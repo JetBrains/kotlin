@@ -75,113 +75,116 @@ fun buildTree(expression: IrExpression): Node? {
   }
 
   val tree = RootNode()
-  expression.accept(object : IrElementVisitor<Unit, Node> {
-    override fun visitElement(element: IrElement, data: Node) {
-      element.acceptChildren(this, data)
-    }
+  expression.accept(
+    object : IrElementVisitor<Unit, Node> {
+      override fun visitElement(element: IrElement, data: Node) {
+        element.acceptChildren(this, data)
+      }
 
-    override fun visitExpression(expression: IrExpression, data: Node) {
-      if (expression is IrFunctionExpression) return // Do not transform lambda expressions, especially their body
+      override fun visitExpression(expression: IrExpression, data: Node) {
+        if (expression is IrFunctionExpression) return // Do not transform lambda expressions, especially their body
 
-      val node = data as? ExpressionNode ?: ExpressionNode().also { data.addChild(it) }
-      node.add(expression)
-      expression.acceptChildren(this, node)
-    }
-
-    override fun visitContainerExpression(expression: IrContainerExpression, data: Node) {
-      if (expression.origin is IrStatementOrigin.SAFE_CALL) {
-        // Null safe expressions can be correctly navigated
-        super.visitContainerExpression(expression, data)
-      } else {
-        // Everything else is considered unsafe and terminates the expression tree
         val node = data as? ExpressionNode ?: ExpressionNode().also { data.addChild(it) }
         node.add(expression)
-      }
-    }
-
-    override fun visitTypeOperator(expression: IrTypeOperatorCall, data: Node) {
-      val node = data as? ExpressionNode ?: ExpressionNode().also { data.addChild(it) }
-      if (expression.operator in setOf(IrTypeOperator.INSTANCEOF, IrTypeOperator.NOT_INSTANCEOF)) {
-        // Only include `is` and `!is` checks
-        node.add(expression)
+        expression.acceptChildren(this, node)
       }
 
-      expression.acceptChildren(this, node)
-    }
+      override fun visitContainerExpression(expression: IrContainerExpression, data: Node) {
+        if (expression.origin is IrStatementOrigin.SAFE_CALL) {
+          // Null safe expressions can be correctly navigated
+          super.visitContainerExpression(expression, data)
+        } else {
+          // Everything else is considered unsafe and terminates the expression tree
+          val node = data as? ExpressionNode ?: ExpressionNode().also { data.addChild(it) }
+          node.add(expression)
+        }
+      }
 
-    override fun visitCall(expression: IrCall, data: Node) {
-      if (expression.symbol.owner.name.asString() == "EQEQ" && expression.origin == IrStatementOrigin.EXCLEQ) {
-        // Skip the EQEQ part of a EXCLEQ call
+      override fun visitTypeOperator(expression: IrTypeOperatorCall, data: Node) {
+        val node = data as? ExpressionNode ?: ExpressionNode().also { data.addChild(it) }
+        if (expression.operator in setOf(IrTypeOperator.INSTANCEOF, IrTypeOperator.NOT_INSTANCEOF)) {
+          // Only include `is` and `!is` checks
+          node.add(expression)
+        }
+
+        expression.acceptChildren(this, node)
+      }
+
+      override fun visitCall(expression: IrCall, data: Node) {
+        if (expression.symbol.owner.name.asString() == "EQEQ" && expression.origin == IrStatementOrigin.EXCLEQ) {
+          // Skip the EQEQ part of a EXCLEQ call
+          expression.acceptChildren(this, data)
+        } else {
+          super.visitCall(expression, data)
+        }
+      }
+
+      override fun visitVararg(expression: IrVararg, data: Node) {
+        // Skip processing of vararg array
         expression.acceptChildren(this, data)
-      } else {
-        super.visitCall(expression, data)
       }
-    }
 
-    override fun visitVararg(expression: IrVararg, data: Node) {
-      // Skip processing of vararg array
-      expression.acceptChildren(this, data)
-    }
+      override fun visitConst(expression: IrConst<*>, data: Node) {
+        // Do not include constants
+      }
 
-    override fun visitConst(expression: IrConst<*>, data: Node) {
-      // Do not include constants
-    }
+      override fun visitWhen(expression: IrWhen, data: Node) {
+        when (expression.origin) {
+          IrStatementOrigin.ANDAND -> {
+            // flatten `&&` expressions to be at the same level
+            val node = data as? AndNode ?: AndNode().also { data.addChild(it) }
 
-    override fun visitWhen(expression: IrWhen, data: Node) {
-      when (expression.origin) {
-        IrStatementOrigin.ANDAND -> {
-          // flatten `&&` expressions to be at the same level
-          val node = data as? AndNode ?: AndNode().also { data.addChild(it) }
+            require(expression.branches.size == 2)
+            val thenBranch = expression.branches[0]
 
-          require(expression.branches.size == 2)
-          val thenBranch = expression.branches[0]
+            thenBranch.condition.accept(this, node)
+            thenBranch.result.accept(this, node)
 
-          thenBranch.condition.accept(this, node)
-          thenBranch.result.accept(this, node)
+            val elseBranchCondition = expression.branches[1].condition
+            val elseBranchResult = expression.branches[1].result
 
-          val elseBranchCondition = expression.branches[1].condition
-          val elseBranchResult = expression.branches[1].result
+            if (elseBranchCondition !is IrConst<*> || elseBranchCondition.value != true) {
+              elseBranchCondition.accept(this, node)
+            }
 
-          if (elseBranchCondition !is IrConst<*> || elseBranchCondition.value != true) {
-            elseBranchCondition.accept(this, node)
+            if (elseBranchResult !is IrConst<*> || elseBranchResult.value != false) {
+              elseBranchResult.accept(this, node)
+            }
           }
+          IrStatementOrigin.OROR -> {
+            // flatten `||` expressions to be at the same level
+            val node = data as? OrNode ?: OrNode().also { data.addChild(it) }
 
-          if (elseBranchResult !is IrConst<*> || elseBranchResult.value != false) {
-            elseBranchResult.accept(this, node)
+            require(expression.branches.size == 2)
+            val thenBranchCondition = expression.branches[0].condition
+            val thenBranchResult = expression.branches[0].result
+            val elseBranchCondition = expression.branches[1].condition
+            val elseBranchResult = expression.branches[1].result
+
+            thenBranchCondition.accept(this, node)
+
+            if (thenBranchResult !is IrConst<*> || thenBranchResult.value != true) {
+              thenBranchResult.accept(this, node)
+            }
+
+            if (elseBranchCondition !is IrConst<*> || elseBranchCondition.value != true) {
+              elseBranchCondition.accept(this, node)
+            }
+
+            if (elseBranchResult !is IrConst<*> || elseBranchResult.value != false) {
+              elseBranchResult.accept(this, node)
+            }
           }
-        }
-        IrStatementOrigin.OROR -> {
-          // flatten `||` expressions to be at the same level
-          val node = data as? OrNode ?: OrNode().also { data.addChild(it) }
-
-          require(expression.branches.size == 2)
-          val thenBranchCondition = expression.branches[0].condition
-          val thenBranchResult = expression.branches[0].result
-          val elseBranchCondition = expression.branches[1].condition
-          val elseBranchResult = expression.branches[1].result
-
-          thenBranchCondition.accept(this, node)
-
-          if (thenBranchResult !is IrConst<*> || thenBranchResult.value != true) {
-            thenBranchResult.accept(this, node)
+          else -> {
+            // Add as basic expression and terminate
+            // TODO this has to be broken and not work in all cases...
+            ExpressionNode().also { data.addChild(it) }
           }
-
-          if (elseBranchCondition !is IrConst<*> || elseBranchCondition.value != true) {
-            elseBranchCondition.accept(this, node)
-          }
-
-          if (elseBranchResult !is IrConst<*> || elseBranchResult.value != false) {
-            elseBranchResult.accept(this, node)
-          }
-        }
-        else -> {
-          // Add as basic expression and terminate
-          // TODO this has to be broken and not work in all cases...
-          ExpressionNode().also { data.addChild(it) }
         }
       }
-    }
-  }, tree)
+    },
+    tree,
+  )
 
   return tree.children.singleOrNull()
 }

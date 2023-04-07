@@ -31,7 +31,7 @@ class DebugFunctionTest {
     val actual = executeMainDebug(
       """
       dbg(1 + 2 + 3)
-      """.trimIndent()
+      """.trimIndent(),
     )
     assertEquals(
       """
@@ -40,7 +40,7 @@ class DebugFunctionTest {
             |   6
             3
       """.trimIndent(),
-      actual.trim()
+      actual.trim(),
     )
   }
 
@@ -49,7 +49,7 @@ class DebugFunctionTest {
     val actual = executeMainDebug(
       """
       dbg(1 + 2 + 3, "Message:")
-      """.trimIndent()
+      """.trimIndent(),
     )
     assertEquals(
       """
@@ -59,7 +59,7 @@ class DebugFunctionTest {
             |   6
             3
       """.trimIndent(),
-      actual.trim()
+      actual.trim(),
     )
   }
 }
@@ -79,7 +79,7 @@ fun main() {
   $mainBody
 }
 """,
-    trimIndent = false
+    trimIndent = false,
   )
 
   val result = compile(listOf(file), PowerAssertComponentRegistrar(setOf(FqName("dbg"))))
@@ -96,8 +96,9 @@ fun getMainResult(main: Method): String {
     fail("main did not throw expected exception")
   } catch (t: InvocationTargetException) {
     with(t.cause) {
-      if (this is RuntimeException && message != null && message!!.startsWith("result:"))
+      if (this is RuntimeException && message != null && message!!.startsWith("result:")) {
         return message!!.substringAfter("result:")
+      }
     }
     throw t.cause!!
   }

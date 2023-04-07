@@ -39,7 +39,7 @@ fun IrBuilderWithScope.irLambda(
   lambdaType: IrType,
   startOffset: Int = this.startOffset,
   endOffset: Int = this.endOffset,
-  block: IrBlockBodyBuilder.() -> Unit
+  block: IrBlockBodyBuilder.() -> Unit,
 ): IrFunctionExpression {
   val scope = this
   val lambda = context.irFactory.buildFun {

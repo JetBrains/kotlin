@@ -37,7 +37,7 @@ class SamConversionLambdaFunctionDelegate(
     dispatchReceiver: IrExpression?,
     extensionReceiver: IrExpression?,
     valueArguments: List<IrExpression?>,
-    messageArgument: IrExpression
+    messageArgument: IrExpression,
   ): IrExpression = with(builder) {
     val lambda = irLambda(context.irBuiltIns.stringType, messageParameter.type) {
       +irReturn(messageArgument)
@@ -49,7 +49,7 @@ class SamConversionLambdaFunctionDelegate(
       dispatchReceiver = dispatchReceiver,
       extensionReceiver = extensionReceiver,
       valueArguments = valueArguments,
-      messageArgument = expression
+      messageArgument = expression,
     )
   }
 }

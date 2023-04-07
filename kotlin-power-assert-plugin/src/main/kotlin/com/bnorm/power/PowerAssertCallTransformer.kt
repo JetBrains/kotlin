@@ -68,7 +68,7 @@ class PowerAssertCallTransformer(
   private val sourceFile: SourceFile,
   private val context: IrPluginContext,
   private val messageCollector: MessageCollector,
-  private val functions: Set<FqName>
+  private val functions: Set<FqName>,
 ) : IrElementTransformerVoidWithContext() {
   private val irTypeSystemContext = IrTypeSystemContextImpl(context.irBuiltIns)
 
@@ -95,7 +95,7 @@ class PowerAssertCallTransformer(
           | - $fqName($valueTypesTruncated() -> String)
           | - $fqName(${valueTypesAll}String)
           | - $fqName($valueTypesAll() -> String)
-        """.trimMargin()
+        """.trimMargin(),
       )
       return super.visitCall(expression)
     }
@@ -132,7 +132,7 @@ class PowerAssertCallTransformer(
       messageArgument = messageArgument,
       roots = roots,
       dispatchRoot = dispatchRoot,
-      extensionRoot = extensionRoot
+      extensionRoot = extensionRoot,
     )
   }
 
@@ -142,14 +142,14 @@ class PowerAssertCallTransformer(
     messageArgument: IrExpression?,
     roots: List<Node?>,
     dispatchRoot: Node? = null,
-    extensionRoot: Node? = null
+    extensionRoot: Node? = null,
   ): IrExpression {
     fun recursive(
       index: Int,
       dispatch: IrExpression?,
       extension: IrExpression?,
       arguments: List<IrExpression?>,
-      variables: List<IrTemporaryVariable>
+      variables: List<IrTemporaryVariable>,
     ): IrExpression {
       if (index >= roots.size) {
         val prefix = buildMessagePrefix(messageArgument, delegate.messageParameter, roots, call)
@@ -181,7 +181,7 @@ class PowerAssertCallTransformer(
     messageArgument: IrExpression?,
     messageParameter: IrValueParameter,
     roots: List<Node?>,
-    original: IrCall
+    original: IrCall,
   ): IrExpression? {
     return when {
       messageArgument is IrConst<*> -> messageArgument

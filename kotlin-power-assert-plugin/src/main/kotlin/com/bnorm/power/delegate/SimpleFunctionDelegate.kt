@@ -34,13 +34,13 @@ class SimpleFunctionDelegate(
     dispatchReceiver: IrExpression?,
     extensionReceiver: IrExpression?,
     valueArguments: List<IrExpression?>,
-    messageArgument: IrExpression
+    messageArgument: IrExpression,
   ): IrExpression = builder.irCallCopy(
     overload = overload,
     original = original,
     dispatchReceiver = dispatchReceiver,
     extensionReceiver = extensionReceiver,
     valueArguments = valueArguments,
-    messageArgument = messageArgument
+    messageArgument = messageArgument,
   )
 }

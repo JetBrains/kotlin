@@ -29,7 +29,7 @@ class MultiParameterFunctionTest {
       """
       val operation = "sum"
       dbg(operation, 1 + 2 + 3)
-      """.trimIndent()
+      """.trimIndent(),
     )
     assertEquals(
       """
@@ -40,7 +40,7 @@ class MultiParameterFunctionTest {
           |            3
           sum
       """.trimIndent(),
-      actual.trim()
+      actual.trim(),
     )
   }
 
@@ -54,7 +54,7 @@ class MultiParameterFunctionTest {
         key = greeting != null && greeting.length == 5,
         value = name == null || name.length == 5
       )
-      """.trimIndent()
+      """.trimIndent(),
     )
     assertEquals(
       """
@@ -70,7 +70,7 @@ class MultiParameterFunctionTest {
                 null
       )
       """.trimIndent(),
-      actual.trim()
+      actual.trim(),
     )
   }
 
@@ -80,7 +80,7 @@ class MultiParameterFunctionTest {
       """
       val operation = "sum"
       dbg(operation, 1 + 2 + 3, "Message:")
-      """.trimIndent()
+      """.trimIndent(),
     )
     assertEquals(
       """
@@ -92,7 +92,7 @@ class MultiParameterFunctionTest {
           |            3
           sum
       """.trimIndent(),
-      actual.trim()
+      actual.trim(),
     )
   }
 
@@ -107,7 +107,7 @@ class MultiParameterFunctionTest {
         value = name == null || name.length == 5,
         msg = "Message:"
       )
-      """.trimIndent()
+      """.trimIndent(),
     )
     assertEquals(
       """
@@ -125,7 +125,7 @@ class MultiParameterFunctionTest {
         msg = "Message:"
       )
       """.trimIndent(),
-      actual.trim()
+      actual.trim(),
     )
   }
 }
@@ -145,7 +145,7 @@ fun main() {
   $mainBody
 }
 """,
-    trimIndent = false
+    trimIndent = false,
   )
 
   val result = compile(listOf(file), PowerAssertComponentRegistrar(setOf(FqName("dbg"))))

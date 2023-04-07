@@ -35,7 +35,7 @@ class Junit5AssertionsTest {
                    |
                    false ==> expected: <true> but was: <false>
       """.trimIndent(),
-      PowerAssertComponentRegistrar(setOf(FqName("org.junit.jupiter.api.Assertions.assertTrue")))
+      PowerAssertComponentRegistrar(setOf(FqName("org.junit.jupiter.api.Assertions.assertTrue"))),
     )
   }
 
@@ -54,7 +54,7 @@ class Junit5AssertionsTest {
                    |
                    false ==> expected: <true> but was: <false>
       """.trimIndent(),
-      PowerAssertComponentRegistrar(setOf(FqName("org.junit.jupiter.api.Assertions.assertTrue")))
+      PowerAssertComponentRegistrar(setOf(FqName("org.junit.jupiter.api.Assertions.assertTrue"))),
     )
   }
 
@@ -74,7 +74,7 @@ class Junit5AssertionsTest {
                    |
                    false ==> expected: <true> but was: <false>
       """.trimIndent(),
-      PowerAssertComponentRegistrar(setOf(FqName("org.junit.jupiter.api.Assertions.assertTrue")))
+      PowerAssertComponentRegistrar(setOf(FqName("org.junit.jupiter.api.Assertions.assertTrue"))),
     )
   }
 
@@ -93,7 +93,7 @@ class Junit5AssertionsTest {
                    |
                    false ==> expected: <true> but was: <false>
       """.trimIndent(),
-      PowerAssertComponentRegistrar(setOf(FqName("org.junit.jupiter.api.Assertions.assertTrue")))
+      PowerAssertComponentRegistrar(setOf(FqName("org.junit.jupiter.api.Assertions.assertTrue"))),
     )
   }
 
@@ -114,7 +114,7 @@ class Junit5AssertionsTest {
                    |
                    false ==> expected: <true> but was: <false>
       """.trimIndent(),
-      PowerAssertComponentRegistrar(setOf(FqName("org.junit.jupiter.api.Assertions.assertTrue")))
+      PowerAssertComponentRegistrar(setOf(FqName("org.junit.jupiter.api.Assertions.assertTrue"))),
     )
   }
 
@@ -133,7 +133,7 @@ class Junit5AssertionsTest {
                     |
                     true ==> expected: <false> but was: <true>
       """.trimIndent(),
-      PowerAssertComponentRegistrar(setOf(FqName("org.junit.jupiter.api.Assertions.assertFalse")))
+      PowerAssertComponentRegistrar(setOf(FqName("org.junit.jupiter.api.Assertions.assertFalse"))),
     )
   }
 
@@ -152,7 +152,7 @@ class Junit5AssertionsTest {
                     |
                     true ==> expected: <false> but was: <true>
       """.trimIndent(),
-      PowerAssertComponentRegistrar(setOf(FqName("org.junit.jupiter.api.Assertions.assertFalse")))
+      PowerAssertComponentRegistrar(setOf(FqName("org.junit.jupiter.api.Assertions.assertFalse"))),
     )
   }
 
@@ -172,7 +172,7 @@ class Junit5AssertionsTest {
                     |
                     true ==> expected: <false> but was: <true>
       """.trimIndent(),
-      PowerAssertComponentRegistrar(setOf(FqName("org.junit.jupiter.api.Assertions.assertFalse")))
+      PowerAssertComponentRegistrar(setOf(FqName("org.junit.jupiter.api.Assertions.assertFalse"))),
     )
   }
 
@@ -191,7 +191,7 @@ class Junit5AssertionsTest {
                     |
                     true ==> expected: <false> but was: <true>
       """.trimIndent(),
-      PowerAssertComponentRegistrar(setOf(FqName("org.junit.jupiter.api.Assertions.assertFalse")))
+      PowerAssertComponentRegistrar(setOf(FqName("org.junit.jupiter.api.Assertions.assertFalse"))),
     )
   }
 
@@ -212,7 +212,7 @@ class Junit5AssertionsTest {
                     |
                     true ==> expected: <false> but was: <true>
       """.trimIndent(),
-      PowerAssertComponentRegistrar(setOf(FqName("org.junit.jupiter.api.Assertions.assertFalse")))
+      PowerAssertComponentRegistrar(setOf(FqName("org.junit.jupiter.api.Assertions.assertFalse"))),
     )
   }
 
@@ -233,7 +233,7 @@ class Junit5AssertionsTest {
                    |         World
                    Hello ==> expected: <Hello> but was: <World>
       """.trimIndent(),
-      PowerAssertComponentRegistrar(setOf(FqName("org.junit.jupiter.api.Assertions.assertEquals")))
+      PowerAssertComponentRegistrar(setOf(FqName("org.junit.jupiter.api.Assertions.assertEquals"))),
     )
   }
 
@@ -255,7 +255,7 @@ class Junit5AssertionsTest {
                    |         World
                    Hello ==> expected: <Hello> but was: <World>
       """.trimIndent(),
-      PowerAssertComponentRegistrar(setOf(FqName("org.junit.jupiter.api.Assertions.assertEquals")))
+      PowerAssertComponentRegistrar(setOf(FqName("org.junit.jupiter.api.Assertions.assertEquals"))),
     )
   }
 
@@ -278,7 +278,7 @@ class Junit5AssertionsTest {
                    |         World
                    Hello ==> expected: <Hello> but was: <World>
       """.trimIndent(),
-      PowerAssertComponentRegistrar(setOf(FqName("org.junit.jupiter.api.Assertions.assertEquals")))
+      PowerAssertComponentRegistrar(setOf(FqName("org.junit.jupiter.api.Assertions.assertEquals"))),
     )
   }
 
@@ -300,7 +300,7 @@ class Junit5AssertionsTest {
                    |         World
                    Hello ==> expected: <Hello> but was: <World>
       """.trimIndent(),
-      PowerAssertComponentRegistrar(setOf(FqName("org.junit.jupiter.api.Assertions.assertEquals")))
+      PowerAssertComponentRegistrar(setOf(FqName("org.junit.jupiter.api.Assertions.assertEquals"))),
     )
   }
 
@@ -324,7 +324,7 @@ class Junit5AssertionsTest {
                    |         World
                    Hello ==> expected: <Hello> but was: <World>
       """.trimIndent(),
-      PowerAssertComponentRegistrar(setOf(FqName("org.junit.jupiter.api.Assertions.assertEquals")))
+      PowerAssertComponentRegistrar(setOf(FqName("org.junit.jupiter.api.Assertions.assertEquals"))),
     )
   }
 }

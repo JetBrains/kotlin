@@ -35,7 +35,7 @@ class KotlinTestAssertTest {
                    |
                    false
       """.trimIndent(),
-      PowerAssertComponentRegistrar(setOf(FqName("kotlin.test.assertTrue")))
+      PowerAssertComponentRegistrar(setOf(FqName("kotlin.test.assertTrue"))),
     )
   }
 
@@ -54,7 +54,7 @@ class KotlinTestAssertTest {
                    |
                    false
       """.trimIndent(),
-      PowerAssertComponentRegistrar(setOf(FqName("kotlin.test.assertTrue")))
+      PowerAssertComponentRegistrar(setOf(FqName("kotlin.test.assertTrue"))),
     )
   }
 
@@ -74,7 +74,7 @@ class KotlinTestAssertTest {
                    |
                    false
       """.trimIndent(),
-      PowerAssertComponentRegistrar(setOf(FqName("kotlin.test.assertTrue")))
+      PowerAssertComponentRegistrar(setOf(FqName("kotlin.test.assertTrue"))),
     )
   }
 
@@ -93,7 +93,7 @@ class KotlinTestAssertTest {
                     |
                     true
       """.trimIndent(),
-      PowerAssertComponentRegistrar(setOf(FqName("kotlin.test.assertFalse")))
+      PowerAssertComponentRegistrar(setOf(FqName("kotlin.test.assertFalse"))),
     )
   }
 
@@ -112,7 +112,7 @@ class KotlinTestAssertTest {
                     |
                     true
       """.trimIndent(),
-      PowerAssertComponentRegistrar(setOf(FqName("kotlin.test.assertFalse")))
+      PowerAssertComponentRegistrar(setOf(FqName("kotlin.test.assertFalse"))),
     )
   }
 
@@ -132,7 +132,7 @@ class KotlinTestAssertTest {
                     |
                     true
       """.trimIndent(),
-      PowerAssertComponentRegistrar(setOf(FqName("kotlin.test.assertFalse")))
+      PowerAssertComponentRegistrar(setOf(FqName("kotlin.test.assertFalse"))),
     )
   }
 
@@ -153,7 +153,7 @@ class KotlinTestAssertTest {
                    |         World
                    Hello ==> expected: <Hello> but was: <World>
       """.trimIndent(),
-      PowerAssertComponentRegistrar(setOf(FqName("kotlin.test.assertEquals")))
+      PowerAssertComponentRegistrar(setOf(FqName("kotlin.test.assertEquals"))),
     )
   }
 
@@ -175,7 +175,7 @@ class KotlinTestAssertTest {
                    |         World
                    Hello ==> expected: <Hello> but was: <World>
       """.trimIndent(),
-      PowerAssertComponentRegistrar(setOf(FqName("kotlin.test.assertEquals")))
+      PowerAssertComponentRegistrar(setOf(FqName("kotlin.test.assertEquals"))),
     )
   }
 
@@ -198,7 +198,7 @@ class KotlinTestAssertTest {
                    |         World
                    Hello ==> expected: <Hello> but was: <World>
       """.trimIndent(),
-      PowerAssertComponentRegistrar(setOf(FqName("kotlin.test.assertEquals")))
+      PowerAssertComponentRegistrar(setOf(FqName("kotlin.test.assertEquals"))),
     )
   }
 
@@ -217,7 +217,7 @@ class KotlinTestAssertTest {
                     |
                     null ==> expected: not <null>
       """.trimIndent(),
-      PowerAssertComponentRegistrar(setOf(FqName("kotlin.test.assertNotNull")))
+      PowerAssertComponentRegistrar(setOf(FqName("kotlin.test.assertNotNull"))),
     )
   }
 
@@ -237,7 +237,7 @@ class KotlinTestAssertTest {
                     |
                     null ==> expected: not <null>
       """.trimIndent(),
-      PowerAssertComponentRegistrar(setOf(FqName("kotlin.test.assertNotNull")))
+      PowerAssertComponentRegistrar(setOf(FqName("kotlin.test.assertNotNull"))),
     )
   }
 
@@ -258,7 +258,7 @@ class KotlinTestAssertTest {
                     |
                     null ==> expected: not <null>
       """.trimIndent(),
-      PowerAssertComponentRegistrar(setOf(FqName("kotlin.test.assertNotNull")))
+      PowerAssertComponentRegistrar(setOf(FqName("kotlin.test.assertNotNull"))),
     )
   }
 }

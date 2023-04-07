@@ -38,7 +38,7 @@ fun IrBuilderWithScope.irDiagramString(
   sourceFile: SourceFile,
   prefix: IrExpression? = null,
   call: IrCall,
-  variables: List<IrTemporaryVariable>
+  variables: List<IrTemporaryVariable>,
 ): IrExpression {
   val callInfo = sourceFile.getSourceRangeInfo(call)
   val callIndent = callInfo.startColumnNumber
@@ -69,7 +69,7 @@ fun IrBuilderWithScope.irDiagramString(
               last = i
             }
           }
-        }
+        },
       )
 
       for (tmp in rowValues.asReversed()) {
@@ -83,7 +83,7 @@ fun IrBuilderWithScope.irDiagramString(
               last = i
             }
             indent(tmp.indent - last - 1)
-          }
+          },
         )
         addArgument(irGet(tmp.value))
       }
@@ -95,13 +95,13 @@ private data class ValueDisplay(
   val value: IrVariable,
   val indent: Int,
   val row: Int,
-  val source: String
+  val source: String,
 )
 
 private fun IrTemporaryVariable.toValueDisplay(
   fileSource: SourceFile,
   callIndent: Int,
-  originalInfo: SourceRangeInfo
+  originalInfo: SourceRangeInfo,
 ): ValueDisplay {
   val info = fileSource.getSourceRangeInfo(original)
   var indent = info.startColumnNumber - callIndent
@@ -158,7 +158,7 @@ private fun IrTemporaryVariable.toValueDisplay(
 private fun findDisplayOffset(
   sourceFile: SourceFile,
   expression: IrExpression,
-  source: String
+  source: String,
 ): Int {
   return when (expression) {
     is IrMemberAccessExpression<*> -> memberAccessOffset(sourceFile, expression, source)
@@ -170,7 +170,7 @@ private fun findDisplayOffset(
 private fun memberAccessOffset(
   sourceFile: SourceFile,
   expression: IrMemberAccessExpression<*>,
-  source: String
+  source: String,
 ): Int {
   if (expression.origin == IrStatementOrigin.EXCLEQ || expression.origin == IrStatementOrigin.EXCLEQEQ) {
     // special case to handle `value != null`
@@ -207,7 +207,7 @@ private fun memberAccessOffset(
 
 private fun typeOperatorOffset(
   expression: IrTypeOperatorCall,
-  source: String
+  source: String,
 ): Int {
   return when (expression.operator) {
     IrTypeOperator.INSTANCEOF -> source.indexOf(" is ") + 1

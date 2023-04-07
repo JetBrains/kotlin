@@ -5,6 +5,7 @@ plugins {
   kotlin("jvm")
   id("com.gradle.plugin-publish")
   id("com.github.gmazzo.buildconfig")
+//  id("org.jmailen.kotlinter")
 }
 
 dependencies {

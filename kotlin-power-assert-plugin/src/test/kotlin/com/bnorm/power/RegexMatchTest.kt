@@ -31,7 +31,7 @@ class RegexMatchTest {
                             |                   [A-Za-z]+
                             false
       """.trimIndent(),
-      actual
+      actual,
     )
   }
 
@@ -46,7 +46,7 @@ class RegexMatchTest {
                             |                   [A-Za-z]+
                             false
       """.trimIndent(),
-      actual
+      actual,
     )
   }
 }

@@ -35,7 +35,7 @@ class LamdaTest {
              |    |                  false
              |    [Doe, Jane, Doe, John]
              [Jane, John]
-      """.trimIndent()
+      """.trimIndent(),
     )
   }
 
@@ -65,7 +65,7 @@ class LamdaTest {
                false
       )
       """.trimIndent(),
-      PowerAssertComponentRegistrar(setOf(FqName("kotlin.require")))
+      PowerAssertComponentRegistrar(setOf(FqName("kotlin.require"))),
     )
   }
 }

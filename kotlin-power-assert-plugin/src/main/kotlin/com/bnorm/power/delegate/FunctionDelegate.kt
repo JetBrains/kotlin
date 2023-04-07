@@ -36,7 +36,7 @@ interface FunctionDelegate {
     dispatchReceiver: IrExpression?,
     extensionReceiver: IrExpression?,
     valueArguments: List<IrExpression?>,
-    messageArgument: IrExpression
+    messageArgument: IrExpression,
   ): IrExpression
 
   fun IrBuilderWithScope.irCallCopy(
@@ -45,7 +45,7 @@ interface FunctionDelegate {
     dispatchReceiver: IrExpression?,
     extensionReceiver: IrExpression?,
     valueArguments: List<IrExpression?>,
-    messageArgument: IrExpression
+    messageArgument: IrExpression,
   ): IrExpression {
     return irCall(overload, type = original.type).apply {
       this.dispatchReceiver = original.dispatchReceiver?.deepCopyWithSymbols(parent)

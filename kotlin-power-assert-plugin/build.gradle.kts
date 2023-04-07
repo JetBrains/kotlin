@@ -7,6 +7,7 @@ plugins {
 
   signing
   `maven-publish`
+//  id("org.jmailen.kotlinter")
 }
 
 dependencies {

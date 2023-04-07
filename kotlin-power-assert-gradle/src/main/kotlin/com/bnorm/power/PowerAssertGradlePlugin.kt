@@ -39,11 +39,11 @@ class PowerAssertGradlePlugin : KotlinCompilerPluginSupportPlugin {
   override fun getPluginArtifact(): SubpluginArtifact = SubpluginArtifact(
     groupId = BuildConfig.PLUGIN_GROUP_ID,
     artifactId = BuildConfig.PLUGIN_ARTIFACT_ID,
-    version = BuildConfig.PLUGIN_VERSION
+    version = BuildConfig.PLUGIN_VERSION,
   )
 
   override fun applyToCompilation(
-    kotlinCompilation: KotlinCompilation<*>
+    kotlinCompilation: KotlinCompilation<*>,
   ): Provider<List<SubpluginOption>> {
     val project = kotlinCompilation.target.project
     val extension = project.extensions.getByType(PowerAssertGradleExtension::class.java)

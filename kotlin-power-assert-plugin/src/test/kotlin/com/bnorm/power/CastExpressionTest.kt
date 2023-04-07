@@ -30,7 +30,7 @@ class CastExpressionTest {
                   |
                   false
       """.trimIndent(),
-      actual
+      actual,
     )
   }
 
@@ -44,7 +44,7 @@ class CastExpressionTest {
                              |
                              false
       """.trimIndent(),
-      actual
+      actual,
     )
   }
 
@@ -54,7 +54,7 @@ class CastExpressionTest {
       """
       val greeting: Any = "hello"
       assert(greeting is String && greeting.length == 2)
-      """.trimIndent()
+      """.trimIndent(),
     )
     assertEquals(
       """
@@ -67,7 +67,7 @@ class CastExpressionTest {
              |        true
              hello
       """.trimIndent(),
-      actual
+      actual,
     )
   }
 }

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import java.io.File
 
 data class SourceFile(
-  private val irFile: IrFile
+  private val irFile: IrFile,
 ) {
   private val source: String = File(irFile.path).readText()
     .replace("\r\n", "\n") // https://youtrack.jetbrains.com/issue/KT-41888

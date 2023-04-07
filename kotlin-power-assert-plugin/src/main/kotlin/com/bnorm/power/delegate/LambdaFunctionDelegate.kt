@@ -36,7 +36,7 @@ class LambdaFunctionDelegate(
     dispatchReceiver: IrExpression?,
     extensionReceiver: IrExpression?,
     valueArguments: List<IrExpression?>,
-    messageArgument: IrExpression
+    messageArgument: IrExpression,
   ): IrExpression = with(builder) {
     val expression = irLambda(context.irBuiltIns.stringType, messageParameter.type) {
       +irReturn(messageArgument)
@@ -47,7 +47,7 @@ class LambdaFunctionDelegate(
       dispatchReceiver = dispatchReceiver,
       extensionReceiver = extensionReceiver,
       valueArguments = valueArguments,
-      messageArgument = expression
+      messageArgument = expression,
     )
   }
 }

@@ -47,7 +47,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Run ktlint
-        uses: ScaCap/action-ktlint@1.4
+        uses: ScaCap/action-ktlint@1.5.1
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           reporter: github-pr-check

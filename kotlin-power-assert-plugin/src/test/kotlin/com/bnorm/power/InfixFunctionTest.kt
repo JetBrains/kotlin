@@ -30,7 +30,7 @@ class InfixFunctionTest {
     val actual = runExtensionInfix(
       """
       (1 + 1) mustEqual (2 + 4)
-      """.trimIndent()
+      """.trimIndent(),
     )
     assertEquals(
       """
@@ -39,7 +39,7 @@ class InfixFunctionTest {
          |                 6
          2
       """.trimIndent(),
-      actual.trim()
+      actual.trim(),
     )
   }
 
@@ -48,7 +48,7 @@ class InfixFunctionTest {
     val actual = runExtensionInfix(
       """
       1 mustEqual (2 + 4)
-      """.trimIndent()
+      """.trimIndent(),
     )
     assertEquals(
       """
@@ -56,7 +56,7 @@ class InfixFunctionTest {
                      |
                      6
       """.trimIndent(),
-      actual.trim()
+      actual.trim(),
     )
   }
 
@@ -65,7 +65,7 @@ class InfixFunctionTest {
     val actual = runExtensionInfix(
       """
       (1 + 1) mustEqual 6
-      """.trimIndent()
+      """.trimIndent(),
     )
     assertEquals(
       """
@@ -73,7 +73,7 @@ class InfixFunctionTest {
          |
          2
       """.trimIndent(),
-      actual.trim()
+      actual.trim(),
     )
   }
 
@@ -82,13 +82,13 @@ class InfixFunctionTest {
     val actual = runExtensionInfix(
       """
       2 mustEqual 6
-      """.trimIndent()
+      """.trimIndent(),
     )
     assertEquals(
       """
       Assertion failed
       """.trimIndent(),
-      actual.trim()
+      actual.trim(),
     )
   }
 
@@ -97,7 +97,7 @@ class InfixFunctionTest {
     val actual = runExtensionInfix(
       """
       (1 + 1).mustEqual(2 + 4)
-      """.trimIndent()
+      """.trimIndent(),
     )
     assertEquals(
       """
@@ -106,7 +106,7 @@ class InfixFunctionTest {
          |                6
          2
       """.trimIndent(),
-      actual.trim()
+      actual.trim(),
     )
   }
 
@@ -115,7 +115,7 @@ class InfixFunctionTest {
     val actual = runExtensionInfix(
       """
       1.mustEqual(2 + 4)
-      """.trimIndent()
+      """.trimIndent(),
     )
     assertEquals(
       """
@@ -123,7 +123,7 @@ class InfixFunctionTest {
                     |
                     6
       """.trimIndent(),
-      actual.trim()
+      actual.trim(),
     )
   }
 
@@ -132,7 +132,7 @@ class InfixFunctionTest {
     val actual = runExtensionInfix(
       """
       (1 + 1).mustEqual(6)
-      """.trimIndent()
+      """.trimIndent(),
     )
     assertEquals(
       """
@@ -140,7 +140,7 @@ class InfixFunctionTest {
          |
          2
       """.trimIndent(),
-      actual.trim()
+      actual.trim(),
     )
   }
 
@@ -149,13 +149,13 @@ class InfixFunctionTest {
     val actual = runExtensionInfix(
       """
       2.mustEqual(6)
-      """.trimIndent()
+      """.trimIndent(),
     )
     assertEquals(
       """
       Assertion failed
       """.trimIndent(),
-      actual.trim()
+      actual.trim(),
     )
   }
 
@@ -164,7 +164,7 @@ class InfixFunctionTest {
     val actual = runDispatchInfix(
       """
       Wrapper(1 + 1) mustEqual (2 + 4)
-      """.trimIndent()
+      """.trimIndent(),
     )
     assertEquals(
       """
@@ -174,7 +174,7 @@ class InfixFunctionTest {
       |         2
       Wrapper
       """.trimIndent(),
-      actual.trim()
+      actual.trim(),
     )
   }
 
@@ -183,7 +183,7 @@ class InfixFunctionTest {
     val actual = runDispatchInfix(
       """
       Wrapper(1) mustEqual (2 + 4)
-      """.trimIndent()
+      """.trimIndent(),
     )
     assertEquals(
       """
@@ -192,7 +192,7 @@ class InfixFunctionTest {
       |                       6
       Wrapper
       """.trimIndent(),
-      actual.trim()
+      actual.trim(),
     )
   }
 
@@ -201,7 +201,7 @@ class InfixFunctionTest {
     val actual = runDispatchInfix(
       """
       Wrapper(1 + 1) mustEqual 6
-      """.trimIndent()
+      """.trimIndent(),
     )
     assertEquals(
       """
@@ -210,7 +210,7 @@ class InfixFunctionTest {
       |         2
       Wrapper
       """.trimIndent(),
-      actual.trim()
+      actual.trim(),
     )
   }
 
@@ -219,7 +219,7 @@ class InfixFunctionTest {
     val actual = runDispatchInfix(
       """
       Wrapper(2) mustEqual 6
-      """.trimIndent()
+      """.trimIndent(),
     )
     assertEquals(
       """
@@ -227,7 +227,7 @@ class InfixFunctionTest {
       |
       Wrapper
       """.trimIndent(),
-      actual.trim()
+      actual.trim(),
     )
   }
 
@@ -236,7 +236,7 @@ class InfixFunctionTest {
     val actual = runDispatchInfix(
       """
       Wrapper(1 + 1).mustEqual(2 + 4)
-      """.trimIndent()
+      """.trimIndent(),
     )
     assertEquals(
       """
@@ -246,7 +246,7 @@ class InfixFunctionTest {
       |         2
       Wrapper
       """.trimIndent(),
-      actual.trim()
+      actual.trim(),
     )
   }
 
@@ -255,7 +255,7 @@ class InfixFunctionTest {
     val actual = runDispatchInfix(
       """
       Wrapper(1).mustEqual(2 + 4)
-      """.trimIndent()
+      """.trimIndent(),
     )
     assertEquals(
       """
@@ -264,7 +264,7 @@ class InfixFunctionTest {
       |                      6
       Wrapper
       """.trimIndent(),
-      actual.trim()
+      actual.trim(),
     )
   }
 
@@ -273,7 +273,7 @@ class InfixFunctionTest {
     val actual = runDispatchInfix(
       """
       Wrapper(1 + 1).mustEqual(6)
-      """.trimIndent()
+      """.trimIndent(),
     )
     assertEquals(
       """
@@ -282,7 +282,7 @@ class InfixFunctionTest {
       |         2
       Wrapper
       """.trimIndent(),
-      actual.trim()
+      actual.trim(),
     )
   }
 
@@ -291,7 +291,7 @@ class InfixFunctionTest {
     val actual = runDispatchInfix(
       """
       Wrapper(2).mustEqual(6)
-      """.trimIndent()
+      """.trimIndent(),
     )
     assertEquals(
       """
@@ -299,7 +299,7 @@ class InfixFunctionTest {
       |
       Wrapper
       """.trimIndent(),
-      actual.trim()
+      actual.trim(),
     )
   }
 
@@ -317,9 +317,9 @@ class InfixFunctionTest {
           $mainBody
         }
         """.trimIndent(),
-        trimIndent = false
+        trimIndent = false,
       ),
-      setOf(FqName("mustEqual"))
+      setOf(FqName("mustEqual")),
     )
   }
 
@@ -343,9 +343,9 @@ class InfixFunctionTest {
           $mainBody
         }
         """.trimIndent(),
-        trimIndent = false
+        trimIndent = false,
       ),
-      setOf(FqName("Wrapper.mustEqual"))
+      setOf(FqName("Wrapper.mustEqual")),
     )
   }
 

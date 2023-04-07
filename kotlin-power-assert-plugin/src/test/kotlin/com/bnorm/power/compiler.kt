@@ -27,12 +27,12 @@ import kotlin.test.assertEquals
 import kotlin.test.fail
 
 private val DEFAULT_COMPONENT_REGISTRARS = arrayOf(
-  PowerAssertComponentRegistrar(setOf(FqName("kotlin.assert")))
+  PowerAssertComponentRegistrar(setOf(FqName("kotlin.assert"))),
 )
 
 fun compile(
   list: List<SourceFile>,
-  vararg plugins: ComponentRegistrar = DEFAULT_COMPONENT_REGISTRARS
+  vararg plugins: ComponentRegistrar = DEFAULT_COMPONENT_REGISTRARS,
 ): KotlinCompilation.Result {
   return KotlinCompilation().apply {
     sources = list
@@ -53,7 +53,7 @@ fun compile(
 
 fun executeAssertion(
   @Language("kotlin") source: String,
-  vararg plugins: ComponentRegistrar = DEFAULT_COMPONENT_REGISTRARS
+  vararg plugins: ComponentRegistrar = DEFAULT_COMPONENT_REGISTRARS,
 ): String {
   val result = compile(
     listOf(SourceFile.kotlin("main.kt", source, trimIndent = false)),
@@ -80,13 +80,13 @@ fun executeMainAssertion(mainBody: String) = executeAssertion(
 fun main() {
   $mainBody
 }
-"""
+""",
 )
 
 fun assertMessage(
   @Language("kotlin") source: String,
   message: String,
-  vararg plugins: ComponentRegistrar = DEFAULT_COMPONENT_REGISTRARS
+  vararg plugins: ComponentRegistrar = DEFAULT_COMPONENT_REGISTRARS,
 ) {
   val actual = executeAssertion(source, *plugins)
   assertEquals(message, actual)

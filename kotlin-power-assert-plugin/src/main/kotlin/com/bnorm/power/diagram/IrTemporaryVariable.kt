@@ -26,12 +26,12 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 
 data class IrTemporaryVariable(
   val temporary: IrVariable,
-  val original: IrExpression
+  val original: IrExpression,
 )
 
 class IrTemporaryExtractionTransformer(
   private val builder: IrStatementsBuilder<*>,
-  private val transform: Set<IrExpression>
+  private val transform: Set<IrExpression>,
 ) : IrElementTransformerVoid() {
   private val _variables = mutableListOf<IrTemporaryVariable>()
   val variables: List<IrTemporaryVariable> = _variables

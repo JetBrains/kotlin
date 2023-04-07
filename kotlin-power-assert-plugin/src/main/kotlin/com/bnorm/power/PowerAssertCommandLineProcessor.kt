@@ -32,14 +32,14 @@ class PowerAssertCommandLineProcessor : CommandLineProcessor {
       valueDescription = "function full-qualified name",
       description = "fully qualified path of function to intercept",
       required = false, // TODO required for Kotlin/JS
-      allowMultipleOccurrences = true
-    )
+      allowMultipleOccurrences = true,
+    ),
   )
 
   override fun processOption(
     option: AbstractCliOption,
     value: String,
-    configuration: CompilerConfiguration
+    configuration: CompilerConfiguration,
   ) {
     return when (option.optionName) {
       "function" -> configuration.add(KEY_FUNCTIONS, value)

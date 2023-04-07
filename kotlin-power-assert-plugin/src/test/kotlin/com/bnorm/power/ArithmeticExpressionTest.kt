@@ -31,7 +31,7 @@ class ArithmeticExpressionTest {
                |   false
                2
       """.trimIndent(),
-      actual
+      actual,
     )
   }
 
@@ -46,7 +46,7 @@ class ArithmeticExpressionTest {
                |   false
                2
       """.trimIndent(),
-      actual
+      actual,
     )
   }
 
@@ -61,7 +61,7 @@ class ArithmeticExpressionTest {
                |   false
                2
       """.trimIndent(),
-      actual
+      actual,
     )
   }
 
@@ -76,7 +76,7 @@ class ArithmeticExpressionTest {
                |   false
                2
       """.trimIndent(),
-      actual
+      actual,
     )
   }
 
@@ -86,7 +86,7 @@ class ArithmeticExpressionTest {
       """
       var i = 1
       assert(++i == 4)
-      """.trimIndent()
+      """.trimIndent(),
     )
     assertEquals(
       """
@@ -96,7 +96,7 @@ class ArithmeticExpressionTest {
              |   false
              2
       """.trimIndent(),
-      actual
+      actual,
     )
   }
 
@@ -106,7 +106,7 @@ class ArithmeticExpressionTest {
       """
       var i = 1
       assert(i++ == 4)
-      """.trimIndent()
+      """.trimIndent(),
     )
     assertEquals(
       """
@@ -116,7 +116,7 @@ class ArithmeticExpressionTest {
              |   false
              1
       """.trimIndent(),
-      actual
+      actual,
     )
   }
 
@@ -126,7 +126,7 @@ class ArithmeticExpressionTest {
       """
       var i = 3
       assert(--i == 4)
-      """.trimIndent()
+      """.trimIndent(),
     )
     assertEquals(
       """
@@ -136,7 +136,7 @@ class ArithmeticExpressionTest {
              |   false
              2
       """.trimIndent(),
-      actual
+      actual,
     )
   }
 
@@ -146,7 +146,7 @@ class ArithmeticExpressionTest {
       """
       var i = 3
       assert(i-- == 4)
-      """.trimIndent()
+      """.trimIndent(),
     )
     assertEquals(
       """
@@ -156,7 +156,7 @@ class ArithmeticExpressionTest {
              |   false
              3
       """.trimIndent(),
-      actual
+      actual,
     )
   }
 }

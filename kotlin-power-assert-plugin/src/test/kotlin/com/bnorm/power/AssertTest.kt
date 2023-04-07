@@ -37,7 +37,7 @@ assert(hello.length == "World".substring(1, 4).length)
        |     |      false
        |     5
        Hello
-""".trimIndent()
+      """.trimIndent(),
     )
   }
 
@@ -57,7 +57,7 @@ assert(hello.reversed() == emptyList<String>())
        |     |          false
        |     [World, Hello]
        [Hello, World]
-""".trimIndent()
+      """.trimIndent(),
     )
   }
 
@@ -73,7 +73,7 @@ Not equal
 assert(1 == 2) { "Not equal" }
          |
          false
-""".trimIndent()
+      """.trimIndent(),
     )
   }
 
@@ -90,7 +90,7 @@ fun main() {
       assert(1 == 2, lambda)
                |
                false
-      """.trimIndent()
+      """.trimIndent(),
     )
   }
 
@@ -108,7 +108,7 @@ assert(text != null && text.length == 1)
        |    |
        |    false
        null
-""".trimIndent()
+      """.trimIndent(),
     )
   }
 
@@ -133,7 +133,7 @@ assert(text != null && text.length == 5 && text.toLowerCase() == text)
        |    |          Hello
        |    true
        Hello
-""".trimIndent()
+      """.trimIndent(),
     )
   }
 
@@ -158,7 +158,7 @@ assert(text == null || text.length == 1 || text.toLowerCase() == text)
        |    |          Hello
        |    false
        Hello
-""".trimIndent()
+      """.trimIndent(),
     )
   }
 
@@ -183,7 +183,7 @@ assert(text != null && (text.length == 1 || text.toLowerCase() == text))
        |    |           Hello
        |    true
        Hello
-""".trimIndent()
+      """.trimIndent(),
     )
   }
 
@@ -206,7 +206,7 @@ assert((text.length == 1 || text.toLowerCase() == text) && text.length == 1)
         |    |      false
         |    5
         Hello
-""".trimIndent()
+      """.trimIndent(),
     )
   }
 
@@ -231,7 +231,7 @@ assert(text == null || (text.length == 5 && text.toLowerCase() == text))
        |    |           Hello
        |    false
        Hello
-""".trimIndent()
+      """.trimIndent(),
     )
   }
 
@@ -257,7 +257,7 @@ assert((text.length == 5 && text.toLowerCase() == text) || text.length == 1)
         |    |      true
         |    5
         Hello
-""".trimIndent()
+      """.trimIndent(),
     )
   }
 
@@ -277,7 +277,7 @@ assert(text?.length?.minus(2) == 1)
        |     |       3
        |     5
        Hello
-""".trimIndent()
+      """.trimIndent(),
     )
   }
 
@@ -294,7 +294,7 @@ fun main() {
                |      |
                |      false
                2
-      """.trimIndent()
+      """.trimIndent(),
     )
 
     assertMessage(
@@ -308,7 +308,7 @@ assert(1 shl 1 == 4)
          |     |
          |     false
          2
-""".trimIndent()
+      """.trimIndent(),
     )
   }
 
@@ -349,7 +349,7 @@ assert(
               Hello
           )
 )
-""".trimIndent()
+      """.trimIndent(),
     )
   }
 
@@ -368,8 +368,8 @@ Hello, the world is broken
 assertTrue(1 == 2, message = "${"$"}text, the world is broken")
              |
              false
-""".trimIndent(),
-      PowerAssertComponentRegistrar(setOf(FqName("kotlin.test.assertTrue")))
+      """.trimIndent(),
+      PowerAssertComponentRegistrar(setOf(FqName("kotlin.test.assertTrue"))),
     )
   }
 
@@ -385,8 +385,8 @@ the world is broken
 require(1 == 2) { "the world is broken" }
           |
           false
-""".trimIndent(),
-      PowerAssertComponentRegistrar(setOf(FqName("kotlin.require")))
+      """.trimIndent(),
+      PowerAssertComponentRegistrar(setOf(FqName("kotlin.require"))),
     )
   }
 
@@ -402,8 +402,8 @@ the world is broken
 check(1 == 2) { "the world is broken" }
         |
         false
-""".trimIndent(),
-      PowerAssertComponentRegistrar(setOf(FqName("kotlin.check")))
+      """.trimIndent(),
+      PowerAssertComponentRegistrar(setOf(FqName("kotlin.check"))),
     )
   }
 
@@ -421,7 +421,8 @@ assert(a == 42)
        | |
        | false
        0
-""".trimIndent())
+      """.trimIndent(),
+    )
   }
 
   @Test
@@ -434,7 +435,7 @@ fun main() {
 }""",
       """
 Assertion failed
-""".trimIndent()
+      """.trimIndent(),
     )
   }
 }
