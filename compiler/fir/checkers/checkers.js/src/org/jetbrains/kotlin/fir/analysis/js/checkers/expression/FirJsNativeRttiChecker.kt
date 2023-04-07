@@ -27,6 +27,10 @@ object FirJsNativeRttiChecker : FirBasicExpressionChecker() {
     private fun checkGetClassCall(expression: FirGetClassCall, context: CheckerContext, reporter: DiagnosticReporter) {
         val declarationToCheck = expression.argument.typeRef.toRegularClassSymbol(context.session) ?: return
 
+        if (expression.arguments.firstOrNull() !is FirResolvedQualifier) {
+            return
+        }
+
         if (declarationToCheck.isNativeInterface(context)) {
             reporter.reportOn(expression.source, FirJsErrors.EXTERNAL_INTERFACE_AS_CLASS_LITERAL, context)
         }
