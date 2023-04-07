@@ -90,7 +90,12 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
             } else {
                 val ktFile = containingKtFile
                 val firFile = containerFirFile ?: firFileBuilder.buildRawFirFileWithCaching(ktFile)
-                firFile.declarations
+                if (ktFile.isScript()) {
+                    // .kts will have a single [FirScript] as a declaration. We need to unwrap statements in it.
+                    (firFile.declarations.singleOrNull() as? FirScript)?.statements?.filterIsInstance<FirDeclaration>()
+                } else {
+                    firFile.declarations
+                }
             }
             val original = originalDeclaration
 

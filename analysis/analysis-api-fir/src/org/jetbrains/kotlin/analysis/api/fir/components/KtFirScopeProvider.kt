@@ -10,10 +10,7 @@ import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.scopes.*
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirAnonymousObjectSymbol
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirEnumEntrySymbol
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirFileSymbol
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.*
 import org.jetbrains.kotlin.analysis.api.fir.types.KtFirType
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KtCompositeScope
@@ -23,6 +20,7 @@ import org.jetbrains.kotlin.analysis.api.scopes.KtTypeScope
 import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithDeclarations
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
@@ -37,9 +35,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.java.JavaScopeProvider
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
-import org.jetbrains.kotlin.analysis.api.fir.scopes.JavaClassDeclaredMembersEnhancementScope
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirPsiJavaClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithDeclarations
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticPropertiesScope
 import org.jetbrains.kotlin.fir.resolve.scope
@@ -110,8 +105,14 @@ internal class KtFirScopeProvider(
     }
 
     override fun getDeclaredMemberScope(classSymbol: KtSymbolWithMembers): KtScope {
+        val useSiteSession = analysisSession.useSiteSession
+        if (classSymbol is KtFirScriptSymbol) {
+            return KtFirDelegatingScope(
+                FirScriptDeclarationsScope(useSiteSession, classSymbol.firSymbol.fir),
+                builder
+            )
+        }
         val firScope = classSymbol.withFirForScope {
-            val useSiteSession = analysisSession.useSiteSession
             when (val regularClass = classSymbol.firSymbol.fir) {
                 is FirJavaClass -> buildJavaEnhancementDeclaredMemberScope(useSiteSession, regularClass.symbol, getScopeSession())
                 else -> useSiteSession.declaredMemberScope(it)
@@ -238,6 +239,8 @@ internal class KtFirScopeProvider(
         is FirExplicitStarImportingScope -> KtScopeKind.ExplicitStarImportingScope(indexInTower)
         is FirDefaultSimpleImportingScope -> KtScopeKind.DefaultSimpleImportingScope(indexInTower)
         is FirDefaultStarImportingScope -> KtScopeKind.DefaultStarImportingScope(indexInTower)
+
+        is FirScriptDeclarationsScope -> KtScopeKind.ScriptMemberScope(indexInTower)
 
         else -> unexpectedElementError("scope", firScope)
     }
