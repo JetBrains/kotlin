@@ -12,7 +12,7 @@ annotation class AnnotationWithDefault(val str: String = "Str" + "ing")
 @AnnotationWithDefault()
 class A
 
-@AnnotationWithDefault("Other")
+@AnnotationWithDefault(<!EVALUATED("Other")!>"Other"<!>)
 class B
 
 // MODULE: main

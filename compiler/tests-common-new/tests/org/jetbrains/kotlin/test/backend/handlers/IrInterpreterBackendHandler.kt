@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.backend.handlers
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
@@ -21,6 +22,15 @@ import org.jetbrains.kotlin.test.services.GlobalMetadataInfoHandler
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.globalMetadataInfoHandler
 
+fun matchIrFileWithTestFile(irModuleFragment: IrModuleFragment, module: TestModule): List<Pair<IrFile, TestFile>> {
+    val irFileWithTestFile = irModuleFragment.files.map { irFile ->
+        irFile to module.files.firstOrNull { testFile -> testFile.relativePath == irFile.fileEntry.name.drop(1) }
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    return irFileWithTestFile.filterNot { (_, testFile) -> testFile == null || testFile.isAdditional } as List<Pair<IrFile, TestFile>>
+}
+
 open class IrInterpreterBackendHandler(testServices: TestServices) : AbstractIrHandler(testServices) {
     private val globalMetadataInfoHandler = testServices.globalMetadataInfoHandler
 
@@ -29,8 +39,7 @@ open class IrInterpreterBackendHandler(testServices: TestServices) : AbstractIrH
     override fun processModule(module: TestModule, info: IrBackendInput) {
         val moduleFragment = info.irModuleFragment
         val evaluator = Evaluator(IrInterpreter(moduleFragment.irBuiltins), globalMetadataInfoHandler)
-        for ((irFile, testFile) in moduleFragment.files.zip(module.files)) {
-            if (testFile.isAdditional) continue
+        for ((irFile, testFile) in matchIrFileWithTestFile(moduleFragment, module)) {
             evaluator.evaluate(irFile, testFile)
         }
     }

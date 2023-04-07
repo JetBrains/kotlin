@@ -11,5 +11,5 @@ enum class A {
 }
 
 fun box(): String {
-    return A.OK.name
+    return A.OK.<!EVALUATED("OK")!>name<!>
 }

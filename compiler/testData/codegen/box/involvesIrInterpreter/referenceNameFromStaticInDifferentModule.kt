@@ -27,9 +27,14 @@ class B {
 
 fun box(): String {
     // `name` call must be optimized with `ConstEvaluationLowering`
-    if (A::somePropertyFromObject.name != "somePropertyFromObject") return "Fail 1"
-    if (A::someFunctionFromObject.name != "someFunctionFromObject") return "Fail 2"
-    if (B.Companion::somePropertyFromCompanionObject.name != "somePropertyFromCompanionObject") return "Fail 3"
-    if (B.Companion::someFunctionFromCompanionObject.name != "someFunctionFromCompanionObject") return "Fail 4"
+    val somePropertyFromObjectName = A::somePropertyFromObject.<!EVALUATED("somePropertyFromObject")!>name<!>
+    val someFunctionFromObjectName = A::someFunctionFromObject.<!EVALUATED("someFunctionFromObject")!>name<!>
+    val somePropertyFromCompanionObjectName = B.Companion::somePropertyFromCompanionObject.<!EVALUATED("somePropertyFromCompanionObject")!>name<!>
+    val someFunctionFromCompanionObjectName = B.Companion::someFunctionFromCompanionObject.<!EVALUATED("someFunctionFromCompanionObject")!>name<!>
+
+    if (somePropertyFromObjectName != "somePropertyFromObject") return "Fail 1"
+    if (someFunctionFromObjectName != "someFunctionFromObject") return "Fail 2"
+    if (somePropertyFromCompanionObjectName != "somePropertyFromCompanionObject") return "Fail 3"
+    if (someFunctionFromCompanionObjectName != "someFunctionFromCompanionObject") return "Fail 4"
     return "OK"
 }

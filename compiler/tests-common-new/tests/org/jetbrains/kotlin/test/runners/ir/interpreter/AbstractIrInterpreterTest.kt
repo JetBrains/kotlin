@@ -97,9 +97,4 @@ class IrInterpreterEnvironmentConfigurator(testServices: TestServices) : Environ
     ): Map<AnalysisFlag<*>, Any?> {
         return mapOf(AnalysisFlags.builtInsFromSources to true)
     }
-
-    override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
-        super.configureCompilerConfiguration(configuration, module)
-        configuration.putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create())
-    }
 }

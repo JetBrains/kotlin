@@ -28,25 +28,25 @@ annotation class BinaryAnnotation(val str: String)
 
 // 1. CLASS
 // 8. CONSTRUCTOR
-@BinaryAnnotation("Str" + "ing")
-class A @BinaryAnnotation("Str" + "ing") constructor(val i: Int) {
-    @BinaryAnnotation("Str" + "ing") constructor() : this(0)
+@BinaryAnnotation("Str" <!EVALUATED("String")!>+ "ing"<!>)
+class A @BinaryAnnotation("Str" <!EVALUATED("String")!>+ "ing"<!>) constructor(val i: Int) {
+    @BinaryAnnotation("Str" <!EVALUATED("String")!>+ "ing"<!>) constructor() : this(0)
 }
 
 // 2. ANNOTATION_CLASS
-@BinaryAnnotation("Str" + "ing")
+@BinaryAnnotation("Str" <!EVALUATED("String")!>+ "ing"<!>)
 annotation class Anno
 
 // 3. TYPE_PARAMETER
-fun <@BinaryAnnotation("Str" + "ing") T, U> fooWithTypeParam(a: T, b: U) {}
+fun <@BinaryAnnotation("Str" <!EVALUATED("String")!>+ "ing"<!>) T, U> fooWithTypeParam(a: T, b: U) {}
 
 // 4. PROPERTY
-@BinaryAnnotation("Str" + "ing")
+@BinaryAnnotation("Str" <!EVALUATED("String")!>+ "ing"<!>)
 val prop: Int = 0
 
 // 5. FIELD
 enum class SomeEnum {
-    @BinaryAnnotation("Str" + "ing") A,
+    @BinaryAnnotation("Str" <!EVALUATED("String")!>+ "ing"<!>) A,
     B;
 }
 
@@ -64,24 +64,24 @@ enum class SomeEnum {
 
 
 // 7. VALUE_PARAMETER
-fun @receiver:BinaryAnnotation("Str" + "ing") String.myExtension() {  }
-fun foo(@BinaryAnnotation("Str" + "ing") a: Int) {  }
+fun @receiver:BinaryAnnotation("Str" <!EVALUATED("String")!>+ "ing"<!>) String.myExtension() {  }
+fun foo(@BinaryAnnotation("Str" <!EVALUATED("String")!>+ "ing"<!>) a: Int) {  }
 
-val @receiver:BinaryAnnotation("Str" + "ing") String.a: Int
+val @receiver:BinaryAnnotation("Str" <!EVALUATED("String")!>+ "ing"<!>) String.a: Int
     get() = 0
 
 // 9. FUNCTION
-@BinaryAnnotation("Str" + "ing")
+@BinaryAnnotation("Str" <!EVALUATED("String")!>+ "ing"<!>)
 fun bar() {}
 
 // 10. PROPERTY_GETTER
 // 11. PROPERTY_SETTER
 var b: Int
-    @BinaryAnnotation("Str" + "ing") get() = 0
-    @BinaryAnnotation("Str" + "ing") set(value) {}
+    @BinaryAnnotation("Str" <!EVALUATED("String")!>+ "ing"<!>) get() = 0
+    @BinaryAnnotation("Str" <!EVALUATED("String")!>+ "ing"<!>) set(value) {}
 
 // 15. TYPEALIAS
-@BinaryAnnotation("Str" + "ing")
+@BinaryAnnotation("Str" <!EVALUATED("String")!>+ "ing"<!>)
 typealias C = Int
 
 // MODULE: main

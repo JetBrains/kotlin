@@ -1,14 +1,11 @@
 // TARGET_BACKEND: JVM_IR
-// IGNORE_FIR_DIAGNOSTICS
-// IGNORE_BACKEND_K1: JVM_IR
-// !DIAGNOSTICS: -UNINITIALIZED_ENUM_ENTRY
+// IGNORE_BACKEND_K2: JVM_IR
 
 enum class TestEnum(val testNaming: String) {
-    OK(OK.name),
+    OK(OK.<!EVALUATED("OK")!>name<!>),
 }
 
-const val name = TestEnum.OK.name
-
 fun box(): String {
+    val name = TestEnum.OK.<!EVALUATED("OK")!>name<!>
     return name
 }

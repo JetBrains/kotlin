@@ -76,7 +76,7 @@ class IrConstTransformer(
         }
 
         evaluatedConstTracker?.save(
-            this.startOffset, this.endOffset,
+            result.startOffset, result.endOffset,
             constant = if (result is IrErrorExpression) ErrorValue.create(result.description)
             else (result as IrConst<*>).toConstantValue()
         )
@@ -95,7 +95,6 @@ class IrConstTransformer(
 
         val initializer = declaration.initializer
         val expression = initializer?.expression ?: return declaration
-        if (expression is IrConst<*>) return declaration
         val isConst = declaration.correspondingPropertySymbol?.owner?.isConst == true
         if (!isConst) return super.visitField(declaration)
 

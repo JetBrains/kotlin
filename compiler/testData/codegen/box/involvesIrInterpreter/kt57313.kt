@@ -15,7 +15,7 @@ class OrgBootstrapTriggerJob(val orgId: Long, val bootstrap: OrgBootstrapRequest
     }
 }
 
-val name = "${OrgBootstrapTriggerJob::class.simpleName}.${OrgBootstrapTriggerJob::execute.name}"
+val name = "${OrgBootstrapTriggerJob::class.simpleName}<!EVALUATED(".")!>.<!>${OrgBootstrapTriggerJob::execute.<!EVALUATED("execute")!>name<!>}"
 
 fun box(): String {
     return "OK"

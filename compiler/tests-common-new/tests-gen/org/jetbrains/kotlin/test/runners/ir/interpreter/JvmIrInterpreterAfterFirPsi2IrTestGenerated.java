@@ -206,12 +206,6 @@ public class JvmIrInterpreterAfterFirPsi2IrTestGenerated extends AbstractJvmIrIn
     }
 
     @Test
-    @TestMetadata("kt53480.kt")
-    public void testKt53480() throws Exception {
-        runTest("compiler/testData/ir/interpreter/kt53480.kt");
-    }
-
-    @Test
     @TestMetadata("lambda.kt")
     public void testLambda() throws Exception {
         runTest("compiler/testData/ir/interpreter/lambda.kt");

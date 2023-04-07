@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.interpreter.checker
 
+import org.jetbrains.kotlin.ir.BuiltInOperatorNames
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.ir.types.isString
 import org.jetbrains.kotlin.ir.types.isUnsignedType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 
 enum class EvaluationMode(protected val mustCheckBody: Boolean) {
     FULL(mustCheckBody = true) {
@@ -51,9 +53,14 @@ enum class EvaluationMode(protected val mustCheckBody: Boolean) {
         private val forbiddenMethodsOnPrimitives = setOf("inc", "dec", "rangeTo", "rangeUntil", "hashCode")
         private val forbiddenMethodsOnStrings = setOf("subSequence", "hashCode", "<init>")
         private val allowedExtensionFunctions = setOf(
-            "kotlin.floorDiv", "kotlin.mod", "kotlin.NumbersKt.floorDiv", "kotlin.NumbersKt.mod", "kotlin.<get-code>",
-            "kotlin.internal.ir.EQEQ", "kotlin.internal.ir.ieee754equals",
+            "kotlin.floorDiv", "kotlin.mod", "kotlin.NumbersKt.floorDiv", "kotlin.NumbersKt.mod", "kotlin.<get-code>"
         )
+        private val allowedBuiltinExtensionFunctions = listOf(
+            BuiltInOperatorNames.LESS, BuiltInOperatorNames.LESS_OR_EQUAL,
+            BuiltInOperatorNames.GREATER, BuiltInOperatorNames.GREATER_OR_EQUAL,
+            BuiltInOperatorNames.EQEQ, BuiltInOperatorNames.IEEE754_EQUALS,
+            BuiltInOperatorNames.ANDAND, BuiltInOperatorNames.OROR
+        ).map { IrBuiltIns.KOTLIN_INTERNAL_IR_FQN.child(Name.identifier(it)).asString() }.toSet()
 
         override fun canEvaluateFunction(function: IrFunction, context: IrCall?): Boolean {
             if ((function as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.isConst == true) return true
@@ -62,13 +69,13 @@ enum class EvaluationMode(protected val mustCheckBody: Boolean) {
             val parent = function.parentClassOrNull
             val parentType = parent?.defaultType
             return when {
-                parentType == null -> fqName in allowedExtensionFunctions
+                parentType == null -> fqName in allowedExtensionFunctions || fqName in allowedBuiltinExtensionFunctions
                 parentType.isPrimitiveType() -> function.name.asString() !in forbiddenMethodsOnPrimitives
                 parentType.isString() -> function.name.asString() !in forbiddenMethodsOnStrings
                 parentType.isAny() -> function.name.asString() == "toString" && context?.dispatchReceiver !is IrGetObjectValue
                 parent.isObject -> parent.parentClassOrNull?.defaultType?.let { it.isPrimitiveType() || it.isUnsigned() } == true
                 parentType.isUnsignedType() && function is IrConstructor -> true
-                else -> fqName in allowedExtensionFunctions
+                else -> fqName in allowedExtensionFunctions || fqName in allowedBuiltinExtensionFunctions
             }
         }
 

@@ -4,8 +4,8 @@
 
 // FILE: 1.kt
 
-const val name = E.OK.name
-fun box(): String = name
+const val name = E.OK.<!EVALUATED("OK")!>name<!>
+fun box(): String = <!EVALUATED("OK")!>name<!>
 
 // FILE: 2.kt
 
