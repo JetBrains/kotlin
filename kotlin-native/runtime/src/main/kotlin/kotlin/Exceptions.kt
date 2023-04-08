@@ -131,7 +131,7 @@ public actual open class AssertionError : Error {
 
     actual constructor(message: Any?) : super(message?.toString(), message as? Throwable)
 
-    constructor(message: String?, cause: Throwable?) : super(message, cause)
+    actual constructor(message: String?, cause: Throwable?) : super(message, cause)
 }
 
 @Suppress("ACTUAL_WITHOUT_EXPECT")
