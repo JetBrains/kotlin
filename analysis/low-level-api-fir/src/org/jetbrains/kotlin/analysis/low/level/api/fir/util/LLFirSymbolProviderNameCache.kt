@@ -18,7 +18,20 @@ import org.jetbrains.kotlin.name.Name
  * Caches the names of classifiers and callables contained in a package. [LLFirSymbolProviderNameCache] is used by symbol providers to abort
  * symbol finding early if the symbol name isn't contained in the symbol provider's domain.
  */
-internal abstract class LLFirSymbolProviderNameCache(private val firSession: FirSession) {
+internal abstract class LLFirSymbolProviderNameCache {
+    abstract fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<String>?
+
+    abstract fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name>?
+
+    abstract fun mayHaveTopLevelClassifier(classId: ClassId, mayHaveFunctionClass: Boolean): Boolean
+
+    abstract fun mayHaveTopLevelCallable(packageFqName: FqName, name: Name): Boolean
+}
+
+
+internal abstract class LLFirSymbolProviderNameCacheBase(
+    private val firSession: FirSession
+) : LLFirSymbolProviderNameCache() {
     abstract fun computeClassifierNames(packageFqName: FqName): Set<String>?
     abstract fun computeCallableNames(packageFqName: FqName): Set<Name>?
 
@@ -28,18 +41,18 @@ internal abstract class LLFirSymbolProviderNameCache(private val firSession: Fir
     private val topLevelCallableNamesByPackage =
         firSession.firCachesFactory.createCache<FqName, Set<Name>?>(::computeCallableNames)
 
-    fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<String>? =
+    final override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<String>? =
         topLevelClassifierNamesByPackage.getValue(packageFqName)
 
-    fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name>? =
+    final override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name>? =
         topLevelCallableNamesByPackage.getValue(packageFqName)
 
-    fun mayHaveTopLevelClassifier(classId: ClassId, mayHaveFunctionClass: Boolean): Boolean {
+    final override fun mayHaveTopLevelClassifier(classId: ClassId, mayHaveFunctionClass: Boolean): Boolean {
         val names = getTopLevelClassifierNamesInPackage(classId.packageFqName) ?: return true
         return names.mayHaveTopLevelClassifier(classId, firSession, mayHaveFunctionClass)
     }
 
-    fun mayHaveTopLevelCallable(packageFqName: FqName, name: Name): Boolean {
+    override fun mayHaveTopLevelCallable(packageFqName: FqName, name: Name): Boolean {
         if (name.isSpecial) return true
         val names = getTopLevelCallableNamesInPackage(packageFqName) ?: return true
         return name in names
