@@ -685,7 +685,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
             }
 
             fun getOrAddVariable(irVariable: IrVariable) = variableNodes.getOrPut(irVariable) {
-                putNewNodeAt(forest.nextNodeId()) { Node.Variable(it, irVariable) }
+                putNewNodeAt(forest.getAssociatedId(0, irVariable)) { Node.Variable(it, irVariable) }
             }
 
             override fun newTempVariable(label: String) = getOrPutNodeAt(forest.nextNodeId()) { Node.Variable(it, label) }
@@ -900,6 +900,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     if (needDebug) block() else Unit
 
             val irBuilder = context.createIrBuilder(function.symbol)
+            val fictitiousVariableInitSetValues = mutableMapOf<IrVariable, IrSetValue>()
             val fictitiousLoopsStarts = mutableMapOf<IrLoop, IrElement>()
             val fictitiousLoopsEnds = mutableMapOf<IrLoop, IrElement>()
             val devirtualizedFictitiousCallSites = mutableMapOf<IrCall, List<IrFunctionAccessExpression>>()
@@ -1066,7 +1067,8 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     "Duplicate variable declaration: ${declaration.render()}"
                 }
 
-                val valueNode = declaration.initializer?.accept(this@PointsToGraphBuilder, data)
+                val initializer = declaration.initializer
+                val valueNode = initializer?.accept(this@PointsToGraphBuilder, data)
                 debug {
                     valueNode?.let {
                         context.log { "after evaluating initializer" }
@@ -1076,8 +1078,11 @@ internal object ControlFlowSensibleEscapeAnalysis {
 
                 val variableNode = getOrAddVariable(declaration)
                 valueNode?.let {
+                    val fictitiousSetValue = fictitiousVariableInitSetValues.getOrPut(declaration) {
+                        irBuilder.irSetVar(declaration, initializer)
+                    }
                     if (data.tryBlock == null)
-                        eraseValue(variableNode, data.loop, declaration)
+                        eraseValue(variableNode, data.loop, fictitiousSetValue)
                     variableNode.addEdge(it)
                 }
                 debug {
