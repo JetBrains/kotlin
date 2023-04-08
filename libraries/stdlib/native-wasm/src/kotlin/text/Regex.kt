@@ -61,8 +61,6 @@ public actual enum class RegexOption(override val value: Int, override val mask:
  *
  * @param value The value of captured group.
  * @param range The range of indices in the input string where group was captured.
- *
- * The [range] property is available on JVM only.
  */
 public actual data class MatchGroup(actual val value: String, val range: IntRange)
 
