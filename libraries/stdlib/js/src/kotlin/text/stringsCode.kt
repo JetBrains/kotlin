@@ -89,9 +89,38 @@ public actual fun String?.equals(other: String?, ignoreCase: Boolean = false): B
 }
 
 
+/**
+ * Returns `true` if the specified range in this char sequence is equal to the specified range in another char sequence.
+ * @param thisOffset the start offset in this char sequence of the substring to compare.
+ * @param other the string against a substring of which the comparison is performed.
+ * @param otherOffset the start offset in the other char sequence of the substring to compare.
+ * @param length the length of the substring to compare.
+ */
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
-public actual fun CharSequence.regionMatches(thisOffset: Int, other: CharSequence, otherOffset: Int, length: Int, ignoreCase: Boolean = false): Boolean =
-    regionMatchesImpl(thisOffset, other, otherOffset, length, ignoreCase)
+public actual fun CharSequence.regionMatches(
+    thisOffset: Int,
+    other: CharSequence,
+    otherOffset: Int,
+    length: Int,
+    ignoreCase: Boolean = false
+): Boolean = regionMatchesImpl(thisOffset, other, otherOffset, length, ignoreCase)
+
+/**
+ * Returns `true` if the specified range in this string is equal to the specified range in another string.
+ * @param thisOffset the start offset in this string of the substring to compare.
+ * @param other the string against a substring of which the comparison is performed.
+ * @param otherOffset the start offset in the other string of the substring to compare.
+ * @param length the length of the substring to compare.
+ */
+@SinceKotlin("1.9")
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun String.regionMatches(
+    thisOffset: Int,
+    other: String,
+    otherOffset: Int,
+    length: Int,
+    ignoreCase: Boolean = false
+): Boolean = regionMatchesImpl(thisOffset, other, otherOffset, length, ignoreCase)
 
 
 /**

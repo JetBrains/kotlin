@@ -649,7 +649,8 @@ public actual fun CharSequence.regionMatches(thisOffset: Int, other: CharSequenc
  * @param otherOffset the start offset in the other string of the substring to compare.
  * @param length the length of the substring to compare.
  */
-public fun String.regionMatches(thisOffset: Int, other: String, otherOffset: Int, length: Int, ignoreCase: Boolean = false): Boolean =
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun String.regionMatches(thisOffset: Int, other: String, otherOffset: Int, length: Int, ignoreCase: Boolean = false): Boolean =
     if (!ignoreCase)
         (this as java.lang.String).regionMatches(thisOffset, other, otherOffset, length)
     else

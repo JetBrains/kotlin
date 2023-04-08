@@ -689,6 +689,9 @@ public inline fun kotlin.CharSequence.reduceRightOrNull(operation: (kotlin.Char,
 
 public fun kotlin.CharSequence.regionMatches(thisOffset: kotlin.Int, other: kotlin.CharSequence, otherOffset: kotlin.Int, length: kotlin.Int, ignoreCase: kotlin.Boolean = ...): kotlin.Boolean
 
+@kotlin.SinceKotlin(version = "1.9")
+public fun kotlin.String.regionMatches(thisOffset: kotlin.Int, other: kotlin.String, otherOffset: kotlin.Int, length: kotlin.Int, ignoreCase: kotlin.Boolean = ...): kotlin.Boolean
+
 public fun kotlin.CharSequence.removePrefix(prefix: kotlin.CharSequence): kotlin.CharSequence
 
 public fun kotlin.String.removePrefix(prefix: kotlin.CharSequence): kotlin.String
