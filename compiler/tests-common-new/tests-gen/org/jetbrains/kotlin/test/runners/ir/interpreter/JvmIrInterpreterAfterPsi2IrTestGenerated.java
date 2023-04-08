@@ -707,6 +707,12 @@ public class JvmIrInterpreterAfterPsi2IrTestGenerated extends AbstractJvmIrInter
         }
 
         @Test
+        @TestMetadata("functionReference.kt")
+        public void testFunctionReference() throws Exception {
+            runTest("compiler/testData/ir/interpreter/reference/functionReference.kt");
+        }
+
+        @Test
         @TestMetadata("getClass.kt")
         public void testGetClass() throws Exception {
             runTest("compiler/testData/ir/interpreter/reference/getClass.kt");

@@ -28278,6 +28278,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("kt57313.kt")
+        public void testKt57313() throws Exception {
+            runTest("compiler/testData/codegen/box/involvesIrInterpreter/kt57313.kt");
+        }
+
+        @Test
         @TestMetadata("referenceNameFromStaticInDifferentModule.kt")
         public void testReferenceNameFromStaticInDifferentModule() throws Exception {
             runTest("compiler/testData/codegen/box/involvesIrInterpreter/referenceNameFromStaticInDifferentModule.kt");
