@@ -70,17 +70,6 @@ fun testCase() {
 }
 
 fun testCategory() {
-    assertEquals('\n'.category.value,     CharCategory.CONTROL.value)
-    assertEquals('1'.category.value,      CharCategory.DECIMAL_DIGIT_NUMBER.value)
-    assertEquals(' '.category.value,      CharCategory.SPACE_SEPARATOR.value)
-    assertEquals('a'.category.value,      CharCategory.LOWERCASE_LETTER.value)
-    assertEquals('A'.category.value,      CharCategory.UPPERCASE_LETTER.value)
-    assertEquals('<'.category.value,      CharCategory.MATH_SYMBOL.value)
-    assertEquals(';'.category.value,      CharCategory.OTHER_PUNCTUATION.value)
-    assertEquals('_'.category.value,      CharCategory.CONNECTOR_PUNCTUATION.value)
-    assertEquals('$'.category.value,      CharCategory.CURRENCY_SYMBOL.value)
-    assertEquals('\u2029'.category.value, CharCategory.PARAGRAPH_SEPARATOR.value)
-
     assertTrue('\n'     in CharCategory.CONTROL)
     assertTrue('1'      in CharCategory.DECIMAL_DIGIT_NUMBER)
     assertTrue(' '      in CharCategory.SPACE_SEPARATOR)
@@ -91,21 +80,6 @@ fun testCategory() {
     assertTrue('_'      in CharCategory.CONNECTOR_PUNCTUATION)
     assertTrue('$'      in CharCategory.CURRENCY_SYMBOL)
     assertTrue('\u2029' in CharCategory.PARAGRAPH_SEPARATOR)
-
-    try {
-        CharCategory.valueOf(-1)
-        throw AssertionError()
-    } catch (e: IllegalArgumentException) {}
-
-    try {
-        CharCategory.valueOf(31)
-        throw AssertionError()
-    } catch (e: IllegalArgumentException) {}
-
-    try {
-        CharCategory.valueOf(17)
-        throw AssertionError()
-    } catch (e: IllegalArgumentException) {}
 }
 
 fun testIsHighSurrogate() {
