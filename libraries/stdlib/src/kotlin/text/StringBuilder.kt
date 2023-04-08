@@ -90,10 +90,10 @@ expect class StringBuilder : Appendable, CharSequence {
      * Returns the current capacity of this string builder.
      *
      * The capacity is the maximum length this string builder can have before an allocation occurs.
+     *
+     * In Kotlin/JS implementation of StringBuilder the value returned from this method may not indicate the actual size of the backing storage.
      */
     @SinceKotlin("1.3")
-//    @ExperimentalStdlibApi
-    @Deprecated("Obtaining StringBuilder capacity is not supported in JS and common code.", level = DeprecationLevel.ERROR)
     fun capacity(): Int
 
     /**
