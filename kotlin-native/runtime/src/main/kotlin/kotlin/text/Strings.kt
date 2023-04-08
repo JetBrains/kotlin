@@ -185,7 +185,8 @@ public actual fun CharSequence.regionMatches(
  * @param otherOffset the start offset in the other string of the substring to compare.
  * @param length the length of the substring to compare.
  */
-public fun String.regionMatches(
+@Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
+public actual fun String.regionMatches(
         thisOffset: Int, other: String, otherOffset: Int, length: Int,
         ignoreCase: Boolean = false): Boolean {
     if (length < 0 || thisOffset < 0 || otherOffset < 0
