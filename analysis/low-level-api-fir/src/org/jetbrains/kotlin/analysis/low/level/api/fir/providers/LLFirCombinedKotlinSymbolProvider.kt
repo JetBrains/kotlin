@@ -9,7 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.NullableCaffeineCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirSymbolProviderNameCache
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirSymbolProviderNameCacheBase
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
@@ -46,7 +46,7 @@ internal class LLFirCombinedKotlinSymbolProvider private constructor(
     providers: List<LLFirProvider.SymbolProvider>,
     private val declarationProvider: KotlinDeclarationProvider,
 ) : LLFirSelectingCombinedSymbolProvider<LLFirProvider.SymbolProvider>(session, project, providers) {
-    private val symbolNameCache = object : LLFirSymbolProviderNameCache(session) {
+    private val symbolNameCache = object : LLFirSymbolProviderNameCacheBase(session) {
         override fun computeClassifierNames(packageFqName: FqName): Set<String>? = buildSet {
             providers.forEach { addAll(it.knownTopLevelClassifiersInPackage(packageFqName) ?: return null) }
         }

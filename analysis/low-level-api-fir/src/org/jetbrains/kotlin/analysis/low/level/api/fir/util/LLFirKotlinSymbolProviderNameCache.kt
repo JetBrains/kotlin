@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.name.Name
 internal class LLFirKotlinSymbolProviderNameCache(
     firSession: FirSession,
     private val declarationProvider: KotlinDeclarationProvider,
-) : LLFirSymbolProviderNameCache(firSession) {
+) : LLFirSymbolProviderNameCacheBase(firSession) {
     override fun computeClassifierNames(packageFqName: FqName): Set<String> =
         declarationProvider
             .getTopLevelKotlinClassLikeDeclarationNamesInPackage(packageFqName)
