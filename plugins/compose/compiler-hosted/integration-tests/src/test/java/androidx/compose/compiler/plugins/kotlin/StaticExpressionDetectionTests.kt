@@ -20,7 +20,6 @@ import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
 import androidx.compose.compiler.plugins.kotlin.lower.dumpSrc
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.util.nameForIrSerialization
 import org.junit.Assert.assertEquals
 import org.junit.Assert.fail
 import org.junit.Test
@@ -287,7 +286,7 @@ class StaticExpressionDetectionTests : AbstractIrTransformTest() {
         )
         val compositionContextBody = irModule.files.last().declarations
             .filterIsInstance<IrFunction>()
-            .first { it.nameForIrSerialization.identifier == "CompositionContext" }
+            .first { it.name.identifier == "CompositionContext" }
             .dumpSrc()
             .replace('$', '%')
 
