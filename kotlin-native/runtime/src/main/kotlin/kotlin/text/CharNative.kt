@@ -20,13 +20,6 @@ external public actual fun Char.isHighSurrogate(): Boolean
 external public actual fun Char.isLowSurrogate(): Boolean
 
 /**
- * Returns `true` if this character (Unicode code point) should be regarded as an ignorable
- * character in a Java identifier or a Unicode identifier.
- */
-@GCUnsafeCall("Kotlin_Char_isIdentifierIgnorable")
-external public fun Char.isIdentifierIgnorable(): Boolean
-
-/**
  * Returns `true` if this character is an ISO control character.
  *
  * A character is considered to be an ISO control character if its [category] is [CharCategory.CONTROL],
