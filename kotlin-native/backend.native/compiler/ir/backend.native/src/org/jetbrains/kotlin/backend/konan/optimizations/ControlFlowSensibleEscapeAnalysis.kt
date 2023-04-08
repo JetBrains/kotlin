@@ -901,8 +901,6 @@ internal object ControlFlowSensibleEscapeAnalysis {
 
             val irBuilder = context.createIrBuilder(function.symbol)
             val fictitiousVariableInitSetValues = mutableMapOf<IrVariable, IrSetValue>()
-            val fictitiousLoopsStarts = mutableMapOf<IrLoop, IrElement>()
-            val fictitiousLoopsEnds = mutableMapOf<IrLoop, IrElement>()
             val devirtualizedFictitiousCallSites = mutableMapOf<IrCall, List<IrFunctionAccessExpression>>()
 
             val returnTargetsResults = mutableMapOf<IrReturnTargetSymbol, MutableList<ExpressionResult>>()
@@ -1355,29 +1353,20 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     context.log { "before ${loop.dump()}" }
                     data.graph.logDigraph()
                 }
-                val fictitiousLoopStart = fictitiousLoopsStarts.getOrPut(loop) {
-                    when (loop) {
-                        is IrWhileLoop -> irBuilder.irWhile()
-                        is IrDoWhileLoop -> irBuilder.irDoWhile()
-                        else -> error("Unsupported loop ${loop.render()}")
-                    }
-                }
-                val fictitiousLoopEnd = fictitiousLoopsEnds.getOrPut(loop) {
-                    when (loop) {
-                        is IrWhileLoop -> irBuilder.irWhile()
-                        is IrDoWhileLoop -> irBuilder.irDoWhile()
-                        else -> error("Unsupported loop ${loop.render()}")
-                    }
-                }
                 val continueResults = loopsContinueResults.getOrPut(loop) { mutableListOf() }
                 val breakResults = loopsBreakResults.getOrPut(loop) { mutableListOf() }
 
-                val iterationResults = mutableListOf<ExpressionResult>()
                 var prevGraph = data.graph
-                if (loop is IrWhileLoop) {
-                    loop.condition.accept(this, BuilderState(prevGraph, loop, data.tryBlock))
-                    // A while loop might not execute even a single iteration.
-                    iterationResults.add(ExpressionResult(Node.Unit, prevGraph.clone()))
+                var loopGraph = when (loop) {
+                    is IrDoWhileLoop -> {
+                        PointsToGraph(prevGraph.forest)
+                    }
+                    is IrWhileLoop -> {
+                        // A while loop might not execute even a single iteration.
+                        loop.condition.accept(this, BuilderState(prevGraph, loop, data.tryBlock))
+                        prevGraph.clone()
+                    }
+                    else -> error("Unsupported loop ${loop.render()}")
                 }
                 val returnTargetsResultsSizes = returnTargetsResults.entries.associate { it.key to it.value.size }
                 val tryBlocksThrowGraphsSizes = tryBlocksThrowGraphs.entries.associate { it.key to it.value.size }
@@ -1388,8 +1377,11 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 var iteration = 0
                 do {
                     debug {
-                        context.log { "iter#$iteration:" }
+                        context.log { "iter#$iteration" }
+                        context.log { "current graph:" }
                         prevGraph.logDigraph()
+                        context.log { "accumulated graph:" }
+                        loopGraph.logDigraph()
                     }
                     ++iteration
 
@@ -1405,21 +1397,20 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     loop.body?.accept(this, BuilderState(curGraph, loop, data.tryBlock))
                     continueResults.add(ExpressionResult(Node.Unit, curGraph))
                     val nextGraph = PointsToGraph(prevGraph.forest)
-                    controlFlowMergePoint(nextGraph, loop, fictitiousLoopStart, context.irBuiltIns.unitType, continueResults)
+                    controlFlowMergePoint(nextGraph, null, null, context.irBuiltIns.unitType, continueResults)
                     loop.condition.accept(this, BuilderState(nextGraph, loop, data.tryBlock))
-                    val graphHasChanged = !PointsToGraphForest.graphsAreEqual(prevGraph, nextGraph)
+
                     prevGraph = nextGraph
-                    if (graphHasChanged) {
-                        breakResults.add(ExpressionResult(Node.Unit, prevGraph))
-                        val iterationGraph = PointsToGraph(prevGraph.forest)
-                        controlFlowMergePoint(iterationGraph, loop, fictitiousLoopEnd, context.irBuiltIns.unitType, breakResults)
-                        iterationResults.add(ExpressionResult(Node.Unit, iterationGraph))
-                    }
+                    breakResults.add(ExpressionResult(Node.Unit, prevGraph))
+                    // TODO: Merge in-place.
+                    val prevLoopGraph = loopGraph.clone()
+                    loopGraph = prevGraph.forest.mergeGraphs(listOf(loopGraph) + breakResults.map { it.graph }, mutableListOf())
+                    val graphHasChanged = !PointsToGraphForest.graphsAreEqual(prevLoopGraph, loopGraph)
                 } while (graphHasChanged && iteration < 10)
 
                 if (iteration >= 10)
-                    error("BUGBUGBUG: ${loop.dump()}")
-                controlFlowMergePoint(data.graph, data.loop, loop, context.irBuiltIns.unitType, iterationResults)
+                    error("BUGBUGBUG: ${function.render()} ${loop.dump()}")
+                data.graph.copyFrom(loopGraph)
                 debug {
                     context.log { "after ${loop.dump()}" }
                     data.graph.logDigraph()
