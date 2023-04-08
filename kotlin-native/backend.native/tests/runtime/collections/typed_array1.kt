@@ -13,40 +13,40 @@ import kotlin.native.concurrent.*
     val array = ByteArray(17)
     val results = mutableSetOf<Any>()
     var counter = 0
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         results += array.getShortAt(16)
     }
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         results += array.getCharAt(22)
     }
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         results += array.getIntAt(15)
     }
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         results += array.getLongAt(14)
     }
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         results += array.getFloatAt(14)
     }
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         results += array.getDoubleAt(13)
     }
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         array.setShortAt(16, 2.toShort())
     }
-    assertFailsWith<ArrayIndexOutOfBoundsException>  {
+    assertFailsWith<IndexOutOfBoundsException>  {
         array.setCharAt(22, 'a')
     }
-    assertFailsWith<ArrayIndexOutOfBoundsException>  {
+    assertFailsWith<IndexOutOfBoundsException>  {
         array.setIntAt(15, 1234)
     }
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         array.setLongAt(14, 1.toLong())
     }
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         array.setFloatAt(14, 1.0f)
     }
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         array.setDoubleAt(13, 3.0)
     }
     expect(0) { results.size }

@@ -11,16 +11,16 @@ import kotlinx.cinterop.*
     arr.usePinned {
         assertEquals(0, it.addressOf(0).pointed.value)
         assertEquals(0, it.addressOf(9).pointed.value)
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(10)
         }
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(-1)
         }
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(Int.MAX_VALUE)
         }
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(Int.MIN_VALUE)
         }
     }
@@ -31,16 +31,16 @@ import kotlinx.cinterop.*
     str.usePinned {
         it.addressOf(0)
         it.addressOf(9)
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(10)
         }
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(-1)
         }
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(Int.MAX_VALUE)
         }
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(Int.MIN_VALUE)
         }
     }
@@ -51,16 +51,16 @@ import kotlinx.cinterop.*
     arr.usePinned {
         it.addressOf(0)
         it.addressOf(9)
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(10)
         }
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(-1)
         }
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(Int.MAX_VALUE)
         }
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(Int.MIN_VALUE)
         }
     }
@@ -71,16 +71,16 @@ import kotlinx.cinterop.*
     arr.usePinned {
         assertEquals(0, it.addressOf(0).pointed.value)
         assertEquals(0, it.addressOf(9).pointed.value)
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(10)
         }
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(-1)
         }
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(Int.MAX_VALUE)
         }
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(Int.MIN_VALUE)
         }
     }
@@ -91,16 +91,16 @@ import kotlinx.cinterop.*
     arr.usePinned {
         assertEquals(0, it.addressOf(0).pointed.value)
         assertEquals(0, it.addressOf(9).pointed.value)
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(10)
         }
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(-1)
         }
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(Int.MAX_VALUE)
         }
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(Int.MIN_VALUE)
         }
     }
@@ -111,16 +111,16 @@ import kotlinx.cinterop.*
     arr.usePinned {
         assertEquals(0, it.addressOf(0).pointed.value)
         assertEquals(0, it.addressOf(9).pointed.value)
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(10)
         }
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(-1)
         }
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(Int.MAX_VALUE)
         }
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(Int.MIN_VALUE)
         }
     }
@@ -131,16 +131,16 @@ import kotlinx.cinterop.*
     arr.usePinned {
         assertEquals(0U, it.addressOf(0).pointed.value)
         assertEquals(0U, it.addressOf(9).pointed.value)
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(10)
         }
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(-1)
         }
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(Int.MAX_VALUE)
         }
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(Int.MIN_VALUE)
         }
     }
@@ -151,16 +151,16 @@ import kotlinx.cinterop.*
     arr.usePinned {
         assertEquals(0U, it.addressOf(0).pointed.value)
         assertEquals(0U, it.addressOf(9).pointed.value)
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(10)
         }
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(-1)
         }
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(Int.MAX_VALUE)
         }
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(Int.MIN_VALUE)
         }
     }
@@ -171,16 +171,16 @@ import kotlinx.cinterop.*
     arr.usePinned {
         assertEquals(0U, it.addressOf(0).pointed.value)
         assertEquals(0U, it.addressOf(9).pointed.value)
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(10)
         }
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(-1)
         }
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(Int.MAX_VALUE)
         }
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(Int.MIN_VALUE)
         }
     }
@@ -191,16 +191,16 @@ import kotlinx.cinterop.*
     arr.usePinned {
         assertEquals(0U, it.addressOf(0).pointed.value)
         assertEquals(0U, it.addressOf(9).pointed.value)
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(10)
         }
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(-1)
         }
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(Int.MAX_VALUE)
         }
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(Int.MIN_VALUE)
         }
     }
@@ -211,16 +211,16 @@ import kotlinx.cinterop.*
     arr.usePinned {
         assertEquals(0.0f, it.addressOf(0).pointed.value)
         assertEquals(0.0f, it.addressOf(9).pointed.value)
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(10)
         }
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(-1)
         }
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(Int.MAX_VALUE)
         }
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(Int.MIN_VALUE)
         }
     }
@@ -231,16 +231,16 @@ import kotlinx.cinterop.*
     arr.usePinned {
         assertEquals(0.0, it.addressOf(0).pointed.value)
         assertEquals(0.0, it.addressOf(9).pointed.value)
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(10)
         }
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(-1)
         }
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(Int.MAX_VALUE)
         }
-        assertFailsWith<ArrayIndexOutOfBoundsException> {
+        assertFailsWith<IndexOutOfBoundsException> {
             it.addressOf(Int.MIN_VALUE)
         }
     }

@@ -334,7 +334,7 @@ public actual fun String(chars: CharArray): String = chars.concatToString()
 @DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5")
 public actual fun String(chars: CharArray, offset: Int, length: Int): String {
     if (offset < 0 || length < 0 || offset + length > chars.size)
-        throw ArrayIndexOutOfBoundsException()
+        throw IndexOutOfBoundsException()
 
     return unsafeStringFromCharArray(chars, offset, length)
 }

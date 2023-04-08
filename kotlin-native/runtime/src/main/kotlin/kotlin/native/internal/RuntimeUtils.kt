@@ -23,6 +23,7 @@ internal fun ThrowIndexOutOfBoundsException(): Nothing {
 
 @ExportForCppRuntime
 internal fun ThrowArrayIndexOutOfBoundsException(): Nothing {
+    @Suppress("DEPRECATION")
     throw ArrayIndexOutOfBoundsException()
 }
 

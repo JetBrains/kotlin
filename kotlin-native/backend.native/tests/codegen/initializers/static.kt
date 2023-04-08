@@ -54,7 +54,7 @@ fun f() = 5
         assertEquals(20, varargGetter(2, 2, 3, 4))
         assertEquals(20, varargGetter(2, 2, 3, 4))
         if (Platform.osFamily != OsFamily.WASM) {
-            assertFailsWith<ArrayIndexOutOfBoundsException> { varargGetter(3, 2, 3, 4) }
+            assertFailsWith<IndexOutOfBoundsException> { varargGetter(3, 2, 3, 4) }
         }
     }
 }

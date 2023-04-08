@@ -92,6 +92,8 @@ public actual open class IndexOutOfBoundsException : RuntimeException {
     actual constructor(message: String?) : super(message)
 }
 
+@Deprecated("Use IndexOutOfBoundsException instead.")
+@DeprecatedSinceKotlin(warningSince = "1.9")
 public open class ArrayIndexOutOfBoundsException : IndexOutOfBoundsException {
 
     constructor() : super()
