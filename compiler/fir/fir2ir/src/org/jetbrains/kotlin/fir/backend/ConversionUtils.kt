@@ -63,7 +63,7 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
-private fun AbstractKtSourceElement?.startOffsetSkippingComments(): Int? {
+fun AbstractKtSourceElement?.startOffsetSkippingComments(): Int? {
     return when (this) {
         is KtPsiSourceElement -> this.psi.startOffsetSkippingComments
         is KtLightSourceElement -> this.startOffsetSkippingComments

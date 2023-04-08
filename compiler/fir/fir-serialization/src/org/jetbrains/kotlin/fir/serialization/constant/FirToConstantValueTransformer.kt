@@ -25,19 +25,26 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.types.ConstantValueKind
 
-internal fun FirExpression.toConstantValue(session: FirSession): ConstantValue<*>? {
-    return accept(FirToConstantValueTransformerUnsafe, session)
+internal fun FirExpression.toConstantValue(session: FirSession, constValueProvider: ConstValueProvider? = null): ConstantValue<*>? {
+    constValueProvider?.findConstantValueFor(this)?.let { return it }
+    return accept(FirToConstantValueTransformerUnsafe(constValueProvider), session)
 }
 
 internal fun FirExpression?.hasConstantValue(session: FirSession): Boolean {
     return this?.accept(FirToConstantValueChecker, session) == true
 }
 
-private object FirToConstantValueTransformerSafe : FirToConstantValueTransformer(failOnNonConst = false)
-private object FirToConstantValueTransformerUnsafe : FirToConstantValueTransformer(failOnNonConst = true)
+private class FirToConstantValueTransformerSafe(
+    constValueProvider: ConstValueProvider?
+) : FirToConstantValueTransformer(failOnNonConst = false, constValueProvider)
+
+private class FirToConstantValueTransformerUnsafe(
+    constValueProvider: ConstValueProvider?
+) : FirToConstantValueTransformer(failOnNonConst = true, constValueProvider)
 
 private abstract class FirToConstantValueTransformer(
-    private val failOnNonConst: Boolean
+    private val failOnNonConst: Boolean,
+    private val constValueProvider: ConstValueProvider?
 ) : FirDefaultVisitor<ConstantValue<*>?, FirSession>() {
     override fun visitElement(
         element: FirElement,
@@ -90,7 +97,7 @@ private abstract class FirToConstantValueTransformer(
         annotation: FirAnnotation,
         data: FirSession
     ): ConstantValue<*> {
-        val mapping = annotation.argumentMapping.mapping.convertToConstantValues(data)
+        val mapping = annotation.argumentMapping.mapping.convertToConstantValues(data, constValueProvider)
         return AnnotationValue.create(annotation.annotationTypeRef.coneType, mapping)
     }
 
@@ -135,7 +142,7 @@ private abstract class FirToConstantValueTransformer(
                 val constructedClassSymbol = symbol.containingClassLookupTag()?.toFirRegularClassSymbol(data) ?: return null
                 if (constructedClassSymbol.classKind != ClassKind.ANNOTATION_CLASS) return null
 
-                val mapping = constructorCall.resolvedArgumentMapping?.convertToConstantValues(data) ?: return null
+                val mapping = constructorCall.resolvedArgumentMapping?.convertToConstantValues(data, constValueProvider) ?: return null
                 return AnnotationValue.create(qualifiedAccessExpression.typeRef.coneType, mapping)
             }
 

@@ -176,8 +176,7 @@ class FirJvmSerializerExtension(
 
     override fun serializeTypeParameter(typeParameter: FirTypeParameter, proto: ProtoBuf.TypeParameter.Builder) {
         for (annotation in typeParameter.nonSourceAnnotations(session)) {
-            val annotationWithConstants = constValueProvider?.getNewFirAnnotationWithConstantValues(typeParameter, annotation) ?: annotation
-            proto.addExtension(JvmProtoBuf.typeParameterAnnotation, annotationSerializer.serializeAnnotation(annotationWithConstants))
+            proto.addExtension(JvmProtoBuf.typeParameterAnnotation, annotationSerializer.serializeAnnotation(annotation))
         }
     }
 

@@ -12,20 +12,30 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
 
-internal fun Map<Name, FirExpression>.convertToConstantValues(session: FirSession): Map<Name, ConstantValue<*>?> {
+internal fun Map<Name, FirExpression>.convertToConstantValues(
+    session: FirSession,
+    constValueProvider: ConstValueProvider?
+): Map<Name, ConstantValue<*>> {
     return this.map { (name, firExpression) ->
-        name to firExpression.toConstantValue(session)
+        val constantValue = constValueProvider?.findConstantValueFor(firExpression)
+            ?: firExpression.toConstantValue(session, constValueProvider)
+            ?: error("Cannot convert expression ${firExpression.render()} to constant")
+        name to constantValue
     }.toMap()
 }
 
-internal fun LinkedHashMap<FirExpression, FirValueParameter>.convertToConstantValues(session: FirSession): Map<Name, ConstantValue<*>?> {
+internal fun LinkedHashMap<FirExpression, FirValueParameter>.convertToConstantValues(
+    session: FirSession,
+    constValueProvider: ConstValueProvider?,
+): Map<Name, ConstantValue<*>> {
     return this.map { (firExpression, firValueParameter) -> firValueParameter.name to firExpression }
-        .toMap().convertToConstantValues(session)
+        .toMap().convertToConstantValues(session, constValueProvider)
 }
 
 inline fun <reified T : ConeKotlinType> AnnotationValue.coneTypeSafe(): T? {
