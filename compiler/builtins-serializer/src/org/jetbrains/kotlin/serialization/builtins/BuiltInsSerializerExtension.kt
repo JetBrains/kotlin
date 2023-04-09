@@ -36,10 +36,11 @@ class BuiltInsSerializerExtension : KotlinSerializerExtensionBase(BuiltInSeriali
         "LongRange" to "kotlin/ranges/LongRange",
         "CharRange" to "kotlin/ranges/CharRange",
         "ExperimentalStdlibApi" to "kotlin/ExperimentalStdlibApi",
+//        "WasExperimental" to "kotlin/WasExperimental",
     )
 
     private val ignoredAnnotationShortNames = setOf(
-        "JvmStatic", "JvmField", "OptIn",
+        "JvmStatic", "JvmField", "OptIn", "WasExperimental",
     )
 
     override fun createAnnotationSerializer(): AnnotationSerializer = object : AnnotationSerializer(stringTable) {
