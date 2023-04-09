@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+package codegen.escapeAnalysis.test16
+
 class A(val x: Int)
 
 class F {
