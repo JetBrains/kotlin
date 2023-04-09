@@ -65,7 +65,7 @@ class LamdaTest {
                false
       )
       """.trimIndent(),
-      PowerAssertComponentRegistrar(setOf(FqName("kotlin.require"))),
+      PowerAssertCompilerPluginRegistrar(setOf(FqName("kotlin.require"))),
     )
   }
 }

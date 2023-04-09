@@ -1,6 +1,4 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jmailen.gradle.kotlinter.tasks.FormatTask
-import org.jmailen.gradle.kotlinter.tasks.LintTask
 
 plugins {
   kotlin("jvm")
@@ -25,12 +23,9 @@ dependencies {
 }
 
 tasks.withType<KotlinCompile> {
-  kotlinOptions.jvmTarget = "1.8"
-  kotlinOptions.freeCompilerArgs = listOf("-opt-in=org.jetbrains.kotlin.backend.common.extensions.FirIncompatiblePluginAPI", "-opt-in=org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi")
-}
-tasks.withType<JavaCompile> {
-  sourceCompatibility = "1.8"
-  targetCompatibility = "1.8"
+  kotlinOptions.freeCompilerArgs += listOf(
+    "-opt-in=org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi",
+  )
 }
 
 tasks.withType<Test> {
@@ -117,14 +112,3 @@ publishing {
     }
   }
 }
-tasks.register<FormatTask>("formatBuildscripts") {
-  group = "verification"
-  source(layout.projectDirectory.asFileTree.matching { include("**.kts") })
-}
-tasks.register<LintTask>("lintBuildscripts") {
-  group = "verification"
-  source(layout.projectDirectory.asFileTree.matching { include("**.kts") })
-}
-
-tasks.named("lintKotlin") { dependsOn("lintBuildscripts") }
-tasks.named("formatKotlin") { dependsOn("formatBuildscripts") }

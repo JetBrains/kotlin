@@ -1,7 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jmailen.gradle.kotlinter.tasks.FormatTask
-import org.jmailen.gradle.kotlinter.tasks.LintTask
-
 plugins {
   id("java-gradle-plugin")
   kotlin("jvm")
@@ -36,14 +32,6 @@ gradlePlugin {
     }
   }
 }
-tasks.withType<JavaCompile> {
-  sourceCompatibility = "1.8"
-  targetCompatibility = "1.8"
-}
-
-tasks.withType<KotlinCompile> {
-  kotlinOptions.jvmTarget = "1.8"
-}
 
 tasks.named("publish") {
   dependsOn("publishPlugins")
@@ -57,14 +45,3 @@ publishing {
     }
   }
 }
-tasks.register<FormatTask>("formatBuildscripts") {
-  group = "verification"
-  source(layout.projectDirectory.asFileTree.matching { include("**.kts") })
-}
-tasks.register<LintTask>("lintBuildscripts") {
-  group = "verification"
-  source(layout.projectDirectory.asFileTree.matching { include("**.kts") })
-}
-
-tasks.named("lintKotlin") { dependsOn("lintBuildscripts") }
-tasks.named("formatKotlin") { dependsOn("formatBuildscripts") }

@@ -30,6 +30,7 @@ import com.bnorm.power.diagram.irDiagramString
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
+import org.jetbrains.kotlin.backend.jvm.ir.parentClassId
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.ir.IrElement
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.asString
 import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.builders.parent
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -57,11 +59,14 @@ import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isBoolean
 import org.jetbrains.kotlin.ir.types.isSubtypeOf
 import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
+import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.functions
+import org.jetbrains.kotlin.ir.util.isFileClass
 import org.jetbrains.kotlin.ir.util.isFunctionOrKFunction
 import org.jetbrains.kotlin.ir.util.kotlinFqName
-import org.jetbrains.kotlin.ir.util.parentClassOrNull
+import org.jetbrains.kotlin.name.CallableId
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
 class PowerAssertCallTransformer(
@@ -215,13 +220,13 @@ class PowerAssertCallTransformer(
 
     // Java static functions require searching by class
     val parentClassFunctions = (
-      function.parentClassOrNull
-        ?.let { context.referenceClass(it.kotlinFqName) }
+      function.parentClassId
+        ?.let { context.referenceClass(it) }
         ?.functions ?: emptySequence()
       )
       .filter { it.owner.kotlinFqName == function.kotlinFqName }
       .toList()
-    val possible = (context.referenceFunctions(function.kotlinFqName) + parentClassFunctions)
+    val possible = (context.referenceFunctions(function.callableId) + parentClassFunctions)
       .distinct()
 
     return possible.mapNotNull { overload ->
@@ -256,7 +261,7 @@ class PowerAssertCallTransformer(
     type.isFunctionOrKFunction() && type is IrSimpleType && (type.arguments.size == 1 && isStringSupertype(type.arguments.first()))
 
   private fun isStringJavaSupplierFunction(type: IrType): Boolean {
-    val javaSupplier = context.referenceClass(FqName("java.util.function.Supplier"))
+    val javaSupplier = context.referenceClass(ClassId.topLevel(FqName("java.util.function.Supplier")))
     return javaSupplier != null && type.isSubtypeOfClass(javaSupplier) &&
       type is IrSimpleType && (type.arguments.size == 1 && isStringSupertype(type.arguments.first()))
   }
@@ -289,3 +294,14 @@ class PowerAssertCallTransformer(
     report(severity, message, sourceFile.getCompilerMessageLocation(expression))
   }
 }
+
+val IrFunction.callableId: CallableId
+  get() {
+    val parentClass = parent as? IrClass
+    val classId = parentClass?.classId
+    return if (classId != null && !parentClass.isFileClass) {
+      CallableId(classId, name)
+    } else {
+      CallableId(parent.kotlinFqName, name)
+    }
+  }

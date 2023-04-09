@@ -1,5 +1,5 @@
 plugins {
-  kotlin("multiplatform") version "1.7.0"
+  kotlin("multiplatform") version "1.8.20"
   id("com.bnorm.power.kotlin-power-assert") version "0.12.1"
 }
 
@@ -51,6 +51,13 @@ kotlin {
       dependsOn(commonTest)
     }
   }
+
+  // TODO Kotlin/JS loses class information at the IR level -> Soft-assertion doesn't work
+  // targets.all {
+  //   compilations.all {
+  //     kotlinOptions.languageVersion = "2.0"
+  //   }
+  // }
 }
 
 tasks.withType<Test> {

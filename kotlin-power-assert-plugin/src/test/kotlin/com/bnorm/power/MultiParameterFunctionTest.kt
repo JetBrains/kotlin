@@ -148,7 +148,7 @@ fun main() {
     trimIndent = false,
   )
 
-  val result = compile(listOf(file), PowerAssertComponentRegistrar(setOf(FqName("dbg"))))
+  val result = compile(listOf(file), PowerAssertCompilerPluginRegistrar(setOf(FqName("dbg"))))
   assertEquals(KotlinCompilation.ExitCode.OK, result.exitCode)
 
   val kClazz = result.classLoader.loadClass("MainKt")

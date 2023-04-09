@@ -350,7 +350,7 @@ class InfixFunctionTest {
   }
 
   private fun run(file: SourceFile, fqNames: Set<FqName>, main: String = "MainKt"): String {
-    val result = compile(listOf(file), PowerAssertComponentRegistrar(fqNames))
+    val result = compile(listOf(file), PowerAssertCompilerPluginRegistrar(fqNames))
     assertEquals(KotlinCompilation.ExitCode.OK, result.exitCode, "Failed with messages: " + result.messages)
 
     val kClazz = result.classLoader.loadClass(main)

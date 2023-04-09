@@ -19,24 +19,23 @@ package com.bnorm.power
 import com.tschuchort.compiletesting.KotlinCompilation
 import com.tschuchort.compiletesting.SourceFile
 import org.intellij.lang.annotations.Language
-import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.name.FqName
 import java.io.OutputStream
 import java.lang.reflect.InvocationTargetException
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
-private val DEFAULT_COMPONENT_REGISTRARS = arrayOf(
-  PowerAssertComponentRegistrar(setOf(FqName("kotlin.assert"))),
+private val DEFAULT_COMPILER_PLUGIN_REGISTRARS = arrayOf(
+  PowerAssertCompilerPluginRegistrar(setOf(FqName("kotlin.assert"))),
 )
 
 fun compile(
   list: List<SourceFile>,
-  vararg componentRegistrars: ComponentRegistrar = DEFAULT_COMPONENT_REGISTRARS,
+  vararg compilerPluginRegistrars: CompilerPluginRegistrar = DEFAULT_COMPILER_PLUGIN_REGISTRARS,
 ): KotlinCompilation.Result {
   return KotlinCompilation().apply {
     sources = list
-    useIR = true
     messageOutputStream = object : OutputStream() {
       override fun write(b: Int) {
         // black hole all writes
@@ -46,18 +45,18 @@ fun compile(
         // black hole all writes
       }
     }
-    this.componentRegistrars = componentRegistrars.toList()
+    this.compilerPluginRegistrars = compilerPluginRegistrars.toList()
     inheritClassPath = true
   }.compile()
 }
 
 fun executeAssertion(
   @Language("kotlin") source: String,
-  vararg plugins: ComponentRegistrar = DEFAULT_COMPONENT_REGISTRARS,
+  vararg compilerPluginRegistrars: CompilerPluginRegistrar = DEFAULT_COMPILER_PLUGIN_REGISTRARS,
 ): String {
   val result = compile(
     listOf(SourceFile.kotlin("main.kt", source, trimIndent = false)),
-    *plugins,
+    *compilerPluginRegistrars,
   )
   assertEquals(KotlinCompilation.ExitCode.OK, result.exitCode, result.messages)
 
@@ -86,8 +85,8 @@ fun main() {
 fun assertMessage(
   @Language("kotlin") source: String,
   message: String,
-  vararg plugins: ComponentRegistrar = DEFAULT_COMPONENT_REGISTRARS,
+  vararg compilerPluginRegistrars: CompilerPluginRegistrar = DEFAULT_COMPILER_PLUGIN_REGISTRARS,
 ) {
-  val actual = executeAssertion(source, *plugins)
+  val actual = executeAssertion(source, *compilerPluginRegistrars)
   assertEquals(message, actual)
 }

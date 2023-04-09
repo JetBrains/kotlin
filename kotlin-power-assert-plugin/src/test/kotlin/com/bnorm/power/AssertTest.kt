@@ -369,7 +369,7 @@ assertTrue(1 == 2, message = "${"$"}text, the world is broken")
              |
              false
       """.trimIndent(),
-      PowerAssertComponentRegistrar(setOf(FqName("kotlin.test.assertTrue"))),
+      PowerAssertCompilerPluginRegistrar(setOf(FqName("kotlin.test.assertTrue"))),
     )
   }
 
@@ -386,7 +386,7 @@ require(1 == 2) { "the world is broken" }
           |
           false
       """.trimIndent(),
-      PowerAssertComponentRegistrar(setOf(FqName("kotlin.require"))),
+      PowerAssertCompilerPluginRegistrar(setOf(FqName("kotlin.require"))),
     )
   }
 
@@ -403,7 +403,7 @@ check(1 == 2) { "the world is broken" }
         |
         false
       """.trimIndent(),
-      PowerAssertComponentRegistrar(setOf(FqName("kotlin.check"))),
+      PowerAssertCompilerPluginRegistrar(setOf(FqName("kotlin.check"))),
     )
   }
 
