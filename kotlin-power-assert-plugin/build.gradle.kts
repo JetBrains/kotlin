@@ -1,4 +1,6 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jmailen.gradle.kotlinter.tasks.FormatTask
+import org.jmailen.gradle.kotlinter.tasks.LintTask
 
 plugins {
   kotlin("jvm")
@@ -7,7 +9,7 @@ plugins {
 
   signing
   `maven-publish`
-//  id("org.jmailen.kotlinter")
+  id("org.jmailen.kotlinter")
 }
 
 dependencies {
@@ -18,12 +20,17 @@ dependencies {
 
   testImplementation(kotlin("test-junit5"))
   testImplementation("org.jetbrains.kotlin:kotlin-compiler-embeddable")
-  testImplementation("com.github.tschuchortdev:kotlin-compile-testing:1.4.9")
+  testImplementation("com.github.tschuchortdev:kotlin-compile-testing:1.5.0")
   testImplementation(enforcedPlatform("org.junit:junit-bom:5.9.1"))
 }
 
 tasks.withType<KotlinCompile> {
   kotlinOptions.jvmTarget = "1.8"
+  kotlinOptions.freeCompilerArgs = listOf("-opt-in=org.jetbrains.kotlin.backend.common.extensions.FirIncompatiblePluginAPI", "-opt-in=org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi")
+}
+tasks.withType<JavaCompile> {
+  sourceCompatibility = "1.8"
+  targetCompatibility = "1.8"
 }
 
 tasks.withType<Test> {
@@ -110,3 +117,14 @@ publishing {
     }
   }
 }
+tasks.register<FormatTask>("formatBuildscripts") {
+  group = "verification"
+  source(layout.projectDirectory.asFileTree.matching { include("**.kts") })
+}
+tasks.register<LintTask>("lintBuildscripts") {
+  group = "verification"
+  source(layout.projectDirectory.asFileTree.matching { include("**.kts") })
+}
+
+tasks.named("lintKotlin") { dependsOn("lintBuildscripts") }
+tasks.named("formatKotlin") { dependsOn("formatBuildscripts") }
