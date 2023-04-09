@@ -1,6 +1,22 @@
 Change Log
 ==========
 
+## Version 0.12.1
+
+_2023-04-08_
+
+**New**
+* Support receivers of infix functions (#69).
+
+**Fixes**
+* Ignore implicit varargs array (#84).
+* Ignore body of object literals (#85).
+
+**Other**
+* Run tests in parallel (#73) - @christophsturm.
+* Upgrade to Gradle 8 (#87) - @TWiStErRob.
+* Add Kotlinter for code styling (#86) - @christophsturm.
+
 ## Version 0.12.0
 
 _2022-07-10_
