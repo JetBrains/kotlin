@@ -41,8 +41,10 @@ class TestTimeSourceTest {
         run {
             val timeSource = TestTimeSource()
             timeSource += moderatePositiveDuration
+            val mark = timeSource.markNow()
             // does not overflow even if duration doesn't fit in long, but the result fits
             timeSource += -moderatePositiveDuration - Long.MAX_VALUE.nanoseconds
+            assertEquals(-(moderatePositiveDuration + Long.MAX_VALUE.nanoseconds), mark.elapsedNow())
         }
     }
 
