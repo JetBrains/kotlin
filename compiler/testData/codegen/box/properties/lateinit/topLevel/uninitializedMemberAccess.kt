@@ -1,5 +1,7 @@
 // WITH_STDLIB
 
+@file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
+
 import kotlin.UninitializedPropertyAccessException
 
 lateinit var str: String

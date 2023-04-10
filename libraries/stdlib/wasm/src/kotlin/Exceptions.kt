@@ -95,14 +95,16 @@ public actual open class ArithmeticException : RuntimeException {
     public actual constructor(message: String?) : super(message)
 }
 
-public actual open class NoWhenBranchMatchedException : RuntimeException {
+@Suppress("ACTUAL_WITHOUT_EXPECT")
+internal actual open class NoWhenBranchMatchedException : RuntimeException {
     public actual constructor() : super()
     public actual constructor(message: String?) : super(message)
     public actual constructor(message: String?, cause: Throwable?) : super(message, cause)
     public actual constructor(cause: Throwable?) : super(cause)
 }
 
-public actual open class UninitializedPropertyAccessException : RuntimeException {
+@Suppress("ACTUAL_WITHOUT_EXPECT")
+internal actual open class UninitializedPropertyAccessException : RuntimeException {
     public actual constructor() : super()
     public actual constructor(message: String?) : super(message)
     public actual constructor(message: String?, cause: Throwable?) : super(message, cause)

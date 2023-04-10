@@ -131,7 +131,8 @@ public actual open class AssertionError : Error {
     constructor(message: String?, cause: Throwable?) : super(message, cause)
 }
 
-public actual open class NoWhenBranchMatchedException : RuntimeException {
+@Suppress("ACTUAL_WITHOUT_EXPECT")
+internal actual open class NoWhenBranchMatchedException : RuntimeException {
 
     actual constructor() : super()
 
@@ -142,7 +143,8 @@ public actual open class NoWhenBranchMatchedException : RuntimeException {
     actual constructor(cause: Throwable?) : super(cause)
 }
 
-public actual open class UninitializedPropertyAccessException : RuntimeException {
+@Suppress("ACTUAL_WITHOUT_EXPECT")
+internal actual open class UninitializedPropertyAccessException : RuntimeException {
 
     actual constructor() : super()
 

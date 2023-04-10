@@ -3,6 +3,8 @@
  * that can be found in the LICENSE file.
  */
 
+@file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
+
 import a.*
 
 fun main() {

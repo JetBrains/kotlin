@@ -20,13 +20,15 @@ class X {
 // MODULE: mainLib(lib)
 // FILE: mainLib.kt
 
+@file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
+
 val x = X()
 
 fun lib(): String {
 
     val a = try {
         qux 
-    } catch (e: UninitializedPropertyAccessException) { 
+    } catch (e: UninitializedPropertyAccessException) {
         "uninitiaized"
     }
 
