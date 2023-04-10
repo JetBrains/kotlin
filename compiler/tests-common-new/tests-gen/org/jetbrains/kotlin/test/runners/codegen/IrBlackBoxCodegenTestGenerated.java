@@ -228,6 +228,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
         }
 
         @Test
+        @TestMetadata("javaConstAnnotationArguments.kt")
+        public void testJavaConstAnnotationArguments() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/javaConstAnnotationArguments.kt");
+        }
+
+        @Test
         @TestMetadata("javaNegativePropertyAsAnnotationParameter.kt")
         public void testJavaNegativePropertyAsAnnotationParameter() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/javaNegativePropertyAsAnnotationParameter.kt");
