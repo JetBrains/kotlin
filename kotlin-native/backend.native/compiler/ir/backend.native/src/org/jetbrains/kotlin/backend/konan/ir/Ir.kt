@@ -51,10 +51,12 @@ internal abstract class KonanSymbols(
         irBuiltIns: IrBuiltIns,
         internal val symbolTable: SymbolTable, // Deprecated to use in this class
 ): Symbols(irBuiltIns, symbolTable) {
-    internal abstract fun IrClassSymbol.findMemberSimpleFunction(name: Name): IrSimpleFunctionSymbol?
-    internal abstract fun IrClassSymbol.findMemberProperty(name: Name): IrPropertySymbol?
-    internal abstract fun IrClassSymbol.findMemberPropertyGetter(name: Name): IrSimpleFunctionSymbol?
-    internal abstract fun findTopLevelExtensionPropertyGetter(packageName: FqName, name: Name, extensionParameterClassID: ClassId): IrSimpleFunctionSymbol?
+    protected abstract fun IrClassSymbol.findMemberSimpleFunction(name: Name): IrSimpleFunctionSymbol?
+    protected abstract fun IrClassSymbol.findMemberProperty(name: Name): IrPropertySymbol?
+    protected abstract fun IrClassSymbol.findMemberPropertyGetter(name: Name): IrSimpleFunctionSymbol?
+    protected abstract fun findDefaultConstructor(className: String): IrConstructorSymbol
+    protected abstract fun findDefaultConstructor(className: String, nestedClassName: String): IrConstructorSymbol
+    protected abstract fun findTopLevelExtensionPropertyGetter(packageName: FqName, name: Name, extensionParameterClassID: ClassId): IrSimpleFunctionSymbol?
     private fun findInteropExtensionPropertyGetter(name: Name, extensionClassID: ClassId): IrSimpleFunctionSymbol? =
             findTopLevelExtensionPropertyGetter(InteropFqNames.packageName, name, extensionClassID)
 
@@ -389,11 +391,12 @@ internal abstract class KonanSymbols(
 
     val eagerInitialization = topLevelClass(KonanFqNames.eagerInitialization)
 
-    abstract val cStructVarConstructorSymbol: IrConstructorSymbol
-    abstract val managedTypeConstructor: IrConstructorSymbol
-    abstract val enumVarConstructorSymbol: IrConstructorSymbol
-    abstract val primitiveVarPrimaryConstructor: IrConstructorSymbol
-    abstract val structVarPrimaryConstructor: IrConstructorSymbol
+    val cStructVarConstructorSymbol = findDefaultConstructor(InteropFqNames.cStructVarName)
+    val managedTypeConstructor = findDefaultConstructor(InteropFqNames.managedTypeName)
+    val enumVarConstructorSymbol = findDefaultConstructor(InteropFqNames.cEnumVarName)
+    val primitiveVarPrimaryConstructor = findDefaultConstructor(InteropFqNames.cPrimitiveVarName, InteropFqNames.TypeName)
+    val structVarPrimaryConstructor = findDefaultConstructor(InteropFqNames.cStructVarName, InteropFqNames.TypeName)
+
     private fun topLevelClass(fqName: FqName): IrClassSymbol = irBuiltIns.findClass(fqName.shortName(), fqName.parent())!!
 
     private fun nativeFunction(name: String) =
@@ -450,6 +453,8 @@ internal abstract class KonanSymbols(
     fun getTestFunctionKind(kind: TestProcessor.FunctionKind) = testFunctionKindCache[kind]!!
 }
 
+// WARNING: override protected functions are called from base class(`KonanSymbols`) constructor,
+// so its functionality must be independent of the derived object(`KonanSymbolsOverDescriptors`)'s state, which is uninitialized at the invocation moment
 internal class KonanSymbolsOverDescriptors(
         context: PhaseContext,
         descriptorsLookup: DescriptorsLookup,
@@ -508,17 +513,12 @@ internal class KonanSymbolsOverDescriptors(
                         TypeUtils.getClassDescriptor(extensionReceiverParameter.type)?.fqNameUnsafe == InteropFqNames.cPointer
             })
 
-    override val cStructVarConstructorSymbol = findDefaultConstructor(InteropFqNames.cStructVarName)
-    override val managedTypeConstructor = findDefaultConstructor(InteropFqNames.managedTypeName)
-    override val enumVarConstructorSymbol = findDefaultConstructor(InteropFqNames.cEnumVarName)
-    override val primitiveVarPrimaryConstructor = findDefaultConstructor(InteropFqNames.cPrimitiveVarName, InteropFqNames.TypeName)
-    override val structVarPrimaryConstructor = findDefaultConstructor(InteropFqNames.cStructVarName, InteropFqNames.TypeName)
-    private fun findDefaultConstructor(className: String): IrConstructorSymbol = symbolTable.referenceConstructor(
+    override fun findDefaultConstructor(className: String): IrConstructorSymbol = symbolTable.referenceConstructor(
             descriptorsLookup.interopBuiltIns.getContributedClass(className)
                     .unsubstitutedPrimaryConstructor!!
     )
 
-    private fun findDefaultConstructor(className: String, nestedClassName: String): IrConstructorSymbol = symbolTable.referenceConstructor(
+    override fun findDefaultConstructor(className: String, nestedClassName: String): IrConstructorSymbol = symbolTable.referenceConstructor(
             descriptorsLookup.interopBuiltIns.getContributedClass(className)
                     .defaultType.memberScope.getContributedClass(nestedClassName)
                     .unsubstitutedPrimaryConstructor!!
@@ -547,6 +547,8 @@ internal class KonanSymbolsOverDescriptors(
     }.getter!!.let { symbolTable.referenceSimpleFunction(it) }
 }
 
+// WARNING: override protected functions are called from base class(`KonanSymbols`) constructor,
+// so its functionality must be independent of the derived object(`KonanSymbolsOverFir`)'s state, which is uninitialized at the invocation moment
 internal class KonanSymbolsOverFir(
         context: PhaseContext,
         descriptorsLookup: DescriptorsLookup,
@@ -587,12 +589,6 @@ internal class KonanSymbolsOverFir(
         it.owner.extensionReceiverParameter?.type?.classFqName?.toUnsafe() == InteropFqNames.cPointer
     }
 
-    override val cStructVarConstructorSymbol = findDefaultConstructor(InteropFqNames.cStructVarName)
-    override val managedTypeConstructor = findDefaultConstructor(InteropFqNames.managedTypeName)
-    override val enumVarConstructorSymbol = findDefaultConstructor(InteropFqNames.cEnumVarName)
-    override val primitiveVarPrimaryConstructor = findDefaultConstructor(InteropFqNames.cPrimitiveVarName, InteropFqNames.TypeName)
-    override val structVarPrimaryConstructor = findDefaultConstructor(InteropFqNames.cStructVarName, InteropFqNames.TypeName)
-
     override val interopGetPtr = irBuiltIns.findProperties(Name.identifier("ptr"), InteropFqNames.packageName).single {
         val singleTypeParameter = it.owner.getter?.typeParameters?.singleOrNull()
         val singleTypeParameterUpperBound = singleTypeParameter?.symbol?.superTypes()?.singleOrNull()
@@ -618,12 +614,12 @@ internal class KonanSymbolsOverFir(
     private fun findSingleInteropFunction(name: String, predicate: (IrSimpleFunctionSymbol) -> Boolean) =
             irBuiltIns.findFunctions(Name.identifier(name), InteropFqNames.packageName).single(predicate)
 
-    private fun findDefaultConstructor(className: String): IrConstructorSymbol =
+    override fun findDefaultConstructor(className: String): IrConstructorSymbol =
             interopClass(className).owner.declarations.single {
                 it is IrConstructor && it.isPrimary
             }.symbol as IrConstructorSymbol
 
-    private fun findDefaultConstructor(className: String, nestedClassName: String): IrConstructorSymbol {
+    override fun findDefaultConstructor(className: String, nestedClassName: String): IrConstructorSymbol {
         val nested = interopClass(className).owner.declarations.single {
             it is IrClass && it.name == Name.identifier(nestedClassName)
         }.symbol as IrClassSymbol
