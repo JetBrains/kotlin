@@ -172,9 +172,14 @@ private fun memberAccessOffset(
   expression: IrMemberAccessExpression<*>,
   source: String,
 ): Int {
-  if (expression.origin == IrStatementOrigin.EXCLEQ || expression.origin == IrStatementOrigin.EXCLEQEQ) {
+  when (expression.origin) {
     // special case to handle `value != null`
-    return source.indexOf("!=")
+    IrStatementOrigin.EXCLEQ, IrStatementOrigin.EXCLEQEQ -> return source.indexOf("!=")
+    // special case to handle `in` operator
+    IrStatementOrigin.IN -> return source.indexOf(" in ") + 1
+    // special case to handle `in` operator
+    IrStatementOrigin.NOT_IN -> return source.indexOf(" !in ") + 1
+    else -> Unit
   }
 
   val owner = expression.symbol.owner
@@ -193,6 +198,7 @@ private fun memberAccessOffset(
     val expressionInfo = sourceFile.getSourceRangeInfo(expression)
     var offset = receiver.endOffset - expressionInfo.startOffset + 1
     if (receiver is IrConst<*> && receiver.kind == IrConstKind.String) offset++ // String constants don't include the quote
+    if (offset < 0 || offset >= source.length) return 0 // infix function called using non-infix syntax
 
     // Continue until there is a non-whitespace character
     while (source[offset].isWhitespace() || source[offset] == '.') {

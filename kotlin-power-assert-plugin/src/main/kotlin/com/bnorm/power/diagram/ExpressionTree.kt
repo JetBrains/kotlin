@@ -114,6 +114,11 @@ fun buildTree(expression: IrExpression): Node? {
         if (expression.symbol.owner.name.asString() == "EQEQ" && expression.origin == IrStatementOrigin.EXCLEQ) {
           // Skip the EQEQ part of a EXCLEQ call
           expression.acceptChildren(this, data)
+        } else if (expression.origin == IrStatementOrigin.NOT_IN) {
+          // Exclude the wrapped "contains" call for `!in` operator expressions and only display the final result
+          val node = data as? ExpressionNode ?: ExpressionNode().also { data.addChild(it) }
+          node.add(expression)
+          expression.dispatchReceiver!!.acceptChildren(this, node)
         } else {
           super.visitCall(expression, data)
         }
