@@ -8,20 +8,32 @@ buildscript {
     }
 }
 
-apply plugin: 'org.jetbrains.kotlin.platform.js'
+apply plugin: 'kotlin-multiplatform'
 
 repositories {
     mavenLocal()
     mavenCentral()
 }
 
-dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
-    testImplementation"org.jetbrains.kotlin:kotlin-test-js:$kotlin_version"
+kotlin {
+    js()
+
+    sourceSets {
+        jsMain {
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-stdlib-js:$kotlin_version"
+            }
+        }
+        jsTest {
+            dependencies {
+                implementation "org.jetbrains.kotlin:kotlin-test-js:$kotlin_version"
+            }
+        }
+    }
 }
 
 task jarSources(type: Jar) {
-    from sourceSets.main.allSource
+    from kotlin.sourceSets.jsMain.allSource
     classifier = 'source'
 }
 artifacts {
