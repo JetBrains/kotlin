@@ -42,10 +42,12 @@ sourceSets {
 projectTest(parallel = true) {
     workingDir = rootDir
     dependsOn(":kotlin-stdlib-js-ir:packFullRuntimeKLib")
+    useJsIrBoxTests(version = version, buildDir = "$buildDir/")
 }
 
 projectTest("testJvmICWithJdk11", parallel = true) {
     workingDir = rootDir
+    useJsIrBoxTests(version = version, buildDir = "$buildDir/")
     filter {
         includeTestsMatching("org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunnerTestGenerated*")
     }

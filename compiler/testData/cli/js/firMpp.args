@@ -8,3 +8,5 @@ $TEMP_DIR$
 -ir-output-name
 firMpp
 -XXLanguage\:+MultiPlatformProjects
+-libraries
+libraries/stdlib/js-ir/build/classes/kotlin/js/main
