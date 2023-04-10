@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.backend.konan.llvm.findMainEntryPoint
 import org.jetbrains.kotlin.backend.konan.lower.TestProcessor
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
+import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyProperty
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.*
@@ -25,8 +28,11 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.findDeclaration
+import org.jetbrains.kotlin.js.descriptorUtils.getKotlinTypeFqName
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 import org.jetbrains.kotlin.types.TypeUtils
@@ -48,7 +54,9 @@ internal abstract class KonanSymbols(
     internal abstract fun IrClassSymbol.findMemberSimpleFunction(name: Name): IrSimpleFunctionSymbol?
     internal abstract fun IrClassSymbol.findMemberProperty(name: Name): IrPropertySymbol?
     internal abstract fun IrClassSymbol.findMemberPropertyGetter(name: Name): IrSimpleFunctionSymbol?
-    internal abstract fun findInteropExtensionPropertyGetter(name: String): IrSimpleFunctionSymbol?
+    internal abstract fun findTopLevelExtensionPropertyGetter(packageName: FqName, name: Name, extensionParameterClassID: ClassId): IrSimpleFunctionSymbol?
+    private fun findInteropExtensionPropertyGetter(name: Name, extensionClassID: ClassId): IrSimpleFunctionSymbol? =
+            findTopLevelExtensionPropertyGetter(InteropFqNames.packageName, name, extensionClassID)
 
     val entryPoint = findMainEntryPoint(context, descriptorsLookup.builtIns)?.let { symbolTable.referenceSimpleFunction(it) }
 
@@ -102,8 +110,8 @@ internal abstract class KonanSymbols(
     abstract val interopNativePointedGetRawPointer: IrSimpleFunctionSymbol
 
     val interopCPointer = interopClass(InteropFqNames.cPointerName)
-    val interopCstr = findInteropExtensionPropertyGetter(InteropFqNames.cstrPropertyName)!!
-    val interopWcstr = findInteropExtensionPropertyGetter(InteropFqNames.wcstrPropertyName)!!
+    val interopCstr = findInteropExtensionPropertyGetter(Name.identifier(InteropFqNames.cstrPropertyName), StandardClassIds.String)!!
+    val interopWcstr = findInteropExtensionPropertyGetter(Name.identifier(InteropFqNames.wcstrPropertyName), StandardClassIds.String)!!
     val interopMemScope = interopClass(InteropFqNames.memScopeName)
     val interopCValue = interopClass(InteropFqNames.cValueName)
     val interopCValuesRef = interopClass(InteropFqNames.cValuesRefName)
@@ -412,9 +420,6 @@ internal abstract class KonanSymbols(
     protected fun interopClass(name: String) =
             irBuiltIns.findClass(Name.identifier(name), InteropFqNames.packageName)!!
 
-    private fun interopVarGetter(name: String) =
-            irBuiltIns.findClass(Name.identifier(name), InteropFqNames.packageName)!!
-
     fun kFunctionN(n: Int) = irBuiltIns.kFunctionN(n).symbol
 
     fun kSuspendFunctionN(n: Int) = irBuiltIns.kSuspendFunctionN(n).symbol
@@ -468,11 +473,15 @@ internal class KonanSymbolsOverDescriptors(
                     ?.getter
                     ?.let { symbolTable.referenceSimpleFunction(it) }
 
-    override fun findInteropExtensionPropertyGetter(name: String): IrSimpleFunctionSymbol? =
-            super.descriptorsLookup.interopBuiltIns.getContributedVariables(name)
-                    .singleOrNull()
-                    ?.getter
-                    ?.let { symbolTable.referenceSimpleFunction(it) }
+    override fun findTopLevelExtensionPropertyGetter(packageName: FqName, name: Name, extensionParameterClassID: ClassId): IrSimpleFunctionSymbol? {
+        val extensionParameterFqNameString = extensionParameterClassID.asFqNameString()
+        return descriptorsLookup.builtIns.builtInsModule.getPackage(InteropFqNames.packageName).memberScope
+                .getContributedVariables(name, NoLookupLocation.FROM_BACKEND)
+                .singleOrNull {
+                    it.extensionReceiverParameter?.type?.getKotlinTypeFqName(true) == extensionParameterFqNameString
+                }?.getter
+                ?.let { symbolTable.referenceSimpleFunction(it) }
+    }
 
     override val interopNativePointedGetRawPointer = symbolTable.referenceSimpleFunction(
             descriptorsLookup.interopBuiltIns.getContributedFunctions(InteropFqNames.nativePointedGetRawPointerFunName).single {
@@ -553,8 +562,12 @@ internal class KonanSymbolsOverFir(
     override fun IrClassSymbol.findMemberPropertyGetter(name: Name): IrSimpleFunctionSymbol? =
             owner.findDeclaration<IrProperty> { it.name == name }?.getter?.symbol
 
-    override fun findInteropExtensionPropertyGetter(name: String): IrSimpleFunctionSymbol? =
-            irBuiltIns.findProperties(Name.identifier(name), InteropFqNames.packageName).single().owner.getter?.symbol
+    override fun findTopLevelExtensionPropertyGetter(packageName: FqName, name: Name, extensionParameterClassID: ClassId): IrSimpleFunctionSymbol? {
+        val extensionParameterConeKotlinType = extensionParameterClassID.constructClassLikeType(arrayOf(), false).type
+        return irBuiltIns.findProperties(name, packageName).singleOrNull {
+            ((it.owner as Fir2IrLazyProperty).fir.receiverParameter?.typeRef as FirResolvedTypeRef).type == extensionParameterConeKotlinType
+        }?.owner?.getter?.symbol
+    }
 
     override val interopNativePointedGetRawPointer = findSingleInteropFunction(InteropFqNames.nativePointedGetRawPointerFunName) {
         val extensionReceiverParameter = it.owner.extensionReceiverParameter
