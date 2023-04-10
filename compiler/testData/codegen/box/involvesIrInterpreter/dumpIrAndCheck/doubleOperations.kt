@@ -87,12 +87,6 @@ const val equals2 = <!EVALUATED("true")!>twoVal == twoVal<!>
 const val equals3 = <!EVALUATED("false")!>threeVal == twoVal<!>
 const val equals4 = <!EVALUATED("false")!>fourVal == twoVal<!>
 
-const val toString1 = oneVal.<!EVALUATED("1.0")!>toString()<!>
-const val toString2 = twoVal.<!EVALUATED("2.0")!>toString()<!>
-const val toString3 = oneAndAHalf.<!EVALUATED("1.5")!>toString()<!>
-
-fun <T> T.id(): T = this
-
 fun box(): String {
     if (<!EVALUATED("false")!>compareTo1 != -1<!>)   return "Fail 1.1"
     if (<!EVALUATED("false")!>compareTo2 != 0<!>)    return "Fail 1.2"
@@ -163,11 +157,6 @@ fun box(): String {
     if (<!EVALUATED("false")!>equals2 != true<!>)    return "Fail 9.2"
     if (<!EVALUATED("false")!>equals3 != false<!>)   return "Fail 9.3"
     if (<!EVALUATED("false")!>equals4 != false<!>)   return "Fail 9.4"
-
-    // id is needed to avoid evaluation and so match different cases for JVM and JS
-    if (<!EVALUATED("1.0")!>toString1<!>.id() != "1.0" && <!EVALUATED("1.0")!>toString1<!>.id() != "1" /* JS */)    return "Fail 10.1"
-    if (<!EVALUATED("2.0")!>toString2<!>.id() != "2.0" && <!EVALUATED("2.0")!>toString2<!>.id() != "2" /* JS */)    return "Fail 10.2"
-    if (<!EVALUATED("1.5")!>toString3<!>.id() != "1.5")                                      return "Fail 10.3"
 
     return "OK"
 }

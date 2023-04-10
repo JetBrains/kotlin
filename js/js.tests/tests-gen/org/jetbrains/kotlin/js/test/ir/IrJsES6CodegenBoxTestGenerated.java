@@ -21086,12 +21086,6 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
         }
 
         @Test
-        @TestMetadata("jsIrToConst.kt")
-        public void testJsIrToConst() throws Exception {
-            runTest("compiler/testData/codegen/box/involvesIrInterpreter/jsIrToConst.kt");
-        }
-
-        @Test
         @TestMetadata("kt55912.kt")
         public void testKt55912() throws Exception {
             runTest("compiler/testData/codegen/box/involvesIrInterpreter/kt55912.kt");
@@ -21164,6 +21158,12 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
             @TestMetadata("intOperations.kt")
             public void testIntOperations() throws Exception {
                 runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/intOperations.kt");
+            }
+
+            @Test
+            @TestMetadata("jsFloatDoubleToString.kt")
+            public void testJsFloatDoubleToString() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/jsFloatDoubleToString.kt");
             }
 
             @Test

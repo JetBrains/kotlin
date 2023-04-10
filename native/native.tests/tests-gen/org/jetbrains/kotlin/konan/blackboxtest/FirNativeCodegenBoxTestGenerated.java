@@ -24361,6 +24361,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
                 }
 
                 @Test
+                @TestMetadata("jvmFloatDoubleToString.kt")
+                public void testJvmFloatDoubleToString() throws Exception {
+                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/jvmFloatDoubleToString.kt");
+                }
+
+                @Test
                 @TestMetadata("longOperations.kt")
                 public void testLongOperations() throws Exception {
                     runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/longOperations.kt");
