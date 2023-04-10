@@ -87,6 +87,16 @@ fun main() {
             }
         }
 
+        testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
+            testClass<AbstractNativeBlackBoxTest>(
+                suiteTestClassName = "FirInfrastructureTestGenerated",
+                annotations = listOf(infrastructure(), firInfrastructure(), provider<UseStandardTestCaseGroupProvider>(), provider<FirPipeline>())
+            ) {
+                model("samples")
+                model("samples2")
+            }
+        }
+
         // Partial linkage tests.
         testGroup("native/native.tests/tests-gen", "compiler/testData") {
             testClass<AbstractNativePartialLinkageTest>(
@@ -207,6 +217,7 @@ private fun firCodegen() = annotation(Tag::class.java, "firCodegen")
 private fun debugger() = annotation(Tag::class.java, "debugger")
 private fun infrastructure() = annotation(Tag::class.java, "infrastructure")
 private fun k1Infrastructure() = annotation(Tag::class.java, "k1Infrastructure")
+private fun firInfrastructure() = annotation(Tag::class.java, "firInfrastructure")
 private fun k1libContents() = annotation(Tag::class.java, "k1libContents")
 private fun k2libContents() = annotation(Tag::class.java, "k2libContents")
 private fun firKLibContents() = annotation(Tag::class.java, "firKlibContents")
