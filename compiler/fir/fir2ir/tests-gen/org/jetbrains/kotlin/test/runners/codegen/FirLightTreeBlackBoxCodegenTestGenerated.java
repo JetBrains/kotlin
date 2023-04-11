@@ -150,6 +150,18 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
         }
 
         @Test
+        @TestMetadata("deserializationOfNestedAnnotationOnType_1.kt")
+        public void testDeserializationOfNestedAnnotationOnType_1() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/deserializationOfNestedAnnotationOnType_1.kt");
+        }
+
+        @Test
+        @TestMetadata("deserializationOfNestedAnnotationOnType_2.kt")
+        public void testDeserializationOfNestedAnnotationOnType_2() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/deserializationOfNestedAnnotationOnType_2.kt");
+        }
+
+        @Test
         @TestMetadata("divisionByZeroInJava.kt")
         public void testDivisionByZeroInJava() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/divisionByZeroInJava.kt");

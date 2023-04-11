@@ -319,7 +319,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             return ConeErrorType(
                 diagnostic,
                 typeArguments = resultingArguments,
-                attributes = typeRef.annotations.computeTypeAttributes(session)
+                attributes = typeRef.annotations.computeTypeAttributes(session, shouldExpandTypeAliases = true)
             )
         }
 
@@ -337,7 +337,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         return symbol.constructType(
             resultingArguments,
             typeRef.isMarkedNullable,
-            typeRef.annotations.computeTypeAttributes(session, containerDeclaration = containerDeclaration)
+            typeRef.annotations.computeTypeAttributes(session, containerDeclaration = containerDeclaration, shouldExpandTypeAliases = true)
         ).also {
             val lookupTag = it.lookupTag
             if (lookupTag is ConeClassLikeLookupTagImpl && symbol is FirClassLikeSymbol<*>) {
@@ -479,7 +479,8 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     add(CompilerConeAttributes.ContextFunctionTypeParams(typeRef.contextReceiverTypeRefs.size))
                 }
             },
-            containerDeclaration
+            containerDeclaration,
+            shouldExpandTypeAliases = true
         )
         return ConeClassLikeTypeImpl(
             classId.toLookupTag(),

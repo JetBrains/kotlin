@@ -111,13 +111,13 @@ class FirTypeDeserializer(
     fun typeRef(proto: ProtoBuf.Type): FirTypeRef {
         return buildResolvedTypeRef {
             annotations += annotationDeserializer.loadTypeAnnotations(proto, nameResolver)
-            type = type(proto, annotations.computeTypeAttributes(moduleData.session))
+            type = type(proto, annotations.computeTypeAttributes(moduleData.session, shouldExpandTypeAliases = false))
         }
     }
 
     private fun attributesFromAnnotations(proto: ProtoBuf.Type): ConeAttributes =
         annotationDeserializer.loadTypeAnnotations(proto, nameResolver)
-            .computeTypeAttributes(moduleData.session)
+            .computeTypeAttributes(moduleData.session, shouldExpandTypeAliases = false)
 
     fun type(proto: ProtoBuf.Type): ConeKotlinType {
         return type(proto, attributesFromAnnotations(proto))
