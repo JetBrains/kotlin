@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.deserialization.AnnotationLoader
 import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
@@ -23,6 +24,7 @@ class ClsStubBuilderComponents(
     val classDataFinder: ClassDataFinder,
     val annotationLoader: AnnotationLoader<ClassId>,
     val virtualFileForDebug: VirtualFile,
+    val serializationProtocol: SerializerExtensionProtocol,
     val classFinder: KotlinClassFinder? = null,
     val jvmMetadataVersion: JvmMetadataVersion? = null
 ) {

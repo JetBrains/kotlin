@@ -386,7 +386,7 @@ private class PropertyClsStubBuilder(
                 }
             }, null)
         } else {
-            val value = propertyProto.getExtensionOrNull(BuiltInSerializerProtocol.compileTimeValue)
+            val value = propertyProto.getExtensionOrNull(c.components.serializationProtocol.compileTimeValue)
             if (value != null) {
                 constantInitializer = createConstantValue(value, c.nameResolver)
             }
