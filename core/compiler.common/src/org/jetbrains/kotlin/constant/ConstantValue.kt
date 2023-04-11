@@ -30,7 +30,11 @@ abstract class IntegerValueConstant<out T> protected constructor(value: T) : Con
 abstract class UnsignedValueConstant<out T> protected constructor(value: T) : ConstantValue<T>(value)
 
 class AnnotationValue private constructor(value: Value) : ConstantValue<AnnotationValue.Value>(value) {
-    class Value(val type: KotlinTypeMarker, val argumentsMapping: Map<Name, ConstantValue<*>>)
+    class Value(val type: KotlinTypeMarker, val argumentsMapping: Map<Name, ConstantValue<*>>) {
+        override fun toString(): String {
+            return "Value(type=$type, argumentsMapping=$argumentsMapping)"
+        }
+    }
 
     override fun <R, D> accept(visitor: AnnotationArgumentVisitor<R, D>, data: D): R = visitor.visitAnnotationValue(this, data)
 

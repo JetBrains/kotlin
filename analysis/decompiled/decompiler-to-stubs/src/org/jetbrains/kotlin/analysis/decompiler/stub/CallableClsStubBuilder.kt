@@ -4,23 +4,33 @@ package org.jetbrains.kotlin.analysis.decompiler.stub
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
+import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.analysis.decompiler.stub.flags.*
+import org.jetbrains.kotlin.constant.ConstantValue
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf.MemberKind
 import org.jetbrains.kotlin.metadata.ProtoBuf.Modality
 import org.jetbrains.kotlin.metadata.deserialization.*
+import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinConstructorStubImpl
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinFunctionStubImpl
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyAccessorStubImpl
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyStubImpl
+import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.resolve.DataClassResolver
+import org.jetbrains.kotlin.resolve.constants.ClassLiteralValue
 import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.getName
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+
+const val COMPILED_DEFAULT_INITIALIZER = "COMPILED_CODE"
 
 fun createPackageDeclarationsStubs(
     parentStub: StubElement<out PsiElement>,
@@ -248,6 +258,7 @@ private class PropertyClsStubBuilder(
 
     override fun doCreateCallableStub(parent: StubElement<out PsiElement>): StubElement<out PsiElement> {
         val callableName = c.nameResolver.getName(propertyProto.name)
+        val initializer = calcInitializer()
 
         // Note that arguments passed to stubs here and elsewhere are based on what stabs would be generated based on decompiled code
         // This info is anyway irrelevant for the purposes these stubs are used
@@ -258,14 +269,18 @@ private class PropertyClsStubBuilder(
             isTopLevel,
             hasDelegate = false,
             hasDelegateExpression = false,
-            hasInitializer = false,
+            hasInitializer = initializer != null,
             isExtension = propertyProto.hasReceiver(),
             hasReturnTypeRef = true,
-            fqName = c.containerFqName.child(callableName)
+            fqName = c.containerFqName.child(callableName),
+            initializer
         )
     }
 
     override fun createCallableSpecialParts() {
+        if ((callableStub as KotlinPropertyStub).hasInitializer()) {
+            KotlinNameReferenceExpressionStubImpl(callableStub, StringRef.fromString(COMPILED_DEFAULT_INITIALIZER))
+        }
         val flags = propertyProto.flags
         if (Flags.HAS_GETTER[flags] && propertyProto.hasGetterFlags()) {
             val getterFlags = propertyProto.getterFlags
@@ -318,6 +333,143 @@ private class PropertyClsStubBuilder(
             )
             createAnnotationStubs(annotationIds, modifierList)
         }
+    }
+
+    private fun calcInitializer(): ConstantValue<*>? {
+        val classFinder = c.components.classFinder
+        val containerClass =
+            if (classFinder != null) getSpecialCaseContainerClass(classFinder, c.components.jvmMetadataVersion!!) else null
+        val source = protoContainer.source
+        val binaryClass = containerClass ?: (source as? KotlinJvmBinarySourceElement)?.binaryClass
+        var constantInitializer: ConstantValue<*>? = null
+        if (binaryClass != null) {
+            val callableName = c.nameResolver.getName(propertyProto.name)
+            binaryClass.visitMembers(object : KotlinJvmBinaryClass.MemberVisitor {
+                private val getterName = lazy(LazyThreadSafetyMode.NONE) {
+                    val signature = propertyProto.getExtensionOrNull(JvmProtoBuf.propertySignature) ?: return@lazy null
+                    c.nameResolver.getName(signature.getter.name)
+                }
+
+                override fun visitMethod(name: Name, desc: String): KotlinJvmBinaryClass.MethodAnnotationVisitor? {
+                    if (protoContainer is ProtoContainer.Class && protoContainer.kind == ProtoBuf.Class.Kind.ANNOTATION_CLASS && getterName.value == name) {
+                        return object : KotlinJvmBinaryClass.MethodAnnotationVisitor {
+                            override fun visitParameterAnnotation(
+                                index: Int,
+                                classId: ClassId,
+                                source: SourceElement
+                            ): KotlinJvmBinaryClass.AnnotationArgumentVisitor? = null
+
+                            override fun visitAnnotationMemberDefaultValue(): KotlinJvmBinaryClass.AnnotationArgumentVisitor {
+                                class AnnotationMemberDefaultValueVisitor : KotlinJvmBinaryClass.AnnotationArgumentVisitor {
+                                    private val args = mutableMapOf<Name, ConstantValue<*>>()
+
+                                    private fun nameOrSpecial(name: Name?): Name {
+                                        return name ?: Name.special("<no_name>")
+                                    }
+
+                                    override fun visit(name: Name?, value: Any?) {
+                                        args[nameOrSpecial(name)] = createConstantValue(value)
+                                    }
+
+                                    override fun visitClassLiteral(name: Name?, value: ClassLiteralValue) {
+                                        args[nameOrSpecial(name)] = createConstantValue(KClassData(value.classId, value.arrayNestedness))
+                                    }
+
+                                    override fun visitEnum(name: Name?, enumClassId: ClassId, enumEntryName: Name) {
+                                        args[nameOrSpecial(name)] = createConstantValue(EnumData(enumClassId, enumEntryName))
+                                    }
+
+                                    override fun visitAnnotation(
+                                        name: Name?,
+                                        classId: ClassId
+                                    ): KotlinJvmBinaryClass.AnnotationArgumentVisitor {
+                                        val visitor = AnnotationMemberDefaultValueVisitor()
+                                        return object : KotlinJvmBinaryClass.AnnotationArgumentVisitor by visitor {
+                                            override fun visitEnd() {
+                                                args[nameOrSpecial(name)] = createConstantValue(AnnotationData(classId, visitor.args))
+                                            }
+                                        }
+                                    }
+
+                                    override fun visitArray(name: Name?): KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor {
+                                        return object : KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor {
+                                            private val elements = mutableListOf<Any>()
+
+                                            override fun visit(value: Any?) {
+                                                elements.addIfNotNull(value)
+                                            }
+
+                                            override fun visitEnum(enumClassId: ClassId, enumEntryName: Name) {
+                                                elements.add(EnumData(enumClassId, enumEntryName))
+                                            }
+
+                                            override fun visitClassLiteral(value: ClassLiteralValue) {
+                                                elements.add(KClassData(value.classId, value.arrayNestedness))
+                                            }
+
+                                            override fun visitAnnotation(classId: ClassId): KotlinJvmBinaryClass.AnnotationArgumentVisitor {
+                                                val visitor = AnnotationMemberDefaultValueVisitor()
+                                                return object : KotlinJvmBinaryClass.AnnotationArgumentVisitor by visitor {
+                                                    override fun visitEnd() {
+                                                        elements.addIfNotNull(AnnotationData(classId, visitor.args))
+                                                    }
+                                                }
+                                            }
+
+                                            override fun visitEnd() {
+                                                args[nameOrSpecial(name)] = createConstantValue(elements.toTypedArray())
+                                            }
+                                        }
+                                    }
+
+                                    override fun visitEnd() {
+                                        constantInitializer = args.values.firstOrNull()
+                                    }
+                                }
+
+                                return AnnotationMemberDefaultValueVisitor()
+                            }
+
+                            override fun visitAnnotation(
+                                classId: ClassId,
+                                source: SourceElement
+                            ): KotlinJvmBinaryClass.AnnotationArgumentVisitor? = null
+
+                            override fun visitEnd() {}
+                        }
+                    }
+                    return null
+                }
+
+                override fun visitField(name: Name, desc: String, initializer: Any?): KotlinJvmBinaryClass.AnnotationVisitor? {
+                    if (initializer != null && name == callableName) {
+                        constantInitializer = createConstantValue(initializer)
+                    }
+                    return null
+                }
+            }, null)
+        } else {
+            val value = propertyProto.getExtensionOrNull(c.components.serializationProtocol.compileTimeValue)
+            if (value != null) {
+                constantInitializer = createConstantValue(value, c.nameResolver)
+            }
+        }
+        return constantInitializer
+    }
+
+    private fun getSpecialCaseContainerClass(
+        classFinder: KotlinClassFinder,
+        jvmMetadataVersion: JvmMetadataVersion
+    ): KotlinJvmBinaryClass? {
+        return AbstractBinaryClassAnnotationLoader.getSpecialCaseContainerClass(
+            container = protoContainer,
+            property = true,
+            field = true,
+            isConst = Flags.IS_CONST.get(propertyProto.flags),
+            isMovedFromInterfaceCompanion = JvmProtoBufUtil.isMovedFromInterfaceCompanion(propertyProto),
+            kotlinClassFinder = classFinder,
+            jvmMetadataVersion = jvmMetadataVersion
+        )
     }
 }
 

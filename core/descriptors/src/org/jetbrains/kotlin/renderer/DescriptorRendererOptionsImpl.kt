@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.types.KotlinType
 import java.lang.IllegalStateException
 import java.lang.reflect.Modifier
@@ -87,6 +88,7 @@ internal class DescriptorRendererOptionsImpl : DescriptorRendererOptions {
     override var actualPropertiesInPrimaryConstructor: Boolean by property(false)
     override var uninferredTypeParameterAsName by property(false)
     override var includePropertyConstant by property(false)
+    override var propertyConstantRenderer: ((ConstantValue<*>) -> String?)? by property(null)
     override var withoutTypeParameters by property(false)
     override var withoutSuperTypes by property(false)
     override var typeNormalizer by property<(KotlinType) -> KotlinType>({ it })
