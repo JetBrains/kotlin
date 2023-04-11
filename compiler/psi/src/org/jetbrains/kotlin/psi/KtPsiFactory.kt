@@ -59,22 +59,28 @@ var KtFile.analysisContext: PsiElement? by UserDataProperty(Key.create("ANALYSIS
 class KtPsiFactory private constructor(
     private val project: Project,
     private val markGenerated: Boolean,
-    private val context: PsiElement?
+    private val context: PsiElement?,
+    private val eventSystemEnabled: Boolean,
 ) {
     companion object {
         @JvmStatic
         @JvmOverloads
-        fun contextual(context: PsiElement, markGenerated: Boolean = true): KtPsiFactory {
-            return KtPsiFactory(context.project, markGenerated, context)
+        fun contextual(context: PsiElement, markGenerated: Boolean = true, eventSystemEnabled: Boolean = false): KtPsiFactory {
+            return KtPsiFactory(context.project, markGenerated, context, eventSystemEnabled)
         }
     }
 
     @JvmOverloads
-    constructor(project: Project, markGenerated: Boolean = true) : this(project, markGenerated, context = null)
+    constructor(project: Project, markGenerated: Boolean = true) :
+            this(project, markGenerated, context = null, eventSystemEnabled = false)
+
+    constructor(project: Project, markGenerated: Boolean = true, eventSystemEnabled: Boolean) :
+            this(project, markGenerated, context = null, eventSystemEnabled = eventSystemEnabled)
+
 
     @JvmOverloads
     @Deprecated("Use 'KtPsiFactory(project, markGenerated)' or 'KtPsiFactory.contextual(context, markGenerated)' instead")
-    constructor(element: KtElement, markGenerated: Boolean = true) : this(element.project, markGenerated, context = null)
+    constructor(element: KtElement, markGenerated: Boolean = true) : this(element.project, markGenerated, context = null, eventSystemEnabled = false)
 
     fun createValKeyword(): PsiElement {
         val property = createProperty("val x = 1")
@@ -240,7 +246,7 @@ class KtPsiFactory private constructor(
             KotlinFileType.INSTANCE,
             text,
             LocalTimeCounter.currentTime(),
-            false,
+            eventSystemEnabled,
             markGenerated
         ) as KtFile
     }
