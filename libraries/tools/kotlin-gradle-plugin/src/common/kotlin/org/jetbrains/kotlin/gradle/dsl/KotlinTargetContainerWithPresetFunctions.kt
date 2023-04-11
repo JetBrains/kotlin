@@ -33,7 +33,7 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
     fun jvm(name: String, configure: Action<KotlinJvmTarget>) = jvm(name) { configure.execute(this) }
     fun jvm(configure: Action<KotlinJvmTarget>) = jvm { configure.execute(this) }
 
-    fun android(
+    fun androidTarget(
         name: String = "android",
         configure: KotlinAndroidTarget.() -> Unit = { }
     ): KotlinAndroidTarget =
@@ -43,10 +43,6 @@ interface KotlinTargetContainerWithPresetFunctions : KotlinTargetsContainerWithP
             configure
         )
 
-    fun android() = android("android") { }
-    fun android(name: String) = android(name) { }
-    fun android(name: String, configure: Action<KotlinAndroidTarget>) = android(name) { configure.execute(this) }
-    fun android(configure: Action<KotlinAndroidTarget>) = android { configure.execute(this) }
 
     fun androidNativeX64(
         name: String = "androidNativeX64",
