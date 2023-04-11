@@ -7,7 +7,11 @@ package org.jetbrains.kotlin.backend.common.actualizer
 
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.DeepCopyIrTreeWithSymbols
+import org.jetbrains.kotlin.ir.util.SymbolRemapper
+import org.jetbrains.kotlin.ir.util.SymbolRenamer
+import org.jetbrains.kotlin.ir.util.TypeRemapper
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 internal class ActualizerSymbolRemapper(private val expectActualMap: Map<IrSymbol, IrSymbol>) : SymbolRemapper {
     override fun getDeclaredClass(symbol: IrClassSymbol) = symbol
@@ -71,7 +75,7 @@ internal class ActualizerSymbolRemapper(private val expectActualMap: Map<IrSymbo
     private inline fun <reified S : IrSymbol> S.actualizeSymbol(): S = (expectActualMap[this] as? S) ?: this
 }
 
-internal open class ActualizerVisitor(symbolRemapper: SymbolRemapper, typeRemapper: TypeRemapper) :
+internal open class ActualizerVisitor(private val symbolRemapper: SymbolRemapper, typeRemapper: TypeRemapper) :
     DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper, SymbolRenamer.DEFAULT) {
     override fun visitModuleFragment(declaration: IrModuleFragment) =
         declaration.also { it.transformChildren(this, null) }
@@ -94,7 +98,11 @@ internal open class ActualizerVisitor(symbolRemapper: SymbolRemapper, typeRemapp
             it.transformChildren(this, null)
         }
 
-    override fun visitSimpleFunction(declaration: IrSimpleFunction) = visitFunction(declaration) as IrSimpleFunction
+    override fun visitSimpleFunction(declaration: IrSimpleFunction) = (visitFunction(declaration) as IrSimpleFunction).also {
+        it.overriddenSymbols = it.overriddenSymbols.memoryOptimizedMap { symbol ->
+            symbolRemapper.getReferencedFunction(symbol) as IrSimpleFunctionSymbol
+        }
+    }
 
     override fun visitConstructor(declaration: IrConstructor) = visitFunction(declaration) as IrConstructor
 
@@ -105,7 +113,12 @@ internal open class ActualizerVisitor(symbolRemapper: SymbolRemapper, typeRemapp
         }
 
     override fun visitProperty(declaration: IrProperty) =
-        declaration.also { it.transformChildren(this, null) }
+        declaration.also {
+            it.transformChildren(this, null)
+            it.overriddenSymbols = it.overriddenSymbols.memoryOptimizedMap { symbol ->
+                symbolRemapper.getReferencedProperty(symbol)
+            }
+        }
 
     override fun visitField(declaration: IrField) =
         declaration.also {

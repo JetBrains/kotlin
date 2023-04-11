@@ -27112,6 +27112,36 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Basic extends AbstractLightAnalysisModeTest {
+                @TestMetadata("expectActualFakeOverrides2.kt")
+                public void ignoreExpectActualFakeOverrides2() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualFakeOverrides2.kt");
+                }
+
+                @TestMetadata("expectActualFakeOverrides3.kt")
+                public void ignoreExpectActualFakeOverrides3() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualFakeOverrides3.kt");
+                }
+
+                @TestMetadata("expectActualFakeOverridesWithTypeParameters.kt")
+                public void ignoreExpectActualFakeOverridesWithTypeParameters() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualFakeOverridesWithTypeParameters.kt");
+                }
+
+                @TestMetadata("expectActualFakeOverridesWithTypeParameters2.kt")
+                public void ignoreExpectActualFakeOverridesWithTypeParameters2() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualFakeOverridesWithTypeParameters2.kt");
+                }
+
+                @TestMetadata("expectActualIntersectionOverride.kt")
+                public void ignoreExpectActualIntersectionOverride() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualIntersectionOverride.kt");
+                }
+
+                @TestMetadata("expectActualIntersectionOverride2.kt")
+                public void ignoreExpectActualIntersectionOverride2() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualIntersectionOverride2.kt");
+                }
+
                 @TestMetadata("expectActualNullabilityBasedOverloads.kt")
                 public void ignoreExpectActualNullabilityBasedOverloads() throws Exception {
                     runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualNullabilityBasedOverloads.kt");
@@ -27125,6 +27155,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 @TestMetadata("noArgActualConstructor.kt")
                 public void ignoreNoArgActualConstructor() throws Exception {
                     runTest("compiler/testData/codegen/box/multiplatform/k2/basic/noArgActualConstructor.kt");
+                }
+
+                @TestMetadata("overridesOfExpectMembers.kt")
+                public void ignoreOverridesOfExpectMembers() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/overridesOfExpectMembers.kt");
                 }
 
                 @TestMetadata("removeExpectDeclarationsFromMetadata.kt")
@@ -27215,6 +27250,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                     runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectInterfaceInSupertypes.kt");
                 }
 
+                @TestMetadata("expectInterfaceInSupertypes2.kt")
+                public void testExpectInterfaceInSupertypes2() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectInterfaceInSupertypes2.kt");
+                }
+
                 @TestMetadata("fakeOverridesInPlatformModule.kt")
                 public void testFakeOverridesInPlatformModule() throws Exception {
                     runTest("compiler/testData/codegen/box/multiplatform/k2/basic/fakeOverridesInPlatformModule.kt");
@@ -27228,6 +27268,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 @TestMetadata("independentCommonSourceModules.kt")
                 public void testIndependentCommonSourceModules() throws Exception {
                     runTest("compiler/testData/codegen/box/multiplatform/k2/basic/independentCommonSourceModules.kt");
+                }
+
+                @TestMetadata("interfaceMethodFromSuperTypeIsImplementedInOtherExpectSuperClass.kt")
+                public void testInterfaceMethodFromSuperTypeIsImplementedInOtherExpectSuperClass() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/interfaceMethodFromSuperTypeIsImplementedInOtherExpectSuperClass.kt");
                 }
 
                 @TestMetadata("kt-56329.kt")

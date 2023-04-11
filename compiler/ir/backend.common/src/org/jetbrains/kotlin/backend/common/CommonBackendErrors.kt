@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 object CommonBackendErrors {
     val NO_ACTUAL_FOR_EXPECT by error2<PsiElement, String, ModuleDescriptor>()
     val MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED by error2<PsiElement, String, String>()
+    val MANY_IMPL_MEMBER_NOT_IMPLEMENTED by error2<PsiElement, String, String>()
 
     init {
         RootDiagnosticRendererFactory.registerFactory(KtDefaultCommonBackendErrorMessages)
@@ -34,6 +35,12 @@ object KtDefaultCommonBackendErrorMessages : BaseDiagnosticRendererFactory() {
         map.put(
             CommonBackendErrors.MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED,
             "{0} must override {1} because it inherits multiple interface methods of it",
+            STRING,
+            STRING,
+        )
+        map.put(
+            CommonBackendErrors.MANY_IMPL_MEMBER_NOT_IMPLEMENTED,
+            "{0} must override {1} because it inherits many implementations of it",
             STRING,
             STRING,
         )

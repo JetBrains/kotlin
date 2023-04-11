@@ -20818,6 +20818,36 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                     runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualFakeOverrides.kt");
                 }
 
+                @TestMetadata("expectActualFakeOverrides2.kt")
+                public void testExpectActualFakeOverrides2() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualFakeOverrides2.kt");
+                }
+
+                @TestMetadata("expectActualFakeOverrides3.kt")
+                public void testExpectActualFakeOverrides3() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualFakeOverrides3.kt");
+                }
+
+                @TestMetadata("expectActualFakeOverridesWithTypeParameters.kt")
+                public void testExpectActualFakeOverridesWithTypeParameters() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualFakeOverridesWithTypeParameters.kt");
+                }
+
+                @TestMetadata("expectActualFakeOverridesWithTypeParameters2.kt")
+                public void testExpectActualFakeOverridesWithTypeParameters2() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualFakeOverridesWithTypeParameters2.kt");
+                }
+
+                @TestMetadata("expectActualIntersectionOverride.kt")
+                public void testExpectActualIntersectionOverride() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualIntersectionOverride.kt");
+                }
+
+                @TestMetadata("expectActualIntersectionOverride2.kt")
+                public void testExpectActualIntersectionOverride2() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualIntersectionOverride2.kt");
+                }
+
                 @TestMetadata("expectActualMultiCommon.kt")
                 public void testExpectActualMultiCommon() throws Exception {
                     runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualMultiCommon.kt");
@@ -20853,6 +20883,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                     runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectInterfaceInSupertypes.kt");
                 }
 
+                @TestMetadata("expectInterfaceInSupertypes2.kt")
+                public void testExpectInterfaceInSupertypes2() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectInterfaceInSupertypes2.kt");
+                }
+
                 @TestMetadata("expectProperty.kt")
                 public void testExpectProperty() throws Exception {
                     runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectProperty.kt");
@@ -20868,6 +20903,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                     runTest("compiler/testData/codegen/box/multiplatform/k2/basic/independentCommonSourceModules.kt");
                 }
 
+                @TestMetadata("interfaceMethodFromSuperTypeIsImplementedInOtherExpectSuperClass.kt")
+                public void testInterfaceMethodFromSuperTypeIsImplementedInOtherExpectSuperClass() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/interfaceMethodFromSuperTypeIsImplementedInOtherExpectSuperClass.kt");
+                }
+
                 @TestMetadata("kt-56329.kt")
                 public void testKt_56329() throws Exception {
                     runTest("compiler/testData/codegen/box/multiplatform/k2/basic/kt-56329.kt");
@@ -20876,6 +20916,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                 @TestMetadata("nonExternalEquals.kt")
                 public void testNonExternalEquals() throws Exception {
                     runTest("compiler/testData/codegen/box/multiplatform/k2/basic/nonExternalEquals.kt");
+                }
+
+                @TestMetadata("overridesOfExpectMembers.kt")
+                public void testOverridesOfExpectMembers() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/overridesOfExpectMembers.kt");
                 }
 
                 @TestMetadata("removeExpectDeclarationsFromMetadata.kt")
