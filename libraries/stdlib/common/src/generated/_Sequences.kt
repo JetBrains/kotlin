@@ -805,7 +805,16 @@ public fun <T> Sequence<T>.toHashSet(): HashSet<T> {
  * The operation is _terminal_.
  */
 public fun <T> Sequence<T>.toList(): List<T> {
-    return this.toMutableList().optimizeReadOnlyList()
+    val it = iterator()
+    if (!it.hasNext())
+        return emptyList()
+    val element = it.next()
+    if (!it.hasNext())
+        return listOf(element)
+    val dst = ArrayList<T>()
+    dst.add(element)
+    while (it.hasNext()) dst.add(it.next())
+    return dst
 }
 
 /**
@@ -825,7 +834,16 @@ public fun <T> Sequence<T>.toMutableList(): MutableList<T> {
  * The operation is _terminal_.
  */
 public fun <T> Sequence<T>.toSet(): Set<T> {
-    return toCollection(LinkedHashSet<T>()).optimizeReadOnlySet()
+    val it = iterator()
+    if (!it.hasNext())
+        return emptySet()
+    val element = it.next()
+    if (!it.hasNext())
+        return setOf(element)
+    val dst = LinkedHashSet<T>()
+    dst.add(element)
+    while (it.hasNext()) dst.add(it.next())
+    return dst
 }
 
 /**
