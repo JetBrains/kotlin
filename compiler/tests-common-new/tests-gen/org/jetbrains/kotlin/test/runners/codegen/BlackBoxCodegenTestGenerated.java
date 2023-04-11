@@ -28357,6 +28357,16 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/js")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Js {
+        @Test
+        public void testAllFilesPresentInJs() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/js"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/jvm8")
     @TestDataPath("$PROJECT_ROOT")
     public class Jvm8 {

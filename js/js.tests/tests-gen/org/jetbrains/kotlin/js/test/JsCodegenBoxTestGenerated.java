@@ -21627,6 +21627,22 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/js")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Js {
+        @Test
+        public void testAllFilesPresentInJs() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/js"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS, true);
+        }
+
+        @Test
+        @TestMetadata("lambdaWithDynamicReceiver.kt")
+        public void testLambdaWithDynamicReceiver() throws Exception {
+            runTest("compiler/testData/codegen/box/js/lambdaWithDynamicReceiver.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/jvm8")
     @TestDataPath("$PROJECT_ROOT")
     public class Jvm8 {

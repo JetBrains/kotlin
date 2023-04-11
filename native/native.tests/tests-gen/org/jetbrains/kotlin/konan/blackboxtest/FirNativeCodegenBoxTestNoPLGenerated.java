@@ -25509,6 +25509,22 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/js")
+        @TestDataPath("$PROJECT_ROOT")
+        @Tag("codegenK2")
+        @Tag("firCodegen")
+        @UseExtTestCaseGroupProvider()
+        @FirPipeline()
+        @UsePartialLinkage(mode = Mode.DISABLED)
+        @Tag("no-partial-linkage-may-be-skipped")
+        public class Js {
+            @Test
+            public void testAllFilesPresentInJs() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/js"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/jvm8")
         @TestDataPath("$PROJECT_ROOT")
         @Tag("codegenK2")
