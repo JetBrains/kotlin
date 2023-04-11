@@ -58,9 +58,9 @@ class NativeXcodeSimulatorTestsIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("iOS simulator test with an https request doesn't with the standalone mode disabled")
+    @DisplayName("iOS simulator test with an https request doesn't fail with the standalone mode disabled")
     @GradleTest
-    fun checkSimulatorTestFailsInNonStandaloneMode(gradleVersion: GradleVersion) {
+    fun checkSimulatorTestDoesNotFailInNonStandaloneMode(gradleVersion: GradleVersion) {
         project("native-test-ios-https-request", gradleVersion) {
             bootXcodeSimulator(defaultIosSimulator)
             buildGradleKts.append(
