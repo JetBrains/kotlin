@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.generators.tests.analysis.api
 
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.annotations.AbstractAnalysisApiAnnotationsOnDeclarationsTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.annotations.AbstractAnalysisApiSpecificAnnotationOnDeclarationTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.annotations.AbstractAnalysisApiAnnotationsOnDeclarationsWithMetaTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.annotations.AbstractAnalysisApiAnnotationsOnFilesTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.annotations.AbstractAnalysisApiAnnotationsOnTypesTest
@@ -152,6 +153,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
 
         test(AbstractAnalysisApiAnnotationsOnDeclarationsTest::class) {
             model("annotationsOnDeclaration")
+        }
+
+        test(AbstractAnalysisApiSpecificAnnotationOnDeclarationTest::class) {
+            model("specificAnnotations")
         }
 
         test(
