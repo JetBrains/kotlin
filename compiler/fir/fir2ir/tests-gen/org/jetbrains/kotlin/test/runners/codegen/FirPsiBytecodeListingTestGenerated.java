@@ -2571,5 +2571,11 @@ public class FirPsiBytecodeListingTestGenerated extends AbstractFirPsiBytecodeLi
         public void testAnnotations() throws Exception {
             runTest("compiler/testData/codegen/bytecodeListing/valueClasses/annotations.kt");
         }
+
+        @Test
+        @TestMetadata("nullabilityAnnotationsOnInlineClassMembers.kt")
+        public void testNullabilityAnnotationsOnInlineClassMembers() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeListing/valueClasses/nullabilityAnnotationsOnInlineClassMembers.kt");
+        }
     }
 }

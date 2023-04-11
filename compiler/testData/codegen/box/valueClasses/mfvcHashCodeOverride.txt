@@ -13,7 +13,7 @@ public final class A {
     public final @org.jetbrains.annotations.NotNull method getValue1(): MyClass
     public final @org.jetbrains.annotations.NotNull method getValue2(): MyClass
     public method hashCode(): int
-    public static method hashCode-impl(@org.jetbrains.annotations.NotNull p0: MyClass, @org.jetbrains.annotations.NotNull p1: MyClass): int
+    public static method hashCode-impl(p0: MyClass, p1: MyClass): int
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public static method toString-impl(p0: MyClass, p1: MyClass): java.lang.String
     public synthetic final method unbox-impl-value1(): MyClass
