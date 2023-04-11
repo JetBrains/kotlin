@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.annotations
 
+import java.lang.annotation.ElementType
 import org.jetbrains.kotlin.analysis.api.annotations.AnnotationUseSiteTargetFilter
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationInfo
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
@@ -68,6 +69,11 @@ internal fun annotationsByClassId(
             .mapIndexedToAnnotationApplication(useSiteTargetFilter, useSiteSession, classId) { index, annotation ->
                 annotation.asKtAnnotationApplicationForTargetAnnotation(useSiteSession, index)
             }
+    } else if (classId == StandardClassIds.Annotations.Java.Target && firSymbol.fir.resolvePhase < FirResolvePhase.ANNOTATIONS_ARGUMENTS_MAPPING) {
+        annotationContainer.resolvedAnnotationsWithClassIds(firSymbol)
+            .mapIndexedToAnnotationApplication(useSiteTargetFilter, useSiteSession, classId) { index, annotation ->
+                annotation.asKtAnnotationApplicationForJavaTargetAnnotation(useSiteSession, index)
+            }
     } else {
         annotationContainer.resolvedAnnotationsWithArguments(firSymbol)
             .mapIndexedToAnnotationApplication(useSiteTargetFilter, useSiteSession, classId) { index, annotation ->
@@ -88,20 +94,26 @@ private inline fun List<FirAnnotation>.mapIndexedToAnnotationApplication(
     transformer(index, annotation)
 }
 
-private fun FirAnnotation.asKtAnnotationApplicationForTargetAnnotation(
+private fun FirAnnotation.asKtAnnotationApplicationForAnnotationWithEnumArgument(
     useSiteSession: FirSession,
     index: Int,
+    expectedEnumClassId: ClassId,
+    annotationParameterName: Name,
+    nameMapper: (String) -> String?,
 ): KtAnnotationApplicationWithArgumentsInfo {
-    val arguments = findAllowedTargets().ifNotEmpty {
+    val arguments = findFromRawArguments(
+        expectedEnumClass = expectedEnumClassId,
+        nameMapper,
+    ).ifNotEmpty {
         listOf(
             KtNamedAnnotationValue(
-                name = StandardClassIds.Annotations.ParameterNames.targetAllowedTargets,
+                name = annotationParameterName,
                 expression = KtArrayAnnotationValue(
                     values = map {
                         KtEnumEntryAnnotationValue(
                             callableId = CallableId(
-                                classId = StandardClassIds.AnnotationTarget,
-                                callableName = Name.identifier(it.name),
+                                classId = expectedEnumClassId,
+                                callableName = Name.identifier(it),
                             ),
                             sourcePsi = null,
                         )
@@ -115,16 +127,38 @@ private fun FirAnnotation.asKtAnnotationApplicationForTargetAnnotation(
     return toKtAnnotationApplication(useSiteSession, index, arguments)
 }
 
-private fun FirAnnotation.findAllowedTargets(): Set<KotlinTarget> = buildSet {
+private fun FirAnnotation.asKtAnnotationApplicationForTargetAnnotation(
+    useSiteSession: FirSession,
+    index: Int,
+): KtAnnotationApplicationWithArgumentsInfo = asKtAnnotationApplicationForAnnotationWithEnumArgument(
+    useSiteSession = useSiteSession,
+    index = index,
+    expectedEnumClassId = StandardClassIds.AnnotationTarget,
+    annotationParameterName = StandardClassIds.Annotations.ParameterNames.targetAllowedTargets,
+    nameMapper = { KotlinTarget.valueOrNull(it)?.name },
+)
+
+private fun FirAnnotation.asKtAnnotationApplicationForJavaTargetAnnotation(
+    useSiteSession: FirSession,
+    index: Int,
+): KtAnnotationApplicationWithArgumentsInfo = asKtAnnotationApplicationForAnnotationWithEnumArgument(
+    useSiteSession = useSiteSession,
+    index = index,
+    expectedEnumClassId = StandardClassIds.Annotations.Java.ElementType,
+    annotationParameterName = StandardClassIds.Annotations.ParameterNames.value,
+    nameMapper = { ElementType.values().firstOrNull { enumValue -> enumValue.name == it }?.name },
+)
+
+private fun <T> FirAnnotation.findFromRawArguments(expectedEnumClass: ClassId, transformer: (String) -> T?): Set<T> = buildSet {
     fun addIfMatching(arg: FirExpression) {
         if (arg !is FirQualifiedAccessExpression) return
         val callableSymbol = arg.calleeReference.toResolvedCallableSymbol() ?: return
-        if (callableSymbol.containingClassLookupTag()?.classId != StandardClassIds.AnnotationTarget) return
+        if (callableSymbol.containingClassLookupTag()?.classId != expectedEnumClass) return
         val identifier = callableSymbol.callableId.callableName.identifier
-        KotlinTarget.values().firstOrNull { identifier == it.name }?.let(::add)
+        transformer(identifier)?.let(::add)
     }
 
-    if (this@findAllowedTargets is FirAnnotationCall) {
+    if (this@findFromRawArguments is FirAnnotationCall) {
         for (arg in argumentList.arguments) {
             arg.unwrapAndFlattenArgument().forEach(::addIfMatching)
         }

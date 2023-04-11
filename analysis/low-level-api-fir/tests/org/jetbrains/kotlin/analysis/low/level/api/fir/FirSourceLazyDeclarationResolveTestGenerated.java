@@ -37,6 +37,12 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     }
 
     @Test
+    @TestMetadata("annotationFromImplicitJavaTypeWithJavaAnnotation.kt")
+    public void testAnnotationFromImplicitJavaTypeWithJavaAnnotation() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/annotationFromImplicitJavaTypeWithJavaAnnotation.kt");
+    }
+
+    @Test
     @TestMetadata("annotationParameters.kt")
     public void testAnnotationParameters() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/lazyResolve/annotationParameters.kt");
