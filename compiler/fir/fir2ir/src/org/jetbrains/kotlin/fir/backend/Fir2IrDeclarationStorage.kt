@@ -434,9 +434,11 @@ class Fir2IrDeclarationStorage(
         return this
     }
 
-    fun getCachedIrFunction(function: FirFunction): IrSimpleFunction? =
-        if (function is FirSimpleFunction) getCachedIrFunction(function)
-        else localStorage.getLocalFunction(function)
+    fun getCachedIrFunction(function: FirFunction): IrFunction? = when (function) {
+        is FirSimpleFunction -> getCachedIrFunction(function)
+        is FirConstructor -> getCachedIrConstructor(function)
+        else -> localStorage.getLocalFunction(function)
+    }
 
     fun getCachedIrFunction(function: FirSimpleFunction): IrSimpleFunction? {
         return if (function.visibility == Visibilities.Local) {

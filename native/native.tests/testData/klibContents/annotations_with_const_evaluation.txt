@@ -1,0 +1,52 @@
+annotation class AnnoBackingField constructor(s: String) : Annotation {
+        val s: String
+    }
+    annotation class AnnoClass constructor(s: String) : Annotation {
+        val s: String
+    }
+    annotation class AnnoConstructor constructor(s: String) : Annotation {
+        val s: String
+    }
+    annotation class AnnoConstructorParameter constructor(s: String) : Annotation {
+        val s: String
+    }
+    annotation class AnnoDelegatedField constructor(s: String) : Annotation {
+        val s: String
+    }
+    annotation class AnnoFunction constructor(s: String) : Annotation {
+        val s: String
+    }
+    annotation class AnnoFunctionExtensionReceiver constructor(s: String) : Annotation {
+        val s: String
+    }
+    annotation class AnnoFunctionParam constructor(s: String) : Annotation {
+        val s: String
+    }
+    annotation class AnnoGetter constructor(s: String) : Annotation {
+        val s: String
+    }
+    annotation class AnnoProperty constructor(s: String) : Annotation {
+        val s: String
+    }
+    annotation class AnnoPropertyExtensionReceiver constructor(s: String) : Annotation {
+        val s: String
+    }
+    annotation class AnnoSetParam constructor(s: String) : Annotation {
+        val s: String
+    }
+    annotation class AnnoSetParam2 constructor(s: String) : Annotation {
+        val s: String
+    }
+    annotation class AnnoSetter constructor(s: String) : Annotation {
+        val s: String
+    }
+    annotation class AnnoSetter2 constructor(s: String) : Annotation {
+        val s: String
+    }
+    @AnnoClass(s = "OK") class Foo @AnnoConstructor(s = "OK") constructor(@AnnoConstructorParameter(s = "OK") i: Int) {
+        val immutableProp: Int
+        var mutableProp: Int
+        @AnnoProperty(s = "OK") var prop: Int
+    }
+    @AnnoPropertyExtensionReceiver(s = "OK") val Foo.extProp: Int
+    @AnnoFunction(s = "OK") fun Foo.extfun(@AnnoFunctionParam(s = "OK") x: Int)
