@@ -65,6 +65,7 @@ void gc::SameThreadMarkAndSweep::ThreadData::SafePointAllocation(size_t size) no
 }
 
 void gc::SameThreadMarkAndSweep::ThreadData::ScheduleAndWaitFullGC() noexcept {
+    RuntimeLogInfo({kTagGC}, "Scheduling GC manually");
     auto didGC = gc_.PerformFullGC();
 
     if (!didGC) {

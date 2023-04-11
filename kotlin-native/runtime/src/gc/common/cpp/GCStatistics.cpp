@@ -123,7 +123,7 @@ GCHandle GCHandle::create(uint64_t epoch) {
     if (current.epoch) {
         last = current;
         current = {};
-        RuntimeLogWarning({kTagGC}, "Starting new GC epoch, while previous is not finished\n");
+        GCLogWarning(epoch, "Starting new GC epoch, while previous is not finished");
     }
     current.epoch = static_cast<KLong>(epoch);
     current.startTime = static_cast<KLong>(konan::getTimeNanos());
@@ -159,9 +159,41 @@ void GCHandle::finished() {
                     stat->rootSet->threadLocalReferences, stat->rootSet->stackReferences, stat->rootSet->globalReferences,
                     stat->rootSet->stableReferences, stat->rootSet->total());
         }
+        if (stat->markStats) {
+            GCLogInfo(epoch_, "Mark: %" PRIu64 " objects.", stat->markStats->objectsCount);
+        }
+        if (stat->memoryUsageAfter.extra && stat->memoryUsageBefore.extra) {
+            GCLogInfo(
+                    epoch_, "Sweep extra objects: swept %" PRIu64 " objects, kept %" PRIu64 " objects",
+                    stat->memoryUsageBefore.extra->objectsCount - stat->memoryUsageAfter.extra->objectsCount, stat->memoryUsageAfter.extra->objectsCount);
+        }
+        if (stat->memoryUsageBefore.heap && stat->memoryUsageAfter.heap) {
+            GCLogInfo(
+                    epoch_, "Sweep: swept %" PRIu64 " objects, kept %" PRIu64 " objects",
+                    stat->memoryUsageBefore.heap->objectsCount - stat->memoryUsageAfter.heap->objectsCount, stat->memoryUsageAfter.heap->objectsCount);
+            GCLogInfo(
+                    epoch_, "Heap memory usage: before %" PRIu64 " bytes, after %" PRIu64 " bytes", stat->memoryUsageBefore.heap->totalObjectsSize,
+                    stat->memoryUsageAfter.heap->totalObjectsSize);
+        }
+        if (stat->pauseStartTime && stat->pauseEndTime) {
+            auto time = (*stat->pauseEndTime - *stat->pauseStartTime) / 1000;
+            GCLogInfo(epoch_, "Mutators pause time: %" PRIu64 " microseconds.", time);
+        }
         if (stat->startTime) {
             auto time = (*current.endTime - *current.startTime) / 1000;
             GCLogInfo(epoch_, "Finished. Total GC epoch time is %" PRId64" microseconds.", time);
+        }
+
+
+        if (auto usage = stat->memoryUsageAfter.heap; usage && stat->markStats) {
+            RuntimeAssert(
+                    stat->markStats->objectsCount == usage->objectsCount,
+                    "Mismatch in statistics: marked %" PRId64 " objects, while %" PRId64 " is alive after sweep",
+                    stat->markStats->objectsCount, usage->objectsCount);
+            RuntimeAssert(
+                    stat->markStats->totalObjectsSize == usage->totalObjectsSize,
+                    "Mismatch in statistics: total marked size is %" PRId64 " bytes, while %" PRId64 " bytes is alive after sweep",
+                    stat->markStats->totalObjectsSize, usage->totalObjectsSize);
         }
 
         if (stat == &current) {
@@ -172,7 +204,7 @@ void GCHandle::finished() {
 }
 void GCHandle::suspensionRequested() {
     std::lock_guard guard(lock);
-    GCLogDebug(epoch_, "Requested thread suspension by thread %d", konan::currentThreadId());
+    GCLogDebug(epoch_, "Requested thread suspension");
     if (auto* stat = statByEpoch(epoch_)) {
         stat->pauseStartTime = static_cast<KLong>(konan::getTimeNanos());
     }
@@ -182,7 +214,7 @@ void GCHandle::threadsAreSuspended() {
     if (auto* stat = statByEpoch(epoch_)) {
         if (stat->pauseStartTime) {
             auto time = (konan::getTimeNanos() - *stat->pauseStartTime) / 1000;
-            GCLogInfo(epoch_, "Suspended all threads in %" PRIu64 " microseconds", time);
+            GCLogDebug(epoch_, "Suspended all threads in %" PRIu64 " microseconds", time);
             return;
         }
     }
@@ -193,7 +225,7 @@ void GCHandle::threadsAreResumed() {
         stat->pauseEndTime = static_cast<KLong>(konan::getTimeNanos());
         if (stat->pauseStartTime) {
             auto time = (*stat->pauseEndTime - *stat->pauseStartTime) / 1000;
-            GCLogInfo(epoch_, "Resume all threads. Total pause time is %" PRId64 " microseconds.", time);
+            GCLogDebug(epoch_, "Resume all threads. Total pause time is %" PRId64 " microseconds.", time);
             return;
         }
     }
@@ -206,12 +238,13 @@ void GCHandle::finalizersDone() {
             auto time = (*stat->finalizersDoneTime - *stat->endTime) / 1000;
             GCLogInfo(epoch_, "Finalization is done in %" PRId64 " microseconds after epoch end.", time);
             return;
+        } else {
+            GCLogInfo(epoch_, "Finalization is done.");
         }
     }
-    GCLogInfo(epoch_, "Finalization is done.");
 }
 void GCHandle::finalizersScheduled(uint64_t finalizersCount) {
-    GCLogInfo(epoch_, "Finalization is scheduled for %" PRIu64 " objects.", finalizersCount);
+    GCLogDebug(epoch_, "Finalization is scheduled for %" PRIu64 " objects.", finalizersCount);
 }
 void GCHandle::threadRootSetCollected(mm::ThreadData &threadData, uint64_t threadLocalReferences, uint64_t stackReferences) {
     std::lock_guard guard(lock);
@@ -267,25 +300,6 @@ void GCHandle::heapUsageAfter(MemoryUsage usage) {
     std::lock_guard guard(lock);
     if (auto* stat = statByEpoch(epoch_)) {
         stat->memoryUsageAfter.heap = usage;
-        if (stat->memoryUsageBefore.heap) {
-            GCLogInfo(
-                    epoch_,
-                    "Collected %" PRId64 " heap objects of total size %" PRId64 " bytes. "
-                    "%" PRId64 " heap objects of total size %" PRId64 " bytes are still alive.",
-                    stat->memoryUsageBefore.heap->objectsCount - stat->memoryUsageAfter.heap->objectsCount,
-                    stat->memoryUsageBefore.heap->totalObjectsSize - stat->memoryUsageAfter.heap->totalObjectsSize,
-                    stat->memoryUsageAfter.heap->objectsCount, stat->memoryUsageAfter.heap->totalObjectsSize);
-        }
-        if (stat->markStats) {
-            RuntimeAssert(
-                    stat->markStats->objectsCount == usage.objectsCount,
-                    "Mismatch in statistics: marked %" PRId64 " objects, while %" PRId64 " is alive after sweep",
-                    stat->markStats->objectsCount, usage.objectsCount);
-            RuntimeAssert(
-                    stat->markStats->totalObjectsSize == usage.totalObjectsSize,
-                    "Mismatch in statistics: total marked size is %" PRId64 " bytes, while %" PRId64 " bytes is alive after sweep",
-                    stat->markStats->totalObjectsSize, usage.totalObjectsSize);
-        }
     }
 }
 
@@ -299,15 +313,6 @@ void GCHandle::extraObjectsUsageAfter(MemoryUsage usage) {
     std::lock_guard guard(lock);
     if (auto* stat = statByEpoch(epoch_)) {
         stat->memoryUsageAfter.extra = usage;
-        if (stat->memoryUsageBefore.extra) {
-            GCLogInfo(
-                    epoch_,
-                    "Collected %" PRId64 " extra objects of total size %" PRId64 ". "
-                    "%" PRId64 " extra objects of total size %" PRId64 " are still alive.",
-                    stat->memoryUsageBefore.extra->objectsCount - stat->memoryUsageAfter.extra->objectsCount,
-                    stat->memoryUsageBefore.extra->totalObjectsSize - stat->memoryUsageAfter.extra->totalObjectsSize,
-                    stat->memoryUsageAfter.extra->objectsCount, stat->memoryUsageAfter.extra->totalObjectsSize);
-        }
     }
 }
 
@@ -367,8 +372,8 @@ GCHandle::GCMarkScope::GCMarkScope(kotlin::gc::GCHandle& handle) : handle_(handl
 GCHandle::GCMarkScope::~GCMarkScope() {
     handle_.marked(MemoryUsage{objectsCount, totalObjectSizeBytes});
     GCLogDebug(handle_.getEpoch(),
-               "Marked %" PRIu64 " objects in %" PRIu64 " microseconds in thread %d",
-               objectsCount, getStageTime(), konan::currentThreadId());
+               "Marked %" PRIu64 " objects in %" PRIu64 " microseconds",
+               objectsCount, getStageTime());
 }
 
 gc::GCHandle::GCProcessWeaksScope::GCProcessWeaksScope(gc::GCHandle& handle) noexcept : handle_(handle) {}

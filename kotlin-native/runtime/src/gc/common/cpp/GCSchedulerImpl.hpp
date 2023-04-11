@@ -140,6 +140,7 @@ public:
                 return;
             }
             if (regularIntervalPacer_.NeedsGC()) {
+                RuntimeLogInfo({kTagGC}, "Scheduling GC by timer");
                 scheduleGC_();
             }
         }) {}
@@ -147,6 +148,7 @@ public:
     void UpdateFromThreadData(gc::GCSchedulerThreadData& threadData) noexcept override {
         heapGrowthController_.OnAllocated(threadData.allocatedBytes());
         if (heapGrowthController_.NeedsGC()) {
+            RuntimeLogInfo({kTagGC}, "Scheduling GC by allocation");
             scheduleGC_();
         }
     }

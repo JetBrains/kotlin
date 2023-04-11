@@ -65,17 +65,20 @@ void gc::ConcurrentMarkAndSweep::ThreadData::SafePointAllocation(size_t size) no
 }
 
 void gc::ConcurrentMarkAndSweep::ThreadData::Schedule() noexcept {
+    RuntimeLogInfo({kTagGC}, "Scheduling GC manually");
     ThreadStateGuard guard(ThreadState::kNative);
     gc_.state_.schedule();
 }
 
 void gc::ConcurrentMarkAndSweep::ThreadData::ScheduleAndWaitFullGC() noexcept {
+    RuntimeLogInfo({kTagGC}, "Scheduling GC manually");
     ThreadStateGuard guard(ThreadState::kNative);
     auto scheduled_epoch = gc_.state_.schedule();
     gc_.state_.waitEpochFinished(scheduled_epoch);
 }
 
 void gc::ConcurrentMarkAndSweep::ThreadData::ScheduleAndWaitFullGCWithFinalizers() noexcept {
+    RuntimeLogInfo({kTagGC}, "Scheduling GC manually");
     ThreadStateGuard guard(ThreadState::kNative);
     auto scheduled_epoch = gc_.state_.schedule();
     gc_.state_.waitEpochFinalized(scheduled_epoch);
@@ -115,7 +118,6 @@ gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep(
         state_.finalized(epoch);
     })) {
     gcScheduler_.SetScheduleGC([this]() NO_INLINE {
-        RuntimeLogDebug({kTagGC}, "Scheduling GC by thread %d", konan::currentThreadId());
         // This call acquires a lock, so we need to ensure that we're in the safe state.
         NativeOrUnregisteredThreadGuard guard(/* reentrant = */ true);
         state_.schedule();
