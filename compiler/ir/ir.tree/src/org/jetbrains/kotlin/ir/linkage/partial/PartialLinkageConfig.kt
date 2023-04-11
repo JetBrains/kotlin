@@ -12,7 +12,7 @@ data class PartialLinkageConfig(val mode: PartialLinkageMode, val logLevel: Part
     val isEnabled get() = mode.isEnabled
 
     companion object {
-        val DEFAULT = PartialLinkageConfig(PartialLinkageMode.DEFAULT, PartialLinkageLogLevel.ERROR)
+        val DEFAULT = PartialLinkageConfig(PartialLinkageMode.DISABLE, PartialLinkageLogLevel.ERROR)
 
         val KEY = CompilerConfigurationKey.create<PartialLinkageConfig>("partial linkage configuration")
     }
@@ -23,7 +23,7 @@ enum class PartialLinkageMode(val isEnabled: Boolean) {
     ENABLE(isEnabled = true), DISABLE(isEnabled = false);
 
     companion object {
-        val DEFAULT = DISABLE // TODO: should be changed to `ENABLE` (KT-51447, KT-51443)
+        val DEFAULT = ENABLE
 
         fun resolveMode(key: String): PartialLinkageMode? =
             values().firstOrNull { entry -> key == entry.name.lowercase() }
