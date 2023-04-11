@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.resolve.bindSymbolToLookupTag
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedReferenceError
 import org.jetbrains.kotlin.fir.resolve.providers.getClassDeclaredPropertySymbols
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -209,7 +210,7 @@ private fun fillAnnotationArgumentMapping(
 ) {
     if (annotationArguments.isEmpty()) return
 
-    val annotationClassSymbol = session.symbolProvider.getClassLikeSymbolByClassId(lookupTag.classId).also {
+    val annotationClassSymbol = lookupTag.toSymbol(session).also {
         lookupTag.bindSymbolToLookupTag(session, it)
     }
     val annotationConstructor = (annotationClassSymbol?.fir as FirRegularClass?)

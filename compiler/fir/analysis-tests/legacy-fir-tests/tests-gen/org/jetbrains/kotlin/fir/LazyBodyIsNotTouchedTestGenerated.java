@@ -3107,6 +3107,11 @@ public class LazyBodyIsNotTouchedTestGenerated extends AbstractLazyBodyIsNotTouc
             runTest("compiler/fir/analysis-tests/testData/resolve/localClasses/implicitInLocalClasses.kt");
         }
 
+        @TestMetadata("lambdaWithAnonymousObject.kt")
+        public void testLambdaWithAnonymousObject() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/localClasses/lambdaWithAnonymousObject.kt");
+        }
+
         @TestMetadata("overrideInLocal.kt")
         public void testOverrideInLocal() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/localClasses/overrideInLocal.kt");

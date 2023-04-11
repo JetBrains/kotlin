@@ -3536,6 +3536,12 @@ public class FirPsiDiagnosticTestGenerated extends AbstractFirPsiDiagnosticTest 
             }
 
             @Test
+            @TestMetadata("lambdaWithAnonymousObject.kt")
+            public void testLambdaWithAnonymousObject() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/localClasses/lambdaWithAnonymousObject.kt");
+            }
+
+            @Test
             @TestMetadata("overrideInLocal.kt")
             public void testOverrideInLocal() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/localClasses/overrideInLocal.kt");
