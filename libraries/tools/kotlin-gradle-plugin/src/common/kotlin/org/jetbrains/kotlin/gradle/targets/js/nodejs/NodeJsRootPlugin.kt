@@ -67,20 +67,22 @@ open class NodeJsRootPlugin : Plugin<Project> {
             it.gradleNodeModules.set(gradleNodeModulesProvider)
         }
 
-        val npmInstall = project.registerTask<KotlinNpmInstallTask>(KotlinNpmInstallTask.NAME) {
-            it.dependsOn(setupTask)
-            it.dependsOn(setupFileHasherTask)
-            it.group = TASKS_GROUP_NAME
-            it.description = "Find, download and link NPM dependencies and projects"
+        val npmInstall = project.registerTask<KotlinNpmInstallTask>(KotlinNpmInstallTask.NAME) { npmInstall ->
+            npmInstall.dependsOn(setupTask)
+            npmInstall.dependsOn(setupFileHasherTask)
+            npmInstall.group = TASKS_GROUP_NAME
+            npmInstall.description = "Find, download and link NPM dependencies and projects"
 
-            it.onlyIfCompat("No package.json files for install") { task ->
+            npmInstall.onlyIfCompat("No package.json files for install") { task ->
                 task as KotlinNpmInstallTask
                 task.preparedFiles.all { file ->
                     file.exists()
                 }
             }
 
-            it.doNotTrackStateCompat("NPM package manager track by its own")
+            npmInstall.outputs.upToDateWhen {
+                npmInstall.nodeModules.exists()
+            }
         }
 
         project.registerTask<Task>(PACKAGE_JSON_UMBRELLA_TASK_NAME)
