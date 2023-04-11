@@ -95,7 +95,6 @@ abstract class FirSerializerExtensionBase(
     }
 
     override fun serializeTypeAnnotations(annotations: List<FirAnnotation>, proto: ProtoBuf.Type.Builder) {
-        // TODO support const extraction for type annotations
         annotations.serializeAnnotations(proto, protocol.typeAnnotation)
     }
 

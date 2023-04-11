@@ -27,28 +27,28 @@ import org.jetbrains.kotlin.types.ConstantValueKind
 
 internal fun FirExpression.toConstantValue(session: FirSession, constValueProvider: ConstValueProvider? = null): ConstantValue<*>? {
     constValueProvider?.findConstantValueFor(this)?.let { return it }
-    return accept(FirToConstantValueTransformerUnsafe(constValueProvider), session)
+    return accept(FirToConstantValueTransformerUnsafe(), FirToConstantValueTransformerData(session, constValueProvider))
 }
 
 internal fun FirExpression?.hasConstantValue(session: FirSession): Boolean {
     return this?.accept(FirToConstantValueChecker, session) == true
 }
 
-private class FirToConstantValueTransformerSafe(
-    constValueProvider: ConstValueProvider?
-) : FirToConstantValueTransformer(failOnNonConst = false, constValueProvider)
+private class FirToConstantValueTransformerSafe : FirToConstantValueTransformer(failOnNonConst = false)
 
-private class FirToConstantValueTransformerUnsafe(
-    constValueProvider: ConstValueProvider?
-) : FirToConstantValueTransformer(failOnNonConst = true, constValueProvider)
+private class FirToConstantValueTransformerUnsafe : FirToConstantValueTransformer(failOnNonConst = true)
+
+private data class FirToConstantValueTransformerData(
+    val session: FirSession,
+    val constValueProvider: ConstValueProvider?,
+)
 
 private abstract class FirToConstantValueTransformer(
     private val failOnNonConst: Boolean,
-    private val constValueProvider: ConstValueProvider?
-) : FirDefaultVisitor<ConstantValue<*>?, FirSession>() {
+) : FirDefaultVisitor<ConstantValue<*>?, FirToConstantValueTransformerData>() {
     override fun visitElement(
         element: FirElement,
-        data: FirSession
+        data: FirToConstantValueTransformerData
     ): ConstantValue<*>? {
         if (failOnNonConst) {
             error("Illegal element as annotation argument: ${element::class.qualifiedName} -> ${element.render()}")
@@ -58,7 +58,7 @@ private abstract class FirToConstantValueTransformer(
 
     override fun <T> visitConstExpression(
         constExpression: FirConstExpression<T>,
-        data: FirSession
+        data: FirToConstantValueTransformerData
     ): ConstantValue<*>? {
         val value = constExpression.value
         return when (constExpression.kind) {
@@ -80,7 +80,10 @@ private abstract class FirToConstantValueTransformer(
         }
     }
 
-    override fun visitStringConcatenationCall(stringConcatenationCall: FirStringConcatenationCall, data: FirSession): ConstantValue<*>? {
+    override fun visitStringConcatenationCall(
+        stringConcatenationCall: FirStringConcatenationCall,
+        data: FirToConstantValueTransformerData
+    ): ConstantValue<*>? {
         val strings = stringConcatenationCall.argumentList.arguments.map { it.accept(this, data) }
         if (strings.any { it == null || it !is StringValue }) return null
         return StringValue(strings.joinToString(separator = "") { (it as StringValue).value })
@@ -88,33 +91,33 @@ private abstract class FirToConstantValueTransformer(
 
     override fun visitArrayOfCall(
         arrayOfCall: FirArrayOfCall,
-        data: FirSession
+        data: FirToConstantValueTransformerData
     ): ConstantValue<*> {
         return ArrayValue(arrayOfCall.argumentList.arguments.mapNotNull { it.accept(this, data) })
     }
 
     override fun visitAnnotation(
         annotation: FirAnnotation,
-        data: FirSession
+        data: FirToConstantValueTransformerData
     ): ConstantValue<*> {
-        val mapping = annotation.argumentMapping.mapping.convertToConstantValues(data, constValueProvider)
+        val mapping = annotation.argumentMapping.mapping.convertToConstantValues(data.session, data.constValueProvider)
         return AnnotationValue.create(annotation.annotationTypeRef.coneType, mapping)
     }
 
-    override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: FirSession): ConstantValue<*> {
+    override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: FirToConstantValueTransformerData): ConstantValue<*> {
         return visitAnnotation(annotationCall, data)
     }
 
     override fun visitGetClassCall(
         getClassCall: FirGetClassCall,
-        data: FirSession
+        data: FirToConstantValueTransformerData
     ): ConstantValue<*>? {
         return create(getClassCall.argument.typeRef.coneTypeUnsafe())
     }
 
     override fun visitQualifiedAccessExpression(
         qualifiedAccessExpression: FirQualifiedAccessExpression,
-        data: FirSession
+        data: FirToConstantValueTransformerData
     ): ConstantValue<*>? {
         val symbol = qualifiedAccessExpression.toResolvedCallableSymbol() ?: return null
         val fir = symbol.fir
@@ -139,10 +142,12 @@ private abstract class FirToConstantValueTransformer(
 
             symbol is FirConstructorSymbol -> {
                 val constructorCall = qualifiedAccessExpression as FirFunctionCall
-                val constructedClassSymbol = symbol.containingClassLookupTag()?.toFirRegularClassSymbol(data) ?: return null
+                val constructedClassSymbol = symbol.containingClassLookupTag()?.toFirRegularClassSymbol(data.session) ?: return null
                 if (constructedClassSymbol.classKind != ClassKind.ANNOTATION_CLASS) return null
 
-                val mapping = constructorCall.resolvedArgumentMapping?.convertToConstantValues(data, constValueProvider) ?: return null
+                val mapping = constructorCall.resolvedArgumentMapping
+                    ?.convertToConstantValues(data.session, data.constValueProvider)
+                    ?: return null
                 return AnnotationValue.create(qualifiedAccessExpression.typeRef.coneType, mapping)
             }
 
@@ -174,13 +179,16 @@ private abstract class FirToConstantValueTransformer(
         }
     }
 
-    override fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression, data: FirSession): ConstantValue<*>? {
+    override fun visitPropertyAccessExpression(
+        propertyAccessExpression: FirPropertyAccessExpression,
+        data: FirToConstantValueTransformerData
+    ): ConstantValue<*>? {
         return visitQualifiedAccessExpression(propertyAccessExpression, data)
     }
 
     override fun visitFunctionCall(
         functionCall: FirFunctionCall,
-        data: FirSession
+        data: FirToConstantValueTransformerData
     ): ConstantValue<*>? {
         if (functionCall.isArrayOfCall) {
             return FirArrayOfCallTransformer().transformFunctionCall(functionCall, null).accept(this, data)
@@ -190,12 +198,15 @@ private abstract class FirToConstantValueTransformer(
 
     override fun visitVarargArgumentsExpression(
         varargArgumentsExpression: FirVarargArgumentsExpression,
-        data: FirSession
+        data: FirToConstantValueTransformerData
     ): ConstantValue<*> {
         return ArrayValue(varargArgumentsExpression.arguments.mapNotNull { it.accept(this, data) })
     }
 
-    override fun visitNamedArgumentExpression(namedArgumentExpression: FirNamedArgumentExpression, data: FirSession): ConstantValue<*>? {
+    override fun visitNamedArgumentExpression(
+        namedArgumentExpression: FirNamedArgumentExpression,
+        data: FirToConstantValueTransformerData
+    ): ConstantValue<*>? {
         return namedArgumentExpression.expression.accept(this, data)
     }
 }

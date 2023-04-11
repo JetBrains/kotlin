@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.serialization
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.serialization.constant.ConstValueProviderInternals
 import org.jetbrains.kotlin.fir.serialization.constant.ConstValueProvider
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
@@ -26,6 +27,16 @@ abstract class FirSerializerExtension {
     val annotationSerializer by lazy { FirAnnotationSerializer(session, stringTable, constValueProvider) }
 
     protected abstract val constValueProvider: ConstValueProvider?
+
+    @OptIn(ConstValueProviderInternals::class)
+    internal inline fun <T> processFile(firFile: FirFile, action: () -> T): T {
+        constValueProvider?.processingFirFile = firFile
+        return try {
+            action()
+        } finally {
+            constValueProvider?.processingFirFile = null
+        }
+    }
 
     open fun shouldUseTypeTable(): Boolean = false
     open fun shouldUseNormalizedVisibility(): Boolean = false

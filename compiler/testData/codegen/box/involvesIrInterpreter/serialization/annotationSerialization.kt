@@ -50,17 +50,16 @@ enum class SomeEnum {
     B;
 }
 
-// TODO: can be uncommented after fix KT-57135
-//@field:BinaryAnnotation("Str" + "ing")
-//var x: Int = 5
+@field:BinaryAnnotation("Str" <!EVALUATED("String")!>+ "ing"<!>)
+var x: Int = 5
 
-//object Delegate {
-//    operator fun getValue(instance: Any?, property: Any) : String = ""
-//    operator fun setValue(instance: Any?, property: Any, value: String) {}
-//}
-//
-//@delegate:BinaryAnnotation("Str" + "ing")
-//val p: String by Delegate
+object Delegate {
+    operator fun getValue(instance: Any?, property: Any) : String = ""
+    operator fun setValue(instance: Any?, property: Any, value: String) {}
+}
+
+@delegate:BinaryAnnotation("Str" <!EVALUATED("String")!>+ "ing"<!>)
+val p: String by Delegate
 
 
 // 7. VALUE_PARAMETER
@@ -69,6 +68,19 @@ fun foo(@BinaryAnnotation("Str" <!EVALUATED("String")!>+ "ing"<!>) a: Int) {  }
 
 val @receiver:BinaryAnnotation("Str" <!EVALUATED("String")!>+ "ing"<!>) String.a: Int
     get() = 0
+
+class WithConstructorArgumentAnnotation(
+    @BinaryAnnotation("Str" <!EVALUATED("String")!>+ "ing"<!>)
+    val a: Int
+)
+
+@setparam:BinaryAnnotation("Str" <!EVALUATED("String")!>+ "ing"<!>)
+var setParamProp: Int = 0
+    get() = field + 1
+    set(x: Int) { field = x * 2 }
+
+var mutablePropWithAnnotationOnSetterParam = 0
+    set(@BinaryAnnotation("Str" <!EVALUATED("String")!>+ "ing"<!>) x: Int) { field = x * 2 }
 
 // 9. FUNCTION
 @BinaryAnnotation("Str" <!EVALUATED("String")!>+ "ing"<!>)

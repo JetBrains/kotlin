@@ -8,8 +8,9 @@ package org.jetbrains.kotlin.constant
 import java.util.concurrent.ConcurrentHashMap
 
 abstract class EvaluatedConstTracker {
-    abstract fun save(start: Int, end: Int, constant: ConstantValue<*>)
-    abstract fun load(start: Int, end: Int): ConstantValue<*>?
+    abstract fun save(start: Int, end: Int, file: String, constant: ConstantValue<*>)
+    abstract fun load(start: Int, end: Int, file: String): ConstantValue<*>?
+    abstract fun load(file: String): Map<Pair<Int, Int>, ConstantValue<*>>?
 
     companion object {
         /**
@@ -24,14 +25,20 @@ abstract class EvaluatedConstTracker {
 }
 
 private class DefaultEvaluatedConstTracker : EvaluatedConstTracker() {
-    private val storage = ConcurrentHashMap<Pair<Int, Int>, ConstantValue<*>>()
+    private val storage = ConcurrentHashMap<String, ConcurrentHashMap<Pair<Int, Int>, ConstantValue<*>>>()
 
-    override fun save(start: Int, end: Int, constant: ConstantValue<*>) {
-        storage[start to end] = constant
+    override fun save(start: Int, end: Int, file: String, constant: ConstantValue<*>) {
+        storage
+            .getOrPut(file) { ConcurrentHashMap() }
+            .let { it[start to end] = constant }
     }
 
-    override fun load(start: Int, end: Int): ConstantValue<*>? {
-        return storage[start to end]
+    override fun load(start: Int, end: Int, file: String): ConstantValue<*>? {
+        return storage[file]?.get(start to end)
+    }
+
+    override fun load(file: String): Map<Pair<Int, Int>, ConstantValue<*>>? {
+        return storage[file]
     }
 }
 

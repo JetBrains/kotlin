@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.interpreter.isPrimitiveArray
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.name.Name
 import kotlin.math.max
 import kotlin.math.min
 
@@ -76,7 +77,7 @@ class IrConstTransformer(
         }
 
         evaluatedConstTracker?.save(
-            result.startOffset, result.endOffset,
+            result.startOffset, result.endOffset, irFile.fqName.child(Name.identifier(irFile.name)).asString(),
             constant = if (result is IrErrorExpression) ErrorValue.create(result.description)
             else (result as IrConst<*>).toConstantValue()
         )

@@ -46,7 +46,7 @@ fun serializeSingleFirFile(
             }
     }
 
-    val classesProto = file.declarations.makeClassesProtoWithNested()
+    val classesProto = serializerExtension.processFile(file) { file.declarations.makeClassesProtoWithNested() }
 
     val hasTopLevelDeclarations = file.declarations.any {
         it is FirMemberDeclaration && it.shouldBeSerialized(actualizedExpectDeclarations) &&

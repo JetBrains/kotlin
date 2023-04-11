@@ -94,8 +94,10 @@ class FirElementSerializer private constructor(
         }
 
         for (file in files) {
-            for (declaration in file.declarations) {
-                addDeclaration(declaration) {}
+            extension.processFile(file) {
+                for (declaration in file.declarations) {
+                    addDeclaration(declaration) {}
+                }
             }
         }
 

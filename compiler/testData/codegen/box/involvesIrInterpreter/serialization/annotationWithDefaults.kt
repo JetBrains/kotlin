@@ -7,7 +7,7 @@
 
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
-annotation class AnnotationWithDefault(val str: String = "Str" + "ing")
+annotation class AnnotationWithDefault(val str: String = "Str" <!EVALUATED("String")!>+ "ing"<!>)
 
 @AnnotationWithDefault()
 class A
