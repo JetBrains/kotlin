@@ -96,3 +96,16 @@ fun functionWithTypeAliasInside(x: NotExportedTypeAlias): NotExportedTypeAlias {
 
 @JsExport
 class TheNewException: Throwable()
+
+// Recursive definition KT-57356
+@JsExport
+interface Service<Self : Service<Self, TEvent>, in TEvent : Event<Self>>
+
+@JsExport
+interface Event<out TService : Service<out TService, *>>
+
+class SomeService : Service<SomeService, SomeEvent>
+class SomeEvent : Event<SomeService>
+
+@JsExport
+class SomeServiceRequest : Service<SomeService, SomeEvent>

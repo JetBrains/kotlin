@@ -549,12 +549,16 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
         )
     }
 
+    private val currentlyProcessedTypes = hashSetOf<IrType>()
+
     private fun exportType(type: IrType, shouldCalculateExportedSupertypeForImplicit: Boolean = true): ExportedType {
-        if (type is IrDynamicType)
+        if (type is IrDynamicType || type in currentlyProcessedTypes)
             return ExportedType.Primitive.Any
 
         if (type !is IrSimpleType)
             return ExportedType.ErrorType("NonSimpleType ${type.render()}")
+
+        currentlyProcessedTypes.add(type)
 
         val classifier = type.classifier
         val isMarkedNullable = type.isMarkedNullable()
@@ -625,6 +629,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
         }
 
         return exportedType.withNullability(isMarkedNullable)
+            .also { currentlyProcessedTypes.remove(type) }
     }
 
     private fun IrDeclarationWithName.getExportedIdentifier(): String =
