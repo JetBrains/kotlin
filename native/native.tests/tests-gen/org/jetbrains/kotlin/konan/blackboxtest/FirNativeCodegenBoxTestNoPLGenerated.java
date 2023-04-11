@@ -8445,6 +8445,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             }
 
             @Test
+            @TestMetadata("inlineCallWithReturns.kt")
+            public void testInlineCallWithReturns() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/inlineCallWithReturns.kt");
+            }
+
+            @Test
             @TestMetadata("inlineFunInGenericClass.kt")
             public void testInlineFunInGenericClass() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/inlineFunInGenericClass.kt");
