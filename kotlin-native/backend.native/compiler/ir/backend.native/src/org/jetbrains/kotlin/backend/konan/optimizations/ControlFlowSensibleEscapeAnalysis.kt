@@ -1918,6 +1918,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
             val function = callGraphNode.symbol.irFunction!!
             if (function.body == null) return true
 
+            // TODO: Use these maps or remove.
             val producerInvocations = mutableMapOf<IrExpression, IrCall>()
             val jobInvocations = mutableMapOf<IrCall, IrCall>()
             val devirtualizedCallSites = mutableMapOf<IrCall, MutableList<IrFunctionSymbol>>()
