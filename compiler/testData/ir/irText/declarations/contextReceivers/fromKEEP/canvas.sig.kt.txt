@@ -8,8 +8,7 @@ class Circle : Shape {
   constructor() /* primary */
 
   // CHECK JVM_IR:
-  //   Mangled name computed from Ir:         Circle#draw(Canvas){}kotlin.String
-  //   Mangled name computed from Descriptor: Circle#draw!Canvas(){}kotlin.String
+  //   Mangled name: Circle#draw!Canvas(){}kotlin.String
   //   Public signature: /Circle.draw|-6733499063990640842[0]
   override fun draw($context_receiver_0: Canvas): String
 
@@ -37,8 +36,7 @@ interface Canvas {
 interface Shape {
 
   // CHECK JVM_IR:
-  //   Mangled name computed from Ir:         Shape#draw(Canvas){}kotlin.String
-  //   Mangled name computed from Descriptor: Shape#draw!Canvas(){}kotlin.String
+  //   Mangled name: Shape#draw!Canvas(){}kotlin.String
   //   Public signature: /Shape.draw|-6733499063990640842[0]
   abstract fun draw($context_receiver_0: Canvas): String
 

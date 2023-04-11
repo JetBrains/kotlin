@@ -104,8 +104,7 @@ class CounterIterator : Iterator<Int> {
     private get
 
   // CHECK:
-  //   Mangled name computed from Ir:         CounterIterator#<init>(CounterConfig;Counter){}
-  //   Mangled name computed from Descriptor: CounterIterator#<init>!CounterConfig(Counter){}
+  //   Mangled name: CounterIterator#<init>!CounterConfig(Counter){}
   //   Public signature: /CounterIterator.<init>|4731448293962665986[0]
   constructor($context_receiver_0: CounterConfig, counter: Counter) /* primary */
   // CHECK:
@@ -131,8 +130,7 @@ class CounterIterator : Iterator<Int> {
 fun box(): String
 
 // CHECK JVM_IR:
-//   Mangled name computed from Ir:         #iterator@Counter(CounterConfig){}CounterIterator
-//   Mangled name computed from Descriptor: #iterator!CounterConfig@Counter(){}CounterIterator
+//   Mangled name: #iterator!CounterConfig@Counter(){}CounterIterator
 //   Public signature: /iterator|3723033021471264185[0]
 operator fun Counter.iterator($context_receiver_0: CounterConfig): CounterIterator
 

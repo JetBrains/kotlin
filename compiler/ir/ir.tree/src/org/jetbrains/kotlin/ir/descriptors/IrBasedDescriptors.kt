@@ -396,10 +396,27 @@ open class IrBasedVariableDescriptorWithAccessor(owner: IrLocalDelegatedProperty
 
 fun IrLocalDelegatedProperty.toIrBasedDescriptor() = IrBasedVariableDescriptorWithAccessor(this)
 
+abstract class IrBasedFunctionDescriptor<Function : IrFunction>(owner: Function) : IrBasedCallableDescriptor<Function>(owner) {
+
+    override fun getExtensionReceiverParameter() = owner.extensionReceiverParameter?.toIrBasedDescriptor() as? ReceiverParameterDescriptor
+
+    override fun getContextReceiverParameters() = owner.valueParameters
+        .asSequence()
+        .take(owner.contextReceiverParametersCount)
+        .map(::IrBasedReceiverParameterDescriptor)
+        .toMutableList()
+
+    override fun getValueParameters() = owner.valueParameters
+        .asSequence()
+        .drop(owner.contextReceiverParametersCount)
+        .map(::IrBasedValueParameterDescriptor)
+        .toMutableList()
+}
+
 // We make all IR-based function descriptors instances of DescriptorWithContainerSource, and use .parentClassId to
 // check whether declaration is deserialized. See IrInlineCodegen.descriptorIsDeserialized
 open class IrBasedSimpleFunctionDescriptor(owner: IrSimpleFunction) : SimpleFunctionDescriptor, DescriptorWithContainerSource,
-    IrBasedCallableDescriptor<IrSimpleFunction>(owner) {
+    IrBasedFunctionDescriptor<IrSimpleFunction>(owner) {
 
     override fun getOverriddenDescriptors(): List<FunctionDescriptor> = owner.overriddenSymbols.memoryOptimizedMap { it.owner.toIrBasedDescriptor() }
 
@@ -412,12 +429,7 @@ open class IrBasedSimpleFunctionDescriptor(owner: IrSimpleFunction) : SimpleFunc
         (containingDeclaration as ClassDescriptor).thisAsReceiverParameter
     }
 
-    override fun getExtensionReceiverParameter() = owner.extensionReceiverParameter?.toIrBasedDescriptor() as? ReceiverParameterDescriptor
     override fun getTypeParameters() = owner.typeParameters.memoryOptimizedMap { it.toIrBasedDescriptor() }
-    override fun getValueParameters() = owner.valueParameters
-        .asSequence()
-        .mapNotNull { it.toIrBasedDescriptor() as? ValueParameterDescriptor }
-        .toMutableList()
 
     override fun isExternal() = owner.isExternal
     override fun isSuspend() = owner.isSuspend
@@ -482,7 +494,7 @@ fun IrSimpleFunction.toIrBasedDescriptor() =
     }
 
 open class IrBasedClassConstructorDescriptor(owner: IrConstructor) : ClassConstructorDescriptor,
-    IrBasedCallableDescriptor<IrConstructor>(owner) {
+    IrBasedFunctionDescriptor<IrConstructor>(owner) {
     override fun getContainingDeclaration() = (owner.parent as IrClass).toIrBasedDescriptor()
 
     override fun getDispatchReceiverParameter() = owner.dispatchReceiverParameter?.run {
@@ -491,10 +503,6 @@ open class IrBasedClassConstructorDescriptor(owner: IrConstructor) : ClassConstr
 
     override fun getTypeParameters() =
         (owner.constructedClass.typeParameters + owner.typeParameters).memoryOptimizedMap { it.toIrBasedDescriptor() }
-
-    override fun getValueParameters() = owner.valueParameters.asSequence()
-        .mapNotNull { it.toIrBasedDescriptor() as? ValueParameterDescriptor }
-        .toMutableList()
 
     override fun getOriginal() = this
 

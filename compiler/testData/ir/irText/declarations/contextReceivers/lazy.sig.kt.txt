@@ -45,20 +45,17 @@ fun <T : Any?> f(lazy1: Lazy<Int>, lazy2: Lazy<CharSequence>, lazyT: Lazy<T>, la
     local fun Lazy<Lazy<T>>.<anonymous>(): Unit
 
 // CHECK:
-//   Mangled name computed from Ir:         #test1(Lazy<kotlin.Int>;Lazy<kotlin.CharSequence>){}
-//   Mangled name computed from Descriptor: #test1!Lazy<kotlin.Int>!Lazy<kotlin.CharSequence>(){}
+//   Mangled name: #test1!Lazy<kotlin.Int>!Lazy<kotlin.CharSequence>(){}
 //   Public signature: /test1|5140438532469983470[0]
 fun test1($context_receiver_0: Lazy<Int>, $context_receiver_1: Lazy<CharSequence>): Unit
 
 // CHECK:
-//   Mangled name computed from Ir:         #test2@Lazy<kotlin.Int>(Lazy<0:0>){0§<kotlin.Any?>}
-//   Mangled name computed from Descriptor: #test2!Lazy<0:0>@Lazy<kotlin.Int>(){0§<kotlin.Any?>}
+//   Mangled name: #test2!Lazy<0:0>@Lazy<kotlin.Int>(){0§<kotlin.Any?>}
 //   Public signature: /test2|-2502875315769862011[0]
 fun <T : Any?> Lazy<Int>.test2($context_receiver_0: Lazy<T>): Unit
 
 // CHECK:
-//   Mangled name computed from Ir:         #test3@Lazy<kotlin.Int>(Lazy<Lazy<0:0>>){0§<kotlin.Any?>}
-//   Mangled name computed from Descriptor: #test3!Lazy<Lazy<0:0>>@Lazy<kotlin.Int>(){0§<kotlin.Any?>}
+//   Mangled name: #test3!Lazy<Lazy<0:0>>@Lazy<kotlin.Int>(){0§<kotlin.Any?>}
 //   Public signature: /test3|-745136432920564509[0]
 fun <T : Any?> Lazy<Int>.test3($context_receiver_0: Lazy<Lazy<T>>): Unit
 

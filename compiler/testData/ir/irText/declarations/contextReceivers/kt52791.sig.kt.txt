@@ -3,17 +3,22 @@
 //   Public signature: /MyClass|null[0]
 class MyClass {
   // CHECK:
-  //   Mangled name computed from Ir:         MyClass#<init>(kotlin.Unit;kotlin.Int){}
-  //   Mangled name computed from Descriptor: MyClass#<init>!kotlin.Unit!kotlin.Int(){}
+  //   Mangled name: MyClass#<init>!kotlin.Unit!kotlin.Int(){}
   //   Public signature: /MyClass.<init>|1062323742830185042[0]
   constructor($context_receiver_0: Unit, $context_receiver_1: Int) /* primary */
-  // CHECK:
+  // CHECK JVM_IR:
   //   Mangled name computed from Ir:         MyClass.contextReceiverField0
   //   Mangled name computed from Descriptor: MyClass{}contextReceiverField0#jf
+  // CHECK JS_IR NATIVE:
+  //   Mangled name computed from Ir:         MyClass.contextReceiverField0
+  //   Mangled name computed from Descriptor: MyClass{}contextReceiverField0
   private /* final field */ val contextReceiverField0: Unit
-  // CHECK:
+  // CHECK JVM_IR:
   //   Mangled name computed from Ir:         MyClass.contextReceiverField1
   //   Mangled name computed from Descriptor: MyClass{}contextReceiverField1#jf
+  // CHECK JS_IR NATIVE:
+  //   Mangled name computed from Ir:         MyClass.contextReceiverField1
+  //   Mangled name computed from Descriptor: MyClass{}contextReceiverField1
   private /* final field */ val contextReceiverField1: Int
 
 }

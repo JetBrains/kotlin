@@ -10,8 +10,7 @@ fun test(): Unit
     local fun <anonymous>(i: Int): Unit
 
 // CHECK:
-//   Mangled name computed from Ir:         #useContext(0:0;kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}
-//   Mangled name computed from Descriptor: #useContext!0:0(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}
+//   Mangled name: #useContext!0:0(kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}
 //   Public signature: /useContext|4354708628570086942[0]
 fun <T : Any?> useContext($context_receiver_0: T, block: Function1<T, Unit>): Unit
 

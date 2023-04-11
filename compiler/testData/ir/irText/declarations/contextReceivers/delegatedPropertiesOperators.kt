@@ -2,9 +2,6 @@
 // IGNORE_BACKEND: JS_IR
 // WITH_STDLIB
 
-// MUTE_SIGNATURE_COMPARISON_K2: ANY
-// ^ KT-57435
-
 import kotlin.reflect.KProperty
 
 var operationScore = 0

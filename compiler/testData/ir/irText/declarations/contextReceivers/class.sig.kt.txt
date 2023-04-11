@@ -3,8 +3,7 @@
 //   Public signature: /Inner|null[0]
 class Inner {
   // CHECK:
-  //   Mangled name computed from Ir:         Inner#<init>(Outer;kotlin.Any){}
-  //   Mangled name computed from Descriptor: Inner#<init>!Outer(kotlin.Any){}
+  //   Mangled name: Inner#<init>!Outer(kotlin.Any){}
   //   Public signature: /Inner.<init>|7428094623108856579[0]
   constructor($context_receiver_0: Outer, arg: Any) /* primary */
   // CHECK:

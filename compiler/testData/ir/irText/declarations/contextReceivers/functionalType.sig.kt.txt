@@ -50,26 +50,22 @@ class R {
 }
 
 // CHECK:
-//   Mangled name computed from Ir:         #f1@R(C;kotlin.Function3<C,R,Param,kotlin.Unit>){}
-//   Mangled name computed from Descriptor: #f1!C@R(kotlin.Function3<C,R,Param,kotlin.Unit>){}
+//   Mangled name: #f1!C@R(kotlin.Function3<C,R,Param,kotlin.Unit>){}
 //   Public signature: /f1|-6159499595952586733[0]
 fun R.f1($context_receiver_0: C, g: @ExtensionFunctionType Function3<C, R, Param, Unit>): Unit
 
 // CHECK:
-//   Mangled name computed from Ir:         #f2(C;kotlin.Function2<C,Param,kotlin.Unit>){}
-//   Mangled name computed from Descriptor: #f2!C(kotlin.Function2<C,Param,kotlin.Unit>){}
+//   Mangled name: #f2!C(kotlin.Function2<C,Param,kotlin.Unit>){}
 //   Public signature: /f2|916795325728250836[0]
 fun f2($context_receiver_0: C, g: Function2<C, Param, Unit>): Unit
 
 // CHECK:
-//   Mangled name computed from Ir:         #f3@R(C;kotlin.Function2<C,R,kotlin.Unit>){}
-//   Mangled name computed from Descriptor: #f3!C@R(kotlin.Function2<C,R,kotlin.Unit>){}
+//   Mangled name: #f3!C@R(kotlin.Function2<C,R,kotlin.Unit>){}
 //   Public signature: /f3|-4964362597990757320[0]
 fun R.f3($context_receiver_0: C, g: @ExtensionFunctionType Function2<C, R, Unit>): Unit
 
 // CHECK:
-//   Mangled name computed from Ir:         #f4(C;kotlin.Function1<C,kotlin.Unit>){}
-//   Mangled name computed from Descriptor: #f4!C(kotlin.Function1<C,kotlin.Unit>){}
+//   Mangled name: #f4!C(kotlin.Function1<C,kotlin.Unit>){}
 //   Public signature: /f4|-1495265522536685659[0]
 fun f4($context_receiver_0: C, g: Function1<C, Unit>): Unit
 

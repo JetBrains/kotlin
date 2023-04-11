@@ -112,6 +112,11 @@ open class FirMangleComputer(
             builder.appendSignature(MangleConstant.STATIC_MEMBER_MARK)
         }
 
+        val contextReceivers = when (this) {
+            is FirPropertyAccessor -> propertySymbol.fir.contextReceivers
+            else -> this.contextReceivers
+        }
+
         contextReceivers.forEach {
             builder.appendSignature(MangleConstant.CONTEXT_RECEIVER_PREFIX)
             mangleType(builder, it.typeRef.coneType, moduleData.session)

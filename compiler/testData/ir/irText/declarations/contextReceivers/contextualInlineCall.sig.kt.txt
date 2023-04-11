@@ -40,32 +40,27 @@ class Context {
 fun box(): String
 
 // CHECK JVM_IR:
-//   Mangled name computed from Ir:         #testInline(Context){}kotlin.Int
-//   Mangled name computed from Descriptor: #testInline!Context(){}kotlin.Int
+//   Mangled name: #testInline!Context(){}kotlin.Int
 //   Public signature: /testInline|2700554304824268037[0]
 inline fun testInline($context_receiver_0: Context): Int
 
 // CHECK JVM_IR:
-//   Mangled name computed from Ir:         #testInlineWithArg(Context;kotlin.Int){}kotlin.Int
-//   Mangled name computed from Descriptor: #testInlineWithArg!Context(kotlin.Int){}kotlin.Int
+//   Mangled name: #testInlineWithArg!Context(kotlin.Int){}kotlin.Int
 //   Public signature: /testInlineWithArg|9204994988875814257[0]
 inline fun testInlineWithArg($context_receiver_0: Context, i: Int): Int
 
 // CHECK JVM_IR:
-//   Mangled name computed from Ir:         #testInlineWithExtensionAndArg@kotlin.Int(Context;kotlin.Int){}kotlin.Int
-//   Mangled name computed from Descriptor: #testInlineWithExtensionAndArg!Context@kotlin.Int(kotlin.Int){}kotlin.Int
+//   Mangled name: #testInlineWithExtensionAndArg!Context@kotlin.Int(kotlin.Int){}kotlin.Int
 //   Public signature: /testInlineWithExtensionAndArg|-7753885706218316674[0]
 inline fun Int.testInlineWithExtensionAndArg($context_receiver_0: Context, i: Int): Int
 
 // CHECK JVM_IR:
-//   Mangled name computed from Ir:         #testInlineWithExtensionAndMultipleArgs@kotlin.Int(Context;kotlin.Int;kotlin.Int){}kotlin.Int
-//   Mangled name computed from Descriptor: #testInlineWithExtensionAndMultipleArgs!Context@kotlin.Int(kotlin.Int;kotlin.Int){}kotlin.Int
+//   Mangled name: #testInlineWithExtensionAndMultipleArgs!Context@kotlin.Int(kotlin.Int;kotlin.Int){}kotlin.Int
 //   Public signature: /testInlineWithExtensionAndMultipleArgs|6839067967550411636[0]
 inline fun Int.testInlineWithExtensionAndMultipleArgs($context_receiver_0: Context, i1: Int, i2: Int): Int
 
 // CHECK JVM_IR:
-//   Mangled name computed from Ir:         #testInlineWithExtensionAndMultipleContextsAndArgs@kotlin.Int(Context;A;kotlin.Int;kotlin.Int){}kotlin.Int
-//   Mangled name computed from Descriptor: #testInlineWithExtensionAndMultipleContextsAndArgs!Context!A@kotlin.Int(kotlin.Int;kotlin.Int){}kotlin.Int
+//   Mangled name: #testInlineWithExtensionAndMultipleContextsAndArgs!Context!A@kotlin.Int(kotlin.Int;kotlin.Int){}kotlin.Int
 //   Public signature: /testInlineWithExtensionAndMultipleContextsAndArgs|4315160499148454711[0]
 inline fun Int.testInlineWithExtensionAndMultipleContextsAndArgs($context_receiver_0: Context, $context_receiver_1: A, i1: Int, i2: Int): Int
 

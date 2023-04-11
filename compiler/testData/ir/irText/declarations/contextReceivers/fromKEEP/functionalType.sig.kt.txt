@@ -55,8 +55,7 @@ class Param {
 fun box(): String
 
 // CHECK JVM_IR:
-//   Mangled name computed from Ir:         #f@K(O;kotlin.Function3<O,K,Param,0:0>){0§<kotlin.Any?>}0:0
-//   Mangled name computed from Descriptor: #f!O@K(kotlin.Function3<O,K,Param,0:0>){0§<kotlin.Any?>}0:0
+//   Mangled name: #f!O@K(kotlin.Function3<O,K,Param,0:0>){0§<kotlin.Any?>}0:0
 //   Public signature: /f|-7653040485655702379[0]
 fun <T : Any?> K.f($context_receiver_0: O, g: @ExtensionFunctionType Function3<O, K, Param, T>): T
 

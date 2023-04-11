@@ -1,10 +1,5 @@
 // FIR_IDENTICAL
 // !LANGUAGE: +ContextReceivers
-// IGNORE_BACKEND_K1: JS_IR
-// IGNORE_BACKEND_K1: JS_IR_ES6
-
-// MUTE_SIGNATURE_COMPARISON_K2: ANY
-// ^ KT-57435
 
 class Context {
     fun foo() = 1

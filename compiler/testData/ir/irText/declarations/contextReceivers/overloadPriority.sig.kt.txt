@@ -10,8 +10,7 @@ class Context {
 }
 
 // CHECK JVM_IR:
-//   Mangled name computed from Ir:         #f(Context){}kotlin.String
-//   Mangled name computed from Descriptor: #f!Context(){}kotlin.String
+//   Mangled name: #f!Context(){}kotlin.String
 //   Public signature: /f|-5175802051654911360[0]
 fun f($context_receiver_0: Context): String
 

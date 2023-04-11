@@ -34,14 +34,12 @@ class Delegate {
   constructor() /* primary */
 
   // CHECK JVM_IR:
-  //   Mangled name computed from Ir:         Delegate#getValue(kotlin.Int;kotlin.Any?;kotlin.reflect.KProperty<*>){}kotlin.String
-  //   Mangled name computed from Descriptor: Delegate#getValue!kotlin.Int(kotlin.Any?;kotlin.reflect.KProperty<*>){}kotlin.String
+  //   Mangled name: Delegate#getValue!kotlin.Int(kotlin.Any?;kotlin.reflect.KProperty<*>){}kotlin.String
   //   Public signature: /Delegate.getValue|-7764345795816801347[0]
   operator fun getValue($context_receiver_0: Int, thisRef: Any?, property: KProperty<*>): String
 
   // CHECK:
-  //   Mangled name computed from Ir:         Delegate#setValue(kotlin.Int;kotlin.Any?;kotlin.reflect.KProperty<*>;kotlin.String){}
-  //   Mangled name computed from Descriptor: Delegate#setValue!kotlin.Int(kotlin.Any?;kotlin.reflect.KProperty<*>;kotlin.String){}
+  //   Mangled name: Delegate#setValue!kotlin.Int(kotlin.Any?;kotlin.reflect.KProperty<*>;kotlin.String){}
   //   Public signature: /Delegate.setValue|9105212648373628088[0]
   operator fun setValue($context_receiver_0: Int, thisRef: Any?, property: KProperty<*>, value: String): Unit
 
@@ -65,8 +63,7 @@ class Result {
     set(<set-?>: String): Unit
 
   // CHECK:
-  //   Mangled name computed from Ir:         Result#<init>(kotlin.Int){}
-  //   Mangled name computed from Descriptor: Result#<init>!kotlin.Int(){}
+  //   Mangled name: Result#<init>!kotlin.Int(){}
   //   Public signature: /Result.<init>|-1392650824251324893[0]
   constructor($context_receiver_0: Int) /* primary */
   // CHECK:

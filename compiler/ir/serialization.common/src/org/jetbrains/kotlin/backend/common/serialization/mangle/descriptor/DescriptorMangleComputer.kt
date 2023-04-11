@@ -78,7 +78,7 @@ open class DescriptorMangleComputer(builder: StringBuilder, mode: MangleMode) :
 
         contextReceiverParameters.forEach {
             builder.appendSignature(MangleConstant.CONTEXT_RECEIVER_PREFIX)
-            mangleContextReceiverParameter(builder, it)
+            mangleType(builder, it.type, null)
         }
 
         extensionReceiverParameter?.let {
@@ -103,10 +103,6 @@ open class DescriptorMangleComputer(builder: StringBuilder, mode: MangleMode) :
             builder.appendSignature(MangleConstant.PLATFORM_FUNCTION_MARKER)
             builder.appendSignature(it)
         }
-    }
-
-    private fun mangleContextReceiverParameter(vpBuilder: StringBuilder, param: ReceiverParameterDescriptor) {
-        mangleType(vpBuilder, param.type, null)
     }
 
     private fun mangleExtensionReceiverParameter(vpBuilder: StringBuilder, param: ReceiverParameterDescriptor) {

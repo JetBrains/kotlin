@@ -65,20 +65,17 @@ data class MyContainer {
 fun box(): String
 
 // CHECK JVM_IR:
-//   Mangled name computed from Ir:         #get@MyContainer(kotlin.Int;kotlin.Int){}kotlin.Int
-//   Mangled name computed from Descriptor: #get!kotlin.Int@MyContainer(kotlin.Int){}kotlin.Int
+//   Mangled name: #get!kotlin.Int@MyContainer(kotlin.Int){}kotlin.Int
 //   Public signature: /get|-3979760669169671321[0]
 operator fun MyContainer.get($context_receiver_0: Int, index: Int): Int
 
 // CHECK JVM_IR:
-//   Mangled name computed from Ir:         #inc@MyContainer(kotlin.Int){}MyContainer
-//   Mangled name computed from Descriptor: #inc!kotlin.Int@MyContainer(){}MyContainer
+//   Mangled name: #inc!kotlin.Int@MyContainer(){}MyContainer
 //   Public signature: /inc|-8228731243470619532[0]
 operator fun MyContainer.inc($context_receiver_0: Int): MyContainer
 
 // CHECK:
-//   Mangled name computed from Ir:         #plusAssign@MyContainer(kotlin.Int;MyContainer){}
-//   Mangled name computed from Descriptor: #plusAssign!kotlin.Int@MyContainer(MyContainer){}
+//   Mangled name: #plusAssign!kotlin.Int@MyContainer(MyContainer){}
 //   Public signature: /plusAssign|677104996565540010[0]
 operator fun MyContainer.plusAssign($context_receiver_0: Int, other: MyContainer): Unit
 

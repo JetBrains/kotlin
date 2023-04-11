@@ -22,8 +22,7 @@ interface NumberOperations {
 }
 
 // CHECK JVM_IR:
-//   Mangled name computed from Ir:         #plus@Matrix(NumberOperations;Matrix){}Matrix
-//   Mangled name computed from Descriptor: #plus!NumberOperations@Matrix(Matrix){}Matrix
+//   Mangled name: #plus!NumberOperations@Matrix(Matrix){}Matrix
 //   Public signature: /plus|1303343764214809933[0]
 fun Matrix.plus($context_receiver_0: NumberOperations, other: Matrix): Matrix
 

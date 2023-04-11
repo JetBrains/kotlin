@@ -3,8 +3,7 @@
 //   Public signature: /A|null[0]
 class A<T : Any?> {
   // CHECK:
-  //   Mangled name computed from Ir:         A#<init>(1:0){}
-  //   Mangled name computed from Descriptor: A#<init>!1:0(){}
+  //   Mangled name: A#<init>!1:0(){}
   //   Public signature: /A.<init>|5547349096232763669[0]
   constructor($context_receiver_0: T) /* primary */
   // CHECK:
@@ -19,8 +18,7 @@ class A<T : Any?> {
 //   Public signature: /B|null[0]
 class B<P : Any?> {
   // CHECK:
-  //   Mangled name computed from Ir:         B#<init>(kotlin.collections.Collection<1:0>){}
-  //   Mangled name computed from Descriptor: B#<init>!kotlin.collections.Collection<1:0>(){}
+  //   Mangled name: B#<init>!kotlin.collections.Collection<1:0>(){}
   //   Public signature: /B.<init>|-5453957848603821578[0]
   constructor($context_receiver_0: Collection<P>) /* primary */
   // CHECK:

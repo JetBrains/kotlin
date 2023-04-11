@@ -59,8 +59,7 @@ class C {
 }
 
 // CHECK:
-//   Mangled name computed from Ir:         #f(A<kotlin.Int>;A<kotlin.String>;B){}
-//   Mangled name computed from Descriptor: #f!A<kotlin.Int>!A<kotlin.String>!B(){}
+//   Mangled name: #f!A<kotlin.Int>!A<kotlin.String>!B(){}
 //   Public signature: /f|-2471136927765483161[0]
 fun f($context_receiver_0: A<Int>, $context_receiver_1: A<String>, $context_receiver_2: B): Unit
 
@@ -69,8 +68,7 @@ fun f($context_receiver_0: A<Int>, $context_receiver_1: A<String>, $context_rece
 //   Public signature: /p|-5429013048289439414[0]
 val C.p: Int
   // CHECK JVM_IR:
-  //   Mangled name computed from Ir:         #<get-p>@C(A<kotlin.Int>;A<kotlin.String>;B){}kotlin.Int
-  //   Mangled name computed from Descriptor: #<get-p>!A<kotlin.Int>!A<kotlin.String>!B@C(){}kotlin.Int
+  //   Mangled name: #<get-p>!A<kotlin.Int>!A<kotlin.String>!B@C(){}kotlin.Int
   //   Public signature: /p.<get-p>|-7725362510645392909[0]
   get($context_receiver_0: A<Int>, $context_receiver_1: A<String>, $context_receiver_2: B): Int
 

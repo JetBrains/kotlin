@@ -61,26 +61,22 @@ data class Result {
 fun box(): String
 
 // CHECK JVM_IR:
-//   Mangled name computed from Ir:         #dec@Result(kotlin.Int){}Result
-//   Mangled name computed from Descriptor: #dec!kotlin.Int@Result(){}Result
+//   Mangled name: #dec!kotlin.Int@Result(){}Result
 //   Public signature: /dec|6054584114651390969[0]
 operator fun Result.dec($context_receiver_0: Int): Result
 
 // CHECK JVM_IR:
-//   Mangled name computed from Ir:         #inc@Result(kotlin.Int){}Result
-//   Mangled name computed from Descriptor: #inc!kotlin.Int@Result(){}Result
+//   Mangled name: #inc!kotlin.Int@Result(){}Result
 //   Public signature: /inc|-6349683016158919485[0]
 operator fun Result.inc($context_receiver_0: Int): Result
 
 // CHECK JVM_IR:
-//   Mangled name computed from Ir:         #unaryMinus@Result(kotlin.Int){}Result
-//   Mangled name computed from Descriptor: #unaryMinus!kotlin.Int@Result(){}Result
+//   Mangled name: #unaryMinus!kotlin.Int@Result(){}Result
 //   Public signature: /unaryMinus|-8891797954767898088[0]
 operator fun Result.unaryMinus($context_receiver_0: Int): Result
 
 // CHECK JVM_IR:
-//   Mangled name computed from Ir:         #unaryPlus@Result(kotlin.Int){}Result
-//   Mangled name computed from Descriptor: #unaryPlus!kotlin.Int@Result(){}Result
+//   Mangled name: #unaryPlus!kotlin.Int@Result(){}Result
 //   Public signature: /unaryPlus|6329022242309077522[0]
 operator fun Result.unaryPlus($context_receiver_0: Int): Result
 

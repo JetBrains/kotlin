@@ -1,9 +1,6 @@
 // !LANGUAGE: +ContextReceivers
 // IGNORE_BACKEND: JS_IR
 
-// MUTE_SIGNATURE_COMPARISON_K2: ANY
-// ^ KT-57435
-
 class Param
 class O {
     val o = "O"

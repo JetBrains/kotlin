@@ -52,14 +52,12 @@ data class MyContainer {
 fun box(): String
 
 // CHECK JVM_IR:
-//   Mangled name computed from Ir:         #get@MyContainer(kotlin.Int;kotlin.Int){}kotlin.String?
-//   Mangled name computed from Descriptor: #get!kotlin.Int@MyContainer(kotlin.Int){}kotlin.String?
+//   Mangled name: #get!kotlin.Int@MyContainer(kotlin.Int){}kotlin.String?
 //   Public signature: /get|-262764729710480185[0]
 operator fun MyContainer.get($context_receiver_0: Int, index: Int): String?
 
 // CHECK:
-//   Mangled name computed from Ir:         #set@MyContainer(kotlin.Int;kotlin.Int;kotlin.String){}
-//   Mangled name computed from Descriptor: #set!kotlin.Int@MyContainer(kotlin.Int;kotlin.String){}
+//   Mangled name: #set!kotlin.Int@MyContainer(kotlin.Int;kotlin.String){}
 //   Public signature: /set|1694887052182048775[0]
 operator fun MyContainer.set($context_receiver_0: Int, index: Int, value: String): Unit
 

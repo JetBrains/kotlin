@@ -44,8 +44,7 @@ class OK {
     get
 
   // CHECK:
-  //   Mangled name computed from Ir:         OK#<init>(O;kotlin.String){}
-  //   Mangled name computed from Descriptor: OK#<init>!O(kotlin.String){}
+  //   Mangled name: OK#<init>!O(kotlin.String){}
   //   Public signature: /OK.<init>|-804847331171011326[0]
   constructor($context_receiver_0: O, k: String) /* primary */
   // CHECK:

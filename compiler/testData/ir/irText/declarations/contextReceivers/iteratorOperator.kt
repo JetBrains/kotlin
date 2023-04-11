@@ -1,10 +1,6 @@
 // !LANGUAGE: +ContextReceivers
 // IGNORE_BACKEND: JS_IR
 // WITH_STDLIB
-
-// MUTE_SIGNATURE_COMPARISON_K2: ANY
-// ^ KT-57435
-
 data class Counter(var i: Int = 0)
 
 data class CounterConfig(val max: Int = 10)

@@ -65,50 +65,42 @@ data class Result {
 fun box(): String
 
 // CHECK JVM_IR:
-//   Mangled name computed from Ir:         #div@Result(kotlin.Int;Result){}Result
-//   Mangled name computed from Descriptor: #div!kotlin.Int@Result(Result){}Result
+//   Mangled name: #div!kotlin.Int@Result(Result){}Result
 //   Public signature: /div|4720798164978030724[0]
 operator fun Result.div($context_receiver_0: Int, other: Result): Result
 
 // CHECK:
-//   Mangled name computed from Ir:         #divAssign@Result(kotlin.Int;Result){}
-//   Mangled name computed from Descriptor: #divAssign!kotlin.Int@Result(Result){}
+//   Mangled name: #divAssign!kotlin.Int@Result(Result){}
 //   Public signature: /divAssign|2355297718303587055[0]
 operator fun Result.divAssign($context_receiver_0: Int, other: Result): Unit
 
 // CHECK JVM_IR:
-//   Mangled name computed from Ir:         #minus@Result(kotlin.Int;Result){}Result
-//   Mangled name computed from Descriptor: #minus!kotlin.Int@Result(Result){}Result
+//   Mangled name: #minus!kotlin.Int@Result(Result){}Result
 //   Public signature: /minus|3968749932240310139[0]
 operator fun Result.minus($context_receiver_0: Int, other: Result): Result
 
 // CHECK:
-//   Mangled name computed from Ir:         #minusAssign@Result(kotlin.Int;Result){}
-//   Mangled name computed from Descriptor: #minusAssign!kotlin.Int@Result(Result){}
+//   Mangled name: #minusAssign!kotlin.Int@Result(Result){}
 //   Public signature: /minusAssign|5475976237961546392[0]
 operator fun Result.minusAssign($context_receiver_0: Int, other: Result): Unit
 
 // CHECK JVM_IR:
-//   Mangled name computed from Ir:         #plus@Result(kotlin.Int;Result){}Result
-//   Mangled name computed from Descriptor: #plus!kotlin.Int@Result(Result){}Result
+//   Mangled name: #plus!kotlin.Int@Result(Result){}Result
 //   Public signature: /plus|4903222358721452198[0]
 operator fun Result.plus($context_receiver_0: Int, other: Result): Result
 
 // CHECK:
-//   Mangled name computed from Ir:         #plusAssign@Result(kotlin.Int;Result){}
-//   Mangled name computed from Descriptor: #plusAssign!kotlin.Int@Result(Result){}
+//   Mangled name: #plusAssign!kotlin.Int@Result(Result){}
 //   Public signature: /plusAssign|-1237264614376392652[0]
 operator fun Result.plusAssign($context_receiver_0: Int, other: Result): Unit
 
 // CHECK JVM_IR:
-//   Mangled name computed from Ir:         #times@Result(kotlin.Int;Result){}Result
-//   Mangled name computed from Descriptor: #times!kotlin.Int@Result(Result){}Result
+//   Mangled name: #times!kotlin.Int@Result(Result){}Result
 //   Public signature: /times|3621876074874527655[0]
 operator fun Result.times($context_receiver_0: Int, other: Result): Result
 
 // CHECK:
-//   Mangled name computed from Ir:         #timesAssign@Result(kotlin.Int;Result){}
-//   Mangled name computed from Descriptor: #timesAssign!kotlin.Int@Result(Result){}
+//   Mangled name: #timesAssign!kotlin.Int@Result(Result){}
 //   Public signature: /timesAssign|1025810528106719294[0]
 operator fun Result.timesAssign($context_receiver_0: Int, other: Result): Unit
 

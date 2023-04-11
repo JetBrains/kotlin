@@ -62,8 +62,7 @@ data class Pair<A : Any?, B : Any?> {
 fun box(): String
 
 // CHECK JVM_IR:
-//   Mangled name computed from Ir:         #compareTo@0:0(java.util.Comparator<0:0>;0:0){0§<kotlin.Any?>}kotlin.Int
-//   Mangled name computed from Descriptor: #compareTo!java.util.Comparator<0:0>@0:0(0:0){0§<kotlin.Any?>}kotlin.Int
+//   Mangled name: #compareTo!java.util.Comparator<0:0>@0:0(0:0){0§<kotlin.Any?>}kotlin.Int
 //   Public signature: /compareTo|-4091974102091923679[0]
 infix operator fun <T : Any?> T.compareTo($context_receiver_0: Comparator<T>, other: T): Int
 
@@ -72,8 +71,7 @@ infix operator fun <T : Any?> T.compareTo($context_receiver_0: Comparator<T>, ot
 //   Public signature: /min|6885845668930107919[0]
 val <T : Any?> Pair<T, T>.min: T
   // CHECK JVM_IR:
-  //   Mangled name computed from Ir:         #<get-min>@Pair<0:0,0:0>(java.util.Comparator<0:0>){0§<kotlin.Any?>}0:0
-  //   Mangled name computed from Descriptor: #<get-min>!java.util.Comparator<0:0>@Pair<0:0,0:0>(){0§<kotlin.Any?>}0:0
+  //   Mangled name: #<get-min>!java.util.Comparator<0:0>@Pair<0:0,0:0>(){0§<kotlin.Any?>}0:0
   //   Public signature: /min.<get-min>|6404877126791863503[0]
   get($context_receiver_0: Comparator<T>): T
 

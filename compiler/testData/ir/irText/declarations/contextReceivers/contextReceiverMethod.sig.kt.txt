@@ -10,6 +10,9 @@ class Context {
   // CHECK JVM_IR:
   //   Mangled name: Context#foo(){}kotlin.Int
   //   Public signature: /Context.foo|-1256155405684507276[0]
+  // CHECK JS_IR:
+  //   Mangled name: Context#foo(){}
+  //   Public signature: /Context.foo|-1041209573719867811[0]
   fun foo(): Int
 
 }
@@ -19,13 +22,15 @@ class Context {
 //   Public signature: /Test|null[0]
 class Test {
   // CHECK:
-  //   Mangled name computed from Ir:         Test#<init>(Context){}
-  //   Mangled name computed from Descriptor: Test#<init>!Context(){}
+  //   Mangled name: Test#<init>!Context(){}
   //   Public signature: /Test.<init>|4848133296495274545[0]
   constructor($context_receiver_0: Context) /* primary */
-  // CHECK:
+  // CHECK JVM_IR:
   //   Mangled name computed from Ir:         Test.contextReceiverField0
   //   Mangled name computed from Descriptor: Test{}contextReceiverField0#jf
+  // CHECK JS_IR NATIVE:
+  //   Mangled name computed from Ir:         Test.contextReceiverField0
+  //   Mangled name computed from Descriptor: Test{}contextReceiverField0
   private /* final field */ val contextReceiverField0: Context
 
   // CHECK:
@@ -36,6 +41,9 @@ class Test {
   // CHECK JVM_IR:
   //   Mangled name: Test#foo(){}kotlin.Int
   //   Public signature: /Test.foo|-1256155405684507276[0]
+  // CHECK JS_IR:
+  //   Mangled name: Test#foo(){}
+  //   Public signature: /Test.foo|-1041209573719867811[0]
   fun foo(): Int
 
 }

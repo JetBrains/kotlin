@@ -33,12 +33,10 @@ interface B {
 //   Public signature: /c|-4416962153448040627[0]
 val c: Int
   // CHECK JVM_IR:
-  //   Mangled name computed from Ir:         #<get-c>(A;B){}kotlin.Int
-  //   Mangled name computed from Descriptor: #<get-c>!A!B(){}kotlin.Int
+  //   Mangled name: #<get-c>!A!B(){}kotlin.Int
   //   Public signature: /c.<get-c>|-2082007887378586898[0]
   // CHECK JS_IR NATIVE:
-  //   Mangled name computed from Ir:         #<get-c>(A;B){}
-  //   Mangled name computed from Descriptor: #<get-c>!A!B(){}
+  //   Mangled name: #<get-c>!A!B(){}
   //   Public signature: /c.<get-c>|2760865531401172403[0]
   get($context_receiver_0: A, $context_receiver_1: B): Int
 

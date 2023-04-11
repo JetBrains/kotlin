@@ -87,6 +87,13 @@ open class IrMangleComputer(
             builder.appendSignature(it)
         }
 
+        valueParameters.take(contextReceiverParametersCount).forEach {
+            if (!it.isHidden) {
+                builder.appendSignature(MangleConstant.CONTEXT_RECEIVER_PREFIX)
+                mangleType(builder, it.type, null)
+            }
+        }
+
         extensionReceiverParameter?.let {
             if (!it.isHidden) {
                 builder.appendSignature(MangleConstant.EXTENSION_RECEIVER_PREFIX)
@@ -94,7 +101,7 @@ open class IrMangleComputer(
             }
         }
 
-        valueParameters.collectForMangler(builder, MangleConstant.VALUE_PARAMETERS) {
+        valueParameters.drop(contextReceiverParametersCount).collectForMangler(builder, MangleConstant.VALUE_PARAMETERS) {
             if (!it.isHidden) {
                 appendSignature(specialValueParamPrefix(it))
                 mangleValueParameter(this, it, null)

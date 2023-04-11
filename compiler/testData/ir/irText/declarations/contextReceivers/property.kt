@@ -1,8 +1,8 @@
 // FIR_IDENTICAL
 // !LANGUAGE: +ContextReceivers
 
-// MUTE_SIGNATURE_COMPARISON_K2: ANY
-// ^ KT-57435
+// MUTE_SIGNATURE_COMPARISON_K2: JS_IR
+// ^ KT-57818
 
 interface A {
     fun a(): Int
