@@ -47,6 +47,36 @@ public class FirStandaloneNormalAnalysisSourceModuleAnalysisApiSpecificAnnotatio
     }
 
     @Test
+    @TestMetadata("javaTargetAnnotationWithEmptyArguments.kt")
+    public void testJavaTargetAnnotationWithEmptyArguments() throws Exception {
+        runTest("analysis/analysis-api/testData/annotations/specificAnnotations/javaTargetAnnotationWithEmptyArguments.kt");
+    }
+
+    @Test
+    @TestMetadata("javaTargetAnnotationWithOneArgument.kt")
+    public void testJavaTargetAnnotationWithOneArgument() throws Exception {
+        runTest("analysis/analysis-api/testData/annotations/specificAnnotations/javaTargetAnnotationWithOneArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("javaTargetAnnotationWithOneArgumentAsImport.kt")
+    public void testJavaTargetAnnotationWithOneArgumentAsImport() throws Exception {
+        runTest("analysis/analysis-api/testData/annotations/specificAnnotations/javaTargetAnnotationWithOneArgumentAsImport.kt");
+    }
+
+    @Test
+    @TestMetadata("javaTargetAnnotationWithSeveralArguments.kt")
+    public void testJavaTargetAnnotationWithSeveralArguments() throws Exception {
+        runTest("analysis/analysis-api/testData/annotations/specificAnnotations/javaTargetAnnotationWithSeveralArguments.kt");
+    }
+
+    @Test
+    @TestMetadata("javaTargetAnnotationWithoutArguments.kt")
+    public void testJavaTargetAnnotationWithoutArguments() throws Exception {
+        runTest("analysis/analysis-api/testData/annotations/specificAnnotations/javaTargetAnnotationWithoutArguments.kt");
+    }
+
+    @Test
     @TestMetadata("targetAnnotationWithEmptyArguments.kt")
     public void testTargetAnnotationWithEmptyArguments() throws Exception {
         runTest("analysis/analysis-api/testData/annotations/specificAnnotations/targetAnnotationWithEmptyArguments.kt");
