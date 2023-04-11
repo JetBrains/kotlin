@@ -29765,6 +29765,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
             }
 
             @Test
+            @TestMetadata("smartcastInFriendModule.kt")
+            public void testSmartcastInFriendModule() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/smartCasts/smartcastInFriendModule.kt");
+            }
+
+            @Test
             @TestMetadata("smartcastOnSameFieldOfDifferentInstances.kt")
             public void testSmartcastOnSameFieldOfDifferentInstances() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/smartCasts/smartcastOnSameFieldOfDifferentInstances.kt");
