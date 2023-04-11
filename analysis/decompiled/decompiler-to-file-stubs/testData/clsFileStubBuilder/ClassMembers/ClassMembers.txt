@@ -31,12 +31,14 @@ PsiJetFileStubImpl[package=test]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
+          NULL[kind=NULL, value=null]
         VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=p5]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
+          NULL[kind=NULL, value=null]
     CLASS_BODY
       PROPERTY[fqName=test.ClassMembers.abstractVar, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=abstractVar]
         MODIFIER_LIST[abstract public]
