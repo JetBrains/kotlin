@@ -23,7 +23,7 @@ FixedBlockPage* FixedBlockPage::Create(uint32_t blockSize) noexcept {
 }
 
 void FixedBlockPage::Destroy() noexcept {
-    std_support::free(this);
+    Free(this, FIXED_BLOCK_PAGE_SIZE);
 }
 
 FixedBlockPage::FixedBlockPage(uint32_t blockSize) noexcept : blockSize_(blockSize) {

@@ -21,7 +21,7 @@ NextFitPage* NextFitPage::Create(uint32_t cellCount) noexcept {
 }
 
 void NextFitPage::Destroy() noexcept {
-    std_support::free(this);
+    Free(this, NEXT_FIT_PAGE_SIZE);
 }
 
 NextFitPage::NextFitPage(uint32_t cellCount) noexcept : curBlock_(cells_) {

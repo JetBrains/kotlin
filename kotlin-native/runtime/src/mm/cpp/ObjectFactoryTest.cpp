@@ -29,8 +29,12 @@ namespace {
 
 using SimpleAllocator = gc::Allocator;
 
+struct DataSizeProvider {
+    static size_t GetDataSize(void* data) noexcept { return 0; }
+};
+
 template <size_t DataAlignment>
-using ObjectFactoryStorage = mm::internal::ObjectFactoryStorage<DataAlignment, SimpleAllocator>;
+using ObjectFactoryStorage = mm::internal::ObjectFactoryStorage<DataAlignment, SimpleAllocator, DataSizeProvider>;
 
 using ObjectFactoryStorageRegular = ObjectFactoryStorage<alignof(void*)>;
 
@@ -782,11 +786,11 @@ public:
     ~MockAllocator();
 
     MOCK_METHOD(void*, Alloc, (size_t));
-    MOCK_METHOD(void, Free, (void*));
+    MOCK_METHOD(void, Free, (void*, size_t));
 
     void* DefaultAlloc(size_t size) { return allocateInObjectPool(size); }
 
-    void DefaultFree(void* instance) { freeInObjectPool(instance); }
+    void DefaultFree(void* instance, size_t size) { freeInObjectPool(instance, size); }
 };
 
 class GlobalMockAllocator {
@@ -796,9 +800,9 @@ public:
         return instance_->Alloc(size);
     }
 
-    static void Free(void* instance) {
+    static void Free(void* instance, size_t size) {
         RuntimeAssert(instance_ != nullptr, "Global allocator must be set");
-        instance_->Free(instance);
+        instance_->Free(instance, size);
     }
 
     static void SetMockAllocator(MockAllocator* instance) {
@@ -820,7 +824,7 @@ private:
 MockAllocator::MockAllocator() {
     GlobalMockAllocator::SetMockAllocator(this);
     ON_CALL(*this, Alloc(_)).WillByDefault([this](size_t size) { return DefaultAlloc(size); });
-    ON_CALL(*this, Free(_)).WillByDefault([this](void* instance) { DefaultFree(instance); });
+    ON_CALL(*this, Free(_, _)).WillByDefault([this](void* instance, size_t size) { DefaultFree(instance, size); });
 }
 
 MockAllocator::~MockAllocator() {
@@ -886,7 +890,7 @@ TEST(ObjectFactoryTest, CreateObject) {
     ++it;
     EXPECT_THAT(it, iter.end());
 
-    EXPECT_CALL(allocator, Free(allocAddress));
+    EXPECT_CALL(allocator, Free(allocAddress, allocSize));
 }
 
 TEST(ObjectFactoryTest, CreateObjectArray) {
@@ -921,7 +925,7 @@ TEST(ObjectFactoryTest, CreateObjectArray) {
     ++it;
     EXPECT_THAT(it, iter.end());
 
-    EXPECT_CALL(allocator, Free(allocAddress));
+    EXPECT_CALL(allocator, Free(allocAddress, allocSize));
 }
 
 TEST(ObjectFactoryTest, CreateCharArray) {
@@ -956,7 +960,7 @@ TEST(ObjectFactoryTest, CreateCharArray) {
     ++it;
     EXPECT_THAT(it, iter.end());
 
-    EXPECT_CALL(allocator, Free(allocAddress));
+    EXPECT_CALL(allocator, Free(allocAddress, allocSize));
 }
 
 TEST(ObjectFactoryTest, Erase) {
@@ -979,7 +983,7 @@ TEST(ObjectFactoryTest, Erase) {
         auto iter = objectFactory.LockForIter();
         for (auto it = iter.begin(); it != iter.end();) {
             if (it->GetObjHeader()->type_info()->IsArray()) {
-                EXPECT_CALL(allocator, Free(_));
+                EXPECT_CALL(allocator, Free(_, _));
                 iter.EraseAndAdvance(it);
                 testing::Mock::VerifyAndClearExpectations(&allocator);
             } else {
@@ -996,7 +1000,7 @@ TEST(ObjectFactoryTest, Erase) {
         }
         EXPECT_THAT(count, 10);
     }
-    EXPECT_CALL(allocator, Free(_)).Times(10);
+    EXPECT_CALL(allocator, Free(_, _)).Times(10);
 }
 
 TEST(ObjectFactoryTest, Move) {
@@ -1045,7 +1049,7 @@ TEST(ObjectFactoryTest, Move) {
         EXPECT_THAT(count, 10);
     }
 
-    EXPECT_CALL(allocator, Free(_)).Times(20);
+    EXPECT_CALL(allocator, Free(_, _)).Times(20);
 }
 
 TEST(ObjectFactoryTest, RunFinalizers) {
@@ -1080,7 +1084,7 @@ TEST(ObjectFactoryTest, RunFinalizers) {
     finalizerQueue.Finalize();
     // Hooks called before `FinalizerQueue` destructor.
     testing::Mock::VerifyAndClearExpectations(&finalizerHooks.finalizerHook());
-    EXPECT_CALL(allocator, Free(_)).Times(10);
+    EXPECT_CALL(allocator, Free(_, _)).Times(10);
 }
 
 TEST(ObjectFactoryTest, ConcurrentPublish) {
@@ -1124,5 +1128,5 @@ TEST(ObjectFactoryTest, ConcurrentPublish) {
     }
 
     EXPECT_THAT(actual, testing::UnorderedElementsAreArray(expected));
-    EXPECT_CALL(allocator, Free(_)).Times(kThreadCount);
+    EXPECT_CALL(allocator, Free(_, _)).Times(kThreadCount);
 }

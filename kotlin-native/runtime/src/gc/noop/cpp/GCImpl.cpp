@@ -80,6 +80,10 @@ size_t gc::GC::GetTotalExtraObjectsSizeUnsafe() const noexcept {
     return mm::GlobalData::Instance().extraObjectDataFactory().GetTotalObjectsSizeUnsafe();
 }
 
+size_t gc::GC::GetTotalHeapObjectsSizeBytes() const noexcept {
+    return allocatedBytes();
+}
+
 gc::GCSchedulerConfig& gc::GC::gcSchedulerConfig() noexcept {
     return impl_->gcScheduler().config();
 }

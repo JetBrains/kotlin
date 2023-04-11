@@ -32,7 +32,7 @@ ExtraObjectPage::ExtraObjectPage() noexcept {
 }
 
 void ExtraObjectPage::Destroy() noexcept {
-    std_support::free(this);
+    Free(this, EXTRA_OBJECT_PAGE_SIZE);
 }
 
 mm::ExtraObjectData* ExtraObjectPage::TryAllocate() noexcept {

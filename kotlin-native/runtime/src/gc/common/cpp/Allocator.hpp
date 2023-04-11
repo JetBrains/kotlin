@@ -19,7 +19,7 @@ namespace gc {
 class Allocator {
 public:
     void* Alloc(size_t size) noexcept { return allocateInObjectPool(size); }
-    static void Free(void* instance) noexcept { freeInObjectPool(instance); }
+    static void Free(void* instance, size_t size) noexcept { freeInObjectPool(instance, size); }
 };
 
 template <typename BaseAllocator, typename GCThreadData>
@@ -37,7 +37,7 @@ public:
         return base_.Alloc(size);
     }
 
-    static void Free(void* instance) noexcept { BaseAllocator::Free(instance); }
+    static void Free(void* instance, size_t size) noexcept { BaseAllocator::Free(instance, size); }
 
 private:
     BaseAllocator base_;

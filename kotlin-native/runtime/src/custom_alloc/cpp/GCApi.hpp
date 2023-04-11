@@ -22,6 +22,9 @@ bool TryResetMark(void* ptr) noexcept;
 bool SweepExtraObject(ExtraObjectCell* extraObjectCell, AtomicStack<ExtraObjectCell>& finalizerQueue) noexcept;
 
 void* SafeAlloc(uint64_t size) noexcept;
+void Free(void* ptr, size_t size) noexcept;
+
+size_t GetAllocatedBytes() noexcept;
 
 } // namespace kotlin::alloc
 

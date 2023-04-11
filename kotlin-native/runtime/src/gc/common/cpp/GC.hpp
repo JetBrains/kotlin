@@ -63,6 +63,7 @@ public:
     size_t GetTotalHeapObjectsSizeUnsafe() const noexcept;
     size_t GetExtraObjectsCountUnsafe() const noexcept;
     size_t GetTotalExtraObjectsSizeUnsafe() const noexcept;
+    size_t GetTotalHeapObjectsSizeBytes() const noexcept;
 
     gc::GCSchedulerConfig& gcSchedulerConfig() noexcept;
 

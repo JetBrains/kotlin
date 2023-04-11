@@ -30,7 +30,7 @@ namespace internal {
 // uses `Allocator` to allocate and free memory.
 // Precondition on `Allocator`: must allocate with alignment at least `DataAlignment`.
 // TODO: Consider merging with `MultiSourceQueue` somehow.
-template <size_t DataAlignment, typename Allocator>
+template <size_t DataAlignment, typename Allocator, typename DataSizeProvider>
 class ObjectFactoryStorage : private Pinned {
     static_assert(IsValidAlignment(DataAlignment), "DataAlignment is not a valid alignment");
 
@@ -38,8 +38,9 @@ class ObjectFactoryStorage : private Pinned {
     class Deleter {
     public:
         void operator()(T* instance) noexcept {
+            auto size = instance->GetAllocatedSize();
             instance->~T();
-            Allocator::Free(instance);
+            Allocator::Free(instance, size);
         }
     };
 
@@ -79,6 +80,12 @@ public:
         template <typename T>
         T& Data() noexcept {
             return *static_cast<T*>(Data());
+        }
+
+        size_t GetAllocatedSize() noexcept {
+            auto dataSize = DataSizeProvider::GetDataSize(Data());
+            auto totalSize = GetSizeForDataSize(dataSize);
+            return totalSize;
         }
 
     private:
@@ -447,8 +454,34 @@ class ObjectFactory : private Pinned {
         alignas(kObjectAlignment) ArrayHeader array;
     };
 
+    static size_t ObjectAllocatedDataSize(const TypeInfo* typeInfo) noexcept {
+        size_t membersSize = typeInfo->instanceSize_ - sizeof(ObjHeader);
+        return AlignUp(sizeof(HeapObjHeader) + membersSize, kObjectAlignment);
+    }
+ 
+    static uint64_t ArrayAllocatedDataSize(const TypeInfo* typeInfo, uint32_t count) noexcept {
+        // -(int32_t min) * uint32_t max cannot overflow uint64_t. And are capped
+        // at about half of uint64_t max.
+        uint64_t membersSize = static_cast<uint64_t>(-typeInfo->instanceSize_) * count;
+        // Note: array body is aligned, but for size computation it is enough to align the sum.
+        return AlignUp<uint64_t>(sizeof(HeapArrayHeader) + membersSize, kObjectAlignment);
+    }
+ 
+    struct DataSizeProvider {
+        static size_t GetDataSize(void* data) noexcept {
+            ObjHeader* object = &static_cast<HeapObjHeader*>(data)->object;
+            RuntimeAssert(object->heap(), "Object must be a heap object");
+            const auto* typeInfo = object->type_info();
+            if (typeInfo->IsArray()) {
+                return ArrayAllocatedDataSize(typeInfo, object->array()->count_);
+            } else {
+                return ObjectAllocatedDataSize(typeInfo);
+            }
+        }
+    };
+
 public:
-    using Storage = internal::ObjectFactoryStorage<kObjectAlignment, Allocator>;
+    using Storage = internal::ObjectFactoryStorage<kObjectAlignment, Allocator, DataSizeProvider>;
 
     class NodeRef {
     public:
@@ -561,19 +594,6 @@ public:
         void ClearForTests() noexcept { producer_.ClearForTests(); }
 
     private:
-        static size_t ObjectAllocatedDataSize(const TypeInfo* typeInfo) noexcept {
-            size_t membersSize = typeInfo->instanceSize_ - sizeof(ObjHeader);
-            return AlignUp(sizeof(HeapObjHeader) + membersSize, kObjectAlignment);
-        }
-
-        static uint64_t ArrayAllocatedDataSize(const TypeInfo* typeInfo, uint32_t count) noexcept {
-            // -(int32_t min) * uint32_t max cannot overflow uint64_t. And are capped
-            // at about half of uint64_t max.
-            uint64_t membersSize = static_cast<uint64_t>(-typeInfo->instanceSize_) * count;
-            // Note: array body is aligned, but for size computation it is enough to align the sum.
-            return AlignUp<uint64_t>(sizeof(HeapArrayHeader) + membersSize, kObjectAlignment);
-        }
-
         typename Storage::Producer producer_;
     };
 

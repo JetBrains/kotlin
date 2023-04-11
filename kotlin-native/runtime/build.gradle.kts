@@ -175,6 +175,8 @@ bitcode {
             sourceSets {
                 main {}
             }
+
+            compilerArgs.add("-DKONAN_MI_MALLOC=1")
         }
 
         module("exceptionsSupport") {

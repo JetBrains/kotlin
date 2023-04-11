@@ -29,6 +29,7 @@ private:
     friend class AtomicStack<SingleObjectPage>;
     SingleObjectPage* next_;
     bool isAllocated_ = false;
+    size_t size_;
     struct alignas(8) {
         uint8_t data_[];
     };
