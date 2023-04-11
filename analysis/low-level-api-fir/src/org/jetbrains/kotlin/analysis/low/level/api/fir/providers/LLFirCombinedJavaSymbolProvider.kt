@@ -40,6 +40,10 @@ internal class LLFirCombinedJavaSymbolProvider private constructor(
     /**
      * The purpose of this cache is to avoid index access for frequently accessed `ClassId`s, including failures. Because Java symbol
      * providers currently cannot benefit from a "name in package" check (see KTIJ-24642), the cache should also store negative results.
+     *
+     * The cache size has been chosen with the help of local benchmarks and performance tests. A cache size of 2500 in comparison to 1000
+     * resulted in less time spent in [computeClassLikeSymbolByClassId] in local benchmarks. Cache sizes of 5000 and 10000 were tried in
+     * performance tests, but didn't affect performance. A cache size of 2500 is a good middle ground with a small memory footprint.
      */
     private val classCache: NullableCaffeineCache<ClassId, FirRegularClassSymbol> = NullableCaffeineCache { it.maximumSize(2500) }
 
