@@ -5972,7 +5972,7 @@ if (isAppleTarget(project)) {
     }
 
     frameworkTest("testPermanentObjectsFramework") {
-        enabled = isExperimentalMM
+        enabled = isExperimentalMM && !isNoopGC // Requires gc to actually happen.
         framework("PermanentObjects") {
             sources = ['framework/permanentObjects']
             opts = ['-opt-in=kotlin.native.internal.InternalForKotlinNative']
