@@ -354,7 +354,7 @@ internal class LLFirSessionCache(private val project: Project) {
             val provider = LLFirProvider(
                 this,
                 components,
-                FileBasedKotlinDeclarationProvider(module.file),
+                NonLazyFileBasedKotlinDeclarationProvider(module.file),
                 project.createPackageProvider(contentScope),
                 canContainKotlinPackage = true,
             )
@@ -419,7 +419,7 @@ internal class LLFirSessionCache(private val project: Project) {
             val provider = LLFirProvider(
                 this,
                 components,
-                if (ktFile != null) FileBasedKotlinDeclarationProvider(ktFile) else EmptyKotlinDeclarationProvider,
+                if (ktFile != null) NonLazyFileBasedKotlinDeclarationProvider(ktFile) else EmptyKotlinDeclarationProvider,
                 project.createPackageProvider(module.contentScope),
                 canContainKotlinPackage = true,
             )

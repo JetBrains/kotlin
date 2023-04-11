@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import kotlin.test.assertContains
 import kotlin.test.assertNotNull
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.NonLazyFileBasedKotlinDeclarationProvider
 
 abstract class AbstractFileBasedKotlinDeclarationProviderTest : AbstractLowLevelApiSingleFileTest() {
     override val configurator = AnalysisApiFirSourceTestConfigurator(analyseInDependentSession = false)
@@ -32,7 +33,7 @@ abstract class AbstractFileBasedKotlinDeclarationProviderTest : AbstractLowLevel
     }
 
     override fun doTestByFileStructure(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices) {
-        val provider = FileBasedKotlinDeclarationProvider(ktFile)
+        val provider = NonLazyFileBasedKotlinDeclarationProvider(ktFile)
         assertContains(provider.findFilesForFacadeByPackage(ktFile.packageFqName), ktFile)
 
         checkByDirectives(moduleStructure, provider)

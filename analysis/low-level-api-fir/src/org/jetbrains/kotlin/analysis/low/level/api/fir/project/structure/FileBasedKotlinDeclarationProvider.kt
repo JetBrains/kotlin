@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.collectForEach
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.name.CallableId
@@ -15,11 +16,13 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.yieldIfNotNull
 
-internal class FileBasedKotlinDeclarationProvider(private val kotlinFile: KtFile) : KotlinDeclarationProvider() {
-    private val topLevelDeclarations: Sequence<KtDeclaration>
+internal abstract class FileBasedKotlinDeclarationProvider : KotlinDeclarationProvider() {
+    abstract val ktFiles: List<KtFile>
+
+    private val KtFile.topLevelDeclarations: Sequence<KtDeclaration>
         get() {
             return sequence {
-                for (child in kotlinFile.declarations) {
+                for (child in declarations) {
                     if (child is KtScript) {
                         yieldAll(child.declarations)
                     } else {
@@ -30,14 +33,16 @@ internal class FileBasedKotlinDeclarationProvider(private val kotlinFile: KtFile
         }
 
     override fun getClassLikeDeclarationByClassId(classId: ClassId): KtClassLikeDeclaration? {
-        return getClassLikeDeclarationsByClassId(classId).firstOrNull()
+        return ktFiles.firstNotNullOfOrNull { getClassLikeDeclarationsByClassId(it, classId).firstOrNull() }
     }
 
     override fun getAllClassesByClassId(classId: ClassId): Collection<KtClassOrObject> {
-        return getClassLikeDeclarationsByClassId(classId).filterIsInstance<KtClassOrObject>().toList()
+        return collectForEach(mutableListOf()) {
+            getClassLikeDeclarationsByClassId(it, classId).filterIsInstanceTo<KtClassOrObject, _>(this)
+        }
     }
 
-    private fun getClassLikeDeclarationsByClassId(classId: ClassId): Sequence<KtClassLikeDeclaration> {
+    private fun getClassLikeDeclarationsByClassId(kotlinFile: KtFile, classId: ClassId): Sequence<KtClassLikeDeclaration> {
         if (classId.isLocal) {
             return emptySequence()
         }
@@ -52,7 +57,7 @@ internal class FileBasedKotlinDeclarationProvider(private val kotlinFile: KtFile
             val tasks = ArrayDeque<Task>()
 
             val startingChunks = classId.relativeClassName.pathSegments()
-            for (declaration in topLevelDeclarations) {
+            for (declaration in kotlinFile.topLevelDeclarations) {
                 tasks.addLast(Task(startingChunks, declaration))
             }
 
@@ -82,19 +87,23 @@ internal class FileBasedKotlinDeclarationProvider(private val kotlinFile: KtFile
     }
 
     override fun getAllTypeAliasesByClassId(classId: ClassId): Collection<KtTypeAlias> {
-        return getClassLikeDeclarationsByClassId(classId).filterIsInstance<KtTypeAlias>().toList()
+        return collectForEach(mutableListOf()) {
+            getClassLikeDeclarationsByClassId(it, classId).filterIsInstanceTo<KtTypeAlias, _>(this)
+        }
     }
 
     override fun getTopLevelKotlinClassLikeDeclarationNamesInPackage(packageFqName: FqName): Set<Name> {
-        return getTopLevelDeclarationNames<KtClassLikeDeclaration>(packageFqName)
+        return collectForEach(mutableSetOf()) {
+            getTopLevelDeclarationNamesTo<KtClassLikeDeclaration>(this, it, packageFqName)
+        }
     }
 
     override fun getTopLevelProperties(callableId: CallableId): Collection<KtProperty> {
-        return getTopLevelCallables(callableId)
+        return collectForEach(mutableSetOf()) { getTopLevelCallablesTo(this, it, callableId) }
     }
 
     override fun getTopLevelFunctions(callableId: CallableId): Collection<KtNamedFunction> {
-        return getTopLevelCallables(callableId)
+        return collectForEach(mutableSetOf()) { getTopLevelCallablesTo(this, it, callableId) }
     }
 
     override fun getTopLevelCallableFiles(callableId: CallableId): Collection<KtFile> {
@@ -105,61 +114,80 @@ internal class FileBasedKotlinDeclarationProvider(private val kotlinFile: KtFile
     }
 
     override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> {
-        return getTopLevelDeclarationNames<KtCallableDeclaration>(packageFqName)
+        return collectForEach(mutableSetOf()) {
+            getTopLevelDeclarationNamesTo<KtCallableDeclaration>(this, it, packageFqName)
+        }
     }
 
     override fun findFilesForFacadeByPackage(packageFqName: FqName): Collection<KtFile> {
-        if (kotlinFile.packageFqName != packageFqName) {
-            return emptyList()
+        return ktFiles.filter { ktFile ->
+            ktFile.packageFqName == packageFqName
         }
-
-        return listOf(kotlinFile)
     }
 
     override fun findFilesForFacade(facadeFqName: FqName): Collection<KtFile> {
-        if (kotlinFile.javaFileFacadeFqName != facadeFqName) return emptyList()
-
-        for (declaration in topLevelDeclarations) {
-            if (declaration !is KtClassLikeDeclaration) {
-                return listOf(kotlinFile)
-            }
+        return ktFiles.filter { ktFile ->
+            ktFile.javaFileFacadeFqName == facadeFqName && ktFile.isFacade
         }
-
-        return emptyList()
     }
 
     override fun findInternalFilesForFacade(facadeFqName: FqName): Collection<KtFile> = emptyList()
 
-    private inline fun <reified T : KtCallableDeclaration> getTopLevelCallables(callableId: CallableId): Collection<T> {
+    private inline fun <reified T : KtCallableDeclaration> getTopLevelCallablesTo(
+        to: MutableCollection<T>,
+        kotlinFile: KtFile,
+        callableId: CallableId,
+    ) {
         require(callableId.classId == null)
-        return getTopLevelDeclarations(callableId.packageName, callableId.callableName)
+        getTopLevelDeclarationsTo(to, kotlinFile, callableId.packageName, callableId.callableName)
     }
 
-    private inline fun <reified T : KtNamedDeclaration> getTopLevelDeclarations(packageFqName: FqName, name: Name): Collection<T> {
+    private inline fun <reified T : KtNamedDeclaration> getTopLevelDeclarationsTo(
+        to: MutableCollection<T>,
+        kotlinFile: KtFile,
+        packageFqName: FqName,
+        name: Name
+    ) {
         if (kotlinFile.packageFqName != packageFqName) {
-            return emptyList()
+            return
         }
 
-        return buildList {
-            for (declaration in topLevelDeclarations) {
-                if (declaration is T && declaration.nameAsName == name) {
-                    add(declaration)
-                }
+        for (declaration in kotlinFile.topLevelDeclarations) {
+            if (declaration is T && declaration.nameAsName == name) {
+                to.add(declaration)
             }
         }
     }
 
-    private inline fun <reified T : KtNamedDeclaration> getTopLevelDeclarationNames(packageFqName: FqName): Set<Name> {
+    private inline fun <reified T : KtNamedDeclaration> getTopLevelDeclarationNamesTo(
+        to: MutableSet<Name>,
+        kotlinFile: KtFile,
+        packageFqName: FqName
+    ) {
         if (kotlinFile.packageFqName != packageFqName) {
-            return emptySet()
+            return
         }
 
-        return buildSet {
-            for (declaration in topLevelDeclarations) {
-                if (declaration is T) {
-                    addIfNotNull(declaration.nameAsName)
-                }
+        for (declaration in kotlinFile.topLevelDeclarations) {
+            if (declaration is T) {
+                to.addIfNotNull(declaration.nameAsName)
             }
         }
     }
+
+    private inline fun <E, C : MutableCollection<E>> collectForEach(
+        collection: C,
+        collect: C.(KtFile) -> Unit
+    ): C {
+        return ktFiles.collectForEach(collection, collect)
+    }
+
+    private val KtFile.isFacade: Boolean
+        get() = hasTopLevelCallables()
+}
+
+internal class NonLazyFileBasedKotlinDeclarationProvider(
+    override val ktFiles: List<KtFile>
+) : FileBasedKotlinDeclarationProvider() {
+    constructor(ktFile: KtFile) : this(listOf(ktFile))
 }
