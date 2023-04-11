@@ -242,8 +242,8 @@ public value class ULong @kotlin.internal.IntrinsicConstEvaluation @PublishedApi
      *
      * If the [other] value is less than or equal to `this` value, then the returned range is empty.
      */
-    @SinceKotlin("1.7")
-    @ExperimentalStdlibApi
+    @SinceKotlin("1.9")
+    @WasExperimental(ExperimentalStdlibApi::class)
     @kotlin.internal.InlineOnly
     public inline operator fun rangeUntil(other: ULong): ULongRange = this until other
 

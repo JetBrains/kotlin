@@ -467,7 +467,7 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
                         If the [other] value is less than or equal to `this` value, then the returned range is empty.
                     """.trimIndent()
                 )
-                annotations += mutableListOf("SinceKotlin(\"1.7\")", "ExperimentalStdlibApi")
+                annotations += mutableListOf("SinceKotlin(\"1.9\")", "WasExperimental(ExperimentalStdlibApi::class)")
                 signature {
                     isOperator = true
                     methodName = "rangeUntil"

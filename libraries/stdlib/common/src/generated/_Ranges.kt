@@ -366,8 +366,8 @@ public operator fun ClosedRange<Float>.contains(value: Byte): Boolean {
  * Checks if the specified [value] belongs to this range.
  */
 @kotlin.jvm.JvmName("intRangeContains")
-@SinceKotlin("1.7")
-@ExperimentalStdlibApi
+@SinceKotlin("1.9")
+@WasExperimental(ExperimentalStdlibApi::class)
 public operator fun OpenEndRange<Int>.contains(value: Byte): Boolean {
     return contains(value.toInt())
 }
@@ -376,8 +376,8 @@ public operator fun OpenEndRange<Int>.contains(value: Byte): Boolean {
  * Checks if the specified [value] belongs to this range.
  */
 @kotlin.jvm.JvmName("longRangeContains")
-@SinceKotlin("1.7")
-@ExperimentalStdlibApi
+@SinceKotlin("1.9")
+@WasExperimental(ExperimentalStdlibApi::class)
 public operator fun OpenEndRange<Long>.contains(value: Byte): Boolean {
     return contains(value.toLong())
 }
@@ -386,8 +386,8 @@ public operator fun OpenEndRange<Long>.contains(value: Byte): Boolean {
  * Checks if the specified [value] belongs to this range.
  */
 @kotlin.jvm.JvmName("shortRangeContains")
-@SinceKotlin("1.7")
-@ExperimentalStdlibApi
+@SinceKotlin("1.9")
+@WasExperimental(ExperimentalStdlibApi::class)
 public operator fun OpenEndRange<Short>.contains(value: Byte): Boolean {
     return contains(value.toShort())
 }
@@ -508,8 +508,8 @@ public operator fun ClosedRange<Double>.contains(value: Float): Boolean {
  * Checks if the specified [value] belongs to this range.
  */
 @kotlin.jvm.JvmName("doubleRangeContains")
-@SinceKotlin("1.7")
-@ExperimentalStdlibApi
+@SinceKotlin("1.9")
+@WasExperimental(ExperimentalStdlibApi::class)
 public operator fun OpenEndRange<Double>.contains(value: Float): Boolean {
     return contains(value.toDouble())
 }
@@ -562,8 +562,8 @@ public operator fun ClosedRange<Float>.contains(value: Int): Boolean {
  * Checks if the specified [value] belongs to this range.
  */
 @kotlin.jvm.JvmName("longRangeContains")
-@SinceKotlin("1.7")
-@ExperimentalStdlibApi
+@SinceKotlin("1.9")
+@WasExperimental(ExperimentalStdlibApi::class)
 public operator fun OpenEndRange<Long>.contains(value: Int): Boolean {
     return contains(value.toLong())
 }
@@ -572,8 +572,8 @@ public operator fun OpenEndRange<Long>.contains(value: Int): Boolean {
  * Checks if the specified [value] belongs to this range.
  */
 @kotlin.jvm.JvmName("byteRangeContains")
-@SinceKotlin("1.7")
-@ExperimentalStdlibApi
+@SinceKotlin("1.9")
+@WasExperimental(ExperimentalStdlibApi::class)
 public operator fun OpenEndRange<Byte>.contains(value: Int): Boolean {
     return value.toByteExactOrNull().let { if (it != null) contains(it) else false }
 }
@@ -582,8 +582,8 @@ public operator fun OpenEndRange<Byte>.contains(value: Int): Boolean {
  * Checks if the specified [value] belongs to this range.
  */
 @kotlin.jvm.JvmName("shortRangeContains")
-@SinceKotlin("1.7")
-@ExperimentalStdlibApi
+@SinceKotlin("1.9")
+@WasExperimental(ExperimentalStdlibApi::class)
 public operator fun OpenEndRange<Short>.contains(value: Int): Boolean {
     return value.toShortExactOrNull().let { if (it != null) contains(it) else false }
 }
@@ -644,8 +644,8 @@ public operator fun ClosedRange<Float>.contains(value: Long): Boolean {
  * Checks if the specified [value] belongs to this range.
  */
 @kotlin.jvm.JvmName("intRangeContains")
-@SinceKotlin("1.7")
-@ExperimentalStdlibApi
+@SinceKotlin("1.9")
+@WasExperimental(ExperimentalStdlibApi::class)
 public operator fun OpenEndRange<Int>.contains(value: Long): Boolean {
     return value.toIntExactOrNull().let { if (it != null) contains(it) else false }
 }
@@ -654,8 +654,8 @@ public operator fun OpenEndRange<Int>.contains(value: Long): Boolean {
  * Checks if the specified [value] belongs to this range.
  */
 @kotlin.jvm.JvmName("byteRangeContains")
-@SinceKotlin("1.7")
-@ExperimentalStdlibApi
+@SinceKotlin("1.9")
+@WasExperimental(ExperimentalStdlibApi::class)
 public operator fun OpenEndRange<Byte>.contains(value: Long): Boolean {
     return value.toByteExactOrNull().let { if (it != null) contains(it) else false }
 }
@@ -664,8 +664,8 @@ public operator fun OpenEndRange<Byte>.contains(value: Long): Boolean {
  * Checks if the specified [value] belongs to this range.
  */
 @kotlin.jvm.JvmName("shortRangeContains")
-@SinceKotlin("1.7")
-@ExperimentalStdlibApi
+@SinceKotlin("1.9")
+@WasExperimental(ExperimentalStdlibApi::class)
 public operator fun OpenEndRange<Short>.contains(value: Long): Boolean {
     return value.toShortExactOrNull().let { if (it != null) contains(it) else false }
 }
@@ -726,8 +726,8 @@ public operator fun ClosedRange<Float>.contains(value: Short): Boolean {
  * Checks if the specified [value] belongs to this range.
  */
 @kotlin.jvm.JvmName("intRangeContains")
-@SinceKotlin("1.7")
-@ExperimentalStdlibApi
+@SinceKotlin("1.9")
+@WasExperimental(ExperimentalStdlibApi::class)
 public operator fun OpenEndRange<Int>.contains(value: Short): Boolean {
     return contains(value.toInt())
 }
@@ -736,8 +736,8 @@ public operator fun OpenEndRange<Int>.contains(value: Short): Boolean {
  * Checks if the specified [value] belongs to this range.
  */
 @kotlin.jvm.JvmName("longRangeContains")
-@SinceKotlin("1.7")
-@ExperimentalStdlibApi
+@SinceKotlin("1.9")
+@WasExperimental(ExperimentalStdlibApi::class)
 public operator fun OpenEndRange<Long>.contains(value: Short): Boolean {
     return contains(value.toLong())
 }
@@ -746,8 +746,8 @@ public operator fun OpenEndRange<Long>.contains(value: Short): Boolean {
  * Checks if the specified [value] belongs to this range.
  */
 @kotlin.jvm.JvmName("byteRangeContains")
-@SinceKotlin("1.7")
-@ExperimentalStdlibApi
+@SinceKotlin("1.9")
+@WasExperimental(ExperimentalStdlibApi::class)
 public operator fun OpenEndRange<Byte>.contains(value: Short): Boolean {
     return value.toByteExactOrNull().let { if (it != null) contains(it) else false }
 }

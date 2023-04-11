@@ -16,14 +16,13 @@ import kotlin.internal.*
  */
 @SinceKotlin("1.5")
 @WasExperimental(ExperimentalUnsignedTypes::class)
-@OptIn(ExperimentalStdlibApi::class)
 public class ULongRange(start: ULong, endInclusive: ULong) : ULongProgression(start, endInclusive, 1), ClosedRange<ULong>, OpenEndRange<ULong> {
     override val start: ULong get() = first
     override val endInclusive: ULong get() = last
     
-    @SinceKotlin("1.7")
-    @ExperimentalStdlibApi
     @Deprecated("Can throw an exception when it's impossible to represent the value with ULong type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
+    @SinceKotlin("1.9")
+    @WasExperimental(ExperimentalStdlibApi::class)
     override val endExclusive: ULong get() {
         if (last == ULong.MAX_VALUE) error("Cannot return the exclusive upper bound of a range that includes MAX_VALUE.")
         return last + 1u

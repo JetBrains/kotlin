@@ -1034,20 +1034,20 @@ public final class Byte : kotlin.Number, kotlin.Comparable<kotlin.Byte> {
 
     public final operator fun rangeTo(other: kotlin.Short): kotlin.ranges.IntRange
 
-    @kotlin.SinceKotlin(version = "1.7")
-    @kotlin.ExperimentalStdlibApi
+    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
     public final operator fun rangeUntil(other: kotlin.Byte): kotlin.ranges.IntRange
 
-    @kotlin.SinceKotlin(version = "1.7")
-    @kotlin.ExperimentalStdlibApi
+    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
     public final operator fun rangeUntil(other: kotlin.Int): kotlin.ranges.IntRange
 
-    @kotlin.SinceKotlin(version = "1.7")
-    @kotlin.ExperimentalStdlibApi
+    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
     public final operator fun rangeUntil(other: kotlin.Long): kotlin.ranges.LongRange
 
-    @kotlin.SinceKotlin(version = "1.7")
-    @kotlin.ExperimentalStdlibApi
+    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
     public final operator fun rangeUntil(other: kotlin.Short): kotlin.ranges.IntRange
 
     @kotlin.SinceKotlin(version = "1.1")
@@ -1179,8 +1179,8 @@ public final class Char : kotlin.Comparable<kotlin.Char> {
 
     public final operator fun rangeTo(other: kotlin.Char): kotlin.ranges.CharRange
 
-    @kotlin.SinceKotlin(version = "1.7")
-    @kotlin.ExperimentalStdlibApi
+    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
     public final operator fun rangeUntil(other: kotlin.Char): kotlin.ranges.CharRange
 
     @kotlin.Deprecated(message = "Conversion of Char to Number is deprecated. Use Char.code property instead.", replaceWith = kotlin.ReplaceWith(expression = "this.code.toByte()", imports = {}))
@@ -1956,20 +1956,20 @@ public final class Int : kotlin.Number, kotlin.Comparable<kotlin.Int> {
 
     public final operator fun rangeTo(other: kotlin.Short): kotlin.ranges.IntRange
 
-    @kotlin.SinceKotlin(version = "1.7")
-    @kotlin.ExperimentalStdlibApi
+    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
     public final operator fun rangeUntil(other: kotlin.Byte): kotlin.ranges.IntRange
 
-    @kotlin.SinceKotlin(version = "1.7")
-    @kotlin.ExperimentalStdlibApi
+    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
     public final operator fun rangeUntil(other: kotlin.Int): kotlin.ranges.IntRange
 
-    @kotlin.SinceKotlin(version = "1.7")
-    @kotlin.ExperimentalStdlibApi
+    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
     public final operator fun rangeUntil(other: kotlin.Long): kotlin.ranges.LongRange
 
-    @kotlin.SinceKotlin(version = "1.7")
-    @kotlin.ExperimentalStdlibApi
+    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
     public final operator fun rangeUntil(other: kotlin.Short): kotlin.ranges.IntRange
 
     @kotlin.SinceKotlin(version = "1.1")
@@ -2228,20 +2228,20 @@ public final class Long : kotlin.Number, kotlin.Comparable<kotlin.Long> {
 
     public final operator fun rangeTo(other: kotlin.Short): kotlin.ranges.LongRange
 
-    @kotlin.SinceKotlin(version = "1.7")
-    @kotlin.ExperimentalStdlibApi
+    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
     public final operator fun rangeUntil(other: kotlin.Byte): kotlin.ranges.LongRange
 
-    @kotlin.SinceKotlin(version = "1.7")
-    @kotlin.ExperimentalStdlibApi
+    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
     public final operator fun rangeUntil(other: kotlin.Int): kotlin.ranges.LongRange
 
-    @kotlin.SinceKotlin(version = "1.7")
-    @kotlin.ExperimentalStdlibApi
+    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
     public final operator fun rangeUntil(other: kotlin.Long): kotlin.ranges.LongRange
 
-    @kotlin.SinceKotlin(version = "1.7")
-    @kotlin.ExperimentalStdlibApi
+    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
     public final operator fun rangeUntil(other: kotlin.Short): kotlin.ranges.LongRange
 
     @kotlin.SinceKotlin(version = "1.1")
@@ -2632,20 +2632,20 @@ public final class Short : kotlin.Number, kotlin.Comparable<kotlin.Short> {
 
     public final operator fun rangeTo(other: kotlin.Short): kotlin.ranges.IntRange
 
-    @kotlin.SinceKotlin(version = "1.7")
-    @kotlin.ExperimentalStdlibApi
+    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
     public final operator fun rangeUntil(other: kotlin.Byte): kotlin.ranges.IntRange
 
-    @kotlin.SinceKotlin(version = "1.7")
-    @kotlin.ExperimentalStdlibApi
+    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
     public final operator fun rangeUntil(other: kotlin.Int): kotlin.ranges.IntRange
 
-    @kotlin.SinceKotlin(version = "1.7")
-    @kotlin.ExperimentalStdlibApi
+    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
     public final operator fun rangeUntil(other: kotlin.Long): kotlin.ranges.LongRange
 
-    @kotlin.SinceKotlin(version = "1.7")
-    @kotlin.ExperimentalStdlibApi
+    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
     public final operator fun rangeUntil(other: kotlin.Short): kotlin.ranges.IntRange
 
     @kotlin.SinceKotlin(version = "1.1")
@@ -2944,8 +2944,8 @@ public final inline class UByte : kotlin.Comparable<kotlin.UByte> {
     @kotlin.internal.InlineOnly
     public final inline operator fun rangeTo(other: kotlin.UByte): kotlin.ranges.UIntRange
 
-    @kotlin.SinceKotlin(version = "1.7")
-    @kotlin.ExperimentalStdlibApi
+    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
     @kotlin.internal.InlineOnly
     public final inline operator fun rangeUntil(other: kotlin.UByte): kotlin.ranges.UIntRange
 
@@ -3144,8 +3144,8 @@ public final inline class UInt : kotlin.Comparable<kotlin.UInt> {
     @kotlin.internal.InlineOnly
     public final inline operator fun rangeTo(other: kotlin.UInt): kotlin.ranges.UIntRange
 
-    @kotlin.SinceKotlin(version = "1.7")
-    @kotlin.ExperimentalStdlibApi
+    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
     @kotlin.internal.InlineOnly
     public final inline operator fun rangeUntil(other: kotlin.UInt): kotlin.ranges.UIntRange
 
@@ -3350,8 +3350,8 @@ public final inline class ULong : kotlin.Comparable<kotlin.ULong> {
     @kotlin.internal.InlineOnly
     public final inline operator fun rangeTo(other: kotlin.ULong): kotlin.ranges.ULongRange
 
-    @kotlin.SinceKotlin(version = "1.7")
-    @kotlin.ExperimentalStdlibApi
+    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
     @kotlin.internal.InlineOnly
     public final inline operator fun rangeUntil(other: kotlin.ULong): kotlin.ranges.ULongRange
 
@@ -3556,8 +3556,8 @@ public final inline class UShort : kotlin.Comparable<kotlin.UShort> {
     @kotlin.internal.InlineOnly
     public final inline operator fun rangeTo(other: kotlin.UShort): kotlin.ranges.UIntRange
 
-    @kotlin.SinceKotlin(version = "1.7")
-    @kotlin.ExperimentalStdlibApi
+    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
     @kotlin.internal.InlineOnly
     public final inline operator fun rangeUntil(other: kotlin.UShort): kotlin.ranges.UIntRange
 
