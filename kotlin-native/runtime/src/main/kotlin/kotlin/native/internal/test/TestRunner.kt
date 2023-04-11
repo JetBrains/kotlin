@@ -6,10 +6,11 @@
 package kotlin.native.internal.test
 
 import kotlin.IllegalArgumentException
-import kotlin.system.getTimeMillis
-import kotlin.system.measureTimeMillis
 import kotlin.text.StringBuilder
+import kotlin.time.TimeSource
+import kotlin.time.measureTime
 
+@OptIn(kotlin.time.ExperimentalTime::class)
 internal class TestRunner(val suites: List<TestSuite>, args: Array<String>) {
     private val filters = mutableListOf<(TestCase) -> Boolean>()
     private val listeners = mutableSetOf<TestListener>()
@@ -239,13 +240,13 @@ internal class TestRunner(val suites: List<TestSuite>, args: Array<String>) {
             if (testCase.ignored) {
                 sendToListeners { ignore(testCase) }
             } else {
-                val startTime = getTimeMillis()
+                val startTime = TimeSource.Monotonic.markNow()
                 try {
                     sendToListeners { start(testCase) }
                     testCase.run()
-                    sendToListeners { pass(testCase, getTimeMillis() - startTime) }
+                    sendToListeners { pass(testCase, startTime.elapsedNow().inWholeMilliseconds) }
                 } catch (e: Throwable) {
-                    sendToListeners { fail(testCase, e, getTimeMillis() - startTime) }
+                    sendToListeners { fail(testCase, e, startTime.elapsedNow().inWholeMilliseconds) }
                     if (useExitCode) {
                         exitCode = 1
                     }
@@ -258,7 +259,7 @@ internal class TestRunner(val suites: List<TestSuite>, args: Array<String>) {
     private fun runIteration(iteration: Int) {
         val suitesFiltered = filterSuites()
         sendToListeners { startIteration(this@TestRunner, iteration, suitesFiltered) }
-        val iterationTime = measureTimeMillis {
+        val iterationTime = measureTime {
             suitesFiltered.forEach {
                 if (it.ignored) {
                     sendToListeners { ignoreSuite(it) }
@@ -268,11 +269,11 @@ internal class TestRunner(val suites: List<TestSuite>, args: Array<String>) {
                         return@forEach
                     }
                     sendToListeners { startSuite(it) }
-                    val time = measureTimeMillis { it.run() }
+                    val time = measureTime { it.run() }.inWholeMilliseconds
                     sendToListeners { finishSuite(it, time) }
                 }
             }
-        }
+        }.inWholeMilliseconds
         sendToListeners { finishIteration(this@TestRunner, iteration, iterationTime) }
     }
 
@@ -280,13 +281,13 @@ internal class TestRunner(val suites: List<TestSuite>, args: Array<String>) {
         if (!runTests)
             return 0
         sendToListeners { startTesting(this@TestRunner) }
-        val totalTime = measureTimeMillis {
+        val totalTime = measureTime {
             var i = 1
             while (i <= iterations || iterations < 0) {
                 runIteration(i)
                 i++
             }
-        }
+        }.inWholeMilliseconds
         sendToListeners { finishTesting(this@TestRunner, totalTime) }
         return exitCode
     }
