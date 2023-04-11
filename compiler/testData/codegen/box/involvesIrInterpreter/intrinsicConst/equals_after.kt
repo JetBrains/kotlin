@@ -1,5 +1,6 @@
 // !LANGUAGE: +IntrinsicConstEvaluation
 // TARGET_BACKEND: JVM_IR
+fun <T> T.id() = this
 
 const val trueVal = <!EVALUATED("true")!>true<!>
 const val falseVal = <!EVALUATED("false")!>false<!>
@@ -93,49 +94,49 @@ const val equalsString3 = <!EVALUATED("false")!>otherStr == someStr<!>
 const val equalsString4 = someStr.<!EVALUATED("false")!>equals(1)<!>
 
 fun box(): String {
-    if (<!EVALUATED("false")!>equalsBoolean1 != true<!>)    return "Fail 1.1"
-    if (<!EVALUATED("false")!>equalsBoolean2 != false<!>)   return "Fail 1.2"
-    if (<!EVALUATED("false")!>equalsBoolean3 != false<!>)   return "Fail 1.3"
+    if (<!EVALUATED("true")!>equalsBoolean1<!>.id() != true)    return "Fail 1.1"
+    if (<!EVALUATED("false")!>equalsBoolean2<!>.id() != false)   return "Fail 1.2"
+    if (<!EVALUATED("false")!>equalsBoolean3<!>.id() != false)   return "Fail 1.3"
 
-    if (<!EVALUATED("false")!>equalsChar1 != false<!>)   return "Fail 2.1"
-    if (<!EVALUATED("false")!>equalsChar2 != true<!>)    return "Fail 2.2"
-    if (<!EVALUATED("false")!>equalsChar3 != false<!>)   return "Fail 2.3"
-    if (<!EVALUATED("false")!>equalsChar4 != false<!>)   return "Fail 2.3"
+    if (<!EVALUATED("false")!>equalsChar1<!>.id() != false)   return "Fail 2.1"
+    if (<!EVALUATED("true")!>equalsChar2<!>.id() != true)    return "Fail 2.2"
+    if (<!EVALUATED("false")!>equalsChar3<!>.id() != false)   return "Fail 2.3"
+    if (<!EVALUATED("false")!>equalsChar4<!>.id() != false)   return "Fail 2.3"
 
-    if (<!EVALUATED("false")!>equalsByte1 != false<!>)   return "Fail 3.1"
-    if (<!EVALUATED("false")!>equalsByte2 != true<!>)    return "Fail 3.2"
-    if (<!EVALUATED("false")!>equalsByte3 != false<!>)   return "Fail 3.3"
-    if (<!EVALUATED("false")!>equalsByte4 != false<!>)   return "Fail 3.3"
+    if (<!EVALUATED("false")!>equalsByte1<!>.id() != false)   return "Fail 3.1"
+    if (<!EVALUATED("true")!>equalsByte2<!>.id() != true)    return "Fail 3.2"
+    if (<!EVALUATED("false")!>equalsByte3<!>.id() != false)   return "Fail 3.3"
+    if (<!EVALUATED("false")!>equalsByte4<!>.id() != false)   return "Fail 3.3"
 
-    if (<!EVALUATED("false")!>equalsShort1 != false<!>)   return "Fail 4.1"
-    if (<!EVALUATED("false")!>equalsShort2 != true<!>)    return "Fail 4.2"
-    if (<!EVALUATED("false")!>equalsShort3 != false<!>)   return "Fail 4.3"
-    if (<!EVALUATED("false")!>equalsShort4 != false<!>)   return "Fail 4.3"
+    if (<!EVALUATED("false")!>equalsShort1<!>.id() != false)   return "Fail 4.1"
+    if (<!EVALUATED("true")!>equalsShort2<!>.id() != true)    return "Fail 4.2"
+    if (<!EVALUATED("false")!>equalsShort3<!>.id() != false)   return "Fail 4.3"
+    if (<!EVALUATED("false")!>equalsShort4<!>.id() != false)   return "Fail 4.3"
 
-    if (<!EVALUATED("false")!>equalsInt1 != false<!>)   return "Fail 5.1"
-    if (<!EVALUATED("false")!>equalsInt2 != true<!>)    return "Fail 5.2"
-    if (<!EVALUATED("false")!>equalsInt3 != false<!>)   return "Fail 5.3"
-    if (<!EVALUATED("false")!>equalsInt4 != false<!>)   return "Fail 5.3"
+    if (<!EVALUATED("false")!>equalsInt1<!>.id() != false)   return "Fail 5.1"
+    if (<!EVALUATED("true")!>equalsInt2<!>.id() != true)    return "Fail 5.2"
+    if (<!EVALUATED("false")!>equalsInt3<!>.id() != false)   return "Fail 5.3"
+    if (<!EVALUATED("false")!>equalsInt4<!>.id() != false)   return "Fail 5.3"
 
-    if (<!EVALUATED("false")!>equalsLong1 != false<!>)   return "Fail 6.1"
-    if (<!EVALUATED("false")!>equalsLong2 != true<!>)    return "Fail 6.2"
-    if (<!EVALUATED("false")!>equalsLong3 != false<!>)   return "Fail 6.3"
-    if (<!EVALUATED("false")!>equalsLong4 != false<!>)   return "Fail 6.3"
+    if (<!EVALUATED("false")!>equalsLong1<!>.id() != false)   return "Fail 6.1"
+    if (<!EVALUATED("true")!>equalsLong2<!>.id() != true)    return "Fail 6.2"
+    if (<!EVALUATED("false")!>equalsLong3<!>.id() != false)   return "Fail 6.3"
+    if (<!EVALUATED("false")!>equalsLong4<!>.id() != false)   return "Fail 6.3"
 
-    if (<!EVALUATED("false")!>equalsFloat1 != false<!>)   return "Fail 7.1"
-    if (<!EVALUATED("false")!>equalsFloat2 != true<!>)    return "Fail 7.2"
-    if (<!EVALUATED("false")!>equalsFloat3 != false<!>)   return "Fail 7.3"
-    if (<!EVALUATED("false")!>equalsFloat4 != false<!>)   return "Fail 7.3"
+    if (<!EVALUATED("false")!>equalsFloat1<!>.id() != false)   return "Fail 7.1"
+    if (<!EVALUATED("true")!>equalsFloat2<!>.id() != true)    return "Fail 7.2"
+    if (<!EVALUATED("false")!>equalsFloat3<!>.id() != false)   return "Fail 7.3"
+    if (<!EVALUATED("false")!>equalsFloat4<!>.id() != false)   return "Fail 7.3"
 
-    if (<!EVALUATED("false")!>equalsDouble1 != false<!>)   return "Fail 8.1"
-    if (<!EVALUATED("false")!>equalsDouble2 != true<!>)    return "Fail 8.2"
-    if (<!EVALUATED("false")!>equalsDouble3 != false<!>)   return "Fail 8.3"
-    if (<!EVALUATED("false")!>equalsDouble4 != false<!>)   return "Fail 8.3"
+    if (<!EVALUATED("false")!>equalsDouble1<!>.id() != false)   return "Fail 8.1"
+    if (<!EVALUATED("true")!>equalsDouble2<!>.id() != true)    return "Fail 8.2"
+    if (<!EVALUATED("false")!>equalsDouble3<!>.id() != false)   return "Fail 8.3"
+    if (<!EVALUATED("false")!>equalsDouble4<!>.id() != false)   return "Fail 8.3"
 
-    if (<!EVALUATED("false")!>equalsString1 != false<!>)   return "Fail 9.1"
-    if (<!EVALUATED("false")!>equalsString2 != true<!>)    return "Fail 9.2"
-    if (<!EVALUATED("false")!>equalsString3 != false<!>)   return "Fail 9.3"
-    if (<!EVALUATED("false")!>equalsString4 != false<!>)   return "Fail 9.3"
+    if (<!EVALUATED("false")!>equalsString1<!>.id() != false)   return "Fail 9.1"
+    if (<!EVALUATED("true")!>equalsString2<!>.id() != true)    return "Fail 9.2"
+    if (<!EVALUATED("false")!>equalsString3<!>.id() != false)   return "Fail 9.3"
+    if (<!EVALUATED("false")!>equalsString4<!>.id() != false)   return "Fail 9.3"
 
     return "OK"
 }

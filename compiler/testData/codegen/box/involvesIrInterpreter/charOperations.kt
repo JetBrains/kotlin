@@ -4,6 +4,7 @@
 // `Char.equals(Char)` will not be evaluated in K1
 // IGNORE_BACKEND_K1: NATIVE
 // WITH_STDLIB
+fun <T> T.id() = this
 
 const val oneVal = <!EVALUATED("1")!>'1'<!>
 const val twoVal = <!EVALUATED("2")!>'2'<!>
@@ -54,45 +55,45 @@ const val code3 = threeVal.<!EVALUATED("51")!>code<!>
 const val code4 = fourVal.<!EVALUATED("52")!>code<!>
 
 fun box(): String {
-    if (<!EVALUATED("false")!>compareTo1 != -1<!>)   return "Fail 1.1"
-    if (<!EVALUATED("false")!>compareTo2 != 0<!>)    return "Fail 1.2"
-    if (<!EVALUATED("false")!>compareTo3 != 1<!>)    return "Fail 1.3"
-    if (<!EVALUATED("false")!>compareTo4 != 1<!>)    return "Fail 1.4"
+    if (<!EVALUATED("-1")!>compareTo1<!>.id() != -1)   return "Fail 1.1"
+    if (<!EVALUATED("0")!>compareTo2<!>.id() != 0)    return "Fail 1.2"
+    if (<!EVALUATED("1")!>compareTo3<!>.id() != 1)    return "Fail 1.3"
+    if (<!EVALUATED("1")!>compareTo4<!>.id() != 1)    return "Fail 1.4"
 
-    if (<!EVALUATED("false")!>plus1 != '6'<!>)   return "Fail 2.1"
-    if (<!EVALUATED("false")!>plus2 != '7'<!>)   return "Fail 2.2"
-    if (<!EVALUATED("false")!>plus3 != '8'<!>)   return "Fail 2.3"
-    if (<!EVALUATED("false")!>plus4 != '9'<!>)   return "Fail 2.4"
+    if (<!EVALUATED("6")!>plus1<!>.id() != '6')   return "Fail 2.1"
+    if (<!EVALUATED("7")!>plus2<!>.id() != '7')   return "Fail 2.2"
+    if (<!EVALUATED("8")!>plus3<!>.id() != '8')   return "Fail 2.3"
+    if (<!EVALUATED("9")!>plus4<!>.id() != '9')   return "Fail 2.4"
 
-    if (<!EVALUATED("false")!>minusChar1 != -1<!>)   return "Fail 3.1"
-    if (<!EVALUATED("false")!>minusChar2 != 0<!>)    return "Fail 3.2"
-    if (<!EVALUATED("false")!>minusChar3 != 1<!>)    return "Fail 3.3"
-    if (<!EVALUATED("false")!>minusChar4 != 2<!>)    return "Fail 3.4"
+    if (<!EVALUATED("-1")!>minusChar1<!>.id() != -1)   return "Fail 3.1"
+    if (<!EVALUATED("0")!>minusChar2<!>.id() != 0)    return "Fail 3.2"
+    if (<!EVALUATED("1")!>minusChar3<!>.id() != 1)    return "Fail 3.3"
+    if (<!EVALUATED("2")!>minusChar4<!>.id() != 2)    return "Fail 3.4"
 
-    if (<!EVALUATED("false")!>minusInt1 != ','<!>)   return "Fail 4.1"
-    if (<!EVALUATED("false")!>minusInt2 != '-'<!>)   return "Fail 4.2"
-    if (<!EVALUATED("false")!>minusInt3 != '.'<!>)   return "Fail 4.3"
-    if (<!EVALUATED("false")!>minusInt4 != '/'<!>)   return "Fail 4.4"
+    if (<!EVALUATED(",")!>minusInt1<!>.id() != ',')   return "Fail 4.1"
+    if (<!EVALUATED("-")!>minusInt2<!>.id() != '-')   return "Fail 4.2"
+    if (<!EVALUATED(".")!>minusInt3<!>.id() != '.')   return "Fail 4.3"
+    if (<!EVALUATED("/")!>minusInt4<!>.id() != '/')   return "Fail 4.4"
 
-    if (<!EVALUATED("false")!>convert1 != 49.toByte()<!>)    return "Fail 5.1"
-    if (<!EVALUATED("false")!>convert2 != '1'<!>)            return "Fail 5.2"
-    if (<!EVALUATED("false")!>convert3 != 49.toShort()<!>)   return "Fail 5.3"
-    if (<!EVALUATED("false")!>convert4 != 49<!>)             return "Fail 5.4"
-    if (<!EVALUATED("false")!>convert5 != 49L<!>)            return "Fail 5.5"
-    if (<!EVALUATED("false")!>convert6 != 49.0f<!>)          return "Fail 5.6"
-    if (<!EVALUATED("false")!>convert7 != 49.0<!>)           return "Fail 5.7"
+    if (<!EVALUATED("49")!>convert1<!>.id() != 49.<!EVALUATED("49")!>toByte()<!>)    return "Fail 5.1"
+    if (<!EVALUATED("1")!>convert2<!>.id() != '1')            return "Fail 5.2"
+    if (<!EVALUATED("49")!>convert3<!>.id() != 49.<!EVALUATED("49")!>toShort()<!>)   return "Fail 5.3"
+    if (<!EVALUATED("49")!>convert4<!>.id() != 49)             return "Fail 5.4"
+    if (<!EVALUATED("49")!>convert5<!>.id() != 49L)            return "Fail 5.5"
+    if (<!EVALUATED("49.0")!>convert6<!>.id() != 49.0f)          return "Fail 5.6"
+    if (<!EVALUATED("49.0")!>convert7<!>.id() != 49.0)           return "Fail 5.7"
 
-    if (<!EVALUATED("false")!>equals1 != false<!>)   return "Fail 6.1"
-    if (<!EVALUATED("false")!>equals2 != true<!>)    return "Fail 6.2"
-    if (<!EVALUATED("false")!>equals3 != false<!>)   return "Fail 6.3"
-    if (<!EVALUATED("false")!>equals4 != false<!>)   return "Fail 6.4"
+    if (<!EVALUATED("false")!>equals1<!>.id() != false)   return "Fail 6.1"
+    if (<!EVALUATED("true")!>equals2<!>.id() != true)    return "Fail 6.2"
+    if (<!EVALUATED("false")!>equals3<!>.id() != false)   return "Fail 6.3"
+    if (<!EVALUATED("false")!>equals4<!>.id() != false)   return "Fail 6.4"
 
-    if (<!EVALUATED("false")!>toString1 != "1"<!>)   return "Fail 7.1"
-    if (<!EVALUATED("false")!>toString2 != "2"<!>)   return "Fail 7.2"
+    if (<!EVALUATED("1")!>toString1<!>.id() != "1")   return "Fail 7.1"
+    if (<!EVALUATED("2")!>toString2<!>.id() != "2")   return "Fail 7.2"
 
-    if (<!EVALUATED("false")!>code1 != 49<!>)   return "Fail 8.1"
-    if (<!EVALUATED("false")!>code2 != 50<!>)   return "Fail 8.2"
-    if (<!EVALUATED("false")!>code3 != 51<!>)   return "Fail 8.3"
-    if (<!EVALUATED("false")!>code4 != 52<!>)   return "Fail 8.4"
+    if (<!EVALUATED("49")!>code1<!>.id() != 49)   return "Fail 8.1"
+    if (<!EVALUATED("50")!>code2<!>.id() != 50)   return "Fail 8.2"
+    if (<!EVALUATED("51")!>code3<!>.id() != 51)   return "Fail 8.3"
+    if (<!EVALUATED("52")!>code4<!>.id() != 52)   return "Fail 8.4"
     return "OK"
 }

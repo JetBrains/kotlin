@@ -3,6 +3,7 @@
 // TARGET_BACKEND: NATIVE
 // `Boolean.equals(Boolean)` will not be evaluated in K1
 // IGNORE_BACKEND_K1: NATIVE
+fun <T> T.id() = this
 
 const val trueVal = <!EVALUATED("true")!>true<!>
 const val falseVal = <!EVALUATED("false")!>false<!>
@@ -39,35 +40,35 @@ const val toString1 = trueVal.<!EVALUATED("true")!>toString()<!>
 const val toString2 = falseVal.<!EVALUATED("false")!>toString()<!>
 
 fun box(): String {
-    if (<!EVALUATED("false")!>not1 != false<!>)  return "Fail 1.1"
-    if (<!EVALUATED("false")!>not2 != true<!>)   return "Fail 1.2"
+    if (<!EVALUATED("false")!>not1<!>.id() != false)  return "Fail 1.1"
+    if (<!EVALUATED("true")!>not2<!>.id() != true)   return "Fail 1.2"
 
-    if (<!EVALUATED("false")!>and1 != true<!>)   return "Fail 2.1"
-    if (<!EVALUATED("false")!>and2 != false<!>)  return "Fail 2.2"
-    if (<!EVALUATED("false")!>and3 != false<!>)  return "Fail 2.3"
-    if (<!EVALUATED("false")!>and4 != false<!>)  return "Fail 2.4"
+    if (<!EVALUATED("true")!>and1<!>.id() != true)   return "Fail 2.1"
+    if (<!EVALUATED("false")!>and2<!>.id() != false)  return "Fail 2.2"
+    if (<!EVALUATED("false")!>and3<!>.id() != false)  return "Fail 2.3"
+    if (<!EVALUATED("false")!>and4<!>.id() != false)  return "Fail 2.4"
 
-    if (<!EVALUATED("false")!>or1 != true<!>)    return "Fail 3.1"
-    if (<!EVALUATED("false")!>or2 != true<!>)    return "Fail 3.2"
-    if (<!EVALUATED("false")!>or3 != true<!>)    return "Fail 3.3"
-    if (<!EVALUATED("false")!>or4 != false<!>)   return "Fail 3.4"
+    if (<!EVALUATED("true")!>or1<!>.id() != true)    return "Fail 3.1"
+    if (<!EVALUATED("true")!>or2<!>.id() != true)    return "Fail 3.2"
+    if (<!EVALUATED("true")!>or3<!>.id() != true)    return "Fail 3.3"
+    if (<!EVALUATED("false")!>or4<!>.id() != false)   return "Fail 3.4"
 
-    if (<!EVALUATED("false")!>xor1 != false<!>)  return "Fail 4.1"
-    if (<!EVALUATED("false")!>xor2 != true<!>)   return "Fail 4.2"
-    if (<!EVALUATED("false")!>xor3 != true<!>)   return "Fail 4.3"
-    if (<!EVALUATED("false")!>xor4 != false<!>)  return "Fail 4.4"
+    if (<!EVALUATED("false")!>xor1<!>.id() != false)  return "Fail 4.1"
+    if (<!EVALUATED("true")!>xor2<!>.id() != true)   return "Fail 4.2"
+    if (<!EVALUATED("true")!>xor3<!>.id() != true)   return "Fail 4.3"
+    if (<!EVALUATED("false")!>xor4<!>.id() != false)  return "Fail 4.4"
 
-    if (<!EVALUATED("false")!>compareTo1 != 0<!>)    return "Fail 5.1"
-    if (<!EVALUATED("false")!>compareTo2 != 1<!>)    return "Fail 5.2"
-    if (<!EVALUATED("false")!>compareTo3 != -1<!>)   return "Fail 5.3"
-    if (<!EVALUATED("false")!>compareTo4 != 0<!>)    return "Fail 5.4"
+    if (<!EVALUATED("0")!>compareTo1<!>.id() != 0)    return "Fail 5.1"
+    if (<!EVALUATED("1")!>compareTo2<!>.id() != 1)    return "Fail 5.2"
+    if (<!EVALUATED("-1")!>compareTo3<!>.id() != -1)   return "Fail 5.3"
+    if (<!EVALUATED("0")!>compareTo4<!>.id() != 0)    return "Fail 5.4"
 
-    if (<!EVALUATED("false")!>equals1 != true<!>)    return "Fail 6.1"
-    if (<!EVALUATED("false")!>equals2 != false<!>)   return "Fail 6.2"
-    if (<!EVALUATED("false")!>equals3 != false<!>)   return "Fail 6.3"
-    if (<!EVALUATED("false")!>equals4 != true<!>)    return "Fail 6.4"
+    if (<!EVALUATED("true")!>equals1<!>.id() != true)    return "Fail 6.1"
+    if (<!EVALUATED("false")!>equals2<!>.id() != false)   return "Fail 6.2"
+    if (<!EVALUATED("false")!>equals3<!>.id() != false)   return "Fail 6.3"
+    if (<!EVALUATED("true")!>equals4<!>.id() != true)    return "Fail 6.4"
 
-    if (<!EVALUATED("false")!>toString1 != "true"<!>)    return "Fail 7.1"
-    if (<!EVALUATED("false")!>toString2 != "false"<!>)   return "Fail 7.2"
+    if (<!EVALUATED("true")!>toString1<!>.id() != "true")    return "Fail 7.1"
+    if (<!EVALUATED("false")!>toString2<!>.id() != "false")   return "Fail 7.2"
     return "OK"
 }

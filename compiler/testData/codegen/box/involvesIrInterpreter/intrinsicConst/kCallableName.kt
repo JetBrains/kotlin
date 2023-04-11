@@ -1,6 +1,7 @@
 // !LANGUAGE: +IntrinsicConstEvaluation
 // TARGET_BACKEND: JVM_IR
 // IGNORE_BACKEND_K1: JVM_IR
+fun <T> T.id() = this
 
 class A(val OK: Int, val somePropertyWithLongName: String) {
     fun foo() {}
@@ -16,11 +17,11 @@ const val className = ::A.<!EVALUATED("<init>")!>name<!>
 const val topLevelPropName = ::topLevelProp.<!EVALUATED("topLevelProp")!>name<!>
 
 fun box(): String {
-    if (<!EVALUATED("false")!>propertyName1 != "OK"<!>) return "Fail 1"
-    if (<!EVALUATED("false")!>propertyName2 != "somePropertyWithLongName"<!>) return "Fail 2"
-    if (<!EVALUATED("false")!>methodName != "foo"<!>) return "Fail 3.1"
-    if (<!EVALUATED("false")!>suspendMethodName != "bar"<!>) return "Fail 3.2"
-    if (<!EVALUATED("false")!>className != "<init>"<!>) return "Fail 4"
-    if (<!EVALUATED("false")!>topLevelPropName != "topLevelProp"<!>) return "Fail 5"
+    if (<!EVALUATED("OK")!>propertyName1<!>.id() != "OK") return "Fail 1"
+    if (<!EVALUATED("somePropertyWithLongName")!>propertyName2<!>.id() != "somePropertyWithLongName") return "Fail 2"
+    if (<!EVALUATED("foo")!>methodName<!>.id() != "foo") return "Fail 3"
+    if (<!EVALUATED("bar")!>suspendMethodName<!>.id() != "bar") return "Fail 3.2"
+    if (<!EVALUATED("<init>")!>className<!>.id() != "<init>") return "Fail 4"
+    if (<!EVALUATED("topLevelProp")!>topLevelPropName<!>.id() != "topLevelProp") return "Fail 5"
     return "OK"
 }

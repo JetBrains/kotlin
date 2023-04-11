@@ -3,6 +3,7 @@
 // TARGET_BACKEND: NATIVE
 // TARGET_BACKEND: JS_IR
 // IGNORE_BACKEND_K1: JVM_IR, NATIVE, JS_IR, JS_IR_ES6
+fun <T> T.id() = this
 
 const val flag = <!EVALUATED("true")!>true<!>
 const val value = <!EVALUATED("10")!>10<!>
@@ -13,10 +14,10 @@ const val withWhen3 = <!EVALUATED("1")!>when(value) { 10 -> "1"; 100 -> "2"; els
 const val multibranchIf = <!EVALUATED("3")!>if (value == 100) 1 else if (value == 1000) 2 else 3<!>
 
 fun box(): String {
-    if (<!EVALUATED("false")!>condition != "True"<!>) return "Fail 1"
-    if (<!EVALUATED("false")!>withWhen != "True"<!>) return "Fail 2"
-    if (<!EVALUATED("false")!>withWhen2 != "True"<!>) return "Fail 3"
-    if (<!EVALUATED("false")!>withWhen3 != "1"<!>) return "Fail 4"
-    if (<!EVALUATED("false")!>multibranchIf != 3<!>) return "Fail 5"
+    if (<!EVALUATED("True")!>condition<!>.id() != "True") return "Fail 1"
+    if (<!EVALUATED("True")!>withWhen<!>.id() != "True") return "Fail 2"
+    if (<!EVALUATED("True")!>withWhen2<!>.id() != "True") return "Fail 3"
+    if (<!EVALUATED("1")!>withWhen3<!>.id() != "1") return "Fail 4"
+    if (<!EVALUATED("3")!>multibranchIf<!>.id() != 3) return "Fail 5"
     return "OK"
 }
