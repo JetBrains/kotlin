@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.fir
 
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationInfo
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
+import org.jetbrains.kotlin.analysis.api.annotations.KtNamedAnnotationValue
 import org.jetbrains.kotlin.analysis.api.fir.annotations.mapAnnotationParameters
 import org.jetbrains.kotlin.analysis.api.fir.evaluate.FirAnnotationValueConverter
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
@@ -71,14 +72,15 @@ internal fun ConeDiagnostic.getCandidateSymbols(): Collection<FirBasedSymbol<*>>
 internal fun FirAnnotation.toKtAnnotationApplication(
     useSiteSession: FirSession,
     index: Int,
+    arguments: List<KtNamedAnnotationValue> = FirAnnotationValueConverter.toNamedConstantValue(
+        mapAnnotationParameters(this),
+        useSiteSession,
+    )
 ): KtAnnotationApplicationWithArgumentsInfo = KtAnnotationApplicationWithArgumentsInfo(
     classId = toAnnotationClassId(useSiteSession),
     psi = psi as? KtCallElement,
     useSiteTarget = useSiteTarget,
-    arguments = FirAnnotationValueConverter.toNamedConstantValue(
-        mapAnnotationParameters(this),
-        useSiteSession,
-    ),
+    arguments = arguments,
     index = index,
 )
 
