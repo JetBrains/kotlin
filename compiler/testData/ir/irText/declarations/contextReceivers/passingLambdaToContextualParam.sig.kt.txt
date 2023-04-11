@@ -9,6 +9,9 @@ class C {
     // CHECK JVM_IR:
     //   Mangled name: C#<get-result>(){}kotlin.String
     //   Public signature: /C.result.<get-result>|8441547134620975366[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: C#<get-result>(){}
+    //   Public signature: /C.result.<get-result>|7945192536455394063[0]
     get
 
   // CHECK:
@@ -21,10 +24,16 @@ class C {
 // CHECK JVM_IR:
 //   Mangled name: #box(){}kotlin.String
 //   Public signature: /box|-9347091776561469[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #box(){}
+//   Public signature: /box|2173511048851971368[0]
 fun box(): String
 
 // CHECK JVM_IR:
 //   Mangled name: #contextual(kotlin.Function1<C,kotlin.String>){}kotlin.String
 //   Public signature: /contextual|-248785556334643583[0]
+// CHECK JS_IR NATIVE:
+//   Mangled name: #contextual(kotlin.Function1<C,kotlin.String>){}
+//   Public signature: /contextual|-8388542031730591420[0]
 fun contextual(f: Function1<C, String>): String
 
