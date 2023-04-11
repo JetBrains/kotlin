@@ -17,11 +17,17 @@ using ::testing::_;
 namespace {
 
 std_support::span<char> FormatLogEntry(
-        std_support::span<char> buffer, logging::Level level, std::initializer_list<const char*> tags, const char* format, ...) {
+        std_support::span<char> buffer,
+        logging::Level level,
+        std::initializer_list<const char*> tags,
+        int threadId,
+        kotlin::nanoseconds timestamp,
+        const char* format,
+        ...) {
     std_support::span<const char* const> tagsSpan(std::data(tags), std::size(tags));
     std::va_list args;
     va_start(args, format);
-    auto result = logging::internal::FormatLogEntry(buffer, level, tagsSpan, format, args);
+    auto result = logging::internal::FormatLogEntry(buffer, level, tagsSpan, threadId, timestamp, format, args);
     va_end(args);
     return result;
 }
@@ -56,57 +62,57 @@ public:
 
 TEST(LoggingTest, FormatLogEntry_Debug_OneTag) {
     std::array<char, 1024> buffer;
-    FormatLogEntry(buffer, logging::Level::kDebug, {"t1"}, "Log #%d", 42);
-    EXPECT_THAT(buffer.data(), testing::StrEq("[DEBUG][t1] Log #42\n"));
+    FormatLogEntry(buffer, logging::Level::kDebug, {"t1"}, 123, kotlin::nanoseconds(42'500'000'000), "Log #%d", 42);
+    EXPECT_THAT(buffer.data(), testing::StrEq("[DEBUG][t1][tid#123][42.500s] Log #42\n"));
 }
 
 TEST(LoggingTest, FormatLogEntry_Debug_TwoTags) {
     std::array<char, 1024> buffer;
-    FormatLogEntry(buffer, logging::Level::kDebug, {"t1", "t2"}, "Log #%d", 42);
-    EXPECT_THAT(buffer.data(), testing::StrEq("[DEBUG][t1,t2] Log #42\n"));
+    FormatLogEntry(buffer, logging::Level::kDebug, {"t1", "t2"}, 123, kotlin::nanoseconds(42'500'000'000), "Log #%d", 42);
+    EXPECT_THAT(buffer.data(), testing::StrEq("[DEBUG][t1,t2][tid#123][42.500s] Log #42\n"));
 }
 
 TEST(LoggingTest, FormatLogEntry_Info_OneTag) {
     std::array<char, 1024> buffer;
-    FormatLogEntry(buffer, logging::Level::kInfo, {"t1"}, "Log #%d", 42);
-    EXPECT_THAT(buffer.data(), testing::StrEq("[INFO][t1] Log #42\n"));
+    FormatLogEntry(buffer, logging::Level::kInfo, {"t1"}, 123, kotlin::nanoseconds(42'500'000'000), "Log #%d", 42);
+    EXPECT_THAT(buffer.data(), testing::StrEq("[INFO][t1][tid#123][42.500s] Log #42\n"));
 }
 
 TEST(LoggingTest, FormatLogEntry_Info_TwoTags) {
     std::array<char, 1024> buffer;
-    FormatLogEntry(buffer, logging::Level::kInfo, {"t1", "t2"}, "Log #%d", 42);
-    EXPECT_THAT(buffer.data(), testing::StrEq("[INFO][t1,t2] Log #42\n"));
+    FormatLogEntry(buffer, logging::Level::kInfo, {"t1", "t2"}, 123, kotlin::nanoseconds(42'500'000'000), "Log #%d", 42);
+    EXPECT_THAT(buffer.data(), testing::StrEq("[INFO][t1,t2][tid#123][42.500s] Log #42\n"));
 }
 
 TEST(LoggingTest, FormatLogEntry_Warning_OneTag) {
     std::array<char, 1024> buffer;
-    FormatLogEntry(buffer, logging::Level::kWarning, {"t1"}, "Log #%d", 42);
-    EXPECT_THAT(buffer.data(), testing::StrEq("[WARN][t1] Log #42\n"));
+    FormatLogEntry(buffer, logging::Level::kWarning, {"t1"}, 123, kotlin::nanoseconds(42'500'000'000), "Log #%d", 42);
+    EXPECT_THAT(buffer.data(), testing::StrEq("[WARN][t1][tid#123][42.500s] Log #42\n"));
 }
 
 TEST(LoggingTest, FormatLogEntry_Warning_TwoTags) {
     std::array<char, 1024> buffer;
-    FormatLogEntry(buffer, logging::Level::kWarning, {"t1", "t2"}, "Log #%d", 42);
-    EXPECT_THAT(buffer.data(), testing::StrEq("[WARN][t1,t2] Log #42\n"));
+    FormatLogEntry(buffer, logging::Level::kWarning, {"t1", "t2"}, 123, kotlin::nanoseconds(42'500'000'000), "Log #%d", 42);
+    EXPECT_THAT(buffer.data(), testing::StrEq("[WARN][t1,t2][tid#123][42.500s] Log #42\n"));
 }
 
 TEST(LoggingTest, FormatLogEntry_Error_OneTag) {
     std::array<char, 1024> buffer;
-    FormatLogEntry(buffer, logging::Level::kError, {"t1"}, "Log #%d", 42);
-    EXPECT_THAT(buffer.data(), testing::StrEq("[ERROR][t1] Log #42\n"));
+    FormatLogEntry(buffer, logging::Level::kError, {"t1"}, 123, kotlin::nanoseconds(42'500'000'000), "Log #%d", 42);
+    EXPECT_THAT(buffer.data(), testing::StrEq("[ERROR][t1][tid#123][42.500s] Log #42\n"));
 }
 
 TEST(LoggingTest, FormatLogEntry_Error_TwoTags) {
     std::array<char, 1024> buffer;
-    FormatLogEntry(buffer, logging::Level::kError, {"t1", "t2"}, "Log #%d", 42);
-    EXPECT_THAT(buffer.data(), testing::StrEq("[ERROR][t1,t2] Log #42\n"));
+    FormatLogEntry(buffer, logging::Level::kError, {"t1", "t2"}, 123, kotlin::nanoseconds(42'500'000'000), "Log #%d", 42);
+    EXPECT_THAT(buffer.data(), testing::StrEq("[ERROR][t1,t2][tid#123][42.500s] Log #42\n"));
 }
 
 TEST(LoggingTest, FormatLogEntry_Overflow) {
     std::array<char, 20> buffer;
-    FormatLogEntry(buffer, logging::Level::kError, {"t1", "t2"}, "Log #%d", 42);
+    FormatLogEntry(buffer, logging::Level::kError, {"t1", "t2"}, 123, kotlin::nanoseconds(42'500'000'000), "Log #%d", 42);
     // Only 18 characters are used for the log string contents, another 2 are \n and \0.
-    EXPECT_THAT(buffer.data(), testing::StrEq("[ERROR][t1,t2] Log\n"));
+    EXPECT_THAT(buffer.data(), testing::StrEq("[ERROR][t1,t2][tid\n"));
 }
 
 TEST(LoggingDeathTest, StderrLogger) {
@@ -187,11 +193,18 @@ namespace {
 
 class LoggingLogTest : public testing::Test {
 public:
-    void Log(logging::Level level, std::initializer_list<const char*> tags, const char* format, ...) {
+    void Log(
+            logging::Level level,
+            std::initializer_list<const char*> tags,
+            int threadId,
+            kotlin::nanoseconds timestamp,
+            const char* format,
+            ...) {
         std::va_list args;
         va_start(args, format);
         logging::internal::Log(
-                logFilter_, logger_, level, std_support::span<const char* const>(std::data(tags), std::size(tags)), format, args);
+                logFilter_, logger_, level, std_support::span<const char* const>(std::data(tags), std::size(tags)), threadId, timestamp,
+                format, args);
         va_end(args);
     }
 
@@ -217,13 +230,13 @@ TEST_F(LoggingLogTest, Log_Fail) {
     constexpr auto level = logging::Level::kInfo;
     const std::initializer_list<const char*> tags = {"t1", "t2"};
     EXPECT_CALL(logFilter(), Enabled(level, TagsAre(tags))).WillOnce(testing::Return(false));
-    Log(level, tags, "Message %d", 42);
+    Log(level, tags, 123, kotlin::nanoseconds(42'500'000'000), "Message %d", 42);
 }
 
 TEST_F(LoggingLogTest, Log_Success) {
     constexpr auto level = logging::Level::kInfo;
     const std::initializer_list<const char*> tags = {"t1", "t2"};
     EXPECT_CALL(logFilter(), Enabled(level, TagsAre(tags))).WillOnce(testing::Return(true));
-    EXPECT_CALL(logger(), Log(level, TagsAre(tags), "[INFO][t1,t2] Message 42\n"));
-    Log(level, tags, "Message %d", 42);
+    EXPECT_CALL(logger(), Log(level, TagsAre(tags), "[INFO][t1,t2][tid#123][42.500s] Message 42\n"));
+    Log(level, tags, 123, kotlin::nanoseconds(42'500'000'000), "Message %d", 42);
 }
