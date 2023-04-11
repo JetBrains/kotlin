@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.renderer.DescriptorRendererOptions
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.DataClassDescriptorResolver
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
+import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.secondaryConstructors
 import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
@@ -35,6 +36,8 @@ fun DescriptorRendererOptions.defaultDecompilerRendererOptions() {
     alwaysRenderModifiers = true
     parameterNamesInFunctionalTypes = false // to support parameters names in decompiled text we need to load annotation arguments
     defaultParameterValueRenderer = { _ -> "null" }
+    includePropertyConstant = true
+    propertyConstantRenderer = { _ -> "COMPILED_CODE" }
 }
 
 internal fun CallableMemberDescriptor.mustNotBeWrittenToDecompiledText(): Boolean {

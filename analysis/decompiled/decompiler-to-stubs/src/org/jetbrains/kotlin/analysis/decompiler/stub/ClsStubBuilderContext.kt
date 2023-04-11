@@ -4,10 +4,12 @@ package org.jetbrains.kotlin.analysis.decompiler.stub
 
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.AnnotationLoader
@@ -20,7 +22,9 @@ data class ClassIdWithTarget(val classId: ClassId, val target: AnnotationUseSite
 class ClsStubBuilderComponents(
     val classDataFinder: ClassDataFinder,
     val annotationLoader: AnnotationLoader<ClassId>,
-    val virtualFileForDebug: VirtualFile
+    val virtualFileForDebug: VirtualFile,
+    val classFinder: KotlinClassFinder? = null,
+    val jvmMetadataVersion: JvmMetadataVersion? = null
 ) {
     fun createContext(
         nameResolver: NameResolver,
