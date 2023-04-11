@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.utils.yieldIfNotNull
 internal abstract class FileBasedKotlinDeclarationProvider : KotlinDeclarationProvider() {
     abstract val ktFiles: List<KtFile>
 
+    open fun mightContainPackage(packageFqName: FqName): Boolean = true
+
     private val KtFile.topLevelDeclarations: Sequence<KtDeclaration>
         get() {
             return sequence {
@@ -33,10 +35,12 @@ internal abstract class FileBasedKotlinDeclarationProvider : KotlinDeclarationPr
         }
 
     override fun getClassLikeDeclarationByClassId(classId: ClassId): KtClassLikeDeclaration? {
+        if (!mightContainPackage(classId.packageFqName)) return null
         return ktFiles.firstNotNullOfOrNull { getClassLikeDeclarationsByClassId(it, classId).firstOrNull() }
     }
 
     override fun getAllClassesByClassId(classId: ClassId): Collection<KtClassOrObject> {
+        if (!mightContainPackage(classId.packageFqName)) return emptyList()
         return collectForEach(mutableListOf()) {
             getClassLikeDeclarationsByClassId(it, classId).filterIsInstanceTo<KtClassOrObject, _>(this)
         }
@@ -87,26 +91,31 @@ internal abstract class FileBasedKotlinDeclarationProvider : KotlinDeclarationPr
     }
 
     override fun getAllTypeAliasesByClassId(classId: ClassId): Collection<KtTypeAlias> {
+        if (!mightContainPackage(classId.packageFqName)) return emptyList()
         return collectForEach(mutableListOf()) {
             getClassLikeDeclarationsByClassId(it, classId).filterIsInstanceTo<KtTypeAlias, _>(this)
         }
     }
 
     override fun getTopLevelKotlinClassLikeDeclarationNamesInPackage(packageFqName: FqName): Set<Name> {
+        if (!mightContainPackage(packageFqName)) return emptySet()
         return collectForEach(mutableSetOf()) {
             getTopLevelDeclarationNamesTo<KtClassLikeDeclaration>(this, it, packageFqName)
         }
     }
 
     override fun getTopLevelProperties(callableId: CallableId): Collection<KtProperty> {
+        if (!mightContainPackage(callableId.packageName)) return emptyList()
         return collectForEach(mutableSetOf()) { getTopLevelCallablesTo(this, it, callableId) }
     }
 
     override fun getTopLevelFunctions(callableId: CallableId): Collection<KtNamedFunction> {
+        if (!mightContainPackage(callableId.packageName)) return emptyList()
         return collectForEach(mutableSetOf()) { getTopLevelCallablesTo(this, it, callableId) }
     }
 
     override fun getTopLevelCallableFiles(callableId: CallableId): Collection<KtFile> {
+        if (!mightContainPackage(callableId.packageName)) return emptyList()
         return buildSet {
             getTopLevelProperties(callableId).mapTo(this) { it.containingKtFile }
             getTopLevelFunctions(callableId).mapTo(this) { it.containingKtFile }
@@ -114,18 +123,21 @@ internal abstract class FileBasedKotlinDeclarationProvider : KotlinDeclarationPr
     }
 
     override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> {
+        if (!mightContainPackage(packageFqName)) return emptySet()
         return collectForEach(mutableSetOf()) {
             getTopLevelDeclarationNamesTo<KtCallableDeclaration>(this, it, packageFqName)
         }
     }
 
     override fun findFilesForFacadeByPackage(packageFqName: FqName): Collection<KtFile> {
+        if (!mightContainPackage(packageFqName)) return emptyList()
         return ktFiles.filter { ktFile ->
             ktFile.packageFqName == packageFqName
         }
     }
 
     override fun findFilesForFacade(facadeFqName: FqName): Collection<KtFile> {
+        if (!mightContainPackage(facadeFqName.parent())) return emptyList()
         return ktFiles.filter { ktFile ->
             ktFile.javaFileFacadeFqName == facadeFqName && ktFile.isFacade
         }
