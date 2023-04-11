@@ -12,12 +12,16 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.createSealed
 import org.jetbrains.kotlin.analysis.low.level.api.fir.fir.caches.FirThreadSafeCachesFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirIdePredicateBasedProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirIdeRegisteredPluginAnnotations
+import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.LLFirNonEmptyResolveExtensionTool
+import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.LLFirResolveExtensionTool
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSourcesSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirExceptionHandler
 import org.jetbrains.kotlin.analysis.project.structure.KtCompilerPluginsProvider
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.analysis.project.structure.moduleScopeProvider
+import org.jetbrains.kotlin.analysis.providers.KtResolveExtensionProvider
 import org.jetbrains.kotlin.analysis.providers.createAnnotationResolver
 import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
 import org.jetbrains.kotlin.fir.FirExceptionHandler
@@ -42,7 +46,16 @@ internal fun LLFirSession.registerIdeComponents(project: Project) {
     register(FirCachesFactory::class, FirThreadSafeCachesFactory)
     register(SealedClassInheritorsProvider::class, project.createSealedInheritorsProvider())
     register(FirExceptionHandler::class, LLFirExceptionHandler)
+    createResolveExtensionTool()?.let {
+        register(LLFirResolveExtensionTool::class, it)
+    }
 }
+
+private fun LLFirSession.createResolveExtensionTool(): LLFirResolveExtensionTool? {
+    val extensions = KtResolveExtensionProvider.provideExtensionsFor(ktModule)
+    return LLFirNonEmptyResolveExtensionTool(this, extensions)
+}
+
 
 internal inline fun createCompositeSymbolProvider(
     session: FirSession,

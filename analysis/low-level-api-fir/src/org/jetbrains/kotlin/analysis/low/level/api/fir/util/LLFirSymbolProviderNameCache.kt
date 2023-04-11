@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.caches.FirCachesFactory
 import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
@@ -27,7 +28,6 @@ internal abstract class LLFirSymbolProviderNameCache {
 
     abstract fun mayHaveTopLevelCallable(packageFqName: FqName, name: Name): Boolean
 }
-
 
 internal abstract class LLFirSymbolProviderNameCacheBase(
     private val firSession: FirSession
@@ -56,5 +56,54 @@ internal abstract class LLFirSymbolProviderNameCacheBase(
         if (name.isSpecial) return true
         val names = getTopLevelCallableNamesInPackage(packageFqName) ?: return true
         return name in names
+    }
+}
+
+
+internal object LLFirEmptySymbolProviderNameCache : LLFirSymbolProviderNameCache() {
+    override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<String>? = emptySet()
+    override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name>? = emptySet()
+    override fun mayHaveTopLevelClassifier(classId: ClassId, mayHaveFunctionClass: Boolean): Boolean = false
+    override fun mayHaveTopLevelCallable(packageFqName: FqName, name: Name): Boolean = false
+}
+
+internal class LLFirCompositeSymbolProviderNameCache
+private constructor(
+    private val caches: List<LLFirSymbolProviderNameCache>
+) : LLFirSymbolProviderNameCache() {
+    override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<String>? {
+        return buildSet {
+            for (cache in caches) {
+                val names = cache.getTopLevelClassifierNamesInPackage(packageFqName) ?: return null
+                addAll(names)
+            }
+        }
+    }
+
+    override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name>? {
+        return buildSet {
+            for (cache in caches) {
+                val names = cache.getTopLevelCallableNamesInPackage(packageFqName) ?: return null
+                addAll(names)
+            }
+        }
+    }
+
+    override fun mayHaveTopLevelClassifier(classId: ClassId, mayHaveFunctionClass: Boolean): Boolean {
+        return caches.any { it.mayHaveTopLevelClassifier(classId, mayHaveFunctionClass) }
+    }
+
+    override fun mayHaveTopLevelCallable(packageFqName: FqName, name: Name): Boolean {
+        return caches.any { it.mayHaveTopLevelCallable(packageFqName, name) }
+    }
+
+    companion object {
+        fun create(caches: List<LLFirSymbolProviderNameCache>): LLFirSymbolProviderNameCache {
+            return when (caches.size) {
+                0 -> LLFirEmptySymbolProviderNameCache
+                1 -> caches.single()
+                else -> LLFirCompositeSymbolProviderNameCache(caches)
+            }
+        }
     }
 }

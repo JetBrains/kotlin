@@ -17,3 +17,14 @@ internal fun <T> MutableList<T>.replaceFirst(from: T, to: T) {
     }
     set(index, to)
 }
+
+
+internal inline fun <E, C : MutableCollection<E>, P> Collection<P>.collectForEach(
+    collection: C,
+    collect: C.(P) -> Unit
+): C {
+    for (item in this) {
+        collect.invoke(collection, item)
+    }
+    return collection
+}

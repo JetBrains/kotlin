@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.configurators
 
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
+import com.intellij.openapi.extensions.ExtensionPoint
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.impl.base.references.HLApiReferenceProviderService
 import org.jetbrains.kotlin.analysis.api.lifetime.KtDefaultLifetimeTokenProvider
@@ -22,7 +23,15 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestServices
 
 object AnalysisApiBaseTestServiceRegistrar: AnalysisApiTestServiceRegistrar()  {
-    override fun registerProjectExtensionPoints(project: MockProject, testServices: TestServices) {}
+    override fun registerProjectExtensionPoints(project: MockProject, testServices: TestServices) {
+        project.extensionArea.apply {
+            registerExtensionPoint(
+                KtResolveExtensionProvider.EP_NAME.name,
+                KtResolveExtensionProvider::class.java.name,
+                ExtensionPoint.Kind.INTERFACE,
+            )
+        }
+    }
 
     @OptIn(KtAnalysisApiInternals::class)
     override fun registerProjectServices(project: MockProject, testServices: TestServices) {

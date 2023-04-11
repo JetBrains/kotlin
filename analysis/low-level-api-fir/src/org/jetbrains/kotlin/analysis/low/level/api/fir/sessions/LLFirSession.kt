@@ -20,6 +20,9 @@ import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import java.util.concurrent.atomic.AtomicBoolean
+import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.LLFirResolveExtensionTool
+import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.llResolveExtensionTool
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 @OptIn(PrivateSessionConstructor::class)
 abstract class LLFirSession(
@@ -51,12 +54,13 @@ abstract class LLFirSession(
         }
 
         modificationTracker = CompositeModificationTracker.createFlattened(
-            listOfNotNull(
-                ExplicitInvalidationTracker(ktModule, isExplicitlyInvalidated),
-                ModuleStateModificationTracker(ktModule, validityTracker),
-                outOfBlockTracker,
-                dependencyTracker
-            )
+            buildList {
+                add(ExplicitInvalidationTracker(ktModule, isExplicitlyInvalidated))
+                add(ModuleStateModificationTracker(ktModule, validityTracker))
+                addIfNotNull(outOfBlockTracker)
+                add(dependencyTracker)
+                llResolveExtensionTool?.modificationTrackers?.let(::addAll)
+            }
         )
 
         initialModificationCount = modificationTracker.modificationCount
