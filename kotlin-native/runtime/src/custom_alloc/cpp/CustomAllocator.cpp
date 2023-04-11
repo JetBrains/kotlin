@@ -119,6 +119,17 @@ void CustomAllocator::PrepareForGC() noexcept {
     extraObjectPage_ = nullptr;
 }
 
+// static
+size_t CustomAllocator::GetAllocatedHeapSize(ObjHeader* object) noexcept {
+    RuntimeAssert(object->heap(), "Object must be a heap object");
+    const auto* typeInfo = object->type_info();
+    if (typeInfo->IsArray()) {
+        return ArrayAllocatedDataSize(typeInfo, object->array()->count_);
+    } else {
+        return ObjectAllocatedDataSize(typeInfo);
+    }
+}
+
 uint8_t* CustomAllocator::Allocate(uint64_t size) noexcept {
     gcScheduler_.OnSafePointAllocation(size);
     CustomAllocDebug("CustomAllocator::Allocate(%" PRIu64 ")", size);

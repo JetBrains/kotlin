@@ -105,13 +105,14 @@ NO_EXTERNAL_CALLS_CHECK void gc::ConcurrentMarkAndSweep::ThreadData::OnSuspendFo
     gc::Mark<internal::MarkTraits>(handle, markQueue);
 }
 
+#ifndef CUSTOM_ALLOCATOR
 gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep(
         mm::ObjectFactory<ConcurrentMarkAndSweep>& objectFactory, GCScheduler& gcScheduler) noexcept :
-#ifndef CUSTOM_ALLOCATOR
     objectFactory_(objectFactory),
     gcScheduler_(gcScheduler),
     finalizerProcessor_(std_support::make_unique<FinalizerProcessor>([this](int64_t epoch) {
 #else
+gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep(GCScheduler& gcScheduler) noexcept :
     gcScheduler_(gcScheduler), finalizerProcessor_(std_support::make_unique<alloc::CustomFinalizerProcessor>([this](int64_t epoch) {
 #endif
         GCHandle::getByEpoch(epoch).finalizersDone();
