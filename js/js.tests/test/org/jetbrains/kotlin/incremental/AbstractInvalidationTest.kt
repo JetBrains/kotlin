@@ -10,6 +10,7 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.local.CoreLocalFileSystem
 import com.intellij.psi.PsiManager
 import com.intellij.psi.SingleRootFileViewProvider
+import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.toPhaseMap
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -19,10 +20,12 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.ir.backend.js.*
-import org.jetbrains.kotlin.ir.backend.js.ic.*
+import org.jetbrains.kotlin.ir.backend.js.JsIrCompilerWithIC
 import org.jetbrains.kotlin.ir.backend.js.SourceMapsInfo
+import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
+import org.jetbrains.kotlin.ir.backend.js.ic.*
+import org.jetbrains.kotlin.ir.backend.js.jsPhases
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputs
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.safeModuleName
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
@@ -35,19 +38,17 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.DebugMode
-import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
-import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
 import org.jetbrains.kotlin.test.util.JUnit4Assertions
+import org.jetbrains.kotlin.test.utils.TestDisposable
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.junit.ComparisonFailure
+import org.junit.jupiter.api.AfterEach
 import java.io.File
-import java.util.EnumSet
+import java.util.*
 
-abstract class AbstractInvalidationTest(
-    private val targetBackend: TargetBackend,
-    private val workingDirPath: String
-) : KotlinTestWithEnvironment() {
+abstract class AbstractInvalidationTest(private val targetBackend: TargetBackend, private val workingDirPath: String) {
     companion object {
         private val OUT_DIR_PATH = System.getProperty("kotlin.js.test.root.out.dir") ?: error("'kotlin.js.test.root.out.dir' is not set")
         private val STDLIB_KLIB = File(System.getProperty("kotlin.js.stdlib.klib.path") ?: error("Please set stdlib path")).canonicalPath
@@ -63,14 +64,12 @@ abstract class AbstractInvalidationTest(
     }
 
     private val zipAccessor = ZipFileSystemCacheableAccessor(2)
+    protected val environment =
+        KotlinCoreEnvironment.createForParallelTests(TestDisposable(), CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
 
-    override fun createEnvironment(): KotlinCoreEnvironment {
-        return KotlinCoreEnvironment.createForTests(TestDisposable(), CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
-    }
-
-    override fun tearDown() {
+    @AfterEach
+    protected fun clearZipAccessor() {
         zipAccessor.reset()
-        super.tearDown()
     }
 
     private fun parseProjectInfo(testName: String, infoFile: File): ProjectInfo {
@@ -84,13 +83,13 @@ abstract class AbstractInvalidationTest(
     private val File.filesInDir
         get() = listFiles() ?: error("cannot retrieve the file list for $absolutePath directory")
 
-    protected fun doTest(testPath: String) {
+    protected fun runTest(@TestDataFile testPath: String) {
         val testDirectory = File(testPath)
         val testName = testDirectory.name
         val projectInfoFile = File(testDirectory, PROJECT_INFO_FILE)
         val projectInfo = parseProjectInfo(testName, projectInfoFile)
 
-        if (isIgnoredTest(projectInfo)){
+        if (isIgnoredTest(projectInfo)) {
             return
         }
 

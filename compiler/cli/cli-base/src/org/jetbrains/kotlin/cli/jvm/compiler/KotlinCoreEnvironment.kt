@@ -468,6 +468,17 @@ class KotlinCoreEnvironment private constructor(
 
         @TestOnly
         @JvmStatic
+        fun createForParallelTests(
+            parentDisposable: Disposable, initialConfiguration: CompilerConfiguration, extensionConfigs: EnvironmentConfigFiles
+        ): KotlinCoreEnvironment {
+            val configuration = initialConfiguration.copy()
+            val appEnv = getOrCreateApplicationEnvironmentForTests(parentDisposable, configuration)
+            val projectEnv = ProjectEnvironment(parentDisposable, appEnv, configuration)
+            return KotlinCoreEnvironment(projectEnv, configuration, extensionConfigs)
+        }
+
+        @TestOnly
+        @JvmStatic
         fun createForTests(
             projectEnvironment: ProjectEnvironment, initialConfiguration: CompilerConfiguration, extensionConfigs: EnvironmentConfigFiles
         ): KotlinCoreEnvironment {

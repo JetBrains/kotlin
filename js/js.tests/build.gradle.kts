@@ -325,7 +325,7 @@ fun Test.setUpBoxTests() {
     forwardProperties()
 }
 
-val test = projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5, maxHeapSizeMb = 4096) {
+val test = projectTest(jUnitMode = JUnitMode.JUnit5) {
     setUpJsBoxTests(jsEnabled = true, jsIrEnabled = true, firEnabled = true, es6Enabled = true)
 
     inputs.dir(rootDir.resolve("compiler/cli/cli-common/resources")) // compiler.xml
@@ -340,26 +340,26 @@ val test = projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5, maxHeapSiz
     configureTestDistribution()
 }
 
-val jsTest = projectTest("jsTest", parallel = true, jUnitMode = JUnitMode.JUnit5, maxHeapSizeMb = 4096) {
+val jsTest = projectTest("jsTest", jUnitMode = JUnitMode.JUnit5) {
     setUpJsBoxTests(jsEnabled = true, jsIrEnabled = false, firEnabled = false, es6Enabled = false)
     useJUnitPlatform()
 }
 
-projectTest("jsIrTest", true, jUnitMode = JUnitMode.JUnit5, maxHeapSizeMb = 4096) {
+projectTest("jsIrTest", jUnitMode = JUnitMode.JUnit5) {
     setUpJsBoxTests(jsEnabled = false, jsIrEnabled = true, firEnabled = false, es6Enabled = false)
     useJUnitPlatform()
 }
-projectTest("jsIrES6Test", true, jUnitMode = JUnitMode.JUnit5, maxHeapSizeMb = 4096) {
+projectTest("jsIrES6Test", jUnitMode = JUnitMode.JUnit5) {
     setUpJsBoxTests(jsEnabled = false, jsIrEnabled = true, firEnabled = false, es6Enabled = true)
     useJUnitPlatform()
 }
 
-projectTest("jsFirTest", true, jUnitMode = JUnitMode.JUnit5, maxHeapSizeMb = 4096) {
+projectTest("jsFirTest", jUnitMode = JUnitMode.JUnit5) {
     setUpJsBoxTests(jsEnabled = false, jsIrEnabled = true, firEnabled = true, es6Enabled = false)
     useJUnitPlatform()
 }
 
-projectTest("quickTest", parallel = true, jUnitMode = JUnitMode.JUnit5, maxHeapSizeMb = 4096) {
+projectTest("quickTest", jUnitMode = JUnitMode.JUnit5) {
     setUpJsBoxTests(jsEnabled = true, jsIrEnabled = false, firEnabled = false, es6Enabled = false)
     systemProperty("kotlin.js.skipMinificationTest", "true")
     useJUnitPlatform()
@@ -432,13 +432,14 @@ val runMocha by tasks.registering {
     finalizedBy(mochaTest)
 }
 
-projectTest("invalidationTest", jUnitMode = JUnitMode.JUnit4) {
+projectTest("invalidationTest", jUnitMode = JUnitMode.JUnit5) {
     workingDir = rootDir
 
     useJsIrBoxTests(version = version, buildDir = "$buildDir/")
     include("org/jetbrains/kotlin/incremental/*")
     dependsOn(":dist")
     forwardProperties()
+    useJUnitPlatform()
 }
 
 tasks.named("check") {
