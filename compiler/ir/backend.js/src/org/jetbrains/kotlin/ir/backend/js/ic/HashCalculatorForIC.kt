@@ -95,7 +95,8 @@ internal class ICHasher {
         val importantSettings = listOf(
             JSConfigurationKeys.GENERATE_DTS,
             JSConfigurationKeys.MODULE_KIND,
-            JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION
+            JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION,
+            JSConfigurationKeys.OPTIMIZE_GENERATED_JS
         )
         hashCalculator.updateForEach(importantSettings) { key ->
             hashCalculator.update(key.toString())

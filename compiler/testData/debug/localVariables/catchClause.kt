@@ -22,7 +22,6 @@ fun box() {
 // EXPECTATIONS JS_IR
 // test.kt:4 box:
 // test.kt:5 box: a=1:number
-// test.kt:5 box: a=1:number
 // test.kt:6 box: a=0:number
 // test.kt:7 box: a=0:number
 // test.kt:8 box: a=0:number

@@ -382,6 +382,12 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
     )
     var verbosityLevel: String? by NullableStringFreezableVar(null)
 
+    @Argument(
+        value = "-Xoptimize-generated-js",
+        description = "Perform additional optimizations on the generated JS code"
+    )
+    var optimizeGeneratedJs: Boolean by FreezableVar(true)
+
     private fun MessageCollector.deprecationWarn(value: Boolean, defaultValue: Boolean, name: String) {
         if (value != defaultValue) {
             report(CompilerMessageSeverity.WARNING, "'$name' is deprecated and ignored, it will be removed in a future release")

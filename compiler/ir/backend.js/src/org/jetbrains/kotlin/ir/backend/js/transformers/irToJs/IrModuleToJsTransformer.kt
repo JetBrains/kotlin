@@ -225,6 +225,7 @@ class IrModuleToJsTransformer(
 
     private val generateFilePaths = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_COMMENTS_WITH_FILE_PATH)
     private val pathPrefixMap = backendContext.configuration.getMap(JSConfigurationKeys.FILE_PATHS_PREFIX_MAP)
+    private val optimizeGeneratedJs = backendContext.configuration.get(JSConfigurationKeys.OPTIMIZE_GENERATED_JS, true)
 
     private fun generateProgramFragment(fileExports: IrFileExports, minimizedMemberNames: Boolean): JsIrProgramFragment {
         val nameGenerator = JsNameLinkingNamer(backendContext, minimizedMemberNames)
@@ -351,6 +352,10 @@ class IrModuleToJsTransformer(
                     }
                 }
             }
+        }
+
+        if (optimizeGeneratedJs) {
+            optimizeFragmentByJsAst(result)
         }
 
         return result

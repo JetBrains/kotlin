@@ -10,6 +10,9 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
+import org.jetbrains.kotlin.ir.backend.js.utils.isTheLastReturnStatementIn
+import org.jetbrains.kotlin.ir.backend.js.utils.isUnitInstanceFunction
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
@@ -23,6 +26,7 @@ import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.synthetic
 
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
 class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsStatement, JsGenerationContext> {
@@ -153,7 +157,17 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
         }
 
         val jsInitializer = value?.accept(IrElementToJsExpressionTransformer(), context)
-        return JsVars(JsVars.JsVar(varName, jsInitializer).withSource(declaration, context, useNameOf = declaration))
+
+        val syntheticVariable = when (declaration.origin) {
+            is IrDeclarationOrigin.IR_TEMPORARY_VARIABLE -> true
+            else -> false
+        }
+
+        val variable = JsVars.JsVar(varName, jsInitializer).apply {
+            withSource(declaration, context, useNameOf = declaration)
+            synthetic = syntheticVariable
+        }
+        return JsVars(variable).apply { synthetic = syntheticVariable }
     }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, context: JsGenerationContext): JsStatement {
@@ -164,18 +178,13 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
     }
 
     override fun visitCall(expression: IrCall, data: JsGenerationContext): JsStatement {
-        if (expression.symbol.isUnitInstanceFunction(data)) {
+        if (expression.symbol.isUnitInstanceFunction(data.staticContext.backendContext)) {
             return JsEmpty
         }
         if (data.checkIfJsCode(expression.symbol) || data.checkIfHasAssociatedJsCode(expression.symbol)) {
             return JsCallTransformer(expression, data).generateStatement()
         }
         return translateCall(expression, data, IrElementToJsExpressionTransformer()).withSource(expression, data).makeStmt()
-    }
-
-    private fun IrFunctionSymbol.isUnitInstanceFunction(context: JsGenerationContext): Boolean {
-        return owner.origin === JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION &&
-                owner.returnType.classifierOrNull === context.staticContext.backendContext.irBuiltIns.unitClass
     }
 
     override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, context: JsGenerationContext): JsStatement {
@@ -206,8 +215,10 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
     override fun visitWhileLoop(loop: IrWhileLoop, context: JsGenerationContext): JsStatement {
         //TODO what if body null?
         val label = context.getNameForLoop(loop)
-        val loopStatement = JsWhile(loop.condition.accept(IrElementToJsExpressionTransformer(), context),
-                                    loop.body?.accept(this, context) ?: JsEmpty)
+        val loopStatement = JsWhile(
+            loop.condition.accept(IrElementToJsExpressionTransformer(), context),
+            loop.body?.accept(this, context) ?: JsEmpty
+        )
         return label?.let { JsLabel(it, loopStatement) } ?: loopStatement
     }
 

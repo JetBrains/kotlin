@@ -38,7 +38,6 @@ fun box(): String {
 // test.kt:4 <init>: x="X":kotlin.String, y="Y":kotlin.String
 // test.kt:4 <init>: x="X":kotlin.String, y="Y":kotlin.String
 // test.kt:16 box: p=MyPair
-// test.kt:16 box: p=MyPair
 // test.kt:6 component1:
 // test.kt:16 box: p=MyPair, o="O":kotlin.String
 // test.kt:10 component2:

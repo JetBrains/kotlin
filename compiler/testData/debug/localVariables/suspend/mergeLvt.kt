@@ -63,6 +63,5 @@ suspend fun box() {
 // test.kt:11 <get-a>:
 // test.kt:37 doResume:
 // test.kt:37 doResume:
-// test.kt:37 doResume:
 // test.kt:26 doResume:
 // test.kt:27 doResume: a=Unit

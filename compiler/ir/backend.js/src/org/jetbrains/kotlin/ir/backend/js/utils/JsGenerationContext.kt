@@ -81,7 +81,7 @@ class JsGenerationContext(
     fun getNameForReturnableBlock(block: IrReturnableBlock): JsName? {
         return nameCache.getOrPut(block) {
             val name = localNames!!.localReturnableBlockNames.names[block] ?: return null
-            return JsName(name, true)
+            JsName(name, true)
         }
     }
 

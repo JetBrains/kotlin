@@ -14,6 +14,7 @@ dependencies {
     api(project(":js:js.ast"))
     api(project(":js:js.frontend"))
     api(project(":js:js.sourcemap"))
+    api(project(":js:js.translator"))
 
     compileOnly(intellijCore())
 }

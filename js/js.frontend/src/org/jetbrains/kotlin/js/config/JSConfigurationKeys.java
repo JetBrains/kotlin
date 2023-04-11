@@ -123,4 +123,7 @@ public class JSConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> WASM_GENERATE_WAT =
             CompilerConfigurationKey.create("generate wat file");
+
+    public static final CompilerConfigurationKey<Boolean> OPTIMIZE_GENERATED_JS =
+            CompilerConfigurationKey.create("perform additional optimizations on the generated JS code");
 }
