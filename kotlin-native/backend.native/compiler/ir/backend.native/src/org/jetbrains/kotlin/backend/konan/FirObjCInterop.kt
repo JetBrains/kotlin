@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.scopes.processAllFunctions
 import org.jetbrains.kotlin.fir.scopes.scopeForClass
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.classId
@@ -131,7 +132,11 @@ private fun FirClassSymbol<*>.isObjCClass(session: FirSession) = classId.package
 private fun FirClassSymbol<*>.selfOrAnySuperClass(session: FirSession, pred: (FirClassSymbol<*>) -> Boolean): Boolean =
         DFS.ifAny(
                 listOf(this),
-                { current -> current.resolvedSuperTypes.mapNotNull { it.classId?.toSymbol(session) as? FirClassSymbol } },
+                { current ->
+                    current.resolvedSuperTypes.mapNotNull {
+                        (it.classId?.toSymbol(session) as? FirClassLikeSymbol)?.fullyExpandedClass(session)
+                    }
+                },
                 pred
         )
 
