@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.analysis.decompiler.psi.text
 
 import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtDecompiledFile
+import org.jetbrains.kotlin.analysis.decompiler.stub.COMPILED_DEFAULT_INITIALIZER
+import org.jetbrains.kotlin.analysis.decompiler.stub.COMPILED_DEFAULT_PARAMETER_VALUE
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures
 import org.jetbrains.kotlin.descriptors.*
@@ -110,6 +112,8 @@ object ByDescriptorIndexer : DecompiledTextIndexer<String> {
         withDefinedIn = true
         renderUnabbreviatedType = false
         defaultParameterValueRenderer = null
+        includePropertyConstant = true
+        propertyConstantRenderer = { _ -> COMPILED_DEFAULT_INITIALIZER }
     }
 
     private val LOG = Logger.getInstance(this::class.java)

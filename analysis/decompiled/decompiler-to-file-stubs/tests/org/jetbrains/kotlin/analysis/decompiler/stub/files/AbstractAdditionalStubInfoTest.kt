@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.psi.KtProjectionKind
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.nio.file.Paths
+import kotlin.reflect.KClass
 
 abstract class AbstractAdditionalStubInfoTest : AbstractDecompiledClassTest() {
     fun runTest(testDirectory: String) {
@@ -32,6 +33,12 @@ abstract class AbstractAdditionalStubInfoTest : AbstractDecompiledClassTest() {
                 if (upperBound != null) {
                     builder.append("    ft: ")
                     appendFlexibleTypeInfo(builder, upperBound)
+                }
+            }
+            is KotlinPropertyStubImpl -> {
+                val initializer = stub.constantInitializer
+                if (initializer != null) {
+                    builder.append("\n").append("  ".repeat(level)).append("initializer: ${initializer.value}")
                 }
             }
             is KotlinFunctionStubImpl -> {
