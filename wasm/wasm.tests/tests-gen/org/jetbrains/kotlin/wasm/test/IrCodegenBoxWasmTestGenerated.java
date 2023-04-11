@@ -18720,16 +18720,16 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/involvesIrInterpreter/kt56215.kt");
         }
 
-        @TestMetadata("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck")
+        @TestMetadata("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class DumpIrAndCheck extends AbstractIrCodegenBoxWasmTest {
+        public static class IntrinsicConst extends AbstractIrCodegenBoxWasmTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
             }
 
-            public void testAllFilesPresentInDumpIrAndCheck() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+            public void testAllFilesPresentInIntrinsicConst() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
             }
         }
 

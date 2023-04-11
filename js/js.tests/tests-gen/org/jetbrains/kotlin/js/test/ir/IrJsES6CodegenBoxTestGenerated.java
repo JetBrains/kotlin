@@ -21086,6 +21086,48 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
         }
 
         @Test
+        @TestMetadata("booleanOperations.kt")
+        public void testBooleanOperations() throws Exception {
+            runTest("compiler/testData/codegen/box/involvesIrInterpreter/booleanOperations.kt");
+        }
+
+        @Test
+        @TestMetadata("byteOperations.kt")
+        public void testByteOperations() throws Exception {
+            runTest("compiler/testData/codegen/box/involvesIrInterpreter/byteOperations.kt");
+        }
+
+        @Test
+        @TestMetadata("charOperations.kt")
+        public void testCharOperations() throws Exception {
+            runTest("compiler/testData/codegen/box/involvesIrInterpreter/charOperations.kt");
+        }
+
+        @Test
+        @TestMetadata("doubleOperations.kt")
+        public void testDoubleOperations() throws Exception {
+            runTest("compiler/testData/codegen/box/involvesIrInterpreter/doubleOperations.kt");
+        }
+
+        @Test
+        @TestMetadata("floatOperations.kt")
+        public void testFloatOperations() throws Exception {
+            runTest("compiler/testData/codegen/box/involvesIrInterpreter/floatOperations.kt");
+        }
+
+        @Test
+        @TestMetadata("intOperations.kt")
+        public void testIntOperations() throws Exception {
+            runTest("compiler/testData/codegen/box/involvesIrInterpreter/intOperations.kt");
+        }
+
+        @Test
+        @TestMetadata("jsFloatDoubleToString.kt")
+        public void testJsFloatDoubleToString() throws Exception {
+            runTest("compiler/testData/codegen/box/involvesIrInterpreter/jsFloatDoubleToString.kt");
+        }
+
+        @Test
         @TestMetadata("kt55912.kt")
         public void testKt55912() throws Exception {
             runTest("compiler/testData/codegen/box/involvesIrInterpreter/kt55912.kt");
@@ -21098,9 +21140,39 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
         }
 
         @Test
+        @TestMetadata("longOperations.kt")
+        public void testLongOperations() throws Exception {
+            runTest("compiler/testData/codegen/box/involvesIrInterpreter/longOperations.kt");
+        }
+
+        @Test
+        @TestMetadata("shortOperations.kt")
+        public void testShortOperations() throws Exception {
+            runTest("compiler/testData/codegen/box/involvesIrInterpreter/shortOperations.kt");
+        }
+
+        @Test
+        @TestMetadata("stdlibConst.kt")
+        public void testStdlibConst() throws Exception {
+            runTest("compiler/testData/codegen/box/involvesIrInterpreter/stdlibConst.kt");
+        }
+
+        @Test
+        @TestMetadata("stringConcatenation.kt")
+        public void testStringConcatenation() throws Exception {
+            runTest("compiler/testData/codegen/box/involvesIrInterpreter/stringConcatenation.kt");
+        }
+
+        @Test
         @TestMetadata("stringConcatenationWithObject.kt")
         public void testStringConcatenationWithObject() throws Exception {
             runTest("compiler/testData/codegen/box/involvesIrInterpreter/stringConcatenationWithObject.kt");
+        }
+
+        @Test
+        @TestMetadata("stringOperations.kt")
+        public void testStringOperations() throws Exception {
+            runTest("compiler/testData/codegen/box/involvesIrInterpreter/stringOperations.kt");
         }
 
         @Test
@@ -21109,97 +21181,25 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
             runTest("compiler/testData/codegen/box/involvesIrInterpreter/thisPlusString.kt");
         }
 
+        @Test
+        @TestMetadata("unsignedConst.kt")
+        public void testUnsignedConst() throws Exception {
+            runTest("compiler/testData/codegen/box/involvesIrInterpreter/unsignedConst.kt");
+        }
+
         @Nested
-        @TestMetadata("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck")
+        @TestMetadata("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst")
         @TestDataPath("$PROJECT_ROOT")
-        public class DumpIrAndCheck {
+        public class IntrinsicConst {
             @Test
-            public void testAllFilesPresentInDumpIrAndCheck() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
-            }
-
-            @Test
-            @TestMetadata("booleanOperations.kt")
-            public void testBooleanOperations() throws Exception {
-                runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/booleanOperations.kt");
-            }
-
-            @Test
-            @TestMetadata("byteOperations.kt")
-            public void testByteOperations() throws Exception {
-                runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/byteOperations.kt");
-            }
-
-            @Test
-            @TestMetadata("charOperations.kt")
-            public void testCharOperations() throws Exception {
-                runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/charOperations.kt");
-            }
-
-            @Test
-            @TestMetadata("doubleOperations.kt")
-            public void testDoubleOperations() throws Exception {
-                runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/doubleOperations.kt");
-            }
-
-            @Test
-            @TestMetadata("floatOperations.kt")
-            public void testFloatOperations() throws Exception {
-                runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/floatOperations.kt");
+            public void testAllFilesPresentInIntrinsicConst() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
             }
 
             @Test
             @TestMetadata("ifConstVal.kt")
             public void testIfConstVal() throws Exception {
-                runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/ifConstVal.kt");
-            }
-
-            @Test
-            @TestMetadata("intOperations.kt")
-            public void testIntOperations() throws Exception {
-                runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/intOperations.kt");
-            }
-
-            @Test
-            @TestMetadata("jsFloatDoubleToString.kt")
-            public void testJsFloatDoubleToString() throws Exception {
-                runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/jsFloatDoubleToString.kt");
-            }
-
-            @Test
-            @TestMetadata("longOperations.kt")
-            public void testLongOperations() throws Exception {
-                runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/longOperations.kt");
-            }
-
-            @Test
-            @TestMetadata("shortOperations.kt")
-            public void testShortOperations() throws Exception {
-                runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/shortOperations.kt");
-            }
-
-            @Test
-            @TestMetadata("stdlibConst.kt")
-            public void testStdlibConst() throws Exception {
-                runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/stdlibConst.kt");
-            }
-
-            @Test
-            @TestMetadata("stringConcatenation.kt")
-            public void testStringConcatenation() throws Exception {
-                runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/stringConcatenation.kt");
-            }
-
-            @Test
-            @TestMetadata("stringOperations.kt")
-            public void testStringOperations() throws Exception {
-                runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/stringOperations.kt");
-            }
-
-            @Test
-            @TestMetadata("unsignedConst.kt")
-            public void testUnsignedConst() throws Exception {
-                runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/unsignedConst.kt");
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/ifConstVal.kt");
             }
         }
 
