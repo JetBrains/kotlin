@@ -25,6 +25,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("annotationClassWithJavaTarget.kt")
+    public void testAnnotationClassWithJavaTarget() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/annotationClassWithJavaTarget.kt");
+    }
+
+    @Test
     @TestMetadata("annotationFromImplicitJavaType.kt")
     public void testAnnotationFromImplicitJavaType() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/lazyResolve/annotationFromImplicitJavaType.kt");
