@@ -88,6 +88,16 @@ import org.jetbrains.kotlin.js.translate.utils.splitToRanges
  *     foo(B, $a)
  *
  * we get `$a` eliminated.
+ *
+ * It is also worth taking care of the temporary variables captured into closure as they cannot be simply removed.
+ *
+ * function test(a) {
+ *     var tmp_a = a // removing this temporary variable changes function behaviour
+ *     var f = function() { console.log(tmp_a) }
+ *     a = []
+ *     return f
+ * }
+ *
  */
 internal class TemporaryVariableElimination(private val function: JsFunction) {
     private val root = function.body
@@ -95,6 +105,7 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
     private val usages = mutableMapOf<JsName, Int>()
     private val definedValues = mutableMapOf<JsName, JsExpression>()
     private val temporary = mutableSetOf<JsName>()
+    private val capturedInClosure = mutableSetOf<JsName>()
     private var hasChanges = false
     private val localVariables = function.collectLocalVariables()
 
@@ -201,6 +212,7 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
                 for (freeVar in x.collectFreeVariables()) {
                     useVariable(freeVar)
                     useVariable(freeVar)
+                    capturedInClosure += freeVar
                 }
             }
 
@@ -260,9 +272,12 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
                             namesWithSideEffects += name
                         }
                     }
-                }
-                else if (sideEffects) {
-                    invalidateTemporaries()
+                } else {
+                    if (sideEffects) {
+                        invalidateTemporaries()
+                    } else {
+                        invalidateTemporariesUsingName(name)
+                    }
                 }
             }
 
@@ -357,6 +372,21 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
 
             private fun invalidateTemporaries() {
                 lastAssignedVars.clear()
+            }
+
+            private fun invalidateTemporariesUsingName(name: JsName) {
+                lastAssignedVars.removeAll { (_, expr) ->
+                    var nameUsed = false
+                    object : RecursiveJsVisitor() {
+                        override fun visitNameRef(nameRef: JsNameRef) {
+                            if (nameRef.name == name) {
+                                nameUsed = true
+                            }
+                            super.visitNameRef(nameRef)
+                        }
+                    }.accept(expr)
+                    nameUsed
+                }
             }
 
             private fun handleExpression(expression: JsExpression): Boolean {
@@ -593,7 +623,9 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
             (definitions[name] ?: 0) > 0 && (usages[name] ?: 0) == 0 && name in temporary && !name.imported
 
     private fun shouldConsiderTemporary(name: JsName): Boolean {
-        if (definitions[name] != 1 || name !in temporary) return false
+        if (definitions[name] != 1 || name !in temporary || name in capturedInClosure) {
+            return false
+        }
 
         val expr = definedValues[name]
         // It's useful to copy trivial expressions when they are used more than once. Example are temporary variables

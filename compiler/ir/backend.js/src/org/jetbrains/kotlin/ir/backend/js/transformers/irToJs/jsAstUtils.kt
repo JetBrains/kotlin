@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind
+import org.jetbrains.kotlin.js.backend.ast.metadata.sideEffects
 import org.jetbrains.kotlin.js.common.isValidES5Identifier
 import org.jetbrains.kotlin.js.config.SourceMapNamesPolicy
 import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
@@ -289,7 +291,14 @@ fun translateCall(
             }
         }
     } else {
-        JsInvocation(ref, listOfNotNull(jsExtensionReceiver) + arguments)
+        JsInvocation(ref, listOfNotNull(jsExtensionReceiver) + arguments).pureIfPossible(function, context)
+    }
+}
+
+private fun JsInvocation.pureIfPossible(function: IrFunction, context: JsGenerationContext) = apply {
+    if (function.symbol.isUnitInstanceFunction(context.staticContext.backendContext)) {
+        sideEffects = SideEffectKind.PURE
+        qualifier.sideEffects = SideEffectKind.PURE
     }
 }
 

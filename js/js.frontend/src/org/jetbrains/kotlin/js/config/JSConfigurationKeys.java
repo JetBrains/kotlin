@@ -121,4 +121,6 @@ public class JSConfigurationKeys {
     public static final CompilerConfigurationKey<ZipFileSystemAccessor> ZIP_FILE_SYSTEM_ACCESSOR =
             CompilerConfigurationKey.create("zip file system accessor, used for klib reading");
 
+    public static final CompilerConfigurationKey<Boolean> OPTIMIZE_GENERATED_JS =
+            CompilerConfigurationKey.create("perform additional optimizations on the generated JS code");
 }

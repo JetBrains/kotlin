@@ -100,9 +100,7 @@ fun box() {
 // test.kt:4 stringSwitch
 // test.kt:5 stringSwitch
 // test.kt:10 stringSwitch
-// test.kt:10 stringSwitch
 // test.kt:11 stringSwitch
-// test.kt:17 stringSwitch
 // test.kt:16 stringSwitch
 // test.kt:19 stringSwitch
 // test.kt:23 stringSwitch
@@ -110,9 +108,7 @@ fun box() {
 // test.kt:4 stringSwitch
 // test.kt:6 stringSwitch
 // test.kt:10 stringSwitch
-// test.kt:10 stringSwitch
 // test.kt:12 stringSwitch
-// test.kt:17 stringSwitch
 // test.kt:16 stringSwitch
 // test.kt:20 stringSwitch
 // test.kt:23 stringSwitch
@@ -120,9 +116,7 @@ fun box() {
 // test.kt:4 stringSwitch
 // test.kt:7 stringSwitch
 // test.kt:10 stringSwitch
-// test.kt:10 stringSwitch
 // test.kt:13 stringSwitch
-// test.kt:17 stringSwitch
 // test.kt:16 stringSwitch
 // test.kt:21 stringSwitch
 // test.kt:23 stringSwitch
