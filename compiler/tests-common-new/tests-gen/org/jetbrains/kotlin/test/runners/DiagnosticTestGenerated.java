@@ -1938,6 +1938,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("javaKotlinTargetRetentionWithExplicitImport.kt")
+                public void testJavaKotlinTargetRetentionWithExplicitImport() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/annotations/options/javaKotlinTargetRetentionWithExplicitImport.kt");
+                }
+
+                @Test
                 @TestMetadata("javaretention.kt")
                 public void testJavaretention() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/annotations/options/javaretention.kt");

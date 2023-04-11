@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.Deprecated
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.DeprecatedSinceKotlin
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.JvmRecord
@@ -55,6 +56,7 @@ object CompilerRequiredAnnotationsHelper {
     internal val REQUIRED_ANNOTATIONS_WITH_ARGUMENTS: Set<ClassId> = setOf(
         Deprecated,
         Target,
+        StandardClassIds.Annotations.Java.Target,
     )
 
     val REQUIRED_ANNOTATIONS: Set<ClassId> = REQUIRED_ANNOTATIONS_WITH_ARGUMENTS + setOf(
@@ -145,7 +147,10 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
                     it is FirEnumEntry && it.name == calleeReference.name
                 }?.symbol as? FirEnumEntrySymbol ?: return
 
-                updateCallee(calleeReference, calleeSymbol)
+                val enhancedCalleeSymbol = session.compilerRequiredAnnotationEnhancementProvider?.enhance(symbol, calleeSymbol, session)
+                    ?: calleeSymbol
+
+                updateCallee(calleeReference, enhancedCalleeSymbol)
 
                 replaceExplicitReceiver(resolvedReceiver)
                 replaceDispatchReceiver(resolvedReceiver)

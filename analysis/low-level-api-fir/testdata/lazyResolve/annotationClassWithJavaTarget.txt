@@ -21,7 +21,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTarget.kt
 COMPILER_REQUIRED_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTarget.kt
     [ResolvedTo(RAW_FIR)] annotations container
-    @java.lang.annotation.Target[Unresolved](ElementType#.TYPE_USE#) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class ResolveMe : R|kotlin/Annotation| {
+    @R|java/lang/annotation/Target|[CompilerRequiredAnnotations](ElementType#.TYPE_USE#) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] annotation class ResolveMe : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|ResolveMe| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -31,7 +31,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTarget.kt
 COMPANION_GENERATION:
 FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTarget.kt
     [ResolvedTo(RAW_FIR)] annotations container
-    @java.lang.annotation.Target[Unresolved](ElementType#.TYPE_USE#) public? final? [ResolvedTo(COMPANION_GENERATION)] annotation class ResolveMe : R|kotlin/Annotation| {
+    @R|java/lang/annotation/Target|[CompilerRequiredAnnotations](ElementType#.TYPE_USE#) public? final? [ResolvedTo(COMPANION_GENERATION)] annotation class ResolveMe : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|ResolveMe| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -41,7 +41,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTarget.kt
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] annotationClassWithJavaTarget.kt
     [ResolvedTo(RAW_FIR)] annotations container
-    @java.lang.annotation.Target[Unresolved](ElementType#.TYPE_USE#) public? final? [ResolvedTo(SUPER_TYPES)] annotation class ResolveMe : R|kotlin/Annotation| {
+    @R|java/lang/annotation/Target|[CompilerRequiredAnnotations](ElementType#.TYPE_USE#) public? final? [ResolvedTo(SUPER_TYPES)] annotation class ResolveMe : R|kotlin/Annotation| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor(): R|ResolveMe| {
             LAZY_super<R|kotlin/Any|>
         }

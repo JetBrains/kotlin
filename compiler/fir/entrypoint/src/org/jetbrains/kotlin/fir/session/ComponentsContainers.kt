@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.java.enhancement.FirAnnotationTypeQualifierResol
 import org.jetbrains.kotlin.fir.java.enhancement.FirEnhancedSymbolsStorage
 import org.jetbrains.kotlin.fir.java.scopes.JavaOverridabilityRules
 import org.jetbrains.kotlin.fir.java.FirSyntheticPropertiesStorage
+import org.jetbrains.kotlin.fir.java.enhancement.JavaCompilerRequiredAnnotationEnhancementProvider
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticNamesProvider
@@ -51,6 +52,7 @@ import org.jetbrains.kotlin.fir.types.TypeComponents
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
+import org.jetbrains.kotlin.fir.resolve.transformers.plugin.CompilerRequiredAnnotationEnhancementProvider
 
 // -------------------------- Required components --------------------------
 
@@ -107,6 +109,7 @@ fun FirSession.registerCommonJavaComponents(javaModuleResolver: JavaModuleResolv
     register(PlatformSpecificOverridabilityRules::class, JavaOverridabilityRules(this))
     register(DeserializedClassConfigurator::class, JvmDeserializedClassConfigurator(this))
     register(FirEnumEntriesSupport::class, FirJvmEnumEntriesSupport(this))
+    register(CompilerRequiredAnnotationEnhancementProvider::class, JavaCompilerRequiredAnnotationEnhancementProvider)
 }
 
 // -------------------------- Resolve components --------------------------
