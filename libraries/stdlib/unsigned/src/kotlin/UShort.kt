@@ -242,8 +242,8 @@ public value class UShort @kotlin.internal.IntrinsicConstEvaluation @PublishedAp
      *
      * If the [other] value is less than or equal to `this` value, then the returned range is empty.
      */
-    @SinceKotlin("1.7")
-    @ExperimentalStdlibApi
+    @SinceKotlin("1.9")
+    @WasExperimental(ExperimentalStdlibApi::class)
     @kotlin.internal.InlineOnly
     public inline operator fun rangeUntil(other: UShort): UIntRange = this.toUInt() until other.toUInt()
 

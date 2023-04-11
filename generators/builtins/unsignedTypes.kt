@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -230,8 +230,8 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
         out.println("     *")
         out.println("     * If the [other] value is less than or equal to `this` value, then the returned range is empty.")
         out.println("     */")
-        out.println("    @SinceKotlin(\"1.7\")")
-        out.println("    @ExperimentalStdlibApi")
+        out.println("    @SinceKotlin(\"1.9\")")
+        out.println("    @WasExperimental(ExperimentalStdlibApi::class)")
         out.println("    @kotlin.internal.InlineOnly")
         out.println("    public inline operator fun rangeUntil(other: $className): $rangeType = ${convert("this")} until ${convert("other")}")
         out.println()
@@ -569,14 +569,13 @@ import kotlin.internal.*
  */
 @SinceKotlin("1.5")
 @WasExperimental(ExperimentalUnsignedTypes::class)
-@OptIn(ExperimentalStdlibApi::class)
 public class ${elementType}Range(start: $elementType, endInclusive: $elementType) : ${elementType}Progression(start, endInclusive, 1), ClosedRange<${elementType}>, OpenEndRange<${elementType}> {
     override val start: $elementType get() = first
     override val endInclusive: $elementType get() = last
     
-    @SinceKotlin("1.7")
-    @ExperimentalStdlibApi
     @Deprecated("Can throw an exception when it's impossible to represent the value with $elementType type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
+    @SinceKotlin("1.9")
+    @WasExperimental(ExperimentalStdlibApi::class)
     override val endExclusive: $elementType get() {
         if (last == $elementType.MAX_VALUE) error("Cannot return the exclusive upper bound of a range that includes MAX_VALUE.")
         return last + 1u

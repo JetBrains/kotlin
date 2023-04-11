@@ -186,8 +186,8 @@ object RangeOps : TemplateGroupBase() {
     } builderWith { (rangeType, itemType) ->
         operator()
         specialFor(OpenRanges) {
-            since("1.7")
-            annotation("@ExperimentalStdlibApi")
+            since("1.9")
+            annotation("@WasExperimental(ExperimentalStdlibApi::class)")
         }
         signature("contains(value: $itemType)")
 
