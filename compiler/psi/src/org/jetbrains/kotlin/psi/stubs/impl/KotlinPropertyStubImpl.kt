@@ -34,7 +34,8 @@ class KotlinPropertyStubImpl(
     private val hasInitializer: Boolean,
     private val isExtension: Boolean,
     private val hasReturnTypeRef: Boolean,
-    private val fqName: FqName?
+    private val fqName: FqName?,
+    val constantInitializer: ConstantValue<*>?
 ) : KotlinStubBaseImpl<KtProperty>(parent, KtStubElementTypes.PROPERTY), KotlinPropertyStub {
 
     init {
