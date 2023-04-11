@@ -240,7 +240,7 @@ class KtPsiFactory private constructor(
             KotlinFileType.INSTANCE,
             text,
             LocalTimeCounter.currentTime(),
-            false,
+            /* eventSystemEnabled = */ true,
             markGenerated
         ) as KtFile
     }
