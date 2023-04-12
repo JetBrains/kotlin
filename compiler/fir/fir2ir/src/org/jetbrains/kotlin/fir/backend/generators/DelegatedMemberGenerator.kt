@@ -13,23 +13,18 @@ import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.delegatedWrapperData
+import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
-import org.jetbrains.kotlin.fir.types.toSymbol
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
-import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.ir.types.isNothing
-import org.jetbrains.kotlin.ir.types.isNullable
-import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.JvmNames.JVM_DEFAULT_CLASS_ID
@@ -94,8 +89,6 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
 
     // Generate delegated members for [subClass]. The synthetic field [irField] has the super interface type.
     fun generate(irField: IrField, firField: FirField, firSubClass: FirClass, subClass: IrClass) {
-        val subClassLookupTag = firSubClass.symbol.toLookupTag()
-
         val subClassScope = firSubClass.unsubstitutedScope(
             session,
             scopeSession,
@@ -103,17 +96,12 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
             memberRequiredPhase = null,
         )
 
-        val delegateToType = firField.initializer!!.typeRef.coneType.fullyExpandedType(session).lowerBoundIfFlexible()
-        val delegateToClass = delegateToType.toSymbol(session).boundClass()
+        val delegateToScope = firField.initializer!!.typeRef.coneType
+            .fullyExpandedType(session)
+            .lowerBoundIfFlexible()
+            .scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing, null) ?: return
 
-        val delegateToScope = delegateToClass.unsubstitutedScope(
-            session,
-            scopeSession,
-            withForcedTypeCalculator = false,
-            memberRequiredPhase = null,
-        )
-
-        val delegateToLookupTag = (delegateToType as? ConeClassLikeType)?.lookupTag
+        val subClassLookupTag = firSubClass.symbol.toLookupTag()
 
         subClassScope.processAllFunctions { functionSymbol ->
             val unwrapped =
@@ -126,9 +114,13 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
                 delegateToScope::processOverriddenFunctions
             ) ?: return@processAllFunctions
 
+            val delegateToLookupTag = delegateToSymbol.dispatchReceiverClassLookupTagOrNull()
+                ?: return@processAllFunctions
+
             val irSubFunction = generateDelegatedFunction(
                 subClass, firSubClass, functionSymbol.fir
             )
+
             bodiesInfo += DeclarationBodyInfo(irSubFunction, irField, delegateToSymbol, delegateToLookupTag)
             declarationStorage.cacheDelegationFunction(functionSymbol.fir, irSubFunction)
             subClass.addMember(irSubFunction)
@@ -151,6 +143,9 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
                 },
                 delegateToScope::processOverriddenProperties
             ) ?: return@processAllProperties
+
+            val delegateToLookupTag = delegateToSymbol.dispatchReceiverClassLookupTagOrNull()
+                ?: return@processAllProperties
 
             val irSubProperty = generateDelegatedProperty(
                 subClass, firSubClass, propertySymbol.fir
@@ -184,7 +179,7 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
                 }
             }
         }
-        return result
+        return result?.unwrapSubstitutionOverrides()
     }
 
     fun bindDelegatedMembersOverriddenSymbols(irClass: IrClass) {
@@ -247,22 +242,31 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
         val irCall = IrCallImpl(
             startOffset,
             endOffset,
-            delegateFunction.returnType,
+            superFunction.returnType,
             superFunction.symbol,
             superFunction.typeParameters.size,
             superFunction.valueParameters.size
         ).apply {
-            dispatchReceiver =
-                IrGetFieldImpl(
+            val getField = IrGetFieldImpl(
+                startOffset, endOffset,
+                irField.symbol,
+                irField.type,
+                IrGetValueImpl(
                     startOffset, endOffset,
-                    irField.symbol,
-                    irField.type,
-                    IrGetValueImpl(
-                        startOffset, endOffset,
-                        delegateFunction.dispatchReceiverParameter?.type!!,
-                        delegateFunction.dispatchReceiverParameter?.symbol!!
-                    )
+                    delegateFunction.dispatchReceiverParameter?.type!!,
+                    delegateFunction.dispatchReceiverParameter?.symbol!!
                 )
+            )
+
+            // When the delegation expression has an intersection type, it is not guaranteed that the field will have the same type as the
+            // dispatch receiver of the target method. Therefore, we need to check if a cast must be inserted.
+            val superFunctionParent = superFunction.parent as? IrClass
+            dispatchReceiver = if (superFunctionParent == null || irField.type.isSubtypeOfClass(superFunctionParent.symbol)) {
+                getField
+            } else {
+                Fir2IrImplicitCastInserter.implicitCastOrExpression(getField, superFunction.dispatchReceiverParameter!!.type)
+            }
+
             extensionReceiver =
                 delegateFunction.extensionReceiverParameter?.let { extensionReceiver ->
                     IrGetValueImpl(startOffset, endOffset, extensionReceiver.type, extensionReceiver.symbol)
@@ -282,6 +286,7 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
             }
         }
         val resultType = delegateFunction.returnType
+
         val irCastOrCall =
             if (callTypeCanBeNullable && !resultType.isNullable()) Fir2IrImplicitCastInserter.implicitNotNullCast(irCall)
             else irCall
@@ -366,4 +371,3 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
             }
     }
 }
-

@@ -309,13 +309,13 @@ class Fir2IrImplicitCastInserter(
         return implicitCastOrExpression(original, castType.toIrType(conversionTypeContext))
     }
 
-    internal fun implicitCastOrExpression(original: IrExpression, castType: IrType): IrExpression {
-        val originalNotNull = original.type.makeNotNull()
-        if (originalNotNull == castType.makeNotNull()) return original
-        return implicitCast(original, castType)
-    }
-
     companion object {
+        internal fun implicitCastOrExpression(original: IrExpression, castType: IrType): IrExpression {
+            val originalNotNull = original.type.makeNotNull()
+            if (originalNotNull == castType.makeNotNull()) return original
+            return implicitCast(original, castType)
+        }
+
         private fun implicitCast(original: IrExpression, castType: IrType): IrExpression {
             val typeOperator = if (original.type is IrDynamicType) {
                 IrTypeOperator.IMPLICIT_DYNAMIC_CAST
