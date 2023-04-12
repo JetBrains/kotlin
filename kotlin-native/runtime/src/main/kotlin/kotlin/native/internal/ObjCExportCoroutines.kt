@@ -5,6 +5,7 @@
 
 package kotlin.native.internal
 
+import kotlin.experimental.ExperimentalNativeApi
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*
 import kotlin.coroutines.native.internal.*
@@ -29,7 +30,7 @@ private object EmptyCompletion : Continuation<Any?> {
     override val context: CoroutineContext
         get() = EmptyCoroutineContext
 
-    @OptIn(ExperimentalStdlibApi::class)
+    @OptIn(ExperimentalNativeApi::class)
     override fun resumeWith(result: Result<Any?>) {
         val exception = result.exceptionOrNull() ?: return
         processUnhandledException(exception)
