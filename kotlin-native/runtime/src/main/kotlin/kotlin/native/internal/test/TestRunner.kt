@@ -5,12 +5,14 @@
 
 package kotlin.native.internal.test
 
+import kotlin.experimental.ExperimentalNativeApi
 import kotlin.IllegalArgumentException
 import kotlin.text.StringBuilder
 import kotlin.time.TimeSource
 import kotlin.time.measureTime
 
 @OptIn(kotlin.time.ExperimentalTime::class)
+@ExperimentalNativeApi
 internal class TestRunner(val suites: List<TestSuite>, args: Array<String>) {
     private val filters = mutableListOf<(TestCase) -> Boolean>()
     private val listeners = mutableSetOf<TestListener>()
