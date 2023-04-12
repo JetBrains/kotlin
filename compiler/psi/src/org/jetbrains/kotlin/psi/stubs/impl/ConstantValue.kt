@@ -131,6 +131,8 @@ class FloatValue(value: Float) : ConstantValue<Float>(value, ConstantValueKind.F
     }
 }
 
+data class EnumData(val enumClassId: ClassId, val enumEntryName: Name)
+
 class EnumValue(
     val enumClassId: ClassId,
     val enumEntryName: Name
@@ -141,6 +143,7 @@ class EnumValue(
     }
 }
 
+data class KClassData(val classId: ClassId, val arrayNestedness: Int)
 class KClassValue(classId: ClassId, arrayNestedness: Int) : ConstantValue<Pair<ClassId, Int>>(classId to arrayNestedness, ConstantValueKind.KCLASS) {
     override fun serializeValue(dataStream: StubOutputStream) {
         StubUtils.serializeClassId(dataStream, value.first)
@@ -214,6 +217,8 @@ fun createConstantValue(value: Any?): ConstantValue<*>? {
         is DoubleArray -> ArrayValue(value.map { createConstantValue(it)!! }.toList())
         is BooleanArray -> ArrayValue(value.map { createConstantValue(it)!! }.toList())
         is Array<*> -> ArrayValue(value.map { createConstantValue(it)!! }.toList())
+        is EnumData -> EnumValue(value.enumClassId, value.enumEntryName)
+        is KClassData -> KClassValue(value.classId, value.arrayNestedness)
         null -> NullValue
         else -> null
     }

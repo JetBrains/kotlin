@@ -361,9 +361,12 @@ private class PropertyClsStubBuilder(
                                         constantInitializer = createConstantValue(value)
                                     }
 
-                                    override fun visitClassLiteral(name: Name?, value: ClassLiteralValue) {}
+                                    override fun visitClassLiteral(name: Name?, value: ClassLiteralValue) {
+                                        constantInitializer = createConstantValue(KClassData(value.classId, value.arrayNestedness))
+                                    }
+
                                     override fun visitEnum(name: Name?, enumClassId: ClassId, enumEntryName: Name) {
-                                        constantInitializer = EnumValue(enumClassId, enumEntryName)
+                                        constantInitializer = createConstantValue(EnumData(enumClassId, enumEntryName))
                                     }
 
                                     override fun visitAnnotation(
@@ -379,7 +382,10 @@ private class PropertyClsStubBuilder(
                                                 value?.let { elements.add(it) }
                                             }
 
-                                            override fun visitEnum(enumClassId: ClassId, enumEntryName: Name) {}
+                                            override fun visitEnum(enumClassId: ClassId, enumEntryName: Name) {
+                                                elements.add(EnumData(enumClassId, enumEntryName))
+                                            }
+
                                             override fun visitClassLiteral(value: ClassLiteralValue) {}
                                             override fun visitAnnotation(classId: ClassId): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {return null}
 
