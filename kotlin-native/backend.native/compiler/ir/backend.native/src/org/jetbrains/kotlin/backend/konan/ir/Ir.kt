@@ -47,9 +47,9 @@ internal class KonanIr(context: Context, override val symbols: KonanSymbols): Ir
 
 internal abstract class KonanSymbols(
         context: PhaseContext,
-        val descriptorsLookup: DescriptorsLookup, // Deprecated to use in this class, except `findMainEntryPoint`. Also KonanBuiltins are deprecated
+        val descriptorsLookup: DescriptorsLookup, // Please don't add usages of `descriptorsLookup` and `descriptorsLookup.builtIns` to this class anymore.
         irBuiltIns: IrBuiltIns,
-        internal val symbolTable: SymbolTable, // Deprecated to use in this class
+        internal val symbolTable: SymbolTable, // Please don't add usages of `symbolTable` to this class anymore.
 ): Symbols(irBuiltIns, symbolTable) {
     protected abstract fun IrClassSymbol.findMemberSimpleFunction(name: Name): IrSimpleFunctionSymbol?
     protected abstract fun IrClassSymbol.findMemberProperty(name: Name): IrPropertySymbol?
