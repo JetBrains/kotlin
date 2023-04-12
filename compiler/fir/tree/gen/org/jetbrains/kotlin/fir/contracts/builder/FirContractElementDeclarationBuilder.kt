@@ -11,9 +11,8 @@ import kotlin.contracts.*
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.contracts.FirContractElementDeclaration
-import org.jetbrains.kotlin.fir.contracts.FirEffectDeclaration
-import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
-import org.jetbrains.kotlin.fir.contracts.impl.FirResolvedContractDescriptionImpl
+import org.jetbrains.kotlin.fir.contracts.description.ConeContractDescriptionElement
+import org.jetbrains.kotlin.fir.contracts.impl.FirContractElementDeclarationImpl
 import org.jetbrains.kotlin.fir.visitors.*
 
 /*
@@ -22,25 +21,23 @@ import org.jetbrains.kotlin.fir.visitors.*
  */
 
 @FirBuilderDsl
-class FirResolvedContractDescriptionBuilder {
+class FirContractElementDeclarationBuilder {
     var source: KtSourceElement? = null
-    val effects: MutableList<FirEffectDeclaration> = mutableListOf()
-    val unresolvedEffects: MutableList<FirContractElementDeclaration> = mutableListOf()
+    lateinit var effect: ConeContractDescriptionElement
 
-    fun build(): FirResolvedContractDescription {
-        return FirResolvedContractDescriptionImpl(
+    fun build(): FirContractElementDeclaration {
+        return FirContractElementDeclarationImpl(
             source,
-            effects,
-            unresolvedEffects,
+            effect,
         )
     }
 
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun buildResolvedContractDescription(init: FirResolvedContractDescriptionBuilder.() -> Unit = {}): FirResolvedContractDescription {
+inline fun buildContractElementDeclaration(init: FirContractElementDeclarationBuilder.() -> Unit): FirContractElementDeclaration {
     contract {
         callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
     }
-    return FirResolvedContractDescriptionBuilder().apply(init).build()
+    return FirContractElementDeclarationBuilder().apply(init).build()
 }

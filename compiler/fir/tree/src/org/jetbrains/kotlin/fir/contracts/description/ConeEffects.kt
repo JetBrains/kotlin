@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.contracts.description
 
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 
 /**
  * Effect with condition attached to it.
@@ -22,6 +23,9 @@ import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
  *  - if [condition] is true, we *can't* reason that [effect] will be observed.
  */
 class ConeConditionalEffectDeclaration(val effect: ConeEffectDeclaration, val condition: ConeBooleanExpression) : ConeEffectDeclaration() {
+    override val erroneous: Boolean
+        get() = effect.erroneous || condition.erroneous
+
     override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitConditionalEffectDeclaration(this, data)
 }
@@ -31,9 +35,11 @@ class ConeConditionalEffectDeclaration(val effect: ConeEffectDeclaration, val co
  * Effect which specifies that subroutine returns some particular value
  */
 class ConeReturnsEffectDeclaration(val value: ConeConstantReference) : ConeEffectDeclaration() {
+    override val erroneous: Boolean
+        get() = value.erroneous
+
     override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitReturnsEffectDeclaration(this, data)
-
 }
 
 
@@ -41,7 +47,24 @@ class ConeReturnsEffectDeclaration(val value: ConeConstantReference) : ConeEffec
  * Effect which specifies, that during execution of subroutine, callable [valueParameterReference] will be invoked
  * [kind] amount of times, and will never be invoked after subroutine call is finished.
  */
-class ConeCallsEffectDeclaration(val valueParameterReference: ConeValueParameterReference, val kind: EventOccurrencesRange) : ConeEffectDeclaration() {
+open class ConeCallsEffectDeclaration(
+    val valueParameterReference: ConeValueParameterReference,
+    val kind: EventOccurrencesRange
+) : ConeEffectDeclaration() {
+    override val erroneous: Boolean
+        get() = valueParameterReference.erroneous
+
     override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitCallsEffectDeclaration(this, data)
+}
+
+class ConeErroneousCallsEffectDeclaration(
+    valueParameterReference: ConeValueParameterReference,
+    val diagnostic: ConeDiagnostic
+) : ConeCallsEffectDeclaration(valueParameterReference, EventOccurrencesRange.UNKNOWN) {
+    override val erroneous: Boolean
+        get() = true
+
+    override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
+        contractDescriptionVisitor.visitErroneousCallsEffectDeclaration(this, data)
 }

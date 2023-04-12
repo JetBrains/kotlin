@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.fir.contracts.description
 
 interface ConeContractDescriptionElement {
     fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R
+
+    val erroneous: Boolean
 }
 
 abstract class ConeEffectDeclaration : ConeContractDescriptionElement {

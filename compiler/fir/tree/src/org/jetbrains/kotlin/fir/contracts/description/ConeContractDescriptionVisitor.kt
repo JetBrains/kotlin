@@ -23,6 +23,9 @@ abstract class ConeContractDescriptionVisitor<out R, in D> {
     open fun visitCallsEffectDeclaration(callsEffect: ConeCallsEffectDeclaration, data: D): R =
         visitEffectDeclaration(callsEffect, data)
 
+    open fun visitErroneousCallsEffectDeclaration(callsEffect: ConeErroneousCallsEffectDeclaration, data: D): R =
+        visitCallsEffectDeclaration(callsEffect, data)
+
     // Expressions
     open fun visitBooleanExpression(booleanExpression: ConeBooleanExpression, data: D): R =
         visitContractDescriptionElement(booleanExpression, data)
@@ -35,6 +38,9 @@ abstract class ConeContractDescriptionVisitor<out R, in D> {
     open fun visitIsInstancePredicate(isInstancePredicate: ConeIsInstancePredicate, data: D): R =
         visitBooleanExpression(isInstancePredicate, data)
 
+    open fun visitErroneousIsInstancePredicate(isInstancePredicate: ConeErroneousIsInstancePredicate, data: D): R =
+        visitIsInstancePredicate(isInstancePredicate, data)
+
     open fun visitIsNullPredicate(isNullPredicate: ConeIsNullPredicate, data: D): R = visitBooleanExpression(isNullPredicate, data)
 
     // Values
@@ -45,9 +51,19 @@ abstract class ConeContractDescriptionVisitor<out R, in D> {
     open fun visitBooleanConstantDescriptor(booleanConstantDescriptor: ConeBooleanConstantReference, data: D): R =
         visitConstantDescriptor(booleanConstantDescriptor, data)
 
+    open fun visitErroneousConstantReference(erroneousConstantReference: ConeErroneousConstantReference, data: D): R =
+        visitConstantDescriptor(erroneousConstantReference, data)
+
     open fun visitValueParameterReference(valueParameterReference: ConeValueParameterReference, data: D): R =
         visitValue(valueParameterReference, data)
 
     open fun visitBooleanValueParameterReference(booleanValueParameterReference: ConeBooleanValueParameterReference, data: D): R =
         visitValueParameterReference(booleanValueParameterReference, data)
+
+    open fun visitErroneousValueParameterReference(valueParameterReference: ConeErroneousValueParameterReference, data: D): R =
+        visitValueParameterReference(valueParameterReference, data)
+
+    // Error
+    open fun visitErroneousElement(element: ConeErroneousContractElement, data: D): R =
+        visitContractDescriptionElement(element, data)
 }

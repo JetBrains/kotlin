@@ -5,15 +5,15 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.contracts
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.builder.buildLegacyRawContractDescription
 import org.jetbrains.kotlin.fir.contracts.builder.buildResolvedContractDescription
 import org.jetbrains.kotlin.fir.contracts.description.ConeEffectDeclaration
-import org.jetbrains.kotlin.fir.contracts.description.ConeUnresolvedEffect
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
-import org.jetbrains.kotlin.fir.contracts.toFirEffectDeclaration
+import org.jetbrains.kotlin.fir.contracts.toFirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildReceiverParameter
@@ -179,11 +179,13 @@ abstract class FirAbstractContractResolveTransformerDispatcher(
             val resolvedContractDescription = buildResolvedContractDescription {
                 val effectExtractor = ConeEffectExtractor(session, owner, valueParameters)
                 for (statement in lambdaBody.statements) {
-                    val effect = statement.accept(effectExtractor, null) as? ConeEffectDeclaration
-                    if (effect == null) {
-                        unresolvedEffects += ConeUnresolvedEffect(statement)
-                    } else {
-                        effects += effect.toFirEffectDeclaration(statement.source)
+                    if (statement.source?.kind is KtFakeSourceElementKind.ImplicitReturn) continue
+                    when (val effect = statement.accept(effectExtractor, null)) {
+                        is ConeEffectDeclaration -> when (effect.erroneous) {
+                            false -> effects += effect.toFirElement(statement.source)
+                            true -> unresolvedEffects += effect.toFirElement(statement.source)
+                        }
+                        else -> unresolvedEffects += effect.toFirElement(statement.source)
                     }
                 }
                 this.source = contractDescription.source

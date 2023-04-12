@@ -562,6 +562,8 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         noImpl(argumentList)
         noImpl(annotationArgumentMapping)
 
+        impl(contractElementDeclaration)
+
         val implementationsWithoutStatusAndTypeParameters = listOf(
             "FirAnonymousFunctionImpl",
             "FirValueParameterImpl",

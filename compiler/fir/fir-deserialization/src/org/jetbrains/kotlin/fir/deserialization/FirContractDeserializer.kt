@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.builder.buildResolvedContractDescription
 import org.jetbrains.kotlin.fir.contracts.description.*
-import org.jetbrains.kotlin.fir.contracts.toFirEffectDeclaration
+import org.jetbrains.kotlin.fir.contracts.toFirElement
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.expressions.LogicOperationKind
@@ -24,7 +24,7 @@ class FirContractDeserializer(private val c: FirDeserializationContext) {
     fun loadContract(proto: ProtoBuf.Contract, owner: FirContractDescriptionOwner): FirContractDescription? {
         val effects = proto.effectList.map { loadPossiblyConditionalEffect(it, owner) ?: return null }
         return buildResolvedContractDescription {
-            this.effects += effects.map { it.toFirEffectDeclaration() }
+            this.effects += effects.map { it.toFirElement() }
         }
     }
 

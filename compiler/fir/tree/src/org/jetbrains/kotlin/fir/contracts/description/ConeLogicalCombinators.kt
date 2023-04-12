@@ -8,12 +8,18 @@ package org.jetbrains.kotlin.fir.contracts.description
 import org.jetbrains.kotlin.fir.expressions.LogicOperationKind
 
 class ConeBinaryLogicExpression(val left: ConeBooleanExpression, val right: ConeBooleanExpression, val kind: LogicOperationKind) : ConeBooleanExpression {
+    override val erroneous: Boolean
+        get() = left.erroneous || right.erroneous
+
     override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R {
         return contractDescriptionVisitor.visitLogicalBinaryOperationContractExpression(this, data)
     }
 }
 
 class ConeLogicalNot(val arg: ConeBooleanExpression) : ConeBooleanExpression {
+    override val erroneous: Boolean
+        get() = arg.erroneous
+
     override fun <R, D> accept(contractDescriptionVisitor: ConeContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitLogicalNot(this, data)
 }
