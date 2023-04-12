@@ -35,23 +35,20 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.Argume
 interface CompilerArgumentAware<T : CommonToolArguments> : KotlinCompilerArgumentsProducer {
 
     @Deprecated("Replaced by KotlinCompilerArgumentsProducer", level = DeprecationLevel.ERROR)
-    @Suppress("DEPRECATION")
     @get:Internal
     val serializedCompilerArguments: List<String>
         get() = convertArgumentsToStringList(prepareCompilerArguments())
 
     @Deprecated("Replaced by KotlinCompilerArgumentsProducer", level = DeprecationLevel.ERROR)
-    @Suppress("DEPRECATION")
     @get:Internal
     val serializedCompilerArgumentsIgnoreClasspathIssues: List<String>
         get() = convertArgumentsToStringList(prepareCompilerArguments(ignoreClasspathResolutionErrors = true))
 
     @Deprecated("Replaced by KotlinCompilerArgumentsProducer", level = DeprecationLevel.ERROR)
-    @Suppress("DEPRECATION")
     @get:Internal
     val defaultSerializedCompilerArguments: List<String>
         get() = createCompilerArguments(
-            CreateCompilerArgumentsContext(includeArgumentTypes = setOf(ArgumentType.Primitive))
+            CreateCompilerArgumentsContext(includeArgumentTypes = emptySet())
         ).let(ArgumentUtils::convertArgumentsToStringList)
 
     @Deprecated("Replaced by KotlinCompilerArgumentsProducer", level = DeprecationLevel.ERROR)
