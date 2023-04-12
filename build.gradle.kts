@@ -495,7 +495,6 @@ allprojects {
                 includeModule("org.jetbrains.kotlin", "protobuf-lite")
                 includeModule("org.jetbrains.kotlin", "protobuf-relocated")
                 includeModule("org.jetbrains.kotlinx", "kotlinx-metadata-klib")
-                includeGroup("org.jetbrains.dokka")
             }
         }
 
