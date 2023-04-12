@@ -37,7 +37,7 @@ abstract class Base<T> {
 class Derived: Base<String>() {
     override fun foo(s: String?) {
         checkNotNull(s)
-        s<!UNSAFE_CALL!>.<!>length
+        s.length
     }
 
     fun test_1(s: Any) {
@@ -54,14 +54,14 @@ class Derived: Base<String>() {
 
     fun test_3(s: Any) {
         if (checkIsReifiedR<String>(s)) {
-            s.<!UNRESOLVED_REFERENCE!>length<!>
+            s.length
         }
     }
 }
 
 fun test_1(d: Derived, s: String?) {
     d.checkNotNull(s)
-    s<!UNSAFE_CALL!>.<!>length
+    s.length
 }
 
 fun test_2(d: Derived, s: Any?) {
@@ -78,6 +78,6 @@ fun test_3(d: Derived, s: Any?) {
 
 fun test_4(d: Derived, s: Any?) {
     if (d.checkIsReifiedR<String>(s)) {
-        s.<!UNRESOLVED_REFERENCE!>length<!>
+        s.length
     }
 }
