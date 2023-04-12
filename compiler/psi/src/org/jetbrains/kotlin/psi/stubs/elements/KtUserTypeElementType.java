@@ -53,14 +53,14 @@ public class KtUserTypeElementType extends KtStubElementType<KotlinUserTypeStub,
     private enum KotlinTypeBeanType {
         CLASS, TYPE_PARAMETER, NONE;
 
-        static KotlinTypeBeanType fromBean(KotlinTypeBean typeBean) {
+        static KotlinTypeBeanType fromBean(KotlinFlexibleAwareTypeBean typeBean) {
             if (typeBean == null) return NONE;
             if (typeBean instanceof KotlinTypeParameterTypeBean) return TYPE_PARAMETER;
             return CLASS;
         }
     }
 
-    private static void serializeType(@NotNull StubOutputStream dataStream, @Nullable KotlinTypeBean type) throws IOException {
+    private static void serializeType(@NotNull StubOutputStream dataStream, @Nullable KotlinFlexibleAwareTypeBean type) throws IOException {
         dataStream.writeInt(KotlinTypeBeanType.fromBean(type).ordinal());
         if (type instanceof KotlinClassTypeBean) {
             StubUtils.serializeClassId(dataStream, ((KotlinClassTypeBean) type).getClassId());
@@ -74,12 +74,15 @@ public class KtUserTypeElementType extends KtStubElementType<KotlinUserTypeStub,
                     serializeType(dataStream, argument.getType());
                 }
             }
-            serializeType(dataStream, ((KotlinClassTypeBean) type).getUpperBound());
         }
         else if (type instanceof KotlinTypeParameterTypeBean) {
             dataStream.writeName(((KotlinTypeParameterTypeBean) type).getTypeParameterName());
             dataStream.writeBoolean(type.getNullable());
             dataStream.writeBoolean(((KotlinTypeParameterTypeBean) type).getDefinitelyNotNull());
+        }
+
+        if (type != null) {
+            serializeType(dataStream, type.getUpperBound());
         }
     }
 
@@ -90,7 +93,7 @@ public class KtUserTypeElementType extends KtStubElementType<KotlinUserTypeStub,
     }
 
     @Nullable
-    private static KotlinTypeBean deserializeType(@NotNull StubInputStream dataStream) throws IOException {
+    private static KotlinFlexibleAwareTypeBean deserializeType(@NotNull StubInputStream dataStream) throws IOException {
         KotlinTypeBeanType hasFlexibleType = KotlinTypeBeanType.values()[dataStream.readInt()];
         switch (hasFlexibleType) {
             case CLASS: {
@@ -112,7 +115,11 @@ public class KtUserTypeElementType extends KtStubElementType<KotlinUserTypeStub,
                 return new KotlinClassTypeBean(classId, arguments, isNullable, deserializeType(dataStream));
             }
             case TYPE_PARAMETER: {
-                return new KotlinTypeParameterTypeBean(Objects.requireNonNull(dataStream.readNameString()), dataStream.readBoolean(), dataStream.readBoolean());
+                String typeParameterName = Objects.requireNonNull(dataStream.readNameString());
+                boolean nullable = dataStream.readBoolean();
+                boolean definitelyNotNull = dataStream.readBoolean();
+                KotlinFlexibleAwareTypeBean upperBound = deserializeType(dataStream);
+                return new KotlinTypeParameterTypeBean(typeParameterName, nullable, upperBound, definitelyNotNull);
             }
             case NONE:
                 return null;

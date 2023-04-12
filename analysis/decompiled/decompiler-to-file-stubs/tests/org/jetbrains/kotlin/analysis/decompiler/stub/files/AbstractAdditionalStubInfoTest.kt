@@ -9,10 +9,13 @@ import com.intellij.psi.stubs.StubElement
 import com.intellij.util.indexing.FileContentImpl
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.KotlinClsStubBuilder
 import org.jetbrains.kotlin.psi.KtProjectionKind
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinClassTypeBean
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinFlexibleAwareTypeBean
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeParameterTypeBean
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinUserTypeStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.nio.file.Paths
-import kotlin.reflect.KClass
 
 abstract class AbstractAdditionalStubInfoTest : AbstractDecompiledClassTest() {
     fun runTest(testDirectory: String) {
@@ -47,7 +50,7 @@ abstract class AbstractAdditionalStubInfoTest : AbstractDecompiledClassTest() {
         }
     }
 
-    private fun appendFlexibleTypeInfo(builder: StringBuilder, typeBean: KotlinTypeBean) {
+    private fun appendFlexibleTypeInfo(builder: StringBuilder, typeBean: KotlinFlexibleAwareTypeBean) {
         when (typeBean) {
             is KotlinClassTypeBean -> {
                 builder.append(typeBean.classId.asFqNameString())
@@ -68,11 +71,6 @@ abstract class AbstractAdditionalStubInfoTest : AbstractDecompiledClassTest() {
                 if (typeBean.nullable) {
                     builder.append("?")
                 }
-                val uUpperBound = typeBean.upperBound
-                if (uUpperBound != null) {
-                    builder.append(" .. ")
-                    appendFlexibleTypeInfo(builder, uUpperBound)
-                }
             }
             is KotlinTypeParameterTypeBean -> {
                 builder.append(typeBean.typeParameterName)
@@ -83,6 +81,11 @@ abstract class AbstractAdditionalStubInfoTest : AbstractDecompiledClassTest() {
                     builder.append(" & Any")
                 }
             }
+        }
+        val uUpperBound = typeBean.upperBound
+        if (uUpperBound != null) {
+            builder.append(" .. ")
+            appendFlexibleTypeInfo(builder, uUpperBound)
         }
     }
 }

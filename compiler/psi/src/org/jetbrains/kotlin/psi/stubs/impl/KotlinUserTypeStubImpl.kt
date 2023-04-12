@@ -26,24 +26,26 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 class KotlinUserTypeStubImpl(
     parent: StubElement<out PsiElement>?,
-    val upperBound: KotlinTypeBean? = null
+    val upperBound: KotlinFlexibleAwareTypeBean? = null
 ) : KotlinStubBaseImpl<KtUserType>(parent, KtStubElementTypes.USER_TYPE), KotlinUserTypeStub
 
-interface KotlinTypeBean {
+interface KotlinFlexibleAwareTypeBean {
     val nullable: Boolean
+    val upperBound: KotlinFlexibleAwareTypeBean?
 }
 
 data class KotlinClassTypeBean(
     val classId: ClassId,
     val arguments: List<KotlinTypeArgumentBean>,
     override val nullable: Boolean,
-    val upperBound: KotlinTypeBean?
-) : KotlinTypeBean
+    override val upperBound: KotlinFlexibleAwareTypeBean?
+) : KotlinFlexibleAwareTypeBean
 
-data class KotlinTypeArgumentBean(val projectionKind: KtProjectionKind, val type: KotlinTypeBean?)
+data class KotlinTypeArgumentBean(val projectionKind: KtProjectionKind, val type: KotlinFlexibleAwareTypeBean?)
 
 data class KotlinTypeParameterTypeBean(
     val typeParameterName: String,
     override val nullable: Boolean,
+    override val upperBound: KotlinFlexibleAwareTypeBean?,
     val definitelyNotNull: Boolean
-) : KotlinTypeBean
+) : KotlinFlexibleAwareTypeBean

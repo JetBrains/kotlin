@@ -85,7 +85,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         }
     }
 
-    private fun createDefinitelyNotNullTypeStub(parent: KotlinStubBaseImpl<*>, classId: ClassId, upperBoundType: KotlinTypeBean?) {
+    private fun createDefinitelyNotNullTypeStub(parent: KotlinStubBaseImpl<*>, classId: ClassId, upperBoundType: KotlinFlexibleAwareTypeBean?) {
         val intersectionType = KotlinPlaceHolderStubImpl<KtIntersectionType>(parent, KtStubElementTypes.INTERSECTION_TYPE)
         val leftReference = KotlinPlaceHolderStubImpl<KtTypeReference>(intersectionType, KtStubElementTypes.TYPE_REFERENCE)
         createStubForTypeName(classId, leftReference, { upperBoundType })
@@ -146,15 +146,26 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
 
     private fun createKotlinTypeBean(
         type: Type?
-    ): KotlinTypeBean? {
+    ): KotlinFlexibleAwareTypeBean? {
         if (type == null) return null
         val definitelyNotNull = Flags.DEFINITELY_NOT_NULL_TYPE.get(type.flags)
+        val upperBoundBean = createKotlinTypeBean(type.flexibleUpperBound(c.typeTable))
         when {
             type.hasTypeParameter() -> {
-                return KotlinTypeParameterTypeBean(c.typeParameters[type.typeParameter].asString(), type.nullable, definitelyNotNull)
+                return KotlinTypeParameterTypeBean(
+                    c.typeParameters[type.typeParameter].asString(),
+                    type.nullable,
+                    upperBoundBean,
+                    definitelyNotNull
+                )
             }
             type.hasTypeParameterName() -> {
-                return KotlinTypeParameterTypeBean(c.nameResolver.getString(type.typeParameterName), type.nullable, definitelyNotNull)
+                return KotlinTypeParameterTypeBean(
+                    c.nameResolver.getString(type.typeParameterName),
+                    type.nullable,
+                    upperBoundBean,
+                    definitelyNotNull
+                )
             }
             else -> {
                 val classId = c.nameResolver.getClassId(if (type.hasClassName()) type.className else type.typeAliasName)
@@ -165,16 +176,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                         if (kind == KtProjectionKind.STAR) null else createKotlinTypeBean(argument.type(c.typeTable))
                     )
                 }
-                if (type.hasFlexibleUpperBound()) {
-                    val flexibleUpperBound = type.flexibleUpperBound(c.typeTable)!!
-                    return KotlinClassTypeBean(
-                        classId,
-                        arguments,
-                        type.nullable,
-                        createKotlinTypeBean(flexibleUpperBound)
-                    )
-                }
-                return KotlinClassTypeBean(classId, arguments, type.nullable, null)
+                return KotlinClassTypeBean(classId, arguments, type.nullable, upperBoundBean)
             }
         }
     }

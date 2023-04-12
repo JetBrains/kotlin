@@ -9,4 +9,7 @@ public abstract class JavaClass {
 
     @Mutable
     public abstract java.util.Collection<Integer> bar();
+
+    @Mutable
+    public abstract java.util.Collection<java.util.Collection<Integer>> baz();
 }

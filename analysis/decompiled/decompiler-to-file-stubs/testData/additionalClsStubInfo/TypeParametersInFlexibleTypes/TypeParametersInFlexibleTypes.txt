@@ -34,7 +34,7 @@ KotlinStub$CLASS[classId=test/TypeParametersInFlexibleTypes, fqName=test.TypePar
     KotlinStub$PROPERTY[fqName=test.TypeParametersInFlexibleTypes.bar, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=bar]
       KotlinStub$MODIFIER_LIST[public final]
       KotlinStub$TYPE_REFERENCE
-        KotlinStub$USER_TYPE    ft: kotlin.collections.Collection<A>?
+        KotlinStub$USER_TYPE    ft: kotlin.collections.Collection<A .. A?>?
           KotlinStub$USER_TYPE
             KotlinStub$USER_TYPE
               KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
@@ -48,7 +48,7 @@ KotlinStub$CLASS[classId=test/TypeParametersInFlexibleTypes, fqName=test.TypePar
     KotlinStub$PROPERTY[fqName=test.TypeParametersInFlexibleTypes.baz, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=baz]
       KotlinStub$MODIFIER_LIST[public final]
       KotlinStub$TYPE_REFERENCE
-        KotlinStub$USER_TYPE    ft: kotlin.collections.Collection<D & Any>?
+        KotlinStub$USER_TYPE    ft: kotlin.collections.Collection<D & Any .. D?>?
           KotlinStub$USER_TYPE
             KotlinStub$USER_TYPE
               KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]

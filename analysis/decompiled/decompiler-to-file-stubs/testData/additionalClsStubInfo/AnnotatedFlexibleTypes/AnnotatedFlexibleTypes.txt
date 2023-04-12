@@ -30,6 +30,31 @@ KotlinStub$CLASS[classId=test/AnnotatedFlexibleTypes, fqName=test.AnnotatedFlexi
                   KotlinStub$USER_TYPE
                     KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
                   KotlinStub$REFERENCE_EXPRESSION[referencedName=Int]
+    KotlinStub$PROPERTY[fqName=test.AnnotatedFlexibleTypes.baz, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=baz]
+      KotlinStub$MODIFIER_LIST[public final]
+      KotlinStub$TYPE_REFERENCE
+        KotlinStub$USER_TYPE    ft: kotlin.collections.Collection<kotlin.collections.MutableCollection<kotlin.Int .. kotlin.Int?> .. kotlin.collections.Collection<kotlin.Int .. kotlin.Int?>?>?
+          KotlinStub$USER_TYPE
+            KotlinStub$USER_TYPE
+              KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+            KotlinStub$REFERENCE_EXPRESSION[referencedName=collections]
+          KotlinStub$REFERENCE_EXPRESSION[referencedName=MutableCollection]
+          KotlinStub$TYPE_ARGUMENT_LIST
+            KotlinStub$TYPE_PROJECTION[projectionKind=NONE]
+              KotlinStub$TYPE_REFERENCE
+                KotlinStub$USER_TYPE    ft: kotlin.collections.Collection<kotlin.Int .. kotlin.Int?>?
+                  KotlinStub$USER_TYPE
+                    KotlinStub$USER_TYPE
+                      KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+                    KotlinStub$REFERENCE_EXPRESSION[referencedName=collections]
+                  KotlinStub$REFERENCE_EXPRESSION[referencedName=MutableCollection]
+                  KotlinStub$TYPE_ARGUMENT_LIST
+                    KotlinStub$TYPE_PROJECTION[projectionKind=NONE]
+                      KotlinStub$TYPE_REFERENCE
+                        KotlinStub$USER_TYPE    ft: kotlin.Int?
+                          KotlinStub$USER_TYPE
+                            KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
+                          KotlinStub$REFERENCE_EXPRESSION[referencedName=Int]
     KotlinStub$PROPERTY[fqName=test.AnnotatedFlexibleTypes.javaClass, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=javaClass]
       KotlinStub$MODIFIER_LIST[public final]
       KotlinStub$TYPE_REFERENCE
