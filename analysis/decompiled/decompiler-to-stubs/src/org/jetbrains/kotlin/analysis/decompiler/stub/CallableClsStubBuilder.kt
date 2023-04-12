@@ -20,9 +20,6 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi.KtSimpleNameStringTemplateEntry
-import org.jetbrains.kotlin.psi.KtStringTemplateExpression
-import org.jetbrains.kotlin.psi.stubs.ConstantValueKind
 import org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
@@ -30,8 +27,8 @@ import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.resolve.constants.ClassLiteralValue
 import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
-import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import org.jetbrains.kotlin.serialization.deserialization.getName
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 fun createPackageDeclarationsStubs(
     parentStub: StubElement<out PsiElement>,
@@ -355,48 +352,70 @@ private class PropertyClsStubBuilder(
                             ): KotlinJvmBinaryClass.AnnotationArgumentVisitor? = null
 
                             override fun visitAnnotationMemberDefaultValue(): KotlinJvmBinaryClass.AnnotationArgumentVisitor {
-                                return object : KotlinJvmBinaryClass.AnnotationArgumentVisitor {
-                                    //todo support all kind of possible annotation arguments
+                                class AnnotationMemberDefaultValueVisitor : KotlinJvmBinaryClass.AnnotationArgumentVisitor {
+                                    val args = mutableListOf<ConstantValue<*>>()
+
                                     override fun visit(name: Name?, value: Any?) {
-                                        constantInitializer = createConstantValue(value)
+                                        args.addIfNotNull(createConstantValue(value))
                                     }
 
                                     override fun visitClassLiteral(name: Name?, value: ClassLiteralValue) {
-                                        constantInitializer = createConstantValue(KClassData(value.classId, value.arrayNestedness))
+                                        args.addIfNotNull(createConstantValue(KClassData(value.classId, value.arrayNestedness)))
                                     }
 
                                     override fun visitEnum(name: Name?, enumClassId: ClassId, enumEntryName: Name) {
-                                        constantInitializer = createConstantValue(EnumData(enumClassId, enumEntryName))
+                                        args.addIfNotNull(createConstantValue(EnumData(enumClassId, enumEntryName)))
                                     }
 
                                     override fun visitAnnotation(
                                         name: Name?,
                                         classId: ClassId
-                                    ): KotlinJvmBinaryClass.AnnotationArgumentVisitor? = null
+                                    ): KotlinJvmBinaryClass.AnnotationArgumentVisitor {
+                                        val visitor = AnnotationMemberDefaultValueVisitor()
+                                        return object : KotlinJvmBinaryClass.AnnotationArgumentVisitor by visitor {
+                                            override fun visitEnd() {
+                                                args.addIfNotNull(createConstantValue(AnnotationData(classId, visitor.args)))
+                                            }
+                                        }
+                                    }
 
                                     override fun visitArray(name: Name?): KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor {
                                         return object : KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor {
                                             private val elements = mutableListOf<Any>()
 
                                             override fun visit(value: Any?) {
-                                                value?.let { elements.add(it) }
+                                                elements.addIfNotNull(value)
                                             }
 
                                             override fun visitEnum(enumClassId: ClassId, enumEntryName: Name) {
                                                 elements.add(EnumData(enumClassId, enumEntryName))
                                             }
 
-                                            override fun visitClassLiteral(value: ClassLiteralValue) {}
-                                            override fun visitAnnotation(classId: ClassId): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {return null}
+                                            override fun visitClassLiteral(value: ClassLiteralValue) {
+                                                elements.add(KClassData(value.classId, value.arrayNestedness))
+                                            }
+
+                                            override fun visitAnnotation(classId: ClassId): KotlinJvmBinaryClass.AnnotationArgumentVisitor {
+                                                val visitor = AnnotationMemberDefaultValueVisitor()
+                                                return object : KotlinJvmBinaryClass.AnnotationArgumentVisitor by visitor {
+                                                    override fun visitEnd() {
+                                                        elements.addIfNotNull(AnnotationData(classId, visitor.args))
+                                                    }
+                                                }
+                                            }
 
                                             override fun visitEnd() {
-                                                constantInitializer = createConstantValue(elements.toTypedArray())
+                                                args.addIfNotNull(createConstantValue(elements.toTypedArray()))
                                             }
                                         }
                                     }
 
-                                    override fun visitEnd() {}
+                                    override fun visitEnd() {
+                                        constantInitializer = args.firstOrNull()
+                                    }
                                 }
+
+                                return AnnotationMemberDefaultValueVisitor()
                             }
 
                             override fun visitAnnotation(
