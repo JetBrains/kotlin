@@ -58,6 +58,8 @@ internal open class StubBasedFirDeserializedSymbolProvider(
 
     override val symbolNamesProvider: FirSymbolNamesProvider = LLFirKotlinSymbolNamesProvider.cached(session, declarationProvider)
 
+    override val allowKotlinPackage: Boolean get() = true
+
     private val typeAliasCache: FirCache<ClassId, FirTypeAliasSymbol?, StubBasedFirDeserializationContext?> =
         session.firCachesFactory.createCacheWithPostCompute(
             createValue = { classId, context -> findAndDeserializeTypeAlias(classId, context) },

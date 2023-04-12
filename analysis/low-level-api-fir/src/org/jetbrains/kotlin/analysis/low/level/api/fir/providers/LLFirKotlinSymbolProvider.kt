@@ -29,6 +29,12 @@ internal abstract class LLFirKotlinSymbolProvider(session: FirSession) : FirSymb
     abstract val declarationProvider: KotlinDeclarationProvider
 
     /**
+     * Whether the [LLFirKotlinSymbolProvider] should be able to find symbols defined in `kotlin` packages. This is usually not the case for
+     * source sessions, unless the `allowKotlinPackage` flag is enabled in the session's `languageVersionSettings`.
+     */
+    abstract val allowKotlinPackage: Boolean
+
+    /**
      * This function is optimized for a known [classLikeDeclaration].
      */
     @FirSymbolProviderInternals

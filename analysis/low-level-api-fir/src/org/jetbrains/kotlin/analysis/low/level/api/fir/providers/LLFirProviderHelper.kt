@@ -70,7 +70,7 @@ internal class LLFirProviderHelper(
         )
     )
 
-    private val allowKotlinPackage = canContainKotlinPackage ||
+    val allowKotlinPackage: Boolean = canContainKotlinPackage ||
             firSession.languageVersionSettings.getFlag(AnalysisFlags.allowKotlinPackage)
 
     private val classifierByClassId =

@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.NullableCaffeineCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
+import org.jetbrains.kotlin.analysis.providers.KotlinPackageProvider
+import org.jetbrains.kotlin.analysis.providers.createPackageProvider
 import org.jetbrains.kotlin.analysis.providers.mergeDeclarationProviders
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirCompositeCachedSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
@@ -38,12 +40,17 @@ import org.jetbrains.kotlin.psi.KtCallableDeclaration
  *   footprint.
  *
  * [declarationProvider] must have a scope which combines the scopes of the individual [providers].
+ *
+ * [packageProviderForKotlinPackages] should be the package provider combined from all [providers] which allow `kotlin` packages (see
+ * [LLFirProvider.SymbolProvider.allowKotlinPackage]). It may be `null` if no such provider exists. See [getPackage] for a use case.
  */
 internal class LLFirCombinedKotlinSymbolProvider private constructor(
     session: FirSession,
     project: Project,
     providers: List<LLFirKotlinSymbolProvider>,
     private val declarationProvider: KotlinDeclarationProvider,
+    private val packageProvider: KotlinPackageProvider,
+    private val packageProviderForKotlinPackages: KotlinPackageProvider?,
 ) : LLFirSelectingCombinedSymbolProvider<LLFirKotlinSymbolProvider>(session, project, providers) {
     override val symbolNamesProvider: FirSymbolNamesProvider = FirCompositeCachedSymbolNamesProvider.fromSymbolProviders(session, providers)
 
@@ -111,13 +118,42 @@ internal class LLFirCombinedKotlinSymbolProvider private constructor(
             }
     }
 
-    override fun getPackage(fqName: FqName): FqName? = providers.firstNotNullOfOrNull { it.getPackage(fqName) }
+    override fun getPackage(fqName: FqName): FqName? {
+        val hasPackage = if (fqName.startsWith(StandardNames.BUILT_INS_PACKAGE_NAME)) {
+            // If a package is a `kotlin` package, `packageProvider` might find it via the scope of an individual symbol provider that
+            // disallows `kotlin` packages. Hence, the combined `getPackage` would erroneously find a package it shouldn't be able to find,
+            // because calling that individual symbol provider directly would result in `null` (as it disallows `kotlin` packages). The
+            // `packageProviderForKotlinPackages` solves this issue by including only scopes from symbol providers which allow `kotlin`
+            // packages.
+            packageProviderForKotlinPackages?.doesKotlinOnlyPackageExist(fqName) == true
+        } else {
+            packageProvider.doesKotlinOnlyPackageExist(fqName)
+        }
+        return fqName.takeIf { hasPackage }
+    }
 
     companion object {
         fun merge(session: LLFirSession, project: Project, providers: List<LLFirKotlinSymbolProvider>): FirSymbolProvider? =
             if (providers.size > 1) {
                 val declarationProvider = project.mergeDeclarationProviders(providers.map { it.declarationProvider })
-                LLFirCombinedKotlinSymbolProvider(session, project, providers, declarationProvider)
+
+                // TODO (marco): Implement a package provider merger.
+                val combinedScope = providers.createCombinedScope()
+                val packageProvider = project.createPackageProvider(combinedScope)
+
+                val packageProviderForKotlinPackages = providers
+                    .filter { it.allowKotlinPackage }
+                    .takeIf { it.isNotEmpty() }
+                    ?.let { project.createPackageProvider(it.createCombinedScope()) }
+
+                LLFirCombinedKotlinSymbolProvider(
+                    session,
+                    project,
+                    providers,
+                    declarationProvider,
+                    packageProvider,
+                    packageProviderForKotlinPackages,
+                )
             } else providers.singleOrNull()
     }
 }
