@@ -57,7 +57,15 @@ abstract class LibraryPathFilter {
 
         override fun accepts(path: Path?): Boolean {
             if (path == null) return false
-            return libs.any { path.startsWith(it) }
+            val isPathAbsolute = path.isAbsolute
+            val absolutePath by lazy(LazyThreadSafetyMode.NONE) { path.toAbsolutePath() }
+            return libs.any {
+                when {
+                    it.isAbsolute && !isPathAbsolute -> absolutePath.startsWith(it)
+                    !it.isAbsolute && isPathAbsolute -> path.startsWith(it.toAbsolutePath())
+                    else -> path.startsWith(it)
+                }
+            }
         }
     }
 }
