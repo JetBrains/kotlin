@@ -5,6 +5,7 @@
 
 package kotlin.native.concurrent
 
+import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.internal.Frozen
 
 @FreezingIsDeprecated
@@ -84,6 +85,7 @@ internal object INITIALIZING {
     }
 }
 
+@OptIn(ExperimentalNativeApi::class)
 @FreezingIsDeprecated
 @Frozen
 internal class AtomicLazyImpl<out T>(initializer: () -> T) : Lazy<T> {

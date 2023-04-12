@@ -5,6 +5,7 @@
 
 package kotlin.native.concurrent
 
+import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.internal.Frozen
 
 @ThreadLocal
@@ -14,7 +15,7 @@ private object CurrentThread {
 }
 
 @Frozen
-@OptIn(FreezingIsDeprecated::class)
+@OptIn(FreezingIsDeprecated::class, ExperimentalNativeApi::class)
 internal class Lock {
     private val locker_ = AtomicInt(0)
     private val reenterCount_ = AtomicInt(0)

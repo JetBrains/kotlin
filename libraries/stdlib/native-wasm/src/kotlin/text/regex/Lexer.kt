@@ -24,6 +24,8 @@
 @file:Suppress("DEPRECATION") // Char.toInt()
 package kotlin.text.regex
 
+import kotlin.experimental.ExperimentalNativeApi
+
 /**
  * This is base class for special tokens like character classes and quantifiers.
  */
@@ -516,6 +518,7 @@ internal class Lexer(val patternString: String, flags: Int) {
 
     /** Process [lookAhead] in assumption that it's quantifier. */
     private fun processQuantifier(): Quantifier {
+        @OptIn(ExperimentalNativeApi::class)
         assert(lookAhead == '{'.toInt())
         val sb = StringBuilder(4)
         var min = -1
