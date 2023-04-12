@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.psi.KtProjectionKind
 import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.nio.file.Paths
+import kotlin.reflect.KClass
 
 abstract class AbstractAdditionalStubInfoTest : AbstractDecompiledClassTest() {
     fun runTest(testDirectory: String) {
@@ -25,11 +26,19 @@ abstract class AbstractAdditionalStubInfoTest : AbstractDecompiledClassTest() {
 
     private fun extractAdditionInfo(stub: StubElement<*>, builder: StringBuilder, level: Int) {
         builder.append(stub.toString())
-        if (stub is KotlinUserTypeStubImpl) {
-            val upperBound = stub.upperBound
-            if (upperBound != null) {
-                builder.append("    ft: ")
-                appendFlexibleTypeInfo(builder, upperBound)
+        when (stub) {
+            is KotlinUserTypeStubImpl -> {
+                val upperBound = stub.upperBound
+                if (upperBound != null) {
+                    builder.append("    ft: ")
+                    appendFlexibleTypeInfo(builder, upperBound)
+                }
+            }
+            is KotlinPropertyStubImpl -> {
+                val initializer = stub.constantInitializer
+                if (initializer != null) {
+                    builder.append("\n").append("  ".repeat(level)).append("initializer: ${initializer.value}")
+                }
             }
         }
         for (child in stub.childrenStubs) {

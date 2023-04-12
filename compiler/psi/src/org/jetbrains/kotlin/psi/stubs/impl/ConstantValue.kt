@@ -25,6 +25,10 @@ sealed class ConstantValue<out T>(open val value: T, val constantValueKind: Cons
         return constantValueKind.ordinal
     }
 
+    override fun toString(): String {
+        return value.toString()
+    }
+
     abstract fun serializeValue(dataStream: StubOutputStream)
 
     companion object {
@@ -80,6 +84,10 @@ class ArrayValue(
             dataStream.writeInt(constantValue.getKind())
             constantValue.serializeValue(dataStream)
         }
+    }
+
+    override fun toString(): String {
+        return value.joinToString(", ", "[", "]") { it.toString() }
     }
 }
 
@@ -185,8 +193,14 @@ class ULongValue(longValue: Long) : UnsignedValueConstant<Long>(longValue, Const
     }
 }
 
+data class AnnotationData(val annoClassId: ClassId, val args: List<ConstantValue<*>>)
 class AnnotationValue(val annoClassId: ClassId, val args: List<ConstantValue<*>>) :
     ConstantValue<Pair<ClassId, List<ConstantValue<*>>>>(annoClassId to args, ConstantValueKind.ANNO) {
+
+    override fun toString(): String {
+        return args.joinToString(", ", "${annoClassId.asFqNameString()}[", "]") { it.toString() }
+    }
+
     override fun serializeValue(dataStream: StubOutputStream) {
         StubUtils.serializeClassId(dataStream, annoClassId)
         dataStream.writeInt(args.size)
@@ -219,6 +233,7 @@ fun createConstantValue(value: Any?): ConstantValue<*>? {
         is Array<*> -> ArrayValue(value.map { createConstantValue(it)!! }.toList())
         is EnumData -> EnumValue(value.enumClassId, value.enumEntryName)
         is KClassData -> KClassValue(value.classId, value.arrayNestedness)
+        is AnnotationData -> AnnotationValue(value.annoClassId, value.args)
         null -> NullValue
         else -> null
     }
