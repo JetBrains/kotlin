@@ -81,21 +81,20 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             createDefinitelyNotNullTypeStub(parent, typeParameterClassId, upperBoundType)
         } else {
             val nullableParentWrapper = nullableTypeParent(parent, type)
-            createStubForTypeName(typeParameterClassId, nullableParentWrapper, upperBoundType)
+            createStubForTypeName(typeParameterClassId, nullableParentWrapper, { upperBoundType })
         }
     }
 
     private fun createDefinitelyNotNullTypeStub(parent: KotlinStubBaseImpl<*>, classId: ClassId, upperBoundType: KotlinTypeBean?) {
         val intersectionType = KotlinPlaceHolderStubImpl<KtIntersectionType>(parent, KtStubElementTypes.INTERSECTION_TYPE)
         val leftReference = KotlinPlaceHolderStubImpl<KtTypeReference>(intersectionType, KtStubElementTypes.TYPE_REFERENCE)
-        createStubForTypeName(classId, leftReference, upperBoundType)
+        createStubForTypeName(classId, leftReference, { upperBoundType })
         val rightReference = KotlinPlaceHolderStubImpl<KtTypeReference>(intersectionType, KtStubElementTypes.TYPE_REFERENCE)
         val userType = KotlinUserTypeStubImpl(rightReference)
         KotlinNameReferenceExpressionStubImpl(userType, StandardNames.FqNames.any.shortName().ref())
     }
 
     private fun createClassReferenceTypeStub(parent: KotlinStubBaseImpl<*>, type: Type, annotations: List<ClassIdWithTarget>) {
-        var upperBoundType: KotlinTypeBean? = null
         if (type.hasFlexibleTypeCapabilitiesId()) {
             val id = c.nameResolver.getString(type.flexibleTypeCapabilitiesId)
 
@@ -103,7 +102,6 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                 KotlinPlaceHolderStubImpl<KtDynamicType>(nullableTypeParent(parent, type), KtStubElementTypes.DYNAMIC_TYPE)
                 return
             }
-            upperBoundType = createKotlinTypeBean(type.flexibleUpperBound(c.typeTable)!!)
         }
 
         assert(type.hasClassName() || type.hasTypeAliasName()) {
@@ -138,7 +136,10 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
 
         val outerTypeChain = generateSequence(type) { it.outerType(c.typeTable) }.toList()
 
-        createStubForTypeName(classId, nullableTypeParent(parent, type), upperBoundType) { userTypeStub, index ->
+        createStubForTypeName(classId, nullableTypeParent(parent, type), { level ->
+            if (level == 0) createKotlinTypeBean(type.flexibleUpperBound(c.typeTable))
+            else createKotlinTypeBean(outerTypeChain.getOrNull(level)?.flexibleUpperBound(c.typeTable))
+        }) { userTypeStub, index ->
             outerTypeChain.getOrNull(index)?.let { createTypeArgumentListStub(userTypeStub, it.argumentList) }
         }
     }

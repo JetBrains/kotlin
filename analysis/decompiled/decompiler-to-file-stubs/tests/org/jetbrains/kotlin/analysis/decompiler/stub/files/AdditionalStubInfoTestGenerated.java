@@ -31,6 +31,12 @@ public class AdditionalStubInfoTestGenerated extends AbstractAdditionalStubInfoT
     }
 
     @Test
+    @TestMetadata("OuterClassesWithFlexibleArgs")
+    public void testOuterClassesWithFlexibleArgs() throws Exception {
+        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/OuterClassesWithFlexibleArgs/");
+    }
+
+    @Test
     @TestMetadata("PropertyInitializer")
     public void testPropertyInitializer() throws Exception {
         runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/PropertyInitializer/");
