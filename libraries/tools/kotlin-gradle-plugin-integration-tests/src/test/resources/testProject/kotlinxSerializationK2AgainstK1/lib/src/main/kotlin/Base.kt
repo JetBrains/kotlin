@@ -12,3 +12,11 @@ open class Base(
     val b: String = "hello",
     val a: List<String> = listOf("a")
 )
+
+@Serializable
+abstract class AbstractBase(
+    val x: Int = 1,
+    val y: Int = 2
+) {
+    abstract val nonSerializableProp: String
+}

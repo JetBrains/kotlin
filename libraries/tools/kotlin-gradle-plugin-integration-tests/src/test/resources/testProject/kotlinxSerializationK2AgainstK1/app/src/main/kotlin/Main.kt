@@ -19,6 +19,12 @@ class Derived(val d: Long = 1000000000000) : Base(2, "world", listOf("b", "c")) 
     }
 }
 
+fun processAbstractBase(abstractBase: AbstractBase) {
+    println(abstractBase.x)
+    println(abstractBase.y)
+    println(abstractBase.nonSerializableProp)
+}
+
 fun main() {
     val expected = Derived(12)
     val result = Json.encodeToString(Derived.serializer(), expected)

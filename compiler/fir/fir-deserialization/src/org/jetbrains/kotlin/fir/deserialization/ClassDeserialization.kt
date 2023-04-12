@@ -327,10 +327,15 @@ private fun ProtoBuf.ClassOrBuilder.propertiesInOrder(context: FirDeserializatio
     if (versionRequirements.any { it.version.major >= 2 }) return properties
     val order = getExtension(SerializationPluginMetadataExtensions.propertiesNamesInProgramOrder)
         .takeIf { it.isNotEmpty() }
+        ?.toSet()
         ?: return properties
     val propertiesByName = properties.groupBy { it.name }
-    return order.flatMap { propertiesByName[it] ?: emptyList() }.also {
-        assert(it.size == properties.size)
+    val orderedProperties = order.flatMap { propertiesByName[it] ?: emptyList() }
+    // non-serializable properties are not saved in SerializationPluginMetadataExtensions, so we need to pick up them if any
+    return if (orderedProperties.size == properties.size) {
+        orderedProperties
+    } else {
+        orderedProperties + properties.filter { it.name !in order }
     }
 }
 

@@ -23,7 +23,7 @@ class K2KotlinxSerializationIT : KGPBaseTest() {
         }
     }
 
-    @DisplayName("Compile code with kotlinx.serialization with K2 against K1")
+    @DisplayName("Compile code with kotlinx.serialization with K2 against K1. KT-57941")
     @GradleTest
     fun `test kotlinx serialization K2 against K1`() {
         project("kotlinxSerializationK2AgainstK1", gradleVersion) {
