@@ -46,6 +46,7 @@ fun addImportToFile(
     if (file is KtCodeFragment) {
         val newDirective = psiFactory.createImportDirective(importPath)
         file.addImportsFromString(newDirective.text)
+        return
     }
 
     if (allUnder) {
@@ -57,17 +58,17 @@ fun addImportToFile(
 
     val newDirective = psiFactory.createImportDirective(importPath)
     val imports = importList.imports
-    if (imports.isEmpty()) { //TODO: strange hack
-        importList.add(psiFactory.createNewLine())
+    if (imports.isEmpty()) {
+        importList.add(psiFactory.createNewLine(2))
         importList.add(newDirective)
     } else {
-        val insertAfter = imports
-            .lastOrNull {
-                val directivePath = it.importPath
+        val insertAfter = imports.lastOrNull {
+            val directivePath = it.importPath
+            directivePath != null && SimpleImportPathComparator.compare(directivePath, importPath) <= 0
+        }
 
-                directivePath != null && SimpleImportPathComparator.compare(directivePath, importPath) <= 0
-            }
-
-        importList.addAfter(newDirective, insertAfter)
+        importList.addAfter(newDirective, insertAfter).also {
+            importList.addBefore(psiFactory.createNewLine(1), it)
+        }
     }
 }
