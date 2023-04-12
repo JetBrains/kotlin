@@ -244,7 +244,8 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         ) { irConstructor ->
             if (
                 primaryConstructorDescriptor.isExpect ||
-                primaryConstructorDescriptor.constructedClass.isEffectivelyExternal()
+                primaryConstructorDescriptor.constructedClass.isEffectivelyExternal() ||
+                context.configuration.skipBodies
             )
                 null
             else
