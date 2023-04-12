@@ -220,6 +220,16 @@ sealed class ConeContractDescriptionError : ConeDiagnostic {
         override val reason: String
             get() = "$operation operator call is illegal in contract description"
     }
+
+    class NotSelfTypeParameter(val symbol: FirTypeParameterSymbol) : ConeContractDescriptionError() {
+        override val reason: String
+            get() = "Type parameter ${symbol.name} does not belong to owner of contract"
+    }
+
+    class NotReifiedTypeParameter(val symbol: FirTypeParameterSymbol) : ConeContractDescriptionError() {
+        override val reason: String
+            get() = "Type parameter ${symbol.name} is not reified"
+    }
 }
 
 class ConeIllegalAnnotationError(val name: Name) : ConeDiagnostic {

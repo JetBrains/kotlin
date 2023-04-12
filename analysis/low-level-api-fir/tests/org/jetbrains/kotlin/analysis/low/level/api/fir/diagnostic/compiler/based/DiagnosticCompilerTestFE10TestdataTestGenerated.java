@@ -37192,6 +37192,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
                 }
 
                 @Test
+                @TestMetadata("contractWithSubstitution.kt")
+                public void testContractWithSubstitution() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/fromStdlib/contractWithSubstitution.kt");
+                }
+
+                @Test
                 @TestMetadata("fromStandardKt.kt")
                 public void testFromStandardKt() throws Exception {
                     runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/fromStdlib/fromStandardKt.kt");

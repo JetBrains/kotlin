@@ -15,12 +15,15 @@ import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeContractDescriptionError
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.getContainingClass
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.ConstantValueKind
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class ConeEffectExtractor(
@@ -210,7 +213,19 @@ class ConeEffectExtractor(
         val arg = typeOperatorCall.argument.asContractValueExpression()
         val type = typeOperatorCall.conversionTypeRef.coneType.fullyExpandedType(session)
         val isNegated = typeOperatorCall.operation == FirOperation.NOT_IS
-        return ConeIsInstancePredicate(arg, type, isNegated)
+        val diagnostic = (type.toSymbol(session) as? FirTypeParameterSymbol)?.let { typeParameterSymbol ->
+            val typeParametersOfOwner = (owner as? FirTypeParameterRefsOwner)?.typeParameters.orEmpty()
+            if (typeParametersOfOwner.none { it is FirTypeParameter && it.symbol == typeParameterSymbol }) {
+                return@let ConeContractDescriptionError.NotSelfTypeParameter(typeParameterSymbol)
+            }
+            runIf(!typeParameterSymbol.isReified) {
+                ConeContractDescriptionError.NotReifiedTypeParameter(typeParameterSymbol)
+            }
+        }
+        return when (diagnostic) {
+            null -> ConeIsInstancePredicate(arg, type, isNegated)
+            else -> ConeErroneousIsInstancePredicate(arg, type, isNegated, diagnostic)
+        }
     }
 
     private fun FirExpression.parseInvocationKind(): EventOccurrencesRange? {
