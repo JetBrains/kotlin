@@ -182,9 +182,7 @@ class Fir2IrLazyProperty(
             correspondingPropertySymbol = this@Fir2IrLazyProperty.symbol
             with(classifierStorage) {
                 setTypeParameters(
-                    this@Fir2IrLazyProperty.fir, ConversionTypeContext(
-                        origin = ConversionTypeOrigin.DEFAULT
-                    )
+                    this@Fir2IrLazyProperty.fir, ConversionTypeContext.DEFAULT
                 )
             }
         }
@@ -216,9 +214,7 @@ class Fir2IrLazyProperty(
                     correspondingPropertySymbol = this@Fir2IrLazyProperty.symbol
                     with(classifierStorage) {
                         setTypeParameters(
-                            this@Fir2IrLazyProperty.fir, ConversionTypeContext(
-                                origin = ConversionTypeOrigin.SETTER
-                            )
+                            this@Fir2IrLazyProperty.fir, ConversionTypeContext.IN_SETTER
                         )
                     }
                 }

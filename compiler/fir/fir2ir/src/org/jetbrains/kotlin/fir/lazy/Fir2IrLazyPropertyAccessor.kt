@@ -118,5 +118,5 @@ class Fir2IrLazyPropertyAccessor(
     override val containerSource: DeserializedContainerSource?
         get() = firParentProperty.containerSource
 
-    private val conversionTypeContext = if (isSetter) ConversionTypeContext.DEFAULT.inSetter() else ConversionTypeContext.DEFAULT
+    private val conversionTypeContext = if (isSetter) ConversionTypeContext.IN_SETTER else ConversionTypeContext.DEFAULT
 }

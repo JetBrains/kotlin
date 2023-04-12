@@ -20,7 +20,10 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.descriptors.FirBuiltInsPackageFragment
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.descriptors.FirPackageFragmentDescriptor
-import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.FirComponentCall
+import org.jetbrains.kotlin.fir.expressions.FirConstExpression
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyConstructor
@@ -54,7 +57,10 @@ import org.jetbrains.kotlin.ir.types.IrErrorType
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.NameUtils
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
@@ -333,11 +339,9 @@ class Fir2IrDeclarationStorage(
                 setTypeParameters(function)
             }
         }
-        val typeContext = ConversionTypeContext(
-            origin = if (forSetter) ConversionTypeOrigin.SETTER else ConversionTypeOrigin.DEFAULT
-        )
+        val typeContext = if (forSetter) ConversionTypeContext.IN_SETTER else ConversionTypeContext.DEFAULT
         if (function is FirDefaultPropertySetter) {
-            val type = function.valueParameters.first().returnTypeRef.toIrType(ConversionTypeContext.DEFAULT.inSetter())
+            val type = function.valueParameters.first().returnTypeRef.toIrType(ConversionTypeContext.IN_SETTER)
             declareDefaultSetterParameter(type)
         } else if (function != null) {
             val contextReceivers = function.contextReceiversForFunctionOrContainingProperty()
@@ -731,9 +735,7 @@ class Fir2IrDeclarationStorage(
                 }
                 with(classifierStorage) {
                     setTypeParameters(
-                        property, ConversionTypeContext(
-                            origin = if (isSetter) ConversionTypeOrigin.SETTER else ConversionTypeOrigin.DEFAULT
-                        )
+                        property, if (isSetter) ConversionTypeContext.IN_SETTER else ConversionTypeContext.DEFAULT
                     )
                 }
                 // NB: we should enter accessor' scope before declaring its parameters
@@ -741,7 +743,7 @@ class Fir2IrDeclarationStorage(
                 enterScope(this)
                 if (propertyAccessor == null && isSetter) {
                     declareDefaultSetterParameter(
-                        property.returnTypeRef.toIrType(ConversionTypeContext.DEFAULT.inSetter())
+                        property.returnTypeRef.toIrType(ConversionTypeContext.IN_SETTER)
                     )
                 }
                 bindAndDeclareParameters(

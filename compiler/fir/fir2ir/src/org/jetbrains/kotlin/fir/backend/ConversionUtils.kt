@@ -109,11 +109,7 @@ internal enum class ConversionTypeOrigin {
     SETTER
 }
 
-class ConversionTypeContext internal constructor(internal val origin: ConversionTypeOrigin) {
-    fun inSetter() = ConversionTypeContext(
-        origin = ConversionTypeOrigin.SETTER
-    )
-
+class ConversionTypeContext private constructor(internal val origin: ConversionTypeOrigin) {
     companion object {
         internal val DEFAULT = ConversionTypeContext(
             origin = ConversionTypeOrigin.DEFAULT

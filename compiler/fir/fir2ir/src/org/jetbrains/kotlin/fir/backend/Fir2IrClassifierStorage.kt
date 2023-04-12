@@ -107,7 +107,7 @@ class Fir2IrClassifierStorage(
             getCachedIrTypeParameter(original)
                 ?: createIrTypeParameterWithoutBounds(original, index, irOwnerSymbol)
             if (owner is FirProperty && owner.isVar) {
-                val context = ConversionTypeContext.DEFAULT.inSetter()
+                val context = ConversionTypeContext.IN_SETTER
                 getCachedIrTypeParameter(original, context)
                     ?: createIrTypeParameterWithoutBounds(original, index, irOwnerSymbol, context)
             }
