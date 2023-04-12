@@ -26786,6 +26786,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
                 }
 
                 @Test
+                @TestMetadata("implicitPropertyType.kt")
+                public void testImplicitPropertyType() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/resolve/invoke/implicitPropertyType.kt");
+                }
+
+                @Test
                 @TestMetadata("invokeAndSmartCast.kt")
                 public void testInvokeAndSmartCast() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/resolve/invoke/invokeAndSmartCast.kt");

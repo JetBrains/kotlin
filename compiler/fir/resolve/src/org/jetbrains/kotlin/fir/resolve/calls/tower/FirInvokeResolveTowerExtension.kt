@@ -160,7 +160,8 @@ internal class FirInvokeResolveTowerExtension(
             if (symbol !is FirCallableSymbol<*> && symbol !is FirClassLikeSymbol<*>) continue
 
             val isExtensionFunctionType =
-                (symbol as? FirCallableSymbol<*>)?.fir?.returnTypeRef?.isExtensionFunctionType(components.session) == true
+                symbol is FirCallableSymbol<*> &&
+                        components.returnTypeCalculator.tryCalculateReturnType(symbol).isExtensionFunctionType(components.session)
 
             if (invokeBuiltinExtensionMode && !isExtensionFunctionType) {
                 continue
