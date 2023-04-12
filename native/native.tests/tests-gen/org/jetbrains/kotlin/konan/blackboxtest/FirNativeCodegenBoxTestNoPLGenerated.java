@@ -27126,6 +27126,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
                     }
 
                     @Test
+                    @TestMetadata("expectAnnotationCallInLibrary.kt")
+                    public void testExpectAnnotationCallInLibrary() throws Exception {
+                        runTest("compiler/testData/codegen/box/multiplatform/k2/annotations/expectAnnotationCallInLibrary.kt");
+                    }
+
+                    @Test
                     @TestMetadata("optionalExpectation.kt")
                     public void testOptionalExpectation() throws Exception {
                         runTest("compiler/testData/codegen/box/multiplatform/k2/annotations/optionalExpectation.kt");

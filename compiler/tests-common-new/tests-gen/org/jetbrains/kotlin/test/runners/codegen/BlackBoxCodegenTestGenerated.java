@@ -32072,6 +32072,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 }
 
                 @Test
+                @TestMetadata("expectAnnotationCallInLibrary.kt")
+                public void testExpectAnnotationCallInLibrary() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/annotations/expectAnnotationCallInLibrary.kt");
+                }
+
+                @Test
                 @TestMetadata("expectClassInJvmMultifileFacade.kt")
                 public void testExpectClassInJvmMultifileFacade() throws Exception {
                     runTest("compiler/testData/codegen/box/multiplatform/k2/annotations/expectClassInJvmMultifileFacade.kt");
