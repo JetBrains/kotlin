@@ -73,7 +73,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
     private fun createTypeParameterStub(parent: KotlinStubBaseImpl<*>, type: Type, name: Name, annotations: List<ClassIdWithTarget>) {
         createTypeAnnotationStubs(parent, type, annotations)
         val upperBoundType = if (type.hasFlexibleTypeCapabilitiesId()) {
-            createFlexibleType(type.flexibleUpperBound(c.typeTable)!!)
+            createKotlinTypeBean(type.flexibleUpperBound(c.typeTable)!!)
         } else null
 
         val typeParameterClassId = ClassId.topLevel(FqName.topLevel(name))
@@ -103,7 +103,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                 KotlinPlaceHolderStubImpl<KtDynamicType>(nullableTypeParent(parent, type), KtStubElementTypes.DYNAMIC_TYPE)
                 return
             }
-            upperBoundType = createFlexibleType(type.flexibleUpperBound(c.typeTable)!!)
+            upperBoundType = createKotlinTypeBean(type.flexibleUpperBound(c.typeTable)!!)
         }
 
         assert(type.hasClassName() || type.hasTypeAliasName()) {
@@ -143,26 +143,39 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         }
     }
 
-    private fun createFlexibleType(
-        upperBound: Type?
+    private fun createKotlinTypeBean(
+        type: Type?
     ): KotlinTypeBean? {
-        if (upperBound == null) return null
-        if (upperBound.hasTypeParameter()) {
-            return KotlinTypeParameterTypeBean(c.typeParameters[upperBound.typeParameter].asString(), upperBound.nullable)
+        if (type == null) return null
+        val definitelyNotNull = Flags.DEFINITELY_NOT_NULL_TYPE.get(type.flags)
+        when {
+            type.hasTypeParameter() -> {
+                return KotlinTypeParameterTypeBean(c.typeParameters[type.typeParameter].asString(), type.nullable, definitelyNotNull)
+            }
+            type.hasTypeParameterName() -> {
+                return KotlinTypeParameterTypeBean(c.nameResolver.getString(type.typeParameterName), type.nullable, definitelyNotNull)
+            }
+            else -> {
+                val classId = c.nameResolver.getClassId(if (type.hasClassName()) type.className else type.typeAliasName)
+                val arguments = type.argumentList.map { argument ->
+                    val kind = argument.projection.toProjectionKind()
+                    KotlinTypeArgumentBean(
+                        kind,
+                        if (kind == KtProjectionKind.STAR) null else createKotlinTypeBean(argument.type(c.typeTable))
+                    )
+                }
+                if (type.hasFlexibleUpperBound()) {
+                    val flexibleUpperBound = type.flexibleUpperBound(c.typeTable)!!
+                    return KotlinClassTypeBean(
+                        classId,
+                        arguments,
+                        type.nullable,
+                        createKotlinTypeBean(flexibleUpperBound)
+                    )
+                }
+                return KotlinClassTypeBean(classId, arguments, type.nullable, null)
+            }
         }
-        if (upperBound.hasTypeParameterName()) {
-            return KotlinTypeParameterTypeBean(c.nameResolver.getString(upperBound.typeParameterName), upperBound.nullable)
-        }
-        val classId = c.nameResolver.getClassId(if (upperBound.hasClassName()) upperBound.className else upperBound.typeAliasName)
-        val arguments = upperBound.argumentList.map { argument ->
-            val kind = argument.projection.toProjectionKind()
-            KotlinTypeArgumentBean(kind, if (kind == KtProjectionKind.STAR) null else createFlexibleType(argument.type(c.typeTable)))
-        }
-        if (upperBound.hasFlexibleUpperBound()) {
-            val flexibleUpperBound = upperBound.flexibleUpperBound(c.typeTable)!!
-            return KotlinClassTypeBean(classId, arguments, upperBound.nullable, createFlexibleType(flexibleUpperBound))
-        }
-        return KotlinClassTypeBean(classId, arguments, upperBound.nullable, null)
     }
 
     private fun createTypeAnnotationStubs(parent: KotlinStubBaseImpl<*>, type: Type, annotations: List<ClassIdWithTarget>) {

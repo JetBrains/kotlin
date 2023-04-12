@@ -79,6 +79,7 @@ public class KtUserTypeElementType extends KtStubElementType<KotlinUserTypeStub,
         else if (type instanceof KotlinTypeParameterTypeBean) {
             dataStream.writeName(((KotlinTypeParameterTypeBean) type).getTypeParameterName());
             dataStream.writeBoolean(type.getNullable());
+            dataStream.writeBoolean(((KotlinTypeParameterTypeBean) type).getDefinitelyNotNull());
         }
     }
 
@@ -111,7 +112,7 @@ public class KtUserTypeElementType extends KtStubElementType<KotlinUserTypeStub,
                 return new KotlinClassTypeBean(classId, arguments, isNullable, deserializeType(dataStream));
             }
             case TYPE_PARAMETER: {
-                return new KotlinTypeParameterTypeBean(Objects.requireNonNull(dataStream.readNameString()), dataStream.readBoolean());
+                return new KotlinTypeParameterTypeBean(Objects.requireNonNull(dataStream.readNameString()), dataStream.readBoolean(), dataStream.readBoolean());
             }
             case NONE:
                 return null;

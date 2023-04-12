@@ -47,11 +47,11 @@ abstract class AbstractAdditionalStubInfoTest : AbstractDecompiledClassTest() {
         }
     }
 
-    private fun appendFlexibleTypeInfo(builder: StringBuilder, upperBound: KotlinTypeBean) {
-        when (upperBound) {
+    private fun appendFlexibleTypeInfo(builder: StringBuilder, typeBean: KotlinTypeBean) {
+        when (typeBean) {
             is KotlinClassTypeBean -> {
-                builder.append(upperBound.classId.asFqNameString())
-                val arguments = upperBound.arguments
+                builder.append(typeBean.classId.asFqNameString())
+                val arguments = typeBean.arguments
                 if (arguments.isNotEmpty()) {
                     builder.append("<")
                     arguments.forEachIndexed { index, arg ->
@@ -65,19 +65,22 @@ abstract class AbstractAdditionalStubInfoTest : AbstractDecompiledClassTest() {
                     }
                     builder.append(">")
                 }
-                if (upperBound.nullable) {
+                if (typeBean.nullable) {
                     builder.append("?")
                 }
-                val uUpperBound = upperBound.upperBound
+                val uUpperBound = typeBean.upperBound
                 if (uUpperBound != null) {
                     builder.append(" .. ")
                     appendFlexibleTypeInfo(builder, uUpperBound)
                 }
             }
             is KotlinTypeParameterTypeBean -> {
-                builder.append(upperBound.typeParameterName)
-                if (upperBound.nullable) {
+                builder.append(typeBean.typeParameterName)
+                if (typeBean.nullable) {
                     builder.append("?")
+                }
+                if (typeBean.definitelyNotNull) {
+                    builder.append(" & Any")
                 }
             }
         }

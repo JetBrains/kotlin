@@ -42,4 +42,8 @@ data class KotlinClassTypeBean(
 
 data class KotlinTypeArgumentBean(val projectionKind: KtProjectionKind, val type: KotlinTypeBean?)
 
-data class KotlinTypeParameterTypeBean(val typeParameterName: String, override val nullable: Boolean) : KotlinTypeBean
+data class KotlinTypeParameterTypeBean(
+    val typeParameterName: String,
+    override val nullable: Boolean,
+    val definitelyNotNull: Boolean
+) : KotlinTypeBean
