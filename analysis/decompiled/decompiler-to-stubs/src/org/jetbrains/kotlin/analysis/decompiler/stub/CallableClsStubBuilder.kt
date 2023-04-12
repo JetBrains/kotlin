@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.ProtoBuf.MemberKind
 import org.jetbrains.kotlin.metadata.ProtoBuf.Modality
 import org.jetbrains.kotlin.metadata.deserialization.*
+import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
@@ -339,8 +340,13 @@ private class PropertyClsStubBuilder(
         if (binaryClass != null) {
             val callableName = c.nameResolver.getName(propertyProto.name)
             binaryClass.visitMembers(object : KotlinJvmBinaryClass.MemberVisitor {
+                private val getterName = lazy(LazyThreadSafetyMode.NONE) {
+                    val signature = propertyProto.getExtensionOrNull(JvmProtoBuf.propertySignature) ?: return@lazy null
+                    c.nameResolver.getName(signature.getter.name)
+                }
+
                 override fun visitMethod(name: Name, desc: String): KotlinJvmBinaryClass.MethodAnnotationVisitor? {
-                    if (name == callableName && protoContainer is ProtoContainer.Class && protoContainer.kind == ProtoBuf.Class.Kind.ANNOTATION_CLASS) {
+                    if (protoContainer is ProtoContainer.Class && protoContainer.kind == ProtoBuf.Class.Kind.ANNOTATION_CLASS && getterName.value == name) {
                         return object : KotlinJvmBinaryClass.MethodAnnotationVisitor {
                             override fun visitParameterAnnotation(
                                 index: Int,
@@ -356,13 +362,33 @@ private class PropertyClsStubBuilder(
                                     }
 
                                     override fun visitClassLiteral(name: Name?, value: ClassLiteralValue) {}
-                                    override fun visitEnum(name: Name?, enumClassId: ClassId, enumEntryName: Name) {}
+                                    override fun visitEnum(name: Name?, enumClassId: ClassId, enumEntryName: Name) {
+                                        constantInitializer = EnumValue(enumClassId, enumEntryName)
+                                    }
+
                                     override fun visitAnnotation(
                                         name: Name?,
                                         classId: ClassId
                                     ): KotlinJvmBinaryClass.AnnotationArgumentVisitor? = null
 
-                                    override fun visitArray(name: Name?): KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor? = null
+                                    override fun visitArray(name: Name?): KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor {
+                                        return object : KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor {
+                                            private val elements = mutableListOf<Any>()
+
+                                            override fun visit(value: Any?) {
+                                                value?.let { elements.add(it) }
+                                            }
+
+                                            override fun visitEnum(enumClassId: ClassId, enumEntryName: Name) {}
+                                            override fun visitClassLiteral(value: ClassLiteralValue) {}
+                                            override fun visitAnnotation(classId: ClassId): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {return null}
+
+                                            override fun visitEnd() {
+                                                constantInitializer = createConstantValue(elements.toTypedArray())
+                                            }
+                                        }
+                                    }
+
                                     override fun visitEnd() {}
                                 }
                             }

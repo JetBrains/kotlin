@@ -213,6 +213,7 @@ fun createConstantValue(value: Any?): ConstantValue<*>? {
         is FloatArray -> ArrayValue(value.map { createConstantValue(it)!! }.toList())
         is DoubleArray -> ArrayValue(value.map { createConstantValue(it)!! }.toList())
         is BooleanArray -> ArrayValue(value.map { createConstantValue(it)!! }.toList())
+        is Array<*> -> ArrayValue(value.map { createConstantValue(it)!! }.toList())
         null -> NullValue
         else -> null
     }
