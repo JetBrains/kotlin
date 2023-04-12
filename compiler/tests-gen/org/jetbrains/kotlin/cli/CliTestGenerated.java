@@ -1363,6 +1363,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/js/languageVersion.args");
         }
 
+        @TestMetadata("legacyCompilerUsageWithoutFlag.args")
+        public void testLegacyCompilerUsageWithoutFlag() throws Exception {
+            runTest("compiler/testData/cli/js/legacyCompilerUsageWithoutFlag.args");
+        }
+
         @TestMetadata("libraryDirNotFound.args")
         public void testLibraryDirNotFound() throws Exception {
             runTest("compiler/testData/cli/js/libraryDirNotFound.args");
