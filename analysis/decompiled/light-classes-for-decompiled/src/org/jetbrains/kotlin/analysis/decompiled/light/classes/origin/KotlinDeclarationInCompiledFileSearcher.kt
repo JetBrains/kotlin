@@ -119,6 +119,7 @@ abstract class KotlinDeclarationInCompiledFileSearcher {
 
     private fun doPropertyMatch(member: PsiMethod, property: KtProperty, setter: Boolean): Boolean {
         val ktTypes = mutableListOf<KtTypeReference>()
+        property.contextReceivers.forEach { ktTypes.add(it.typeReference()!!) }
         property.receiverTypeReference?.let { ktTypes.add(it) }
         property.typeReference?.let { ktTypes.add(it) }
 
@@ -204,7 +205,8 @@ abstract class KotlinDeclarationInCompiledFileSearcher {
             return qualifiedName == StandardNames.FqNames.array.asString() ||
                     varArgs && areTypesTheSame(ktTypeRef, psiType.componentType, false)
         }
-        return ((psiType as? PsiClassType)?.rawType() ?: psiType).canonicalText == psiType(qualifiedName, ktTypeRef).canonicalText
+        //currently functional types are unresolved and thus type comparison doesn't work
+        return psiType.canonicalText.takeWhile { it != '<' } == psiType(qualifiedName, ktTypeRef).canonicalText
     }
 
     companion object {
