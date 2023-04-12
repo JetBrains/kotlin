@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.native
 
+import org.gradle.api.logging.configuration.WarningMode
 import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.DUMMY_FRAMEWORK_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_BUILD_TASK_NAME
@@ -1146,7 +1147,7 @@ class CocoaPodsIT : BaseGradleIT() {
                 TestVersions.Gradle.G_7_4,
                 currentGradleVersion,
                 "Workaround for KT-57483",
-            )
+            ).copy(warningMode = WarningMode.Fail)
         ) {
             assertSuccessful()
 

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.native
 
 import com.intellij.testFramework.TestDataFile
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jdom.input.SAXBuilder
 import org.jetbrains.kotlin.gradle.*
@@ -303,7 +304,7 @@ class GeneralNativeIT : BaseGradleIT() {
                         TestVersions.Gradle.G_7_4,
                         currentGradleVersion,
                         "Workaround for KT-57483"
-                    ),
+                    ).copy(warningMode = WarningMode.Fail),
                 check = check
             )
         }
