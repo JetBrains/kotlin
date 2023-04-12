@@ -79,6 +79,7 @@ open internal class JointSet(children: List<AbstractSet>, fSet: FSet) : Abstract
             assert(newFSet == fSet)
         }
 
+        @OptIn(ExperimentalNativeApi::class)
         children.replaceAll { child -> if (!child.secondPassVisited) child.processSecondPass() else child }
         return super.processSecondPassInternal()
     }
