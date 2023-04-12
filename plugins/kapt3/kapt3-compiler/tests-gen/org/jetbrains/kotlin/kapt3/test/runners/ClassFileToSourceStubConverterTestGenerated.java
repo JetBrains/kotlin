@@ -608,6 +608,12 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
     }
 
     @Test
+    @TestMetadata("superConstructorCall.kt")
+    public void testSuperConstructorCall() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/superConstructorCall.kt");
+    }
+
+    @Test
     @TestMetadata("suspendArgName.kt")
     public void testSuspendArgName() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/suspendArgName.kt");

@@ -244,7 +244,8 @@ internal class FunctionGenerator(declarationGenerator: DeclarationGenerator) : D
         ) { irConstructor ->
             if (
                 primaryConstructorDescriptor.isExpect ||
-                primaryConstructorDescriptor.constructedClass.isEffectivelyExternal()
+                primaryConstructorDescriptor.constructedClass.isEffectivelyExternal() ||
+                context.configuration.skipBodies
             )
                 null
             else
