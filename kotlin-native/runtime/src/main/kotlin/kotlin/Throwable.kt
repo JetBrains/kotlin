@@ -5,6 +5,7 @@
 
 package kotlin
 
+import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.concurrent.freeze
 import kotlin.native.concurrent.isFrozen
 import kotlin.native.internal.ExportForCppRuntime
@@ -39,6 +40,8 @@ public open class Throwable(open val message: String?, open val cause: Throwable
      * Returns an array of stack trace strings representing the stack trace
      * pertaining to this throwable.
      */
+    // Deprecate this function in favour of KT-57164 when it gets implemented
+    @ExperimentalNativeApi
     public fun getStackTrace(): Array<String> = stackTraceStrings
 
     internal fun getStackTraceAddressesInternal(): List<Long> =
