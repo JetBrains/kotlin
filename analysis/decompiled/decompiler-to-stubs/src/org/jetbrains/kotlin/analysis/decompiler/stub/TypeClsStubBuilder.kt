@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.utils.doNothing
 // TODO: see DescriptorRendererOptions.excludedTypeAnnotationClasses for decompiler
 private val ANNOTATIONS_NOT_LOADED_FOR_TYPES = setOf(StandardNames.FqNames.parameterName)
 
+const val COMPILED_DEFAULT_PARAMETER_VALUE = "COMPILED_CODE"
+
 class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
     fun createTypeReferenceStub(
         parent: StubElement<out PsiElement>,
@@ -279,12 +281,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
 
             createTypeReferenceStub(parameterStub, typeProto)
             if (hasDefaultValue) {
-                KotlinConstantExpressionStubImpl(
-                    parameterStub,
-                    KtStubElementTypes.NULL,
-                    ConstantValueKind.NULL,
-                    StringRef.fromString("null")
-                )
+                KotlinNameReferenceExpressionStubImpl(parameterStub, StringRef.fromString(COMPILED_DEFAULT_PARAMETER_VALUE))
             }
         }
     }
