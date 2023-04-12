@@ -5,6 +5,7 @@
 
 package kotlin
 
+import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.identityHashCode
 import kotlin.native.internal.fullName
 import kotlin.native.internal.ExportTypeInfo
@@ -36,7 +37,7 @@ public open class Any {
      * * Whenever it is invoked on the same object more than once, the `hashCode` method must consistently return the same integer, provided no information used in `equals` comparisons on the object is modified.
      * * If two objects are equal according to the `equals()` method, then calling the `hashCode` method on each of the two objects must produce the same integer result.
      */
-    @OptIn(ExperimentalStdlibApi::class)
+    @OptIn(ExperimentalNativeApi::class)
     public open fun hashCode(): Int = this.identityHashCode()
 
     /**

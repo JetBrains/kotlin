@@ -115,6 +115,6 @@ public external fun terminateWithUnhandledException(throwable: Throwable): Nothi
  * Compute stable wrt potential object relocations by the memory manager identity hash code.
  * @return 0 for `null` object, identity hash code otherwise.
  */
-@ExperimentalStdlibApi
+@ExperimentalNativeApi
 @GCUnsafeCall("Kotlin_Any_hashCode")
 public external fun Any?.identityHashCode(): Int

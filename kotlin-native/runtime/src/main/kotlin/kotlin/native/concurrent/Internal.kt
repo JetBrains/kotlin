@@ -5,6 +5,7 @@
 
 package kotlin.native.concurrent
 
+import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.internal.DescribeObjectForDebugging
 import kotlin.native.internal.ExportForCppRuntime
 import kotlin.native.internal.GCUnsafeCall
@@ -130,7 +131,7 @@ internal fun ThrowFreezingException(toFreeze: Any, blocker: Any): Nothing =
 
 @ExportForCppRuntime
 @FreezingIsDeprecated
-@OptIn(ExperimentalStdlibApi::class)
+@OptIn(ExperimentalNativeApi::class)
 internal fun ThrowInvalidMutabilityException(where: Any): Nothing {
     val description = debugDescription(where::class, where.identityHashCode())
     throw InvalidMutabilityException("mutation attempt of frozen $description")
