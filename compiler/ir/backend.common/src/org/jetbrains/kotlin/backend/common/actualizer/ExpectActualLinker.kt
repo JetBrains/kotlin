@@ -84,7 +84,10 @@ internal open class ActualizerVisitor(private val symbolRemapper: SymbolRemapper
         declaration.also { it.transformChildren(this, null) }
 
     override fun visitFile(declaration: IrFile) =
-        declaration.also { it.transformChildren(this, null) }
+        declaration.also {
+            it.transformChildren(this, null)
+            it.transformAnnotations(declaration)
+        }
 
     override fun visitScript(declaration: IrScript) =
         declaration.also {
@@ -96,6 +99,7 @@ internal open class ActualizerVisitor(private val symbolRemapper: SymbolRemapper
         declaration.also {
             it.superTypes = it.superTypes.map { superType -> superType.remapType() }
             it.transformChildren(this, null)
+            it.transformAnnotations(declaration)
         }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction) = (visitFunction(declaration) as IrSimpleFunction).also {
@@ -110,6 +114,7 @@ internal open class ActualizerVisitor(private val symbolRemapper: SymbolRemapper
         declaration.also {
             it.returnType = it.returnType.remapType()
             it.transformChildren(this, null)
+            it.transformAnnotations(declaration)
         }
 
     override fun visitProperty(declaration: IrProperty) =
@@ -118,12 +123,14 @@ internal open class ActualizerVisitor(private val symbolRemapper: SymbolRemapper
             it.overriddenSymbols = it.overriddenSymbols.memoryOptimizedMap { symbol ->
                 symbolRemapper.getReferencedProperty(symbol)
             }
+            it.transformAnnotations(declaration)
         }
 
     override fun visitField(declaration: IrField) =
         declaration.also {
             it.type = it.type.remapType()
             it.transformChildren(this, null)
+            it.transformAnnotations(declaration)
         }
 
     override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty) =
@@ -133,12 +140,16 @@ internal open class ActualizerVisitor(private val symbolRemapper: SymbolRemapper
         }
 
     override fun visitEnumEntry(declaration: IrEnumEntry) =
-        declaration.also { it.transformChildren(this, null) }
+        declaration.also {
+            it.transformChildren(this, null)
+            it.transformAnnotations(declaration)
+        }
 
     override fun visitTypeParameter(declaration: IrTypeParameter) =
         declaration.also {
             it.superTypes = it.superTypes.map { superType -> superType.remapType() }
             it.transformChildren(this, null)
+            it.transformAnnotations(declaration)
         }
 
     override fun visitValueParameter(declaration: IrValueParameter) =
@@ -146,6 +157,7 @@ internal open class ActualizerVisitor(private val symbolRemapper: SymbolRemapper
             it.type = it.type.remapType()
             it.varargElementType = it.varargElementType?.remapType()
             it.transformChildren(this, null)
+            it.transformAnnotations(declaration)
         }
 
     override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer) =
@@ -155,11 +167,13 @@ internal open class ActualizerVisitor(private val symbolRemapper: SymbolRemapper
         declaration.also {
             it.type = it.type.remapType()
             it.transformChildren(this, null)
+            it.transformAnnotations(declaration)
         }
 
     override fun visitTypeAlias(declaration: IrTypeAlias) =
         declaration.also {
             it.expandedType = it.expandedType.remapType()
             it.transformChildren(this, null)
+            it.transformAnnotations(declaration)
         }
 }
