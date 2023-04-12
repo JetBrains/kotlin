@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.parseCompilerArguments
+import org.jetbrains.kotlin.gradle.util.parseCompilerArgumentsFromBuildOutput
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.fail
 import kotlin.io.path.appendText
@@ -223,7 +224,10 @@ internal class CompilerOptionsIT : KGPBaseTest() {
     fun combinesOptInFromLanguageSettingsNative(gradleVersion: GradleVersion) {
         project(
             projectName = "new-mpp-lib-and-app/sample-lib",
-            gradleVersion = gradleVersion
+            gradleVersion = gradleVersion,
+            // We need to get specific task output as commonizer may run first producing
+            // arguments as well in output
+            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
             buildGradle.appendText(
                 //language=Groovy
@@ -251,7 +255,8 @@ internal class CompilerOptionsIT : KGPBaseTest() {
 
             build("compileNativeMainKotlinMetadata") {
                 assertTasksExecuted(":compileNativeMainKotlinMetadata")
-                val arguments = parseCompilerArguments<K2NativeCompilerArguments>()
+                val taskOutput = getOutputForTask("compileNativeMainKotlinMetadata")
+                val arguments = parseCompilerArgumentsFromBuildOutput(K2NativeCompilerArguments::class, taskOutput)
                 assertEquals(
                     setOf("another.custom.UnderOptIn", "my.custom.OptInAnnotation"), arguments.optIn?.toSet(),
                     "Arguments optIn does not match '-opt-in=another.custom.UnderOptIn, -opt-in=my.custom.OptInAnnotation'"
@@ -260,7 +265,8 @@ internal class CompilerOptionsIT : KGPBaseTest() {
 
             build("compileKotlinLinux64") {
                 assertTasksExecuted(":compileKotlinLinux64")
-                val arguments = parseCompilerArguments<K2NativeCompilerArguments>()
+                val taskOutput = getOutputForTask("compileKotlinLinux64")
+                val arguments = parseCompilerArgumentsFromBuildOutput(K2NativeCompilerArguments::class, taskOutput)
                 assertEquals(
                     setOf("another.custom.UnderOptIn", "my.custom.OptInAnnotation"), arguments.optIn?.toSet(),
                     "Arguments optIn does not match '-opt-in=another.custom.UnderOptIn, -opt-in=my.custom.OptInAnnotation'"
