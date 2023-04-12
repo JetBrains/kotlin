@@ -57,17 +57,6 @@ internal actual inline fun <E> buildListInternal(capacity: Int, builderAction: M
 
 
 /**
- * Replaces each element in the list with a result of a transformation specified.
- */
-public fun <T> MutableList<T>.replaceAll(transformation: (T) -> T) {
-    val it = listIterator()
-    while (it.hasNext()) {
-        val element = it.next()
-        it.set(transformation(element))
-    }
-}
-
-/**
  * Groups elements from the [Grouping] source by key and counts elements in each group.
  *
  * @return a [Map] associating the key of each group with the count of elements in the group.
