@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
-import org.jetbrains.kotlin.toKtPsiSourceElement
 
 class StubBasedFirDeserializationContext(
     val moduleData: FirModuleData,
@@ -441,14 +440,12 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
 
             function.contextReceivers.mapNotNull { it.typeReference() }.mapTo(contextReceivers, ::loadContextReceiver)
         }
-        //todo contracts
-//        if (function.hasContract()) {
-//            val contractDeserializer = if (function.typeParameters.isEmpty()) this.contractDeserializer else FirContractDeserializer(local)
-//            val contractDescription = contractDeserializer.loadContract(function.contract, simpleFunction)
-//            if (contractDescription != null) {
-//                simpleFunction.replaceContractDescription(contractDescription)
-//            }
-//        }
+        if (function.mayHaveContract()) {
+            val resolvedDescription = StubBasedFirContractDeserializer(simpleFunction, local.typeDeserializer).loadContract(function)
+            if (resolvedDescription != null) {
+                simpleFunction.replaceContractDescription(resolvedDescription)
+            }
+        }
         return simpleFunction
     }
 

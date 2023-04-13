@@ -29,12 +29,14 @@ import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasSuspendModifier
 import org.jetbrains.kotlin.psi.psiUtil.unwrapNullability
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinClassTypeBean
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinFlexibleAwareTypeBean
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinNameReferenceExpressionStubImpl
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeParameterTypeBean
 import org.jetbrains.kotlin.types.Variance
 
 class StubBasedFirTypeDeserializer(
@@ -105,6 +107,39 @@ class StubBasedFirTypeDeserializer(
 
     fun type(typeReference: KtTypeReference): ConeKotlinType {
         return type(typeReference, attributesFromAnnotations(typeReference))
+    }
+
+    fun type(type: KotlinFlexibleAwareTypeBean): ConeKotlinType? {
+        when (type) {
+            is KotlinTypeParameterTypeBean -> {
+                val lookupTag =
+                    typeParameterNames[type.typeParameterName]?.toLookupTag() ?: parent?.typeParameterSymbol(type.typeParameterName)
+                    ?: return null
+                return ConeTypeParameterTypeImpl(lookupTag, isNullable = type.nullable).let {
+                    if (type.definitelyNotNull)
+                        ConeDefinitelyNotNullType.create(it, moduleData.session.typeContext, avoidComprehensiveCheck = true) ?: it
+                    else
+                        it
+                }
+            }
+            is KotlinClassTypeBean -> {
+                val projections = type.arguments.map { typeArgumentBean ->
+                    val kind = typeArgumentBean.projectionKind
+                    if (kind == KtProjectionKind.STAR) {
+                        return@map ConeStarProjection
+                    }
+                    val argType = type(typeArgumentBean.type!!) ?: error("Broken type argument ${typeArgumentBean.type}")
+                    typeArgument(argType, kind)
+                }
+                return ConeClassLikeTypeImpl(
+                    type.classId.toLookupTag(),
+                    projections.toTypedArray(),
+                    isNullable = type.nullable,
+                    ConeAttributes.Empty
+                )
+            }
+            else -> TODO("Make sealed class")
+        }
     }
 
     private fun type(typeReference: KtTypeReference, attributes: ConeAttributes): ConeKotlinType {
@@ -189,13 +224,20 @@ class StubBasedFirTypeDeserializer(
             return ConeStarProjection
         }
 
-        val variance = when (projection.projectionKind) {
+        val type = type(projection.typeReference!!)
+        return typeArgument(type, projection.projectionKind)
+    }
+
+    private fun typeArgument(
+        type: ConeKotlinType,
+        projectionKind: KtProjectionKind
+    ): ConeTypeProjection {
+        val variance = when (projectionKind) {
             KtProjectionKind.IN -> Variance.IN_VARIANCE
             KtProjectionKind.OUT -> Variance.OUT_VARIANCE
             KtProjectionKind.NONE -> Variance.INVARIANT
             KtProjectionKind.STAR -> throw AssertionError("* should not be here")
         }
-        val type = type(projection.typeReference!!)
         return type.toTypeProjection(variance)
     }
 }
