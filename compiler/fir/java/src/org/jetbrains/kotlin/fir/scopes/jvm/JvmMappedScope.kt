@@ -49,7 +49,6 @@ class JvmMappedScope(
     private val firKotlinClass: FirRegularClass,
     private val firJavaClass: FirJavaClass,
     private val declaredMemberScope: FirContainingNamesAwareScope,
-    private val signatures: Signatures
 ) : FirTypeScope() {
     private val functionsCache = mutableMapOf<FirNamedFunctionSymbol, FirNamedFunctionSymbol>()
 
@@ -211,7 +210,7 @@ class JvmMappedScope(
     }
 
     override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
-        javaMappedClassUseSiteScopeWithCustomSupertype.processDeclaredConstructors { javaCtorSymbol ->
+        javaMappedClassUseSiteScopeWithCustomSupertype.processDeclaredConstructors processor@{ javaCtorSymbol ->
 
             fun FirConstructor.isShadowedBy(ctorFromKotlin: FirConstructorSymbol): Boolean {
                 // assuming already checked for visibility
@@ -233,14 +232,15 @@ class JvmMappedScope(
             // Here the logic is generally the same, but simplified for performance by reordering checks and avoiding checking
             // for the impossible combinations
             val javaCtor = javaCtorSymbol.fir
-            if (javaCtor.status.visibility.isPublicAPI && !javaCtor.isDeprecated() &&
-                javaCtor.computeJvmDescriptor() !in signatures.hiddenConstructors &&
-                !javaCtor.isTrivialCopyConstructor() &&
-                firKotlinClassConstructors.none { javaCtor.isShadowedBy(it) }
-            ) {
-                val newSymbol = getOrCreateCopy(javaCtorSymbol)
-                processor(newSymbol)
-            }
+
+            if (!javaCtor.status.visibility.isPublicAPI || javaCtor.isDeprecated()) return@processor
+            val signature = SignatureBuildingComponents.signature(firJavaClass.classId, javaCtor.computeJvmDescriptor())
+            if (signature in JvmBuiltInsSignatures.HIDDEN_CONSTRUCTOR_SIGNATURES) return@processor
+            if (javaCtor.isTrivialCopyConstructor()) return@processor
+            if (firKotlinClassConstructors.any { javaCtor.isShadowedBy(it) }) return@processor
+
+            val newSymbol = getOrCreateCopy(javaCtorSymbol)
+            processor(newSymbol)
         }
 
         declaredMemberScope.processDeclaredConstructors(processor)
@@ -338,33 +338,6 @@ class JvmMappedScope(
             val lookupTag: ConeClassLikeLookupTag,
             val substitutor: ConeSubstitutor,
         ) : ScopeSessionKey<FirClass, FirClassSubstitutionScope>()
-
-        data class Signatures(val visibleMethodSignaturesByName: Map<Name, Set<String>>, val hiddenConstructors: Set<String>) {
-            fun isEmpty() = visibleMethodSignaturesByName.isEmpty() && hiddenConstructors.isEmpty()
-            fun isNotEmpty() = !isEmpty()
-        }
-
-        fun prepareSignatures(klass: FirRegularClass, isMutable: Boolean): Signatures {
-
-            val signaturePrefix = klass.symbol.classId.toString()
-            val visibleMethodsByName = mutableMapOf<Name, MutableSet<String>>()
-            (JvmBuiltInsSignatures.VISIBLE_METHOD_SIGNATURES).filter { signature ->
-                signature in JvmBuiltInsSignatures.MUTABLE_METHOD_SIGNATURES == isMutable &&
-                        signature.startsWith(signaturePrefix)
-            }.map { signature ->
-                // +1 to delete dot before function name
-                signature.substring(signaturePrefix.length + 1)
-            }.forEach {
-                visibleMethodsByName.getOrPut(Name.identifier(it.substringBefore("("))) { mutableSetOf() }.add(it)
-            }
-
-            val hiddenConstructors =
-                JvmBuiltInsSignatures.HIDDEN_CONSTRUCTOR_SIGNATURES
-                    .filter { it.startsWith(signaturePrefix) }
-                    .mapTo(mutableSetOf()) { it.substring(signaturePrefix.length + 1) }
-
-            return Signatures(visibleMethodsByName, hiddenConstructors)
-        }
 
         /**
          * For fromClass=A<T1, T2>, toClass=B<F1, F1> classes
