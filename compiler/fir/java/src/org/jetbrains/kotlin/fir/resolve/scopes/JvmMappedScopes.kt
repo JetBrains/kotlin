@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.jvm.JvmMappedScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
+import org.jetbrains.kotlin.fir.types.isSomeFunctionType
+import org.jetbrains.kotlin.name.StandardClassIds
 
 fun wrapScopeWithJvmMapped(
     klass: FirClass,
@@ -32,23 +34,21 @@ fun wrapScopeWithJvmMapped(
     val symbolProvider = useSiteSession.symbolProvider
     val javaClass = symbolProvider.getClassLikeSymbolByClassId(javaClassId)?.fir as? FirRegularClass
         ?: return declaredMemberScope
-    val preparedSignatures = JvmMappedScope.prepareSignatures(javaClass, JavaToKotlinClassMap.isMutable(kotlinUnsafeFqName))
-    return if (preparedSignatures.isNotEmpty()) {
-        val javaClassUseSiteScope = javaClass.unsubstitutedScope(
-            useSiteSession,
-            scopeSession,
-            withForcedTypeCalculator = false,
-            memberRequiredPhase = memberRequiredPhase,
-        )
-        JvmMappedScope(
-            useSiteSession,
-            klass,
-            javaClass,
-            declaredMemberScope,
-            javaClassUseSiteScope,
-            preparedSignatures,
-        )
-    } else {
-        declaredMemberScope
-    }
+
+    // We don't add additional built-in members to function types and kotlin.Any (see JvmBuiltInsCustomizer.getJavaAnalogue)
+    if (klass.symbol.toLookupTag().isSomeFunctionType(useSiteSession) || classId == StandardClassIds.Any) return declaredMemberScope
+
+    val javaClassUseSiteScope = javaClass.unsubstitutedScope(
+        useSiteSession,
+        scopeSession,
+        withForcedTypeCalculator = false,
+        memberRequiredPhase = memberRequiredPhase,
+    )
+    return JvmMappedScope(
+        useSiteSession,
+        klass,
+        javaClass,
+        declaredMemberScope,
+        javaClassUseSiteScope,
+    )
 }
