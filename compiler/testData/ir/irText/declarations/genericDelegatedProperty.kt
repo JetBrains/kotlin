@@ -1,6 +1,3 @@
-// MUTE_SIGNATURE_COMPARISON_K2: JS_IR
-// ^ KT-57818
-
 class C<T>
 
 object Delegate {

@@ -1,8 +1,5 @@
 // FIR_IDENTICAL
 
-// MUTE_SIGNATURE_COMPARISON_K2: JS_IR
-// ^ KT-57818
-
 fun <T> castFun(x: Any) = x as T
 
 fun <T> Any.castExtFun() = this as T

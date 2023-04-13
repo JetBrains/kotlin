@@ -1,9 +1,6 @@
 // FIR_IDENTICAL
 // WITH_STDLIB
 
-// MUTE_SIGNATURE_COMPARISON_K2: JS_IR
-// ^ KT-57818
-
 val testSimpleUIntLiteral = 1u
 
 val testSimpleUIntLiteralWithOverflow = 0xFFFF_FFFFu

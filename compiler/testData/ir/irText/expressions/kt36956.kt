@@ -1,4 +1,4 @@
-// MUTE_SIGNATURE_COMPARISON_K2: ANY
+// MUTE_SIGNATURE_COMPARISON_K2: JVM_IR
 // ^ KT-57429
 
 class A<T>(private val value: T) {

@@ -40,8 +40,6 @@ open class IrMangleComputer(
             get() = throw UnsupportedOperationException("Builtins are unavailable")
     }
 
-    open fun IrFunction.platformSpecificFunctionMarks(): List<String> = emptyList()
-
     override fun copy(newMode: MangleMode) = IrMangleComputer(builder, newMode, compatibleMode)
 
     final override fun IrDeclaration.visitParent() {
@@ -52,70 +50,47 @@ open class IrMangleComputer(
         acceptVoid(Visitor())
     }
 
-    private fun IrFunction.mangleFunction(isCtor: Boolean, isStatic: Boolean, container: IrDeclaration) {
+    override fun IrDeclaration.asTypeParameterContainer(): IrDeclaration =
+        this
 
-        isRealExpect = isRealExpect or isExpect
-
-        typeParameterContainers.add(container)
-        val containerParent = container.parent
-        val realParent =
-            if (containerParent is IrField && containerParent.origin == IrDeclarationOrigin.DELEGATE) containerParent.parent else containerParent
+    override fun IrDeclaration.visitParentForFunctionMangling() {
+        val declarationParent = parent
+        val realParent = if (declarationParent is IrField && declarationParent.origin == IrDeclarationOrigin.DELEGATE)
+            declarationParent.parent
+        else
+            declarationParent
         realParent.acceptVoid(Visitor())
-
-        builder.appendName(MangleConstant.FUNCTION_NAME_PREFIX)
-
-        platformSpecificFunctionName()?.let {
-            builder.append(it)
-            return
-        }
-
-        val funName = name.asString()
-
-        builder.append(funName)
-
-        mangleSignature(isCtor, isStatic)
     }
 
-    private fun IrFunction.mangleSignature(isCtor: Boolean, isStatic: Boolean) {
-        if (!mode.signature) return
+    override fun getContextReceiverTypes(function: IrFunction): List<IrType> =
+        function
+            .valueParameters
+            .asSequence()
+            .take(function.contextReceiverParametersCount)
+            .filterNot { it.isHidden }
+            .map { it.type }
+            .toList()
 
-        if (isStatic) {
-            builder.appendSignature(MangleConstant.STATIC_MEMBER_MARK)
-        }
+    override fun getExtensionReceiverParameterType(function: IrFunction) =
+        function
+            .extensionReceiverParameter
+            ?.takeUnless { it.isHidden }
+            ?.type
 
-        platformSpecificFunctionMarks().forEach {
-            builder.appendSignature(it)
-        }
+    override fun getValueParameters(function: IrFunction): List<IrValueParameter> =
+        function
+            .valueParameters
+            .asSequence()
+            .drop(function.contextReceiverParametersCount)
+            .filterNot { it.isHidden }
+            .toList()
 
-        valueParameters.take(contextReceiverParametersCount).forEach {
-            if (!it.isHidden) {
-                builder.appendSignature(MangleConstant.CONTEXT_RECEIVER_PREFIX)
-                mangleType(builder, it.type, null)
-            }
-        }
+    override fun getReturnType(function: IrFunction) = function.returnType
 
-        extensionReceiverParameter?.let {
-            if (!it.isHidden) {
-                builder.appendSignature(MangleConstant.EXTENSION_RECEIVER_PREFIX)
-                mangleValueParameter(builder, it, null)
-            }
-        }
+    override fun getTypeParametersWithIndices(function: IrFunction, container: IrDeclaration): List<IndexedValue<IrTypeParameterSymbol>> =
+        function.typeParameters.map { IndexedValue(it.index, it.symbol) }
 
-        valueParameters.drop(contextReceiverParametersCount).collectForMangler(builder, MangleConstant.VALUE_PARAMETERS) {
-            if (!it.isHidden) {
-                appendSignature(specialValueParamPrefix(it))
-                mangleValueParameter(this, it, null)
-            }
-        }
-
-        typeParameters.collectForMangler(builder, MangleConstant.TYPE_PARAMETERS) {
-            mangleTypeParameter(this, it.symbol, it.index, null)
-        }
-
-        if (!isCtor && !returnType.isUnit() && (addReturnType() || addReturnTypeSpecialCase(this))) {
-            mangleType(builder, returnType, null)
-        }
-    }
+    override fun isUnit(type: IrType) = type.isUnit()
 
     final override fun getEffectiveParent(typeParameter: IrTypeParameterSymbol): IrDeclaration = typeParameter.owner.run {
         when (val irParent = parent) {
@@ -171,7 +146,6 @@ open class IrMangleComputer(
         }
 
         override fun visitClass(declaration: IrClass) {
-            isRealExpect = isRealExpect or declaration.isExpect
             typeParameterContainers.add(declaration)
 
             val className = declaration.name.asString()
@@ -188,7 +162,6 @@ open class IrMangleComputer(
                 "Expected at least one accessor or backing field for property ${declaration.render()}"
             }
 
-            isRealExpect = isRealExpect or declaration.isExpect
             typeParameterContainers.add(declaration)
             declaration.visitParent()
 
@@ -268,16 +241,26 @@ open class IrMangleComputer(
         }
 
         override fun visitSimpleFunction(declaration: IrSimpleFunction) {
-            isRealExpect = isRealExpect or declaration.isExpect
-
             val container = declaration.correspondingPropertySymbol?.owner ?: declaration
             val isStatic = declaration.dispatchReceiverParameter == null &&
                     (container.parent !is IrPackageFragment && !container.parent.isFacadeClass)
-
-            declaration.mangleFunction(false, isStatic, container)
+            declaration.mangleFunction(
+                name = declaration.name,
+                isConstructor = false,
+                isStatic = isStatic,
+                container = container,
+                session = null
+            )
         }
 
-        override fun visitConstructor(declaration: IrConstructor) =
-            declaration.mangleFunction(isCtor = true, isStatic = false, declaration)
+        override fun visitConstructor(declaration: IrConstructor) {
+            declaration.mangleFunction(
+                name = declaration.name,
+                isConstructor = true,
+                isStatic = false,
+                container = declaration,
+                session = null
+            )
+        }
     }
 }

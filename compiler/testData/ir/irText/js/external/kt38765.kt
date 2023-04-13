@@ -1,8 +1,5 @@
 // TARGET_BACKEND: JS_IR
 
-// MUTE_SIGNATURE_COMPARISON_K2: ANY
-// ^ KT-57777
-
 package events
 
 external open class internal {

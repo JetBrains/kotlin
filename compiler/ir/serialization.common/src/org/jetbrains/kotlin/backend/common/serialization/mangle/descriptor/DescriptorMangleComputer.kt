@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor
 
+import org.jetbrains.kotlin.backend.common.serialization.isExpectMember
 import org.jetbrains.kotlin.backend.common.serialization.mangle.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.descriptors.IrImplementingDelegateDescriptor
@@ -24,7 +25,7 @@ open class DescriptorMangleComputer(builder: StringBuilder, mode: MangleMode) :
             /*Type=*/KotlinType,
             /*TypeParameter=*/TypeParameterDescriptor,
             /*ValueParameter=*/ValueParameterDescriptor,
-            /*TypeParameterContainer=*/DeclarationDescriptor,
+            /*TypeParameterContainer=*/DeclarationDescriptor, // CallableDescriptor or ClassDescriptor
             /*FunctionDeclaration=*/FunctionDescriptor,
             /*Session=*/Nothing?,
             >(builder, mode) {
@@ -49,61 +50,32 @@ open class DescriptorMangleComputer(builder: StringBuilder, mode: MangleMode) :
     private val CallableDescriptor.isRealStatic: Boolean
         get() = dispatchReceiverParameter == null && containingDeclaration !is PackageFragmentDescriptor
 
-    private fun FunctionDescriptor.mangleFunction(isCtor: Boolean, container: CallableDescriptor) {
+    override fun DeclarationDescriptor.asTypeParameterContainer(): DeclarationDescriptor =
+        this
 
-        isRealExpect = isRealExpect or isExpect
+    override fun getContextReceiverTypes(function: FunctionDescriptor): List<KotlinType> =
+        function.contextReceiverParameters.map { it.type }
 
-        typeParameterContainers.add(container)
-        container.containingDeclaration.visit()
+    override fun getExtensionReceiverParameterType(function: FunctionDescriptor): KotlinType? =
+        function.extensionReceiverParameter?.type
 
-        builder.appendName(MangleConstant.FUNCTION_NAME_PREFIX)
+    override fun getValueParameters(function: FunctionDescriptor): List<ValueParameterDescriptor> =
+        function.valueParameters
 
-        platformSpecificFunctionName()?.let {
-            builder.append(it)
-            return
-        }
+    override fun getReturnType(function: FunctionDescriptor): KotlinType? =
+        function.returnType
 
-        builder.append(name.asString())
+    override fun getTypeParametersWithIndices(
+        function: FunctionDescriptor,
+        container: DeclarationDescriptor,
+    ): List<IndexedValue<TypeParameterDescriptor>> =
+        (container as? CallableDescriptor)
+            ?.typeParameters
+            .orEmpty()
+            .filter { it.containingDeclaration == container }
+            .map { IndexedValue(it.index, it) }
 
-        mangleSignature(isCtor, container)
-    }
-
-    private fun FunctionDescriptor.mangleSignature(isCtor: Boolean, realTypeParameterContainer: CallableDescriptor) {
-
-        if (!mode.signature) return
-
-        if (!isCtor && realTypeParameterContainer.isRealStatic) {
-            builder.appendSignature(MangleConstant.STATIC_MEMBER_MARK)
-        }
-
-        contextReceiverParameters.forEach {
-            builder.appendSignature(MangleConstant.CONTEXT_RECEIVER_PREFIX)
-            mangleType(builder, it.type, null)
-        }
-
-        extensionReceiverParameter?.let {
-            builder.appendSignature(MangleConstant.EXTENSION_RECEIVER_PREFIX)
-            mangleExtensionReceiverParameter(builder, it)
-        }
-
-        valueParameters.collectForMangler(builder, MangleConstant.VALUE_PARAMETERS) {
-            appendSignature(specialValueParamPrefix(it))
-            mangleValueParameter(this, it, null)
-        }
-        realTypeParameterContainer.typeParameters.filter { it.containingDeclaration == realTypeParameterContainer }
-            .collectForMangler(builder, MangleConstant.TYPE_PARAMETERS) { mangleTypeParameter(this, it, it.index, null) }
-
-        returnType?.run {
-            if (!isCtor && !isUnit() && (addReturnType() || addReturnTypeSpecialCase(this@mangleSignature))) {
-                mangleType(builder, this, null)
-            }
-        }
-
-        platformSpecificSuffix()?.let {
-            builder.appendSignature(MangleConstant.PLATFORM_FUNCTION_MARKER)
-            builder.appendSignature(it)
-        }
-    }
+    override fun isUnit(type: KotlinType) = type.isUnit()
 
     private fun mangleExtensionReceiverParameter(vpBuilder: StringBuilder, param: ReceiverParameterDescriptor) {
         mangleType(vpBuilder, param.type, null)
@@ -111,7 +83,8 @@ open class DescriptorMangleComputer(builder: StringBuilder, mode: MangleMode) :
 
     final override fun isVararg(valueParameter: ValueParameterDescriptor) = valueParameter.varargElementType != null
 
-    final override fun getValueParameterType(valueParameter: ValueParameterDescriptor) = valueParameter.type
+    final override fun getValueParameterType(valueParameter: ValueParameterDescriptor): KotlinType =
+        valueParameter.type
 
     @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
     final override fun mangleType(tBuilder: StringBuilder, wrappedType: KotlinType, declarationSiteSession: Nothing?) {
@@ -173,7 +146,13 @@ open class DescriptorMangleComputer(builder: StringBuilder, mode: MangleMode) :
 
     private fun manglePropertyAccessor(accessor: PropertyAccessorDescriptor) {
         val property = accessor.correspondingProperty
-        accessor.mangleFunction(false, property)
+        accessor.mangleFunction(
+            name = accessor.name,
+            isConstructor = false,
+            isStatic = property.isRealStatic,
+            container = property,
+            session = null
+        )
     }
 
     protected open fun visitModuleDeclaration(descriptor: ModuleDescriptor) = reportUnexpectedDescriptor(descriptor)
@@ -189,7 +168,13 @@ open class DescriptorMangleComputer(builder: StringBuilder, mode: MangleMode) :
         override fun visitVariableDescriptor(descriptor: VariableDescriptor, data: Nothing?) = reportUnexpectedDescriptor(descriptor)
 
         override fun visitFunctionDescriptor(descriptor: FunctionDescriptor, data: Nothing?) {
-            descriptor.mangleFunction(false, descriptor)
+            descriptor.mangleFunction(
+                name = descriptor.name,
+                isConstructor = false,
+                isStatic = descriptor.isRealStatic,
+                container = descriptor,
+                session = null
+            )
         }
 
         override fun visitTypeParameterDescriptor(descriptor: TypeParameterDescriptor, data: Nothing?) {
@@ -200,7 +185,6 @@ open class DescriptorMangleComputer(builder: StringBuilder, mode: MangleMode) :
         }
 
         override fun visitClassDescriptor(descriptor: ClassDescriptor, data: Nothing?) {
-            isRealExpect = isRealExpect or descriptor.isExpect
             typeParameterContainers.add(descriptor)
             descriptor.mangleSimpleDeclaration(descriptor.name.asString())
         }
@@ -214,7 +198,13 @@ open class DescriptorMangleComputer(builder: StringBuilder, mode: MangleMode) :
         }
 
         override fun visitConstructorDescriptor(constructorDescriptor: ConstructorDescriptor, data: Nothing?) {
-            constructorDescriptor.mangleFunction(isCtor = true, container = constructorDescriptor)
+            constructorDescriptor.mangleFunction(
+                name = constructorDescriptor.name,
+                isConstructor = true,
+                isStatic = constructorDescriptor.isRealStatic,
+                container = constructorDescriptor,
+                session = null
+            )
         }
 
         override fun visitScriptDescriptor(scriptDescriptor: ScriptDescriptor, data: Nothing?) =
@@ -229,8 +219,6 @@ open class DescriptorMangleComputer(builder: StringBuilder, mode: MangleMode) :
                 val actualDescriptor = (descriptor as? IrPropertyDelegateDescriptor)?.correspondingProperty ?: descriptor
 
                 val extensionReceiver = actualDescriptor.extensionReceiverParameter
-
-                isRealExpect = isRealExpect or actualDescriptor.isExpect
 
                 typeParameterContainers.add(actualDescriptor)
                 actualDescriptor.containingDeclaration.visit()

@@ -3,7 +3,7 @@
 // IGNORE_BACKEND: JS_IR_ES6
 
 // MUTE_SIGNATURE_COMPARISON_K2: ANY
-// ^ KT-57775, KT-57777
+// ^ KT-57775
 
 enum class Test0(val x: Int) {
     ZERO;

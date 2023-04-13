@@ -1,9 +1,5 @@
 // WITH_STDLIB
 
-// MUTE_SIGNATURE_COMPARISON_K2: JS_IR
-// MUTE_SIGNATURE_COMPARISON_K2: NATIVE
-// ^ KT-57818
-
 fun interface Fn<T, R> {
     fun run(s: String, i: Int, t: T): R
 }

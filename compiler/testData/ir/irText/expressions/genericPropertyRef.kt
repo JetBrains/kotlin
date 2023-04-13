@@ -1,5 +1,5 @@
-// MUTE_SIGNATURE_COMPARISON_K2: ANY
-// ^ KT-57436, KT-57429
+// MUTE_SIGNATURE_COMPARISON_K2: JVM_IR
+// ^ KT-57429
 
 class Value<T>(var value: T = null as T, var text: String? = null)
 

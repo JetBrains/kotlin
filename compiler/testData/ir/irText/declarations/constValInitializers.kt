@@ -1,9 +1,5 @@
 // FIR_IDENTICAL
 
-// MUTE_SIGNATURE_COMPARISON_K2: JS_IR
-// MUTE_SIGNATURE_COMPARISON_K2: NATIVE
-// ^ KT-57818
-
 const val I0 = 0
 const val I1 = 1
 const val I2 = I0 + I1 + I1

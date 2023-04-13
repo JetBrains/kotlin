@@ -1,9 +1,6 @@
 // WITH_STDLIB
 // !LANGUAGE: +ImplicitSignedToUnsignedIntegerConversion
 
-// MUTE_SIGNATURE_COMPARISON_K2: JS_IR
-// ^ KT-57818
-
 // FILE: signedToUnsignedConversions_annotation.kt
 
 package kotlin.internal
