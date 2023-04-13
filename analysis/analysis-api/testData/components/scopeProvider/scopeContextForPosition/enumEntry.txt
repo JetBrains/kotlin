@@ -42,7 +42,7 @@ scopes:
         symbolKind: CLASS_MEMBER
         typeParameters: []
         visibility: Public
-    callables: 9
+    callables: 11
       KtKotlinPropertySymbol:
         annotationsList: []
         backingFieldSymbol: KtBackingFieldSymbol:
@@ -402,6 +402,59 @@ scopes:
         symbolKind: CLASS_MEMBER
         typeParameters: []
         visibility: Public
+      KtFunctionSymbol:
+        annotationsList: []
+        callableIdIfNonLocal: /E.getDeclaringClass
+        contextReceivers: []
+        contractEffects: []
+        hasStableParameterNames: false
+        isBuiltinFunctionInvoke: false
+        isExtension: false
+        isExternal: false
+        isInfix: false
+        isInline: false
+        isOperator: false
+        isOverride: false
+        isStatic: false
+        isSuspend: false
+        modality: FINAL
+        name: getDeclaringClass
+        origin: SUBSTITUTION_OVERRIDE
+        receiverParameter: null
+        returnType: KtFlexibleType:
+          annotationsList: []
+          type: ft<java/lang/Class<E!>, java/lang/Class<E!>?>
+        symbolKind: CLASS_MEMBER
+        typeParameters: []
+        valueParameters: []
+        visibility: Public
+      KtFunctionSymbol:
+        annotationsList: []
+        callableIdIfNonLocal: kotlin/Enum.finalize
+        contextReceivers: []
+        contractEffects: []
+        hasStableParameterNames: false
+        isBuiltinFunctionInvoke: false
+        isExtension: false
+        isExternal: false
+        isInfix: false
+        isInline: false
+        isOperator: false
+        isOverride: false
+        isStatic: false
+        isSuspend: false
+        modality: FINAL
+        name: finalize
+        origin: JAVA
+        receiverParameter: null
+        returnType: KtUsualClassType:
+          annotationsList: []
+          ownTypeArguments: []
+          type: kotlin/Unit
+        symbolKind: CLASS_MEMBER
+        typeParameters: []
+        valueParameters: []
+        visibility: ProtectedAndPackage
 
   StaticMemberScope, index = 3
     classifiers: 0

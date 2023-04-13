@@ -51,3 +51,11 @@ CLASS IR_EXTERNAL_JAVA_DECLARATION_STUB ENUM_CLASS name:JEnum modality:FINAL vis
       overridden:
         public final fun <get-ordinal> (): kotlin.Int declared in kotlin.Enum
       $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:<root>.JEnum
+  FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:<root>.JEnum) returnType:@[FlexibleNullability] java.lang.Class<@[FlexibleNullability] <root>.JEnum?>? [fake_override]
+    overridden:
+      public final fun getDeclaringClass (): @[FlexibleNullability] java.lang.Class<@[FlexibleNullability] E of kotlin.Enum?>? declared in kotlin.Enum
+    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:<root>.JEnum
+  FUN FAKE_OVERRIDE name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:<root>.JEnum) returnType:kotlin.Unit [fake_override]
+    overridden:
+      protected/*protected and package*/ final fun finalize (): kotlin.Unit declared in kotlin.Enum
+    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:<root>.JEnum

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInfix
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
@@ -24,10 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
 import org.jetbrains.kotlin.fir.resolve.inference.hasBuilderInferenceAnnotation
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExplicitTypeParameterConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.scopes.FirTypeScope
-import org.jetbrains.kotlin.fir.scopes.FirUnstableSmartcastTypeScope
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
-import org.jetbrains.kotlin.fir.scopes.processOverriddenFunctions
+import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.SyntheticSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -656,10 +654,26 @@ internal object CheckDeprecatedSinceKotlin : ResolutionStage() {
     override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
         val symbol = candidate.symbol as? FirCallableSymbol<*> ?: return
         val deprecation = symbol.getDeprecation(context.session, callInfo.callSite)
-        if (deprecation != null && deprecation.deprecationLevel == DeprecationLevelValue.HIDDEN) {
+        if (deprecation?.deprecationLevel == DeprecationLevelValue.HIDDEN || isHiddenForThisCallSite(symbol, callInfo, candidate)) {
             sink.yieldDiagnostic(HiddenCandidate)
         }
     }
+
+    private fun isHiddenForThisCallSite(
+        symbol: FirCallableSymbol<*>,
+        callInfo: CallInfo,
+        candidate: Candidate,
+    ): Boolean {
+        if (callInfo.callSite.isSuperCall()) return false
+        if (symbol.fir.dispatchReceiverType == null || symbol !is FirNamedFunctionSymbol) return false
+        if (symbol.fir.isHiddenEverywhereBesideSuperCalls == true) return true
+
+        val scope = candidate.originScope as? FirTypeScope ?: return false
+        return scope.getDirectOverriddenFunctions(symbol).any { it.fir.isHiddenEverywhereBesideSuperCalls == true }
+    }
+
+    private fun FirElement.isSuperCall(): Boolean =
+        this is FirQualifiedAccessExpression && explicitReceiver?.calleeReference is FirSuperReference
 }
 
 private val DYNAMIC_EXTENSION_ANNOTATION_CLASS_ID: ClassId = ClassId.topLevel(DYNAMIC_EXTENSION_FQ_NAME)

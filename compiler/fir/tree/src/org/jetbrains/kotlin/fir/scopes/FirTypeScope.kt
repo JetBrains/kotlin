@@ -91,6 +91,23 @@ fun FirTypeScope.processOverriddenFunctions(
         mutableSetOf()
     )
 
+fun FirTypeScope.anyOverriddenOf(
+    functionSymbol: FirNamedFunctionSymbol,
+    predicate: (FirNamedFunctionSymbol) -> Boolean
+): Boolean {
+    var result = false
+    processOverriddenFunctions(functionSymbol) {
+        if (predicate(it)) {
+            result = true
+            return@processOverriddenFunctions ProcessorAction.STOP
+        }
+
+        return@processOverriddenFunctions ProcessorAction.NEXT
+    }
+
+    return result
+}
+
 private fun FirTypeScope.processOverriddenFunctionsWithVisited(
     functionSymbol: FirNamedFunctionSymbol,
     visited: MutableSet<Pair<FirTypeScope, FirNamedFunctionSymbol>>,

@@ -33,16 +33,16 @@ class Impl : A, B {
     return <this>.#$$delegate_0.retainAll(elements = elements)
   }
 
+  override fun isEmpty(): Boolean {
+    return <this>.#$$delegate_0.isEmpty()
+  }
+
   override operator fun contains(element: @FlexibleNullability String?): Boolean {
     return <this>.#$$delegate_0.contains(element = element)
   }
 
   override fun containsAll(elements: Collection<@FlexibleNullability String?>): Boolean {
     return <this>.#$$delegate_0.containsAll(elements = elements)
-  }
-
-  override fun isEmpty(): Boolean {
-    return <this>.#$$delegate_0.isEmpty()
   }
 
   override val size: Int

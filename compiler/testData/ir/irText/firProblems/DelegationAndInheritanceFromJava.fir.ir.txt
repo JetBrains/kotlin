@@ -85,6 +85,16 @@ FILE fqName:<root> fileName:/DelegationAndInheritanceFromJava.kt
             $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final]' type=<root>.Foo.B origin=null
               receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.retainAll' type=<root>.Impl origin=null
             elements: GET_VAR 'elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?> declared in <root>.Impl.retainAll' type=kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?> origin=null
+    FUN DELEGATED_MEMBER name:isEmpty visibility:public modality:OPEN <> ($this:<root>.Impl) returnType:kotlin.Boolean
+      overridden:
+        public abstract fun isEmpty (): kotlin.Boolean [fake_override] declared in <root>.Foo.A
+        public abstract fun isEmpty (): kotlin.Boolean [fake_override] declared in <root>.Foo.B
+      $this: VALUE_PARAMETER name:<this> type:<root>.Impl
+      BLOCK_BODY
+        RETURN type=kotlin.Nothing from='public open fun isEmpty (): kotlin.Boolean declared in <root>.Impl'
+          CALL 'public abstract fun isEmpty (): kotlin.Boolean declared in kotlin.collections.Set' type=kotlin.Boolean origin=null
+            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final]' type=<root>.Foo.B origin=null
+              receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.isEmpty' type=<root>.Impl origin=null
     FUN DELEGATED_MEMBER name:contains visibility:public modality:OPEN <> ($this:<root>.Impl, element:@[FlexibleNullability] kotlin.String?) returnType:kotlin.Boolean [operator]
       overridden:
         public abstract fun contains (element: @[FlexibleNullability] kotlin.String?): kotlin.Boolean [fake_override,operator] declared in <root>.Foo.A
@@ -109,16 +119,6 @@ FILE fqName:<root> fileName:/DelegationAndInheritanceFromJava.kt
             $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final]' type=<root>.Foo.B origin=null
               receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.containsAll' type=<root>.Impl origin=null
             elements: GET_VAR 'elements: kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?> declared in <root>.Impl.containsAll' type=kotlin.collections.Collection<@[FlexibleNullability] kotlin.String?> origin=null
-    FUN DELEGATED_MEMBER name:isEmpty visibility:public modality:OPEN <> ($this:<root>.Impl) returnType:kotlin.Boolean
-      overridden:
-        public abstract fun isEmpty (): kotlin.Boolean [fake_override] declared in <root>.Foo.A
-        public abstract fun isEmpty (): kotlin.Boolean [fake_override] declared in <root>.Foo.B
-      $this: VALUE_PARAMETER name:<this> type:<root>.Impl
-      BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public open fun isEmpty (): kotlin.Boolean declared in <root>.Impl'
-          CALL 'public abstract fun isEmpty (): kotlin.Boolean declared in kotlin.collections.Set' type=kotlin.Boolean origin=null
-            $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Foo.B visibility:private [final]' type=<root>.Foo.B origin=null
-              receiver: GET_VAR '<this>: <root>.Impl declared in <root>.Impl.isEmpty' type=<root>.Impl origin=null
     PROPERTY DELEGATED_MEMBER name:size visibility:public modality:OPEN [val]
       overridden:
         public abstract size: kotlin.Int [fake_override,val]

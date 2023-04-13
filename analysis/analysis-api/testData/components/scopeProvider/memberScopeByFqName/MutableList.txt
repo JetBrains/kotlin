@@ -855,6 +855,105 @@ KtFunctionSymbol:
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
 
+KtKotlinPropertySymbol:
+  annotationsList: []
+  backingFieldSymbol: KtBackingFieldSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    isExtension: false
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KtKotlinPropertySymbol(kotlin/collections/List.size)
+    receiverParameter: null
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Int
+    symbolKind: LOCAL
+    typeParameters: []
+    getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+    deprecationStatus: null
+  callableIdIfNonLocal: kotlin/collections/List.size
+  contextReceivers: []
+  getter: null
+  hasBackingField: false
+  hasGetter: false
+  hasSetter: false
+  initializer: null
+  isConst: false
+  isDelegatedProperty: false
+  isExtension: false
+  isFromPrimaryConstructor: false
+  isLateInit: false
+  isOverride: false
+  isStatic: false
+  isVal: true
+  modality: ABSTRACT
+  name: size
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Int
+  setter: null
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  visibility: Public
+  getDispatchReceiver(): KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: [
+      KtTypeParameterType:
+        annotationsList: []
+        type: E
+    ]
+    type: kotlin/collections/List<E>
+  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  deprecationStatus: null
+  getterDeprecationStatus: null
+  javaGetterName: getSize
+  javaSetterName: null
+  setterDeprecationStatus: null
+
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: kotlin/collections/List.isEmpty
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: ABSTRACT
+  name: isEmpty
+  origin: LIBRARY
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Boolean
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+  getDispatchReceiver(): KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: [
+      KtTypeParameterType:
+        annotationsList: []
+        type: E
+    ]
+    type: kotlin/collections/List<E>
+  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  deprecationStatus: null
+
 KtFunctionSymbol:
   annotationsList: []
   callableIdIfNonLocal: kotlin/collections/MutableList.contains
@@ -903,6 +1002,48 @@ KtFunctionSymbol:
       getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
       deprecationStatus: null
   ]
+  visibility: Public
+  getDispatchReceiver(): KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: [
+      KtTypeParameterType:
+        annotationsList: []
+        type: E
+    ]
+    type: kotlin/collections/MutableList<E>
+  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+  deprecationStatus: null
+
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: kotlin/collections/MutableList.iterator
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: true
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: ABSTRACT
+  name: iterator
+  origin: INTERSECTION_OVERRIDE
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: [
+      KtTypeParameterType:
+        annotationsList: []
+        type: E
+    ]
+    type: kotlin/collections/MutableIterator<E>
+  symbolKind: CLASS_MEMBER
+  typeParameters: []
+  valueParameters: []
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
     annotationsList: []
@@ -1102,86 +1243,6 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/List.isEmpty
-  contextReceivers: []
-  contractEffects: []
-  hasStableParameterNames: true
-  isBuiltinFunctionInvoke: false
-  isExtension: false
-  isExternal: false
-  isInfix: false
-  isInline: false
-  isOperator: false
-  isOverride: false
-  isStatic: false
-  isSuspend: false
-  modality: ABSTRACT
-  name: isEmpty
-  origin: LIBRARY
-  receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
-    type: kotlin/Boolean
-  symbolKind: CLASS_MEMBER
-  typeParameters: []
-  valueParameters: []
-  visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
-        type: E
-    ]
-    type: kotlin/collections/List<E>
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
-  deprecationStatus: null
-
-KtFunctionSymbol:
-  annotationsList: []
-  callableIdIfNonLocal: kotlin/collections/MutableList.iterator
-  contextReceivers: []
-  contractEffects: []
-  hasStableParameterNames: true
-  isBuiltinFunctionInvoke: false
-  isExtension: false
-  isExternal: false
-  isInfix: false
-  isInline: false
-  isOperator: true
-  isOverride: false
-  isStatic: false
-  isSuspend: false
-  modality: ABSTRACT
-  name: iterator
-  origin: INTERSECTION_OVERRIDE
-  receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
-        type: E
-    ]
-    type: kotlin/collections/MutableIterator<E>
-  symbolKind: CLASS_MEMBER
-  typeParameters: []
-  valueParameters: []
-  visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
-        type: E
-    ]
-    type: kotlin/collections/MutableList<E>
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
-  deprecationStatus: null
-
-KtFunctionSymbol:
-  annotationsList: []
   callableIdIfNonLocal: kotlin/collections/MutableList.lastIndexOf
   contextReceivers: []
   contractEffects: []
@@ -1239,67 +1300,6 @@ KtFunctionSymbol:
     type: kotlin/collections/MutableList<E>
   getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
   deprecationStatus: null
-
-KtKotlinPropertySymbol:
-  annotationsList: []
-  backingFieldSymbol: KtBackingFieldSymbol:
-    annotationsList: []
-    callableIdIfNonLocal: null
-    contextReceivers: []
-    isExtension: false
-    name: field
-    origin: PROPERTY_BACKING_FIELD
-    owningProperty: KtKotlinPropertySymbol(kotlin/collections/List.size)
-    receiverParameter: null
-    returnType: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
-      type: kotlin/Int
-    symbolKind: LOCAL
-    typeParameters: []
-    getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
-    deprecationStatus: null
-  callableIdIfNonLocal: kotlin/collections/List.size
-  contextReceivers: []
-  getter: null
-  hasBackingField: false
-  hasGetter: false
-  hasSetter: false
-  initializer: null
-  isConst: false
-  isDelegatedProperty: false
-  isExtension: false
-  isFromPrimaryConstructor: false
-  isLateInit: false
-  isOverride: false
-  isStatic: false
-  isVal: true
-  modality: ABSTRACT
-  name: size
-  origin: LIBRARY
-  receiverParameter: null
-  returnType: KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: []
-    type: kotlin/Int
-  setter: null
-  symbolKind: CLASS_MEMBER
-  typeParameters: []
-  visibility: Public
-  getDispatchReceiver(): KtUsualClassType:
-    annotationsList: []
-    ownTypeArguments: [
-      KtTypeParameterType:
-        annotationsList: []
-        type: E
-    ]
-    type: kotlin/collections/List<E>
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
-  deprecationStatus: null
-  getterDeprecationStatus: null
-  javaGetterName: getSize
-  javaSetterName: null
-  setterDeprecationStatus: null
 
 KtFunctionSymbol:
   annotationsList: []
