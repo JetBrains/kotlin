@@ -1,8 +1,8 @@
 public abstract interface InheritNullabilityJavaSubtype : R|kotlin/Any| {
     public abstract interface Super : R|kotlin/Any| {
-        public abstract fun dummy(): R|kotlin/Unit|
-
         public abstract fun foo(): R|kotlin/CharSequence|
+
+        public abstract fun dummy(): R|kotlin/Unit|
 
     }
 

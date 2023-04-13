@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.comparators.FirCallableDeclarationComparator
+import org.jetbrains.kotlin.fir.declarations.comparators.FirMemberDeclarationComparator
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
@@ -56,6 +57,7 @@ import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.mapToIndex
 
 class FirElementSerializer private constructor(
     private val session: FirSession,
@@ -160,18 +162,37 @@ class FirElementSerializer private constructor(
             }
         }
 
+
+        /*
+         * Order of constructors:
+         *   - declared constructors in declaration order
+         *   - generated constructors in sorted order
+         *   - provided constructors in sorted order
+         */
         if (regularClass != null && regularClass.classKind != ClassKind.ENUM_ENTRY) {
             for (constructor in regularClass.constructors()) {
                 builder.addConstructor(constructorProto(constructor))
             }
 
-            for (constructor in providedDeclarationsService.getProvidedConstructors(classSymbol, scopeSession)) {
+            val providedConstructors = providedDeclarationsService
+                .getProvidedConstructors(classSymbol, scopeSession)
+                .sortedWith(FirCallableDeclarationComparator)
+            for (constructor in providedConstructors) {
                 builder.addConstructor(constructorProto(constructor))
             }
         }
 
-        val callableMembers = (klass.memberDeclarations() + providedDeclarationsService.getProvidedCallables(classSymbol, scopeSession))
+        val providedCallables = providedDeclarationsService
+            .getProvidedCallables(classSymbol, scopeSession)
             .sortedWith(FirCallableDeclarationComparator)
+
+        /*
+         * Order of callables:
+         *   - declared callable in declaration order
+         *   - generated callable in sorted order
+         *   - provided callable in sorted order
+         */
+        val callableMembers = (klass.memberDeclarations() + providedCallables)
 
         for (declaration in callableMembers) {
             if (declaration !is FirEnumEntry && declaration.isStatic) continue // ??? Miss values() & valueOf()
@@ -263,11 +284,26 @@ class FirElementSerializer private constructor(
         return builder
     }
 
+    /*
+     * Order of nested classifiers:
+     *   - declared classifiers in declaration order
+     *   - generated classifiers in sorted order
+     *   - provided classifiers in sorted order
+     */
     fun computeNestedClassifiersForClass(classSymbol: FirClassSymbol<*>): List<FirClassifierSymbol<*>> {
         val scope = session.nestedClassifierScope(classSymbol.fir) ?: return emptyList()
         return buildList {
-            scope.getClassifierNames().mapNotNullTo(this) { scope.getSingleClassifier(it) }
-            addAll(providedDeclarationsService.getProvidedNestedClassifiers(classSymbol, scopeSession))
+            val indexByDeclaration = classSymbol.fir.declarations.filterIsInstance<FirClassLikeDeclaration>().mapToIndex()
+            val (declared, nonDeclared) = scope.getClassifierNames()
+                .mapNotNull { scope.getSingleClassifier(it)?.fir as FirClassLikeDeclaration? }
+                .partition { it in indexByDeclaration }
+            declared.sortedBy { indexByDeclaration.getValue(it) }.mapTo(this) { it.symbol }
+            nonDeclared.sortedWith(FirMemberDeclarationComparator).mapTo(this) { it.symbol }
+
+            providedDeclarationsService.getProvidedNestedClassifiers(classSymbol, scopeSession)
+                .map { it.fir }
+                .sortedWith(FirMemberDeclarationComparator)
+                .mapTo(this) { it.symbol }
         }
     }
 
@@ -286,37 +322,43 @@ class FirElementSerializer private constructor(
 
     private inline fun <reified T : FirCallableDeclaration, S : FirCallableSymbol<*>> FirClass.collectDeclarations(
         processScope: (FirTypeScope, ((S) -> Unit)) -> Unit
-    ): List<T> = buildList {
-        val memberScope = unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false, memberRequiredPhase = null)
-
-        processScope(memberScope) l@{
-            val declaration = it.fir as T
-            val dispatchReceiverLookupTag = declaration.dispatchReceiverClassLookupTagOrNull()
-            // Special case for data/value class equals/hashCode/toString, see KT-57510
-            val isOverrideOfAnyFunctionInDataOrValueClass = this@collectDeclarations is FirRegularClass &&
-                    (this@collectDeclarations.isData || this@collectDeclarations.isInline) &&
-                    dispatchReceiverLookupTag?.classId == StandardClassIds.Any && !declaration.isFinal
-            if (declaration.isSubstitutionOrIntersectionOverride) {
-                if (!isOverrideOfAnyFunctionInDataOrValueClass) {
-                    return@l
-                }
-            } else if (!(declaration.isStatic || declaration is FirConstructor)) {
-                // non-intersection or substitution fake override
-                if (dispatchReceiverLookupTag != this@collectDeclarations.symbol.toLookupTag()) {
+    ): List<T> {
+        val foundInScope = buildList {
+            val memberScope = unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false, memberRequiredPhase = null)
+            processScope(memberScope) l@{
+                val declaration = it.fir as T
+                val dispatchReceiverLookupTag = declaration.dispatchReceiverClassLookupTagOrNull()
+                // Special case for data/value class equals/hashCode/toString, see KT-57510
+                val isOverrideOfAnyFunctionInDataOrValueClass = this@collectDeclarations is FirRegularClass &&
+                        (this@collectDeclarations.isData || this@collectDeclarations.isInline) &&
+                        dispatchReceiverLookupTag?.classId == StandardClassIds.Any && !declaration.isFinal
+                if (declaration.isSubstitutionOrIntersectionOverride) {
                     if (!isOverrideOfAnyFunctionInDataOrValueClass) {
                         return@l
                     }
+                } else if (!(declaration.isStatic || declaration is FirConstructor)) {
+                    // non-intersection or substitution fake override
+                    if (dispatchReceiverLookupTag != this@collectDeclarations.symbol.toLookupTag()) {
+                        if (!isOverrideOfAnyFunctionInDataOrValueClass) {
+                            return@l
+                        }
+                    }
                 }
-            }
 
-            add(declaration)
-        }
-
-        for (declaration in declarations) {
-            if (declaration is T && declaration.isStatic) {
                 add(declaration)
             }
+
+            for (declaration in declarations) {
+                if (declaration is T && declaration.isStatic) {
+                    add(declaration)
+                }
+            }
         }
+        val indexByDeclaration = declarations.filterIsInstance<T>().mapToIndex()
+        val (declared, nonDeclared) = foundInScope
+            .sortedBy { indexByDeclaration[it] ?: Int.MAX_VALUE }
+            .partition { it in indexByDeclaration }
+        return declared + nonDeclared.sortedWith(FirCallableDeclarationComparator)
     }
 
     private fun FirPropertyAccessor.nonSourceAnnotations(session: FirSession): List<FirAnnotation> =

@@ -1,0 +1,39 @@
+public final const val ubyteConst: R|kotlin/UByte| = Byte(10)
+    public get(): R|kotlin/UByte|
+
+public final const val uintConst: R|kotlin/UInt| = Int(30)
+    public get(): R|kotlin/UInt|
+
+public final const val ulongConst: R|kotlin/ULong| = Long(40)
+    public get(): R|kotlin/ULong|
+
+public final const val ushortConst: R|kotlin/UShort| = Short(20)
+    public get(): R|kotlin/UShort|
+
+public final class A : R|kotlin/Any| {
+    public final fun unsigned(s: R|@R|test/Ann|(ubyte = UByte(1), ushort = UShort(2), uint = UInt(3), ulong = ULong(4))  kotlin/String|): R|kotlin/Unit|
+
+    public final fun <@R|test/Ann|(ubyte = UByte(-1), ushort = UShort(-1), uint = UInt(-1), ulong = ULong(-1)) T> typeParam(): R|kotlin/Unit|
+
+    public final fun unsignedConsts(s: R|@R|test/Ann|(ubyte = UByte(10), ushort = UShort(20), uint = UInt(30), ulong = ULong(40))  kotlin/String|): R|kotlin/Unit|
+
+    public constructor(): R|test/A|
+
+}
+
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.TYPE|, R|kotlin/annotation/AnnotationTarget.TYPE_PARAMETER|)) public final annotation class Ann : R|kotlin/Annotation| {
+    public final val ubyte: R|kotlin/UByte|
+        public get(): R|kotlin/UByte|
+
+    public final val ushort: R|kotlin/UShort|
+        public get(): R|kotlin/UShort|
+
+    public final val uint: R|kotlin/UInt|
+        public get(): R|kotlin/UInt|
+
+    public final val ulong: R|kotlin/ULong|
+        public get(): R|kotlin/ULong|
+
+    public constructor(ubyte: R|kotlin/UByte|, ushort: R|kotlin/UShort|, uint: R|kotlin/UInt|, ulong: R|kotlin/ULong|): R|test/Ann|
+
+}

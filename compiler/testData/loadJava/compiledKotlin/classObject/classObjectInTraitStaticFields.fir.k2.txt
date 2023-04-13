@@ -2,9 +2,6 @@ public abstract interface Test : R|kotlin/Any| {
     public final companion object Companion : R|kotlin/Any| {
         public final fun incProp4(): R|kotlin/Unit|
 
-        public final const val constProp8: R|kotlin/Int| = Int(80)
-            public get(): R|kotlin/Int|
-
         public final val prop1: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
@@ -26,6 +23,9 @@ public abstract interface Test : R|kotlin/Any| {
         public final var prop7: R|kotlin/Int|
             public get(): R|kotlin/Int|
             public set(i: R|kotlin/Int|): R|kotlin/Unit|
+
+        public final const val constProp8: R|kotlin/Int| = Int(80)
+            public get(): R|kotlin/Int|
 
         private constructor(): R|test/Test.Companion|
 

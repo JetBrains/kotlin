@@ -1,0 +1,23 @@
+public final class A<TA> : R|kotlin/Any| {
+    public constructor<TA>(): R|test/A<TA>|
+
+    public final inner class B<TB, TA> : R|kotlin/Any| {
+        public test/A<TA>.constructor<TB>(): R|test/A.B<TB, TA>|
+
+        public final inner class C<TC, TB, TA> : R|kotlin/Any| {
+            public test/A.B<TB, TA>.constructor<TC>(): R|test/A.B.C<TC, TB, TA>|
+
+            public final inner class D<TD, TC, TB, TA> : R|kotlin/Any| {
+                public final fun <P1, P2, P3, P4> foo(p1: R|P1|, p2: R|P2|, p3: R|P3|, p4: R|P4|): R|kotlin/Nothing|
+
+                public final fun bar(ta: R|TA|, tb: R|TB|, tc: R|TC|, td: R|TD|): R|test/A.B.C.D<TD, TC, TB, TA>|
+
+                public test/A.B.C<TC, TB, TA>.constructor<TD>(): R|test/A.B.C.D<TD, TC, TB, TA>|
+
+            }
+
+        }
+
+    }
+
+}

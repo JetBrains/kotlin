@@ -1,8 +1,8 @@
 public abstract interface DeeplySubstitutedClassParameter2 : R|kotlin/Any| {
     public abstract interface Super<T> : R|kotlin/Any| {
-        public abstract fun dummy(): R|kotlin/Unit|
-
         public abstract fun foo(t: R|T|): R|kotlin/Unit|
+
+        public abstract fun dummy(): R|kotlin/Unit|
 
     }
 

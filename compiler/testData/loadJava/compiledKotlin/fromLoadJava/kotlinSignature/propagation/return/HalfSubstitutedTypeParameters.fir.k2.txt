@@ -3,9 +3,9 @@ public abstract interface HalfSubstitutedTypeParameters : R|kotlin/Any| {
     }
 
     public abstract interface Super : R|kotlin/Any| {
-        public abstract fun dummy(): R|kotlin/Unit|
-
         public abstract fun foo(): R|kotlin/collections/MutableList<kotlin/String?>|
+
+        public abstract fun dummy(): R|kotlin/Unit|
 
     }
 

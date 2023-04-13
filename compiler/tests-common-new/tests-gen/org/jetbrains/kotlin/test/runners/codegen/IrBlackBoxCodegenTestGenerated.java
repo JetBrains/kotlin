@@ -45881,6 +45881,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
             }
 
             @Test
+            @TestMetadata("propertyOrder.kt")
+            public void testPropertyOrder() throws Exception {
+                runTest("compiler/testData/codegen/box/reflection/properties/propertyOrder.kt");
+            }
+
+            @Test
             @TestMetadata("protectedClassVar.kt")
             public void testProtectedClassVar() throws Exception {
                 runTest("compiler/testData/codegen/box/reflection/properties/protectedClassVar.kt");

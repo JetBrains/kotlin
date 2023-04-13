@@ -1,0 +1,16 @@
+public abstract interface Sub : R|test/Super1|, R|test/Super2| {
+}
+
+public abstract interface Super1 : R|kotlin/Any| {
+    private final fun bar(): R|kotlin/String|
+
+    public abstract fun foo(): R|kotlin/CharSequence|
+
+}
+
+public abstract interface Super2 : R|kotlin/Any| {
+    public abstract fun bar(): R|kotlin/CharSequence|
+
+    private final fun foo(): R|kotlin/String|
+
+}
