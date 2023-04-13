@@ -24,7 +24,13 @@ operator fun set(index: kotlin.Int, element: E): E
 
 fun subList(fromIndex: kotlin.Int, toIndex: kotlin.Int): kotlin.collections.MutableList<E>
 
+val size: kotlin.Int
+
+fun isEmpty(): kotlin.Boolean
+
 operator fun contains(element: E): kotlin.Boolean
+
+operator fun iterator(): kotlin.collections.MutableIterator<E>
 
 fun containsAll(elements: kotlin.collections.Collection<E>): kotlin.Boolean
 
@@ -32,13 +38,7 @@ operator fun get(index: kotlin.Int): E
 
 fun indexOf(element: E): kotlin.Int
 
-fun isEmpty(): kotlin.Boolean
-
-operator fun iterator(): kotlin.collections.MutableIterator<E>
-
 fun lastIndexOf(element: E): kotlin.Int
-
-val size: kotlin.Int
 
 open operator fun equals(other: kotlin.Any?): kotlin.Boolean
 

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.resolve
 
 import org.jetbrains.kotlin.fir.PrivateForInline
 
-class ScopeSession {
+class ScopeSession(val skipDeclaredMemberScopeDecorator: Boolean = false) {
     private val scopes = hashMapOf<Any, HashMap<ScopeSessionKey<*, *>, Any>>()
 
     @PrivateForInline
@@ -24,4 +24,3 @@ class ScopeSession {
 }
 
 abstract class ScopeSessionKey<ID : Any, FS : Any>
-
