@@ -1,9 +1,6 @@
 // FULL_JDK
 // See also: https://youtrack.jetbrains.com/issue/KT-42330
 
-// IGNORE_BACKEND_K2: JVM_IR
-// FIR status: KT-57269 K2: collection stub for `sort` is not generated for custom List subclasses
-
 class DIntIterator(d: Iterator<Int>) : Iterator<Int> by d
 
 class DIntListIterator(d: ListIterator<Int>) : ListIterator<Int> by d

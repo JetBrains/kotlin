@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.getDeprecationsProviderFromAccessors
+import org.jetbrains.kotlin.fir.declarations.isHiddenEverywhereBesideSuperCalls
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
@@ -123,7 +124,8 @@ class FirSyntheticPropertiesScope private constructor(
         // And it doesn't make sense to make a synthetic property for `void` typed getters
         if (getterReturnType?.isUnit == true && CompilerConeAttributes.EnhancedNullability !in getterReturnType.attributes) return
 
-        if (!getterSymbol.hasJavaOverridden()) return
+        // Should have Java among overridden _and_ don't have isHiddenEverywhereBesideSuperCalls among them
+        if (!getterSymbol.mayBeUsedAsGetterForSyntheticProperty()) return
 
         var matchingSetter: FirSimpleFunction? = null
         if (needCheckForSetter && getterReturnType != null) {
@@ -231,17 +233,22 @@ class FirSyntheticPropertiesScope private constructor(
                 || processOverrides(getterSymbol, setterSymbolToCompare = setterSymbol)
     }
 
-    private fun FirNamedFunctionSymbol.hasJavaOverridden(): Boolean {
+    private fun FirNamedFunctionSymbol.mayBeUsedAsGetterForSyntheticProperty(): Boolean {
         var result = false
+        var isHiddenEverywhereBesideSuperCalls = false
         baseScope.processOverriddenFunctionsAndSelf(this) {
-            if (it.unwrapFakeOverrides().fir.origin == FirDeclarationOrigin.Enhancement) {
+            val unwrapped = it.unwrapFakeOverrides().fir
+            if (unwrapped.origin == FirDeclarationOrigin.Enhancement) {
                 result = true
-                ProcessorAction.STOP
-            } else {
-                ProcessorAction.NEXT
             }
+
+            if (unwrapped.isHiddenEverywhereBesideSuperCalls == true) {
+                isHiddenEverywhereBesideSuperCalls = true
+            }
+
+            ProcessorAction.NEXT
         }
 
-        return result
+        return result && !isHiddenEverywhereBesideSuperCalls
     }
 }
