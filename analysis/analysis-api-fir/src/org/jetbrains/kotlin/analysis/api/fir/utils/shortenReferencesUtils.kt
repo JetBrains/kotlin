@@ -59,7 +59,10 @@ fun addImportToFile(
     val newDirective = psiFactory.createImportDirective(importPath)
     val imports = importList.imports
     if (imports.isEmpty()) {
-        importList.add(psiFactory.createNewLine(2))
+        file.packageDirective?.takeIf { it.packageKeyword != null }?.let {
+            file.addAfter(psiFactory.createNewLine(2), it)
+        }
+
         importList.add(newDirective)
     } else {
         val insertAfter = imports.lastOrNull {
