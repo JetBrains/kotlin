@@ -90,6 +90,7 @@ class FunctionInlining(
     private val inlinePureArguments: Boolean = true,
     private val regenerateInlinedAnonymousObjects: Boolean = false,
     private val inlineArgumentsWithTheirOriginalTypeAndOffset: Boolean = false,
+    private val allowExternalInlining: Boolean = false
 ) : IrElementTransformerVoidWithContext(), BodyLoweringPass {
     private var containerScope: ScopeWithIr? = null
 
@@ -153,7 +154,7 @@ class FunctionInlining(
         return this
     }
 
-    private val IrFunction.needsInlining get() = this.isInline && !this.isExternal
+    private val IrFunction.needsInlining get() = this.isInline && (allowExternalInlining || !this.isExternal)
 
     private inner class Inliner(
         val callSite: IrFunctionAccessExpression,

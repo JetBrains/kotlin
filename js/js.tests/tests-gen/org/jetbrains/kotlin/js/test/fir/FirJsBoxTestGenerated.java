@@ -5373,6 +5373,12 @@ public class FirJsBoxTestGenerated extends AbstractFirJsBoxTest {
         }
 
         @Test
+        @TestMetadata("externalInlineWithSuppress.kt")
+        public void testExternalInlineWithSuppress() throws Exception {
+            runTest("js/js.translator/testData/box/inline/externalInlineWithSuppress.kt");
+        }
+
+        @Test
         @TestMetadata("fakeOverrideInlining.kt")
         public void testFakeOverrideInlining() throws Exception {
             runTest("js/js.translator/testData/box/inline/fakeOverrideInlining.kt");
