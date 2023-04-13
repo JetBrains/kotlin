@@ -69,6 +69,13 @@ private val PRIMITIVE_TYPE_SIGNATURE: Map<String, String> = mapOf(
     "Double" to "D",
 )
 
+private val PRIMITIVE_TYPE_ARRAYS_SIGNATURE: Map<String, String> =
+    PRIMITIVE_TYPE_SIGNATURE.map { (name, desc) ->
+        "${name}Array" to "[$desc"
+    }.toMap()
+
+private val PRIMITIVE_TYPE_OR_ARRAY_SIGNATURE: Map<String, String> = PRIMITIVE_TYPE_SIGNATURE + PRIMITIVE_TYPE_ARRAYS_SIGNATURE
+
 fun ConeKotlinType.computeJvmDescriptorRepresentation(
     typeConversion: (FirTypeRef) -> ConeKotlinType? = FirTypeRef::coneTypeSafe
 ): String = buildString {
@@ -82,7 +89,7 @@ private fun StringBuilder.appendConeType(
     (coneType as? ConeClassLikeType)?.let {
         val classId = it.lookupTag.classId
         if (classId.packageFqName.toString() == "kotlin") {
-            PRIMITIVE_TYPE_SIGNATURE[classId.shortClassName.identifier]?.let { signature ->
+            PRIMITIVE_TYPE_OR_ARRAY_SIGNATURE[classId.shortClassName.identifier]?.let { signature ->
                 append(signature)
                 return
             }
