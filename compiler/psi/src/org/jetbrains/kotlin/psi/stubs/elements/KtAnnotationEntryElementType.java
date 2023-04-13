@@ -27,9 +27,13 @@ import org.jetbrains.kotlin.name.Name;
 import org.jetbrains.kotlin.psi.KtAnnotationEntry;
 import org.jetbrains.kotlin.psi.KtValueArgumentList;
 import org.jetbrains.kotlin.psi.stubs.KotlinAnnotationEntryStub;
+import org.jetbrains.kotlin.psi.stubs.impl.ConstantValue;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinAnnotationEntryStubImpl;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Objects;
 
 public class KtAnnotationEntryElementType extends KtStubElementType<KotlinAnnotationEntryStub, KtAnnotationEntry> {
 
@@ -44,13 +48,25 @@ public class KtAnnotationEntryElementType extends KtStubElementType<KotlinAnnota
         String resultName = shortName != null ? shortName.asString() : null;
         KtValueArgumentList valueArgumentList = psi.getValueArgumentList();
         boolean hasValueArguments = valueArgumentList != null && !valueArgumentList.getArguments().isEmpty();
-        return new KotlinAnnotationEntryStubImpl((StubElement<?>) parentStub, StringRef.fromString(resultName), hasValueArguments);
+        return new KotlinAnnotationEntryStubImpl((StubElement<?>) parentStub, StringRef.fromString(resultName), hasValueArguments, null);
     }
 
     @Override
     public void serialize(@NotNull KotlinAnnotationEntryStub stub, @NotNull StubOutputStream dataStream) throws IOException {
         dataStream.writeName(stub.getShortName());
         dataStream.writeBoolean(stub.hasValueArguments());
+        if (stub instanceof KotlinAnnotationEntryStubImpl) {
+            Map<Name, ConstantValue<?>> arguments = ((KotlinAnnotationEntryStubImpl) stub).getValueArguments();
+            dataStream.writeInt(arguments != null ? arguments.size() : 0);
+            if (arguments != null) {
+                for (Map.Entry<Name, ConstantValue<?>> valueEntry : arguments.entrySet()) {
+                    dataStream.writeName(valueEntry.getKey().asString());
+                    ConstantValue<?> value = valueEntry.getValue();
+                    dataStream.writeInt(value.getKind());
+                    value.serializeValue(dataStream);
+                }
+            }
+        }
     }
 
     @NotNull
@@ -58,7 +74,13 @@ public class KtAnnotationEntryElementType extends KtStubElementType<KotlinAnnota
     public KotlinAnnotationEntryStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         StringRef text = dataStream.readName();
         boolean hasValueArguments = dataStream.readBoolean();
-        return new KotlinAnnotationEntryStubImpl((StubElement<?>) parentStub, text, hasValueArguments);
+        int valueArgCount = dataStream.readInt();
+        Map<Name, ConstantValue<?>> args = new LinkedHashMap<>();
+        for (int i = 0; i < valueArgCount; i++) {
+            args.put(Name.identifier(Objects.requireNonNull(dataStream.readNameString())),
+                     ConstantValue.Companion.createConstantValue(dataStream));
+        }
+        return new KotlinAnnotationEntryStubImpl((StubElement<?>) parentStub, text, hasValueArguments, args.isEmpty() ? null : args);
     }
 
     @Override
