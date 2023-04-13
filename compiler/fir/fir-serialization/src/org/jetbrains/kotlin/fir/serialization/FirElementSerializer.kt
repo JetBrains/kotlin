@@ -170,10 +170,8 @@ class FirElementSerializer private constructor(
             }
         }
 
-        val callableMembers =
-            extension.customClassMembersProducer?.getCallableMembers(klass)
-                ?: (klass.memberDeclarations() + providedDeclarationsService.getProvidedCallables(classSymbol, scopeSession))
-                    .sortedWith(FirCallableDeclarationComparator)
+        val callableMembers = (klass.memberDeclarations() + providedDeclarationsService.getProvidedCallables(classSymbol, scopeSession))
+            .sortedWith(FirCallableDeclarationComparator)
 
         for (declaration in callableMembers) {
             if (declaration !is FirEnumEntry && declaration.isStatic) continue // ??? Miss values() & valueOf()

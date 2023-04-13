@@ -99,11 +99,4 @@ abstract class FirSerializerExtension {
     open fun serializeErrorType(type: ConeErrorType, builder: ProtoBuf.Type.Builder) {
         throw IllegalStateException("Cannot serialize error type: $type")
     }
-
-    open val customClassMembersProducer: ClassMembersProducer?
-        get() = null
-
-    interface ClassMembersProducer {
-        fun getCallableMembers(klass: FirClass): Collection<FirCallableDeclaration>
-    }
 }

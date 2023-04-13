@@ -100,9 +100,6 @@ abstract class FirSerializerExtensionBase(
         typeParameter.serializeAnnotations(proto, protocol.typeParameterAnnotation)
     }
 
-    override val customClassMembersProducer: ClassMembersProducer?
-        get() = super.customClassMembersProducer
-
     @Suppress("Reformat")
     private fun <
         MessageType : GeneratedMessageLite.ExtendableMessage<MessageType>,
