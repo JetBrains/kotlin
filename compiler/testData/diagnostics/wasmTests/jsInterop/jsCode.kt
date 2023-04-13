@@ -4,8 +4,8 @@ val prop: Int =
 fun funExprBody(x: Int): Int =
     js("x")
 
-fun funBlockBody(x: Int): Int {
-    js("return x;")
+fun funBlockBody(<!UNUSED_PARAMETER!>x<!>: Int): Int {
+    <!JSCODE_WRONG_CONTEXT!>js<!>("return x;")
 }
 
 fun <!IMPLICIT_NOTHING_RETURN_TYPE!>returnTypeNotSepcified<!>() = js("1")

@@ -36,7 +36,7 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
 
         put(
             ErrorsWasm.JSCODE_WRONG_CONTEXT,
-            "Calls to js(code) should be a single expression inside a top-level function body or a property initializer in Kotlin/Wasm"
+            "Calls to js(code) should be a single expression inside a top-level function expression body or a property initializer in Kotlin/Wasm"
         )
         put(
             ErrorsWasm.JSCODE_UNSUPPORTED_FUNCTION_KIND,

@@ -42,26 +42,22 @@ public external val definedExternally: Nothing
  * It is used to implement top-level functions and initialize top-level properties.
  *
  * It is important to note, that calls to [js] function should be the only expression
- * in a function body or a property initializer.
+ * in a function expression body or a property initializer.
  *
  * [code] parameter should be a compile-time constant.
  *
- * When used in an expression context, [code] should contain a single JavaScript expression. For example:
+ * [code] should contain a single JavaScript expression or a block of JavaScript statements
+ * enclosed in curly brackets. For example:
  *
  * ``` kotlin
  * val version: String = js("process.version")
+ *
  * fun newEmptyJsArray(): JsValue = js("[]")
- * ```
  *
- * When used in a function body, [code] is expected to be a list of JavaScript statements. For example:
- *
- * ``` kotlin
- * fun log(message1: String, message2: String) {
- *     js("""
+ * fun log(message1: String, message2: String): Unit = js("""{
  *     console.log(message1);
  *     console.log(message2);
- *     """)
- * }
+ * }""")
  * ```
  *
  * You can use parameters of calling function in JavaScript [code].

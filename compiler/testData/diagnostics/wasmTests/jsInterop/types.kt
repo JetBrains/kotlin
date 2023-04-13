@@ -95,9 +95,6 @@ external fun <
 ): T3
 
 <!WRONG_JS_INTEROP_TYPE!>fun jsCode1(<!WRONG_JS_INTEROP_TYPE!>x: Any<!>): Any<!> = js("x")
-<!WRONG_JS_INTEROP_TYPE!>fun jsCode2(<!WRONG_JS_INTEROP_TYPE!>x: Any<!>): Any<!> {
-    js("return x;")
-}
 <!WRONG_JS_INTEROP_TYPE!>val jsProp: Any<!> = js("1")
 
 <!WRONG_JS_INTEROP_TYPE!>@JsExport

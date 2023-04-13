@@ -29,10 +29,6 @@ private fun KtDeclarationWithBody.hasValidJsCodeBody(bindingContext: BindingCont
     val body = bodyExpression!!
     return when {
         !hasBlockBody() -> body.isJsCall(bindingContext)
-        body is KtBlockExpression -> {
-            val statement = body.statements.singleOrNull() ?: return false
-            statement.isJsCall(bindingContext)
-        }
         else -> false
     }
 }
