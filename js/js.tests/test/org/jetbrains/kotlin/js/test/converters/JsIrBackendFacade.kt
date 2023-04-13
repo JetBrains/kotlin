@@ -272,7 +272,10 @@ class JsIrBackendFacade(
     }
 
     private fun CompilationOutputs.writeTo(outputFile: File, moduleId: String, moduleKind: ModuleKind) {
-        val allJsFiles = writeAll(outputFile.parentFile, outputFile.nameWithoutExtension, false, moduleId, moduleKind).filter {
+        val tmpBuildDir = outputFile.parentFile.resolve("tmp-build")
+        // CompilationOutputs keeps the `outputDir` clean by removing all outdated JS and other unknown files.
+        // To ensure that useful files around `outputFile`, such as irdump, are not removed, use `tmpBuildDir` instead.
+        val allJsFiles = writeAll(tmpBuildDir, outputFile.nameWithoutExtension, false, moduleId, moduleKind).filter {
             it.extension == "js" || it.extension == "mjs"
         }
 
@@ -283,6 +286,7 @@ class JsIrBackendFacade(
             val newFile = outputFile.augmentWithModuleName(depModuleId)
             builtJsFilePath.fixJsFile(newFile, depModuleId, moduleKind)
         }
+        tmpBuildDir.deleteRecursively()
     }
 
     private fun File.write(text: String) {
