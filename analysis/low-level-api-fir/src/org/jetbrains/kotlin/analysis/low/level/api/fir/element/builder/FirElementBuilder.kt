@@ -95,6 +95,11 @@ internal class FirElementBuilder(
     }
 }
 
+private fun KtDeclaration.isPartOf(callableDeclaration: KtCallableDeclaration): Boolean = when (this) {
+    is KtPropertyAccessor -> this.property == callableDeclaration
+    else -> false
+}
+
 internal fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate: (KtDeclaration) -> Boolean = { true }): KtDeclaration? {
     var candidate: KtDeclaration? = null
 
@@ -105,8 +110,8 @@ internal fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate: (KtDec
     }
 
     for (parent in parentsWithSelf) {
-        if (candidate != null) {
-            if (parent is KtEnumEntry || parent is KtCallableDeclaration || parent is KtClassInitializer) {
+        candidate?.let { notNullCandidate ->
+            if (parent is KtEnumEntry || parent is KtCallableDeclaration && !notNullCandidate.isPartOf(parent) || parent is KtClassInitializer) {
                 // Candidate turned out to be local. Let's find another one.
                 candidate = null
             }
@@ -135,6 +140,11 @@ internal fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate: (KtDec
                     }
 
                     if (isKindApplicable && declarationCanBeLazilyResolved(parent) && predicate(parent)) {
+                        propose(parent)
+                    }
+                }
+                is KtPropertyAccessor -> {
+                    if (predicate(parent)) {
                         propose(parent)
                     }
                 }

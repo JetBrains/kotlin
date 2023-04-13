@@ -67,13 +67,16 @@ internal class FileStructure private constructor(
 
     private fun getStructureKtElement(element: KtElement): KtDeclaration? {
         val container = element.getNonLocalContainingOrThisDeclaration()
-        when {
+        val resultedContainer = when {
             container is KtClassOrObject && container.isInsideSuperClassCall(element) -> {
-                container.primaryConstructor?.let { return it }
+                container.primaryConstructor
             }
+
+            container is KtPropertyAccessor -> container.property
+            else -> null
         }
 
-        return container
+        return resultedContainer ?: container
     }
 
     private fun KtClassOrObject.isInsideSuperClassCall(element: KtElement): Boolean {

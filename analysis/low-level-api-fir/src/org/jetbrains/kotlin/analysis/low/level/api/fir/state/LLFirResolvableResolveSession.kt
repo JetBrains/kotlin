@@ -124,15 +124,16 @@ internal abstract class LLFirResolvableResolveSession(
         require(getModuleKind(module) == ModuleKind.RESOLVABLE_MODULE) {
             "Declaration should be resolvable module, instead it had ${module::class}"
         }
-        val nonLocalNamedDeclaration = ktDeclaration.getNonLocalContainingOrThisDeclaration()
+
+        val nonLocalDeclaration = ktDeclaration.getNonLocalContainingOrThisDeclaration()
             ?: buildErrorWithAttachment("Declaration should have non-local container") {
                 withPsiEntry("ktDeclaration", ktDeclaration)
                 withEntry("module", module) { it.moduleDescription }
             }
 
-        if (ktDeclaration == nonLocalNamedDeclaration) {
+        if (ktDeclaration == nonLocalDeclaration) {
             val session = getResolvableSessionFor(module)
-            return nonLocalNamedDeclaration.findSourceNonLocalFirDeclaration(
+            return nonLocalDeclaration.findSourceNonLocalFirDeclaration(
                 firFileBuilder = session.moduleComponents.firFileBuilder,
                 provider = session.firProvider,
             ).symbol

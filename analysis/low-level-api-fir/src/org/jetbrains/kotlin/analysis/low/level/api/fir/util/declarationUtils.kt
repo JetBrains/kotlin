@@ -110,6 +110,19 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
             firFile.declarations.firstOrNull { it.psi == this }
         }
         this is KtScript -> containerFirFile?.declarations?.singleOrNull { it is FirScript }
+        this is KtPropertyAccessor -> {
+            val firPropertyDeclaration = property.findSourceNonLocalFirDeclaration(
+                firFileBuilder,
+                provider,
+                containerFirFile,
+            ) as FirVariable
+
+            if (isGetter) {
+                firPropertyDeclaration.getter
+            } else {
+                firPropertyDeclaration.setter
+            }
+        }
         else -> errorWithFirSpecificEntries("Invalid container", psi = this)
     }
     return candidate?.takeIf { it.realPsi == this }
