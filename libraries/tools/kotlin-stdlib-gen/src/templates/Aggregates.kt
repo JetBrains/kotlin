@@ -28,10 +28,11 @@ object Aggregates : TemplateGroupBase() {
 
     val f_all = fn("all(predicate: (T) -> Boolean)") {
         includeDefault()
-        include(Maps, CharSequences, ArraysOfUnsigned)
+        include(Maps, CharSequences, ArraysOfUnsigned, Collections)
     } builder {
         inline()
         specialFor(ArraysOfUnsigned) { inlineOnly() }
+        specialFor(Collections) { since("1.9") }
 
         doc {
             """
@@ -48,6 +49,7 @@ object Aggregates : TemplateGroupBase() {
             """
             ${when (f) {
                 Iterables -> "if (this is Collection && isEmpty()) return true"
+                Collections -> "if (isEmpty()) return true"
                 Maps -> "if (isEmpty()) return true"
                 else -> ""
             }}
@@ -59,10 +61,11 @@ object Aggregates : TemplateGroupBase() {
 
     val f_none_predicate = fn("none(predicate: (T) -> Boolean)") {
         includeDefault()
-        include(Maps, CharSequences, ArraysOfUnsigned)
+        include(Maps, CharSequences, ArraysOfUnsigned, Collections)
     } builder {
         inline()
         specialFor(ArraysOfUnsigned) { inlineOnly() }
+        specialFor(Collections) { since("1.9") }
 
         doc {
             """
@@ -75,6 +78,7 @@ object Aggregates : TemplateGroupBase() {
             """
             ${when (f) {
                 Iterables -> "if (this is Collection && isEmpty()) return true"
+                Collections -> "if (isEmpty()) return true"
                 Maps -> "if (isEmpty()) return true"
                 else -> ""
             }}
@@ -86,9 +90,10 @@ object Aggregates : TemplateGroupBase() {
 
     val f_none = fn("none()") {
         includeDefault()
-        include(Maps, CharSequences, ArraysOfUnsigned)
+        include(Maps, CharSequences, ArraysOfUnsigned, Collections)
     } builder {
         specialFor(ArraysOfUnsigned) { inlineOnly() }
+        specialFor(Collections) { since("1.9") }
 
         doc {
             """
@@ -109,17 +114,18 @@ object Aggregates : TemplateGroupBase() {
             }
         }
 
-        body(Maps, CharSequences, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
+        body(Maps, CharSequences, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, Collections) {
             "return isEmpty()"
         }
     }
 
     val f_any_predicate = fn("any(predicate: (T) -> Boolean)") {
         includeDefault()
-        include(Maps, CharSequences, ArraysOfUnsigned)
+        include(Maps, CharSequences, ArraysOfUnsigned, Collections)
     } builder {
         inline()
         specialFor(ArraysOfUnsigned) { inlineOnly() }
+        specialFor(Collections) { since("1.9") }
 
         doc {
             """
@@ -132,6 +138,7 @@ object Aggregates : TemplateGroupBase() {
             """
             ${when (f) {
                 Iterables -> "if (this is Collection && isEmpty()) return false"
+                Collections -> "if (isEmpty()) return false"
                 Maps -> "if (isEmpty()) return false"
                 else -> ""
             }}
@@ -143,7 +150,7 @@ object Aggregates : TemplateGroupBase() {
 
     val f_any = fn("any()") {
         includeDefault()
-        include(Maps, CharSequences, ArraysOfUnsigned)
+        include(Maps, CharSequences, ArraysOfUnsigned, Collections)
     } builder {
         doc {
             """
@@ -151,6 +158,7 @@ object Aggregates : TemplateGroupBase() {
             """
         }
         sample("samples.collections.Collections.Aggregates.any")
+        specialFor(Collections) { since("1.9") }
         returns("Boolean")
         body {
             "return iterator().hasNext()"
@@ -161,7 +169,7 @@ object Aggregates : TemplateGroupBase() {
             return iterator().hasNext()
             """
         }
-        body(Maps, CharSequences, ArraysOfObjects, ArraysOfPrimitives) { "return !isEmpty()" }
+        body(Maps, CharSequences, ArraysOfObjects, ArraysOfPrimitives, Collections) { "return !isEmpty()" }
 
         specialFor(ArraysOfUnsigned) {
             inlineOnly()
@@ -172,18 +180,20 @@ object Aggregates : TemplateGroupBase() {
 
     val f_count_predicate = fn("count(predicate: (T) -> Boolean)") {
         includeDefault()
-        include(Maps, CharSequences, ArraysOfUnsigned)
+        include(Maps, CharSequences, ArraysOfUnsigned, Collections)
     } builder {
         inline()
         specialFor(ArraysOfUnsigned) { inlineOnly() }
 
         doc { "Returns the number of ${f.element.pluralize()} matching the given [predicate]." }
         returns("Int")
+        specialFor(Collections) { since("1.9") }
         body {
             fun checkOverflow(value: String) = if (f == Sequences || f == Iterables) "checkCountOverflow($value)" else value
             """
             ${when (f) {
                 Iterables -> "if (this is Collection && isEmpty()) return 0"
+                Collections -> "if (isEmpty()) return 0"
                 Maps -> "if (isEmpty()) return 0"
                 else -> ""
             }}
@@ -1391,12 +1401,15 @@ object Aggregates : TemplateGroupBase() {
 
     val f_runningFold = fn("runningFold(initial: R, operation: (acc: R, T) -> R)") {
         includeDefault()
-        include(CharSequences, ArraysOfUnsigned)
+        include(CharSequences, ArraysOfUnsigned, Collections)
     } builder {
         since("1.4")
-
         specialFor(Iterables, ArraysOfObjects, CharSequences) { inline() }
         specialFor(ArraysOfPrimitives, ArraysOfUnsigned) { inlineOnly() }
+        specialFor(Collections) {
+            inline()
+            since("1.9")
+        }
 
         typeParam("R")
 
@@ -1414,7 +1427,7 @@ object Aggregates : TemplateGroupBase() {
         sample("samples.collections.Collections.Aggregates.runningFold")
         sequenceClassification(intermediate, stateless)
 
-        body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, CharSequences) {
+        body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, CharSequences, Collections) {
             """
             if (isEmpty()) return listOf(initial)
 
@@ -1484,14 +1497,34 @@ object Aggregates : TemplateGroupBase() {
         body { "return runningFold(initial, operation)" }
     }
 
+
+    private fun runningFoldIndexCollectionsBody(useSize: Boolean = true): String =
+        """
+        val estimatedSize = ${if (useSize) "size" else "collectionSizeOrDefault(9)"}
+        if (estimatedSize == 0) return listOf(initial)
+
+        val result = ArrayList<R>(estimatedSize + 1).apply { add(initial) }
+        var index = 0
+        var accumulator = initial
+        for (element in this) {
+            accumulator = operation(index++, accumulator, element)
+            result.add(accumulator)
+        }
+        return result
+        """
+
     val f_runningFoldIndexed = fn("runningFoldIndexed(initial: R, operation: (index: Int, acc: R, T) -> R)") {
         includeDefault()
-        include(CharSequences, ArraysOfUnsigned)
+        include(CharSequences, ArraysOfUnsigned, Collections)
     } builder {
         since("1.4")
 
         specialFor(Iterables, ArraysOfObjects, CharSequences) { inline() }
         specialFor(ArraysOfPrimitives, ArraysOfUnsigned) { inlineOnly() }
+        specialFor(Collections) {
+            inline()
+            since("1.9")
+        }
 
         typeParam("R")
 
@@ -1523,20 +1556,12 @@ object Aggregates : TemplateGroupBase() {
             return result
             """
         }
+        specialFor(Collections) {
+            since("1.9")
+            body { runningFoldIndexCollectionsBody(true) }
+        }
         body(Iterables) {
-            """
-            val estimatedSize = collectionSizeOrDefault(9)
-            if (estimatedSize == 0) return listOf(initial)
-            
-            val result = ArrayList<R>(estimatedSize + 1).apply { add(initial) }
-            var index = 0
-            var accumulator = initial
-            for (element in this) {
-                accumulator = operation(index++, accumulator, element)
-                result.add(accumulator)
-            }
-            return result
-            """
+            runningFoldIndexCollectionsBody(false)
         }
         body(Sequences) {
             """
@@ -1655,12 +1680,12 @@ object Aggregates : TemplateGroupBase() {
     }
 
     val f_runningReduceSuper = fn("runningReduce(operation: (acc: S, T) -> S)") {
-        include(ArraysOfObjects, Iterables, Sequences)
+        include(ArraysOfObjects, Iterables, Sequences, Collections)
     } builder {
         since("1.4")
         wasExperimental("ExperimentalStdlibApi")
 
-        specialFor(ArraysOfObjects, Iterables) { inline() }
+        specialFor(ArraysOfObjects, Iterables, Collections) { inline() }
 
         typeParam("S")
         typeParam("T : S")
@@ -1706,6 +1731,23 @@ object Aggregates : TemplateGroupBase() {
             return result
             """
         }
+        specialFor(Collections) {
+            since("1.9")
+            body {
+                """
+                if (isEmpty()) return emptyList()
+
+                val iterator = this.iterator()
+                var accumulator: S = iterator.next()
+                val result = ArrayList<S>(size).apply { add(accumulator) }
+                while (iterator.hasNext()) {
+                    accumulator = operation(accumulator, iterator.next())
+                    result.add(accumulator)
+                }
+                return result
+                """
+            }
+        }
         body(Sequences) {
             """
             return sequence {
@@ -1724,11 +1766,11 @@ object Aggregates : TemplateGroupBase() {
     }
 
     val f_runningReduceIndexedSuper = fn("runningReduceIndexed(operation: (index: Int, acc: S, T) -> S)") {
-        include(ArraysOfObjects, Iterables, Sequences)
+        include(ArraysOfObjects, Iterables, Sequences, Collections)
     } builder {
         since("1.4")
 
-        specialFor(ArraysOfObjects, Iterables) { inline() }
+        specialFor(ArraysOfObjects, Iterables, Collections) { inline() }
 
         typeParam("S")
         typeParam("T : S")
@@ -1775,6 +1817,24 @@ object Aggregates : TemplateGroupBase() {
             }
             return result
             """
+        }
+        specialFor(Collections) {
+            since("1.9")
+            body {
+                """
+                if (isEmpty()) return emptyList()
+
+                val iterator = this.iterator()
+                var accumulator: S = iterator.next()
+                val result = ArrayList<S>(size).apply { add(accumulator) }
+                var index = 1
+                while (iterator.hasNext()) {
+                    accumulator = operation(index++, accumulator, iterator.next())
+                    result.add(accumulator)
+                }
+                return result
+                """
+            }
         }
         body(Sequences) {
             """

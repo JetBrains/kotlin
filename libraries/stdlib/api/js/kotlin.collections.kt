@@ -260,6 +260,9 @@ public inline fun kotlin.ULongArray.all(predicate: (kotlin.ULong) -> kotlin.Bool
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UShortArray.all(predicate: (kotlin.UShort) -> kotlin.Boolean): kotlin.Boolean
 
+@kotlin.SinceKotlin(version = "1.9")
+public inline fun <T> kotlin.collections.Collection<T>.all(predicate: (T) -> kotlin.Boolean): kotlin.Boolean
+
 public inline fun <T> kotlin.collections.Iterable<T>.all(predicate: (T) -> kotlin.Boolean): kotlin.Boolean
 
 public inline fun <K, V> kotlin.collections.Map<out K, V>.all(predicate: (kotlin.collections.Map.Entry<K, V>) -> kotlin.Boolean): kotlin.Boolean
@@ -339,6 +342,12 @@ public inline fun kotlin.UShortArray.any(): kotlin.Boolean
 @kotlin.ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UShortArray.any(predicate: (kotlin.UShort) -> kotlin.Boolean): kotlin.Boolean
+
+@kotlin.SinceKotlin(version = "1.9")
+public fun <T> kotlin.collections.Collection<T>.any(): kotlin.Boolean
+
+@kotlin.SinceKotlin(version = "1.9")
+public inline fun <T> kotlin.collections.Collection<T>.any(predicate: (T) -> kotlin.Boolean): kotlin.Boolean
 
 public fun <T> kotlin.collections.Iterable<T>.any(): kotlin.Boolean
 
@@ -498,6 +507,9 @@ public inline fun <K, V> kotlin.LongArray.associate(transform: (kotlin.Long) -> 
 
 public inline fun <K, V> kotlin.ShortArray.associate(transform: (kotlin.Short) -> kotlin.Pair<K, V>): kotlin.collections.Map<K, V>
 
+@kotlin.SinceKotlin(version = "1.9")
+public inline fun <T, K, V> kotlin.collections.Collection<T>.associate(transform: (T) -> kotlin.Pair<K, V>): kotlin.collections.Map<K, V>
+
 public inline fun <T, K, V> kotlin.collections.Iterable<T>.associate(transform: (T) -> kotlin.Pair<K, V>): kotlin.collections.Map<K, V>
 
 public inline fun <T, K> kotlin.Array<out T>.associateBy(keySelector: (T) -> K): kotlin.collections.Map<K, T>
@@ -535,6 +547,12 @@ public inline fun <K, V> kotlin.LongArray.associateBy(keySelector: (kotlin.Long)
 public inline fun <K> kotlin.ShortArray.associateBy(keySelector: (kotlin.Short) -> K): kotlin.collections.Map<K, kotlin.Short>
 
 public inline fun <K, V> kotlin.ShortArray.associateBy(keySelector: (kotlin.Short) -> K, valueTransform: (kotlin.Short) -> V): kotlin.collections.Map<K, V>
+
+@kotlin.SinceKotlin(version = "1.9")
+public inline fun <T, K> kotlin.collections.Collection<T>.associateBy(keySelector: (T) -> K): kotlin.collections.Map<K, T>
+
+@kotlin.SinceKotlin(version = "1.9")
+public inline fun <T, K, V> kotlin.collections.Collection<T>.associateBy(keySelector: (T) -> K, valueTransform: (T) -> V): kotlin.collections.Map<K, V>
 
 public inline fun <T, K> kotlin.collections.Iterable<T>.associateBy(keySelector: (T) -> K): kotlin.collections.Map<K, T>
 
@@ -654,6 +672,9 @@ public inline fun <V> kotlin.ULongArray.associateWith(valueSelector: (kotlin.ULo
 @kotlin.ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <V> kotlin.UShortArray.associateWith(valueSelector: (kotlin.UShort) -> V): kotlin.collections.Map<kotlin.UShort, V>
+
+@kotlin.SinceKotlin(version = "1.9")
+public inline fun <K, V> kotlin.collections.Collection<K>.associateWith(valueSelector: (K) -> V): kotlin.collections.Map<K, V>
 
 @kotlin.SinceKotlin(version = "1.3")
 public inline fun <K, V> kotlin.collections.Iterable<K>.associateWith(valueSelector: (K) -> V): kotlin.collections.Map<K, V>
@@ -1670,6 +1691,9 @@ public inline fun kotlin.UShortArray.count(predicate: (kotlin.UShort) -> kotlin.
 
 @kotlin.internal.InlineOnly
 public inline fun <T> kotlin.collections.Collection<T>.count(): kotlin.Int
+
+@kotlin.SinceKotlin(version = "1.9")
+public inline fun <T> kotlin.collections.Collection<T>.count(predicate: (T) -> kotlin.Boolean): kotlin.Int
 
 public fun <T> kotlin.collections.Iterable<T>.count(): kotlin.Int
 
@@ -3999,6 +4023,9 @@ public inline fun <R> kotlin.ULongArray.map(transform: (kotlin.ULong) -> R): kot
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.UShortArray.map(transform: (kotlin.UShort) -> R): kotlin.collections.List<R>
 
+@kotlin.SinceKotlin(version = "1.9")
+public inline fun <T, R> kotlin.collections.Collection<T>.map(transform: (T) -> R): kotlin.collections.List<R>
+
 public inline fun <T, R> kotlin.collections.Iterable<T>.map(transform: (T) -> R): kotlin.collections.List<R>
 
 public inline fun <K, V, R> kotlin.collections.Map<out K, V>.map(transform: (kotlin.collections.Map.Entry<K, V>) -> R): kotlin.collections.List<R>
@@ -4040,6 +4067,9 @@ public inline fun <R> kotlin.ULongArray.mapIndexed(transform: (index: kotlin.Int
 @kotlin.ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.UShortArray.mapIndexed(transform: (index: kotlin.Int, kotlin.UShort) -> R): kotlin.collections.List<R>
+
+@kotlin.SinceKotlin(version = "1.9")
+public inline fun <T, R> kotlin.collections.Collection<T>.mapIndexed(transform: (index: kotlin.Int, T) -> R): kotlin.collections.List<R>
 
 public inline fun <T, R> kotlin.collections.Iterable<T>.mapIndexed(transform: (index: kotlin.Int, T) -> R): kotlin.collections.List<R>
 
@@ -6285,6 +6315,12 @@ public inline fun kotlin.UShortArray.none(): kotlin.Boolean
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UShortArray.none(predicate: (kotlin.UShort) -> kotlin.Boolean): kotlin.Boolean
 
+@kotlin.SinceKotlin(version = "1.9")
+public fun <T> kotlin.collections.Collection<T>.none(): kotlin.Boolean
+
+@kotlin.SinceKotlin(version = "1.9")
+public inline fun <T> kotlin.collections.Collection<T>.none(predicate: (T) -> kotlin.Boolean): kotlin.Boolean
+
 public fun <T> kotlin.collections.Iterable<T>.none(): kotlin.Boolean
 
 public inline fun <T> kotlin.collections.Iterable<T>.none(predicate: (T) -> kotlin.Boolean): kotlin.Boolean
@@ -7552,6 +7588,9 @@ public inline fun <R> kotlin.ULongArray.runningFold(initial: R, operation: (acc:
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.UShortArray.runningFold(initial: R, operation: (acc: R, kotlin.UShort) -> R): kotlin.collections.List<R>
 
+@kotlin.SinceKotlin(version = "1.9")
+public inline fun <T, R> kotlin.collections.Collection<T>.runningFold(initial: R, operation: (acc: R, T) -> R): kotlin.collections.List<R>
+
 @kotlin.SinceKotlin(version = "1.4")
 public inline fun <T, R> kotlin.collections.Iterable<T>.runningFold(initial: R, operation: (acc: R, T) -> R): kotlin.collections.List<R>
 
@@ -7609,6 +7648,9 @@ public inline fun <R> kotlin.ULongArray.runningFoldIndexed(initial: R, operation
 @kotlin.ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R> kotlin.UShortArray.runningFoldIndexed(initial: R, operation: (index: kotlin.Int, acc: R, kotlin.UShort) -> R): kotlin.collections.List<R>
+
+@kotlin.SinceKotlin(version = "1.9")
+public inline fun <T, R> kotlin.collections.Collection<T>.runningFoldIndexed(initial: R, operation: (index: kotlin.Int, acc: R, T) -> R): kotlin.collections.List<R>
 
 @kotlin.SinceKotlin(version = "1.4")
 public inline fun <T, R> kotlin.collections.Iterable<T>.runningFoldIndexed(initial: R, operation: (index: kotlin.Int, acc: R, T) -> R): kotlin.collections.List<R>
@@ -7669,6 +7711,10 @@ public inline fun kotlin.ULongArray.runningReduce(operation: (acc: kotlin.ULong,
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UShortArray.runningReduce(operation: (acc: kotlin.UShort, kotlin.UShort) -> kotlin.UShort): kotlin.collections.List<kotlin.UShort>
 
+@kotlin.SinceKotlin(version = "1.9")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
+public inline fun <S, T : S> kotlin.collections.Collection<T>.runningReduce(operation: (acc: S, T) -> S): kotlin.collections.List<S>
+
 @kotlin.SinceKotlin(version = "1.4")
 @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public inline fun <S, T : S> kotlin.collections.Iterable<T>.runningReduce(operation: (acc: S, T) -> S): kotlin.collections.List<S>
@@ -7727,6 +7773,9 @@ public inline fun kotlin.ULongArray.runningReduceIndexed(operation: (index: kotl
 @kotlin.ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun kotlin.UShortArray.runningReduceIndexed(operation: (index: kotlin.Int, acc: kotlin.UShort, kotlin.UShort) -> kotlin.UShort): kotlin.collections.List<kotlin.UShort>
+
+@kotlin.SinceKotlin(version = "1.9")
+public inline fun <S, T : S> kotlin.collections.Collection<T>.runningReduceIndexed(operation: (index: kotlin.Int, acc: S, T) -> S): kotlin.collections.List<S>
 
 @kotlin.SinceKotlin(version = "1.4")
 public inline fun <S, T : S> kotlin.collections.Iterable<T>.runningReduceIndexed(operation: (index: kotlin.Int, acc: S, T) -> S): kotlin.collections.List<S>

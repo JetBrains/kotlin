@@ -209,7 +209,7 @@ object Snapshots : TemplateGroupBase() {
 
     val f_associate = fn("associate(transform: (T) -> Pair<K, V>)") {
         includeDefault()
-        include(CharSequences)
+        include(CharSequences, Collections)
     } builder {
         inline()
         typeParam("K")
@@ -230,6 +230,7 @@ object Snapshots : TemplateGroupBase() {
             ArraysOfObjects, ArraysOfPrimitives -> "samples.collections.Arrays.Transformations.associateArrayOfPrimitives"
             else -> "samples.collections.Collections.Transformations.associate"
         })
+        specialFor(Collections) { since("1.9") }
         body {
             """
             val capacity = mapCapacity(collectionSizeOrDefault(10)).coerceAtLeast(16)
@@ -247,7 +248,7 @@ object Snapshots : TemplateGroupBase() {
             return associateTo(LinkedHashMap<K, V>(capacity), transform)
             """
         }
-        body(ArraysOfObjects, ArraysOfPrimitives) {
+        body(ArraysOfObjects, ArraysOfPrimitives, Collections) {
             """
             val capacity = mapCapacity(size).coerceAtLeast(16)
             return associateTo(LinkedHashMap<K, V>(capacity), transform)
@@ -289,7 +290,7 @@ object Snapshots : TemplateGroupBase() {
 
     val f_associateBy_key = fn("associateBy(keySelector: (T) -> K)") {
         includeDefault()
-        include(CharSequences)
+        include(CharSequences, Collections)
     } builder {
         inline()
         typeParam("K")
@@ -309,6 +310,7 @@ object Snapshots : TemplateGroupBase() {
             else -> "samples.collections.Collections.Transformations.associateBy"
         })
         returns("Map<K, T>")
+        specialFor(Collections) { since("1.9") }
 
         // Collection size helper methods are private, so we fall back to the calculation from HashSet's Collection
         // constructor.
@@ -329,7 +331,7 @@ object Snapshots : TemplateGroupBase() {
             return associateByTo(LinkedHashMap<K, T>(capacity), keySelector)
             """
         }
-        body(ArraysOfObjects, ArraysOfPrimitives) {
+        body(ArraysOfObjects, ArraysOfPrimitives, Collections) {
             """
             val capacity = mapCapacity(size).coerceAtLeast(16)
             return associateByTo(LinkedHashMap<K, T>(capacity), keySelector)
@@ -371,7 +373,7 @@ object Snapshots : TemplateGroupBase() {
 
     val f_associateBy_key_value = fn("associateBy(keySelector: (T) -> K, valueTransform: (T) -> V)") {
         includeDefault()
-        include(CharSequences)
+        include(CharSequences, Collections)
     } builder {
         inline()
         typeParam("K")
@@ -391,6 +393,7 @@ object Snapshots : TemplateGroupBase() {
             else -> "samples.collections.Collections.Transformations.associateByWithValueTransform"
         })
         returns("Map<K, V>")
+        specialFor(Collections) { since("1.9") }
 
         /**
          * Collection size helper methods are private, so we fall back to the calculation from HashSet's Collection
@@ -414,7 +417,7 @@ object Snapshots : TemplateGroupBase() {
             return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
             """
         }
-        body(ArraysOfObjects, ArraysOfPrimitives) {
+        body(ArraysOfObjects, ArraysOfPrimitives, Collections) {
             """
             val capacity = mapCapacity(size).coerceAtLeast(16)
             return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
@@ -457,7 +460,7 @@ object Snapshots : TemplateGroupBase() {
     }
 
     val f_associateWith = fn("associateWith(valueSelector: (K) -> V)") {
-        include(Iterables, Sequences, CharSequences, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
+        include(Iterables, Sequences, CharSequences, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, Collections)
     } builder {
         inline()
         specialFor(ArraysOfPrimitives, ArraysOfUnsigned) { inlineOnly() }
@@ -465,6 +468,7 @@ object Snapshots : TemplateGroupBase() {
         specialFor(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
             since("1.4")
         }
+        specialFor(Collections) { since("1.9") }
         typeParam("K", primary = true)
         typeParam("V")
         returns("Map<K, V>")
@@ -486,6 +490,7 @@ object Snapshots : TemplateGroupBase() {
             val capacity = when (family) {
                 Iterables -> "mapCapacity(collectionSizeOrDefault(10)).coerceAtLeast(16)"
                 CharSequences -> "mapCapacity(length.coerceAtMost(128)).coerceAtLeast(16)"
+                Collections -> "mapCapacity(size.coerceAtMost(128)).coerceAtLeast(16)"
                 ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned -> if (primitive == PrimitiveType.Char) {
                     "mapCapacity(size.coerceAtMost(128)).coerceAtLeast(16)"
                 } else {

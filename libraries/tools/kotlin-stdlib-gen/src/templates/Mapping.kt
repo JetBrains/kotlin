@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -49,10 +49,11 @@ object Mapping : TemplateGroupBase() {
 
     val f_mapIndexed = fn("mapIndexed(transform: (index: Int, T) -> R)") {
         includeDefault()
-        include(CharSequences, ArraysOfUnsigned)
+        include(CharSequences, ArraysOfUnsigned, Collections)
     } builder {
         inline()
         specialFor(ArraysOfUnsigned) { inlineOnly() }
+        specialFor(Collections) { since("1.9") }
 
         doc {
             """
@@ -67,7 +68,7 @@ object Mapping : TemplateGroupBase() {
         body(Iterables) {
             "return mapIndexedTo(ArrayList<R>(collectionSizeOrDefault(10)), transform)"
         }
-        body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
+        body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, Collections) {
             "return mapIndexedTo(ArrayList<R>(size), transform)"
         }
         body(CharSequences) {
@@ -84,10 +85,11 @@ object Mapping : TemplateGroupBase() {
 
     val f_map = fn("map(transform: (T) -> R)") {
         includeDefault()
-        include(Maps, CharSequences, ArraysOfUnsigned)
+        include(Maps, CharSequences, ArraysOfUnsigned, Collections)
     } builder {
         inline()
         specialFor(ArraysOfUnsigned) { inlineOnly() }
+        specialFor(Collections) { since("1.9") }
 
         doc {
             """
@@ -96,7 +98,7 @@ object Mapping : TemplateGroupBase() {
             """
         }
 
-        specialFor(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
+        specialFor(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, Collections) {
             sample("samples.collections.Collections.Transformations.map")
         }
 
@@ -113,7 +115,7 @@ object Mapping : TemplateGroupBase() {
         body(Iterables) {
             "return mapTo(ArrayList<R>(collectionSizeOrDefault(10)), transform)"
         }
-        body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, Maps) {
+        body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, Maps, Collections) {
             "return mapTo(ArrayList<R>(size), transform)"
         }
         body(CharSequences) {

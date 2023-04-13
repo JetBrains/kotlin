@@ -1181,6 +1181,22 @@ public inline fun <T, K, V> Iterable<T>.associate(transform: (T) -> Pair<K, V>):
 }
 
 /**
+ * Returns a [Map] containing key-value pairs provided by [transform] function
+ * applied to elements of the given collection.
+ * 
+ * If any of two pairs would have the same key the last one gets added to the map.
+ * 
+ * The returned map preserves the entry iteration order of the original collection.
+ * 
+ * @sample samples.collections.Collections.Transformations.associate
+ */
+@SinceKotlin("1.9")
+public inline fun <T, K, V> Collection<T>.associate(transform: (T) -> Pair<K, V>): Map<K, V> {
+    val capacity = mapCapacity(size).coerceAtLeast(16)
+    return associateTo(LinkedHashMap<K, V>(capacity), transform)
+}
+
+/**
  * Returns a [Map] containing the elements from the given collection indexed by the key
  * returned from [keySelector] function applied to each element.
  * 
@@ -1196,6 +1212,22 @@ public inline fun <T, K> Iterable<T>.associateBy(keySelector: (T) -> K): Map<K, 
 }
 
 /**
+ * Returns a [Map] containing the elements from the given collection indexed by the key
+ * returned from [keySelector] function applied to each element.
+ * 
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
+ * The returned map preserves the entry iteration order of the original collection.
+ * 
+ * @sample samples.collections.Collections.Transformations.associateBy
+ */
+@SinceKotlin("1.9")
+public inline fun <T, K> Collection<T>.associateBy(keySelector: (T) -> K): Map<K, T> {
+    val capacity = mapCapacity(size).coerceAtLeast(16)
+    return associateByTo(LinkedHashMap<K, T>(capacity), keySelector)
+}
+
+/**
  * Returns a [Map] containing the values provided by [valueTransform] and indexed by [keySelector] functions applied to elements of the given collection.
  * 
  * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
@@ -1206,6 +1238,21 @@ public inline fun <T, K> Iterable<T>.associateBy(keySelector: (T) -> K): Map<K, 
  */
 public inline fun <T, K, V> Iterable<T>.associateBy(keySelector: (T) -> K, valueTransform: (T) -> V): Map<K, V> {
     val capacity = mapCapacity(collectionSizeOrDefault(10)).coerceAtLeast(16)
+    return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
+}
+
+/**
+ * Returns a [Map] containing the values provided by [valueTransform] and indexed by [keySelector] functions applied to elements of the given collection.
+ * 
+ * If any two elements would have the same key returned by [keySelector] the last one gets added to the map.
+ * 
+ * The returned map preserves the entry iteration order of the original collection.
+ * 
+ * @sample samples.collections.Collections.Transformations.associateByWithValueTransform
+ */
+@SinceKotlin("1.9")
+public inline fun <T, K, V> Collection<T>.associateBy(keySelector: (T) -> K, valueTransform: (T) -> V): Map<K, V> {
+    val capacity = mapCapacity(size).coerceAtLeast(16)
     return associateByTo(LinkedHashMap<K, V>(capacity), keySelector, valueTransform)
 }
 
@@ -1269,6 +1316,22 @@ public inline fun <T, K, V, M : MutableMap<in K, in V>> Iterable<T>.associateTo(
 @SinceKotlin("1.3")
 public inline fun <K, V> Iterable<K>.associateWith(valueSelector: (K) -> V): Map<K, V> {
     val result = LinkedHashMap<K, V>(mapCapacity(collectionSizeOrDefault(10)).coerceAtLeast(16))
+    return associateWithTo(result, valueSelector)
+}
+
+/**
+ * Returns a [Map] where keys are elements from the given collection and values are
+ * produced by the [valueSelector] function applied to each element.
+ * 
+ * If any two elements are equal, the last one gets added to the map.
+ * 
+ * The returned map preserves the entry iteration order of the original collection.
+ * 
+ * @sample samples.collections.Collections.Transformations.associateWith
+ */
+@SinceKotlin("1.9")
+public inline fun <K, V> Collection<K>.associateWith(valueSelector: (K) -> V): Map<K, V> {
+    val result = LinkedHashMap<K, V>(mapCapacity(size.coerceAtMost(128)).coerceAtLeast(16))
     return associateWithTo(result, valueSelector)
 }
 
@@ -1551,12 +1614,34 @@ public inline fun <T, R> Iterable<T>.map(transform: (T) -> R): List<R> {
 
 /**
  * Returns a list containing the results of applying the given [transform] function
+ * to each element in the original collection.
+ * 
+ * @sample samples.collections.Collections.Transformations.map
+ */
+@SinceKotlin("1.9")
+public inline fun <T, R> Collection<T>.map(transform: (T) -> R): List<R> {
+    return mapTo(ArrayList<R>(size), transform)
+}
+
+/**
+ * Returns a list containing the results of applying the given [transform] function
  * to each element and its index in the original collection.
  * @param [transform] function that takes the index of an element and the element itself
  * and returns the result of the transform applied to the element.
  */
 public inline fun <T, R> Iterable<T>.mapIndexed(transform: (index: Int, T) -> R): List<R> {
     return mapIndexedTo(ArrayList<R>(collectionSizeOrDefault(10)), transform)
+}
+
+/**
+ * Returns a list containing the results of applying the given [transform] function
+ * to each element and its index in the original collection.
+ * @param [transform] function that takes the index of an element and the element itself
+ * and returns the result of the transform applied to the element.
+ */
+@SinceKotlin("1.9")
+public inline fun <T, R> Collection<T>.mapIndexed(transform: (index: Int, T) -> R): List<R> {
+    return mapIndexedTo(ArrayList<R>(size), transform)
 }
 
 /**
@@ -1729,6 +1814,22 @@ public inline fun <T> Iterable<T>.all(predicate: (T) -> Boolean): Boolean {
 }
 
 /**
+ * Returns `true` if all elements match the given [predicate].
+ * 
+ * Note that if the collection contains no elements, the function returns `true`
+ * because there are no elements in it that _do not_ match the predicate.
+ * See a more detailed explanation of this logic concept in ["Vacuous truth"](https://en.wikipedia.org/wiki/Vacuous_truth) article.
+ * 
+ * @sample samples.collections.Collections.Aggregates.all
+ */
+@SinceKotlin("1.9")
+public inline fun <T> Collection<T>.all(predicate: (T) -> Boolean): Boolean {
+    if (isEmpty()) return true
+    for (element in this) if (!predicate(element)) return false
+    return true
+}
+
+/**
  * Returns `true` if collection has at least one element.
  * 
  * @sample samples.collections.Collections.Aggregates.any
@@ -1739,12 +1840,34 @@ public fun <T> Iterable<T>.any(): Boolean {
 }
 
 /**
+ * Returns `true` if collection has at least one element.
+ * 
+ * @sample samples.collections.Collections.Aggregates.any
+ */
+@SinceKotlin("1.9")
+public fun <T> Collection<T>.any(): Boolean {
+    return !isEmpty()
+}
+
+/**
  * Returns `true` if at least one element matches the given [predicate].
  * 
  * @sample samples.collections.Collections.Aggregates.anyWithPredicate
  */
 public inline fun <T> Iterable<T>.any(predicate: (T) -> Boolean): Boolean {
     if (this is Collection && isEmpty()) return false
+    for (element in this) if (predicate(element)) return true
+    return false
+}
+
+/**
+ * Returns `true` if at least one element matches the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.anyWithPredicate
+ */
+@SinceKotlin("1.9")
+public inline fun <T> Collection<T>.any(predicate: (T) -> Boolean): Boolean {
+    if (isEmpty()) return false
     for (element in this) if (predicate(element)) return true
     return false
 }
@@ -1774,6 +1897,17 @@ public inline fun <T> Iterable<T>.count(predicate: (T) -> Boolean): Int {
     if (this is Collection && isEmpty()) return 0
     var count = 0
     for (element in this) if (predicate(element)) checkCountOverflow(++count)
+    return count
+}
+
+/**
+ * Returns the number of elements matching the given [predicate].
+ */
+@SinceKotlin("1.9")
+public inline fun <T> Collection<T>.count(predicate: (T) -> Boolean): Int {
+    if (isEmpty()) return 0
+    var count = 0
+    for (element in this) if (predicate(element)) ++count
     return count
 }
 
@@ -2616,12 +2750,34 @@ public fun <T> Iterable<T>.none(): Boolean {
 }
 
 /**
+ * Returns `true` if the collection has no elements.
+ * 
+ * @sample samples.collections.Collections.Aggregates.none
+ */
+@SinceKotlin("1.9")
+public fun <T> Collection<T>.none(): Boolean {
+    return isEmpty()
+}
+
+/**
  * Returns `true` if no elements match the given [predicate].
  * 
  * @sample samples.collections.Collections.Aggregates.noneWithPredicate
  */
 public inline fun <T> Iterable<T>.none(predicate: (T) -> Boolean): Boolean {
     if (this is Collection && isEmpty()) return true
+    for (element in this) if (predicate(element)) return false
+    return true
+}
+
+/**
+ * Returns `true` if no elements match the given [predicate].
+ * 
+ * @sample samples.collections.Collections.Aggregates.noneWithPredicate
+ */
+@SinceKotlin("1.9")
+public inline fun <T> Collection<T>.none(predicate: (T) -> Boolean): Boolean {
+    if (isEmpty()) return true
     for (element in this) if (predicate(element)) return false
     return true
 }
@@ -2857,6 +3013,29 @@ public inline fun <T, R> Iterable<T>.runningFold(initial: R, operation: (acc: R,
 
 /**
  * Returns a list containing successive accumulation values generated by applying [operation] from left to right
+ * to each element and current accumulator value that starts with [initial] value.
+ * 
+ * Note that `acc` value passed to [operation] function should not be mutated;
+ * otherwise it would affect the previous value in resulting list.
+ * 
+ * @param [operation] function that takes current accumulator value and an element, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.runningFold
+ */
+@SinceKotlin("1.9")
+public inline fun <T, R> Collection<T>.runningFold(initial: R, operation: (acc: R, T) -> R): List<R> {
+    if (isEmpty()) return listOf(initial)
+    val result = ArrayList<R>(size + 1).apply { add(initial) }
+    var accumulator = initial
+    for (element in this) {
+        accumulator = operation(accumulator, element)
+        result.add(accumulator)
+    }
+    return result
+}
+
+/**
+ * Returns a list containing successive accumulation values generated by applying [operation] from left to right
  * to each element, its index in the original collection and current accumulator value that starts with [initial] value.
  * 
  * Note that `acc` value passed to [operation] function should not be mutated;
@@ -2870,6 +3049,32 @@ public inline fun <T, R> Iterable<T>.runningFold(initial: R, operation: (acc: R,
 @SinceKotlin("1.4")
 public inline fun <T, R> Iterable<T>.runningFoldIndexed(initial: R, operation: (index: Int, acc: R, T) -> R): List<R> {
     val estimatedSize = collectionSizeOrDefault(9)
+    if (estimatedSize == 0) return listOf(initial)
+    val result = ArrayList<R>(estimatedSize + 1).apply { add(initial) }
+    var index = 0
+    var accumulator = initial
+    for (element in this) {
+        accumulator = operation(index++, accumulator, element)
+        result.add(accumulator)
+    }
+    return result
+}
+
+/**
+ * Returns a list containing successive accumulation values generated by applying [operation] from left to right
+ * to each element, its index in the original collection and current accumulator value that starts with [initial] value.
+ * 
+ * Note that `acc` value passed to [operation] function should not be mutated;
+ * otherwise it would affect the previous value in resulting list.
+ * 
+ * @param [operation] function that takes the index of an element, current accumulator value
+ * and the element itself, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.runningFold
+ */
+@SinceKotlin("1.9")
+public inline fun <T, R> Collection<T>.runningFoldIndexed(initial: R, operation: (index: Int, acc: R, T) -> R): List<R> {
+    val estimatedSize = size
     if (estimatedSize == 0) return listOf(initial)
     val result = ArrayList<R>(estimatedSize + 1).apply { add(initial) }
     var index = 0
@@ -2908,6 +3113,31 @@ public inline fun <S, T : S> Iterable<T>.runningReduce(operation: (acc: S, T) ->
 
 /**
  * Returns a list containing successive accumulation values generated by applying [operation] from left to right
+ * to each element and current accumulator value that starts with the first element of this collection.
+ * 
+ * Note that `acc` value passed to [operation] function should not be mutated;
+ * otherwise it would affect the previous value in resulting list.
+ * 
+ * @param [operation] function that takes current accumulator value and the element, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.runningReduce
+ */
+@SinceKotlin("1.9")
+@WasExperimental(ExperimentalStdlibApi::class)
+public inline fun <S, T : S> Collection<T>.runningReduce(operation: (acc: S, T) -> S): List<S> {
+    if (isEmpty()) return emptyList()
+    val iterator = this.iterator()
+    var accumulator: S = iterator.next()
+    val result = ArrayList<S>(size).apply { add(accumulator) }
+    while (iterator.hasNext()) {
+        accumulator = operation(accumulator, iterator.next())
+        result.add(accumulator)
+    }
+    return result
+}
+
+/**
+ * Returns a list containing successive accumulation values generated by applying [operation] from left to right
  * to each element, its index in the original collection and current accumulator value that starts with the first element of this collection.
  * 
  * Note that `acc` value passed to [operation] function should not be mutated;
@@ -2924,6 +3154,32 @@ public inline fun <S, T : S> Iterable<T>.runningReduceIndexed(operation: (index:
     if (!iterator.hasNext()) return emptyList()
     var accumulator: S = iterator.next()
     val result = ArrayList<S>(collectionSizeOrDefault(10)).apply { add(accumulator) }
+    var index = 1
+    while (iterator.hasNext()) {
+        accumulator = operation(index++, accumulator, iterator.next())
+        result.add(accumulator)
+    }
+    return result
+}
+
+/**
+ * Returns a list containing successive accumulation values generated by applying [operation] from left to right
+ * to each element, its index in the original collection and current accumulator value that starts with the first element of this collection.
+ * 
+ * Note that `acc` value passed to [operation] function should not be mutated;
+ * otherwise it would affect the previous value in resulting list.
+ * 
+ * @param [operation] function that takes the index of an element, current accumulator value
+ * and the element itself, and calculates the next accumulator value.
+ * 
+ * @sample samples.collections.Collections.Aggregates.runningReduce
+ */
+@SinceKotlin("1.9")
+public inline fun <S, T : S> Collection<T>.runningReduceIndexed(operation: (index: Int, acc: S, T) -> S): List<S> {
+    if (isEmpty()) return emptyList()
+    val iterator = this.iterator()
+    var accumulator: S = iterator.next()
+    val result = ArrayList<S>(size).apply { add(accumulator) }
     var index = 1
     while (iterator.hasNext()) {
         accumulator = operation(index++, accumulator, iterator.next())

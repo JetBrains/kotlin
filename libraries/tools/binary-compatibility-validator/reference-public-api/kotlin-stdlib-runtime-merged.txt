@@ -2185,19 +2185,26 @@ public final class kotlin/collections/CollectionsKt {
 	public static final fun addAll (Ljava/util/Collection;Lkotlin/sequences/Sequence;)Z
 	public static final fun addAll (Ljava/util/Collection;[Ljava/lang/Object;)Z
 	public static final fun all (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Z
+	public static final fun all (Ljava/util/Collection;Lkotlin/jvm/functions/Function1;)Z
 	public static final fun any (Ljava/lang/Iterable;)Z
 	public static final fun any (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Z
+	public static final fun any (Ljava/util/Collection;)Z
+	public static final fun any (Ljava/util/Collection;Lkotlin/jvm/functions/Function1;)Z
 	public static final fun arrayListOf ([Ljava/lang/Object;)Ljava/util/ArrayList;
 	public static final fun asReversed (Ljava/util/List;)Ljava/util/List;
 	public static final fun asReversedMutable (Ljava/util/List;)Ljava/util/List;
 	public static final fun asSequence (Ljava/lang/Iterable;)Lkotlin/sequences/Sequence;
 	public static final fun associate (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
+	public static final fun associate (Ljava/util/Collection;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
 	public static final fun associateBy (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
 	public static final fun associateBy (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
+	public static final fun associateBy (Ljava/util/Collection;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
+	public static final fun associateBy (Ljava/util/Collection;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
 	public static final fun associateByTo (Ljava/lang/Iterable;Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
 	public static final fun associateByTo (Ljava/lang/Iterable;Ljava/util/Map;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
 	public static final fun associateTo (Ljava/lang/Iterable;Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
 	public static final fun associateWith (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
+	public static final fun associateWith (Ljava/util/Collection;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
 	public static final fun associateWithTo (Ljava/lang/Iterable;Ljava/util/Map;Lkotlin/jvm/functions/Function1;)Ljava/util/Map;
 	public static final fun averageOfByte (Ljava/lang/Iterable;)D
 	public static final fun averageOfDouble (Ljava/lang/Iterable;)D
@@ -2221,6 +2228,7 @@ public final class kotlin/collections/CollectionsKt {
 	public static final fun contains (Ljava/lang/Iterable;Ljava/lang/Object;)Z
 	public static final fun count (Ljava/lang/Iterable;)I
 	public static final fun count (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)I
+	public static final fun count (Ljava/util/Collection;Lkotlin/jvm/functions/Function1;)I
 	public static final fun createListBuilder ()Ljava/util/List;
 	public static final fun createListBuilder (I)Ljava/util/List;
 	public static final fun distinct (Ljava/lang/Iterable;)Ljava/util/List;
@@ -2296,7 +2304,9 @@ public final class kotlin/collections/CollectionsKt {
 	public static final fun listOfNotNull (Ljava/lang/Object;)Ljava/util/List;
 	public static final fun listOfNotNull ([Ljava/lang/Object;)Ljava/util/List;
 	public static final fun map (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Ljava/util/List;
+	public static final fun map (Ljava/util/Collection;Lkotlin/jvm/functions/Function1;)Ljava/util/List;
 	public static final fun mapIndexed (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
+	public static final fun mapIndexed (Ljava/util/Collection;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
 	public static final fun mapIndexedNotNull (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
 	public static final fun mapIndexedNotNullTo (Ljava/lang/Iterable;Ljava/util/Collection;Lkotlin/jvm/functions/Function2;)Ljava/util/Collection;
 	public static final fun mapIndexedTo (Ljava/lang/Iterable;Ljava/util/Collection;Lkotlin/jvm/functions/Function2;)Ljava/util/Collection;
@@ -2340,6 +2350,8 @@ public final class kotlin/collections/CollectionsKt {
 	public static final fun mutableListOf ([Ljava/lang/Object;)Ljava/util/List;
 	public static final fun none (Ljava/lang/Iterable;)Z
 	public static final fun none (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Z
+	public static final fun none (Ljava/util/Collection;)Z
+	public static final fun none (Ljava/util/Collection;Lkotlin/jvm/functions/Function1;)Z
 	public static final fun onEach (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Ljava/lang/Iterable;
 	public static final fun onEachIndexed (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function2;)Ljava/lang/Iterable;
 	public static final fun partition (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function1;)Lkotlin/Pair;
@@ -2380,9 +2392,13 @@ public final class kotlin/collections/CollectionsKt {
 	public static final fun reverse (Ljava/util/List;)V
 	public static final fun reversed (Ljava/lang/Iterable;)Ljava/util/List;
 	public static final fun runningFold (Ljava/lang/Iterable;Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
+	public static final fun runningFold (Ljava/util/Collection;Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
 	public static final fun runningFoldIndexed (Ljava/lang/Iterable;Ljava/lang/Object;Lkotlin/jvm/functions/Function3;)Ljava/util/List;
+	public static final fun runningFoldIndexed (Ljava/util/Collection;Ljava/lang/Object;Lkotlin/jvm/functions/Function3;)Ljava/util/List;
 	public static final fun runningReduce (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
+	public static final fun runningReduce (Ljava/util/Collection;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
 	public static final fun runningReduceIndexed (Ljava/lang/Iterable;Lkotlin/jvm/functions/Function3;)Ljava/util/List;
+	public static final fun runningReduceIndexed (Ljava/util/Collection;Lkotlin/jvm/functions/Function3;)Ljava/util/List;
 	public static final fun scan (Ljava/lang/Iterable;Ljava/lang/Object;Lkotlin/jvm/functions/Function2;)Ljava/util/List;
 	public static final fun scanIndexed (Ljava/lang/Iterable;Ljava/lang/Object;Lkotlin/jvm/functions/Function3;)Ljava/util/List;
 	public static final fun shuffle (Ljava/util/List;Lkotlin/random/Random;)V
