@@ -63,6 +63,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.Variance
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
+import org.jetbrains.kotlin.analysis.api.fir.signatures.KtFirFunctionFirSymbolBasedSignature
+import org.jetbrains.kotlin.analysis.api.fir.signatures.KtFirPropertyFirSymbolBasedSignature
 
 /**
  * Maps FirElement to KtSymbol & ConeType to KtType, thread safe
@@ -221,18 +223,7 @@ internal class KtSymbolByFirBuilder constructor(
         fun buildFunctionSignature(firSymbol: FirNamedFunctionSymbol): KtFunctionLikeSignature<KtFirFunctionSymbol> {
             firSymbol.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
             val functionSymbol = buildFunctionSymbol(firSymbol)
-            return KtFunctionLikeSignature(
-                functionSymbol,
-                typeBuilder.buildKtType(firSymbol.resolvedReturnType),
-                firSymbol.resolvedReceiverTypeRef?.let { typeBuilder.buildKtType(it) },
-                functionSymbol.valueParameters.zip(firSymbol.fir.valueParameters).map { (ktSymbol, fir) ->
-                    var type = fir.returnTypeRef.coneType
-                    if (fir.isVararg) {
-                        type = type.arrayElementType() ?: type
-                    }
-                    KtVariableLikeSignature(ktSymbol, typeBuilder.buildKtType(type), null)
-                }
-            )
+            return KtFirFunctionFirSymbolBasedSignature(functionSymbol, firSymbol, analysisSession.firSymbolBuilder)
         }
 
         fun buildAnonymousFunctionSymbol(firSymbol: FirAnonymousFunctionSymbol): KtFirAnonymousFunctionSymbol {
@@ -312,11 +303,7 @@ internal class KtSymbolByFirBuilder constructor(
 
         fun buildPropertySignature(firSymbol: FirPropertySymbol): KtVariableLikeSignature<KtVariableSymbol> {
             firSymbol.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
-            return KtVariableLikeSignature(
-                buildPropertySymbol(firSymbol),
-                typeBuilder.buildKtType(firSymbol.fir.returnTypeRef),
-                firSymbol.resolvedReceiverTypeRef?.let { typeBuilder.buildKtType(it) }
-            )
+            return KtFirPropertyFirSymbolBasedSignature(buildPropertySymbol(firSymbol), firSymbol, analysisSession.firSymbolBuilder)
         }
 
         fun buildLocalVariableSymbol(firSymbol: FirPropertySymbol): KtFirLocalVariableSymbol {

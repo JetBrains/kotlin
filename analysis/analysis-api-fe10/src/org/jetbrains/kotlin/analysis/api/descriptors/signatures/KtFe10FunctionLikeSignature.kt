@@ -1,0 +1,41 @@
+/*
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.analysis.api.descriptors.signatures
+
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
+import org.jetbrains.kotlin.analysis.api.signatures.KtFunctionLikeSignature
+import org.jetbrains.kotlin.analysis.api.signatures.KtVariableLikeSignature
+import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
+import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
+import org.jetbrains.kotlin.analysis.api.types.KtType
+
+internal class KtFe10FunctionLikeSignature<out S : KtFunctionLikeSymbol>(
+    symbol: S,
+    private val _returnType: KtType,
+    private val _receiverType: KtType?,
+    private val _valueParameters: List<KtVariableLikeSignature<KtValueParameterSymbol>>,
+) : KtFunctionLikeSignature<S>(symbol) {
+    override val returnType: KtType
+        get() = withValidityAssertion { _returnType }
+    override val receiverType: KtType?
+        get() = withValidityAssertion { _receiverType }
+    override val valueParameters: List<KtVariableLikeSignature<KtValueParameterSymbol>>
+        get() = withValidityAssertion { _valueParameters }
+
+    override fun substitute(substitutor: KtSubstitutor): KtFunctionLikeSignature<S> = KtFe10FunctionLikeSignature(
+        symbol,
+        substitutor.substitute(returnType),
+        receiverType?.let { substitutor.substitute(it) },
+        valueParameters.map { valueParameter ->
+            KtFe10VariableLikeSignature<KtValueParameterSymbol>(
+                valueParameter.symbol,
+                substitutor.substitute(valueParameter.returnType),
+                valueParameter.receiverType?.let { substitutor.substitute(it) }
+            )
+        }
+    )
+}

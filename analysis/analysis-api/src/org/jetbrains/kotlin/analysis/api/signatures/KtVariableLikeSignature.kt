@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.analysis.api.annotations.annotationsByClassId
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtVariableLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.receiverType
+import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.Name
@@ -21,19 +23,17 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 /**
  * A signature of a variable-like symbol. This includes properties, enum entries local variables, etc.
  */
-public class KtVariableLikeSignature<out S : KtVariableLikeSymbol>(
+public abstract class KtVariableLikeSignature<out S : KtVariableLikeSymbol>(
     private val _symbol: S,
-    private val _returnType: KtType,
-    private val _receiverType: KtType?,
 ) : KtCallableSignature<S>() {
     override val token: KtLifetimeToken
         get() = _symbol.token
     override val symbol: S
         get() = withValidityAssertion { _symbol }
     override val returnType: KtType
-        get() = withValidityAssertion { _returnType }
+        get() = withValidityAssertion { _symbol.returnType }
     override val receiverType: KtType?
-        get() = withValidityAssertion { _receiverType }
+        get() = withValidityAssertion { _symbol.receiverType }
 
     /**
      * A name of the variable with respect to the `@ParameterName` annotation. Can be different from the [KtVariableLikeSymbol.name].
@@ -66,10 +66,12 @@ public class KtVariableLikeSignature<out S : KtVariableLikeSymbol>(
             //
             //   fun foo(x: (item: Int) -> Unit) { x(1) }
             //   fun bar(x: Function1<@ParameterName("item") Int, Unit>) { x(1) }
-            val nameCanBeDeclaredInAnnotation = _symbol.psi == null
+            val nameCanBeDeclaredInAnnotation = symbol.psi == null
 
-            runIf(nameCanBeDeclaredInAnnotation) { getValueFromParameterNameAnnotation() } ?: _symbol.name
+            runIf(nameCanBeDeclaredInAnnotation) { getValueFromParameterNameAnnotation() } ?: symbol.name
         }
+
+    abstract override fun substitute(substitutor: KtSubstitutor): KtVariableLikeSignature<S>
 
     private fun getValueFromParameterNameAnnotation(): Name? {
         val resultingAnnotation = findParameterNameAnnotation() ?: return null
@@ -98,17 +100,17 @@ public class KtVariableLikeSignature<out S : KtVariableLikeSymbol>(
 
         other as KtVariableLikeSignature<*>
 
-        if (_symbol != other._symbol) return false
-        if (_returnType != other._returnType) return false
-        if (_receiverType != other._receiverType) return false
+        if (symbol != other.symbol) return false
+        if (returnType != other.returnType) return false
+        if (receiverType != other.receiverType) return false
 
         return true
     }
 
     override fun hashCode(): Int {
-        var result = _symbol.hashCode()
-        result = 31 * result + _returnType.hashCode()
-        result = 31 * result + (_receiverType?.hashCode() ?: 0)
+        var result = symbol.hashCode()
+        result = 31 * result + returnType.hashCode()
+        result = 31 * result + (receiverType?.hashCode() ?: 0)
         return result
     }
 }

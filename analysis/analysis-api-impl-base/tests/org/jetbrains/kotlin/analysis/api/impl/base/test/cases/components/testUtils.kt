@@ -34,6 +34,11 @@ import kotlin.reflect.full.memberProperties
 internal fun KtAnalysisSession.stringRepresentation(any: Any): String = with(any) {
     fun KtType.render() = asStringForDebugging().replace('/', '.')
     fun String.indented() = replace("\n", "\n  ")
+    fun Any.clazz() = when (this) {
+        is KtVariableLikeSignature<*> -> KtVariableLikeSignature::class
+        is KtFunctionLikeSignature<*> -> KtFunctionLikeSignature::class
+        else -> this::class
+    }
     return when (this) {
         is KtFunctionLikeSymbol -> buildString {
             append(
@@ -92,7 +97,7 @@ internal fun KtAnalysisSession.stringRepresentation(any: Any): String = with(any
         is Name -> asString()
         is CallableId -> toString()
         else -> buildString {
-            val clazz = this@with::class
+            val clazz = this@with.clazz()
             val className = clazz.simpleName!!
             append(className)
             appendLine(":")
