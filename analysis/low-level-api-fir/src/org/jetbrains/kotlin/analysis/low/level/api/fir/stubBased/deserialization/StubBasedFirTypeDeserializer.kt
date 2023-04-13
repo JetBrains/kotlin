@@ -38,7 +38,7 @@ import org.jetbrains.kotlin.types.Variance
 
 class StubBasedFirTypeDeserializer(
     val moduleData: FirModuleData,
-    val annotationDeserializer: StubBasedAbstractAnnotationDeserializer,
+    val annotationDeserializer: StubBasedAnnotationDeserializer,
     owner: KtTypeParameterListOwner,
     val parent: StubBasedFirTypeDeserializer?,
     val containingSymbol: FirBasedSymbol<*>?
@@ -67,7 +67,7 @@ class StubBasedFirTypeDeserializer(
                     this.containingDeclarationSymbol = containingSymbol ?: error("Top-level type parameter ???")
                     variance = typeParameter.variance
                     isReified = typeParameter.hasModifier(KtTokens.REIFIED_KEYWORD)
-                    annotations += annotationDeserializer.loadTypeParameterAnnotations(typeParameter)
+                    annotations += annotationDeserializer.loadAnnotations(typeParameter)
                 }
             }
 
@@ -92,13 +92,13 @@ class StubBasedFirTypeDeserializer(
 
     fun typeRef(typeReference: KtTypeReference): FirTypeRef {
         return buildResolvedTypeRef {
-            annotations += annotationDeserializer.loadTypeAnnotations(typeReference)
+            annotations += annotationDeserializer.loadAnnotations(typeReference)
             type = type(typeReference, annotations.computeTypeAttributes(moduleData.session, shouldExpandTypeAliases = false))
         }
     }
 
     private fun attributesFromAnnotations(typeReference: KtTypeReference): ConeAttributes =
-        annotationDeserializer.loadTypeAnnotations(typeReference).computeTypeAttributes(moduleData.session, shouldExpandTypeAliases = false)
+        annotationDeserializer.loadAnnotations(typeReference).computeTypeAttributes(moduleData.session, shouldExpandTypeAliases = false)
 
     fun type(typeReference: KtTypeReference): ConeKotlinType {
         return type(typeReference, attributesFromAnnotations(typeReference))

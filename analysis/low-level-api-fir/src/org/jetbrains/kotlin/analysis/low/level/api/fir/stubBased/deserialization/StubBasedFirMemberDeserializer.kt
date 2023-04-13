@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization
 
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
@@ -39,7 +40,7 @@ class StubBasedFirDeserializationContext(
     val packageFqName: FqName,
     val relativeClassName: FqName?,
     val typeDeserializer: StubBasedFirTypeDeserializer,
-    val annotationDeserializer: StubBasedAbstractAnnotationDeserializer,
+    val annotationDeserializer: StubBasedAnnotationDeserializer,
     val containerSource: DeserializedContainerSource?,
     val outerClassSymbol: FirRegularClassSymbol?,
     val outerTypeParameters: List<FirTypeParameterSymbol>
@@ -54,7 +55,7 @@ class StubBasedFirDeserializationContext(
         relativeClassName: FqName? = this.relativeClassName,
         containerSource: DeserializedContainerSource? = this.containerSource,
         outerClassSymbol: FirRegularClassSymbol? = this.outerClassSymbol,
-        annotationDeserializer: StubBasedAbstractAnnotationDeserializer = this.annotationDeserializer,
+        annotationDeserializer: StubBasedAnnotationDeserializer = this.annotationDeserializer,
         capturesTypeParameters: Boolean = true,
         containingDeclarationSymbol: FirBasedSymbol<*>? = this.outerClassSymbol
     ): StubBasedFirDeserializationContext = StubBasedFirDeserializationContext(
@@ -83,7 +84,7 @@ class StubBasedFirDeserializationContext(
             classId: ClassId,
             classOrObject: KtClassOrObject,
             moduleData: FirModuleData,
-            annotationDeserializer: StubBasedAbstractAnnotationDeserializer,
+            annotationDeserializer: StubBasedAnnotationDeserializer,
             containerSource: DeserializedContainerSource?,
             outerClassSymbol: FirRegularClassSymbol
         ): StubBasedFirDeserializationContext = createRootContext(
@@ -99,7 +100,7 @@ class StubBasedFirDeserializationContext(
 
         fun createRootContext(
             moduleData: FirModuleData,
-            annotationDeserializer: StubBasedAbstractAnnotationDeserializer,
+            annotationDeserializer: StubBasedAnnotationDeserializer,
             packageFqName: FqName,
             relativeClassName: FqName?,
             owner: KtTypeParameterListOwner,
@@ -131,7 +132,7 @@ class StubBasedFirDeserializationContext(
             symbol: FirBasedSymbol<*>
         ): StubBasedFirDeserializationContext = createRootContext(
             moduleData,
-            JvmAnnotationsDeserializer(session),
+            StubBasedAnnotationDeserializer(session),
             callableId.packageName,
             callableId.className,
             parameterListOwner,
@@ -161,7 +162,7 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
                 isActual = false
             }
 
-            annotations += c.annotationDeserializer.loadTypeAliasAnnotations(typeAlias)
+            annotations += c.annotationDeserializer.loadAnnotations(typeAlias)
             symbol = aliasSymbol
             expandedTypeRef = typeAlias.getTypeReference()?.toTypeRef(local) ?: error("Type alias doesn't have type reference $typeAlias")
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
@@ -209,8 +210,8 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
             )
         }.apply {
             replaceAnnotations(
-                c.annotationDeserializer.loadPropertyGetterAnnotations(
-                    getter
+                c.annotationDeserializer.loadAnnotations(
+                    getter, AnnotationUseSiteTarget.PROPERTY_GETTER
                 )
             )
             containingClassForStaticMemberAttr = c.dispatchReceiver?.lookupTag
@@ -219,7 +220,6 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
 
     private fun loadPropertySetter(
         setter: KtPropertyAccessor,
-        classOrObject: KtClassOrObject? = null,
         classSymbol: FirClassSymbol<*>?,
         returnTypeRef: FirTypeRef,
         propertySymbol: FirPropertySymbol,
@@ -244,9 +244,7 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
                 dispatchReceiverType = c.dispatchReceiver
                 valueParameters += local.memberDeserializer.valueParameters(
                     setter.valueParameters,
-                    symbol,
-                    StubBasedAbstractAnnotationDeserializer.CallableKind.PROPERTY_SETTER,
-                    classOrObject
+                    symbol
                 )
                 this.propertySymbol = propertySymbol
             }
@@ -263,8 +261,8 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
             )
         }.apply {
             replaceAnnotations(
-                c.annotationDeserializer.loadPropertySetterAnnotations(
-                    setter
+                c.annotationDeserializer.loadAnnotations(
+                    setter, AnnotationUseSiteTarget.PROPERTY_SETTER
                 )
             )
             containingClassForStaticMemberAttr = c.dispatchReceiver?.lookupTag
@@ -273,7 +271,6 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
 
     fun loadProperty(
         property: KtProperty,
-        classOrObject: KtClassOrObject? = null,
         classSymbol: FirClassSymbol<*>? = null,
         existingSymbol: FirPropertySymbol? = null
     ): FirProperty {
@@ -286,8 +283,8 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
 
         val getter = property.getter
         val receiverAnnotations = if (getter != null && property.receiverTypeReference != null) {
-            c.annotationDeserializer.loadExtensionReceiverParameterAnnotations(
-                property, StubBasedAbstractAnnotationDeserializer.CallableKind.PROPERTY_GETTER
+            c.annotationDeserializer.loadAnnotations(
+                property, AnnotationUseSiteTarget.PROPERTY_GETTER
             )
         } else {
             emptyList()
@@ -325,13 +322,13 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             typeParameters += local.typeDeserializer.ownTypeParameters.map { it.fir }
             annotations +=
-                c.annotationDeserializer.loadPropertyAnnotations(property, classOrObject)
+                c.annotationDeserializer.loadAnnotations(property, AnnotationUseSiteTarget.PROPERTY)
             annotations +=
-                c.annotationDeserializer.loadPropertyBackingFieldAnnotations(
+                c.annotationDeserializer.loadAnnotations(
                     property
                 )
             annotations +=
-                c.annotationDeserializer.loadPropertyDelegatedFieldAnnotations(
+                c.annotationDeserializer.loadAnnotations(
                     property
                 )
             if (getter != null) {
@@ -347,7 +344,6 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
             if (setter != null) {
                 this.setter = loadPropertySetter(
                     setter,
-                    classOrObject,
                     classSymbol,
                     returnTypeRef,
                     symbol,
@@ -377,14 +373,13 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
 
     fun loadFunction(
         function: KtNamedFunction,
-        classOrObject: KtClassOrObject? = null,
         classSymbol: FirClassSymbol<*>? = null,
         session: FirSession,
         existingSymbol: FirNamedFunctionSymbol? = null
     ): FirSimpleFunction {
         val receiverAnnotations = if (function.receiverTypeReference != null) {
-            c.annotationDeserializer.loadExtensionReceiverParameterAnnotations(
-                function, StubBasedAbstractAnnotationDeserializer.CallableKind.OTHERS
+            c.annotationDeserializer.loadAnnotations(
+                function
             )
         } else {
             emptyList()
@@ -429,12 +424,10 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
             typeParameters += local.typeDeserializer.ownTypeParameters.map { it.fir }
             valueParameters += local.memberDeserializer.valueParameters(
                 function.valueParameters,
-                symbol,
-                StubBasedAbstractAnnotationDeserializer.CallableKind.OTHERS,
-                classOrObject
+                symbol
             )
             annotations +=
-                c.annotationDeserializer.loadFunctionAnnotations(function)
+                c.annotationDeserializer.loadAnnotations(function)
             deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(c.session, fromJava = false)
             this.containerSource = c.containerSource
 
@@ -505,12 +498,10 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
             valueParameters += local.memberDeserializer.valueParameters(
                 constructor.valueParameters,
                 symbol,
-                StubBasedAbstractAnnotationDeserializer.CallableKind.OTHERS,
-                classOrObject,
                 addDefaultValue = classBuilder.symbol.classId == StandardClassIds.Enum
             )
             annotations +=
-                c.annotationDeserializer.loadConstructorAnnotations(constructor)
+                c.annotationDeserializer.loadAnnotations(constructor)
             containerSource = c.containerSource
             deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(c.session, fromJava = false)
 
@@ -523,11 +514,9 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
     private fun valueParameters(
         valueParameters: List<KtParameter>,
         functionSymbol: FirFunctionSymbol<*>,
-        callableKind: StubBasedAbstractAnnotationDeserializer.CallableKind,
-        classOrObject: KtClassOrObject?,
         addDefaultValue: Boolean = false
     ): List<FirValueParameter> {
-        return valueParameters.mapIndexed { index, ktParameter ->
+        return valueParameters.map { ktParameter ->
             val name = ktParameter.nameAsSafeName
             buildValueParameter {
                 moduleData = c.moduleData
@@ -551,11 +540,8 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
                 }
                 isCrossinline = ktParameter.hasModifier(KtTokens.CROSSINLINE_KEYWORD)
                 isNoinline = ktParameter.hasModifier(KtTokens.NOINLINE_KEYWORD)
-                annotations += c.annotationDeserializer.loadValueParameterAnnotations(
-                    ktParameter,
-                    classOrObject,
-                    callableKind,
-                    index,
+                annotations += c.annotationDeserializer.loadAnnotations(
+                    ktParameter
                 )
             }
         }.toList()

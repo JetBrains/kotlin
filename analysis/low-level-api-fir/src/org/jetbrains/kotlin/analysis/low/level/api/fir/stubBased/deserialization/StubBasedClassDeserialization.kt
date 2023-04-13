@@ -50,7 +50,7 @@ fun deserializeClassToSymbol(
     symbol: FirRegularClassSymbol,
     session: FirSession,
     moduleData: FirModuleData,
-    defaultAnnotationDeserializer: StubBasedAbstractAnnotationDeserializer?,
+    defaultAnnotationDeserializer: StubBasedAnnotationDeserializer?,
     scopeProvider: FirScopeProvider,
     parentContext: StubBasedFirDeserializationContext? = null,
     containerSource: DeserializedContainerSource? = null,
@@ -83,7 +83,7 @@ fun deserializeClassToSymbol(
         isFun = classOrObject.hasModifier(KtTokens.FUN_KEYWORD)
         isExternal = classOrObject.hasModifier(KtTokens.EXTERNAL_KEYWORD)
     }
-    val annotationDeserializer = defaultAnnotationDeserializer ?: StubBasedFirBuiltinAnnotationDeserializer(session)
+    val annotationDeserializer = defaultAnnotationDeserializer ?: StubBasedAnnotationDeserializer(session)
     val context =
         parentContext?.childContext(
             classOrObject,
@@ -100,11 +100,11 @@ fun deserializeClassToSymbol(
             containerSource,
             symbol
         )
-    if (status.isCompanion) {
-        parentContext?.let {
-            context.annotationDeserializer.inheritAnnotationInfo(it.annotationDeserializer)
-        }
-    }
+//    if (status.isCompanion) {
+//        parentContext?.let {
+//            context.annotationDeserializer.inheritAnnotationInfo(it.annotationDeserializer)
+//        }
+//    }
     buildRegularClass {
         this.moduleData = moduleData
         this.origin = FirDeclarationOrigin.Library
@@ -140,8 +140,8 @@ fun deserializeClassToSymbol(
         classOrObject.body?.declarations?.forEach { declaration ->
             when (declaration) {
                 is KtConstructor<*> -> addDeclaration(classDeserializer.loadConstructor(declaration, classOrObject, this))
-                is KtNamedFunction -> addDeclaration(classDeserializer.loadFunction(declaration, classOrObject, symbol, session))
-                is KtProperty -> addDeclaration(classDeserializer.loadProperty(declaration, classOrObject, symbol))
+                is KtNamedFunction -> addDeclaration(classDeserializer.loadFunction(declaration, symbol, session))
+                is KtProperty -> addDeclaration(classDeserializer.loadProperty(declaration, symbol))
                 is KtEnumEntry -> {
                     val enumEntryName = declaration.name ?: error("Enum entry doesn't provide name $declaration")
 
@@ -214,7 +214,7 @@ fun deserializeClassToSymbol(
         valueClassRepresentation = computeValueClassRepresentation(this, session)
 
         replaceAnnotations(
-            context.annotationDeserializer.loadClassAnnotations(classOrObject)
+            context.annotationDeserializer.loadAnnotations(classOrObject)
         )
 
 
