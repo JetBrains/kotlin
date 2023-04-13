@@ -202,7 +202,8 @@ class JvmStubBasedFirDeserializedSymbolProvider(
     }
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
-        if (!classLikeNamesByPackage.getValue(classId.packageFqName).contains(classId.shortClassName)) return null
+        val topClassName = classId.relativeClassName.pathSegments().first()
+        if (!classLikeNamesByPackage.getValue(classId.packageFqName).contains(topClassName)) return null
         return getClass(classId) ?: getTypeAlias(classId)
     }
 }

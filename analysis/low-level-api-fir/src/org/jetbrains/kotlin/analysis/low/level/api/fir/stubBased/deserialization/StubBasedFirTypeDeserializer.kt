@@ -104,15 +104,6 @@ class StubBasedFirTypeDeserializer(
         return type(typeReference, attributesFromAnnotations(typeReference))
     }
 
-    fun simpleType(typeReference: KtTypeReference): ConeSimpleKotlinType {
-        return simpleType(typeReference, attributesFromAnnotations(typeReference)) ?: ConeErrorType(
-            ConeSimpleDiagnostic(
-                "?!id:0",
-                DiagnosticKind.DeserializationError
-            )
-        )
-    }
-
     private fun type(typeReference: KtTypeReference, attributes: ConeAttributes): ConeKotlinType {
 //todo flexible types
         //        if (typeReference.hasFlexibleTypeCapabilitiesId()) {
