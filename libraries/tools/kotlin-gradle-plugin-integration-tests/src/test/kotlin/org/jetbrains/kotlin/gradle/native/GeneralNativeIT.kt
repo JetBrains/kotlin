@@ -1224,11 +1224,6 @@ class GeneralNativeIT : BaseGradleIT() {
          */
         fun CompiledProject.getOutputForTask(taskPath: String): String = getOutputForTask(taskPath, output)
 
-        fun CompiledProject.extractNativeCommandLineArguments(taskPath: String? = null, toolName: NativeToolKind): List<String> =
-            extractNativeToolSettings(taskPath?.let { getOutputForTask(taskPath) } ?: output,
-                                      toolName,
-                                      NativeToolSettingsKind.COMMAND_LINE_ARGUMENTS).toList()
-
         fun CompiledProject.extractNativeCustomEnvironment(taskPath: String? = null, toolName: NativeToolKind): Map<String, String> =
             extractNativeToolSettings(taskPath?.let { getOutputForTask(taskPath) } ?: output,
                                       toolName,
@@ -1241,7 +1236,7 @@ class GeneralNativeIT : BaseGradleIT() {
             vararg taskPaths: String,
             toolName: NativeToolKind = NativeToolKind.KONANC,
             check: (List<String>) -> Unit
-        ) = taskPaths.forEach { taskPath -> check(extractNativeCommandLineArguments(taskPath, toolName)) }
+        ) = taskPaths.forEach { taskPath -> check(extractNativeCompilerCommandLineArguments(getOutputForTask(taskPath), toolName)) }
 
         fun CompiledProject.withNativeCustomEnvironment(
             vararg taskPaths: String,

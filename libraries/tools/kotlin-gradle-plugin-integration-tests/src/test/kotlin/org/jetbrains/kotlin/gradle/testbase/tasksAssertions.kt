@@ -42,6 +42,18 @@ fun BuildResult.assertTasksExecuted(vararg tasks: String) {
 }
 
 /**
+ * Asserts given [tasks] have not been executed.
+ */
+fun BuildResult.assertTasksNotExecuted(vararg tasks: String) {
+    tasks.forEach {
+        assert(!this.tasks.contains(task(it))) {
+            printBuildOutput()
+            "Task $it was executed and finished with state: ${task(it)?.outcome}"
+        }
+    }
+}
+
+/**
  * Asserts given [tasks] have 'SUCCESS' execution state.
  */
 fun BuildResult.assertTasksExecuted(tasks: Collection<String>) {
@@ -129,7 +141,7 @@ fun BuildResult.assertTasksPackedToCache(vararg tasks: String) {
  *
  * Note: Log level of output must be set to [LogLevel.DEBUG].
  *
- * @param tasksPaths names of the tasks, which classpath should be checked with give assertions
+ * @param tasksPaths tasks' paths, for which classpath should be checked with give assertions
  * @param toolName name of build tool
  * @param assertions assertions, with will be applied to each classpath of each given task
  */
@@ -138,3 +150,57 @@ fun BuildResult.assertNativeTasksClasspath(
     toolName: NativeToolKind = NativeToolKind.KONANC,
     assertions: (List<String>) -> Unit
 ) = tasksPaths.forEach { taskPath -> assertions(extractNativeCompilerClasspath(getOutputForTask(taskPath), toolName)) }
+
+/**
+ * Builds test project with 'tasks --all' arguments and then
+ * asserts that [registeredTasks] of the given tasks have been registered
+ * and tasks from the [notRegisteredTasks] list have not been registered.
+ *
+ * @param registeredTasks The names of the tasks that should have been registered,
+ *                          it could contain task paths as well, but without the first semicolon.
+ * @param notRegisteredTasks An optional list of task names that should not have been registered,
+ *                           it could contain task paths as well, but without the first semicolon.
+ * @throws AssertionError if any of the registered tasks do not match the expected task names,
+ * or if any of the not-registered tasks were actually registered.
+ */
+fun TestProject.buildAndAssertAllTasks(
+    vararg registeredTasks: String,
+    notRegisteredTasks: List<String> = emptyList()
+) {
+    build("tasks", "--all") {
+        val allRegisteredTasks = getAllTasksFromTheOutput()
+        registeredTasks.forEach {
+            assert(allRegisteredTasks.contains(it)) {
+                printBuildOutput()
+                "Expected $it task is not registered in all tasks."
+            }
+        }
+        notRegisteredTasks.forEach {
+            assert(!allRegisteredTasks.contains(it)) {
+                printBuildOutput()
+                "$it task should not be registered in all tasks."
+            }
+        }
+    }
+}
+
+/**
+ * Method parses the output of a 'tasks --all' build
+ * and returns a list of all the tasks mentioned in it.
+ *
+ * @return A list of all the tasks mentioned in the build 'tasks -all' output
+ * @throws IllegalStateException if the build output could not be parsed.
+ */
+private fun BuildResult.getAllTasksFromTheOutput(): List<String> {
+
+    val taskPattern = Regex("^([:\\w]+) - (.*)$")
+    val tasks = mutableListOf<String>()
+
+    output.lines().forEach { line ->
+        if (line.matches(taskPattern)) {
+            tasks.add(taskPattern.find(line)!!.groupValues[1])
+        }
+    }
+
+    return tasks
+}

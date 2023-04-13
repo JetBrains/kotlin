@@ -725,11 +725,6 @@ abstract class BaseGradleIT {
         }
     }
 
-    fun CompiledProject.assertTasksRegisteredAndNotRealized(vararg tasks: String) {
-        assertTasksRegistered(*tasks)
-        assertTasksNotRealized(*tasks)
-    }
-
     fun CompiledProject.assertTasksSkipped(vararg tasks: String) {
         for (task in tasks) {
             assertContains("Skipping task '$task'")
