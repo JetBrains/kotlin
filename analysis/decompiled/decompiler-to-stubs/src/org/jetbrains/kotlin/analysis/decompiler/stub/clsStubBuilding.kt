@@ -101,31 +101,32 @@ fun createFileStub(packageFqName: FqName, isScript: Boolean): KotlinFileStubImpl
 
 private fun setupFileStub(fileStub: KotlinFileStubImpl, packageFqName: FqName) {
     val packageDirectiveStub = KotlinPlaceHolderStubImpl<KtPackageDirective>(fileStub, KtStubElementTypes.PACKAGE_DIRECTIVE)
-    createStubForPackageName(packageDirectiveStub, packageFqName)
+    createStubForPackageName(packageDirectiveStub, packageFqName, 0)
     KotlinPlaceHolderStubImpl<KtImportList>(fileStub, KtStubElementTypes.IMPORT_LIST)
 }
 
-fun createStubForPackageName(packageDirectiveStub: KotlinPlaceHolderStubImpl<KtPackageDirective>, packageFqName: FqName) {
+fun createStubForPackageName(stub: StubElement<*>, packageFqName: FqName, classLength: Int){
     val segments = packageFqName.pathSegments()
     val iterator = segments.listIterator(segments.size)
+    val packageLength = segments.size - classLength
 
-    fun recCreateStubForPackageName(current: StubElement<out PsiElement>) {
-        when (iterator.previousIndex()) {
+    fun recCreateStubForPackageName(current: StubElement<out PsiElement>){
+        when (val index = iterator.previousIndex()) {
             -1 -> return
             0 -> {
-                KotlinNameReferenceExpressionStubImpl(current, iterator.previous().ref())
+                KotlinNameReferenceExpressionStubImpl(current, iterator.previous().ref(), false)
                 return
             }
             else -> {
                 val lastSegment = iterator.previous()
                 val receiver = KotlinPlaceHolderStubImpl<KtDotQualifiedExpression>(current, KtStubElementTypes.DOT_QUALIFIED_EXPRESSION)
                 recCreateStubForPackageName(receiver)
-                KotlinNameReferenceExpressionStubImpl(receiver, lastSegment.ref())
+                KotlinNameReferenceExpressionStubImpl(receiver, lastSegment.ref(), index >= packageLength)
             }
         }
     }
 
-    recCreateStubForPackageName(packageDirectiveStub)
+    recCreateStubForPackageName(stub)
 }
 
 fun createStubForTypeName(
@@ -192,22 +193,23 @@ fun createEmptyModifierListStub(parent: KotlinStubBaseImpl<*>): KotlinModifierLi
     )
 }
 
-fun createAnnotationStubs(annotationIds: List<ClassId>, parent: KotlinStubBaseImpl<*>) {
-    return createTargetedAnnotationStubs(annotationIds.map { ClassIdWithTarget(it, null) }, parent)
+fun createAnnotationStubs(annotations: List<AnnotationWithArgs>, parent: KotlinStubBaseImpl<*>) {
+    return createTargetedAnnotationStubs(annotations.map { AnnotationWithTarget(it, null) }, parent)
 }
 
 fun createTargetedAnnotationStubs(
-    annotationIds: List<ClassIdWithTarget>,
+    annotations: List<AnnotationWithTarget>,
     parent: KotlinStubBaseImpl<*>
 ) {
-    if (annotationIds.isEmpty()) return
+    if (annotations.isEmpty()) return
 
-    annotationIds.forEach { annotation ->
-        val (annotationClassId, target) = annotation
+    annotations.forEach { annotation ->
+        val (annotationWithArgs, target) = annotation
         val annotationEntryStubImpl = KotlinAnnotationEntryStubImpl(
             parent,
-            shortName = annotationClassId.shortClassName.ref(),
-            hasValueArguments = false
+            shortName = annotationWithArgs.classId.shortClassName.ref(),
+            hasValueArguments = false,
+            annotationWithArgs.args
         )
         if (target != null) {
             KotlinAnnotationUseSiteTargetStubImpl(annotationEntryStubImpl, StringRef.fromString(target.name)!!)
@@ -215,8 +217,16 @@ fun createTargetedAnnotationStubs(
         val constructorCallee =
             KotlinPlaceHolderStubImpl<KtConstructorCalleeExpression>(annotationEntryStubImpl, KtStubElementTypes.CONSTRUCTOR_CALLEE)
         val typeReference = KotlinPlaceHolderStubImpl<KtTypeReference>(constructorCallee, KtStubElementTypes.TYPE_REFERENCE)
-        createStubForTypeName(annotationClassId, typeReference)
+        createStubForTypeName(annotationWithArgs.classId, typeReference)
     }
+}
+
+private fun createQualifiedReference(
+    parent: StubElement<*>,
+    classId: ClassId
+) {
+    val classLength = classId.relativeClassName.pathSegments().size
+    createStubForPackageName(parent, classId.asSingleFqName(), classLength)
 }
 
 val MessageLite.annotatedCallableKind: AnnotatedCallableKind

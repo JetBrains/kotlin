@@ -114,7 +114,7 @@ abstract class CallableClsStubBuilder(
     }
 
     abstract val receiverType: ProtoBuf.Type?
-    abstract val receiverAnnotations: List<ClassIdWithTarget>
+    abstract val receiverAnnotations: List<AnnotationWithTarget>
 
     abstract val returnType: ProtoBuf.Type?
     abstract val contextReceiverTypes: List<ProtoBuf.Type>
@@ -149,11 +149,11 @@ private class FunctionClsStubBuilder(
     override val receiverType: ProtoBuf.Type?
         get() = functionProto.receiverType(c.typeTable)
 
-    override val receiverAnnotations: List<ClassIdWithTarget>
+    override val receiverAnnotations: List<AnnotationWithTarget>
         get() {
             return c.components.annotationLoader
                 .loadExtensionReceiverParameterAnnotations(protoContainer, functionProto, AnnotatedCallableKind.FUNCTION)
-                .map { ClassIdWithTarget(it, AnnotationUseSiteTarget.RECEIVER) }
+                .map { AnnotationWithTarget(it, AnnotationUseSiteTarget.RECEIVER) }
         }
 
     override val returnType: ProtoBuf.Type
@@ -176,10 +176,10 @@ private class FunctionClsStubBuilder(
         // If function is marked as having no annotations, we don't create stubs for it
         if (!Flags.HAS_ANNOTATIONS.get(functionProto.flags)) return
 
-        val annotationIds = c.components.annotationLoader.loadCallableAnnotations(
+        val annotations = c.components.annotationLoader.loadCallableAnnotations(
             protoContainer, functionProto, AnnotatedCallableKind.FUNCTION
         )
-        createAnnotationStubs(annotationIds, modifierListStubImpl)
+        createAnnotationStubs(annotations, modifierListStubImpl)
     }
 
     override fun doCreateCallableStub(parent: StubElement<out PsiElement>): StubElement<out PsiElement> {
@@ -213,10 +213,10 @@ private class PropertyClsStubBuilder(
     override val receiverType: ProtoBuf.Type?
         get() = propertyProto.receiverType(c.typeTable)
 
-    override val receiverAnnotations: List<ClassIdWithTarget>
+    override val receiverAnnotations: List<AnnotationWithTarget>
         get() = c.components.annotationLoader
             .loadExtensionReceiverParameterAnnotations(protoContainer, propertyProto, AnnotatedCallableKind.PROPERTY_GETTER)
-            .map { ClassIdWithTarget(it, AnnotationUseSiteTarget.RECEIVER) }
+            .map { AnnotationWithTarget(it, AnnotationUseSiteTarget.RECEIVER) }
 
     override val returnType: ProtoBuf.Type
         get() = propertyProto.returnType(c.typeTable)
@@ -246,9 +246,9 @@ private class PropertyClsStubBuilder(
         val delegateFieldAnnotations =
             c.components.annotationLoader.loadPropertyDelegateFieldAnnotations(protoContainer, propertyProto)
         val allAnnotations =
-            propertyAnnotations.map { ClassIdWithTarget(it, null) } +
-                    backingFieldAnnotations.map { ClassIdWithTarget(it, AnnotationUseSiteTarget.FIELD) } +
-                    delegateFieldAnnotations.map { ClassIdWithTarget(it, AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD) }
+            propertyAnnotations.map { AnnotationWithTarget(it, null) } +
+                    backingFieldAnnotations.map { AnnotationWithTarget(it, AnnotationUseSiteTarget.FIELD) } +
+                    delegateFieldAnnotations.map { AnnotationWithTarget(it, AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD) }
         createTargetedAnnotationStubs(allAnnotations, modifierListStubImpl)
     }
 
@@ -354,70 +354,11 @@ private class PropertyClsStubBuilder(
                             ): KotlinJvmBinaryClass.AnnotationArgumentVisitor? = null
 
                             override fun visitAnnotationMemberDefaultValue(): KotlinJvmBinaryClass.AnnotationArgumentVisitor {
-                                class AnnotationMemberDefaultValueVisitor : KotlinJvmBinaryClass.AnnotationArgumentVisitor {
-                                    val args = mutableListOf<ConstantValue<*>>()
-
-                                    override fun visit(name: Name?, value: Any?) {
-                                        args.addIfNotNull(createConstantValue(value))
-                                    }
-
-                                    override fun visitClassLiteral(name: Name?, value: ClassLiteralValue) {
-                                        args.addIfNotNull(createConstantValue(KClassData(value.classId, value.arrayNestedness)))
-                                    }
-
-                                    override fun visitEnum(name: Name?, enumClassId: ClassId, enumEntryName: Name) {
-                                        args.addIfNotNull(createConstantValue(EnumData(enumClassId, enumEntryName)))
-                                    }
-
-                                    override fun visitAnnotation(
-                                        name: Name?,
-                                        classId: ClassId
-                                    ): KotlinJvmBinaryClass.AnnotationArgumentVisitor {
-                                        val visitor = AnnotationMemberDefaultValueVisitor()
-                                        return object : KotlinJvmBinaryClass.AnnotationArgumentVisitor by visitor {
-                                            override fun visitEnd() {
-                                                args.addIfNotNull(createConstantValue(AnnotationData(classId, visitor.args)))
-                                            }
-                                        }
-                                    }
-
-                                    override fun visitArray(name: Name?): KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor {
-                                        return object : KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor {
-                                            private val elements = mutableListOf<Any>()
-
-                                            override fun visit(value: Any?) {
-                                                elements.addIfNotNull(value)
-                                            }
-
-                                            override fun visitEnum(enumClassId: ClassId, enumEntryName: Name) {
-                                                elements.add(EnumData(enumClassId, enumEntryName))
-                                            }
-
-                                            override fun visitClassLiteral(value: ClassLiteralValue) {
-                                                elements.add(KClassData(value.classId, value.arrayNestedness))
-                                            }
-
-                                            override fun visitAnnotation(classId: ClassId): KotlinJvmBinaryClass.AnnotationArgumentVisitor {
-                                                val visitor = AnnotationMemberDefaultValueVisitor()
-                                                return object : KotlinJvmBinaryClass.AnnotationArgumentVisitor by visitor {
-                                                    override fun visitEnd() {
-                                                        elements.addIfNotNull(AnnotationData(classId, visitor.args))
-                                                    }
-                                                }
-                                            }
-
-                                            override fun visitEnd() {
-                                                args.addIfNotNull(createConstantValue(elements.toTypedArray()))
-                                            }
-                                        }
-                                    }
-
+                                return object : AnnotationMemberDefaultValueVisitor() {
                                     override fun visitEnd() {
-                                        constantInitializer = args.firstOrNull()
+                                        constantInitializer = args.values.firstOrNull()
                                     }
                                 }
-
-                                return AnnotationMemberDefaultValueVisitor()
                             }
 
                             override fun visitAnnotation(
@@ -504,7 +445,7 @@ private class ConstructorClsStubBuilder(
     override val receiverType: ProtoBuf.Type?
         get() = null
 
-    override val receiverAnnotations: List<ClassIdWithTarget>
+    override val receiverAnnotations: List<AnnotationWithTarget>
         get() = emptyList()
 
     override val returnType: ProtoBuf.Type?
@@ -540,4 +481,70 @@ private class ConstructorClsStubBuilder(
         else
             KotlinConstructorStubImpl(parent, KtStubElementTypes.PRIMARY_CONSTRUCTOR, name, hasBody = false, isDelegatedCallToThis = false)
     }
+}
+
+open class AnnotationMemberDefaultValueVisitor : KotlinJvmBinaryClass.AnnotationArgumentVisitor {
+    protected val args = mutableMapOf<Name, ConstantValue<*>>()
+
+    private fun nameOrSpecial(name: Name?): Name {
+        return name ?: Name.special("<no_name>")
+    }
+
+    override fun visit(name: Name?, value: Any?) {
+        val constantValue = createConstantValue(value)
+        args[nameOrSpecial(name)] = constantValue
+    }
+
+    override fun visitClassLiteral(name: Name?, value: ClassLiteralValue) {
+        args[nameOrSpecial(name)] = createConstantValue(KClassData(value.classId, value.arrayNestedness))
+    }
+
+    override fun visitEnum(name: Name?, enumClassId: ClassId, enumEntryName: Name) {
+        args[nameOrSpecial(name)] = createConstantValue(EnumData(enumClassId, enumEntryName))
+    }
+
+    override fun visitAnnotation(
+        name: Name?,
+        classId: ClassId
+    ): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
+        val visitor = AnnotationMemberDefaultValueVisitor()
+        return object : KotlinJvmBinaryClass.AnnotationArgumentVisitor by visitor {
+            override fun visitEnd() {
+                args[nameOrSpecial(name)] = createConstantValue(AnnotationData(classId, visitor.args))
+            }
+        }
+    }
+
+    override fun visitArray(name: Name?): KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor? {
+        return object : KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor {
+            private val elements = mutableListOf<Any>()
+
+            override fun visit(value: Any?) {
+                elements.addIfNotNull(value)
+            }
+
+            override fun visitEnum(enumClassId: ClassId, enumEntryName: Name) {
+                elements.add(EnumData(enumClassId, enumEntryName))
+            }
+
+            override fun visitClassLiteral(value: ClassLiteralValue) {
+                elements.add(KClassData(value.classId, value.arrayNestedness))
+            }
+
+            override fun visitAnnotation(classId: ClassId): KotlinJvmBinaryClass.AnnotationArgumentVisitor {
+                val visitor = AnnotationMemberDefaultValueVisitor()
+                return object : KotlinJvmBinaryClass.AnnotationArgumentVisitor by visitor {
+                    override fun visitEnd() {
+                        elements.addIfNotNull(AnnotationData(classId, visitor.args))
+                    }
+                }
+            }
+
+            override fun visitEnd() {
+                args[nameOrSpecial(name)] = createConstantValue(elements.toTypedArray())
+            }
+        }
+    }
+
+    override fun visitEnd() {}
 }

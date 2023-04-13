@@ -40,6 +40,16 @@ abstract class AbstractAdditionalStubInfoTest : AbstractDecompiledClassTest() {
                     builder.append("\n").append("  ".repeat(level)).append("initializer: ${initializer.value}")
                 }
             }
+            is KotlinAnnotationEntryStubImpl -> {
+                val arguments = stub.valueArguments
+                if (arguments != null) {
+                    builder
+                        .append("\n")
+                        .append("  ".repeat(level))
+                        .append("valueArguments: ")
+                        .append(arguments.entries.joinToString(", ", "(", ")") { "${it.key.asString()} = ${it.value}" })
+                }
+            }
         }
         for (child in stub.childrenStubs) {
             builder.append("\n").append("  ".repeat(level))
