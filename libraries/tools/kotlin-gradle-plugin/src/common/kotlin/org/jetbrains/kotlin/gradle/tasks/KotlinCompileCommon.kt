@@ -66,6 +66,13 @@ abstract class KotlinCompileCommon @Inject constructor(
     @get:Internal
     internal var executionTimeFreeCompilerArgs: List<String>? = null
 
+    @Suppress("DeprecatedCallableAddReplaceWith")
+    @Deprecated("KTIJ-25227: Necessary override for IDEs < 2023.2", level = DeprecationLevel.ERROR)
+    override fun setupCompilerArgs(args: K2MetadataCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
+        @Suppress("DEPRECATION_ERROR")
+        super.setupCompilerArgs(args, defaultsOnly, ignoreClasspathResolutionErrors)
+    }
+
     override fun createCompilerArguments(context: CreateCompilerArgumentsContext) = context.create<K2MetadataCompilerArguments> {
         primitive { args ->
             args.multiPlatform = multiPlatformEnabled.get()

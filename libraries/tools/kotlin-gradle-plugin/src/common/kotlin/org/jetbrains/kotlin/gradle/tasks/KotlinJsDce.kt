@@ -31,9 +31,7 @@ import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.compilerRunner.runToolInSeparateProcess
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
-import org.jetbrains.kotlin.gradle.dsl.KotlinJsDceCompilerToolOptionsDefault
 import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
 import org.jetbrains.kotlin.gradle.utils.absolutePathWithoutExtension
@@ -157,5 +155,12 @@ abstract class KotlinJsDce @Inject constructor(
     companion object {
         const val strategyAllArg = "-Xdev-mode-overwriting-strategy=${DevModeOverwritingStrategies.ALL}"
         const val strategyOlderArg = "-Xdev-mode-overwriting-strategy=${DevModeOverwritingStrategies.OLDER}"
+    }
+
+    @Suppress("DeprecatedCallableAddReplaceWith")
+    @Deprecated("KTIJ-25227: Necessary override for IDEs < 2023.2", level = DeprecationLevel.ERROR)
+    override fun setupCompilerArgs(args: K2JSDceArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
+        @Suppress("DEPRECATION_ERROR")
+        super.setupCompilerArgs(args, defaultsOnly, ignoreClasspathResolutionErrors)
     }
 }
