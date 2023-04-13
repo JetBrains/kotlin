@@ -23980,6 +23980,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/jdk/kt1397.kt");
         }
 
+        @TestMetadata("noStringToCharArray.kt")
+        public void testNoStringToCharArray() throws Exception {
+            runTest("compiler/testData/codegen/box/jdk/noStringToCharArray.kt");
+        }
+
         @TestMetadata("removeIf.kt")
         public void testRemoveIf() throws Exception {
             runTest("compiler/testData/codegen/box/jdk/removeIf.kt");
