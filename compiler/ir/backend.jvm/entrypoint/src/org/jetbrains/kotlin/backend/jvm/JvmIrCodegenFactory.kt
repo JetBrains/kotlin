@@ -98,11 +98,13 @@ open class JvmIrCodegenFactory(
 
     /**
      * @param shouldStubOrphanedExpectSymbols See [stubOrphanedExpectSymbols].
+     * @param shouldReferenceUndiscoveredExpectSymbols See [referenceUndiscoveredExpectSymbols].
      * @param shouldDeduplicateBuiltInSymbols See [SymbolTableWithBuiltInsDeduplication].
      */
     data class IdeCodegenSettings(
         val shouldStubAndNotLinkUnboundSymbols: Boolean = false,
         val shouldStubOrphanedExpectSymbols: Boolean = false,
+        val shouldReferenceUndiscoveredExpectSymbols: Boolean = false,
         val shouldDeduplicateBuiltInSymbols: Boolean = false,
     )
 
@@ -249,6 +251,10 @@ open class JvmIrCodegenFactory(
         } else {
             val stubGeneratorForMissingClasses = DeclarationStubGeneratorForNotFoundClasses(stubGenerator)
             listOf(irLinker, stubGeneratorForMissingClasses)
+        }
+
+        if (ideCodegenSettings.shouldReferenceUndiscoveredExpectSymbols) {
+            symbolTable.referenceUndiscoveredExpectSymbols(input.files, input.bindingContext)
         }
 
         val irModuleFragment =
