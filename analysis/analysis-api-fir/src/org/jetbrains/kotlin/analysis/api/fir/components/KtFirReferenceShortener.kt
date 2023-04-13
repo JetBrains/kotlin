@@ -874,6 +874,10 @@ private class ElementsToShortenCollector(
         val availableCallables = shorteningContext.findPropertiesInScopes(scopes, callableSymbol.name)
 
         val firPropertyAccess = qualifiedProperty.getOrBuildFir(firResolveSession) as? FirQualifiedAccessExpression ?: return
+
+        // if explicit receiver is a property access or a function call, we cannot shorten it
+        if (firPropertyAccess.explicitReceiver !is FirResolvedQualifier) return
+
         if (availableCallables.isNotEmpty() && shortenIfAlreadyImported(firPropertyAccess, callableSymbol, referenceExpression)) {
             addElementToShorten(ShortenQualifier(qualifiedProperty))
             return
