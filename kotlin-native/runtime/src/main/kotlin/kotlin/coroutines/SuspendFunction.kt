@@ -10,4 +10,6 @@ package kotlin.coroutines
  *
  * @param R return type of the function.
  */
+@Deprecated("This interface will be removed in a future release")
+@DeprecatedSinceKotlin(warningSince = "1.9")
 public interface SuspendFunction<out R>
