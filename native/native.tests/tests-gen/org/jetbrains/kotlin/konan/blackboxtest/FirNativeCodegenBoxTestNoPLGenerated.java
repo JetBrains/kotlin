@@ -25292,6 +25292,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             public void testKt1397() throws Exception {
                 runTest("compiler/testData/codegen/box/jdk/kt1397.kt");
             }
+
+            @Test
+            @TestMetadata("noStringToCharArray.kt")
+            public void testNoStringToCharArray() throws Exception {
+                runTest("compiler/testData/codegen/box/jdk/noStringToCharArray.kt");
+            }
         }
 
         @Nested
