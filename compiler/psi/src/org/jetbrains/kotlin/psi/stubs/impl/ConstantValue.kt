@@ -7,8 +7,6 @@ package org.jetbrains.kotlin.psi.stubs.impl
 
 import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
-import org.jetbrains.kotlin.builtins.PrimitiveType
-import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
@@ -64,8 +62,8 @@ sealed class ConstantValue<out T>(open val value: T, val constantValueKind: Cons
                 ConstantValueKind.ANNO -> {
                     val classId = StubUtils.deserializeClassId(dataStream)!!
                     val numberOfArgs = dataStream.readInt() - 1
-                    AnnotationValue(classId, (0..numberOfArgs).map {
-                        createConstantValue(dataStream)!!
+                    AnnotationValue(classId, (0..numberOfArgs).associate {
+                        Name.identifier(dataStream.readNameString()!!) to createConstantValue(dataStream)!!
                     })
                 }
             }
@@ -144,7 +142,7 @@ data class EnumData(val enumClassId: ClassId, val enumEntryName: Name)
 class EnumValue(
     val enumClassId: ClassId,
     val enumEntryName: Name
-) : ConstantValue<Pair<ClassId, Name>>(enumClassId to enumEntryName, ConstantValueKind.ENUM) {
+) : ConstantValue<EnumData>(EnumData(enumClassId, enumEntryName), ConstantValueKind.ENUM) {
     override fun serializeValue(dataStream: StubOutputStream) {
         StubUtils.serializeClassId(dataStream, enumClassId)
         dataStream.writeName(enumEntryName.identifier)
@@ -152,10 +150,10 @@ class EnumValue(
 }
 
 data class KClassData(val classId: ClassId, val arrayNestedness: Int)
-class KClassValue(classId: ClassId, arrayNestedness: Int) : ConstantValue<Pair<ClassId, Int>>(classId to arrayNestedness, ConstantValueKind.KCLASS) {
+class KClassValue(classId: ClassId, arrayNestedness: Int) : ConstantValue<KClassData>(KClassData(classId, arrayNestedness), ConstantValueKind.KCLASS) {
     override fun serializeValue(dataStream: StubOutputStream) {
-        StubUtils.serializeClassId(dataStream, value.first)
-        dataStream.writeInt(value.second)
+        StubUtils.serializeClassId(dataStream, value.classId)
+        dataStream.writeInt(value.arrayNestedness)
     }
 }
 
@@ -193,25 +191,26 @@ class ULongValue(longValue: Long) : UnsignedValueConstant<Long>(longValue, Const
     }
 }
 
-data class AnnotationData(val annoClassId: ClassId, val args: List<ConstantValue<*>>)
-class AnnotationValue(val annoClassId: ClassId, val args: List<ConstantValue<*>>) :
-    ConstantValue<Pair<ClassId, List<ConstantValue<*>>>>(annoClassId to args, ConstantValueKind.ANNO) {
+data class AnnotationData(val annoClassId: ClassId, val args: Map<Name, ConstantValue<*>>)
+class AnnotationValue(val annoClassId: ClassId, val args: Map<Name, ConstantValue<*>>) :
+    ConstantValue<AnnotationData>(AnnotationData(annoClassId, args), ConstantValueKind.ANNO) {
 
     override fun toString(): String {
-        return args.joinToString(", ", "${annoClassId.asFqNameString()}[", "]") { it.toString() }
+        return args.entries.joinToString(", ", "${annoClassId.asFqNameString()}[", "]") { it.toString() }
     }
 
     override fun serializeValue(dataStream: StubOutputStream) {
         StubUtils.serializeClassId(dataStream, annoClassId)
         dataStream.writeInt(args.size)
         for (arg in args) {
-            dataStream.writeInt(arg.getKind())
-            arg.serializeValue(dataStream)
+            dataStream.writeName(arg.key.asString())
+            dataStream.writeInt(arg.value.getKind())
+            arg.value.serializeValue(dataStream)
         }
     }
 }
 
-fun createConstantValue(value: Any?): ConstantValue<*>? {
+fun createConstantValue(value: Any?): ConstantValue<*> {
     return when (value) {
         is Byte -> ByteValue(value)
         is Short -> ShortValue(value)
@@ -222,20 +221,20 @@ fun createConstantValue(value: Any?): ConstantValue<*>? {
         is Double -> DoubleValue(value)
         is Boolean -> BooleanValue(value)
         is String -> StringValue(value)
-        is ByteArray -> ArrayValue(value.map { createConstantValue(it)!! }.toList())
-        is ShortArray -> ArrayValue(value.map { createConstantValue(it)!! }.toList())
-        is IntArray -> ArrayValue(value.map { createConstantValue(it)!! }.toList())
-        is LongArray -> ArrayValue(value.map { createConstantValue(it)!! }.toList())
-        is CharArray -> ArrayValue(value.map { createConstantValue(it)!! }.toList())
-        is FloatArray -> ArrayValue(value.map { createConstantValue(it)!! }.toList())
-        is DoubleArray -> ArrayValue(value.map { createConstantValue(it)!! }.toList())
-        is BooleanArray -> ArrayValue(value.map { createConstantValue(it)!! }.toList())
-        is Array<*> -> ArrayValue(value.map { createConstantValue(it)!! }.toList())
+        is ByteArray -> ArrayValue(value.map { createConstantValue(it) }.toList())
+        is ShortArray -> ArrayValue(value.map { createConstantValue(it) }.toList())
+        is IntArray -> ArrayValue(value.map { createConstantValue(it) }.toList())
+        is LongArray -> ArrayValue(value.map { createConstantValue(it) }.toList())
+        is CharArray -> ArrayValue(value.map { createConstantValue(it) }.toList())
+        is FloatArray -> ArrayValue(value.map { createConstantValue(it) }.toList())
+        is DoubleArray -> ArrayValue(value.map { createConstantValue(it) }.toList())
+        is BooleanArray -> ArrayValue(value.map { createConstantValue(it) }.toList())
+        is Array<*> -> ArrayValue(value.map { createConstantValue(it) }.toList())
         is EnumData -> EnumValue(value.enumClassId, value.enumEntryName)
         is KClassData -> KClassValue(value.classId, value.arrayNestedness)
         is AnnotationData -> AnnotationValue(value.annoClassId, value.args)
         null -> NullValue
-        else -> null
+        else -> error("Unsupported value $value")
     }
 }
 
@@ -262,7 +261,7 @@ fun createConstantValue(value: ProtoBuf.Annotation.Argument.Value, nameResolver:
         )
         ProtoBuf.Annotation.Argument.Value.Type.ANNOTATION -> {
             val args =
-                value.annotation.argumentList.map { createConstantValue(it.value, nameResolver) }
+                value.annotation.argumentList.associate { nameResolver.getName(it.nameId) to createConstantValue(it.value, nameResolver) }
             AnnotationValue(nameResolver.getClassId(value.annotation.id), args)
         }
         ProtoBuf.Annotation.Argument.Value.Type.ARRAY -> ArrayValue(

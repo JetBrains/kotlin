@@ -287,7 +287,7 @@ KotlinStub$CLASS[classId=test/PropertyInitializer, fqName=test.PropertyInitializ
               KotlinStub$REFERENCE_EXPRESSION[referencedName=Annotation]
       KotlinStub$CLASS_BODY
         KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Anno.annotationArrayWithDefault, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=annotationArrayWithDefault]
-          initializer: [test.A1[(test/E, A), (test/E, B)], test.A1[(test/E, B), (test/E, A)]]
+          initializer: [test.A1[e=EnumData(enumClassId=test/E, enumEntryName=A), e1=EnumData(enumClassId=test/E, enumEntryName=B)], test.A1[e=EnumData(enumClassId=test/E, enumEntryName=B), e1=EnumData(enumClassId=test/E, enumEntryName=A)]]
           KotlinStub$MODIFIER_LIST[public final]
           KotlinStub$TYPE_REFERENCE
             KotlinStub$USER_TYPE
@@ -303,7 +303,7 @@ KotlinStub$CLASS[classId=test/PropertyInitializer, fqName=test.PropertyInitializ
                       KotlinStub$REFERENCE_EXPRESSION[referencedName=A1]
           KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
         KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Anno.annotationWithDefault, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=annotationWithDefault]
-          initializer: (test/A1, [(test/E, A), (test/E, B)])
+          initializer: AnnotationData(annoClassId=test/A1, args={e=EnumData(enumClassId=test/E, enumEntryName=A), e1=EnumData(enumClassId=test/E, enumEntryName=B)})
           KotlinStub$MODIFIER_LIST[public final]
           KotlinStub$TYPE_REFERENCE
             KotlinStub$USER_TYPE
@@ -372,7 +372,7 @@ KotlinStub$CLASS[classId=test/PropertyInitializer, fqName=test.PropertyInitializ
               KotlinStub$REFERENCE_EXPRESSION[referencedName=Double]
           KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
         KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Anno.enumWithDefault, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=enumWithDefault]
-          initializer: (test/E, B)
+          initializer: EnumData(enumClassId=test/E, enumEntryName=B)
           KotlinStub$MODIFIER_LIST[public final]
           KotlinStub$TYPE_REFERENCE
             KotlinStub$USER_TYPE
@@ -399,7 +399,7 @@ KotlinStub$CLASS[classId=test/PropertyInitializer, fqName=test.PropertyInitializ
               KotlinStub$REFERENCE_EXPRESSION[referencedName=Int]
           KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
         KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Anno.klassWithDefault, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=klassWithDefault]
-          initializer: (test/E, 0)
+          initializer: KClassData(classId=test/E, arrayNestedness=0)
           KotlinStub$MODIFIER_LIST[public final]
           KotlinStub$TYPE_REFERENCE
             KotlinStub$USER_TYPE

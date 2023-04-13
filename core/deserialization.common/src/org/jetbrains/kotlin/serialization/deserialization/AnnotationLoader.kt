@@ -60,4 +60,6 @@ interface AnnotationLoader<out A : Any> {
         proto: ProtoBuf.TypeParameter,
         nameResolver: NameResolver
     ): List<A>
+
+    fun loadTypeAnnotation(proto: ProtoBuf.Annotation, nameResolver: NameResolver): A
 }
