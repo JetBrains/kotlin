@@ -33,4 +33,3 @@ open enum class ConfigurationParameter : Enum<ConfigurationParameter> {
     get(): EnumEntries<ConfigurationParameter> /* Synthetic body for ENUM_ENTRIES */
 
 }
-

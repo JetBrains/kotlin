@@ -6,14 +6,19 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.getDeprecationsProviderFromAccessors
+import org.jetbrains.kotlin.fir.declarations.isHiddenEverywhereBesideSuperCalls
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.SyntheticSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
@@ -118,7 +123,8 @@ class FirSyntheticPropertiesScope private constructor(
 
         if ((getterReturnType as? ConeClassLikeType)?.lookupTag?.classId == StandardClassIds.Unit) return
 
-        if (!getterSymbol.hasJavaOverridden()) return
+        // Should have Java among overridden _and_ don't have isHiddenEverywhereBesideSuperCalls among them
+        if (!getterSymbol.mayBeUsedAsGetterForSyntheticProperty()) return
 
         var matchingSetter: FirSimpleFunction? = null
         if (needCheckForSetter && getterReturnType != null) {
@@ -226,17 +232,22 @@ class FirSyntheticPropertiesScope private constructor(
                 || processOverrides(getterSymbol, setterSymbolToCompare = setterSymbol)
     }
 
-    private fun FirNamedFunctionSymbol.hasJavaOverridden(): Boolean {
+    private fun FirNamedFunctionSymbol.mayBeUsedAsGetterForSyntheticProperty(): Boolean {
         var result = false
+        var isHiddenEverywhereBesideSuperCalls = false
         baseScope.processOverriddenFunctionsAndSelf(this) {
-            if (it.unwrapFakeOverrides().fir.origin == FirDeclarationOrigin.Enhancement) {
+            val unwrapped = it.unwrapFakeOverrides().fir
+            if (unwrapped.origin == FirDeclarationOrigin.Enhancement) {
                 result = true
-                ProcessorAction.STOP
-            } else {
-                ProcessorAction.NEXT
             }
+
+            if (unwrapped.isHiddenEverywhereBesideSuperCalls == true) {
+                isHiddenEverywhereBesideSuperCalls = true
+            }
+
+            ProcessorAction.NEXT
         }
 
-        return result
+        return result && !isHiddenEverywhereBesideSuperCalls
     }
 }

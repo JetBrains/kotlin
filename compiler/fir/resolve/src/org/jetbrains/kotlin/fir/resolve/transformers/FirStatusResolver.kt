@@ -72,7 +72,7 @@ class FirStatusResolver(
     ): FirResolvedDeclarationStatus {
         return when (declaration) {
             is FirProperty -> resolveStatus(declaration, containingClass, isLocal)
-            is FirSimpleFunction -> resolveStatus(declaration, containingClass, isLocal)
+            is FirSimpleFunction -> resolveStatus(declaration, containingClass, isLocal).status
             is FirPropertyAccessor -> resolveStatus(declaration, containingClass, containingProperty, isLocal)
             is FirRegularClass -> resolveStatus(declaration, containingClass, isLocal)
             is FirTypeAlias -> resolveStatus(declaration, containingClass, isLocal)
@@ -120,15 +120,15 @@ class FirStatusResolver(
         return resolveStatus(property, status, containingClass, null, isLocal, statuses)
     }
 
-    private fun getOverriddenStatuses(
+    private fun getOverriddenDeclarations(
         function: FirSimpleFunction,
         containingClass: FirClass?
-    ): List<FirResolvedDeclarationStatus> {
+    ): List<FirCallableDeclaration> {
         if (containingClass == null) {
             return emptyList()
         }
 
-        return buildList<FirCallableDeclaration> {
+        return buildList {
             val scope = containingClass.unsubstitutedScope(
                 session,
                 scopeSession,
@@ -147,17 +147,24 @@ class FirStatusResolver(
                 }
                 ProcessorAction.NEXT
             }
-        }.map {
-            it.status as FirResolvedDeclarationStatus
         }
     }
 
-    fun resolveStatus(function: FirSimpleFunction, containingClass: FirClass?, isLocal: Boolean): FirResolvedDeclarationStatus {
+    class ResolvedStatusAndOverridden(
+        val status: FirResolvedDeclarationStatus,
+        val overridden: List<FirCallableDeclaration>,
+    )
+
+    fun resolveStatus(function: FirSimpleFunction, containingClass: FirClass?, isLocal: Boolean): ResolvedStatusAndOverridden {
         val status = function.applyExtensionTransformers {
             transformStatus(it, function, containingClass?.symbol, isLocal)
         }
-        val overriddenStatuses = getOverriddenStatuses(function, containingClass)
-        return resolveStatus(function, status, containingClass, null, isLocal, overriddenStatuses)
+        val overriddenDeclarations = getOverriddenDeclarations(function, containingClass)
+        val overriddenStatuses = overriddenDeclarations.map { it.status as FirResolvedDeclarationStatus }
+        return ResolvedStatusAndOverridden(
+            resolveStatus(function, status, containingClass, null, isLocal, overriddenStatuses),
+            overriddenDeclarations,
+        )
     }
 
     fun resolveStatus(

@@ -19,4 +19,3 @@ open enum class EE : Enum<EE> {
     get(): EnumEntries<EE> /* Synthetic body for ENUM_ENTRIES */
 
 }
-

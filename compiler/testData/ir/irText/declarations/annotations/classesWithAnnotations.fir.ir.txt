@@ -187,6 +187,14 @@ FILE fqName:<root> fileName:/classesWithAnnotations.kt
         overridden:
           public final fun <get-ordinal> (): kotlin.Int declared in kotlin.Enum
         $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<E of kotlin.Enum>
+    FUN FAKE_OVERRIDE name:getDeclaringClass visibility:public modality:FINAL <> ($this:kotlin.Enum<E of kotlin.Enum>) returnType:@[FlexibleNullability] java.lang.Class<@[FlexibleNullability] <root>.TestEnum?>? [fake_override]
+      overridden:
+        public final fun getDeclaringClass (): @[FlexibleNullability] java.lang.Class<@[FlexibleNullability] E of kotlin.Enum?>? declared in kotlin.Enum
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<E of kotlin.Enum>
+    FUN FAKE_OVERRIDE name:finalize visibility:protected/*protected and package*/ modality:FINAL <> ($this:kotlin.Enum<E of kotlin.Enum>) returnType:kotlin.Unit [fake_override]
+      overridden:
+        protected/*protected and package*/ final fun finalize (): kotlin.Unit declared in kotlin.Enum
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<E of kotlin.Enum>
   CLASS ANNOTATION_CLASS name:TestAnnotation modality:OPEN visibility:public superTypes:[kotlin.Annotation]
     annotations:
       TestAnn(x = 'annotation')
