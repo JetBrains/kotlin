@@ -116,6 +116,7 @@ internal abstract class KonanSymbols(
     val interopWcstr = findInteropExtensionPropertyGetter(Name.identifier(InteropFqNames.wcstrPropertyName), StandardClassIds.String)!!
     val interopMemScope = interopClass(InteropFqNames.memScopeName)
     val interopCValue = interopClass(InteropFqNames.cValueName)
+    val interopCValues = interopClass(InteropFqNames.cValuesName)
     val interopCValuesRef = interopClass(InteropFqNames.cValuesRefName)
     abstract val interopCValueWrite: IrSimpleFunctionSymbol
     abstract val interopCValueRead: IrSimpleFunctionSymbol
