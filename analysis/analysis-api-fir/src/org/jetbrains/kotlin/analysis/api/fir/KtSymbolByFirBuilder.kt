@@ -62,6 +62,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.Variance
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
+import org.jetbrains.kotlin.analysis.api.fir.signatures.KtFirFunctionLikeSubstitutorBasedSignature
+import org.jetbrains.kotlin.analysis.api.fir.signatures.KtFirVariableLikeSubstitutorBasedSignature
 
 /**
  * Maps FirElement to KtSymbol & ConeType to KtType, thread safe
@@ -219,19 +221,7 @@ internal class KtSymbolByFirBuilder constructor(
 
         fun buildFunctionSignature(firSymbol: FirNamedFunctionSymbol): KtFunctionLikeSignature<KtFirFunctionSymbol> {
             firSymbol.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
-            val functionSymbol = buildFunctionSymbol(firSymbol)
-            return KtFunctionLikeSignature(
-                functionSymbol,
-                typeBuilder.buildKtType(firSymbol.resolvedReturnType),
-                firSymbol.resolvedReceiverTypeRef?.let { typeBuilder.buildKtType(it) },
-                functionSymbol.valueParameters.zip(firSymbol.fir.valueParameters).map { (ktSymbol, fir) ->
-                    var type = fir.returnTypeRef.coneType
-                    if (fir.isVararg) {
-                        type = type.arrayElementType() ?: type
-                    }
-                    KtVariableLikeSignature(ktSymbol, typeBuilder.buildKtType(type), null)
-                }
-            )
+            return KtFirFunctionLikeSubstitutorBasedSignature(analysisSession.token, firSymbol, analysisSession.firSymbolBuilder)
         }
 
         fun buildAnonymousFunctionSymbol(firSymbol: FirAnonymousFunctionSymbol): KtFirAnonymousFunctionSymbol {
@@ -311,11 +301,7 @@ internal class KtSymbolByFirBuilder constructor(
 
         fun buildPropertySignature(firSymbol: FirPropertySymbol): KtVariableLikeSignature<KtVariableSymbol> {
             firSymbol.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
-            return KtVariableLikeSignature(
-                buildPropertySymbol(firSymbol),
-                typeBuilder.buildKtType(firSymbol.fir.returnTypeRef),
-                firSymbol.resolvedReceiverTypeRef?.let { typeBuilder.buildKtType(it) }
-            )
+            return KtFirVariableLikeSubstitutorBasedSignature(analysisSession.token, firSymbol, analysisSession.firSymbolBuilder)
         }
 
         fun buildLocalVariableSymbol(firSymbol: FirPropertySymbol): KtFirLocalVariableSymbol {
@@ -332,6 +318,9 @@ internal class KtSymbolByFirBuilder constructor(
         }
 
         fun buildValueParameterSymbol(firSymbol: FirValueParameterSymbol): KtValueParameterSymbol {
+            firSymbol.fir.unwrapSubstitutionOverrideIfNeeded()?.let {
+                return buildValueParameterSymbol(it.symbol)
+            }
             return symbolsCache.cache(firSymbol) {
                 KtFirValueParameterSymbol(firSymbol, analysisSession)
             }
@@ -529,14 +518,19 @@ internal class KtSymbolByFirBuilder constructor(
     private inline fun <reified T : FirCallableDeclaration> T.unwrapUseSiteSubstitutionOverride(): T? {
         val originalDeclaration = originalForSubstitutionOverride ?: return null
 
-        val containingClass = getContainingClass(rootSession) ?: return null
-        val originalContainingClass = originalDeclaration.getContainingClass(rootSession) ?: return null
+        val containingClass = getContainingMemberOrSelf().getContainingClass(rootSession) ?: return null
+        val originalContainingClass = originalDeclaration.getContainingMemberOrSelf().getContainingClass(rootSession) ?: return null
 
         // If substitution override does not change the containing class of the FIR declaration,
         // it is a use-site substitution override
         if (containingClass != originalContainingClass) return null
 
         return originalDeclaration
+    }
+
+    private fun FirCallableDeclaration.getContainingMemberOrSelf(): FirCallableDeclaration = when (this) {
+        is FirValueParameter -> containingFunctionSymbol.fir
+        else -> this
     }
 
     /**

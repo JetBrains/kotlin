@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.signatures
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
+import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.name.CallableId
 
@@ -42,6 +43,13 @@ public sealed class KtCallableSignature<out S : KtCallableSymbol> : KtLifetimeOw
      * A [CallableId] of a substituted symbol
      */
     public open val callableIdIfNonLocal: CallableId? get() = withValidityAssertion { symbol.callableIdIfNonLocal }
+
+    /**
+     * Applies a [substitutor] to the given signature and return a new signature with substituted types.
+     *
+     * @see KtSubstitutor.substitute
+     */
+    public abstract fun substitute(substitutor: KtSubstitutor): KtCallableSignature<S>
 
     abstract override fun equals(other: Any?): Boolean
     abstract override fun hashCode(): Int
