@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.LocalClassesNavigationInfo
 import org.jetbrains.kotlin.fir.scopes.FirCompositeScope
@@ -394,8 +393,12 @@ abstract class AbstractFirStatusResolveTransformer(
         simpleFunction: FirSimpleFunction,
         data: FirResolvedDeclarationStatus?
     ): FirStatement = whileAnalysing(session, simpleFunction) {
-        val resolvedStatus = statusResolver.resolveStatus(simpleFunction, containingClass, isLocal = false)
-        simpleFunction.transformStatus(this, resolvedStatus)
+        val resolvedStatusAndOverridden = statusResolver.resolveStatus(simpleFunction, containingClass, isLocal = false)
+        simpleFunction.transformStatus(this, resolvedStatusAndOverridden.status)
+
+//        if (resolvedStatusAndOverridden.overridden.any { it.isHiddenEverywhereBesideSuperCalls == true }) {
+//            simpleFunction.isHiddenEverywhereBesideSuperCalls = true
+//        }
         return transformDeclaration(simpleFunction, data) as FirStatement
     }
 

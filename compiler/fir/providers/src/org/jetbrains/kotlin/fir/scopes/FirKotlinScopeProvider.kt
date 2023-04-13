@@ -43,8 +43,14 @@ class FirKotlinScopeProvider(
             val declaredScope = useSiteSession.declaredMemberScope(klass)
 
             val decoratedDeclaredMemberScope =
-                declaredMemberScopeDecorator(klass, declaredScope, useSiteSession, scopeSession, memberRequiredPhase).let {
+                run {
+                    if (scopeSession.skipDeclaredMemberScopeDecorator)
+                        declaredScope
+                    else
+                        declaredMemberScopeDecorator(klass, declaredScope, useSiteSession, scopeSession, memberRequiredPhase)
+                }.let {
                     val delegateFields = klass.delegateFields
+
                     if (delegateFields.isEmpty())
                         it
                     else
