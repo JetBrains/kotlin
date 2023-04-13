@@ -36,7 +36,7 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
         result: MutableList<A>
     ): KotlinJvmBinaryClass.AnnotationArgumentVisitor?
 
-    protected abstract fun loadTypeAnnotation(proto: ProtoBuf.Annotation, nameResolver: NameResolver): A
+    abstract override fun loadAnnotation(proto: ProtoBuf.Annotation, nameResolver: NameResolver): A
 
     protected fun loadAnnotationIfNotSpecial(
         annotationClassId: ClassId,
@@ -194,11 +194,11 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
     }
 
     override fun loadTypeAnnotations(proto: ProtoBuf.Type, nameResolver: NameResolver): List<A> {
-        return proto.getExtension(JvmProtoBuf.typeAnnotation).map { loadTypeAnnotation(it, nameResolver) }
+        return proto.getExtension(JvmProtoBuf.typeAnnotation).map { loadAnnotation(it, nameResolver) }
     }
 
     override fun loadTypeParameterAnnotations(proto: ProtoBuf.TypeParameter, nameResolver: NameResolver): List<A> {
-        return proto.getExtension(JvmProtoBuf.typeParameterAnnotation).map { loadTypeAnnotation(it, nameResolver) }
+        return proto.getExtension(JvmProtoBuf.typeParameterAnnotation).map { loadAnnotation(it, nameResolver) }
     }
 
     protected fun findClassWithAnnotationsAndInitializers(
@@ -308,6 +308,12 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
         }
     }
 }
+
+class AnnotationsContainerWithConstants<out A, out C>(
+    override val memberAnnotations: Map<MemberSignature, List<A>>,
+    val propertyConstants: Map<MemberSignature, C>,
+    val annotationParametersDefaultValues: Map<MemberSignature, C>
+) : AbstractBinaryClassAnnotationLoader.AnnotationsContainer<A>()
 
 fun getPropertySignature(
     proto: ProtoBuf.Property,

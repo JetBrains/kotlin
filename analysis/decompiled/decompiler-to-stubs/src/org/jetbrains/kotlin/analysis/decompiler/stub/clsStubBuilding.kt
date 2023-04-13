@@ -192,22 +192,23 @@ fun createEmptyModifierListStub(parent: KotlinStubBaseImpl<*>): KotlinModifierLi
     )
 }
 
-fun createAnnotationStubs(annotationIds: List<ClassId>, parent: KotlinStubBaseImpl<*>) {
-    return createTargetedAnnotationStubs(annotationIds.map { ClassIdWithTarget(it, null) }, parent)
+fun createAnnotationStubs(annotations: List<AnnotationWithArgs>, parent: KotlinStubBaseImpl<*>) {
+    return createTargetedAnnotationStubs(annotations.map { AnnotationWithTarget(it, null) }, parent)
 }
 
 fun createTargetedAnnotationStubs(
-    annotationIds: List<ClassIdWithTarget>,
+    annotations: List<AnnotationWithTarget>,
     parent: KotlinStubBaseImpl<*>
 ) {
-    if (annotationIds.isEmpty()) return
+    if (annotations.isEmpty()) return
 
-    annotationIds.forEach { annotation ->
-        val (annotationClassId, target) = annotation
+    annotations.forEach { annotation ->
+        val (annotationWithArgs, target) = annotation
         val annotationEntryStubImpl = KotlinAnnotationEntryStubImpl(
             parent,
-            shortName = annotationClassId.shortClassName.ref(),
-            hasValueArguments = false
+            shortName = annotationWithArgs.classId.shortClassName.ref(),
+            hasValueArguments = false,
+            annotationWithArgs.args
         )
         if (target != null) {
             KotlinAnnotationUseSiteTargetStubImpl(annotationEntryStubImpl, StringRef.fromString(target.name)!!)
@@ -215,7 +216,7 @@ fun createTargetedAnnotationStubs(
         val constructorCallee =
             KotlinPlaceHolderStubImpl<KtConstructorCalleeExpression>(annotationEntryStubImpl, KtStubElementTypes.CONSTRUCTOR_CALLEE)
         val typeReference = KotlinPlaceHolderStubImpl<KtTypeReference>(constructorCallee, KtStubElementTypes.TYPE_REFERENCE)
-        createStubForTypeName(annotationClassId, typeReference)
+        createStubForTypeName(annotationWithArgs.classId, typeReference)
     }
 }
 

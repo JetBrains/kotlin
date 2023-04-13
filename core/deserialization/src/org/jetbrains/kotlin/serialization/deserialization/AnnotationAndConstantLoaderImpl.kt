@@ -39,6 +39,10 @@ class AnnotationAndConstantLoaderImpl(
         return annotations.map { proto -> deserializer.deserializeAnnotation(proto, container.nameResolver) }
     }
 
+    override fun loadAnnotation(proto: ProtoBuf.Annotation, nameResolver: NameResolver): AnnotationDescriptor {
+        return deserializer.deserializeAnnotation(proto, nameResolver)
+    }
+
     override fun loadCallableAnnotations(
         container: ProtoContainer,
         proto: MessageLite,

@@ -1,0 +1,110 @@
+PsiJetFileStubImpl[package=test]
+KotlinStub$PACKAGE_DIRECTIVE
+  KotlinStub$REFERENCE_EXPRESSION[referencedName=test]
+KotlinStub$IMPORT_LIST
+KotlinStub$CLASS[classId=test/AnnotationValues, fqName=test.AnnotationValues, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnotationValues, superNames=[]]
+  KotlinStub$MODIFIER_LIST[public final]
+  KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=AnnotationValues]
+    KotlinStub$MODIFIER_LIST[public]
+    KotlinStub$VALUE_PARAMETER_LIST
+  KotlinStub$CLASS_BODY
+    KotlinStub$CLASS[classId=test/AnnotationValues.WithArrays, fqName=test.AnnotationValues.WithArrays, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithArrays, superNames=[]]
+      KotlinStub$MODIFIER_LIST[public final]
+        KotlinStub$ANNOTATION_ENTRY[hasValueArguments=false, shortName=Arrays]
+          valueArguments: (ia = [1, 2, 3], la = [1.toLong()], fa = [], da = [2.2.toDouble()], ca = [\u0061 ('a')], ba = [true, false])
+          KotlinStub$CONSTRUCTOR_CALLEE
+            KotlinStub$TYPE_REFERENCE
+              KotlinStub$USER_TYPE
+                KotlinStub$USER_TYPE
+                  KotlinStub$REFERENCE_EXPRESSION[referencedName=test]
+                KotlinStub$REFERENCE_EXPRESSION[referencedName=Arrays]
+      KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=WithArrays]
+        KotlinStub$MODIFIER_LIST[public]
+        KotlinStub$VALUE_PARAMETER_LIST
+      KotlinStub$CLASS_BODY
+    KotlinStub$CLASS[classId=test/AnnotationValues.WithClassLiteral, fqName=test.AnnotationValues.WithClassLiteral, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithClassLiteral, superNames=[]]
+      KotlinStub$MODIFIER_LIST[public final]
+        KotlinStub$ANNOTATION_ENTRY[hasValueArguments=false, shortName=ClassLiteral]
+          valueArguments: (c1 = NormalClass(value=test/AnnotationValues.WithClassLiteral), c2 = NormalClass(value=kotlin/String))
+          KotlinStub$CONSTRUCTOR_CALLEE
+            KotlinStub$TYPE_REFERENCE
+              KotlinStub$USER_TYPE
+                KotlinStub$USER_TYPE
+                  KotlinStub$REFERENCE_EXPRESSION[referencedName=test]
+                KotlinStub$REFERENCE_EXPRESSION[referencedName=ClassLiteral]
+      KotlinStub$TYPE_PARAMETER_LIST
+        KotlinStub$TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+      KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=WithClassLiteral]
+        KotlinStub$MODIFIER_LIST[public]
+        KotlinStub$VALUE_PARAMETER_LIST
+      KotlinStub$CLASS_BODY
+    KotlinStub$CLASS[classId=test/AnnotationValues.WithEnumLiteral, fqName=test.AnnotationValues.WithEnumLiteral, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithEnumLiteral, superNames=[]]
+      KotlinStub$MODIFIER_LIST[public final]
+        KotlinStub$ANNOTATION_ENTRY[hasValueArguments=false, shortName=EnumLiteral]
+          valueArguments: (e1 = E.E1, e2 = E.E2, e3 = E.E2)
+          KotlinStub$CONSTRUCTOR_CALLEE
+            KotlinStub$TYPE_REFERENCE
+              KotlinStub$USER_TYPE
+                KotlinStub$USER_TYPE
+                  KotlinStub$REFERENCE_EXPRESSION[referencedName=test]
+                KotlinStub$REFERENCE_EXPRESSION[referencedName=EnumLiteral]
+      KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=WithEnumLiteral]
+        KotlinStub$MODIFIER_LIST[public]
+        KotlinStub$VALUE_PARAMETER_LIST
+      KotlinStub$CLASS_BODY
+    KotlinStub$CLASS[classId=test/AnnotationValues.WithNested, fqName=test.AnnotationValues.WithNested, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithNested, superNames=[]]
+      KotlinStub$MODIFIER_LIST[public final]
+        KotlinStub$ANNOTATION_ENTRY[hasValueArguments=false, shortName=Outer]
+          valueArguments: (some = "value", nested = Value(type=KotlinClassTypeBean(classId=test/Nested, arguments=[], nullable=false), argumentsMapping={i=12, s="nested value"}))
+          KotlinStub$CONSTRUCTOR_CALLEE
+            KotlinStub$TYPE_REFERENCE
+              KotlinStub$USER_TYPE
+                KotlinStub$USER_TYPE
+                  KotlinStub$REFERENCE_EXPRESSION[referencedName=test]
+                KotlinStub$REFERENCE_EXPRESSION[referencedName=Outer]
+      KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=WithNested]
+        KotlinStub$MODIFIER_LIST[public]
+        KotlinStub$VALUE_PARAMETER_LIST
+      KotlinStub$CLASS_BODY
+    KotlinStub$CLASS[classId=test/AnnotationValues.WithSimple, fqName=test.AnnotationValues.WithSimple, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithSimple, superNames=[]]
+      KotlinStub$MODIFIER_LIST[public final]
+        KotlinStub$ANNOTATION_ENTRY[hasValueArguments=false, shortName=Simple]
+          valueArguments: (i = 12, l = 12.toLong(), b = 12.toByte(), d = 3.3.toDouble(), f = 3.3.toFloat(), c = \u0061 ('a'), b1 = true, b2 = false)
+          KotlinStub$CONSTRUCTOR_CALLEE
+            KotlinStub$TYPE_REFERENCE
+              KotlinStub$USER_TYPE
+                KotlinStub$USER_TYPE
+                  KotlinStub$REFERENCE_EXPRESSION[referencedName=test]
+                KotlinStub$REFERENCE_EXPRESSION[referencedName=Simple]
+      KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=WithSimple]
+        KotlinStub$MODIFIER_LIST[public]
+        KotlinStub$VALUE_PARAMETER_LIST
+      KotlinStub$CLASS_BODY
+    KotlinStub$CLASS[classId=test/AnnotationValues.WithStringLiteral, fqName=test.AnnotationValues.WithStringLiteral, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithStringLiteral, superNames=[]]
+      KotlinStub$MODIFIER_LIST[public final]
+        KotlinStub$ANNOTATION_ENTRY[hasValueArguments=false, shortName=StringLiteral]
+          valueArguments: (s1 = "some", s2 = "", s3 = "H12")
+          KotlinStub$CONSTRUCTOR_CALLEE
+            KotlinStub$TYPE_REFERENCE
+              KotlinStub$USER_TYPE
+                KotlinStub$USER_TYPE
+                  KotlinStub$REFERENCE_EXPRESSION[referencedName=test]
+                KotlinStub$REFERENCE_EXPRESSION[referencedName=StringLiteral]
+      KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=WithStringLiteral]
+        KotlinStub$MODIFIER_LIST[public]
+        KotlinStub$VALUE_PARAMETER_LIST
+      KotlinStub$CLASS_BODY
+    KotlinStub$CLASS[classId=test/AnnotationValues.WithVarArg, fqName=test.AnnotationValues.WithVarArg, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithVarArg, superNames=[]]
+      KotlinStub$MODIFIER_LIST[public final]
+        KotlinStub$ANNOTATION_ENTRY[hasValueArguments=false, shortName=VarArg]
+          valueArguments: (v = [1, 2, 3])
+          KotlinStub$CONSTRUCTOR_CALLEE
+            KotlinStub$TYPE_REFERENCE
+              KotlinStub$USER_TYPE
+                KotlinStub$USER_TYPE
+                  KotlinStub$REFERENCE_EXPRESSION[referencedName=test]
+                KotlinStub$REFERENCE_EXPRESSION[referencedName=VarArg]
+      KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, isDelegatedCallToThis=false, isExtension=false, isTopLevel=false, name=WithVarArg]
+        KotlinStub$MODIFIER_LIST[public]
+        KotlinStub$VALUE_PARAMETER_LIST
+      KotlinStub$CLASS_BODY
