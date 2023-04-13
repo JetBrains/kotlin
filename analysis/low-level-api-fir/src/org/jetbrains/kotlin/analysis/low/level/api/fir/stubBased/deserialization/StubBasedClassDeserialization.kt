@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -85,12 +84,6 @@ fun deserializeClassToSymbol(
         isExternal = classOrObject.hasModifier(KtTokens.EXTERNAL_KEYWORD)
     }
     val annotationDeserializer = defaultAnnotationDeserializer ?: StubBasedFirBuiltinAnnotationDeserializer(session)
-    val jvmBinaryClass = (containerSource as? KotlinJvmBinarySourceElement)?.binaryClass
-    val constDeserializer = if (jvmBinaryClass != null) {
-        StubBasedFirJvmConstDeserializer(session, jvmBinaryClass)
-    } else {
-        FirConstDeserializer(session)
-    }
     val context =
         parentContext?.childContext(
             classOrObject,
@@ -98,23 +91,12 @@ fun deserializeClassToSymbol(
             containerSource,
             symbol,
             annotationDeserializer,
-            if (status.isCompanion) {
-                parentContext.constDeserializer
-            } else {
-                ((containerSource as? KotlinJvmBinarySourceElement)?.binaryClass)?.let {
-                    StubBasedFirJvmConstDeserializer(
-                        session,
-                        it
-                    )
-                } ?: parentContext.constDeserializer
-            },
             status.isInner
         ) ?: StubBasedFirDeserializationContext.createForClass(
             classId,
             classOrObject,
             moduleData,
             annotationDeserializer,
-            constDeserializer,
             containerSource,
             symbol
         )

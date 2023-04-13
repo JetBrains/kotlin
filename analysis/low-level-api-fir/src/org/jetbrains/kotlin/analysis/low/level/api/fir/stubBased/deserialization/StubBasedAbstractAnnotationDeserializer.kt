@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -120,6 +122,16 @@ abstract class StubBasedAbstractAnnotationDeserializer(
         kind: CallableKind
     ): List<FirAnnotation> {
         return emptyList()
+    }
+
+    private val constantCache = mutableMapOf<CallableId, FirExpression>()
+
+    open fun loadConstant(property: KtProperty, callableId: CallableId): FirExpression? {
+        if (!property.hasModifier(KtTokens.CONST_KEYWORD)) return null
+        constantCache[callableId]?.let { return it }
+        val propertyStub = property.stub as? KotlinPropertyStubImpl ?: return null
+        val constantValue = propertyStub.constantInitializer ?: return null
+        return resolveValue(constantValue)
     }
 
     abstract fun loadTypeAnnotations(typeReference: KtTypeReference): List<FirAnnotation>
