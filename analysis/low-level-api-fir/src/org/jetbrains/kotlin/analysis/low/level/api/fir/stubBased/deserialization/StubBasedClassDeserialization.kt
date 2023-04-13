@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization
 
+import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -106,6 +107,7 @@ fun deserializeClassToSymbol(
 //        }
 //    }
     buildRegularClass {
+        source = KtRealPsiSourceElement(classOrObject)
         this.moduleData = moduleData
         this.origin = FirDeclarationOrigin.Library
         name = classId.shortClassName
@@ -147,6 +149,7 @@ fun deserializeClassToSymbol(
 
                     val enumType = ConeClassLikeTypeImpl(symbol.toLookupTag(), emptyArray(), false)
                     val property = buildEnumEntry {
+                        source = KtRealPsiSourceElement(declaration)
                         this.moduleData = moduleData
                         this.origin = FirDeclarationOrigin.Library
                         returnTypeRef = buildResolvedTypeRef { type = enumType }

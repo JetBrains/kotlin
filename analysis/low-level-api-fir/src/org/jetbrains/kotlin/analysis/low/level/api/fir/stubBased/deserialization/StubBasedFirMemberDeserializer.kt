@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization
 
+import org.jetbrains.kotlin.KtFakeSourceElement
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirModuleData
@@ -34,6 +37,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.toKtPsiSourceElement
 
 class StubBasedFirDeserializationContext(
     val moduleData: FirModuleData,
@@ -184,6 +188,7 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
         val effectiveVisibility = visibility.toEffectiveVisibility(classSymbol)
         return if (getter.hasBody()) {
             buildPropertyAccessor {
+                source = KtRealPsiSourceElement(getter)
                 moduleData = c.moduleData
                 origin = FirDeclarationOrigin.Library
                 this.returnTypeRef = returnTypeRef
@@ -199,7 +204,7 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
             }
         } else {
             FirDefaultPropertyGetter(
-                null,
+                KtRealPsiSourceElement(getter),
                 c.moduleData,
                 FirDeclarationOrigin.Library,
                 returnTypeRef,
@@ -231,6 +236,7 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
         val effectiveVisibility = visibility.toEffectiveVisibility(classSymbol)
         return if (setter.hasBody()) {
             buildPropertyAccessor {
+                source = KtRealPsiSourceElement(setter)
                 moduleData = c.moduleData
                 origin = FirDeclarationOrigin.Library
                 this.returnTypeRef = FirImplicitUnitTypeRef(source)
@@ -250,7 +256,7 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
             }
         } else {
             FirDefaultPropertySetter(
-                null,
+                KtRealPsiSourceElement(setter),
                 c.moduleData,
                 FirDeclarationOrigin.Library,
                 returnTypeRef,
@@ -293,6 +299,7 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
 
         val isVar = property.isVar
         return buildProperty {
+            source = KtRealPsiSourceElement(property)
             moduleData = c.moduleData
             origin = FirDeclarationOrigin.Library
             this.returnTypeRef = returnTypeRef
@@ -361,6 +368,7 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
     private fun loadContextReceiver(typeReference: KtTypeReference): FirContextReceiver {
         val typeRef = typeReference.toTypeRef(c)
         return buildContextReceiver {
+            source = KtRealPsiSourceElement(typeReference)
             val type = typeRef.coneType
             this.labelNameFromTypeRef = (type as? ConeLookupTagBasedType)?.lookupTag?.name
             this.typeRef = typeRef
@@ -392,6 +400,7 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
         val simpleFunction = buildSimpleFunction {
             moduleData = c.moduleData
             origin = FirDeclarationOrigin.Library
+            source = KtRealPsiSourceElement(function)
             returnTypeRef = function.typeReference?.toTypeRef(local) ?: session.builtinTypes.unitType
             receiverParameter = function.receiverTypeReference?.toTypeRef(local)?.let { receiverType ->
                 buildReceiverParameter {
@@ -462,6 +471,7 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
                 typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }.toTypedArray(),
                 false
             )
+            source = KtFakeSourceElement(classOrObject, KtFakeSourceElementKind.ClassSelfTypeRef)
         }
 
         return if (isPrimary) {
@@ -470,6 +480,7 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
             FirConstructorBuilder()
         }.apply {
             moduleData = c.moduleData
+            source = KtRealPsiSourceElement(constructor)
             origin = FirDeclarationOrigin.Library
             returnTypeRef = delegatedSelfType
             val visibility = constructor.visibility
@@ -518,6 +529,7 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
         return valueParameters.map { ktParameter ->
             val name = ktParameter.nameAsSafeName
             buildValueParameter {
+                source = KtRealPsiSourceElement(ktParameter)
                 moduleData = c.moduleData
                 this.containingFunctionSymbol = functionSymbol
                 origin = FirDeclarationOrigin.Library
