@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
 import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.name.CallableId
@@ -225,15 +226,14 @@ class JvmMappedScope(
 
             fun FirConstructor.isTrivialCopyConstructor(): Boolean =
                 valueParameters.singleOrNull()?.let {
-                    val type = substitutor.substituteOrSelf(it.returnTypeRef.coneType)
-                    type == firKotlinClass.defaultType()
+                    (it.returnTypeRef.coneType.lowerBoundIfFlexible() as? ConeClassLikeType)?.lookupTag == firKotlinClass.symbol.toLookupTag()
                 } ?: false
 
             // In K1 it is handled by JvmBuiltInsCustomizer.getConstructors
             // Here the logic is generally the same, but simplified for performance by reordering checks and avoiding checking
             // for the impossible combinations
             val javaCtor = javaCtorSymbol.fir
-            if (javaCtor.status.visibility.isPublicAPI &&
+            if (javaCtor.status.visibility.isPublicAPI && !javaCtor.isDeprecated() &&
                 javaCtor.computeJvmDescriptor() !in signatures.hiddenConstructors &&
                 !javaCtor.isTrivialCopyConstructor() &&
                 firKotlinClassConstructors.none { javaCtor.isShadowedBy(it) }
@@ -245,6 +245,8 @@ class JvmMappedScope(
 
         declaredMemberScope.processDeclaredConstructors(processor)
     }
+
+    private fun FirDeclaration.isDeprecated(): Boolean = symbol.getDeprecation(session, callSite = null) != null
 
     private fun getOrCreateCopy(symbol: FirConstructorSymbol): FirConstructorSymbol {
         return constructorsCache.getOrPut(symbol) {
@@ -342,40 +344,6 @@ class JvmMappedScope(
             fun isNotEmpty() = !isEmpty()
         }
 
-        // NOTE: No-arg constructors
-        private val additionalHiddenConstructors = buildSet {
-            // kotlin.text.String pseudo-constructors should be used instead of java.lang.String constructors
-            listOf(
-                "",
-                "Lkotlin/ByteArray;IILjava/nio/charset/Charset;",
-                "Lkotlin/ByteArray;Ljava/nio/charset/Charset;",
-                "Lkotlin/ByteArray;III",
-                "Lkotlin/ByteArray;II",
-                "Lkotlin/ByteArray;IILjava/lang/String;",
-                "Lkotlin/ByteArray;I",
-                "Lkotlin/ByteArray;",
-                "Lkotlin/ByteArray;Ljava/lang/String;",
-                "IILkotlin/CharArray;",
-                "Lkotlin/CharArray;",
-                "Lkotlin/CharArray;Z",
-                "Lkotlin/CharArray;II",
-                "Lkotlin/IntArray;II",
-                "Ljava/lang/StringBuffer;",
-                "Ljava/lang/StringBuilder;",
-                "Ljava/lang/String;",
-            ).mapTo(this) { arguments -> "java/lang/String.<init>($arguments)V" }
-
-            listOf(
-                "",
-                "Ljava/lang/String;Ljava/lang/Throwable;",
-                "Ljava/lang/Throwable;",
-                "Ljava/lang/String;"
-            ).mapTo(this) { arguments -> "java/lang/Throwable.<init>($arguments)V" }
-
-            // TODO: remove after the end of getDeclaringClass/declaringClass deprecation period
-            add("java/lang/Enum.<init>(Ljava/lang/String;I)V")
-        }
-
         fun prepareSignatures(klass: FirRegularClass, isMutable: Boolean): Signatures {
 
             val signaturePrefix = klass.symbol.classId.toString()
@@ -391,7 +359,7 @@ class JvmMappedScope(
             }
 
             val hiddenConstructors =
-                (JvmBuiltInsSignatures.HIDDEN_CONSTRUCTOR_SIGNATURES + additionalHiddenConstructors)
+                JvmBuiltInsSignatures.HIDDEN_CONSTRUCTOR_SIGNATURES
                     .filter { it.startsWith(signaturePrefix) }
                     .mapTo(mutableSetOf()) { it.substring(signaturePrefix.length + 1) }
 
