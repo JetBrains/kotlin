@@ -235,3 +235,9 @@ private fun List<FirAnnotation>.extractDeprecationAnnotationInfoPerUseSite(
         }
     }
 }
+
+private object IsHiddenEverywhereBesideSuperCalls : FirDeclarationDataKey()
+
+var FirCallableDeclaration.isHiddenEverywhereBesideSuperCalls: Boolean? by FirDeclarationDataRegistry.data(
+    IsHiddenEverywhereBesideSuperCalls
+)

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
@@ -110,7 +111,8 @@ object FirFakeOverrideGenerator {
         newReturnType: ConeKotlinType? = null,
         newModality: Modality? = null,
         newVisibility: Visibility? = null,
-        fakeOverrideSubstitution: FakeOverrideSubstitution? = null
+        fakeOverrideSubstitution: FakeOverrideSubstitution? = null,
+        additionalAnnotations: List<FirAnnotation> = emptyList(),
     ): FirSimpleFunction {
         return buildSimpleFunction {
             source = baseFunction.source
@@ -125,9 +127,14 @@ object FirFakeOverrideGenerator {
             attributes = baseFunction.attributes.copy()
             typeParameters += configureAnnotationsTypeParametersAndSignature(
                 session, baseFunction, newParameterTypes, newTypeParameters,
-                newReceiverType, newContextReceiverTypes, newReturnType, fakeOverrideSubstitution, newSymbol
+                newReceiverType, newContextReceiverTypes, newReturnType, fakeOverrideSubstitution, newSymbol, additionalAnnotations
             ).filterIsInstance<FirTypeParameter>()
-            deprecationsProvider = baseFunction.deprecationsProvider
+
+            deprecationsProvider = when {
+                additionalAnnotations.isNotEmpty() ->
+                    annotations.getDeprecationsProviderFromAnnotations(session, fromJava = origin == FirDeclarationOrigin.Enhancement)
+                else -> baseFunction.deprecationsProvider
+            }
         }.apply {
             containingClassForStaticMemberAttr = derivedClassLookupTag.takeIf { shouldOverrideSetContainingClass(baseFunction) }
         }
@@ -196,6 +203,7 @@ object FirFakeOverrideGenerator {
         newReturnType: ConeKotlinType?,
         fakeOverrideSubstitution: FakeOverrideSubstitution?,
         symbolForOverride: FirFunctionSymbol<*>,
+        additionalAnnotations: List<FirAnnotation> = emptyList(),
     ): List<FirTypeParameterRef> {
         return when {
             baseFunction.typeParameters.isEmpty() -> {
@@ -206,7 +214,8 @@ object FirFakeOverrideGenerator {
                     newReceiverType,
                     newContextReceiverTypes,
                     newReturnType,
-                    fakeOverrideSubstitution
+                    fakeOverrideSubstitution,
+                    additionalAnnotations
                 )
                 emptyList()
             }
@@ -232,7 +241,8 @@ object FirFakeOverrideGenerator {
                     copiedReceiverType,
                     copiedContextReceiverTypes,
                     copiedReturnType,
-                    newFakeOverrideSubstitution
+                    newFakeOverrideSubstitution,
+                    additionalAnnotations
                 )
                 copiedTypeParameters
             }
@@ -244,7 +254,8 @@ object FirFakeOverrideGenerator {
                     newReceiverType,
                     newContextReceiverTypes,
                     newReturnType,
-                    fakeOverrideSubstitution
+                    fakeOverrideSubstitution,
+                    additionalAnnotations
                 )
                 newTypeParameters
             }
@@ -259,8 +270,10 @@ object FirFakeOverrideGenerator {
         newContextReceiverTypes: List<ConeKotlinType?>?,
         newReturnType: ConeKotlinType?,
         fakeOverrideSubstitution: FakeOverrideSubstitution?,
+        additionalAnnotations: List<FirAnnotation> = emptyList(),
     ) {
         annotations += baseFunction.annotations
+        annotations += additionalAnnotations
 
         @Suppress("NAME_SHADOWING")
         val fakeOverrideSubstitution = fakeOverrideSubstitution ?: runIf(baseFunction.returnTypeRef is FirImplicitTypeRef) {
