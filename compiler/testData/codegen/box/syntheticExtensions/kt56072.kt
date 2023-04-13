@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM
+// !LANGUAGE: +ReferencesToSyntheticJavaProperties
 // FILE: SuperClass.java
 
 public class SuperClass {

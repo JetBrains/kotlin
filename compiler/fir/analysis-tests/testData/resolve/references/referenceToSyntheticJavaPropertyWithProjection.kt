@@ -1,4 +1,5 @@
 // ISSUE: KT-56243
+// !LANGUAGE: +ReferencesToSyntheticJavaProperties
 
 // FILE: JavaInv.java
 public class JavaInv<T> {

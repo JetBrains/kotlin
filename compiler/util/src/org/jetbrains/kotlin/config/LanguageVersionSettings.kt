@@ -273,7 +273,6 @@ enum class LanguageFeature(
     DataObjects(KOTLIN_1_9), // KT-4107
     ProhibitAccessToEnumCompanionMembersInEnumConstructorCall(KOTLIN_1_9, kind = BUG_FIX), // KT-49110
     RefineTypeCheckingOnAssignmentsToJavaFields(KOTLIN_1_9, kind = BUG_FIX), // KT-46727
-    ReferencesToSyntheticJavaProperties(KOTLIN_1_9), // KT-8575
     ValueClassesSecondaryConstructorWithBody(sinceVersion = KOTLIN_1_9, kind = UNSTABLE_FEATURE), // KT-55333
     NativeJsProhibitLateinitIsInitializedIntrinsicWithoutPrivateAccess(KOTLIN_1_9, kind = BUG_FIX), // KT-27002
 
@@ -290,6 +289,8 @@ enum class LanguageFeature(
     ProhibitAccessToInvisibleSetterFromDerivedClass(KOTLIN_2_0, kind = BUG_FIX), // KT-56662
 
     // 2.1
+
+    ReferencesToSyntheticJavaProperties(KOTLIN_2_1), // KT-8575
 
     // End of 2.* language features --------------------------------------------------
 

@@ -1,4 +1,5 @@
 // !LANGUAGE: -ReferencesToSyntheticJavaProperties
+// FIR_IDENTICAL
 
 // FILE: Customer.java
 public class Customer {
