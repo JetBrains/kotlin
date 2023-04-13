@@ -121,8 +121,7 @@ class StubBasedAnnotationDeserializer(
 //                    type = expectedArrayElementType.createArrayType() //todo
 //                }
             }
-            //todo
-            is AnnotationValue -> deserializeAnnotation(sourceElement, value.annoClassId, value.args.map { Name.identifier("value") to it }.toMap())
+            is AnnotationValue -> deserializeAnnotation(sourceElement, value.annoClassId, value.args)
             is BooleanValue -> const(ConstantValueKind.Boolean, value.value, session.builtinTypes.booleanType, sourceElement)
             is ByteValue -> const(ConstantValueKind.Byte, value.value, session.builtinTypes.byteType, sourceElement)
             is CharValue -> const(ConstantValueKind.Char, value.value, session.builtinTypes.charType, sourceElement)
