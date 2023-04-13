@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.jvm.JvmMappedScope
+import org.jetbrains.kotlin.name.StandardClassIds
 
 fun wrapScopeWithJvmMapped(
     klass: FirClass,
@@ -34,16 +35,14 @@ fun wrapScopeWithJvmMapped(
     val symbolProvider = useSiteSession.symbolProvider
     val javaClass = symbolProvider.getClassLikeSymbolByClassId(javaClassId)?.fir as? FirJavaClass
         ?: return declaredMemberScope
-    val preparedSignatures = JvmMappedScope.prepareSignatures(javaClass, JavaToKotlinClassMap.isMutable(kotlinUnsafeFqName))
-    return if (preparedSignatures.isNotEmpty()) {
-        JvmMappedScope(
-            useSiteSession,
-            klass,
-            javaClass,
-            declaredMemberScope,
-            preparedSignatures
-        )
-    } else {
+
+    if (JavaToKotlinClassMap.mapJavaToKotlin(javaClassId.asSingleFqName()) == null) return declaredMemberScope
+    if (classId == StandardClassIds.Any) return declaredMemberScope
+
+    return JvmMappedScope(
+        useSiteSession,
+        klass,
+        javaClass,
         declaredMemberScope
-    }
+    )
 }
