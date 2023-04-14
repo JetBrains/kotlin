@@ -44,8 +44,8 @@ internal fun remapArgumentsWithVararg(
     var indexAfterVarargs = argumentList.size
     val newArgumentMapping = linkedMapOf<FirExpression, FirValueParameter>()
     val varargArgument = buildVarargArgumentsExpression {
-        this.varargElementType = varargParameterTypeRef.withReplacedConeType(varargElementType)
-        this.typeRef = varargParameterTypeRef.withReplacedConeType(varargArrayType)
+        this.varargElementType = varargParameterTypeRef.withReplacedConeType(varargElementType, KtFakeSourceElementKind.VarargArgument)
+        this.typeRef = varargParameterTypeRef.withReplacedConeType(varargArrayType, KtFakeSourceElementKind.VarargArgument)
         for ((i, arg) in argumentList.withIndex()) {
             val valueParameter = argumentMapping.getValue(arg)
             // Collect arguments if `arg` is a vararg argument of interest or other vararg arguments.
