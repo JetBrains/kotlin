@@ -390,9 +390,7 @@ testsJar {}
 
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateJsTestsKt") {
     dependsOn(":compiler:generateTestData")
-    if (!project.hasProperty("teamcity")) {
-        dependsOn(generateTypeScriptJsExportOnFileTests)
-    }
+    dependsOn(generateTypeScriptJsExportOnFileTests)
 }
 
 val prepareNpmTestData by tasks.registering(Copy::class) {
