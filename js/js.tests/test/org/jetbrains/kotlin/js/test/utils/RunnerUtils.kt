@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.js.JavaScript
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.test.JsAdditionalSourceProvider
 import org.jetbrains.kotlin.js.test.converters.augmentWithModuleName
+import org.jetbrains.kotlin.js.test.converters.finalizePath
 import org.jetbrains.kotlin.js.test.converters.kind
 import org.jetbrains.kotlin.js.test.handlers.JsBoxRunner.Companion.TEST_FUNCTION
 import org.jetbrains.kotlin.js.testOld.*
@@ -135,7 +136,7 @@ fun testWithModuleSystem(testServices: TestServices): Boolean {
 }
 
 fun getModeOutputFilePath(testServices: TestServices, module: TestModule, mode: TranslationMode): String {
-    return JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name, mode) + module.kind.extension
+    return JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name, mode).finalizePath(module.kind)
 }
 
 fun getAllFilesForRunner(
