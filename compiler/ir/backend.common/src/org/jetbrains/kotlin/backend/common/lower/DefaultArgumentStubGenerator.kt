@@ -398,20 +398,17 @@ open class DefaultParameterInjector(
 
         log { "$declaration -> $stubFunction" }
 
-        val realArgumentsNumber = declaration.valueParameters.size
-        val maskValues = IntArray((declaration.valueParameters.size + 31) / 32)
+        val realArgumentsNumber = declaration.valueParameters.filterNot { it.isMovedReceiver() }.size
+        val maskValues = IntArray((realArgumentsNumber + 31) / 32)
 
-        assert(
-            ((if (isStatic(expression.symbol.owner) && stubFunction.extensionReceiverParameter != null) 1 else 0) +
-                    stubFunction.valueParameters.size - realArgumentsNumber - maskValues.size) in listOf(0, 1)
-        ) {
+        assert(stubFunction.explicitParametersCount - declaration.explicitParametersCount - maskValues.size in listOf(0, 1)) {
             "argument count mismatch: expected $realArgumentsNumber arguments + ${maskValues.size} masks + optional handler/marker, " +
-                    "got ${stubFunction.valueParameters.size} total in ${stubFunction.render()}"
+                    "got ${stubFunction.explicitParametersCount} total in ${stubFunction.render()}"
         }
 
         var sourceParameterIndex = -1
         val valueParametersPrefix =
-            if (isStatic(expression.symbol.owner))
+            if (isStatic(declaration))
                 listOfNotNull(stubFunction.dispatchReceiverParameter, stubFunction.extensionReceiverParameter)
             else emptyList()
         return stubFunction.symbol to (valueParametersPrefix + stubFunction.valueParameters).mapIndexed { i, parameter ->
@@ -419,12 +416,12 @@ open class DefaultParameterInjector(
                 ++sourceParameterIndex
             }
             when {
-                i >= realArgumentsNumber + maskValues.size -> IrConstImpl.constNull(startOffset, endOffset, parameter.type)
-                i >= realArgumentsNumber -> IrConstImpl.int(startOffset, endOffset, parameter.type, maskValues[i - realArgumentsNumber])
+                sourceParameterIndex >= realArgumentsNumber + maskValues.size -> IrConstImpl.constNull(startOffset, endOffset, parameter.type)
+                sourceParameterIndex >= realArgumentsNumber -> IrConstImpl.int(startOffset, endOffset, parameter.type, maskValues[sourceParameterIndex - realArgumentsNumber])
                 else -> {
                     val valueArgument = expression.getValueArgument(i)
                     if (valueArgument == null) {
-                        maskValues[i / 32] = maskValues[i / 32] or (1 shl (sourceParameterIndex % 32))
+                        maskValues[sourceParameterIndex / 32] = maskValues[sourceParameterIndex / 32] or (1 shl (sourceParameterIndex % 32))
                     }
                     valueArgument ?: nullConst(startOffset, endOffset, parameter)?.let {
                         IrCompositeImpl(

@@ -16763,6 +16763,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/inlineClasses/kt50974_resultMultiModule.kt");
         }
 
+        @TestMetadata("kt57973.kt")
+        public void ignoreKt57973() throws Exception {
+            runTest("compiler/testData/codegen/box/inlineClasses/kt57973.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
+        }
+
         @TestMetadata("mappingOfBoxedFlexibleInlineClassTypeGeneric.kt")
         public void ignoreMappingOfBoxedFlexibleInlineClassTypeGeneric() throws Exception {
             runTest("compiler/testData/codegen/box/inlineClasses/mappingOfBoxedFlexibleInlineClassTypeGeneric.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
