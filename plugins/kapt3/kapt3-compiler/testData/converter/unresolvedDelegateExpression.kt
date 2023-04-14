@@ -9,4 +9,9 @@ class B : NonExisting {
     val a: String by flaf()
 }
 
+interface I
+
+@Suppress("UNRESOLVED_REFERENCE")
+class D : I by NonExisting
+
 fun C.flaf() = "OK"

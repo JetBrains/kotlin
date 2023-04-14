@@ -53,6 +53,8 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeSubstitutor
+import org.jetbrains.kotlin.types.error.ErrorTypeKind
+import org.jetbrains.kotlin.types.error.ErrorUtils.createErrorType
 import org.jetbrains.kotlin.utils.newHashMapWithExpectedSize
 
 @ObsoleteDescriptorBasedAPI
@@ -199,7 +201,11 @@ internal class ClassGenerator(
         delegateNumber: Int
     ) {
         val ktDelegateExpression = ktEntry.delegateExpression!!
-        val delegateType = getTypeInferredByFrontendOrFail(ktDelegateExpression)
+        val delegateType = if (context.configuration.generateBodies) {
+            getTypeInferredByFrontendOrFail(ktDelegateExpression)
+        } else {
+            getTypeInferredByFrontend(ktDelegateExpression) ?: createErrorType(ErrorTypeKind.UNRESOLVED_TYPE, ktDelegateExpression.text)
+        }
         val superType = getOrFail(BindingContext.TYPE, ktEntry.typeReference!!)
 
         val superTypeConstructorDescriptor = superType.constructor.declarationDescriptor
@@ -212,11 +218,16 @@ internal class ClassGenerator(
             irClass.properties.first { it.descriptor == propertyDescriptor }.backingField!!
         } else {
             val delegateDescriptor = IrImplementingDelegateDescriptorImpl(irClass.descriptor, delegateType, superType, delegateNumber)
+            val initializer = if (context.configuration.generateBodies) {
+                createBodyGenerator(irClass.symbol).generateExpressionBody(ktDelegateExpression)
+            } else {
+                null
+            }
             context.symbolTable.declareField(
                 ktDelegateExpression.startOffsetSkippingComments, ktDelegateExpression.endOffset,
                 IrDeclarationOrigin.DELEGATE,
                 delegateDescriptor, delegateDescriptor.type.toIrType(),
-                createBodyGenerator(irClass.symbol).generateExpressionBody(ktDelegateExpression)
+                initializer
             ).apply {
                 irClass.addMember(this)
             }

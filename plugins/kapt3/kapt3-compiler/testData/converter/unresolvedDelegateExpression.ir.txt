@@ -34,6 +34,25 @@ public class C {
 
 
 @kotlin.Metadata()
+@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
+public final class D implements I {
+
+    public D() {
+        super();
+    }
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+public abstract interface I {
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
 public final class UnresolvedDelegateExpressionKt {
 
     @org.jetbrains.annotations.NotNull()
