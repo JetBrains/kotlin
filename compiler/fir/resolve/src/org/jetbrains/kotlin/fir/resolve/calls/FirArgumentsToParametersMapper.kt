@@ -262,19 +262,27 @@ private class FirCallArgumentsProcessor(
             return
         }
 
-        if (lastParameter.isVararg) {
-            addDiagnostic(VarargArgumentOutsideParentheses(externalArgument, lastParameter))
-            return
+        if (function.origin != FirDeclarationOrigin.DynamicScope) {
+            if (lastParameter.isVararg) {
+                addDiagnostic(VarargArgumentOutsideParentheses(externalArgument, lastParameter))
+                return
+            }
+
+            val previousOccurrence = result[lastParameter]
+            if (previousOccurrence != null) {
+                addDiagnostic(TooManyArguments(externalArgument, function))
+                return
+            }
+
+            result[lastParameter] = ResolvedCallArgument.SimpleArgument(externalArgument)
+        } else {
+            val existing = result[lastParameter]
+            if (existing == null) {
+                result[lastParameter] = ResolvedCallArgument.SimpleArgument(externalArgument)
+            } else {
+                result[lastParameter] = ResolvedCallArgument.VarargArgument(existing.arguments + externalArgument)
+            }
         }
-
-        val previousOccurrence = result[lastParameter]
-        if (previousOccurrence != null) {
-            addDiagnostic(TooManyArguments(externalArgument, function))
-            return
-        }
-
-
-        result[lastParameter] = ResolvedCallArgument.SimpleArgument(externalArgument)
     }
 
     fun processExcessLambdaArguments(excessLambdaArguments: List<FirExpression>) {
@@ -312,7 +320,7 @@ private class FirCallArgumentsProcessor(
     private fun completeVarargPositionArguments() {
         assert(state == State.VARARG_POSITION) { "Incorrect state: $state" }
         val parameter = parameters[currentPositionedParameterIndex]
-        result.put(parameter, ResolvedCallArgument.VarargArgument(varargArguments!!))
+        result[parameter] = ResolvedCallArgument.VarargArgument(varargArguments!!)
     }
 
     private fun addVarargArgument(argument: FirExpression) {
