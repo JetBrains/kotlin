@@ -165,21 +165,6 @@ fun generateJsExportOnFileTestFor(dir: String): Task = task<Copy>("generate-js-e
     into(outputDir)
 }
 
-val generateTypeScriptJsExportOnFileTests = sequential(
-    tasks = typescriptTestsDir
-        .listFiles { it: File ->
-            it.isDirectory &&
-                    !it.path.endsWith("selective-export") &&
-                    !it.path.endsWith("implicit-export") &&
-                    !it.path.endsWith("inheritance") &&
-                    !it.path.endsWith("strict-implicit-export") &&
-                    !it.path.endsWith("private-primary-constructor") &&
-                    !it.path.endsWith(exportFileDirPostfix)
-        }
-        .map { generateJsExportOnFileTestFor(it.name) }
-)
-
-
 fun generateTypeScriptTestFor(dir: String): Task = task<NpmTask>("generate-ts-for-$dir") {
     val baseDir = fileTree(typescriptTestsDir.resolve(dir))
 
@@ -193,6 +178,21 @@ val generateTypeScriptTests = sequential(
     installTsDependencies,
     typescriptTestsDir.listFiles { it: File -> it.isDirectory }
         .map { generateTypeScriptTestFor(it.name) }
+)
+
+val generateTypeScriptJsExportOnFileTests = sequential(
+    tasks = typescriptTestsDir
+        .listFiles { it: File ->
+            it.isDirectory &&
+                    !it.path.endsWith("selective-export") &&
+                    !it.path.endsWith("implicit-export") &&
+                    !it.path.endsWith("inheritance") &&
+                    !it.path.endsWith("strict-implicit-export") &&
+                    !it.path.endsWith("private-primary-constructor") &&
+                    !it.path.endsWith(exportFileDirPostfix)
+        }
+        .map { generateJsExportOnFileTestFor(it.name) }
+        .plus(generateTypeScriptTests)
 )
 
 fun Test.setupNodeJs() {
@@ -218,10 +218,7 @@ fun Test.setUpJsBoxTests(jsEnabled: Boolean, jsIrEnabled: Boolean, firEnabled: B
     inputs.files(rootDir.resolve("js/js.engines/src/org/jetbrains/kotlin/js/engine/repl.js"))
 
     dependsOn(":dist")
-
-    if (!project.hasProperty("teamcity")) {
-        dependsOn(generateTypeScriptTests)
-    }
+    dependsOn(generateTypeScriptTests)
 
     if (jsEnabled) {
         dependsOn(testJsRuntime)
@@ -390,9 +387,7 @@ testsJar {}
 
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateJsTestsKt") {
     dependsOn(":compiler:generateTestData")
-    if (!project.hasProperty("teamcity")) {
-        dependsOn(generateTypeScriptJsExportOnFileTests)
-    }
+    dependsOn(generateTypeScriptJsExportOnFileTests)
 }
 
 val prepareNpmTestData by tasks.registering(Copy::class) {
