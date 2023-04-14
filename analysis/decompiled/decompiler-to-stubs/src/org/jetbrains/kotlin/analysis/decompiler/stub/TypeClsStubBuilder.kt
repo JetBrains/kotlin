@@ -4,6 +4,7 @@ package org.jetbrains.kotlin.analysis.decompiler.stub
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
+import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionClass
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.stubs.ConstantValueKind
 import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
@@ -28,6 +30,8 @@ import org.jetbrains.kotlin.utils.doNothing
 
 // TODO: see DescriptorRendererOptions.excludedTypeAnnotationClasses for decompiler
 private val ANNOTATIONS_NOT_LOADED_FOR_TYPES = setOf(StandardNames.FqNames.parameterName)
+
+const val COMPILED_DEFAULT_PARAMETER_VALUE = "COMPILED_CODE"
 
 class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
     fun createTypeReferenceStub(
@@ -312,11 +316,12 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                 SpecialNames.IMPLICIT_SET_PARAMETER -> StandardNames.DEFAULT_VALUE_PARAMETER
                 else -> name
             }
+            val hasDefaultValue = Flags.DECLARES_DEFAULT_VALUE.get(valueParameterProto.flags)
             val parameterStub = KotlinParameterStubImpl(
                 parameterListStub,
                 name = paramName.ref(),
                 fqName = null,
-                hasDefaultValue = false,
+                hasDefaultValue = hasDefaultValue,
                 hasValOrVar = false,
                 isMutable = false
             )
@@ -346,6 +351,9 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             }
 
             createTypeReferenceStub(parameterStub, typeProto)
+            if (hasDefaultValue) {
+                KotlinNameReferenceExpressionStubImpl(parameterStub, StringRef.fromString(COMPILED_DEFAULT_PARAMETER_VALUE))
+            }
         }
     }
 
