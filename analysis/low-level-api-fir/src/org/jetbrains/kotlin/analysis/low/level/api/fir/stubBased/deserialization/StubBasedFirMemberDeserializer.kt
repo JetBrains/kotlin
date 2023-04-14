@@ -68,9 +68,9 @@ class StubBasedFirDeserializationContext(
         StubBasedFirTypeDeserializer(
             moduleData,
             annotationDeserializer,
-            owner,
             typeDeserializer,
-            containingDeclarationSymbol
+            containingDeclarationSymbol,
+            owner
         ),
         annotationDeserializer,
         containerSource,
@@ -117,9 +117,9 @@ class StubBasedFirDeserializationContext(
             StubBasedFirTypeDeserializer(
                 moduleData,
                 annotationDeserializer,
-                owner,
                 null,
-                containingDeclarationSymbol
+                containingDeclarationSymbol,
+                owner
             ),
             annotationDeserializer,
             containerSource,
