@@ -1,7 +1,7 @@
 # Local build with no caches:
-# docker build --no-cache -t local/kotlin-build-env:v6 -f kotlin-build-env.dockerfile .
+# docker build --no-cache -t local/kotlin-build-env:v7 -f kotlin-build-env.dockerfile .
 
-FROM debian:10.12-slim
+FROM debian:11.6-slim
 
 RUN apt-get update \
     && apt-get install -y locales \
