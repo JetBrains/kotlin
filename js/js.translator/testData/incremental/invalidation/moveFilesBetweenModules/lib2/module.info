@@ -12,3 +12,4 @@ STEP 2:
     modifications:
         D : l22.kt
     removed direct depends: l21.kt
+    removed file: l22.kt

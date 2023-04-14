@@ -118,12 +118,28 @@ class CacheUpdater(
             libs.filter { it.libraryFile.canonicalPath in friendPaths }
         }
 
-        private val incrementalCaches = libraryDependencies.keys.associate { lib ->
+        private val klibCacheDirs = libraryDependencies.keys.map { lib ->
             val libFile = KotlinLibraryFile(lib)
             val file = File(libFile.path)
             val pathHash = file.absolutePath.cityHash64().toULong().toString(Character.MAX_RADIX)
-            val libraryCacheDir = File(cacheRootDir, "${file.name}.$pathHash")
-            libFile to IncrementalCache(KotlinLoadedLibraryHeader(lib), libraryCacheDir)
+            File(cacheRootDir, "${file.name}.$pathHash")
+        }
+
+        init {
+            // Enabled Partial Linkage may replace entire IR expressions with a stub during klib linking and loading.
+            // This may break the incremental cache dependency graph.
+            // Dropping incremental cache files after updating klibs (e.g. update klib version)
+            // covers almost all cases which could not be tracked due to a broken dependency graph.
+            // TODO: This code could be removed after fixing KT-57347
+            val oldKlibCaches = cacheRootDir.listFiles { file: File -> file.isDirectory }?.mapTo(hashSetOf()) { it.name } ?: emptySet()
+            val newKlibCaches = klibCacheDirs.mapTo(hashSetOf()) { it.name }
+            if (oldKlibCaches != newKlibCaches) {
+                cacheRootDir.deleteRecursively()
+            }
+        }
+
+        private val incrementalCaches = libraryDependencies.keys.zip(klibCacheDirs).associate { (lib, libraryCacheDir) ->
+            KotlinLibraryFile(lib) to IncrementalCache(KotlinLoadedLibraryHeader(lib), libraryCacheDir)
         }
 
         private val removedIncrementalCaches = buildList {

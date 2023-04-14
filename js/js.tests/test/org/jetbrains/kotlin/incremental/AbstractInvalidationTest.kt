@@ -161,15 +161,8 @@ abstract class AbstractInvalidationTest(private val targetBackend: TargetBackend
             val moduleSourceDir = File(sourceDir, module)
             val moduleInfo = moduleInfos[module] ?: error("No module info found for $module")
             val moduleStep = moduleInfo.steps.getValue(projStepId)
-            val deletedFiles = mutableSetOf<String>()
             for (modification in moduleStep.modifications) {
-                modification.execute(moduleTestDir, moduleSourceDir) { deletedFiles.add(it.name) }
-            }
-
-            val expectedFileStats = moduleStep.expectedFileStats.toMutableMap()
-            if (deletedFiles.isNotEmpty()) {
-                val removedFiles = expectedFileStats[DirtyFileState.REMOVED_FILE.str] ?: emptySet()
-                expectedFileStats[DirtyFileState.REMOVED_FILE.str] = removedFiles + deletedFiles
+                modification.execute(moduleTestDir, moduleSourceDir) {}
             }
 
             val outputKlibFile = resolveModuleArtifact(module, buildDir)
@@ -196,7 +189,7 @@ abstract class AbstractInvalidationTest(private val targetBackend: TargetBackend
                 module.safeModuleName,
                 outputKlibFile.canonicalPath,
                 friends.map { it.canonicalPath },
-                expectedFileStats,
+                moduleStep.expectedFileStats,
                 dtsFile?.readText()
             )
         }
