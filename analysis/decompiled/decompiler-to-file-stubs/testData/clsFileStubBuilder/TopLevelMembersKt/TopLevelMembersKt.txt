@@ -147,12 +147,13 @@ PsiJetFileStubImpl[package=foo.TopLevelMembers]
           REFERENCE_EXPRESSION[referencedName=kotlin]
         REFERENCE_EXPRESSION[referencedName=Int]
     VALUE_PARAMETER_LIST
-      VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=i]
+      VALUE_PARAMETER[fqName=null, hasDefaultValue=true, hasValOrVar=false, isMutable=false, name=i]
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
+        REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
     TYPE_REFERENCE
       USER_TYPE
         USER_TYPE
