@@ -21802,6 +21802,12 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
         public void testLambdaWithDynamicReceiver() throws Exception {
             runTest("compiler/testData/codegen/box/js/lambdaWithDynamicReceiver.kt");
         }
+
+        @Test
+        @TestMetadata("trailingLambdaOnDynamic.kt")
+        public void testTrailingLambdaOnDynamic() throws Exception {
+            runTest("compiler/testData/codegen/box/js/trailingLambdaOnDynamic.kt");
+        }
     }
 
     @Nested
