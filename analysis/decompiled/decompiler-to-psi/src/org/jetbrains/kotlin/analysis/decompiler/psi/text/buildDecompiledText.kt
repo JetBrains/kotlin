@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.decompiler.psi.text
 
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.analysis.decompiler.stub.COMPILED_DEFAULT_PARAMETER_VALUE
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.contracts.description.ContractProviderKey
 import org.jetbrains.kotlin.descriptors.*
@@ -35,6 +36,7 @@ fun DescriptorRendererOptions.defaultDecompilerRendererOptions() {
     excludedTypeAnnotationClasses = emptySet()
     alwaysRenderModifiers = true
     parameterNamesInFunctionalTypes = false // to support parameters names in decompiled text we need to load annotation arguments
+    defaultParameterValueRenderer = { _ -> COMPILED_DEFAULT_PARAMETER_VALUE }
 }
 
 internal fun CallableMemberDescriptor.mustNotBeWrittenToDecompiledText(): Boolean {
