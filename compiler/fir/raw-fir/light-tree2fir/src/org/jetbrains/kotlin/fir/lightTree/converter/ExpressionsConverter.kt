@@ -267,6 +267,8 @@ class ExpressionsConverter(
         val operationToken = operationTokenName.getOperationSymbol()
         if (operationToken == IDENTIFIER) {
             context.calleeNamesForLambda += operationTokenName.nameAsSafeName()
+        } else {
+            context.calleeNamesForLambda += null
         }
 
         val rightArgAsFir =
@@ -277,10 +279,8 @@ class ExpressionsConverter(
 
         val leftArgAsFir = getAsFirExpression<FirExpression>(leftArgNode, "No left operand")
 
-        if (operationToken == IDENTIFIER) {
-            // No need for the callee name since arguments are already generated
-            context.calleeNamesForLambda.removeLast()
-        }
+        // No need for the callee name since arguments are already generated
+        context.calleeNamesForLambda.removeLast()
 
         when (operationToken) {
             ELVIS ->

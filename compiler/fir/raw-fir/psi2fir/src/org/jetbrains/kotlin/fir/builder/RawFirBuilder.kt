@@ -2380,15 +2380,15 @@ open class RawFirBuilder(
 
             if (operationToken == IDENTIFIER) {
                 context.calleeNamesForLambda += expression.operationReference.getReferencedNameAsName()
+            } else {
+                context.calleeNamesForLambda += null
             }
 
             val leftArgument = expression.left.toFirExpression("No left operand")
             val rightArgument = expression.right.toFirExpression("No right operand")
 
-            if (operationToken == IDENTIFIER) {
-                // No need for the callee name since arguments are already generated
-                context.calleeNamesForLambda.removeLast()
-            }
+            // No need for the callee name since arguments are already generated
+            context.calleeNamesForLambda.removeLast()
 
             val source = expression.toFirSourceElement()
 
