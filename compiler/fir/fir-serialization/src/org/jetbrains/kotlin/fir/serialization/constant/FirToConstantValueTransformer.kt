@@ -214,6 +214,8 @@ internal object FirToConstantValueChecker : FirDefaultVisitor<Boolean, FirSessio
         ConstantValueKind.Int, ConstantValueKind.UnsignedInt, ConstantValueKind.Long, ConstantValueKind.UnsignedLong,
     )
 
+    private val constantIntrinsicCalls = setOf("toByte", "toLong", "toShort", "toFloat", "toDouble", "toChar", "unaryMinus")
+
     override fun visitElement(element: FirElement, data: FirSession): Boolean {
         return false
     }
@@ -259,9 +261,8 @@ internal object FirToConstantValueChecker : FirDefaultVisitor<Boolean, FirSessio
             symbol.callableId.packageName.asString() == "kotlin" -> {
                 val dispatchReceiver = qualifiedAccessExpression.dispatchReceiver
                 when (symbol.callableId.callableName.asString()) {
-                    in setOf("toByte", "toLong", "toShort", "toFloat", "toDouble", "toChar") -> true
-                    "unaryMinus" -> dispatchReceiver.accept(this, data)
-                    else -> false
+                    !in constantIntrinsicCalls -> false
+                    else -> dispatchReceiver.accept(this, data)
                 }
             }
 

@@ -1,5 +1,4 @@
 // ISSUE: KT-57986
-// IGNORE_BACKEND_K2: JS_IR, NATIVE
 
 // MODULE: m1
 // FILE: m1.kt
