@@ -1652,6 +1652,16 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
             }
         }
     }
+
+    @DisplayName("test deprecated kotlin-js gradle plugin message reported")
+    @GradleTest
+    fun testDeprecatedMessageReported(gradleVersion: GradleVersion) {
+        project("kotlin2JsInternalTest", gradleVersion) {
+            build("help") { // just to trigger plugin registration
+                assertOutputContains("w: 'kotlin-js' Gradle plugin is deprecated and will be removed in the future.")
+            }
+        }
+    }
 }
 
 @JsGradlePluginTests
@@ -1661,7 +1671,7 @@ class GeneralKotlin2JsGradlePluginIT : KGPBaseTest() {
     fun testJsBothModeWithTests(gradleVersion: GradleVersion) {
         project("kotlin-js-both-mode-with-tests", gradleVersion) {
             build("build") {
-                assertNoBuildWarnings()
+                assertNoBuildWarnings(setOf("w: 'kotlin-js' Gradle plugin is deprecated and will be removed in the future."))
             }
         }
     }
