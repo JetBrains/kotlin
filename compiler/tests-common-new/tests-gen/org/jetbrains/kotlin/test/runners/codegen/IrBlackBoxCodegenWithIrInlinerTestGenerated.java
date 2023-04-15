@@ -18380,6 +18380,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
         }
 
         @Test
+        @TestMetadata("enumEntryInTypeJavaAnnotation.kt")
+        public void testEnumEntryInTypeJavaAnnotation() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/enumEntryInTypeJavaAnnotation.kt");
+        }
+
+        @Test
         @TestMetadata("ExtensionAlias.kt")
         public void testExtensionAlias() throws Exception {
             runTest("compiler/testData/codegen/box/fir/ExtensionAlias.kt");
