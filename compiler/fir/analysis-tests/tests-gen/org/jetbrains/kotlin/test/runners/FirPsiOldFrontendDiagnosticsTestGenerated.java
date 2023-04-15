@@ -21268,6 +21268,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                 runTest("compiler/testData/diagnostics/tests/modifiers/repeatedModifiers.kt");
             }
 
+            @Test
+            @TestMetadata("suspendAnonymousFunction.kt")
+            public void testSuspendAnonymousFunction() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/modifiers/suspendAnonymousFunction.kt");
+            }
+
             @Nested
             @TestMetadata("compiler/testData/diagnostics/tests/modifiers/const")
             @TestDataPath("$PROJECT_ROOT")
