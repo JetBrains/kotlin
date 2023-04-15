@@ -21039,6 +21039,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("labelToOuterLambda.kt")
+            public void testLabelToOuterLambda() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/labels/labelToOuterLambda.kt");
+            }
+
+            @Test
             @TestMetadata("labeledFunctionLiteral.kt")
             public void testLabeledFunctionLiteral() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/labels/labeledFunctionLiteral.kt");
