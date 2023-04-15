@@ -15445,6 +15445,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             public void testNestedClassTypeParameterDeserialization() throws Exception {
                 runTest("compiler/testData/codegen/box/fir/nestedClassTypeParameterDeserialization.kt");
             }
+
+            @Test
+            @TestMetadata("toLong.kt")
+            public void testToLong() throws Exception {
+                runTest("compiler/testData/codegen/box/fir/toLong.kt");
+            }
         }
 
         @Nested
