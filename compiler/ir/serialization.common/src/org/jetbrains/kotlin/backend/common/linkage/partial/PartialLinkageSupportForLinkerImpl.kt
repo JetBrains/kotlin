@@ -38,6 +38,8 @@ internal class PartialLinkageSupportForLinkerImpl(
 
     override val isEnabled get() = true
 
+    override fun shouldBeSkipped(declaration: IrDeclaration) = patcher.shouldBeSkipped(declaration)
+
     override fun exploreClassifiers(fakeOverrideBuilder: FakeOverrideBuilder) {
         val entries = fakeOverrideBuilder.fakeOverrideCandidates
         if (entries.isEmpty()) return

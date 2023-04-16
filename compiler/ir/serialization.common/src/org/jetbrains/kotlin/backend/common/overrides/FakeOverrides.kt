@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.backend.common.overrides
 
 import org.jetbrains.kotlin.backend.common.linkage.partial.ImplementAsErrorThrowingStubs
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.serialization.CompatibilityMode
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.GlobalDeclarationTable
@@ -76,14 +77,17 @@ class FakeOverrideBuilder(
     mangler: KotlinMangler.IrMangler,
     typeSystem: IrTypeSystemContext,
     friendModules: Map<String, Collection<String>>,
-    private val partialLinkageEnabled: Boolean,
+    private val partialLinkageSupport: PartialLinkageSupportForLinker,
     val platformSpecificClassFilter: FakeOverrideClassFilter = DefaultFakeOverrideClassFilter,
     private val fakeOverrideDeclarationTable: DeclarationTable = FakeOverrideDeclarationTable(mangler) { builder, table ->
         IdSignatureSerializer(builder, table)
     }
 ) : FakeOverrideBuilderStrategy(
     friendModules = friendModules,
-    unimplementedOverridesStrategy = if (partialLinkageEnabled) ImplementAsErrorThrowingStubs else ProcessAsFakeOverrides
+    unimplementedOverridesStrategy = if (partialLinkageSupport.isEnabled)
+        ImplementAsErrorThrowingStubs(partialLinkageSupport)
+    else
+        ProcessAsFakeOverrides
 ) {
     private val haveFakeOverrides = mutableSetOf<IrClass>()
 
@@ -186,7 +190,7 @@ class FakeOverrideBuilder(
         val symbol = linker.tryReferencingSimpleFunctionByLocalSignature(parent, signature)
             ?: symbolTable.referenceSimpleFunction(signature)
 
-        if (!partialLinkageEnabled
+        if (!partialLinkageSupport.isEnabled
             || !symbol.isBound
             || symbol.owner.let { boundFunction ->
                 boundFunction.isSuspend == function.isSuspend && !boundFunction.isInline && !function.isInline
@@ -221,7 +225,7 @@ class FakeOverrideBuilder(
         val symbol = linker.tryReferencingPropertyByLocalSignature(parent, signature)
             ?: symbolTable.referenceProperty(signature)
 
-        if (!partialLinkageEnabled
+        if (!partialLinkageSupport.isEnabled
             || !symbol.isBound
             || symbol.owner.let { boundProperty ->
                 boundProperty.getter?.isInline != true && boundProperty.setter?.isInline != true

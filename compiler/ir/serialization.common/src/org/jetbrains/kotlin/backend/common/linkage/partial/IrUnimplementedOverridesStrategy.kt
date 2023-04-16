@@ -14,9 +14,15 @@ import org.jetbrains.kotlin.ir.linkage.partial.IrUnimplementedOverridesStrategy
 import org.jetbrains.kotlin.ir.linkage.partial.PartiallyLinkedDeclarationOrigin
 import org.jetbrains.kotlin.ir.types.isNothing
 
-internal object ImplementAsErrorThrowingStubs : IrUnimplementedOverridesStrategy {
+internal class ImplementAsErrorThrowingStubs(
+    private val partialLinkageSupport: PartialLinkageSupportForLinker
+) : IrUnimplementedOverridesStrategy {
     override fun <T : IrOverridableMember> computeCustomization(overridableMember: T, parent: IrClass) =
-        if (overridableMember.isAbstract && parent.isConcrete && !parent.delegatesToNothing) {
+        if (overridableMember.isAbstract
+            && parent.isConcrete
+            && !parent.delegatesToNothing
+            && !partialLinkageSupport.shouldBeSkipped(parent)
+        ) {
             IrUnimplementedOverridesStrategy.Customization(
                 origin = PartiallyLinkedDeclarationOrigin.UNIMPLEMENTED_ABSTRACT_CALLABLE_MEMBER,
                 modality = parent.modality // Use modality of class for implemented callable member.

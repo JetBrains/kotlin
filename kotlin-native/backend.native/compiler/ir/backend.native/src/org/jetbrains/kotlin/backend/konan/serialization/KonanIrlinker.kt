@@ -376,7 +376,7 @@ internal class KonanIrLinker(
             mangler = KonanManglerIr,
             typeSystem = IrTypeSystemContextImpl(builtIns),
             friendModules = friendModules,
-            partialLinkageEnabled = partialLinkageSupport.isEnabled,
+            partialLinkageSupport = partialLinkageSupport,
             platformSpecificClassFilter = KonanFakeOverrideClassFilter
     )
 

@@ -15,6 +15,17 @@ interface PartialLinkageSupportForLinker {
     val isEnabled: Boolean
 
     /**
+     * Fast check to determine if the given [declaration] should be skipped from the partial linkage point of view.
+     *
+     * This check is typically used to avoid processing and patching declarations that came from stdlib or were generated
+     * on the fly by the compiler itself and this way are automatically supposed to be correct.
+     *
+     * Note: There is no need to call [shouldBeSkipped] prior to [exploreClassifiersInInlineLazyIrFunction] and
+     * [generateStubsAndPatchUsages] functions. These function do the same check internally in more optimal way.
+     */
+    fun shouldBeSkipped(declaration: IrDeclaration): Boolean
+
+    /**
      * For general use in IR linker.
      *
      * Note: Those classifiers that were detected as partially linked are excluded from the fake overrides generation
@@ -40,6 +51,7 @@ interface PartialLinkageSupportForLinker {
     companion object {
         val DISABLED = object : PartialLinkageSupportForLinker {
             override val isEnabled get() = false
+            override fun shouldBeSkipped(declaration: IrDeclaration) = true
             override fun exploreClassifiers(fakeOverrideBuilder: FakeOverrideBuilder) = Unit
             override fun exploreClassifiersInInlineLazyIrFunction(function: IrFunction) = Unit
             override fun generateStubsAndPatchUsages(symbolTable: SymbolTable, roots: () -> Sequence<IrModuleFragment>) = Unit

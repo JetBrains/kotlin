@@ -50,7 +50,7 @@ class JvmIrLinker(
         mangler = JvmIrMangler,
         typeSystem = typeSystem,
         friendModules = emptyMap(), // TODO: provide friend modules
-        partialLinkageEnabled = false
+        partialLinkageSupport = PartialLinkageSupportForLinker.DISABLED
     )
 
     private val javaName = Name.identifier("java")

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.serialization
 
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.overrides.DefaultFakeOverrideClassFilter
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideDeclarationTable
@@ -162,7 +163,7 @@ fun makeSimpleFakeOverrideBuilder(
         typeSystemContext,
         fakeOverrideDeclarationTable = PrePopulatedDeclarationTable(symbolDeserializer.deserializedSymbols),
         friendModules = emptyMap(), // TODO: provide friend modules
-        partialLinkageEnabled = false
+        partialLinkageSupport = PartialLinkageSupportForLinker.DISABLED
     )
 }
 
