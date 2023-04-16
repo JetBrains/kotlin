@@ -30,7 +30,11 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageUtils.Module as PLModule
 
-internal class ClassifierExplorer(private val builtIns: IrBuiltIns, private val stubGenerator: MissingDeclarationStubGenerator) {
+internal class ClassifierExplorer(
+    private val builtIns: IrBuiltIns,
+    private val stubGenerator: MissingDeclarationStubGenerator,
+    private val allowErrorTypes: Boolean
+) {
     private val exploredSymbols = ExploredClassifiers()
 
     private val permittedAnnotationArrayParameterSymbols: Set<IrClassSymbol> by lazy {
@@ -72,7 +76,12 @@ internal class ClassifierExplorer(private val builtIns: IrBuiltIns, private val 
                 ?: arguments.firstUnusable { it.typeOrNull?.exploreType(visitedSymbols) }
                 ?: Usable
             is IrDynamicType -> Usable
-            else -> throw IllegalArgumentException("Unsupported IR type: ${this::class.java}, $this")
+            else -> {
+                if (this is IrErrorType && allowErrorTypes)
+                    Usable
+                else
+                    throw IllegalArgumentException("Unsupported IR type: ${this::class.java}, $this")
+            }
         }
     }
 

@@ -143,7 +143,12 @@ internal fun PsiToIrContext.psiToIr(
                 stubGenerator = stubGenerator,
                 cenumsProvider = irProviderForCEnumsAndCStructs,
                 exportedDependencies = exportedDependencies,
-                partialLinkageSupport = createPartialLinkageSupportForLinker(partialLinkageConfig, generatorContext.irBuiltIns, messageLogger),
+                partialLinkageSupport = createPartialLinkageSupportForLinker(
+                        partialLinkageConfig = partialLinkageConfig,
+                        allowErrorTypes = false, // Kotlin/Native does not support error types.
+                        builtIns = generatorContext.irBuiltIns,
+                        messageLogger = messageLogger
+                ),
                 cachedLibraries = config.cachedLibraries,
                 lazyIrForCaches = config.lazyIrForCaches,
                 libraryBeingCached = config.libraryToCache,

@@ -264,13 +264,19 @@ fun getIrModuleInfoForKlib(
     val mainModuleLib = sortedDependencies.last()
     val typeTranslator = TypeTranslatorImpl(symbolTable, configuration.languageVersionSettings, moduleDescriptor)
     val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
+    val errorPolicy = configuration[JSConfigurationKeys.ERROR_TOLERANCE_POLICY] ?: ErrorTolerancePolicy.DEFAULT
 
     val irLinker = JsIrLinker(
         currentModule = null,
         messageLogger = messageLogger,
         builtIns = irBuiltIns,
         symbolTable = symbolTable,
-        partialLinkageSupport = createPartialLinkageSupportForLinker(configuration.partialLinkageConfig, irBuiltIns, messageLogger),
+        partialLinkageSupport = createPartialLinkageSupportForLinker(
+            partialLinkageConfig = configuration.partialLinkageConfig,
+            allowErrorTypes = errorPolicy.allowErrors,
+            builtIns = irBuiltIns,
+            messageLogger = messageLogger
+        ),
         translationPluginContext = null,
         icData = null,
         friendModules = friendModules
@@ -322,13 +328,19 @@ fun getIrModuleInfoForSourceFiles(
     val feContext = psi2IrContext.run {
         JsIrLinker.JsFePluginContext(moduleDescriptor, symbolTable, typeTranslator, irBuiltIns)
     }
+    val errorPolicy = configuration[JSConfigurationKeys.ERROR_TOLERANCE_POLICY] ?: ErrorTolerancePolicy.DEFAULT
 
     val irLinker = JsIrLinker(
         currentModule = psi2IrContext.moduleDescriptor,
         messageLogger = messageLogger,
         builtIns = irBuiltIns,
         symbolTable = symbolTable,
-        partialLinkageSupport = createPartialLinkageSupportForLinker(configuration.partialLinkageConfig, irBuiltIns, messageLogger),
+        partialLinkageSupport = createPartialLinkageSupportForLinker(
+            partialLinkageConfig = configuration.partialLinkageConfig,
+            allowErrorTypes = errorPolicy.allowErrors,
+            builtIns = irBuiltIns,
+            messageLogger = messageLogger
+        ),
         translationPluginContext = feContext,
         icData = null,
         friendModules = friendModules,
