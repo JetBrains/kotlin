@@ -334,7 +334,10 @@ internal class PartiallyLinkedIrTreePatcher(
                 val invalidConstructorDelegationFound =
                     if (calledConstructor.origin != PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION) {
                         val constructedSuperClassSymbol = calledConstructor.parentAsClass.symbol
-                        constructedSuperClassSymbol != constructedClassSymbol && constructedSuperClassSymbol != actualSuperClassSymbol
+                        // Note: Constructor of an external class may delegate to kotlin.Any
+                        constructedSuperClassSymbol != constructedClassSymbol
+                                && constructedSuperClassSymbol != actualSuperClassSymbol
+                                && (!constructedClass.isExternal || constructedSuperClassSymbol != builtIns.anyClass)
                     } else {
                         // Fallback to signatures.
                         (calledConstructorSymbol.signature as? IdSignature.CommonSignature)?.let { constructorSignature ->
