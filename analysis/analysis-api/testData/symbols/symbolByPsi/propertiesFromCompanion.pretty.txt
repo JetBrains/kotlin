@@ -7,7 +7,6 @@ class MyClass {
     @kotlin.jvm.JvmStatic
     val staticProperty: kotlin.Int
 
-    @kotlin.jvm.JvmField
     val fieldProperty: kotlin.Int
 
     var variable: kotlin.Int
@@ -15,7 +14,6 @@ class MyClass {
     @kotlin.jvm.JvmStatic
     var staticVariable: kotlin.Int
 
-    @kotlin.jvm.JvmField
     var fieldVariable: kotlin.Int
   }
 }

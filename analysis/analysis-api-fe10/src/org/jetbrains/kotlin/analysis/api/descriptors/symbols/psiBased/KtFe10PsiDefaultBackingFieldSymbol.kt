@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade
 import org.jetbrains.kotlin.analysis.api.descriptors.annotations.KtFe10AnnotationsList
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10Symbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10NeverRestoringSymbolPointer
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10PsiDefaultBackingFieldSymbolPointer
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.cached
@@ -23,7 +24,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.descriptors.FieldDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
-import org.jetbrains.kotlin.descriptors.PropertyGetterDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -31,8 +31,8 @@ import org.jetbrains.kotlin.resolve.BindingContext
 internal class KtFe10PsiDefaultBackingFieldSymbol(
     private val propertyPsi: KtProperty,
     override val owningProperty: KtKotlinPropertySymbol,
-    val analysisContext: Fe10AnalysisContext
-) : KtBackingFieldSymbol() {
+    override val analysisContext: Fe10AnalysisContext
+) : KtBackingFieldSymbol(), KtFe10Symbol {
     val descriptor: FieldDescriptor? by cached {
         val bindingContext = analysisContext.analyze(propertyPsi, Fe10AnalysisFacade.AnalysisMode.PARTIAL)
         (bindingContext[BindingContext.VARIABLE, propertyPsi] as? PropertyDescriptor)?.backingField

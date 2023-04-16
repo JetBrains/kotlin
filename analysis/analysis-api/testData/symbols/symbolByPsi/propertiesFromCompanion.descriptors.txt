@@ -1,6 +1,22 @@
 KtKotlinPropertySymbol:
   annotationsList: []
-  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
+  backingFieldSymbol: KtBackingFieldSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    isExtension: false
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KtKotlinPropertySymbol(/MyClass.Companion.property)
+    receiverParameter: null
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Int
+    symbolKind: LOCAL
+    typeParameters: []
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   callableIdIfNonLocal: /MyClass.Companion.property
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -67,7 +83,23 @@ KtKotlinPropertySymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: []
-  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
+  backingFieldSymbol: KtBackingFieldSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    isExtension: false
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KtKotlinPropertySymbol(/MyClass.Companion.constProperty)
+    receiverParameter: null
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Int
+    symbolKind: LOCAL
+    typeParameters: []
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   callableIdIfNonLocal: /MyClass.Companion.constProperty
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -137,7 +169,23 @@ KtKotlinPropertySymbol:
     kotlin/jvm/JvmStatic()
       psi: KtAnnotationEntry
   ]
-  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
+  backingFieldSymbol: KtBackingFieldSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    isExtension: false
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KtKotlinPropertySymbol(/MyClass.Companion.staticProperty)
+    receiverParameter: null
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Int
+    symbolKind: LOCAL
+    typeParameters: []
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   callableIdIfNonLocal: /MyClass.Companion.staticProperty
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -204,11 +252,26 @@ KtKotlinPropertySymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: []
-  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
+  backingFieldSymbol: KtBackingFieldSymbol:
     annotationsList: [
       kotlin/jvm/JvmField()
         psi: KtAnnotationEntry
     ]
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    isExtension: false
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KtKotlinPropertySymbol(/MyClass.Companion.fieldProperty)
+    receiverParameter: null
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Int
+    symbolKind: LOCAL
+    typeParameters: []
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   callableIdIfNonLocal: /MyClass.Companion.fieldProperty
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -275,7 +338,23 @@ KtKotlinPropertySymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: []
-  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
+  backingFieldSymbol: KtBackingFieldSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    isExtension: false
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KtKotlinPropertySymbol(/MyClass.Companion.variable)
+    receiverParameter: null
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Int
+    symbolKind: LOCAL
+    typeParameters: []
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   callableIdIfNonLocal: /MyClass.Companion.variable
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -413,7 +492,23 @@ KtKotlinPropertySymbol:
     kotlin/jvm/JvmStatic()
       psi: KtAnnotationEntry
   ]
-  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
+  backingFieldSymbol: KtBackingFieldSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    isExtension: false
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KtKotlinPropertySymbol(/MyClass.Companion.staticVariable)
+    receiverParameter: null
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Int
+    symbolKind: LOCAL
+    typeParameters: []
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   callableIdIfNonLocal: /MyClass.Companion.staticVariable
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -548,11 +643,26 @@ KtKotlinPropertySymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: []
-  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
+  backingFieldSymbol: KtBackingFieldSymbol:
     annotationsList: [
       kotlin/jvm/JvmField()
         psi: KtAnnotationEntry
     ]
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    isExtension: false
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KtKotlinPropertySymbol(/MyClass.Companion.fieldVariable)
+    receiverParameter: null
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Int
+    symbolKind: LOCAL
+    typeParameters: []
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   callableIdIfNonLocal: /MyClass.Companion.fieldVariable
   contextReceivers: []
   getter: KtPropertyGetterSymbol:

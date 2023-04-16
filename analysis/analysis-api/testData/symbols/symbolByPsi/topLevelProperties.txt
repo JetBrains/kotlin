@@ -1,6 +1,22 @@
 KtKotlinPropertySymbol:
   annotationsList: []
-  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
+  backingFieldSymbol: KtBackingFieldSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    isExtension: false
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KtKotlinPropertySymbol(/x)
+    receiverParameter: null
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Int
+    symbolKind: LOCAL
+    typeParameters: []
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   callableIdIfNonLocal: /x
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -59,7 +75,23 @@ KtKotlinPropertySymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: []
-  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
+  backingFieldSymbol: KtBackingFieldSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    isExtension: false
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KtKotlinPropertySymbol(/y)
+    receiverParameter: null
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Int
+    symbolKind: LOCAL
+    typeParameters: []
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   callableIdIfNonLocal: /y
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -136,7 +168,23 @@ KtKotlinPropertySymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: []
-  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
+  backingFieldSymbol: KtBackingFieldSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    isExtension: false
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KtKotlinPropertySymbol(/get)
+    receiverParameter: null
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Long
+    symbolKind: LOCAL
+    typeParameters: []
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   callableIdIfNonLocal: /get
   contextReceivers: []
   getter: KtPropertyGetterSymbol:

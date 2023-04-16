@@ -1,6 +1,22 @@
 KtKotlinPropertySymbol:
   annotationsList: []
-  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
+  backingFieldSymbol: KtBackingFieldSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    isExtension: false
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KtKotlinPropertySymbol(/I.zoo)
+    receiverParameter: null
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Unit
+    symbolKind: LOCAL
+    typeParameters: []
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   callableIdIfNonLocal: /I.zoo
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -242,7 +258,23 @@ KtFunctionSymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: []
-  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
+  backingFieldSymbol: KtBackingFieldSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    isExtension: false
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KtKotlinPropertySymbol(/I.foo)
+    receiverParameter: null
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Int
+    symbolKind: LOCAL
+    typeParameters: []
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   callableIdIfNonLocal: /I.foo
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -309,7 +341,23 @@ KtKotlinPropertySymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: []
-  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
+  backingFieldSymbol: KtBackingFieldSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    isExtension: false
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KtKotlinPropertySymbol(/I.bar)
+    receiverParameter: null
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Long
+    symbolKind: LOCAL
+    typeParameters: []
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   callableIdIfNonLocal: /I.bar
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -447,7 +495,23 @@ KtKotlinPropertySymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: []
-  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
+  backingFieldSymbol: KtBackingFieldSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    isExtension: false
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KtKotlinPropertySymbol(/I.doo)
+    receiverParameter: null
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/String
+    symbolKind: LOCAL
+    typeParameters: []
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   callableIdIfNonLocal: /I.doo
   contextReceivers: []
   getter: KtPropertyGetterSymbol:

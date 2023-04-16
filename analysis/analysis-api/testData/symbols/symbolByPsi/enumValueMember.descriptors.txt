@@ -21,7 +21,23 @@ KtConstructorSymbol:
       contextReceivers: []
       generatedPrimaryConstructorProperty: KtKotlinPropertySymbol:
         annotationsList: []
-        backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
+        backingFieldSymbol: KtBackingFieldSymbol:
+          annotationsList: []
+          callableIdIfNonLocal: null
+          contextReceivers: []
+          isExtension: false
+          name: field
+          origin: PROPERTY_BACKING_FIELD
+          owningProperty: KtKotlinPropertySymbol(/Style.value)
+          receiverParameter: null
+          returnType: KtUsualClassType:
+            annotationsList: []
+            ownTypeArguments: []
+            type: kotlin/String
+          symbolKind: LOCAL
+          typeParameters: []
+          getContainingModule: KtSourceModule "Sources of main"
+          deprecationStatus: null
         callableIdIfNonLocal: /Style.value
         contextReceivers: []
         getter: KtPropertyGetterSymbol:
@@ -109,7 +125,23 @@ KtConstructorSymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: []
-  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
+  backingFieldSymbol: KtBackingFieldSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    isExtension: false
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KtKotlinPropertySymbol(<local>/exitAnimation)
+    receiverParameter: null
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/String
+    symbolKind: LOCAL
+    typeParameters: []
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   callableIdIfNonLocal: null
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -194,7 +226,23 @@ KtEnumEntrySymbol:
 
 KtKotlinPropertySymbol:
   annotationsList: []
-  backingFieldSymbol: KtBackingFieldSymbol(<local>/field)
+  backingFieldSymbol: KtBackingFieldSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    isExtension: false
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KtKotlinPropertySymbol(/Style.exitAnimation)
+    receiverParameter: null
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/String
+    symbolKind: LOCAL
+    typeParameters: []
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   callableIdIfNonLocal: /Style.exitAnimation
   contextReceivers: []
   getter: KtPropertyGetterSymbol:

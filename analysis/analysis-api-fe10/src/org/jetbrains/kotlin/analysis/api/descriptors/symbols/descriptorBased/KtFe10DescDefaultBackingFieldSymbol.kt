@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationsList
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.annotations.KtFe10AnnotationsList
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.base.KtFe10Symbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10NeverRestoringSymbolPointer
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.pointers.KtFe10PsiDefaultBackingFieldSymbolPointer
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
@@ -25,8 +26,8 @@ import org.jetbrains.kotlin.descriptors.annotations.Annotations
 internal class KtFe10DescDefaultBackingFieldSymbol(
     private val fieldDescriptor: FieldDescriptor?,
     override val owningProperty: KtKotlinPropertySymbol,
-    val analysisContext: Fe10AnalysisContext
-) : KtBackingFieldSymbol() {
+    override val analysisContext: Fe10AnalysisContext
+) : KtBackingFieldSymbol(), KtFe10Symbol {
     context(KtAnalysisSession) override fun createPointer(): KtSymbolPointer<KtBackingFieldSymbol> = withValidityAssertion {
         KtPsiBasedSymbolPointer.createForSymbolFromSource<KtPropertySymbol>(owningProperty)
             ?.let { KtFe10PsiDefaultBackingFieldSymbolPointer(it) }

@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotated
 import org.jetbrains.kotlin.analysis.api.base.KtContextReceiversOwner
 import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KtPropertySymbol
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.lexer.KtKeywordToken
 
@@ -31,20 +30,14 @@ public fun <S> renderAnnotationsModifiersAndContextReceivers(
     renderContextReceivers(symbol, printer)
 
     val annotationsRendered: Boolean
-    val fieldAnnotationsRendered: Boolean
     val modifiersRendered: Boolean
     codeStyle.getSeparatorBetweenAnnotationAndOwner(symbol).separated(
         { annotationsRendered = checkIfPrinted { annotationRenderer.renderAnnotations(symbol, printer) } },
-        {
-            fieldAnnotationsRendered = checkIfPrinted {
-                if (symbol is KtPropertySymbol) symbol.backingFieldSymbol?.let { annotationRenderer.renderAnnotations(it, printer) }
-            }
-        },
         { modifiersRendered = checkIfPrinted { modifiersRenderer.renderDeclarationModifiers(symbol, printer) } }
     )
     val separator = when {
-        (annotationsRendered || fieldAnnotationsRendered) && !modifiersRendered -> codeStyle.getSeparatorBetweenAnnotationAndOwner(symbol)
-        annotationsRendered || fieldAnnotationsRendered || modifiersRendered -> codeStyle.getSeparatorBetweenModifiers()
+        annotationsRendered && !modifiersRendered -> codeStyle.getSeparatorBetweenAnnotationAndOwner(symbol)
+        annotationsRendered || modifiersRendered -> codeStyle.getSeparatorBetweenModifiers()
         else -> ""
     }
 
@@ -61,7 +54,6 @@ public fun <S> renderAnnotationsModifiersAndContextReceivers(
     renderContextReceivers(symbol, printer)
     codeStyle.getSeparatorBetweenAnnotationAndOwner(symbol).separated(
         { annotationRenderer.renderAnnotations(symbol, printer) },
-        { if (symbol is KtPropertySymbol) symbol.backingFieldSymbol?.let { annotationRenderer.renderAnnotations(it, printer) } },
         { modifiersRenderer.renderDeclarationModifiers(symbol, printer) }
     )
 }

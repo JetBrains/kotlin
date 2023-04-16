@@ -173,7 +173,10 @@ public class DebugSymbolRenderer(
             }
         }
 
-        if (renderSymbolsFully || symbol is KtPropertyGetterSymbol || symbol is KtPropertySetterSymbol || symbol is KtValueParameterSymbol || symbol is KtReceiverParameterSymbol) {
+        if (renderSymbolsFully || symbol is KtBackingFieldSymbol ||
+            symbol is KtPropertyGetterSymbol || symbol is KtPropertySetterSymbol ||
+            symbol is KtValueParameterSymbol || symbol is KtReceiverParameterSymbol
+        ) {
             renderSymbol(symbol)
             return
         }
@@ -187,13 +190,6 @@ public class DebugSymbolRenderer(
             else -> error("Unsupported symbol ${symbol::class.java.name}")
         }
         append(")")
-        if (symbol is KtBackingFieldSymbol && symbol.annotationsList.annotations.isNotEmpty()) {
-            appendLine()
-            withIndent {
-                append("annotationsList: ")
-                renderAnnotationsList(symbol.annotationsList)
-            }
-        }
     }
 
     context(KtAnalysisSession)
