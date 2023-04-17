@@ -1,0 +1,39 @@
+@kotlin.Metadata()
+@kotlin.Suppress(names = {"UNRESOLVED_REFERENCE"})
+public abstract interface A {
+    @org.jetbrains.annotations.NotNull()
+    public static final A.Companion Companion = null;
+
+    public abstract void inject(@org.jetbrains.annotations.NotNull()
+    A.B b);
+
+    @org.jetbrains.annotations.NotNull()
+    public abstract java.lang.String getX();
+
+    @kotlin.Metadata()
+    public static abstract class B implements A {
+
+        public B() {
+            super();
+        }
+
+        @java.lang.Override()
+        @org.jetbrains.annotations.NotNull()
+        public java.lang.String getX() {
+            return null;
+        }
+
+        @java.lang.Override()
+        public void inject(@org.jetbrains.annotations.NotNull()
+        A.B b) {
+        }
+    }
+
+    @kotlin.Metadata()
+    public static final class Companion extends A.B {
+
+        private Companion() {
+            super();
+        }
+    }
+}
