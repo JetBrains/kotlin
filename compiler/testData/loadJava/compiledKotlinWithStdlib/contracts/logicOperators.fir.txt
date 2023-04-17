@@ -1,0 +1,23 @@
+public final fun andSequence(x: R|kotlin/Any?|, y: R|kotlin/Any?|, b: R|kotlin/Boolean|): R|kotlin/Unit|
+    [R|Contract description]
+     <
+        Returns(WILDCARD) -> x is test/A && x is test/B && y is test/A && b
+    >
+
+
+public final fun orSequence(x: R|kotlin/Any?|, y: R|kotlin/Any?|, b: R|kotlin/Boolean|): R|kotlin/Unit|
+    [R|Contract description]
+     <
+        Returns(WILDCARD) -> x is kotlin/String || y is kotlin/Int || (!b)
+    >
+
+
+public final class A : R|kotlin/Any| {
+    public constructor(): R|test/A|
+
+}
+
+public final class B : R|kotlin/Any| {
+    public constructor(): R|test/B|
+
+}

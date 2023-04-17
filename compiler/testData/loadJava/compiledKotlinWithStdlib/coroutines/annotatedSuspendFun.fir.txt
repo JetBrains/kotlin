@@ -1,0 +1,9 @@
+@R|test/Anno|(t = String(foo)) public final suspend fun foo(): R|kotlin/Unit|
+
+public final annotation class Anno : R|kotlin/Annotation| {
+    public final val t: R|kotlin/String|
+        public get(): R|kotlin/String|
+
+    public constructor(t: R|kotlin/String|): R|test/Anno|
+
+}

@@ -1,0 +1,12 @@
+public final fun bar(x: R|kotlin/Any?|): R|kotlin/Boolean|
+    [R|Contract description]
+     <
+        Returns(WILDCARD) -> x is kotlin/Int
+    >
+
+
+public final fun foo(x: R|kotlin/Any?|): R|kotlin/Boolean|
+    [R|Contract description]
+     <
+        Returns(WILDCARD) -> x is kotlin/String
+    >

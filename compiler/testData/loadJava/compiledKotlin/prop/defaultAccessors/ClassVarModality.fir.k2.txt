@@ -1,0 +1,29 @@
+public open class ClassVarModality : R|kotlin/Any| {
+    public open var property1: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+        public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+    internal final var property2: R|kotlin/Int|
+        internal get(): R|kotlin/Int|
+        internal set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+    public open var property3: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+        public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+    internal final var property4: R|kotlin/Int|
+        internal get(): R|kotlin/Int|
+        private set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+    public constructor(): R|test/ClassVarModality|
+
+}
+
+public abstract class ClassVarModalityAbstract : R|kotlin/Any| {
+    public abstract var property1: R|java/util/Date|
+        public get(): R|java/util/Date|
+        public set(value: R|java/util/Date|): R|kotlin/Unit|
+
+    public constructor(): R|test/ClassVarModalityAbstract|
+
+}

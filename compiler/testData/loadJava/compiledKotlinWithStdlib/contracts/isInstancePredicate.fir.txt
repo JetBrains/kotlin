@@ -1,0 +1,18 @@
+public final fun R|kotlin/Any?|.receiverIsInstance(): R|kotlin/Unit|
+    [R|Contract description]
+     <
+        Returns(TRUE) -> this is test/A
+    >
+
+
+public final fun simpleIsInstace(x: R|kotlin/Any?|): R|kotlin/Unit|
+    [R|Contract description]
+     <
+        Returns(TRUE) -> x is test/A
+    >
+
+
+public final class A : R|kotlin/Any| {
+    public constructor(): R|test/A|
+
+}
