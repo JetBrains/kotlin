@@ -1410,3 +1410,11 @@ public final object Unit : R|kotlin/Any| {
 
 }
 
+@R|kotlin/annotation/Target|(allowedTargets = <implicitArrayOf>(R|kotlin/annotation/AnnotationTarget.CLASS|, R|kotlin/annotation/AnnotationTarget.PROPERTY|, R|kotlin/annotation/AnnotationTarget.CONSTRUCTOR|, R|kotlin/annotation/AnnotationTarget.FUNCTION|, R|kotlin/annotation/AnnotationTarget.TYPEALIAS|)) @R|kotlin/annotation/Retention|(value = R|kotlin/annotation/AnnotationRetention.BINARY|) internal final annotation class WasExperimental : R|kotlin/Annotation| {
+    public final val markerClass: R|kotlin/Array<out kotlin/reflect/KClass<out kotlin/Annotation>>|
+        public get(): R|kotlin/Array<out kotlin/reflect/KClass<out kotlin/Annotation>>|
+
+    public constructor(vararg markerClass: R|kotlin/Array<out kotlin/reflect/KClass<out kotlin/Annotation>>|): R|kotlin/WasExperimental|
+
+}
+

@@ -44,6 +44,7 @@ val prepareRangeSources by tasks.registering(Sync::class) {
     from(kotlinAnnotationsCommon) {
         include("ExperimentalStdlibApi.kt")
         include("OptIn.kt")
+        include("WasExperimental.kt")
     }
 
     into(rangesCherryPicked)
