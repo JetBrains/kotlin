@@ -85,7 +85,16 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
     @Nullable
     public KtExpression getDefaultValue() {
         KotlinParameterStub stub = getStub();
-        if (stub != null && !stub.hasDefaultValue()) return null;
+        if (stub != null) {
+            if (!stub.hasDefaultValue()) {
+                return null;
+            }
+
+            if (getContainingKtFile().isCompiled()) {
+                //don't load ast
+                return null;
+            }
+        }
 
         PsiElement equalsToken = getEqualsToken();
         return equalsToken != null ? PsiTreeUtil.getNextSiblingOfType(equalsToken, KtExpression.class) : null;
