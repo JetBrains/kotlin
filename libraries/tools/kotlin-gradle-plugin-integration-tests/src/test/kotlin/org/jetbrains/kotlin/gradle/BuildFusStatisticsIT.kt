@@ -11,8 +11,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("Build FUS statistics")
-class BuildFusStatisticsIT : KGPBaseTest() {
-    @JvmGradlePluginTests
+class BuildFusStatisticsIT : KGPDaemonsBaseTest() {
     @DisplayName("works for project with buildSrc and kotlinDsl plugin")
     @GradleTest
     fun testCompatibilityBuildSrcWithKotlinDsl(gradleVersion: GradleVersion) {
