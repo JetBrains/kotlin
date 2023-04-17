@@ -6,7 +6,7 @@
 package kotlin.wasm.internal
 
 @Suppress("UNUSED_PARAMETER") // TODO: Remove after bootstrap update
-private fun throwJsError(message: String?, wasmTypeName: String?, stack: String): Nothing {
+private fun throwJsError(message: String?, wasmTypeName: String?, stack: ExternalInterfaceType): Nothing {
     js("""
     const error = new Error();
     error.message = message;
@@ -17,7 +17,7 @@ private fun throwJsError(message: String?, wasmTypeName: String?, stack: String)
 }
 
 internal fun throwAsJsException(t: Throwable): Nothing {
-    throwJsError(t.message, getSimpleName(t.typeInfo), t.stack)
+    throwJsError(t.message, getSimpleName(t.typeInfo), t.jsStack)
 }
 
 internal var isNotFirstWasmExportCall: Boolean = false

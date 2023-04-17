@@ -22,7 +22,7 @@ public open class Throwable(open val message: String?, open val cause: kotlin.Th
 
     constructor() : this(null, null)
 
-    private val jsStack: ExternalInterfaceType = captureStackTrace()
+    internal val jsStack: ExternalInterfaceType = captureStackTrace()
 
     private var _stack: String? = null
     internal val stack: String
