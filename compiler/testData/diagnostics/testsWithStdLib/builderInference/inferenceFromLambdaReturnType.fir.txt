@@ -8,7 +8,7 @@ FILE: inferenceFromLambdaReturnType.kt
     public final fun <S> getWithFallback(fallback: R|(ThemeKey<S>) -> S|): R|kotlin/Unit| {
     }
     public final fun main(): R|kotlin/Unit| {
-        R|/getWithFallback|<R|kotlin/String|>(<L> = getWithFallback@fun <anonymous>(it: R|ThemeKey<ERROR CLASS: Type for S is not inferred>|): R|kotlin/String| <inline=NoInline>  {
+        R|/getWithFallback|<R|kotlin/String|>(<L> = getWithFallback@fun <anonymous>(it: R|ThemeKey<kotlin/String>|): R|kotlin/String| <inline=NoInline>  {
             ^ String()
         }
         )
