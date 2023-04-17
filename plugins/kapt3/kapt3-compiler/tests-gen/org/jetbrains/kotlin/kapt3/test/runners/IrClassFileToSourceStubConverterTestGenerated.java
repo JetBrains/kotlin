@@ -158,6 +158,12 @@ public class IrClassFileToSourceStubConverterTestGenerated extends AbstractIrCla
     }
 
     @Test
+    @TestMetadata("delegationAndCompanionObject.kt")
+    public void testDelegationAndCompanionObject() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/delegationAndCompanionObject.kt");
+    }
+
+    @Test
     @TestMetadata("deprecated.kt")
     public void testDeprecated() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/deprecated.kt");

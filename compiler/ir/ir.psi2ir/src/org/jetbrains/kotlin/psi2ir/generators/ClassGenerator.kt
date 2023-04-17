@@ -324,7 +324,9 @@ internal class ClassGenerator(
             // TODO could possibly refer to scoped type parameters for property accessors
             irFunction.returnType = delegatedDescriptor.returnType!!.toIrType()
 
-            irFunction.body = generateDelegateFunctionBody(irDelegate, delegatedDescriptor, delegateToDescriptor, irFunction)
+            if (context.configuration.generateBodies) {
+                irFunction.body = generateDelegateFunctionBody(irDelegate, delegatedDescriptor, delegateToDescriptor, irFunction)
+            }
         }
 
     private fun generateDelegateFunctionBody(
