@@ -7,11 +7,14 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.IdeSessionComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.createSealedInheritorsProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.fir.caches.FirThreadSafeCachesFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirIdePredicateBasedProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirIdeRegisteredPluginAnnotations
+import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.LLFirNonEmptyResolveExtensionTool
+import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.LLFirResolveExtensionTool
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSourcesSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirExceptionHandler
@@ -42,7 +45,17 @@ internal fun LLFirSession.registerIdeComponents(project: Project) {
     register(FirCachesFactory::class, FirThreadSafeCachesFactory)
     register(SealedClassInheritorsProvider::class, project.createSealedInheritorsProvider())
     register(FirExceptionHandler::class, LLFirExceptionHandler)
+    createResolveExtensionTool()?.let {
+        register(LLFirResolveExtensionTool::class, it)
+    }
 }
+
+private fun LLFirSession.createResolveExtensionTool(): LLFirResolveExtensionTool? {
+    val extensions = KtResolveExtensionProvider.provideExtensionsFor(ktModule)
+    if (extensions.isEmpty()) return null
+    return LLFirNonEmptyResolveExtensionTool(this, extensions)
+}
+
 
 internal inline fun createCompositeSymbolProvider(
     session: FirSession,
@@ -52,7 +65,7 @@ internal inline fun createCompositeSymbolProvider(
 
 @SessionConfiguration
 internal fun FirSession.registerCompilerPluginExtensions(project: Project, module: KtSourceModule) {
-    val extensionProvider = project.getService(KtCompilerPluginsProvider::class.java) ?: return
+    val extensionProvider = project.getService<KtCompilerPluginsProvider>(KtCompilerPluginsProvider::class.java) ?: return
     FirSessionConfigurator(this).apply {
         val registrars = FirExtensionRegistrarAdapter.getInstances(project) +
                 extensionProvider.getRegisteredExtensions(module, FirExtensionRegistrarAdapter)

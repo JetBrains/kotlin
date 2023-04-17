@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.psi.PsiFile
 import com.intellij.psi.SmartPointerManager
+import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.llResolveExtensionTool
 import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.analysis.providers.KotlinModificationTrackerFactory
 import org.jetbrains.kotlin.analysis.providers.KtModuleStateTracker
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.concurrent.atomic.AtomicBoolean
 
 @OptIn(PrivateSessionConstructor::class)
@@ -51,12 +53,13 @@ abstract class LLFirSession(
         }
 
         modificationTracker = CompositeModificationTracker.createFlattened(
-            listOfNotNull(
-                ExplicitInvalidationTracker(ktModule, isExplicitlyInvalidated),
-                ModuleStateModificationTracker(ktModule, validityTracker),
-                outOfBlockTracker,
-                dependencyTracker
-            )
+            buildList {
+                add(ExplicitInvalidationTracker(ktModule, isExplicitlyInvalidated))
+                add(ModuleStateModificationTracker(ktModule, validityTracker))
+                addIfNotNull(outOfBlockTracker)
+                add(dependencyTracker)
+                llResolveExtensionTool?.modificationTrackers?.let(::addAll)
+            }
         )
 
         initialModificationCount = modificationTracker.modificationCount

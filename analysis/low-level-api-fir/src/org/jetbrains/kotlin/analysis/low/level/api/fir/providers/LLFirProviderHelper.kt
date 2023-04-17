@@ -6,7 +6,12 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirFileBuilder
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.CompositeKotlinDeclarationProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.CompositeKotlinPackageProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.LLFirResolveExtensionTool
+import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.llResolveExtensionTool
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirCompositeSymbolProviderNameCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirKotlinSymbolProviderNameCache
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.KotlinPackageProvider
@@ -32,10 +37,25 @@ import org.jetbrains.kotlin.psi.KtFile
 internal class LLFirProviderHelper(
     firSession: FirSession,
     private val firFileBuilder: LLFirFileBuilder,
-    private val declarationProvider: KotlinDeclarationProvider,
-    private val packageProvider: KotlinPackageProvider,
+    mainDeclarationProvider: KotlinDeclarationProvider,
+    mainPackageProvider: KotlinPackageProvider,
     canContainKotlinPackage: Boolean,
 ) {
+    private val extensionTool: LLFirResolveExtensionTool? = firSession.llResolveExtensionTool
+
+    private val declarationProvider = CompositeKotlinDeclarationProvider.create(
+        listOfNotNull(
+            mainDeclarationProvider,
+            extensionTool?.declarationProvider,
+        )
+    )
+
+    private val packageProvider = CompositeKotlinPackageProvider.create(
+        listOfNotNull(
+            mainPackageProvider,
+            extensionTool?.packageProvider,
+        )
+    )
     private val allowKotlinPackage = canContainKotlinPackage ||
             firSession.languageVersionSettings.getFlag(AnalysisFlags.allowKotlinPackage)
 
@@ -60,7 +80,12 @@ internal class LLFirProviderHelper(
             }
         }
 
-    val symbolNameCache = LLFirKotlinSymbolProviderNameCache(firSession, declarationProvider)
+    val symbolNameCache = LLFirCompositeSymbolProviderNameCache.create(
+        listOfNotNull(
+            LLFirKotlinSymbolProviderNameCache(firSession, declarationProvider),
+            extensionTool?.symbolNameCache,
+        )
+    )
 
     fun getFirClassifierByFqNameAndDeclaration(
         classId: ClassId,

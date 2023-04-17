@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.yieldIfNotNull
 
-internal class FileBasedKotlinDeclarationProvider(private val kotlinFile: KtFile) : KotlinDeclarationProvider() {
+internal class FileBasedKotlinDeclarationProvider(val kotlinFile: KtFile) : KotlinDeclarationProvider() {
     private val topLevelDeclarations: Sequence<KtDeclaration>
         get() {
             return sequence {

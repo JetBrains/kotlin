@@ -14,12 +14,16 @@ class KtStaticModuleProvider(
     private val builtinsModule: KtBuiltinsModule,
     val projectStructure: KtModuleProjectStructure,
 ) : ProjectStructureProvider() {
+
+    @OptIn(KtModuleStructureInternals::class)
     override fun getKtModuleForKtElement(element: PsiElement): KtModule {
         val containingFileAsPsiFile = element.containingFile
         val containingFileAsVirtualFile = containingFileAsPsiFile.virtualFile
         if (containingFileAsVirtualFile.extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION) {
             return builtinsModule
         }
+
+        containingFileAsVirtualFile.analysisExtensionFileContextModule?.let { return it }
 
         return projectStructure.mainModules
             .first { module ->
