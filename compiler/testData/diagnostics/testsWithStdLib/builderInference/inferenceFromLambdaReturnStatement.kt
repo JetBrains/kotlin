@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-57889
 
 class SafeResult<S>

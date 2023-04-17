@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.tower.FirTowerResolver
 import org.jetbrains.kotlin.fir.resolve.calls.tower.TowerGroup
 import org.jetbrains.kotlin.fir.resolve.calls.tower.TowerResolveManager
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
+import org.jetbrains.kotlin.fir.resolve.inference.FirBuilderInferenceSession
 import org.jetbrains.kotlin.fir.resolve.inference.ResolvedCallableReferenceAtom
 import org.jetbrains.kotlin.fir.resolve.inference.inferenceComponents
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -741,15 +742,20 @@ class FirCallResolver(
             )
         }
         /*
-         * This `if` is an optimization for local variables and properties without type parameters
+         * This `if` is an optimization for local variables and properties without type parameters.
          * Since they have no type variables, so we can don't run completion on them at all and create
-         *   resolved reference immediately
+         *   resolved reference immediately.
          *
-         * But for callable reference resolution we should keep candidate, because it was resolved
+         * But for callable reference resolution (createResolvedReferenceWithoutCandidateForLocalVariables = true)
+         *   we should keep candidate, because it was resolved
          *   with special resolution stages, which saved in candidate additional reference info,
-         *   like `resultingTypeForCallableReference`
+         *   like `resultingTypeForCallableReference`.
+         *
+         * The same is true for builder inference session, because inference from expected type inside lambda
+         *   can be important in builder inference mode, and it will never work if we skip completion here.
+         * See inferenceFromLambdaReturnStatement.kt test.
          */
-        if (
+        if (components.context.inferenceSession !is FirBuilderInferenceSession &&
             createResolvedReferenceWithoutCandidateForLocalVariables &&
             explicitReceiver?.typeRef?.coneTypeSafe<ConeIntegerLiteralType>() == null &&
             coneSymbol is FirVariableSymbol &&
