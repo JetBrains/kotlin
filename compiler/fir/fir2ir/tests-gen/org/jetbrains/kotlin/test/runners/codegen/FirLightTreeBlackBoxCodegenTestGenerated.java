@@ -18550,6 +18550,18 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
         }
 
         @Test
+        @TestMetadata("TypeParameterInNestedClass.kt")
+        public void testTypeParameterInNestedClass() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/TypeParameterInNestedClass.kt");
+        }
+
+        @Test
+        @TestMetadata("TypeParameterInNestedClass2.kt")
+        public void testTypeParameterInNestedClass2() throws Exception {
+            runTest("compiler/testData/codegen/box/fir/TypeParameterInNestedClass2.kt");
+        }
+
+        @Test
         @TestMetadata("unqualifiedEnum.kt")
         public void testUnqualifiedEnum() throws Exception {
             runTest("compiler/testData/codegen/box/fir/unqualifiedEnum.kt");

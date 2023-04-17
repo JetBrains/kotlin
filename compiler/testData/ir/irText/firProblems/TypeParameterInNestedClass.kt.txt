@@ -1,0 +1,31 @@
+object Retry {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  class Builder<B : Any?> {
+    constructor(action: SuspendFunction0<B>) /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+    private val action: SuspendFunction0<B>
+      field = action
+      private get
+
+  }
+
+  fun <W : Any?> withExponentialBackoff(action: Function0<W>): Builder<W> {
+    return Builder<W>(action = { // BLOCK
+      local suspend fun Function0<W>.suspendConversion0(): W {
+        return callee.invoke()
+      }
+
+      action::suspendConversion0
+    })
+  }
+
+}
