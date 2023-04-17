@@ -8,7 +8,7 @@ plugins {
 
 dependencies {
     implementation(kotlinStdlib())
-    implementation(":build-tools-enum-compat")
+    implementation(project(":build-tools-enum-compat"))
     @Suppress("UNCHECKED_CAST")
     rootProject.extra["kotlinJpsPluginEmbeddedDependencies"]
         .let { it as List<String> }
