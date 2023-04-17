@@ -7,9 +7,8 @@ package org.jetbrains.kotlin.gradle.native
 
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.GradleVersionRequired
-import org.jetbrains.kotlin.gradle.native.NativeExternalDependenciesIT.Companion.MASKED_TARGET_NAME
-import org.jetbrains.kotlin.gradle.native.NativeExternalDependenciesIT.Companion.findKotlinNativeTargetName
-import org.jetbrains.kotlin.gradle.native.NativeExternalDependenciesIT.Companion.findParameterInOutput
+import org.jetbrains.kotlin.gradle.testbase.DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX
+import org.jetbrains.kotlin.gradle.testbase.findParameterInOutput
 import org.jetbrains.kotlin.konan.library.KONAN_PLATFORM_LIBS_NAME_PREFIX
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -49,18 +48,18 @@ class NativeIrLinkerIssuesIT : BaseGradleIT() {
             |
             |This could happen if there are two libraries, where one library was compiled against the different version of the other library than the one currently used in the project. Please check that the project configuration is correct and has consistent versions of dependencies.
             |
-            |The list of libraries that depend on "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME)" and may lead to conflicts:
-            |1. "io.ktor:ktor-client-core (io.ktor:ktor-client-core-$MASKED_TARGET_NAME): 1.5.4" (was compiled against "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.4.3-native-mt" but "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.5.0-RC-native-mt" is used in the project)
-            |2. "io.ktor:ktor-http (io.ktor:ktor-http-$MASKED_TARGET_NAME): 1.5.4" (was compiled against "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.4.3-native-mt" but "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.5.0-RC-native-mt" is used in the project)
-            |3. "io.ktor:ktor-http-cio (io.ktor:ktor-http-cio-$MASKED_TARGET_NAME): 1.5.4" (was compiled against "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.4.3-native-mt" but "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.5.0-RC-native-mt" is used in the project)
-            |4. "io.ktor:ktor-io (io.ktor:ktor-io-$MASKED_TARGET_NAME): 1.5.4" (was compiled against "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.4.3-native-mt" but "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.5.0-RC-native-mt" is used in the project)
-            |5. "io.ktor:ktor-utils (io.ktor:ktor-utils-$MASKED_TARGET_NAME): 1.5.4" (was compiled against "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.4.3-native-mt" but "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.5.0-RC-native-mt" is used in the project)
+            |The list of libraries that depend on "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX)" and may lead to conflicts:
+            |1. "io.ktor:ktor-client-core (io.ktor:ktor-client-core-$DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX): 1.5.4" (was compiled against "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX): 1.4.3-native-mt" but "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX): 1.5.0-RC-native-mt" is used in the project)
+            |2. "io.ktor:ktor-http (io.ktor:ktor-http-$DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX): 1.5.4" (was compiled against "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX): 1.4.3-native-mt" but "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX): 1.5.0-RC-native-mt" is used in the project)
+            |3. "io.ktor:ktor-http-cio (io.ktor:ktor-http-cio-$DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX): 1.5.4" (was compiled against "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX): 1.4.3-native-mt" but "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX): 1.5.0-RC-native-mt" is used in the project)
+            |4. "io.ktor:ktor-io (io.ktor:ktor-io-$DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX): 1.5.4" (was compiled against "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX): 1.4.3-native-mt" but "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX): 1.5.0-RC-native-mt" is used in the project)
+            |5. "io.ktor:ktor-utils (io.ktor:ktor-utils-$DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX): 1.5.4" (was compiled against "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX): 1.4.3-native-mt" but "org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX): 1.5.0-RC-native-mt" is used in the project)
             |
             |Project dependencies:
-            |+--- io.ktor:ktor-client-core (io.ktor:ktor-client-core-$MASKED_TARGET_NAME): 1.5.4
-            ||    +--- io.ktor:ktor-http (io.ktor:ktor-http-$MASKED_TARGET_NAME): 1.5.4
-            ||    |    +--- io.ktor:ktor-utils (io.ktor:ktor-utils-$MASKED_TARGET_NAME): 1.5.4
-            ||    |    |    +--- io.ktor:ktor-io (io.ktor:ktor-io-$MASKED_TARGET_NAME): 1.5.4
+            |+--- io.ktor:ktor-client-core (io.ktor:ktor-client-core-$DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX): 1.5.4
+            ||    +--- io.ktor:ktor-http (io.ktor:ktor-http-$DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX): 1.5.4
+            ||    |    +--- io.ktor:ktor-utils (io.ktor:ktor-utils-$DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX): 1.5.4
+            ||    |    |    +--- io.ktor:ktor-io (io.ktor:ktor-io-$DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX): 1.5.4
             ||    |    |    |    +--- io.ktor:ktor-io-cinterop-bits: 1.5.4
             ||    |    |    |    |    \--- stdlib: 1.4.32 -> $kotlinNativeCompilerVersion
             ||    |    |    |    +--- io.ktor:ktor-io-cinterop-sockets: 1.5.4
@@ -80,36 +79,36 @@ class NativeIrLinkerIssuesIT : BaseGradleIT() {
             ||    |    |    |    |    +--- stdlib: $kotlinNativeCompilerVersion
             ||    |    |    |    |    \--- org.jetbrains.kotlin.native.platform.posix: $kotlinNativeCompilerVersion (*)
             ||    |    |    |    +--- org.jetbrains.kotlin.native.platform.posix: 1.4.32 -> $kotlinNativeCompilerVersion (*)
-            ||    |    |    |    +--- org.jetbrains.kotlinx:atomicfu (org.jetbrains.kotlinx:atomicfu-$MASKED_TARGET_NAME): 0.15.1 -> 0.16.1
+            ||    |    |    |    +--- org.jetbrains.kotlinx:atomicfu (org.jetbrains.kotlinx:atomicfu-$DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX): 0.15.1 -> 0.16.1
             ||    |    |    |    |    +--- stdlib: 1.5 -> $kotlinNativeCompilerVersion
             ||    |    |    |    |    +--- org.jetbrains.kotlin.native.platform.posix: 1.5 -> $kotlinNativeCompilerVersion (*)
             ||    |    |    |    |    \--- org.jetbrains.kotlinx:atomicfu-cinterop-interop: 0.16.1
             ||    |    |    |    |         +--- stdlib: 1.5 -> $kotlinNativeCompilerVersion
             ||    |    |    |    |         \--- org.jetbrains.kotlin.native.platform.posix: 1.5 -> $kotlinNativeCompilerVersion (*)
             ||    |    |    |    +--- org.jetbrains.kotlinx:atomicfu-cinterop-interop: 0.16.1 (*)
-            ||    |    |    |    \--- org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.4.3-native-mt -> 1.5.0-RC-native-mt
+            ||    |    |    |    \--- org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX): 1.4.3-native-mt -> 1.5.0-RC-native-mt
             ||    |    |    |         ^^^ This module contains symbol kotlinx.coroutines/CancellationException|null[0] that is the cause of the conflict.
             ||    |    |    |         +--- stdlib: 1.5 -> $kotlinNativeCompilerVersion
             ||    |    |    |         +--- org.jetbrains.kotlin.native.platform.CoreFoundation: 1.5 -> $kotlinNativeCompilerVersion (*)
             ||    |    |    |         +--- org.jetbrains.kotlin.native.platform.darwin: 1.5 -> $kotlinNativeCompilerVersion (*)
             ||    |    |    |         +--- org.jetbrains.kotlin.native.platform.posix: 1.5 -> $kotlinNativeCompilerVersion (*)
-            ||    |    |    |         +--- org.jetbrains.kotlinx:atomicfu (org.jetbrains.kotlinx:atomicfu-$MASKED_TARGET_NAME): 0.16.1 (*)
+            ||    |    |    |         +--- org.jetbrains.kotlinx:atomicfu (org.jetbrains.kotlinx:atomicfu-$DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX): 0.16.1 (*)
             ||    |    |    |         \--- org.jetbrains.kotlinx:atomicfu-cinterop-interop: 0.16.1 (*)
-            ||    |    |    +--- org.jetbrains.kotlinx:atomicfu (org.jetbrains.kotlinx:atomicfu-$MASKED_TARGET_NAME): 0.15.1 -> 0.16.1 (*)
-            ||    |    |    \--- org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.4.3-native-mt -> 1.5.0-RC-native-mt (*)
+            ||    |    |    +--- org.jetbrains.kotlinx:atomicfu (org.jetbrains.kotlinx:atomicfu-$DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX): 0.15.1 -> 0.16.1 (*)
+            ||    |    |    \--- org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX): 1.4.3-native-mt -> 1.5.0-RC-native-mt (*)
             ||    |    |         ^^^ This module contains symbol kotlinx.coroutines/CancellationException|null[0] that is the cause of the conflict.
-            ||    |    +--- org.jetbrains.kotlinx:atomicfu (org.jetbrains.kotlinx:atomicfu-$MASKED_TARGET_NAME): 0.15.1 -> 0.16.1 (*)
-            ||    |    \--- org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.4.3-native-mt -> 1.5.0-RC-native-mt (*)
+            ||    |    +--- org.jetbrains.kotlinx:atomicfu (org.jetbrains.kotlinx:atomicfu-$DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX): 0.15.1 -> 0.16.1 (*)
+            ||    |    \--- org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX): 1.4.3-native-mt -> 1.5.0-RC-native-mt (*)
             ||    |         ^^^ This module contains symbol kotlinx.coroutines/CancellationException|null[0] that is the cause of the conflict.
-            ||    +--- io.ktor:ktor-http-cio (io.ktor:ktor-http-cio-$MASKED_TARGET_NAME): 1.5.4
-            ||    |    +--- io.ktor:ktor-http (io.ktor:ktor-http-$MASKED_TARGET_NAME): 1.5.4 (*)
-            ||    |    +--- org.jetbrains.kotlinx:atomicfu (org.jetbrains.kotlinx:atomicfu-$MASKED_TARGET_NAME): 0.15.1 -> 0.16.1 (*)
-            ||    |    \--- org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.4.3-native-mt -> 1.5.0-RC-native-mt (*)
+            ||    +--- io.ktor:ktor-http-cio (io.ktor:ktor-http-cio-$DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX): 1.5.4
+            ||    |    +--- io.ktor:ktor-http (io.ktor:ktor-http-$DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX): 1.5.4 (*)
+            ||    |    +--- org.jetbrains.kotlinx:atomicfu (org.jetbrains.kotlinx:atomicfu-$DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX): 0.15.1 -> 0.16.1 (*)
+            ||    |    \--- org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX): 1.4.3-native-mt -> 1.5.0-RC-native-mt (*)
             ||    |         ^^^ This module contains symbol kotlinx.coroutines/CancellationException|null[0] that is the cause of the conflict.
-            ||    +--- org.jetbrains.kotlinx:atomicfu (org.jetbrains.kotlinx:atomicfu-$MASKED_TARGET_NAME): 0.15.1 -> 0.16.1 (*)
-            ||    \--- org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.4.3-native-mt -> 1.5.0-RC-native-mt (*)
+            ||    +--- org.jetbrains.kotlinx:atomicfu (org.jetbrains.kotlinx:atomicfu-$DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX): 0.15.1 -> 0.16.1 (*)
+            ||    \--- org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX): 1.4.3-native-mt -> 1.5.0-RC-native-mt (*)
             ||         ^^^ This module contains symbol kotlinx.coroutines/CancellationException|null[0] that is the cause of the conflict.
-            |\--- org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$MASKED_TARGET_NAME): 1.5.0-RC-native-mt (*)
+            |\--- org.jetbrains.kotlinx:kotlinx-coroutines-core (org.jetbrains.kotlinx:kotlinx-coroutines-core-$DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX): 1.5.0-RC-native-mt (*)
             |     ^^^ This module contains symbol kotlinx.coroutines/CancellationException|null[0] that is the cause of the conflict.
             |
             |(*) - dependencies omitted (listed previously)
@@ -272,8 +271,6 @@ class NativeIrLinkerIssuesIT : BaseGradleIT() {
             build("linkDebugExecutableNative") {
                 assertFailed()
 
-                val kotlinNativeTargetName = findKotlinNativeTargetName(output)
-                assertNotNull(kotlinNativeTargetName)
 
                 val kotlinNativeCompilerVersion = findKotlinNativeCompilerVersion(output)
                 assertNotNull(kotlinNativeCompilerVersion)
@@ -281,7 +278,6 @@ class NativeIrLinkerIssuesIT : BaseGradleIT() {
                 val errorMessage = ERROR_LINE_REGEX.findAll(getOutputForTask("linkDebugExecutableNative"))
                     .map { matchResult -> matchResult.groupValues[1] }
                     .filterNot { it.startsWith("w:") || it.startsWith("v:") || it.startsWith("i:") }
-                    .map { line -> line.replace(kotlinNativeTargetName, MASKED_TARGET_NAME) }
                     .map { line ->
                         line.replace(COMPRESSED_PLATFORM_LIBS_REGEX) { result ->
                             val rangeWithPlatformLibrariesCount = result.groups[1]!!.range

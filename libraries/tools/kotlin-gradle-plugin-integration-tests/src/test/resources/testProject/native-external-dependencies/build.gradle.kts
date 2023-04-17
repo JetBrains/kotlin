@@ -1,5 +1,5 @@
 plugins {
-    id("org.jetbrains.kotlin.multiplatform").version("<pluginMarkerVersion>")
+    id("org.jetbrains.kotlin.multiplatform")
 }
 
 repositories {
@@ -24,7 +24,6 @@ val buildExternalDependenciesFile = tasks.register("buildExternalDependenciesFil
             .invoke(null, project)
             ?.toString().orEmpty()
 
-        println("for_test_kotlin_native_target=<SingleNativeTarget>")
         println("for_test_external_dependencies_file=$externalDependenciesFile")
     }
 }

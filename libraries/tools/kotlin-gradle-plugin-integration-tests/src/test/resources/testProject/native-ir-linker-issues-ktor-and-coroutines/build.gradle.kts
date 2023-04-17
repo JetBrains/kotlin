@@ -25,5 +25,4 @@ val konanHome: String? by ext.properties
 val kotlinNativeCompilerVersion = konanHome?.let { org.jetbrains.kotlin.konan.target.Distribution(it).compilerVersion }
     ?: "<pluginMarkerVersion>"
 
-println("for_test_kotlin_native_target=<SingleNativeTarget>")
 println("for_test_kotlin_native_compiler_version=$kotlinNativeCompilerVersion")
