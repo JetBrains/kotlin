@@ -46,7 +46,7 @@ private fun ReferenceWrapper.stress() = (1..REPEAT_COUNT).sumOf {
     this.value
 }
 
-@file:OptIn(kotlin.native.runtime.NativeRuntimeApi::class)
+@OptIn(kotlin.native.runtime.NativeRuntimeApi::class)
 open class WeakRefBenchmark {
     private val aliveRef = ReferenceWrapper.create()
     private val deadRef = ReferenceWrapper.create().apply {
