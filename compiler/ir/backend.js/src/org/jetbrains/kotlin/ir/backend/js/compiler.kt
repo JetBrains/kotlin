@@ -120,7 +120,7 @@ fun compileIr(
     val irProviders = listOf(irLinker)
     ExternalDependenciesGenerator(symbolTable, irProviders).generateUnboundSymbolsAsDependencies()
 
-    irLinker.postProcess()
+    irLinker.postProcess(inOrAfterLinkageStep = true)
     irLinker.checkNoUnboundSymbols(symbolTable, "at the end of IR linkage process")
 
     allModules.forEach { module ->

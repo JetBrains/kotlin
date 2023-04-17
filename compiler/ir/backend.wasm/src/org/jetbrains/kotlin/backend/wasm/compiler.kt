@@ -73,7 +73,7 @@ fun compileToLoweredIr(
     ExternalDependenciesGenerator(symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
     allModules.forEach { it.patchDeclarationParents() }
 
-    irLinker.postProcess()
+    irLinker.postProcess(inOrAfterLinkageStep = true)
     irLinker.checkNoUnboundSymbols(symbolTable, "at the end of IR linkage process")
 
     for (module in allModules)

@@ -298,7 +298,7 @@ fun getIrModuleInfoForKlib(
 
     irLinker.init(null, emptyList())
     ExternalDependenciesGenerator(symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
-    irLinker.postProcess()
+    irLinker.postProcess(inOrAfterLinkageStep = true)
 
     return IrModuleInfo(
         moduleFragment,

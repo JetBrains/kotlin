@@ -559,7 +559,7 @@ class GenerateIrRuntime {
         ExternalDependenciesGenerator(symbolTable, listOf(jsLinker))
             .generateUnboundSymbolsAsDependencies()
 
-        jsLinker.postProcess()
+        jsLinker.postProcess(inOrAfterLinkageStep = true)
 
         moduleFragment.patchDeclarationParents()
 
@@ -585,7 +585,7 @@ class GenerateIrRuntime {
         ExternalDependenciesGenerator(symbolTable, listOf(jsLinker))
             .generateUnboundSymbolsAsDependencies()
 
-        jsLinker.postProcess()
+        jsLinker.postProcess(inOrAfterLinkageStep = true)
 
         moduleFragment.patchDeclarationParents()
 

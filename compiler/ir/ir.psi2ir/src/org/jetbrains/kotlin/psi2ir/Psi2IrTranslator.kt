@@ -101,7 +101,7 @@ class Psi2IrTranslator(
 
         moduleGenerator.generateUnboundSymbolsAsDependencies(irProviders)
 
-        deserializers.forEach { it.postProcess() }
+        deserializers.forEach { it.postProcess(inOrAfterLinkageStep = true) }
         context.checkNoUnboundSymbols { "after generation of IR module ${irModule.name.asString()}" }
 
         postprocessingSteps.forEach { it.invoke(irModule) }
@@ -109,7 +109,7 @@ class Psi2IrTranslator(
 
         // TODO: remove it once plugin API improved
         moduleGenerator.generateUnboundSymbolsAsDependencies(irProviders)
-        deserializers.forEach { it.postProcess() }
+        deserializers.forEach { it.postProcess(inOrAfterLinkageStep = true) }
         context.checkNoUnboundSymbols { "after applying all post-processing steps for the generated IR module ${irModule.name.asString()}" }
 
         return irModule

@@ -27,5 +27,19 @@ interface IrDeserializer : IrProvider {
 
     fun init(moduleFragment: IrModuleFragment?, extensions: Collection<IrLinkerExtension>) {}
     fun resolveBySignatureInModule(signature: IdSignature, kind: TopLevelSymbolKind, moduleName: Name): IrSymbol
-    fun postProcess() {}
+
+    /**
+     * [postProcess] has two usages with different expectations:
+     * - IR plugin API: actualize expects/actuals, generate fake overrides
+     * - Linker(s): the same + run partial linkage
+     *
+     * In the future, this function should be split into several functions with different semantics for more precise use.
+     */
+    @Deprecated(
+        "Use postProcess(inOrAfterLinkageStep) instead",
+        ReplaceWith("postProcess(inOrAfterLinkageStep = true)"),
+        DeprecationLevel.ERROR
+    )
+    fun postProcess() = postProcess(inOrAfterLinkageStep = true)
+    fun postProcess(inOrAfterLinkageStep: Boolean)
 }

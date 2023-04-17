@@ -407,9 +407,9 @@ internal class KonanIrLinker(
                 }
             }
 
-    override fun postProcess() {
+    override fun postProcess(inOrAfterLinkageStep: Boolean) {
         stubGenerator.unboundSymbolGeneration = true
-        super.postProcess()
+        super.postProcess(inOrAfterLinkageStep)
     }
 
     private val inlineFunctionFiles = mutableMapOf<IrExternalPackageFragment, IrFile>()

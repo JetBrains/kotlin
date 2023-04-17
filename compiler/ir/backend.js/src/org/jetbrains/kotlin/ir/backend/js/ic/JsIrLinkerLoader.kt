@@ -71,7 +71,7 @@ internal data class LoadedJsIr(
     fun loadUnboundSymbols() {
         signatureProvidersImpl.clear()
         ExternalDependenciesGenerator(linker.symbolTable, listOf(linker)).generateUnboundSymbolsAsDependencies()
-        linker.postProcess()
+        linker.postProcess(inOrAfterLinkageStep = true)
         linker.checkNoUnboundSymbols(linker.symbolTable, "at the end of IR linkage process")
     }
 }

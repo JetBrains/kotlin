@@ -204,21 +204,25 @@ abstract class KotlinIrLinker(
         deserializersForModules.values.forEach { it.init() }
     }
 
-    override fun postProcess() {
+    override fun postProcess(inOrAfterLinkageStep: Boolean) {
         // TODO: Expect/actual actualization should be fixed to cope with the situation when either expect or actual symbol is unbound.
         finalizeExpectActualLinker()
 
-        // We have to exclude classifiers with unbound symbols in supertypes and in type parameter upper bounds from F.O. generation
-        // to avoid failing with `Symbol for <signature> is unbound` error or generating fake overrides with incorrect signatures.
-        partialLinkageSupport.exploreClassifiers(fakeOverrideBuilder)
+        if (inOrAfterLinkageStep) {
+            // We have to exclude classifiers with unbound symbols in supertypes and in type parameter upper bounds from F.O. generation
+            // to avoid failing with `Symbol for <signature> is unbound` error or generating fake overrides with incorrect signatures.
+            partialLinkageSupport.exploreClassifiers(fakeOverrideBuilder)
+        }
 
         // Fake override generator creates new IR declarations. This may have effect of binding for certain symbols.
         fakeOverrideBuilder.provideFakeOverrides()
         triedToDeserializeDeclarationForSymbol.clear()
 
-        // Finally, generate stubs for the remaining unbound symbols and patch every usage of any unbound symbol inside the IR tree.
-        partialLinkageSupport.generateStubsAndPatchUsages(symbolTable) {
-            deserializersForModules.values.asSequence().map { it.moduleFragment }
+        if (inOrAfterLinkageStep) {
+            // Finally, generate stubs for the remaining unbound symbols and patch every usage of any unbound symbol inside the IR tree.
+            partialLinkageSupport.generateStubsAndPatchUsages(symbolTable) {
+                deserializersForModules.values.asSequence().map { it.moduleFragment }
+            }
         }
 
         // TODO: fix IrPluginContext to make it not produce additional external reference

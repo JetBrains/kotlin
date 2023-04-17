@@ -261,7 +261,7 @@ open class JvmIrCodegenFactory(
                 fragmentInfo = evaluatorFragmentInfoForPsi2Ir
             )
 
-        irLinker.postProcess()
+        irLinker.postProcess(inOrAfterLinkageStep = true)
 
         stubGenerator.unboundSymbolGeneration = true
 
