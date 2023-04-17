@@ -668,8 +668,9 @@ internal object CheckDeprecatedSinceKotlin : ResolutionStage() {
         if (symbol.fir.dispatchReceiverType == null || symbol !is FirNamedFunctionSymbol) return false
         if (symbol.fir.isHiddenEverywhereBesideSuperCalls == true) return true
 
-        val scope = candidate.originScope as? FirTypeScope ?: return false
-        return scope.getDirectOverriddenFunctions(symbol).any { it.fir.isHiddenEverywhereBesideSuperCalls == true }
+        if (candidate.originScope !is FirTypeScope) return false
+
+        return false
     }
 
     private fun FirElement.isSuperCall(): Boolean =
