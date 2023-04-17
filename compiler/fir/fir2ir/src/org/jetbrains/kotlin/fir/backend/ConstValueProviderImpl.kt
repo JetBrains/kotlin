@@ -58,8 +58,13 @@ class ConstValueProviderImpl(
                 ?.let { if (firAnnotationContainer.isGetter) it.getter else it.setter }
             is FirFunction -> components.declarationStorage.getCachedIrFunction(firAnnotationContainer)
             is FirProperty -> components.declarationStorage.getCachedIrProperty(firAnnotationContainer)
-            is FirValueParameter -> components.declarationStorage.getCachedIrFunction(firAnnotationContainer.containingFunctionSymbol.fir)
-                ?.valueParameters?.single { it.name == firAnnotationContainer.name }
+            is FirValueParameter -> {
+                val irFunction = when (val fir = firAnnotationContainer.containingFunctionSymbol.fir) {
+                    is FirConstructor -> components.declarationStorage.getCachedIrConstructor(fir)
+                    else -> components.declarationStorage.getCachedIrFunction(fir)
+                }
+                irFunction?.valueParameters?.single { it.name == firAnnotationContainer.name }
+            }
             else -> error("Cannot extract IR declaration for ${firAnnotationContainer.render()}")
         } ?: return firAnnotation
 
