@@ -27555,6 +27555,18 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
             }
 
             @Test
+            @TestMetadata("invisibleInternalSetterAccessFromDeriviedClass.kt")
+            public void testInvisibleInternalSetterAccessFromDeriviedClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/scopes/invisibleInternalSetterAccessFromDeriviedClass.kt");
+            }
+
+            @Test
+            @TestMetadata("invisibleInternalSetterAccessFromDeriviedClassOn.kt")
+            public void testInvisibleInternalSetterAccessFromDeriviedClassOn() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/scopes/invisibleInternalSetterAccessFromDeriviedClassOn.kt");
+            }
+
+            @Test
             @TestMetadata("invisibleSetter.kt")
             public void testInvisibleSetter() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/scopes/invisibleSetter.kt");

@@ -805,7 +805,7 @@ public class OverridingUtil {
     }
 
     @NotNull
-    private static Collection<CallableMemberDescriptor> filterVisibleFakeOverrides(
+    public static Collection<CallableMemberDescriptor> filterVisibleFakeOverrides(
             @NotNull final ClassDescriptor current,
             @NotNull Collection<CallableMemberDescriptor> toFilter
     ) {

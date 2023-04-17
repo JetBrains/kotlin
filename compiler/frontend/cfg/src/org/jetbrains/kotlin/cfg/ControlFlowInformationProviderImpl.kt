@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.util.*
 import org.jetbrains.kotlin.resolve.checkers.PlatformDiagnosticSuppressor
+import org.jetbrains.kotlin.resolve.descriptorUtil.firstOverridden
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
@@ -494,15 +495,19 @@ class ControlFlowInformationProviderImpl private constructor(
 
             if (DescriptorVisibilityUtils.isVisible(receiverValue, variableDescriptor, descriptor, languageVersionSettings)
                 && setterDescriptor != null
-                && !DescriptorVisibilityUtils.isVisible(receiverValue, setterDescriptor, descriptor, languageVersionSettings)
             ) {
-                report(
-                    Errors.INVISIBLE_SETTER.on(
-                        expression, variableDescriptor, setterDescriptor.visibility,
-                        setterDescriptor
-                    ), ctxt
-                )
-                return true
+                if (!DescriptorVisibilityUtils.isVisible(receiverValue, setterDescriptor, descriptor, languageVersionSettings)) {
+                    report(
+                        INVISIBLE_SETTER.on(
+                            expression, variableDescriptor, setterDescriptor.visibility,
+                            setterDescriptor
+                        ), ctxt
+                    )
+                    return true
+                } else {
+                    // don't return anything as only warning is reported (not error), so further diagnostics are also important
+                    reportVisibilityWarningForInternalFakeSetterOverride(setterDescriptor, expression, variableDescriptor, ctxt)
+                }
             }
         }
         val isThisOrNoDispatchReceiver = PseudocodeUtil.isThisOrNoDispatchReceiver(writeValueInstruction, trace.bindingContext)
@@ -558,6 +563,35 @@ class ControlFlowInformationProviderImpl private constructor(
             }
         }
         return false
+    }
+
+    private fun reportVisibilityWarningForInternalFakeSetterOverride(
+        setterDescriptor: PropertySetterDescriptor,
+        expression: KtExpression,
+        variableDescriptor: PropertyDescriptor,
+        ctxt: VariableInitContext
+    ) {
+        if (setterDescriptor.kind.isReal) return
+        if (setterDescriptor.visibility.isPublicAPI) return
+
+        val containingClass = setterDescriptor.containingDeclaration as? ClassDescriptor ?: return
+        val firstRealOverridden = setterDescriptor.firstOverridden { it.kind.isReal } ?: return
+
+        val visibleOverrides = OverridingUtil.filterVisibleFakeOverrides(containingClass, listOf(firstRealOverridden))
+        if (visibleOverrides.isEmpty()) {
+            val diagnostic =
+                when (languageVersionSettings.supportsFeature(LanguageFeature.ProhibitAccessToInvisibleSetterFromDerivedClass)) {
+                    true -> INVISIBLE_SETTER
+                    else -> INVISIBLE_SETTER_FROM_DERIVED
+                }
+
+            report(
+                diagnostic.on(
+                    expression, variableDescriptor, setterDescriptor.visibility,
+                    setterDescriptor
+                ), ctxt
+            )
+        }
     }
 
     private fun reportValReassigned(expression: KtExpression, variableDescriptor: VariableDescriptor, ctxt: VariableInitContext) {
