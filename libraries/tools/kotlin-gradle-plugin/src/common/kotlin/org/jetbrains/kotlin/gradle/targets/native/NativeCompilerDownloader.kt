@@ -6,9 +6,12 @@
 @file:Suppress("PackageDirectoryMismatch") // Old package for compatibility
 package org.jetbrains.kotlin.gradle.utils
 
+import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.Project
 import org.gradle.api.artifacts.repositories.ArtifactRepository
 import org.gradle.api.file.FileTree
+import org.gradle.api.initialization.resolve.RepositoriesMode
+import org.gradle.api.internal.GradleInternal
 import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeToolRunner
 import org.jetbrains.kotlin.compilerRunner.konanHome
@@ -87,14 +90,19 @@ class NativeCompilerDownloader(
         }
 
     private fun setupRepo(repoUrl: String): ArtifactRepository {
-        return project.repositories.ivy { repo ->
-            repo.setUrl(repoUrl)
-            repo.patternLayout {
-                it.artifact("[artifact]-[revision].[ext]")
+        try {
+            return project.repositories.ivy { repo ->
+                repo.setUrl(repoUrl)
+                repo.patternLayout {
+                    it.artifact("[artifact]-[revision].[ext]")
+                }
+                repo.metadataSources {
+                    it.artifact()
+                }
             }
-            repo.metadataSources {
-                it.artifact()
-            }
+        } catch (e: InvalidUserCodeException) {
+            logger.error("e: Can't add Kotlin Native Distribution repository. Please add it yourself, default repository url: '$repoUrl'")
+            throw e
         }
     }
 

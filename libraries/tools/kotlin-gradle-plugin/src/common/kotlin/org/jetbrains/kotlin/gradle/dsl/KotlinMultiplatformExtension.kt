@@ -25,10 +25,10 @@ abstract class KotlinMultiplatformExtension(project: Project) :
     override val presets: NamedDomainObjectCollection<KotlinTargetPreset<*>> = project.container(KotlinTargetPreset::class.java)
 
     final override val targets: NamedDomainObjectCollection<KotlinTarget> = project.container(KotlinTarget::class.java)
+    internal val targetsState = project.suspendableProperty(targets)
 
     internal suspend fun awaitTargets(): NamedDomainObjectCollection<KotlinTarget> {
-        AfterFinaliseDsl.await()
-        return targets
+        return targetsState.awaitFinalValue()
     }
 
     override val compilerTypeFromProperties: KotlinJsCompilerType? = project.kotlinPropertiesProvider.jsCompiler

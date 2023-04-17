@@ -65,9 +65,9 @@ Util functions
  *
  * If the lifecycle already finished and Gradle moved to its execution phase, then the block will be invoked right away.
  */
-internal fun Project.launch(block: suspend KotlinPluginLifecycle.() -> Unit) {
-    kotlinPluginLifecycle.launch(block)
-}
+//internal fun Project.launch(block: suspend KotlinPluginLifecycle.() -> Unit) {
+//    kotlinPluginLifecycle.launch(block)
+//}
 
 /**
  * See [launch] and [launchInRequiredStage]
@@ -76,12 +76,12 @@ internal fun Project.launch(block: suspend KotlinPluginLifecycle.() -> Unit) {
  * @param block Is guaranteed to be executed *not before* [stage]. However, when this function is called in a higher stage then specified
  * the [block] will still be launched.
  */
-internal fun Project.launchInStage(stage: Stage, block: suspend KotlinPluginLifecycle.() -> Unit) {
-    launch {
-        await(stage)
-        block()
-    }
-}
+//internal fun Project.launchInStage(stage: Stage, block: suspend KotlinPluginLifecycle.() -> Unit) {
+//    launch {
+//        await(stage)
+//        block()
+//    }
+//}
 
 /**
  * See also [launch]
@@ -98,13 +98,13 @@ internal fun Project.launchInStage(stage: Stage, block: suspend KotlinPluginLife
  * }
  * ```
  */
-internal fun Project.launchInRequiredStage(stage: Stage, block: suspend KotlinPluginLifecycle.() -> Unit) {
-    launchInStage(stage) {
-        requiredStage(stage) {
-            block()
-        }
-    }
-}
+//internal fun Project.launchInRequiredStage(stage: Stage, block: suspend KotlinPluginLifecycle.() -> Unit) {
+//    launchInStage(stage) {
+//        requiredStage(stage) {
+//            block()
+//        }
+//    }
+//}
 
 /**
  * Universal way of retrieving the current lifecycle
@@ -118,9 +118,9 @@ internal val Project.kotlinPluginLifecycle: KotlinPluginLifecycle
 /**
  * Will start the lifecycle, this shall be called before the [kotlinPluginLifecycle] is effectively used
  */
-internal fun Project.startKotlinPluginLifecycle() {
-    (kotlinPluginLifecycle as KotlinPluginLifecycleImpl).start()
-}
+//internal fun Project.startKotlinPluginLifecycle() {
+//    (kotlinPluginLifecycle as KotlinPluginLifecycleImpl).start()
+//}
 
 /**
  * Similar to [currentCoroutineContext]: Returns the current [KotlinPluginLifecycle] instance used to launch
@@ -135,9 +135,9 @@ internal suspend fun currentKotlinPluginLifecycle(): KotlinPluginLifecycle {
  * Suspends execution until we *at least* reached the specified [this@await]
  * This will return right away if the specified [this@await] was already executed or we are currently executing the [this@await]
  */
-internal suspend fun Stage.await() {
-    currentKotlinPluginLifecycle().await(this)
-}
+//internal suspend fun Stage.await() {
+//    currentKotlinPluginLifecycle().await(this)
+//}
 
 /**
  * See [LifecycleAwareProperty]
@@ -154,18 +154,18 @@ internal suspend fun Stage.await() {
  * }
  * ```
  */
-internal inline fun <reified T : Any> Project.newKotlinPluginLifecycleAwareProperty(
-    finaliseIn: Stage = Stage.FinaliseDsl, initialValue: T? = null
-): LifecycleAwareProperty<T> {
-    return kotlinPluginLifecycle.newLifecycleAwareProperty(T::class.java, finaliseIn, initialValue)
-}
+//internal inline fun <reified T : Any> Project.newKotlinPluginLifecycleAwareProperty(
+//    finaliseIn: Stage = Stage.FinaliseDsl, initialValue: T? = null
+//): LifecycleAwareProperty<T> {
+//    return kotlinPluginLifecycle.newLifecycleAwareProperty(T::class.java, finaliseIn, initialValue)
+//}
 
 /**
  * Will return the [LifecycleAwareProperty] instance if the given receiver was created by [newKotlinPluginLifecycleAwareProperty]
  */
-internal suspend fun <T : Any> Property<T>.findKotlinPluginLifecycleAwareProperty(): LifecycleAwareProperty<T>? {
-    return (currentKotlinPluginLifecycle() as KotlinPluginLifecycleImpl).findLifecycleAwareProperty(this)
-}
+//internal suspend fun <T : Any> Property<T>.findKotlinPluginLifecycleAwareProperty(): LifecycleAwareProperty<T>? {
+//    return (currentKotlinPluginLifecycle() as KotlinPluginLifecycleImpl).findLifecycleAwareProperty(this)
+//}
 
 /**
  * Will suspend until the property finalises its value and therefore a final value can returned.
@@ -175,32 +175,32 @@ internal suspend fun <T : Any> Property<T>.findKotlinPluginLifecycleAwarePropert
  * If a property was not created using 'newKotlinPluginLifecycleAwareProperty' then the execution
  * will suspend until 'FinaliseDsl' and calls [Property.finalizeValue] before returnign the actual value
  */
-internal suspend fun <T : Any> Property<T>.awaitFinalValue(): T? {
-    val lifecycleAwareProperty = findKotlinPluginLifecycleAwareProperty()
-    if (lifecycleAwareProperty != null) {
-        return lifecycleAwareProperty.awaitFinalValue()
-    }
-
-    Stage.FinaliseDsl.await()
-    finalizeValue()
-    return orNull
-}
+//internal suspend fun <T : Any> Property<T>.awaitFinalValue(): T? {
+//    val lifecycleAwareProperty = findKotlinPluginLifecycleAwareProperty()
+//    if (lifecycleAwareProperty != null) {
+//        return lifecycleAwareProperty.awaitFinalValue()
+//    }
+//
+//    Stage.FinaliseDsl.await()
+//    finalizeValue()
+//    return orNull
+//}
 
 /**
  * @return true if this property has an associated [LifecycleAwareProperty]
  */
-internal suspend fun Property<*>.isKotlinPluginLifecycleAware(): Boolean {
-    return findKotlinPluginLifecycleAwareProperty() != null
-}
+//internal suspend fun Property<*>.isKotlinPluginLifecycleAware(): Boolean {
+//    return findKotlinPluginLifecycleAwareProperty() != null
+//}
 
 /**
  * See also [withRestrictedStages]
  *
  * Will ensure that the given [block] can only execute in the given [stage]
  */
-internal suspend fun <T> requiredStage(stage: Stage, block: suspend () -> T): T {
-    return withRestrictedStages(hashSetOf(stage), block)
-}
+//internal suspend fun <T> requiredStage(stage: Stage, block: suspend () -> T): T {
+//    return withRestrictedStages(hashSetOf(stage), block)
+//}
 
 /**
  * See also [withRestrictedStages]
@@ -216,9 +216,9 @@ internal suspend fun <T> requiredStage(stage: Stage, block: suspend () -> T): T 
  * }
  * ```
  */
-internal suspend fun <T> requireCurrentStage(block: suspend () -> T): T {
-    return requiredStage(currentKotlinPluginLifecycle().stage, block)
-}
+//internal suspend fun <T> requireCurrentStage(block: suspend () -> T): T {
+//    return requiredStage(currentKotlinPluginLifecycle().stage, block)
+//}
 
 /**
  * Will ensure that the given [block] cannot leave the specified allowed stages [allowed]
@@ -233,11 +233,11 @@ internal suspend fun <T> requireCurrentStage(block: suspend () -> T): T {
  * }
  * ```
  */
-internal suspend fun <T> withRestrictedStages(allowed: Set<Stage>, block: suspend () -> T): T {
-    return withContext(RestrictedLifecycleStages(currentKotlinPluginLifecycle(), allowed)) {
-        block()
-    }
-}
+//internal suspend fun <T> withRestrictedStages(allowed: Set<Stage>, block: suspend () -> T): T {
+//    return withContext(RestrictedLifecycleStages(currentKotlinPluginLifecycle(), allowed)) {
+//        block()
+//    }
+//}
 
 /*
 Definition of the Lifecycle and its stages
@@ -476,7 +476,7 @@ private class KotlinPluginLifecycleImpl(override val project: Project) : KotlinP
     ) : LifecycleAwareProperty<T> {
 
         override suspend fun awaitFinalValue(): T? {
-            finaliseIn.await()
+            //finaliseIn.await()
             return property.orNull
         }
     }
