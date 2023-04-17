@@ -259,14 +259,6 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             mainCallArguments = mainCallArguments
         )
 
-        configuration.setupPartialLinkageConfig(
-            mode = arguments.partialLinkageMode,
-            logLevel = arguments.partialLinkageLogLevel,
-            compilerModeAllowsUsingPartialLinkage = arguments.includes != null, // Don't run PL when producing KLIB.
-            onWarning = { messageCollector.report(WARNING, it) },
-            onError = { messageCollector.report(ERROR, it) }
-        )
-
         // Run analysis if main module is sources
         var sourceModule: ModulesStructure? = null
         val includes = arguments.includes
@@ -719,6 +711,14 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
         configuration.put(JSConfigurationKeys.PRINT_REACHABILITY_INFO, arguments.irDcePrintReachabilityInfo)
         configuration.put(JSConfigurationKeys.FAKE_OVERRIDE_VALIDATOR, arguments.fakeOverrideValidator)
+
+        configuration.setupPartialLinkageConfig(
+            mode = arguments.partialLinkageMode,
+            logLevel = arguments.partialLinkageLogLevel,
+            compilerModeAllowsUsingPartialLinkage = arguments.includes != null, // Don't run PL when producing KLIB.
+            onWarning = { messageCollector.report(WARNING, it) },
+            onError = { messageCollector.report(ERROR, it) }
+        )
     }
 
     override fun executableScriptFileName(): String {
