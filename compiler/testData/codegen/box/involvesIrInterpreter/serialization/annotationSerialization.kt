@@ -70,6 +70,11 @@ fun foo(@BinaryAnnotation("Str" + "ing") a: Int) {  }
 val @receiver:BinaryAnnotation("Str" + "ing") String.a: Int
     get() = 0
 
+class WithConstructorArgumentAnnotation(
+    @BinaryAnnotation("Str" + "ing")
+    val a: Int
+)
+
 // 9. FUNCTION
 @BinaryAnnotation("Str" + "ing")
 fun bar() {}
