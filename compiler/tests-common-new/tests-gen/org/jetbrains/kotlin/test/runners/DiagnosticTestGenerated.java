@@ -37551,6 +37551,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("inferenceFromLambdaReturnType.kt")
+            public void testInferenceFromLambdaReturnType() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/inferenceFromLambdaReturnType.kt");
+            }
+
+            @Test
             @TestMetadata("resolveUsualCallWithBuilderInference.kt")
             public void testResolveUsualCallWithBuilderInference() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/resolveUsualCallWithBuilderInference.kt");
