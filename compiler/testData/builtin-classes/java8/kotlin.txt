@@ -849,3 +849,9 @@ public object Unit {
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.TYPE}) @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE) @kotlin.annotation.MustBeDocumented public final annotation class UnsafeVariance : kotlin.Annotation {
     /*primary*/ public constructor UnsafeVariance()
 }
+
+@kotlin.annotation.Target(allowedTargets = {AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.FUNCTION, AnnotationTarget.TYPEALIAS}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) internal final annotation class WasExperimental : kotlin.Annotation {
+    /*primary*/ public constructor WasExperimental(/*0*/ vararg markerClass: kotlin.reflect.KClass<out kotlin.Annotation> /*kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>>*/)
+    public final val markerClass: kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>>
+        public final fun `<get-markerClass>`(): kotlin.Array<out kotlin.reflect.KClass<out kotlin.Annotation>>
+}
