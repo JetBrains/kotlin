@@ -75,7 +75,8 @@ val kotlinGradlePluginAndItsRequired = arrayOf(
     ":native:kotlin-klib-commonizer-embeddable",
     ":native:kotlin-klib-commonizer-api",
     ":native:kotlin-native-utils",
-    ":kotlin-lombok"
+    ":kotlin-lombok",
+    ":build-tools-enum-compat"
 )
 
 fun Task.dependsOnKotlinGradlePluginInstall() {

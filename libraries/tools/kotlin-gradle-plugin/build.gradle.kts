@@ -77,6 +77,14 @@ dependencies {
     commonRuntimeOnly(project(":kotlin-scripting-compiler-embeddable"))
     commonRuntimeOnly(project(":kotlin-scripting-compiler-impl-embeddable"))
 
+    // Adding workaround KT-57317 for Gradle versions where Kotlin runtime <1.8.0
+    implementation(project(":build-tools-enum-compat"))
+    gradle70Implementation(project(":build-tools-enum-compat"))
+    gradle71Implementation(project(":build-tools-enum-compat"))
+    gradle74Implementation(project(":build-tools-enum-compat"))
+    gradle75Implementation(project(":build-tools-enum-compat"))
+    gradle76Implementation(project(":build-tools-enum-compat"))
+
     embedded(project(":kotlin-gradle-build-metrics"))
     embedded(project(":kotlin-gradle-statistics"))
     embedded(commonDependency("org.jetbrains.intellij.deps:asm-all")) { isTransitive = false }

@@ -51,10 +51,3 @@ val unpill by tasks.creating {
     dependsOn(jar)
     doLast { runPillTask("unpill") }
 }
-
-// 1.9 level breaks Kotlin Gradle plugins via changes in enums (KT-48872)
-tasks.withType<KotlinCompilationTask<*>>().configureEach {
-    compilerOptions.apiVersion.value(KotlinVersion.KOTLIN_1_8).finalizeValueOnRead()
-    compilerOptions.languageVersion.value(KotlinVersion.KOTLIN_1_8).finalizeValueOnRead()
-}
-
