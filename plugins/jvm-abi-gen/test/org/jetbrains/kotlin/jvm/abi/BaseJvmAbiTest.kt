@@ -74,7 +74,7 @@ abstract class BaseJvmAbiTest : TestCase() {
         val compiler = K2JVMCompiler()
         val args = compiler.createArguments().apply {
             freeArgs = listOf(compilation.srcDir.canonicalPath)
-            classpath = (abiDependencies + kotlinJvmStdlib).map { it.canonicalPath }.toTypedArray()
+            classpath = (abiDependencies + kotlinJvmStdlib).joinToString(File.pathSeparator) { it.canonicalPath }
             pluginClasspaths = arrayOf(abiPluginJar.canonicalPath)
             pluginOptions = listOfNotNull(
                 abiOption(JvmAbiCommandLineProcessor.OUTPUT_PATH_OPTION.optionName, compilation.abiDir.canonicalPath),

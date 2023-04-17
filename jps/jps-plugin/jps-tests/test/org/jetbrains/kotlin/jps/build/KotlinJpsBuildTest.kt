@@ -12,7 +12,6 @@ import com.intellij.openapi.util.text.StringUtil
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.testFramework.UsefulTestCase
-import com.intellij.util.io.Decompressor
 import com.intellij.util.io.URLUtil
 import com.intellij.util.io.ZipUtil
 import org.jetbrains.jps.ModuleChunk
@@ -958,7 +957,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
             Files.copy(libraryJar.toPath(), module1Lib.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
             assert(module1Lib.exists())
-            (facet.compilerArguments as K2JVMCompilerArguments).classpath = arrayOf(module1Lib.path)
+            (facet.compilerArguments as K2JVMCompilerArguments).classpath = module1Lib.path
 
             it.container.setChild(
                 JpsKotlinFacetModuleExtension.KIND,

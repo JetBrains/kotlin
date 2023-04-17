@@ -26,10 +26,9 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
         value = "-classpath",
         shortName = "-cp",
         valueDescription = "<path>",
-        description = "List of directories and JAR/ZIP archives to search for user class files",
-        delimiter = Argument.Delimiters.pathSeparator
+        description = "List of directories and JAR/ZIP archives to search for user class files"
     )
-    var classpath: Array<String>? = null
+    var classpath: String? = null
         set(value) {
             checkFrozen()
             field = if (value.isNullOrEmpty()) null else value
@@ -210,13 +209,8 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
             field = value
         }
 
-    @Argument(
-        value = "-Xmodule-path",
-        valueDescription = "<path>",
-        description = "Paths where to find Java 9+ modules",
-        delimiter = Argument.Delimiters.pathSeparator
-    )
-    var javaModulePath: Array<String>? = null
+    @Argument(value = "-Xmodule-path", valueDescription = "<path>", description = "Paths where to find Java 9+ modules")
+    var javaModulePath: String? = null
         set(value) {
             checkFrozen()
             field = if (value.isNullOrEmpty()) null else value

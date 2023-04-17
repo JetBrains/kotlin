@@ -230,7 +230,7 @@ fun CommonCompilerArguments.convertPathsToSystemIndependent() {
     when (this) {
         is K2JVMCompilerArguments -> {
             destination = destination?.let(FileUtilRt::toSystemIndependentName)
-            classpath?.forEachIndexed { index, s -> classpath!![index] = FileUtilRt.toSystemIndependentName(s) }
+            classpath = classpath?.let(FileUtilRt::toSystemIndependentName)
             jdkHome = jdkHome?.let(FileUtilRt::toSystemIndependentName)
             kotlinHome = kotlinHome?.let(FileUtilRt::toSystemIndependentName)
             friendPaths?.forEachIndexed { index, s -> friendPaths!![index] = FileUtilRt.toSystemIndependentName(s) }

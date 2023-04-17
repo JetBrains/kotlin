@@ -34,7 +34,7 @@ class CompilerArgumentsSerializationTest {
     @Test
     fun testLongClasspathArgumentJVM() {
         doSerializeDeserializeAndCompareTest<K2JVMCompilerArguments> {
-            classpath = generateSequence { generateRandomString(50) }.take(10).toList().toTypedArray()
+            classpath = generateSequence { generateRandomString(50) }.take(10).toList().joinToString(File.pathSeparator)
         }
     }
 

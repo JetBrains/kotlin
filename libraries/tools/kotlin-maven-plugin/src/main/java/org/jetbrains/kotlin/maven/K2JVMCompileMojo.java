@@ -165,14 +165,13 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
 
         if (!classpathList.isEmpty()) {
             String classPathString = join(classpathList, File.pathSeparator);
-            String[] classPath = classpathList.toArray(new String[0]);
             if (isJava9Module(sourceRoots)) {
                 getLog().debug("Module path: " + classPathString);
-                arguments.setJavaModulePath(classPath);
+                arguments.setJavaModulePath(classPathString);
             }
             else {
                 getLog().debug("Classpath: " + classPathString);
-                arguments.setClasspath(classPath);
+                arguments.setClasspath(classPathString);
             }
         }
 
@@ -256,19 +255,19 @@ public class K2JVMCompileMojo extends KotlinCompileMojoBase<K2JVMCompilerArgumen
         File classesDir = new File(destination);
         File kotlinClassesDir = new File(cachesDir, "classes");
         File snapshotsFile = new File(cachesDir, "snapshots.bin");
-        String[] classpath = arguments.getClasspath();
+        String classpath = arguments.getClasspath();
         MavenICReporter icReporter = new MavenICReporter(getLog());
 
         try {
             arguments.setDestination(kotlinClassesDir.getAbsolutePath());
             if (classpath != null) {
                 List<String> filteredClasspath = new ArrayList<>();
-                for (String path : classpath) {
+                for (String path : classpath.split(File.pathSeparator)) {
                     if (!classesDir.equals(new File(path))) {
                         filteredClasspath.add(path);
                     }
                 }
-                arguments.setClasspath(filteredClasspath.toArray(new String[0]));
+                arguments.setClasspath(StringUtil.join(filteredClasspath, File.pathSeparator));
             }
 
             IncrementalJvmCompilerRunnerKt.makeIncrementally(cachesDir, sourceRoots, arguments, messageCollector, icReporter);

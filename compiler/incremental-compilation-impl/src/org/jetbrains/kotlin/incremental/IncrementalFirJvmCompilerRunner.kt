@@ -342,7 +342,7 @@ fun CompilerConfiguration.configureBaseRoots(args: K2JVMCompilerArguments) {
         }
     }
 
-    args.classpath?.forEach { classpathRoot ->
+    args.classpath?.split(File.pathSeparator)?.forEach { classpathRoot ->
         add(
             CLIConfigurationKeys.CONTENT_ROOTS,
             if (isJava9Module) JvmModulePathRoot(File(classpathRoot)) else JvmClasspathRoot(File(classpathRoot))

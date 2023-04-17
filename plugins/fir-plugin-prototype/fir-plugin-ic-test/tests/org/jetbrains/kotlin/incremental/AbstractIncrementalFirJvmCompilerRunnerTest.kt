@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.incremental.testingUtils.BuildLogFinder
 import org.junit.jupiter.api.fail
 import java.io.File
-import java.io.FilenameFilter
 
 abstract class AbstractIncrementalFirJvmWithPluginCompilerRunnerTest : AbstractIncrementalFirJvmCompilerRunnerTest() {
     companion object {
@@ -35,7 +34,7 @@ abstract class AbstractIncrementalFirJvmWithPluginCompilerRunnerTest : AbstractI
             val annotationsJar = findJar(ANNOTATIONS_JAR_DIR, ANNOTATIONS_JAR_NAME, ":plugins:fir-plugin-prototype:plugin-annotations:jar")
             val pluginJar = findJar(PLUGIN_JAR_DIR, PLUGIN_JAR_NAME, ":plugins:fir-plugin-prototype:jar")
 
-            classpath = classpath?.plus(annotationsJar)
+            classpath += "${File.pathSeparator}$annotationsJar"
             pluginClasspaths = arrayOf(pluginJar)
         }
 
