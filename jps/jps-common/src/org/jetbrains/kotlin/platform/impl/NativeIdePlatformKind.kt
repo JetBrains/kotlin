@@ -62,9 +62,10 @@ object NativeIdePlatformKind : IdePlatformKind() {
 // These are fake compiler arguments for Kotlin/Native - only for usage within IDEA plugin:
 @Deprecated(
     message = "Use K2NativeCompilerArguments instead",
-    level = DeprecationLevel.ERROR
+    level = DeprecationLevel.WARNING
 )
 class FakeK2NativeCompilerArguments : CommonCompilerArguments() {
+    @Suppress("DEPRECATION")
     override fun copyOf(): Freezable = copyCommonCompilerArguments(this, FakeK2NativeCompilerArguments())
 }
 
