@@ -21,7 +21,7 @@ interface IdeCompilerArgumentsResolver {
         @JvmStatic
         fun instance(project: Project): IdeCompilerArgumentsResolver {
             return project.extraProperties.getOrPut(IdeCompilerArgumentsResolver::class.java.name) {
-                IdeCompilerArgumentsResolverImpl(project.kotlinExtension)
+                IdeCompilerArgumentsResolverImpl()
             }
         }
     }
