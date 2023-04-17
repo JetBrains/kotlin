@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typePro
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractHasCommonSubtypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractTypeReferenceTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceResolveTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceResolveWithResolveExtensionTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceShortenerTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSingleSymbolByPsi
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSymbolByFqNameTest
@@ -86,6 +87,20 @@ internal fun AnalysisApiTestGroup.generateAnalysisApiTests() {
     group(filter = testModuleKindIs(TestModuleKind.Source)) {
         generateAnalysisApiComponentsTests()
         generateAnalysisApiNonComponentsTests()
+        generateResolveExtensionsTests()
+    }
+}
+
+private fun AnalysisApiTestGroup.generateResolveExtensionsTests() {
+    group(
+        "resolveExtensions",
+        filter = analysisSessionModeIs(AnalysisSessionMode.Normal) and
+                frontendIs(FrontendKind.Fir) and
+                testModuleKindIs(TestModuleKind.Source)
+    ) {
+        test(AbstractReferenceResolveWithResolveExtensionTest::class) {
+            model("referenceResolve")
+        }
     }
 }
 
