@@ -36785,6 +36785,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("inferenceFromLambdaReturnStatement.kt")
+            public void testInferenceFromLambdaReturnStatement() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/inferenceFromLambdaReturnStatement.kt");
+            }
+
+            @Test
             @TestMetadata("inferenceFromLambdaReturnType.kt")
             public void testInferenceFromLambdaReturnType() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/inferenceFromLambdaReturnType.kt");
