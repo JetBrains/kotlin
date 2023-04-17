@@ -51,6 +51,8 @@ import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsCodeGenerator
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageConfig
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageMode
 import org.jetbrains.kotlin.ir.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
@@ -715,7 +717,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         configuration.setupPartialLinkageConfig(
             mode = arguments.partialLinkageMode,
             logLevel = arguments.partialLinkageLogLevel,
-            compilerModeAllowsUsingPartialLinkage = arguments.includes != null, // Don't run PL when producing KLIB.
+            compilerModeAllowsUsingPartialLinkage =
+                /* disabled for WASM for now */ !arguments.wasm && /* no PL when producing KLIB */ arguments.includes != null,
             onWarning = { messageCollector.report(WARNING, it) },
             onError = { messageCollector.report(ERROR, it) }
         )
