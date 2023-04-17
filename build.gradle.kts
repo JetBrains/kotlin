@@ -230,6 +230,7 @@ extra["compilerModules"] =
 // They are embedded just because we don't publish those dependencies as separate Maven artifacts (yet)
 extra["kotlinJpsPluginEmbeddedDependencies"] = listOf(
     ":compiler:cli-common",
+    ":kotlin-build-tools-enum-compat",
     ":kotlin-compiler-runner-unshaded",
     ":daemon-common",
     ":core:compiler.common",

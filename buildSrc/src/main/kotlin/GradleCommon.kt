@@ -13,7 +13,6 @@ import org.gradle.api.attributes.*
 import org.gradle.api.attributes.java.TargetJvmEnvironment
 import org.gradle.api.attributes.java.TargetJvmVersion
 import org.gradle.api.attributes.plugin.GradlePluginApiVersion
-import org.gradle.api.file.FileCollection
 import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.api.plugins.JavaLibraryPlugin
 import org.gradle.api.plugins.JavaPlugin
@@ -31,12 +30,10 @@ import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.dokka.gradle.GradleExternalDocumentationLinkBuilder
 import org.jetbrains.kotlin.gradle.dsl.KotlinSingleJavaTargetExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
 import java.net.URL
-import java.util.*
 
 /**
  * Gradle's plugins common variants.
@@ -251,6 +248,7 @@ fun Project.wireGradleVariantToCommonGradleVariant(
             from(wireSourceSet.output, commonSourceSet.output)
             setupPublicJar(archiveBaseName.get())
             addEmbeddedRuntime()
+            addEmbeddedRuntime(wireSourceSet.embeddedConfigurationName)
         } else if (name == wireSourceSet.sourcesJarTaskName) {
             from(wireSourceSet.allSource, commonSourceSet.allSource)
         }
@@ -302,6 +300,15 @@ fun Project.reconfigureMainSourcesSetForGradlePlugin(
                         withJavadocJar()
                     }
                 }
+
+            configurations.create(sourceSets.getByName("main").embeddedConfigurationName) {
+                isCanBeConsumed = false
+                isCanBeResolved = true
+                attributes {
+                    attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+                    attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
+                }
+            }
         }
 
         // Workaround for https://youtrack.jetbrains.com/issue/KT-52987
@@ -423,10 +430,20 @@ fun Project.createGradlePluginVariant(
 
             configurations.named(variantSourceSet.apiElementsConfigurationName, commonVariantAttributes())
             configurations.named(variantSourceSet.runtimeElementsConfigurationName, commonVariantAttributes())
+
+            configurations.create(variantSourceSet.embeddedConfigurationName) {
+                isCanBeConsumed = false
+                isCanBeResolved = true
+                attributes {
+                    attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+                    attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
+                }
+            }
         }
 
         tasks.named<Jar>(variantSourceSet.sourcesJarTaskName) {
             addEmbeddedSources()
+            addEmbeddedSources(variantSourceSet.embeddedConfigurationName)
         }
     }
 
@@ -513,6 +530,7 @@ fun Project.publishShadowedJar(
             jarTask.flatMap { it.archiveClassifier }
         )
         addEmbeddedRuntime()
+        addEmbeddedRuntime(sourceSet.embeddedConfigurationName)
         from(sourceSet.output)
         from(commonSourceSet.output)
 
@@ -701,3 +719,5 @@ private fun GradleExternalDocumentationLinkBuilder.addWorkaroundForElementList(p
         packageListUrl.set(URL("${pluginVariant.gradleApiJavadocUrl}element-list"))
     }
 }
+
+private val SourceSet.embeddedConfigurationName get() = "${name}Embedded"

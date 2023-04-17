@@ -17,6 +17,7 @@
          <trust group="org.jetbrains.kotlin" name="kotlin-annotation-processing-embeddable" version="1.9.[0-9](-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-annotation-processing-gradle" version="1.9.[0-9](-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-build-common" version="1.9.[0-9](-.+)?" regex="true"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-build-tools-enum-compat" version="1.9.[0-9](-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-build-tools-api" version="1.9.[0-9](-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-build-tools-impl" version="1.9.[0-9](-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-compiler-embeddable" version="1.9.[0-9](-.+)?" regex="true"/>

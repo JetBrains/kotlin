@@ -73,8 +73,9 @@ fun Project.noDefaultJar() {
     configurations.named("archives", removeJarTaskArtifact(jarTask))
 }
 
-fun Jar.addEmbeddedRuntime() {
-    project.configurations.findByName("embedded")?.let { embedded ->
+@JvmOverloads
+fun Jar.addEmbeddedRuntime(embeddedConfigurationName: String = "embedded") {
+    project.configurations.findByName(embeddedConfigurationName)?.let { embedded ->
         dependsOn(embedded)
         val archiveOperations = project.serviceOf<ArchiveOperations>()
         from {
@@ -203,8 +204,9 @@ fun Project.sourcesJarWithSourcesFromEmbedded(
     return sourcesJarTask
 }
 
-fun Jar.addEmbeddedSources() {
-    project.configurations.findByName("embedded")?.let { embedded ->
+@JvmOverloads
+fun Jar.addEmbeddedSources(configurationName: String = "embedded") {
+    project.configurations.findByName(configurationName)?.let { embedded ->
         val allSources by lazy {
             embedded.resolvedConfiguration
                 .resolvedArtifacts

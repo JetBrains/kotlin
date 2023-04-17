@@ -185,6 +185,7 @@ include ":kotlin-imports-dumper-compiler-plugin",
         ":generators:ide-iml-to-gradle-generator",
         ":generators:test-generator",
         ":tools:kotlinp",
+        ":kotlin-build-tools-enum-compat",
         ":kotlin-project-model",
         ":kotlin-project-model-tests-generator",
         ":kotlin-gradle-compiler-types",
@@ -710,6 +711,7 @@ project(':kotlin-assignment-compiler-plugin.cli').projectDir = "$rootDir/plugins
 project(':kotlin-assignment-compiler-plugin.embeddable').projectDir = "$rootDir/plugins/assign-plugin/assign-plugin.embeddable" as File
 
 project(':tools:kotlinp').projectDir = "$rootDir/libraries/tools/kotlinp" as File
+project(":kotlin-build-tools-enum-compat").projectDir = "$rootDir/libraries/tools/kotlin-build-tools-enum-compat" as File
 project(':kotlin-project-model').projectDir = "$rootDir/libraries/tools/kotlin-project-model" as File
 project(':kotlin-project-model-tests-generator').projectDir = "$rootDir/libraries/tools/kotlin-project-model-tests-generator" as File
 project(':kotlin-gradle-compiler-types').projectDir = "$rootDir/libraries/tools/kotlin-gradle-compiler-types" as File

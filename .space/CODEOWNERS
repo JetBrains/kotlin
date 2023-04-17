@@ -277,6 +277,7 @@
 /libraries/tools/binary-compatibility-validator/ "Kotlin Libraries"
 /libraries/tools/dukat/ "Kotlin JS"
 /libraries/kotlin-dom-api-compat/ "Kotlin JS"
+/libraries/tools/kotlin-build-tools-enum-compat/ "Kotlin Build Tools"
 /libraries/tools/gradle/ "Kotlin Build Tools"
 /libraries/tools/kotlin-allopen/ "Kotlin Build Tools"
 /libraries/tools/kotlin-annotations-jvm/ "Kotlin Libraries"
