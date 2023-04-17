@@ -13,6 +13,7 @@
          <trust file="kotlin-native-prebuilt-.*" regex="true"/>
          <trust group="gradle" name="gradle" file="gradle-.*-src[.]zip" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="builtins" version="1.9.0.*" regex="true"/>
+         <trust group="org.jetbrains.kotlin" name="build-tools-enum-compat" version="1.9.0.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-android-extensions" version="1.9.0.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-annotation-processing-gradle" version="1.9.0.*" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-build-common" version="1.9.0.*" regex="true"/>
