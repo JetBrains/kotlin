@@ -51,7 +51,7 @@ open class CandidateCollector(
     open fun shouldStopAtTheGroup(group: TowerGroup): Boolean =
         shouldStopResolve && bestGroup < group
 
-    private val shouldStopResolve: Boolean
+    val shouldStopResolve: Boolean
         get() = currentApplicability.shouldStopResolve
 
     val isSuccess: Boolean

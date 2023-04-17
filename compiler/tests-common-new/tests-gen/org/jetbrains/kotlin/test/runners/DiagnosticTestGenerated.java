@@ -40108,6 +40108,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("lowPriorityTopLevelValAndObject.kt")
+                public void testLowPriorityTopLevelValAndObject() throws Exception {
+                    runTest("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve/lowPriorityTopLevelValAndObject.kt");
+                }
+
+                @Test
                 @TestMetadata("moreOnlyInputTypes.kt")
                 public void testMoreOnlyInputTypes() throws Exception {
                     runTest("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve/moreOnlyInputTypes.kt");

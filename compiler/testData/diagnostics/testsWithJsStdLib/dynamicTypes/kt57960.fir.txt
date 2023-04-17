@@ -1,0 +1,52 @@
+FILE: kt57960.kt
+    public final class Bar : R|kotlin/Any| {
+        public constructor(): R|Bar| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var toDOM: R|((Baz) -> kotlin/Any)?| = Null(null)
+            public get(): R|((Baz) -> kotlin/Any)?|
+            public set(value: R|((Baz) -> kotlin/Any)?|): R|kotlin/Unit|
+
+    }
+    public final class Baz : R|kotlin/Any| {
+        public constructor(): R|Baz| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final var text: R|kotlin/String| = String()
+            public get(): R|kotlin/String|
+            public set(value: R|kotlin/String|): R|kotlin/Unit|
+
+    }
+    public final object Foo : R|kotlin/Any| {
+        private constructor(): R|Foo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final fun create2(toDOM: R|((Baz) -> kotlin/Any)?| = Null(null)): R|Bar| {
+            ^create2 R|/jso|<R|Bar|>(<L> = jso@fun R|Bar|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                R|<local>/toDOM|?.{ $subj$.R|kotlin/let|<R|(Baz) -> kotlin/Any|, R|kotlin/Unit|>(<L> = let@fun <anonymous>(it: R|(Baz) -> kotlin/Any|): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+                    this@R|special/anonymous|.R|/Bar.toDOM| = R|<local>/it|
+                }
+                ) }
+            }
+            )
+        }
+
+    }
+    private final fun buildSchemaNodes1(): R|kotlin/Unit| {
+        R|/jso|<R|dynamic|>(<L> = jso@fun R|dynamic|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+            Q|Foo|.R|/Foo.create2|(toDOM = create2@fun <anonymous>(domNode: R|Baz|): R|kotlin/Any| <inline=NoInline>  {
+                ^ R|<local>/domNode|.R|/Baz.text|
+            }
+            )
+        }
+        )
+    }
+    public final fun <T : R|kotlin/Any|> jso(): R|T| {
+        ^jso R|kotlin/js/js|(String(({})))
+    }
+    public final inline fun <T : R|kotlin/Any|> jso(block: R|T.() -> kotlin/Unit|): R|T| {
+        ^jso R|/jso|<R|T|>().R|kotlin/apply|<R|T|>(R|<local>/block|)
+    }
