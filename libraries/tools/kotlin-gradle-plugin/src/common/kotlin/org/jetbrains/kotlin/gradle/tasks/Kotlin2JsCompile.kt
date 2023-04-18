@@ -218,10 +218,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
         .fileCollection()
         .from(friendPaths)
         .filter {
-            // .jar files are not required for js compilation as friend modules
-            // and, because of `@InputFiles` and different normalization strategy from `@Classpath`,
-            // they produce build cache misses
-            it.exists() && !it.name.endsWith(".jar") && libraryFilter(it)
+            it.exists() && libraryFilter(it)
         }
 
     @get:Internal
