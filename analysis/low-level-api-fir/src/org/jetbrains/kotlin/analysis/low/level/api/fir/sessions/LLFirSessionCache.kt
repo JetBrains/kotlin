@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.analysis.providers.createAnnotationResolver
 import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.createPackageProvider
+import org.jetbrains.kotlin.analysis.providers.impl.FileBasedKotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.utils.trackers.CompositeModificationTracker
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
