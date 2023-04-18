@@ -5,8 +5,18 @@
 
 package org.jetbrains.kotlin.gradle
 
+/**
+ * Marker for APIs that can be used by Google to build and maintain a 'KotlinTarget' outside the kotlin.git repository:
+ * Declarations marked with this annotation will be checked for binary compatibility.
+ *
+ * ### Stability Guarantee:
+ * Despite those APIs being verified for binary compatibility, the overall 'External Kotlin Target API' surface is
+ * not stabilised yet and changes might happen until 1.9.20
+ *
+ * After 1.9.20 this APIs will have to go through a full deprecation cycle before being broken.
+ */
 @RequiresOptIn(
-    message = "This API is intended to be used by Google to maintain KotlinTargets outside of kotlin.git",
+    message = "This API can be used by Google to maintain KotlinTargets outside of kotlin.git",
     level = RequiresOptIn.Level.ERROR
 )
 annotation class ExternalKotlinTargetApi
