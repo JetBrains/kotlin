@@ -21,7 +21,6 @@ private fun dateNow(): Double =
     js("Date.now()")
 
 @SinceKotlin("1.3")
-@ExperimentalTime
 internal actual object MonotonicTimeSource : TimeSource.WithComparableMarks {
     private val performance: ExternalInterfaceType? = tryGetPerformance()
 

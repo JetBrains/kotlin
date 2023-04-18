@@ -3,7 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(ExperimentalTime::class)
 package test.time
 
 import kotlin.math.sign
@@ -14,7 +13,6 @@ import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.nanoseconds
 import kotlin.time.Duration.Companion.seconds
 
-@OptIn(ExperimentalTime::class)
 class TimeMarkTest {
     private val units = DurationUnit.values()
 
@@ -228,6 +226,7 @@ class TimeMarkTest {
         override fun read(): Long = reading
     }
 
+    @OptIn(ExperimentalTime::class)
     @Suppress("DEPRECATION")
     private class DoubleTimeSource(unit: DurationUnit) : AbstractDoubleTimeSource(unit) {
         var reading: Double = 0.0

@@ -9,7 +9,6 @@ import kotlin.test.*
 import kotlin.time.*
 import kotlin.time.Duration.Companion.nanoseconds
 
-@OptIn(ExperimentalTime::class)
 class TimeMarkJVMTest {
 
     @Test
