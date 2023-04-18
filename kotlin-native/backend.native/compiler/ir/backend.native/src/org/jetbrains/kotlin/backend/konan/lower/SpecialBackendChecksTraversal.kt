@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.Variance
-import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.getClassFqNameUnsafe
 import org.jetbrains.kotlin.utils.fileUtils.descendantRelativeTo
 import java.io.File
 
@@ -159,13 +158,13 @@ private class BackendChecker(
         function.valueParameters.forEach {
             val kotlinType = it.descriptor.type
             if (!kotlinType.isObjCObjectType())
-                reportError(it, "Unexpected $action method parameter type: $kotlinType\n" +
+                reportError(it, "Unexpected $action method parameter type: ${it.type.classFqName}\n" +
                         "Only Objective-C object types are supported here")
         }
 
         val returnType = function.returnType
         if (!returnType.isUnit())
-            reportError(function, "Unexpected $action method return type: ${returnType.toKotlinType()}\n" +
+            reportError(function, "Unexpected $action method return type: ${returnType.classFqName}\n" +
                     "Only 'Unit' is supported here")
 
         checkCanGenerateFunctionImp(function)
@@ -185,7 +184,7 @@ private class BackendChecker(
 
         val type = descriptor.type
         if (!type.isObjCObjectType())
-            reportError(property, "Unexpected $outlet type: $type\n" +
+            reportError(property, "Unexpected $outlet type: ${property.getter?.returnType?.classFqName}\n" +
                     "Only Objective-C object types are supported here")
 
         checkCanGenerateFunctionImp(property.setter!!)
@@ -340,8 +339,7 @@ private class BackendChecker(
         val parent = declaration.parent
 
         if (parent is IrClass && parent.defaultType.isNativePointed(symbols) && parent.symbol != symbols.nativePointed) {
-            val nativePointed = symbols.nativePointed.owner.name
-            reportError(declaration, "Subclasses of $nativePointed cannot have properties with backing fields")
+            reportError(declaration, "Subclasses of ${InteropFqNames.nativePointed} cannot have properties with backing fields")
         }
     }
 
@@ -419,7 +417,8 @@ private class BackendChecker(
                     if (typeArgument.constructor != signatureType.constructor ||
                             typeArgument.isMarkedNullable != signatureType.isMarkedNullable
                     ) {
-                        reportError(expression, "C function signature element mismatch: expected '$signatureType', got '$typeArgument'")
+                        reportError(expression, "C function signature element mismatch: " +
+                                "expected '${signatureTypes[index].classFqName}', got '${expression.getTypeArgument(index)!!.classFqName}'")
                     }
                 }
 
@@ -436,25 +435,22 @@ private class BackendChecker(
 
                 val receiver = expression.extensionReceiver!!
                 val typeOperand = expression.getSingleTypeArgument()
-                val kotlinTypeOperand = typeOperand.toKotlinType()
 
                 val receiverTypeIndex = integerTypePredicates.indexOfFirst { it(receiver.type) }
                 val typeOperandIndex = integerTypePredicates.indexOfFirst { it(typeOperand) }
 
-                val receiverKotlinType = receiver.type.toKotlinType()
-
                 if (receiverTypeIndex == -1)
-                    reportError(receiver, "Receiver's type $receiverKotlinType is not an integer type")
+                    reportError(receiver, "Receiver's type ${receiver.type.classFqName} is not an integer type")
 
                 if (typeOperandIndex == -1)
-                    reportError(expression, "Type argument $kotlinTypeOperand is not an integer type")
+                    reportError(expression, "Type argument ${typeOperand.classFqName} is not an integer type")
 
                 when (intrinsicType) {
                     IntrinsicType.INTEROP_SIGN_EXTEND -> if (receiverTypeIndex > typeOperandIndex)
-                        reportError(expression, "unable to sign extend $receiverKotlinType to $kotlinTypeOperand")
+                        reportError(expression, "unable to sign extend ${receiver.type.classFqName} to ${typeOperand.classFqName}")
 
                     IntrinsicType.INTEROP_NARROW -> if (receiverTypeIndex < typeOperandIndex)
-                        reportError(expression, "unable to narrow $receiverKotlinType to $kotlinTypeOperand")
+                        reportError(expression, "unable to narrow ${receiver.type.classFqName} to ${typeOperand.classFqName}")
 
                     else -> error(intrinsicType)
                 }
@@ -465,7 +461,7 @@ private class BackendChecker(
                 val receiverType = expression.symbol.owner.extensionReceiverParameter!!.type
 
                 if (typeOperand !is IrSimpleType || typeOperand.classifier !in integerClasses || typeOperand.isNullable())
-                    reportError(expression, "unable to convert ${receiverType.toKotlinType()} to ${typeOperand.toKotlinType()}")
+                    reportError(expression, "unable to convert ${receiverType.classFqName} to ${typeOperand.classFqName}")
             }
             IntrinsicType.WORKER_EXECUTE -> {
                 val (function, captures) = getUnboundReferencedFunction(expression.getValueArgument(2)!!)
