@@ -5,30 +5,29 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtFakeSourceElement
-import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealPsiSourceElement
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.*
-import org.jetbrains.kotlin.fir.builder.currentDispatchReceiverType
+import org.jetbrains.kotlin.fir.builder.createDataClassCopyFunction
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.comparators.FirMemberDeclarationComparator
-import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.deserialization.*
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal val KtModifierListOwner.visibility: Visibility
     get() = with(modifierList) {
@@ -142,8 +141,10 @@ fun deserializeClassToSymbol(
             superTypeRefs.add(session.builtinTypes.anyType)
         }
 
-        classOrObject.primaryConstructor?.let {
-            addDeclaration(classDeserializer.loadConstructor(it, classOrObject, this))
+        val firPrimaryConstructor = classOrObject.primaryConstructor?.let {
+            val constructor = classDeserializer.loadConstructor(it, classOrObject, this)
+            addDeclaration(constructor)
+            constructor
         }
         classOrObject.body?.declarations?.forEach { declaration ->
             when (declaration) {
@@ -192,6 +193,18 @@ fun deserializeClassToSymbol(
             )
             generateValueOfFunction(moduleData, classId.packageFqName, classId.relativeClassName, origin = FirDeclarationOrigin.Library)
             generateEntriesGetter(moduleData, classId.packageFqName, classId.relativeClassName, origin = FirDeclarationOrigin.Library)
+        }
+
+        if (classOrObject.isData() && firPrimaryConstructor != null) {
+            val zippedParameters =
+                classOrObject.primaryConstructorParameters.filter { it.hasValOrVar() } zip declarations.filterIsInstance<FirProperty>()
+            addDeclaration(createDataClassCopyFunction(classId, classOrObject, context.dispatchReceiver, zippedParameters,
+                                                       createClassTypeRefWithSourceKind = { firPrimaryConstructor.returnTypeRef.copyWithNewSourceKind(it) },
+                                                       createParameterTypeRefWithSourceKind = { property, newKind ->
+                                                           property.returnTypeRef.copyWithNewSourceKind(newKind)
+                                                       }) { src, kind ->
+                KtFakeSourceElement(src as PsiElement, kind)
+            })
         }
 
         addCloneForArrayIfNeeded(classId, context.dispatchReceiver)
