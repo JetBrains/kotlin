@@ -11839,6 +11839,18 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
             }
 
             @Test
+            @TestMetadata("javaFieldKotlinPropertyDifferentType.kt")
+            public void testJavaFieldKotlinPropertyDifferentType() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/fieldRename/javaFieldKotlinPropertyDifferentType.kt");
+            }
+
+            @Test
+            @TestMetadata("javaFieldKotlinPropertyDifferentType2.kt")
+            public void testJavaFieldKotlinPropertyDifferentType2() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/fieldRename/javaFieldKotlinPropertyDifferentType2.kt");
+            }
+
+            @Test
             @TestMetadata("javaFieldKotlinPropertyJavaFieldInPackagePrivate.kt")
             public void testJavaFieldKotlinPropertyJavaFieldInPackagePrivate() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/fieldRename/javaFieldKotlinPropertyJavaFieldInPackagePrivate.kt");
