@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.plugin.ide
 
-import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.idea.proto.tcs.toByteArray
 import org.jetbrains.kotlin.gradle.idea.proto.toByteArray
@@ -21,7 +20,6 @@ import org.jetbrains.kotlin.tooling.core.Extras
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 import org.jetbrains.kotlin.utils.addToStdlib.measureTimeMillisWithResult
 import kotlin.system.measureTimeMillis
-
 
 internal class IdeMultiplatformImportImpl(
     private val extension: KotlinProjectExtension
@@ -61,7 +59,6 @@ internal class IdeMultiplatformImportImpl(
     private val registeredExtrasSerializationExtensions = mutableListOf<IdeaKotlinExtrasSerializationExtension>()
 
     @OptIn(Idea222Api::class)
-    @ExternalKotlinTargetApi
     override fun registerDependencyResolver(
         resolver: IdeDependencyResolver,
         constraint: SourceSetConstraint,
@@ -80,7 +77,6 @@ internal class IdeMultiplatformImportImpl(
         }
     }
 
-    @ExternalKotlinTargetApi
     override fun registerDependencyTransformer(
         transformer: IdeDependencyTransformer,
         constraint: SourceSetConstraint,
@@ -91,7 +87,6 @@ internal class IdeMultiplatformImportImpl(
         )
     }
 
-    @ExternalKotlinTargetApi
     override fun registerAdditionalArtifactResolver(
         resolver: IdeAdditionalArtifactResolver,
         constraint: SourceSetConstraint,
@@ -105,14 +100,12 @@ internal class IdeMultiplatformImportImpl(
         )
     }
 
-    @ExternalKotlinTargetApi
     override fun registerDependencyEffect(effect: IdeDependencyEffect, constraint: SourceSetConstraint) {
         registeredDependencyEffects.add(
             RegisteredDependencyEffect(effect, constraint)
         )
     }
 
-    @ExternalKotlinTargetApi
     override fun registerExtrasSerializationExtension(extension: IdeaKotlinExtrasSerializationExtension) {
         registeredExtrasSerializationExtensions.add(extension)
     }
