@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.caches.*
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirVariable
@@ -310,10 +309,12 @@ class FirTypeIntersectionScopeContext(
         symbol: D,
         scope: FirTypeScope,
         result: MutableCollection<MemberWithBaseScope<D>>,
-        visited: MutableSet<D>,
+        // There's no guarantee that directOverridden(symbol) is strictly different
+        // It might be the same instance that when being requested with a different/new scope would return next level of overridden
+        visited: MutableSet<Pair<FirTypeScope, D>>,
         processDirectOverridden: FirTypeScope.(D, (D, FirTypeScope) -> ProcessorAction) -> ProcessorAction,
     ) {
-        if (!visited.add(symbol)) return
+        if (!visited.add(scope to symbol)) return
         if (!symbol.fir.origin.fromSupertypes) {
             result.add(MemberWithBaseScope(symbol, scope))
             return

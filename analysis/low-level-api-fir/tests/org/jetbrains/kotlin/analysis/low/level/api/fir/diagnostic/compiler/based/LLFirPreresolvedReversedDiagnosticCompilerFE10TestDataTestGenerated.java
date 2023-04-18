@@ -20320,6 +20320,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
                 }
 
                 @Test
+                @TestMetadata("inheritanceThroughEmptyClass.kt")
+                public void testInheritanceThroughEmptyClass() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/j+k/specialBuiltIns/inheritanceThroughEmptyClass.kt");
+                }
+
+                @Test
                 @TestMetadata("securityProvider.kt")
                 public void testSecurityProvider() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/j+k/specialBuiltIns/securityProvider.kt");
