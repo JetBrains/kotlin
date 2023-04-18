@@ -1,3 +1,34 @@
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver$Companion;
+	public static final field DOCUMENTATION_BINARY_TYPE Ljava/lang/String;
+	public static final field SOURCES_BINARY_TYPE Ljava/lang/String;
+	public abstract fun resolve (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;)Ljava/util/Set;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver$Companion {
+	public static final field DOCUMENTATION_BINARY_TYPE Ljava/lang/String;
+	public static final field SOURCES_BINARY_TYPE Ljava/lang/String;
+	public final fun getGradleArtifact (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinDependency;)Lorg/gradle/api/artifacts/result/ResolvedArtifactResult;
+	public final fun getResolvedBy (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinDependency;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;
+	public final fun setGradleArtifact (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinDependency;Lorg/gradle/api/artifacts/result/ResolvedArtifactResult;)V
+	public final fun setResolvedBy (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinDependency;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver$Empty : org/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver$Empty;
+	public fun resolve (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;)Ljava/util/Set;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver$WithBuildDependencies {
+	public abstract fun dependencies (Lorg/gradle/api/Project;)Ljava/lang/Iterable;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolverKt {
+	public static final fun IdeDependencyResolver (Ljava/lang/Iterable;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;
+	public static final fun IdeDependencyResolver ([Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;
+	public static final fun plus (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;
+}
+
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport {
 	public abstract fun registerAdditionalArtifactResolver (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeAdditionalArtifactResolver;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$AdditionalArtifactResolutionPhase;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$AdditionalArtifactResolutionLevel;)V
 	public abstract fun registerDependencyEffect (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyEffect;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;)V
