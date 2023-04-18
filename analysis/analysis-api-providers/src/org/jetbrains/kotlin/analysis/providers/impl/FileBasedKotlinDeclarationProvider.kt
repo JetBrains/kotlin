@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure
+package org.jetbrains.kotlin.analysis.providers.impl
 
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.yieldIfNotNull
 
-internal class FileBasedKotlinDeclarationProvider(val kotlinFile: KtFile) : KotlinDeclarationProvider() {
+public class FileBasedKotlinDeclarationProvider(val kotlinFile: KtFile) : KotlinDeclarationProvider() {
     private val topLevelDeclarations: Sequence<KtDeclaration>
         get() {
             return sequence {
