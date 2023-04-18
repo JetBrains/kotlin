@@ -124,28 +124,28 @@ public val kotlin.Int.seconds: kotlin.time.Duration { get; }
 @kotlin.DeprecatedSinceKotlin(errorSince = "1.8", hiddenSince = "1.9", warningSince = "1.5")
 public val kotlin.Long.seconds: kotlin.time.Duration { get; }
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.time.ExperimentalTime
+@kotlin.SinceKotlin(version = "1.9")
+@kotlin.WasExperimental(markerClass = {kotlin.time.ExperimentalTime::class})
 public inline fun measureTime(block: () -> kotlin.Unit): kotlin.time.Duration
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.time.ExperimentalTime
+@kotlin.SinceKotlin(version = "1.9")
+@kotlin.WasExperimental(markerClass = {kotlin.time.ExperimentalTime::class})
 public inline fun <T> measureTimedValue(block: () -> T): kotlin.time.TimedValue<T>
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.time.ExperimentalTime
+@kotlin.SinceKotlin(version = "1.9")
+@kotlin.WasExperimental(markerClass = {kotlin.time.ExperimentalTime::class})
 public inline fun kotlin.time.TimeSource.measureTime(block: () -> kotlin.Unit): kotlin.time.Duration
 
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.time.ExperimentalTime
+@kotlin.SinceKotlin(version = "1.9")
+@kotlin.WasExperimental(markerClass = {kotlin.time.ExperimentalTime::class})
 public inline fun kotlin.time.TimeSource.Monotonic.measureTime(block: () -> kotlin.Unit): kotlin.time.Duration
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.time.ExperimentalTime
+@kotlin.SinceKotlin(version = "1.9")
+@kotlin.WasExperimental(markerClass = {kotlin.time.ExperimentalTime::class})
 public inline fun <T> kotlin.time.TimeSource.measureTimedValue(block: () -> T): kotlin.time.TimedValue<T>
 
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.time.ExperimentalTime
+@kotlin.SinceKotlin(version = "1.9")
+@kotlin.WasExperimental(markerClass = {kotlin.time.ExperimentalTime::class})
 public inline fun <T> kotlin.time.TimeSource.Monotonic.measureTimedValue(block: () -> T): kotlin.time.TimedValue<T>
 
 @kotlin.SinceKotlin(version = "1.6")
@@ -183,8 +183,8 @@ public abstract class AbstractDoubleTimeSource : kotlin.time.TimeSource.WithComp
     protected abstract fun read(): kotlin.Double
 }
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.time.ExperimentalTime
+@kotlin.SinceKotlin(version = "1.9")
+@kotlin.WasExperimental(markerClass = {kotlin.time.ExperimentalTime::class})
 public abstract class AbstractLongTimeSource : kotlin.time.TimeSource.WithComparableMarks {
     public constructor AbstractLongTimeSource(unit: kotlin.time.DurationUnit)
 
@@ -195,8 +195,8 @@ public abstract class AbstractLongTimeSource : kotlin.time.TimeSource.WithCompar
     protected abstract fun read(): kotlin.Long
 }
 
-@kotlin.SinceKotlin(version = "1.8")
-@kotlin.time.ExperimentalTime
+@kotlin.SinceKotlin(version = "1.9")
+@kotlin.WasExperimental(markerClass = {kotlin.time.ExperimentalTime::class})
 public interface ComparableTimeMark : kotlin.time.TimeMark, kotlin.Comparable<kotlin.time.ComparableTimeMark> {
     public open override operator fun compareTo(other: kotlin.time.ComparableTimeMark): kotlin.Int
 
@@ -560,8 +560,8 @@ public final annotation class ExperimentalTime : kotlin.Annotation {
     public constructor ExperimentalTime()
 }
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.time.ExperimentalTime
+@kotlin.SinceKotlin(version = "1.9")
+@kotlin.WasExperimental(markerClass = {kotlin.time.ExperimentalTime::class})
 public final class TestTimeSource : kotlin.time.AbstractLongTimeSource {
     public constructor TestTimeSource()
 
@@ -570,8 +570,8 @@ public final class TestTimeSource : kotlin.time.AbstractLongTimeSource {
     protected open override fun read(): kotlin.Long
 }
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.time.ExperimentalTime
+@kotlin.SinceKotlin(version = "1.9")
+@kotlin.WasExperimental(markerClass = {kotlin.time.ExperimentalTime::class})
 public interface TimeMark {
     public abstract fun elapsedNow(): kotlin.time.Duration
 
@@ -584,8 +584,8 @@ public interface TimeMark {
     public open operator fun plus(duration: kotlin.time.Duration): kotlin.time.TimeMark
 }
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.time.ExperimentalTime
+@kotlin.SinceKotlin(version = "1.9")
+@kotlin.WasExperimental(markerClass = {kotlin.time.ExperimentalTime::class})
 public interface TimeSource {
     public abstract fun markNow(): kotlin.time.TimeMark
 
@@ -597,8 +597,8 @@ public interface TimeSource {
 
         public open override fun toString(): kotlin.String
 
-        @kotlin.time.ExperimentalTime
-        @kotlin.SinceKotlin(version = "1.7")
+        @kotlin.SinceKotlin(version = "1.9")
+        @kotlin.WasExperimental(markerClass = {kotlin.time.ExperimentalTime::class})
         @kotlin.jvm.JvmInline
         public final inline class ValueTimeMark : kotlin.time.ComparableTimeMark {
             public final operator fun compareTo(other: kotlin.time.TimeSource.Monotonic.ValueTimeMark): kotlin.Int
@@ -625,15 +625,15 @@ public interface TimeSource {
         }
     }
 
-    @kotlin.SinceKotlin(version = "1.8")
-    @kotlin.time.ExperimentalTime
+    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.WasExperimental(markerClass = {kotlin.time.ExperimentalTime::class})
     public interface WithComparableMarks : kotlin.time.TimeSource {
         public abstract override fun markNow(): kotlin.time.ComparableTimeMark
     }
 }
 
-@kotlin.SinceKotlin(version = "1.3")
-@kotlin.time.ExperimentalTime
+@kotlin.SinceKotlin(version = "1.9")
+@kotlin.WasExperimental(markerClass = {kotlin.time.ExperimentalTime::class})
 public final data class TimedValue<T> {
     public constructor TimedValue<T>(value: T, duration: kotlin.time.Duration)
 

@@ -12,7 +12,6 @@ import kotlin.time.TimeSource.Monotonic.ValueTimeMark
 @Suppress("ACTUAL_WITHOUT_EXPECT") // visibility
 internal actual typealias ValueTimeMarkReading = Any
 
-@ExperimentalTime
 internal interface DefaultTimeSource : TimeSource.WithComparableMarks {
     override fun markNow(): ValueTimeMark
     fun elapsedFrom(timeMark: ValueTimeMark): Duration
@@ -21,7 +20,6 @@ internal interface DefaultTimeSource : TimeSource.WithComparableMarks {
 }
 
 @SinceKotlin("1.3")
-@ExperimentalTime
 internal actual object MonotonicTimeSource : DefaultTimeSource, TimeSource.WithComparableMarks {  // TODO: interface should not be required here
 
     private val actualSource: DefaultTimeSource = run {
@@ -50,7 +48,6 @@ internal external interface Process {
 }
 
 @SinceKotlin("1.3")
-@ExperimentalTime
 internal class HrTimeSource(private val process: Process) : DefaultTimeSource {
     @Suppress("NOTHING_TO_INLINE")
     private class Reading(val components: Array<Double>) {
@@ -87,7 +84,6 @@ internal class HrTimeSource(private val process: Process) : DefaultTimeSource {
 }
 
 @SinceKotlin("1.3")
-@ExperimentalTime
 internal class PerformanceTimeSource(private val performance: Performance) :
     DefaultTimeSource { // AbstractDoubleTimeSource(unit = DurationUnit.MILLISECONDS) {
     private fun read(): Double = performance.now()
@@ -108,7 +104,6 @@ internal class PerformanceTimeSource(private val performance: Performance) :
 }
 
 @SinceKotlin("1.3")
-@ExperimentalTime
 internal object DateNowTimeSource : DefaultTimeSource {
     private fun read(): Double = kotlin.js.Date.now()
 

@@ -9,7 +9,6 @@ import java.util.concurrent.TimeUnit
 import kotlin.test.*
 import kotlin.time.*
 
-@OptIn(ExperimentalTime::class)
 class DurationUnitJVMTest {
     @Test
     fun conversionFromTimeUnit() {

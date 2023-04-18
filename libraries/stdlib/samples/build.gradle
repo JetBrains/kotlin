@@ -14,7 +14,6 @@ compileTestKotlin {
         freeCompilerArgs = [
                 "-opt-in=kotlin.ExperimentalStdlibApi",
                 "-opt-in=kotlin.ExperimentalUnsignedTypes",
-                "-opt-in=kotlin.time.ExperimentalTime",
         ]
     }
 }

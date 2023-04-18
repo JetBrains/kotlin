@@ -8,7 +8,6 @@ package kotlin.time
 import kotlin.math.sign
 
 @SinceKotlin("1.3")
-@ExperimentalTime
 internal expect object MonotonicTimeSource : TimeSource.WithComparableMarks {
     override fun markNow(): TimeSource.Monotonic.ValueTimeMark
     fun elapsedFrom(timeMark: TimeSource.Monotonic.ValueTimeMark): Duration
@@ -24,8 +23,8 @@ internal expect object MonotonicTimeSource : TimeSource.WithComparableMarks {
  *
  * @property unit The unit in which this time source's readings are expressed.
  */
-@SinceKotlin("1.3")
-@ExperimentalTime
+@SinceKotlin("1.9")
+@WasExperimental(ExperimentalTime::class)
 public abstract class AbstractLongTimeSource(protected val unit: DurationUnit) : TimeSource.WithComparableMarks {
     /**
      * This protected method should be overridden to return the current reading of the time source expressed as a [Long] number
@@ -149,8 +148,8 @@ public abstract class AbstractDoubleTimeSource(protected val unit: DurationUnit)
  * thus it's capable to represent a time range of approximately ±292 years.
  * Should the reading value overflow as the result of [plusAssign] operation, an [IllegalStateException] is thrown.
  */
-@SinceKotlin("1.3")
-@ExperimentalTime
+@SinceKotlin("1.9")
+@WasExperimental(ExperimentalTime::class)
 public class TestTimeSource : AbstractLongTimeSource(unit = DurationUnit.NANOSECONDS) {
     private var reading: Long = 0L
 

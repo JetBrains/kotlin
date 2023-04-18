@@ -9,7 +9,6 @@ import kotlin.system.*
 import kotlin.time.TimeSource.Monotonic.ValueTimeMark
 
 @SinceKotlin("1.3")
-@ExperimentalTime
 internal actual object MonotonicTimeSource : TimeSource.WithComparableMarks {
     @Suppress("DEPRECATION")
     private val zero: Long = getTimeNanos()

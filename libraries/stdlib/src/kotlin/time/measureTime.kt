@@ -12,8 +12,8 @@ import kotlin.contracts.*
  *
  * The elapsed time is measured with [TimeSource.Monotonic].
  */
-@SinceKotlin("1.3")
-@ExperimentalTime
+@SinceKotlin("1.9")
+@WasExperimental(ExperimentalTime::class)
 public inline fun measureTime(block: () -> Unit): Duration {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
@@ -27,8 +27,8 @@ public inline fun measureTime(block: () -> Unit): Duration {
  *
  * The elapsed time is measured with the specified `this` [TimeSource] instance.
  */
-@SinceKotlin("1.3")
-@ExperimentalTime
+@SinceKotlin("1.9")
+@WasExperimental(ExperimentalTime::class)
 public inline fun TimeSource.measureTime(block: () -> Unit): Duration {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
@@ -44,8 +44,8 @@ public inline fun TimeSource.measureTime(block: () -> Unit): Duration {
  *
  * The elapsed time is measured with the specified `this` [TimeSource.Monotonic] instance.
  */
-@SinceKotlin("1.7")
-@ExperimentalTime
+@SinceKotlin("1.9")
+@WasExperimental(ExperimentalTime::class)
 public inline fun TimeSource.Monotonic.measureTime(block: () -> Unit): Duration {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
@@ -63,8 +63,8 @@ public inline fun TimeSource.Monotonic.measureTime(block: () -> Unit): Duration 
  * @property value the result of the action.
  * @property duration the time elapsed to execute the action.
  */
-@SinceKotlin("1.3")
-@ExperimentalTime
+@SinceKotlin("1.9")
+@WasExperimental(ExperimentalTime::class)
 public data class TimedValue<T>(val value: T, val duration: Duration)
 
 /**
@@ -73,8 +73,8 @@ public data class TimedValue<T>(val value: T, val duration: Duration)
  *
  * The elapsed time is measured with [TimeSource.Monotonic].
  */
-@SinceKotlin("1.3")
-@ExperimentalTime
+@SinceKotlin("1.9")
+@WasExperimental(ExperimentalTime::class)
 public inline fun <T> measureTimedValue(block: () -> T): TimedValue<T> {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
@@ -89,8 +89,8 @@ public inline fun <T> measureTimedValue(block: () -> T): TimedValue<T> {
  *
  * The elapsed time is measured with the specified `this` [TimeSource] instance.
  */
-@SinceKotlin("1.3")
-@ExperimentalTime
+@SinceKotlin("1.9")
+@WasExperimental(ExperimentalTime::class)
 public inline fun <T> TimeSource.measureTimedValue(block: () -> T): TimedValue<T> {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
@@ -107,8 +107,8 @@ public inline fun <T> TimeSource.measureTimedValue(block: () -> T): TimedValue<T
  *
  * The elapsed time is measured with the specified `this` [TimeSource.Monotonic] instance.
  */
-@SinceKotlin("1.7")
-@ExperimentalTime
+@SinceKotlin("1.9")
+@WasExperimental(ExperimentalTime::class)
 public inline fun <T> TimeSource.Monotonic.measureTimedValue(block: () -> T): TimedValue<T> {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)

@@ -15,8 +15,8 @@ import kotlin.jvm.JvmInline
  * @see [measureTime]
  * @see [measureTimedValue]
  */
-@SinceKotlin("1.3")
-@ExperimentalTime
+@SinceKotlin("1.9")
+@WasExperimental(ExperimentalTime::class)
 public interface TimeSource {
     /**
      * Marks a point in time on this time source.
@@ -29,8 +29,8 @@ public interface TimeSource {
     /**
      * A [TimeSource] that returns [time marks][ComparableTimeMark] that can be compared for difference with each other.
      */
-    @SinceKotlin("1.8")
-    @ExperimentalTime
+    @SinceKotlin("1.9")
+    @WasExperimental(ExperimentalTime::class)
     public interface WithComparableMarks : TimeSource {
         override fun markNow(): ComparableTimeMark
     }
@@ -60,8 +60,8 @@ public interface TimeSource {
          * This time mark implements [ComparableTimeMark] and therefore is comparable with other time marks
          * obtained from the same [TimeSource.Monotonic] time source.
          */
-        @ExperimentalTime
-        @SinceKotlin("1.7")
+        @SinceKotlin("1.9")
+        @WasExperimental(ExperimentalTime::class)
         @JvmInline
         public value class ValueTimeMark internal constructor(internal val reading: ValueTimeMarkReading) : ComparableTimeMark {
             override fun elapsedNow(): Duration = MonotonicTimeSource.elapsedFrom(this)
@@ -114,8 +114,8 @@ internal expect class ValueTimeMarkReading
  * Represents a time point notched on a particular [TimeSource]. Remains bound to the time source it was taken from
  * and allows querying for the duration of time elapsed from that point (see the function [elapsedNow]).
  */
-@SinceKotlin("1.3")
-@ExperimentalTime
+@SinceKotlin("1.9")
+@WasExperimental(ExperimentalTime::class)
 public interface TimeMark {
     /**
      * Returns the amount of time passed from this mark measured with the time source from which this mark was taken.
@@ -175,8 +175,8 @@ public interface TimeMark {
 /**
  * A [TimeMark] that can be compared for difference with other time marks obtained from the same [TimeSource.WithComparableMarks] time source.
  */
-@SinceKotlin("1.8")
-@ExperimentalTime
+@SinceKotlin("1.9")
+@WasExperimental(ExperimentalTime::class)
 public interface ComparableTimeMark : TimeMark, Comparable<ComparableTimeMark> {
     public abstract override operator fun plus(duration: Duration): ComparableTimeMark
     public open override operator fun minus(duration: Duration): ComparableTimeMark = plus(-duration)
@@ -221,7 +221,6 @@ public interface ComparableTimeMark : TimeMark, Comparable<ComparableTimeMark> {
 }
 
 
-@ExperimentalTime
 private class AdjustedTimeMark(val mark: TimeMark, val adjustment: Duration) : TimeMark {
     override fun elapsedNow(): Duration = mark.elapsedNow() - adjustment
 
