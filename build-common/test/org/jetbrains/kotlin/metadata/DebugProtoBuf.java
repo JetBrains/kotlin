@@ -5807,6 +5807,43 @@ public final class DebugProtoBuf {
     int getAbbreviatedTypeId();
 
     /**
+     * <code>repeated .org.jetbrains.kotlin.metadata.Type context_receiver_type = 15;</code>
+     */
+    java.util.List<org.jetbrains.kotlin.metadata.DebugProtoBuf.Type> 
+        getContextReceiverTypeList();
+    /**
+     * <code>repeated .org.jetbrains.kotlin.metadata.Type context_receiver_type = 15;</code>
+     */
+    org.jetbrains.kotlin.metadata.DebugProtoBuf.Type getContextReceiverType(int index);
+    /**
+     * <code>repeated .org.jetbrains.kotlin.metadata.Type context_receiver_type = 15;</code>
+     */
+    int getContextReceiverTypeCount();
+    /**
+     * <code>repeated .org.jetbrains.kotlin.metadata.Type context_receiver_type = 15;</code>
+     */
+    java.util.List<? extends org.jetbrains.kotlin.metadata.DebugProtoBuf.TypeOrBuilder> 
+        getContextReceiverTypeOrBuilderList();
+    /**
+     * <code>repeated .org.jetbrains.kotlin.metadata.Type context_receiver_type = 15;</code>
+     */
+    org.jetbrains.kotlin.metadata.DebugProtoBuf.TypeOrBuilder getContextReceiverTypeOrBuilder(
+        int index);
+
+    /**
+     * <code>repeated int32 context_receiver_type_id = 16 [packed = true];</code>
+     */
+    java.util.List<java.lang.Integer> getContextReceiverTypeIdList();
+    /**
+     * <code>repeated int32 context_receiver_type_id = 16 [packed = true];</code>
+     */
+    int getContextReceiverTypeIdCount();
+    /**
+     * <code>repeated int32 context_receiver_type_id = 16 [packed = true];</code>
+     */
+    int getContextReceiverTypeId(int index);
+
+    /**
      * <code>optional int32 flags = 1;</code>
      *
      * <pre>
@@ -5975,6 +6012,35 @@ public final class DebugProtoBuf {
               abbreviatedTypeId_ = input.readInt32();
               break;
             }
+            case 122: {
+              if (!((mutable_bitField0_ & 0x00002000) == 0x00002000)) {
+                contextReceiverType_ = new java.util.ArrayList<org.jetbrains.kotlin.metadata.DebugProtoBuf.Type>();
+                mutable_bitField0_ |= 0x00002000;
+              }
+              contextReceiverType_.add(input.readMessage(org.jetbrains.kotlin.metadata.DebugProtoBuf.Type.PARSER, extensionRegistry));
+              break;
+            }
+            case 128: {
+              if (!((mutable_bitField0_ & 0x00004000) == 0x00004000)) {
+                contextReceiverTypeId_ = new java.util.ArrayList<java.lang.Integer>();
+                mutable_bitField0_ |= 0x00004000;
+              }
+              contextReceiverTypeId_.add(input.readInt32());
+              break;
+            }
+            case 130: {
+              int length = input.readRawVarint32();
+              int limit = input.pushLimit(length);
+              if (!((mutable_bitField0_ & 0x00004000) == 0x00004000) && input.getBytesUntilLimit() > 0) {
+                contextReceiverTypeId_ = new java.util.ArrayList<java.lang.Integer>();
+                mutable_bitField0_ |= 0x00004000;
+              }
+              while (input.getBytesUntilLimit() > 0) {
+                contextReceiverTypeId_.add(input.readInt32());
+              }
+              input.popLimit(limit);
+              break;
+            }
           }
         }
       } catch (org.jetbrains.kotlin.protobuf.InvalidProtocolBufferException e) {
@@ -5985,6 +6051,12 @@ public final class DebugProtoBuf {
       } finally {
         if (((mutable_bitField0_ & 0x00000001) == 0x00000001)) {
           argument_ = java.util.Collections.unmodifiableList(argument_);
+        }
+        if (((mutable_bitField0_ & 0x00002000) == 0x00002000)) {
+          contextReceiverType_ = java.util.Collections.unmodifiableList(contextReceiverType_);
+        }
+        if (((mutable_bitField0_ & 0x00004000) == 0x00004000)) {
+          contextReceiverTypeId_ = java.util.Collections.unmodifiableList(contextReceiverTypeId_);
         }
         this.unknownFields = unknownFields.build();
         makeExtensionsImmutable();
@@ -7144,6 +7216,64 @@ public final class DebugProtoBuf {
       return abbreviatedTypeId_;
     }
 
+    public static final int CONTEXT_RECEIVER_TYPE_FIELD_NUMBER = 15;
+    private java.util.List<org.jetbrains.kotlin.metadata.DebugProtoBuf.Type> contextReceiverType_;
+    /**
+     * <code>repeated .org.jetbrains.kotlin.metadata.Type context_receiver_type = 15;</code>
+     */
+    public java.util.List<org.jetbrains.kotlin.metadata.DebugProtoBuf.Type> getContextReceiverTypeList() {
+      return contextReceiverType_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.metadata.Type context_receiver_type = 15;</code>
+     */
+    public java.util.List<? extends org.jetbrains.kotlin.metadata.DebugProtoBuf.TypeOrBuilder> 
+        getContextReceiverTypeOrBuilderList() {
+      return contextReceiverType_;
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.metadata.Type context_receiver_type = 15;</code>
+     */
+    public int getContextReceiverTypeCount() {
+      return contextReceiverType_.size();
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.metadata.Type context_receiver_type = 15;</code>
+     */
+    public org.jetbrains.kotlin.metadata.DebugProtoBuf.Type getContextReceiverType(int index) {
+      return contextReceiverType_.get(index);
+    }
+    /**
+     * <code>repeated .org.jetbrains.kotlin.metadata.Type context_receiver_type = 15;</code>
+     */
+    public org.jetbrains.kotlin.metadata.DebugProtoBuf.TypeOrBuilder getContextReceiverTypeOrBuilder(
+        int index) {
+      return contextReceiverType_.get(index);
+    }
+
+    public static final int CONTEXT_RECEIVER_TYPE_ID_FIELD_NUMBER = 16;
+    private java.util.List<java.lang.Integer> contextReceiverTypeId_;
+    /**
+     * <code>repeated int32 context_receiver_type_id = 16 [packed = true];</code>
+     */
+    public java.util.List<java.lang.Integer>
+        getContextReceiverTypeIdList() {
+      return contextReceiverTypeId_;
+    }
+    /**
+     * <code>repeated int32 context_receiver_type_id = 16 [packed = true];</code>
+     */
+    public int getContextReceiverTypeIdCount() {
+      return contextReceiverTypeId_.size();
+    }
+    /**
+     * <code>repeated int32 context_receiver_type_id = 16 [packed = true];</code>
+     */
+    public int getContextReceiverTypeId(int index) {
+      return contextReceiverTypeId_.get(index);
+    }
+    private int contextReceiverTypeIdMemoizedSerializedSize = -1;
+
     public static final int FLAGS_FIELD_NUMBER = 1;
     private int flags_;
     /**
@@ -7183,6 +7313,8 @@ public final class DebugProtoBuf {
       outerTypeId_ = 0;
       abbreviatedType_ = org.jetbrains.kotlin.metadata.DebugProtoBuf.Type.getDefaultInstance();
       abbreviatedTypeId_ = 0;
+      contextReceiverType_ = java.util.Collections.emptyList();
+      contextReceiverTypeId_ = java.util.Collections.emptyList();
       flags_ = 0;
     }
     private byte memoizedIsInitialized = -1;
@@ -7211,6 +7343,12 @@ public final class DebugProtoBuf {
       }
       if (hasAbbreviatedType()) {
         if (!getAbbreviatedType().isInitialized()) {
+          memoizedIsInitialized = 0;
+          return false;
+        }
+      }
+      for (int i = 0; i < getContextReceiverTypeCount(); i++) {
+        if (!getContextReceiverType(i).isInitialized()) {
           memoizedIsInitialized = 0;
           return false;
         }
@@ -7270,6 +7408,16 @@ public final class DebugProtoBuf {
       }
       if (((bitField0_ & 0x00000800) == 0x00000800)) {
         output.writeInt32(14, abbreviatedTypeId_);
+      }
+      for (int i = 0; i < contextReceiverType_.size(); i++) {
+        output.writeMessage(15, contextReceiverType_.get(i));
+      }
+      if (getContextReceiverTypeIdList().size() > 0) {
+        output.writeRawVarint32(130);
+        output.writeRawVarint32(contextReceiverTypeIdMemoizedSerializedSize);
+      }
+      for (int i = 0; i < contextReceiverTypeId_.size(); i++) {
+        output.writeInt32NoTag(contextReceiverTypeId_.get(i));
       }
       extensionWriter.writeUntil(200, output);
       getUnknownFields().writeTo(output);
@@ -7336,6 +7484,24 @@ public final class DebugProtoBuf {
       if (((bitField0_ & 0x00000800) == 0x00000800)) {
         size += org.jetbrains.kotlin.protobuf.CodedOutputStream
           .computeInt32Size(14, abbreviatedTypeId_);
+      }
+      for (int i = 0; i < contextReceiverType_.size(); i++) {
+        size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+          .computeMessageSize(15, contextReceiverType_.get(i));
+      }
+      {
+        int dataSize = 0;
+        for (int i = 0; i < contextReceiverTypeId_.size(); i++) {
+          dataSize += org.jetbrains.kotlin.protobuf.CodedOutputStream
+            .computeInt32SizeNoTag(contextReceiverTypeId_.get(i));
+        }
+        size += dataSize;
+        if (!getContextReceiverTypeIdList().isEmpty()) {
+          size += 2;
+          size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+              .computeInt32SizeNoTag(dataSize);
+        }
+        contextReceiverTypeIdMemoizedSerializedSize = dataSize;
       }
       size += extensionsSerializedSize();
       size += getUnknownFields().getSerializedSize();
@@ -7452,6 +7618,7 @@ public final class DebugProtoBuf {
           getFlexibleUpperBoundFieldBuilder();
           getOuterTypeFieldBuilder();
           getAbbreviatedTypeFieldBuilder();
+          getContextReceiverTypeFieldBuilder();
         }
       }
       private static Builder create() {
@@ -7502,8 +7669,16 @@ public final class DebugProtoBuf {
         bitField0_ = (bitField0_ & ~0x00000800);
         abbreviatedTypeId_ = 0;
         bitField0_ = (bitField0_ & ~0x00001000);
+        if (contextReceiverTypeBuilder_ == null) {
+          contextReceiverType_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00002000);
+        } else {
+          contextReceiverTypeBuilder_.clear();
+        }
+        contextReceiverTypeId_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00004000);
         flags_ = 0;
-        bitField0_ = (bitField0_ & ~0x00002000);
+        bitField0_ = (bitField0_ & ~0x00008000);
         return this;
       }
 
@@ -7601,7 +7776,21 @@ public final class DebugProtoBuf {
           to_bitField0_ |= 0x00000800;
         }
         result.abbreviatedTypeId_ = abbreviatedTypeId_;
-        if (((from_bitField0_ & 0x00002000) == 0x00002000)) {
+        if (contextReceiverTypeBuilder_ == null) {
+          if (((bitField0_ & 0x00002000) == 0x00002000)) {
+            contextReceiverType_ = java.util.Collections.unmodifiableList(contextReceiverType_);
+            bitField0_ = (bitField0_ & ~0x00002000);
+          }
+          result.contextReceiverType_ = contextReceiverType_;
+        } else {
+          result.contextReceiverType_ = contextReceiverTypeBuilder_.build();
+        }
+        if (((bitField0_ & 0x00004000) == 0x00004000)) {
+          contextReceiverTypeId_ = java.util.Collections.unmodifiableList(contextReceiverTypeId_);
+          bitField0_ = (bitField0_ & ~0x00004000);
+        }
+        result.contextReceiverTypeId_ = contextReceiverTypeId_;
+        if (((from_bitField0_ & 0x00008000) == 0x00008000)) {
           to_bitField0_ |= 0x00001000;
         }
         result.flags_ = flags_;
@@ -7683,6 +7872,42 @@ public final class DebugProtoBuf {
         if (other.hasAbbreviatedTypeId()) {
           setAbbreviatedTypeId(other.getAbbreviatedTypeId());
         }
+        if (contextReceiverTypeBuilder_ == null) {
+          if (!other.contextReceiverType_.isEmpty()) {
+            if (contextReceiverType_.isEmpty()) {
+              contextReceiverType_ = other.contextReceiverType_;
+              bitField0_ = (bitField0_ & ~0x00002000);
+            } else {
+              ensureContextReceiverTypeIsMutable();
+              contextReceiverType_.addAll(other.contextReceiverType_);
+            }
+            onChanged();
+          }
+        } else {
+          if (!other.contextReceiverType_.isEmpty()) {
+            if (contextReceiverTypeBuilder_.isEmpty()) {
+              contextReceiverTypeBuilder_.dispose();
+              contextReceiverTypeBuilder_ = null;
+              contextReceiverType_ = other.contextReceiverType_;
+              bitField0_ = (bitField0_ & ~0x00002000);
+              contextReceiverTypeBuilder_ = 
+                org.jetbrains.kotlin.protobuf.GeneratedMessage.alwaysUseFieldBuilders ?
+                   getContextReceiverTypeFieldBuilder() : null;
+            } else {
+              contextReceiverTypeBuilder_.addAllMessages(other.contextReceiverType_);
+            }
+          }
+        }
+        if (!other.contextReceiverTypeId_.isEmpty()) {
+          if (contextReceiverTypeId_.isEmpty()) {
+            contextReceiverTypeId_ = other.contextReceiverTypeId_;
+            bitField0_ = (bitField0_ & ~0x00004000);
+          } else {
+            ensureContextReceiverTypeIdIsMutable();
+            contextReceiverTypeId_.addAll(other.contextReceiverTypeId_);
+          }
+          onChanged();
+        }
         if (other.hasFlags()) {
           setFlags(other.getFlags());
         }
@@ -7712,6 +7937,12 @@ public final class DebugProtoBuf {
         }
         if (hasAbbreviatedType()) {
           if (!getAbbreviatedType().isInitialized()) {
+            
+            return false;
+          }
+        }
+        for (int i = 0; i < getContextReceiverTypeCount(); i++) {
+          if (!getContextReceiverType(i).isInitialized()) {
             
             return false;
           }
@@ -8726,6 +8957,312 @@ public final class DebugProtoBuf {
         return this;
       }
 
+      private java.util.List<org.jetbrains.kotlin.metadata.DebugProtoBuf.Type> contextReceiverType_ =
+        java.util.Collections.emptyList();
+      private void ensureContextReceiverTypeIsMutable() {
+        if (!((bitField0_ & 0x00002000) == 0x00002000)) {
+          contextReceiverType_ = new java.util.ArrayList<org.jetbrains.kotlin.metadata.DebugProtoBuf.Type>(contextReceiverType_);
+          bitField0_ |= 0x00002000;
+         }
+      }
+
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
+          org.jetbrains.kotlin.metadata.DebugProtoBuf.Type, org.jetbrains.kotlin.metadata.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.metadata.DebugProtoBuf.TypeOrBuilder> contextReceiverTypeBuilder_;
+
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.Type context_receiver_type = 15;</code>
+       */
+      public java.util.List<org.jetbrains.kotlin.metadata.DebugProtoBuf.Type> getContextReceiverTypeList() {
+        if (contextReceiverTypeBuilder_ == null) {
+          return java.util.Collections.unmodifiableList(contextReceiverType_);
+        } else {
+          return contextReceiverTypeBuilder_.getMessageList();
+        }
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.Type context_receiver_type = 15;</code>
+       */
+      public int getContextReceiverTypeCount() {
+        if (contextReceiverTypeBuilder_ == null) {
+          return contextReceiverType_.size();
+        } else {
+          return contextReceiverTypeBuilder_.getCount();
+        }
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.Type context_receiver_type = 15;</code>
+       */
+      public org.jetbrains.kotlin.metadata.DebugProtoBuf.Type getContextReceiverType(int index) {
+        if (contextReceiverTypeBuilder_ == null) {
+          return contextReceiverType_.get(index);
+        } else {
+          return contextReceiverTypeBuilder_.getMessage(index);
+        }
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.Type context_receiver_type = 15;</code>
+       */
+      public Builder setContextReceiverType(
+          int index, org.jetbrains.kotlin.metadata.DebugProtoBuf.Type value) {
+        if (contextReceiverTypeBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureContextReceiverTypeIsMutable();
+          contextReceiverType_.set(index, value);
+          onChanged();
+        } else {
+          contextReceiverTypeBuilder_.setMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.Type context_receiver_type = 15;</code>
+       */
+      public Builder setContextReceiverType(
+          int index, org.jetbrains.kotlin.metadata.DebugProtoBuf.Type.Builder builderForValue) {
+        if (contextReceiverTypeBuilder_ == null) {
+          ensureContextReceiverTypeIsMutable();
+          contextReceiverType_.set(index, builderForValue.build());
+          onChanged();
+        } else {
+          contextReceiverTypeBuilder_.setMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.Type context_receiver_type = 15;</code>
+       */
+      public Builder addContextReceiverType(org.jetbrains.kotlin.metadata.DebugProtoBuf.Type value) {
+        if (contextReceiverTypeBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureContextReceiverTypeIsMutable();
+          contextReceiverType_.add(value);
+          onChanged();
+        } else {
+          contextReceiverTypeBuilder_.addMessage(value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.Type context_receiver_type = 15;</code>
+       */
+      public Builder addContextReceiverType(
+          int index, org.jetbrains.kotlin.metadata.DebugProtoBuf.Type value) {
+        if (contextReceiverTypeBuilder_ == null) {
+          if (value == null) {
+            throw new NullPointerException();
+          }
+          ensureContextReceiverTypeIsMutable();
+          contextReceiverType_.add(index, value);
+          onChanged();
+        } else {
+          contextReceiverTypeBuilder_.addMessage(index, value);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.Type context_receiver_type = 15;</code>
+       */
+      public Builder addContextReceiverType(
+          org.jetbrains.kotlin.metadata.DebugProtoBuf.Type.Builder builderForValue) {
+        if (contextReceiverTypeBuilder_ == null) {
+          ensureContextReceiverTypeIsMutable();
+          contextReceiverType_.add(builderForValue.build());
+          onChanged();
+        } else {
+          contextReceiverTypeBuilder_.addMessage(builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.Type context_receiver_type = 15;</code>
+       */
+      public Builder addContextReceiverType(
+          int index, org.jetbrains.kotlin.metadata.DebugProtoBuf.Type.Builder builderForValue) {
+        if (contextReceiverTypeBuilder_ == null) {
+          ensureContextReceiverTypeIsMutable();
+          contextReceiverType_.add(index, builderForValue.build());
+          onChanged();
+        } else {
+          contextReceiverTypeBuilder_.addMessage(index, builderForValue.build());
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.Type context_receiver_type = 15;</code>
+       */
+      public Builder addAllContextReceiverType(
+          java.lang.Iterable<? extends org.jetbrains.kotlin.metadata.DebugProtoBuf.Type> values) {
+        if (contextReceiverTypeBuilder_ == null) {
+          ensureContextReceiverTypeIsMutable();
+          org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+              values, contextReceiverType_);
+          onChanged();
+        } else {
+          contextReceiverTypeBuilder_.addAllMessages(values);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.Type context_receiver_type = 15;</code>
+       */
+      public Builder clearContextReceiverType() {
+        if (contextReceiverTypeBuilder_ == null) {
+          contextReceiverType_ = java.util.Collections.emptyList();
+          bitField0_ = (bitField0_ & ~0x00002000);
+          onChanged();
+        } else {
+          contextReceiverTypeBuilder_.clear();
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.Type context_receiver_type = 15;</code>
+       */
+      public Builder removeContextReceiverType(int index) {
+        if (contextReceiverTypeBuilder_ == null) {
+          ensureContextReceiverTypeIsMutable();
+          contextReceiverType_.remove(index);
+          onChanged();
+        } else {
+          contextReceiverTypeBuilder_.remove(index);
+        }
+        return this;
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.Type context_receiver_type = 15;</code>
+       */
+      public org.jetbrains.kotlin.metadata.DebugProtoBuf.Type.Builder getContextReceiverTypeBuilder(
+          int index) {
+        return getContextReceiverTypeFieldBuilder().getBuilder(index);
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.Type context_receiver_type = 15;</code>
+       */
+      public org.jetbrains.kotlin.metadata.DebugProtoBuf.TypeOrBuilder getContextReceiverTypeOrBuilder(
+          int index) {
+        if (contextReceiverTypeBuilder_ == null) {
+          return contextReceiverType_.get(index);  } else {
+          return contextReceiverTypeBuilder_.getMessageOrBuilder(index);
+        }
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.Type context_receiver_type = 15;</code>
+       */
+      public java.util.List<? extends org.jetbrains.kotlin.metadata.DebugProtoBuf.TypeOrBuilder> 
+           getContextReceiverTypeOrBuilderList() {
+        if (contextReceiverTypeBuilder_ != null) {
+          return contextReceiverTypeBuilder_.getMessageOrBuilderList();
+        } else {
+          return java.util.Collections.unmodifiableList(contextReceiverType_);
+        }
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.Type context_receiver_type = 15;</code>
+       */
+      public org.jetbrains.kotlin.metadata.DebugProtoBuf.Type.Builder addContextReceiverTypeBuilder() {
+        return getContextReceiverTypeFieldBuilder().addBuilder(
+            org.jetbrains.kotlin.metadata.DebugProtoBuf.Type.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.Type context_receiver_type = 15;</code>
+       */
+      public org.jetbrains.kotlin.metadata.DebugProtoBuf.Type.Builder addContextReceiverTypeBuilder(
+          int index) {
+        return getContextReceiverTypeFieldBuilder().addBuilder(
+            index, org.jetbrains.kotlin.metadata.DebugProtoBuf.Type.getDefaultInstance());
+      }
+      /**
+       * <code>repeated .org.jetbrains.kotlin.metadata.Type context_receiver_type = 15;</code>
+       */
+      public java.util.List<org.jetbrains.kotlin.metadata.DebugProtoBuf.Type.Builder> 
+           getContextReceiverTypeBuilderList() {
+        return getContextReceiverTypeFieldBuilder().getBuilderList();
+      }
+      private org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
+          org.jetbrains.kotlin.metadata.DebugProtoBuf.Type, org.jetbrains.kotlin.metadata.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.metadata.DebugProtoBuf.TypeOrBuilder> 
+          getContextReceiverTypeFieldBuilder() {
+        if (contextReceiverTypeBuilder_ == null) {
+          contextReceiverTypeBuilder_ = new org.jetbrains.kotlin.protobuf.RepeatedFieldBuilder<
+              org.jetbrains.kotlin.metadata.DebugProtoBuf.Type, org.jetbrains.kotlin.metadata.DebugProtoBuf.Type.Builder, org.jetbrains.kotlin.metadata.DebugProtoBuf.TypeOrBuilder>(
+                  contextReceiverType_,
+                  ((bitField0_ & 0x00002000) == 0x00002000),
+                  getParentForChildren(),
+                  isClean());
+          contextReceiverType_ = null;
+        }
+        return contextReceiverTypeBuilder_;
+      }
+
+      private java.util.List<java.lang.Integer> contextReceiverTypeId_ = java.util.Collections.emptyList();
+      private void ensureContextReceiverTypeIdIsMutable() {
+        if (!((bitField0_ & 0x00004000) == 0x00004000)) {
+          contextReceiverTypeId_ = new java.util.ArrayList<java.lang.Integer>(contextReceiverTypeId_);
+          bitField0_ |= 0x00004000;
+         }
+      }
+      /**
+       * <code>repeated int32 context_receiver_type_id = 16 [packed = true];</code>
+       */
+      public java.util.List<java.lang.Integer>
+          getContextReceiverTypeIdList() {
+        return java.util.Collections.unmodifiableList(contextReceiverTypeId_);
+      }
+      /**
+       * <code>repeated int32 context_receiver_type_id = 16 [packed = true];</code>
+       */
+      public int getContextReceiverTypeIdCount() {
+        return contextReceiverTypeId_.size();
+      }
+      /**
+       * <code>repeated int32 context_receiver_type_id = 16 [packed = true];</code>
+       */
+      public int getContextReceiverTypeId(int index) {
+        return contextReceiverTypeId_.get(index);
+      }
+      /**
+       * <code>repeated int32 context_receiver_type_id = 16 [packed = true];</code>
+       */
+      public Builder setContextReceiverTypeId(
+          int index, int value) {
+        ensureContextReceiverTypeIdIsMutable();
+        contextReceiverTypeId_.set(index, value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated int32 context_receiver_type_id = 16 [packed = true];</code>
+       */
+      public Builder addContextReceiverTypeId(int value) {
+        ensureContextReceiverTypeIdIsMutable();
+        contextReceiverTypeId_.add(value);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated int32 context_receiver_type_id = 16 [packed = true];</code>
+       */
+      public Builder addAllContextReceiverTypeId(
+          java.lang.Iterable<? extends java.lang.Integer> values) {
+        ensureContextReceiverTypeIdIsMutable();
+        org.jetbrains.kotlin.protobuf.AbstractMessageLite.Builder.addAll(
+            values, contextReceiverTypeId_);
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>repeated int32 context_receiver_type_id = 16 [packed = true];</code>
+       */
+      public Builder clearContextReceiverTypeId() {
+        contextReceiverTypeId_ = java.util.Collections.emptyList();
+        bitField0_ = (bitField0_ & ~0x00004000);
+        onChanged();
+        return this;
+      }
+
       private int flags_ ;
       /**
        * <code>optional int32 flags = 1;</code>
@@ -8736,7 +9273,7 @@ public final class DebugProtoBuf {
        * </pre>
        */
       public boolean hasFlags() {
-        return ((bitField0_ & 0x00002000) == 0x00002000);
+        return ((bitField0_ & 0x00008000) == 0x00008000);
       }
       /**
        * <code>optional int32 flags = 1;</code>
@@ -8758,7 +9295,7 @@ public final class DebugProtoBuf {
        * </pre>
        */
       public Builder setFlags(int value) {
-        bitField0_ |= 0x00002000;
+        bitField0_ |= 0x00008000;
         flags_ = value;
         onChanged();
         return this;
@@ -8772,7 +9309,7 @@ public final class DebugProtoBuf {
        * </pre>
        */
       public Builder clearFlags() {
-        bitField0_ = (bitField0_ & ~0x00002000);
+        bitField0_ = (bitField0_ & ~0x00008000);
         flags_ = 0;
         onChanged();
         return this;
@@ -37041,7 +37578,7 @@ public final class DebugProtoBuf {
       "\004Type\022\010\n\004BYTE\020\000\022\010\n\004CHAR\020\001\022\t\n\005SHORT\020\002\022\007\n\003" +
       "INT\020\003\022\010\n\004LONG\020\004\022\t\n\005FLOAT\020\005\022\n\n\006DOUBLE\020\006\022\013",
       "\n\007BOOLEAN\020\007\022\n\n\006STRING\020\010\022\t\n\005CLASS\020\t\022\010\n\004EN" +
-      "UM\020\n\022\016\n\nANNOTATION\020\013\022\t\n\005ARRAY\020\014\"\223\006\n\004Type" +
+      "UM\020\n\022\016\n\nANNOTATION\020\013\022\t\n\005ARRAY\020\014\"\201\007\n\004Type" +
       "\022>\n\010argument\030\002 \003(\0132,.org.jetbrains.kotli" +
       "n.metadata.Type.Argument\022\027\n\010nullable\030\003 \001" +
       "(\010:\005false\022+\n\035flexible_type_capabilities_" +
@@ -37055,169 +37592,172 @@ public final class DebugProtoBuf {
       "metadata.Type\022\033\n\router_type_id\030\013 \001(\005B\004\240\265" +
       "\030\001\022=\n\020abbreviated_type\030\r \001(\0132#.org.jetbr" +
       "ains.kotlin.metadata.Type\022!\n\023abbreviated" +
-      "_type_id\030\016 \001(\005B\004\240\265\030\001\022\r\n\005flags\030\001 \001(\005\032\330\001\n\010" +
-      "Argument\022P\n\nprojection\030\001 \001(\01627.org.jetbr" +
-      "ains.kotlin.metadata.Type.Argument.Proje" +
-      "ction:\003INV\0221\n\004type\030\002 \001(\0132#.org.jetbrains" +
-      ".kotlin.metadata.Type\022\025\n\007type_id\030\003 \001(\005B\004",
-      "\240\265\030\001\"0\n\nProjection\022\006\n\002IN\020\000\022\007\n\003OUT\020\001\022\007\n\003I" +
-      "NV\020\002\022\010\n\004STAR\020\003*\005\010d\020\310\001\"\234\002\n\rTypeParameter\022" +
-      "\n\n\002id\030\001 \002(\005\022\022\n\004name\030\002 \002(\005B\004\210\265\030\001\022\026\n\007reifi" +
-      "ed\030\003 \001(\010:\005false\022L\n\010variance\030\004 \001(\01625.org." +
-      "jetbrains.kotlin.metadata.TypeParameter." +
-      "Variance:\003INV\0228\n\013upper_bound\030\005 \003(\0132#.org" +
-      ".jetbrains.kotlin.metadata.Type\022\036\n\016upper" +
-      "_bound_id\030\006 \003(\005B\006\020\001\240\265\030\001\"$\n\010Variance\022\006\n\002I" +
-      "N\020\000\022\007\n\003OUT\020\001\022\007\n\003INV\020\002*\005\010d\020\350\007\"\220\013\n\005Class\022\020" +
-      "\n\005flags\030\001 \001(\005:\0016\022\025\n\007fq_name\030\003 \002(\005B\004\220\265\030\001\022",
-      "#\n\025companion_object_name\030\004 \001(\005B\004\210\265\030\001\022D\n\016" +
-      "type_parameter\030\005 \003(\0132,.org.jetbrains.kot" +
-      "lin.metadata.TypeParameter\0226\n\tsupertype\030" +
-      "\006 \003(\0132#.org.jetbrains.kotlin.metadata.Ty" +
-      "pe\022\034\n\014supertype_id\030\002 \003(\005B\006\020\001\240\265\030\001\022!\n\021nest" +
-      "ed_class_name\030\007 \003(\005B\006\020\001\210\265\030\001\022B\n\025context_r" +
-      "eceiver_type\030\024 \003(\0132#.org.jetbrains.kotli" +
-      "n.metadata.Type\022(\n\030context_receiver_type" +
-      "_id\030\025 \003(\005B\006\020\001\240\265\030\001\022?\n\013constructor\030\010 \003(\0132*" +
-      ".org.jetbrains.kotlin.metadata.Construct",
-      "or\0229\n\010function\030\t \003(\0132\'.org.jetbrains.kot" +
-      "lin.metadata.Function\0229\n\010property\030\n \003(\0132" +
-      "\'.org.jetbrains.kotlin.metadata.Property" +
-      "\022<\n\ntype_alias\030\013 \003(\0132(.org.jetbrains.kot" +
-      "lin.metadata.TypeAlias\022<\n\nenum_entry\030\r \003" +
-      "(\0132(.org.jetbrains.kotlin.metadata.EnumE" +
-      "ntry\022\'\n\027sealed_subclass_fq_name\030\020 \003(\005B\006\020" +
-      "\001\220\265\030\001\0223\n%inline_class_underlying_propert" +
-      "y_name\030\021 \001(\005B\004\210\265\030\001\022I\n\034inline_class_under" +
-      "lying_type\030\022 \001(\0132#.org.jetbrains.kotlin.",
-      "metadata.Type\022-\n\037inline_class_underlying" +
-      "_type_id\030\023 \001(\005B\004\240\265\030\001\0227\n\'multi_field_valu" +
-      "e_class_underlying_name\030\026 \003(\005B\006\020\001\210\265\030\001\022T\n" +
-      "\'multi_field_value_class_underlying_type" +
-      "\030\027 \003(\0132#.org.jetbrains.kotlin.metadata.T" +
-      "ype\022:\n*multi_field_value_class_underlyin" +
-      "g_type_id\030\030 \003(\005B\006\020\001\240\265\030\001\022<\n\ntype_table\030\036 " +
+      "_type_id\030\016 \001(\005B\004\240\265\030\001\022B\n\025context_receiver" +
+      "_type\030\017 \003(\0132#.org.jetbrains.kotlin.metad" +
+      "ata.Type\022(\n\030context_receiver_type_id\030\020 \003" +
+      "(\005B\006\020\001\240\265\030\001\022\r\n\005flags\030\001 \001(\005\032\330\001\n\010Argument\022P" +
+      "\n\nprojection\030\001 \001(\01627.org.jetbrains.kotli",
+      "n.metadata.Type.Argument.Projection:\003INV" +
+      "\0221\n\004type\030\002 \001(\0132#.org.jetbrains.kotlin.me" +
+      "tadata.Type\022\025\n\007type_id\030\003 \001(\005B\004\240\265\030\001\"0\n\nPr" +
+      "ojection\022\006\n\002IN\020\000\022\007\n\003OUT\020\001\022\007\n\003INV\020\002\022\010\n\004ST" +
+      "AR\020\003*\005\010d\020\310\001\"\234\002\n\rTypeParameter\022\n\n\002id\030\001 \002(" +
+      "\005\022\022\n\004name\030\002 \002(\005B\004\210\265\030\001\022\026\n\007reified\030\003 \001(\010:\005" +
+      "false\022L\n\010variance\030\004 \001(\01625.org.jetbrains." +
+      "kotlin.metadata.TypeParameter.Variance:\003" +
+      "INV\0228\n\013upper_bound\030\005 \003(\0132#.org.jetbrains" +
+      ".kotlin.metadata.Type\022\036\n\016upper_bound_id\030",
+      "\006 \003(\005B\006\020\001\240\265\030\001\"$\n\010Variance\022\006\n\002IN\020\000\022\007\n\003OUT" +
+      "\020\001\022\007\n\003INV\020\002*\005\010d\020\350\007\"\220\013\n\005Class\022\020\n\005flags\030\001 " +
+      "\001(\005:\0016\022\025\n\007fq_name\030\003 \002(\005B\004\220\265\030\001\022#\n\025compani" +
+      "on_object_name\030\004 \001(\005B\004\210\265\030\001\022D\n\016type_param" +
+      "eter\030\005 \003(\0132,.org.jetbrains.kotlin.metada" +
+      "ta.TypeParameter\0226\n\tsupertype\030\006 \003(\0132#.or" +
+      "g.jetbrains.kotlin.metadata.Type\022\034\n\014supe" +
+      "rtype_id\030\002 \003(\005B\006\020\001\240\265\030\001\022!\n\021nested_class_n" +
+      "ame\030\007 \003(\005B\006\020\001\210\265\030\001\022B\n\025context_receiver_ty" +
+      "pe\030\024 \003(\0132#.org.jetbrains.kotlin.metadata",
+      ".Type\022(\n\030context_receiver_type_id\030\025 \003(\005B" +
+      "\006\020\001\240\265\030\001\022?\n\013constructor\030\010 \003(\0132*.org.jetbr" +
+      "ains.kotlin.metadata.Constructor\0229\n\010func" +
+      "tion\030\t \003(\0132\'.org.jetbrains.kotlin.metada" +
+      "ta.Function\0229\n\010property\030\n \003(\0132\'.org.jetb" +
+      "rains.kotlin.metadata.Property\022<\n\ntype_a" +
+      "lias\030\013 \003(\0132(.org.jetbrains.kotlin.metada" +
+      "ta.TypeAlias\022<\n\nenum_entry\030\r \003(\0132(.org.j" +
+      "etbrains.kotlin.metadata.EnumEntry\022\'\n\027se" +
+      "aled_subclass_fq_name\030\020 \003(\005B\006\020\001\220\265\030\001\0223\n%i",
+      "nline_class_underlying_property_name\030\021 \001" +
+      "(\005B\004\210\265\030\001\022I\n\034inline_class_underlying_type" +
+      "\030\022 \001(\0132#.org.jetbrains.kotlin.metadata.T" +
+      "ype\022-\n\037inline_class_underlying_type_id\030\023" +
+      " \001(\005B\004\240\265\030\001\0227\n\'multi_field_value_class_un" +
+      "derlying_name\030\026 \003(\005B\006\020\001\210\265\030\001\022T\n\'multi_fie" +
+      "ld_value_class_underlying_type\030\027 \003(\0132#.o" +
+      "rg.jetbrains.kotlin.metadata.Type\022:\n*mul" +
+      "ti_field_value_class_underlying_type_id\030" +
+      "\030 \003(\005B\006\020\001\240\265\030\001\022<\n\ntype_table\030\036 \001(\0132(.org.",
+      "jetbrains.kotlin.metadata.TypeTable\022\033\n\023v" +
+      "ersion_requirement\030\037 \003(\005\022Y\n\031version_requ" +
+      "irement_table\030  \001(\01326.org.jetbrains.kotl" +
+      "in.metadata.VersionRequirementTable\"x\n\004K" +
+      "ind\022\t\n\005CLASS\020\000\022\r\n\tINTERFACE\020\001\022\016\n\nENUM_CL" +
+      "ASS\020\002\022\016\n\nENUM_ENTRY\020\003\022\024\n\020ANNOTATION_CLAS" +
+      "S\020\004\022\n\n\006OBJECT\020\005\022\024\n\020COMPANION_OBJECT\020\006*\006\010" +
+      "d\020\270\224\001\"\335\002\n\007Package\0229\n\010function\030\003 \003(\0132\'.or" +
+      "g.jetbrains.kotlin.metadata.Function\0229\n\010" +
+      "property\030\004 \003(\0132\'.org.jetbrains.kotlin.me",
+      "tadata.Property\022<\n\ntype_alias\030\005 \003(\0132(.or" +
+      "g.jetbrains.kotlin.metadata.TypeAlias\022<\n" +
+      "\ntype_table\030\036 \001(\0132(.org.jetbrains.kotlin" +
+      ".metadata.TypeTable\022Y\n\031version_requireme" +
+      "nt_table\030  \001(\01326.org.jetbrains.kotlin.me" +
+      "tadata.VersionRequirementTable*\005\010d\020\310\001\"`\n" +
+      "\tTypeTable\0221\n\004type\030\001 \003(\0132#.org.jetbrains" +
+      ".kotlin.metadata.Type\022\032\n\016first_nullable\030" +
+      "\002 \001(\005:\002-1:\004\240\273\030\001\"\214\001\n\013Constructor\022\020\n\005flags" +
+      "\030\001 \001(\005:\0016\022F\n\017value_parameter\030\002 \003(\0132-.org",
+      ".jetbrains.kotlin.metadata.ValueParamete" +
+      "r\022\033\n\023version_requirement\030\037 \003(\005*\006\010d\020\270\224\001\"\224" +
+      "\005\n\010Function\022\020\n\005flags\030\t \001(\005:\0016\022\024\n\told_fla" +
+      "gs\030\001 \001(\005:\0016\022\022\n\004name\030\002 \002(\005B\004\210\265\030\001\0228\n\013retur" +
+      "n_type\030\003 \001(\0132#.org.jetbrains.kotlin.meta" +
+      "data.Type\022\034\n\016return_type_id\030\007 \001(\005B\004\240\265\030\001\022" +
+      "D\n\016type_parameter\030\004 \003(\0132,.org.jetbrains." +
+      "kotlin.metadata.TypeParameter\022:\n\rreceive" +
+      "r_type\030\005 \001(\0132#.org.jetbrains.kotlin.meta" +
+      "data.Type\022\036\n\020receiver_type_id\030\010 \001(\005B\004\240\265\030",
+      "\001\022B\n\025context_receiver_type\030\n \003(\0132#.org.j" +
+      "etbrains.kotlin.metadata.Type\022(\n\030context" +
+      "_receiver_type_id\030\013 \003(\005B\006\020\001\240\265\030\001\022F\n\017value" +
+      "_parameter\030\006 \003(\0132-.org.jetbrains.kotlin." +
+      "metadata.ValueParameter\022<\n\ntype_table\030\036 " +
       "\001(\0132(.org.jetbrains.kotlin.metadata.Type" +
-      "Table\022\033\n\023version_requirement\030\037 \003(\005\022Y\n\031ve" +
-      "rsion_requirement_table\030  \001(\01326.org.jetb",
-      "rains.kotlin.metadata.VersionRequirement" +
-      "Table\"x\n\004Kind\022\t\n\005CLASS\020\000\022\r\n\tINTERFACE\020\001\022" +
-      "\016\n\nENUM_CLASS\020\002\022\016\n\nENUM_ENTRY\020\003\022\024\n\020ANNOT" +
-      "ATION_CLASS\020\004\022\n\n\006OBJECT\020\005\022\024\n\020COMPANION_O" +
-      "BJECT\020\006*\006\010d\020\270\224\001\"\335\002\n\007Package\0229\n\010function\030" +
-      "\003 \003(\0132\'.org.jetbrains.kotlin.metadata.Fu" +
-      "nction\0229\n\010property\030\004 \003(\0132\'.org.jetbrains" +
-      ".kotlin.metadata.Property\022<\n\ntype_alias\030" +
-      "\005 \003(\0132(.org.jetbrains.kotlin.metadata.Ty" +
-      "peAlias\022<\n\ntype_table\030\036 \001(\0132(.org.jetbra",
-      "ins.kotlin.metadata.TypeTable\022Y\n\031version" +
-      "_requirement_table\030  \001(\01326.org.jetbrains" +
-      ".kotlin.metadata.VersionRequirementTable" +
-      "*\005\010d\020\310\001\"`\n\tTypeTable\0221\n\004type\030\001 \003(\0132#.org" +
-      ".jetbrains.kotlin.metadata.Type\022\032\n\016first" +
-      "_nullable\030\002 \001(\005:\002-1:\004\240\273\030\001\"\214\001\n\013Constructo" +
-      "r\022\020\n\005flags\030\001 \001(\005:\0016\022F\n\017value_parameter\030\002" +
-      " \003(\0132-.org.jetbrains.kotlin.metadata.Val" +
-      "ueParameter\022\033\n\023version_requirement\030\037 \003(\005" +
-      "*\006\010d\020\270\224\001\"\224\005\n\010Function\022\020\n\005flags\030\t \001(\005:\0016\022",
-      "\024\n\told_flags\030\001 \001(\005:\0016\022\022\n\004name\030\002 \002(\005B\004\210\265\030" +
-      "\001\0228\n\013return_type\030\003 \001(\0132#.org.jetbrains.k" +
-      "otlin.metadata.Type\022\034\n\016return_type_id\030\007 " +
-      "\001(\005B\004\240\265\030\001\022D\n\016type_parameter\030\004 \003(\0132,.org." +
-      "jetbrains.kotlin.metadata.TypeParameter\022" +
-      ":\n\rreceiver_type\030\005 \001(\0132#.org.jetbrains.k" +
-      "otlin.metadata.Type\022\036\n\020receiver_type_id\030" +
-      "\010 \001(\005B\004\240\265\030\001\022B\n\025context_receiver_type\030\n \003" +
-      "(\0132#.org.jetbrains.kotlin.metadata.Type\022" +
-      "(\n\030context_receiver_type_id\030\013 \003(\005B\006\020\001\240\265\030",
-      "\001\022F\n\017value_parameter\030\006 \003(\0132-.org.jetbrai" +
-      "ns.kotlin.metadata.ValueParameter\022<\n\ntyp" +
-      "e_table\030\036 \001(\0132(.org.jetbrains.kotlin.met" +
-      "adata.TypeTable\022\033\n\023version_requirement\030\037" +
-      " \003(\005\0229\n\010contract\030  \001(\0132\'.org.jetbrains.k" +
-      "otlin.metadata.Contract*\006\010d\020\270\224\001\"\323\004\n\010Prop" +
-      "erty\022\022\n\005flags\030\013 \001(\005:\003518\022\027\n\told_flags\030\001 " +
-      "\001(\005:\0042054\022\022\n\004name\030\002 \002(\005B\004\210\265\030\001\0228\n\013return_" +
+      "Table\022\033\n\023version_requirement\030\037 \003(\005\0229\n\010co" +
+      "ntract\030  \001(\0132\'.org.jetbrains.kotlin.meta" +
+      "data.Contract*\006\010d\020\270\224\001\"\323\004\n\010Property\022\022\n\005fl" +
+      "ags\030\013 \001(\005:\003518\022\027\n\told_flags\030\001 \001(\005:\0042054\022",
+      "\022\n\004name\030\002 \002(\005B\004\210\265\030\001\0228\n\013return_type\030\003 \001(\013" +
+      "2#.org.jetbrains.kotlin.metadata.Type\022\034\n" +
+      "\016return_type_id\030\t \001(\005B\004\240\265\030\001\022D\n\016type_para" +
+      "meter\030\004 \003(\0132,.org.jetbrains.kotlin.metad" +
+      "ata.TypeParameter\022:\n\rreceiver_type\030\005 \001(\013" +
+      "2#.org.jetbrains.kotlin.metadata.Type\022\036\n" +
+      "\020receiver_type_id\030\n \001(\005B\004\240\265\030\001\022B\n\025context" +
+      "_receiver_type\030\014 \003(\0132#.org.jetbrains.kot" +
+      "lin.metadata.Type\022(\n\030context_receiver_ty" +
+      "pe_id\030\r \003(\005B\006\020\001\240\265\030\001\022M\n\026setter_value_para",
+      "meter\030\006 \001(\0132-.org.jetbrains.kotlin.metad" +
+      "ata.ValueParameter\022\024\n\014getter_flags\030\007 \001(\005" +
+      "\022\024\n\014setter_flags\030\010 \001(\005\022\033\n\023version_requir" +
+      "ement\030\037 \003(\005*\006\010d\020\270\224\001\"\357\001\n\016ValueParameter\022\020" +
+      "\n\005flags\030\001 \001(\005:\0010\022\022\n\004name\030\002 \002(\005B\004\210\265\030\001\0221\n\004" +
       "type\030\003 \001(\0132#.org.jetbrains.kotlin.metada" +
-      "ta.Type\022\034\n\016return_type_id\030\t \001(\005B\004\240\265\030\001\022D\n",
-      "\016type_parameter\030\004 \003(\0132,.org.jetbrains.ko" +
-      "tlin.metadata.TypeParameter\022:\n\rreceiver_" +
-      "type\030\005 \001(\0132#.org.jetbrains.kotlin.metada" +
-      "ta.Type\022\036\n\020receiver_type_id\030\n \001(\005B\004\240\265\030\001\022" +
-      "B\n\025context_receiver_type\030\014 \003(\0132#.org.jet" +
-      "brains.kotlin.metadata.Type\022(\n\030context_r" +
-      "eceiver_type_id\030\r \003(\005B\006\020\001\240\265\030\001\022M\n\026setter_" +
-      "value_parameter\030\006 \001(\0132-.org.jetbrains.ko" +
-      "tlin.metadata.ValueParameter\022\024\n\014getter_f" +
-      "lags\030\007 \001(\005\022\024\n\014setter_flags\030\010 \001(\005\022\033\n\023vers",
-      "ion_requirement\030\037 \003(\005*\006\010d\020\270\224\001\"\357\001\n\016ValueP" +
-      "arameter\022\020\n\005flags\030\001 \001(\005:\0010\022\022\n\004name\030\002 \002(\005" +
-      "B\004\210\265\030\001\0221\n\004type\030\003 \001(\0132#.org.jetbrains.kot" +
-      "lin.metadata.Type\022\025\n\007type_id\030\005 \001(\005B\004\240\265\030\001" +
-      "\022@\n\023vararg_element_type\030\004 \001(\0132#.org.jetb" +
-      "rains.kotlin.metadata.Type\022$\n\026vararg_ele" +
-      "ment_type_id\030\006 \001(\005B\004\240\265\030\001*\005\010d\020\310\001\"\226\003\n\tType" +
-      "Alias\022\020\n\005flags\030\001 \001(\005:\0016\022\022\n\004name\030\002 \002(\005B\004\210" +
-      "\265\030\001\022D\n\016type_parameter\030\003 \003(\0132,.org.jetbra" +
-      "ins.kotlin.metadata.TypeParameter\022<\n\017und",
-      "erlying_type\030\004 \001(\0132#.org.jetbrains.kotli" +
-      "n.metadata.Type\022 \n\022underlying_type_id\030\005 " +
-      "\001(\005B\004\240\265\030\001\022:\n\rexpanded_type\030\006 \001(\0132#.org.j" +
-      "etbrains.kotlin.metadata.Type\022\036\n\020expande" +
-      "d_type_id\030\007 \001(\005B\004\240\265\030\001\022=\n\nannotation\030\010 \003(" +
-      "\0132).org.jetbrains.kotlin.metadata.Annota" +
-      "tion\022\033\n\023version_requirement\030\037 \003(\005*\005\010d\020\310\001" +
-      "\"&\n\tEnumEntry\022\022\n\004name\030\001 \001(\005B\004\210\265\030\001*\005\010d\020\310\001" +
-      "\"\225\003\n\022VersionRequirement\022\017\n\007version\030\001 \001(\005" +
-      "\022\024\n\014version_full\030\002 \001(\005\022M\n\005level\030\003 \001(\01627.",
-      "org.jetbrains.kotlin.metadata.VersionReq" +
-      "uirement.Level:\005ERROR\022\022\n\nerror_code\030\004 \001(" +
-      "\005\022\025\n\007message\030\005 \001(\005B\004\230\265\030\001\022e\n\014version_kind" +
-      "\030\006 \001(\0162=.org.jetbrains.kotlin.metadata.V" +
-      "ersionRequirement.VersionKind:\020LANGUAGE_" +
-      "VERSION\"+\n\005Level\022\013\n\007WARNING\020\000\022\t\n\005ERROR\020\001" +
-      "\022\n\n\006HIDDEN\020\002\"J\n\013VersionKind\022\024\n\020LANGUAGE_" +
-      "VERSION\020\000\022\024\n\020COMPILER_VERSION\020\001\022\017\n\013API_V" +
-      "ERSION\020\002\"a\n\027VersionRequirementTable\022F\n\013r" +
-      "equirement\030\001 \003(\01321.org.jetbrains.kotlin.",
-      "metadata.VersionRequirement\"\217\002\n\017PackageF" +
-      "ragment\022;\n\007strings\030\001 \001(\0132*.org.jetbrains" +
-      ".kotlin.metadata.StringTable\022J\n\017qualifie" +
-      "d_names\030\002 \001(\01321.org.jetbrains.kotlin.met" +
-      "adata.QualifiedNameTable\0227\n\007package\030\003 \001(" +
-      "\0132&.org.jetbrains.kotlin.metadata.Packag" +
-      "e\0223\n\005class\030\004 \003(\0132$.org.jetbrains.kotlin." +
-      "metadata.Class*\005\010d\020\310\001\"A\n\010Contract\0225\n\006eff" +
-      "ect\030\001 \003(\0132%.org.jetbrains.kotlin.metadat" +
-      "a.Effect\"\306\003\n\006Effect\022E\n\013effect_type\030\001 \001(\016",
-      "20.org.jetbrains.kotlin.metadata.Effect." +
-      "EffectType\022N\n\033effect_constructor_argumen" +
-      "t\030\002 \003(\0132).org.jetbrains.kotlin.metadata." +
-      "Expression\022S\n conclusion_of_conditional_" +
-      "effect\030\003 \001(\0132).org.jetbrains.kotlin.meta" +
-      "data.Expression\022B\n\004kind\030\004 \001(\01624.org.jetb" +
-      "rains.kotlin.metadata.Effect.InvocationK" +
-      "ind\"C\n\nEffectType\022\024\n\020RETURNS_CONSTANT\020\000\022" +
-      "\t\n\005CALLS\020\001\022\024\n\020RETURNS_NOT_NULL\020\002\"G\n\016Invo" +
-      "cationKind\022\020\n\014AT_MOST_ONCE\020\000\022\020\n\014EXACTLY_",
-      "ONCE\020\001\022\021\n\rAT_LEAST_ONCE\020\002\"\245\003\n\nExpression" +
-      "\022\020\n\005flags\030\001 \001(\005:\0010\022!\n\031value_parameter_re" +
-      "ference\030\002 \001(\005\022O\n\016constant_value\030\003 \001(\01627." +
+      "ta.Type\022\025\n\007type_id\030\005 \001(\005B\004\240\265\030\001\022@\n\023vararg" +
+      "_element_type\030\004 \001(\0132#.org.jetbrains.kotl" +
+      "in.metadata.Type\022$\n\026vararg_element_type_" +
+      "id\030\006 \001(\005B\004\240\265\030\001*\005\010d\020\310\001\"\226\003\n\tTypeAlias\022\020\n\005f",
+      "lags\030\001 \001(\005:\0016\022\022\n\004name\030\002 \002(\005B\004\210\265\030\001\022D\n\016typ" +
+      "e_parameter\030\003 \003(\0132,.org.jetbrains.kotlin" +
+      ".metadata.TypeParameter\022<\n\017underlying_ty" +
+      "pe\030\004 \001(\0132#.org.jetbrains.kotlin.metadata" +
+      ".Type\022 \n\022underlying_type_id\030\005 \001(\005B\004\240\265\030\001\022" +
+      ":\n\rexpanded_type\030\006 \001(\0132#.org.jetbrains.k" +
+      "otlin.metadata.Type\022\036\n\020expanded_type_id\030" +
+      "\007 \001(\005B\004\240\265\030\001\022=\n\nannotation\030\010 \003(\0132).org.je" +
+      "tbrains.kotlin.metadata.Annotation\022\033\n\023ve" +
+      "rsion_requirement\030\037 \003(\005*\005\010d\020\310\001\"&\n\tEnumEn",
+      "try\022\022\n\004name\030\001 \001(\005B\004\210\265\030\001*\005\010d\020\310\001\"\225\003\n\022Versi" +
+      "onRequirement\022\017\n\007version\030\001 \001(\005\022\024\n\014versio" +
+      "n_full\030\002 \001(\005\022M\n\005level\030\003 \001(\01627.org.jetbra" +
+      "ins.kotlin.metadata.VersionRequirement.L" +
+      "evel:\005ERROR\022\022\n\nerror_code\030\004 \001(\005\022\025\n\007messa" +
+      "ge\030\005 \001(\005B\004\230\265\030\001\022e\n\014version_kind\030\006 \001(\0162=.o" +
+      "rg.jetbrains.kotlin.metadata.VersionRequ" +
+      "irement.VersionKind:\020LANGUAGE_VERSION\"+\n" +
+      "\005Level\022\013\n\007WARNING\020\000\022\t\n\005ERROR\020\001\022\n\n\006HIDDEN" +
+      "\020\002\"J\n\013VersionKind\022\024\n\020LANGUAGE_VERSION\020\000\022",
+      "\024\n\020COMPILER_VERSION\020\001\022\017\n\013API_VERSION\020\002\"a" +
+      "\n\027VersionRequirementTable\022F\n\013requirement" +
+      "\030\001 \003(\01321.org.jetbrains.kotlin.metadata.V" +
+      "ersionRequirement\"\217\002\n\017PackageFragment\022;\n" +
+      "\007strings\030\001 \001(\0132*.org.jetbrains.kotlin.me" +
+      "tadata.StringTable\022J\n\017qualified_names\030\002 " +
+      "\001(\01321.org.jetbrains.kotlin.metadata.Qual" +
+      "ifiedNameTable\0227\n\007package\030\003 \001(\0132&.org.je" +
+      "tbrains.kotlin.metadata.Package\0223\n\005class" +
+      "\030\004 \003(\0132$.org.jetbrains.kotlin.metadata.C",
+      "lass*\005\010d\020\310\001\"A\n\010Contract\0225\n\006effect\030\001 \003(\0132" +
+      "%.org.jetbrains.kotlin.metadata.Effect\"\306" +
+      "\003\n\006Effect\022E\n\013effect_type\030\001 \001(\01620.org.jet" +
+      "brains.kotlin.metadata.Effect.EffectType" +
+      "\022N\n\033effect_constructor_argument\030\002 \003(\0132)." +
       "org.jetbrains.kotlin.metadata.Expression" +
-      ".ConstantValue\022=\n\020is_instance_type\030\004 \001(\013" +
-      "2#.org.jetbrains.kotlin.metadata.Type\022!\n" +
-      "\023is_instance_type_id\030\005 \001(\005B\004\240\265\030\001\022?\n\014and_" +
-      "argument\030\006 \003(\0132).org.jetbrains.kotlin.me" +
-      "tadata.Expression\022>\n\013or_argument\030\007 \003(\0132)" +
-      ".org.jetbrains.kotlin.metadata.Expressio",
-      "n\".\n\rConstantValue\022\010\n\004TRUE\020\000\022\t\n\005FALSE\020\001\022" +
-      "\010\n\004NULL\020\002*9\n\010Modality\022\t\n\005FINAL\020\000\022\010\n\004OPEN" +
-      "\020\001\022\014\n\010ABSTRACT\020\002\022\n\n\006SEALED\020\003*b\n\nVisibili" +
-      "ty\022\014\n\010INTERNAL\020\000\022\013\n\007PRIVATE\020\001\022\r\n\tPROTECT" +
-      "ED\020\002\022\n\n\006PUBLIC\020\003\022\023\n\017PRIVATE_TO_THIS\020\004\022\t\n" +
-      "\005LOCAL\020\005*Q\n\nMemberKind\022\017\n\013DECLARATION\020\000\022" +
-      "\021\n\rFAKE_OVERRIDE\020\001\022\016\n\nDELEGATION\020\002\022\017\n\013SY" +
-      "NTHESIZED\020\003B\017B\rDebugProtoBuf"
+      "\022S\n conclusion_of_conditional_effect\030\003 \001" +
+      "(\0132).org.jetbrains.kotlin.metadata.Expre" +
+      "ssion\022B\n\004kind\030\004 \001(\01624.org.jetbrains.kotl" +
+      "in.metadata.Effect.InvocationKind\"C\n\nEff",
+      "ectType\022\024\n\020RETURNS_CONSTANT\020\000\022\t\n\005CALLS\020\001" +
+      "\022\024\n\020RETURNS_NOT_NULL\020\002\"G\n\016InvocationKind" +
+      "\022\020\n\014AT_MOST_ONCE\020\000\022\020\n\014EXACTLY_ONCE\020\001\022\021\n\r" +
+      "AT_LEAST_ONCE\020\002\"\245\003\n\nExpression\022\020\n\005flags\030" +
+      "\001 \001(\005:\0010\022!\n\031value_parameter_reference\030\002 " +
+      "\001(\005\022O\n\016constant_value\030\003 \001(\01627.org.jetbra" +
+      "ins.kotlin.metadata.Expression.ConstantV" +
+      "alue\022=\n\020is_instance_type\030\004 \001(\0132#.org.jet" +
+      "brains.kotlin.metadata.Type\022!\n\023is_instan" +
+      "ce_type_id\030\005 \001(\005B\004\240\265\030\001\022?\n\014and_argument\030\006",
+      " \003(\0132).org.jetbrains.kotlin.metadata.Exp" +
+      "ression\022>\n\013or_argument\030\007 \003(\0132).org.jetbr" +
+      "ains.kotlin.metadata.Expression\".\n\rConst" +
+      "antValue\022\010\n\004TRUE\020\000\022\t\n\005FALSE\020\001\022\010\n\004NULL\020\002*" +
+      "9\n\010Modality\022\t\n\005FINAL\020\000\022\010\n\004OPEN\020\001\022\014\n\010ABST" +
+      "RACT\020\002\022\n\n\006SEALED\020\003*b\n\nVisibility\022\014\n\010INTE" +
+      "RNAL\020\000\022\013\n\007PRIVATE\020\001\022\r\n\tPROTECTED\020\002\022\n\n\006PU" +
+      "BLIC\020\003\022\023\n\017PRIVATE_TO_THIS\020\004\022\t\n\005LOCAL\020\005*Q" +
+      "\n\nMemberKind\022\017\n\013DECLARATION\020\000\022\021\n\rFAKE_OV" +
+      "ERRIDE\020\001\022\016\n\nDELEGATION\020\002\022\017\n\013SYNTHESIZED\020",
+      "\003B\017B\rDebugProtoBuf"
     };
     org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.InternalDescriptorAssigner assigner =
         new org.jetbrains.kotlin.protobuf.Descriptors.FileDescriptor.    InternalDescriptorAssigner() {
@@ -37273,7 +37813,7 @@ public final class DebugProtoBuf {
     internal_static_org_jetbrains_kotlin_metadata_Type_fieldAccessorTable = new
       org.jetbrains.kotlin.protobuf.GeneratedMessage.FieldAccessorTable(
         internal_static_org_jetbrains_kotlin_metadata_Type_descriptor,
-        new java.lang.String[] { "Argument", "Nullable", "FlexibleTypeCapabilitiesId", "FlexibleUpperBound", "FlexibleUpperBoundId", "ClassName", "TypeParameter", "TypeParameterName", "TypeAliasName", "OuterType", "OuterTypeId", "AbbreviatedType", "AbbreviatedTypeId", "Flags", });
+        new java.lang.String[] { "Argument", "Nullable", "FlexibleTypeCapabilitiesId", "FlexibleUpperBound", "FlexibleUpperBoundId", "ClassName", "TypeParameter", "TypeParameterName", "TypeAliasName", "OuterType", "OuterTypeId", "AbbreviatedType", "AbbreviatedTypeId", "ContextReceiverType", "ContextReceiverTypeId", "Flags", });
     internal_static_org_jetbrains_kotlin_metadata_Type_Argument_descriptor =
       internal_static_org_jetbrains_kotlin_metadata_Type_descriptor.getNestedTypes().get(0);
     internal_static_org_jetbrains_kotlin_metadata_Type_Argument_fieldAccessorTable = new
@@ -37390,6 +37930,7 @@ public final class DebugProtoBuf {
     registry.add(org.jetbrains.kotlin.metadata.DebugExtOptionsProtoBuf.fqNameIdInTable);
     registry.add(org.jetbrains.kotlin.metadata.DebugExtOptionsProtoBuf.nameIdInTable);
     registry.add(org.jetbrains.kotlin.metadata.DebugExtOptionsProtoBuf.fqNameIdInTable);
+    registry.add(org.jetbrains.kotlin.metadata.DebugExtOptionsProtoBuf.typeIdInTable);
     registry.add(org.jetbrains.kotlin.metadata.DebugExtOptionsProtoBuf.typeIdInTable);
     registry.add(org.jetbrains.kotlin.metadata.DebugExtOptionsProtoBuf.typeIdInTable);
     registry.add(org.jetbrains.kotlin.metadata.DebugExtOptionsProtoBuf.typeIdInTable);

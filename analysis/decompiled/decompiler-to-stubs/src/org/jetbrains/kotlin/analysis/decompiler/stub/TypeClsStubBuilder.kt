@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.utils.doNothing
 
 // TODO: see DescriptorRendererOptions.excludedTypeAnnotationClasses for decompiler
-private val ANNOTATIONS_NOT_LOADED_FOR_TYPES = setOf(StandardNames.FqNames.parameterName)
+private val ANNOTATIONS_NOT_LOADED_FOR_TYPES = setOf(StandardNames.FqNames.parameterName, StandardNames.FqNames.contextFunctionTypeParams)
 
 class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
     fun createTypeReferenceStub(
@@ -185,6 +185,9 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
     ) {
         val typeArgumentList = type.argumentList
         val functionType = KotlinPlaceHolderStubImpl<KtFunctionType>(parent, KtStubElementTypes.FUNCTION_TYPE)
+        if (type.getContextReceiverTypeCount() + type.getContextReceiverTypeIdCount() != 0) {
+            ContextReceiversListStubBuilder(c).createContextReceiverStubs(functionType, type.contextReceiverTypes(c.typeTable))
+        }
         if (isExtensionFunctionType) {
             val functionTypeReceiverStub =
                 KotlinPlaceHolderStubImpl<KtFunctionTypeReceiver>(functionType, KtStubElementTypes.FUNCTION_TYPE_RECEIVER)
@@ -194,7 +197,10 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
 
         val parameterList = KotlinPlaceHolderStubImpl<KtParameterList>(functionType, KtStubElementTypes.VALUE_PARAMETER_LIST)
         val typeArgumentsWithoutReceiverAndReturnType =
-            typeArgumentList.subList(if (isExtensionFunctionType) 1 else 0, typeArgumentList.size - 1)
+            typeArgumentList.subList(
+                (if (isExtensionFunctionType) 1 else 0) + type.getContextReceiverTypeCount() + type.getContextReceiverTypeIdCount(),
+                typeArgumentList.size - 1
+            )
         var suspendParameterType: Type? = null
 
         for ((index, argument) in typeArgumentsWithoutReceiverAndReturnType.withIndex()) {

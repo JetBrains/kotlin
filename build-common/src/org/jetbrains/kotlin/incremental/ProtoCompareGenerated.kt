@@ -915,6 +915,10 @@ open class ProtoCompareGenerated(
             if (!checkEquals(oldTypeTable.getType(old.abbreviatedTypeId), newTypeTable.getType(new.abbreviatedTypeId))) return false
         }
 
+        if (!checkEqualsTypeContextReceiverType(old, new)) return false
+
+        if (!checkEqualsTypeContextReceiverTypeId(old, new)) return false
+
         if (old.hasFlags() != new.hasFlags()) return false
         if (old.hasFlags()) {
             if (old.flags != new.flags) return false
@@ -1705,6 +1709,26 @@ open class ProtoCompareGenerated(
         return true
     }
 
+    open fun checkEqualsTypeContextReceiverType(old: ProtoBuf.Type, new: ProtoBuf.Type): Boolean {
+        if (old.contextReceiverTypeCount != new.contextReceiverTypeCount) return false
+
+        for(i in 0..old.contextReceiverTypeCount - 1) {
+            if (!checkEquals(old.getContextReceiverType(i), new.getContextReceiverType(i))) return false
+        }
+
+        return true
+    }
+
+    open fun checkEqualsTypeContextReceiverTypeId(old: ProtoBuf.Type, new: ProtoBuf.Type): Boolean {
+        if (old.contextReceiverTypeIdCount != new.contextReceiverTypeIdCount) return false
+
+        for(i in 0..old.contextReceiverTypeIdCount - 1) {
+            if (!checkEquals(oldTypeTable.getType(old.getContextReceiverTypeId(i)), newTypeTable.getType(new.getContextReceiverTypeId(i)))) return false
+        }
+
+        return true
+    }
+
     open fun checkEqualsConstructorValueParameter(old: ProtoBuf.Constructor, new: ProtoBuf.Constructor): Boolean {
         if (old.valueParameterCount != new.valueParameterCount) return false
 
@@ -2370,6 +2394,14 @@ fun ProtoBuf.Type.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> 
 
     if (hasAbbreviatedTypeId()) {
         hashCode = 31 * hashCode + typeById(abbreviatedTypeId).hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
+    for(i in 0..contextReceiverTypeCount - 1) {
+        hashCode = 31 * hashCode + getContextReceiverType(i).hashCode(stringIndexes, fqNameIndexes, typeById)
+    }
+
+    for(i in 0..contextReceiverTypeIdCount - 1) {
+        hashCode = 31 * hashCode + typeById(getContextReceiverTypeId(i)).hashCode(stringIndexes, fqNameIndexes, typeById)
     }
 
     if (hasFlags()) {
