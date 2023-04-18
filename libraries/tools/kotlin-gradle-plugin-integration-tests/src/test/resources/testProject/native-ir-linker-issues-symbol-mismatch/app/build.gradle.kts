@@ -15,6 +15,11 @@ kotlin {
                 entryPoint = "sample.app.main"
             }
         }
+        compilations.configureEach {
+            compilerOptions.configure {
+                freeCompilerArgs.add("-Xpartial-linkage=disable")
+            }
+        }
         sourceSets["commonMain"].dependencies {
             implementation("org.sample:libb:1.0")
             implementation("org.sample:liba:2.0")
