@@ -16,16 +16,27 @@ class MultiModuleInfoDumper(private val moduleHeaderTemplate: String? = "Module:
     }
 
     fun generateResultingDump(): String {
-        builderByModule.values.singleOrNull()?.let { return it.toString() }
+        builderByModule.values.singleOrNull()?.let {
+            it.addNewLineIfNeeded()
+            return it.toString()
+        }
         return buildString {
             for ((module, builder) in builderByModule) {
                 moduleHeaderTemplate?.let { appendLine(String.format(it, module.name)) }
                 append(builder)
             }
+            addNewLineIfNeeded()
         }
     }
 
     fun isEmpty(): Boolean {
         return builderByModule.isEmpty()
+    }
+
+    private fun StringBuilder.addNewLineIfNeeded() {
+        if (this.isEmpty()) return
+        if (last() != '\n') {
+            appendLine()
+        }
     }
 }
