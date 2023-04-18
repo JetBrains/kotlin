@@ -5077,7 +5077,6 @@ if (PlatformInfo.isAppleTarget(project)) {
     }
 
     interopTest("interop_objc_foreignException") {
-        disabled = isK2(project) // KT-55909
         source = "interop/objc/foreignException/objc_wrap.kt"
         interop = 'foreignException'
         UtilsKt.dependsOnPlatformLibs(it)
