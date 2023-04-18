@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions
 
+import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.ModificationTracker
+import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtension
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionFile
-import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionReferenceTargetsPsiProvider
+import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionReferencePsiTargetsProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.FileBasedKotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirSymbolProviderNameCache
@@ -192,16 +194,24 @@ private class LLFirResolveExtensionToolDeclarationProvider(
                 eventSystemEnabled = true // so every generated KtFile backed by some VirtualFile
             )
             val text = file.buildFileText()
-            val ktFile = createKtFile(factory, file.getFileName(), text)
+            val psiTargetsProvider = file.createPsiTargetsProvider()
+            val ktFile = createKtFile(factory, file.getFileName(), text, psiTargetsProvider)
             FileBasedKotlinDeclarationProvider(ktFile)
         }
     }
 
 
     @OptIn(KtModuleStructureInternals::class)
-    private fun createKtFile(factory: KtPsiFactory, fileName: String, fileText: String): KtFile {
+    private fun createKtFile(
+        factory: KtPsiFactory,
+        fileName: String,
+        fileText: String,
+        psiTargetsProvider: KtResolveExtensionReferencePsiTargetsProvider
+    ): KtFile {
         val ktFile = factory.createFile(fileName, fileText)
-        ktFile.virtualFile.analysisExtensionFileContextModule = ktModule
+        val virtualFile = ktFile.virtualFile
+        virtualFile.analysisExtensionFileContextModule = ktModule
+        virtualFile.psiTargetsProvider = psiTargetsProvider
         return ktFile
     }
 }
@@ -274,3 +284,6 @@ private fun KtResolveExtensionFile.mayHaveTopLevelClassifier(name: Name): Boolea
 private fun KtResolveExtensionFile.mayHaveTopLevelCallable(name: Name): Boolean {
     return name in getTopLevelCallableNames()
 }
+
+@KtModuleStructureInternals
+public var VirtualFile.psiTargetsProvider: KtResolveExtensionReferencePsiTargetsProvider? by UserDataProperty(Key.create("KT_RESOLVE_EXTENSION_PSI_TARGETS_PROVIDER"))

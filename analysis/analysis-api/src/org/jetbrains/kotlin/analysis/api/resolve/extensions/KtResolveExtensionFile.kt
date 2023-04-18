@@ -77,11 +77,11 @@ abstract class KtResolveExtensionFile {
     abstract fun buildFileText(): String
 
     /**
-     * Creates a [KtResolveExtensionReferenceTargetsPsiProvider] for this [KtResolveExtensionFile].
+     * Creates a [KtResolveExtensionReferencePsiTargetsProvider] for this [KtResolveExtensionFile].
      *
-     * @see KtResolveExtensionReferenceTargetsPsiProvider
+     * @see KtResolveExtensionReferencePsiTargetsProvider
      * @see KtResolveExtensionFile
      */
-    abstract fun createTargetPsiProvider(): KtResolveExtensionReferenceTargetsPsiProvider
+    abstract fun createPsiTargetsProvider(): KtResolveExtensionReferencePsiTargetsProvider
 
 }

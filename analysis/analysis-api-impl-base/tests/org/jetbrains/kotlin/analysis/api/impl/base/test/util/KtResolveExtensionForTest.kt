@@ -7,9 +7,13 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.util
 
 import com.intellij.mock.MockProject
 import com.intellij.openapi.util.ModificationTracker
+import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtension
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionFile
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionProvider
+import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionReferencePsiTargetsProvider
+import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
 import org.jetbrains.kotlin.name.FqName
@@ -66,4 +70,12 @@ class KtResolveExtensionFileForTests(
     override fun getTopLevelCallableNames(): Set<Name> = topLevelCallableNames
 
     override fun buildFileText(): String = fileText
+
+    override fun createPsiTargetsProvider(): KtResolveExtensionReferencePsiTargetsProvider {
+        return object : KtResolveExtensionReferencePsiTargetsProvider() {
+            override fun KtAnalysisSession.getReferenceTargetsForSymbol(symbol: KtSymbol): Collection<PsiElement> {
+                return emptyList()
+            }
+        }
+    }
 }
