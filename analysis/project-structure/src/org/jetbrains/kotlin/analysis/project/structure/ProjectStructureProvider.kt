@@ -10,9 +10,29 @@ import com.intellij.psi.PsiElement
 
 public abstract class ProjectStructureProvider {
     /**
-     * For a given [PsiElement] get a [KtModule] to which [PsiElement] belongs.
+     * Returns a [KtModule] for a given [element] in context of the [contextualModule].
+     *
+     * Normally, every Kotlin source file either belongs to some module (e.g. a source module, or a library module), or is self-contained
+     * (a script file, or a file outside content roots). However, in certain cases there might be special modules that include both
+     * existing source files, and also some additional files.
+     *
+     * An example of such a module is one that owns an 'outsider' source file. Outsiders are used in IntelliJ for displaying files that
+     * technically belong to some module, but are not included in the module's content roots (e.g. a file from previous VCS revision).
+     * As there might be cross-references between the outsider file and other files in the module, they need to be analyzed as a single
+     * synthetic module. Inside an analysis session for such a module (that would become there a 'contextualModule'),
+     * sources that originally belong to a source module should be treated rather as a part of the synthetic one.
      */
-    public abstract fun getKtModuleForKtElement(element: PsiElement): KtModule
+    public abstract fun getModule(element: PsiElement, contextualModule: KtModule?): KtModule
+
+    public companion object {
+        public fun getInstance(project: Project): ProjectStructureProvider {
+            return project.getService(ProjectStructureProvider::class.java)
+        }
+
+        public fun getModule(element: PsiElement, contextualModule: KtModule?): KtModule {
+            return getInstance(element.project).getModule(element, contextualModule)
+        }
+    }
 }
 
 /**
@@ -21,7 +41,7 @@ public abstract class ProjectStructureProvider {
  */
 public fun PsiElement.getKtModule(project: Project = this.project): KtModule =
     project.getService(ProjectStructureProvider::class.java)
-        .getKtModuleForKtElement(this)
+        .getModule(this, null)
 
 /**
  * For a given [PsiElement] get a [KtModule] to which [PsiElement] belongs.

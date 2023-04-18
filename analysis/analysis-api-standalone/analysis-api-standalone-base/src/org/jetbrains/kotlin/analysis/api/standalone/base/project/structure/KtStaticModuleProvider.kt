@@ -12,11 +12,13 @@ import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerial
 
 class KtStaticModuleProvider(
     private val builtinsModule: KtBuiltinsModule,
-    val projectStructure: KtModuleProjectStructure,
+    private val projectStructure: KtModuleProjectStructure,
 ) : ProjectStructureProvider() {
+    val allModules: List<KtModule>
+        get() = projectStructure.allKtModules()
 
     @OptIn(KtModuleStructureInternals::class)
-    override fun getKtModuleForKtElement(element: PsiElement): KtModule {
+    override fun getModule(element: PsiElement, contextualModule: KtModule?): KtModule {
         val containingFileAsPsiFile = element.containingFile
         val containingFileAsVirtualFile = containingFileAsPsiFile.virtualFile
         if (containingFileAsVirtualFile.extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION) {
@@ -30,8 +32,7 @@ class KtStaticModuleProvider(
         }?.let { return it }
 
         return projectStructure.mainModules
-            .first { module ->
-                element in module.ktModule.contentScope
-            }.ktModule
+            .first { module -> element in module.ktModule.contentScope }
+            .ktModule
     }
 }

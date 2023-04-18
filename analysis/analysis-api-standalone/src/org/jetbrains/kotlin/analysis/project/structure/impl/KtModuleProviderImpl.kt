@@ -36,7 +36,7 @@ internal class KtModuleProviderImpl(
         LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(platform).ktModule as KtBuiltinsModule
     }
 
-    override fun getKtModuleForKtElement(element: PsiElement): KtModule {
+    override fun getModule(element: PsiElement, contextualModule: KtModule?): KtModule {
         val containingFileAsPsiFile = element.containingFile
             ?: return ktNotUnderContentRootModuleWithoutPsiFile
         // If an [element] is created on the fly, e.g., via [KtPsiFactory],
