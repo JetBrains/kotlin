@@ -135,7 +135,14 @@ fun BuildResult.assertOutputContainsExactlyTimes(
     expected: String,
     expectedCount: Int = 1
 ) {
-    val occurrenceCount = expected.toRegex(RegexOption.LITERAL).findAll(output).count()
+    assertOutputContainsExactlyTimes(expected.toRegex(RegexOption.LITERAL), expectedCount)
+}
+
+fun BuildResult.assertOutputContainsExactlyTimes(
+    expected: Regex,
+    expectedCount: Int = 1
+) {
+    val occurrenceCount = expected.findAll(output).count()
     assert(occurrenceCount == expectedCount) {
         printBuildOutput()
 

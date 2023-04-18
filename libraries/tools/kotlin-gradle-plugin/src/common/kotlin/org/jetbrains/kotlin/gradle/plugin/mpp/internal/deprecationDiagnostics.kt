@@ -31,6 +31,7 @@ internal fun runDeprecationDiagnostics(project: Project) {
     project.runProjectConfigurationHealthCheckWhenEvaluated {
         checkAndReportDeprecatedNativeTargets(project)
         reportTargetsWithNonUniqueConsumableConfigurations(project)
+        checkAndReportPreHmppDependenciesUsage(project)
     }
 }
 

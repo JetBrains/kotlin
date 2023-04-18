@@ -447,6 +447,8 @@ internal fun Path.addDefaultBuildFiles() {
 }
 
 internal fun Path.addPluginManagementToSettings() {
+    val buildGradle = resolve("build.gradle")
+    val buildGradleKts = resolve("build.gradle.kts")
     val settingsGradle = resolve("settings.gradle")
     val settingsGradleKts = resolve("settings.gradle.kts")
     when {
@@ -474,7 +476,11 @@ internal fun Path.addPluginManagementToSettings() {
             }
         }
 
-        else -> settingsGradle.toFile().writeText(DEFAULT_GROOVY_SETTINGS_FILE)
+        Files.exists(buildGradle) -> settingsGradle.toFile().writeText(DEFAULT_GROOVY_SETTINGS_FILE)
+
+        Files.exists(buildGradleKts) -> settingsGradleKts.toFile().writeText(DEFAULT_KOTLIN_SETTINGS_FILE)
+
+        else -> error("No build-file or settings file found")
     }
 
     if (Files.exists(resolve("buildSrc"))) {
