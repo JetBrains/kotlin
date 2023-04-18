@@ -71,23 +71,36 @@ object JavaScopeProvider : FirScopeProvider() {
         memberRequiredPhase: FirResolvePhase?,
         additionalSupertypeScope: FirTypeScope?,
     ): JavaClassMembersEnhancementScope {
+        if (additionalSupertypeScope != null) return doBuild(symbol, useSiteSession, scopeSession, memberRequiredPhase, additionalSupertypeScope)
+
         return scopeSession.getOrBuild(symbol, JAVA_ENHANCEMENT) {
-            val firJavaClass = symbol.fir
-            require(firJavaClass is FirJavaClass) {
-                "${firJavaClass.classId} is expected to be FirJavaClass, but ${firJavaClass::class} found"
-            }
-            JavaClassMembersEnhancementScope(
-                useSiteSession,
-                symbol,
-                buildUseSiteMemberScopeWithJavaTypes(
-                    firJavaClass,
-                    useSiteSession,
-                    scopeSession,
-                    memberRequiredPhase,
-                    additionalSupertypeScope,
-                )
-            )
+            doBuild(symbol, useSiteSession, scopeSession, memberRequiredPhase, additionalSupertypeScope)
         }
+
+    }
+
+    private fun doBuild(
+        symbol: FirRegularClassSymbol,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession,
+        memberRequiredPhase: FirResolvePhase?,
+        additionalSupertypeScope: FirTypeScope?
+    ): JavaClassMembersEnhancementScope {
+        val firJavaClass = symbol.fir
+        require(firJavaClass is FirJavaClass) {
+            "${firJavaClass.classId} is expected to be FirJavaClass, but ${firJavaClass::class} found"
+        }
+        return JavaClassMembersEnhancementScope(
+            useSiteSession,
+            symbol,
+            buildUseSiteMemberScopeWithJavaTypes(
+                firJavaClass,
+                useSiteSession,
+                scopeSession,
+                memberRequiredPhase,
+                additionalSupertypeScope,
+            )
+        )
     }
 
     private fun buildDeclaredMemberScope(useSiteSession: FirSession, regularClass: FirRegularClass): FirContainingNamesAwareScope {
@@ -105,27 +118,45 @@ object JavaScopeProvider : FirScopeProvider() {
         memberRequiredPhase: FirResolvePhase?,
         additionalSupertypeScope: FirTypeScope?,
     ): JavaClassUseSiteMemberScope {
-        return scopeSession.getOrBuild(regularClass.symbol, JAVA_USE_SITE) {
-            val declaredScope = buildDeclaredMemberScope(useSiteSession, regularClass)
-            val superTypes =
-                if (regularClass.isThereLoopInSupertypes(useSiteSession))
-                    listOf(StandardClassIds.Any.constructClassLikeType(emptyArray(), isNullable = false))
-                else
-                    lookupSuperTypes(
-                        regularClass, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession, substituteTypes = true
-                    )
-
-            val superTypeScopes = superTypes.mapNotNull {
-                it.scopeForSupertype(useSiteSession, scopeSession, regularClass, memberRequiredPhase = memberRequiredPhase)
-            } + listOfNotNull(additionalSupertypeScope)
-
-            JavaClassUseSiteMemberScope(
-                regularClass,
-                useSiteSession,
-                superTypeScopes,
-                declaredScope
+        if (additionalSupertypeScope != null) {
+            return doBuildUseSiteMemberScopeWithJavaTypes(
+                useSiteSession, regularClass, scopeSession, memberRequiredPhase, additionalSupertypeScope
             )
         }
+
+        return scopeSession.getOrBuild(regularClass.symbol, JAVA_USE_SITE) {
+            doBuildUseSiteMemberScopeWithJavaTypes(
+                useSiteSession, regularClass, scopeSession, memberRequiredPhase, additionalSupertypeScope
+            )
+        }
+    }
+
+    private fun doBuildUseSiteMemberScopeWithJavaTypes(
+        useSiteSession: FirSession,
+        regularClass: FirJavaClass,
+        scopeSession: ScopeSession,
+        memberRequiredPhase: FirResolvePhase?,
+        additionalSupertypeScope: FirTypeScope?
+    ): JavaClassUseSiteMemberScope {
+        val declaredScope = buildDeclaredMemberScope(useSiteSession, regularClass)
+        val superTypes =
+            if (regularClass.isThereLoopInSupertypes(useSiteSession))
+                listOf(StandardClassIds.Any.constructClassLikeType(emptyArray(), isNullable = false))
+            else
+                lookupSuperTypes(
+                    regularClass, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession, substituteTypes = true
+                )
+
+        val superTypeScopes = superTypes.mapNotNull {
+            it.scopeForSupertype(useSiteSession, scopeSession, regularClass, memberRequiredPhase = memberRequiredPhase)
+        } + listOfNotNull(additionalSupertypeScope)
+
+        return JavaClassUseSiteMemberScope(
+            regularClass,
+            useSiteSession,
+            superTypeScopes,
+            declaredScope
+        )
     }
 
     override fun getStaticMemberScopeForCallables(

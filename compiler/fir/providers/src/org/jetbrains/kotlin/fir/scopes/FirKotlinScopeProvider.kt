@@ -29,7 +29,8 @@ class FirKotlinScopeProvider(
         klass: FirClass,
         declaredMemberScope: FirContainingNamesAwareScope,
         useSiteSession: FirSession,
-    ) -> FirContainingNamesAwareScope = { _, declaredMemberScope, _ -> declaredMemberScope }
+        scopeSession: ScopeSession,
+    ) -> FirContainingNamesAwareScope = { _, declaredMemberScope, _, _ -> declaredMemberScope }
 ) : FirScopeProvider(), FirSessionComponent {
     override fun getUseSiteMemberScope(
         klass: FirClass,
@@ -45,7 +46,7 @@ class FirKotlinScopeProvider(
                     if (scopeSession.skipDeclaredMemberScopeDecorator)
                         declaredScope
                     else
-                        declaredMemberScopeDecorator(klass, declaredScope, useSiteSession)
+                        declaredMemberScopeDecorator(klass, declaredScope, useSiteSession, scopeSession)
                 }.let {
                     val delegateFields = klass.delegateFields
 
