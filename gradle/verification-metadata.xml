@@ -12,13 +12,13 @@
          <trust file=".*[.]pom" regex="true"/>
          <trust file="kotlin-native-prebuilt-.*" regex="true"/>
          <trust group="gradle" name="gradle" file="gradle-.*-src[.]zip" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="build-tools-api" version="1.9.[0-9](-.+)?" regex="true"/>
-         <trust group="org.jetbrains.kotlin" name="build-tools-impl" version="1.9.[0-9](-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="builtins" version="1.9.[0-9](-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-android-extensions" version="1.9.[0-9](-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-annotation-processing-embeddable" version="1.9.[0-9](-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-annotation-processing-gradle" version="1.9.[0-9](-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-build-common" version="1.9.[0-9](-.+)?" regex="true"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-build-tools-api" version="1.9.[0-9](-.+)?" regex="true"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-build-tools-impl" version="1.9.[0-9](-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-compiler-embeddable" version="1.9.[0-9](-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-compiler-runner" version="1.9.[0-9](-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-daemon-client" version="1.9.[0-9](-.+)?" regex="true"/>

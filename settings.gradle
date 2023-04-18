@@ -378,8 +378,8 @@ if (!buildProperties.inJpsBuildIdeaSync) {
             ":prepare:ide-plugin-dependencies:kotlin-compiler-fir-for-ide"
 }
 
-include ":compiler:build-tools:build-tools-api",
-        ":compiler:build-tools:build-tools-impl"
+include ":compiler:build-tools:kotlin-build-tools-api",
+        ":compiler:build-tools:kotlin-build-tools-impl"
 
 void intellij(String imlPath) {
     File imlFile = new File("${rootDir}/intellij/community/plugins/kotlin/${imlPath}")

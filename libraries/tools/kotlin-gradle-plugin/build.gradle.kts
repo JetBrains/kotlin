@@ -65,7 +65,7 @@ dependencies {
     commonImplementation(project(":kotlin-util-klib"))
     commonImplementation(project(":native:kotlin-klib-commonizer-api"))
     commonImplementation(project(":kotlin-project-model"))
-    commonImplementation(project(":compiler:build-tools:build-tools-api"))
+    commonImplementation(project(":compiler:build-tools:kotlin-build-tools-api"))
 
     commonRuntimeOnly(project(":kotlin-compiler-embeddable"))
     commonRuntimeOnly(project(":kotlin-annotation-processing-embeddable"))
