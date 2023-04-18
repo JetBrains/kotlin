@@ -563,6 +563,14 @@ public final class org/jetbrains/kotlin/gradle/dsl/KotlinVersion$Companion {
 	public final fun getDEFAULT ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinVersion;
 }
 
+public final class org/jetbrains/kotlin/gradle/dsl/jvm/JvmTargetValidationMode : java/lang/Enum {
+	public static final field ERROR Lorg/jetbrains/kotlin/gradle/dsl/jvm/JvmTargetValidationMode;
+	public static final field IGNORE Lorg/jetbrains/kotlin/gradle/dsl/jvm/JvmTargetValidationMode;
+	public static final field WARNING Lorg/jetbrains/kotlin/gradle/dsl/jvm/JvmTargetValidationMode;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/dsl/jvm/JvmTargetValidationMode;
+	public static fun values ()[Lorg/jetbrains/kotlin/gradle/dsl/jvm/JvmTargetValidationMode;
+}
+
 public abstract class org/jetbrains/kotlin/gradle/plugin/AbstractCompileWithDependenciesTracking : org/gradle/api/tasks/compile/AbstractCompile {
 	public fun <init> ()V
 	public fun isDependentTaskOutOfDate (Lorg/gradle/api/Task;)Z
@@ -1607,6 +1615,7 @@ public final class org/jetbrains/kotlin/gradle/tasks/KotlinJavaToolchain$JdkSett
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/tasks/KotlinJvmCompile : org/jetbrains/kotlin/gradle/dsl/KotlinCompile, org/jetbrains/kotlin/gradle/tasks/BaseKotlinCompile, org/jetbrains/kotlin/gradle/tasks/KotlinCompilationTask {
+	public abstract fun getJvmTargetValidationMode ()Lorg/gradle/api/provider/Property;
 	public abstract fun getModuleName ()Lorg/gradle/api/provider/Property;
 	public abstract fun getParentKotlinOptions ()Lorg/gradle/api/provider/Property;
 }

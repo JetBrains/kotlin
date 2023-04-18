@@ -51,6 +51,45 @@ class JvmTargetValidationTest : KGPBaseTest() {
         }
     }
 
+    @DisplayName("Should allow to override validation mode for specific task")
+    @GradleTest
+    internal fun overrideModeForTask(gradleVersion: GradleVersion) {
+        project(
+            projectName = "kotlinJavaProject".fullProjectName,
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.WARN)
+        ) {
+            setJavaCompilationCompatibility(JavaVersion.VERSION_1_8)
+            useToolchainToCompile(11)
+
+            gradleProperties.append(
+                """
+                kotlin.jvm.target.validation.mode = error
+                """.trimIndent()
+            )
+
+            buildGradle.appendText(
+                //language=groovy
+                """
+                |
+                |tasks.named("compileKotlin", org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile.class) {
+                |    jvmTargetValidationMode.set(org.jetbrains.kotlin.gradle.dsl.jvm.JvmTargetValidationMode.IGNORE)
+                |}
+                """.trimMargin()
+            )
+
+            build("assemble") {
+                assertOutputDoesNotContain(
+                    "'compileJava' task (current target is 1.8) and 'compileKotlin' task (current target is 11) jvm target compatibility " +
+                            "should be set to the same Java version.\n" +
+                            "By default will become an error since Gradle 8.0+! " +
+                            "Read more: https://kotl.in/gradle/jvm/target-validation\n" +
+                            "Consider using JVM toolchain: https://kotl.in/gradle/jvm/toolchain"
+                )
+            }
+        }
+    }
+
     @DisplayName("Should warn in the build log if verification mode is 'warning' and kotlin and java targets are different")
     @GradleTest
     internal fun shouldWarnBuildIfJavaAndKotlinJvmTargetsAreDifferent(gradleVersion: GradleVersion) {

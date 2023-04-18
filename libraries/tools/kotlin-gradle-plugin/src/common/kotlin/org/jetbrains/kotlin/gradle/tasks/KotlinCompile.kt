@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsHelper
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
+import org.jetbrains.kotlin.gradle.dsl.jvm.JvmTargetValidationMode
 import org.jetbrains.kotlin.gradle.dsl.usesK2
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
 import org.jetbrains.kotlin.gradle.logging.GradleErrorMessageCollector
@@ -39,7 +40,6 @@ import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.report.BuildReportMode
 import org.jetbrains.kotlin.gradle.tasks.internal.KotlinJvmOptionsCompat
@@ -164,9 +164,6 @@ abstract class KotlinCompile @Inject constructor(
 
     @get:Internal
     internal abstract val associatedJavaCompileTaskName: Property<String>
-
-    @get:Input
-    internal abstract val jvmTargetValidationMode: Property<PropertiesProvider.JvmTargetValidationMode>
 
     @get:Internal
     internal val nagTaskModuleNameUsage: Property<Boolean> = objectFactory.propertyWithConvention(false)
@@ -368,6 +365,9 @@ abstract class KotlinCompile @Inject constructor(
     private fun validateKotlinAndJavaHasSameTargetCompatibility(
         args: K2JVMCompilerArguments,
     ) {
+        val jvmTargetValidationMode: JvmTargetValidationMode = jvmTargetValidationMode.get()
+        if (jvmTargetValidationMode == JvmTargetValidationMode.IGNORE) return
+
         associatedJavaCompileTaskTargetCompatibility.orNull?.let { targetCompatibility ->
             val normalizedJavaTarget = when (targetCompatibility) {
                 "6" -> "1.6"
@@ -392,9 +392,9 @@ abstract class KotlinCompile @Inject constructor(
                     appendLine("Consider using JVM toolchain: https://kotl.in/gradle/jvm/toolchain")
                 }
 
-                when (jvmTargetValidationMode.get()) {
-                    PropertiesProvider.JvmTargetValidationMode.ERROR -> throw GradleException(errorMessage)
-                    PropertiesProvider.JvmTargetValidationMode.WARNING -> logger.warn(errorMessage)
+                when (jvmTargetValidationMode) {
+                    JvmTargetValidationMode.ERROR -> throw GradleException(errorMessage)
+                    JvmTargetValidationMode.WARNING -> logger.warn(errorMessage)
                     else -> Unit
                 }
             }

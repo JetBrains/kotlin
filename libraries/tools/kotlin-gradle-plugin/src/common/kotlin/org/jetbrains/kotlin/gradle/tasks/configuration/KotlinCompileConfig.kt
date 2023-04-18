@@ -43,7 +43,7 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
             taskProvider.configure { task ->
                 task.incremental = propertiesProvider.incrementalJvm ?: true
                 task.usePreciseJavaTracking = propertiesProvider.usePreciseJavaTracking ?: true
-                task.jvmTargetValidationMode.set(propertiesProvider.jvmTargetValidationMode)
+                task.jvmTargetValidationMode.convention(propertiesProvider.jvmTargetValidationMode).finalizeValueOnRead()
                 task.useKotlinAbiSnapshot.value(propertiesProvider.useKotlinAbiSnapshot).disallowChanges()
 
                 task.classpathSnapshotProperties.useClasspathSnapshot.value(useClasspathSnapshot).disallowChanges()
