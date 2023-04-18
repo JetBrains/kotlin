@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.jvm.JvmMappedScope
@@ -21,6 +22,7 @@ fun wrapScopeWithJvmMapped(
     klass: FirClass,
     declaredMemberScope: FirContainingNamesAwareScope,
     useSiteSession: FirSession,
+    scopeSession: ScopeSession,
 ): FirContainingNamesAwareScope {
     if (klass !is FirRegularClass) return declaredMemberScope
     val classId = klass.classId
@@ -38,6 +40,7 @@ fun wrapScopeWithJvmMapped(
         useSiteSession,
         klass,
         javaClass,
-        declaredMemberScope
+        declaredMemberScope,
+        scopeSession,
     )
 }
