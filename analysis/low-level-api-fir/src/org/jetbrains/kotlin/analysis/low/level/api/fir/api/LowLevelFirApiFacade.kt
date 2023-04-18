@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveSessionService
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.getKtModule
+import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -22,9 +22,13 @@ import org.jetbrains.kotlin.psi.KtFile
 /**
  * Returns [LLFirResolveSession] which corresponds to containing module
  */
+@Deprecated(
+    "Use KtModule.getFirResolveSession() instead.",
+    level = DeprecationLevel.ERROR
+)
 fun KtElement.getFirResolveSession(): LLFirResolveSession {
-    val project = project
-    return getKtModule(project).getFirResolveSession(project)
+    val module = ProjectStructureProvider.getModule(this, null)
+    return module.getFirResolveSession(this.project)
 }
 
 /**
