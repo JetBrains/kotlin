@@ -88,7 +88,7 @@ internal fun LLFirSourcesSession.registerCompilerPluginServices(
     register(FirRegisteredPluginAnnotations::class, LLFirIdeRegisteredPluginAnnotations(this, annotationsResolver))
     register(
         FirPredicateBasedProvider::class,
-        LLFirIdePredicateBasedProvider(this, annotationsResolver, project.createDeclarationProvider(projectWithDependenciesScope))
+        LLFirIdePredicateBasedProvider(this, annotationsResolver, project.createDeclarationProvider(projectWithDependenciesScope, module))
     )
 
 }

@@ -39,21 +39,21 @@ class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupportBase<KtMo
     override fun findClassOrObjectDeclarationsInPackage(
         packageFqName: FqName,
         searchScope: GlobalSearchScope
-    ): Collection<KtClassOrObject> = project.createDeclarationProvider(searchScope).run {
+    ): Collection<KtClassOrObject> = project.createDeclarationProvider(searchScope, null).run {
         getTopLevelKotlinClassLikeDeclarationNamesInPackage(packageFqName).flatMap {
             getAllClassesByClassId(ClassId.topLevel(packageFqName.child(it)))
         }
     }
 
     override fun findFilesForPackage(packageFqName: FqName, searchScope: GlobalSearchScope): Collection<KtFile> = buildSet {
-        addAll(project.createDeclarationProvider(searchScope).findFilesForFacadeByPackage(packageFqName))
+        addAll(project.createDeclarationProvider(searchScope, null).findFilesForFacadeByPackage(packageFqName))
         findClassOrObjectDeclarationsInPackage(packageFqName, searchScope).mapTo(this) {
             it.containingKtFile
         }
     }
 
     override fun findFilesForFacadeByPackage(packageFqName: FqName, searchScope: GlobalSearchScope): Collection<KtFile> {
-        return project.createDeclarationProvider(searchScope).findFilesForFacadeByPackage(packageFqName)
+        return project.createDeclarationProvider(searchScope, null).findFilesForFacadeByPackage(packageFqName)
     }
 
     private fun FqName.toClassIdSequence(): Sequence<ClassId> {
@@ -75,9 +75,9 @@ class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupportBase<KtMo
 
     override fun findClassOrObjectDeclarations(fqName: FqName, searchScope: GlobalSearchScope): Collection<KtClassOrObject> =
         fqName.toClassIdSequence().flatMap {
-            project.createDeclarationProvider(searchScope).getAllClassesByClassId(it)
+            project.createDeclarationProvider(searchScope, null).getAllClassesByClassId(it)
         }
-            .filter { it.isFromSourceOrLibraryBinary(project) }
+            .filter { it.isFromSourceOrLibraryBinary() }
             .toSet()
 
     override fun packageExists(fqName: FqName, scope: GlobalSearchScope): Boolean =
@@ -140,7 +140,7 @@ class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupportBase<KtMo
     override fun getScriptClasses(scriptFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> = error("Should not be called")
 
     override fun getKotlinInternalClasses(fqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
-        val facadeKtFiles = project.createDeclarationProvider(scope).findInternalFilesForFacade(fqName)
+        val facadeKtFiles = project.createDeclarationProvider(scope, null).findInternalFilesForFacade(fqName)
         if (facadeKtFiles.isEmpty()) return emptyList()
 
         val partShortName = fqName.shortName().asString()
@@ -165,7 +165,7 @@ class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupportBase<KtMo
     }
 
     override fun findFilesForFacade(facadeFqName: FqName, searchScope: GlobalSearchScope): Collection<KtFile> {
-        return project.createDeclarationProvider(searchScope).findFilesForFacade(facadeFqName)
+        return project.createDeclarationProvider(searchScope, null).findFilesForFacade(facadeFqName)
     }
 
     override fun getFakeLightClass(classOrObject: KtClassOrObject): KtFakeLightClass = SymbolBasedFakeLightClass(classOrObject)

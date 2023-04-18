@@ -143,7 +143,7 @@ internal class LLFirSessionCache(private val project: Project) {
             val provider = LLFirProvider(
                 this,
                 components,
-                project.createDeclarationProvider(contentScope),
+                project.createDeclarationProvider(contentScope, module),
                 project.createPackageProvider(contentScope),
                 /* Source modules can contain `kotlin` package only if `-Xallow-kotlin-package` is specified, this is handled in LLFirProvider */
                 canContainKotlinPackage = false,
@@ -230,7 +230,7 @@ internal class LLFirSessionCache(private val project: Project) {
             val provider = LLFirProvider(
                 this,
                 components,
-                project.createDeclarationProvider(contentScope),
+                project.createDeclarationProvider(contentScope, module),
                 project.createPackageProvider(contentScope),
                 canContainKotlinPackage = true,
             )
@@ -535,7 +535,7 @@ internal class LLFirSessionCache(private val project: Project) {
      * create a combined symbol provider.
      */
     private fun List<FirSymbolProvider>.mergeDependencySymbolProvidersInto(
-        session: FirSession,
+        session: LLFirSession,
         destination: MutableList<FirSymbolProvider>,
     ) {
         SymbolProviderMerger(this, destination).apply {

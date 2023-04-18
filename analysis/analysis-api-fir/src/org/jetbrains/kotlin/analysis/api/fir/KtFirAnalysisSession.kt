@@ -142,7 +142,7 @@ private constructor(
     internal val targetPlatform: TargetPlatform get() = useSiteSession.moduleData.platform
 
     val useSiteAnalysisScope: GlobalSearchScope = analysisScopeProviderImpl.getAnalysisScope()
-    val useSiteScopeDeclarationProvider: KotlinDeclarationProvider = project.createDeclarationProvider(useSiteAnalysisScope)
+    val useSiteScopeDeclarationProvider: KotlinDeclarationProvider = project.createDeclarationProvider(useSiteAnalysisScope, useSiteModule)
 
     fun getScopeSessionFor(session: FirSession): ScopeSession = withValidityAssertion { firResolveSession.getScopeSessionFor(session) }
 

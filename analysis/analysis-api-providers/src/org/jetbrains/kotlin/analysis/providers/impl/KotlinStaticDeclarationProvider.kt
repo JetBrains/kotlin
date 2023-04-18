@@ -17,6 +17,7 @@ import com.intellij.util.indexing.FileContent
 import com.intellij.util.indexing.FileContentImpl
 import com.intellij.util.io.URLUtil
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInDecompiler
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProviderFactory
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
@@ -268,7 +269,7 @@ public class KotlinStaticDeclarationProviderFactory(
         }
     }
 
-    override fun createDeclarationProvider(searchScope: GlobalSearchScope): KotlinDeclarationProvider {
-        return KotlinStaticDeclarationProvider(index, searchScope)
+    override fun createDeclarationProvider(scope: GlobalSearchScope, contextualModule: KtModule?): KotlinDeclarationProvider {
+        return KotlinStaticDeclarationProvider(index, scope)
     }
 }
