@@ -11392,6 +11392,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
             }
 
             @Test
+            @TestMetadata("fromOtherModule.kt")
+            public void testFromOtherModule() throws Exception {
+                runTest("compiler/testData/codegen/box/dataClasses/fromOtherModule.kt");
+            }
+
+            @Test
             @TestMetadata("genericParam.kt")
             public void testGenericParam() throws Exception {
                 runTest("compiler/testData/codegen/box/dataClasses/genericParam.kt");
