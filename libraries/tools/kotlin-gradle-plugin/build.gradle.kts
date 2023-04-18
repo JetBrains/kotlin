@@ -58,6 +58,7 @@ dependencies {
         exclude(group = "*")
     }
     commonCompileOnly(project(":kotlin-tooling-metadata"))
+    commonCompileOnly(project(":compiler:build-tools:kotlin-build-statistic"))
 
     commonImplementation(project(":kotlin-gradle-plugin-idea"))
     commonImplementation(project(":kotlin-gradle-plugin-idea-proto"))
@@ -65,7 +66,6 @@ dependencies {
     commonImplementation(project(":native:kotlin-klib-commonizer-api"))
     commonImplementation(project(":kotlin-project-model"))
     commonImplementation(project(":compiler:build-tools:kotlin-build-tools-api"))
-    commonImplementation(project(":kotlin-build-statistic"))
 
     commonRuntimeOnly(project(":kotlin-compiler-embeddable"))
     commonRuntimeOnly(project(":kotlin-annotation-processing-embeddable"))
@@ -108,7 +108,6 @@ dependencies {
     testImplementation(commonDependency("junit:junit"))
     testImplementation(project(":kotlin-gradle-statistics"))
     testImplementation(project(":kotlin-tooling-metadata"))
-    testImplementation(projectTests(":kotlin-build-statistic"))
 }
 
 if (kotlinBuildProperties.isInJpsBuildIdeaSync) {

@@ -14,13 +14,12 @@ import org.jetbrains.kotlin.build.report.statistic.file.FileReportService
 import org.jetbrains.kotlin.build.report.statistic.formatSize
 import org.jetbrains.kotlin.build.report.statistic.BuildFinishStatisticsData
 import org.jetbrains.kotlin.build.report.statistic.CompileStatisticsData
-import org.jetbrains.kotlin.build.report.statistic.GradleBuildStartParameters
+import org.jetbrains.kotlin.build.report.statistic.BuildStartParameters
 import org.jetbrains.kotlin.build.report.statistic.StatTag
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionData
 import org.jetbrains.kotlin.gradle.report.data.BuildOperationRecord
 import org.jetbrains.kotlin.utils.addToStdlib.measureTimeMillisWithResult
 import java.io.File
-import java.lang.management.ManagementFactory
 import java.net.InetAddress
 import java.text.SimpleDateFormat
 import java.util.*
@@ -133,11 +132,11 @@ class BuildReportsService {
         parameters.httpService?.sendData(buildFinishData, loggerAdapter)
     }
 
-    private fun GradleBuildStartParameters.includeVerboseEnvironment(verboseEnvironment: Boolean): GradleBuildStartParameters {
+    private fun BuildStartParameters.includeVerboseEnvironment(verboseEnvironment: Boolean): BuildStartParameters {
         return if (verboseEnvironment) {
             this
         } else {
-            GradleBuildStartParameters(
+            BuildStartParameters(
                 tasks = this.tasks,
                 excludedTasks = this.excludedTasks,
                 currentDir = null,
@@ -284,10 +283,6 @@ class BuildReportsService {
         label?.also {
             buildScan.buildScan.tag(it)
         }
-        val debugConfiguration = "-agentlib:"
-        if (ManagementFactory.getRuntimeMXBean().inputArguments.firstOrNull { it.startsWith(debugConfiguration) } != null) {
-            buildScan.buildScan.tag(StatTag.GRADLE_DEBUG.readableString)
-        }
     }
 
     internal fun addCollectedTags(buildScan: BuildScanExtensionHolder) {
@@ -322,7 +317,7 @@ class BuildReportsService {
         private val DATE_FORMATTER = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
 
         fun getStartParameters(project: Project) = project.gradle.startParameter.let {
-            GradleBuildStartParameters(
+            BuildStartParameters(
                 tasks = it.taskRequests.flatMap { it.args },
                 excludedTasks = it.excludedTaskNames,
                 currentDir = it.currentDir.path,
@@ -352,7 +347,7 @@ enum class TaskExecutionState {
 }
 
 data class BuildReportParameters(
-    val startParameters: GradleBuildStartParameters,
+    val startParameters: BuildStartParameters,
     val reportingSettings: ReportingSettings,
     val httpService: HttpReportService?,
 

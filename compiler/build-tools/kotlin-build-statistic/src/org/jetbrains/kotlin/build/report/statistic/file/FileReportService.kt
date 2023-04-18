@@ -6,12 +6,10 @@
 package org.jetbrains.kotlin.build.report.statistic.file
 
 import org.jetbrains.kotlin.build.report.metrics.*
+import org.jetbrains.kotlin.build.report.statistic.*
 import org.jetbrains.kotlin.build.report.statistic.asString
-import org.jetbrains.kotlin.build.report.statistic.formatSize
 import org.jetbrains.kotlin.build.report.statistic.formatTime
-import org.jetbrains.kotlin.build.report.statistic.CompileStatisticsData
-import org.jetbrains.kotlin.build.report.statistic.GradleBuildStartParameters
-import org.jetbrains.kotlin.util.Logger
+import org.jetbrains.kotlin.compilerRunner.KotlinLogger
 import java.io.File
 import java.io.Serializable
 import java.text.SimpleDateFormat
@@ -20,7 +18,7 @@ import java.util.*
 class FileReportService(
     private val outputFile: File,
     private val printMetrics: Boolean,
-    private val logger: Logger
+    private val logger: KotlinLogger
 ) : Serializable {
     companion object {
         private val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").also { it.timeZone = TimeZone.getTimeZone("UTC")}
@@ -29,9 +27,9 @@ class FileReportService(
             projectName: String,
             includeMetricsInReport: Boolean,
             buildData: List<CompileStatisticsData>,
-            startParameters: GradleBuildStartParameters,
+            startParameters: BuildStartParameters,
             failureMessages: List<String>,
-            logger: Logger
+            logger: KotlinLogger
         ) {
             val ts = SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(Calendar.getInstance().time)
             val reportFile = buildReportDir.resolve("$projectName-build-$ts.txt")
@@ -48,8 +46,8 @@ class FileReportService(
 
     fun process(
         statisticsData: List<CompileStatisticsData>,
-        startParameters: GradleBuildStartParameters,
-        failureMessages: List<String>
+        startParameters: BuildStartParameters,
+        failureMessages: List<String> = emptyList()
     ) {
         val buildReportPath = outputFile.toPath().toUri().toString()
         try {
@@ -72,7 +70,7 @@ class FileReportService(
 
     private fun printBuildReport(
         statisticsData: List<CompileStatisticsData>,
-        startParameters: GradleBuildStartParameters,
+        startParameters: BuildStartParameters,
         failureMessages: List<String>
     ) {
         // NOTE: BuildExecutionData / BuildOperationRecord contains data for both tasks and transforms.
@@ -97,7 +95,7 @@ class FileReportService(
         printTasksLog(statisticsData)
     }
 
-    private fun printBuildInfo(startParameters: GradleBuildStartParameters, failureMessages: List<String>) {
+    private fun printBuildInfo(startParameters: BuildStartParameters, failureMessages: List<String>) {
         p.withIndent("Gradle start parameters:") {
             startParameters.let {
                 p.println("tasks = ${it.tasks}")

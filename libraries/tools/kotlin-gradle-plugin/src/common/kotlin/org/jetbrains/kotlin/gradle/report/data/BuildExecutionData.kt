@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.gradle.report.data
 
 import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
-import org.jetbrains.kotlin.build.report.statistic.GradleBuildStartParameters
+import org.jetbrains.kotlin.build.report.statistic.BuildStartParameters
 
 class BuildExecutionData(
-    val startParameters: GradleBuildStartParameters,
+    val startParameters: BuildStartParameters,
     val failureMessages: List<String?>,
     val buildOperationRecord: Collection<BuildOperationRecord>
 ) {
