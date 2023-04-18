@@ -6,7 +6,7 @@ idePluginDependency {
     val mavenDependencies = rootProject.extra["kotlinJpsPluginMavenDependencies"] as List<String>
     val mavenDependenciesLibs = rootProject.extra["kotlinJpsPluginMavenDependenciesNonTransitiveLibs"] as List<String>
 
-    val otherProjects = listOf(":jps:jps-plugin", ":jps:jps-common")
+    val otherProjects = listOf(":jps:jps-plugin", ":jps:jps-common", ":build-tools-enum-compat")
 
     publishProjectJars(
         embeddedDependencies + mavenDependencies + otherProjects,
