@@ -16,9 +16,9 @@
 
 package org.jetbrains.kotlin.resolve.diagnostics
 
-import com.intellij.openapi.diagnostic.Logger
 import com.intellij.openapi.util.CompositeModificationTracker
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFile
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.util.CachedValueImpl
 import org.jetbrains.annotations.TestOnly
@@ -32,6 +32,7 @@ class MutableDiagnosticsWithSuppression(
     private val delegateDiagnostics: Diagnostics,
 ) : Diagnostics {
     private val diagnosticList = ArrayList<Diagnostic>()
+
     @Volatile
     private var diagnosticsCallback: DiagnosticSink.DiagnosticsCallback? = null
 
@@ -74,14 +75,21 @@ class MutableDiagnosticsWithSuppression(
         modificationTracker.incModificationCount()
     }
 
-    private fun onTheFlyDiagnosticsCallback(diagnostic: Diagnostic): DiagnosticSink.DiagnosticsCallback? =
-        diagnosticsCallback.takeIf {
-            diagnosticsCallback != null &&
-                    // Due to a potential recursion in filter.invoke (via LazyAnnotations) do not try to report
-                    // diagnostic on-the-fly if it happened in annotations, and do not report any potentially suppressed elements
-                    KtStubbedPsiUtil.getPsiOrStubParent(diagnostic.psiElement, KtAnnotated::class.java, false) == null &&
-                    suppressCache.filter.invoke(diagnostic)
+    private fun onTheFlyDiagnosticsCallback(diagnostic: Diagnostic): DiagnosticSink.DiagnosticsCallback? {
+        val callback = diagnosticsCallback ?: return null
+        // Due to a potential recursion in filter.invoke (via LazyAnnotations) do not try to report
+        // diagnostic on-the-fly if it happened in annotations, and do not report any potentially suppressed elements
+        var element: PsiElement? = diagnostic.psiElement
+        while (element != null && element !is PsiFile) {
+            val annotated = KtStubbedPsiUtil.getPsiOrStubParent(element, KtAnnotated::class.java, false)
+            val annotationEntries = annotated?.annotationEntries
+            if (annotationEntries?.isNotEmpty() == true) return null
+            element = annotated?.parent
         }
+        val filtered = suppressCache.filter.invoke(diagnostic)
+        if (!filtered) return null
+        return callback
+    }
 
     fun clear() {
         diagnosticList.clear()
