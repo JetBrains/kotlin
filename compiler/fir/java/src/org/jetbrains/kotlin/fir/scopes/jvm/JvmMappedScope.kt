@@ -49,6 +49,7 @@ class JvmMappedScope(
     private val firKotlinClass: FirRegularClass,
     private val firJavaClass: FirJavaClass,
     private val declaredMemberScope: FirContainingNamesAwareScope,
+    private val scopeSession: ScopeSession,
 ) : FirTypeScope() {
     private val functionsCache = mutableMapOf<FirNamedFunctionSymbol, FirNamedFunctionSymbol>()
 
@@ -70,9 +71,9 @@ class JvmMappedScope(
         JavaScopeProvider.getUseSiteMemberScope(
             firJavaClass, session,
             // We explicitly use fresh ScopeSession, to make sure we do not leak irregular scope to the common session
-            ScopeSession(),
+            scopeSession,
             memberRequiredPhase = null,
-            additionalSupertypeScope = buildUseSiteScopeForKotlinMirrorClassWithRegularDeclaredScope(firJavaClass, session)
+            additionalSupertypeScope = buildUseSiteScopeForKotlinMirrorClassWithRegularDeclaredScope(firJavaClass, session, scopeSession)
         )
 
     private val isMutable = JavaToKotlinClassMap.isMutable(firKotlinClass.classId)
@@ -290,12 +291,14 @@ class JvmMappedScope(
     }
 
     companion object {
+        private object ScopeSessionForCommonLikeBuiltIn : ScopeSessionKey<ScopeSessionForCommonLikeBuiltIn, ScopeSession>()
         /**
          * @return platform-independent scope of (probably) mutable version of built-in class that is mapped to firJavaClass
          */
         private fun buildUseSiteScopeForKotlinMirrorClassWithRegularDeclaredScope(
             firJavaClass: FirJavaClass,
             session: FirSession,
+            mainScopeSession: ScopeSession,
         ): FirTypeScope? {
             val kotlinMutableVersionClassId =
                 JavaToKotlinClassMap.mapJavaToKotlin(firJavaClass.classId.asSingleFqName())
@@ -318,7 +321,7 @@ class JvmMappedScope(
                 // - passing that flag through all the places where scopes are created
                 //
                 // Both of them looks quite complicated and non-local, so they don't seem like worth it.
-                ScopeSession(skipDeclaredMemberScopeDecorator = true),
+                mainScopeSession.getOrBuild(ScopeSessionForCommonLikeBuiltIn, ScopeSessionForCommonLikeBuiltIn) { ScopeSession(skipDeclaredMemberScopeDecorator = true) },
                 memberRequiredPhase = null
             ).let {
                 val substitutor = createMappingSubstitutor(kotlinMutableVersionFirClass, firJavaClass, session)
