@@ -519,7 +519,7 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
                                         compilerContext,
                                         it
                                     )
-                                    instantiate(argSer, it)!!
+                                    instantiate(argSer, it) ?: return null
                                 })
                         )
                     }
