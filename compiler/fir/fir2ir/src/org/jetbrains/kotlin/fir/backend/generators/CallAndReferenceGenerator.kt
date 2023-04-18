@@ -290,7 +290,7 @@ class CallAndReferenceGenerator(
 
     private fun convertToIrCallForDynamic(
         qualifiedAccess: FirQualifiedAccessExpression,
-        explicitReceiverExpression: IrExpression,
+        explicitReceiverExpression: IrExpression?,
         type: IrType,
         calleeReference: FirReference,
         symbol: FirBasedSymbol<*>,
@@ -298,7 +298,7 @@ class CallAndReferenceGenerator(
         dynamicOperator: IrDynamicOperator? = null,
         noArguments: Boolean = false,
     ): IrExpression {
-        var convertedExplicitReceiver = explicitReceiverExpression
+        val selectedReceiver = qualifiedAccess.findIrDynamicReceiver(explicitReceiverExpression)
 
         return qualifiedAccess.convertWithOffsets { startOffset, endOffset ->
             when (symbol) {
@@ -314,22 +314,24 @@ class CallAndReferenceGenerator(
                     } else {
                         type
                     }
-                    if (operator == IrDynamicOperator.INVOKE && qualifiedAccess !is FirImplicitInvokeCall) {
-                        convertedExplicitReceiver = IrDynamicMemberExpressionImpl(
-                            startOffset, endOffset, type, name.identifier, explicitReceiverExpression
-                        )
+                    IrDynamicOperatorExpressionImpl(startOffset, endOffset, theType, operator).apply {
+                        receiver = if (operator == IrDynamicOperator.INVOKE && qualifiedAccess !is FirImplicitInvokeCall) {
+                            IrDynamicMemberExpressionImpl(startOffset, endOffset, type, name.identifier, selectedReceiver)
+                        } else {
+                            selectedReceiver
+                        }
                     }
-                    IrDynamicOperatorExpressionImpl(startOffset, endOffset, theType, operator)
                 }
 
                 is FirPropertySymbol -> {
                     val name = calleeReference.resolved?.name ?: error("There must be a name")
-                    IrDynamicMemberExpressionImpl(startOffset, endOffset, type, name.identifier, explicitReceiverExpression)
+                    IrDynamicMemberExpressionImpl(startOffset, endOffset, type, name.identifier, selectedReceiver)
                 }
 
                 else -> generateErrorCallExpression(startOffset, endOffset, calleeReference, type)
             }
-        }.applyTypeArguments(qualifiedAccess).applyReceivers(qualifiedAccess, convertedExplicitReceiver)
+        }
+            .applyTypeArguments(qualifiedAccess)
             .applyCallArguments((qualifiedAccess as? FirCall)?.takeIf { !noArguments }, annotationMode)
     }
 
@@ -356,7 +358,7 @@ class CallAndReferenceGenerator(
             if (isDynamicAccess) {
                 return convertToIrCallForDynamic(
                     qualifiedAccess,
-                    explicitReceiverExpression ?: error("Must've had a receiver"),
+                    explicitReceiverExpression,
                     type,
                     calleeReference,
                     firSymbol ?: error("Must have had a symbol"),
@@ -483,31 +485,41 @@ class CallAndReferenceGenerator(
 
     private fun convertToIrSetCallForDynamic(
         variableAssignment: FirVariableAssignment,
-        receiverExpression: IrExpression,
+        explicitReceiverExpression: IrExpression?,
         type: IrType,
         calleeReference: FirReference,
         symbol: FirBasedSymbol<*>,
         assignedValue: IrExpression,
     ): IrExpression {
-        var convertedExplicitReceiver = receiverExpression
+        val selectedReceiver =
+            (variableAssignment.unwrapLValue() ?: error("Assignment has no lValue")).findIrDynamicReceiver(explicitReceiverExpression)
 
         return variableAssignment.convertWithOffsets { startOffset, endOffset ->
             when (symbol) {
                 is FirPropertySymbol -> {
                     val name = calleeReference.resolved?.name ?: error("There must be a name")
-                    convertedExplicitReceiver = IrDynamicMemberExpressionImpl(
-                        startOffset, endOffset, type, name.identifier, receiverExpression
-                    )
                     IrDynamicOperatorExpressionImpl(startOffset, endOffset, type, IrDynamicOperator.EQ).apply {
+                        receiver = IrDynamicMemberExpressionImpl(
+                            startOffset, endOffset, type, name.identifier, selectedReceiver
+                        )
                         arguments.add(assignedValue)
                     }
                 }
 
                 else -> generateErrorCallExpression(startOffset, endOffset, calleeReference)
             }
-        }.apply {
-            variableAssignment.unwrapLValue()?.let { applyReceivers(it, convertedExplicitReceiver) }
         }
+    }
+
+    /**
+     * A dynamic call has either an explicit receiver or an implicit this dispatch receiver.
+     */
+    private fun FirQualifiedAccessExpression.findIrDynamicReceiver(
+        explicitReceiverExpression: IrExpression?,
+    ): IrExpression {
+        return explicitReceiverExpression
+            ?: (dispatchReceiver as? FirThisReceiverExpression)?.let(visitor::convertToIrExpression)
+            ?: error("No receiver for dynamic call")
     }
 
     fun convertToIrSetCall(variableAssignment: FirVariableAssignment, explicitReceiverExpression: IrExpression?): IrExpression {
@@ -520,13 +532,9 @@ class CallAndReferenceGenerator(
             val isDynamicAccess = firSymbol?.origin == FirDeclarationOrigin.DynamicScope
 
             if (isDynamicAccess) {
-                val receiverExpression = (explicitReceiverExpression
-                    ?: (variableAssignment.dispatchReceiver as? FirThisReceiverExpression)?.let(visitor::convertToIrExpression)
-                    ?: error("Must've had a receiver"))
-
                 return convertToIrSetCallForDynamic(
                     variableAssignment,
-                    receiverExpression,
+                    explicitReceiverExpression,
                     type,
                     calleeReference,
                     firSymbol ?: error("Must've had a symbol"),
@@ -1151,10 +1159,6 @@ class CallAndReferenceGenerator(
                 if (!ownerField.isStatic) {
                     receiver = qualifiedAccess.findIrDispatchReceiver(explicitReceiverExpression)
                 }
-            }
-
-            is IrDynamicOperatorExpression -> {
-                receiver = explicitReceiverExpression ?: error("No receiver for dynamic")
             }
         }
         return this

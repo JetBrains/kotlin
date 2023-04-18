@@ -21804,6 +21804,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("getOperatorOnDynamicThis.kt")
+        public void testGetOperatorOnDynamicThis() throws Exception {
+            runTest("compiler/testData/codegen/box/js/getOperatorOnDynamicThis.kt");
+        }
+
+        @Test
         @TestMetadata("lambdaWithDynamicReceiver.kt")
         public void testLambdaWithDynamicReceiver() throws Exception {
             runTest("compiler/testData/codegen/box/js/lambdaWithDynamicReceiver.kt");
