@@ -2,7 +2,7 @@
 // FIR_IDENTICAL
 
 // MUTE_SIGNATURE_COMPARISON_K2: ANY
-// ^ KT-57566
+// ^ KT-57818
 
 val d: dynamic = 1
 

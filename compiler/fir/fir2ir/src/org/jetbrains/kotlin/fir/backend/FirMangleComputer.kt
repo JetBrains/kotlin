@@ -190,6 +190,10 @@ open class FirMangleComputer(
                 mangleType(tBuilder, type.lowerBound, declarationSiteSession)
             }
 
+            is ConeDynamicType -> {
+                tBuilder.appendSignature(MangleConstant.DYNAMIC_MARK)
+            }
+
             is ConeFlexibleType -> {
                 with(declarationSiteSession.typeContext) {
                     // Need to reproduce type approximation done for flexible types in TypeTranslator.

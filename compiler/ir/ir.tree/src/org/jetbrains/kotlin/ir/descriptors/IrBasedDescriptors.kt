@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.descriptors
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
@@ -103,6 +104,9 @@ abstract class IrBasedDeclarationDescriptor<T : IrDeclaration>(val owner: T) : D
             else -> error("$this is not expected: ${this.dump()}")
         }
     }
+
+    @OptIn(ObsoleteDescriptorBasedAPI::class)
+    protected fun IrType.toIrBasedKotlinType(): KotlinType = toIrBasedKotlinType(owner.module.builtIns)
 
     override fun getContainingDeclaration(): DeclarationDescriptor =
         getContainingDeclaration(owner)
@@ -1161,9 +1165,9 @@ private fun getContainingDeclaration(declaration: IrDeclaration): DeclarationDes
     }
 }
 
-fun IrType.toIrBasedKotlinType(): KotlinType = when (this) {
+fun IrType.toIrBasedKotlinType(builtins: KotlinBuiltIns? = null): KotlinType = when (this) {
     is IrSimpleType ->
-        makeKotlinType(classifier, arguments, isMarkedNullable()).let {
+        makeKotlinType(classifier, arguments, isMarkedNullable(), builtins).let {
             if (classifier is IrTypeParameterSymbol && nullability == SimpleTypeNullability.DEFINITELY_NOT_NULL) {
                 // avoidCheckingActualTypeNullability = true is necessary because in recursive cases `makesSenseToBeDefinitelyNotNull` triggers
                 // supertype computation for a type parameter and for which bounds we need to call `toIrBasedKotlinType` again
@@ -1172,6 +1176,7 @@ fun IrType.toIrBasedKotlinType(): KotlinType = when (this) {
                 it
             }
         }
+    is IrDynamicType -> kotlinType ?: builtins?.let(::createDynamicType) ?: error("Couldn't instantiate DynamicType")
     is IrErrorType -> kotlinType ?: error("Can't find KotlinType in IrErrorType: " + (this as IrType).render())
     else ->
         throw AssertionError("Unexpected type: $this = ${this.render()}")
@@ -1180,7 +1185,8 @@ fun IrType.toIrBasedKotlinType(): KotlinType = when (this) {
 private fun makeKotlinType(
     classifier: IrClassifierSymbol,
     arguments: List<IrTypeArgument>,
-    hasQuestionMark: Boolean
+    hasQuestionMark: Boolean,
+    builtins: KotlinBuiltIns?,
 ): SimpleType =
     when (classifier) {
         is IrTypeParameterSymbol ->
@@ -1189,7 +1195,7 @@ private fun makeKotlinType(
             val classDescriptor = classifier.toIrBasedDescriptorIfPossible()
             val kotlinTypeArguments = arguments.memoryOptimizedMapIndexed { index, it ->
                 when (it) {
-                    is IrTypeProjection -> TypeProjectionImpl(it.variance, it.type.toIrBasedKotlinType())
+                    is IrTypeProjection -> TypeProjectionImpl(it.variance, it.type.toIrBasedKotlinType(builtins))
                     is IrStarProjection -> StarProjectionImpl(classDescriptor.typeConstructor.parameters[index])
                 }
             }

@@ -1,9 +1,5 @@
 // TARGET_BACKEND: JS_IR
 // FIR_IDENTICAL
-
-// MUTE_SIGNATURE_COMPARISON_K2: ANY
-// ^ KT-57566
-
 fun invoke() {}
 
 fun test1(a: dynamic) = a(1)
