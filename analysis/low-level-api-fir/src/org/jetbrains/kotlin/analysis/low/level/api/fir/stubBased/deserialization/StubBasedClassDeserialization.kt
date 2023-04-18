@@ -5,18 +5,24 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization
 
+import org.jetbrains.kotlin.KtFakeSourceElement
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.builder.currentDispatchReceiverType
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
 import org.jetbrains.kotlin.fir.declarations.comparators.FirMemberDeclarationComparator
+import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.deserialization.*
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -181,10 +187,11 @@ fun deserializeClassToSymbol(
             generateValuesFunction(
                 moduleData,
                 classId.packageFqName,
-                classId.relativeClassName
+                classId.relativeClassName,
+                origin = FirDeclarationOrigin.Library
             )
-            generateValueOfFunction(moduleData, classId.packageFqName, classId.relativeClassName)
-            generateEntriesGetter(moduleData, classId.packageFqName, classId.relativeClassName)
+            generateValueOfFunction(moduleData, classId.packageFqName, classId.relativeClassName, origin = FirDeclarationOrigin.Library)
+            generateEntriesGetter(moduleData, classId.packageFqName, classId.relativeClassName, origin = FirDeclarationOrigin.Library)
         }
 
         addCloneForArrayIfNeeded(classId, context.dispatchReceiver)
