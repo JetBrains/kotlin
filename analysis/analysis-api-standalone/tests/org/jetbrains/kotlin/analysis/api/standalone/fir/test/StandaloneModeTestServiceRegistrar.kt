@@ -28,7 +28,7 @@ object StandaloneModeTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
     override fun registerProjectModelServices(project: MockProject, testServices: TestServices) {
         val projectStructureProvider = project.getService(ProjectStructureProvider::class.java)
         val binaryModules =
-            (projectStructureProvider as? KtStaticModuleProvider)?.projectStructure?.allKtModules()?.filterIsInstance<KtBinaryModule>()
+            (projectStructureProvider as? KtStaticModuleProvider)?.allModules?.filterIsInstance<KtBinaryModule>()
                 ?: emptyList()
         val projectEnvironment = testServices.environmentManager.getProjectEnvironment()
         project.apply {

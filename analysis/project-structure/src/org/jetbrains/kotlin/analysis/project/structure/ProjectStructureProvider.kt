@@ -10,9 +10,19 @@ import com.intellij.psi.PsiElement
 
 public abstract class ProjectStructureProvider {
     /**
-     * For a given [PsiElement] get a [KtModule] to which [PsiElement] belongs.
+     * Returns a [KtModule] for a given [element] in context of the [contextualModule].
      */
-    public abstract fun getKtModuleForKtElement(element: PsiElement): KtModule
+    public abstract fun getModule(element: PsiElement, contextualModule: KtModule?): KtModule
+
+    companion object {
+        public fun getInstance(project: Project): ProjectStructureProvider {
+            return project.getService(ProjectStructureProvider::class.java)
+        }
+
+        public fun getModule(element: PsiElement, contextualModule: KtModule?): KtModule {
+            return getInstance(element.project).getModule(element, contextualModule)
+        }
+    }
 }
 
 /**
@@ -21,7 +31,7 @@ public abstract class ProjectStructureProvider {
  */
 public fun PsiElement.getKtModule(project: Project = this.project): KtModule =
     project.getService(ProjectStructureProvider::class.java)
-        .getKtModuleForKtElement(this)
+        .getModule(this, null)
 
 /**
  * For a given [PsiElement] get a [KtModule] to which [PsiElement] belongs.
