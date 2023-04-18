@@ -7,6 +7,7 @@ import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.analysis.decompiler.stub.flags.*
 import org.jetbrains.kotlin.constant.ConstantValue
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.load.kotlin.*
@@ -27,6 +28,8 @@ import org.jetbrains.kotlin.resolve.constants.ClassLiteralValue
 import org.jetbrains.kotlin.serialization.deserialization.AnnotatedCallableKind
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.getName
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -85,7 +88,11 @@ private fun shouldSkip(flags: Int, name: Name): Boolean {
     return when (Flags.MEMBER_KIND.get(flags)) {
         MemberKind.FAKE_OVERRIDE, MemberKind.DELEGATION -> true
         //TODO: fix decompiler to use sane criteria
-        MemberKind.SYNTHESIZED -> !DataClassResolver.isComponentLike(name)
+        MemberKind.SYNTHESIZED -> !DataClassResolver.isComponentLike(name) && name !in listOf(
+            OperatorNameConventions.EQUALS,
+            StandardNames.HASHCODE_NAME,
+            OperatorNameConventions.TO_STRING
+        )
         else -> false
     }
 }
