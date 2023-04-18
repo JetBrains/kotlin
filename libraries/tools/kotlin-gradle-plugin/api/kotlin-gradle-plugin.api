@@ -255,6 +255,10 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/external/
 	public abstract fun getTargetName ()Ljava/lang/String;
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetDescriptor$TargetFactory {
+	public abstract fun create (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinTarget$Delegate;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinTarget;
+}
+
 public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetDescriptorBuilder {
 	public final fun configure (Lkotlin/jvm/functions/Function1;)V
 	public final fun configureIdeImport (Lkotlin/jvm/functions/Function1;)V

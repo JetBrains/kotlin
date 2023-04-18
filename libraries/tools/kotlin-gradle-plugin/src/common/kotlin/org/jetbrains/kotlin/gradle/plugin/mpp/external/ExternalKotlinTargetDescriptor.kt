@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:Suppress("MemberVisibilityCanBePrivate")
+
 package org.jetbrains.kotlin.gradle.plugin.mpp.external
 
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
@@ -11,9 +13,16 @@ import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinTargetDescriptor.TargetFactory
 import kotlin.properties.Delegates
 
+/**
+ * Descriptor used by the Kotlin Gradle Plugin to build a corresponding [ExternalKotlinTargetImpl] from.
+ * This interface is *not stable for implementation* and will become sealed in the future!
+ *
+ * Use the `ExternalKotlinTargetDescriptor { }` factory function to create a new instance using a builder pattern
+ */
 @ExternalKotlinTargetApi
 interface ExternalKotlinTargetDescriptor<T : DecoratedExternalKotlinTarget> {
 
+    @ExternalKotlinTargetApi
     fun interface TargetFactory<T : DecoratedExternalKotlinTarget> {
         fun create(target: DecoratedExternalKotlinTarget.Delegate): T
     }
@@ -32,6 +41,11 @@ interface ExternalKotlinTargetDescriptor<T : DecoratedExternalKotlinTarget> {
     val configureIdeImport: (IdeMultiplatformImport.() -> Unit)?
 }
 
+/**
+ * Creates a new [ExternalKotlinTargetDescriptor] using the builder pattern.
+ * There are some required properties that have to be set.
+ * Check [ExternalKotlinTargetDescriptorBuilder] for further details.
+ */
 @ExternalKotlinTargetApi
 fun <T : DecoratedExternalKotlinTarget> ExternalKotlinTargetDescriptor(
     configure: ExternalKotlinTargetDescriptorBuilder<T>.() -> Unit
@@ -39,6 +53,16 @@ fun <T : DecoratedExternalKotlinTarget> ExternalKotlinTargetDescriptor(
     return ExternalKotlinTargetDescriptorBuilder<T>().also(configure).build()
 }
 
+/**
+ * Mutable version of [ExternalKotlinTargetDescriptor]
+ * The following properties have to be specified:
+ * - [targetName]
+ * - [platformType]
+ * - [targetFactory]
+ *
+ * Properties added in future Kotlin Gradle Plugin releases will be added using a default value, but
+ * a warning might be emitted if not specified.
+ */
 @ExternalKotlinTargetApi
 class ExternalKotlinTargetDescriptorBuilder<T : DecoratedExternalKotlinTarget> internal constructor() {
     var targetName: String by Delegates.notNull()
@@ -60,16 +84,40 @@ class ExternalKotlinTargetDescriptorBuilder<T : DecoratedExternalKotlinTarget> i
     val runtimeElementsPublished: ExternalKotlinTargetConfigurationDescriptorBuilder<T> =
         ExternalKotlinTargetConfigurationDescriptorBuilder()
 
+    /**
+     * Generic configuration that will be invoked when building the target.
+     * This configuration is called right after creating the instance and before
+     * publishing the target to all subscribers of `kotlin.targets.all {}`
+     */
     var configure: ((T) -> Unit)? = null
 
+    /**
+     * Generic configuration that will be invoked when building the target.
+     * This configuration is called right after creating the instance and before
+     * publishing the target to all subscribers of `kotlin.targets.all {}`
+     */
     fun configure(action: (T) -> Unit) {
         val configure = this.configure
         if (configure == null) this.configure = action
         else this.configure = { configure(it); action(it) }
     }
 
+    /**
+     * Main entrance of configuring the ide import:
+     * The [IdeMultiplatformImport] instance passed to this function shall
+     * not be captured and used outside of this block.
+     *
+     * The [IdeMultiplatformImport] instance shall not be retrieved any other way than using this function.
+     */
     var configureIdeImport: (IdeMultiplatformImport.() -> Unit)? = null
 
+    /**
+     * Main entrance of configuring the ide import:
+     * The [IdeMultiplatformImport] instance passed to this function shall
+     * not be captured and used outside of this block.
+     *
+     * The [IdeMultiplatformImport] instance shall not be retrieved any other way than using this function.
+     */
     fun configureIdeImport(action: IdeMultiplatformImport.() -> Unit) {
         val configureIdeImport = this.configureIdeImport
         if (configureIdeImport == null) this.configureIdeImport = action
