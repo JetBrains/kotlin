@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.analysis.api.KtAnalysisAllowanceManager
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtension
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionFile
+import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionProvider
 import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionReferencePsiTargetsProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.FileBasedKotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
@@ -70,27 +72,27 @@ private class LLFirResolveExtensionToolNameCache(
     private val packageFilter: LLFirResolveExtensionToolPackageFilter,
     private val fileProvider: LLFirResolveExtensionsFileProvider,
 ) : LLFirSymbolProviderNameCache() {
-    override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<String>? {
+    override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<String>? = forbidAnalysis {
         if (!packageFilter.packageExists(packageFqName)) return emptySet()
         return fileProvider.getFilesByPackage(packageFqName)
             .flatMap { it.getTopLevelClassifierNames() }
             .mapTo(mutableSetOf()) { it.asString() }
     }
 
-    override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> {
+    override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> = forbidAnalysis {
         if (!packageFilter.packageExists(packageFqName)) return emptySet()
         return fileProvider.getFilesByPackage(packageFqName)
             .flatMapTo(mutableSetOf()) { it.getTopLevelCallableNames() }
     }
 
-    override fun mayHaveTopLevelClassifier(classId: ClassId, mayHaveFunctionClass: Boolean): Boolean {
+    override fun mayHaveTopLevelClassifier(classId: ClassId, mayHaveFunctionClass: Boolean): Boolean = forbidAnalysis {
         if (!packageFilter.packageExists(classId.packageFqName)) return false
 
         return fileProvider.getFilesByPackage(classId.packageFqName)
             .any { it.mayHaveTopLevelClassifier(classId.getTopLevelShortClassName()) }
     }
 
-    override fun mayHaveTopLevelCallable(packageFqName: FqName, name: Name): Boolean {
+    override fun mayHaveTopLevelCallable(packageFqName: FqName, name: Name): Boolean = forbidAnalysis {
         if (!packageFilter.packageExists(packageFqName)) return false
 
         return fileProvider.getFilesByPackage(packageFqName)
@@ -102,7 +104,9 @@ private class LLFirResolveExtensionToolPackageFilter(
     private val extensions: List<KtResolveExtension>
 ) {
     val allPackages: Set<FqName> by lazy {
-        extensions.flatMapTo(mutableSetOf()) { it.getContainedPackages() }
+        forbidAnalysis {
+            extensions.flatMapTo(mutableSetOf()) { it.getContainedPackages() }
+        }
     }
 
     fun packageExists(packageFqName: FqName): Boolean {
@@ -118,52 +122,52 @@ private class LLFirResolveExtensionToolDeclarationProvider(
     private val extensionFileToDeclarationProvider: ConcurrentHashMap<KtResolveExtensionFile, FileBasedKotlinDeclarationProvider> =
         ConcurrentHashMap()
 
-    override fun getClassLikeDeclarationByClassId(classId: ClassId): KtClassLikeDeclaration? {
+    override fun getClassLikeDeclarationByClassId(classId: ClassId): KtClassLikeDeclaration? = forbidAnalysis {
         return getDeclarationProvidersByPackage(classId.packageFqName) { it.mayHaveTopLevelClassifier(classId.getTopLevelShortClassName()) }
             .firstNotNullOfOrNull { it.getClassLikeDeclarationByClassId(classId) }
     }
 
-    override fun getAllClassesByClassId(classId: ClassId): Collection<KtClassOrObject> {
+    override fun getAllClassesByClassId(classId: ClassId): Collection<KtClassOrObject> = forbidAnalysis {
         return getDeclarationProvidersByPackage(classId.packageFqName) { it.mayHaveTopLevelClassifier(classId.getTopLevelShortClassName()) }
             .flatMapTo(mutableListOf()) { it.getAllClassesByClassId(classId) }
     }
 
-    override fun getAllTypeAliasesByClassId(classId: ClassId): Collection<KtTypeAlias> {
+    override fun getAllTypeAliasesByClassId(classId: ClassId): Collection<KtTypeAlias> = forbidAnalysis {
         return getDeclarationProvidersByPackage(classId.packageFqName) { it.mayHaveTopLevelClassifier(classId.getTopLevelShortClassName()) }
             .flatMapTo(mutableListOf()) { it.getAllTypeAliasesByClassId(classId) }
     }
 
-    override fun getTopLevelKotlinClassLikeDeclarationNamesInPackage(packageFqName: FqName): Set<Name> {
+    override fun getTopLevelKotlinClassLikeDeclarationNamesInPackage(packageFqName: FqName): Set<Name> = forbidAnalysis {
         return getDeclarationProvidersByPackage(packageFqName) { true }
             .flatMapTo(mutableSetOf()) { it.getTopLevelKotlinClassLikeDeclarationNamesInPackage(packageFqName) }
     }
 
-    override fun getTopLevelProperties(callableId: CallableId): Collection<KtProperty> {
+    override fun getTopLevelProperties(callableId: CallableId): Collection<KtProperty> = forbidAnalysis {
         return getDeclarationProvidersByPackage(callableId.packageName) { it.mayHaveTopLevelCallable(callableId.callableName) }
             .flatMapTo(mutableListOf()) { it.getTopLevelProperties(callableId) }
     }
 
-    override fun getTopLevelFunctions(callableId: CallableId): Collection<KtNamedFunction> {
+    override fun getTopLevelFunctions(callableId: CallableId): Collection<KtNamedFunction> = forbidAnalysis {
         return getDeclarationProvidersByPackage(callableId.packageName) { it.mayHaveTopLevelCallable(callableId.callableName) }
             .flatMapTo(mutableListOf()) { it.getTopLevelFunctions(callableId) }
     }
 
-    override fun getTopLevelCallableFiles(callableId: CallableId): Collection<KtFile> {
+    override fun getTopLevelCallableFiles(callableId: CallableId): Collection<KtFile> = forbidAnalysis {
         return getDeclarationProvidersByPackage(callableId.packageName) { it.mayHaveTopLevelCallable(callableId.callableName) }
             .mapTo(mutableListOf()) { it.kotlinFile }
     }
 
-    override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> {
+    override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> = forbidAnalysis {
         return extensionProvider.getFilesByPackage(packageFqName).flatMapTo(mutableSetOf()) { it.getTopLevelClassifierNames() }
     }
 
-    override fun findFilesForFacadeByPackage(packageFqName: FqName): Collection<KtFile> {
+    override fun findFilesForFacadeByPackage(packageFqName: FqName): Collection<KtFile> = forbidAnalysis {
         return getDeclarationProvidersByPackage(packageFqName) { file ->
             file.getTopLevelCallableNames().isNotEmpty()
         }.mapTo(mutableListOf()) { it.kotlinFile }
     }
 
-    override fun findFilesForFacade(facadeFqName: FqName): Collection<KtFile> {
+    override fun findFilesForFacade(facadeFqName: FqName): Collection<KtFile> = forbidAnalysis {
         if (facadeFqName.isRoot) return emptyList()
         val packageFqName = facadeFqName.parent()
         return getDeclarationProvidersByPackage(packageFqName) { file ->
@@ -172,7 +176,7 @@ private class LLFirResolveExtensionToolDeclarationProvider(
             .mapTo(mutableListOf()) { it.kotlinFile }
     }
 
-    override fun findInternalFilesForFacade(facadeFqName: FqName): Collection<KtFile> {
+    override fun findInternalFilesForFacade(facadeFqName: FqName): Collection<KtFile> = forbidAnalysis {
         // no decompiled files here (see the `org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider.findInternalFilesForFacade` KDoc)
         return emptyList()
     }
@@ -180,13 +184,13 @@ private class LLFirResolveExtensionToolDeclarationProvider(
     private inline fun getDeclarationProvidersByPackage(
         packageFqName: FqName,
         crossinline filter: (KtResolveExtensionFile) -> Boolean
-    ): Sequence<FileBasedKotlinDeclarationProvider> {
+    ): Sequence<FileBasedKotlinDeclarationProvider> = forbidAnalysis {
         return extensionProvider.getFilesByPackage(packageFqName)
             .filter { filter(it) }
             .map { createDeclarationProviderByFile(it) }
     }
 
-    private fun createDeclarationProviderByFile(file: KtResolveExtensionFile): FileBasedKotlinDeclarationProvider {
+    private fun createDeclarationProviderByFile(file: KtResolveExtensionFile): FileBasedKotlinDeclarationProvider = forbidAnalysis {
         return extensionFileToDeclarationProvider.getOrPut(file) {
             val factory = KtPsiFactory(
                 ktModule.project,
@@ -219,7 +223,7 @@ private class LLFirResolveExtensionToolDeclarationProvider(
 private class LLFirResolveExtensionsFileProvider(
     val extensions: List<KtResolveExtension>,
 ) {
-    fun getFilesByPackage(packageFqName: FqName): Sequence<KtResolveExtensionFile> {
+    fun getFilesByPackage(packageFqName: FqName): Sequence<KtResolveExtensionFile> = forbidAnalysis {
         return extensions
             .asSequence()
             .filter { packageFqName in it.getContainedPackages() }
@@ -287,3 +291,7 @@ private fun KtResolveExtensionFile.mayHaveTopLevelCallable(name: Name): Boolean 
 
 @KtModuleStructureInternals
 public var VirtualFile.psiTargetsProvider: KtResolveExtensionReferencePsiTargetsProvider? by UserDataProperty(Key.create("KT_RESOLVE_EXTENSION_PSI_TARGETS_PROVIDER"))
+
+private inline fun <R> forbidAnalysis(action: () -> R): R {
+    return KtAnalysisAllowanceManager.forbidAnalysisInside(KtResolveExtensionProvider::class.java.simpleName, action)
+}
