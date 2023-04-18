@@ -71,6 +71,9 @@ abstract class AbstractAdditionalStubInfoTest : AbstractDecompiledClassTest() {
                         .append(arguments.entries.joinToString(", ", "(", ")") { "${it.key.asString()} = ${it.value}" })
                 }
             }
+            is KotlinParameterStubImpl -> {
+                stub.functionTypeParameterName?.let { builder.append("   paramNameByAnnotation: ").append(it) }
+            }
         }
         for (child in stub.childrenStubs) {
             builder.append("\n").append("  ".repeat(level))

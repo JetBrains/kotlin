@@ -16,10 +16,10 @@ import org.jetbrains.kotlin.fir.declarations.builder.FirTypeParameterBuilder
 import org.jetbrains.kotlin.fir.declarations.utils.addDefaultBoundIfNecessary
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
-import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
-import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotation
+import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationArgumentMapping
+import org.jetbrains.kotlin.fir.expressions.builder.buildConstExpression
+import org.jetbrains.kotlin.fir.symbols.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -29,11 +29,13 @@ import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasSuspendModifier
 import org.jetbrains.kotlin.psi.psiUtil.unwrapNullability
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
+import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
 
 class StubBasedFirTypeDeserializer(
@@ -99,11 +101,24 @@ class StubBasedFirTypeDeserializer(
         }
     }
 
-    private fun attributesFromAnnotations(typeReference: KtTypeReference): ConeAttributes =
-        annotationDeserializer.loadAnnotations(typeReference).computeTypeAttributes(moduleData.session, shouldExpandTypeAliases = false)
-
     fun type(typeReference: KtTypeReference): ConeKotlinType {
-        return type(typeReference, attributesFromAnnotations(typeReference))
+        val annotations = annotationDeserializer.loadAnnotations(typeReference).toMutableList()
+        val parent = typeReference.stub?.parentStub
+        if (parent is KotlinParameterStubImpl) {
+            (parent as? KotlinParameterStubImpl)?.functionTypeParameterName?.let { paramName ->
+                annotations += buildAnnotation {
+                    annotationTypeRef = buildResolvedTypeRef {
+                        type = StandardNames.FqNames.parameterNameClassId.toLookupTag()
+                            .constructClassType(emptyArray(), isNullable = false)
+                    }
+                    this.argumentMapping = buildAnnotationArgumentMapping {
+                        mapping[Name.identifier("name")] =
+                            buildConstExpression(null, ConstantValueKind.String, paramName, setType = true)
+                    }
+                }
+            }
+        }
+        return type(typeReference, annotations.computeTypeAttributes(moduleData.session, shouldExpandTypeAliases = false))
     }
 
     fun type(type: KotlinFlexibleAwareTypeBean): ConeSimpleKotlinType? {

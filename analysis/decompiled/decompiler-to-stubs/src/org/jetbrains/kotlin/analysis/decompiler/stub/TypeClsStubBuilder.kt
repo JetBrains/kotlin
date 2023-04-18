@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.stubs.ConstantValueKind
 import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
@@ -46,7 +45,15 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
 
         val typeReference = KotlinPlaceHolderStubImpl<KtTypeReference>(parent, KtStubElementTypes.TYPE_REFERENCE)
 
-        val annotations = c.components.annotationLoader.loadTypeAnnotations(type, c.nameResolver).filterNot {
+        val allAnnotationsInType = c.components.annotationLoader.loadTypeAnnotations(type, c.nameResolver)
+        if (parent is KotlinParameterStubImpl) {
+            for (annotationWithArgs in allAnnotationsInType) {
+                if (annotationWithArgs.classId.asSingleFqName() == StandardNames.FqNames.parameterName) {
+                    parent.functionTypeParameterName = (annotationWithArgs.args.values.firstOrNull() as? StringValue)?.value
+                }
+            }
+        }
+        val annotations = allAnnotationsInType.filterNot {
             val isTopLevelClass = !it.classId.isNestedClass
             isTopLevelClass && it.classId.asSingleFqName() in ANNOTATIONS_NOT_LOADED_FOR_TYPES
         }
