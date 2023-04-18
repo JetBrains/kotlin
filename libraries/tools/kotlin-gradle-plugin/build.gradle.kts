@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.pill.PillExtension
 plugins {
     id("gradle-plugin-common-configuration")
     id("jps-compatible")
+    id("org.jetbrains.kotlinx.binary-compatibility-validator")
 }
 
 repositories {
@@ -24,6 +25,12 @@ kotlin.sourceSets.all {
     languageSettings.optIn("org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi")
     languageSettings.optIn("org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi")
     languageSettings.optIn("org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi")
+}
+
+apiValidation {
+    publicMarkers.add("org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi")
+    nonPublicMarkers.add("org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi")
+    additionalSourceSets.add("common")
 }
 
 dependencies {
