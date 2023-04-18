@@ -1,6 +1,3 @@
-// MUTE_SIGNATURE_COMPARISON_K2: ANY
-// ^ KT-57436
-
 import C.f
 import C.p
 import C.ext

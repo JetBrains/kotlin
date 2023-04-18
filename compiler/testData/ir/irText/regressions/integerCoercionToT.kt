@@ -1,9 +1,5 @@
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
-
-// MUTE_SIGNATURE_COMPARISON_K2: ANY
-// ^ KT-57436
-
 interface CPointed
 
 inline fun <reified T : CPointed> CPointed.reinterpret(): T = TODO()

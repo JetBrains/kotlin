@@ -1146,6 +1146,9 @@ fun IrErrorDeclaration.toIrBasedDescriptor() = IrBasedErrorDescriptor(this)
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 private fun getContainingDeclaration(declaration: IrDeclaration): DeclarationDescriptor {
     val parent = declaration.parent
+    if (declaration is IrTypeParameter && parent is IrSimpleFunction) {
+        parent.correspondingPropertySymbol?.owner?.let { return it.toIrBasedDescriptor() }
+    }
     val parentDescriptor = (parent as IrSymbolOwner).let {
         if (it is IrDeclaration) it.toIrBasedDescriptor() else it.symbol.descriptor
     }
