@@ -544,7 +544,7 @@ abstract class AbstractTypeApproximator(
                      */
                     if (argumentType.typeConstructor().isCapturedTypeConstructor()) {
                         val subType = approximateToSubType(argumentType, conf, depth) ?: continue@loop
-                        if (!subType.isTrivialSub()) {
+                        if (shouldUseSubTypeForCapturedArgument(subType, argumentType, conf, depth)) {
                             newArguments[index] = createTypeArgument(subType, TypeVariance.IN)
                             continue@loop
                         }
@@ -575,6 +575,36 @@ abstract class AbstractTypeApproximator(
         val newArgumentsList = List(type.argumentsCount()) { index -> newArguments[index] ?: type.getArgument(index) }
         val approximatedType = type.replaceArguments(newArgumentsList)
         return approximateLocalTypes(approximatedType, conf, toSuper) ?: approximatedType
+    }
+
+    private fun shouldUseSubTypeForCapturedArgument(
+        subType: KotlinTypeMarker,
+        capturedArgumentType: KotlinTypeMarker,
+        conf: TypeApproximatorConfiguration,
+        depth: Int,
+    ): Boolean {
+        if (subType.isTrivialSub()) return false
+        // For K1, the result is always `!subType.isTrivialSub()` (leaving the old behavior)
+        if (!isK2) return true
+
+        // Basically, what's written further might be simplified like
+        // return !approximateToSubType(capturedArgumentType.withNullability(false), conf, depth)!!.isTrivialSub()
+        // But it seems that now it looks a bit more clear and probably performant, thus first two if's are basically fast paths
+
+        // If it's not `Nothing?`, then the lower bound is indeed non-trivial
+        if (!subType.lowerBoundIfFlexible().isNullableNothing()) return true
+
+        // Here the subType is `Nothing?`, and it might be trivial only in cause the nullability is caused by nullability of captured type itself
+
+        // If captured type is not marked as nullable, then nullability of subType came from the lower bound of the captured type.
+        // Thus, the lower bound is non-trivial for sure
+        if (!capturedArgumentType.isMarkedNullable()) return true
+
+        val notMarkedNullableSubType =
+            approximateToSubType(capturedArgumentType.withNullability(false), conf, depth)
+                ?: error("Not-marked-nullable version of captured type approximation should also return not-null")
+
+        return !notMarkedNullableSubType.isTrivialSub()
     }
 
     private fun KotlinTypeMarker.defaultResult(toSuper: Boolean) = if (toSuper) nullableAnyType() else {
