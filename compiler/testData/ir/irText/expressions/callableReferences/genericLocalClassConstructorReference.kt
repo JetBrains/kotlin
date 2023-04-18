@@ -1,6 +1,3 @@
-// MUTE_SIGNATURE_COMPARISON_K2: JVM_IR
-// ^ KT-57429
-
 open class L<LL>(val ll: LL)
 
 class Rec<T>(val rt: T)

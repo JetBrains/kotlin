@@ -3,7 +3,7 @@
 // IGNORE_BACKEND: JS_IR_ES6
 
 // MUTE_SIGNATURE_COMPARISON_K2: ANY
-// ^ KT-57429, KT-57778
+// ^ KT-57778
 
 import kotlin.experimental.ExperimentalTypeInference
 

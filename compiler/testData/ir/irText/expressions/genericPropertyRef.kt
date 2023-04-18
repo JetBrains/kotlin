@@ -1,6 +1,3 @@
-// MUTE_SIGNATURE_COMPARISON_K2: JVM_IR
-// ^ KT-57429
-
 class Value<T>(var value: T = null as T, var text: String? = null)
 
 val <T> Value<T>.additionalText by DVal(Value<T>::text)

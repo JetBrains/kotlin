@@ -2,9 +2,6 @@
 // IGNORE_BACKEND_K2: JS_IR
 // IGNORE_BACKEND_K2: JS_IR_ES6
 
-// MUTE_SIGNATURE_COMPARISON_K2: ANY
-// ^ KT-57429
-
 open class ControlFlowInfo<K, V>(val map: Map<K, V>): Map<K, V> by map
 
 class StringFlowInfo(map: Map<String, String>): ControlFlowInfo<String, String>(map) {

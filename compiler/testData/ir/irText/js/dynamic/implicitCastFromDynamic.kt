@@ -1,9 +1,6 @@
 // TARGET_BACKEND: JS_IR
 // FIR_IDENTICAL
 
-// MUTE_SIGNATURE_COMPARISON_K2: ANY
-// ^ KT-57818
-
 val d: dynamic = 1
 
 val p: Int = d

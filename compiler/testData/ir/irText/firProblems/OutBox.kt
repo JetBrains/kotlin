@@ -1,8 +1,5 @@
 // TARGET_BACKEND: JVM
 
-// MUTE_SIGNATURE_COMPARISON_K2: ANY
-// ^ KT-57429
-
 // FILE: Foo.java
 
 public class Foo {

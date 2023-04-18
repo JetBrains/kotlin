@@ -1,6 +1,3 @@
-// MUTE_SIGNATURE_COMPARISON_K2: JVM_IR
-// ^ KT-57429
-
 data class Test1(
         val stringArray: Array<String>,
         val charArray: CharArray,

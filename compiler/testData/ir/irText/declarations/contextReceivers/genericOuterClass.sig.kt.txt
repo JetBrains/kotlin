@@ -6,9 +6,12 @@ class A<T : Any?> {
   //   Mangled name: A#<init>!1:0(){}
   //   Public signature: /A.<init>|5547349096232763669[0]
   constructor($context_receiver_0: T) /* primary */
-  // CHECK:
+  // CHECK JVM_IR:
   //   Mangled name computed from Ir:         A.contextReceiverField0
   //   Mangled name computed from Descriptor: A{}contextReceiverField0#jf
+  // CHECK JS_IR NATIVE:
+  //   Mangled name computed from Ir:         A.contextReceiverField0
+  //   Mangled name computed from Descriptor: A{}contextReceiverField0
   private /* final field */ val contextReceiverField0: T
 
 }
@@ -21,9 +24,12 @@ class B<P : Any?> {
   //   Mangled name: B#<init>!kotlin.collections.Collection<1:0>(){}
   //   Public signature: /B.<init>|-5453957848603821578[0]
   constructor($context_receiver_0: Collection<P>) /* primary */
-  // CHECK:
+  // CHECK JVM_IR:
   //   Mangled name computed from Ir:         B.contextReceiverField0
   //   Mangled name computed from Descriptor: B{}contextReceiverField0#jf
+  // CHECK JS_IR NATIVE:
+  //   Mangled name computed from Ir:         B.contextReceiverField0
+  //   Mangled name computed from Descriptor: B{}contextReceiverField0
   private /* final field */ val contextReceiverField0: Collection<P>
 
 }

@@ -3,7 +3,7 @@
 // DUMP_LOCAL_DECLARATION_SIGNATURES
 
 // MUTE_SIGNATURE_COMPARISON_K2: ANY
-// ^ KT-57429, KT-57430
+// ^ KT-57430
 
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass

@@ -78,6 +78,9 @@ class Derived1<T : Any?> : Base<T> {
     // CHECK JVM_IR:
     //   Mangled name: Derived1#<get-bar>(){}1:0
     //   Public signature: /Derived1.bar.<get-bar>|7899956589744407340[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Derived1#<get-bar>(){}
+    //   Public signature: /Derived1.bar.<get-bar>|6880642144337645699[0]
     override get
     // CHECK:
     //   Mangled name: Derived1#<set-bar>(1:0){}
@@ -92,6 +95,9 @@ class Derived1<T : Any?> : Base<T> {
   // CHECK JVM_IR:
   //   Mangled name: Derived1#foo(0:0){0§<kotlin.Any?>}1:0
   //   Public signature: /Derived1.foo|8673945311830780726[0]
+  // CHECK JS_IR NATIVE:
+  //   Mangled name: Derived1#foo(0:0){0§<kotlin.Any?>}
+  //   Public signature: /Derived1.foo|-6838606926256314363[0]
   override fun <Y : Any?> foo(y: Y): T
 
   // CHECK:
@@ -101,6 +107,9 @@ class Derived1<T : Any?> : Base<T> {
     // CHECK JVM_IR:
     //   Mangled name: Derived1#<get-x>(){}1:0
     //   Public signature: /Derived1.x.<get-x>|-8893883356128097563[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Derived1#<get-x>(){}
+    //   Public signature: /Derived1.x.<get-x>|1482705010654679335[0]
     /* fake */ override get(): T
 
   // CHECK:
@@ -110,6 +119,9 @@ class Derived1<T : Any?> : Base<T> {
     // CHECK JVM_IR:
     //   Mangled name: Derived1#<get-exn>@0:0(){0§<kotlin.Any?>}1:0
     //   Public signature: /Derived1.exn.<get-exn>|6217753676739394662[0]
+    // CHECK JS_IR NATIVE:
+    //   Mangled name: Derived1#<get-exn>@0:0(){0§<kotlin.Any?>}
+    //   Public signature: /Derived1.exn.<get-exn>|-202876889853335253[0]
     override get(): T
     // CHECK:
     //   Mangled name: Derived1#<set-exn>@0:0(1:0){0§<kotlin.Any?>}

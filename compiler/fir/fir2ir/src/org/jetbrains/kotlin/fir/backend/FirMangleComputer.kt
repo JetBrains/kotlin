@@ -107,9 +107,25 @@ open class FirMangleComputer(
 
     override fun isUnit(type: ConeKotlinType) = type.isUnit
 
-    @OptIn(SymbolInternals::class)
     override fun getEffectiveParent(typeParameter: ConeTypeParameterLookupTag): FirMemberDeclaration = typeParameter.symbol.fir.run {
-        this.containingDeclarationSymbol.fir as FirMemberDeclaration
+
+        fun FirTypeParameter.sameAs(other: FirTypeParameter) =
+            this === other ||
+                    (name == other.name && bounds.size == other.bounds.size &&
+                            bounds.zip(other.bounds).all { it.first.coneType == it.second.coneType })
+
+        for (parent in typeParameterContainers) {
+            if (parent.typeParameters.any { it is FirTypeParameter && this.sameAs(it) }) {
+                return parent
+            }
+            if (parent is FirCallableDeclaration) {
+                val overriddenFir = parent.originalForSubstitutionOverride
+                if (overriddenFir is FirTypeParametersOwner && overriddenFir.typeParameters.any { this.sameAs(it) }) {
+                    return parent
+                }
+            }
+        }
+        throw IllegalStateException("Should not be here!")
     }
 
     override fun renderDeclaration(declaration: FirDeclaration) = declaration.render()

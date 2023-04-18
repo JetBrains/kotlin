@@ -3,9 +3,6 @@
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
 
-// MUTE_SIGNATURE_COMPARISON_K2: ANY
-// ^ KT-57429
-
 sealed class ArrayMap<T : Any> : Iterable<T> {
     abstract val size: Int
 
