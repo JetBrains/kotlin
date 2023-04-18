@@ -21,6 +21,6 @@ interface Distribution {
     val outputDirectory: DirectoryProperty
 
     companion object {
-        const val JS_DIST = "js-dist"
+        const val DIST = "dist"
     }
 }

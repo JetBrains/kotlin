@@ -48,7 +48,7 @@ abstract class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
     private val webpackTaskConfigurations: MutableList<Action<KotlinWebpack>> = mutableListOf()
     private val runTaskConfigurations: MutableList<Action<KotlinWebpack>> = mutableListOf()
     private val dceConfigurations: MutableList<Action<KotlinJsDce>> = mutableListOf()
-    private val distribution: Distribution = createDefaultDistribution(project)
+    private val distribution: Distribution = createDefaultDistribution(project, target.targetName)
 
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside browser using karma and webpack"

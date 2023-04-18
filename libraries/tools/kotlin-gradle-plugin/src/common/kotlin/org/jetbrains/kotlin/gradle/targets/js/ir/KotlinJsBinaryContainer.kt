@@ -114,7 +114,7 @@ constructor(
                 override val compilation: KotlinJsCompilation = jsCompilation
                 override val name: String = name
                 override val mode: KotlinJsBinaryMode = type
-                override val distribution: Distribution = createDefaultDistribution(jsCompilation.target.project)
+                override val distribution: Distribution = createDefaultDistribution(jsCompilation.target.project, jsCompilation.target.targetName)
             }
         }
     )

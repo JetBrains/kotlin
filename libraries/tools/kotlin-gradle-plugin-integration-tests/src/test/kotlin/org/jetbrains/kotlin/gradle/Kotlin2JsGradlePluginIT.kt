@@ -362,7 +362,7 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
     fun testKotlinJsPackageModuleName(gradleVersion: GradleVersion) {
         project("kotlin-js-package-module-name", gradleVersion) {
             build("assemble") {
-                assertFileInProjectExists("build/${Distribution.JS_DIST}/productionExecutable/kotlin-js-package-module-name.js")
+                assertFileInProjectExists("build/${Distribution.DIST}/js/productionExecutable/kotlin-js-package-module-name.js")
                 assertFileInProjectExists("build/js/packages/@foo/bar/kotlin/@foo/bar.js")
             }
         }
@@ -1149,7 +1149,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
                 assertDirectoryInProjectExists("build/js/packages/kotlin-js-browser-app")
 
                 if (irBackend) {
-                    assertFileInProjectExists("app/build/${Distribution.JS_DIST}/productionExecutable/app.js")
+                    assertFileInProjectExists("app/build/${Distribution.DIST}/js/productionExecutable/app.js")
                 } else {
                     assertFileInProjectExists("app/build/distributions/app.js")
                 }
@@ -1175,7 +1175,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
                 )
 
                 if (irBackend) {
-                    assertFileInProjectExists("app/build/${Distribution.JS_DIST}/productionExecutable/index.html")
+                    assertFileInProjectExists("app/build/${Distribution.DIST}/js/productionExecutable/index.html")
                 } else {
                     assertFileInProjectExists("app/build/distributions/index.html")
                 }

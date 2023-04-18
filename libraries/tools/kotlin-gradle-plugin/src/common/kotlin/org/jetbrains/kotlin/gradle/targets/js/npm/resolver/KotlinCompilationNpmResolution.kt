@@ -9,8 +9,8 @@ import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.TasksRequirements
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.PreparedKotlinCompilationNpmResolution
-import java.io.Serializable
 import java.io.File
+import java.io.Serializable
 
 class KotlinCompilationNpmResolution(
     var internalDependencies: Collection<InternalDependency>,
@@ -88,13 +88,15 @@ class KotlinCompilationNpmResolution(
     ): PreparedKotlinCompilationNpmResolution {
         val rootResolver = npmResolutionManager.parameters.resolution.get()
 
-        internalDependencies.map {
-            val compilationNpmResolution: KotlinCompilationNpmResolution = rootResolver[it.projectPath][it.compilationName]
-            compilationNpmResolution.getResolutionOrPrepare(
-                npmResolutionManager,
-                logger
-            )
-        }
+        val internalNpmDependencies = internalDependencies
+            .map {
+                val compilationNpmResolution: KotlinCompilationNpmResolution = rootResolver[it.projectPath][it.compilationName]
+                compilationNpmResolution.getResolutionOrPrepare(
+                    npmResolutionManager,
+                    logger
+                )
+            }
+            .flatMap { it.externalNpmDependencies }
         val importedExternalGradleDependencies = externalGradleDependencies.mapNotNull {
             npmResolutionManager.parameters.gradleNodeModulesProvider.get().get(it.dependencyName, it.dependencyVersion, it.file)
         } + fileCollectionDependencies.flatMap { dependency ->
@@ -109,9 +111,9 @@ class KotlinCompilationNpmResolution(
                     )
                 }
         }.filterNotNull()
-        val transitiveNpmDependencies = importedExternalGradleDependencies.flatMap {
+        val transitiveNpmDependencies = (importedExternalGradleDependencies.flatMap {
             it.dependencies
-        }.filter { it.scope != NpmDependency.Scope.DEV }
+        } + internalNpmDependencies).filter { it.scope != NpmDependency.Scope.DEV }
 
         val toolsNpmDependencies = tasksRequirements
             .getCompilationNpmRequirements(projectPath, compilationDisambiguatedName)
