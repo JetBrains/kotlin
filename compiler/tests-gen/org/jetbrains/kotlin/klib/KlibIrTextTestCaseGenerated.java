@@ -737,6 +737,16 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
                 runTest("compiler/testData/ir/irText/declarations/multiplatform/expectIntersectionOverride.kt");
             }
 
+            @TestMetadata("expectMemberInNotExpectClass.kt")
+            public void testExpectMemberInNotExpectClass() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/multiplatform/expectMemberInNotExpectClass.kt");
+            }
+
+            @TestMetadata("expectMemberInNotExpectClassFir.kt")
+            public void testExpectMemberInNotExpectClassFir() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/multiplatform/expectMemberInNotExpectClassFir.kt");
+            }
+
             @TestMetadata("expectedEnumClass.kt")
             public void testExpectedEnumClass() throws Exception {
                 runTest("compiler/testData/ir/irText/declarations/multiplatform/expectedEnumClass.kt");

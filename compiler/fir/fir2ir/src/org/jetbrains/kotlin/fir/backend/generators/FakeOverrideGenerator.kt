@@ -136,7 +136,7 @@ class FakeOverrideGenerator(
                         session, symbol, firFunction,
                         derivedClassLookupTag = firClass.symbol.toLookupTag(),
                         newDispatchReceiverType = firClass.defaultType(),
-                        isExpect = (firClass as? FirRegularClass)?.isExpect == true
+                        isExpect = (firClass as? FirRegularClass)?.isExpect == true || firFunction.isExpect
                     )
                 },
                 baseFunctionSymbols,
@@ -164,7 +164,7 @@ class FakeOverrideGenerator(
                                 session, symbolForOverride, firProperty,
                                 derivedClassLookupTag = firClass.symbol.toLookupTag(),
                                 newDispatchReceiverType = firClass.defaultType(),
-                                isExpect = (firClass as? FirRegularClass)?.isExpect == true
+                                isExpect = (firClass as? FirRegularClass)?.isExpect == true || firProperty.isExpect
                             )
                         },
                         basePropertySymbols,
@@ -344,7 +344,7 @@ class FakeOverrideGenerator(
                 session, callableSymbol, firFunction,
                 derivedClassLookupTag = klass.symbol.toLookupTag(),
                 newDispatchReceiverType = klass.defaultType(),
-                isExpect = (klass as? FirRegularClass)?.isExpect == true
+                isExpect = (klass as? FirRegularClass)?.isExpect == true || firFunction.isExpect
             )
         },
         computeDirectOverridden = FirTypeScope::getDirectOverriddenFunctions,
@@ -363,7 +363,7 @@ class FakeOverrideGenerator(
                 session, callableSymbol, firProperty,
                 derivedClassLookupTag = klass.symbol.toLookupTag(),
                 newDispatchReceiverType = klass.defaultType(),
-                isExpect = (klass as? FirRegularClass)?.isExpect == true
+                isExpect = (klass as? FirRegularClass)?.isExpect == true || firProperty.isExpect
             )
         },
         computeDirectOverridden = FirTypeScope::getDirectOverriddenProperties,
