@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver.Companion.gr
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeaKotlinBinaryCoordinates
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeaKotlinProjectCoordinates
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationConfigurationsContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmFragment
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmVariant
@@ -33,33 +34,59 @@ import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.InternalKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.utils.markResolvable
+import org.gradle.api.artifacts.ResolutionStrategy
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 
+/**
+ * Dependency resolver for [IdeaKotlinBinaryDependency] instances:
+ * This resolver is intended to resolve dependencies from maven repositories by providing a specific artifact view
+ *
+ * @param binaryType Binary type used when creating [IdeaKotlinResolvedBinaryDependency.binaryType] from resolved artifacts.
+ * Default is [IdeaKotlinBinaryDependency.KOTLIN_COMPILE_BINARY_TYPE] to indicate binary dependencies for the Kotlin compiler
+ * such as .jar or .klib files
+ *
+ * @param artifactResolutionStrategy Strategy passed for creating a resolvable artifactView for a given source set.
+ * see
+ * - [ArtifactResolutionStrategy.Compilation],
+ * - [ArtifactResolutionStrategy.ResolvableConfiguration],
+ * - [ArtifactResolutionStrategy.PlatformLikeSourceSet]
+ *
+ * Default is: [ArtifactResolutionStrategy.Compilation] which will find the most suitable compilation and resolve dependencies
+ * from the given [KotlinCompilationConfigurationsContainer.compileDependencyConfiguration]
+ */
 @ExternalKotlinTargetApi
-class IdeBinaryDependencyResolver(
+class IdeBinaryDependencyResolver @JvmOverloads constructor(
     private val binaryType: String = IdeaKotlinBinaryDependency.KOTLIN_COMPILE_BINARY_TYPE,
     private val artifactResolutionStrategy: ArtifactResolutionStrategy = ArtifactResolutionStrategy.Compilation()
 ) : IdeDependencyResolver {
 
+    @ExternalKotlinTargetApi
     sealed class ArtifactResolutionStrategy {
 
         /**
          * Resolve the artifacts from a [KotlinSourceSet] using its [KotlinCompilation.compileDependencyConfigurationName],
          * which already knows how to resolve platform artifacts.
+         *
+         * @param compilationSelector: Selects the compilation used for resolving dependencies for a given source set
+         * default: Find a single 'platform' compilation
          * @param setupArtifactViewAttributes: Additional attributes that will be used to create an [ArtifactView] for resolving the dependencies.
+         * @param componentFilter: Filter added to the artifactView: Only components passing the filter will be resolved
          */
-        data class Compilation(
-            internal val compilationSelector: (KotlinSourceSet) -> KotlinCompilation<*>? =
-                { sourceSet -> sourceSet.internal.compilations.singleOrNull { it.platformType != KotlinPlatformType.common } },
+        @ExternalKotlinTargetApi
+        class Compilation @JvmOverloads constructor(
+            internal val compilationSelector: (KotlinSourceSet) -> KotlinCompilation<*>? = { sourceSet -> sourceSet.internal.compilations.singleOrNull { it.platformType != KotlinPlatformType.common } },
             internal val setupArtifactViewAttributes: AttributeContainer.(sourceSet: KotlinSourceSet) -> Unit = {},
             internal val componentFilter: ((ComponentIdentifier) -> Boolean)? = null
         ) : ArtifactResolutionStrategy()
 
         /**
          * Resolve the artifacts from a [KotlinSourceSet] using the configuration returned by [configurationSelector].
+         * @param configurationSelector Returns the configuration that shall be resolved for the given [KotlinSourceSet]
          * @param setupArtifactViewAttributes: Additional attributes that will be used to create an [ArtifactView] for resolving the dependencies.
+         * @param componentFilter Filter added to the artifactView: Only components passing the filter will be resolved
          */
-        data class ResolvableConfiguration(
+        @ExternalKotlinTargetApi
+        class ResolvableConfiguration @JvmOverloads constructor(
             internal val configurationSelector: (KotlinSourceSet) -> Configuration?,
             internal val setupArtifactViewAttributes: AttributeContainer.(sourceSet: KotlinSourceSet) -> Unit = {},
             internal val componentFilter: ((ComponentIdentifier) -> Boolean)? = null
@@ -71,8 +98,12 @@ class IdeBinaryDependencyResolver(
          * @param setupPlatformResolutionAttributes: Attributes describing how to resolve platform artifacts in general.
          * @param setupArtifactViewAttributes: Additional attributes that will be used to create an [ArtifactView] for
          * resolving the dependencies
+         * @param componentFilter Filter added to the artifactView: Only components passing the filter will be resolved
+         * @param dependencySubstitution Dependency substitution added to the adhoc configuration created for this resolution.
+         * see [ResolutionStrategy.dependencySubstitution]
          */
-        data class PlatformLikeSourceSet(
+        @ExternalKotlinTargetApi
+        class PlatformLikeSourceSet @JvmOverloads constructor(
             internal val setupPlatformResolutionAttributes: AttributeContainer.(sourceSet: KotlinSourceSet) -> Unit,
             internal val setupArtifactViewAttributes: AttributeContainer.(sourceSet: KotlinSourceSet) -> Unit = {},
             internal val componentFilter: ((ComponentIdentifier) -> Boolean)? = null,
@@ -103,8 +134,7 @@ class IdeBinaryDependencyResolver(
             when (val componentId = artifact.id.componentIdentifier) {
                 is ProjectComponentIdentifier -> {
                     IdeaKotlinProjectArtifactDependency(
-                        type = IdeaKotlinSourceDependency.Type.Regular,
-                        coordinates = IdeaKotlinProjectCoordinates(componentId)
+                        type = IdeaKotlinSourceDependency.Type.Regular, coordinates = IdeaKotlinProjectCoordinates(componentId)
                     ).apply {
                         artifactsClasspath.add(artifact.file)
                     }
@@ -120,16 +150,14 @@ class IdeBinaryDependencyResolver(
 
                 is LibraryBinaryIdentifier -> {
                     IdeaKotlinResolvedBinaryDependency(
-                        binaryType = binaryType,
-                        coordinates = IdeaKotlinBinaryCoordinates(
+                        binaryType = binaryType, coordinates = IdeaKotlinBinaryCoordinates(
                             group = componentId.projectPath + "(${componentId.variant})",
                             module = componentId.libraryName,
-                            version = null, sourceSetName = null
-                        ),
-                        classpath = IdeaKotlinClasspath(artifact.file)
+                            version = null,
+                            sourceSetName = null
+                        ), classpath = IdeaKotlinClasspath(artifact.file)
                     )
                 }
-
 
                 is OpaqueComponentArtifactIdentifier -> {
                     /* Such dependencies *would* require implementing a resolver */
@@ -195,8 +223,9 @@ class IdeBinaryDependencyResolver(
         platformLikeCompileDependenciesConfiguration.attributes.setupPlatformResolutionAttributes(sourceSet)
         platformLikeCompileDependenciesConfiguration.dependencies.addAll(sourceSet.resolvableMetadataConfiguration.allDependencies)
 
-        if (dependencySubstitution != null)
+        if (dependencySubstitution != null) {
             platformLikeCompileDependenciesConfiguration.resolutionStrategy.dependencySubstitution(dependencySubstitution)
+        }
 
         return platformLikeCompileDependenciesConfiguration.incoming.artifactView { view ->
             view.isLenient = true
