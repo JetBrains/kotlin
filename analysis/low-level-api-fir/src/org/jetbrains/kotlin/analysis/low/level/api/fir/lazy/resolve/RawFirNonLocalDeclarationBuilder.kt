@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
 import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
@@ -218,7 +219,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             val typeParameters = mutableListOf<FirTypeParameterRef>()
             context.appendOuterTypeParameters(ignoreLastLevel = false, typeParameters)
             val containingClass = this.containingClass ?: buildErrorWithAttachment("Constructor outside of class") {
-                withPsiEntry("constructor", constructor)
+                withPsiEntry("constructor", constructor, baseSession.llFirModuleData.ktModule)
             }
             val selfType = classOrObject.toDelegatedSelfType(typeParameters, containingClass.symbol)
             val superTypeCallEntry = classOrObject.superTypeListEntries.lastIsInstanceOrNull<KtSuperTypeCallEntry>()
@@ -230,7 +231,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             val params = extractContructorConversionParams(classOrObject, constructor)
             val delegatedTypeRef = (originalDeclaration as FirConstructor).delegatedConstructor?.constructedTypeRef
                 ?: buildErrorWithAttachment("Secondary constructor without delegated call") {
-                    withPsiEntry("constructor", constructor)
+                    withPsiEntry("constructor", constructor, baseSession.llFirModuleData.ktModule)
                 }
             return constructor.toFirConstructor(
                 delegatedTypeRef,
@@ -264,7 +265,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
 
         override fun visitEnumEntry(enumEntry: KtEnumEntry, data: Unit?): FirElement {
             val owner = containingClass ?: buildErrorWithAttachment("Enum entry outside of class") {
-                withPsiEntry("enumEntry", enumEntry)
+                withPsiEntry("enumEntry", enumEntry, baseSession.llFirModuleData.ktModule)
             }
             val classOrObject = owner.psi as KtClassOrObject
             val primaryConstructor = classOrObject.primaryConstructor

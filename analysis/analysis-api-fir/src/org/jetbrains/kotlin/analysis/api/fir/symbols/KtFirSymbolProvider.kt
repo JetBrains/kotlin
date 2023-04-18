@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.components.KtFirAnalysisSessionComponent
+import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
@@ -72,7 +72,7 @@ internal class KtFirSymbolProvider(
             is FirAnonymousFunctionSymbol -> firSymbolBuilder.functionLikeBuilder.buildAnonymousFunctionSymbol(firSymbol)
             else -> buildErrorWithAttachment("Unexpected ${firSymbol::class}") {
                 withFirSymbolEntry("firSymbol", firSymbol)
-                withPsiEntry("function", psi)
+                withPsiEntry("function", psi, analysisSession::getModule)
             }
         }
     }
@@ -141,8 +141,9 @@ internal class KtFirSymbolProvider(
         return when (val firClassLike = resolveToFirSymbolOfType<FirClassLikeSymbol<*>>(firResolveSession)) {
             is FirTypeAliasSymbol -> firClassLike.fullyExpandedClass(analysisSession.useSiteSession)
                 ?: buildErrorWithAttachment("${firClassLike.fir::class} should be expanded to the expected type alias") {
+                    val errorElement = this@resolveToFirClassLikeSymbol
                     withFirSymbolEntry("firClassLikeSymbol", firClassLike)
-                    withPsiEntry("ktClassOrObject", this@resolveToFirClassLikeSymbol)
+                    withPsiEntry("ktClassOrObject", errorElement, analysisSession::getModule)
                 }
             is FirAnonymousObjectSymbol -> firClassLike
             is FirRegularClassSymbol -> firClassLike

@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirArrayOfSymbolProvider.
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirArrayOfSymbolProvider.arrayOfSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirArrayOfSymbolProvider.arrayTypeToArrayOfCall
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.impl.base.components.AbstractKtCallResolver
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.signatures.KtCallableSignature
@@ -1290,7 +1291,7 @@ internal class KtFirCallResolver(
     @KtAnalysisApiInternals
     override fun unresolvedKtCallError(psi: KtElement): KtErrorCallInfo {
         LOG.logErrorWithAttachment("${psi::class.simpleName} should always resolve to a KtCallInfo") {
-            withPsiEntry("psi", psi)
+            withPsiEntry("psi", psi, analysisSession::getModule)
             provideAdditionalAttachmentToUnresolvedCall(psi, this)
         }
 
@@ -1309,7 +1310,7 @@ internal class KtFirCallResolver(
                 "Error during resolving call ${element::class.java.name}",
                 exception = e,
             ) {
-                withPsiEntry("psi", element)
+                withPsiEntry("psi", element, analysisSession::getModule)
                 element.getOrBuildFir(firResolveSession)?.let { withFirEntry("fir", it) }
             }
         }

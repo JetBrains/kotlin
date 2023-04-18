@@ -11,6 +11,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.project.structure.KtCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtCompilerPluginsProvider.CompilerPluginType
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
+import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -20,7 +21,6 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.expressions.OperatorConventions.ASSIGN_METHOD
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 
 abstract class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSimpleReference<KtSimpleNameExpression>(expression) {
     // Extension point used by deprecated android extensions.
@@ -94,7 +94,7 @@ abstract class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSim
     abstract fun getImportAlias(): KtImportAlias?
 
     private fun isAssignmentResolved(project: Project, binaryExpression: KtBinaryExpression): Boolean {
-        val sourceModule = binaryExpression.getKtModule(element.project) as? KtSourceModule ?: return false
+        val sourceModule = ProjectStructureProvider.getModule(binaryExpression, contextualModule = null) as? KtSourceModule ?: return false
         val reference = binaryExpression.operationReference.reference ?: return false
         val pluginPresenceService = project.getService(KtCompilerPluginsProvider::class.java)
             ?: error("KtAssignResolutionPresenceService is not available as a service")

@@ -40,7 +40,13 @@ abstract class LLFirSelectingCombinedSymbolProvider<PROVIDER : FirSymbolProvider
     /**
      * Cache [ProjectStructureProvider] to avoid service access when getting [KtModule]s.
      */
-    private val projectStructureProvider: ProjectStructureProvider = project.getService(ProjectStructureProvider::class.java)
+    private val projectStructureProvider: ProjectStructureProvider = ProjectStructureProvider.getInstance(project)
+
+    private val contextualModule = session.llFirModuleData.ktModule
+
+    protected fun getModule(element: PsiElement): KtModule {
+        return projectStructureProvider.getModule(element, contextualModule)
+    }
 
     /**
      * Selects the element with the highest module precedence in [candidates], returning the element and the provider to which resolution
@@ -60,7 +66,7 @@ abstract class LLFirSelectingCombinedSymbolProvider<PROVIDER : FirSymbolProvider
 
         for (candidate in candidates) {
             val element = getElement(candidate) ?: continue
-            val ktModule = projectStructureProvider.getKtModuleForKtElement(element)
+            val ktModule = getModule(element)
 
             // If `ktModule` cannot be found in the map, `candidate` cannot be processed by any of the available providers, because none of
             // them belong to the correct module. We can skip in that case, because iterating through all providers wouldn't lead to any

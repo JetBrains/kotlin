@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.state.LLFirResolvableResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalDeclaration
-import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
 import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.analysis.utils.printer.getElementTextInContext
@@ -105,8 +104,8 @@ object LowLevelFirApiFacadeForResolveOnAir {
 
         declaration.accept(expressionLocator)
         return expressionLocator.result ?: errorWithFirSpecificEntries("Resolved on-air element was not found in containing declaration") {
-            withPsiEntry("place", place)
-            withPsiEntry("elementToResolve", elementToResolve)
+            withPsiEntry("place", place, firResolveSession::getModule)
+            withPsiEntry("elementToResolve", elementToResolve, firResolveSession::getModule)
         }
     }
 
@@ -114,7 +113,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
         firResolveSession: LLFirResolveSession,
         ktFile: KtFile,
     ): FirTowerContextProvider {
-        val ktModule = ktFile.getKtModule(firResolveSession.project)
+        val ktModule = firResolveSession.getModule(ktFile)
         val session = firResolveSession.getSessionFor(ktModule) as LLFirResolvableModuleSession
         val moduleComponents = session.moduleComponents
 
@@ -153,7 +152,8 @@ object LowLevelFirApiFacadeForResolveOnAir {
         firResolveSession: LLFirResolvableResolveSession,
         file: KtFile,
     ): FirTowerDataContext {
-        val session = firResolveSession.getSessionFor(file.getKtModule(firResolveSession.project)) as LLFirResolvableModuleSession
+        val module = firResolveSession.getModule(file)
+        val session = firResolveSession.getSessionFor(module) as LLFirResolvableModuleSession
         val moduleComponents = session.moduleComponents
 
         val firFile = moduleComponents.firFileBuilder.buildRawFirFileWithCaching(file)
@@ -188,8 +188,8 @@ object LowLevelFirApiFacadeForResolveOnAir {
 
         val sameDeclarationInOriginalFile = PsiTreeUtil.findSameElementInCopy(dependencyNonLocalDeclaration, originalKtFile)
             ?: buildErrorWithAttachment("Cannot find original function matching") {
-                withPsiEntry("matchingPsi", dependencyNonLocalDeclaration)
-                withPsiEntry("originalFile", originalKtFile)
+                withPsiEntry("matchingPsi", dependencyNonLocalDeclaration, originalFirResolveSession::getModule)
+                withPsiEntry("originalFile", originalKtFile, originalFirResolveSession::getModule)
             }
 
         recordOriginalDeclaration(

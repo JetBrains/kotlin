@@ -37,7 +37,7 @@ object AnalysisApiFe10TestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
     override fun registerProjectModelServices(project: MockProject, testServices: TestServices) {
         project.apply {
             registerService(KtAnalysisSessionProvider::class.java, KtFe10AnalysisSessionProvider(project))
-            registerService(Fe10AnalysisFacade::class.java, CliFe10AnalysisFacade(project))
+            registerService(Fe10AnalysisFacade::class.java, CliFe10AnalysisFacade())
             registerService(ModuleVisibilityManager::class.java, CliModuleVisibilityManagerImpl(enabled = true))
 
             registerService(ReadWriteAccessChecker::class.java, ReadWriteAccessCheckerDescriptorsImpl())

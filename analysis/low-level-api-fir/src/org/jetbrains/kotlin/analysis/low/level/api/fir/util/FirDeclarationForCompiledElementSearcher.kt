@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirBuiltinsAndCloneableSession
-import org.jetbrains.kotlin.analysis.project.structure.getKtModule
+import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analysis.utils.errors.ExceptionAttachmentBuilder
 import org.jetbrains.kotlin.analysis.utils.errors.withClassEntry
 import org.jetbrains.kotlin.fir.declarations.*
@@ -26,6 +26,11 @@ import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
  * Allows to search for FIR declarations by compiled [KtDeclaration]s.
  */
 internal class FirDeclarationForCompiledElementSearcher(private val symbolProvider: FirSymbolProvider) {
+    private val projectStructureProvider by lazy {
+        val project = symbolProvider.session.llFirModuleData.ktModule.project
+        ProjectStructureProvider.getInstance(project)
+    }
+
     fun findNonLocalDeclaration(ktDeclaration: KtDeclaration): FirDeclaration {
         return when (ktDeclaration) {
             is KtEnumEntry -> findNonLocalEnumEntry(ktDeclaration)
@@ -81,7 +86,10 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
         if (classCandidate == null) {
             errorWithFirSpecificEntries("We should be able to find a symbol for $classId", psi = declaration) {
                 withEntry("classId", classId) { it.asString() }
-                withEntry("ktModule", declaration.getKtModule()) { it.moduleDescription }
+
+                val contextualModule = symbolProvider.session.llFirModuleData.ktModule
+                val moduleForFile = projectStructureProvider.getModule(declaration, contextualModule)
+                withEntry("ktModule", moduleForFile) { it.moduleDescription }
             }
         }
 

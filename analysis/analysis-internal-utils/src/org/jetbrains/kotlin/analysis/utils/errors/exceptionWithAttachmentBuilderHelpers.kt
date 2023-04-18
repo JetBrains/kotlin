@@ -8,11 +8,14 @@ package org.jetbrains.kotlin.analysis.utils.errors
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiInvalidElementAccessException
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.analysis.utils.printer.getElementTextInContext
 import org.jetbrains.kotlin.psi.KtElement
 
-public fun ExceptionAttachmentBuilder.withPsiEntry(name: String, psi: PsiElement?) {
+public fun ExceptionAttachmentBuilder.withPsiEntry(name: String, psi: PsiElement?, moduleFactory: (PsiElement) -> KtModule) {
+    return withPsiEntry(name, psi, psi?.let(moduleFactory))
+}
+
+public fun ExceptionAttachmentBuilder.withPsiEntry(name: String, psi: PsiElement?, module: KtModule?) {
     withEntry(name, psi) { psiElement ->
         when {
             !psiElement.isValid -> "INVALID PSI ${PsiInvalidElementAccessException.findOutInvalidationReason(psiElement)}"
@@ -21,7 +24,7 @@ public fun ExceptionAttachmentBuilder.withPsiEntry(name: String, psi: PsiElement
         }
     }
     if (psi != null) {
-        withKtModuleEntry("${name}KtModule", psi.getKtModule())
+        withKtModuleEntry("${name}KtModule", module)
     }
 }
 
