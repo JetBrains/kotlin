@@ -110,6 +110,12 @@ public class FirOldFrontendMPPDiagnosticsWithLightTreeTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("sealedClassWithPrivateConstructor.kt")
+    public void testSealedClassWithPrivateConstructor() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/sealedClassWithPrivateConstructor.kt");
+    }
+
+    @Test
     @TestMetadata("sealedTypeAlias.kt")
     public void testSealedTypeAlias() throws Exception {
         runTest("compiler/testData/diagnostics/tests/multiplatform/sealedTypeAlias.kt");
