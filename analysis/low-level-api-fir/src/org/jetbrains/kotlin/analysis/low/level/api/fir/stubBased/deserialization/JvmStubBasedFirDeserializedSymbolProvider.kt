@@ -50,7 +50,7 @@ internal open class JvmStubBasedFirDeserializedSymbolProvider(
     scope: GlobalSearchScope,
     private val initialOrigin: FirDeclarationOrigin
 ) : FirSymbolProvider(session) {
-    private val declarationProvider by lazy(LazyThreadSafetyMode.PUBLICATION) { project.createDeclarationProvider(scope) }
+    private val declarationProvider by lazy(LazyThreadSafetyMode.PUBLICATION) { project.createDeclarationProvider(scope, module = null) }
     private val moduleData = moduleDataProvider.getModuleData(null)
     private val packageSetWithTopLevelCallableDeclarations: Set<String> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         declarationProvider.computePackageSetWithTopLevelCallableDeclarations()

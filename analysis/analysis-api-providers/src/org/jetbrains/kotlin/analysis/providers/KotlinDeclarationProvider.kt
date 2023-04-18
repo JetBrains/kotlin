@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.providers
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -47,9 +48,10 @@ public abstract class KotlinDeclarationProvider {
 }
 
 public abstract class KotlinDeclarationProviderFactory {
-    public abstract fun createDeclarationProvider(searchScope: GlobalSearchScope): KotlinDeclarationProvider
+    public abstract fun createDeclarationProvider(scope: GlobalSearchScope, contextualModule: KtModule?): KotlinDeclarationProvider
 }
 
-public fun Project.createDeclarationProvider(searchScope: GlobalSearchScope): KotlinDeclarationProvider =
-    this.getService(KotlinDeclarationProviderFactory::class.java)
-        .createDeclarationProvider(searchScope)
+public fun Project.createDeclarationProvider(scope: GlobalSearchScope, module: KtModule?): KotlinDeclarationProvider {
+    return getService(KotlinDeclarationProviderFactory::class.java)
+        .createDeclarationProvider(scope, module)
+}

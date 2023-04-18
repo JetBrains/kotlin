@@ -169,7 +169,7 @@ private constructor(
         }
         useSiteScopeDeclarationProvider = CompositeKotlinDeclarationProvider.create(
             buildList {
-                add(project.createDeclarationProvider(useSiteAnalysisScope))
+                add(project.createDeclarationProvider(useSiteAnalysisScope, useSiteModule))
                 extensionTools.mapTo(this) { it.declarationProvider }
             }
         )
@@ -181,7 +181,6 @@ private constructor(
             }
         )
     }
-
 
     fun getScopeSessionFor(session: FirSession): ScopeSession = withValidityAssertion { firResolveSession.getScopeSessionFor(session) }
 
