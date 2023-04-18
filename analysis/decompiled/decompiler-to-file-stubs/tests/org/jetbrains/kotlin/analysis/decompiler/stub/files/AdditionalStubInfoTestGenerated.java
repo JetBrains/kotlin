@@ -49,6 +49,12 @@ public class AdditionalStubInfoTestGenerated extends AbstractAdditionalStubInfoT
     }
 
     @Test
+    @TestMetadata("ParameterName")
+    public void testParameterName() throws Exception {
+        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/ParameterName/");
+    }
+
+    @Test
     @TestMetadata("PropertyInitializer")
     public void testPropertyInitializer() throws Exception {
         runTest("analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo/PropertyInitializer/");

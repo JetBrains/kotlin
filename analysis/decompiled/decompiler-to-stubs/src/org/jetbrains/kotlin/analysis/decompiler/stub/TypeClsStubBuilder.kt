@@ -7,6 +7,7 @@ import com.intellij.psi.stubs.StubElement
 import com.intellij.util.io.StringRef
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionClass
+import org.jetbrains.kotlin.constant.StringValue
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -21,7 +22,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.stubs.ConstantValueKind
 import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
@@ -37,7 +37,8 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
     fun createTypeReferenceStub(
         parent: StubElement<out PsiElement>,
         type: Type,
-        additionalAnnotations: () -> List<AnnotationWithTarget> = { emptyList() }
+        additionalAnnotations: () -> List<AnnotationWithTarget> = { emptyList() },
+        loadTypeAnnotations: (Type) -> List<AnnotationWithArgs> = { c.components.annotationLoader.loadTypeAnnotations(it, c.nameResolver) }
     ) {
         val abbreviatedType = type.abbreviatedType(c.typeTable)
         if (abbreviatedType != null) {
@@ -46,7 +47,8 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
 
         val typeReference = KotlinPlaceHolderStubImpl<KtTypeReference>(parent, KtStubElementTypes.TYPE_REFERENCE)
 
-        val annotations = c.components.annotationLoader.loadTypeAnnotations(type, c.nameResolver).filterNot {
+        val allAnnotationsInType = loadTypeAnnotations(type)
+        val annotations = allAnnotationsInType.filterNot {
             val isTopLevelClass = !it.classId.isNestedClass
             isTopLevelClass && it.classId.asSingleFqName() in ANNOTATIONS_NOT_LOADED_FOR_TYPES
         }
@@ -271,8 +273,8 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         var suspendParameterType: Type? = null
 
         for ((index, argument) in typeArgumentsWithoutReceiverAndReturnType.withIndex()) {
+            val parameterType = argument.type(c.typeTable)!!
             if (isSuspend && index == typeArgumentsWithoutReceiverAndReturnType.size - 1) {
-                val parameterType = argument.type(c.typeTable)!!
                 if (parameterType.hasClassName() && parameterType.argumentCount == 1) {
                     val classId = c.nameResolver.getClassId(parameterType.className)
                     val fqName = classId.asSingleFqName()
@@ -286,11 +288,27 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                     continue
                 }
             }
-            val parameter = KotlinParameterStubImpl(
-                parameterList, fqName = null, name = null, isMutable = false, hasValOrVar = false, hasDefaultValue = false
-            )
+            val annotations = c.components.annotationLoader.loadTypeAnnotations(parameterType, c.nameResolver)
 
-            createTypeReferenceStub(parameter, argument.type(c.typeTable)!!)
+            fun getFunctionTypeParameterName(annotations: List<AnnotationWithArgs>): String? {
+                for (annotationWithArgs in annotations) {
+                    if (annotationWithArgs.classId.asSingleFqName() == StandardNames.FqNames.parameterName) {
+                        return (annotationWithArgs.args.values.firstOrNull() as? StringValue)?.value
+                    }
+                }
+                return null
+            }
+
+            val parameter = KotlinParameterStubImpl(
+                parameterList,
+                fqName = null,
+                name = null,
+                isMutable = false,
+                hasValOrVar = false,
+                hasDefaultValue = false,
+                functionTypeParameterName = getFunctionTypeParameterName(annotations)
+            )
+            createTypeReferenceStub(parameter, parameterType, loadTypeAnnotations = { annotations })
         }
 
 
