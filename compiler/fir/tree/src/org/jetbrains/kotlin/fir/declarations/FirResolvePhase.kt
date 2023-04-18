@@ -39,3 +39,10 @@ enum class FirResolvePhase(val noProcessor: Boolean = false) {
         val ANALYZED_DEPENDENCIES = BODY_RESOLVE
     }
 }
+
+val FirResolvePhase.isBodyResolve: Boolean
+    get() = when (this) {
+        FirResolvePhase.BODY_RESOLVE,
+        FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE -> true
+        else -> false
+    }
