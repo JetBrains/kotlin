@@ -41,6 +41,12 @@ public class FirNativeKLibContentsTestGenerated extends AbstractNativeKlibConten
     }
 
     @Test
+    @TestMetadata("data_class.kt")
+    public void testData_class() throws Exception {
+        runTest("native/native.tests/testData/klibContents/data_class.kt");
+    }
+
+    @Test
     @TestMetadata("kt55464_serializeTypeAnnotation.kt")
     public void testKt55464_serializeTypeAnnotation() throws Exception {
         runTest("native/native.tests/testData/klibContents/kt55464_serializeTypeAnnotation.kt");

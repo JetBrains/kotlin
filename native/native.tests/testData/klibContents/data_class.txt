@@ -1,0 +1,16 @@
+    data class DataClass constructor(intProp: Int, stringProp: String) {
+        val intProp: Int
+        val nonConstructorProp: Int = 0
+        val stringProp: String
+        operator fun component1(): Int
+        operator fun component2(): String
+        fun copy(intProp: Int = ..., stringProp: String = ...): DataClass
+        override fun equals(other: Any?): Boolean
+        override fun hashCode(): Int
+        override fun toString(): String
+    }
+    data object DataObject {
+        override fun equals(other: Any?): Boolean
+        override fun hashCode(): Int
+        override fun toString(): String
+    }
