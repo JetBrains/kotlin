@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.secondaryConstructors
 import org.jetbrains.kotlin.types.isFlexible
+import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 private const val DECOMPILED_CODE_COMMENT = "/* compiled code */"
@@ -52,7 +53,11 @@ internal fun CallableMemberDescriptor.mustNotBeWrittenToDecompiledText(): Boolea
 
         CallableMemberDescriptor.Kind.SYNTHESIZED -> {
             // Of all synthesized functions, only `component*` functions are rendered (for historical reasons)
-            !DataClassDescriptorResolver.isComponentLike(name)
+            !DataClassDescriptorResolver.isComponentLike(name) && name !in listOf(
+                OperatorNameConventions.EQUALS,
+                StandardNames.HASHCODE_NAME,
+                OperatorNameConventions.TO_STRING
+            )
         }
     }
 }
