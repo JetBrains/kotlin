@@ -15424,6 +15424,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                 }
 
                 @Test
+                @TestMetadata("approximationLeavesNonTrivialLowerBound.kt")
+                public void testApproximationLeavesNonTrivialLowerBound() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/approximationLeavesNonTrivialLowerBound.kt");
+                }
+
+                @Test
                 @TestMetadata("avoidCreatingUselessCapturedTypes.kt")
                 public void testAvoidCreatingUselessCapturedTypes() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/avoidCreatingUselessCapturedTypes.kt");
@@ -15445,6 +15451,18 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                 @TestMetadata("captureForPlatformTypes.kt")
                 public void testCaptureForPlatformTypes() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/captureForPlatformTypes.kt");
+                }
+
+                @Test
+                @TestMetadata("captureFromNullableTypeInScope.kt")
+                public void testCaptureFromNullableTypeInScope() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/captureFromNullableTypeInScope.kt");
+                }
+
+                @Test
+                @TestMetadata("captureFromNullableTypeInScopeAny.kt")
+                public void testCaptureFromNullableTypeInScopeAny() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/captureFromNullableTypeInScopeAny.kt");
                 }
 
                 @Test
