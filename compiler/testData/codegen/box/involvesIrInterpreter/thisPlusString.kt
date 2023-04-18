@@ -11,9 +11,10 @@ object Test {
     fun baz(): String = "baz " + this.toString()
 }
 
+// STOP_EVALUATION_CHECKS
 fun box(): String {
-    if (!Test.foo().startsWith("foo ")) return "<!EVALUATED("Fail ")!>Fail <!>${Test.foo()}"
-    if (!Test.bar().startsWith("bar ")) return "<!EVALUATED("Fail ")!>Fail <!>${Test.bar()}"
-    if (!Test.baz().startsWith("baz ")) return "<!EVALUATED("Fail ")!>Fail <!>${Test.baz()}"
+    if (!Test.foo().startsWith("foo ")) return "Fail ${Test.foo()}"
+    if (!Test.bar().startsWith("bar ")) return "Fail ${Test.bar()}"
+    if (!Test.baz().startsWith("baz ")) return "Fail ${Test.baz()}"
     return "OK"
 }

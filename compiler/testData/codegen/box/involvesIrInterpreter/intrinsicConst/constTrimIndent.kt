@@ -12,8 +12,9 @@ const val complexTrimIndent =
             456
         """.<!EVALUATED("ABC\n123\n456")!>trimIndent()<!>
 
+// STOP_EVALUATION_CHECKS
 fun box(): String {
-    if (<!EVALUATED("123")!>trimIndent<!>.id() != "123") return "Fail 1"
-    if (<!EVALUATED("ABC\n123\n456")!>complexTrimIndent<!>.id() != "ABC\n123\n456") return "Fail 2"
+    if (trimIndent.id() != "123") return "Fail 1"
+    if (complexTrimIndent.id() != "ABC\n123\n456") return "Fail 2"
     return "OK"
 }

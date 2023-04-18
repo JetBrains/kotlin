@@ -10,6 +10,7 @@ enum class A {
     val x = J.f()
 }
 
+// STOP_EVALUATION_CHECKS
 fun box(): String {
-    return A.OK.<!EVALUATED("OK")!>name<!>
+    return A.OK.name
 }

@@ -18,6 +18,9 @@ import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 
+private const val stopEvaluation = "// STOP_EVALUATION_CHECKS"
+private const val startEvaluation = "// START_EVALUATION_CHECKS"
+
 interface IrInterpreterDumpHandler {
     val testServices: TestServices
     private val globalMetadataInfoHandler
@@ -47,8 +50,11 @@ interface IrInterpreterDumpHandler {
     }
 
     private fun EvaluatedConstTracker.processFile(testFile: TestFile, irFile: IrFile) {
+        val rangesThatAreNotSupposedToBeRendered = testFile.extractRangesWithoutRender()
         this.load(irFile.name)?.forEach { (pair, constantValue) ->
             val (start, end) = pair
+            if (rangesThatAreNotSupposedToBeRendered.any { start >= it.first && start <= it.second }) return@forEach
+
             val message = constantValue.stringTemplateValue()
             val metaInfo = ParsedCodeMetaInfo(
                 start, end,
@@ -57,6 +63,20 @@ interface IrInterpreterDumpHandler {
                 description = StringUtil.escapeLineBreak(message)
             )
             globalMetadataInfoHandler.addMetadataInfosForFile(testFile, listOf(metaInfo))
+        }
+    }
+
+    private fun TestFile.extractRangesWithoutRender(): List<Pair<Int, Int>> {
+        val content = testServices.sourceFileProvider.getContentOfSourceFile(this)
+        return buildList {
+            var indexOfStop = -1
+            do {
+                indexOfStop = content.indexOf(stopEvaluation, indexOfStop + 1)
+                if (indexOfStop < 0) break
+
+                val indexOfStart = content.indexOf(startEvaluation, indexOfStop).takeIf { it != -1 } ?: content.length
+                add(indexOfStop to indexOfStart)
+            } while (true)
         }
     }
 }

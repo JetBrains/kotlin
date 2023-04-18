@@ -13,11 +13,12 @@ const val withWhen2 = <!EVALUATED("True")!>when { flag == true -> "True"; else -
 const val withWhen3 = <!EVALUATED("1")!>when(value) { 10 -> "1"; 100 -> "2"; else -> "3" }<!>
 const val multibranchIf = <!EVALUATED("3")!>if (value == 100) 1 else if (value == 1000) 2 else 3<!>
 
+// STOP_EVALUATION_CHECKS
 fun box(): String {
-    if (<!EVALUATED("True")!>condition<!>.id() != "True") return "Fail 1"
-    if (<!EVALUATED("True")!>withWhen<!>.id() != "True") return "Fail 2"
-    if (<!EVALUATED("True")!>withWhen2<!>.id() != "True") return "Fail 3"
-    if (<!EVALUATED("1")!>withWhen3<!>.id() != "1") return "Fail 4"
-    if (<!EVALUATED("3")!>multibranchIf<!>.id() != 3) return "Fail 5"
+    if (condition.id() != "True") return "Fail 1"
+    if (withWhen.id() != "True") return "Fail 2"
+    if (withWhen2.id() != "True") return "Fail 3"
+    if (withWhen3.id() != "1") return "Fail 4"
+    if (multibranchIf.id() != 3) return "Fail 5"
     return "OK"
 }

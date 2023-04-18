@@ -16,9 +16,10 @@ const val withoutMargin = """
     #bar
 """.<!EVALUATED("XYZ\nfoo\nbar")!>trimMargin("#")<!>
 
+// STOP_EVALUATION_CHECKS
 fun box(): String {
-    if (<!EVALUATED("123")!>trimMargin<!>.id() != "123") return "Fail 1"
-    if (<!EVALUATED("ABC\n123\n456")!>trimMarginDefault<!>.id() != "ABC\n123\n456") return "Fail 2"
-    if (<!EVALUATED("XYZ\nfoo\nbar")!>withoutMargin<!>.id() != "XYZ\nfoo\nbar") return "Fail 3"
+    if (trimMargin.id() != "123") return "Fail 1"
+    if (trimMarginDefault.id() != "ABC\n123\n456") return "Fail 2"
+    if (withoutMargin.id() != "XYZ\nfoo\nbar") return "Fail 3"
     return "OK"
 }

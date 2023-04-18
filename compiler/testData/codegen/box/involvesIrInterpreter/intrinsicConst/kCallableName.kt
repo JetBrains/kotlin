@@ -16,12 +16,13 @@ const val suspendMethodName = A::bar.<!EVALUATED("bar")!>name<!>
 const val className = ::A.<!EVALUATED("<init>")!>name<!>
 const val topLevelPropName = ::topLevelProp.<!EVALUATED("topLevelProp")!>name<!>
 
+// STOP_EVALUATION_CHECKS
 fun box(): String {
-    if (<!EVALUATED("OK")!>propertyName1<!>.id() != "OK") return "Fail 1"
-    if (<!EVALUATED("somePropertyWithLongName")!>propertyName2<!>.id() != "somePropertyWithLongName") return "Fail 2"
-    if (<!EVALUATED("foo")!>methodName<!>.id() != "foo") return "Fail 3"
-    if (<!EVALUATED("bar")!>suspendMethodName<!>.id() != "bar") return "Fail 3.2"
-    if (<!EVALUATED("<init>")!>className<!>.id() != "<init>") return "Fail 4"
-    if (<!EVALUATED("topLevelProp")!>topLevelPropName<!>.id() != "topLevelProp") return "Fail 5"
+    if (propertyName1.id() != "OK") return "Fail 1"
+    if (propertyName2.id() != "somePropertyWithLongName") return "Fail 2"
+    if (methodName.id() != "foo") return "Fail 3"
+    if (suspendMethodName.id() != "bar") return "Fail 3.2"
+    if (className.id() != "<init>") return "Fail 4"
+    if (topLevelPropName.id() != "topLevelProp") return "Fail 5"
     return "OK"
 }
