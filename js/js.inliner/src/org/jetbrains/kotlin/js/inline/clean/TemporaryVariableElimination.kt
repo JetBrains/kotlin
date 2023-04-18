@@ -209,8 +209,7 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
                 try {
                     localVars = mutableSetOf()
                     return block()
-                }
-                finally {
+                } finally {
                     currentScope -= localVars
                     localVars = localVarsBackup
                 }
@@ -233,8 +232,7 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
                 if (assignment != null) {
                     val (name, value) = assignment
                     handleDefinition(name, value, x)
-                }
-                else {
+                } else {
                     if (handleExpression(expression)) {
                         invalidateTemporaries()
                     }
@@ -256,8 +254,7 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
                     if (isTrivial(value)) {
                         statementsToRemove += node
                         namesToSubstitute += name
-                    }
-                    else {
+                    } else {
                         lastAssignedVars += Pair(name, node)
                         if (sideEffects) {
                             namesWithSideEffects += name
@@ -460,8 +457,7 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
                         substitutableVariableReferences += name
                     }
                 }
-            }
-            else {
+            } else {
                 super.visitNameRef(nameRef)
                 if (nameRef.sideEffects == SideEffectKind.AFFECTS_STATE) {
                     sideEffectOccurred = true
@@ -479,8 +475,7 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
                     if (qualifier != null) {
                         accept(qualifier)
                     }
-                }
-                else if (left is JsArrayAccess) {
+                } else if (left is JsArrayAccess) {
                     accept(left.arrayExpression)
                     accept(left.indexExpression)
                 }
@@ -488,13 +483,11 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
 
                 accept(right)
                 sideEffectOccurred = true
-            }
-            else if (x.operator == JsBinaryOperator.AND || x.operator == JsBinaryOperator.OR) {
+            } else if (x.operator == JsBinaryOperator.AND || x.operator == JsBinaryOperator.OR) {
                 accept(x.arg1)
                 sideEffectOccurred = true
                 accept(x.arg2)
-            }
-            else {
+            } else {
                 super.visitBinaryExpression(x)
             }
         }
@@ -518,8 +511,7 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
                         for (initializer in initializers) {
                             ctx.addPrevious(JsExpressionStatement(accept(initializer)).apply { synthetic = true })
                         }
-                    }
-                    else {
+                    } else {
                         ctx.addPrevious(JsVars(*subList.toTypedArray()).apply { synthetic = true })
                     }
                 }

@@ -76,7 +76,7 @@ internal class DoWhileGuardElimination(private val root: JsStatement) {
 
                 if (guard != null) {
 
-                    // When do..while loop has no label and we encounter break guard from nested loop, we can't
+                    // When do..while loop has no label and we encounter `break guard` from nested loop, we can't
                     // replace this break with continue. Example:
                     //
                     // do {

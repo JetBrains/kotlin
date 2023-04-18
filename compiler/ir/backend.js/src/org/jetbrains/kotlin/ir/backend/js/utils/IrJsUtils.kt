@@ -78,6 +78,7 @@ val IrFunctionAccessExpression.typeArguments: List<IrType?>
 
 val IrFunctionAccessExpression.valueArguments: List<IrExpression?>
     get() = List(valueArgumentsCount) { getValueArgument(it) }
+
 val IrClass.isInstantiableEnum: Boolean
     get() = isEnumClass && !isExpect && !isEffectivelyExternal()
 
