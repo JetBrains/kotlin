@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.calls.KtCallCandidateInfo
 import org.jetbrains.kotlin.analysis.api.calls.KtCallInfo
 import org.jetbrains.kotlin.analysis.api.calls.KtErrorCallInfo
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtNonBoundToPsiErrorDiagnostic
+import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.utils.errors.ExceptionAttachmentBuilder
 import org.jetbrains.kotlin.analysis.utils.errors.logErrorWithAttachment
@@ -28,7 +29,7 @@ public abstract class KtCallResolver : KtAnalysisSessionComponent() {
     @KtAnalysisApiInternals
     public fun unresolvedKtCallError(psi: KtElement): KtErrorCallInfo {
         LOG.logErrorWithAttachment("${psi::class.simpleName} should always resolve to a KtCallInfo") {
-            withPsiEntry("psi", psi)
+            withPsiEntry("psi", psi, analysisSession::getModule)
             provideAdditionalAttachmentToUnresolvedCall(psi, this)
         }
         return KtErrorCallInfo(

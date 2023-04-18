@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableM
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
-import org.jetbrains.kotlin.analysis.project.structure.getKtModule
+import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.forEachDescendantOfType
 import org.jetbrains.kotlin.test.KotlinTestUtils
@@ -102,9 +102,10 @@ abstract class AbstractFileStructureTest : AbstractLowLevelApiSingleFileTest() {
     }
 
     private fun KtFile.getFileStructure(): FileStructure {
-        val moduleFirResolveSession = getFirResolveSession()
+        val module = ProjectStructureProvider.getModule(this, null)
+        val moduleFirResolveSession = module.getFirResolveSession(project)
         check(moduleFirResolveSession.isSourceSession)
-        val session = moduleFirResolveSession.getSessionFor(getKtModule()) as LLFirResolvableModuleSession
+        val session = moduleFirResolveSession.getSessionFor(module) as LLFirResolvableModuleSession
         return session.moduleComponents.fileStructureCache.getFileStructure(this)
     }
 

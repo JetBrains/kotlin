@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
-import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
+import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analysis.utils.errors.ExceptionAttachmentBuilder
 import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
 import org.jetbrains.kotlin.analysis.utils.errors.withKtModuleEntry
@@ -36,7 +37,7 @@ fun ExceptionAttachmentBuilder.withFirEntry(name: String, fir: FirElement) {
     if (fir is FirElementWithResolveState) {
         withKtModuleEntry("${name}KtModule", fir.llFirModuleData.ktModule)
     }
-    withPsiEntry("${name}Psi", fir.psi)
+    withPsiEntry("${name}Psi", fir.psi, (fir as? FirElementWithResolveState)?.llFirSession?.ktModule)
 }
 
 
@@ -65,7 +66,7 @@ fun errorWithFirSpecificEntries(
         }
 
         if (psi != null) {
-            withPsiEntry("psi", psi)
+            withPsiEntry("psi", psi, ProjectStructureProvider.getModule(psi, null))
         }
 
         if (coneType != null) {

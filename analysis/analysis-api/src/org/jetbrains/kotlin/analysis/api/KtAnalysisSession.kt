@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.analysis.api
 
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
@@ -169,4 +171,8 @@ public abstract class KtAnalysisSession(final override val token: KtLifetimeToke
     internal val typesCreator: KtTypeCreator
         get() = typesCreatorImpl
     protected abstract val typesCreatorImpl: KtTypeCreator
+}
+
+public fun KtAnalysisSession.getModule(element: PsiElement): KtModule {
+    return ProjectStructureProvider.getModule(element, useSiteModule)
 }

@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolProvider
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolProviderByJavaPsi
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.getKtModule
+import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 
@@ -28,7 +28,7 @@ class KtFe10AnalysisSession(
 ) : KtAnalysisSession(analysisContext.token) {
     constructor(contextElement: KtElement, token: KtLifetimeToken) : this(
         Fe10AnalysisContext(Fe10AnalysisFacade.getInstance(contextElement.project), contextElement, token),
-        contextElement.getKtModule()
+        ProjectStructureProvider.getModule(contextElement, null)
     )
 
 

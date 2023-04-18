@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder
 
 import org.jetbrains.kotlin.analysis.api.impl.barebone.annotations.ThreadSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
-import org.jetbrains.kotlin.analysis.project.structure.getKtModule
+import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analysis.utils.errors.checkWithAttachmentBuilder
 import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
 import org.jetbrains.kotlin.fir.builder.RawFirBuilder
@@ -18,16 +18,19 @@ import org.jetbrains.kotlin.psi.KtFile
  * Responsible for building [FirFile] by [KtFile]
  */
 @ThreadSafe
-internal class LLFirFileBuilder(
-    val moduleComponents: LLFirModuleResolveComponents,
-) {
+internal class LLFirFileBuilder(val moduleComponents: LLFirModuleResolveComponents) {
+    private val projectStructureProvider by lazy { ProjectStructureProvider.getInstance(moduleComponents.session.project) }
+
     fun buildRawFirFileWithCaching(ktFile: KtFile): FirFile = moduleComponents.cache.fileCached(ktFile) {
-        checkWithAttachmentBuilder(ktFile.getKtModule() == moduleComponents.module, { "Modules are inconsistent" }) {
+        val contextualModule = moduleComponents.module
+        val actualFileModule = projectStructureProvider.getModule(ktFile, contextualModule)
+
+        checkWithAttachmentBuilder(actualFileModule == contextualModule, { "Modules are inconsistent" }) {
             withEntry("file", ktFile.name)
-            withEntry("file module", ktFile.getKtModule()) {
+            withEntry("file module", actualFileModule) {
                 it.toString()
             }
-            withEntry("components module", moduleComponents.module) {
+            withEntry("components module", contextualModule) {
                 it.toString()
             }
         }

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeTokenFactory
 import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.getKtModule
+import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analysis.providers.createProjectWideOutOfBlockModificationTracker
 import org.jetbrains.kotlin.psi.KtElement
 import java.util.concurrent.ConcurrentMap
@@ -36,7 +36,8 @@ class KtFirAnalysisSessionProvider(project: Project) : KtAnalysisSessionProvider
     }
 
     override fun getAnalysisSession(useSiteKtElement: KtElement, factory: KtLifetimeTokenFactory): KtAnalysisSession {
-        return getAnalysisSessionByUseSiteKtModule(useSiteKtElement.getKtModule(project), factory)
+        val module = ProjectStructureProvider.getModule(useSiteKtElement, null)
+        return getAnalysisSessionByUseSiteKtModule(module, factory)
     }
 
     override fun getAnalysisSessionByUseSiteKtModule(useSiteKtModule: KtModule, factory: KtLifetimeTokenFactory): KtAnalysisSession {

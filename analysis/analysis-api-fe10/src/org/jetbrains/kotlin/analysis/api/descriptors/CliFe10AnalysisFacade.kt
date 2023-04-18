@@ -11,7 +11,7 @@ import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbolOrigin
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
-import org.jetbrains.kotlin.analysis.project.structure.getKtModule
+import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.container.get
@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.resolve.lazy.ResolveSession
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.util.CancellationChecker
 
-class CliFe10AnalysisFacade(private val project: Project) : Fe10AnalysisFacade {
+class CliFe10AnalysisFacade : Fe10AnalysisFacade {
     override fun getResolveSession(element: KtElement): ResolveSession {
         return getHandler(element).resolveSession ?: error("Resolution is not performed")
     }
@@ -68,7 +68,7 @@ class CliFe10AnalysisFacade(private val project: Project) : Fe10AnalysisFacade {
     }
 
     private fun getHandler(useSiteElement: KtElement): KtFe10AnalysisHandlerExtension {
-        val ktModule = useSiteElement.getKtModule(project)
+        val ktModule = ProjectStructureProvider.getModule(useSiteElement, null)
         return KtFe10AnalysisHandlerExtension.getInstance(ktModule.project, ktModule)
     }
 }

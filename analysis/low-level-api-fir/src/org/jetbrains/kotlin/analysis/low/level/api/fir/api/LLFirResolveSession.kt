@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
@@ -56,4 +58,8 @@ abstract class LLFirResolveSession {
     internal abstract fun resolveFirToPhase(declaration: FirDeclaration, toPhase: FirResolvePhase)
 
     abstract fun getTowerContextProvider(ktFile: KtFile): FirTowerContextProvider
+}
+
+fun LLFirResolveSession.getModule(element: PsiElement): KtModule {
+    return ProjectStructureProvider.getModule(element, useSiteKtModule)
 }

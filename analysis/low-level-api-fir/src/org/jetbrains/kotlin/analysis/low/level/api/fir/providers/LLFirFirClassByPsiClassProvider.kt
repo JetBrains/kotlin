@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.analysis.utils.classIdIfNonLocal
 
 class LLFirFirClassByPsiClassProvider(private val session: LLFirSession) : FirSessionComponent {
@@ -37,7 +36,7 @@ class LLFirFirClassByPsiClassProvider(private val session: LLFirSession) : FirSe
             }
         ) {
             withEntry("virtualFilePath", psiClass.containingFile.virtualFile?.path)
-            withPsiEntry("psiClass", psiClass)
+            withPsiEntry("psiClass", psiClass, session.ktModule)
         }
 
         if (psiClass.qualifiedName == null) {
@@ -71,7 +70,7 @@ class LLFirFirClassByPsiClassProvider(private val session: LLFirSession) : FirSe
         val provider = session.nullableJavaSymbolProvider ?: session.symbolProvider
         val symbol = provider.getClassLikeSymbolByClassId(classId)
             ?: buildErrorWithAttachment("No classifier found") {
-                withPsiEntry("psiClass", psiClass)
+                withPsiEntry("psiClass", psiClass, session.ktModule)
                 withEntry("classId", classId) { it.asString() }
             }
         return symbol as FirRegularClassSymbol

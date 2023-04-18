@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.NullableCaffeineCa
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirSymbolProviderNameCacheBase
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
 import org.jetbrains.kotlin.fir.FirSession
@@ -105,7 +104,7 @@ internal class LLFirCombinedKotlinSymbolProvider private constructor(
         val callableId = CallableId(packageFqName, name)
 
         declarationProvider.getTopLevelCallableFiles(callableId)
-            .groupBy { it.getKtModule(project) }
+            .groupBy { getModule(it) }
             .forEach { (ktModule, ktFiles) ->
                 // If `ktModule` cannot be found in the map, `ktFiles` cannot be processed by any of the available providers, because none
                 // of them belong to the correct module. We can skip in that case, because iterating through all providers wouldn't lead to

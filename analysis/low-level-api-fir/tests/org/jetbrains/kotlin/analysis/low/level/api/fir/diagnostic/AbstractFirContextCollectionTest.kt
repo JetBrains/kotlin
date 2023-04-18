@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getDiagnostics
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getModule
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.BeforeElementDiagnosticCollectionHandler
 import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics.beforeElementDiagnosticCollectionHandler
@@ -22,7 +23,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLeve
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.useFirSessionConfigurator
-import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -45,7 +45,8 @@ abstract class AbstractFirContextCollectionTest : AbstractLowLevelApiSingleFileT
         resolveWithClearCaches(ktFile) { firResolveSession ->
             check(firResolveSession.isSourceSession)
 
-            val session = firResolveSession.getSessionFor(ktFile.getKtModule()) as LLFirResolvableModuleSession
+            val module = firResolveSession.getModule(ktFile)
+            val session = firResolveSession.getSessionFor(module) as LLFirResolvableModuleSession
             val handler = session.beforeElementDiagnosticCollectionHandler as BeforeElementTestDiagnosticCollectionHandler
 
             val fileStructureCache = session.moduleComponents.fileStructureCache

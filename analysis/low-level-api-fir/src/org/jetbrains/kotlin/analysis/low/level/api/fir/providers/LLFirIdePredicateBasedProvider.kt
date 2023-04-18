@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSourcesSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
+import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analysis.providers.KotlinAnnotationsResolver
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.fir.FirElement
@@ -44,6 +45,7 @@ internal class LLFirIdePredicateBasedProvider(
     private val annotationsResolver: KotlinAnnotationsResolver,
     private val declarationProvider: KotlinDeclarationProvider,
 ) : FirPredicateBasedProvider() {
+    private val projectStructureProvider by lazy { ProjectStructureProvider.getInstance(session.project) }
 
     private val registeredPluginAnnotations: FirRegisteredPluginAnnotations
         get() = session.registeredPluginAnnotations
@@ -75,8 +77,9 @@ internal class LLFirIdePredicateBasedProvider(
             this !is KtProperty
         ) return null
 
-        val firResolveSession = this.getFirResolveSession()
-        return this.resolveToFirSymbol(firResolveSession).fir
+        val moduleForFile = projectStructureProvider.getModule(this, session.ktModule)
+        val sessionForFile = moduleForFile.getFirResolveSession(project)
+        return this.resolveToFirSymbol(sessionForFile).fir
     }
 
     override fun getOwnersOfDeclaration(declaration: FirDeclaration): List<FirBasedSymbol<*>>? {
