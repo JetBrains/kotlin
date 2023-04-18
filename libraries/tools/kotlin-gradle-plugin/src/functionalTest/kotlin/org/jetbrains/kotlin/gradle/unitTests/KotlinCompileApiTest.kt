@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
-import org.jetbrains.kotlin.gradle.plugin.KotlinBaseApiPlugin
+import org.jetbrains.kotlin.gradle.plugin.KotlinApiPlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinJvmFactory
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
@@ -36,7 +36,7 @@ class KotlinCompileApiTest {
     @Before
     fun setUpProject() {
         project = buildProject {}
-        plugin = project.plugins.apply(KotlinBaseApiPlugin::class.java)
+        plugin = project.plugins.apply(KotlinApiPlugin::class.java)
         plugin.registerKotlinJvmCompileTask(TASK_NAME).configure { task ->
             taskApi = task
         }

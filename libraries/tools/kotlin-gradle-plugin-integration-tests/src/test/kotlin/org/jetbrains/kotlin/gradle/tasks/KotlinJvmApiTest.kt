@@ -34,8 +34,8 @@ class KotlinJvmApiTest : KGPBaseTest() {
             buildGradle.modify {
                 it.replace("id 'org.jetbrains.kotlin.jvm'", "id 'org.jetbrains.kotlin.jvm' apply false") +
                         """
-                        import org.jetbrains.kotlin.gradle.plugin.KotlinBaseApiPlugin
-                        KotlinBaseApiPlugin apiPlugin = plugins.apply(KotlinBaseApiPlugin.class)
+                        import org.jetbrains.kotlin.gradle.plugin.KotlinApiPlugin
+                        KotlinApiPlugin apiPlugin = plugins.apply(KotlinApiPlugin.class)
                                                 
                         apiPlugin.registerKotlinJvmCompileTask("foo").configure {
                             it.source("src/main")
@@ -79,8 +79,8 @@ class KotlinJvmApiTest : KGPBaseTest() {
             buildGradle.modify {
                 it.replace("id 'org.jetbrains.kotlin.jvm'", "id 'org.jetbrains.kotlin.jvm' apply false") +
                         """
-                        import org.jetbrains.kotlin.gradle.plugin.KotlinBaseApiPlugin
-                        KotlinBaseApiPlugin apiPlugin = plugins.apply(KotlinBaseApiPlugin.class)
+                        import org.jetbrains.kotlin.gradle.plugin.KotlinApiPlugin
+                        KotlinApiPlugin apiPlugin = plugins.apply(KotlinApiPlugin.class)
                         
                         File kaptFakeJar = new File(project.projectDir, "kapt.jar")
                         kaptFakeJar.createNewFile()

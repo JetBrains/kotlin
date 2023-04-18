@@ -137,6 +137,13 @@ open class KotlinPlatformCommonPlugin : KotlinPlatformPluginBase("common") {
     }
 }
 
+open class KotlinApiPlugin : KotlinBaseApiPlugin() {
+    override fun apply(project: Project) {
+        project.registerVariantImplementations()
+        super.apply(project)
+    }
+}
+
 @Suppress("UnusedReceiverParameter")
 private fun Project.registerVariantImplementations() {
 
