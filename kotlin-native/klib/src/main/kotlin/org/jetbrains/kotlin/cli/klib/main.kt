@@ -88,10 +88,9 @@ fun error(text: String): Nothing {
 
 object KlibToolLogger : Logger {
     override fun warning(message: String) = org.jetbrains.kotlin.cli.klib.warn(message)
-    override fun error(message: String, throwable: Throwable?) = org.jetbrains.kotlin.cli.klib.warn(message)
+    override fun error(message: String) = org.jetbrains.kotlin.cli.klib.warn(message)
     override fun fatal(message: String) = org.jetbrains.kotlin.cli.klib.error(message)
     override fun log(message: String) = println(message)
-    override fun lifecycle(message: String) = println(message)
 }
 
 val defaultRepository = File(DependencyProcessor.localKonanDir.resolve("klib").absolutePath)

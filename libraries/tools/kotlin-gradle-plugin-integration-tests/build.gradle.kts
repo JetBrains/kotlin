@@ -74,7 +74,7 @@ dependencies {
     testImplementation(project(":kotlin-compiler-embeddable"))
     testImplementation(commonDependency("org.jetbrains.intellij.deps:jdom"))
     testImplementation(project(":compiler:cli-common"))
-    testImplementation(project(":kotlin-build-statistic"))
+    testImplementation(project(":compiler:build-tools:kotlin-build-statistics"))
     // testCompileOnly dependency on non-shaded artifacts is needed for IDE support
     // testRuntimeOnly on shaded artifact is needed for running tests with shaded compiler
     testCompileOnly(project(":kotlin-gradle-plugin-test-utils-embeddable"))

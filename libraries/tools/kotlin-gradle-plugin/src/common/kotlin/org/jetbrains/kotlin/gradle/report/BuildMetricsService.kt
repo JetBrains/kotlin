@@ -26,13 +26,12 @@ import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTime
-import org.jetbrains.kotlin.build.report.statistic.HttpReportService
-import org.jetbrains.kotlin.build.report.statistic.HttpReportServiceImpl
+import org.jetbrains.kotlin.build.report.statistics.HttpReportService
 import org.jetbrains.kotlin.gradle.plugin.BuildEventsListenerRegistryHolder
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
-import org.jetbrains.kotlin.build.report.statistic.GradleBuildStartParameters
-import org.jetbrains.kotlin.build.report.statistic.StatTag
+import org.jetbrains.kotlin.build.report.statistics.BuildStartParameters
+import org.jetbrains.kotlin.build.report.statistics.StatTag
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.report.BuildReportsService.Companion.getStartParameters
 import org.jetbrains.kotlin.gradle.report.data.BuildOperationRecord
@@ -45,6 +44,7 @@ import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import java.lang.management.ManagementFactory
 
 internal interface UsesBuildMetricsService : Task {
     @get:Internal
@@ -55,7 +55,7 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
 
     //Part of BuildReportService
     interface Parameters : BuildServiceParameters {
-        val startParameters: Property<GradleBuildStartParameters>
+        val startParameters: Property<BuildStartParameters>
         val reportingSettings: Property<ReportingSettings>
         val httpService: Property<HttpReportService>
 
@@ -204,7 +204,7 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
                 it.parameters.reportingSettings.set(reportingSettings)
                 reportingSettings.httpReportSettings?.let { httpSettings ->
                     it.parameters.httpService.set(
-                        HttpReportServiceImpl(
+                        HttpReportService(
                             httpSettings.url,
                             httpSettings.user,
                             httpSettings.password
@@ -264,6 +264,10 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
             }
             if (gradle.startParameter.isBuildCacheEnabled) {
                 additionalTags.add(StatTag.BUILD_CACHE)
+            }
+            val debugConfiguration = "-agentlib:"
+            if (ManagementFactory.getRuntimeMXBean().inputArguments.firstOrNull { it.startsWith(debugConfiguration) } != null) {
+                additionalTags.add(StatTag.GRADLE_DEBUG)
             }
             return additionalTags
         }

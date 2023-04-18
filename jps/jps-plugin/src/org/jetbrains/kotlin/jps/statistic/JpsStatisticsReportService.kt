@@ -10,10 +10,9 @@ import org.jetbrains.jps.incremental.CompileContext
 import org.jetbrains.kotlin.build.report.FileReportSettings
 import org.jetbrains.kotlin.build.report.HttpReportSettings
 import org.jetbrains.kotlin.build.report.metrics.*
-import org.jetbrains.kotlin.build.report.statistic.BuildDataType
-import org.jetbrains.kotlin.build.report.statistic.CompileStatisticsData
-import org.jetbrains.kotlin.build.report.statistic.HttpReportServiceImpl
-import org.jetbrains.kotlin.build.report.statistic.file.FileReportService
+import org.jetbrains.kotlin.build.report.statistics.*
+import org.jetbrains.kotlin.build.report.statistics.file.FileReportService
+import org.jetbrains.kotlin.compilerRunner.JpsKotlinLogger
 import java.io.File
 import java.util.*
 import java.net.InetAddress
@@ -22,11 +21,11 @@ interface JpsBuilderMetricReporter : BuildMetricsReporter {
     fun flush(context: CompileContext): CompileStatisticsData
 }
 
-//single thread execution
+private const val jpsBuildTaskName = "JPS build"
+
 class JpsBuilderMetricReporterImpl(private val reporter: BuildMetricsReporterImpl) : JpsBuilderMetricReporter, BuildMetricsReporter by reporter {
 
     companion object {
-        private val log = Logger.getInstance("#org.jetbrains.kotlin.jps.statistic.KotlinBuilderMetricImpl")
         private val hostName: String? = try {
             InetAddress.getLocalHost().hostName
         } catch (_: Exception) {
@@ -38,24 +37,24 @@ class JpsBuilderMetricReporterImpl(private val reporter: BuildMetricsReporterImp
     private val uuid = UUID.randomUUID()
     private val startTime = System.currentTimeMillis()
 
-    override fun flush(context: CompileContext/*, listener: BuildListener*/): CompileStatisticsData {
+    override fun flush(context: CompileContext): CompileStatisticsData {
         val buildMetrics = reporter.getMetrics()
         return CompileStatisticsData(
             projectName = context.projectDescriptor.project.name,
-            label = "JPS build", //TODO
-            taskName = "JPS build",
-            taskResult = "Unknown",//TODO
+            label = "JPS build", //TODO will be updated in KT-58026
+            taskName = jpsBuildTaskName,
+            taskResult = "Unknown",//TODO will be updated in KT-58026
             startTimeMs = startTime,
             durationMs = System.currentTimeMillis() - startTime,
             tags = emptySet(),
             buildUuid = uuid.toString(),
-            changes = emptyList(), //TODO
-            kotlinVersion = "kotlin_version", //TODO
+            changes = emptyList(), //TODO will be updated in KT-58026
+            kotlinVersion = "kotlin_version", //TODO will be updated in KT-58026
             hostName = hostName,
             finishTime = System.currentTimeMillis(),
             buildTimesMetrics = buildMetrics.buildTimes.asMapMs(),
             performanceMetrics = buildMetrics.buildPerformanceMetrics.asMap(),
-            compilerArguments = emptyList(), //TODO
+            compilerArguments = emptyList(), //TODO will be updated in KT-58026
             nonIncrementalAttributes = emptySet(),
             type = BuildDataType.JPS_DATA.name,
             fromKotlinPlugin = true,
@@ -71,14 +70,10 @@ class JpsBuilderMetricReporterImpl(private val reporter: BuildMetricsReporterImp
 }
 
 // TODO test UserDataHolder in CompileContext to store CompileStatisticsData.Build or KotlinBuilderMetric
-class KotlinBuilderReportService(
-    private val fileReportSettings: FileReportSettings?,
-    private val httpReportSettings: HttpReportSettings?
-) {
-    constructor() : this(
-        initFileReportSettings(),
-        initHttpReportSettings(),
-    )
+class JpsStatisticsReportService {
+
+    private val fileReportSettings: FileReportSettings? = initFileReportSettings()
+    private val httpReportSettings: HttpReportSettings? = initHttpReportSettings()
 
     companion object {
         private fun initFileReportSettings(): FileReportSettings? {
@@ -97,8 +92,8 @@ class KotlinBuilderReportService(
 
     private val contextMetrics = HashMap<CompileContext, JpsBuilderMetricReporter>()
     private val log = Logger.getInstance("#org.jetbrains.kotlin.jps.statistic.KotlinBuilderReportService")
-    private val loggerAdapter = JpsLoggerAdapter(log)
-    private val httpService = httpReportSettings?.let { HttpReportServiceImpl(it.url, it.user, it.password) }
+    private val loggerAdapter = JpsKotlinLogger(log)
+    private val httpService = httpReportSettings?.let { HttpReportService(it.url, it.user, it.password) }
     fun buildStarted(context: CompileContext) {
         if (contextMetrics[context] != null) {
             log.error("Service already initialized for context")
@@ -113,17 +108,13 @@ class KotlinBuilderReportService(
             return
         }
 
-        httpService?.sendData(metrics.flush(context), loggerAdapter)
-        fileReportSettings?.also { FileReportService(it.buildReportDir, true, loggerAdapter) }
-    }
-
-    fun addMetric(context: CompileContext, metric: BuildTime, value: Long) {
-        val metrics = contextMetrics[context]
-        if (metrics == null) {
-            log.error("Service hasn't initialized for context")
-            return
+        val compileStatisticsData = metrics.flush(context)
+        httpService?.sendData(compileStatisticsData, loggerAdapter)
+        fileReportSettings?.also {
+            FileReportService(it.buildReportDir, true, loggerAdapter)
+                .process(listOf(compileStatisticsData),
+                         BuildStartParameters(tasks = listOf(jpsBuildTaskName)))
         }
-        metrics.addTimeMetricNs(metric, value)
     }
 }
 

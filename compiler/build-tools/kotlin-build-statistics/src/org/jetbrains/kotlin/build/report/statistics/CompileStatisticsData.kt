@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.build.report.statistic
+package org.jetbrains.kotlin.build.report.statistics
 
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
@@ -66,18 +66,18 @@ enum class BuildDataType {
 }
 
 //Sensitive data. This object is used directly for statistic via http
-data class GradleBuildStartParameters(
+data class BuildStartParameters(
     val tasks: List<String>,
-    val excludedTasks: Set<String>,
-    val currentDir: String?,
-    val projectProperties: List<String>,
-    val systemProperties: List<String>,
+    val excludedTasks: Set<String> = emptySet(),
+    val currentDir: String? = null,
+    val projectProperties: List<String> = emptyList(),
+    val systemProperties: List<String> = emptyList(),
 ) : java.io.Serializable
 
 //Sensitive data. This object is used directly for statistic via http
 data class BuildFinishStatisticsData(
     val projectName: String,
-    val startParameters: GradleBuildStartParameters,
+    val startParameters: BuildStartParameters,
     val buildUuid: String = "Unset",
     val label: String?,
     val totalTime: Long,

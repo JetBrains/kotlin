@@ -106,9 +106,8 @@ val CompilerConfiguration.resolverLogger: Logger
         null -> DummyLogger
         else -> object : Logger {
             override fun log(message: String) = messageLogger.report(IrMessageLogger.Severity.INFO, message, null)
-            override fun error(message: String, throwable: Throwable?) = messageLogger.report(IrMessageLogger.Severity.ERROR, message, null)
+            override fun error(message: String) = messageLogger.report(IrMessageLogger.Severity.ERROR, message, null)
             override fun warning(message: String) = messageLogger.report(IrMessageLogger.Severity.WARNING, message, null)
-            override fun lifecycle(message: String) = messageLogger.report(IrMessageLogger.Severity.INFO, message, null)
 
             override fun fatal(message: String): Nothing {
                 messageLogger.report(IrMessageLogger.Severity.ERROR, message, null)
