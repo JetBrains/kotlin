@@ -234,6 +234,7 @@ internal class Lexer(val patternString: String, flags: Int) {
     /**
      * Returns the next code point in the pattern string.
      */
+    @OptIn(ExperimentalNativeApi::class)
     private fun nextCodePoint(): Int {
         val high = pattern[nextIndex()] // nextIndex skips comments and whitespaces if comments flag is on.
         if (high.isHighSurrogate()) {
@@ -789,6 +790,7 @@ internal class Lexer(val patternString: String, flags: Int) {
             return ch >= 0
         }
 
+        @OptIn(ExperimentalNativeApi::class)
         private fun String.codePointAt(index: Int): Int {
             val high = this[index]
             if (high.isHighSurrogate() && index + 1 < this.length) {
@@ -841,6 +843,7 @@ internal class Lexer(val patternString: String, flags: Int) {
         /**
          * Normalize given string.
          */
+        @OptIn(ExperimentalNativeApi::class)
         fun normalize(input: String): String {
             val inputChars = input.toCharArray()
             val inputLength = inputChars.size

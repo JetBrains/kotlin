@@ -8,12 +8,14 @@ package generators.unicode.mappings.string
 import generators.unicode.SpecialCasingLine
 import generators.unicode.UnicodeDataLine
 import generators.unicode.writeHeader
+import templates.KotlinTarget
 import java.io.File
 import java.io.FileWriter
 
 internal class StringUppercaseGenerator(
     private val outputFile: File,
-    unicodeDataLines: List<UnicodeDataLine>
+    unicodeDataLines: List<UnicodeDataLine>,
+    private val target: KotlinTarget
 ) : StringCasingGenerator(unicodeDataLines) {
 
     override fun SpecialCasingLine.mapping(): List<String> = uppercaseMapping
@@ -39,7 +41,7 @@ internal class StringUppercaseGenerator(
     }
 
     private fun charCount(): String = """
-        internal fun Int.charCount(): Int = if (this >= Char.MIN_SUPPLEMENTARY_CODE_POINT) 2 else 1 
+        internal fun Int.charCount(): Int = if (this > Char.MAX_VALUE.code) 2 else 1 
     """.trimIndent()
 
     private fun codePointAt(): String = """
@@ -53,11 +55,11 @@ internal class StringUppercaseGenerator(
             }
             return high.code
         }
-    """.trimIndent()
+    """.trimIndent().prependOptInExperimentalNativeApi(target)
 
     private fun appendCodePoint(): String = """
         internal fun StringBuilder.appendCodePoint(codePoint: Int) {
-            if (codePoint < Char.MIN_SUPPLEMENTARY_CODE_POINT) {
+            if (codePoint <= Char.MAX_VALUE.code) {
                 append(codePoint.toChar())
             } else {
                 append(Char.MIN_HIGH_SURROGATE + ((codePoint - 0x10000) shr 10))
@@ -101,4 +103,12 @@ internal class StringUppercaseGenerator(
             return sb.toString()
         }
     """.trimIndent()
+}
+
+internal fun String.prependOptInExperimentalNativeApi(target: KotlinTarget): String {
+    return if (target == KotlinTarget.Native) {
+        "@OptIn(kotlin.experimental.ExperimentalNativeApi::class)\n$this"
+    } else {
+        this
+    }
 }

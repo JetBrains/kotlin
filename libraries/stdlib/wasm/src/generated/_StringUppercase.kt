@@ -21,10 +21,10 @@ internal fun String.codePointAt(index: Int): Int {
     return high.code
 }
 
-internal fun Int.charCount(): Int = if (this >= Char.MIN_SUPPLEMENTARY_CODE_POINT) 2 else 1 
+internal fun Int.charCount(): Int = if (this > Char.MAX_VALUE.code) 2 else 1 
 
 internal fun StringBuilder.appendCodePoint(codePoint: Int) {
-    if (codePoint < Char.MIN_SUPPLEMENTARY_CODE_POINT) {
+    if (codePoint <= Char.MAX_VALUE.code) {
         append(codePoint.toChar())
     } else {
         append(Char.MIN_HIGH_SURROGATE + ((codePoint - 0x10000) shr 10))

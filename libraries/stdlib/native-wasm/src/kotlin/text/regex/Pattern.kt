@@ -23,6 +23,8 @@
 @file:Suppress("DEPRECATION") // Char.toInt()
 package kotlin.text.regex
 
+import kotlin.experimental.ExperimentalNativeApi
+
 /** Represents a compiled pattern used by [Regex] for matching, searching, or replacing strings. */
 internal class Pattern(val pattern: String, flags: Int = 0) {
 
@@ -194,6 +196,7 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
     /**
      * T->aaa
      */
+    @OptIn(ExperimentalNativeApi::class)
     private fun processSequence(): AbstractSet {
         val substring = StringBuilder()
         while (!lexemes.isEmpty()
@@ -787,6 +790,7 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
         return RangeSet(charClass, hasFlag(CASE_INSENSITIVE))
     }
 
+    @OptIn(ExperimentalNativeApi::class)
     private fun processCharSet(ch: Int): AbstractSet {
         val isSupplCodePoint = Char.isSupplementaryCodePoint(ch)
 
