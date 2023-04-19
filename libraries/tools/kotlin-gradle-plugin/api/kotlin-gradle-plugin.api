@@ -1,3 +1,11 @@
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyEffect {
+	public abstract fun invoke (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;Ljava/util/Set;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyEffectKt {
+	public static final fun withEffect (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyEffect;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;
+}
+
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver$Companion;
 	public static final field DOCUMENTATION_BINARY_TYPE Ljava/lang/String;
