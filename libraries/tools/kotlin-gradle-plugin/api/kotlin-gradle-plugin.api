@@ -1,3 +1,12 @@
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/ide/IdeAdditionalArtifactResolver {
+	public abstract fun resolve (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;Ljava/util/Set;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeAdditionalArtifactResolver$Empty : org/jetbrains/kotlin/gradle/plugin/ide/IdeAdditionalArtifactResolver {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeAdditionalArtifactResolver$Empty;
+	public fun resolve (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;Ljava/util/Set;)V
+}
+
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyEffect {
 	public abstract fun invoke (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;Ljava/util/Set;)V
 }
