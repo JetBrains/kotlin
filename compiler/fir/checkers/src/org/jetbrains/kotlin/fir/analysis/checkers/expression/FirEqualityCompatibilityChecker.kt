@@ -80,6 +80,7 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
 
     private fun checkEqualityApplicability(l: TypeInfo, r: TypeInfo, context: CheckerContext): Applicability {
         val oneIsBuiltin = l.isBuiltin || r.isBuiltin
+        val oneIsIdentityLess = l.isIdentityLess || r.isIdentityLess
 
         // The compiler should only check comparisons
         // when builtins are involved.
@@ -87,7 +88,7 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
         // the list of special fqNames described in RULES1
 
         return when {
-            oneIsBuiltin && shouldReportAsPerRules1(l, r, context) -> getInapplicabilityFor(l, r)
+            (oneIsBuiltin || oneIsIdentityLess) && shouldReportAsPerRules1(l, r, context) -> getInapplicabilityFor(l, r)
             else -> Applicability.APPLICABLE
         }
     }

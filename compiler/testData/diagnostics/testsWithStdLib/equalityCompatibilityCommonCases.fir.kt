@@ -86,13 +86,13 @@ fun incompatibleIdentityRegardlessNullabilitySmartCast(a: Any?, b: Any?) {
 }
 
 fun incompatibleIdentityRegardlessNullabilityWithValueClasses(c: C?, d: D?) {
-    c == d
+    <!EQUALITY_NOT_APPLICABLE!>c == d<!>
     <!FORBIDDEN_IDENTITY_EQUALS!>c === d<!>
 }
 
 fun incompatibleIdentityRegardlessNullabilityWithValueClassesSmartCast(c: Any?, d: Any?) {
     if (c is C? && d is D?) {
-        c == d
+        <!EQUALITY_NOT_APPLICABLE_WARNING!>c == d<!>
         <!FORBIDDEN_IDENTITY_EQUALS_WARNING!>c === d<!>
     }
 }
