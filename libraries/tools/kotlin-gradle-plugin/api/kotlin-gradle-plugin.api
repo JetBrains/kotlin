@@ -241,6 +241,21 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/external/
 	public abstract fun getFriendArtifactResolver ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$FriendArtifactResolver;
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$CompilationAssociator {
+	public abstract fun associate (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinCompilation;Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinCompilation;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$CompilationFactory {
+	public abstract fun create (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinCompilation$Delegate;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/DecoratedKotlinCompilation;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$DecoratedKotlinCompilationFactory : org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$CompilationFactory {
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$FriendArtifactResolver {
+	public abstract fun resolveFriendPaths (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinCompilation;)Lorg/gradle/api/file/FileCollection;
+}
+
 public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptorBuilder {
 	public final fun configure (Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptorBuilder;
 	public final fun getCompilationAssociator ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$CompilationAssociator;
