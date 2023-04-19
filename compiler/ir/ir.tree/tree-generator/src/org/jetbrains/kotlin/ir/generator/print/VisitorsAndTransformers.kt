@@ -7,15 +7,17 @@ package org.jetbrains.kotlin.ir.generator.print
 
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
+import org.jetbrains.kotlin.ir.generator.IrTree
 import org.jetbrains.kotlin.ir.generator.VISITOR_PACKAGE
-import org.jetbrains.kotlin.ir.generator.model.Element
-import org.jetbrains.kotlin.ir.generator.model.Model
+import org.jetbrains.kotlin.ir.generator.irTypeType
+import org.jetbrains.kotlin.ir.generator.model.*
 import org.jetbrains.kotlin.ir.generator.util.GeneratedFile
 import java.io.File
 
 private val visitorTypeName = ClassName(VISITOR_PACKAGE, "IrElementVisitor")
 private val visitorVoidTypeName = ClassName(VISITOR_PACKAGE, "IrElementVisitorVoid")
 private val transformerTypeName = ClassName(VISITOR_PACKAGE, "IrElementTransformer")
+private val typeTransformerVoidTypeName = ClassName(VISITOR_PACKAGE, "IrTypeTransformerVoid")
 
 fun printVisitor(generationPath: File, model: Model): GeneratedFile {
     val visitorType = TypeSpec.interfaceBuilder(visitorTypeName).apply {
@@ -111,4 +113,100 @@ fun printTransformer(generationPath: File, model: Model): GeneratedFile {
     }.build()
 
     return printTypeCommon(generationPath, transformerTypeName.packageName, visitorType)
+}
+
+fun printTypeVisitor(generationPath: File, model: Model): GeneratedFile {
+    val transformTypeFunName = "transformType"
+
+    fun FunSpec.Builder.addVisitTypeStatement(element: Element, field: Field) {
+        val visitorParam = element.visitorParam
+        val access = "$visitorParam.${field.name}"
+        when (field) {
+            is SingleField -> addStatement("$access = $transformTypeFunName($visitorParam, $access, data)")
+            is ListField -> {
+                if (field.mutable) {
+                    addStatement("$access = $access.map { $transformTypeFunName($visitorParam, it, data) }")
+                } else {
+                    beginControlFlow("for (i in 0 until $access.size)")
+                    addStatement("$access[i] = $transformTypeFunName($visitorParam, $access[i], data)")
+                    endControlFlow()
+                }
+            }
+        }
+    }
+
+    fun Element.getFieldsWithIrTypeType(insideParent: Boolean = false): List<Field> {
+        val parentsFields = elementParents.flatMap { it.element.getFieldsWithIrTypeType(insideParent = true) }
+        if (insideParent && this.visitorParent != null) {
+            return parentsFields
+        }
+
+        val irTypeFields = this.fields
+            .filter {
+                val type = when (it) {
+                    is SingleField -> it.type
+                    is ListField -> it.elementType
+                }
+                type.toString() == irTypeType.toString()
+            }
+
+        return irTypeFields + parentsFields
+    }
+
+    val visitorType = TypeSpec.interfaceBuilder(typeTransformerVoidTypeName).apply {
+        val d = TypeVariableName("D", KModifier.IN)
+        addTypeVariable(d)
+        addSuperinterface(transformerTypeName.parameterizedBy(d))
+
+        val abstractVisitFun = FunSpec.builder(transformTypeFunName).apply {
+            val poetNullableIrType = irTypeType.toPoet().copy(nullable = true)
+            val typeVariable = TypeVariableName("Type", poetNullableIrType)
+            addTypeVariable(typeVariable)
+            addParameter("container", model.rootElement.toPoet())
+            addParameter("type", typeVariable)
+            addParameter("data", d)
+            returns(typeVariable)
+        }
+        addFunction(abstractVisitFun.addModifiers(KModifier.ABSTRACT).build())
+
+        fun buildVisitFun(element: Element) = FunSpec.builder(element.visitFunName).apply {
+            addModifiers(KModifier.OVERRIDE)
+            addParameter(element.visitorParam, element.toPoetStarParameterized())
+            addParameter("data", d)
+        }
+
+        for (element in model.elements) {
+            val irTypeFields = element.getFieldsWithIrTypeType()
+            if (irTypeFields.isEmpty()) continue
+
+            element.visitorParent?.let { _ ->
+                addFunction(buildVisitFun(element).apply {
+                    // Note: using `run` here to infer return type automatically
+                    beginControlFlow("return run")
+
+                    val visitorParam = element.visitorParam
+                    when (element.name) {
+                        IrTree.memberAccessExpression.name -> {
+                            beginControlFlow("(0 until $visitorParam.typeArgumentsCount).forEach {")
+                            beginControlFlow("$visitorParam.getTypeArgument(it)?.let { type ->")
+                            addStatement("expression.putTypeArgument(it, $transformTypeFunName($visitorParam, type, data))")
+                            endControlFlow()
+                            endControlFlow()
+                        }
+                        IrTree.`class`.name -> {
+                            beginControlFlow("$visitorParam.valueClassRepresentation?.mapUnderlyingType {")
+                            addStatement("$transformTypeFunName($visitorParam, it, data)")
+                            endControlFlow()
+                            irTypeFields.forEach { addVisitTypeStatement(element, it) }
+                        }
+                        else -> irTypeFields.forEach { addVisitTypeStatement(element, it) }
+                    }
+                    addStatement("return@run super.${element.visitFunName}($visitorParam, data)")
+                    endControlFlow()
+                }.build())
+            }
+        }
+    }.build()
+
+    return printTypeCommon(generationPath, typeTransformerVoidTypeName.packageName, visitorType)
 }
