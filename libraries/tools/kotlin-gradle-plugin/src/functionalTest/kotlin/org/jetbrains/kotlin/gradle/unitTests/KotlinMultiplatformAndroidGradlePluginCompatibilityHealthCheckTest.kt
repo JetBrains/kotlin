@@ -316,7 +316,7 @@ class KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheckTest {
     }
 
     private fun Project.assertNoWarningMessage() {
-        val diagnostics = kotlinToolingDiagnosticsCollector.getAllDiagnostics()
+        val diagnostics = kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this)
         if (diagnostics.isNotEmpty()) {
             fail("Expected no warning messages to be emitted. Found: $diagnostics")
         }

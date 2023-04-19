@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.diagnosticsTests
 
 import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.*
 import org.jetbrains.kotlin.gradle.util.applyKotlinJvmPlugin
 import org.jetbrains.kotlin.gradle.util.buildProject
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.ERROR
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.WARNING
+import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.junit.Test
 
 class DiagnosticsReportingFunctionalTest {
@@ -111,6 +113,39 @@ class DiagnosticsReportingFunctionalTest {
         root.evaluate()
 
         root.checkDiagnostics("oncePerProjectAndOncePerBuildAreEquivalentForRoot")
+    }
+
+    @Test
+    fun testSuppressedWarnings() {
+        buildProject().run {
+            applyKotlinJvmPlugin()
+            extraProperties.set(PropertiesProvider.PropertyNames.KOTLIN_SUPPRESS_GRADLE_PLUGIN_WARNINGS, "TEST_DIAGNOSTIC")
+            reportTestDiagnostic()
+            evaluate()
+            checkDiagnostics("suppressedWarnings")
+        }
+    }
+
+    @Test
+    fun testSuppressedErrors() {
+        buildProject().run {
+            applyKotlinJvmPlugin()
+            extraProperties.set(PropertiesProvider.PropertyNames.KOTLIN_SUPPRESS_GRADLE_PLUGIN_ERRORS, "TEST_DIAGNOSTIC")
+            reportTestDiagnostic(severity = ERROR)
+            evaluate()
+            checkDiagnostics("suppressedErrors")
+        }
+    }
+
+    @Test
+    fun testSuppressForWarningsDoesntWorkForErrors() {
+        buildProject().run {
+            applyKotlinJvmPlugin()
+            extraProperties.set(PropertiesProvider.PropertyNames.KOTLIN_SUPPRESS_GRADLE_PLUGIN_WARNINGS, "TEST_DIAGNOSTIC")
+            reportTestDiagnostic(severity = ERROR)
+            evaluate()
+            checkDiagnostics("suppressForWarningsDoesntWorkForErrors")
+        }
     }
 }
 

@@ -530,6 +530,12 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val internalVerboseDiagnostics: Boolean
         get() = booleanProperty(KOTLIN_INTERNAL_VERBOSE_DIAGNOSTICS) ?: false
 
+    val suppressedGradlePluginWarnings: List<String>
+        get() = property(PropertyNames.KOTLIN_SUPPRESS_GRADLE_PLUGIN_WARNINGS)?.split(",").orEmpty()
+
+    val suppressedGradlePluginErrors: List<String>
+        get() = property(PropertyNames.KOTLIN_SUPPRESS_GRADLE_PLUGIN_ERRORS)?.split(",").orEmpty()
+
     /**
      * Retrieves a comma-separated list of browsers to use when running karma tests for [target]
      * @see KOTLIN_JS_KARMA_BROWSERS
@@ -620,6 +626,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
         const val KOTLIN_MPP_ALLOW_LEGACY_DEPENDENCIES = "kotlin.mpp.allow.legacy.dependencies"
         const val KOTLIN_EXPERIMENTAL_TRY_K2 = "kotlin.experimental.tryK2"
         const val KOTLIN_INTERNAL_VERBOSE_DIAGNOSTICS = "kotlin.internal.verboseDiagnostics"
+        const val KOTLIN_SUPPRESS_GRADLE_PLUGIN_WARNINGS = "kotlin.suppressGradlePluginWarnings"
+        const val KOTLIN_SUPPRESS_GRADLE_PLUGIN_ERRORS = "kotlin.internal.suppressGradlePluginErrors"
     }
 
     companion object {
