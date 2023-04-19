@@ -164,22 +164,40 @@ fun BuildResult.assertNativeTasksClasspath(
  * or if any of the not-registered tasks were actually registered.
  */
 fun TestProject.buildAndAssertAllTasks(
-    vararg registeredTasks: String,
+    registeredTasks: List<String> = emptyList(),
     notRegisteredTasks: List<String> = emptyList()
 ) {
     build("tasks", "--all") {
-        val allRegisteredTasks = getAllTasksFromTheOutput()
-        registeredTasks.forEach {
-            assert(allRegisteredTasks.contains(it)) {
-                printBuildOutput()
-                "Expected $it task is not registered in all tasks."
-            }
+        assertTasksInBuildOutput(registeredTasks, notRegisteredTasks)
+    }
+}
+
+/**
+ * Inspects the output of the 'tasks' command and asserts that the specified
+ * tasks are either present or absent in the output.
+ *
+ * @param expectedPresentTasks The names of the tasks that should be present in the output,
+ *                              it could contain task paths as well, but without the first semicolon.
+ * @param expectedAbsentTasks The names of the tasks that should be absent from the output,
+ *                              it could contain task paths as well, but without the first semicolon.
+ * @throws AssertionError if any of the expected present tasks are not present in the output,
+ * or if any of the expected absent tasks are present in the output.
+ */
+fun BuildResult.assertTasksInBuildOutput(
+    expectedPresentTasks: List<String> = emptyList(),
+    expectedAbsentTasks: List<String> = emptyList()
+) {
+    val registeredTasks = getAllTasksFromTheOutput()
+    expectedPresentTasks.forEach {
+        assert(registeredTasks.contains(it)) {
+            printBuildOutput()
+            "Expected $it task is not registered in $registeredTasks"
         }
-        notRegisteredTasks.forEach {
-            assert(!allRegisteredTasks.contains(it)) {
-                printBuildOutput()
-                "$it task should not be registered in all tasks."
-            }
+    }
+    expectedAbsentTasks.forEach {
+        assert(!registeredTasks.contains(it)) {
+            printBuildOutput()
+            "$it task should not be registered in $registeredTasks"
         }
     }
 }

@@ -22,16 +22,18 @@ class NativeLibraryDslIT : KGPBaseTest() {
     fun shouldSharedAndLibRegisteredTasks(gradleVersion: GradleVersion) {
         nativeProject("new-kn-library-dsl", gradleVersion) {
             buildAndAssertAllTasks(
-                "shared:assembleMyfatframeFatFramework",
-                "shared:assembleMyframeFrameworkIosArm64",
-                "shared:assembleMylibSharedLibraryLinuxX64",
-                "shared:assembleMyslibSharedLibraryLinuxX64",
-                "shared:assembleSharedXCFramework",
-                "lib:assembleGroofatframeFatFramework",
-                "lib:assembleGrooframeFrameworkIosArm64",
-                "lib:assembleGroolibSharedLibraryIosX64",
-                "lib:assembleLibXCFramework",
-                notRegisteredTasks = listOf("shared:assembleMyslibReleaseSharedLibraryLinuxX64")
+                listOf(
+                    "shared:assembleMyfatframeFatFramework",
+                    "shared:assembleMyframeFrameworkIosArm64",
+                    "shared:assembleMylibSharedLibraryLinuxX64",
+                    "shared:assembleMyslibSharedLibraryLinuxX64",
+                    "shared:assembleSharedXCFramework",
+                    "lib:assembleGroofatframeFatFramework",
+                    "lib:assembleGrooframeFrameworkIosArm64",
+                    "lib:assembleGroolibSharedLibraryIosX64",
+                    "lib:assembleLibXCFramework"
+                ),
+                listOf("shared:assembleMyslibReleaseSharedLibraryLinuxX64")
             )
         }
     }

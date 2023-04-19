@@ -112,3 +112,7 @@ fun File.replaceText(oldValue: String, newValue: String) {
 fun File.replaceText(regex: Regex, replacement: String) {
     writeText(readText().replace(regex, replacement))
 }
+
+fun Path.replaceFirst(oldValue: String, newValue: String) {
+    writeText(readText().replaceFirst(oldValue, newValue))
+}

@@ -22,15 +22,17 @@ class NativeLibraryDslWithCocoapodsIT : KGPBaseTest() {
     fun shouldCheckGradleRegisteredTasks(gradleVersion: GradleVersion) {
         buildNewKnLibraryDslCocoapodsProjectWithTasks(gradleVersion) {
             buildAndAssertAllTasks(
-                "shared:generateMylibStaticLibraryLinuxX64Podspec",
-                "shared:generateMyslibSharedLibraryLinuxX64Podspec",
-                "shared:generateMyframeFrameworkIosArm64Podspec",
-                "shared:generateMyfatframeFatFrameworkPodspec",
-                "shared:generateSharedXCFrameworkPodspec",
-                "lib:generateGrooframeFrameworkIosArm64Podspec",
-                "lib:generateGrooxcframeXCFrameworkPodspec",
-                "shared:generateMyframewihtoutpodspecFrameworkIosArm64Podspec",
-                "lib:generateGrooxcframewithoutpodspecXCFrameworkPodspec"
+                listOf(
+                    "shared:generateMylibStaticLibraryLinuxX64Podspec",
+                    "shared:generateMyslibSharedLibraryLinuxX64Podspec",
+                    "shared:generateMyframeFrameworkIosArm64Podspec",
+                    "shared:generateMyfatframeFatFrameworkPodspec",
+                    "shared:generateSharedXCFrameworkPodspec",
+                    "lib:generateGrooframeFrameworkIosArm64Podspec",
+                    "lib:generateGrooxcframeXCFrameworkPodspec",
+                    "shared:generateMyframewihtoutpodspecFrameworkIosArm64Podspec",
+                    "lib:generateGrooxcframewithoutpodspecXCFrameworkPodspec"
+                )
             )
         }
     }
