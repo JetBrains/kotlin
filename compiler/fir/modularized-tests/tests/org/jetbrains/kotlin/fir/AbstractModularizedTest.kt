@@ -149,42 +149,8 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
         return modules.map { node -> loadModule(node).also { it.arguments = arguments } }
     }
 
-    // TODO: remove once support for snapshot 2022 is ended
-    private fun updateCompilerArgumentsXml(element: Element) {
-        fun convertOptionToList(optionElement: Element) {
-            if (optionElement.getAttribute("value") == null) return
-            val paths = optionElement.getAttributeValue("value").split(":")
-
-            optionElement.removeAttribute("value")
-
-            val listElement = Element("list")
-            paths.forEach { path ->
-                val pathElement = Element("option")
-                pathElement.setAttribute("value", path)
-                listElement.addContent(pathElement)
-            }
-
-            optionElement.addContent(listElement)
-        }
-
-
-        fun findOptionElements(parentElement: Element, optionName: String): List<Element> {
-            return parentElement.getChildren("option")
-                .filter { it.getAttributeValue("name") == optionName }
-        }
-
-        // See KT-57927
-        findOptionElements(element, "classpath").forEach {
-            convertOptionToList(it)
-        }
-        findOptionElements(element, "pluginClasspath").forEach {
-            convertOptionToList(it)
-        }
-    }
-
     private fun loadCompilerArguments(argumentsRoot: Element): CommonCompilerArguments? {
         val element = argumentsRoot.children.singleOrNull() ?: return null
-        updateCompilerArgumentsXml(element)
         return when (element.name) {
             "K2JVMCompilerArguments" -> K2JVMCompilerArguments().also { XmlSerializer.deserializeInto(it, element) }
             else -> null
