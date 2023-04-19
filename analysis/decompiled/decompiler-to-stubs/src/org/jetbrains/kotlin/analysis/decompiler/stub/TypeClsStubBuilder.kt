@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.metadata.ProtoBuf.Type
 import org.jetbrains.kotlin.metadata.ProtoBuf.Type.Argument.Projection
 import org.jetbrains.kotlin.metadata.ProtoBuf.TypeParameter.Variance
 import org.jetbrains.kotlin.metadata.deserialization.*
+import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -124,7 +125,13 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                 nullableTypeParent(parent, type)
             }
 
-            createFunctionTypeStub(nullableWrapper, type, isExtension, isSuspend, numContextReceivers = contextReceiverAnnotations.size)
+            val numContextReceivers = if (contextReceiverAnnotations.isEmpty()) {
+                0
+            } else {
+                val argument = type.getExtension(JvmProtoBuf.typeAnnotation).find { c.nameResolver.getClassId(it.id).asSingleFqName() == StandardNames.FqNames.contextFunctionTypeParams }!!.getArgument(0)
+                argument.value.intValue.toInt()
+            };
+            createFunctionTypeStub(nullableWrapper, type, isExtension, isSuspend, numContextReceivers)
 
             return
         }
@@ -191,13 +198,6 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         val typeArgumentList = type.argumentList
         val functionType = KotlinPlaceHolderStubImpl<KtFunctionType>(parent, KtStubElementTypes.FUNCTION_TYPE)
         var processedTypes = 0
-        if (isExtensionFunctionType) {
-            val functionTypeReceiverStub =
-                KotlinPlaceHolderStubImpl<KtFunctionTypeReceiver>(functionType, KtStubElementTypes.FUNCTION_TYPE_RECEIVER)
-            val receiverTypeProto = typeArgumentList.first().type(c.typeTable)!!
-            createTypeReferenceStub(functionTypeReceiverStub, receiverTypeProto)
-            processedTypes = 1
-        }
 
         if (numContextReceivers != 0) {
             ContextReceiversListStubBuilder(c).createContextReceiverStubs(
@@ -209,8 +209,16 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             processedTypes += numContextReceivers
         }
 
+        if (isExtensionFunctionType) {
+            val functionTypeReceiverStub =
+                KotlinPlaceHolderStubImpl<KtFunctionTypeReceiver>(functionType, KtStubElementTypes.FUNCTION_TYPE_RECEIVER)
+            val receiverTypeProto = typeArgumentList[processedTypes].type(c.typeTable)!!
+            createTypeReferenceStub(functionTypeReceiverStub, receiverTypeProto)
+            processedTypes++
+        }
+
         val parameterList = KotlinPlaceHolderStubImpl<KtParameterList>(functionType, KtStubElementTypes.VALUE_PARAMETER_LIST)
-        val typeArgumentsWithoutReceiverAndReturnType = typeArgumentList.subList(numContextReceivers, typeArgumentList.size - 1)
+        val typeArgumentsWithoutReceiverAndReturnType = typeArgumentList.subList(processedTypes, typeArgumentList.size - 1)
         var suspendParameterType: Type? = null
 
         for ((index, argument) in typeArgumentsWithoutReceiverAndReturnType.withIndex()) {
