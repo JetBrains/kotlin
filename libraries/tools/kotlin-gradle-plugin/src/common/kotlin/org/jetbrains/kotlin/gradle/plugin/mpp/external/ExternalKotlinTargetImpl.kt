@@ -87,8 +87,8 @@ internal class ExternalKotlinTargetImpl internal constructor(
         setOf(ExternalKotlinTargetSoftwareComponent(this))
     }
 
-    override val compilations: NamedDomainObjectContainer<ExternalDecoratedKotlinCompilation> by lazy {
-        project.container(ExternalDecoratedKotlinCompilation::class.java)
+    override val compilations: NamedDomainObjectContainer<DecoratedExternalKotlinCompilation> by lazy {
+        project.container(DecoratedExternalKotlinCompilation::class.java)
     }
 
     @Suppress("unchecked_cast")

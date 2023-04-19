@@ -176,8 +176,8 @@ public final class org/jetbrains/kotlin/gradle/plugin/ide/dependencyResolvers/Id
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/CreateExternalKotlinCompilationKt {
-	public static final fun createCompilation (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinTarget;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalDecoratedKotlinCompilation;
-	public static final fun createCompilation (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinTarget;Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalDecoratedKotlinCompilation;
+	public static final fun createCompilation (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinTarget;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinCompilation;
+	public static final fun createCompilation (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinTarget;Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinCompilation;
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/CreateExternalKotlinTargetKt {
@@ -185,7 +185,11 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/CreateExterna
 	public static final fun createExternalKotlinTarget (Lorg/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformExtension;Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetDescriptor;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinTarget;
 }
 
-public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinTarget : org/jetbrains/kotlin/gradle/plugin/mpp/InternalKotlinTarget {
+public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinCompilation : org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalDecoratedKotlinCompilation {
+	public fun <init> (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinCompilation$Delegate;)V
+}
+
+public class org/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinTarget : org/jetbrains/kotlin/gradle/plugin/mpp/InternalKotlinTarget {
 	public fun <init> (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinTarget$Delegate;)V
 	public fun attributes (Lkotlin/jvm/functions/Function1;)V
 	public fun attributes (Lorg/gradle/api/Action;)V

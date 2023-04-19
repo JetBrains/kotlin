@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationS
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory.KotlinCompilationImplFactory.KotlinCompilationTaskNamesContainerFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.decoratedInstance
-import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalDecoratedKotlinCompilation.Delegate
+import org.jetbrains.kotlin.gradle.plugin.mpp.external.DecoratedExternalKotlinCompilation.Delegate
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 
 /**
@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
  *  container
  */
 @ExternalKotlinTargetApi
-fun <T : ExternalDecoratedKotlinCompilation> DecoratedExternalKotlinTarget.createCompilation(
+fun <T : DecoratedExternalKotlinCompilation> DecoratedExternalKotlinTarget.createCompilation(
     descriptor: ExternalKotlinCompilationDescriptor<T>
 ): T {
     val compilationImplFactory = KotlinCompilationImplFactory(
@@ -52,7 +52,7 @@ fun <T : ExternalDecoratedKotlinCompilation> DecoratedExternalKotlinTarget.creat
         compilationAssociator = descriptor.compilationAssociator?.let { declaredAssociator ->
             @Suppress("unchecked_cast")
             KotlinCompilationAssociator { _, first, second ->
-                declaredAssociator.associate(first.decoratedInstance as T, second.decoratedInstance as ExternalDecoratedKotlinCompilation)
+                declaredAssociator.associate(first.decoratedInstance as T, second.decoratedInstance as DecoratedExternalKotlinCompilation)
             }
         } ?: DefaultKotlinCompilationAssociator,
         compilationFriendPathsResolver = DefaultKotlinCompilationFriendPathsResolver(
@@ -82,14 +82,14 @@ fun <T : ExternalDecoratedKotlinCompilation> DecoratedExternalKotlinTarget.creat
  * @see createCompilation
  */
 @ExternalKotlinTargetApi
-fun <T : ExternalDecoratedKotlinCompilation> DecoratedExternalKotlinTarget.createCompilation(
+fun <T : DecoratedExternalKotlinCompilation> DecoratedExternalKotlinTarget.createCompilation(
     descriptor: ExternalKotlinCompilationDescriptorBuilder<T>.() -> Unit
 ): T {
     return createCompilation(ExternalKotlinCompilationDescriptor(descriptor))
 }
 
 private fun DecoratedExternalKotlinTarget.setupCompileTask(
-    compilation: ExternalDecoratedKotlinCompilation
+    compilation: DecoratedExternalKotlinCompilation
 ) {
     val tasksProvider = KotlinTasksProvider()
     val compilationInfo = KotlinCompilationInfo(compilation)
