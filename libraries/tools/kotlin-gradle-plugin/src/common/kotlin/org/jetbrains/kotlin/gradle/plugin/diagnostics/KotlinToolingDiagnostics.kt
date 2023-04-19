@@ -220,4 +220,24 @@ object KotlinToolingDiagnostics {
             """.trimIndent()
         )
     }
+
+    object AndroidTargetIsMissing : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(projectName: String, projectPath: String, androidPluginId: String) = build(
+            """
+            Missing 'androidTarget()' Kotlin target in multiplatform project '$projectName ($projectPath)'.
+            The Android Gradle plugin was applied without creating a corresponding 'android()' Kotlin Target:
+            
+            ```
+            plugins {
+                id("$androidPluginId")
+                kotlin("multiplatform")
+            }
+            
+            kotlin {
+                androidTarget() // <-- please register this Android target
+            }
+            ```
+            """.trimIndent()
+        )
+    }
 }
