@@ -351,7 +351,7 @@ fun case_15(x: Any?) {
 }
 
 // TESTCASE NUMBER: 16
-fun case_16(a: Any?, b: Int = if (a is Number? && a is Int? && a !== null) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int")!>a<!> else 0) {
+fun case_16(a: Any?, b: Int = if (a is Number? && a is Int? && <!FORBIDDEN_IDENTITY_EQUALS_WARNING!>a !== null<!>) <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Int")!>a<!> else 0) {
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>a<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>b<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int")!>b<!>.equals(null)

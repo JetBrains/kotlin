@@ -187,7 +187,7 @@ fun case_16() {
 }
 
 // TESTCASE NUMBER: 17
-val case_17 = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>if (nullableIntProperty !== null) 0 else {
+val case_17 = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING!>nullableIntProperty !== null<!>) 0 else {
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>nullableIntProperty<!>
 }<!>
 
@@ -297,7 +297,7 @@ fun case_25(b: Boolean) {
 }
 
 // TESTCASE NUMBER: 26
-fun case_26(a: Int?, b: Int? = if (a !== null) 0 else <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>a<!>) {
+fun case_26(a: Int?, b: Int? = if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING!>a !== null<!>) 0 else <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>a<!>) {
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>a<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>b<!>
 }

@@ -121,14 +121,14 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
         // we only need to check if one is related
         // to the other
 
-        fun TypeInfo.isSubtypeOf(other: TypeInfo) =
-            notNullType.isSubtypeOf(other.notNullType, context.session)
-
         return when {
             l.type.isNothingOrNullableNothing || r.type.isNothingOrNullableNothing -> false
-            else -> !l.isSubtypeOf(r) && !r.isSubtypeOf(l)
+            else -> !l.isSubtypeOf(r, context) && !r.isSubtypeOf(l, context)
         }
     }
+
+    private fun TypeInfo.isSubtypeOf(other: TypeInfo, context: CheckerContext) =
+        notNullType.isSubtypeOf(other.notNullType, context.session)
 
     private enum class Applicability {
         APPLICABLE,
@@ -153,12 +153,13 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
         forceWarning: Boolean,
         context: CheckerContext,
     ): KtDiagnosticFactory2<ConeKotlinType, ConeKotlinType> {
-        val areBothPrimitives = l.isPrimitive && r.isPrimitive
+        val areBothPrimitives = l.isNotNullPrimitive && r.isNotNullPrimitive
         val areSameTypes = l.type.classId == r.type.classId
         val shouldProperlyReportError = context.languageVersionSettings.supportsFeature(LanguageFeature.ReportErrorsForComparisonOperators)
 
         // In this case K1 reports nothing
-        val shouldRelaxDiagnostic = (l.type.isNullableNothing || r.type.isNullableNothing) && !shouldProperlyReportError
+        val shouldRelaxDiagnostic = (l.isPrimitive || r.isPrimitive) && (l.isSubtypeOf(r, context) || r.isSubtypeOf(l, context))
+                && !shouldProperlyReportError
 
         return when {
             // See: KT-28252
@@ -174,7 +175,7 @@ object FirEqualityCompatibilityChecker : FirEqualityOperatorCallChecker() {
         isPrimitiveWithNonPrimitiveSupertype(l, r, session) || isPrimitiveWithNonPrimitiveSupertype(r, l, session)
 
     private fun isPrimitiveWithNonPrimitiveSupertype(l: TypeInfo, r: TypeInfo, session: FirSession) =
-        l.isPrimitive && !r.isPrimitive && l.type.isSubtypeOf(r.type, session)
+        l.isNotNullPrimitive && !r.isNotNullPrimitive && l.type.isSubtypeOf(r.type, session)
 
     private fun getSourceLessInapplicabilityDiagnostic(forceWarning: Boolean) = when {
         forceWarning -> FirErrors.INCOMPATIBLE_TYPES_WARNING
@@ -298,7 +299,9 @@ private val TypeInfo.enforcesEmptyIntersection get() = isFinalClass && !isEnumCl
 
 private val TypeInfo.isNullableEnum get() = isEnumClass && type.isNullable
 
-private val TypeInfo.isIdentityLess get() = isPrimitive || !type.isNullable && isValueClass
+private val TypeInfo.isIdentityLess get() = isPrimitive || isValueClass
+
+private val TypeInfo.isNotNullPrimitive get() = isPrimitive && !type.isNullable
 
 private val FirClassSymbol<*>.isFinalClass get() = isClass && isFinal
 
@@ -315,7 +318,7 @@ private fun ConeKotlinType.toTypeInfo(session: FirSession): TypeInfo {
         type, notNullType,
         isFinalClass = bounds.any { it.toClassSymbol(session)?.isFinalClass == true },
         isEnumClass = bounds.any { it.toClassSymbol(session)?.isEnumClass == true },
-        isPrimitive = bounds.any { it.isPrimitive },
+        isPrimitive = bounds.any { it.isPrimitiveOrNullablePrimitive },
         isBuiltin = bounds.any { it.toClassSymbol(session)?.isBuiltin == true },
         isValueClass = bounds.any { it.toClassSymbol(session)?.isInline == true },
         isLiterallyTypeParameter = this.lowerBoundIfFlexible() is ConeTypeParameterType,

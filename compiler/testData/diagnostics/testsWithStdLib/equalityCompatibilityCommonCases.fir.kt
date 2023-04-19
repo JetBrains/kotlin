@@ -75,24 +75,24 @@ fun incompatibleEnumComparisonSmartCast(c: Any?, e: Any?) {
 
 fun incompatibleIdentityRegardlessNullability(a: Int?, b: String?) {
     <!EQUALITY_NOT_APPLICABLE!>a == b<!>
-    a === b
+    <!FORBIDDEN_IDENTITY_EQUALS!>a === b<!>
 }
 
 fun incompatibleIdentityRegardlessNullabilitySmartCast(a: Any?, b: Any?) {
     if (a is Int? && b is String?) {
         <!EQUALITY_NOT_APPLICABLE_WARNING!>a == b<!>
-        a === b
+        <!FORBIDDEN_IDENTITY_EQUALS_WARNING!>a === b<!>
     }
 }
 
 fun incompatibleIdentityRegardlessNullabilityWithValueClasses(c: C?, d: D?) {
     c == d
-    c === d
+    <!FORBIDDEN_IDENTITY_EQUALS!>c === d<!>
 }
 
 fun incompatibleIdentityRegardlessNullabilityWithValueClassesSmartCast(c: Any?, d: Any?) {
     if (c is C? && d is D?) {
         c == d
-        c === d
+        <!FORBIDDEN_IDENTITY_EQUALS_WARNING!>c === d<!>
     }
 }

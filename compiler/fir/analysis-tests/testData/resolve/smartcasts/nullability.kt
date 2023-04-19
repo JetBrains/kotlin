@@ -123,7 +123,7 @@ fun test_10(a: Int?, b: Int?) {
     }
     b<!UNSAFE_CALL!>.<!>inc()
 
-    if (a === b) {
+    if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING!>a === b<!>) {
         b<!UNSAFE_CALL!>.<!>inc()
     }
     b<!UNSAFE_CALL!>.<!>inc()
@@ -133,7 +133,7 @@ fun test_10(a: Int?, b: Int?) {
     }
     b<!UNSAFE_CALL!>.<!>inc()
 
-    if (b === a) {
+    if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING!>b === a<!>) {
         b<!UNSAFE_CALL!>.<!>inc()
     }
     b<!UNSAFE_CALL!>.<!>inc()
