@@ -222,6 +222,7 @@ public actual val Char.category: CharCategory
  * Checks whether the given [radix] is valid radix for string to number and number to string conversion.
  */
 @PublishedApi
+@Suppress("DEPRECATION")
 internal actual fun checkRadix(radix: Int): Int {
     if(radix !in Char.MIN_RADIX..Char.MAX_RADIX) {
         throw IllegalArgumentException("radix $radix was not in valid range ${Char.MIN_RADIX..Char.MAX_RADIX}")
