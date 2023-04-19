@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.backend.common.serialization.Hash128Bits
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CrossModuleReferences
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageConfig
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
@@ -77,6 +79,19 @@ private class HashCalculatorForIC {
         collection.forEach { f(it) }
     }
 
+    fun <T> updateConfigKeys(config: CompilerConfiguration, keys: List<CompilerConfigurationKey<out T>>, valueUpdater: (T) -> Unit) {
+        updateForEach(keys) { key ->
+            update(key.toString())
+            val value = config.get(key)
+            if (value == null) {
+                md5Digest.update(0)
+            } else {
+                md5Digest.update(1)
+                valueUpdater(value)
+            }
+        }
+    }
+
     fun finalize(): ICHash {
         val hashBytes = md5Digest.digest()
         md5Digest.reset()
@@ -92,15 +107,38 @@ internal class ICHasher {
     fun calculateConfigHash(config: CompilerConfiguration): ICHash {
         hashCalculator.update(KotlinCompilerVersion.VERSION)
 
-        val importantSettings = listOf(
+        val booleanKeys = listOf(
+            JSConfigurationKeys.SOURCE_MAP,
+            JSConfigurationKeys.META_INFO,
+            JSConfigurationKeys.DEVELOPER_MODE,
+            JSConfigurationKeys.GENERATE_POLYFILLS,
             JSConfigurationKeys.GENERATE_DTS,
-            JSConfigurationKeys.MODULE_KIND,
             JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION,
-            JSConfigurationKeys.OPTIMIZE_GENERATED_JS
+            JSConfigurationKeys.GENERATE_INLINE_ANONYMOUS_FUNCTIONS,
+            JSConfigurationKeys.GENERATE_STRICT_IMPLICIT_EXPORT,
+            JSConfigurationKeys.OPTIMIZE_GENERATED_JS,
         )
-        hashCalculator.updateForEach(importantSettings) { key ->
-            hashCalculator.update(key.toString())
-            hashCalculator.update(config.get(key).toString())
+        hashCalculator.updateConfigKeys(config, booleanKeys) { value: Boolean ->
+            hashCalculator.update(if (value) 1 else 0)
+        }
+
+        val enumKeys = listOf(
+            JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES,
+            JSConfigurationKeys.SOURCEMAP_NAMES_POLICY,
+            JSConfigurationKeys.MODULE_KIND,
+            JSConfigurationKeys.ERROR_TOLERANCE_POLICY
+        )
+        hashCalculator.updateConfigKeys(config, enumKeys) { value: Enum<*> ->
+            hashCalculator.update(value.ordinal)
+        }
+
+        hashCalculator.updateConfigKeys(config, listOf(JSConfigurationKeys.SOURCE_MAP_PREFIX)) { value: String ->
+            hashCalculator.update(value)
+        }
+
+        hashCalculator.updateConfigKeys(config, listOf(PartialLinkageConfig.KEY)) { value: PartialLinkageConfig ->
+            hashCalculator.update(value.mode.ordinal)
+            hashCalculator.update(value.logLevel.ordinal)
         }
 
         hashCalculator.update(config.languageVersionSettings.toString())
