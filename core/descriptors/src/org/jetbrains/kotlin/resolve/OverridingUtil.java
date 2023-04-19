@@ -561,7 +561,7 @@ public class OverridingUtil {
                 }
             });
         } catch (NoSuchMethodError e) {
-            String path = CollectionsKt.class.getResource(CollectionsKt.class.getName().replace(".", "/") + ".class").toString();
+            String path = CollectionsKt.class.getResource("/" + CollectionsKt.class.getName().replace(".", "/") + ".class").toString();
             throw new LinkageError("Unable to find method for class loaded from " + path, e);
         }
     }
