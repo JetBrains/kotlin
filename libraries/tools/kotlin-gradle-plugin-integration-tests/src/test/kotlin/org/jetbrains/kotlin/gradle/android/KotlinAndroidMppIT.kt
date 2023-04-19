@@ -74,7 +74,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
                     namespace 'org.jetbrains.kotlin.gradle.test.android.libalfa'
                 }
         
-                kotlin { android("android") { } }
+                kotlin { androidTarget("android") { } }
                 """.trimIndent()
             )
 
@@ -232,7 +232,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
                 //language=Gradle
                 """
                     
-                kotlin.android('androidLib').publishLibraryVariants = ['release']
+                kotlin.androidTarget('androidLib').publishLibraryVariants = ['release']
                 """.trimIndent()
             )
             build("publish") {
@@ -253,7 +253,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
                 //language=Gradle
                 """
 
-                kotlin.android('androidLib') { publishAllLibraryVariants() }
+                kotlin.androidTarget('androidLib') { publishAllLibraryVariants() }
                 """.trimIndent()
             )
             build("publish") {
@@ -285,7 +285,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
                 //language=Gradle
                 """
 
-                kotlin.android('androidLib').publishLibraryVariantsGroupedByFlavor = true
+                kotlin.androidTarget('androidLib').publishLibraryVariantsGroupedByFlavor = true
                 """.trimIndent()
             )
             build("publish") {
@@ -369,7 +369,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
                 //language=Gradle
                 """
                     
-                kotlin.android('androidLib') { publishLibraryVariantsGroupedByFlavor = false }    
+                kotlin.androidTarget('androidLib') { publishLibraryVariantsGroupedByFlavor = false }    
                 """.trimIndent()
             )
             build("publish") {
@@ -435,7 +435,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
                 //language=Gradle
                 """
                     
-                    kotlin.android('androidLib') {
+                    kotlin.androidTarget('androidLib') {
                         withSourcesJar(false)
                         publishLibraryVariants = ['release']
                     }
@@ -488,7 +488,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
     
                         apply plugin: 'maven-publish'
                         publishing { repositories { maven { url = uri("${'$'}buildDir/repo") } } }
-                        kotlin.android('androidApp') { publishAllLibraryVariants() }
+                        kotlin.androidTarget('androidApp') { publishAllLibraryVariants() }
                         android { flavorDimensions('foo'); productFlavors { fooBar { dimension 'foo' }; fooBaz { dimension 'foo' } } }
                         """.trimIndent()
             }
@@ -664,7 +664,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
                 //language=Gradle
                 """
 
-                kotlin.android('androidLib') { publishAllLibraryVariants() }
+                kotlin.androidTarget('androidLib') { publishAllLibraryVariants() }
                 """.trimIndent()
             )
 
