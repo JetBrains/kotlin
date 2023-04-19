@@ -102,7 +102,8 @@ internal interface KotlinGradleProjectChecker {
             TargetsWithAmbiguousConsumableConfigurationsChecker,
             AndroidPluginWithoutAndroidTargetChecker,
             NoKotlinTargetsDeclaredChecker,
-            DisabledCinteropCommonizationInHmppProjectChecker
+            DisabledCinteropCommonizationInHmppProjectChecker,
+            DisabledNativeTargetsChecker
         )
     }
 }
