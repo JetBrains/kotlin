@@ -85,7 +85,7 @@ class JvmStubBasedFirDeserializedSymbolProvider(
     }
 
     private fun findAndDeserializeTypeAlias(classId: ClassId): Pair<FirTypeAliasSymbol?, DeserializedTypeAliasPostProcessor?> {
-        val classLikeDeclaration = declarationProvider.getClassLikeDeclarationByClassId(classId)
+        val classLikeDeclaration = declarationProvider.getClassLikeDeclarationByClassId(classId)?.originalElement
         if (classLikeDeclaration is KtTypeAlias) {
             val moduleData = moduleDataProvider.getModuleData(classLikeDeclaration.containingLibrary()) ?: return null to null
             val symbol = FirTypeAliasSymbol(classId)
@@ -109,7 +109,7 @@ class JvmStubBasedFirDeserializedSymbolProvider(
         classId: ClassId,
         parentContext: StubBasedFirDeserializationContext? = null
     ): Pair<FirRegularClassSymbol?, DeserializedClassPostProcessor?> {
-        val classLikeDeclaration = declarationProvider.getClassLikeDeclarationByClassId(classId) ?: return null to null
+        val classLikeDeclaration = declarationProvider.getClassLikeDeclarationByClassId(classId)?.originalElement ?: return null to null
         val symbol = FirRegularClassSymbol(classId)
         if (classLikeDeclaration is KtClassOrObject) {
             val moduleData = moduleDataProvider.getModuleData(classLikeDeclaration.containingLibrary()) ?: return null to null
@@ -140,25 +140,31 @@ class JvmStubBasedFirDeserializedSymbolProvider(
     }
 
     private fun loadFunctionsByCallableId(callableId: CallableId): List<FirNamedFunctionSymbol> {
-        return declarationProvider.getTopLevelFunctions(callableId).mapNotNull { function ->
-            val file = function.containingKtFile
-            if (file.packageFqName.asString()
-                    .replace(".", "/") + "/" + file.virtualFile.nameWithoutExtension in KotlinBuiltins
-            ) return@mapNotNull null
-            val moduleData = moduleDataProvider.getModuleData(function.containingLibrary()) ?: return@mapNotNull null
-            val symbol = FirNamedFunctionSymbol(callableId)
-            val createRootContext = StubBasedFirDeserializationContext.createRootContext(session, moduleData, callableId, function, symbol)
-            createRootContext.memberDeserializer.loadFunction(function, null, session, symbol).symbol
-        }
+        return declarationProvider.getTopLevelFunctions(callableId)
+            .mapNotNull { it.originalElement as? KtNamedFunction }
+            .mapNotNull { function ->
+                val file = function.containingKtFile
+                if (file.packageFqName.asString()
+                        .replace(".", "/") + "/" + file.virtualFile.nameWithoutExtension in KotlinBuiltins
+                ) return@mapNotNull null
+                val moduleData = moduleDataProvider.getModuleData(function.containingLibrary()) ?: return@mapNotNull null
+                val symbol = FirNamedFunctionSymbol(callableId)
+                val createRootContext =
+                    StubBasedFirDeserializationContext.createRootContext(session, moduleData, callableId, function, symbol)
+                createRootContext.memberDeserializer.loadFunction(function, null, session, symbol).symbol
+            }
     }
 
     private fun loadPropertiesByCallableId(callableId: CallableId): List<FirPropertySymbol> {
-        return declarationProvider.getTopLevelProperties(callableId).mapNotNull { property ->
-            val moduleData = moduleDataProvider.getModuleData(property.containingLibrary()) ?: return@mapNotNull null
-            val symbol = FirPropertySymbol(callableId)
-            val createRootContext = StubBasedFirDeserializationContext.createRootContext(session, moduleData, callableId, property, symbol)
-            createRootContext.memberDeserializer.loadProperty(property, null, symbol).symbol
-        }
+        return declarationProvider.getTopLevelProperties(callableId)
+            .mapNotNull { it.originalElement as? KtProperty }
+            .mapNotNull { property ->
+                val moduleData = moduleDataProvider.getModuleData(property.containingLibrary()) ?: return@mapNotNull null
+                val symbol = FirPropertySymbol(callableId)
+                val createRootContext =
+                    StubBasedFirDeserializationContext.createRootContext(session, moduleData, callableId, property, symbol)
+                createRootContext.memberDeserializer.loadProperty(property, null, symbol).symbol
+            }
     }
 
     private fun getClass(
