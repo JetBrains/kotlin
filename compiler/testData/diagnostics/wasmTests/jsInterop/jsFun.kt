@@ -1,5 +1,3 @@
-@file:Suppress("DEPRECATION")
-
 @JsFun("() => {}")
 external fun topLevelExternalFun(): Unit
 
