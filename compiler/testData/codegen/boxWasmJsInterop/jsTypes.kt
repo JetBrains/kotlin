@@ -50,9 +50,9 @@ fun box(): String {
     assertTrue(jsRepresentation(jsArray) == "object:element0,element1,element2")
 
     // JsReference
-    val JsReference: JsReference<Int> = 10.toJsReference()
-    assertTrue(JsReference.get() == 10)
-    assertTrue(JsReference.toJsReference().get() == JsReference)
+    val jsReference: JsReference<Int> = 10.toJsReference()
+    assertTrue(jsReference.get() == 10)
+    assertTrue(jsReference.toJsReference().get() == jsReference)
     val c = listOf(1)
     assertTrue(c.toJsReference().get() === c.toJsReference().get())
     assertTrue(c.toJsReference() === c.toJsReference())
