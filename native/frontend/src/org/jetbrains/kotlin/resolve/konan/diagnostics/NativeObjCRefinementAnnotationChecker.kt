@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.resolve.konan.diagnostics.NativeObjCRefinementChecke
 
 object NativeObjCRefinementAnnotationChecker : DeclarationChecker {
 
-    private val supportedTargets = arrayOf(KotlinTarget.FUNCTION, KotlinTarget.PROPERTY)
+    private val supportedTargets = arrayOf(KotlinTarget.FUNCTION, KotlinTarget.PROPERTY, KotlinTarget.CLASS)
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (descriptor !is ClassDescriptor || descriptor.kind != ClassKind.ANNOTATION_CLASS) return

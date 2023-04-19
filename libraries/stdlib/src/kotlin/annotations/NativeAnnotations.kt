@@ -85,10 +85,10 @@ public expect annotation class ObjCName(val name: String = "", val swiftName: St
 public expect annotation class HidesFromObjC()
 
 /**
- * Instructs the Kotlin compiler to remove this function or property from the public Objective-C API.
+ * Instructs the Kotlin compiler to remove this class, function or property from the public Objective-C API.
  */
 @HidesFromObjC
-@Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION)
+@Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
 @OptionalExpectation

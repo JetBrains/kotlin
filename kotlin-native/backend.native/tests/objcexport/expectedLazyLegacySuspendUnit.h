@@ -685,6 +685,160 @@ __attribute__((swift_name("TestGH3992.B")))
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
 @end
 
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("ClassNotAvailableInSwift")))
+@interface KtClassNotAvailableInSwift : NSObject
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("ParentClass")))
+@interface KtParentClass : NSObject
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("ParentClass.NestedClass")))
+@interface KtParentClassNestedClass : NSObject
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("ParentClass.NestedClassDeeplyNestedClass")))
+@interface KtParentClassNestedClassDeeplyNestedClass : NSObject
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("ParentClass.InnerClass")))
+@interface KtParentClassInnerClass : NSObject
+@end
+
+__attribute__((swift_name("InterfaceNotAvailableInSwift")))
+@protocol KtInterfaceNotAvailableInSwift
+@required
+@end
+
+__attribute__((swift_name("ChildOfUnavailableInterface")))
+@protocol KtChildOfUnavailableInterface
+@required
+- (NSString *)g __attribute__((swift_name("g()")));
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("UnavailableEnum")))
+@interface KtUnavailableEnum : NSObject
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("UnavailableObject")))
+@interface KtUnavailableObject : NSObject
+@end
+
+__attribute__((swift_name("ChildOfChildOfUnavailableInterface")))
+@protocol KtChildOfChildOfUnavailableInterface
+@required
+@end
+
+__attribute__((swift_name("SealedClass")))
+@interface KtSealedClass : KtBase
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("SealedClass.A")))
+@interface KtSealedClassA : NSObject
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("SealedClass.B")))
+@interface KtSealedClassB : KtSealedClass
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("SealedClass.C")))
+@interface KtSealedClassC : NSObject
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("WrapperOverUnavailable")))
+@interface KtWrapperOverUnavailable<T> : KtBase
+- (instancetype)initWithArg:(T)arg __attribute__((swift_name("init(arg:)"))) __attribute__((objc_designated_initializer));
+@property (readonly) T arg __attribute__((swift_name("arg")));
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("ImplementsHiddenInterface")))
+@interface KtImplementsHiddenInterface : KtBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@end
+
+__attribute__((swift_name("PhhiA")))
+@protocol KtPhhiA
+@required
+- (NSString *)a __attribute__((swift_name("a()")));
+@end
+
+__attribute__((swift_name("PhhiB")))
+@protocol KtPhhiB
+@required
+@end
+
+__attribute__((swift_name("PhhiC")))
+@protocol KtPhhiC
+@required
+@end
+
+__attribute__((swift_name("PhhiD")))
+@protocol KtPhhiD <KtPhhiA>
+@required
+- (NSString *)d __attribute__((swift_name("d()")));
+@end
+
+__attribute__((swift_name("PhhiE")))
+@protocol KtPhhiE <KtPhhiA>
+@required
+- (NSString *)e __attribute__((swift_name("e()")));
+@end
+
+__attribute__((swift_name("PhhiF")))
+@protocol KtPhhiF
+@required
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("PhhiClass")))
+@interface KtPhhiClass : KtBase <KtPhhiD, KtPhhiA, KtPhhiE>
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+- (NSString *)a __attribute__((swift_name("a()")));
+- (NSString *)d __attribute__((swift_name("d()")));
+- (NSString *)e __attribute__((swift_name("e()")));
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("HiddenfromobjcKt")))
+@interface KtHiddenfromobjcKt : KtBase
++ (id)useOfUnavailableClassParam:(id)param __attribute__((swift_name("useOfUnavailableClass(param:)")));
++ (id _Nullable)useOfNullableUnavailableClassParam:(id _Nullable)param __attribute__((swift_name("useOfNullableUnavailableClass(param:)")));
++ (id)produceUnavailable __attribute__((swift_name("produceUnavailable()")));
++ (NSString *)consumeUnavailableParam:(id)param __attribute__((swift_name("consumeUnavailable(param:)")));
++ (id)createUnavailableInterface __attribute__((swift_name("createUnavailableInterface()")));
++ (NSString * _Nullable)useOfNullableUnavailableInterfaceParam:(id _Nullable)param __attribute__((swift_name("useOfNullableUnavailableInterface(param:)")));
++ (id)createUnavailableEnum __attribute__((swift_name("createUnavailableEnum()")));
++ (NSString *)useOfUnavailableEnumParam:(id)param __attribute__((swift_name("useOfUnavailableEnum(param:)")));
++ (NSString *)useOfNullableUnavailableEnumParam:(id _Nullable)param __attribute__((swift_name("useOfNullableUnavailableEnum(param:)")));
++ (id)getUnavailableObject __attribute__((swift_name("getUnavailableObject()")));
++ (NSString *)useOfUnavailableObjectParam:(id)param __attribute__((swift_name("useOfUnavailableObject(param:)")));
++ (NSString * _Nullable)useOfNullableUnavailableObjectParam:(id _Nullable)param __attribute__((swift_name("useOfNullableUnavailableObject(param:)")));
++ (id)createChildOfChildOfUnavailableInterface __attribute__((swift_name("createChildOfChildOfUnavailableInterface()")));
++ (NSString *)useOfChildOfChildOfUnavailableInterfaceParam:(id)param __attribute__((swift_name("useOfChildOfChildOfUnavailableInterface(param:)")));
++ (KtSealedClass *)createSealedClass __attribute__((swift_name("createSealedClass()")));
++ (NSString *)useSealedClassParam:(KtSealedClass *)param __attribute__((swift_name("useSealedClass(param:)")));
++ (NSString *)useUnavailableA:(id)a __attribute__((swift_name("useUnavailable(a:)")));
++ (NSString *)callAParam:(id<KtPhhiA>)param __attribute__((swift_name("callA(param:)")));
++ (NSString *)callDParam:(id<KtPhhiD>)param __attribute__((swift_name("callD(param:)")));
++ (NSString *)callEParam:(id<KtPhhiE>)param __attribute__((swift_name("callE(param:)")));
+@end
+
 __attribute__((swift_name("InterfaceNameManglingI1")))
 @protocol KtInterfaceNameManglingI1
 @required

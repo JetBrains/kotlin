@@ -103,6 +103,18 @@ internal fun ObjCExportMapper.shouldBeExposed(descriptor: CallableMemberDescript
 private fun CallableMemberDescriptor.isHiddenFromObjC(): Boolean = when {
     // Note: the front-end checker requires all overridden descriptors to be either refined or not refined.
     overriddenDescriptors.isNotEmpty() -> overriddenDescriptors.first().isHiddenFromObjC()
+    // If containing declaration is marked as @HiddenFromObjC then member should be hidden as well.
+    (this.containingDeclaration as? ClassDescriptor)?.isHiddenFromObjC() == true -> true
+    else -> annotations.any { annotation ->
+        annotation.annotationClass?.annotations?.any { it.fqName == KonanFqNames.hidesFromObjC } == true
+    }
+}
+
+/**
+ * Check if the given class or its enclosing declaration is marked as @HiddenFromObjC.
+ */
+internal fun ClassDescriptor.isHiddenFromObjC(): Boolean = when {
+    (this.containingDeclaration as? ClassDescriptor)?.isHiddenFromObjC() == true -> true
     else -> annotations.any { annotation ->
         annotation.annotationClass?.annotations?.any { it.fqName == KonanFqNames.hidesFromObjC } == true
     }
@@ -175,7 +187,7 @@ internal fun ObjCExportMapper.shouldBeVisible(descriptor: ClassDescriptor): Bool
         descriptor.isEffectivelyPublicApi && when (descriptor.kind) {
         ClassKind.CLASS, ClassKind.INTERFACE, ClassKind.ENUM_CLASS, ClassKind.OBJECT -> true
         ClassKind.ENUM_ENTRY, ClassKind.ANNOTATION_CLASS -> false
-    } && !descriptor.isExpect && !descriptor.isInlined() && !isHiddenByDeprecation(descriptor)
+    } && !descriptor.isExpect && !descriptor.isInlined() && !isHiddenByDeprecation(descriptor) && !descriptor.isHiddenFromObjC()
 
 private fun ObjCExportMapper.isBase(descriptor: CallableMemberDescriptor): Boolean =
         descriptor.overriddenDescriptors.all { !shouldBeExposed(it) }

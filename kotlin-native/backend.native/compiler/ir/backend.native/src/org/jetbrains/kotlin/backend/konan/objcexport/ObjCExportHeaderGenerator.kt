@@ -241,11 +241,25 @@ internal class ObjCExportTranslatorImpl(
         return objCProtocol(name, descriptor, superProtocols, members, comment = comment)
     }
 
+    /**
+     * An interface might be marked as @HiddenFromObjC. In this case we expose its parents.
+     */
+    private fun ClassDescriptor.findExposedInterfaces(): Sequence<ClassDescriptor> {
+        require(this.isInterface)
+        if (mapper.shouldBeExposed(this)) return sequenceOf(this)
+        if (!this.isHiddenFromObjC()) return emptySequence()
+        return getSuperInterfaces()
+            .asSequence()
+            .flatMap { it.findExposedInterfaces() }
+            .distinct()
+    }
+
     private val ClassDescriptor.superProtocols: List<String>
         get() =
             getSuperInterfaces()
                     .asSequence()
-                    .filter { mapper.shouldBeExposed(it) }
+                    .flatMap { it.findExposedInterfaces() }
+                    .distinct()
                     .map {
                         generator?.generateExtraInterfaceEarly(it)
                         referenceProtocol(it).objCName
@@ -299,7 +313,12 @@ internal class ObjCExportTranslatorImpl(
             return emptyList()
         }
 
-        val superClass = descriptor.getSuperClassNotAny()
+        var superClass = descriptor.getSuperClassNotAny()
+        // Immediate superclass might be hidden by @HiddenFromObjC.
+        // In this case, walk the hierarchy up.
+        while (superClass != null && superClass.isHiddenFromObjC()) {
+            superClass = superClass.getSuperClassNotAny()
+        }
 
         val superName = if (superClass == null) {
             kotlinAnyName
