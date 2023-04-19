@@ -4348,6 +4348,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                 }
 
                 @Test
+                @TestMetadata("referenceToKotlinPropertyViaIntermediateJavaClass.kt")
+                public void testReferenceToKotlinPropertyViaIntermediateJavaClass() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/unsupported/referenceToKotlinPropertyViaIntermediateJavaClass.kt");
+                }
+
+                @Test
                 @TestMetadata("syntheticProperties.kt")
                 public void testSyntheticProperties() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/callableReference/unsupported/syntheticProperties.kt");
