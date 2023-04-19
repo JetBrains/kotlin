@@ -6,7 +6,7 @@
       frame #1: [..]`kfun:$main$lambda$0$FUNCTION_REFERENCE$0.invoke#internal(_this=[..]) at kt42208-1.kt:10:71
       frame #2: [..]`kfun:$main$lambda$0$FUNCTION_REFERENCE$0.$<bridge-BNN>invoke(_this=[..]){}kotlin.Boolean#internal at kt42208-1.kt:10:71
       frame #3: [..]`kfun:#main(){} at kt42208-1.kt:6:5
-      frame #4: [..]`Konan_start(args=[..]) at kt42208-1.kt:4:1
+      frame #4: [..]`Konan_start(args=[..]) at [..]
       frame #5: [..]
 > c
 > bt
@@ -15,7 +15,7 @@
       frame #1: [..]`kfun:$main$lambda$0$FUNCTION_REFERENCE$0.invoke#internal(_this=[..]) at kt42208-1.kt:10:71
       frame #2: [..]`kfun:$main$lambda$0$FUNCTION_REFERENCE$0.$<bridge-BNN>invoke(_this=[..]){}kotlin.Boolean#internal at kt42208-1.kt:10:71
       frame #3: [..]`kfun:#main(){} at kt42208-1.kt:7:5
-      frame #4: [..]`Konan_start(args=[..]) at kt42208-1.kt:4:1
+      frame #4: [..]`Konan_start(args=[..]) at [..]
 > c
 > bt
   * thread #1, [..] stop reason = breakpoint 1.1
@@ -23,5 +23,5 @@
       frame #1: [..]`kfun:$main$lambda$0$FUNCTION_REFERENCE$0.invoke#internal(_this=[..]) at kt42208-1.kt:10:71
       frame #2: [..]`kfun:$main$lambda$0$FUNCTION_REFERENCE$0.$<bridge-BNN>invoke(_this=[..]){}kotlin.Boolean#internal at kt42208-1.kt:10:71
       frame #3: [..]`kfun:#main(){} at kt42208-1.kt:8:5
-      frame #4: [..]`Konan_start(args=[..]) at kt42208-1.kt:4:1
+      frame #4: [..]`Konan_start(args=[..]) at [..]
 > q
