@@ -553,12 +553,17 @@ public class OverridingUtil {
         if (notOverridden.size() < 2) return true;
 
         final DeclarationDescriptor containingDeclaration = notOverridden.iterator().next().getContainingDeclaration();
-        return CollectionsKt.all(notOverridden, new Function1<CallableMemberDescriptor, Boolean>() {
-            @Override
-            public Boolean invoke(CallableMemberDescriptor descriptor) {
-                return descriptor.getContainingDeclaration() == containingDeclaration;
-            }
-        });
+        try {
+            return CollectionsKt.all(notOverridden, new Function1<CallableMemberDescriptor, Boolean>() {
+                @Override
+                public Boolean invoke(CallableMemberDescriptor descriptor) {
+                    return descriptor.getContainingDeclaration() == containingDeclaration;
+                }
+            });
+        } catch (NoSuchMethodError e) {
+            String path = CollectionsKt.class.getResource(CollectionsKt.class.getName().replace(".", "/") + ".class").toString();
+            throw new LinkageError("Unable to find method for class loaded from " + path, e);
+        }
     }
 
     private static void createAndBindFakeOverrides(
