@@ -101,7 +101,8 @@ internal interface KotlinGradleProjectChecker {
             AndroidSourceSetLayoutV1SourceSetsNotFoundChecker,
             TargetsWithAmbiguousConsumableConfigurationsChecker,
             AndroidPluginWithoutAndroidTargetChecker,
-            NoKotlinTargetsDeclaredChecker
+            NoKotlinTargetsDeclaredChecker,
+            DisabledCinteropCommonizationInHmppProjectChecker
         )
     }
 }
