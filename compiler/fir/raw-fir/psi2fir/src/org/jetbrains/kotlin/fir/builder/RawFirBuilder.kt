@@ -1722,9 +1722,14 @@ open class RawFirBuilder(
 
         private fun KtDeclarationWithInitializer.toInitializerExpression() =
             runIf(hasInitializer()) {
-                buildOrLazyExpression(null) {
+                this@RawFirBuilder.context.calleeNamesForLambda += null
+
+                val expression = buildOrLazyExpression(null) {
                     initializer.toFirExpression("Should have initializer")
                 }
+
+                this@RawFirBuilder.context.calleeNamesForLambda.removeLast()
+                expression
             }
 
         private fun <T> KtProperty.toFirProperty(

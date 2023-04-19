@@ -1186,7 +1186,11 @@ class DeclarationsConverter(
                     accessors += it
                 }
                 BACKING_FIELD -> fieldDeclaration = it
-                else -> if (it.isExpression()) propertyInitializer = expressionConverter.getAsFirExpression(it, "Should have initializer")
+                else -> if (it.isExpression()) {
+                    context.calleeNamesForLambda += null
+                    propertyInitializer = expressionConverter.getAsFirExpression(it, "Should have initializer")
+                    context.calleeNamesForLambda.removeLast()
+                }
             }
         }
 
