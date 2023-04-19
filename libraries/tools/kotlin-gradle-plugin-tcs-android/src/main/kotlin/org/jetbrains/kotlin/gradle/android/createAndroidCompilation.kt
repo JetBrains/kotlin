@@ -12,7 +12,7 @@ import org.gradle.api.attributes.java.TargetJvmEnvironment.TARGET_JVM_ENVIRONMEN
 import org.gradle.kotlin.dsl.named
 import org.jetbrains.kotlin.gradle.android.AndroidKotlinSourceSet.Companion.android
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinCompilationDescriptor
-import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinCompilationDescriptor.DecoratedKotlinCompilationFactory
+import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinCompilationDescriptor.CompilationFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.createCompilation
 
 
@@ -22,7 +22,7 @@ internal fun PrototypeAndroidTarget.createAndroidCompilation(name: String): Prot
         defaultSourceSet = kotlin.sourceSets.maybeCreate(camelCase("prototype", targetName, name)).apply {
             android = AndroidKotlinSourceSet()
         }
-        decoratedKotlinCompilationFactory = DecoratedKotlinCompilationFactory(::PrototypeAndroidCompilation)
+        compilationFactory = CompilationFactory(::PrototypeAndroidCompilation)
         compileTaskName = camelCase("prototype", "compile", targetName, name)
 
         /*

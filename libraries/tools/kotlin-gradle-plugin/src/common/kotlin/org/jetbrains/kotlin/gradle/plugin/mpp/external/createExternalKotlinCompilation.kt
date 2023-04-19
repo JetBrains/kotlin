@@ -69,7 +69,7 @@ fun <T : DecoratedExternalKotlinCompilation> DecoratedExternalKotlinTarget.creat
     )
 
     val compilationImpl = compilationImplFactory.create(this, descriptor.compilationName)
-    val decoratedCompilation = descriptor.decoratedKotlinCompilationFactory.create(Delegate(compilationImpl))
+    val decoratedCompilation = descriptor.compilationFactory.create(Delegate(compilationImpl))
     descriptor.configure?.invoke(decoratedCompilation)
     this.delegate.compilations.add(decoratedCompilation)
 

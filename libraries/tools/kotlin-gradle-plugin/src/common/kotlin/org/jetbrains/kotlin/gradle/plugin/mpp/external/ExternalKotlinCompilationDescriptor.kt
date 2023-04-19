@@ -14,7 +14,17 @@ import kotlin.properties.Delegates
 
 @ExternalKotlinTargetApi
 interface ExternalKotlinCompilationDescriptor<T : DecoratedExternalKotlinCompilation> {
-    fun interface DecoratedKotlinCompilationFactory<T : DecoratedKotlinCompilation<*>> {
+
+    /**
+     * Scheduled for removal in Kotlin 2.0
+     */
+    @Deprecated(
+        "Renamed to 'CompilationFactory'", level = DeprecationLevel.ERROR,
+        replaceWith = ReplaceWith("CompilationFactory")
+    )
+    fun interface DecoratedKotlinCompilationFactory<T : DecoratedKotlinCompilation<*>> : CompilationFactory<T>
+
+    fun interface CompilationFactory<T : DecoratedKotlinCompilation<*>> {
         fun create(delegate: DecoratedExternalKotlinCompilation.Delegate): T
     }
 
@@ -30,7 +40,14 @@ interface ExternalKotlinCompilationDescriptor<T : DecoratedExternalKotlinCompila
     val compileTaskName: String?
     val compileAllTaskName: String?
     val defaultSourceSet: KotlinSourceSet
+
+    @Suppress("deprecation_error")
+    @Deprecated(
+        "Renamed to compilationFactory", level = DeprecationLevel.ERROR,
+        replaceWith = ReplaceWith("compilationFactory")
+    )
     val decoratedKotlinCompilationFactory: DecoratedKotlinCompilationFactory<T>
+    val compilationFactory: CompilationFactory<T>
     val friendArtifactResolver: FriendArtifactResolver<T>?
     val compilationAssociator: CompilationAssociator<T>?
     val configure: ((T) -> Unit)?
@@ -40,13 +57,13 @@ interface ExternalKotlinCompilationDescriptor<T : DecoratedExternalKotlinCompila
 fun <T : DecoratedExternalKotlinCompilation> ExternalKotlinCompilationDescriptor(
     configure: ExternalKotlinCompilationDescriptorBuilder<T>.() -> Unit
 ): ExternalKotlinCompilationDescriptor<T> {
-    return ExternalKotlinCompilationDescriptorBuilderImpl<T>().also(configure).run {
+    return ExternalKotlinCompilationDescriptorBuilder<T>().also(configure).run {
         ExternalKotlinCompilationDescriptorImpl(
             compilationName = compilationName,
             compileTaskName = compileTaskName,
             compileAllTaskName = compileAllTaskName,
             defaultSourceSet = defaultSourceSet,
-            decoratedKotlinCompilationFactory = decoratedKotlinCompilationFactory,
+            compilationFactory = compilationFactory ?: decoratedKotlinCompilationFactory,
             friendArtifactResolver = friendArtifactResolver,
             compilationAssociator = compilationAssociator,
             configure = this.configure
@@ -55,15 +72,20 @@ fun <T : DecoratedExternalKotlinCompilation> ExternalKotlinCompilationDescriptor
 }
 
 @ExternalKotlinTargetApi
-interface ExternalKotlinCompilationDescriptorBuilder<T : DecoratedExternalKotlinCompilation> {
-    var compilationName: String
-    var compileTaskName: String?
-    var compileAllTaskName: String?
-    var defaultSourceSet: KotlinSourceSet
-    var decoratedKotlinCompilationFactory: DecoratedKotlinCompilationFactory<T>
-    var friendArtifactResolver: FriendArtifactResolver<T>?
-    var compilationAssociator: CompilationAssociator<T>?
-    var configure: ((T) -> Unit)?
+class ExternalKotlinCompilationDescriptorBuilder<T : DecoratedExternalKotlinCompilation> internal constructor() {
+    var compilationName: String by Delegates.notNull()
+    var compileTaskName: String? = null
+    var compileAllTaskName: String? = null
+    var defaultSourceSet: KotlinSourceSet by Delegates.notNull()
+
+    @Suppress("deprecation_error")
+    var decoratedKotlinCompilationFactory: DecoratedKotlinCompilationFactory<T> by Delegates.notNull()
+    var compilationFactory: CompilationFactory<T>? = null
+
+    var friendArtifactResolver: FriendArtifactResolver<T>? = null
+    var compilationAssociator: CompilationAssociator<T>? = null
+    var configure: ((T) -> Unit)? = null
+
     fun configure(action: (T) -> Unit) = apply {
         val configure = this.configure
         if (configure == null) this.configure = action
@@ -72,26 +94,17 @@ interface ExternalKotlinCompilationDescriptorBuilder<T : DecoratedExternalKotlin
 }
 
 @ExternalKotlinTargetApi
-private class ExternalKotlinCompilationDescriptorBuilderImpl<T : DecoratedExternalKotlinCompilation> :
-    ExternalKotlinCompilationDescriptorBuilder<T> {
-    override var compilationName: String by Delegates.notNull()
-    override var compileTaskName: String? = null
-    override var compileAllTaskName: String? = null
-    override var defaultSourceSet: KotlinSourceSet by Delegates.notNull()
-    override var decoratedKotlinCompilationFactory: DecoratedKotlinCompilationFactory<T> by Delegates.notNull()
-    override var friendArtifactResolver: FriendArtifactResolver<T>? = null
-    override var compilationAssociator: CompilationAssociator<T>? = null
-    override var configure: ((T) -> Unit)? = null
-}
-
-@ExternalKotlinTargetApi
 private data class ExternalKotlinCompilationDescriptorImpl<T : DecoratedExternalKotlinCompilation>(
     override val compilationName: String,
     override val compileTaskName: String?,
     override val compileAllTaskName: String?,
     override val defaultSourceSet: KotlinSourceSet,
-    override val decoratedKotlinCompilationFactory: DecoratedKotlinCompilationFactory<T>,
+    override val compilationFactory: CompilationFactory<T>,
     override val friendArtifactResolver: FriendArtifactResolver<T>?,
     override val compilationAssociator: CompilationAssociator<T>?,
     override val configure: ((T) -> Unit)?
-) : ExternalKotlinCompilationDescriptor<T>
+) : ExternalKotlinCompilationDescriptor<T> {
+    @Suppress("deprecation_error", "OVERRIDE_DEPRECATION")
+    override val decoratedKotlinCompilationFactory: DecoratedKotlinCompilationFactory<T>
+        get() = DecoratedKotlinCompilationFactory { compilationFactory.create(it) }
+}
