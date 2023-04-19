@@ -65,8 +65,9 @@ private fun generatePresetFunctions(
     funPrefix: String = ""
 ): String {
     val presetName = presetEntry.presetName
+    val functionName = presetEntry.functionName ?: presetName
     return """
-    ${funPrefix}fun $presetName(
+    ${funPrefix}fun $functionName(
         name: String = "$presetName",
         configure: ${presetEntry.targetType.renderShort()}.() -> Unit = { }
     ): ${presetEntry.targetType.renderShort()} =
@@ -76,9 +77,9 @@ private fun generatePresetFunctions(
             configure
         )
 
-    ${funPrefix}fun $presetName() = $presetName("$presetName") { }
-    ${funPrefix}fun $presetName(name: String) = $presetName(name) { }
-    ${funPrefix}fun $presetName(name: String, configure: Action<${presetEntry.targetType.renderShort()}>) = $presetName(name) { configure.execute(this) }
-    ${funPrefix}fun $presetName(configure: Action<${presetEntry.targetType.renderShort()}>) = $presetName { configure.execute(this) }
+    ${funPrefix}fun $functionName() = $functionName("$presetName") { }
+    ${funPrefix}fun $functionName(name: String) = $functionName(name) { }
+    ${funPrefix}fun $functionName(name: String, configure: Action<${presetEntry.targetType.renderShort()}>) = $functionName(name) { configure.execute(this) }
+    ${funPrefix}fun $functionName(configure: Action<${presetEntry.targetType.renderShort()}>) = $functionName { configure.execute(this) }
 """.trimIndent()
 }

@@ -15,7 +15,8 @@ internal class KotlinPresetEntry(
     val presetName: String,
     val presetType: TypeName,
     val targetType: TypeName,
-    val deprecation: String? = null
+    val deprecation: String? = null,
+    val functionName: String? = null
 )
 
 internal fun KotlinPresetEntry.typeNames(): Set<TypeName> = setOf(presetType, targetType)
@@ -45,7 +46,8 @@ internal val jvmPresetEntry = KotlinPresetEntry(
 internal val androidPresetEntry = KotlinPresetEntry(
     "android",
     typeName("$MPP_PACKAGE.KotlinAndroidTargetPreset"),
-    typeName("$MPP_PACKAGE.KotlinAndroidTarget")
+    typeName("$MPP_PACKAGE.KotlinAndroidTarget"),
+    functionName = "androidTarget"
 )
 
 // Note: modifying these sets should also be reflected in the MPP plugin code, see 'setupDefaultPresets'
