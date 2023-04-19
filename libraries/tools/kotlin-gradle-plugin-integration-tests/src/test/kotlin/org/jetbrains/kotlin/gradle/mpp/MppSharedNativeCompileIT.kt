@@ -46,4 +46,18 @@ class MppSharedNativeCompileIT : KGPBaseTest() {
             }
         }
     }
+
+    /**
+     *
+     */
+    @GradleTest
+    fun `test - K2 - shared native compilation - assemble`(gradleVersion: GradleVersion) {
+        project("kt-57944-k2-native-compilation", gradleVersion, buildOptions = defaultBuildOptions.copy(languageVersion = "2.0")) {
+            build("assemble") {
+                assertTasksExecuted(":compileCommonMainKotlinMetadata")
+                assertTasksExecuted(":compileNativeMainKotlinMetadata")
+                assertTasksExecuted(":compileKotlinLinuxX64")
+            }
+        }
+    }
 }
