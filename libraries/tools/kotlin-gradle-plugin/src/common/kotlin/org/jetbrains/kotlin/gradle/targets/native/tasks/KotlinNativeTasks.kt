@@ -452,7 +452,8 @@ internal constructor(
 
             args.pluginOptions = compilerPlugins.flatMap { it.options.arguments }.toTypedArray()
 
-            if (compilerOptions.usesK2.get()) {
+            /* Shared native compilations in K2 still use -Xcommon-sources and klib dependencies */
+            if (compilerOptions.usesK2.get() && sharedCompilationData == null) {
                 args.fragments = multiplatformStructure.fragmentsCompilerArgs
                 args.fragmentRefines = multiplatformStructure.fragmentRefinesCompilerArgs
             }
@@ -475,14 +476,9 @@ internal constructor(
         }
 
         sources { args ->
-            if (compilerOptions.usesK2.get()) {
-                /*
-                For now, we only pass multiplatform structure to K2 for platform compilations
-                Metadata compilations will compile against pre-compiled klibs from their dependsOn
-                */
-                if (sharedCompilationData == null) {
-                    args.fragmentSources = multiplatformStructure.fragmentSourcesCompilerArgs
-                }
+            /* Shared native compilations in K2 still use -Xcommon-sources and klib dependencies */
+            if (compilerOptions.usesK2.get() && sharedCompilationData == null) {
+                args.fragmentSources = multiplatformStructure.fragmentSourcesCompilerArgs
             } else {
                 args.commonSources = commonSourcesTree.files.takeIf { it.isNotEmpty() }?.toPathsArray()
             }
