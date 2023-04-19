@@ -8,8 +8,6 @@ package org.jetbrains.kotlin.gradle.mpp
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.util.replaceText
-import org.jetbrains.kotlin.test.TestMetadata
 import kotlin.io.path.appendText
 import kotlin.io.path.writeText
 
@@ -26,7 +24,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
     }
 
     @GradleTest
-    fun testDeprecatedProperties(gradleVersion: GradleVersion) {
+    fun testDeprecatedMppProperties(gradleVersion: GradleVersion) {
         project("mppDeprecatedProperties", gradleVersion) {
             checkDeprecatedProperties(isDeprecationExpected = false)
 

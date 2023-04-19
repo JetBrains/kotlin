@@ -7,8 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.diagnostics
 
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.ERROR
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.WARNING
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.*
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV1
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV2
 
@@ -237,6 +236,15 @@ object KotlinToolingDiagnostics {
                 androidTarget() // <-- please register this Android target
             }
             ```
+            """.trimIndent()
+        )
+    }
+
+    object NoKotlinTargetsDeclared : ToolingDiagnosticFactory(ERROR) {
+        operator fun invoke(projectName: String, projectPath: String) = build(
+            """
+                Please initialize at least one Kotlin target in '${projectName} (${projectPath})'.
+                Read more https://kotl.in/set-up-targets
             """.trimIndent()
         )
     }

@@ -1,0 +1,7 @@
+[UnusedSourceSetsWarning | WARNING] The Kotlin source set commonTest was configured but not added to any Kotlin compilation.
+
+You can add a source set to a target's compilation by connecting it with the compilation's default source set using 'dependsOn'.
+See https://kotl.in/connecting-source-sets
+----
+[NoKotlinTargetsDeclared | ERROR] Please initialize at least one Kotlin target in 'noTargetsDeclared (:)'.
+Read more https://kotl.in/set-up-targets
