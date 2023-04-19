@@ -24,7 +24,7 @@ object UnusedSourceSetsChecker {
 
     const val WARNING_BOTTOM_LINE =
         "You can add a source set to a target's compilation by connecting it with the compilation's default source set using 'dependsOn'.\n" +
-                "See https://kotlinlang.org/docs/reference/building-mpp-with-gradle.html#connecting-source-sets"
+                "See https://kotl.in/connecting-source-sets"
 
     private fun reportUnusedSourceSets(project: Project, sourceSets: Set<KotlinSourceSet>) {
         require(sourceSets.isNotEmpty())
