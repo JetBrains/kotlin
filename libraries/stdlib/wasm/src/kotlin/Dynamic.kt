@@ -22,14 +22,14 @@ fun Any.asDynamic(): JsAny = this.toJsReference()
 /**
  * Reinterprets this value as a value of the Dynamic type.
  */
-@Deprecated("Use toJsString instead", level = DeprecationLevel.ERROR, replaceWith = ReplaceWith("toJsString"))
+@Deprecated("Use toJsString instead", level = DeprecationLevel.ERROR, replaceWith = ReplaceWith("this.toJsString()"))
 @kotlin.internal.InlineOnly
 fun String.asDynamic(): JsString = this.toJsString()
 
 /**
  * Reinterprets boolean value as a value of the specified type [T] without any actual type checking.
  */
-@Deprecated("Use toJsBoolean instead", level = DeprecationLevel.ERROR, replaceWith = ReplaceWith("toJsBoolean"))
+@Deprecated("Use toJsBoolean instead", level = DeprecationLevel.ERROR, replaceWith = ReplaceWith("this.toJsBoolean()"))
 @Suppress("UNCHECKED_CAST")
 fun <T> Boolean.unsafeCast(): T = this.toJsBoolean() as T
 
