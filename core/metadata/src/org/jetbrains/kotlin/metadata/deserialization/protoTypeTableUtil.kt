@@ -122,4 +122,3 @@ fun ProtoBuf.Function.contextReceiverTypes(typeTable: TypeTable): List<ProtoBuf.
 
 fun ProtoBuf.Property.contextReceiverTypes(typeTable: TypeTable): List<ProtoBuf.Type> =
     contextReceiverTypeList.takeIf(Collection<*>::isNotEmpty) ?: contextReceiverTypeIdList.map { typeTable[it] }
-
