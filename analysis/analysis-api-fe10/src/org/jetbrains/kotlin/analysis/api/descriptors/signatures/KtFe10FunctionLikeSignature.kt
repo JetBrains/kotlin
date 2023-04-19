@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.signatures
 
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.signatures.KtFunctionLikeSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KtVariableLikeSignature
@@ -14,11 +15,15 @@ import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KtType
 
 internal class KtFe10FunctionLikeSignature<out S : KtFunctionLikeSymbol>(
-    symbol: S,
+    private val _symbol: S,
     private val _returnType: KtType,
     private val _receiverType: KtType?,
     private val _valueParameters: List<KtVariableLikeSignature<KtValueParameterSymbol>>,
-) : KtFunctionLikeSignature<S>(symbol) {
+) : KtFunctionLikeSignature<S>() {
+    override val token: KtLifetimeToken
+        get() = _symbol.token
+    override val symbol: S
+        get() = withValidityAssertion { _symbol }
     override val returnType: KtType
         get() = withValidityAssertion { _returnType }
     override val receiverType: KtType?
@@ -26,16 +31,18 @@ internal class KtFe10FunctionLikeSignature<out S : KtFunctionLikeSymbol>(
     override val valueParameters: List<KtVariableLikeSignature<KtValueParameterSymbol>>
         get() = withValidityAssertion { _valueParameters }
 
-    override fun substitute(substitutor: KtSubstitutor): KtFunctionLikeSignature<S> = KtFe10FunctionLikeSignature(
-        symbol,
-        substitutor.substitute(returnType),
-        receiverType?.let { substitutor.substitute(it) },
-        valueParameters.map { valueParameter ->
-            KtFe10VariableLikeSignature<KtValueParameterSymbol>(
-                valueParameter.symbol,
-                substitutor.substitute(valueParameter.returnType),
-                valueParameter.receiverType?.let { substitutor.substitute(it) }
-            )
-        }
-    )
+    override fun substitute(substitutor: KtSubstitutor): KtFunctionLikeSignature<S> = withValidityAssertion {
+        KtFe10FunctionLikeSignature(
+            symbol,
+            substitutor.substitute(returnType),
+            receiverType?.let { substitutor.substitute(it) },
+            valueParameters.map { valueParameter ->
+                KtFe10VariableLikeSignature<KtValueParameterSymbol>(
+                    valueParameter.symbol,
+                    substitutor.substitute(valueParameter.returnType),
+                    valueParameter.receiverType?.let { substitutor.substitute(it) }
+                )
+            }
+        )
+    }
 }

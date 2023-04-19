@@ -5,29 +5,15 @@
 
 package org.jetbrains.kotlin.analysis.api.signatures
 
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtValueParameterSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.receiverType
 import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KtType
 
 /**
  * A signature of a function-like symbol. This includes functions, getters, setters, lambdas, etc.
  */
-public abstract class KtFunctionLikeSignature<out S : KtFunctionLikeSymbol>(
-    private val _symbol: S
-) : KtCallableSignature<S>() {
-    override val token: KtLifetimeToken
-        get() = _symbol.token
-    override val symbol: S
-        get() = withValidityAssertion { _symbol }
-    override val returnType: KtType
-        get() = withValidityAssertion { _symbol.returnType }
-    override val receiverType: KtType?
-        get() = withValidityAssertion { _symbol.receiverType }
-
+public abstract class KtFunctionLikeSignature<out S : KtFunctionLikeSymbol> : KtCallableSignature<S>() {
     /**
      * The use-site-substituted value parameters.
      */

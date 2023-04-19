@@ -8,10 +8,8 @@ package org.jetbrains.kotlin.analysis.api.signatures
 import org.jetbrains.kotlin.analysis.api.annotations.KtAnnotationApplicationWithArgumentsInfo
 import org.jetbrains.kotlin.analysis.api.annotations.KtConstantAnnotationValue
 import org.jetbrains.kotlin.analysis.api.annotations.annotationsByClassId
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KtVariableLikeSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.receiverType
 import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.builtins.StandardNames
@@ -23,18 +21,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 /**
  * A signature of a variable-like symbol. This includes properties, enum entries local variables, etc.
  */
-public abstract class KtVariableLikeSignature<out S : KtVariableLikeSymbol>(
-    private val _symbol: S,
-) : KtCallableSignature<S>() {
-    override val token: KtLifetimeToken
-        get() = _symbol.token
-    override val symbol: S
-        get() = withValidityAssertion { _symbol }
-    override val returnType: KtType
-        get() = withValidityAssertion { _symbol.returnType }
-    override val receiverType: KtType?
-        get() = withValidityAssertion { _symbol.receiverType }
-
+public abstract class KtVariableLikeSignature<out S : KtVariableLikeSymbol> : KtCallableSignature<S>() {
     /**
      * A name of the variable with respect to the `@ParameterName` annotation. Can be different from the [KtVariableLikeSymbol.name].
      *

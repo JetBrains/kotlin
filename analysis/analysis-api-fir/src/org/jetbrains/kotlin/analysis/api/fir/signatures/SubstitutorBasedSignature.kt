@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.signatures
 
-import org.jetbrains.kotlin.analysis.api.signatures.KtCallableSignature
-import org.jetbrains.kotlin.analysis.api.types.KtSubstitutor
+import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 
-interface SubstitutorBasedSignature<out S : KtCallableSignature<*>> {
-    val signature: S
-    val substitutor: KtSubstitutor
+internal interface SubstitutorBasedSignature {
+    val coneSubstitutor: ConeSubstitutor
 }

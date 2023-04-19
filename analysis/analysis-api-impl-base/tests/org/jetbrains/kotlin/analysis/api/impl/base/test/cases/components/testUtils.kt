@@ -33,12 +33,6 @@ import kotlin.reflect.full.memberProperties
 @OptIn(KtAnalysisApiInternals::class)
 internal fun KtAnalysisSession.stringRepresentation(any: Any): String = with(any) {
     fun KtType.render() = asStringForDebugging().replace('/', '.')
-    fun String.indented() = replace("\n", "\n  ")
-    fun Any.clazz() = when (this) {
-        is KtVariableLikeSignature<*> -> KtVariableLikeSignature::class
-        is KtFunctionLikeSignature<*> -> KtFunctionLikeSignature::class
-        else -> this::class
-    }
     return when (this) {
         is KtFunctionLikeSymbol -> buildString {
             append(
@@ -96,8 +90,9 @@ internal fun KtAnalysisSession.stringRepresentation(any: Any): String = with(any
         is Enum<*> -> name
         is Name -> asString()
         is CallableId -> toString()
+        is KtCallableSignature<*> -> this.stringRepresentation()
         else -> buildString {
-            val clazz = this@with.clazz()
+            val clazz = this@with::class
             val className = clazz.simpleName!!
             append(className)
             appendLine(":")
@@ -118,6 +113,31 @@ internal fun KtAnalysisSession.stringRepresentation(any: Any): String = with(any
         }
     }
 }
+
+context(KtAnalysisSession)
+private fun KtCallableSignature<*>.stringRepresentation(): String = buildString {
+    when (this@stringRepresentation) {
+        is KtFunctionLikeSignature<*> -> append(KtFunctionLikeSignature::class.simpleName)
+        is KtVariableLikeSignature<*> -> append(KtVariableLikeSignature::class.simpleName)
+    }
+    appendLine(":")
+    val memberProperties = listOfNotNull(
+        KtVariableLikeSignature<*>::name.takeIf { this@stringRepresentation is KtVariableLikeSignature<*> },
+        KtCallableSignature<*>::receiverType,
+        KtCallableSignature<*>::returnType,
+        KtCallableSignature<*>::symbol,
+        KtFunctionLikeSignature<*>::valueParameters.takeIf { this@stringRepresentation is KtFunctionLikeSignature<*> },
+        KtCallableSignature<*>::callableIdIfNonLocal
+    )
+    memberProperties.joinTo(this, separator = "\n  ", prefix = "  ") { property ->
+        @Suppress("UNCHECKED_CAST")
+        val value = (property as KProperty1<Any, *>).get(this@stringRepresentation)
+        val valueAsString = value?.let { stringRepresentation(it).indented() }
+        "${property.name} = $valueAsString"
+    }
+}
+
+private fun String.indented() = replace("\n", "\n  ")
 
 internal fun KtAnalysisSession.prettyPrintSignature(signature: KtCallableSignature<*>): String = prettyPrint {
     when (signature) {

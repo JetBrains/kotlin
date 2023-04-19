@@ -6,20 +6,27 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.signatures.KtFirFunctionLikeSymbolBasedSignature
-import org.jetbrains.kotlin.analysis.api.fir.signatures.KtFirVariableLikeSymbolBasedSignature
+import org.jetbrains.kotlin.analysis.api.fir.signatures.KtFirFunctionLikeDummySignature
+import org.jetbrains.kotlin.analysis.api.fir.signatures.KtFirVariableLikeDummySignature
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.components.AbstractKtSignatureSubstitutor
 import org.jetbrains.kotlin.analysis.api.signatures.KtFunctionLikeSignature
 import org.jetbrains.kotlin.analysis.api.signatures.KtVariableLikeSignature
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtVariableLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 
 internal class KtFirSignatureSubstitutor(
     override val analysisSession: KtFirAnalysisSession
 ) : AbstractKtSignatureSubstitutor(), KtFirAnalysisSessionComponent {
-    override fun <S : KtFunctionLikeSymbol> asSignature(symbol: S): KtFunctionLikeSignature<S> =
-        KtFirFunctionLikeSymbolBasedSignature<S>(symbol)
+    override fun <S : KtFunctionLikeSymbol> asSignature(symbol: S): KtFunctionLikeSignature<S> {
+        val firSymbol = (symbol as KtFirSymbol<*>).firSymbol as FirFunctionSymbol<*>
+        return KtFirFunctionLikeDummySignature<S>(analysisSession.token, firSymbol, analysisSession.firSymbolBuilder)
+    }
 
-    override fun <S : KtVariableLikeSymbol> asSignature(symbol: S): KtVariableLikeSignature<S> =
-        KtFirVariableLikeSymbolBasedSignature<S>(symbol)
+    override fun <S : KtVariableLikeSymbol> asSignature(symbol: S): KtVariableLikeSignature<S> {
+        val firSymbol = (symbol as KtFirSymbol<*>).firSymbol as FirVariableSymbol<*>
+        return KtFirVariableLikeDummySignature<S>(analysisSession.token, firSymbol, analysisSession.firSymbolBuilder)
+    }
 }
