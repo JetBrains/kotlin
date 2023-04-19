@@ -6,8 +6,7 @@
 package kotlin.native.ref
 
 import kotlin.experimental.ExperimentalNativeApi
-import kotlin.native.concurrent.isShareable
-import kotlin.native.concurrent.freeze
+import kotlin.native.concurrent.*
 import kotlin.native.internal.*
 import kotlinx.cinterop.NativePtr
 
@@ -91,7 +90,7 @@ public fun <T> createCleaner(resource: T, cleanupAction: (resource: T) -> Unit):
         createCleanerImpl(resource, cleanupAction)
 
 @ExperimentalNativeApi
-@OptIn(FreezingIsDeprecated::class)
+@OptIn(FreezingIsDeprecated::class, ObsoleteWorkersApi::class)
 internal fun <T> createCleanerImpl(resource: T, cleanupAction: (T) -> Unit): Cleaner {
     if (!resource.isShareable())
         throw IllegalArgumentException("$resource must be shareable")
@@ -122,3 +121,4 @@ private class CleanerImpl(
 
 @GCUnsafeCall("CreateStablePointer")
 external private fun createStablePointer(obj: Any): NativePtr
+

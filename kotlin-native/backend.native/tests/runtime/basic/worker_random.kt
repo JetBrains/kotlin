@@ -3,6 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
+@file:OptIn(ObsoleteWorkersApi::class)
 package runtime.basic.worker_random
 
 import kotlin.native.concurrent.*

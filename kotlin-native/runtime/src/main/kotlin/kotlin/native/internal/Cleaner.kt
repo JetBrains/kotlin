@@ -76,7 +76,7 @@ public interface Cleaner
 @Suppress("DEPRECATION")
 @ExperimentalStdlibApi
 @ExportForCompiler
-@OptIn(ExperimentalNativeApi::class)
+@OptIn(ExperimentalNativeApi::class, ObsoleteWorkersApi::class)
 fun <T> createCleaner(argument: T, block: (T) -> Unit): Cleaner =
         kotlin.native.ref.createCleanerImpl(argument, block) as Cleaner
 
@@ -84,7 +84,7 @@ fun <T> createCleaner(argument: T, block: (T) -> Unit): Cleaner =
  * Perform GC on a worker that executes Cleaner blocks.
  */
 @InternalForKotlinNative
-@OptIn(kotlin.native.runtime.NativeRuntimeApi::class)
+@OptIn(kotlin.native.runtime.NativeRuntimeApi::class, ObsoleteWorkersApi::class)
 fun performGCOnCleanerWorker() =
     getCleanerWorker().execute(TransferMode.SAFE, {}) {
         GC.collect()
@@ -94,20 +94,24 @@ fun performGCOnCleanerWorker() =
  * Wait for a worker that executes Cleaner blocks to complete its scheduled tasks.
  */
 @InternalForKotlinNative
+@OptIn(ObsoleteWorkersApi::class)
 fun waitCleanerWorker() =
     getCleanerWorker().execute(TransferMode.SAFE, {}) {
         Unit
     }.result
 
 @GCUnsafeCall("Kotlin_CleanerImpl_getCleanerWorker")
+@OptIn(ObsoleteWorkersApi::class)
 external internal fun getCleanerWorker(): Worker
 
 @ExportForCppRuntime("Kotlin_CleanerImpl_shutdownCleanerWorker")
+@OptIn(ObsoleteWorkersApi::class)
 private fun shutdownCleanerWorker(worker: Worker, executeScheduledCleaners: Boolean) {
     worker.requestTermination(executeScheduledCleaners).result
 }
 
 @ExportForCppRuntime("Kotlin_CleanerImpl_createCleanerWorker")
+@OptIn(ObsoleteWorkersApi::class)
 private fun createCleanerWorker(): Worker {
     return Worker.start(errorReporting = false, name = "Cleaner worker")
 }

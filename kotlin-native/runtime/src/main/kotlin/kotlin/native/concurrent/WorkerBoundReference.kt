@@ -8,12 +8,15 @@ package kotlin.native.concurrent
 import kotlin.native.internal.*
 
 @GCUnsafeCall("Kotlin_WorkerBoundReference_create")
+@ObsoleteWorkersApi
 external private fun createWorkerBoundReference(value: Any): NativePtr
 
 @GCUnsafeCall("Kotlin_WorkerBoundReference_deref")
+@ObsoleteWorkersApi
 external private fun derefWorkerBoundReference(ref: NativePtr): Any?
 
 @GCUnsafeCall("Kotlin_WorkerBoundReference_describe")
+@ObsoleteWorkersApi
 external private fun describeWorkerBoundReference(ref: NativePtr): String
 
 /**
@@ -31,6 +34,7 @@ external private fun describeWorkerBoundReference(ref: NativePtr): String
 @HasFinalizer
 @HasFreezeHook
 @FreezingIsDeprecated
+@ObsoleteWorkersApi
 public class WorkerBoundReference<out T : Any>(value: T) {
 
     private var ptr = NativePtr.NULL

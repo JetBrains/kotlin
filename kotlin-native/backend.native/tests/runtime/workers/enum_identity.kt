@@ -3,6 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
+@file:OptIn(ObsoleteWorkersApi::class)
 package runtime.workers.enum_identity
 
 import kotlin.test.*
