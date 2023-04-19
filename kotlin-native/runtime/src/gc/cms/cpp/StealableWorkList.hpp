@@ -65,7 +65,7 @@ public:
      * In case some other thread is currently operating with the victim's shared list, returns `0`.
      * @return the number of elements stolen
      */
-    size_type tryStealFrom(StealableWorkList<T, Traits>& victim, size_type maxAmount) {
+    size_type tryStealFrom(StealableWorkList<T, Traits>& victim, size_type maxAmount) { // TODO noexcept
         auto locked = victim.sharedLock_.tryLock(false);
         if (!locked) return 0;
         RuntimeAssert(!victim.sharedEmpty(), "Victim's shared was locked as non-empty");
@@ -100,6 +100,7 @@ public:
     }
 
 private:
+    // TODO explain
     class TheftLock {
         static const std::size_t Empty = 0;
         static const std::size_t Available = 1;
@@ -114,6 +115,16 @@ private:
             }
             return status_.compare_exchange_strong(expected, desired, std::memory_order_acquire, std::memory_order_relaxed);
         }
+        void lock() noexcept {
+            while (true) {
+                auto status = status_.load(std::memory_order_relaxed);
+                if (status == Empty || status == Available) {
+                    auto locked = status_.compare_exchange_weak(status, Locked, std::memory_order_acquire, std::memory_order_relaxed);
+                    if (locked) return;
+                }
+                std::this_thread::yield();
+            }
+        }
         void release(bool empty) noexcept {
             RuntimeAssert(status_ == (Locked | (konan::currentThreadId() << 2)), "Lock must be locked");
             auto releasedStatus = empty ? Empty : Available;
@@ -123,6 +134,7 @@ private:
         std::atomic<std::size_t> status_;
     };
 
+    // TODO consider removal?
     static constexpr size_t CACHE_LINE_SIZE = 128;
 
     alignas(CACHE_LINE_SIZE) ListImpl local_;
