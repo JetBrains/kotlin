@@ -1505,7 +1505,7 @@ public final class StringBuilder : kotlin.text.Appendable, kotlin.CharSequence {
     public final fun appendRange(value: kotlin.CharSequence, startIndex: kotlin.Int, endIndex: kotlin.Int): kotlin.text.StringBuilder
 
     @kotlin.SinceKotlin(version = "1.3")
-    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Obtaining StringBuilder capacity is not supported in JS and common code.")
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Obtaining StringBuilder capacity is not supported in JS and common code.")
     public final fun capacity(): kotlin.Int
 
     @kotlin.SinceKotlin(version = "1.3")
