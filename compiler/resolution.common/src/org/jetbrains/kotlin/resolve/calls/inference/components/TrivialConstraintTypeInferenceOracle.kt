@@ -30,7 +30,7 @@ class TrivialConstraintTypeInferenceOracle private constructor(context: TypeSyst
     fun isSuitableResultedType(
         resultType: KotlinTypeMarker
     ): Boolean {
-        return !resultType.typeConstructor().isNothingConstructor()
+        return !resultType.typeConstructor().isNothingConstructor() || (isK2 && resultType.isDynamic())
     }
 
     // It's possible to generate Nothing-like constraints inside incorporation mechanism:

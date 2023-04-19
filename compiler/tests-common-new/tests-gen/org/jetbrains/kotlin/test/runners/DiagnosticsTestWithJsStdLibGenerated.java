@@ -374,6 +374,12 @@ public class DiagnosticsTestWithJsStdLibGenerated extends AbstractDiagnosticsTes
         }
 
         @Test
+        @TestMetadata("setOperatorOnDynamic.kt")
+        public void testSetOperatorOnDynamic() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/setOperatorOnDynamic.kt");
+        }
+
+        @Test
         @TestMetadata("smartCast.kt")
         public void testSmartCast() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/smartCast.kt");
