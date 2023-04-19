@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterEnvironment
 import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
-import org.jetbrains.kotlin.ir.interpreter.checker.IrConstTransformer
+import org.jetbrains.kotlin.ir.interpreter.checker.transformConst
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.NaiveSourceBasedFileEntryImpl
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -431,12 +431,7 @@ class Fir2IrConverter(
             val interpreter = IrInterpreter(IrInterpreterEnvironment(irModuleFragment.irBuiltins, configuration))
             val mode = if (intrinsicConstEvaluation) EvaluationMode.ONLY_INTRINSIC_CONST else EvaluationMode.ONLY_BUILTINS
             irModuleFragment.files.forEach {
-                val transformer = IrConstTransformer(
-                    interpreter, it,
-                    mode = mode,
-                    evaluatedConstTracker = fir2IrConfiguration.evaluatedConstTracker
-                )
-                it.transformChildren(transformer, null)
+                it.transformConst(interpreter, mode = mode, evaluatedConstTracker = fir2IrConfiguration.evaluatedConstTracker)
             }
         }
 

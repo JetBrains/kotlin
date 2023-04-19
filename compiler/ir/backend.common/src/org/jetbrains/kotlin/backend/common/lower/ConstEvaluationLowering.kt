@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterEnvironment
 import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
-import org.jetbrains.kotlin.ir.interpreter.checker.IrConstTransformer
+import org.jetbrains.kotlin.ir.interpreter.checker.transformConst
 
 class ConstEvaluationLowering(
     val context: CommonBackendContext,
@@ -28,13 +28,9 @@ class ConstEvaluationLowering(
     private val evaluatedConstTracker = context.configuration[CommonConfigurationKeys.EVALUATED_CONST_TRACKER]
 
     override fun lower(irFile: IrFile) {
-        val transformer = IrConstTransformer(
-            interpreter, irFile,
-            mode = EvaluationMode.ONLY_INTRINSIC_CONST,
-            evaluatedConstTracker,
-            onWarning, onError, suppressErrors
+        irFile.transformConst(
+            interpreter, mode = EvaluationMode.ONLY_INTRINSIC_CONST, evaluatedConstTracker, onWarning, onError, suppressErrors
         )
-        irFile.transformChildren(transformer, null)
     }
 }
 
