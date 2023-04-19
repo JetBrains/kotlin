@@ -17,6 +17,17 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.decoratedInstance
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalDecoratedKotlinCompilation.Delegate
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 
+/**
+ *  Creates a compilation for External Kotlin Targets adhering to the configuration provided in the [descriptor]
+ *  - The _kind_ of compilation will be chosen automatically by the specified [DecoratedExternalKotlinTarget.platformType]
+ *  - The compilation will use the [ExternalKotlinCompilationDescriptor.defaultSourceSet] as its (default) source set
+ *  - The compilation wil reference the compile task using the [ExternalKotlinCompilationDescriptor.compileTaskName] if specified
+ *  - The compilation will reference the compile all task name using the[ExternalKotlinCompilationDescriptor.compileAllTaskName] if specified
+ *  - Compilations .associateWith calls will be handled by the [ExternalKotlinCompilationDescriptor.compilationAssociator] if specified
+ *  - An additional friendArtifactResolver will be respected if the [ExternalKotlinCompilationDescriptor.friendArtifactResolver] is specified
+ *  - The [ExternalKotlinCompilationDescriptor.configure] method will be called before the compilation is available in [KotlinTarget.compilations]
+ *  container
+ */
 @ExternalKotlinTargetApi
 fun <T : ExternalDecoratedKotlinCompilation> DecoratedExternalKotlinTarget.createCompilation(
     descriptor: ExternalKotlinCompilationDescriptor<T>
@@ -67,6 +78,9 @@ fun <T : ExternalDecoratedKotlinCompilation> DecoratedExternalKotlinTarget.creat
     return decoratedCompilation
 }
 
+/**
+ * @see createCompilation
+ */
 @ExternalKotlinTargetApi
 fun <T : ExternalDecoratedKotlinCompilation> DecoratedExternalKotlinTarget.createCompilation(
     descriptor: ExternalKotlinCompilationDescriptorBuilder<T>.() -> Unit
@@ -74,8 +88,6 @@ fun <T : ExternalDecoratedKotlinCompilation> DecoratedExternalKotlinTarget.creat
     return createCompilation(ExternalKotlinCompilationDescriptor(descriptor))
 }
 
-
-@OptIn(ExternalKotlinTargetApi::class)
 private fun DecoratedExternalKotlinTarget.setupCompileTask(
     compilation: ExternalDecoratedKotlinCompilation
 ) {
