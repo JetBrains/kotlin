@@ -11,8 +11,7 @@ import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jdom.input.SAXBuilder
 import org.jetbrains.kotlin.gradle.*
-import org.jetbrains.kotlin.gradle.internals.DISABLED_NATIVE_TARGETS_REPORTER_DISABLE_WARNING_PROPERTY_NAME
-import org.jetbrains.kotlin.gradle.internals.DISABLED_NATIVE_TARGETS_REPORTER_WARNING_PREFIX
+import org.jetbrains.kotlin.gradle.internals.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS_PROPERTY
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -949,11 +948,11 @@ class GeneralNativeIT : BaseGradleIT() {
         hostHaveUnsupportedTarget()
         build {
             assertSuccessful()
-            assertEquals(1, output.lines().count { DISABLED_NATIVE_TARGETS_REPORTER_WARNING_PREFIX in it })
+            assertHasDiagnostic(KotlinToolingDiagnostics.DisabledKotlinNativeTargets)
         }
-        build("-P$DISABLED_NATIVE_TARGETS_REPORTER_DISABLE_WARNING_PROPERTY_NAME=true") {
+        build("-P$KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS_PROPERTY=true") {
             assertSuccessful()
-            assertNotContains(DISABLED_NATIVE_TARGETS_REPORTER_WARNING_PREFIX)
+            assertNoDiagnostic(KotlinToolingDiagnostics.DisabledKotlinNativeTargets)
         }
     }
 

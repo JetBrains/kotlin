@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.diagnostics
 
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.*
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV1
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV2
@@ -266,6 +267,16 @@ object KotlinToolingDiagnostics {
                 
                 The following cinterops are affected: 
                 $affectedCinteropsString
+            """.trimIndent()
+        )
+    }
+
+    object DisabledKotlinNativeTargets : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(disabledTargetNames: Collection<String>): ToolingDiagnostic = build(
+            """
+                The following Kotlin/Native targets cannot be built on this machine and are disabled:
+                ${disabledTargetNames.joinToString()}
+                To hide this message, add '$KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS=true' to the Gradle properties.
             """.trimIndent()
         )
     }

@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_IMPORT_ENABLE_KGP_DEPENDENCY_RESOLUTION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_IMPORT_ENABLE_SLOW_SOURCES_JAR_RESOLVER
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_DEPENDENCY_PROPAGATION
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_USE_XCODE_MESSAGE_STYLE
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_RUN_COMPILER_VIA_BUILD_TOOLS_API
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_STDLIB_DEFAULT_DEPENDENCY
@@ -50,7 +51,6 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerBui
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinIrJsGeneratedTSValidationStrategy
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrOutputGranularity
-import org.jetbrains.kotlin.gradle.targets.native.DisabledNativeTargetsReporter
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -240,7 +240,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = booleanProperty("$jsCompilerProperty.nowarn") ?: false
 
     val ignoreDisabledNativeTargets: Boolean?
-        get() = booleanProperty(DisabledNativeTargetsReporter.DISABLE_WARNING_PROPERTY_NAME)
+        get() = booleanProperty(KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS)
 
     val ignoreAbsentAndroidMultiplatformTarget: Boolean
         get() = booleanProperty("kotlin.mpp.absentAndroidTarget.nowarn") ?: false
@@ -618,6 +618,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         const val KOTLIN_INTERNAL_VERBOSE_DIAGNOSTICS = "kotlin.internal.verboseDiagnostics"
         const val KOTLIN_SUPPRESS_GRADLE_PLUGIN_WARNINGS = "kotlin.suppressGradlePluginWarnings"
         const val KOTLIN_SUPPRESS_GRADLE_PLUGIN_ERRORS = "kotlin.internal.suppressGradlePluginErrors"
+        const val KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS = "kotlin.native.ignoreDisabledTargets"
     }
 
     companion object {

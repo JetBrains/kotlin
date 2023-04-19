@@ -11,8 +11,6 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 import org.gradle.api.Project
 import org.jetbrains.kotlin.compilerRunner.konanHome
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
-import org.jetbrains.kotlin.gradle.targets.native.DisabledNativeTargetsReporter
 import org.jetbrains.kotlin.gradle.targets.native.internal.*
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 import org.jetbrains.kotlin.gradle.utils.setupNativeCompiler
@@ -64,13 +62,6 @@ abstract class AbstractKotlinNativeTargetPreset<T : KotlinNativeTarget>(
         SingleActionPerProject.run(project, "setupCInteropDependencies") {
             project.setupCInteropCommonizerDependencies()
             project.setupCInteropPropagatedDependencies()
-        }
-
-        if (!konanTarget.enabledOnCurrentHost) {
-            with(HostManager()) {
-                val supportedHosts = enabledByHost.filterValues { konanTarget in it }.keys
-                DisabledNativeTargetsReporter.reportDisabledTarget(project, result, supportedHosts)
-            }
         }
 
         return result
