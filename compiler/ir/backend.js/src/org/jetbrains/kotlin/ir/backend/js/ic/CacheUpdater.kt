@@ -6,6 +6,7 @@ package org.jetbrains.kotlin.ir.backend.js.ic
 
 import org.jetbrains.kotlin.backend.common.CommonJsKLibResolver
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
+import org.jetbrains.kotlin.backend.common.serialization.IrInterningService
 import org.jetbrains.kotlin.backend.common.serialization.cityHash64
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.*
@@ -19,6 +20,10 @@ import org.jetbrains.kotlin.library.KLIB_PROPERTY_DEPENDS
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.utils.memoryOptimizedFilter
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
+import org.jetbrains.kotlin.utils.newHashMapWithExpectedSize
+import org.jetbrains.kotlin.utils.newHashSetWithExpectedSize
 import java.io.File
 import java.nio.file.Files
 import java.util.EnumSet
@@ -67,6 +72,8 @@ class CacheUpdater(
 
     private val icHasher = ICHasher()
 
+    private val internationService = IrInterningService()
+
     private val cacheRootDir = run {
         val configHash = icHasher.calculateConfigHash(compilerConfiguration)
         File(cacheDir, "version.${configHash.hash.lowBytes.toString(Character.MAX_RADIX)}")
@@ -107,15 +114,15 @@ class CacheUpdater(
             val nameToKotlinLibrary = libraries.associateBy { it.moduleName }
 
             libraries.associateWith {
-                it.manifestProperties.propertyList(KLIB_PROPERTY_DEPENDS, escapeInQuotes = true).map { depName ->
+                it.manifestProperties.propertyList(KLIB_PROPERTY_DEPENDS, escapeInQuotes = true).memoryOptimizedMap { depName ->
                     nameToKotlinLibrary[depName] ?: notFoundIcError("library $depName")
                 }
             }
         }
 
         val mainModuleFriendLibraries = libraryDependencies.keys.let { libs ->
-            val friendPaths = mainModuleFriends.mapTo(HashSet(mainModuleFriends.size)) { File(it).canonicalPath }
-            libs.filter { it.libraryFile.canonicalPath in friendPaths }
+            val friendPaths = mainModuleFriends.mapTo(newHashSetWithExpectedSize(mainModuleFriends.size)) { File(it).canonicalPath }
+            libs.memoryOptimizedFilter { it.libraryFile.canonicalPath in friendPaths }
         }
 
         private val klibCacheDirs = libraryDependencies.keys.map { lib ->
@@ -139,12 +146,12 @@ class CacheUpdater(
         }
 
         private val incrementalCaches = libraryDependencies.keys.zip(klibCacheDirs).associate { (lib, libraryCacheDir) ->
-            KotlinLibraryFile(lib) to IncrementalCache(KotlinLoadedLibraryHeader(lib), libraryCacheDir)
+            KotlinLibraryFile(lib) to IncrementalCache(KotlinLoadedLibraryHeader(lib, internationService), libraryCacheDir)
         }
 
         private val removedIncrementalCaches = buildList {
             if (cacheRootDir.isDirectory) {
-                val availableCaches = incrementalCaches.values.mapTo(HashSet(incrementalCaches.size)) { it.cacheDir }
+                val availableCaches = incrementalCaches.values.mapTo(newHashSetWithExpectedSize(incrementalCaches.size)) { it.cacheDir }
                 val allDirs = Files.walk(cacheRootDir.toPath(), 1).map { it.toFile() }
                 allDirs.filter { it != cacheRootDir && it !in availableCaches }.forEach { removedCacheDir ->
                     add(IncrementalCache(KotlinRemovedLibraryHeader(removedCacheDir), removedCacheDir))
@@ -445,7 +452,7 @@ class CacheUpdater(
                             // if imports have been modified, metadata for the file will be rebuilt later,
                             // so if the imports haven't been modified, update the metadata manually
                             if (newMetadata.importedSignaturesState == ImportedSignaturesState.NON_MODIFIED) {
-                                val newDirectDependencies = newSignatures.associateWithTo(HashMap(newSignatures.size)) {
+                                val newDirectDependencies = newSignatures.associateWithTo(newHashMapWithExpectedSize(newSignatures.size)) {
                                     signatureHashCalculator[it] ?: notFoundIcError("signature $it hash", libFile, srcFile)
                                 }
                                 newMetadata.directDependencies[libFile, srcFile] = newDirectDependencies
@@ -690,7 +697,7 @@ class CacheUpdater(
         // Load declarations referenced during `context` initialization
         loadedIr.loadUnboundSymbols()
 
-        val dirtyFiles = dirtyFileExports.entries.associateTo(HashMap(dirtyFileExports.size)) { it.key to HashSet(it.value.keys) }
+        val dirtyFiles = dirtyFileExports.entries.associateTo(newHashMapWithExpectedSize(dirtyFileExports.size)) { it.key to HashSet(it.value.keys) }
 
         stopwatch.startNext("Processing IR - updating intrinsics and builtins dependencies")
         updater.updateStdlibIntrinsicDependencies(loadedIr, mainModuleFragment, dirtyFiles)
@@ -752,12 +759,13 @@ fun rebuildCacheForDirtyFiles(
     mainArguments: List<String>?,
     es6mode: Boolean
 ): Pair<IrModuleFragment, List<Pair<IrFile, JsIrProgramFragment>>> {
+    val internationService = IrInterningService()
     val emptyMetadata = object : KotlinSourceFileExports() {
         override val inverseDependencies = KotlinSourceFileMap<Set<IdSignature>>(emptyMap())
     }
 
     val libFile = KotlinLibraryFile(library)
-    val dirtySrcFiles = dirtyFiles?.map { KotlinSourceFile(it) } ?: KotlinLoadedLibraryHeader(library).sourceFileFingerprints.keys
+    val dirtySrcFiles = dirtyFiles?.memoryOptimizedMap { KotlinSourceFile(it) } ?: KotlinLoadedLibraryHeader(library, internationService).sourceFileFingerprints.keys
 
     val modifiedFiles = mapOf(libFile to dirtySrcFiles.associateWith { emptyMetadata })
 
@@ -767,7 +775,7 @@ fun rebuildCacheForDirtyFiles(
     val currentIrModule = loadedIr.loadedFragments[libFile] ?: notFoundIcError("loaded fragment", libFile)
     val dirtyIrFiles = dirtyFiles?.let {
         val files = it.toSet()
-        currentIrModule.files.filter { irFile -> irFile.fileEntry.name in files }
+        currentIrModule.files.memoryOptimizedFilter { irFile -> irFile.fileEntry.name in files }
     } ?: currentIrModule.files
 
     val compilerWithIC = JsIrCompilerWithIC(
@@ -781,8 +789,9 @@ fun rebuildCacheForDirtyFiles(
 
     // Load declarations referenced during `context` initialization
     loadedIr.loadUnboundSymbols()
+    internationService.clear()
 
-    val fragments = compilerWithIC.compile(loadedIr.loadedFragments.values, dirtyIrFiles, mainArguments).map { it() }
+    val fragments = compilerWithIC.compile(loadedIr.loadedFragments.values, dirtyIrFiles, mainArguments).memoryOptimizedMap { it() }
 
     return currentIrModule to dirtyIrFiles.zip(fragments)
 }

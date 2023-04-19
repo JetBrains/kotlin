@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.ir.expressions.impl
 
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.utils.SmartList
 
 class IrWhenImpl(
     override val startOffset: Int,
@@ -35,7 +36,7 @@ class IrWhenImpl(
         this.branches.addAll(branches)
     }
 
-    override val branches: MutableList<IrBranch> = ArrayList()
+    override val branches: MutableList<IrBranch> = ArrayList(2)
 }
 
 open class IrBranchImpl(

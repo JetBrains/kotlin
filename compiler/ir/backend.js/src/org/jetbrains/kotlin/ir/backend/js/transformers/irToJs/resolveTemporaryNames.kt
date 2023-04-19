@@ -24,7 +24,7 @@ fun JsNode.resolveTemporaryNames() {
 
 private fun JsNode.resolveNames(): Map<JsName, JsName> {
     val rootScope = computeScopes().liftUsedNames()
-    val replacements = mutableMapOf<JsName, JsName>()
+    val replacements = hashMapOf<JsName, JsName>()
     fun traverse(scope: Scope) {
         // Don't clash with non-temporary names declared in current scope. It's for rare cases like `_` or `Kotlin` names,
         // since most of local declarations are temporary.
@@ -37,7 +37,7 @@ private fun JsNode.resolveNames(): Map<JsName, JsName> {
         // Outer `foo` resolves first, so when traversing inner scope, we should take it into account.
         occupiedNames += scope.usedNames.asSequence().mapNotNull { if (!it.isTemporary) it.ident else replacements[it]?.ident }
 
-        val nextSuffix = mutableMapOf<String, Int>()
+        val nextSuffix = hashMapOf<String, Int>()
         for (temporaryName in scope.declaredNames.asSequence().filter { it.isTemporary }) {
             var resolvedName = temporaryName.ident
             var suffix = nextSuffix.getOrDefault(temporaryName.ident, 0)

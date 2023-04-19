@@ -560,6 +560,7 @@ class GenerateIrRuntime {
             .generateUnboundSymbolsAsDependencies()
 
         jsLinker.postProcess(inOrAfterLinkageStep = true)
+        jsLinker.clear()
 
         moduleFragment.patchDeclarationParents()
 
@@ -586,6 +587,7 @@ class GenerateIrRuntime {
             .generateUnboundSymbolsAsDependencies()
 
         jsLinker.postProcess(inOrAfterLinkageStep = true)
+        jsLinker.clear()
 
         moduleFragment.patchDeclarationParents()
 

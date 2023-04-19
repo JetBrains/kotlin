@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.types.impl.IrUninitializedType
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 @ObsoleteDescriptorBasedAPI
 fun SymbolTable.declareSimpleFunctionWithOverrides(
@@ -49,7 +50,7 @@ fun generateOverriddenFunctionSymbols(
     declaration: IrSimpleFunction,
     symbolTable: ReferenceSymbolTable
 ) {
-    declaration.overriddenSymbols = declaration.descriptor.overriddenDescriptors.map {
+    declaration.overriddenSymbols = declaration.descriptor.overriddenDescriptors.memoryOptimizedMap {
         symbolTable.referenceSimpleFunction(it.original)
     }
 }

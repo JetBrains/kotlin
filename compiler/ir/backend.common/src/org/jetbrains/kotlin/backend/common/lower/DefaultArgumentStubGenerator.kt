@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
 // TODO: fix expect/actual default parameters
 
@@ -488,7 +489,7 @@ class DefaultParameterPatchOverridenSymbolsLowering(
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration is IrSimpleFunction) {
             (context.mapping.defaultArgumentsOriginalFunction[declaration] as? IrSimpleFunction)?.run {
-                declaration.overriddenSymbols += overriddenSymbols.mapNotNull {
+                declaration.overriddenSymbols = declaration.overriddenSymbols memoryOptimizedPlus overriddenSymbols.mapNotNull {
                     (context.mapping.defaultArgumentsDispatchFunction[it.owner] as? IrSimpleFunction)?.symbol
                 }
             }

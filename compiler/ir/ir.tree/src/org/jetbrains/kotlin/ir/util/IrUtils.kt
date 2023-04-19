@@ -29,8 +29,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.util.OperatorNameConventions
-import org.jetbrains.kotlin.utils.DFS
-import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.*
 import java.io.StringWriter
 
 /**
@@ -731,7 +730,7 @@ fun IrClass.addSimpleDelegatingConstructor(
         this.visibility = superConstructor.visibility
         this.isPrimary = isPrimary
     }.also { constructor ->
-        constructor.valueParameters = superConstructor.valueParameters.mapIndexed { index, parameter ->
+        constructor.valueParameters = superConstructor.valueParameters.memoryOptimizedMapIndexed { index, parameter ->
             parameter.copyTo(constructor, index = index)
         }
 
@@ -842,7 +841,7 @@ fun IrFunction.copyReceiverParametersFrom(from: IrFunction, substitutionMap: Map
 fun IrFunction.copyValueParametersFrom(from: IrFunction, substitutionMap: Map<IrTypeParameterSymbol, IrType>) {
     copyReceiverParametersFrom(from, substitutionMap)
     val shift = valueParameters.size
-    valueParameters += from.valueParameters.map {
+    valueParameters = valueParameters memoryOptimizedPlus from.valueParameters.map {
         it.copyTo(this, index = it.index + shift, type = it.type.substitute(substitutionMap))
     }
 }
@@ -866,12 +865,12 @@ fun IrTypeParametersContainer.copyTypeParameters(
     val oldToNewParameterMap = parameterMap.orEmpty().toMutableMap()
     // Any type parameter can figure in a boundary type for any other parameter.
     // Therefore, we first copy the parameters themselves, then set up their supertypes.
-    val newTypeParameters = srcTypeParameters.mapIndexed { i, sourceParameter ->
+    val newTypeParameters = srcTypeParameters.memoryOptimizedMapIndexed { i, sourceParameter ->
         sourceParameter.copyToWithoutSuperTypes(this, index = i + shift, origin = origin ?: sourceParameter.origin).also {
             oldToNewParameterMap[sourceParameter] = it
         }
     }
-    typeParameters += newTypeParameters
+    typeParameters = typeParameters memoryOptimizedPlus newTypeParameters
     srcTypeParameters.zip(newTypeParameters).forEach { (srcParameter, dstParameter) ->
         dstParameter.copySuperTypesFrom(srcParameter, oldToNewParameterMap)
     }
@@ -888,13 +887,13 @@ private fun IrTypeParameter.copySuperTypesFrom(source: IrTypeParameter, srcToDst
     val target = this
     val sourceParent = source.parent as IrTypeParametersContainer
     val targetParent = target.parent as IrTypeParametersContainer
-    target.superTypes = source.superTypes.map {
+    target.superTypes = source.superTypes.memoryOptimizedMap {
         it.remapTypeParameters(sourceParent, targetParent, srcToDstParameterMap)
     }
 }
 
 fun IrAnnotationContainer.copyAnnotations(): List<IrConstructorCall> {
-    return annotations.map { it.deepCopyWithSymbols(this as? IrDeclarationParent) }
+    return annotations.memoryOptimizedMap { it.deepCopyWithSymbols(this as? IrDeclarationParent) }
 }
 
 fun IrAnnotationContainer.copyAnnotationsWhen(filter: IrConstructorCall.() -> Boolean): List<IrConstructorCall> {
@@ -902,7 +901,7 @@ fun IrAnnotationContainer.copyAnnotationsWhen(filter: IrConstructorCall.() -> Bo
 }
 
 fun IrMutableAnnotationContainer.copyAnnotationsFrom(source: IrAnnotationContainer) {
-    annotations += source.copyAnnotations()
+    annotations = annotations memoryOptimizedPlus source.copyAnnotations()
 }
 
 fun makeTypeParameterSubstitutionMap(
@@ -935,7 +934,7 @@ fun IrFunction.copyValueParametersToStatic(
             target.classIfConstructor
         )
 
-        target.valueParameters += originalDispatchReceiver.copyTo(
+        target.valueParameters = target.valueParameters memoryOptimizedPlus originalDispatchReceiver.copyTo(
             target,
             origin = originalDispatchReceiver.origin,
             index = shift++,
@@ -944,7 +943,7 @@ fun IrFunction.copyValueParametersToStatic(
         )
     }
     source.extensionReceiverParameter?.let { originalExtensionReceiver ->
-        target.valueParameters += originalExtensionReceiver.copyTo(
+        target.valueParameters = target.valueParameters memoryOptimizedPlus originalExtensionReceiver.copyTo(
             target,
             origin = originalExtensionReceiver.origin,
             index = shift++,
@@ -954,7 +953,7 @@ fun IrFunction.copyValueParametersToStatic(
 
     for (oldValueParameter in source.valueParameters) {
         if (oldValueParameter.index >= numValueParametersToCopy) break
-        target.valueParameters += oldValueParameter.copyTo(
+        target.valueParameters = target.valueParameters memoryOptimizedPlus oldValueParameter.copyTo(
             target,
             origin = origin,
             index = oldValueParameter.index + shift
@@ -1002,7 +1001,7 @@ fun IrType.remapTypeParameters(
                     IrSimpleTypeImpl(
                         classifier.symbol,
                         nullability,
-                        arguments.map {
+                        arguments.memoryOptimizedMap {
                             when (it) {
                                 is IrTypeProjection -> makeTypeProjection(
                                     it.type.remapTypeParameters(source, target, srcToDstParameterMap),
@@ -1218,7 +1217,7 @@ fun IrFactory.createStaticFunctionWithReceivers(
         fun remap(type: IrType): IrType =
             type.remapTypeParameters(oldFunction, this, typeParameterMap)
 
-        typeParameters.forEach { it.superTypes = it.superTypes.map(::remap) }
+        typeParameters.forEach { it.superTypes = it.superTypes.memoryOptimizedMap(::remap) }
 
         annotations = oldFunction.annotations
 
@@ -1321,7 +1320,7 @@ private fun IrSimpleFunction.copyAndRenameConflictingTypeParametersFrom(
         newParameter.copySuperTypesFrom(oldParameter, parameterMap)
     }
 
-    typeParameters = typeParameters + newParameters
+    typeParameters = typeParameters memoryOptimizedPlus newParameters
 
     return newParameters
 }

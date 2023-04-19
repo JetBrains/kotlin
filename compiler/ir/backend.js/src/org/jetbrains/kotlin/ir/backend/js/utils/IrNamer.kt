@@ -74,7 +74,7 @@ abstract class IrNamerBase : IrNamer {
         }
     }
 
-    private val associatedObjectKeyMap = mutableMapOf<IrClass, Int>()
+    private val associatedObjectKeyMap = hashMapOf<IrClass, Int>()
 
     override fun getAssociatedObjectKey(irClass: IrClass): Int? {
         if (irClass.isAssociatedObjectAnnotatedAnnotation) {

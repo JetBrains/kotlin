@@ -8,9 +8,10 @@ package org.jetbrains.kotlin.ir.types
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.impl.*
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 
 abstract class AbstractIrTypeSubstitutor(private val irBuiltIns: IrBuiltIns) : TypeSubstitutorMarker {
@@ -39,7 +40,7 @@ abstract class AbstractIrTypeSubstitutor(private val irBuiltIns: IrBuiltIns) : T
         return when (irType) {
             is IrSimpleType ->
                 with(irType.toBuilder()) {
-                    arguments = irType.arguments.map { substituteTypeArgument(it) }
+                    arguments = irType.arguments.memoryOptimizedMap { substituteTypeArgument(it) }
                     buildSimpleType()
                 }
             is IrDynamicType,

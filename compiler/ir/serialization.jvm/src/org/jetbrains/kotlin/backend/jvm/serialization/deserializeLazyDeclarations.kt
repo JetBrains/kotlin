@@ -45,6 +45,7 @@ fun deserializeFromByteArray(
     toplevelParent: IrClass,
     typeSystemContext: IrTypeSystemContext,
 ) {
+    val internationService = IrInterningService()
     val irProto = JvmIr.ClassOrFile.parseFrom(byteArray.codedInputStream)
     val irLibraryFile = IrLibraryFileFromAnnotation(
         irProto.typeList,
@@ -66,7 +67,8 @@ fun deserializeFromByteArray(
         fileSignature = dummyFileSignature,
         /* TODO */ actuals = emptyList(),
         enqueueLocalTopLevelDeclaration = {}, // just link to it in symbolTable
-        handleExpectActualMapping = { _, symbol -> symbol } // no expect declarations
+        handleExpectActualMapping = { _, symbol -> symbol }, // no expect declarations
+        internationService = internationService
     ) { idSignature, symbolKind ->
         referencePublicSymbol(symbolTable, idSignature, symbolKind)
     }
@@ -86,7 +88,8 @@ fun deserializeFromByteArray(
         DefaultFakeOverrideClassFilter,
         fakeOverrideBuilder,
         compatibilityMode = CompatibilityMode.CURRENT,
-        partialLinkageEnabled = false
+        partialLinkageEnabled = false,
+        internationService = internationService
     )
     for (declarationProto in irProto.declarationList) {
         deserializer.deserializeDeclaration(declarationProto, setParent = false)

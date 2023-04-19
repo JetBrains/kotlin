@@ -17,13 +17,14 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.atMostOne
 
 class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : CallsTransformer {
     private val intrinsics = context.intrinsics
     private val irBuiltIns = context.irBuiltIns
     private val icUtils = context.inlineClassesUtils
 
-    private val symbolToTransformer: SymbolToTransformer = mutableMapOf()
+    private val symbolToTransformer: SymbolToTransformer = hashMapOf()
 
     init {
         symbolToTransformer.run {
@@ -178,11 +179,10 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
     private fun IrType.findEqualsMethod(): IrSimpleFunction? {
         val klass = getClass() ?: return null
         if (klass.isEnumClass && klass.isExternal) return null
-        return klass.declarations
+        return klass.declarations.asSequence()
             .filterIsInstance<IrSimpleFunction>()
             .filter { it.isEqualsInheritedFromAny() && !it.isFakeOverriddenFromAny() }
-            .also { assert(it.size <= 1) }
-            .singleOrNull()
+            .atMostOne()
     }
 
     private fun IrFunction.isMethodOfPrimitiveJSType() =

@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator.Companion.getMainModule
-import org.jetbrains.kotlin.util.collectionUtils.filterIsInstanceAnd
+import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 import java.io.File
 
 const val MODULE_EMULATION_FILE = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/moduleEmulation.js"

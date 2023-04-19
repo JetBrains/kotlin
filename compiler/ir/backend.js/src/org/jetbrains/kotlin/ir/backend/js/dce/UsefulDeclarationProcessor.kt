@@ -27,7 +27,7 @@ abstract class UsefulDeclarationProcessor(
     protected fun getMethodOfAny(name: String): IrDeclaration =
         context.irBuiltIns.anyClass.owner.declarations.filterIsInstance<IrFunction>().single { it.name.asString() == name }
 
-    protected val toStringMethod: IrDeclaration by lazy { getMethodOfAny("toString") }
+    protected val toStringMethod: IrDeclaration by lazy(LazyThreadSafetyMode.NONE) { getMethodOfAny("toString") }
     protected abstract fun isExported(declaration: IrDeclaration): Boolean
     protected abstract val bodyVisitor: BodyVisitorBase
 

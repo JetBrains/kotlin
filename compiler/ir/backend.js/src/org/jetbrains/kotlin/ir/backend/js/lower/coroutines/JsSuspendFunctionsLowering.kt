@@ -179,7 +179,7 @@ class JsSuspendFunctionsLowering(ctx: JsCommonBackendContext) : AbstractSuspendF
 
         val liveLocals = computeLivenessAtSuspensionPoints(functionBody).values.flatten().toSet()
 
-        val localToPropertyMap = mutableMapOf<IrValueSymbol, IrFieldSymbol>()
+        val localToPropertyMap = hashMapOf<IrValueSymbol, IrFieldSymbol>()
         var localCounter = 0
         // TODO: optimize by using the same property for different locals.
         liveLocals.forEach {

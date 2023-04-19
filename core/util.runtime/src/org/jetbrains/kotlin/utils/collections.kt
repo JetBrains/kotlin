@@ -86,6 +86,21 @@ fun <T> ArrayList<T>.compact(): List<T> =
         else -> apply { trimToSize() }
     }
 
+
+/**
+ * The same as [org.jetbrains.kotlin.utils.compact] extension function, but it could be used with the
+ * immutable list type (without [java.util.ArrayList.trimToSize] for the collections with more than 1 element)
+ * @see org.jetbrains.kotlin.utils.compact
+ */
+fun <T> List<T>.compactIfPossible(): List<T> =
+    when (size) {
+        0 -> emptyList()
+        1 -> listOf(first())
+        else -> apply {
+            if (this is ArrayList<*>) trimToSize()
+        }
+    }
+
 fun <T> List<T>.indexOfFirst(startFrom: Int, predicate: (T) -> Boolean): Int {
     for (index in startFrom..lastIndex) {
         if (predicate(this[index])) return index

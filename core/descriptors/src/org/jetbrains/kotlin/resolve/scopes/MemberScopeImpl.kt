@@ -22,9 +22,9 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.util.collectionUtils.filterIsInstanceMapTo
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.alwaysTrue
+import org.jetbrains.kotlin.utils.filterIsInstanceMapTo
 
 abstract class MemberScopeImpl : MemberScope {
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = null

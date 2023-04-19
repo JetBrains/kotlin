@@ -21,6 +21,9 @@ import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind
 import org.jetbrains.kotlin.js.backend.ast.metadata.sideEffects
 import org.jetbrains.kotlin.js.backend.ast.metadata.synthetic
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
+import org.jetbrains.kotlin.utils.memoryOptimizedPlus
+import org.jetbrains.kotlin.utils.toSmartList
 
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
 class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsExpression, JsGenerationContext> {
@@ -48,7 +51,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
 
     override fun visitVararg(expression: IrVararg, context: JsGenerationContext): JsExpression {
         assert(expression.elements.none { it is IrSpreadElement })
-        return JsArrayLiteral(expression.elements.map { it.accept(this, context) }).withSource(expression, context)
+        return JsArrayLiteral(expression.elements.map { it.accept(this, context) }.toSmartList()).withSource(expression, context)
     }
 
     override fun visitExpressionBody(body: IrExpressionBody, context: JsGenerationContext): JsExpression =
@@ -179,7 +182,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         return if (context.staticContext.backendContext.es6mode) {
             JsInvocation(JsSuperRef(), arguments)
         } else {
-            JsInvocation(callFuncRef, listOf(thisRef) + arguments)
+            JsInvocation(callFuncRef, listOf(thisRef) memoryOptimizedPlus arguments)
         }.withSource(expression, context)
     }
 
@@ -301,7 +304,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
             IrDynamicOperator.INVOKE ->
                 JsInvocation(
                     expression.receiver.accept(this, data),
-                    expression.arguments.map { it.accept(this, data) }
+                    expression.arguments.memoryOptimizedMap { it.accept(this, data) }
                 )
 
             else -> compilationException(

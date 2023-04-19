@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.ir.expressions.typeParametersCount
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.allTypeParameters
+import org.jetbrains.kotlin.ir.util.initializeParameterArguments
+import org.jetbrains.kotlin.ir.util.initializeTypeArguments
 
 class IrDelegatingConstructorCallImpl(
     override val startOffset: Int,
@@ -35,9 +37,9 @@ class IrDelegatingConstructorCallImpl(
 ) : IrDelegatingConstructorCall() {
     override var origin: IrStatementOrigin? = null
 
-    override val typeArguments: Array<IrType?> = arrayOfNulls(typeArgumentsCount)
+    override val typeArguments: Array<IrType?> = initializeTypeArguments(typeArgumentsCount)
 
-    override val valueArguments: Array<IrExpression?> = arrayOfNulls(valueArgumentsCount)
+    override val valueArguments: Array<IrExpression?> = initializeParameterArguments(valueArgumentsCount)
 
     override var contextReceiversCount = 0
 

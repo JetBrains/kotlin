@@ -49,7 +49,6 @@ import org.jetbrains.kotlin.js.analyze.AbstractTopDownAnalyzerFacadeForWeb
 import org.jetbrains.kotlin.js.analyzer.JsAnalysisResult
 import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
-import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
 import org.jetbrains.kotlin.konan.properties.Properties
 import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.library.*
@@ -74,6 +73,7 @@ import org.jetbrains.kotlin.util.DummyLogger
 import org.jetbrains.kotlin.util.Logger
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
+import org.jetbrains.kotlin.utils.memoryOptimizedFilter
 import java.io.File
 
 val KotlinLibrary.moduleName: String
@@ -494,7 +494,7 @@ class ModulesStructure(
 
     val friendDependencies = allDependencies.run {
         val friendAbsolutePaths = friendDependenciesPaths.map { File(it).canonicalPath }
-        filter {
+        memoryOptimizedFilter {
             it.libraryFile.absolutePath in friendAbsolutePaths
         }
     }

@@ -54,7 +54,7 @@ class JsReturnableBlockLowering(val context: CommonBackendContext) : BodyLowerin
 
 class JsReturnableBlockTransformer(val context: CommonBackendContext) : IrElementTransformerVoidWithContext() {
     private var labelCnt = 0
-    private var map = mutableMapOf<IrReturnableBlockSymbol, IrVariable>()
+    private var map = hashMapOf<IrReturnableBlockSymbol, IrVariable>()
 
     private val unitType = context.irBuiltIns.unitType
     private val unitValue get() = IrGetObjectValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, unitType, context.irBuiltIns.unitClass)

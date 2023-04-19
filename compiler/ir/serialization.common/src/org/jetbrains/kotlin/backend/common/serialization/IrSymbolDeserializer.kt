@@ -25,11 +25,12 @@ class IrSymbolDeserializer(
     val actuals: List<Actual>,
     val enqueueLocalTopLevelDeclaration: (IdSignature) -> Unit,
     val handleExpectActualMapping: (IdSignature, IrSymbol) -> IrSymbol,
+    internationService: IrInterningService,
     val symbolProcessor: IrSymbolDeserializer.(IrSymbol, IdSignature) -> IrSymbol = { s, _ -> s },
     fileSignature: IdSignature.FileSignature = IdSignature.FileSignature(fileSymbol),
     val deserializePublicSymbol: (IdSignature, BinarySymbolData.SymbolKind) -> IrSymbol
 ) {
-    val deserializedSymbols: MutableMap<IdSignature, IrSymbol> = mutableMapOf()
+    val deserializedSymbols: MutableMap<IdSignature, IrSymbol> = hashMapOf()
 
     fun deserializeIrSymbol(idSig: IdSignature, symbolKind: BinarySymbolData.SymbolKind): IrSymbol {
         return deserializedSymbols.getOrPut(idSig) {
@@ -84,7 +85,7 @@ class IrSymbolDeserializer(
         }
     }
 
-    val signatureDeserializer = IdSignatureDeserializer(libraryFile, fileSignature)
+    val signatureDeserializer = IdSignatureDeserializer(libraryFile, fileSignature, internationService)
 
     fun deserializeIdSignature(index: Int): IdSignature {
         return signatureDeserializer.deserializeIdSignature(index)

@@ -105,7 +105,7 @@ class CurrentModuleWithICDeserializer(
     icReaderFactory: (IrLibrary) -> IrModuleDeserializer) :
     IrModuleDeserializer(delegate.moduleDescriptor, KotlinAbiVersion.CURRENT) {
 
-    private val dirtyDeclarations = mutableMapOf<IdSignature, IrSymbol>()
+    private val dirtyDeclarations = hashMapOf<IdSignature, IrSymbol>()
     private val icKlib = ICKotlinLibrary(icData)
 
     private val icDeserializer: IrModuleDeserializer = icReaderFactory(icKlib)

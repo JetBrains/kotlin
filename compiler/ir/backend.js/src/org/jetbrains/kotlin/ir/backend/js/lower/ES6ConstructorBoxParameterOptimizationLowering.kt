@@ -22,7 +22,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
-import org.jetbrains.kotlin.util.collectionUtils.filterIsInstanceAnd
+import org.jetbrains.kotlin.utils.filterIsInstanceAnd
+import org.jetbrains.kotlin.utils.memoryOptimizedFilterNot
 
 class ES6ConstructorBoxParameterOptimizationLowering(private val context: JsIrBackendContext) : BodyLoweringPass {
     private val IrClass.needsOfBoxParameter by context.mapping.esClassWhichNeedBoxParameters
@@ -36,7 +37,7 @@ class ES6ConstructorBoxParameterOptimizationLowering(private val context: JsIrBa
             containerFunction?.isEs6ConstructorReplacement == true && !containerFunction.parentAsClass.requiredToHaveBoxParameter()
 
         if (containerFunction != null && shouldRemoveBoxRelatedDeclarationsAndStatements && irBody is IrBlockBody) {
-            containerFunction.valueParameters = containerFunction.valueParameters.filter { !it.isBoxParameter }
+            containerFunction.valueParameters = containerFunction.valueParameters.memoryOptimizedFilterNot { it.isBoxParameter }
         }
 
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {

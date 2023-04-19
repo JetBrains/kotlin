@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.name.Name
 
 abstract class DefaultArgumentFunctionFactory(open val context: CommonBackendContext) {
@@ -40,7 +41,7 @@ abstract class DefaultArgumentFunctionFactory(open val context: CommonBackendCon
     }
 
     protected fun IrFunction.copyValueParametersFrom(original: IrFunction, wrapWithNullable: Boolean = true) {
-        valueParameters = original.valueParameters.map {
+        valueParameters = original.valueParameters.memoryOptimizedMap {
             val newType = it.type.remapTypeParameters(original.classIfConstructor, classIfConstructor)
             val makeNullable = wrapWithNullable && it.defaultValue != null &&
                     (context.ir.unfoldInlineClassType(it.type) ?: it.type) !in context.irBuiltIns.primitiveIrTypes
@@ -121,17 +122,18 @@ abstract class DefaultArgumentFunctionFactory(open val context: CommonBackendCon
                     context.mapping.defaultArgumentsOriginalFunction[defaultsFunction] = declaration
 
                     if (forceSetOverrideSymbols) {
-                        (defaultsFunction as IrSimpleFunction).overriddenSymbols += declaration.overriddenSymbols.mapNotNull {
-                            generateDefaultsFunction(
-                                it.owner,
-                                skipInlineMethods,
-                                skipExternalMethods,
-                                forceSetOverrideSymbols,
-                                visibility,
-                                useConstructorMarker,
-                                it.owner.copyAnnotations(),
-                            )?.symbol as IrSimpleFunctionSymbol?
-                        }
+                        (defaultsFunction as IrSimpleFunction).overriddenSymbols =
+                            defaultsFunction.overriddenSymbols memoryOptimizedPlus declaration.overriddenSymbols.mapNotNull {
+                                generateDefaultsFunction(
+                                    it.owner,
+                                    skipInlineMethods,
+                                    skipExternalMethods,
+                                    forceSetOverrideSymbols,
+                                    visibility,
+                                    useConstructorMarker,
+                                    it.owner.copyAnnotations(),
+                                )?.symbol as IrSimpleFunctionSymbol?
+                            }
                     }
                 }
         }
@@ -200,7 +202,7 @@ abstract class DefaultArgumentFunctionFactory(open val context: CommonBackendCon
             parent = declaration.parent
             generateDefaultArgumentStubFrom(declaration, useConstructorMarker)
             // TODO some annotations are needed (e.g. @JvmStatic), others need different values (e.g. @JvmName), the rest are redundant.
-            annotations += copiedAnnotations
+            annotations = annotations memoryOptimizedPlus copiedAnnotations
         }
     }
 }

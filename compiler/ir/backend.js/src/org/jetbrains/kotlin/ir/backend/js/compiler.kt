@@ -122,6 +122,7 @@ fun compileIr(
 
     irLinker.postProcess(inOrAfterLinkageStep = true)
     irLinker.checkNoUnboundSymbols(symbolTable, "at the end of IR linkage process")
+    irLinker.clear()
 
     allModules.forEach { module ->
         if (shouldGeneratePolyfills) {

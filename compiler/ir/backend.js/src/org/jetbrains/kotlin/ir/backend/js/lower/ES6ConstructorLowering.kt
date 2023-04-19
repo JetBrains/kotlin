@@ -23,6 +23,10 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.memoryOptimizedFilterNot
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
+import org.jetbrains.kotlin.utils.memoryOptimizedPlus
+import org.jetbrains.kotlin.utils.newHashMapWithExpectedSize
 
 object ES6_INIT_CALL : IrStatementOriginImpl("ES6_INIT_CALL")
 object ES6_CONSTRUCTOR_REPLACEMENT : IrDeclarationOriginImpl("ES6_CONSTRUCTOR_REPLACEMENT")
@@ -62,7 +66,7 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
     private fun IrConstructor.generateExportedConstructorIfNeed(factoryFunction: IrSimpleFunction): IrConstructor? {
         return runIf(isExported(context) && isPrimary) {
             apply {
-                valueParameters = valueParameters.filterNot { it.isBoxParameter }
+                valueParameters = valueParameters.memoryOptimizedFilterNot { it.isBoxParameter }
                 (body as? IrBlockBody)?.let {
                     val selfReplacedConstructorCall = JsIrBuilder.buildCall(factoryFunction.symbol).apply {
                         valueParameters.forEachIndexed { i, it -> putValueArgument(i, JsIrBuilder.buildGetValue(it.symbol)) }
@@ -170,9 +174,9 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
 
         transformChildrenVoid(object : ValueRemapper(emptyMap()) {
             override val map: MutableMap<IrValueSymbol, IrValueSymbol> = currentConstructor.valueParameters
-                .zip(constructorReplacement.valueParameters)
-                .associate { it.first.symbol to it.second.symbol }
-                .toMutableMap()
+                .asSequence()
+                .zip(constructorReplacement.valueParameters.asSequence())
+                .associateTo(newHashMapWithExpectedSize(currentConstructor.valueParameters.size)) { it.first.symbol to it.second.symbol }
 
             override fun visitReturn(expression: IrReturn): IrExpression {
                 return if (expression.returnTargetSymbol == currentConstructor.symbol) {
@@ -208,7 +212,7 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
                             .apply {
                                 putValueArgument(0, irClass.getCurrentConstructorReference(constructorReplacement))
                                 putValueArgument(1, expression.symbol.owner.parentAsClass.jsConstructorReference(context))
-                                putValueArgument(2, irAnyArray(expression.valueArguments.map { it ?: context.getVoid() }))
+                                putValueArgument(2, irAnyArray(expression.valueArguments.memoryOptimizedMap { it ?: context.getVoid() }))
                                 putValueArgument(3, boxParameterGetter)
                             }
                     constructor.parentAsClass.symbol == context.irBuiltIns.anyClass ->
@@ -252,6 +256,6 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
     private fun IrDeclaration.excludeFromExport() {
         val jsExportIgnoreClass = context.intrinsics.jsExportIgnoreAnnotationSymbol.owner
         val jsExportIgnoreCtor = jsExportIgnoreClass.primaryConstructor ?: return
-        annotations += JsIrBuilder.buildConstructorCall(jsExportIgnoreCtor.symbol)
+        annotations = annotations memoryOptimizedPlus JsIrBuilder.buildConstructorCall(jsExportIgnoreCtor.symbol)
     }
 }

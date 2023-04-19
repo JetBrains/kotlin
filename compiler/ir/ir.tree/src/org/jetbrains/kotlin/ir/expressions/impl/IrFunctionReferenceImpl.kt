@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.initializeParameterArguments
+import org.jetbrains.kotlin.ir.util.initializeTypeArguments
 
 class IrFunctionReferenceImpl(
     override val startOffset: Int,
@@ -33,9 +35,9 @@ class IrFunctionReferenceImpl(
     override var reflectionTarget: IrFunctionSymbol? = symbol,
     override var origin: IrStatementOrigin? = null,
 ) : IrFunctionReference() {
-    override val typeArguments: Array<IrType?> = arrayOfNulls(typeArgumentsCount)
+    override val typeArguments: Array<IrType?> = initializeTypeArguments(typeArgumentsCount)
 
-    override val valueArguments: Array<IrExpression?> = arrayOfNulls(valueArgumentsCount)
+    override val valueArguments: Array<IrExpression?> = initializeParameterArguments(valueArgumentsCount)
 
     companion object {
         @ObsoleteDescriptorBasedAPI

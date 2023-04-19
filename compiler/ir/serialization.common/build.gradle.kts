@@ -11,6 +11,7 @@ dependencies {
     api(project(":compiler:util"))
     implementation(project(":compiler:psi"))
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+    compileOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
 
     compileOnly(intellijCore())
 }

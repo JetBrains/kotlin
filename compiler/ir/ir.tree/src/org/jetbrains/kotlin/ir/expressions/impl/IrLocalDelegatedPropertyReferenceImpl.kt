@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.initializeParameterArguments
+import org.jetbrains.kotlin.ir.util.initializeTypeArguments
 
 class IrLocalDelegatedPropertyReferenceImpl(
     override val startOffset: Int,
@@ -34,14 +36,7 @@ class IrLocalDelegatedPropertyReferenceImpl(
     override var setter: IrSimpleFunctionSymbol?,
     override var origin: IrStatementOrigin? = null,
 ) : IrLocalDelegatedPropertyReference() {
-    override val typeArguments: Array<IrType?>
-        get() = EMPTY_TYPE_ARGUMENTS
+    override val typeArguments: Array<IrType?> = initializeTypeArguments(0)
 
-    override val valueArguments: Array<IrExpression?>
-        get() = EMPTY_VALUE_ARGUMENTS
-
-    companion object {
-        private val EMPTY_TYPE_ARGUMENTS = emptyArray<IrType?>()
-        private val EMPTY_VALUE_ARGUMENTS = emptyArray<IrExpression?>()
-    }
+    override val valueArguments: Array<IrExpression?> = initializeParameterArguments(0)
 }

@@ -20,14 +20,14 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.util.companionObject
 import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.util.collectionUtils.filterIsInstanceAnd
+import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
 class ExportModelToJsStatements(
     private val staticContext: JsStaticContext,
     private val es6mode: Boolean,
     private val declareNewNamespace: (String) -> String,
 ) {
-    private val namespaceToRefMap = mutableMapOf<String, JsNameRef>()
+    private val namespaceToRefMap = hashMapOf<String, JsNameRef>()
 
     fun generateModuleExport(
         module: ExportedModule,

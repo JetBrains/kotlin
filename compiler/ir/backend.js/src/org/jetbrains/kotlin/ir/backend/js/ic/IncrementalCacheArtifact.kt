@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.ic
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragment
 import org.jetbrains.kotlin.ir.backend.js.utils.serialization.serializeTo
 import org.jetbrains.kotlin.konan.file.use
+import org.jetbrains.kotlin.utils.newHashSetWithExpectedSize
 import java.io.BufferedOutputStream
 import java.io.File
 
@@ -54,7 +55,7 @@ internal class IncrementalCacheArtifact(
     private val srcCacheActions: List<SourceFileCacheArtifact>,
     private val externalModuleName: String?
 ) {
-    fun getSourceFiles() = srcCacheActions.mapTo(HashSet(srcCacheActions.size)) { it.srcFile }
+    fun getSourceFiles() = srcCacheActions.mapTo(newHashSetWithExpectedSize(srcCacheActions.size)) { it.srcFile }
 
     fun buildModuleArtifactAndCommitCache(
         moduleName: String,

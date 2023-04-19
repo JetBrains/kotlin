@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
+import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
 /**
  * Replaces suspend functions with regular non-suspend functions with additional
@@ -120,12 +122,12 @@ private fun IrSimpleFunction.createSuspendFunctionStub(context: CommonBackendCon
         val substitutionMap = makeTypeParameterSubstitutionMap(this, function)
         function.copyReceiverParametersFrom(this, substitutionMap)
 
-        function.overriddenSymbols += overriddenSymbols.map {
+        function.overriddenSymbols = function.overriddenSymbols memoryOptimizedPlus overriddenSymbols.map {
             factory.stageController.restrictTo(it.owner) {
                 it.owner.getOrCreateFunctionWithContinuationStub(context).symbol
             }
         }
-        function.valueParameters = valueParameters.map { it.copyTo(function) }
+        function.valueParameters = valueParameters.memoryOptimizedMap { it.copyTo(function) }
 
         val mapping = mutableMapOf<IrValueSymbol, IrValueSymbol>()
         valueParameters.forEach { mapping[it.symbol] = function.valueParameters[it.index].symbol }

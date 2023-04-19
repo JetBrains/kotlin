@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.initializeParameterArguments
+import org.jetbrains.kotlin.ir.util.initializeTypeArguments
 import org.jetbrains.kotlin.ir.util.parentAsClass
 
 class IrConstructorCallImpl(
@@ -26,9 +28,9 @@ class IrConstructorCallImpl(
     override var origin: IrStatementOrigin? = null,
     override var source: SourceElement = SourceElement.NO_SOURCE
 ) : IrConstructorCall() {
-    override val typeArguments: Array<IrType?> = arrayOfNulls(typeArgumentsCount)
+    override val typeArguments: Array<IrType?> = initializeTypeArguments(typeArgumentsCount)
 
-    override val valueArguments: Array<IrExpression?> = arrayOfNulls(valueArgumentsCount)
+    override val valueArguments: Array<IrExpression?> = initializeParameterArguments(valueArgumentsCount)
 
     override var contextReceiversCount = 0
 

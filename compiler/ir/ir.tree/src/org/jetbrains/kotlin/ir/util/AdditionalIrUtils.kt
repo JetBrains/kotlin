@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 import java.io.File
 
 val IrConstructor.constructedClass get() = this.parent as IrClass
@@ -259,7 +260,7 @@ class NaiveSourceBasedFileEntryImpl(
 }
 
 private fun IrClass.getPropertyDeclaration(name: String): IrProperty? {
-    val properties = declarations.filterIsInstance<IrProperty>().filter { it.name.asString() == name }
+    val properties = declarations.filterIsInstanceAnd<IrProperty> { it.name.asString() == name }
     if (properties.size > 1) {
         error(
             "More than one property with name $name in class $fqNameWhenAvailable:\n" +

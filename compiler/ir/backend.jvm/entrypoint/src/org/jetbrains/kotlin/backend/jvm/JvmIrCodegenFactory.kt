@@ -262,6 +262,7 @@ open class JvmIrCodegenFactory(
             )
 
         irLinker.postProcess(inOrAfterLinkageStep = true)
+        irLinker.clear()
 
         stubGenerator.unboundSymbolGeneration = true
 

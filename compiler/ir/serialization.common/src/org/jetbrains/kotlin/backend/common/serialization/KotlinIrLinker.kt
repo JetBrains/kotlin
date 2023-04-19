@@ -15,7 +15,10 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.*
@@ -32,22 +35,23 @@ abstract class KotlinIrLinker(
     private val exportedDependencies: List<ModuleDescriptor>,
     val symbolProcessor: IrSymbolDeserializer.(IrSymbol, IdSignature) -> IrSymbol = { s, _ -> s },
 ) : IrDeserializer, FileLocalAwareLinker {
+    val internationService = IrInterningService()
 
     // Kotlin-MPP related data. Consider some refactoring
     val expectIdSignatureToActualIdSignature = mutableMapOf<IdSignature, IdSignature>()
-    val topLevelActualIdSignatureToModuleDeserializer = mutableMapOf<IdSignature, IrModuleDeserializer>()
-    internal val expectSymbols = mutableMapOf<IdSignature, IrSymbol>()
-    internal val actualSymbols = mutableMapOf<IdSignature, IrSymbol>()
+    val topLevelActualIdSignatureToModuleDeserializer = hashMapOf<IdSignature, IrModuleDeserializer>()
+    internal val expectSymbols = hashMapOf<IdSignature, IrSymbol>()
+    internal val actualSymbols = hashMapOf<IdSignature, IrSymbol>()
 
-    val modulesWithReachableTopLevels = mutableSetOf<IrModuleDeserializer>()
+    val modulesWithReachableTopLevels = hashSetOf<IrModuleDeserializer>()
 
-    protected val deserializersForModules = mutableMapOf<String, IrModuleDeserializer>()
+    protected val deserializersForModules = hashMapOf<String, IrModuleDeserializer>()
 
     abstract val fakeOverrideBuilder: FakeOverrideBuilder
 
     abstract val translationPluginContext: TranslationPluginContext?
 
-    private val triedToDeserializeDeclarationForSymbol = mutableSetOf<IrSymbol>()
+    private val triedToDeserializeDeclarationForSymbol = hashSetOf<IrSymbol>()
 
     private lateinit var linkerExtensions: Collection<IrDeserializer.IrLinkerExtension>
 
@@ -204,6 +208,10 @@ abstract class KotlinIrLinker(
         deserializersForModules.values.forEach { it.init() }
     }
 
+    fun clear() {
+        internationService.clear()
+    }
+
     override fun postProcess(inOrAfterLinkageStep: Boolean) {
         // TODO: Expect/actual actualization should be fixed to cope with the situation when either expect or actual symbol is unbound.
         finalizeExpectActualLinker()
@@ -224,7 +232,6 @@ abstract class KotlinIrLinker(
                 deserializersForModules.values.asSequence().map { it.moduleFragment }
             }
         }
-
         // TODO: fix IrPluginContext to make it not produce additional external reference
         // symbolTable.noUnboundLeft("unbound after fake overrides:")
     }

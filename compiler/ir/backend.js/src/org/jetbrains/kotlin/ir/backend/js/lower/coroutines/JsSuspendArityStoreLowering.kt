@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
 class JsSuspendArityStoreLowering(context: JsIrBackendContext) : DeclarationTransformer {
 
@@ -19,11 +20,8 @@ class JsSuspendArityStoreLowering(context: JsIrBackendContext) : DeclarationTran
         if (declaration !is IrClass) return null
 
         declaration.declarations
-            .filterIsInstance<IrSimpleFunction>()
-            .filter { it.isSuspend }
-            .let {
-                declaration.suspendArityStore = it
-            }
+            .filterIsInstanceAnd<IrSimpleFunction> { it.isSuspend }
+            .let { declaration.suspendArityStore = it }
 
         return null
     }
