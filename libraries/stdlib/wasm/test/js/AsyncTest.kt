@@ -57,6 +57,6 @@ class AsyncTest {
     @Test
     fun testJsValueToThrowableOrNull2() {
         val e = MyThrowable()
-        assertEquals((e.toJsHandle()).toThrowableOrNull(), e)
+        assertEquals((e.toJsReference()).toThrowableOrNull(), e)
     }
 }

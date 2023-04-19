@@ -10,20 +10,20 @@ import kotlin.wasm.internal.implementedAsIntrinsic
 import kotlin.wasm.internal.returnArgumentIfItIsKotlinAny
 
 /**
- * JavaScript value that can serve as a handle for any Kotlin value.
+ * JavaScript value that can serve as a reference for any Kotlin value.
  *
  * In JavaScript, it behaves like an immutable empty object with a null prototype.
  * When passed back to Kotlin/Wasm, the original value can be retrieved using the [get] method.
  */
 @Suppress("WRONG_JS_INTEROP_TYPE")  // Exception to the rule
-public sealed external interface JsHandle<out T : Any> : JsAny
+public sealed external interface JsReference<out T : Any> : JsAny
 
 @WasmOp(WasmOp.EXTERN_EXTERNALIZE)
-public fun <T : Any> T.toJsHandle(): JsHandle<T> =
+public fun <T : Any> T.toJsReference(): JsReference<T> =
     implementedAsIntrinsic
 
-/** Retrieve original Kotlin value from JsHandle */
-public fun <T : Any> JsHandle<T>.get(): T {
+/** Retrieve original Kotlin value from JsReference */
+public fun <T : Any> JsReference<T>.get(): T {
     returnArgumentIfItIsKotlinAny(this)
-    throw ClassCastException("JsHandle doesn't contain a Kotlin type")
+    throw ClassCastException("JsReference doesn't contain a Kotlin type")
 }

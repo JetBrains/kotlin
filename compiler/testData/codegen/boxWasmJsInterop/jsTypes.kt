@@ -49,13 +49,13 @@ fun box(): String {
     assertTrue(jsArray[1] == "element1".toJsString())
     assertTrue(jsRepresentation(jsArray) == "object:element0,element1,element2")
 
-    // JsHandle
-    val jsHandle: JsHandle<Int> = 10.toJsHandle()
-    assertTrue(jsHandle.get() == 10)
-    assertTrue(jsHandle.toJsHandle().get() == jsHandle)
+    // JsReference
+    val jsReference: JsReference<Int> = 10.toJsReference()
+    assertTrue(jsReference.get() == 10)
+    assertTrue(jsReference.toJsReference().get() == jsReference)
     val c = listOf(1)
-    assertTrue(c.toJsHandle().get() === c.toJsHandle().get())
-    assertTrue(c.toJsHandle() === c.toJsHandle())
+    assertTrue(c.toJsReference().get() === c.toJsReference().get())
+    assertTrue(c.toJsReference() === c.toJsReference())
 
     return "OK"
 }
