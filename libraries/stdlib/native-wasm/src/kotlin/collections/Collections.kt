@@ -122,3 +122,11 @@ internal actual inline fun checkCountOverflow(count: Int): Int {
     }
     return count
 }
+
+/**
+ * Returns a new read-only list containing only the specified object [element].
+ *
+ * @sample samples.collections.Collections.Lists.singletonReadOnlyList
+ */
+@SinceKotlin("1.9")
+public actual fun <T> listOf(element: T): List<T> = arrayListOf(element)

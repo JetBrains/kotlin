@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -42,6 +42,16 @@ public fun <T> emptySet(): Set<T> = EmptySet
  * @sample samples.collections.Collections.Sets.readOnlySet
  */
 public fun <T> setOf(vararg elements: T): Set<T> = if (elements.size > 0) elements.toSet() else emptySet()
+
+/**
+ * Returns a new read-only set containing only the specified object [element].
+ *
+ * The returned set is serializable (JVM).
+ *
+ * @sample samples.collections.Collections.Sets.singletonReadOnlySet
+ */
+@SinceKotlin("1.9")
+public expect fun <T> setOf(element: T): Set<T>
 
 /**
  * Returns an empty read-only set.  The returned set is serializable (JVM).
