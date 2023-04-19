@@ -120,6 +120,7 @@ abstract class AbstractJsKlibEvolutionTest(val compilerType: CompilerType) : Abs
             irOnly = true
             irModuleName = module.name
             compilerType.setup(this)
+            partialLinkageMode = "disable" // Don't use partial linkage for KLIB evolution tests.
         }
         K2JSCompiler().exec(TestMessageCollector(), Services.EMPTY, args)
     }
