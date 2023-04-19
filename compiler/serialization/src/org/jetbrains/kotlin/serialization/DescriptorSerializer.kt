@@ -6,7 +6,10 @@
 package org.jetbrains.kotlin.serialization
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.builtins.*
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.isSuspendFunctionType
+import org.jetbrains.kotlin.builtins.isSuspendFunctionTypeOrSubtype
+import org.jetbrains.kotlin.builtins.transformSuspendFunctionToRuntimeFunctionType
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
@@ -654,15 +657,6 @@ class DescriptorSerializer private constructor(
             val functionType = type(transformSuspendFunctionToRuntimeFunctionType(type))
             functionType.flags = Flags.getTypeFlags(true, false)
             return functionType
-        }
-
-        if (type.isFunctionType) {
-            val types = type.getContextReceiverTypesFromFunctionType()
-            if (useTypeTable()) {
-                types.forEach { builder.addContextReceiverTypeId(typeId(it)) }
-            } else {
-                types.forEach { builder.addContextReceiverType(type(it)) }
-            }
         }
 
         when (val descriptor = type.constructor.declarationDescriptor) {

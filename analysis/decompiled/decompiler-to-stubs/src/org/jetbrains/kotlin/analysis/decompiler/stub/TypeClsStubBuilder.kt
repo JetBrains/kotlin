@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.serialization.deserialization.getName
 import org.jetbrains.kotlin.utils.doNothing
 
 // TODO: see DescriptorRendererOptions.excludedTypeAnnotationClasses for decompiler
-private val ANNOTATIONS_NOT_LOADED_FOR_TYPES = setOf(StandardNames.FqNames.parameterName, StandardNames.FqNames.contextFunctionTypeParams)
+private val ANNOTATIONS_NOT_LOADED_FOR_TYPES = setOf(StandardNames.FqNames.parameterName)
 
 class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
     fun createTypeReferenceStub(
@@ -108,19 +108,23 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                 it.classId.asSingleFqName() == StandardNames.FqNames.extensionFunctionType
             }
 
+            val (contextReceiverAnnotations, otherAnnotations) = notExtensionAnnotations.partition {
+                it.classId.asSingleFqName() == StandardNames.FqNames.contextFunctionTypeParams
+            }
+
             val isExtension = extensionAnnotations.isNotEmpty()
             val isSuspend = Flags.SUSPEND_TYPE.get(type.flags)
 
             val nullableWrapper = if (isSuspend) {
                 val wrapper = nullableTypeParent(parent, type)
-                createTypeAnnotationStubs(wrapper, type, notExtensionAnnotations)
+                createTypeAnnotationStubs(wrapper, type, otherAnnotations)
                 wrapper
             } else {
-                createTypeAnnotationStubs(parent, type, notExtensionAnnotations)
+                createTypeAnnotationStubs(parent, type, otherAnnotations)
                 nullableTypeParent(parent, type)
             }
 
-            createFunctionTypeStub(nullableWrapper, type, isExtension, isSuspend)
+            createFunctionTypeStub(nullableWrapper, type, isExtension, isSuspend, numContextReceivers = contextReceiverAnnotations.size)
 
             return
         }
@@ -181,26 +185,32 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         parent: StubElement<out PsiElement>,
         type: Type,
         isExtensionFunctionType: Boolean,
-        isSuspend: Boolean
+        isSuspend: Boolean,
+        numContextReceivers: Int,
     ) {
         val typeArgumentList = type.argumentList
         val functionType = KotlinPlaceHolderStubImpl<KtFunctionType>(parent, KtStubElementTypes.FUNCTION_TYPE)
-        if (type.getContextReceiverTypeCount() + type.getContextReceiverTypeIdCount() != 0) {
-            ContextReceiversListStubBuilder(c).createContextReceiverStubs(functionType, type.contextReceiverTypes(c.typeTable))
-        }
+        var processedTypes = 0
         if (isExtensionFunctionType) {
             val functionTypeReceiverStub =
                 KotlinPlaceHolderStubImpl<KtFunctionTypeReceiver>(functionType, KtStubElementTypes.FUNCTION_TYPE_RECEIVER)
             val receiverTypeProto = typeArgumentList.first().type(c.typeTable)!!
             createTypeReferenceStub(functionTypeReceiverStub, receiverTypeProto)
+            processedTypes = 1
+        }
+
+        if (numContextReceivers != 0) {
+            ContextReceiversListStubBuilder(c).createContextReceiverStubs(
+                functionType,
+                typeArgumentList.subList(
+                    processedTypes,
+                    processedTypes + numContextReceivers
+                ).map { it.type(c.typeTable)!! })
+            processedTypes += numContextReceivers
         }
 
         val parameterList = KotlinPlaceHolderStubImpl<KtParameterList>(functionType, KtStubElementTypes.VALUE_PARAMETER_LIST)
-        val typeArgumentsWithoutReceiverAndReturnType =
-            typeArgumentList.subList(
-                (if (isExtensionFunctionType) 1 else 0) + type.getContextReceiverTypeCount() + type.getContextReceiverTypeIdCount(),
-                typeArgumentList.size - 1
-            )
+        val typeArgumentsWithoutReceiverAndReturnType = typeArgumentList.subList(numContextReceivers, typeArgumentList.size - 1)
         var suspendParameterType: Type? = null
 
         for ((index, argument) in typeArgumentsWithoutReceiverAndReturnType.withIndex()) {
