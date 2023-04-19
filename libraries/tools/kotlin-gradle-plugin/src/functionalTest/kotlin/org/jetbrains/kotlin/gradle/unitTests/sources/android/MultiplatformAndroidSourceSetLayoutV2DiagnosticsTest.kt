@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.gradle.unitTests.sources.android
 import com.android.build.gradle.LibraryPlugin
 import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.kotlin.dsl.android
 import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider

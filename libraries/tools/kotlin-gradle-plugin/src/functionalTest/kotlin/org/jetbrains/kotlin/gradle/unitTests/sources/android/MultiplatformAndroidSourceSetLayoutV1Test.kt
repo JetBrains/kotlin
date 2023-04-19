@@ -12,6 +12,7 @@ import com.android.build.gradle.api.AndroidSourceSet
 import org.gradle.api.Action
 import org.gradle.api.internal.HasConvention
 import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.kotlin.dsl.android
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension

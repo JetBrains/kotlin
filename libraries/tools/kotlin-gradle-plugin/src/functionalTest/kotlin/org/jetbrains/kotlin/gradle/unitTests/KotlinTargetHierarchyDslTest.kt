@@ -8,6 +8,7 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.gradle.kotlin.dsl.android
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet

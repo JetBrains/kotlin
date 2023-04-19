@@ -11,6 +11,7 @@ import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.LibraryPlugin
 import com.android.builder.model.SourceProvider
 import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.kotlin.dsl.android
 import org.gradle.testfixtures.ProjectBuilder
 import org.jetbrains.kotlin.gradle.plugin.sources.android.*
 import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin

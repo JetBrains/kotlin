@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.gradle.dependencyResolutionTests.tcs
 
 import com.android.build.gradle.internal.publishing.AndroidArtifacts
+import org.gradle.kotlin.dsl.android
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
