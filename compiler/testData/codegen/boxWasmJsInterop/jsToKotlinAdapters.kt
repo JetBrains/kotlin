@@ -44,7 +44,7 @@ fun testExterRef() {
 }
 
 class DataRefImpl
-typealias DataRef = JsHandle<DataRefImpl>
+typealias DataRef = JsReference<DataRefImpl>
 
 fun notNullDataRef(x: DataRef): DataRef = js("x")
 
@@ -55,7 +55,7 @@ fun nullDataRef(x: DataRef): DataRef? = js("x")
 fun null2DataRef(x: DataRef): DataRef? = js("null")
 
 fun testDataRef() {
-    val dataRef = DataRefImpl().toJsHandle()
+    val dataRef = DataRefImpl().toJsReference()
     check(notNullDataRef(dataRef) == dataRef)
     checkNPE { notNull2DataRef(dataRef) }
     check (nullDataRef(dataRef) == dataRef)

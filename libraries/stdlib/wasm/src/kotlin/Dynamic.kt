@@ -16,8 +16,8 @@ public external interface Dynamic : JsAny
 /**
  * Reinterprets this value as a value of the Dynamic type.
  */
-@Deprecated("If value is a subtype of JsAny, use JsAny instead. Otherwise, use toJsHandle", level = DeprecationLevel.ERROR)
-fun Any.asDynamic(): JsAny = this.toJsHandle()
+@Deprecated("If value is a subtype of JsAny, use JsAny instead. Otherwise, use toJsReference", level = DeprecationLevel.ERROR)
+fun Any.asDynamic(): JsAny = this.toJsReference()
 
 /**
  * Reinterprets this value as a value of the Dynamic type.
