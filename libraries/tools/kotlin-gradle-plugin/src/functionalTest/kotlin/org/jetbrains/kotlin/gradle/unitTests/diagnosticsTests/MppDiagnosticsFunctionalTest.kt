@@ -5,10 +5,14 @@
 
 package org.jetbrains.kotlin.gradle.unitTests.diagnosticsTests
 
+import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.attributes.Attribute
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmWithJavaTargetPreset
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Test
+import kotlin.jvm.Throws
+import kotlin.test.assertTrue
 
 class MppDiagnosticsFunctionalTest {
 
@@ -150,6 +154,13 @@ class MppDiagnosticsFunctionalTest {
                     attributes { attribute(distinguishAttribute, "js") }
                 }
             }
+        }
+    }
+
+    @Test
+    fun testNoTargetsDeclared() {
+        checkDiagnosticsWithMppProject("noTargetsDeclared") {
+            kotlin { }
         }
     }
 }

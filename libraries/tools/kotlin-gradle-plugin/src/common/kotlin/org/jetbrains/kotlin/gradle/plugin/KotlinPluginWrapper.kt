@@ -387,7 +387,6 @@ abstract class AbstractKotlinMultiplatformPluginWrapper : KotlinBasePluginWrappe
         get() = KotlinMultiplatformExtension::class
 
     override fun whenBuildEvaluated(project: Project) {
-        project.runMissingKotlinTargetsProjectConfigurationHealthCheck()
         project.runDisabledCInteropCommonizationOnHmppProjectConfigurationHealthCheck()
     }
 }

@@ -100,7 +100,8 @@ internal interface KotlinGradleProjectChecker {
             UnusedSourceSetsChecker,
             AndroidSourceSetLayoutV1SourceSetsNotFoundChecker,
             TargetsWithAmbiguousConsumableConfigurationsChecker,
-            AndroidPluginWithoutAndroidTargetChecker
+            AndroidPluginWithoutAndroidTargetChecker,
+            NoKotlinTargetsDeclaredChecker
         )
     }
 }
