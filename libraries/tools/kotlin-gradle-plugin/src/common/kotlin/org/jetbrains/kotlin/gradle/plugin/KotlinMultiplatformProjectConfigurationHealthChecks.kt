@@ -38,37 +38,6 @@ internal fun Project.runMissingKotlinTargetsProjectConfigurationHealthCheck() = 
     }
 }
 
-internal fun Project.runMissingAndroidTargetProjectConfigurationHealthCheck(
-    warningLogger: (warningMessage: String) -> Unit = project.logger::warn
-) = project.runProjectConfigurationHealthCheck check@{
-    if (project.kotlinPropertiesProvider.ignoreAbsentAndroidMultiplatformTarget) {
-        return@check
-    }
-
-    val androidPluginId = findAppliedAndroidPluginIdOrNull() ?: return@check
-
-    if (findAndroidTarget() != null) return@check
-
-    warningLogger(
-        """
-            Missing 'androidTarget()' Kotlin target in multiplatform project ${project.name} (${project.path})'.
-            The Android Gradle plugin was applied without creating a corresponding 'androidTarget()' Kotlin Target:
-            
-            ```
-            plugins {
-                id("$androidPluginId")
-                kotlin("multiplatform")
-            }
-            
-            kotlin {
-                androidTarget() // <-- please register this Android target
-            }
-            ```
-          
-        """.trimIndent()
-    )
-}
-
 internal fun Project.runDisabledCInteropCommonizationOnHmppProjectConfigurationHealthCheck(
     warningLogger: (warningMessage: String) -> Unit = project.logger::warn
 ) {
