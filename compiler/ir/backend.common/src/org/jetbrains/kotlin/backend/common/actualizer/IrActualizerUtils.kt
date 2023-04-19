@@ -15,11 +15,15 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrDynamicType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.ir.util.module
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil
+
+private val FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME = StandardClassIds.Annotations.FlexibleNullability.asSingleFqName()
 
 internal fun Map<String, List<IrDeclaration>>.getMatches(
     expectDeclaration: IrDeclaration,
@@ -44,7 +48,7 @@ private inline fun List<IrDeclaration>.getMatches(
 }
 
 private fun IrFunction.match(actualFunction: IrFunction, expectActualTypesMap: Map<IrSymbol, IrSymbol>): Boolean {
-    fun getActualizedValueParameterSymbol(
+    fun getActualizedTypeClassifierSymbol(
         expectParameter: IrValueParameter,
         localTypeParametersMap: Map<IrTypeParameterSymbol, IrTypeParameterSymbol>? = null
     ): IrSymbol {
@@ -74,8 +78,15 @@ private fun IrFunction.match(actualFunction: IrFunction, expectActualTypesMap: M
             return true
         }
 
-        if (getActualizedValueParameterSymbol(expectParameter, localTypeParametersMap) !=
-            getActualizedValueParameterSymbol(actualParameter)
+        if (expectParameter.type.isNullable() != actualParameter.type.isNullable() &&
+            !expectParameter.type.annotations.hasAnnotation(FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME) &&
+            !actualParameter.type.annotations.hasAnnotation(FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME)
+        ) {
+            return false
+        }
+
+        if (getActualizedTypeClassifierSymbol(expectParameter, localTypeParametersMap) !=
+            getActualizedTypeClassifierSymbol(actualParameter)
         ) {
             return false
         }

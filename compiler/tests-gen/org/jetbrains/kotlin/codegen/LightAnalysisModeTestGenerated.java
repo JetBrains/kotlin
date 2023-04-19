@@ -27225,6 +27225,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
             public static class Basic extends AbstractLightAnalysisModeTest {
+                @TestMetadata("expectActualNullabilityBasedOverloads.kt")
+                public void ignoreExpectActualNullabilityBasedOverloads() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualNullabilityBasedOverloads.kt");
+                }
+
                 @TestMetadata("expectProperty.kt")
                 public void ignoreExpectProperty() throws Exception {
                     runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectProperty.kt");

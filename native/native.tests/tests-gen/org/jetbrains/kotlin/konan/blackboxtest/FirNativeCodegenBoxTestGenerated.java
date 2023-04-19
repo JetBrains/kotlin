@@ -26810,6 +26810,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
                     }
 
                     @Test
+                    @TestMetadata("expectActualNullabilityBasedOverloads.kt")
+                    public void testExpectActualNullabilityBasedOverloads() throws Exception {
+                        runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualNullabilityBasedOverloads.kt");
+                    }
+
+                    @Test
                     @TestMetadata("expectActualOverloads.kt")
                     public void testExpectActualOverloads() throws Exception {
                         runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualOverloads.kt");
