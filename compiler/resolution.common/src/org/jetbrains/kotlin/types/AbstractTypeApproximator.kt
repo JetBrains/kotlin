@@ -542,13 +542,13 @@ abstract class AbstractTypeApproximator(
                      * Note that for case Inv<C> we will chose Inv<in Int>, because it is more informative then Inv<out Any?>.
                      * May be we should do the same for deeper types, but not now.
                      */
-                    if (argumentType.typeConstructor().isCapturedTypeConstructor()) {
-                        val subType = approximateToSubType(argumentType, conf, depth) ?: continue@loop
-                        if (shouldUseSubTypeForCapturedArgument(subType, argumentType, conf, depth)) {
-                            newArguments[index] = createTypeArgument(subType, TypeVariance.IN)
-                            continue@loop
-                        }
-                    }
+//                    if (argumentType.typeConstructor().isCapturedTypeConstructor()) {
+//                        val subType = approximateToSubType(argumentType, conf, depth) ?: continue@loop
+//                        if (shouldUseSubTypeForCapturedArgument(subType, argumentType, conf, depth)) {
+//                            newArguments[index] = createTypeArgument(subType, TypeVariance.IN)
+//                            continue@loop
+//                        }
+//                    }
 
                     val approximatedSuperType =
                         approximateToSuperType(argumentType, conf, depth) ?: continue@loop // null means that this type we can leave as is
