@@ -13,11 +13,17 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.tooling.core.MutableExtras
 
+/* Scheduled for removal with Kotlin 2.0 */
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 @ExternalKotlinTargetApi
 val KotlinSourceSet.extras: MutableExtras get() = this.internal.extras
 
+/* Scheduled for removal with Kotlin 2.0 */
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 @ExternalKotlinTargetApi
 val KotlinCompilation<*>.extras: MutableExtras get() = this.internal.extras
 
+/* Scheduled for removal with Kotlin 2.0 */
+@Suppress("EXTENSION_SHADOWED_BY_MEMBER")
 @ExternalKotlinTargetApi
 val KotlinTarget.extras: MutableExtras get() = this.internal.extras
