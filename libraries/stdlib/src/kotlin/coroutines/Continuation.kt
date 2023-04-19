@@ -37,6 +37,11 @@ public interface Continuation<in T> {
 public annotation class RestrictsSuspension
 
 /**
+ * Resumes the execution of the corresponding coroutine with no return value.
+ */
+public inline fun Continuation<Unit>.resume(): Unit = resume(Unit)
+
+/**
  * Resumes the execution of the corresponding coroutine passing [value] as the return value of the last suspension point.
  */
 @SinceKotlin("1.3")
