@@ -126,8 +126,8 @@ private fun externrefEquals(lhs: ExternalInterfaceType, rhs: ExternalInterfaceTy
 
 private external fun tryGetOrSetExternrefBox(
     ref: ExternalInterfaceType,
-    ifNotCached: JsHandle<JsExternalBox>
-): JsHandle<JsExternalBox>?
+    ifNotCached: JsReference<JsExternalBox>
+): JsReference<JsExternalBox>?
 
 @WasmNoOpCast
 @Suppress("unused")
@@ -174,7 +174,7 @@ internal fun externRefToAny(ref: ExternalInterfaceType): Any? {
     // If we have Null in notNullRef -- return null
     // If we already have a box -- return it,
     // otherwise -- remember new box and return it.
-    return tryGetOrSetExternrefBox(ref, JsExternalBox(ref).toJsHandle())
+    return tryGetOrSetExternrefBox(ref, JsExternalBox(ref).toJsReference())
 }
 
 

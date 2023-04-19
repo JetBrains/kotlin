@@ -5,10 +5,10 @@
 class C(val x: Int)
 
 @JsExport
-fun makeC(x: Int): JsHandle<C> = C(x).toJsHandle()
+fun makeC(x: Int): JsReference<C> = C(x).toJsReference()
 
 @JsExport
-fun getX(c: JsHandle<C>): Int = c.get().x
+fun getX(c: JsReference<C>): Int = c.get().x
 
 @JsExport
 fun getString(s: String): String = "Test string $s";
@@ -19,10 +19,10 @@ fun isEven(x: Int): Boolean = x % 2 == 0
 external interface EI
 
 @JsExport
-fun eiAsAny(ei: EI): JsHandle<Any> = ei.toJsHandle()
+fun eiAsAny(ei: EI): JsReference<Any> = ei.toJsReference()
 
 @JsExport
-fun anyAsEI(any: JsHandle<Any>): EI = any.get() as EI
+fun anyAsEI(any: JsReference<Any>): EI = any.get() as EI
 
 fun box(): String = "OK"
 
