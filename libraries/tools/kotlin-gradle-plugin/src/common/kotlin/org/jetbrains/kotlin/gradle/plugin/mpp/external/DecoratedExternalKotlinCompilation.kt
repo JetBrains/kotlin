@@ -12,8 +12,22 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.plugin.mpp.DecoratedKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
 
+/**
+ * Renamed DecoratedExternalKotlinCompilation:
+ * Scheduled for removal with Kotlin 2.0
+ */
+@Deprecated(
+    "Renamed to 'DecoratedExternalKotlinCompilation'", level = DeprecationLevel.ERROR,
+    replaceWith = ReplaceWith("DecoratedExternalKotlinCompilation")
+)
 @ExternalKotlinTargetApi
 abstract class ExternalDecoratedKotlinCompilation(delegate: Delegate) :
     DecoratedKotlinCompilation<KotlinCommonOptions>(delegate.compilation) {
-    class Delegate internal constructor(internal val compilation: KotlinCompilationImpl)
+    open class Delegate internal constructor(internal open val compilation: KotlinCompilationImpl)
+}
+
+@Suppress("deprecation_error")
+@ExternalKotlinTargetApi
+abstract class DecoratedExternalKotlinCompilation(delegate: Delegate) : ExternalDecoratedKotlinCompilation(delegate) {
+    class Delegate internal constructor(compilation: KotlinCompilationImpl) : ExternalDecoratedKotlinCompilation.Delegate(compilation)
 }
