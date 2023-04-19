@@ -213,7 +213,7 @@ object KotlinToolingDiagnostics {
     object Kotlin12XMppDeprecation : ToolingDiagnosticFactory(WARNING) {
         operator fun invoke() = build(
             """
-            The 'org.jetbrains.kotlin.platform.*' plugins are deprecated and will no longer be available in Kotlin 1.4.
+            The 'org.jetbrains.kotlin.platform.*' plugins are deprecated and are no longer available since Kotlin 1.4.
             Please migrate the project to the 'org.jetbrains.kotlin.multiplatform' plugin.
             See: https://kotlinlang.org/docs/reference/building-mpp-with-gradle.html
             """.trimIndent()
@@ -245,6 +245,27 @@ object KotlinToolingDiagnostics {
             """
                 Please initialize at least one Kotlin target in '${projectName} (${projectPath})'.
                 Read more https://kotl.in/set-up-targets
+            """.trimIndent()
+        )
+    }
+
+    object DisabledCinteropsCommonizationInHmppProject : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(affectedSourceSetsString: String, affectedCinteropsString: String) = build(
+            """
+                The project is using Kotlin Multiplatform with hierarchical structure and disabled 'cinterop commonization'
+                See: https://kotlinlang.org/docs/mpp-share-on-platforms.html#use-native-libraries-in-the-hierarchical-structure
+           
+                'cinterop commonization' can be enabled in your 'gradle.properties'
+                kotlin.mpp.enableCInteropCommonization=true
+                
+                To hide this message, add to your 'gradle.properties'
+                ${PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION}.nowarn=true 
+            
+                The following source sets are affected: 
+                $affectedSourceSetsString
+                
+                The following cinterops are affected: 
+                $affectedCinteropsString
             """.trimIndent()
         )
     }
