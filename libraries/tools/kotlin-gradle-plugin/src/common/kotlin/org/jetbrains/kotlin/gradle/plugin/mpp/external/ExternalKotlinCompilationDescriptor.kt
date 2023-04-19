@@ -7,11 +7,17 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.external
 
 import org.gradle.api.file.FileCollection
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.DecoratedKotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.external.ExternalKotlinCompilationDescriptor.*
 import kotlin.properties.Delegates
 
+/**
+ * Describes how a compilation created for an external [KotlinTarget] should be created.
+ * @see createCompilation
+ */
 @ExternalKotlinTargetApi
 interface ExternalKotlinCompilationDescriptor<T : DecoratedExternalKotlinCompilation> {
 
@@ -22,16 +28,31 @@ interface ExternalKotlinCompilationDescriptor<T : DecoratedExternalKotlinCompila
         "Renamed to 'CompilationFactory'", level = DeprecationLevel.ERROR,
         replaceWith = ReplaceWith("CompilationFactory")
     )
+    @ExternalKotlinTargetApi
     fun interface DecoratedKotlinCompilationFactory<T : DecoratedKotlinCompilation<*>> : CompilationFactory<T>
 
+    /**
+     * Factory creating the decorated instance ([DecoratedExternalKotlinCompilation] using the backing implementation inside
+     * the [DecoratedExternalKotlinCompilation.Delegate]
+     */
+    @ExternalKotlinTargetApi
     fun interface CompilationFactory<T : DecoratedKotlinCompilation<*>> {
         fun create(delegate: DecoratedExternalKotlinCompilation.Delegate): T
     }
 
+    /**
+     * Providing an additional [FriendArtifactResolver] will allow to add 'friend artifacts' to the compilation
+     */
+    @ExternalKotlinTargetApi
     fun interface FriendArtifactResolver<T : DecoratedExternalKotlinCompilation> {
         fun resolveFriendPaths(compilation: T): FileCollection
     }
 
+    /**
+     * Implementing a [CompilationAssociator] allows for intercepting the [KotlinCompilation.associateWith] calls, effectively
+     * handling them on behalf of the authors of the external [KotlinTarget]
+     */
+    @ExternalKotlinTargetApi
     fun interface CompilationAssociator<T : DecoratedExternalKotlinCompilation> {
         fun associate(auxiliary: T, main: DecoratedExternalKotlinCompilation)
     }
@@ -93,7 +114,6 @@ class ExternalKotlinCompilationDescriptorBuilder<T : DecoratedExternalKotlinComp
     }
 }
 
-@ExternalKotlinTargetApi
 private data class ExternalKotlinCompilationDescriptorImpl<T : DecoratedExternalKotlinCompilation>(
     override val compilationName: String,
     override val compileTaskName: String?,
