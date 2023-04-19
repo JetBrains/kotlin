@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.ide
 import org.gradle.api.Project
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
+import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryCoordinates
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinProjectCoordinates
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinSourceCoordinates
@@ -40,7 +41,7 @@ internal fun IdeaKotlinSourceCoordinates(sourceSet: KotlinSourceSet): IdeaKotlin
     )
 }
 
-fun IdeaKotlinBinaryCoordinates(identifier: ModuleComponentIdentifier): IdeaKotlinBinaryCoordinates {
+internal fun IdeaKotlinBinaryCoordinates(identifier: ModuleComponentIdentifier): IdeaKotlinBinaryCoordinates {
     return IdeaKotlinBinaryCoordinates(
         group = identifier.group,
         module = identifier.module,
