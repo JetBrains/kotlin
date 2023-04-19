@@ -132,4 +132,4 @@ internal val JsBinary.executeTaskBaseName: String
         null
     )
 
-internal val COMPILE_SYNC = "compileSync"
+internal const val COMPILE_SYNC = "compileSync"

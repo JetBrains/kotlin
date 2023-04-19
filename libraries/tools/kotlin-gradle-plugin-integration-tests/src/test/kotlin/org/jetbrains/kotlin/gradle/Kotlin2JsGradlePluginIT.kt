@@ -485,6 +485,19 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
             }
         }
     }
+
+    @DisplayName("Multiple targets works without clash")
+    @GradleTest
+    fun testMultipleJsTargets(gradleVersion: GradleVersion) {
+        project("kotlin-js-multiple-targets", gradleVersion) {
+            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
+
+            build("assemble") {
+                assertTasksExecuted(":compileProductionExecutableKotlinServerSide")
+                assertTasksExecuted(":compileProductionExecutableKotlinClientSide")
+            }
+        }
+    }
 }
 
 @JsGradlePluginTests

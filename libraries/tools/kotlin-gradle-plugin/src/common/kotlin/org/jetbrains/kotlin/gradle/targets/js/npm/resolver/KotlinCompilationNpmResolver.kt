@@ -103,7 +103,7 @@ class KotlinCompilationNpmResolver(
 
     override fun toString(): String = "KotlinCompilationNpmResolver(${npmProject.name})"
 
-    val aggregatedConfiguration: Configuration by lazy {
+    val aggregatedConfiguration: Configuration = run {
         createAggregatedConfiguration()
     }
 
@@ -126,7 +126,7 @@ class KotlinCompilationNpmResolver(
     }
 
     private fun createAggregatedConfiguration(): Configuration {
-        val all = project.configurations.create(compilation.disambiguateName("npm"))
+        val all = project.configurations.create(compilation.npmConfigurationName)
 
         all.usesPlatformOf(target)
         all.attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerRuntimeUsage(target))
@@ -156,7 +156,7 @@ class KotlinCompilationNpmResolver(
     }
 
     private fun createPublicPackageJsonConfiguration(): Configuration {
-        val all = project.configurations.create(compilation.disambiguateName("publicPackageJsonConfiguration"))
+        val all = project.configurations.create(compilation.publicPackageJsonConfigurationName)
 
         all.usesPlatformOf(target)
         all.attributes.attribute(Usage.USAGE_ATTRIBUTE, KotlinUsages.consumerRuntimeUsage(target))
