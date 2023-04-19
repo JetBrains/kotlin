@@ -5,11 +5,11 @@ class Test : J {
 
   }
 
-  override fun takeNotNull(x: @EnhancedNullability String) {
+  override fun takeNotNull(@NotNull x: @EnhancedNullability String) {
     <this>.#j.takeNotNull(x = x)
   }
 
-  override fun takeNullable(x: String?) {
+  override fun takeNullable(@Nullable x: String?) {
     <this>.#j.takeNullable(x = x)
   }
 

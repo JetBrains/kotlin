@@ -298,9 +298,9 @@ class Fir2IrDeclarationStorage(
         }
     }
 
-    private fun <T : IrFunction> T.declareDefaultSetterParameter(type: IrType): T {
+    private fun <T : IrFunction> T.declareDefaultSetterParameter(type: IrType, firValueParameter: FirValueParameter?): T {
         valueParameters = listOf(
-            createDefaultSetterParameter(startOffset, endOffset, type, parent = this)
+            createDefaultSetterParameter(startOffset, endOffset, type, parent = this, firValueParameter)
         )
         return this
     }
@@ -310,6 +310,7 @@ class Fir2IrDeclarationStorage(
         endOffset: Int,
         type: IrType,
         parent: IrFunction,
+        firValueParameter: FirValueParameter?,
         name: Name? = null,
         isCrossinline: Boolean = false,
         isNoinline: Boolean = false,
@@ -322,6 +323,9 @@ class Fir2IrDeclarationStorage(
             isHidden = false, isAssignable = false
         ).apply {
             this.parent = parent
+            if (firValueParameter != null) {
+                annotationGenerator.generate(this, firValueParameter)
+            }
         }
     }
 
@@ -341,8 +345,9 @@ class Fir2IrDeclarationStorage(
         }
         val typeContext = if (forSetter) ConversionTypeContext.IN_SETTER else ConversionTypeContext.DEFAULT
         if (function is FirDefaultPropertySetter) {
-            val type = function.valueParameters.first().returnTypeRef.toIrType(ConversionTypeContext.IN_SETTER)
-            declareDefaultSetterParameter(type)
+            val valueParameter = function.valueParameters.first()
+            val type = valueParameter.returnTypeRef.toIrType(ConversionTypeContext.IN_SETTER)
+            declareDefaultSetterParameter(type, valueParameter)
         } else if (function != null) {
             val contextReceivers = function.contextReceiversForFunctionOrContainingProperty()
 
@@ -743,7 +748,8 @@ class Fir2IrDeclarationStorage(
                 enterScope(this)
                 if (propertyAccessor == null && isSetter) {
                     declareDefaultSetterParameter(
-                        property.returnTypeRef.toIrType(ConversionTypeContext.IN_SETTER)
+                        property.returnTypeRef.toIrType(ConversionTypeContext.IN_SETTER),
+                        firValueParameter = null
                     )
                 }
                 bindAndDeclareParameters(
@@ -1163,6 +1169,7 @@ class Fir2IrDeclarationStorage(
                         )
                     )
                 }
+                annotationGenerator.generate(this, valueParameter)
             }
         }
         localStorage.putParameter(valueParameter, irParameter)
@@ -1673,11 +1680,6 @@ class Fir2IrDeclarationStorage(
             || origin == IrDeclarationOrigin.FAKE_OVERRIDE
         ) {
             annotationGenerator.generate(this, firAnnotationContainer)
-            if (this is IrFunction && firAnnotationContainer is FirSimpleFunction) {
-                valueParameters.zip(firAnnotationContainer.valueParameters).forEach { (irParameter, firParameter) ->
-                    annotationGenerator.generate(irParameter, firParameter)
-                }
-            }
         }
     }
 
