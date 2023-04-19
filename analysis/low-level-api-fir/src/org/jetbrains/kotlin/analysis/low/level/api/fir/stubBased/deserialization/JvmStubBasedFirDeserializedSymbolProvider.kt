@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserializatio
 import com.intellij.psi.util.PsiUtil
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.caches.*
+import org.jetbrains.kotlin.fir.caches.FirCache
+import org.jetbrains.kotlin.fir.caches.createCache
+import org.jetbrains.kotlin.fir.caches.firCachesFactory
+import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.java.deserialization.KotlinBuiltins
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -18,6 +21,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragment
 import java.nio.file.Path
 import java.nio.file.Paths
 
@@ -144,8 +148,10 @@ class JvmStubBasedFirDeserializedSymbolProvider(
             .mapNotNull { it.originalElement as? KtNamedFunction }
             .mapNotNull { function ->
                 val file = function.containingKtFile
+                val virtualFile = file.virtualFile
+                if (virtualFile.extension == MetadataPackageFragment.METADATA_FILE_EXTENSION) return@mapNotNull null
                 if (file.packageFqName.asString()
-                        .replace(".", "/") + "/" + file.virtualFile.nameWithoutExtension in KotlinBuiltins
+                        .replace(".", "/") + "/" + virtualFile.nameWithoutExtension in KotlinBuiltins
                 ) return@mapNotNull null
                 val moduleData = moduleDataProvider.getModuleData(function.containingLibrary()) ?: return@mapNotNull null
                 val symbol = FirNamedFunctionSymbol(callableId)
