@@ -46,6 +46,17 @@ public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolverK
 	public static final fun plus (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyTransformer {
+	public abstract fun transform (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;Ljava/util/Set;)Ljava/util/Set;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyTransformerKt {
+	public static final fun IdeDependencyTransformer (Ljava/util/List;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyTransformer;
+	public static final fun IdeDependencyTransformer ([Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyTransformer;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyTransformer;
+	public static final fun plus (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyTransformer;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyTransformer;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyTransformer;
+	public static final fun withTransformer (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyTransformer;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;
+}
+
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$Companion;
 	public static fun instance (Lorg/gradle/api/Project;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport;
