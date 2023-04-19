@@ -87,6 +87,8 @@
 
 package kotlin.text.regex
 
+import kotlin.experimental.ExperimentalNativeApi
+
 /**
  * Represents node accepting single character from the given char class.
  * This character can be supplementary (2 chars needed to represent) or from
@@ -118,6 +120,7 @@ open internal class SupplementaryRangeSet(charClass: AbstractCharClass, val igno
 
         if (index < rightBound) {
             val low = testString[index++]
+            @OptIn(ExperimentalNativeApi::class)
             if (Char.isSurrogatePair(high, low) && contains(Char.toCodePoint(high, low))) {
                 return next.matches(index, testString, matchResult)
             }

@@ -77,6 +77,7 @@ internal fun Int.isCaseIgnorable(): Boolean {
     return index >= 0 && this <= caseIgnorableEnd[index]
 }
 
+@OptIn(kotlin.experimental.ExperimentalNativeApi::class)
 private fun String.codePointBefore(index: Int): Int {
     val low = this[index]
     if (low.isLowSurrogate() && index - 1 >= 0) {

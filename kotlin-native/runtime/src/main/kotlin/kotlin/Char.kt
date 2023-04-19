@@ -6,6 +6,7 @@
 
 package kotlin
 
+import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.internal.GCUnsafeCall
 import kotlin.native.internal.TypedIntrinsic
 import kotlin.native.internal.IntrinsicType
@@ -151,18 +152,30 @@ public class Char private constructor() : Comparable<Char> {
         public const val MAX_SURROGATE: Char = MAX_LOW_SURROGATE
 
         /**
-         * The minimum value of a supplementary code point, `\u0x10000`. Kotlin/Native specific.
+         * The minimum value of a supplementary code point, `\u0x10000`.
+         *
+         * Note that this constant is experimental.
+         * In the future it could be deprecated in favour of another constant of a `CodePoint` type.
          */
+        @ExperimentalNativeApi
         public const val MIN_SUPPLEMENTARY_CODE_POINT: Int = 0x10000
 
         /**
-         * The minimum value of a Unicode code point. Kotlin/Native specific.
+         * The minimum value of a Unicode code point.
+         *
+         * Note that this constant is experimental.
+         * In the future it could be deprecated in favour of another constant of a `CodePoint` type.
          */
+        @ExperimentalNativeApi
         public const val MIN_CODE_POINT = 0x000000
 
         /**
-         * The maximum value of a Unicode code point. Kotlin/Native specific.
+         * The maximum value of a Unicode code point.
+         *
+         * Note that this constant is experimental.
+         * In the future it could be deprecated in favour of another constant of a `CodePoint` type.
          */
+        @ExperimentalNativeApi
         public const val MAX_CODE_POINT = 0X10FFFF
 
         /**
