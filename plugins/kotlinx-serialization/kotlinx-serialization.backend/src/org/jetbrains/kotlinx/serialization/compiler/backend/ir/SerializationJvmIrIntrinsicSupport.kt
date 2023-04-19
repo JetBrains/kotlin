@@ -231,13 +231,13 @@ class SerializationJvmIrIntrinsicSupport(val jvmBackendContext: JvmBackendContex
      *
      * Operation detection in new compilers performed by voidMagicApiCall.
      */
-    private fun InstructionAdapter.putReifyMarkerIfNeeded(type: KotlinTypeMarker, intrinsicType: IntrinsicType): Boolean =
+    private fun InstructionAdapter.putReifyMarkerIfNeeded(type: IrType, intrinsicType: IntrinsicType): Boolean =
         with(typeSystemContext) {
             val typeDescriptor = type.typeConstructor().getTypeParameterClassifier()
             if (typeDescriptor != null) { // need further reification
                 ReifiedTypeInliner.putReifiedOperationMarkerIfNeeded(
                     typeDescriptor,
-                    false,
+                    type.isMarkedNullable(),
                     ReifiedTypeInliner.OperationKind.TYPE_OF,
                     this@putReifyMarkerIfNeeded,
                     typeSystemContext
