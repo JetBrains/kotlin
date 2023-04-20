@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.metadata.ProtoBuf.Type
 import org.jetbrains.kotlin.metadata.ProtoBuf.Type.Argument.Projection
 import org.jetbrains.kotlin.metadata.ProtoBuf.TypeParameter.Variance
 import org.jetbrains.kotlin.metadata.deserialization.*
+import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -110,19 +111,29 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                 it.classId.asSingleFqName() == StandardNames.FqNames.extensionFunctionType
             }
 
+            val (contextReceiverAnnotations, otherAnnotations) = notExtensionAnnotations.partition {
+                it.classId.asSingleFqName() == StandardNames.FqNames.contextFunctionTypeParams
+            }
+
             val isExtension = extensionAnnotations.isNotEmpty()
             val isSuspend = Flags.SUSPEND_TYPE.get(type.flags)
 
             val nullableWrapper = if (isSuspend) {
                 val wrapper = nullableTypeParent(parent, type)
-                createTypeAnnotationStubs(wrapper, type, notExtensionAnnotations)
+                createTypeAnnotationStubs(wrapper, type, otherAnnotations)
                 wrapper
             } else {
-                createTypeAnnotationStubs(parent, type, notExtensionAnnotations)
+                createTypeAnnotationStubs(parent, type, otherAnnotations)
                 nullableTypeParent(parent, type)
             }
 
-            createFunctionTypeStub(nullableWrapper, type, isExtension, isSuspend)
+            val numContextReceivers = if (contextReceiverAnnotations.isEmpty()) {
+                0
+            } else {
+                val argument = type.getExtension(JvmProtoBuf.typeAnnotation).find { c.nameResolver.getClassId(it.id).asSingleFqName() == StandardNames.FqNames.contextFunctionTypeParams }!!.getArgument(0)
+                argument.value.intValue.toInt()
+            }
+            createFunctionTypeStub(nullableWrapper, type, isExtension, isSuspend, numContextReceivers)
 
             return
         }
@@ -225,20 +236,33 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         parent: StubElement<out PsiElement>,
         type: Type,
         isExtensionFunctionType: Boolean,
-        isSuspend: Boolean
+        isSuspend: Boolean,
+        numContextReceivers: Int,
     ) {
         val typeArgumentList = type.argumentList
         val functionType = KotlinPlaceHolderStubImpl<KtFunctionType>(parent, KtStubElementTypes.FUNCTION_TYPE)
+        var processedTypes = 0
+
+        if (numContextReceivers != 0) {
+            ContextReceiversListStubBuilder(c).createContextReceiverStubs(
+                functionType,
+                typeArgumentList.subList(
+                    processedTypes,
+                    processedTypes + numContextReceivers
+                ).map { it.type(c.typeTable)!! })
+            processedTypes += numContextReceivers
+        }
+
         if (isExtensionFunctionType) {
             val functionTypeReceiverStub =
                 KotlinPlaceHolderStubImpl<KtFunctionTypeReceiver>(functionType, KtStubElementTypes.FUNCTION_TYPE_RECEIVER)
-            val receiverTypeProto = typeArgumentList.first().type(c.typeTable)!!
+            val receiverTypeProto = typeArgumentList[processedTypes].type(c.typeTable)!!
             createTypeReferenceStub(functionTypeReceiverStub, receiverTypeProto)
+            processedTypes++
         }
 
         val parameterList = KotlinPlaceHolderStubImpl<KtParameterList>(functionType, KtStubElementTypes.VALUE_PARAMETER_LIST)
-        val typeArgumentsWithoutReceiverAndReturnType =
-            typeArgumentList.subList(if (isExtensionFunctionType) 1 else 0, typeArgumentList.size - 1)
+        val typeArgumentsWithoutReceiverAndReturnType = typeArgumentList.subList(processedTypes, typeArgumentList.size - 1)
         var suspendParameterType: Type? = null
 
         for ((index, argument) in typeArgumentsWithoutReceiverAndReturnType.withIndex()) {

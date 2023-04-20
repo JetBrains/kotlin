@@ -109,6 +109,12 @@ public class ClsStubBuilderTestGenerated extends AbstractClsStubBuilderTest {
     }
 
     @Test
+    @TestMetadata("ContextReceiversOnFunctionType")
+    public void testContextReceiversOnFunctionType() throws Exception {
+        runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/ContextReceiversOnFunctionType/");
+    }
+
+    @Test
     @TestMetadata("ContextReceiversOnTopLevelCallables")
     public void testContextReceiversOnTopLevelCallables() throws Exception {
         runTest("analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder/ContextReceiversOnTopLevelCallables/");
