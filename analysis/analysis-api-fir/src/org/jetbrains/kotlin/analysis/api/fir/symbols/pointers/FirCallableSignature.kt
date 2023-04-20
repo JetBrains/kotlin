@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols.pointers
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.renderer.ConeAttributeRenderer
 import org.jetbrains.kotlin.fir.renderer.ConeIdFullRenderer
 import org.jetbrains.kotlin.fir.renderer.ConeTypeRenderer
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.types.ConeAttributes
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 
 /**
@@ -76,7 +78,7 @@ internal class FirCallableSignature private constructor(
         fun createSignature(callableSymbol: FirCallableSymbol<*>): FirCallableSignature = createSignature(callableSymbol.fir)
 
         fun createSignature(callableDeclaration: FirCallableDeclaration): FirCallableSignature {
-            callableDeclaration.lazyResolveToPhase(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE)
+            callableDeclaration.lazyResolveToPhase(FirResolvePhase.TYPES)
 
             return FirCallableSignature(
                 receiverType = callableDeclaration.receiverParameter?.typeRef?.renderType(),
@@ -87,13 +89,14 @@ internal class FirCallableSignature private constructor(
                     null
                 },
                 typeParametersCount = callableDeclaration.typeParameters.size,
-                returnType = callableDeclaration.returnTypeRef.renderType(),
+                returnType = callableDeclaration.symbol.resolvedReturnTypeRef.renderType(),
             )
         }
     }
 }
 
-private fun FirTypeRef.renderType(): String = FirRenderer(
+private fun FirTypeRef.renderType(builder: StringBuilder = StringBuilder()): String = FirRenderer(
+    builder = builder,
     annotationRenderer = null,
     bodyRenderer = null,
     callArgumentsRenderer = null,
@@ -105,7 +108,11 @@ private fun FirTypeRef.renderType(): String = FirRenderer(
     packageDirectiveRenderer = null,
     propertyAccessorRenderer = null,
     resolvePhaseRenderer = null,
-    typeRenderer = ConeTypeRenderer(),
+    typeRenderer = ConeTypeRenderer().apply { attributeRenderer = EmptyConeTypeAttributeRenderer },
     valueParameterRenderer = null,
     errorExpressionRenderer = null,
 ).renderElementAsString(this)
+
+private object EmptyConeTypeAttributeRenderer : ConeAttributeRenderer() {
+    override fun render(attributes: ConeAttributes): String = ""
+}
