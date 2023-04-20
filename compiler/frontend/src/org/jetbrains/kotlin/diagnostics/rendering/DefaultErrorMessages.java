@@ -369,7 +369,7 @@ public class DefaultErrorMessages {
                 NAME, adaptGenerics2(IncompatibleExpectedActualClassScopesRenderer.TEXT));
         MAP.put(ACTUAL_MISSING, "Declaration must be marked with 'actual'");
         MAP.put(EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE,
-                "{0}: expect and corresponding actual are declared in the same module, which will be prohibited in Kotlin 2.0. See https://youtrack.jetbrains.com/issue/KT-55177",
+                "{0}: expect and corresponding actual are declared in the same compilation unit, which will be prohibited in Kotlin 2.0. See https://youtrack.jetbrains.com/issue/KT-55177",
                 CAPITALIZED_DECLARATION_NAME_WITH_KIND_AND_PLATFORM);
 
         MAP.put(OPTIONAL_EXPECTATION_NOT_ON_EXPECTED, "'@OptionalExpectation' can only be used on an expected annotation class");
