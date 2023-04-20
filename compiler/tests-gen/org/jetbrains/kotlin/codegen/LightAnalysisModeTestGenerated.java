@@ -3131,6 +3131,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/callableReference/bound/genericValOnLHS.kt");
             }
 
+            @TestMetadata("implicitIntegerCoercionNamedArg.kt")
+            public void testImplicitIntegerCoercionNamedArg() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/bound/implicitIntegerCoercionNamedArg.kt");
+            }
+
             @TestMetadata("javaField.kt")
             public void testJavaField() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/bound/javaField.kt");

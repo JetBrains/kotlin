@@ -3735,6 +3735,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
             }
 
             @Test
+            @TestMetadata("implicitIntegerCoercionNamedArg.kt")
+            public void testImplicitIntegerCoercionNamedArg() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/bound/implicitIntegerCoercionNamedArg.kt");
+            }
+
+            @Test
             @TestMetadata("javaField.kt")
             public void testJavaField() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/bound/javaField.kt");
