@@ -1,4 +1,4 @@
-@file:OptIn(kotlin.native.runtime.NativeRuntimeApi::class, ObsoleteWorkersApi::class
+@file:OptIn(kotlin.native.runtime.NativeRuntimeApi::class, ObsoleteWorkersApi::class)
 
 import objclib.*
 import kotlin.native.concurrent.*
