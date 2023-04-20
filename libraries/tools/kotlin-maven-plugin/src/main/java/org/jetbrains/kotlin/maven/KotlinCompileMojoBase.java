@@ -41,6 +41,7 @@ import java.lang.reflect.Field;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static org.jetbrains.kotlin.maven.Util.joinArrays;
 
@@ -82,7 +83,7 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
         List<String> list = new ArrayList<>();
         if (sourceDirs != null && !sourceDirs.isEmpty()) list.addAll(sourceDirs);
         list.addAll(project.getCompileSourceRoots());
-        return list;
+        return list.stream().distinct().collect(Collectors.toList());
     }
 
     @NotNull
