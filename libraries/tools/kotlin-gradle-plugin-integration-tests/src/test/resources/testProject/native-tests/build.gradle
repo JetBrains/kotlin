@@ -50,25 +50,7 @@ configure([hostTest, iosTest, iosArm64Test]){
     }
 }
 
-// Check that getting a test binary in an old way fails showing the corresponding warning
-task checkOldGet {
-    doLast {
-        configure([kotlin.targets.host]) {
-            println("Get test: ${binaries.getExecutable("test", DEBUG)}")
-        }
-    }
-}
-
-// Check that finding a test binary in an old way returns null showing the corresponding warning.
-task checkOldFind {
-    doLast {
-        configure([kotlin.targets.host]) {
-            println("Find test: ${binaries.findExecutable("test", DEBUG)}")
-        }
-    }
-}
-
-task checkNewGetters {
+task checkGetters {
     doLast {
         configure([kotlin.targets.host]) {
             println("Get test: ${binaries.getTest(DEBUG).outputFile.name}")
