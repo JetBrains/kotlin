@@ -804,7 +804,7 @@ class GeneralNativeIT : BaseGradleIT() {
     @Test
     fun testNativeTestGetters() = with(transformNativeTestProject("native-tests")) {
         // Check that test binaries can be accessed in a buildscript.
-        build("checkNewGetters") {
+        build("checkGetters") {
             assertSuccessful()
             val suffix = if (HostManager.hostIsMingw) "exe" else "kexe"
             val names = listOf("test", "another")
@@ -814,32 +814,6 @@ class GeneralNativeIT : BaseGradleIT() {
                 assertContains("Get test: $it")
                 assertContains("Find test: $it")
             }
-        }
-
-        // Check that accessing a test as an executable fails or returns null and shows the corresponding warning.
-        build("checkOldGet") {
-            assertFailed()
-            assertContains(
-                """
-                    |Probably you are accessing the default test binary using the 'binaries.getExecutable("test", DEBUG)' method.
-                    |Since 1.3.40 tests are represented by a separate binary type. To get the default test binary, use:
-                    |
-                    |    binaries.getTest("DEBUG")
-                """.trimMargin()
-            )
-        }
-
-        build("checkOldFind") {
-            assertSuccessful()
-            assertContains(
-                """
-                    |Probably you are accessing the default test binary using the 'binaries.findExecutable("test", DEBUG)' method.
-                    |Since 1.3.40 tests are represented by a separate binary type. To get the default test binary, use:
-                    |
-                    |    binaries.findTest("DEBUG")
-                """.trimMargin()
-            )
-            assertContains("Find test: null")
         }
     }
 
