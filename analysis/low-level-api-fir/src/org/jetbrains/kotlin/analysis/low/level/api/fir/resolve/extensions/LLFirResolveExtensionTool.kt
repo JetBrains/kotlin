@@ -187,6 +187,10 @@ private class LLFirResolveExtensionToolDeclarationProvider(
             .mapNotNullTo(mutableListOf()) { it.kotlinFile.script }
     }
 
+    override fun computePackageSetWithNonClassDeclarations(): Set<String> {
+        return emptySet() //todo
+    }
+
     private inline fun getDeclarationProvidersByPackage(
         packageFqName: FqName,
         crossinline filter: (KtResolveExtensionFile) -> Boolean
