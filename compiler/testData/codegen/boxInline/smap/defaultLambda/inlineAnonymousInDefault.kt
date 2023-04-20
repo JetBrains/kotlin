@@ -1,7 +1,7 @@
 // SEPARATE_SMAP_DUMPS
 // SKIP_INLINE_CHECK_IN: lParams$default
 // IGNORE_BACKEND: JS
-
+// IGNORE_INLINER_K2: IR
 // FILE: 1.kt
 
 package test

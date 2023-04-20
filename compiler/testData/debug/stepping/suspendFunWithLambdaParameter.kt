@@ -14,7 +14,11 @@ suspend fun box() {
 // EXPECTATIONS JVM_IR
 // test.kt:9 box
 // test.kt:5 foo
+// EXPECTATIONS ClassicFrontend JVM_IR
 // test.kt:10 invoke
+// EXPECTATIONS FIR JVM_IR
+// test.kt:10 box$lambda$0
+// EXPECTATIONS JVM_IR
 // test.kt:5 foo
 // test.kt:9 box
 // test.kt:12 box

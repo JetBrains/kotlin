@@ -1,4 +1,5 @@
 // !SANITIZE_PARENTHESES
+// IGNORE_BACKEND_K1: JVM_IR
 
 class `(X)` {
     fun `(Y)`(): String {
@@ -23,4 +24,4 @@ fun box(): String {
 // 1 \(Y\)
 
 // JVM_IR_TEMPLATES
-// 4 this\$0
+// 3 this\$0

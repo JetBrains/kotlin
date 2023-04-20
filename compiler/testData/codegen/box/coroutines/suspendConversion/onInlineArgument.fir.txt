@@ -1,0 +1,27 @@
+@kotlin.coroutines.jvm.internal.DebugMetadata
+@kotlin.Metadata
+final class OnInlineArgumentKt$box$1 {
+    // source: 'onInlineArgument.kt'
+    enclosing method OnInlineArgumentKt.box()Ljava/lang/String;
+    synthetic final field $lambda: kotlin.jvm.functions.Function1
+    synthetic final field $test: kotlin.jvm.internal.Ref$ObjectRef
+    field label: int
+    inner (anonymous) class OnInlineArgumentKt$box$1
+    method <init>(p0: kotlin.jvm.internal.Ref$ObjectRef, p1: kotlin.jvm.functions.Function1, p2: kotlin.coroutines.Continuation): void
+    public final method create(p0: kotlin.coroutines.Continuation): kotlin.coroutines.Continuation
+    public synthetic bridge method invoke(p0: java.lang.Object): java.lang.Object
+    public final method invoke(p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final method invokeSuspend(p0: java.lang.Object): java.lang.Object
+    public final inner class kotlin/jvm/internal/Ref$ObjectRef
+}
+
+@kotlin.Metadata
+public final class OnInlineArgumentKt {
+    // source: 'onInlineArgument.kt'
+    inner (anonymous) class OnInlineArgumentKt$box$1
+    private final static method box$lambda$0(p0: java.lang.String): java.lang.String
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+    private final static method runS$$forInline(p0: kotlin.jvm.functions.Function2, p1: kotlin.coroutines.Continuation): java.lang.Object
+    public final static @org.jetbrains.annotations.Nullable method runS(@org.jetbrains.annotations.NotNull p0: kotlin.jvm.functions.Function2, @org.jetbrains.annotations.NotNull p1: kotlin.coroutines.Continuation): java.lang.Object
+    public final inner class kotlin/jvm/internal/Ref$ObjectRef
+}

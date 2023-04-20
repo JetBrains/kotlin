@@ -53,25 +53,10 @@ package {
 }
 // IntersectionTypeInLambdaLiteralAndDelegatedPropertyKt$test$1.class
 // ------------------------------------------
-lambda {
-
-  // signature: invoke(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
-  local final fun kotlin/Nothing.<anonymous>(it: kotlin/Nothing): kotlin/Any
-}
+synthetic class
 // IntersectionTypeInLambdaLiteralAndDelegatedPropertyKt$test$2.class
 // ------------------------------------------
-lambda {
-
-  // signature: invoke(LInv;LInv;)LInv;
-  local final fun kotlin/Nothing.<anonymous>(it: kotlin/Nothing): Inv<out kotlin/Any>
-}
-// IntersectionTypeInLambdaLiteralAndDelegatedPropertyKt$test$d$2.class
-// ------------------------------------------
-lambda {
-
-  // signature: invoke()Ljava/lang/Object;
-  local final fun <anonymous>(): kotlin/Any
-}
+synthetic class
 // Inv.class
 // ------------------------------------------
 public final class Inv<T#0 /* T */> : kotlin/Any {

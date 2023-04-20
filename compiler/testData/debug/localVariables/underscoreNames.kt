@@ -23,7 +23,7 @@ fun box() {
     }
 }
 
-// EXPECTATIONS JVM_IR
+// EXPECTATIONS ClassicFrontend JVM_IR
 // test.kt:12 box:
 // test.kt:4 <init>: x:double=1.0:double, y:java.lang.String="":java.lang.String, z:char=0:char
 // test.kt:12 box:
@@ -40,6 +40,24 @@ fun box() {
 // test.kt:18 invoke: w:int=1:int, x:double=1.0:double, y:char=0:char, a:double=1.0:double, c:char=0:char, _:java.lang.String="":java.lang.String, d:char=0:char
 // test.kt:22 invoke: w:int=1:int, x:double=1.0:double, y:char=0:char, a:double=1.0:double, c:char=0:char, _:java.lang.String="":java.lang.String, d:char=0:char
 // test.kt:6 foo: a:A=A, block:kotlin.jvm.functions.Function3=TestKt$box$1
+// test.kt:12 box:
+// test.kt:24 box:
+
+// EXPECTATIONS FIR JVM_IR
+// test.kt:12 box:
+// test.kt:4 <init>: x:double=1.0:double, y:java.lang.String="":java.lang.String, z:char=0:char
+// test.kt:12 box:
+// test.kt:6 foo: a:A=A, block:kotlin.jvm.functions.Function3=TestKt$<lambda>
+// test.kt:13 box$lambda$0: w:int=1:int
+// test.kt:15 box$lambda$0: w:int=1:int, x:double=1.0:double, y:char=0:char
+// test.kt:4 <init>: x:double=1.0:double, y:java.lang.String="":java.lang.String, z:char=0:char
+// test.kt:15 box$lambda$0: w:int=1:int, x:double=1.0:double, y:char=0:char
+// test.kt:16 box$lambda$0: w:int=1:int, x:double=1.0:double, y:char=0:char, a:double=1.0:double, c:char=0:char
+// test.kt:4 <init>: x:double=1.0:double, y:java.lang.String="":java.lang.String, z:char=0:char
+// test.kt:16 box$lambda$0: w:int=1:int, x:double=1.0:double, y:char=0:char, a:double=1.0:double, c:char=0:char
+// test.kt:18 box$lambda$0: w:int=1:int, x:double=1.0:double, y:char=0:char, a:double=1.0:double, c:char=0:char, _:java.lang.String="":java.lang.String, d:char=0:char
+// test.kt:22 box$lambda$0: w:int=1:int, x:double=1.0:double, y:char=0:char, a:double=1.0:double, c:char=0:char, _:java.lang.String="":java.lang.String, d:char=0:char
+// test.kt:6 foo: a:A=A, block:kotlin.jvm.functions.Function3=TestKt$<lambda>
 // test.kt:12 box:
 // test.kt:24 box:
 

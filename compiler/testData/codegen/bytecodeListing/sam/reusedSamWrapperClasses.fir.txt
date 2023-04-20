@@ -1,0 +1,27 @@
+@kotlin.Metadata
+synthetic final class A$sam$java_lang_Runnable$0 {
+    // source: 'reusedSamWrapperClasses.kt'
+    enclosing class A
+    private synthetic final field function: kotlin.jvm.functions.Function0
+    inner (anonymous) class A$sam$java_lang_Runnable$0
+    method <init>(p0: kotlin.jvm.functions.Function0): void
+    public synthetic final method run(): void
+}
+
+@kotlin.Metadata
+public final class A {
+    // source: 'reusedSamWrapperClasses.kt'
+    inner (anonymous) class A$sam$java_lang_Runnable$0
+    public method <init>(): void
+    private final static method test1$lambda$0(): kotlin.Unit
+    public final method test1(): void
+}
+
+@kotlin.Metadata
+public final class B {
+    // source: 'reusedSamWrapperClasses.kt'
+    inner (anonymous) class A$sam$java_lang_Runnable$0
+    public method <init>(): void
+    private final static method test2$lambda$0(): kotlin.Unit
+    public final method test2(): void
+}

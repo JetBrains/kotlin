@@ -309,6 +309,7 @@ enum class LanguageFeature(
     ProhibitDefaultArgumentsInExpectActualizedByFakeOverride(KOTLIN_2_0, kind = BUG_FIX), // KT-62036
     DisableCompatibilityModeForNewInference(KOTLIN_2_0, kind = OTHER), // KT-63558 (umbrella), KT-64306, KT-64307, KT-64308
     DfaBooleanVariables(KOTLIN_2_0), // KT-25747
+    LightweightLambdas(KOTLIN_2_0, kind = OTHER), // KT-45375
 
     // 2.1
 
@@ -355,7 +356,6 @@ enum class LanguageFeature(
     // Experimental features
 
     BreakContinueInInlineLambdas(null), // KT-1436
-    LightweightLambdas(null),
     JsEnableExtensionFunctionInExternals(null, kind = OTHER),
     PackagePrivateFileClassesWithAllPrivateMembers(null), // Disabled until the breaking change is approved by the committee, see KT-10884.
     BooleanElvisBoundSmartCasts(null), // see KT-26357 for details

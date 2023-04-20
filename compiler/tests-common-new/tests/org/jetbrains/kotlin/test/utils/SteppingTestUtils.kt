@@ -46,9 +46,13 @@ class LocalVariableRecord(
             append(variableType)
         }
         append("=")
-        append(value)
+        append(value.toString().normalizeIndyLambdas())
     }
 }
+
+private fun String.normalizeIndyLambdas(): String =
+    // Invokedynamic lambdas have an unstable hash in the name.
+    replace("\\\$Lambda\\\$.*".toRegex(), "<lambda>")
 
 private const val EXPECTATIONS_MARKER = "// EXPECTATIONS"
 private const val FORCE_STEP_INTO_MARKER = "// FORCE_STEP_INTO"

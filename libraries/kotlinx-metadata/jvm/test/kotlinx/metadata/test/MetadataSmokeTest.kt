@@ -212,7 +212,7 @@ class MetadataSmokeTest {
     fun testDisplayNameSample() {
         class A {}
 
-        val b: (Int) -> Int = fun(x: Int) = x
+        val b: (Int) -> Int = @JvmSerializableLambda fun(x: Int) = x
 
         assertEquals("Class .kotlinx/metadata/test/MetadataSmokeTest\$testDisplayNameSample\$A", displayName(A::class.java.getMetadata()))
         assertEquals("Lambda <no name provided>", displayName(b::class.java.getMetadata()))

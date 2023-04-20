@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.NO_SMAP_DUMP
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.SEPARATE_SMAP_DUMPS
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
+import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
@@ -77,7 +78,11 @@ class SMAPDumpHandler(testServices: TestServices) : JvmBinaryArtifactHandler(tes
         }
 
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
-        val expectedFile = testDataFile.withExtension(extension)
+        val firExpectedFile = testDataFile.withExtension("fir.$extension")
+        val expectedFile =
+            if (testServices.moduleStructure.modules.first().frontendKind == FrontendKinds.FIR && firExpectedFile.exists())
+                firExpectedFile
+            else testDataFile.withExtension(extension)
         assertions.assertEqualsToFile(expectedFile, dumper.generateResultingDump())
 
         if (separateDumpEnabled && isSeparateCompilation) {
