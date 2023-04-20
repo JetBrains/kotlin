@@ -1772,6 +1772,11 @@ internal class ReifiedTypeForbiddenSubstitutionImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.ReifiedTypeForbiddenSubstitution(), KtAbstractFirDiagnostic<PsiElement>
 
+internal class DefinitelyNonNullableAsReifiedImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.DefinitelyNonNullableAsReified(), KtAbstractFirDiagnostic<PsiElement>
+
 internal class FinalUpperBoundImpl(
     override val type: KtType,
     override val firDiagnostic: KtPsiDiagnostic,
