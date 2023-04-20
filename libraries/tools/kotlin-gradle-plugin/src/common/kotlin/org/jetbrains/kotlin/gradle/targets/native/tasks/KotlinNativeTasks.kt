@@ -220,15 +220,13 @@ abstract class AbstractKotlinNativeCompile<
         get() = false
 
     @get:Input
-    val kotlinNativeVersion: String
-        get() = project.konanVersion.toString()
+    val kotlinNativeVersion: String = project.konanVersion
 
     @get:Input
     val artifactVersion = project.version.toString()
 
     @get:Input
-    internal val useEmbeddableCompilerJar: Boolean
-        get() = project.nativeUseEmbeddableCompilerJar
+    internal val useEmbeddableCompilerJar: Boolean = project.nativeUseEmbeddableCompilerJar
 
     @get:Internal
     open val outputFile: Provider<File>

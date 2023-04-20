@@ -111,8 +111,7 @@ constructor(
     }
 
     @get:Input
-    internal val useEmbeddableCompilerJar: Boolean
-        get() = project.nativeUseEmbeddableCompilerJar
+    internal val useEmbeddableCompilerJar: Boolean = project.nativeUseEmbeddableCompilerJar
 
     @Suppress("unused", "UNCHECKED_CAST")
     @Deprecated(
