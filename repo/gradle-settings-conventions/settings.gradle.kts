@@ -24,6 +24,7 @@ include(":build-cache")
 include(":gradle-enterprise")
 include(":jvm-toolchain-provisioning")
 include(":kotlin-daemon-config")
+include(":internal-gradle-setup")
 
 // Unfortunately it is not possible to apply build-cache.settings.gradle.kts as script compilation
 // could not then find types from "kotlin-build-gradle-plugin"

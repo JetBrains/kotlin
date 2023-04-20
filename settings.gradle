@@ -20,6 +20,7 @@ plugins {
     id "gradle-enterprise"
     id "jvm-toolchain-provisioning"
     id "kotlin-daemon-config"
+    id "internal-gradle-setup"
 }
 
 def buildProperties = BuildPropertiesKt.getKotlinBuildPropertiesForSettings(settings)
