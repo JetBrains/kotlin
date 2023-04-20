@@ -185,12 +185,12 @@ open class Kapt3AndroidIncrementalIT : Kapt3BaseIT() {
                         .resolve(useUtilFileName).relativeTo(projectPath)
                     assertCompiledKotlinSources(
                         listOf(affectedFile),
-                        getOutputForTask("app:kaptGenerateStubsDebugKotlin"),
+                        getOutputForTask(":app:kaptGenerateStubsDebugKotlin"),
                         errorMessageSuffix = " in task ':app:kaptGenerateStubsDebugKotlin"
                     )
                     assertCompiledKotlinSources(
                         listOf(affectedFile),
-                        getOutputForTask("app:compileDebugKotlin"),
+                        getOutputForTask(":app:compileDebugKotlin"),
                         errorMessageSuffix = " in task ':app:compileDebugKotlin"
                     )
                 }

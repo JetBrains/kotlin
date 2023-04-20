@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.native
 
 import com.intellij.testFramework.TestDataFile
+import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jdom.input.SAXBuilder
@@ -15,8 +16,7 @@ import org.jetbrains.kotlin.gradle.internals.DISABLED_NATIVE_TARGETS_REPORTER_WA
 import org.jetbrains.kotlin.gradle.internals.NO_NATIVE_STDLIB_PROPERTY_WARNING
 import org.jetbrains.kotlin.gradle.internals.NO_NATIVE_STDLIB_WARNING
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeOutputKind
-import org.jetbrains.kotlin.gradle.testbase.TestVersions
-import org.jetbrains.kotlin.gradle.transformProjectWithPluginsDsl
+import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.util.runProcess
 import org.jetbrains.kotlin.gradle.utils.Xcode
@@ -498,7 +498,8 @@ class GeneralNativeIT : BaseGradleIT() {
             "releaseExecutable" to "native-binary",
             "bazDebugExecutable" to "my-baz",
         )
-        val linkTasks = binaries.map { (name, _) -> "link${name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}Host" }
+        val linkTasks =
+            binaries.map { (name, _) -> "link${name.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}Host" }
         val outputFiles = binaries.map { (name, fileBaseName) ->
             val outputKind = NativeOutputKind.values().single { name.endsWith(it.taskNameClassifier, true) }.compilerOutputKind
             val prefix = outputKind.prefix(HostManager.host)
@@ -874,7 +875,7 @@ class GeneralNativeIT : BaseGradleIT() {
             assertSuccessful()
             assertTasksExecuted(":projectLibrary:cinteropAnotherNumberHost")
             libraryFiles("projectLibrary", "anotherNumber").forEach { assertFileExists(it) }
-            withNativeCustomEnvironment(":projectLibrary:cinteropAnotherNumberHost", toolName = "cinterop") { env ->
+            withNativeCustomEnvironment(":projectLibrary:cinteropAnotherNumberHost", toolName = NativeToolKind.C_INTEROP) { env ->
                 assertEquals("1", env["LIBCLANG_DISABLE_CRASH_RECOVERY"])
             }
         }
@@ -1173,18 +1174,19 @@ class GeneralNativeIT : BaseGradleIT() {
 
     // KT-52303
     @Test
-    fun testBuildDirChangeAppliedToBinaries() = with(transformNativeTestProjectWithPluginDsl("executables", directoryPrefix = "native-binaries")) {
-        gradleBuildScript().appendText(
-            """
+    fun testBuildDirChangeAppliedToBinaries() =
+        with(transformNativeTestProjectWithPluginDsl("executables", directoryPrefix = "native-binaries")) {
+            gradleBuildScript().appendText(
+                """
                 project.buildDir = file("${'$'}{project.buildDir.absolutePath}/mydir")
             """.trimIndent()
-        )
-        build(":linkDebugExecutableHost") {
-            assertSuccessful()
-            assertDirectoryExists("build/mydir/bin/host/debugExecutable")
-            assertNoSuchFile("build/bin")
+            )
+            build(":linkDebugExecutableHost") {
+                assertSuccessful()
+                assertDirectoryExists("build/mydir/bin/host/debugExecutable")
+                assertNoSuchFile("build/bin")
+            }
         }
-    }
 
     // KT-54439
     @Test
@@ -1215,70 +1217,35 @@ class GeneralNativeIT : BaseGradleIT() {
             return Collections.indexOfSubList(this, elements.toList()) != -1
         }
 
-        private enum class NativeToolSettingsKind(val title: String) {
-            COMPILER_CLASSPATH("Classpath"),
-            COMMAND_LINE_ARGUMENTS("Arguments"),
-            CUSTOM_ENV_VARIABLES("Custom ENV variables")
-        }
+        /**
+         * Filter output for specific task with given [taskPath]
+         *
+         * Requires using [LogLevel.DEBUG].
+         */
+        fun CompiledProject.getOutputForTask(taskPath: String): String = getOutputForTask(taskPath, output)
 
-        private fun CompiledProject.extractNativeToolSettings(
-            toolName: String,
-            taskPath: String?,
-            settingsKind: NativeToolSettingsKind
-        ): Sequence<String> {
-            val settingsPrefix = "${settingsKind.title} = ["
-            val settings = output.lineSequence()
-                .run {
-                    if (taskPath != null) dropWhile { "Executing actions for task '$taskPath'" !in it }.drop(1) else this
-                }
-                .dropWhile {
-                    check(taskPath == null || "Executing actions for task" !in it) { "Unexpected log line with new Gradle task: $it" }
-                    "Run in-process tool \"$toolName\"" !in it && "Run \"$toolName\" tool in a separate JVM process" !in it
-                }
-                .drop(1)
-                .dropWhile {
-                    check(taskPath == null || "Executing actions for task" !in it) { "Unexpected log line with new Gradle task: $it" }
-                    settingsPrefix !in it
-                }
+        fun CompiledProject.extractNativeCommandLineArguments(taskPath: String? = null, toolName: NativeToolKind): List<String> =
+            extractNativeToolSettings(taskPath?.let { getOutputForTask(taskPath) } ?: output,
+                                      toolName,
+                                      NativeToolSettingsKind.COMMAND_LINE_ARGUMENTS).toList()
 
-            val settingsHeader = settings.firstOrNull()
-            check(settingsHeader != null && settingsPrefix in settingsHeader) {
-                "Cannot find setting '${settingsKind.title}' for task ${taskPath}"
-            }
-
-            return if (settingsHeader.trimEnd().endsWith(']'))
-                emptySequence() // No parameters.
-            else
-                settings.drop(1).map { it.trim() }.takeWhile { it != "]" }
-        }
-
-        fun CompiledProject.extractNativeCommandLineArguments(taskPath: String? = null, toolName: String): List<String> =
-            extractNativeToolSettings(toolName, taskPath, NativeToolSettingsKind.COMMAND_LINE_ARGUMENTS).toList()
-
-        fun CompiledProject.extractNativeCompilerClasspath(taskPath: String? = null, toolName: String): List<String> =
-            extractNativeToolSettings(toolName, taskPath, NativeToolSettingsKind.COMPILER_CLASSPATH).toList()
-
-        fun CompiledProject.extractNativeCustomEnvironment(taskPath: String? = null, toolName: String): Map<String, String> =
-            extractNativeToolSettings(toolName, taskPath, NativeToolSettingsKind.CUSTOM_ENV_VARIABLES).map {
+        fun CompiledProject.extractNativeCustomEnvironment(taskPath: String? = null, toolName: NativeToolKind): Map<String, String> =
+            extractNativeToolSettings(taskPath?.let { getOutputForTask(taskPath) } ?: output,
+                                      toolName,
+                                      NativeToolSettingsKind.CUSTOM_ENV_VARIABLES).map {
                 val (key, value) = it.split("=")
                 key.trim() to value.trim()
             }.toMap()
 
         fun CompiledProject.withNativeCommandLineArguments(
             vararg taskPaths: String,
-            toolName: String = "konanc",
+            toolName: NativeToolKind = NativeToolKind.KONANC,
             check: (List<String>) -> Unit
         ) = taskPaths.forEach { taskPath -> check(extractNativeCommandLineArguments(taskPath, toolName)) }
 
-        fun CompiledProject.withNativeCompilerClasspath(
-            vararg taskPaths: String,
-            toolName: String = "konanc",
-            check: (List<String>) -> Unit
-        ) = taskPaths.forEach { taskPath -> check(extractNativeCompilerClasspath(taskPath, toolName)) }
-
         fun CompiledProject.withNativeCustomEnvironment(
             vararg taskPaths: String,
-            toolName: String = "konanc",
+            toolName: NativeToolKind = NativeToolKind.KONANC,
             check: (Map<String, String>) -> Unit
         ) = taskPaths.forEach { taskPath -> check(extractNativeCustomEnvironment(taskPath, toolName)) }
     }

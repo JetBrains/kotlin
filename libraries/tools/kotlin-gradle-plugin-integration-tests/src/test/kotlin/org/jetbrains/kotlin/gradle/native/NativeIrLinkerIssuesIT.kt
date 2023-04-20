@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.native
 
 import org.jetbrains.kotlin.gradle.BaseGradleIT
 import org.jetbrains.kotlin.gradle.GradleVersionRequired
+import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.getOutputForTask
 import org.jetbrains.kotlin.gradle.testbase.DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX
 import org.jetbrains.kotlin.gradle.testbase.findParameterInOutput
 import org.jetbrains.kotlin.konan.library.KONAN_PLATFORM_LIBS_NAME_PREFIX
@@ -271,7 +272,7 @@ class NativeIrLinkerIssuesIT : BaseGradleIT() {
                 val kotlinNativeCompilerVersion = findKotlinNativeCompilerVersion(output)
                 assertNotNull(kotlinNativeCompilerVersion)
 
-                val errorMessage = ERROR_LINE_REGEX.findAll(getOutputForTask("linkDebugExecutableNative"))
+                val errorMessage = ERROR_LINE_REGEX.findAll(getOutputForTask(":linkDebugExecutableNative"))
                     .map { matchResult -> matchResult.groupValues[1] }
                     .filterNot { it.startsWith("w:") || it.startsWith("v:") || it.startsWith("i:") }
                     .map { line ->
