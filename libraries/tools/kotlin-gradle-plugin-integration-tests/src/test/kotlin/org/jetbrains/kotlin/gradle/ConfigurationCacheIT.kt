@@ -61,7 +61,11 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
 
     @MppGradlePluginTests
     @DisplayName("works with MPP publishing")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
+    @GradleTestVersions(
+        minVersion = TestVersions.Gradle.G_7_4,
+        additionalVersions = [TestVersions.Gradle.G_7_6],
+        maxVersion = TestVersions.Gradle.G_8_1
+    )
     @GradleTest
     fun testMppWithMavenPublish(gradleVersion: GradleVersion) {
         project("new-mpp-lib-and-app/sample-lib", gradleVersion) {
@@ -77,7 +81,11 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
 
     @NativeGradlePluginTests
     @DisplayName("works with native tasks in complex project")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
+    @GradleTestVersions(
+        minVersion = TestVersions.Gradle.G_7_4,
+        additionalVersions = [TestVersions.Gradle.G_7_6],
+        maxVersion = TestVersions.Gradle.G_8_1
+    )
     @GradleTest
     fun testNativeTasks(gradleVersion: GradleVersion) {
         val expectedTasks = mutableListOf(
@@ -114,7 +122,11 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
 
     @NativeGradlePluginTests
     @DisplayName("works with commonizer")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
+    @GradleTestVersions(
+        minVersion = TestVersions.Gradle.G_7_4,
+        additionalVersions = [TestVersions.Gradle.G_7_6],
+        maxVersion = TestVersions.Gradle.G_8_1
+    )
     @GradleTest
     fun testCommonizer(gradleVersion: GradleVersion) {
         project("native-configuration-cache", gradleVersion) {
