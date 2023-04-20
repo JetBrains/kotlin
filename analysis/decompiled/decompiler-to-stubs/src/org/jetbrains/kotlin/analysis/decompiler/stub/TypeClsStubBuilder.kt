@@ -130,7 +130,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             } else {
                 val argument = type.getExtension(JvmProtoBuf.typeAnnotation).find { c.nameResolver.getClassId(it.id).asSingleFqName() == StandardNames.FqNames.contextFunctionTypeParams }!!.getArgument(0)
                 argument.value.intValue.toInt()
-            };
+            }
             createFunctionTypeStub(nullableWrapper, type, isExtension, isSuspend, numContextReceivers)
 
             return
