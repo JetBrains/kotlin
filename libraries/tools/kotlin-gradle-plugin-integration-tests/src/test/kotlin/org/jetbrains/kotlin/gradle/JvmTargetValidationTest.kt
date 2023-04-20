@@ -10,6 +10,7 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.internal.jvm.JavaInfo
 import org.gradle.internal.jvm.Jvm
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import java.io.File
@@ -40,13 +41,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
             )
 
             buildAndFail("assemble") {
-                assertOutputContains(
-                    "'compileJava' task (current target is 1.8) and 'compileKotlin' task (current target is 11) jvm target compatibility " +
-                            "should be set to the same Java version.\n" +
-                            "By default will become an error since Gradle 8.0+! " +
-                            "Read more: https://kotl.in/gradle/jvm/target-validation\n" +
-                            "Consider using JVM toolchain: https://kotl.in/gradle/jvm/toolchain"
-                )
+                assertHasDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
             }
         }
     }
@@ -79,13 +74,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
             )
 
             build("assemble") {
-                assertOutputDoesNotContain(
-                    "'compileJava' task (current target is 1.8) and 'compileKotlin' task (current target is 11) jvm target compatibility " +
-                            "should be set to the same Java version.\n" +
-                            "By default will become an error since Gradle 8.0+! " +
-                            "Read more: https://kotl.in/gradle/jvm/target-validation\n" +
-                            "Consider using JVM toolchain: https://kotl.in/gradle/jvm/toolchain"
-                )
+                assertNoDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
             }
         }
     }
@@ -108,10 +97,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
             )
 
             build("assemble") {
-                assertOutputContains(
-                    "'compileJava' task (current target is 1.8) and 'compileKotlin' task (current target is 11) jvm target compatibility " +
-                            "should be set to the same Java version.\n"
-                )
+                assertHasDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
             }
         }
     }
@@ -136,10 +122,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
             )
 
             build("assemble") {
-                assertOutputDoesNotContain(
-                    "'compileJava' task (current target is 1.8) and 'compileKotlin' task (current target is 11) jvm target compatibility " +
-                            "should be set to the same Java version."
-                )
+                assertNoDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
             }
         }
     }
@@ -160,10 +143,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
             )
 
             build("build") {
-                assertOutputDoesNotContain(
-                    "'compileJava' task (current target is 1.8) and 'compileKotlin' task (current target is 11) jvm target compatibility " +
-                            "should be set to the same Java version."
-                )
+                assertNoDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
             }
         }
     }
@@ -204,13 +184,13 @@ class JvmTargetValidationTest : KGPBaseTest() {
             )
 
             build("build") {
-                assertOutputContains(
-                    "'compileTestJava' task (current target is 1.8) and 'compileTestKotlin' task (current target is 11) jvm target " +
-                            "compatibility should be set to the same Java version."
+                assertHasDiagnostic(
+                    KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks,
+                    withSubstring = "compileTestKotlin"
                 )
-                assertOutputDoesNotContain(
-                    "'compileJava' task (current target is 1.8) and 'compileKotlin' task (current target is 11) jvm target compatibility " +
-                            "should be set to the same Java version."
+                assertNoDiagnostic(
+                    KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks,
+                    withSubstring = "compileKotlin"
                 )
             }
         }
@@ -266,10 +246,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
             javaSourcesDir().resolve("demo/HelloWorld.java").deleteExisting()
 
             build("assemble") {
-                assertOutputDoesNotContain(
-                    "'compileJava' task (current target is 1.8) and 'compileKotlin' task (current target is 11) jvm target compatibility " +
-                            "should be set to the same Java version."
-                )
+                assertNoDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
             }
 
             javaSourcesDir().resolve("demo/Greeter.java").modify {
@@ -277,10 +254,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
             }
 
             build("assemble") {
-                assertOutputDoesNotContain(
-                    "'compileJava' task (current target is 1.8) and 'compileKotlin' task (current target is 11) jvm target compatibility " +
-                            "should be set to the same Java version."
-                )
+                assertNoDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
             }
         }
     }
@@ -302,10 +276,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
             )
 
             build("assemble") {
-                assertOutputContains(
-                    "'compileJava' task (current target is 11) and 'compileKotlin' task (current target is 1.8) jvm target compatibility " +
-                            "should be set to the same Java version.\n"
-                )
+                assertHasDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
             }
         }
     }
@@ -330,9 +301,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
             )
 
             build("assemble") {
-                assertOutputContains(
-                    "'compileJava' task (current target is 11) and 'compileKotlin' task (current target is 1.8) jvm target compatibility should be set to the same Java version."
-                )
+                assertHasDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
             }
 
             javaSourcesDir().resolve("demo").run {
@@ -352,9 +321,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
             }
 
             build("assemble") {
-                assertOutputContains(
-                    "'compileJava' task (current target is 11) and 'compileKotlin' task (current target is 1.8) jvm target compatibility should be set to the same Java version."
-                )
+                assertHasDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
             }
         }
     }
@@ -400,6 +367,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
     internal fun errorByDefaultWithGradle8(gradleVersion: GradleVersion) {
         project("simple".fullProjectName, gradleVersion) {
             //language=Groovy
+            @Suppress("UnnecessaryQualifiedReference")
             buildGradle.appendText(
                 """
                 |
@@ -411,15 +379,11 @@ class JvmTargetValidationTest : KGPBaseTest() {
 
             if (gradleVersion.baseVersion >= GradleVersion.version("8.0")) {
                 buildAndFail("assemble") {
-                    assertOutputContains(
-                        "'compileJava' task (current target is 1.8) and 'compileKotlin' task (current target is 11) jvm target compatibility should be set to the same Java version."
-                    )
+                    assertHasDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
                 }
             } else {
                 build("assemble") {
-                    assertOutputContains(
-                        "'compileJava' task (current target is 1.8) and 'compileKotlin' task (current target is 11) jvm target compatibility should be set to the same Java version."
-                    )
+                    assertHasDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
                 }
             }
         }
@@ -447,8 +411,7 @@ class JvmTargetValidationTest : KGPBaseTest() {
             )
 
             buildAndFail(":lib:compileKotlinJvmWithJava") {
-                assertOutputContains("'compileJava' task (current target is 17) and 'compileKotlinJvmWithJava' task" +
-                            " (current target is 1.8) jvm target compatibility should be set to the same Java version.")
+                assertHasDiagnostic(KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks)
             }
         }
     }

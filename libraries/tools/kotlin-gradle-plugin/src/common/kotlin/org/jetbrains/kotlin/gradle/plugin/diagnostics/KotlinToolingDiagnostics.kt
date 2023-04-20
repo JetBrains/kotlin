@@ -280,4 +280,21 @@ object KotlinToolingDiagnostics {
             """.trimIndent()
         )
     }
+
+    object InconsistentTargetCompatibilityForKotlinAndJavaTasks : ToolingDiagnosticFactory(predefinedSeverity = null) {
+        operator fun invoke(
+            javaTaskName: String,
+            targetCompatibility: String,
+            kotlinTaskName: String,
+            jvmTarget: String,
+            severity: ToolingDiagnostic.Severity
+        ) = build(
+            """
+                Inconsistent JVM-target compatibility detected for tasks '$javaTaskName' ($targetCompatibility) and '$kotlinTaskName' ($jvmTarget).
+                ${if (severity == WARNING) "This will become an error in Gradle 8.0." else ""}
+                Read more: https://kotl.in/gradle/jvm/target-validation 
+            """.trimIndent(),
+            severity
+        )
+    }
 }
