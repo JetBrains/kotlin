@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.JavaVersion
 import org.gradle.api.logging.LogLevel
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
@@ -1118,6 +1119,64 @@ open class Kapt3IT : Kapt3BaseIT() {
                     "KaptGenerateStubs task compiler arguments contains $composeSuppressOption times option to suppress compose warning:" +
                             " ${compilerArguments.joinToString("\n")}"
                 }
+            }
+        }
+    }
+
+    @DisplayName("Kapt runs in fallback mode with useK2 = true")
+    @GradleTest
+    internal fun fallBackModeWithUseK2(gradleVersion: GradleVersion) {
+        project("simple".withPrefix, gradleVersion) {
+            buildGradle.appendText(
+                """
+                |tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+                |    compilerOptions {
+                |        freeCompilerArgs.addAll([
+                |            "-Xuse-fir-ic",
+                |            "-Xuse-fir-lt"
+                |        ])
+                |    }
+                |    kotlinOptions {
+                |      useK2 = true
+                |    }
+                |}
+                |
+                |compileKotlin.kotlinOptions.allWarningsAsErrors = false
+                """.trimMargin()
+            )
+            build("build") {
+                assertKaptSuccessful()
+                assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin")
+                assertOutputContains("Falling back to 1.9.")
+            }
+        }
+    }
+
+    @DisplayName("Kapt runs in fallback mode with languageVersion = 2.0")
+    @GradleTest
+    internal fun fallBackModeWithLanguageVersion2_0(gradleVersion: GradleVersion) {
+        project("simple".withPrefix, gradleVersion) {
+            buildGradle.appendText(
+                """
+                |tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+                |    compilerOptions {
+                |        freeCompilerArgs.addAll([
+                |            "-Xuse-fir-ic",
+                |            "-Xuse-fir-lt"
+                |        ])
+                |    }
+                |    kotlinOptions {
+                |      languageVersion = "2.0"
+                |    }
+                |}
+                |
+                |compileKotlin.kotlinOptions.allWarningsAsErrors = false
+                """.trimMargin()
+            )
+            build("build") {
+                assertKaptSuccessful()
+                assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin")
+                assertOutputContains("Falling back to 1.9.")
             }
         }
     }
