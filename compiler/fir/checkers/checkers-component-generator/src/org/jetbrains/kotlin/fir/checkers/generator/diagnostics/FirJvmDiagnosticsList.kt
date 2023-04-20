@@ -188,9 +188,5 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
             PositioningStrategy.SPREAD_OPERATOR
         )
         val JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE by error<PsiElement>()
-        val JAVA_SHADOWED_PROTECTED_FIELD_REFERENCE by error<PsiElement> {
-            parameter<ClassId>("containerClass")
-            parameter<ClassId>("shadowingClass")
-        }
     }
 }

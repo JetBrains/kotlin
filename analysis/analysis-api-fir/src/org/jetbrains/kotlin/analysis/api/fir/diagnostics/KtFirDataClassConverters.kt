@@ -4875,14 +4875,6 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirJvmErrors.JAVA_SHADOWED_PROTECTED_FIELD_REFERENCE) { firDiagnostic ->
-        JavaShadowedProtectedFieldReferenceImpl(
-            firDiagnostic.a,
-            firDiagnostic.b,
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
     add(FirJsErrors.IMPLEMENTING_FUNCTION_INTERFACE) { firDiagnostic ->
         ImplementingFunctionInterfaceImpl(
             firDiagnostic as KtPsiDiagnostic,

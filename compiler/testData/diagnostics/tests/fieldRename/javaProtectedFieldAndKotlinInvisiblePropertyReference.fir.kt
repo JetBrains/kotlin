@@ -52,7 +52,7 @@ open class IntermediatePublic : BaseJava() {
 
 class Derived : Intermediate() {
     // This should be the first erroneous place (only in K2)
-    fun foo() = this::<!JAVA_SHADOWED_PROTECTED_FIELD_REFERENCE!>a<!>
+    fun foo() = this::a
 
     fun bar() = a // Non-reference
 
@@ -63,7 +63,7 @@ typealias Alias = Intermediate
 
 class DerivedAlias : Alias() {
     // This should be the second erroneous place (only in K2)
-    fun foo() = this::<!JAVA_SHADOWED_PROTECTED_FIELD_REFERENCE!>a<!>
+    fun foo() = this::a
 }
 
 fun local() {
@@ -73,7 +73,7 @@ fun local() {
 
     class LocalDerived : LocalIntermediate() {
         // This should be the third and the last erroneous place (only in K2)
-        fun foo() = this::<!JAVA_SHADOWED_PROTECTED_FIELD_REFERENCE!>a<!>
+        fun foo() = this::a
     }
 }
 
