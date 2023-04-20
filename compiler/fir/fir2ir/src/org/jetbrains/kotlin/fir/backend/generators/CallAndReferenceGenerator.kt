@@ -1002,6 +1002,7 @@ class CallAndReferenceGenerator(
 
         fun IrExpression.applyToElement(argument: FirExpression, conversionFunction: IrSimpleFunctionSymbol): IrExpression =
             if (argument is FirConstExpression<*> ||
+                argument is FirNamedArgumentExpression ||
                 argument.calleeReference?.toResolvedCallableSymbol()?.let {
                     it.resolvedStatus.isConst && it.isMarkedWithImplicitIntegerCoercion
                 } == true

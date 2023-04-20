@@ -19,14 +19,22 @@ FILE fqName:kotlin.internal fileName:/annotation.kt
         public open fun toString (): kotlin.String [fake_override] declared in kotlin.Annotation
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
 FILE fqName:<root> fileName:/test.kt
-  FUN name:test visibility:public modality:FINAL <> (x:kotlin.UInt) returnType:kotlin.UInt
+  FUN name:testInt visibility:public modality:FINAL <> (x:kotlin.UInt) returnType:kotlin.UInt
     VALUE_PARAMETER name:x index:0 type:kotlin.UInt
       annotations:
         ImplicitIntegerCoercion
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun test (x: kotlin.UInt): kotlin.UInt declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun testInt (x: kotlin.UInt): kotlin.UInt declared in <root>'
         TYPE_OP type=kotlin.UInt origin=CAST typeOperand=kotlin.UInt
-          GET_VAR 'x: kotlin.UInt declared in <root>.test' type=kotlin.UInt origin=null
+          GET_VAR 'x: kotlin.UInt declared in <root>.testInt' type=kotlin.UInt origin=null
+  FUN name:testLong visibility:public modality:FINAL <> (x:kotlin.ULong) returnType:kotlin.ULong
+    VALUE_PARAMETER name:x index:0 type:kotlin.ULong
+      annotations:
+        ImplicitIntegerCoercion
+    BLOCK_BODY
+      RETURN type=kotlin.Nothing from='public final fun testLong (x: kotlin.ULong): kotlin.ULong declared in <root>'
+        TYPE_OP type=kotlin.ULong origin=CAST typeOperand=kotlin.ULong
+          GET_VAR 'x: kotlin.ULong declared in <root>.testLong' type=kotlin.ULong origin=null
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
@@ -34,20 +42,39 @@ FILE fqName:<root> fileName:/test.kt
           BRANCH
             if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
               $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-                arg0: CALL 'public final fun test (x: kotlin.UInt): kotlin.UInt declared in <root>' type=kotlin.UInt origin=null
+                arg0: CALL 'public final fun testInt (x: kotlin.UInt): kotlin.UInt declared in <root>' type=kotlin.UInt origin=null
                   x: CALL 'public final fun toUInt (): kotlin.UInt [inline] declared in kotlin.UIntKt' type=kotlin.UInt origin=null
                     $receiver: CONST Int type=kotlin.Int value=5
                 arg1: CALL 'public final fun toUInt (): kotlin.UInt [inline] declared in kotlin.UIntKt' type=kotlin.UInt origin=null
                   $receiver: CONST Int type=kotlin.Int value=5
-            then: CONST String type=kotlin.String value="Fail: test(5)"
+            then: CONST String type=kotlin.String value="Fail: testInt(5)"
           BRANCH
             if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
               $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-                arg0: CALL 'public final fun test (x: kotlin.UInt): kotlin.UInt declared in <root>' type=kotlin.UInt origin=null
-                  x: CONST Int type=kotlin.Int value=5
+                arg0: CALL 'public final fun testInt (x: kotlin.UInt): kotlin.UInt declared in <root>' type=kotlin.UInt origin=null
+                  x: CALL 'public final fun toUInt (): kotlin.UInt [inline] declared in kotlin.UIntKt' type=kotlin.UInt origin=null
+                    $receiver: CONST Int type=kotlin.Int value=5
                 arg1: CALL 'public final fun toUInt (): kotlin.UInt [inline] declared in kotlin.UIntKt' type=kotlin.UInt origin=null
                   $receiver: CONST Int type=kotlin.Int value=5
-            then: CONST String type=kotlin.String value="Fail: test(x = 5)"
+            then: CONST String type=kotlin.String value="Fail: testInt(x = 5)"
+          BRANCH
+            if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+                arg0: CALL 'public final fun testLong (x: kotlin.ULong): kotlin.ULong declared in <root>' type=kotlin.ULong origin=null
+                  x: CALL 'public final fun toULong (): kotlin.ULong [inline] declared in kotlin.ULongKt' type=kotlin.ULong origin=null
+                    $receiver: CONST Int type=kotlin.Int value=5
+                arg1: CALL 'public final fun toULong (): kotlin.ULong [inline] declared in kotlin.ULongKt' type=kotlin.ULong origin=null
+                  $receiver: CONST Long type=kotlin.Long value=5
+            then: CONST String type=kotlin.String value="Fail: testLong(5L)"
+          BRANCH
+            if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
+              $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
+                arg0: CALL 'public final fun testLong (x: kotlin.ULong): kotlin.ULong declared in <root>' type=kotlin.ULong origin=null
+                  x: CALL 'public final fun toULong (): kotlin.ULong [inline] declared in kotlin.ULongKt' type=kotlin.ULong origin=null
+                    $receiver: CONST Int type=kotlin.Int value=5
+                arg1: CALL 'public final fun toULong (): kotlin.ULong [inline] declared in kotlin.ULongKt' type=kotlin.ULong origin=null
+                  $receiver: CONST Long type=kotlin.Long value=5
+            then: CONST String type=kotlin.String value="Fail: testLong(x = 5L)"
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST String type=kotlin.String value="OK"

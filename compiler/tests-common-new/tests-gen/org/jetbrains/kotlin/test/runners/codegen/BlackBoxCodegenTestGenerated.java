@@ -3579,12 +3579,6 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
-            @TestMetadata("implicitIntegerCoercionNamedArg.kt")
-            public void testImplicitIntegerCoercionNamedArg() throws Exception {
-                runTest("compiler/testData/codegen/box/callableReference/bound/implicitIntegerCoercionNamedArg.kt");
-            }
-
-            @Test
             @TestMetadata("javaField.kt")
             public void testJavaField() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/bound/javaField.kt");
@@ -49285,6 +49279,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         @TestMetadata("forInUnsignedUntil.kt")
         public void testForInUnsignedUntil() throws Exception {
             runTest("compiler/testData/codegen/box/unsignedTypes/forInUnsignedUntil.kt");
+        }
+
+        @Test
+        @TestMetadata("implicitIntegerCoercionNamedArg.kt")
+        public void testImplicitIntegerCoercionNamedArg() throws Exception {
+            runTest("compiler/testData/codegen/box/unsignedTypes/implicitIntegerCoercionNamedArg.kt");
         }
 
         @Test

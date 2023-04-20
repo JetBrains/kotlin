@@ -2403,12 +2403,6 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
             }
 
             @Test
-            @TestMetadata("implicitIntegerCoercionNamedArg.kt")
-            public void testImplicitIntegerCoercionNamedArg() throws Exception {
-                runTest("compiler/testData/codegen/box/callableReference/bound/implicitIntegerCoercionNamedArg.kt");
-            }
-
-            @Test
             @TestMetadata("kCallableNameIntrinsic.kt")
             public void testKCallableNameIntrinsic() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/bound/kCallableNameIntrinsic.kt");
@@ -36705,6 +36699,12 @@ public class JsCodegenBoxTestGenerated extends AbstractJsCodegenBoxTest {
         @TestMetadata("forInUnsignedUntil.kt")
         public void testForInUnsignedUntil() throws Exception {
             runTest("compiler/testData/codegen/box/unsignedTypes/forInUnsignedUntil.kt");
+        }
+
+        @Test
+        @TestMetadata("implicitIntegerCoercionNamedArg.kt")
+        public void testImplicitIntegerCoercionNamedArg() throws Exception {
+            runTest("compiler/testData/codegen/box/unsignedTypes/implicitIntegerCoercionNamedArg.kt");
         }
 
         @Test
