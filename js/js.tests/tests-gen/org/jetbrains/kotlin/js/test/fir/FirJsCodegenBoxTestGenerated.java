@@ -2869,12 +2869,6 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
             }
 
             @Test
-            @TestMetadata("getArityViaFunctionImpl.kt")
-            public void testGetArityViaFunctionImpl() throws Exception {
-                runTest("compiler/testData/codegen/box/callableReference/function/getArityViaFunctionImpl.kt");
-            }
-
-            @Test
             @TestMetadata("innerClassConstructorWithTwoReceivers.kt")
             public void testInnerClassConstructorWithTwoReceivers() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/function/innerClassConstructorWithTwoReceivers.kt");
