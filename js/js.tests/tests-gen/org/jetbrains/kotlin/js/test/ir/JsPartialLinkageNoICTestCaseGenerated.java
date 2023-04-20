@@ -60,6 +60,11 @@ public class JsPartialLinkageNoICTestCaseGenerated extends AbstractJsPartialLink
         runTest("compiler/testData/klibABI/classTransformations/");
     }
 
+    @TestMetadata("externalDeclarations")
+    public void testExternalDeclarations() throws Exception {
+        runTest("compiler/testData/klibABI/externalDeclarations/");
+    }
+
     @TestMetadata("functionTransformations")
     public void testFunctionTransformations() throws Exception {
         runTest("compiler/testData/klibABI/functionTransformations/");

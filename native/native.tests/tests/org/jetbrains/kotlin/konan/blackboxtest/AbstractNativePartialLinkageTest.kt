@@ -57,9 +57,14 @@ abstract class AbstractNativePartialLinkageTest : AbstractNativeSimpleTest() {
         override fun onNonEmptyBuildDirectory(directory: File) = backupDirectoryContents(directory)
 
         // Temporarily mute TA tests on FIR FE with caches.
-        override fun isIgnoredTest(projectInfo: ProjectInfo) = super.isIgnoredTest(projectInfo)
-                || (projectInfo.name == "typeAliasChanges" && testModeName.endsWith("STATIC_EVERYWHERE")
-                && this@AbstractNativePartialLinkageTest::class.java.simpleName.startsWith("Fir"))
+        override fun isIgnoredTest(projectInfo: ProjectInfo) = when {
+            super.isIgnoredTest(projectInfo) -> true
+            projectInfo.name == "typeAliasChanges"
+                    && testModeName.endsWith("STATIC_EVERYWHERE")
+                    && this@AbstractNativePartialLinkageTest::class.java.simpleName.startsWith("Fir") -> true
+            projectInfo.name == "externalDeclarations" -> true
+            else -> false
+        }
 
         override fun onIgnoredTest() = throw TestAbortedException()
     }
