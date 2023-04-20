@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.tasks
 
-import org.gradle.api.GradleException
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
@@ -19,7 +18,6 @@ import org.gradle.api.tasks.*
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.util.PatternFilterable
-import org.gradle.util.GradleVersion
 import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
 import org.gradle.work.NormalizeLineEndings
@@ -39,6 +37,8 @@ import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.report.BuildReportMode
 import org.jetbrains.kotlin.gradle.tasks.internal.KotlinJvmOptionsCompat
@@ -311,7 +311,8 @@ abstract class KotlinCompile @Inject constructor(
         validateKotlinAndJavaHasSameTargetCompatibility(args)
 
         val gradlePrintingMessageCollector = GradlePrintingMessageCollector(logger, args.allWarningsAsErrors)
-        val gradleMessageCollector = GradleErrorMessageCollector(
+        val gradleMessageCollector =
+            GradleErrorMessageCollector(
             gradlePrintingMessageCollector, kotlinPluginVersion = getKotlinPluginVersion(logger)
         )
         val outputItemCollector = OutputItemsCollectorImpl()
@@ -356,8 +357,11 @@ abstract class KotlinCompile @Inject constructor(
     private fun validateKotlinAndJavaHasSameTargetCompatibility(
         args: K2JVMCompilerArguments,
     ) {
-        val jvmTargetValidationMode: JvmTargetValidationMode = jvmTargetValidationMode.get()
-        if (jvmTargetValidationMode == JvmTargetValidationMode.IGNORE) return
+        val severity = when (jvmTargetValidationMode.get()) {
+            JvmTargetValidationMode.ERROR -> ToolingDiagnostic.Severity.FATAL
+            JvmTargetValidationMode.WARNING -> ToolingDiagnostic.Severity.WARNING
+            else -> return
+        }
 
         associatedJavaCompileTaskTargetCompatibility.orNull?.let { targetCompatibility ->
             val normalizedJavaTarget = when (targetCompatibility) {
@@ -370,24 +374,15 @@ abstract class KotlinCompile @Inject constructor(
 
             val jvmTarget = args.jvmTarget ?: JvmTarget.DEFAULT.toString()
             if (normalizedJavaTarget != jvmTarget) {
-                val javaTaskName = associatedJavaCompileTaskName.get()
-
-                val errorMessage = buildString {
-                    append("'$javaTaskName' task (current target is $targetCompatibility) and ")
-                    append("'$name' task (current target is $jvmTarget) ")
-                    appendLine("jvm target compatibility should be set to the same Java version.")
-                    if (GradleVersion.current().baseVersion < GradleVersion.version("8.0")) {
-                        append("By default will become an error since Gradle 8.0+! ")
-                        appendLine("Read more: https://kotl.in/gradle/jvm/target-validation")
-                    }
-                    appendLine("Consider using JVM toolchain: https://kotl.in/gradle/jvm/toolchain")
-                }
-
-                when (jvmTargetValidationMode) {
-                    JvmTargetValidationMode.ERROR -> throw GradleException(errorMessage)
-                    JvmTargetValidationMode.WARNING -> logger.warn(errorMessage)
-                    else -> Unit
-                }
+                reportDiagnostic(
+                    KotlinToolingDiagnostics.InconsistentTargetCompatibilityForKotlinAndJavaTasks(
+                        javaTaskName = associatedJavaCompileTaskName.get(),
+                        targetCompatibility = targetCompatibility,
+                        kotlinTaskName = name,
+                        jvmTarget = args.jvmTarget ?: "not provided explicitly, picked up default ${JvmTarget.DEFAULT}",
+                        severity = severity
+                    )
+                )
             }
         }
     }
