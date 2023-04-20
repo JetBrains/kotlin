@@ -97,6 +97,10 @@ internal class FirElementBuilder(
 
 private fun KtDeclaration.isPartOf(callableDeclaration: KtCallableDeclaration): Boolean = when (this) {
     is KtPropertyAccessor -> this.property == callableDeclaration
+    is KtParameter -> {
+        val ownerFunction = ownerFunction
+        ownerFunction == callableDeclaration || ownerFunction?.isPartOf(callableDeclaration) == true
+    }
     else -> false
 }
 
@@ -129,6 +133,11 @@ internal fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate: (KtDec
                         declarationCanBeLazilyResolved(container) &&
                         predicate(parent)
                     ) {
+                        propose(parent)
+                    }
+                }
+                is KtParameter -> {
+                    if (predicate(parent)) {
                         propose(parent)
                     }
                 }

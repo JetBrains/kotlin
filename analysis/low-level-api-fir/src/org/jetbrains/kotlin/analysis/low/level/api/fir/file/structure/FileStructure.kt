@@ -73,6 +73,7 @@ internal class FileStructure private constructor(
             }
 
             container is KtPropertyAccessor -> container.property
+            container is KtParameter -> container.ownerFunction
             else -> null
         }
 

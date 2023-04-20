@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
 
 /**
  * 'Non-local' stands for not local classes/functions/etc.
@@ -122,6 +123,18 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
             } else {
                 firPropertyDeclaration.setter
             }
+        }
+        this is KtParameter -> {
+            val ownerFunction = ownerFunction
+                ?: errorWithFirSpecificEntries("Containing function should be not null for KtParameter", psi = this)
+
+            val firFunctionDeclaration = ownerFunction.findSourceNonLocalFirDeclarationByProvider(
+                firFileBuilder,
+                provider,
+                containerFirFile,
+            ) as FirFunction
+
+            firFunctionDeclaration.valueParameters[parameterIndex()]
         }
         else -> errorWithFirSpecificEntries("Invalid container", psi = this)
     }
