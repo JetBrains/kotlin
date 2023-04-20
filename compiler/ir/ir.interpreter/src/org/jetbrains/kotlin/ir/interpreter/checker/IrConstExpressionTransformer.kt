@@ -26,27 +26,27 @@ internal class IrConstExpressionTransformer(
     onError: (IrFile, IrElement, IrErrorExpression) -> Unit,
     suppressExceptions: Boolean,
 ) : IrConstTransformer(interpreter, irFile, mode, evaluatedConstTracker, onWarning, onError, suppressExceptions) {
-    override fun visitCall(expression: IrCall): IrExpression {
+    override fun visitCall(expression: IrCall, data: Nothing?): IrElement {
         if (expression.canBeInterpreted()) {
             return expression.interpret(failAsError = false)
         }
-        return super.visitCall(expression)
+        return super.visitCall(expression, data)
     }
 
-    override fun visitField(declaration: IrField): IrStatement {
+    override fun visitField(declaration: IrField, data: Nothing?): IrStatement {
         val initializer = declaration.initializer
         val expression = initializer?.expression ?: return declaration
         val isConst = declaration.correspondingPropertySymbol?.owner?.isConst == true
-        if (!isConst) return super.visitField(declaration)
+        if (!isConst) return super.visitField(declaration, data)
 
         if (expression.canBeInterpreted(declaration, interpreter.environment.configuration.copy(treatFloatInSpecialWay = false))) {
             initializer.expression = expression.interpret(failAsError = true)
         }
 
-        return super.visitField(declaration)
+        return super.visitField(declaration, data)
     }
 
-    override fun visitStringConcatenation(expression: IrStringConcatenation): IrExpression {
+    override fun visitStringConcatenation(expression: IrStringConcatenation, data: Nothing?): IrExpression {
         fun IrExpression.wrapInStringConcat(): IrExpression = IrStringConcatenationImpl(
             this.startOffset, this.endOffset, expression.type, listOf(this@wrapInStringConcat)
         )

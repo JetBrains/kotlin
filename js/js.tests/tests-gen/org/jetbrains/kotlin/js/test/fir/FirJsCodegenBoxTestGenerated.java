@@ -21259,6 +21259,18 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
             public void testAnnotationWithDefaults() throws Exception {
                 runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/annotationWithDefaults.kt");
             }
+
+            @Test
+            @TestMetadata("nestedTypeAnnotation.kt")
+            public void testNestedTypeAnnotation() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/nestedTypeAnnotation.kt");
+            }
+
+            @Test
+            @TestMetadata("typeAnnotation.kt")
+            public void testTypeAnnotation() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/typeAnnotation.kt");
+            }
         }
     }
 

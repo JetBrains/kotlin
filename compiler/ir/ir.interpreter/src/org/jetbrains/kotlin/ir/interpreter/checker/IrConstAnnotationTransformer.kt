@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.ir.interpreter.checker
 
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
-import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
@@ -19,7 +16,7 @@ import org.jetbrains.kotlin.ir.interpreter.isPrimitiveArray
 import org.jetbrains.kotlin.ir.interpreter.toIrConst
 import org.jetbrains.kotlin.ir.types.*
 
-internal class IrConstAnnotationTransformer(
+internal abstract class IrConstAnnotationTransformer(
     interpreter: IrInterpreter,
     irFile: IrFile,
     mode: EvaluationMode,
@@ -28,17 +25,7 @@ internal class IrConstAnnotationTransformer(
     onError: (IrFile, IrElement, IrErrorExpression) -> Unit,
     suppressExceptions: Boolean,
 ) : IrConstTransformer(interpreter, irFile, mode, evaluatedConstTracker, onWarning, onError, suppressExceptions) {
-    override fun visitField(declaration: IrField): IrStatement {
-        transformAnnotations(declaration)
-        return super.visitField(declaration)
-    }
-
-    override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement {
-        transformAnnotations(declaration)
-        return super.visitDeclaration(declaration)
-    }
-
-    private fun transformAnnotations(annotationContainer: IrAnnotationContainer) {
+    protected fun transformAnnotations(annotationContainer: IrAnnotationContainer) {
         annotationContainer.annotations.forEach { annotation ->
             transformAnnotation(annotation)
         }

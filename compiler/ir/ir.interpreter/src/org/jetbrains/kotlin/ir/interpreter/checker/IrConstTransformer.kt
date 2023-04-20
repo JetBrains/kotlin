@@ -18,13 +18,13 @@ import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.ir.interpreter.toConstantValue
 import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.name.Name
 
 fun IrFile.transformConst(
     interpreter: IrInterpreter,
     mode: EvaluationMode,
-    evaluatedConstTracker: EvaluatedConstTracker?,
+    evaluatedConstTracker: EvaluatedConstTracker? = null,
     onWarning: (IrFile, IrElement, IrErrorExpression) -> Unit = { _, _, _ -> },
     onError: (IrFile, IrElement, IrErrorExpression) -> Unit = { _, _, _ -> },
     suppressExceptions: Boolean = false,
@@ -32,13 +32,19 @@ fun IrFile.transformConst(
     val irConstExpressionTransformer = IrConstExpressionTransformer(
         interpreter, this, mode, evaluatedConstTracker, onWarning, onError, suppressExceptions
     )
-    val irConstAnnotationTransformer = IrConstAnnotationTransformer(
+    val irConstDeclarationAnnotationTransformer = IrConstDeclarationAnnotationTransformer(
+        interpreter, this, mode, evaluatedConstTracker, onWarning, onError, suppressExceptions
+    )
+    val irConstTypeAnnotationTransformer = IrConstTypeAnnotationTransformer(
         interpreter, this, mode, evaluatedConstTracker, onWarning, onError, suppressExceptions
     )
     this.transform(irConstExpressionTransformer, null)
-    this.transform(irConstAnnotationTransformer, null)
+    this.transform(irConstDeclarationAnnotationTransformer, null)
+    this.transform(irConstTypeAnnotationTransformer, null)
 }
 
+// Note: We are using `IrElementTransformer` here instead of `IrElementTransformerVoid` to avoid conflicts with `IrTypeVisitorVoid`
+// that is used later in `IrConstTypeAnnotationTransformer`.
 internal abstract class IrConstTransformer(
     protected val interpreter: IrInterpreter,
     private val irFile: IrFile,
@@ -47,7 +53,7 @@ internal abstract class IrConstTransformer(
     private val onWarning: (IrFile, IrElement, IrErrorExpression) -> Unit,
     private val onError: (IrFile, IrElement, IrErrorExpression) -> Unit,
     private val suppressExceptions: Boolean,
-) : IrElementTransformerVoid() {
+) : IrElementTransformer<Nothing?> {
     private fun IrExpression.warningIfError(original: IrExpression): IrExpression {
         if (this is IrErrorExpression) {
             onWarning(irFile, original, this)
