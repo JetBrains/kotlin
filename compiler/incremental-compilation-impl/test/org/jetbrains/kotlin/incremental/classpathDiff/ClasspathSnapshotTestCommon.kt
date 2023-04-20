@@ -177,12 +177,8 @@ abstract class ClasspathSnapshotTestCommon {
         fun ClassFile.snapshot(granularity: ClassSnapshotGranularity? = null): ClassSnapshot = listOf(this).snapshot(granularity).single()
 
         fun List<ClassFile>.snapshot(granularity: ClassSnapshotGranularity? = null): List<ClassSnapshot> {
-            val classes = map { ClassFileWithContents(it, it.readBytes()) }
-            return if (granularity == null) {
-                ClassSnapshotter.snapshot(classes)
-            } else {
-                ClassSnapshotter.snapshot(classes, granularity = granularity)
-            }
+            val classes = map { ClassFileWithContentsProvider(it) { it.readBytes() } }
+            return ClassSnapshotter.snapshot(classes, granularity ?: ClassSnapshotGranularity.CLASS_MEMBER_LEVEL)
         }
     }
 }
