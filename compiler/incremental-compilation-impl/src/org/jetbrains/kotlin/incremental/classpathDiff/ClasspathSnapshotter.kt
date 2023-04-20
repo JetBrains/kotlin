@@ -15,10 +15,13 @@ import org.jetbrains.kotlin.incremental.PackagePartProtoData
 import org.jetbrains.kotlin.incremental.classpathDiff.ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
 import org.jetbrains.kotlin.incremental.md5
 import org.jetbrains.kotlin.incremental.storage.toByteArray
+import org.jetbrains.kotlin.konan.file.use
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.Kind.*
-import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import java.io.Closeable
 import java.io.File
-import java.util.zip.ZipInputStream
+import java.util.zip.ZipEntry
+import java.util.zip.ZipFile
 
 /** Computes a [ClasspathEntrySnapshot] of a classpath entry (directory or jar). */
 object ClasspathEntrySnapshotter {
@@ -26,8 +29,8 @@ object ClasspathEntrySnapshotter {
     private val DEFAULT_CLASS_FILTER = { unixStyleRelativePath: String, isDirectory: Boolean ->
         !isDirectory
                 && unixStyleRelativePath.endsWith(".class", ignoreCase = true)
-                && !unixStyleRelativePath.startsWith("meta-inf/", ignoreCase = true)
                 && !unixStyleRelativePath.equals("module-info.class", ignoreCase = true)
+                && !unixStyleRelativePath.startsWith("meta-inf/", ignoreCase = true)
     }
 
     fun snapshot(
@@ -35,52 +38,93 @@ object ClasspathEntrySnapshotter {
         granularity: ClassSnapshotGranularity,
         metrics: BuildMetricsReporter = DoNothingBuildMetricsReporter
     ): ClasspathEntrySnapshot {
-        val classes = metrics.measure(BuildTime.LOAD_CLASSES) {
-            DirectoryOrJarContentsReader
-                .read(classpathEntry, DEFAULT_CLASS_FILTER)
-                .map { (unixStyleRelativePath, contents) ->
-                    ClassFileWithContents(ClassFile(classpathEntry, unixStyleRelativePath), contents)
+        DirectoryOrJarReader.create(classpathEntry).use { directoryOrJarReader ->
+            val classes = metrics.measure(BuildTime.LOAD_CLASSES_PATHS_ONLY) {
+                directoryOrJarReader.getUnixStyleRelativePaths(DEFAULT_CLASS_FILTER).map { unixStyleRelativePath ->
+                    ClassFileWithContentsProvider(
+                        classFile = ClassFile(classpathEntry, unixStyleRelativePath),
+                        contentsProvider = { directoryOrJarReader.readBytes(unixStyleRelativePath) }
+                    )
                 }
+            }
+            val snapshots = metrics.measure(BuildTime.SNAPSHOT_CLASSES) {
+                ClassSnapshotter.snapshot(classes, granularity, metrics)
+            }
+            return ClasspathEntrySnapshot(
+                classSnapshots = classes.map { it.classFile.unixStyleRelativePath }.zip(snapshots).toMap(LinkedHashMap())
+            )
         }
-
-        val snapshots = metrics.measure(BuildTime.SNAPSHOT_CLASSES) {
-            ClassSnapshotter.snapshot(classes, granularity, metrics = metrics)
-        }
-
-        val relativePathsToSnapshotsMap = classes.map { it.classFile.unixStyleRelativePath }.zip(snapshots).toMap(LinkedHashMap())
-        return ClasspathEntrySnapshot(relativePathsToSnapshotsMap)
     }
 }
 
-/** Creates [ClassSnapshot]s of classes. */
+/** Computes [ClassSnapshot]s of classes. */
 object ClassSnapshotter {
 
-    /** Creates [ClassSnapshot]s of the given classes. */
     fun snapshot(
-        classes: List<ClassFileWithContents>,
-        granularity: ClassSnapshotGranularity = CLASS_MEMBER_LEVEL,
+        classes: List<ClassFileWithContentsProvider>,
+        granularity: ClassSnapshotGranularity,
         metrics: BuildMetricsReporter = DoNothingBuildMetricsReporter
     ): List<ClassSnapshot> {
-        val classesInfo: List<BasicClassInfo> = metrics.measure(BuildTime.READ_CLASSES_BASIC_INFO) {
-            classes.map { it.classInfo }
+        fun ClassFile.getClassName(): JvmClassName {
+            check(unixStyleRelativePath.endsWith(".class", ignoreCase = true))
+            return JvmClassName.byInternalName(unixStyleRelativePath.dropLast(".class".length))
         }
-        val inaccessibleClassesInfo: Set<BasicClassInfo> = metrics.measure(BuildTime.FIND_INACCESSIBLE_CLASSES) {
-            findInaccessibleClasses(classesInfo)
-        }
-        return classes.map {
-            when {
-                it.classInfo in inaccessibleClassesInfo -> InaccessibleClassSnapshot
-                it.classInfo.isKotlinClass -> metrics.measure(BuildTime.SNAPSHOT_KOTLIN_CLASSES) {
-                    snapshotKotlinClass(it, granularity)
+
+        val classNameToClassFileMap: Map<JvmClassName, ClassFileWithContentsProvider> = classes.associateBy { it.classFile.getClassName() }
+        val classFileToSnapshotMap = mutableMapOf<ClassFileWithContentsProvider, ClassSnapshot>()
+
+        fun snapshotClass(classFile: ClassFileWithContentsProvider): ClassSnapshot {
+            return classFileToSnapshotMap.getOrPut(classFile) {
+                val clazz = metrics.measure(BuildTime.LOAD_CONTENTS_OF_CLASSES) {
+                    classFile.loadContents()
                 }
-                else -> metrics.measure(BuildTime.SNAPSHOT_JAVA_CLASSES) {
-                    JavaClassSnapshotter.snapshot(it, granularity)
+                // Snapshot outer class first as we need this info to determine whether a class is transitively inaccessible (see below)
+                val outerClassSnapshot = clazz.classInfo.classId.outerClassId?.let { outerClassId ->
+                    val outerClassFile = classNameToClassFileMap[JvmClassName.byClassId(outerClassId)]
+                    // It's possible that the outer class is not found in the given classes (it could happen with faulty jars)
+                    outerClassFile?.let { snapshotClass(it) }
+                }
+                when {
+                    // We don't need to snapshot (directly or transitively) inaccessible classes.
+                    // A class is transitively inaccessible if its outer class is inaccessible.
+                    clazz.classInfo.isInaccessible() || outerClassSnapshot is InaccessibleClassSnapshot -> {
+                        InaccessibleClassSnapshot
+                    }
+                    clazz.classInfo.isKotlinClass -> metrics.measure(BuildTime.SNAPSHOT_KOTLIN_CLASSES) {
+                        snapshotKotlinClass(clazz, granularity)
+                    }
+                    else -> metrics.measure(BuildTime.SNAPSHOT_JAVA_CLASSES) {
+                        JavaClassSnapshotter.snapshot(clazz, granularity)
+                    }
                 }
             }
         }
+
+        return classes.map { snapshotClass(it) }
     }
 
-    /** Creates [KotlinClassSnapshot] of the given Kotlin class (the caller must ensure that the given class is a Kotlin class). */
+    /**
+     * Returns `true` if this class is inaccessible, and `false` otherwise (or if we don't know).
+     *
+     * A class is inaccessible if it can't be referenced from other source files (and therefore any changes in an inaccessible class will
+     * not require recompilation of other source files).
+     */
+    private fun BasicClassInfo.isInaccessible(): Boolean {
+        return when {
+            isKotlinClass -> when (kotlinClassHeader!!.kind) {
+                CLASS -> isPrivate || isLocal || isAnonymous || isSynthetic
+                SYNTHETIC_CLASS -> true
+                else -> false // We don't know about the other class kinds
+            }
+            else -> isPrivate || isLocal || isAnonymous || isSynthetic
+        }
+    }
+
+    /**
+     * Computes a [KotlinClassSnapshot] of the given Kotlin class.
+     *
+     * (The caller must ensure that the given class is a Kotlin class.)
+     */
     private fun snapshotKotlinClass(classFile: ClassFileWithContents, granularity: ClassSnapshotGranularity): KotlinClassSnapshot {
         val kotlinClassInfo =
             KotlinClassInfo.createFrom(classFile.classInfo.classId, classFile.classInfo.kotlinClassHeader!!, classFile.contents)
@@ -108,114 +152,84 @@ object ClassSnapshotter {
         }
     }
 
+}
+
+private sealed interface DirectoryOrJarReader : Closeable {
+
     /**
-     * Returns inaccessible classes, i.e. classes that can't be referenced from other source files (and therefore any changes in these
-     * classes will not require recompilation of other source files).
+     * Returns the Unix-style relative paths of all entries under the containing directory or jar which satisfy the given [filter].
      *
-     * Examples include private, local, anonymous, and synthetic classes.
+     * The paths are in Unix style and are sorted to ensure deterministic results across platforms.
      *
-     * If a class is inaccessible, its nested classes (if any) are also inaccessible.
-     *
-     * NOTE: If we do not have enough info to determine whether a class is inaccessible, we will assume that the class is accessible to be
-     * safe.
+     * If a jar has duplicate entries, only unique paths are kept in the returned list (similar to the way the compiler selects the first
+     * class if the classpath has duplicate classes).
      */
-    private fun findInaccessibleClasses(classesInfo: List<BasicClassInfo>): Set<BasicClassInfo> {
-        fun BasicClassInfo.isInaccessible(): Boolean {
-            return if (this.isKotlinClass) {
-                when (this.kotlinClassHeader!!.kind) {
-                    CLASS -> isPrivate || isLocal || isAnonymous || isSynthetic
-                    SYNTHETIC_CLASS -> true
-                    // We're not sure about the other kinds of Kotlin classes, so we assume it's accessible (see this method's kdoc)
-                    else -> false
-                }
+    fun getUnixStyleRelativePaths(filter: (unixStyleRelativePath: String, isDirectory: Boolean) -> Boolean): List<String>
+
+    fun readBytes(unixStyleRelativePath: String): ByteArray
+
+    companion object {
+
+        fun create(directoryOrJar: File): DirectoryOrJarReader {
+            return if (directoryOrJar.isDirectory) {
+                DirectoryReader(directoryOrJar)
             } else {
-                isPrivate || isLocal || isAnonymous || isSynthetic
+                check(directoryOrJar.isFile && directoryOrJar.path.endsWith(".jar", ignoreCase = true))
+                JarReader(directoryOrJar)
             }
         }
-
-        val classIsInaccessible: MutableMap<BasicClassInfo, Boolean> = HashMap(classesInfo.size)
-        val classIdToClassInfo: Map<ClassId, BasicClassInfo> = classesInfo.associateBy { it.classId }
-
-        fun BasicClassInfo.isTransitivelyInaccessible(): Boolean {
-            classIsInaccessible[this]?.let { return it }
-
-            val inaccessible = if (isInaccessible()) {
-                true
-            } else classId.outerClassId?.let { outerClassId ->
-                classIdToClassInfo[outerClassId]?.isTransitivelyInaccessible()
-                // If we can't find the outer class from the given list of classes (which could happen with faulty jars), we assume that
-                // the class is accessible (see this method's kdoc).
-                    ?: false
-            } ?: false
-
-            return inaccessible.also {
-                classIsInaccessible[this] = inaccessible
-            }
-        }
-
-        return classesInfo.filterTo(mutableSetOf()) { it.isTransitivelyInaccessible() }
     }
 }
 
-/** Utility to read the contents of a directory or jar. */
-private object DirectoryOrJarContentsReader {
+private class DirectoryReader(private val directory: File) : DirectoryOrJarReader {
 
-    /**
-     * Returns a map from Unix-style relative paths of entries to their contents. The paths are relative to the given container (directory
-     * or jar).
-     *
-     * The map entries need to satisfy the given filter.
-     *
-     * The map entries are sorted based on their Unix-style relative paths (to ensure deterministic results across filesystems).
-     *
-     * Note: If a jar has duplicate entries after filtering, only the first one is retained.
-     */
-    fun read(
-        directoryOrJar: File,
-        entryFilter: ((unixStyleRelativePath: String, isDirectory: Boolean) -> Boolean)? = null
-    ): LinkedHashMap<String, ByteArray> {
-        return if (directoryOrJar.isDirectory) {
-            readDirectory(directoryOrJar, entryFilter)
-        } else {
-            check(directoryOrJar.isFile && directoryOrJar.path.endsWith(".jar", ignoreCase = true))
-            readJar(directoryOrJar, entryFilter)
+    override fun getUnixStyleRelativePaths(filter: (unixStyleRelativePath: String, isDirectory: Boolean) -> Boolean): List<String> {
+        return directory.walk()
+            .filter { filter.invoke(it.relativeTo(directory).invariantSeparatorsPath, it.isDirectory) }
+            .map { it.relativeTo(directory).invariantSeparatorsPath }
+            .sorted()
+            .toList()
+    }
+
+    override fun readBytes(unixStyleRelativePath: String): ByteArray {
+        return directory.resolve(unixStyleRelativePath).readBytes()
+    }
+
+    override fun close() {
+        // Do nothing
+    }
+}
+
+private class JarReader(jar: File) : DirectoryOrJarReader {
+
+    // Use `java.util.zip.ZipFile` API to read jars (it matches what the compiler is using).
+    // Note: Using `java.util.zip.ZipInputStream` API is slightly faster, but (1) it may fail on certain jars (e.g., KT-57767), and (2) it
+    // doesn't support non-sequential access of the entries, so we would have to load and index all entries in memory to provide
+    // non-sequential access, thereby increasing memory usage (KT-57757).
+    // Another option is to use `java.nio.file.FileSystem` API, but it seems to be slower than the other two.
+    private val zipFile = ZipFile(jar)
+
+    override fun getUnixStyleRelativePaths(filter: (unixStyleRelativePath: String, isDirectory: Boolean) -> Boolean): List<String> {
+        return zipFile.entries()
+            .asSequence()
+            .filter { filter.invoke(it.name, it.isDirectory) }
+            .mapTo(sortedSetOf()) { it.name } // Map to `Set` to de-duplicate entries
+            .toList()
+    }
+
+    override fun readBytes(unixStyleRelativePath: String): ByteArray {
+        return zipFile.getInputStream(zipFile.getEntry(unixStyleRelativePath)).use {
+            it.readBytes()
         }
     }
 
-    private fun readDirectory(
-        directory: File,
-        entryFilter: ((unixStyleRelativePath: String, isDirectory: Boolean) -> Boolean)? = null
-    ): LinkedHashMap<String, ByteArray> {
-        val relativePathsToContents = mutableMapOf<String, ByteArray>()
-        directory.walk().forEach { file ->
-            val unixStyleRelativePath = file.relativeTo(directory).invariantSeparatorsPath
-            if (entryFilter == null || entryFilter(unixStyleRelativePath, file.isDirectory)) {
-                relativePathsToContents[unixStyleRelativePath] = file.readBytes()
-            }
-        }
-        return relativePathsToContents.toSortedMap().toMap(LinkedHashMap())
-    }
-
-    private fun readJar(
-        jarFile: File,
-        entryFilter: ((unixStyleRelativePath: String, isDirectory: Boolean) -> Boolean)? = null
-    ): LinkedHashMap<String, ByteArray> {
-        val relativePathsToContents = mutableMapOf<String, ByteArray>()
-        ZipInputStream(jarFile.inputStream().buffered()).use { zipInputStream ->
-            while (true) {
-                val entry = zipInputStream.nextEntry ?: break
-                val unixStyleRelativePath = entry.name
-                if (entryFilter == null || entryFilter(unixStyleRelativePath, entry.isDirectory)) {
-                    relativePathsToContents.getOrPut(unixStyleRelativePath) { zipInputStream.readBytes() }
-                }
-            }
-        }
-        return relativePathsToContents.toSortedMap().toMap(LinkedHashMap())
+    override fun close() {
+        zipFile.close()
     }
 }
 
 internal fun ByteArray.hashToLong(): Long {
-    // Note: md5 is 128-bit while Long is 64-bit.
-    // Use md5 for now until we find a better 64-bit hash function.
+    // Note: The returned type `Long` is 64-bit, but we currently don't have a good 64-bit hash function.
+    // The method below uses `md5` which is 128-bit and converts it to `Long`.
     return md5()
 }
