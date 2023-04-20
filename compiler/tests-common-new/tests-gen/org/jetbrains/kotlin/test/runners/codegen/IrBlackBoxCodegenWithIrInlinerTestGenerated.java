@@ -3735,12 +3735,6 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
             }
 
             @Test
-            @TestMetadata("implicitIntegerCoercionNamedArg.kt")
-            public void testImplicitIntegerCoercionNamedArg() throws Exception {
-                runTest("compiler/testData/codegen/box/callableReference/bound/implicitIntegerCoercionNamedArg.kt");
-            }
-
-            @Test
             @TestMetadata("javaField.kt")
             public void testJavaField() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/bound/javaField.kt");
@@ -51901,6 +51895,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
         @TestMetadata("forInUnsignedUntil.kt")
         public void testForInUnsignedUntil() throws Exception {
             runTest("compiler/testData/codegen/box/unsignedTypes/forInUnsignedUntil.kt");
+        }
+
+        @Test
+        @TestMetadata("implicitIntegerCoercionNamedArg.kt")
+        public void testImplicitIntegerCoercionNamedArg() throws Exception {
+            runTest("compiler/testData/codegen/box/unsignedTypes/implicitIntegerCoercionNamedArg.kt");
         }
 
         @Test

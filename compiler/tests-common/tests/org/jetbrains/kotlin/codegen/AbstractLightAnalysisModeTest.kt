@@ -42,7 +42,8 @@ abstract class AbstractLightAnalysisModeTest : CodegenTestCase() {
     override fun doMultiFileTest(wholeFile: File, files: List<TestFile>) {
         var isIgnored = false
         for (file in files) {
-            if (file.content.contains(failDirective)) throw RuntimeException("Forced ignore for this test")
+            if (file.content.contains(failDirective))
+                throw RuntimeException("Forced ignore for this test")
             if (!isIgnored && ignoreDirectives.any { file.content.contains(it) }) isIgnored = true
         }
         if (isIgnored) return
