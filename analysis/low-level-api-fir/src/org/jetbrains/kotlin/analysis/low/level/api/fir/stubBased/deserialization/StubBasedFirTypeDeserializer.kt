@@ -121,7 +121,7 @@ class StubBasedFirTypeDeserializer(
         return type(typeReference, annotations.computeTypeAttributes(moduleData.session, shouldExpandTypeAliases = false))
     }
 
-    fun type(type: KotlinFlexibleAwareTypeBean): ConeSimpleKotlinType? {
+    fun type(type: KotlinTypeBean): ConeKotlinType? {
         when (type) {
             is KotlinTypeParameterTypeBean -> {
                 val lookupTag =
@@ -142,11 +142,7 @@ class StubBasedFirTypeDeserializer(
                     }
                     val argBean = typeArgumentBean.type!!
                     val lowerBound = type(argBean) ?: error("Broken type argument ${typeArgumentBean.type}")
-                    val upperBound = argBean.upperBound
-                    val argType = if (upperBound != null) {
-                        ConeFlexibleType(lowerBound, type(upperBound) ?: error("Broken upper bound $upperBound"))
-                    } else lowerBound
-                    typeArgument(argType, kind)
+                    typeArgument(lowerBound, kind)
                 }
                 return ConeClassLikeTypeImpl(
                     type.classId.toLookupTag(),
@@ -155,7 +151,14 @@ class StubBasedFirTypeDeserializer(
                     ConeAttributes.Empty
                 )
             }
-            else -> TODO("Make sealed class")
+            is KotlinFlexibleTypeBean -> {
+                val lowerBound = type(type.lowerBound)
+                val upperBound = type(type.upperBound)
+                return ConeFlexibleType(
+                    lowerBound as? ConeSimpleKotlinType ?: error("Unexpected lower bound $lowerBound"),
+                    upperBound as? ConeSimpleKotlinType ?: error("Unexpected upper bound $upperBound")
+                )
+            }
         }
     }
 
@@ -171,7 +174,7 @@ class StubBasedFirTypeDeserializer(
             return if (isDynamic) {
                 ConeDynamicType.create(moduleData.session)
             } else {
-                ConeFlexibleType(lowerBound!!, upperBound!!)
+                ConeFlexibleType(lowerBound!!, upperBound as ConeSimpleKotlinType)
             }
         }
 
