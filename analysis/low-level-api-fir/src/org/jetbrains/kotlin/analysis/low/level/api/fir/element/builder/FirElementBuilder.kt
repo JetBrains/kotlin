@@ -101,8 +101,14 @@ private fun KtDeclaration.isPartOf(callableDeclaration: KtCallableDeclaration): 
         val ownerFunction = ownerFunction
         ownerFunction == callableDeclaration || ownerFunction?.isPartOf(callableDeclaration) == true
     }
+    is KtTypeParameter -> containingDeclaration == callableDeclaration
     else -> false
 }
+
+internal val KtTypeParameter.containingDeclaration: KtDeclaration?
+    get() = (parent as? KtTypeParameterList)?.parent as? KtDeclaration
+
+internal val KtDeclaration.canBePartOfParentDeclaration: Boolean get() = this is KtPropertyAccessor || this is KtParameter || this is KtTypeParameter
 
 internal fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate: (KtDeclaration) -> Boolean = { true }): KtDeclaration? {
     var candidate: KtDeclaration? = null
@@ -136,12 +142,13 @@ internal fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate: (KtDec
                         propose(parent)
                     }
                 }
-                is KtParameter -> {
-                    if (predicate(parent)) {
-                        propose(parent)
+                is KtDeclaration -> {
+                    if (parent.canBePartOfParentDeclaration) {
+                        if (predicate(parent)) {
+                            propose(parent)
+                        }
                     }
-                }
-                is KtNamedDeclaration -> {
+
                     val isKindApplicable = when (parent) {
                         is KtClassOrObject -> !parent.isObjectLiteral()
                         is KtDeclarationWithBody, is KtProperty, is KtTypeAlias -> true
@@ -149,11 +156,6 @@ internal fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate: (KtDec
                     }
 
                     if (isKindApplicable && declarationCanBeLazilyResolved(parent) && predicate(parent)) {
-                        propose(parent)
-                    }
-                }
-                is KtPropertyAccessor -> {
-                    if (predicate(parent)) {
                         propose(parent)
                     }
                 }

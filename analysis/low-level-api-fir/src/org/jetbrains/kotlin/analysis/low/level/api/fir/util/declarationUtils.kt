@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
+import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.containingDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirFileBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirProvider
@@ -136,6 +137,19 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
 
             firFunctionDeclaration.valueParameters[parameterIndex()]
         }
+        this is KtTypeParameter -> {
+            val declaration = containingDeclaration
+                ?: errorWithFirSpecificEntries("Containing declaration should be not null for KtTypeParameter", psi = this)
+
+            val firTypeParameterOwner = declaration.findSourceNonLocalFirDeclarationByProvider(
+                firFileBuilder,
+                provider,
+                containerFirFile,
+            ) as FirTypeParameterRefsOwner
+
+            val index = (parent as KtTypeParameterList).parameters.indexOf(this)
+            firTypeParameterOwner.typeParameters[index] as FirDeclaration
+        }
         else -> errorWithFirSpecificEntries("Invalid container", psi = this)
     }
     return candidate?.takeIf { it.realPsi == this }
@@ -159,14 +173,12 @@ var KtFile.originalKtFile by UserDataProperty(ORIGINAL_KT_FILE_KEY)
 
 
 private fun KtClassLikeDeclaration.findFir(provider: FirProvider): FirClassLikeDeclaration? {
-    val declaration = if (provider is LLFirProvider) {
+    return if (provider is LLFirProvider) {
         provider.getFirClassifierByDeclaration(this)
     } else {
         val classId = getClassId() ?: return null
         provider.getFirClassifierByFqName(classId)
     }
-
-    return declaration as? FirRegularClass
 }
 
 

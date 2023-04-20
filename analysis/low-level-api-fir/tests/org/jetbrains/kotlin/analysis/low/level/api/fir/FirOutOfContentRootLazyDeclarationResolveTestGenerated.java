@@ -204,6 +204,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
         runTest("analysis/low-level-api-fir/testdata/lazyResolve/typeParameterOfTopSetter.kt");
     }
 
+    @Test
+    @TestMetadata("typeParameterOfTypeAlias.kt")
+    public void testTypeParameterOfTypeAlias() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/typeParameterOfTypeAlias.kt");
+    }
+
     @Nested
     @TestMetadata("analysis/low-level-api-fir/testdata/lazyResolve/classes")
     @TestDataPath("$PROJECT_ROOT")

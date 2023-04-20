@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecific
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceByTraversingWholeTree
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.findSourceNonLocalFirDeclaration
 import org.jetbrains.kotlin.analysis.utils.printer.getElementTextInContext
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.fir.declarations.FirDanglingModifierList
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -23,9 +22,9 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import java.util.concurrent.ConcurrentHashMap
+import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.canBePartOfParentDeclaration
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 
@@ -66,14 +65,14 @@ internal class FileStructure private constructor(
     }
 
     private fun getStructureKtElement(element: KtElement): KtDeclaration? {
-        val container = element.getNonLocalContainingOrThisDeclaration()
+        val container = element.getNonLocalContainingOrThisDeclaration {
+            !it.canBePartOfParentDeclaration
+        }
+
         val resultedContainer = when {
             container is KtClassOrObject && container.isInsideSuperClassCall(element) -> {
                 container.primaryConstructor
             }
-
-            container is KtPropertyAccessor -> container.property
-            container is KtParameter -> container.ownerFunction
             else -> null
         }
 

@@ -1,0 +1,153 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] typeParameterOfTypeAlias.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] class X<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(RAW_FIR)] T>(): R|X<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public? final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TypeParam> = X<TypeParam>
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] class X<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(RAW_FIR)] T>(): R|X<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public? final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TypeParam> = X<TypeParam>
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] class X<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(RAW_FIR)] T>(): R|X<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public? final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] typealias Alias<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] TypeParam> = X<TypeParam>
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] class X<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(RAW_FIR)] T>(): R|X<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public? final [ResolvedTo(COMPANION_GENERATION)] typealias Alias<[ResolvedTo(COMPANION_GENERATION)] TypeParam> = X<TypeParam>
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(SUPER_TYPES)] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|X<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public? final [ResolvedTo(SUPER_TYPES)] typealias Alias<[ResolvedTo(SUPER_TYPES)] TypeParam> = R|X<TypeParam>|
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(SUPER_TYPES)] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|X<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public? final [ResolvedTo(TYPES)] typealias Alias<[ResolvedTo(TYPES)] TypeParam> = R|X<TypeParam>|
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(SUPER_TYPES)] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|X<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(STATUS)] typealias Alias<[ResolvedTo(STATUS)] TypeParam> = R|X<TypeParam>|
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(SUPER_TYPES)] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|X<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] typealias Alias<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] TypeParam> = R|X<TypeParam>|
+
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(SUPER_TYPES)] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|X<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] typealias Alias<[ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] TypeParam> = R|X<TypeParam>|
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(SUPER_TYPES)] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|X<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(CONTRACTS)] typealias Alias<[ResolvedTo(CONTRACTS)] TypeParam> = R|X<TypeParam>|
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(SUPER_TYPES)] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|X<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] typealias Alias<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] TypeParam> = R|X<TypeParam>|
+
+ANNOTATIONS_ARGUMENTS_MAPPING:
+FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(SUPER_TYPES)] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|X<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] typealias Alias<[ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] TypeParam> = R|X<TypeParam>|
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(SUPER_TYPES)] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|X<T>| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] typealias Alias<[ResolvedTo(BODY_RESOLVE)] TypeParam> = R|X<TypeParam>|
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAlias.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public final [ResolvedTo(BODY_RESOLVE)] class X<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] constructor<[ResolvedTo(BODY_RESOLVE)] T>(): R|X<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] typealias Alias<[ResolvedTo(BODY_RESOLVE)] TypeParam> = R|X<TypeParam>|
