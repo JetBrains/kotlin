@@ -297,4 +297,19 @@ object KotlinToolingDiagnostics {
             severity
         )
     }
+
+    object JsEnvironmentNotChosenExplicitly : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(availableEnvironments: List<String>) = build(
+            """
+                |Please choose a JavaScript environment to build distributions and run tests.
+                |Not choosing any of them will be an error in the future releases.
+                |kotlin {
+                |    js {
+                |        // To build distributions for and run tests on browser or Node.js use one or both of:
+                |        ${availableEnvironments.joinToString(separator = "\n")}
+                |    }
+                |}
+            """.trimMargin()
+        )
+    }
 }

@@ -57,21 +57,6 @@ open class KotlinJsTargetPreset(
             this.isMpp = this@KotlinJsTargetPreset.isMpp
 
             project.runProjectConfigurationHealthCheckWhenEvaluated {
-                if (!isBrowserConfigured && !isNodejsConfigured) {
-                    project.logger.warn(
-                        """
-                            Please choose a JavaScript environment to build distributions and run tests.
-                            Not choosing any of them will be an error in the future releases.
-                            kotlin {
-                                js {
-                                    // To build distributions for and run tests on browser or Node.js use one or both of:
-                                    browser()
-                                    nodejs()
-                                }
-                            }
-                        """.trimIndent()
-                    )
-                }
                 val buildStatsService = KotlinBuildStatsService.getInstance()
                 when {
                     isBrowserConfigured && isNodejsConfigured -> buildStatsService?.report(StringMetrics.JS_TARGET_MODE, "both")
