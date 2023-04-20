@@ -97,6 +97,18 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("primaryConstructorParameter.kt")
+    public void testPrimaryConstructorParameter() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/primaryConstructorParameter.kt");
+    }
+
+    @Test
+    @TestMetadata("primaryConstructorProperty.kt")
+    public void testPrimaryConstructorProperty() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/primaryConstructorProperty.kt");
+    }
+
+    @Test
     @TestMetadata("propertyWithGetter.kt")
     public void testPropertyWithGetter() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/lazyResolve/propertyWithGetter.kt");
@@ -118,6 +130,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     @TestMetadata("secondaryConstructor.kt")
     public void testSecondaryConstructor() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/lazyResolve/secondaryConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("secondaryConstructorParameter.kt")
+    public void testSecondaryConstructorParameter() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/secondaryConstructorParameter.kt");
     }
 
     @Test
@@ -240,6 +258,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
         }
 
         @Test
+        @TestMetadata("functionParameter.kt")
+        public void testFunctionParameter() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/functions/functionParameter.kt");
+        }
+
+        @Test
         @TestMetadata("functionWithGenericExpectedTypeInside.kt")
         public void testFunctionWithGenericExpectedTypeInside() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/lazyResolve/functions/functionWithGenericExpectedTypeInside.kt");
@@ -259,6 +283,30 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
         @Test
         public void testAllFilesPresentInProperties() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/lazyResolve/properties"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("propertyGetterWithExplicitType.kt")
+        public void testPropertyGetterWithExplicitType() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/properties/propertyGetterWithExplicitType.kt");
+        }
+
+        @Test
+        @TestMetadata("propertyGetterWithExplicitTypeAndBody.kt")
+        public void testPropertyGetterWithExplicitTypeAndBody() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/properties/propertyGetterWithExplicitTypeAndBody.kt");
+        }
+
+        @Test
+        @TestMetadata("propertyGetterWithImplicitType.kt")
+        public void testPropertyGetterWithImplicitType() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/properties/propertyGetterWithImplicitType.kt");
+        }
+
+        @Test
+        @TestMetadata("propertySetter.kt")
+        public void testPropertySetter() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/properties/propertySetter.kt");
         }
 
         @Test

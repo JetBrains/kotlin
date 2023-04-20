@@ -8,6 +8,6 @@ fun interface Foo {
 
 fun testMe(f: Foo) {}
 
-fun resolveMe() {
+fun resolve<caret>Me() {
     testMe { b -> b }
 }

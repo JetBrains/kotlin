@@ -1,4 +1,4 @@
 import java.lang.annotation.ElementType
 
 @java.lang.annotation.Target(ElementType.TYPE_USE)
-annotation class ResolveMe
+annotation class Reso<caret>lveMe

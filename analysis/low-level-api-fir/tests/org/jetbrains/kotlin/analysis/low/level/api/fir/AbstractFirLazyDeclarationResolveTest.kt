@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
+import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -36,27 +38,6 @@ import org.junit.jupiter.api.parallel.ExecutionMode
  */
 @Execution(ExecutionMode.SAME_THREAD)
 abstract class AbstractFirLazyDeclarationResolveTest : AbstractLowLevelApiSingleFileTest() {
-
-    private fun FirFile.findResolveMe(): FirDeclaration {
-        val visitor = object : FirVisitorVoid() {
-            var result: FirDeclaration? = null
-            override fun visitElement(element: FirElement) {
-                if (result != null) return
-                if (element is FirDeclaration) {
-                    val declaration = element.realPsi as? KtDeclaration
-                    if (declaration != null && declaration.name?.decapitalizeAsciiOnly() == "resolveMe") {
-                        result = element
-                        return
-                    }
-                }
-                element.acceptChildren(this)
-            }
-
-        }
-        accept(visitor)
-        return visitor.result ?: error("declaration with name `resolveMe` was not found")
-    }
-
     override fun doTestByFileStructure(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices) {
         val resultBuilder = StringBuilder()
         val renderer = FirRenderer(
@@ -69,14 +50,19 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractLowLevelApiSingle
 
         resolveWithClearCaches(ktFile) { firResolveSession ->
             check(firResolveSession.isSourceSession)
-            val declarationToResolve = firResolveSession
-                .getOrBuildFirFile(ktFile)
-                .findResolveMe()
+            val ktDeclaration = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtDeclaration>(ktFile)
+            val declarationToResolve = ktDeclaration.resolveToFirSymbol(firResolveSession)
+
             for (currentPhase in FirResolvePhase.values()) {
                 if (currentPhase == FirResolvePhase.SEALED_CLASS_INHERITORS) continue
                 declarationToResolve.lazyResolveToPhase(currentPhase)
+
                 val firFile = firResolveSession.getOrBuildFirFile(ktFile)
-                resultBuilder.append("\n${currentPhase.name}:\n")
+                if (resultBuilder.isNotEmpty()) {
+                    resultBuilder.appendLine()
+                }
+
+                resultBuilder.append("${currentPhase.name}:\n")
                 renderer.renderElementAsString(firFile)
             }
         }

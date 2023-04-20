@@ -2,7 +2,7 @@
 interface OV {
     val originalExpressions: A
 
-    class ResolveMe: OV {
+    class Resolve<caret>Me: OV {
         override val originalExpressions: A
     }
 

@@ -4,6 +4,6 @@ fun bar(): Foo<String>? {
     return null
 }
 
-fun resolveMe() {
+fun resolve<caret>Me() {
     val x = bar()
 }

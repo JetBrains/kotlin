@@ -1,5 +1,5 @@
 class A {
-    fun resolveMe() {
+    fun resolve<caret>Me() {
         receive(functionWithLazyBody())
     }
 

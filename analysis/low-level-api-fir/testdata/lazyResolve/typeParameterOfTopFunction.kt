@@ -1,1 +1,1 @@
-fun ddd<resolveMe>() {}
+fun ddd<resolve<caret>Me>() {}

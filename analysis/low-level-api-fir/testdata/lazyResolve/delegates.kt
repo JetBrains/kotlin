@@ -3,7 +3,7 @@
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
-fun resolveMe() {
+fun resolve<caret>Me() {
     receive(valueWithExplicitType)
     receive(valueWithImplicitType)
 

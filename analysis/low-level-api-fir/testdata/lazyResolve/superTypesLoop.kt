@@ -1,4 +1,4 @@
-open class resolveMe : C()
+open class resolve<caret>Me : C()
 
 open class A : B()
 

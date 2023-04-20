@@ -1,2 +1,2 @@
 var x: Int = 2
-    set(resolveMe) = Unit
+    set(resolve<caret>Me) = Unit

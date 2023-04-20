@@ -1,4 +1,4 @@
-fun resolveMe(foo: Foo) {
+fun resolve<caret>Me(foo: Foo) {
     foo.util()
 }
 

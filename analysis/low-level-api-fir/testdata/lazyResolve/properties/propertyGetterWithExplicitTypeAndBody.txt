@@ -1,0 +1,93 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] propertyGetterWithExplicitTypeAndBody.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] val prop: Int
+        public? [ResolvedTo(RAW_FIR)] get(): Int { LAZY_BLOCK }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] propertyGetterWithExplicitTypeAndBody.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] val prop: Int
+        public? [ResolvedTo(RAW_FIR)] get(): Int { LAZY_BLOCK }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] propertyGetterWithExplicitTypeAndBody.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val prop: Int
+        public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): Int { LAZY_BLOCK }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] propertyGetterWithExplicitTypeAndBody.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(COMPANION_GENERATION)] val prop: Int
+        public? [ResolvedTo(COMPANION_GENERATION)] get(): Int { LAZY_BLOCK }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] propertyGetterWithExplicitTypeAndBody.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(SUPER_TYPES)] val prop: Int
+        public? [ResolvedTo(SUPER_TYPES)] get(): Int { LAZY_BLOCK }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] propertyGetterWithExplicitTypeAndBody.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(TYPES)] val prop: R|kotlin/Int|
+        public? [ResolvedTo(TYPES)] get(): R|kotlin/Int| { LAZY_BLOCK }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] propertyGetterWithExplicitTypeAndBody.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(STATUS)] val prop: R|kotlin/Int|
+        public [ResolvedTo(STATUS)] get(): R|kotlin/Int| { LAZY_BLOCK }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] propertyGetterWithExplicitTypeAndBody.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val prop: R|kotlin/Int|
+        public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): R|kotlin/Int| { LAZY_BLOCK }
+
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] propertyGetterWithExplicitTypeAndBody.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] val prop: R|kotlin/Int|
+        public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] get(): R|kotlin/Int| { LAZY_BLOCK }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] propertyGetterWithExplicitTypeAndBody.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(CONTRACTS)] val prop: R|kotlin/Int|
+        public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int| {
+            ^ IntegerLiteral(42)
+        }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] propertyGetterWithExplicitTypeAndBody.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/Int|
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int| {
+            ^ IntegerLiteral(42)
+        }
+
+ANNOTATIONS_ARGUMENTS_MAPPING:
+FILE: [ResolvedTo(IMPORTS)] propertyGetterWithExplicitTypeAndBody.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val prop: R|kotlin/Int|
+        public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] get(): R|kotlin/Int| {
+            ^ IntegerLiteral(42)
+        }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] propertyGetterWithExplicitTypeAndBody.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/Int|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+            ^ Int(42)
+        }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(IMPORTS)] propertyGetterWithExplicitTypeAndBody.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public final [ResolvedTo(BODY_RESOLVE)] val prop: R|kotlin/Int|
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
+            ^ Int(42)
+        }

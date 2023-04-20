@@ -2,5 +2,5 @@
 
 @JvmInline
 value class Value(val value: Int) {
-    fun resolveMe() {}
+    fun resolve<caret>Me() {}
 }

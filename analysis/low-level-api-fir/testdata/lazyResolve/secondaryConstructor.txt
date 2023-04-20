@@ -1,4 +1,3 @@
-
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] secondaryConstructor.kt
     [ResolvedTo(RAW_FIR)] annotations container
