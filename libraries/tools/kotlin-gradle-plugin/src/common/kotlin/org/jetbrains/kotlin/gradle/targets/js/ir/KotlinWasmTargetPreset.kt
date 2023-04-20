@@ -27,24 +27,6 @@ class KotlinWasmTargetPreset(
         val irTarget = project.objects.newInstance(KotlinJsIrTarget::class.java, project, KotlinPlatformType.wasm, false)
         irTarget.isMpp = true
 
-        project.runProjectConfigurationHealthCheckWhenEvaluated {
-            if (!irTarget.isBrowserConfigured && !irTarget.isNodejsConfigured && !irTarget.isD8Configured) {
-                project.logger.warn(
-                    """
-                    Please choose a JavaScript environment to run tests.
-                    kotlin {
-                        wasm {
-                            // To build distributions for and run tests on browser, Node.js or d8 use one:
-                            browser()
-                            nodejs()
-                            d8()
-                        }
-                    }
-                """.trimIndent()
-                )
-            }
-        }
-
         return irTarget
     }
 
