@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.Stand
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.ClsJavaStubByVirtualFileCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.FirSealedClassInheritorsProcessorFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirBuiltinsSessionFactory
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionConfigurator
 import org.jetbrains.kotlin.analysis.project.structure.KtModuleScopeProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModuleScopeProviderImpl
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
@@ -40,6 +41,7 @@ import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.compiler.setupIdeaStandaloneExecution
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProvider
 import org.jetbrains.kotlin.fir.declarations.SealedClassInheritorsProviderImpl
 import org.jetbrains.kotlin.idea.references.KotlinFirReferenceContributor
@@ -107,6 +109,14 @@ public class StandaloneAnalysisAPISessionBuilder(
         kotlinCoreProjectEnvironment.environment.application.apply {
             registerService(serviceImplementation)
         }
+    }
+
+    private fun registerProjectExtensionPoints() {
+        LLFirSessionConfigurator.registerExtensionPoint(project)
+    }
+
+    public fun <T : Any> registerProjectExtensionPoint(extensionDescriptor: ProjectExtensionDescriptor<T>) {
+        extensionDescriptor.registerExtensionPoint(project)
     }
 
     @OptIn(KtAnalysisApiInternals::class)
@@ -203,6 +213,7 @@ public class StandaloneAnalysisAPISessionBuilder(
             modules,
             allSourceFiles,
         )
+        registerProjectExtensionPoints()
 
         val project = kotlinCoreProjectEnvironment.project
         val ktFiles = allSourceFiles.filterIsInstance<KtFile>()
