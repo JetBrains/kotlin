@@ -192,7 +192,6 @@ val generateTypeScriptJsExportOnFileTests = sequential(
                     !it.path.endsWith(exportFileDirPostfix)
         }
         .map { generateJsExportOnFileTestFor(it.name) }
-        .plus(generateTypeScriptTests)
 )
 
 fun Test.setupNodeJs() {
