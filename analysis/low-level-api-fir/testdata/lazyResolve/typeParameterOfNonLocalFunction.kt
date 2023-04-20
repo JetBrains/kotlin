@@ -1,3 +1,3 @@
 class X {
-    fun ddd<resolve<caret>Me>() {}
+    fun <resolve<caret>Me> ddd() {}
 }

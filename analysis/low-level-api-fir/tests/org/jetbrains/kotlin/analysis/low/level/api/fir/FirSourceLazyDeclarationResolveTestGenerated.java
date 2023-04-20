@@ -97,6 +97,12 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     }
 
     @Test
+    @TestMetadata("parameterOfTopSetter.kt")
+    public void testParameterOfTopSetter() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/parameterOfTopSetter.kt");
+    }
+
+    @Test
     @TestMetadata("primaryConstructorParameter.kt")
     public void testPrimaryConstructorParameter() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/lazyResolve/primaryConstructorParameter.kt");
@@ -172,6 +178,12 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     @TestMetadata("typeParameterBounds.kt")
     public void testTypeParameterBounds() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/lazyResolve/typeParameterBounds.kt");
+    }
+
+    @Test
+    @TestMetadata("typeParameterOfClass.kt")
+    public void testTypeParameterOfClass() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/typeParameterOfClass.kt");
     }
 
     @Test
