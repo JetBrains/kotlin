@@ -70,9 +70,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     fun testMppWithMavenPublish(gradleVersion: GradleVersion) {
         project("new-mpp-lib-and-app/sample-lib", gradleVersion) {
             val publishedTargets = listOf("kotlinMultiplatform", "jvm6", "nodeJs", "linux64", "mingw64", "mingw86")
-
             testConfigurationCacheOf(
-                ":buildKotlinToolingMetadata", // Remove it when KT-49933 is fixed and `kotlinMultiplatform` publication works
                 *(publishedTargets.map { ":publish${it.replaceFirstChar { it.uppercaseChar() }}PublicationToMavenRepository" }.toTypedArray()),
                 checkUpToDateOnRebuild = false
             )
@@ -130,14 +128,13 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @GradleTest
     fun testCommonizer(gradleVersion: GradleVersion) {
         project("native-configuration-cache", gradleVersion) {
+            // results of :commonizeNativeDistribution is not cleanable so just check if it works with configuration cache on first run
             build(
-                ":lib:commonizeCInterop",
                 ":commonizeNativeDistribution",
             ) {
-                // Reduce the problem numbers when a Task become compatible with GCC.
-                // When all tasks support GCC, replace these assertions with `testConfigurationCacheOf`
                 assertOutputContains("0 problems were found storing the configuration cache.")
             }
+            testConfigurationCacheOf(":lib:commonizeCInterop")
         }
     }
 
