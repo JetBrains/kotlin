@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
 import org.jetbrains.kotlin.fir.declarations.FirErrorImport
+import org.jetbrains.kotlin.fir.declarations.FirErrorProperty
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.diagnostics.ConeAmbiguousSuper
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
@@ -107,6 +108,11 @@ class ErrorNodeDiagnosticCollectorComponent(
     override fun visitErrorFunction(errorFunction: FirErrorFunction, data: CheckerContext) {
         val source = errorFunction.source ?: return
         reportFirDiagnostic(errorFunction.diagnostic, source, data)
+    }
+
+    override fun visitErrorProperty(errorProperty: FirErrorProperty, data: CheckerContext) {
+        val source = errorProperty.source ?: return
+        reportFirDiagnostic(errorProperty.diagnostic, source, data)
     }
 
     override fun visitErrorResolvedQualifier(errorResolvedQualifier: FirErrorResolvedQualifier, data: CheckerContext) {
