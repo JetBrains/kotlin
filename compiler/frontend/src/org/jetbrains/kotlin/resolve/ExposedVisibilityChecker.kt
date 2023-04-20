@@ -144,7 +144,7 @@ class ExposedVisibilityChecker(
                 }
             }
         }
-        return result and checkMemberReceiver(function.receiverTypeReference, functionDescriptor)
+        return result and checkMemberReceiver(function.receiverTypeReference, functionDescriptor, visibility)
     }
 
     fun checkProperty(
@@ -160,13 +160,17 @@ class ExposedVisibilityChecker(
             reportExposure(EXPOSED_PROPERTY_TYPE, property.nameIdentifier ?: property, propertyVisibility, restricting)
             result = false
         }
-        return result and checkMemberReceiver(property.receiverTypeReference, propertyDescriptor)
+        return result and checkMemberReceiver(property.receiverTypeReference, propertyDescriptor, visibility)
     }
 
-    private fun checkMemberReceiver(typeReference: KtTypeReference?, memberDescriptor: CallableMemberDescriptor): Boolean {
+    private fun checkMemberReceiver(
+        typeReference: KtTypeReference?,
+        memberDescriptor: CallableMemberDescriptor,
+        visibility: DescriptorVisibility,
+    ): Boolean {
         if (typeReference == null) return true
         val receiverParameterDescriptor = memberDescriptor.extensionReceiverParameter ?: return true
-        val memberVisibility = memberDescriptor.effectiveVisibility()
+        val memberVisibility = memberDescriptor.effectiveVisibility(visibility)
         val restricting = receiverParameterDescriptor.type.leastPermissiveDescriptor(memberVisibility)
         if (restricting != null) {
             reportExposure(EXPOSED_RECEIVER_TYPE, typeReference, memberVisibility, restricting)
