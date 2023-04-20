@@ -2253,6 +2253,18 @@ public class FirLightTreeBytecodeTextTestGenerated extends AbstractFirLightTreeB
         public void testKt18731_2() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/enum/kt18731_2.kt");
         }
+
+        @Test
+        @TestMetadata("kt57671_1.kt")
+        public void testKt57671_1() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/enum/kt57671_1.kt");
+        }
+
+        @Test
+        @TestMetadata("kt57671_2.kt")
+        public void testKt57671_2() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/enum/kt57671_2.kt");
+        }
     }
 
     @Nested
