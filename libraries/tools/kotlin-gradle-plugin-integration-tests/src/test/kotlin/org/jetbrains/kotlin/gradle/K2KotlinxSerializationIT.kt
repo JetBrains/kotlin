@@ -69,4 +69,12 @@ class K2KotlinxSerializationIT : KGPBaseTest() {
             build(":compileTestKotlinJs")
         }
     }
+
+    @DisplayName("Compile MPP project to JS kotlinx.serialization and K2")
+    @GradleTest
+    fun `test kotlinx serialization mpp to JS`(gradleVersion: GradleVersion) {
+        project("kotlinxSerializationMppK2", gradleVersion) {
+            build(":compileKotlinJs")
+        }
+    }
 }
