@@ -2181,6 +2181,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
                 runTest("compiler/testData/codegen/box/callableReference/bound/genericValOnLHS.kt");
             }
 
+            @TestMetadata("implicitIntegerCoercionNamedArg.kt")
+            public void testImplicitIntegerCoercionNamedArg() throws Exception {
+                runTest("compiler/testData/codegen/box/callableReference/bound/implicitIntegerCoercionNamedArg.kt");
+            }
+
             @TestMetadata("kCallableNameIntrinsic.kt")
             public void testKCallableNameIntrinsic() throws Exception {
                 runTest("compiler/testData/codegen/box/callableReference/bound/kCallableNameIntrinsic.kt");
