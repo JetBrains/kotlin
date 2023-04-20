@@ -32,9 +32,7 @@ dependencies {
 
     testCompileOnly(libs.kotlinCompiler)
     testRuntimeOnly(
-        project(
-           ":compose:compiler:compiler-hosted:integration-tests:kotlin-compiler-repackaged"
-        )
+        project(":compose:compiler:compiler-hosted:integration-tests:kotlin-compiler-repackaged")
     )
 
     // tools.jar required for com.sun.jdi
