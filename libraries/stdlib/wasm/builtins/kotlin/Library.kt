@@ -30,7 +30,7 @@ public operator fun String?.plus(other: Any?): String = (this ?: "null") + other
  */
 // TODO: Should T be reified?
 @Suppress("REIFIED_TYPE_PARAMETER_NO_INLINE")
-public fun <@PureReifiable reified T> arrayOfNulls(size: Int): Array<T?> = Array(size) { null }
+public fun <@PureReifiable reified T> arrayOfNulls(size: Int): Array<T?> = Array(size)
 
 /**
  * Returns an array containing the specified elements.
