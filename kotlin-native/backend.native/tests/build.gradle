@@ -4529,8 +4529,7 @@ interopTest("interop0") {
                (project.testTarget == 'linux_mips32') ||   //  st_uid of '/' is not equal to 0 when using qemu
                (project.testTarget == 'linux_mipsel32') ||
                (project.testTarget == 'linux_arm32_hfp') ||
-               (project.testTarget == 'linux_arm64') ||
-               isK2(project)   // KT-58099
+               (project.testTarget == 'linux_arm64')
     useGoldenData = true
     source = "interop/basics/0.kt"
     interop = 'sysstat'

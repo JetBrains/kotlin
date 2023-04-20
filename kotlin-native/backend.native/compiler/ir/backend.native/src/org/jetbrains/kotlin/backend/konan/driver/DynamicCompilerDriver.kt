@@ -104,7 +104,8 @@ internal class DynamicCompilerDriver : CompilerDriver() {
         require(frontendOutput is FirOutput.Full)
 
         val fir2IrOutput = engine.runFir2Ir(frontendOutput)
-        engine.runK2SpecialBackendChecks(fir2IrOutput)
+        // FIXME: KT-58099
+        // engine.runK2SpecialBackendChecks(fir2IrOutput)
         return engine.runFirSerializer(fir2IrOutput)
     }
 
