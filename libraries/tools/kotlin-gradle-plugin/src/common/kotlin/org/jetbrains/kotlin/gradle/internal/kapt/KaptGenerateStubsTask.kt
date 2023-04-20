@@ -25,7 +25,6 @@ import org.gradle.work.Incremental
 import org.gradle.work.NormalizeLineEndings
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsHelper
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
@@ -88,6 +87,9 @@ abstract class KaptGenerateStubsTask @Inject constructor(
     @get:Internal
     override val androidLayoutResources: FileCollection = objectFactory.fileCollection()
 
+    @get:Internal
+    abstract val kotlinCompileDestinationDirectory: DirectoryProperty
+
     override val incrementalProps: List<FileCollection>
         get() = listOf(
             sources,
@@ -97,18 +99,10 @@ abstract class KaptGenerateStubsTask @Inject constructor(
             classpathSnapshotProperties.classpathSnapshot
         )
 
-    @get:Internal
-    internal abstract val compileTaskCompilerOptions: Property<KotlinJvmCompilerOptions>
-
     override fun createCompilerArguments(context: CreateCompilerArgumentsContext) = context.create<K2JVMCompilerArguments> {
         primitive { args ->
             args.allowNoSourceFiles = true
-            KotlinJvmCompilerOptionsHelper.fillCompilerArguments(compileTaskCompilerOptions.get(), args)
 
-            // Workaround for freeCompiler args duplication when they were configured for both this task
-            // and linked KotlinCompile task with the same values. For now linked KotlinCompile task
-            // freeCompilerArgs is used as convention for this task freeCompilerArgs
-            args.freeArgs = emptyList()
             KotlinJvmCompilerOptionsHelper.fillCompilerArguments(compilerOptions, args)
 
             overrideArgsUsingTaskModuleNameWithWarning(args)

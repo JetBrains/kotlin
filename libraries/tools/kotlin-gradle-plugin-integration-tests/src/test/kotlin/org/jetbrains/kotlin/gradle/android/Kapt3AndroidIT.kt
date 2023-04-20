@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.appendText
-import kotlin.io.path.readText
 import kotlin.io.path.writeText
 
 @DisplayName("android with kapt3 tests")

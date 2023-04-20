@@ -9,6 +9,8 @@ import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
+import org.jetbrains.kotlin.gradle.internal.KAPT_GENERATE_STUBS_PREFIX
+import org.jetbrains.kotlin.gradle.internal.getKaptTaskName
 import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
@@ -52,16 +54,20 @@ internal fun addSourcesToKotlinCompileTask(
 
         // The `commonSourceSet` is passed to the compiler as-is, converted with toList
         commonSourceSet.from(
-            Callable<Any> { if (addAsCommonSources.value) sources else emptyList<Any>() }
+            { if (addAsCommonSources.value) sources else emptyList<Any>() }
         )
     }
 
     project.tasks
-        // To configure a task that may have not yet been created at this point, use 'withType-matching-configureEach`:
         .withType(AbstractKotlinCompile::class.java)
-        .matching { it.name == taskName }
         .configureEach { compileKotlinTask ->
-            compileKotlinTask.configureAction()
+            val compileTaskName = compileKotlinTask.name
+            // We also should configure related Kapt* tasks as they are not pickup configuration from
+            // related KotlinJvmCompile to avoid circular task dependencies
+            val kaptGenerateStubsTaskName = getKaptTaskName(compileTaskName, KAPT_GENERATE_STUBS_PREFIX)
+            if (compileTaskName == taskName || kaptGenerateStubsTaskName == taskName) {
+                compileKotlinTask.configureAction()
+            }
         }
 }
 

@@ -240,9 +240,10 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
             kaptExtension.includeCompileClasspath
                 ?: project.isIncludeCompileClasspath()
 
+        @Suppress("UNCHECKED_CAST")
         val kotlinCompile: TaskProvider<KotlinCompile>
             // Can't use just kotlinCompilation.compileKotlinTaskProvider, as the latter is not statically-known to be KotlinCompile
-            get() = checkNotNull(project.locateTask(kotlinCompilation.compileKotlinTaskName))
+            get() = kotlinCompilation.compileTaskProvider as TaskProvider<KotlinCompile>
     }
 
     override fun applyToCompilation(
@@ -355,7 +356,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
     private fun Kapt3SubpluginContext.createKaptKotlinTask(
         generateStubsTask: TaskProvider<KaptGenerateStubsTask>
     ): TaskProvider<out KaptTask> {
-        val taskName = getKaptTaskName("kapt")
+        val taskName = kotlinCompile.kaptTaskName
         @Suppress("UNCHECKED_CAST")
         val taskConfigAction = KaptWithoutKotlincConfig(
             kotlinCompilation.project,
@@ -432,10 +433,10 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
     }
 
     private fun Kapt3SubpluginContext.createKaptGenerateStubsTask(): TaskProvider<KaptGenerateStubsTask> {
-        val kaptTaskName = getKaptTaskName("kaptGenerateStubs")
+        val kaptTaskName = kotlinCompile.kaptGenerateStubsTaskName
         val kaptTaskProvider = project.registerTask<KaptGenerateStubsTask>(kaptTaskName)
 
-        val taskConfig = KaptGenerateStubsConfig(kotlinCompilation, kotlinCompile, classesOutputDir)
+        val taskConfig = KaptGenerateStubsConfig(kotlinCompilation)
         taskConfig.configureTask {
             it.stubsDir.set(getKaptStubsDir())
             it.destinationDirectory.set(getKaptIncrementalDataDir())
@@ -449,13 +450,6 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
         }
 
         return kaptTaskProvider
-    }
-
-    private fun Kapt3SubpluginContext.getKaptTaskName(prefix: String): String {
-        // Replace compile*Kotlin to kapt*Kotlin
-        val baseName = kotlinCompile.name
-        assert(baseName.startsWith("compile"))
-        return baseName.replaceFirst("compile", prefix)
     }
 
     private fun Kapt3SubpluginContext.disableAnnotationProcessingInJavaTask() {
@@ -489,6 +483,24 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
 
     override fun getPluginArtifact(): SubpluginArtifact =
         JetBrainsSubpluginArtifact(artifactId = KAPT_ARTIFACT_NAME)
+}
+
+internal const val KAPT_GENERATE_STUBS_PREFIX = "kaptGenerateStubs"
+internal const val KAPT_PREFIX = "kapt"
+
+internal val TaskProvider<out KotlinJvmCompile>.kaptGenerateStubsTaskName
+    get() = getKaptTaskName(name, KAPT_GENERATE_STUBS_PREFIX)
+
+internal val TaskProvider<out KotlinJvmCompile>.kaptTaskName
+    get() = getKaptTaskName(name, KAPT_PREFIX)
+
+internal fun getKaptTaskName(
+    kotlinCompileName: String,
+    prefix: String
+): String {
+    // Replace compile*Kotlin to kapt*Kotlin
+    assert(kotlinCompileName.startsWith("compile"))
+    return kotlinCompileName.replaceFirst("compile", prefix)
 }
 
 internal fun buildKaptSubpluginOptions(

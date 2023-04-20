@@ -8,8 +8,10 @@ repositories {
     mavenCentral()
 }
 
-tasks.named("compileKotlin", org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile.class) {
-    source("src/proto/generated")
+sourceSets {
+    main {
+        kotlin.srcDir("src/proto/generated")
+    }
 }
 
 tasks.withType(JavaCompile.class).configureEach {

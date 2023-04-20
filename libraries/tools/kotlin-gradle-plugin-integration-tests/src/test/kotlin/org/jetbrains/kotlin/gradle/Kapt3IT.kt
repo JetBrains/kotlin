@@ -1038,7 +1038,7 @@ open class Kapt3IT : Kapt3BaseIT() {
         }
     }
 
-    @DisplayName("KT-52761: generated sources attached to compile task are also used by generate stubs task")
+    @DisplayName("Generated sources attached to KotlinSourceSet are also used by generate stubs task")
     @GradleTest
     fun testGeneratedSourcesUsedInGenerateStubsTask(gradleVersion: GradleVersion) {
         project("generatedSources".withPrefix, gradleVersion) {
