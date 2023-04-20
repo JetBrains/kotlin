@@ -34,18 +34,6 @@ abstract class AbstractAdditionalStubInfoTest : AbstractDecompiledClassTest() {
                     appendFlexibleTypeInfo(builder, upperBound)
                 }
             }
-            is KotlinFunctionStubImpl -> {
-                val contract = stub.contract
-                if (contract != null) {
-                    builder.append("\n" + "  ".repeat(level))
-                        .append(
-                            contract.joinToString("\n" + "  ".repeat(level), "effect: ") { effect ->
-                                effect.effectType.name + "; " + effect.conclusion.toString() + "; " +
-                                        (effect.invocationKind?.name ?: "no invocation kind") + "; " +
-                                        effect.arguments?.joinToString(", ", "args: [", "]")
-                            })
-                }
-            }
             is KotlinPropertyStubImpl -> {
                 val initializer = stub.constantInitializer
                 if (initializer != null) {
