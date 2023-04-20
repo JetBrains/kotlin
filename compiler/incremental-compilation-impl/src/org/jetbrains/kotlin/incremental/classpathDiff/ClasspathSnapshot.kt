@@ -133,10 +133,10 @@ class JavaElementSnapshot(
 /**
  * [ClassSnapshot] of an inaccessible class.
  *
- * For example, a local class is inaccessible as it can't be referenced from other source files and therefore any changes in a local class
- * will not require recompilation of other source files.
+ * A class is inaccessible if it can't be referenced from other source files (and therefore any changes in an inaccessible class will not
+ * require recompilation of other source files).
  */
-object InaccessibleClassSnapshot : ClassSnapshot()
+data object InaccessibleClassSnapshot : ClassSnapshot()
 
 /**
  * The granularity of a [ClassSnapshot].
