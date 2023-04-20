@@ -32,10 +32,12 @@ public final class Container /* p1.Container*/ {
     public java.lang.CharSequence subSequence(int, int);//  subSequence(int, int)
 
     @java.lang.Override()
-    public IntStream chars();//  chars()
+    @org.jetbrains.annotations.NotNull()
+    public java.util.stream.IntStream chars();//  chars()
 
     @java.lang.Override()
-    public IntStream codePoints();//  codePoints()
+    @org.jetbrains.annotations.NotNull()
+    public java.util.stream.IntStream codePoints();//  codePoints()
 
     @java.lang.Override()
     public char get(int);//  get(int)

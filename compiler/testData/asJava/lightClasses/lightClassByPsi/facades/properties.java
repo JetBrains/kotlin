@@ -127,6 +127,10 @@ public final class PropertiesKt /* PropertiesKt*/ {
 
   protected static final void setProtectedLateinitVar(@org.jetbrains.annotations.NotNull() java.lang.String);//  setProtectedLateinitVar(java.lang.String)
 
+  public static final <T> int getValue(T, @org.jetbrains.annotations.NotNull() kotlin.reflect.KProperty<?>);// <T>  getValue(T, kotlin.reflect.KProperty<?>)
+
+  public static final <T> void setValue(T, @org.jetbrains.annotations.NotNull() kotlin.reflect.KProperty<?>, int);// <T>  setValue(T, kotlin.reflect.KProperty<?>, int)
+
   public static final boolean isEmpty();//  isEmpty()
 
   public static final error.NonExistentClass getDelegatedProp2();//  getDelegatedProp2()
@@ -144,8 +148,6 @@ public final class PropertiesKt /* PropertiesKt*/ {
   public static final int getInternalWithPrivateSet();//  getInternalWithPrivateSet()
 
   public static final int getPlainField();//  getPlainField()
-
-  public static final int getValue(error.NonExistentClass, @org.jetbrains.annotations.NotNull() kotlin.reflect.KProperty<?>);//  getValue(error.NonExistentClass, kotlin.reflect.KProperty<?>)
 
   public static final java.lang.Void getIntConst();//  getIntConst()
 
@@ -176,6 +178,4 @@ public final class PropertiesKt /* PropertiesKt*/ {
   public static final void setStringRepresentation(@org.jetbrains.annotations.NotNull() java.lang.String);//  setStringRepresentation(java.lang.String)
 
   public static final void setSubject(error.NonExistentClass);//  setSubject(error.NonExistentClass)
-
-  public static final void setValue(error.NonExistentClass, @org.jetbrains.annotations.NotNull() kotlin.reflect.KProperty<?>, int);//  setValue(error.NonExistentClass, kotlin.reflect.KProperty<?>, int)
 }

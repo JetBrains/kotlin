@@ -1,4 +1,3 @@
-
 import kotlin.reflect.KProperty
 
 val f1 = 2
@@ -57,8 +56,8 @@ private set
 
 val sum: (Int)->Int = { x: Int -> sum(x - 1) + x }
 
-operator fun getValue(t: T, p: KProperty<*>): Int = 42
-operator fun setValue(t: T, p: KProperty<*>, i: Int) {}
+operator fun <T> getValue(t: T, p: KProperty<*>): Int = 42
+operator fun <T> setValue(t: T, p: KProperty<*>, i: Int) {}
 
 @delegate:Transient
 val plainField: Int = 1

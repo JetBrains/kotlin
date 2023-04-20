@@ -1,5 +1,8 @@
 // p1.Container
+// FULL_JDK
 package p1
+
+import java.util.stream.IntStream
 
 class Container {
     class MyString : CharSequence {

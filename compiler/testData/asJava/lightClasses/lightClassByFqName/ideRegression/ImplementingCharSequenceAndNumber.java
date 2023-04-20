@@ -23,13 +23,15 @@ public final class Container /* p1.Container*/ {
     @org.jetbrains.annotations.NotNull()
     public java.lang.CharSequence subSequence(int, int);//  subSequence(int, int)
 
+    @org.jetbrains.annotations.NotNull()
+    public java.util.stream.IntStream chars();//  chars()
+
+    @org.jetbrains.annotations.NotNull()
+    public java.util.stream.IntStream codePoints();//  codePoints()
+
     public  MyString();//  .ctor()
 
     public char get(int);//  get(int)
-
-    public error.NonExistentClass chars();//  chars()
-
-    public error.NonExistentClass codePoints();//  codePoints()
 
     public int getLength();//  getLength()
   }
