@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2023 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 
@@ -52,7 +52,7 @@ actual class HashMap<K, V> private constructor(
     internal fun build(): Map<K, V> {
         checkIsMutable()
         isReadOnly = true
-        return this
+        return if (size > 0) this else EmptyHolder.value()
     }
 
     override actual fun isEmpty(): Boolean = _size == 0
@@ -486,6 +486,15 @@ actual class HashMap<K, V> private constructor(
         private fun computeHashSize(capacity: Int): Int = (capacity.coerceAtLeast(1) * 3).takeHighestOneBit()
 
         private fun computeShift(hashSize: Int): Int = hashSize.countLeadingZeroBits() + 1
+    }
+
+    internal object EmptyHolder {
+        val value_ = HashMap<Nothing, Nothing>(0).also { it.isReadOnly = true }
+
+        fun <K, V> value(): HashMap<K, V> {
+            @Suppress("UNCHECKED_CAST")
+            return value_ as HashMap<K, V>
+        }
     }
 
     internal open class Itr<K, V>(

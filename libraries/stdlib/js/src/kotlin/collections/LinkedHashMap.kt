@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,6 +18,9 @@ import kotlin.collections.MutableMap.MutableEntry
  * The insertion order is preserved by maintaining a doubly-linked list of all of its entries.
  */
 public actual open class LinkedHashMap<K, V> : HashMap<K, V>, MutableMap<K, V> {
+    private companion object {
+        private val Empty = LinkedHashMap<Nothing, Nothing>(0).also { it.isReadOnly = true }
+    }
 
     /**
      * The entry we use includes next/prev pointers for a doubly-linked circular
@@ -204,7 +207,8 @@ public actual open class LinkedHashMap<K, V> : HashMap<K, V>, MutableMap<K, V> {
     internal fun build(): Map<K, V> {
         checkIsMutable()
         isReadOnly = true
-        return this
+        @Suppress("UNCHECKED_CAST")
+        return if (size > 0) this else (Empty as Map<K, V>)
     }
 
     actual override fun clear() {

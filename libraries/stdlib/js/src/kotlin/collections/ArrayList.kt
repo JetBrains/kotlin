@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,6 +13,10 @@ package kotlin.collections
  * capacity and "growth increment" concepts.
  */
 public actual open class ArrayList<E> internal constructor(private var array: Array<Any?>) : AbstractMutableList<E>(), MutableList<E>, RandomAccess {
+    private companion object {
+        private val Empty = ArrayList<Nothing>(0).also { it.isReadOnly = true }
+    }
+
     private var isReadOnly: Boolean = false
 
     /**
@@ -35,7 +39,7 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
     internal fun build(): List<E> {
         checkIsMutable()
         isReadOnly = true
-        return this
+        return if (size > 0) this else Empty
     }
 
     /** Does nothing in this ArrayList implementation. */

@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 package test.collections
 
 import test.collections.behaviors.listBehavior
@@ -57,6 +62,38 @@ class ContainerBuilderTest {
         "entries.iterator().next().setValue(v)" to { entries.iterator().next().setValue(v) }
     )
 
+    private fun <E> emptyCollectionOperations(value: E) = listOf<Pair<String, MutableCollection<E>.() -> Unit>> (
+        "add(value)"               to { add(value) },
+
+        "addAll(listOf(value))"    to { addAll(listOf(value)) },
+        "addAll(emptyList())"      to { addAll(emptyList()) },
+
+        "remove(value)"            to { remove(value) },
+
+        "removeAll(listOf(value))" to { removeAll(listOf(value)) },
+        "removeAll(emptyList())"   to { removeAll(emptyList()) },
+
+        "retainAll(listOf(value))" to { retainAll(listOf(value)) },
+        "retailAll(emptyList())"   to { retainAll(emptyList()) },
+
+        "clear()"                  to { clear() }
+    )
+
+    private fun <E> emptyListOperations(value: E) = emptyCollectionOperations(value) + listOf<Pair<String, MutableList<E>.() -> Unit>>(
+        "add(0, value)"             to { add(0, value) },
+        "addAll(0, listOf(value))"  to { addAll(0, listOf(value)) },
+        "addAll(0, emptyList())"    to { addAll(0, emptyList()) },
+        "listIterator().add(value)" to { listIterator().add(value) }
+    )
+
+    private fun <K, V> emptyMapOperations(k: K, v: V) = listOf<Pair<String, MutableMap<K, V>.() -> Unit>>(
+        "put(k, v)"             to { put(k, v) },
+        "remove(k)"             to { remove(k) },
+        "putAll(mapOf(k to v))" to { putAll(mapOf(k to v)) },
+        "putAll(emptyMap())"    to { putAll(emptyMap()) },
+        "clear()"               to { clear() }
+    )
+
     @Test
     fun buildList() {
         val x = buildList {
@@ -89,6 +126,22 @@ class ContainerBuilderTest {
             assertFailsWith<UnsupportedOperationException>("y.subList(1, 3).$fName") { y.subList(1, 3).operation() }
             assertFailsWith<UnsupportedOperationException>("subList.$fName") { subList.operation() }
         }
+    }
+
+    @Test
+    fun buildEmptyList() {
+        val empty = buildList<Int> {}
+        assertSame(empty, buildList {})
+        assertTrue(empty is MutableList<Int>)
+        for ((fName, operation) in emptyListOperations(0)) {
+            assertFailsWith<UnsupportedOperationException>("empty.$fName") { empty.operation() }
+        }
+
+        assertEquals(0, empty.size)
+        assertTrue(empty.isEmpty())
+        assertFalse(empty.contains(42))
+        assertFalse(empty.containsAll(listOf(42)))
+        assertTrue(empty.containsAll(emptyList()))
     }
 
     @Test
@@ -151,6 +204,22 @@ class ContainerBuilderTest {
     }
 
     @Test
+    fun buildEmptySet() {
+        val empty = buildSet<Int> {}
+        assertSame(empty, buildSet {})
+        assertTrue(empty is MutableSet<Int>)
+        for ((fName, operation) in emptyCollectionOperations(0)) {
+            assertFailsWith<UnsupportedOperationException>("empty.$fName") { empty.operation() }
+        }
+
+        assertEquals(0, empty.size)
+        assertTrue(empty.isEmpty())
+        assertFalse(empty.contains(42))
+        assertFalse(empty.containsAll(listOf(42)))
+        assertTrue(empty.containsAll(emptyList()))
+    }
+
+    @Test
     fun buildMap() {
         val x = buildMap<Char, Int> {
             put('b', 2)
@@ -190,5 +259,21 @@ class ContainerBuilderTest {
         for ((fName, operation) in mutableSetOperations(presentEntry, absentEntry)) {
             assertFailsWith<UnsupportedOperationException>("y.entries.$fName") { y.entries.operation() }
         }
+    }
+
+    @Test
+    fun testBuildEmptyMap() {
+        val empty = buildMap<Char, Int> {}
+        assertSame(empty, buildMap {})
+        assertTrue(empty is MutableMap<Char, Int>)
+        for ((fName, operation) in emptyMapOperations('0', 0)) {
+            assertFailsWith<UnsupportedOperationException>("empty.$fName") { empty.operation() }
+        }
+
+        assertEquals(0, empty.size)
+        assertTrue(empty.isEmpty())
+        assertFalse(empty.contains('0'))
+        assertFalse(empty.containsKey('0'))
+        assertFalse(empty.containsValue(0))
     }
 }

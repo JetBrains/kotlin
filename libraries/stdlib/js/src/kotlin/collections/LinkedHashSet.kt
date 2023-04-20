@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 /*
@@ -15,6 +15,11 @@ package kotlin.collections
  * This implementation preserves the insertion order of elements during the iteration.
  */
 public actual open class LinkedHashSet<E> : HashSet<E>, MutableSet<E> {
+    private companion object {
+        private val Empty = LinkedHashSet<Nothing>(0).also {
+            (it.map as LinkedHashMap<Nothing, Any>).build()
+        }
+    }
 
     internal constructor(map: LinkedHashMap<E, Any>) : super(map)
 
@@ -45,7 +50,7 @@ public actual open class LinkedHashSet<E> : HashSet<E>, MutableSet<E> {
     @PublishedApi
     internal fun build(): Set<E> {
         (map as LinkedHashMap<E, Any>).build()
-        return this
+        return if (size > 0) this else Empty
     }
 
     internal override fun checkIsMutable(): Unit = map.checkIsMutable()
