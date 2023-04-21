@@ -132,7 +132,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiSingleFileTest() {
 
         compareResults(pointersWithRendered, testServices)
 
-        configurator.doOutOfBlockModification(ktFile)
+        configurator.doGlobalModuleStateModification(ktFile.project)
 
         restoreSymbolsInOtherReadActionAndCompareResults(
             directiveToIgnore = directiveToIgnoreSymbolRestore,
