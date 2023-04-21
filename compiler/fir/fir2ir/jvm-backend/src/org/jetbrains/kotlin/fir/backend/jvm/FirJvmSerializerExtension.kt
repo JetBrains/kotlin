@@ -137,8 +137,11 @@ class FirJvmSerializerExtension(
         writeLocalProperties(proto, JvmProtoBuf.packageLocalVariable)
     }
 
-    @Suppress("UNUSED_PARAMETER")
-    private fun <MessageType : GeneratedMessageLite.ExtendableMessage<MessageType>, BuilderType : GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>> writeLocalProperties(
+    @Suppress("Reformat")
+    private fun <
+        MessageType : GeneratedMessageLite.ExtendableMessage<MessageType>,
+        BuilderType : GeneratedMessageLite.ExtendableBuilder<MessageType, BuilderType>
+    > writeLocalProperties(
         proto: BuilderType,
         extension: GeneratedMessageLite.GeneratedExtension<MessageType, List<ProtoBuf.Property>>
     ) {

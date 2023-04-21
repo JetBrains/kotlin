@@ -334,7 +334,7 @@ class Fir2IrClassifierStorage(
 
     fun registerIrClass(
         regularClass: FirRegularClass,
-        parent: IrDeclarationParent? = null,
+        parent: IrDeclarationParent,
         predefinedOrigin: IrDeclarationOrigin? = null
     ): IrClass {
         val visibility = regularClass.visibility
@@ -369,9 +369,7 @@ class Fir2IrClassifierStorage(
                 }
             }
         }
-        if (parent != null) {
-            irClass.parent = parent
-        }
+        irClass.parent = parent
         if (regularClass.visibility == Visibilities.Local) {
             localStorage[regularClass] = irClass
         } else {
@@ -508,23 +506,22 @@ class Fir2IrClassifierStorage(
 
     fun getIrEnumEntry(
         enumEntry: FirEnumEntry,
-        irParent: IrClass?,
+        irParent: IrClass,
         predefinedOrigin: IrDeclarationOrigin? = null,
         forceTopLevelPrivate: Boolean = false,
     ): IrEnumEntry {
         getCachedIrEnumEntry(enumEntry)?.let { return it }
         val containingFile = firProvider.getFirCallableContainerFile(enumEntry.symbol)
-        val irParentClass = irParent ?: enumEntry.containingClassLookupTag()?.let { findIrClass(it) }
 
         @Suppress("NAME_SHADOWING")
         val predefinedOrigin = predefinedOrigin ?: if (containingFile != null) {
             IrDeclarationOrigin.DEFINED
         } else {
-            irParentClass?.origin ?: IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB
+            irParent.origin
         }
         return createIrEnumEntry(
             enumEntry,
-            irParent = irParentClass,
+            irParent = irParent,
             predefinedOrigin = predefinedOrigin,
             forceTopLevelPrivate
         )
