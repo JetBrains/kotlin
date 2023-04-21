@@ -20,9 +20,14 @@ fun eliminateDeadDeclarations(modules: List<IrModuleFragment>, context: WasmBack
         context.configuration.getBoolean(JSConfigurationKeys.PRINT_REACHABILITY_INFO) ||
                 java.lang.Boolean.getBoolean("kotlin.wasm.dce.print.reachability.info")
 
+    val dumpReachabilityInfoToFile: String? =
+        context.configuration.get(JSConfigurationKeys.DUMP_REACHABILITY_INFO_TO_FILE)
+            ?: System.getProperty("kotlin.wasm.dce.dump.reachability.info.to.file")
+
     val usefulDeclarations = WasmUsefulDeclarationProcessor(
         context = context,
-        printReachabilityInfo = printReachabilityInfo
+        printReachabilityInfo = printReachabilityInfo,
+        dumpReachabilityInfoToFile
     ).collectDeclarations(rootDeclarations = buildRoots(modules, context))
 
     val remover = WasmUselessDeclarationsRemover(usefulDeclarations)
