@@ -10,8 +10,8 @@ import org.jetbrains.jps.incremental.CompileContext
 import org.jetbrains.kotlin.build.report.FileReportSettings
 import org.jetbrains.kotlin.build.report.HttpReportSettings
 import org.jetbrains.kotlin.build.report.metrics.*
-import org.jetbrains.kotlin.build.report.statistic.*
-import org.jetbrains.kotlin.build.report.statistic.file.FileReportService
+import org.jetbrains.kotlin.build.report.statistics.*
+import org.jetbrains.kotlin.build.report.statistics.file.FileReportService
 import org.jetbrains.kotlin.compilerRunner.JpsKotlinLogger
 import java.io.File
 import java.util.*
@@ -70,7 +70,7 @@ class JpsBuilderMetricReporterImpl(private val reporter: BuildMetricsReporterImp
 }
 
 // TODO test UserDataHolder in CompileContext to store CompileStatisticsData.Build or KotlinBuilderMetric
-class KotlinBuilderReportService {
+class JpsStatisticsReportService {
 
     private val fileReportSettings: FileReportSettings? = initFileReportSettings()
     private val httpReportSettings: HttpReportSettings? = initHttpReportSettings()

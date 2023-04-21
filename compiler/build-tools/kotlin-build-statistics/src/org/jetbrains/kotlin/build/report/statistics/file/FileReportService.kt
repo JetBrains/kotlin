@@ -3,12 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.build.report.statistic.file
+package org.jetbrains.kotlin.build.report.statistics.file
 
 import org.jetbrains.kotlin.build.report.metrics.*
-import org.jetbrains.kotlin.build.report.statistic.*
-import org.jetbrains.kotlin.build.report.statistic.asString
-import org.jetbrains.kotlin.build.report.statistic.formatTime
+import org.jetbrains.kotlin.build.report.statistics.*
+import org.jetbrains.kotlin.build.report.statistics.asString
+import org.jetbrains.kotlin.build.report.statistics.formatTime
 import org.jetbrains.kotlin.compilerRunner.KotlinLogger
 import java.io.File
 import java.io.Serializable

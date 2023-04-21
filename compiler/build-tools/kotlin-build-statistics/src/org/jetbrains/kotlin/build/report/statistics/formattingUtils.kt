@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.build.report.statistic
+package org.jetbrains.kotlin.build.report.statistics
 
 internal fun formatTime(ms: Long): String {
     val seconds = ms.toDouble() / 1_000

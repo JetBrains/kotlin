@@ -11,7 +11,7 @@ import org.gradle.tooling.events.task.TaskFinishEvent
 import org.gradle.tooling.events.task.TaskOperationDescriptor
 import org.gradle.tooling.events.task.TaskOperationResult
 import org.jetbrains.kotlin.build.report.metrics.*
-import org.jetbrains.kotlin.build.report.statistic.StatTag
+import org.jetbrains.kotlin.build.report.statistics.StatTag
 import org.jetbrains.kotlin.gradle.report.TaskRecord
 import org.jetbrains.kotlin.gradle.report.prepareData
 import org.junit.Ignore

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.report
 
 import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-import org.jetbrains.kotlin.build.report.statistic.StatTag
+import org.jetbrains.kotlin.build.report.statistics.StatTag
 import org.jetbrains.kotlin.incremental.ChangedFiles
 
 internal class TaskExecutionResult(
