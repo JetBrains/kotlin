@@ -299,11 +299,9 @@ private fun transformToStringBy(
     separator: String,
     transformer: (sourceFqn: String, targetFqn: String, description: String, isTargetContagious: Boolean) -> String
 ): String {
-    fun IrDeclaration.fqnOrUnknown() = (this as? IrDeclarationWithName)?.fqNameWhenAvailable?.asString() ?: "<unknown>"
-
     return reachabilityInfos
         .map {
-            transformer(it.source.fqnOrUnknown(), it.target.fqnOrUnknown(), it.description, it.isTargetContagious)
+            transformer(it.source.fqNameForDceDump(), it.target.fqNameForDceDump(), it.description, it.isTargetContagious)
         }
         .distinct()
         .joinToString(separator)
