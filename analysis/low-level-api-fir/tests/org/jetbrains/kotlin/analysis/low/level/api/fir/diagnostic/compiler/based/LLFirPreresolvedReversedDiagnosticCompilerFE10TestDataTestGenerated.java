@@ -8926,6 +8926,18 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
                 }
 
                 @Test
+                @TestMetadata("nestedPartiallyResolvedCalls.kt")
+                public void testNestedPartiallyResolvedCalls() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/nestedPartiallyResolvedCalls.kt");
+                }
+
+                @Test
+                @TestMetadata("nestedPartiallyResolvedCallsSimple.kt")
+                public void testNestedPartiallyResolvedCallsSimple() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/nestedPartiallyResolvedCallsSimple.kt");
+                }
+
+                @Test
                 @TestMetadata("noErrorsForImplicitConstraints.kt")
                 public void testNoErrorsForImplicitConstraints() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/noErrorsForImplicitConstraints.kt");

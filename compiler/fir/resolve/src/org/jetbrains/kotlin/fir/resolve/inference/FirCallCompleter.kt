@@ -111,9 +111,13 @@ class FirCallCompleter(
 
             ConstraintSystemCompletionMode.PARTIAL -> {
                 runCompletionForCall(candidate, completionMode, call, initialType, analyzer)
-                if (inferenceSession !is FirBuilderInferenceSession) {
+
+                // Add top-level delegate call as partially resolved to inference session
+                if (resolutionMode is ResolutionMode.ContextDependentDelegate) {
+                    require(inferenceSession is FirDelegatedPropertyInferenceSession)
                     inferenceSession.addPartiallyResolvedCall(call)
                 }
+
                 CompletionResult(call, false)
             }
 

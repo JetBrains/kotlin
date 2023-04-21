@@ -318,8 +318,9 @@ open class FirDeclarationsResolveTransformer(
         wrappedDelegateExpression: FirWrappedDelegateExpression,
         data: ResolutionMode,
     ): FirStatement {
-        // First, resolve delegate expression in dependent context
-        val delegateExpression = wrappedDelegateExpression.expression.transformSingle(transformer, ResolutionMode.ContextDependent)
+        // First, resolve delegate expression in dependent context, and add potentially partially resolved call to inference session
+        // (that is why we use ContextDependentDelegate instead of plain ContextDependent)
+        val delegateExpression = wrappedDelegateExpression.expression.transformSingle(transformer, ResolutionMode.ContextDependentDelegate)
             .transformSingle(components.integerLiteralAndOperatorApproximationTransformer, null)
 
         // Second, replace result type of delegate expression with stub type if delegate not yet resolved

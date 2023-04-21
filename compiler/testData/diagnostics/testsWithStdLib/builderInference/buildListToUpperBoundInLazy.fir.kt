@@ -30,7 +30,7 @@ internal class TowerDataElementsForName2() {
 internal class TowerDataElementsForName3() {
     val reversedFilteredLocalScopes by <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>lazy<!>(LazyThreadSafetyMode.NONE) {
         @OptIn(ExperimentalStdlibApi::class)
-        <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER, NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>buildList<!> l1@ {
+        buildList l1@ {
             for (i in lastIndex downTo 0) {
                 val reversedFilteredLocalScopes by lazy(LazyThreadSafetyMode.NONE) {
                     @OptIn(ExperimentalStdlibApi::class)
