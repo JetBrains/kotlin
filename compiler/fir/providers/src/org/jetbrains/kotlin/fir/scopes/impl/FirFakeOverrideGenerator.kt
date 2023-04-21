@@ -443,6 +443,7 @@ object FirFakeOverrideGenerator {
             propertySymbol = propertySymbol,
             modality = modality ?: Modality.FINAL,
             effectiveVisibility = effectiveVisibility,
+            resolvePhase = resolvePhase,
         ).apply {
             replaceAnnotations(annotations)
         }
@@ -455,6 +456,7 @@ object FirFakeOverrideGenerator {
             propertySymbol = propertySymbol,
             modality = modality ?: Modality.FINAL,
             effectiveVisibility = effectiveVisibility,
+            resolvePhase = resolvePhase,
         ).apply {
             replaceAnnotations(annotations)
         }
