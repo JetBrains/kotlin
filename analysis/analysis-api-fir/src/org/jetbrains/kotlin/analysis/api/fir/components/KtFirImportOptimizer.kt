@@ -174,7 +174,7 @@ internal class KtFirImportOptimizer(
             }
 
             private fun processFunctionCall(functionCall: FirFunctionCall) {
-                if (functionCall.isFullyQualified) return
+                if (functionCall.dispatchedWithoutImport) return
                 processErrorNameReference(functionCall)
 
                 val referencesByName = functionCall.functionReferenceName ?: return
@@ -192,7 +192,7 @@ internal class KtFirImportOptimizer(
             }
 
             private fun processPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression) {
-                if (propertyAccessExpression.isFullyQualified) return
+                if (propertyAccessExpression.dispatchedWithoutImport) return
                 processErrorNameReference(propertyAccessExpression)
 
                 val referencedByName = propertyAccessExpression.propertyReferenceName ?: return
@@ -208,7 +208,7 @@ internal class KtFirImportOptimizer(
             }
 
             private fun processCallableReferenceAccess(callableReferenceAccess: FirCallableReferenceAccess) {
-                if (callableReferenceAccess.isFullyQualified) return
+                if (callableReferenceAccess.dispatchedWithoutImport) return
                 processErrorNameReference(callableReferenceAccess)
 
                 val referencedByName = callableReferenceAccess.callableReferenceName ?: return
@@ -331,8 +331,30 @@ private val FirResolvedTypeRef.resolvedClassId: ClassId?
         return singleClassSymbol?.classId
     }
 
-private val FirQualifiedAccessExpression.isFullyQualified: Boolean
-    get() = explicitReceiver is FirResolvedQualifier
+private val FirQualifiedAccessExpression.dispatchedWithoutImport: Boolean
+    get() = when {
+        isQualifiedWithPackage -> true
+        dispatchReceiver is FirThisReceiverExpression -> true
+        dispatchReceiver == explicitReceiver -> true
+        else -> false
+    }
+
+
+/**
+ * Returns `true` if [this] expression is fully-qualified with package name.
+ * Such expressions definitely do not need any kind of imports.
+ *
+ * Examples:
+ * - `pkg.foo()` - `true`
+ * - `foo()` - `false`
+ * - `Obj.foo()` - `false`
+ * - `pkg.Obj.foo()` - `false`
+ */
+private val FirQualifiedAccessExpression.isQualifiedWithPackage: Boolean
+    get() {
+        val receiver = explicitReceiver
+        return receiver is FirResolvedQualifier && receiver.relativeClassFqName == null
+    }
 
 private fun KtExpression.getPossiblyQualifiedSimpleNameExpression(): KtSimpleNameExpression? {
     return ((this as? KtQualifiedExpression)?.selectorExpression ?: this) as? KtSimpleNameExpression?
