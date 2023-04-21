@@ -1,1 +1,18 @@
+plugins {
+    id("com.gradle.enterprise") version "3.4"
+}
+
+gradleEnterprise {
+    buildScan {
+        server = "https://ge.jetbrains.com/"
+        publishAlways()
+        termsOfServiceUrl = "https://gradle.com/terms-of-service"
+        termsOfServiceAgree = "yes"
+
+    }
+}
+
+
 include ':app', ':lib'
+
+
