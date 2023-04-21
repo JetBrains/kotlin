@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 
-fun <A : CommonCompilerArguments> CompilerConfiguration.setupCommonArguments(
-    arguments: A,
+fun CompilerConfiguration.setupCommonArguments(
+    arguments: CommonCompilerArguments,
     createMetadataVersion: ((IntArray) -> BinaryVersion)? = null
 ) {
     val messageCollector = getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
@@ -79,7 +79,7 @@ fun switchToFallbackModeIfNecessary(arguments: CommonCompilerArguments, messageC
     }
 }
 
-fun <A : CommonCompilerArguments> CompilerConfiguration.setupLanguageVersionSettings(arguments: A) {
+fun CompilerConfiguration.setupLanguageVersionSettings(arguments: CommonCompilerArguments) {
     languageVersionSettings = arguments.toLanguageVersionSettings(getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY))
 }
 
@@ -105,7 +105,7 @@ fun computeKotlinPaths(messageCollector: MessageCollector, arguments: CommonComp
     }
 }
 
-fun <A : CommonToolArguments> MessageCollector.reportArgumentParseProblems(arguments: A) {
+fun MessageCollector.reportArgumentParseProblems(arguments: CommonToolArguments) {
     val errors = arguments.errors ?: return
     for (flag in errors.unknownExtraFlags) {
         report(CompilerMessageSeverity.STRONG_WARNING, "Flag is not supported by this version of the compiler: $flag")
@@ -133,7 +133,7 @@ fun <A : CommonToolArguments> MessageCollector.reportArgumentParseProblems(argum
     }
 }
 
-private fun <A : CommonToolArguments> MessageCollector.reportUnsafeInternalArgumentsIfAny(arguments: A) {
+private fun MessageCollector.reportUnsafeInternalArgumentsIfAny(arguments: CommonToolArguments) {
     val unsafeArguments = arguments.internalArguments.filterNot {
         // -XXLanguage which turns on BUG_FIX considered safe
         it is ManualLanguageFeatureSetting && it.languageFeature.kind == LanguageFeature.Kind.BUG_FIX && it.state == LanguageFeature.State.ENABLED
