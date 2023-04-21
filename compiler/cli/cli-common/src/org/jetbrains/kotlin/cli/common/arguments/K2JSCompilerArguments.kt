@@ -294,6 +294,20 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
             field = value
         }
 
+    @Argument(
+        value = "-Xir-dce-dump-reachability-info-to-file",
+        valueDescription = "<path>",
+        description = "Dump declarations' reachability info collected during performing DCE to a file. " +
+                "The format will be chosen automatically based on the file extension. " +
+                "Supported output formats include JSON for .json, JS const initialized with a plain object containing information for .js, " +
+                "and plain text for all other file types."
+    )
+    var irDceDumpReachabilityInfoToFile: String? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @Argument(value = "-Xir-property-lazy-initialization", description = "Perform lazy initialization for properties")
     var irPropertyLazyInitialization = true
         set(value) {

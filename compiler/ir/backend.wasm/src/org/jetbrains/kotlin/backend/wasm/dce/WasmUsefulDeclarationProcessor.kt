@@ -18,8 +18,9 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 internal class WasmUsefulDeclarationProcessor(
     override val context: WasmBackendContext,
-    printReachabilityInfo: Boolean
-) : UsefulDeclarationProcessor(printReachabilityInfo, removeUnusedAssociatedObjects = false) {
+    printReachabilityInfo: Boolean,
+    dumpReachabilityInfoToFile: String?
+) : UsefulDeclarationProcessor(printReachabilityInfo, removeUnusedAssociatedObjects = false, dumpReachabilityInfoToFile) {
 
     private val unitGetInstance: IrSimpleFunction = context.findUnitGetInstanceFunction()
 
