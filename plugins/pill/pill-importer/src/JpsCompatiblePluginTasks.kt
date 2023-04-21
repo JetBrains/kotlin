@@ -70,7 +70,8 @@ class JpsCompatiblePluginTasks(
 
         private val ALLOWED_ARTIFACT_PATTERNS = listOf(
             Regex("kotlinx_cli_jvm_[\\d_]+_SNAPSHOT\\.xml"),
-            Regex("kotlin_test_wasm_js_[\\d_]+_SNAPSHOT\\.xml")
+            Regex("kotlin_test_wasm_js_[\\d_]+_SNAPSHOT\\.xml"),
+            Regex("kotlin_dom_api_compat_[\\d_]+_SNAPSHOT\\.xml")
         )
     }
 
