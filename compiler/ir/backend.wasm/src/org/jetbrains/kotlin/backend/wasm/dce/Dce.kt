@@ -53,6 +53,8 @@ private fun buildRoots(modules: List<IrModuleFragment>, context: WasmBackendCont
     add(context.irBuiltIns.throwableClass.owner)
     add(context.mainCallsWrapperFunction)
     add(context.fieldInitFunction)
+    // TODO move Unit related optimization on IR level and make unit usages explicit 
+    add(context.findUnitGetInstanceFunction())
 
     // Remove all functions used to call a kotlin closure from JS side, reachable ones will be added back later.
     removeAll(context.closureCallExports.values)
