@@ -1183,6 +1183,14 @@ open class HierarchicalMppIT : KGPBaseTest() {
         }
     }
 
+    @GradleTest
+    @DisplayName("KT-56380: correct nullability inference in metadata compilations")
+    fun `test correct nullability inference in metadata compilation`(gradleVersion: GradleVersion) {
+        project("kt-56380_correct_nullability_inference", gradleVersion) {
+            build(":b:compileCommonMainKotlinMetadata")
+        }
+    }
+
 
     private fun TestProject.testDependencyTransformations(
         subproject: String? = null,
