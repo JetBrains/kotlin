@@ -65,84 +65,47 @@ public:
      * In case some other thread is currently operating with the victim's shared list, returns `0`.
      * @return the number of elements stolen
      */
-    size_type tryStealFrom(StealableWorkList<T, Traits>& victim, size_type maxAmount) { // TODO noexcept
-        auto locked = victim.sharedLock_.tryLock(false);
-        if (!locked) return 0;
-        RuntimeAssert(!victim.sharedEmpty(), "Victim's shared was locked as non-empty");
+    size_type tryStealFrom(StealableWorkList<T, Traits>& victim, size_type maxAmount) noexcept {
+        bool wasLockedByOther = victim.sharedLocked_.test_and_set(std::memory_order_acquire);
+        if (wasLockedByOther) return 0;
+        if (victim.sharedEmpty()) {
+            victim.sharedLocked_.clear(std::memory_order_relaxed);
+            return 0;
+        }
 
         auto amount = local_.splice_after(local_.before_begin(), victim.shared_.before_begin(), victim.shared_.end(), maxAmount);
         victim.sharedSize_ -= amount;
         localSize_ += amount;
 
-        victim.sharedLock_.release(victim.sharedEmpty());
+        victim.sharedLocked_.clear(std::memory_order_release);
 
         return amount;
     }
 
     /**
      * Moves all of the local items into own shared list.
-     * @return `0` if the shared list is busy or non-empty, amount of newly shared items otherwise.
+     * @return `0` if the shared list is busy, amount of newly shared items otherwise.
      */
-    size_type shareAll() {
+    size_type shareAll() noexcept {
         RuntimeAssert(!localEmpty(), "Nothing to share");
-        // don't bother with locked or non-empty shared_ -- take it another time
-        auto locked = sharedLock_.tryLock(true);
-        if (!locked) return 0;
+        auto wasLockedByOther = sharedLocked_.test_and_set(std::memory_order_acquire);
+        if (wasLockedByOther) return 0;
 
-        RuntimeAssert(sharedEmpty(), "Shared just have been locked as empty");
-        shared_.swap(local_);
-        std::swap(sharedSize_, localSize_);
-        auto sharedAmount = sharedSize_;
-        RuntimeAssert(!sharedEmpty(), "Must have shared at least something");
+        auto amount = shared_.splice_after(shared_.before_begin(), local_.before_begin(), local_.end(), localSize_);
+        sharedSize_ += amount;
+        localSize_ -= amount;
 
-        sharedLock_.release(false);
-        return sharedAmount;
+        sharedLocked_.clear(std::memory_order_release);
+        return amount;
     }
 
 private:
-    // TODO explain
-    class TheftLock {
-        static const std::size_t Empty = 0;
-        static const std::size_t Available = 1;
-        static const std::size_t Locked = 2;
-    public:
-        TheftLock() noexcept : status_(Empty) {}
-        bool tryLock(bool asEmpty) noexcept {
-            auto expected = asEmpty ? Empty : Available;
-            auto desired = Locked;
-            if (compiler::runtimeAssertsMode() != compiler::RuntimeAssertsMode::kIgnore) {
-                desired |= (konan::currentThreadId() << 2);
-            }
-            return status_.compare_exchange_strong(expected, desired, std::memory_order_acquire, std::memory_order_relaxed);
-        }
-        void lock() noexcept {
-            while (true) {
-                auto status = status_.load(std::memory_order_relaxed);
-                if (status == Empty || status == Available) {
-                    auto locked = status_.compare_exchange_weak(status, Locked, std::memory_order_acquire, std::memory_order_relaxed);
-                    if (locked) return;
-                }
-                std::this_thread::yield();
-            }
-        }
-        void release(bool empty) noexcept {
-            RuntimeAssert(status_ == (Locked | (konan::currentThreadId() << 2)), "Lock must be locked");
-            auto releasedStatus = empty ? Empty : Available;
-            status_.store(releasedStatus, std::memory_order_release);
-        }
-    private:
-        std::atomic<std::size_t> status_;
-    };
-
-    // TODO consider removal?
-    static constexpr size_t CACHE_LINE_SIZE = 128;
-
-    alignas(CACHE_LINE_SIZE) ListImpl local_;
+    ListImpl local_;
     size_type localSize_ = 0;
 
-    alignas(CACHE_LINE_SIZE) ListImpl shared_;
+    ListImpl shared_;
     size_type sharedSize_ = 0;
-    TheftLock sharedLock_;
+    std::atomic_flag sharedLocked_ = ATOMIC_FLAG_INIT;
 };
 
 }
