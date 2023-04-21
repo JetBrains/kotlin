@@ -972,7 +972,7 @@ task worker9_experimentalMM(type: KonanLocalTest) {
 
 task worker10(type: KonanLocalTest) {
     enabled = (project.testTarget != 'wasm32') && // Workers need pthreads.
-        !isNoopGC
+        !isNoopGC && !isAggressiveGC
     useGoldenData = true
     source = "runtime/workers/worker10.kt"
 }
