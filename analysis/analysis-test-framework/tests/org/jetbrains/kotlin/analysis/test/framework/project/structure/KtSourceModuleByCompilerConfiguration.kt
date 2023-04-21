@@ -145,6 +145,19 @@ private class LibraryByRoots(
     override val platform: TargetPlatform get() = module.platform
     override val analyzerServices: PlatformDependentAnalyzerServices get() = module.analyzerServices
     override fun getBinaryRoots(): Collection<Path> = roots
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as LibraryByRoots
+
+        return roots == other.roots
+    }
+
+    override fun hashCode(): Int {
+        return roots.hashCode()
+    }
+
     override val librarySources: KtLibrarySourceModule? get() = null
 }
 
