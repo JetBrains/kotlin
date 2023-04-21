@@ -46,6 +46,7 @@ internal fun collectNewDirtySources(
                     body: (MetadataSerializer) -> Unit
                 ) {
                     val serializer = makeLocalFirMetadataSerializerForMetadataSource(
+                        it,
                         metadata,
                         analyzedOutput.session,
                         analyzedOutput.scopeSession,
@@ -73,7 +74,7 @@ internal fun collectNewDirtySources(
                 }
 
                 override fun visitFile(file: FirFile, data: MutableList<MetadataSerializer>) {
-                    val metadata = FirMetadataSource.File(listOf(file))
+                    val metadata = FirMetadataSource.File(file)
                     withMetadataSerializer(metadata, data) {
                         file.acceptChildren(this, data)
                         // TODO: compare package fragments?

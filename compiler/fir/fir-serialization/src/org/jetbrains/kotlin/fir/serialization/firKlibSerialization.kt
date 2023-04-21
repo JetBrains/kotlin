@@ -35,7 +35,7 @@ fun serializeSingleFirFile(
     // TODO: split package fragment (see klib serializer)
     // TODO: handle incremental/monolothic (see klib serializer) - maybe externally
 
-    val packageProto = packageSerializer.packagePartProto(file.packageFqName, listOf(file), actualizedExpectDeclarations).build()
+    val packageProto = packageSerializer.packagePartProto(file.packageFqName, file, actualizedExpectDeclarations).build()
 
     val classesProto = mutableListOf<Pair<ProtoBuf.Class, Int>>()
 
@@ -51,14 +51,12 @@ fun serializeSingleFirFile(
             )
             val index = classSerializer.stringTable.getFqNameIndex(klass)
 
-            classesProto += classSerializer.classProto(klass).build() to index
+            classesProto += classSerializer.classProto(klass, file).build() to index
             classSerializer.computeNestedClassifiersForClass(symbol).filterIsInstance<FirClassSymbol<*>>().makeClassesProtoWithNested()
         }
     }
 
-    serializerExtension.processFile(file) {
-        file.declarations.mapNotNull { it.symbol as? FirClassSymbol<*> }.makeClassesProtoWithNested()
-    }
+    file.declarations.mapNotNull { it.symbol as? FirClassSymbol<*> }.makeClassesProtoWithNested()
 
     val hasTopLevelDeclarations = file.declarations.any {
         it is FirMemberDeclaration && it.shouldBeSerialized(actualizedExpectDeclarations) &&

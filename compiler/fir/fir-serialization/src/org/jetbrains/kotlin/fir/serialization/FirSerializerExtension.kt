@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.fir.serialization
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.serialization.constant.ConstValueProviderInternals
 import org.jetbrains.kotlin.fir.serialization.constant.ConstValueProvider
+import org.jetbrains.kotlin.fir.serialization.constant.ConstValueProviderInternals
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -29,7 +29,7 @@ abstract class FirSerializerExtension {
     protected abstract val constValueProvider: ConstValueProvider?
 
     @OptIn(ConstValueProviderInternals::class)
-    internal inline fun <T> processFile(firFile: FirFile, action: () -> T): T {
+    internal inline fun <T> processFile(firFile: FirFile, crossinline action: () -> T): T {
         val previousFile = constValueProvider?.processingFirFile
         constValueProvider?.processingFirFile = firFile
         return try {

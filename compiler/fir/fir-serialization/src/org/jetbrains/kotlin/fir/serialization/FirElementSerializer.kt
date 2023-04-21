@@ -78,7 +78,7 @@ class FirElementSerializer private constructor(
 
     fun packagePartProto(
         packageFqName: FqName,
-        files: List<FirFile>,
+        file: FirFile,
         actualizedExpectDeclarations: Set<FirDeclaration>?
     ): ProtoBuf.Package.Builder {
         val builder = ProtoBuf.Package.newBuilder()
@@ -88,7 +88,7 @@ class FirElementSerializer private constructor(
                 if (!declaration.shouldBeSerialized(actualizedExpectDeclarations)) return
                 when (declaration) {
                     is FirProperty -> propertyProto(declaration)?.let { builder.addProperty(it) }
-                    is FirSimpleFunction -> functionProto(declaration)?.let { builder.addFunction(it) }
+                    is FirSimpleFunction -> privateFunctionProto(declaration)?.let { builder.addFunction(it) }
                     is FirTypeAlias -> typeAliasProto(declaration)?.let { builder.addTypeAlias(it) }
                     else -> onUnsupportedDeclaration(declaration)
                 }
@@ -97,18 +97,16 @@ class FirElementSerializer private constructor(
             }
         }
 
-        for (file in files) {
-            extension.processFile(file) {
-                for (declaration in file.declarations) {
-                    addDeclaration(declaration) {}
-                }
+        processFile(file) {
+            for (declaration in file.declarations) {
+                addDeclaration(declaration) {}
             }
-        }
+            extension.serializePackage(packageFqName, builder)
 
-        extension.serializePackage(packageFqName, builder)
-        for (declaration in providedDeclarationsService.getProvidedTopLevelDeclarations(packageFqName, scopeSession)) {
-            addDeclaration(declaration) {
-                error("Unsupported top-level declaration type: ${it.render()}")
+            for (declaration in providedDeclarationsService.getProvidedTopLevelDeclarations(packageFqName, scopeSession)) {
+                addDeclaration(declaration) {
+                    error("Unsupported top-level declaration type: ${it.render()}")
+                }
             }
         }
 
@@ -118,7 +116,20 @@ class FirElementSerializer private constructor(
         return builder
     }
 
-    fun classProto(klass: FirClass): ProtoBuf.Class.Builder = whileAnalysing(session, klass) {
+    private inline fun <T> processFile(firFile: FirFile, crossinline action: () -> T): T {
+        return extension.processFile(firFile) {
+            action()
+        }
+    }
+
+    // Note: we could try to extract FirFile from `session.firProvider.getFirClassifierContainerFile` but it doesn't work for anonymous objects
+    fun classProto(klass: FirClass, firFile: FirFile): ProtoBuf.Class.Builder {
+        return processFile(firFile) {
+            privateClassProto(klass)
+        }
+    }
+
+    private fun privateClassProto(klass: FirClass): ProtoBuf.Class.Builder = whileAnalysing(session, klass) {
         val builder = ProtoBuf.Class.newBuilder()
 
         val regularClass = klass as? FirRegularClass
@@ -198,7 +209,7 @@ class FirElementSerializer private constructor(
             if (declaration !is FirEnumEntry && declaration.isStatic) continue // ??? Miss values() & valueOf()
             when (declaration) {
                 is FirProperty -> propertyProto(declaration)?.let { builder.addProperty(it) }
-                is FirSimpleFunction -> functionProto(declaration)?.let { builder.addFunction(it) }
+                is FirSimpleFunction -> privateFunctionProto(declaration)?.let { builder.addFunction(it) }
                 is FirEnumEntry -> enumEntryProto(declaration).let { builder.addEnumEntry(it) }
                 else -> {}
             }
@@ -489,7 +500,13 @@ class FirElementSerializer private constructor(
         return builder
     }
 
-    fun functionProto(function: FirFunction): ProtoBuf.Function.Builder? = whileAnalysing(session, function) {
+    fun functionProto(function: FirFunction, firFile: FirFile): ProtoBuf.Function.Builder? {
+        return processFile(firFile) {
+            privateFunctionProto(function)
+        }
+    }
+
+    fun privateFunctionProto(function: FirFunction): ProtoBuf.Function.Builder? = whileAnalysing(session, function) {
         val builder = ProtoBuf.Function.newBuilder()
         val simpleFunction = function as? FirSimpleFunction
 

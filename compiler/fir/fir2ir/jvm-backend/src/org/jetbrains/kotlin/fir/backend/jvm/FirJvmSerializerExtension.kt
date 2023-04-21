@@ -134,9 +134,6 @@ class FirJvmSerializerExtension(
         if (moduleName != JvmProtoBufUtil.DEFAULT_MODULE_NAME) {
             proto.setExtension(JvmProtoBuf.packageModuleName, stringTable.getStringIndex(moduleName))
         }
-    }
-
-    fun serializeJvmPackage(proto: ProtoBuf.Package.Builder) {
         writeLocalProperties(proto, JvmProtoBuf.packageLocalVariable)
     }
 
