@@ -41,7 +41,7 @@ abstract class AbstractSymbolRestoreFromDifferentModuleTest : AbstractAnalysisAp
             val pointer = symbol.createPointer()
             Triple(DebugSymbolRenderer().render(symbol), symbol.render(defaultRenderer), pointer)
         }
-        configurator.doOutOfBlockModification(declaration.containingKtFile)
+        configurator.doGlobalModuleStateModification(project)
 
         val (debugRenderedRestored, prettyRenderedRestored) = analyseForTest(restoreAt) {
             val symbol = pointer.restoreSymbol() as? KtDeclarationSymbol

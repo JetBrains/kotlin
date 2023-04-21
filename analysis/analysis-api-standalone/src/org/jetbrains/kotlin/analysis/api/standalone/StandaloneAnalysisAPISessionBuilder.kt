@@ -119,6 +119,8 @@ public class StandaloneAnalysisAPISessionBuilder(
             FirStandaloneServiceRegistrar.registerProjectModelServices(project, kotlinCoreProjectEnvironment.parentDisposable)
 
             registerService(KotlinModificationTrackerFactory::class.java, KotlinStaticModificationTrackerFactory::class.java)
+            registerService(KotlinMessageBusProvider::class.java, KotlinProjectMessageBusProvider::class.java)
+            registerService(KotlinGlobalModificationService::class.java, KotlinStaticGlobalModificationService::class.java)
 
             registerService(KtModuleScopeProvider::class.java, KtModuleScopeProviderImpl())
             registerService(KotlinAnnotationsResolverFactory::class.java, KotlinStaticAnnotationsResolverFactory(ktFiles))
