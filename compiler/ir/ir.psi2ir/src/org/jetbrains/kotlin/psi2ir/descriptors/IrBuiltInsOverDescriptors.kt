@@ -333,6 +333,7 @@ class IrBuiltInsOverDescriptors(
     override val comparableClass = builtIns.comparable.toIrSymbol()
 
     override val arrayClass = builtIns.array.toIrSymbol()
+    override val vArrayClass = builtIns.vArray?.toIrSymbol()
 
     override val throwableType = builtIns.throwable.defaultType.toIrType()
     override val throwableClass = builtIns.throwable.toIrSymbol()
@@ -468,6 +469,11 @@ class IrBuiltInsOverDescriptors(
     }
 
     override val arrayOfNulls = findFunctions(Name.identifier("arrayOfNulls")).first {
+        it.descriptor.extensionReceiverParameter == null && it.descriptor.dispatchReceiverParameter == null &&
+                it.descriptor.valueParameters.size == 1 && KotlinBuiltIns.isInt(it.descriptor.valueParameters[0].type)
+    }
+
+    override val vArrayOfNulls = findFunctions(Name.identifier("vArrayOfNulls")).firstOrNull {
         it.descriptor.extensionReceiverParameter == null && it.descriptor.dispatchReceiverParameter == null &&
                 it.descriptor.valueParameters.size == 1 && KotlinBuiltIns.isInt(it.descriptor.valueParameters[0].type)
     }

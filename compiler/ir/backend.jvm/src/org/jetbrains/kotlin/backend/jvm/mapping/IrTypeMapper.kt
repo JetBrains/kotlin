@@ -139,7 +139,12 @@ open class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapp
         }
 
         if (type !is IrSimpleType) return
-        if (skipGenericSignature() || hasNothingInNonContravariantPosition(type) || type.arguments.isEmpty() || type.isRawTypeImpl()) {
+        if (skipGenericSignature()
+            || hasNothingInNonContravariantPosition(type)
+            || type.arguments.isEmpty()
+            || type.isRawTypeImpl()
+            || type.isVArrayOrNullableVArray()
+        ) {
             writeAsmType(asmType)
             return
         }

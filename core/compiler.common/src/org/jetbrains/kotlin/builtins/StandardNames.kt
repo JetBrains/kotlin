@@ -101,6 +101,8 @@ object StandardNames {
         @JvmField val charSequence: FqNameUnsafe = fqNameUnsafe("CharSequence")
         @JvmField val string: FqNameUnsafe = fqNameUnsafe("String")
         @JvmField val array: FqNameUnsafe = fqNameUnsafe("Array")
+        @JvmField val vArray: FqNameUnsafe = fqNameUnsafe("VArray")
+        @JvmField val vArrayIterator : FqNameUnsafe = fqNameUnsafe("VArrayIterator")
 
         @JvmField val _boolean: FqNameUnsafe = fqNameUnsafe("Boolean")
         @JvmField val _char: FqNameUnsafe = fqNameUnsafe("Char")

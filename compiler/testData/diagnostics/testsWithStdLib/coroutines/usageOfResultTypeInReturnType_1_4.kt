@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_PARAMETER, -UNUSED_EXPRESSION, -UNUSED_VARIABLE
 // !LANGUAGE: +InlineClasses +AllowResultInReturnType, -JvmInlineValueClasses
 

@@ -443,6 +443,15 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun arrayType(componentType: KotlinTypeMarker): SimpleTypeMarker =
         irBuiltIns.arrayClass.typeWith(componentType as IrType)
 
+    override fun KotlinTypeMarker.isVArray(): Boolean = (this as IrType).isVArray
+
+    override fun KotlinTypeMarker.getPrimitiveVArrayType(): PrimitiveType? {
+        if (!isVArray()) return null
+        val argument = getArgument(0)
+        if (argument.getVariance() != TypeVariance.INV || !argument.getType().isDefinitelyNotNullType()) return null
+        return argument.getType().getPrimitiveType()
+    }
+
     override fun KotlinTypeMarker.isArrayOrNullableArray(): Boolean =
         (this as IrType).isArray() || isNullableArray()
 

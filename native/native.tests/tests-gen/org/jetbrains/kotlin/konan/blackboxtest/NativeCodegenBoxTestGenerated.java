@@ -40923,6 +40923,19 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/vArrays")
+        @TestDataPath("$PROJECT_ROOT")
+        @Tag("codegen")
+        @Tag("k1Codegen")
+        @UseExtTestCaseGroupProvider()
+        public class VArrays {
+            @Test
+            public void testAllFilesPresentInVArrays() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/vArrays"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/valueClasses")
         @TestDataPath("$PROJECT_ROOT")
         @Tag("codegen")

@@ -515,6 +515,21 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return this.classId == StandardClassIds.Array
     }
 
+    override fun KotlinTypeMarker.isVArray(): Boolean {
+        require(this is ConeKotlinType)
+        return this.classId == StandardClassIds.VArray
+    }
+
+    override fun KotlinTypeMarker.getPrimitiveVArrayType(): PrimitiveType? {
+        if (!isVArray()) return null
+        val argument = getArgument(0)
+        if (argument.getVariance() != TypeVariance.INV) return null
+        val argumentType = argument.getType()
+        if (argumentType !is ConeClassLikeType) return null
+        if (!argumentType.isPrimitiveType() || !argumentType.isDefinitelyNotNullType()) return null
+        return PrimitiveType.getByShortName(argumentType.classId!!.shortClassName.identifier)
+    }
+
     override fun TypeConstructorMarker.isFinalClassOrEnumEntryOrAnnotationClassConstructor(): Boolean {
         val firRegularClass = toFirRegularClass() ?: return false
 

@@ -160,8 +160,22 @@ class IrBuiltInsOverFir(
     ) {
         configureSuperTypes()
         createProperty("length", intType, modality = Modality.ABSTRACT)
-        createMemberFunction(OperatorNameConventions.GET, charType, "index" to intType, modality = Modality.ABSTRACT, isOperator = true, isIntrinsicConst = false)
-        createMemberFunction("subSequence", defaultType, "startIndex" to intType, "endIndex" to intType, modality = Modality.ABSTRACT, isIntrinsicConst = false)
+        createMemberFunction(
+            OperatorNameConventions.GET,
+            charType,
+            "index" to intType,
+            modality = Modality.ABSTRACT,
+            isOperator = true,
+            isIntrinsicConst = false
+        )
+        createMemberFunction(
+            "subSequence",
+            defaultType,
+            "startIndex" to intType,
+            "endIndex" to intType,
+            modality = Modality.ABSTRACT,
+            isIntrinsicConst = false
+        )
         finalizeClassDefinition()
     }
     override val charSequenceClass: IrClassSymbol get() = charSequence.klass
@@ -213,6 +227,15 @@ class IrBuiltInsOverFir(
         finalizeClassDefinition()
     }
     override val arrayClass: IrClassSymbol get() = array.klass
+
+    private val vArray by createClass(kotlinIrPackage, IdSignatureValues.vArray) {
+        configureSuperTypes()
+        val typeParameter = addTypeParameter("T", anyNType)
+        addVArrayMembers(typeParameter.defaultType)
+        finalizeClassDefinition()
+    }
+
+    override val vArrayClass: IrClassSymbol get() = vArray.klass
 
     private val intRangeType by lazy { referenceClassByClassId(StandardClassIds.IntRange)!!.owner.defaultType }
     private val longRangeType by lazy { referenceClassByClassId(StandardClassIds.LongRange)!!.owner.defaultType }
@@ -383,6 +406,15 @@ class IrBuiltInsOverFir(
     override lateinit var dataClassArrayMemberHashCodeSymbol: IrSimpleFunctionSymbol private set
     override lateinit var dataClassArrayMemberToStringSymbol: IrSimpleFunctionSymbol private set
 
+    override val vArrayOfNulls: IrSimpleFunctionSymbol? by lazy {
+        findFunctions(kotlinPackage, Name.identifier("vArrayOfNulls")).firstOrNull {
+            it.owner.dispatchReceiverParameter == null
+                    && it.owner.extensionReceiverParameter == null
+                    && it.owner.valueParameters.size == 1
+                    && it.owner.valueParameters[0].type == intType
+        }
+    }
+
     override lateinit var checkNotNullSymbol: IrSimpleFunctionSymbol private set
     override val arrayOfNulls: IrSimpleFunctionSymbol by lazy {
         findFunctions(kotlinPackage, Name.identifier("arrayOfNulls")).first {
@@ -428,9 +460,21 @@ class IrBuiltInsOverFir(
             throwCceSymbol = addBuiltinOperatorSymbol(BuiltInOperatorNames.THROW_CCE, nothingType)
             throwIseSymbol = addBuiltinOperatorSymbol(BuiltInOperatorNames.THROW_ISE, nothingType)
             andandSymbol =
-                addBuiltinOperatorSymbol(BuiltInOperatorNames.ANDAND, booleanType, "" to booleanType, "" to booleanType, isIntrinsicConst = true)
+                addBuiltinOperatorSymbol(
+                    BuiltInOperatorNames.ANDAND,
+                    booleanType,
+                    "" to booleanType,
+                    "" to booleanType,
+                    isIntrinsicConst = true
+                )
             ororSymbol =
-                addBuiltinOperatorSymbol(BuiltInOperatorNames.OROR, booleanType, "" to booleanType, "" to booleanType, isIntrinsicConst = true)
+                addBuiltinOperatorSymbol(
+                    BuiltInOperatorNames.OROR,
+                    booleanType,
+                    "" to booleanType,
+                    "" to booleanType,
+                    isIntrinsicConst = true
+                )
             noWhenBranchMatchedExceptionSymbol =
                 addBuiltinOperatorSymbol(BuiltInOperatorNames.NO_WHEN_BRANCH_MATCHED_EXCEPTION, nothingType)
             illegalArgumentExceptionSymbol =
@@ -458,7 +502,15 @@ class IrBuiltInsOverFir(
             }
 
             fun List<IrType>.defineComparisonOperatorForEachIrType(name: String) =
-                associate { it.classifierOrFail to addBuiltinOperatorSymbol(name, booleanType, "" to it, "" to it, isIntrinsicConst = true) }
+                associate {
+                    it.classifierOrFail to addBuiltinOperatorSymbol(
+                        name,
+                        booleanType,
+                        "" to it,
+                        "" to it,
+                        isIntrinsicConst = true
+                    )
+                }
 
             lessFunByOperandType = primitiveIrTypesWithComparisons.defineComparisonOperatorForEachIrType(BuiltInOperatorNames.LESS)
             lessOrEqualFunByOperandType =
@@ -478,7 +530,7 @@ class IrBuiltInsOverFir(
     }
 
     override val unsignedArraysElementTypes: Map<IrClassSymbol, IrType?> by lazy {
-        unsignedTypesToUnsignedArrays.map { (k,v) -> v to referenceClassByClassId(k.classId)?.owner?.defaultType }.toMap()
+        unsignedTypesToUnsignedArrays.map { (k, v) -> v to referenceClassByClassId(k.classId)?.owner?.defaultType }.toMap()
     }
 
     override fun getKPropertyClass(mutable: Boolean, n: Int): IrClassSymbol = when (n) {
@@ -905,10 +957,21 @@ class IrBuiltInsOverFir(
 
         val irFun4SignatureCalculation = makeWithSymbol(IrSimpleFunctionSymbolImpl())
         val signature = irSignatureBuilder.computeSignature(irFun4SignatureCalculation)
-        return components.symbolTable.declareSimpleFunction(signature, { IrSimpleFunctionPublicSymbolImpl(signature, null) }, ::makeWithSymbol)
+        return components.symbolTable.declareSimpleFunction(
+            signature,
+            { IrSimpleFunctionPublicSymbolImpl(signature, null) },
+            ::makeWithSymbol
+        )
     }
 
     private fun IrClass.addArrayMembers(elementType: IrType, iteratorType: IrType) {
+        addCommonVArrayAndArrayMembers(elementType)
+        createMemberFunction(OperatorNameConventions.ITERATOR, iteratorType, isOperator = true)
+    }
+
+    private fun IrClass.addVArrayMembers(elementType: IrType) = addCommonVArrayAndArrayMembers(elementType)
+
+    private fun IrClass.addCommonVArrayAndArrayMembers(elementType: IrType) {
         addConstructor {
             origin = object : IrDeclarationOriginImpl("BUILTIN_CLASS_CONSTRUCTOR") {}
             returnType = defaultType
@@ -917,9 +980,15 @@ class IrBuiltInsOverFir(
             it.addValueParameter("size", intType, object : IrDeclarationOriginImpl("BUILTIN_CLASS_CONSTRUCTOR") {})
         }
         createMemberFunction(OperatorNameConventions.GET, elementType, "index" to intType, isOperator = true, isIntrinsicConst = false)
-        createMemberFunction(OperatorNameConventions.SET, unitType, "index" to intType, "value" to elementType, isOperator = true, isIntrinsicConst = false)
+        createMemberFunction(
+            OperatorNameConventions.SET,
+            unitType,
+            "index" to intType,
+            "value" to elementType,
+            isOperator = true,
+            isIntrinsicConst = false
+        )
         createProperty("size", intType)
-        createMemberFunction(OperatorNameConventions.ITERATOR, iteratorType, isOperator = true)
     }
 
     private fun IrClass.createProperty(

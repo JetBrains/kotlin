@@ -32,6 +32,9 @@ fun IrClassifierSymbol?.isArrayOrPrimitiveArray(builtins: IrBuiltIns): Boolean =
 fun IrFunction.isInlineArrayConstructor(builtIns: IrBuiltIns): Boolean =
     this is IrConstructor && valueParameters.size == 2 && constructedClass.symbol.isArrayOrPrimitiveArray(builtIns)
 
+fun IrFunction.isInlineVArrayConstructor(builtIns: IrBuiltIns): Boolean =
+    this is IrConstructor && valueParameters.size == 2 && constructedClass.symbol == builtIns.vArrayClass
+
 val IrDeclarationParent.fqNameForIrSerialization: FqName
     get() = when (this) {
         is IrPackageFragment -> this.fqName

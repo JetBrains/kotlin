@@ -131,6 +131,12 @@ class TypeMappingMode @TypeMappingModeInternals constructor(
             else -> genericArgumentMode ?: this
         }
 
+    fun dontBoxPrimitivesMode(): TypeMappingMode =
+        TypeMappingMode(
+            false, needInlineClassWrapping, isForAnnotationParameter, skipDeclarationSiteWildcards, skipDeclarationSiteWildcardsIfPossible,
+            genericArgumentMode, kotlinCollectionsToJavaCollections, genericContravariantArgumentMode, genericInvariantArgumentMode
+        )
+
     fun wrapInlineClassesMode(): TypeMappingMode =
         TypeMappingMode(
             needPrimitiveBoxing, true, isForAnnotationParameter, skipDeclarationSiteWildcards, skipDeclarationSiteWildcardsIfPossible,

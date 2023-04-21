@@ -294,7 +294,11 @@ class KotlinTypeMapper @JvmOverloads constructor(
         //  In<Nothing, Foo> == In<*, Foo> -> In<?, Foo>
         //  In<Nothing, Nothing> -> In
         //  Inv<in Nothing, Foo> -> Inv
-        if (signatureVisitor.skipGenericSignature() || hasNothingInNonContravariantPosition(type) || type.arguments.isEmpty()) {
+        if (signatureVisitor.skipGenericSignature()
+            || hasNothingInNonContravariantPosition(type)
+            || type.arguments.isEmpty()
+            || KotlinBuiltIns.isPrimitiveVArray(type)
+        ) {
             signatureVisitor.writeAsmType(asmType)
             return
         }

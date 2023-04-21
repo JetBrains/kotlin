@@ -9,4 +9,4 @@ class ValueParam(vararg val a: <!OPT_IN_USAGE!>ULong<!>)
 
 annotation class Ann(vararg val a: <!OPT_IN_USAGE!>UInt<!>)
 
-fun array(<!FORBIDDEN_VARARG_PARAMETER_TYPE!>vararg<!> a: <!OPT_IN_USAGE!>UIntArray<!>) {}
+fun array(vararg a: <!OPT_IN_USAGE!>UIntArray<!>) {}

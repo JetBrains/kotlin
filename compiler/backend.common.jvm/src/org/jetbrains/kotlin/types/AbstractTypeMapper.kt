@@ -85,6 +85,10 @@ object AbstractTypeMapper {
                 return mapArrayType(type, sw, context, mode, materialized)
             }
 
+            if (type.isVArray()) {
+                return mapVArrayType(type, sw, context, mode, materialized)
+            }
+
             if (typeConstructor.isClassTypeConstructor()) {
                 return mapClassType(typeConstructor, mode, type, context, sw, materialized)
             }
@@ -123,6 +127,22 @@ object AbstractTypeMapper {
         }
     }
 
+    private fun <Writer : JvmDescriptorTypeWriter<Type>> TypeSystemCommonBackendContextForTypeMapping.mapVArrayType(
+        type: SimpleTypeMarker,
+        sw: Writer?,
+        context: TypeMappingContext<Writer>,
+        mode: TypeMappingMode,
+        materialized: Boolean
+    ) = mapArrayOrVArrayType(type, sw, context, mode, materialized) { it.dontWrapInlineClassesMode().dontBoxPrimitivesMode() }
+
+    private fun <Writer : JvmDescriptorTypeWriter<Type>> TypeSystemCommonBackendContextForTypeMapping.mapArrayType(
+        type: SimpleTypeMarker,
+        sw: Writer?,
+        context: TypeMappingContext<Writer>,
+        mode: TypeMappingMode,
+        materialized: Boolean
+    ) = mapArrayOrVArrayType(type, sw, context, mode, materialized) { it }
+
     private fun <Writer : JvmDescriptorTypeWriter<Type>> TypeSystemCommonBackendContextForTypeMapping.mapSuspendFunctionType(
         type: SimpleTypeMarker,
         context: TypeMappingContext<Writer>,
@@ -143,12 +163,13 @@ object AbstractTypeMapper {
         return mapType(context, runtimeFunctionType, mode, sw, materialized)
     }
 
-    private fun <Writer : JvmDescriptorTypeWriter<Type>> TypeSystemCommonBackendContextForTypeMapping.mapArrayType(
+    private fun <Writer : JvmDescriptorTypeWriter<Type>> TypeSystemCommonBackendContextForTypeMapping.mapArrayOrVArrayType(
         type: SimpleTypeMarker,
         sw: Writer?,
         context: TypeMappingContext<Writer>,
         mode: TypeMappingMode,
-        materialized: Boolean
+        materialized: Boolean,
+        modeProcessing: (TypeMappingMode) -> TypeMappingMode
     ): Type {
         val typeArgument = type.asArgumentList()[0]
         val (variance, memberType) = when {
@@ -162,7 +183,8 @@ object AbstractTypeMapper {
             arrayElementType = AsmTypes.OBJECT_TYPE
             sw?.writeClass(arrayElementType)
         } else {
-            arrayElementType = mapType(context, memberType, mode.toGenericArgumentMode(variance, ofArray = true), sw, materialized)
+            arrayElementType =
+                mapType(context, memberType, modeProcessing(mode.toGenericArgumentMode(variance, ofArray = true)), sw, materialized)
         }
         sw?.writeArrayEnd()
         return AsmUtil.getArrayType(arrayElementType)

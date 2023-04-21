@@ -52137,6 +52137,70 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/vArrays")
+    @TestDataPath("$PROJECT_ROOT")
+    public class VArrays {
+        @Test
+        public void testAllFilesPresentInVArrays() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/vArrays"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("vArrayClone.kt")
+        public void testVArrayClone() throws Exception {
+            runTest("compiler/testData/codegen/box/vArrays/vArrayClone.kt");
+        }
+
+        @Test
+        @TestMetadata("vArrayCopy.kt")
+        public void testVArrayCopy() throws Exception {
+            runTest("compiler/testData/codegen/box/vArrays/vArrayCopy.kt");
+        }
+
+        @Test
+        @TestMetadata("vArrayCreation.kt")
+        public void testVArrayCreation() throws Exception {
+            runTest("compiler/testData/codegen/box/vArrays/vArrayCreation.kt");
+        }
+
+        @Test
+        @TestMetadata("vArrayIterator.kt")
+        public void testVArrayIterator() throws Exception {
+            runTest("compiler/testData/codegen/box/vArrays/vArrayIterator.kt");
+        }
+
+        @Test
+        @TestMetadata("vArrayMultidimensional.kt")
+        public void testVArrayMultidimensional() throws Exception {
+            runTest("compiler/testData/codegen/box/vArrays/vArrayMultidimensional.kt");
+        }
+
+        @Test
+        @TestMetadata("vArrayReifiedTypeArgument.kt")
+        public void testVArrayReifiedTypeArgument() throws Exception {
+            runTest("compiler/testData/codegen/box/vArrays/vArrayReifiedTypeArgument.kt");
+        }
+
+        @Test
+        @TestMetadata("vArraySize.kt")
+        public void testVArraySize() throws Exception {
+            runTest("compiler/testData/codegen/box/vArrays/vArraySize.kt");
+        }
+
+        @Test
+        @TestMetadata("vArrayTypeChecks.kt")
+        public void testVArrayTypeChecks() throws Exception {
+            runTest("compiler/testData/codegen/box/vArrays/vArrayTypeChecks.kt");
+        }
+
+        @Test
+        @TestMetadata("varargParameterOfInlineType.kt")
+        public void testVarargParameterOfInlineType() throws Exception {
+            runTest("compiler/testData/codegen/box/vArrays/varargParameterOfInlineType.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/valueClasses")
     @TestDataPath("$PROJECT_ROOT")
     public class ValueClasses {

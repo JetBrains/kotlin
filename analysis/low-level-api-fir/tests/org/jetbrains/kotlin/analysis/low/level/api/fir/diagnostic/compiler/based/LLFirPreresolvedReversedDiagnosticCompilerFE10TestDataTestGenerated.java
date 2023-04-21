@@ -34018,6 +34018,34 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         }
 
         @Nested
+        @TestMetadata("compiler/testData/diagnostics/tests/vArrays")
+        @TestDataPath("$PROJECT_ROOT")
+        public class VArrays {
+            @Test
+            public void testAllFilesPresentInVArrays() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/vArrays"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true, "multiplatform");
+            }
+
+            @Test
+            @TestMetadata("vArrayTypeArgumentNonReified.kt")
+            public void testVArrayTypeArgumentNonReified() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/vArrays/vArrayTypeArgumentNonReified.kt");
+            }
+
+            @Test
+            @TestMetadata("vArraysTypeArguments.kt")
+            public void testVArraysTypeArguments() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/vArrays/vArraysTypeArguments.kt");
+            }
+
+            @Test
+            @TestMetadata("vArraysTypeChecks.kt")
+            public void testVArraysTypeChecks() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/vArrays/vArraysTypeChecks.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/diagnostics/tests/valueClasses")
         @TestDataPath("$PROJECT_ROOT")
         public class ValueClasses {

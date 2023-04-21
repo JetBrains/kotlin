@@ -113,7 +113,7 @@ object FirClassLiteralChecker : FirGetClassCallChecker() {
     private fun ConeKotlinType.isAllowedInClassLiteral(context: CheckerContext): Boolean =
         when (this) {
             is ConeClassLikeType -> {
-                if (isNonPrimitiveArray) {
+                if (isNonPrimitiveArray || isVArray) {
                     typeArguments.none { typeArgument ->
                         when (typeArgument) {
                             is ConeStarProjection -> true

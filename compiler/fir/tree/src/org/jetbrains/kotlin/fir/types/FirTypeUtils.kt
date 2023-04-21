@@ -49,6 +49,12 @@ val FirTypeRef.isArrayType: Boolean
                 || StandardClassIds.primitiveArrayTypeByElementType.values.any { isBuiltinType(it, false) }
                 || StandardClassIds.unsignedArrayTypeByElementType.values.any { isBuiltinType(it, false) }
 
+val FirTypeRef.isVArray : Boolean
+    get() = isBuiltinType(StandardClassIds.VArray, false)
+
+val FirTypeRef.isNullableVArray : Boolean
+    get() = isBuiltinType(StandardClassIds.VArray, true)
+
 val FirExpression.isNullLiteral: Boolean
     get() = this is FirConstExpression<*> &&
             this.kind == ConstantValueKind.Null &&

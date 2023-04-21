@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.util.isFileClass
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeAsciiOnly
 import org.jetbrains.org.objectweb.asm.Opcodes.*
@@ -53,11 +54,14 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                 Key(kotlinJvmInternalUnsafeFqn, null, "monitorExit", listOf(anyFqn)) to MonitorInstruction.MONITOR_EXIT,
                 Key(kotlinJvmFqn, arrayFqn, "isArrayOf", emptyList()) to IsArrayOf,
                 Key(kotlinFqn, null, "arrayOfNulls", listOf(intFqn)) to NewArray,
+                Key(kotlinFqn, null, "vArrayOfNulls", listOf(intFqn)) to NewArray,
+                Key(kotlinFqn, StandardClassIds.VArray.asSingleFqName(), "iterator", emptyList()) to VArrayIterator,
                 Key(cloneableFqn, null, "clone", emptyList()) to Clone,
                 Key(kotlinFqn, null, "enumValues", listOf()) to EnumValues,
                 Key(kotlinFqn, null, "enumValueOf", listOf(stringFqn)) to EnumValueOf,
                 Key(kotlinFqn, stringFqn, "plus", listOf(anyFqn)) to StringPlus,
                 Key(kotlinReflectFqn, null, "typeOf", listOf()) to TypeOf,
+                Key(StandardNames.FqNames.vArrayIterator.toSafe(), null, "next", listOf()) to VArrayIteratorNext,
                 irBuiltIns.eqeqSymbol.toKey()!! to Equals(KtTokens.EQEQ),
                 irBuiltIns.eqeqeqSymbol.toKey()!! to Equals(KtTokens.EQEQEQ),
                 irBuiltIns.ieee754equalsFunByOperandType[irBuiltIns.floatClass]!!.toKey()!! to Ieee754Equals(Type.FLOAT_TYPE),
@@ -81,7 +85,7 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                 symbols.jvmIndyIntrinsic.toKey()!! to JvmInvokeDynamic,
                 symbols.jvmDebuggerInvokeSpecialIntrinsic.toKey()!! to JvmDebuggerInvokeSpecial,
                 symbols.intPostfixIncrDecr.toKey()!! to IntIncr(isPrefix = false),
-                symbols.intPrefixIncrDecr.toKey()!! to IntIncr(isPrefix = true)
+                symbols.intPrefixIncrDecr.toKey()!! to IntIncr(isPrefix = true),
             ) +
                     numberConversionMethods() +
                     unaryFunForPrimitives("plus", UnaryPlus) +
@@ -111,9 +115,10 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                     createKeyMapping(Not, irBuiltIns.booleanClass, "not") +
                     createKeyMapping(StringGetChar, irBuiltIns.stringClass, "get", irBuiltIns.intClass) +
                     symbols.primitiveIteratorsByType.values.map { iteratorClass ->
-                        createKeyMapping(IteratorNext, iteratorClass, "next")
+                        createKeyMapping(PrimitiveArrayIteratorNext, iteratorClass, "next")
                     } +
                     arrayMethods() +
+                    vArrayMethods() +
                     primitiveComparisonIntrinsics(irBuiltIns.lessFunByOperandType, KtTokens.LT) +
                     primitiveComparisonIntrinsics(irBuiltIns.lessOrEqualFunByOperandType, KtTokens.LTEQ) +
                     primitiveComparisonIntrinsics(irBuiltIns.greaterFunByOperandType, KtTokens.GT) +
@@ -168,19 +173,32 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
             }
         }
 
-    private fun arrayMethods(): List<Pair<Key, IntrinsicMethod>> =
-        symbols.primitiveArraysToPrimitiveTypes.flatMap { (array, primitiveType) -> arrayMethods(primitiveType.symbol, array) } +
-                arrayMethods(symbols.array.owner.typeParameters.single().symbol, symbols.array)
+    private fun vArrayMethods() = if (irBuiltIns.vArrayClass == null) {
+        emptyList()
+    } else {
+        arrayMethods(irBuiltIns.vArrayClass!!.owner.typeParameters.single().symbol, irBuiltIns.vArrayClass!!)
+    }
 
-    private fun arrayMethods(elementClass: IrClassifierSymbol, arrayClass: IrClassSymbol) =
-        listOf(
+    private fun arrayMethods(): List<Pair<Key, IntrinsicMethod>> =
+        symbols.primitiveArraysToPrimitiveTypes.flatMap { (array, primitiveType) ->
+            arrayMethods(
+                primitiveType.symbol,
+                array
+            )
+        } + arrayMethods(symbols.array.owner.typeParameters.single().symbol, symbols.array)
+
+    private fun arrayMethods(elementClass: IrClassifierSymbol, arrayClass: IrClassSymbol): List<Pair<Key, IntrinsicMethod>> {
+        val methods = mutableListOf(
             createKeyMapping(ArraySize, arrayClass, "<get-size>"),
             createKeyMapping(NewArray, arrayClass, "<init>", irBuiltIns.intClass),
             createKeyMapping(ArraySet, arrayClass, "set", irBuiltIns.intClass, elementClass),
             createKeyMapping(ArrayGet, arrayClass, "get", irBuiltIns.intClass),
             createKeyMapping(Clone, arrayClass, "clone"),
-            createKeyMapping(ArrayIterator, arrayClass, "iterator")
         )
+        if (arrayClass != irBuiltIns.vArrayClass) methods.add(createKeyMapping(ArrayIterator, arrayClass, "iterator"))
+        return methods
+    }
+
 
     private fun primitiveComparisonIntrinsics(
         typeToIrFun: Map<IrClassifierSymbol, IrSimpleFunctionSymbol>,

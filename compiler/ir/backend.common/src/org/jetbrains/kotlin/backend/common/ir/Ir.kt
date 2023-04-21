@@ -50,6 +50,7 @@ open class BuiltinSymbolsBase(val irBuiltIns: IrBuiltIns, private val symbolTabl
         get() = symbolTable
 
     val iterator = getClass(Name.identifier("Iterator"), "kotlin", "collections")
+    val vArrayIterator = getClass(Name.identifier("VArrayIterator"), "kotlin")
 
     val charSequence = getClass(Name.identifier("CharSequence"), "kotlin")
     val string = getClass(Name.identifier("String"), "kotlin")
@@ -119,7 +120,10 @@ open class BuiltinSymbolsBase(val irBuiltIns: IrBuiltIns, private val symbolTabl
     val arrayOf: IrSimpleFunctionSymbol get() = irBuiltIns.arrayOf
     val arrayOfNulls: IrSimpleFunctionSymbol get() = irBuiltIns.arrayOfNulls
 
+    val vArrayOfNulls: IrSimpleFunctionSymbol? get() = irBuiltIns.vArrayOfNulls
+
     val array get() = irBuiltIns.arrayClass
+    val vArray get() = irBuiltIns.vArrayClass
 
     val byteArray get() = irBuiltIns.byteArray
     val charArray get() = irBuiltIns.charArray

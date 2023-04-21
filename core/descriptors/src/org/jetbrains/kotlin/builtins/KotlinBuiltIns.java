@@ -57,10 +57,10 @@ public abstract class KotlinBuiltIns {
             @Override
             public Collection<PackageViewDescriptor> invoke() {
                 return Arrays.asList(
-                    getBuiltInsModule().getPackage(BUILT_INS_PACKAGE_FQ_NAME),
-                    getBuiltInsModule().getPackage(COLLECTIONS_PACKAGE_FQ_NAME),
-                    getBuiltInsModule().getPackage(RANGES_PACKAGE_FQ_NAME),
-                    getBuiltInsModule().getPackage(ANNOTATION_PACKAGE_FQ_NAME)
+                        getBuiltInsModule().getPackage(BUILT_INS_PACKAGE_FQ_NAME),
+                        getBuiltInsModule().getPackage(COLLECTIONS_PACKAGE_FQ_NAME),
+                        getBuiltInsModule().getPackage(RANGES_PACKAGE_FQ_NAME),
+                        getBuiltInsModule().getPackage(ANNOTATION_PACKAGE_FQ_NAME)
                 );
             }
         });
@@ -89,10 +89,7 @@ public abstract class KotlinBuiltIns {
             @Override
             public ClassDescriptor invoke(Name name) {
                 ClassifierDescriptor classifier = getBuiltInsPackageScope().getContributedClassifier(name, NoLookupLocation.FROM_BUILTINS);
-                if (classifier == null) {
-                    throw new AssertionError("Built-in class " + BUILT_INS_PACKAGE_FQ_NAME.child(name) + " is not found");
-                }
-                if (!(classifier instanceof ClassDescriptor)) {
+                if (classifier != null && !(classifier instanceof ClassDescriptor)) {
                     throw new AssertionError("Must be a class descriptor " + name + ", but was " + classifier);
                 }
                 return (ClassDescriptor) classifier;
@@ -182,7 +179,7 @@ public abstract class KotlinBuiltIns {
     /**
      * Checks if the given descriptor is declared in the deserialized built-in package fragment, i.e. if it was loaded as a part of
      * loading .kotlin_builtins definition files.
-     *
+     * <p>
      * NOTE: this method returns false for descriptors loaded from .class files or other binaries, even if they are "built-in" in some
      * other sense! For example, it returns false for the class descriptor of `kotlin.IntRange` loaded from `kotlin/IntRange.class`.
      * In case you need to check if the class is "built-in" in another sense, you should probably do it by inspecting its FQ name,
@@ -220,7 +217,11 @@ public abstract class KotlinBuiltIns {
 
     @NotNull
     private ClassDescriptor getBuiltInClassByName(@NotNull String simpleName) {
-        return builtInClassesByName.invoke(Name.identifier(simpleName));
+        ClassDescriptor classDescriptor = builtInClassesByName.invoke(Name.identifier(simpleName));
+        if (classDescriptor == null) {
+            throw new AssertionError("Built-in class " + BUILT_INS_PACKAGE_FQ_NAME.child(Name.identifier(simpleName)) + " is not found");
+        }
+        return classDescriptor;
     }
 
     @NotNull
@@ -281,6 +282,14 @@ public abstract class KotlinBuiltIns {
     @NotNull
     public ClassDescriptor getArray() {
         return getBuiltInClassByName("Array");
+    }
+
+    private ClassDescriptor getBuiltInClassByNameOrNull(@NotNull String simpleName) {
+        return builtInClassesByName.invoke(Name.identifier(simpleName));
+    }
+
+    public ClassDescriptor getVArray() {
+        return getBuiltInClassByNameOrNull("VArray");
     }
 
     @NotNull
@@ -463,7 +472,8 @@ public abstract class KotlinBuiltIns {
 
     @NotNull
     public ClassDescriptor getMutableMapEntry() {
-        ClassDescriptor classDescriptor = DescriptorUtils.getInnerClassByName(getMutableMap(), "MutableEntry", NoLookupLocation.FROM_BUILTINS);
+        ClassDescriptor classDescriptor =
+                DescriptorUtils.getInnerClassByName(getMutableMap(), "MutableEntry", NoLookupLocation.FROM_BUILTINS);
         assert classDescriptor != null : "Can't find MutableMap.MutableEntry";
         return classDescriptor;
     }
@@ -575,7 +585,7 @@ public abstract class KotlinBuiltIns {
 
     @NotNull
     public KotlinType getArrayElementType(@NotNull KotlinType arrayType) {
-        if (isArray(arrayType)) {
+        if (isArray(arrayType) || isVArray(arrayType)) {
             if (arrayType.getArguments().size() != 1) {
                 throw new IllegalStateException();
             }
@@ -692,6 +702,10 @@ public abstract class KotlinBuiltIns {
         return isConstructedFromGivenClass(type, FqNames.array);
     }
 
+    public static boolean isVArray(@NotNull KotlinType type) {
+        return isConstructedFromGivenClass(type, FqNames.vArray);
+    }
+
     public static boolean isArrayOrPrimitiveArray(@NotNull ClassDescriptor descriptor) {
         return classFqNameEquals(descriptor, FqNames.array) || getPrimitiveArrayType(descriptor) != null;
     }
@@ -700,6 +714,13 @@ public abstract class KotlinBuiltIns {
         return isArray(type) || isPrimitiveArray(type);
     }
 
+    public static boolean isPrimitiveVArray(@NotNull KotlinType type) {
+        if (isVArray(type)) {
+            TypeProjection elementType = type.getArguments().get(0);
+            return elementType.getProjectionKind() == Variance.INVARIANT && isPrimitiveType(elementType.getType());
+        }
+        return false;
+    }
     public static boolean isPrimitiveArray(@NotNull KotlinType type) {
         ClassifierDescriptor descriptor = type.getConstructor().getDeclarationDescriptor();
         return descriptor != null && getPrimitiveArrayType(descriptor) != null;
@@ -904,8 +925,9 @@ public abstract class KotlinBuiltIns {
         assert functionReturnType != null : "Function return typed type must be resolved.";
         boolean mayReturnNonUnitValue = !isUnit(functionReturnType);
         for (FunctionDescriptor overriddenDescriptor : descriptor.getOriginal().getOverriddenDescriptors()) {
-            if (mayReturnNonUnitValue)
+            if (mayReturnNonUnitValue) {
                 break;
+            }
             KotlinType overriddenFunctionReturnType = overriddenDescriptor.getReturnType();
             assert overriddenFunctionReturnType != null : "Function return typed type must be resolved.";
             mayReturnNonUnitValue = !isUnit(overriddenFunctionReturnType);

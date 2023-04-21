@@ -268,7 +268,9 @@ abstract class DataClassMembersGenerator(
             ?: throw AssertionError("Class: ${irClass.descriptor}: unexpected property descriptor: $property")
 
     val IrClassifierSymbol?.isArrayOrPrimitiveArray: Boolean
-        get() = isArrayOrPrimitiveArray(context.irBuiltIns)
+        get() = this == context.irBuiltIns.arrayClass
+                || this == context.irBuiltIns.vArrayClass
+                || this in context.irBuiltIns.primitiveArraysToPrimitiveTypes
 
     abstract fun declareSimpleFunction(startOffset: Int, endOffset: Int, functionDescriptor: FunctionDescriptor): IrFunction
 

@@ -31,11 +31,20 @@ class GenerateArrayIterators(out: PrintWriter) : BuiltInsSourceGenerator(out) {
             out.println("    override fun hasNext() = index < array.size")
             out.println("    override fun next$s() = try { array[index++] } catch (e: ArrayIndexOutOfBoundsException) { index -= 1; throw NoSuchElementException(e.message) }")
             out.println("}")
+
+            out.println("private class VArray${s}Iterator(private val array: VArray<${s}>) : ${s}Iterator(), VArrayIterator<$s> {")
+            out.println("    private var index = 0")
+            out.println("    override fun hasNext() = index < array.size")
+            out.println("    override fun next$s() = try { array[index++] } catch (e: ArrayIndexOutOfBoundsException) { index -= 1; throw NoSuchElementException(e.message) }")
+            out.println("}")
+
             out.println()
         }
         for (kind in PrimitiveType.values()) {
             val s = kind.capitalized
             out.println("public fun iterator(array: ${s}Array): ${s}Iterator = Array${s}Iterator(array)")
+            out.println("public fun vArrayIterator(array: VArray<${s}>): ${s}Iterator = VArray${s}Iterator(array)")
+
         }
     }
 }

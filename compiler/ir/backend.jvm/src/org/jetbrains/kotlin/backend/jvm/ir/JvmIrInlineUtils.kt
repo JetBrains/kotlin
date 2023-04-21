@@ -67,7 +67,8 @@ fun IrStatement.unwrapInlineLambda(): IrFunctionReference? = when (this) {
 }
 
 fun IrFunction.isInlineFunctionCall(context: JvmBackendContext): Boolean =
-    (!context.state.isInlineDisabled || typeParameters.any { it.isReified }) && (isInline || isInlineArrayConstructor(context.irBuiltIns))
+    (!context.state.isInlineDisabled || typeParameters.any { it.isReified })
+            && (isInline || isInlineArrayConstructor(context.irBuiltIns) || isInlineVArrayConstructor(context.irBuiltIns))
 
 fun IrDeclaration.isInlineOnly(): Boolean =
     this is IrFunction && (

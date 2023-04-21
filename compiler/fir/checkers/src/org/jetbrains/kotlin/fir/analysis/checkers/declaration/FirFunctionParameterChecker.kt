@@ -67,11 +67,9 @@ object FirFunctionParameterChecker : FirFunctionChecker() {
             // never be anything except `Nothing` or `Nothing?`
             // in case it is a complex type that quantifies
             // over many other types.
-            if (varargParameterType.leastUpperBound(context.session).isNothingOrNullableNothing ||
-                (varargParameterType.isValueClass(context.session) && !varargParameterType.isUnsignedTypeOrNullableUnsignedType)
-            // Note: comparing with FE1.0, we skip checking if the type is not primitive because primitive types are not inline. That
-            // is any primitive values are already allowed by the inline check.
-            ) {
+            if (varargParameterType.leastUpperBound(context.session).isNothingOrNullableNothing) {
+                // Note: comparing with FE1.0, we skip checking if the type is not primitive because primitive types are not inline. That
+                // is any primitive values are already allowed by the inline check.
                 reporter.reportOn(
                     varargParameter.source, FirErrors.FORBIDDEN_VARARG_PARAMETER_TYPE,
                     varargParameterType,

@@ -61,10 +61,11 @@ class IrArrayBuilder(val builder: JvmIrBuilder, val arrayType: IrType) {
     private fun newArray(size: Int) = newArray(builder.irInt(size))
 
     private fun newArray(size: IrExpression): IrExpression {
-        val arrayConstructor = if (unwrappedArrayType.isBoxedArray)
-            builder.irSymbols.arrayOfNulls
-        else
-            unwrappedArrayType.classOrNull!!.constructors.single { it.owner.valueParameters.size == 1 }
+        val arrayConstructor = when {
+            unwrappedArrayType.isBoxedArray -> builder.irSymbols.arrayOfNulls
+            unwrappedArrayType.isVArray -> builder.irSymbols.vArrayOfNulls!!
+            else -> unwrappedArrayType.classOrNull!!.constructors.single { it.owner.valueParameters.size == 1 }
+        }
 
         return builder.irCall(arrayConstructor, unwrappedArrayType).apply {
             if (typeArgumentsCount != 0)

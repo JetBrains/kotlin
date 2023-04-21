@@ -49527,6 +49527,16 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/vArrays")
+    @TestDataPath("$PROJECT_ROOT")
+    public class VArrays {
+        @Test
+        public void testAllFilesPresentInVArrays() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/vArrays"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+        }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/valueClasses")
     @TestDataPath("$PROJECT_ROOT")
     public class ValueClasses {
