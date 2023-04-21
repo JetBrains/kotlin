@@ -25,25 +25,28 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.types.ConstantValueKind
 
-internal fun FirExpression.toConstantValue(session: FirSession, constValueProvider: ConstValueProvider? = null): ConstantValue<*>? {
-    constValueProvider?.findConstantValueFor(this)?.let { return it }
-    return accept(FirToConstantValueTransformerUnsafe(), FirToConstantValueTransformerData(session, constValueProvider))
+internal inline fun <reified T : ConstantValue<*>> FirExpression.toConstantValue(
+    session: FirSession,
+    constValueProvider: ConstValueProvider? = null
+): T? {
+    return constValueProvider?.findConstantValueFor(this) as? T
+        ?: accept(FirToConstantValueTransformerUnsafe(), FirToConstantValueTransformerData(session, constValueProvider)) as? T
 }
 
 internal fun FirExpression?.hasConstantValue(session: FirSession): Boolean {
     return this?.accept(FirToConstantValueChecker, session) == true
 }
 
-private class FirToConstantValueTransformerSafe : FirToConstantValueTransformer(failOnNonConst = false)
+internal class FirToConstantValueTransformerSafe : FirToConstantValueTransformer(failOnNonConst = false)
 
-private class FirToConstantValueTransformerUnsafe : FirToConstantValueTransformer(failOnNonConst = true)
+internal class FirToConstantValueTransformerUnsafe : FirToConstantValueTransformer(failOnNonConst = true)
 
-private data class FirToConstantValueTransformerData(
+internal data class FirToConstantValueTransformerData(
     val session: FirSession,
     val constValueProvider: ConstValueProvider?,
 )
 
-private abstract class FirToConstantValueTransformer(
+internal abstract class FirToConstantValueTransformer(
     private val failOnNonConst: Boolean,
 ) : FirDefaultVisitor<ConstantValue<*>?, FirToConstantValueTransformerData>() {
     override fun visitElement(

@@ -1091,8 +1091,7 @@ class FirElementSerializer private constructor(
     private fun serializeVersionRequirementFromRequireKotlin(annotation: FirAnnotation): ProtoBuf.VersionRequirement.Builder? {
         val argumentMapping = annotation.argumentMapping.mapping
 
-        val versionString =
-            (argumentMapping[RequireKotlinConstants.VERSION]?.toConstantValue(session) as? StringValue)?.value ?: return null
+        val versionString = argumentMapping[RequireKotlinConstants.VERSION]?.toConstantValue<StringValue>(session)?.value ?: return null
         val matchResult = RequireKotlinConstants.VERSION_REGEX.matchEntire(versionString) ?: return null
 
         val major = matchResult.groupValues.getOrNull(1)?.toIntOrNull() ?: return null
@@ -1105,12 +1104,12 @@ class FirElementSerializer private constructor(
             writeVersionFull = { proto.versionFull = it }
         )
 
-        val message = (argumentMapping[RequireKotlinConstants.MESSAGE]?.toConstantValue(session) as? StringValue)?.value
+        val message = argumentMapping[RequireKotlinConstants.MESSAGE]?.toConstantValue<StringValue>(session)?.value
         if (message != null) {
             proto.message = stringTable.getStringIndex(message)
         }
 
-        when ((argumentMapping[RequireKotlinConstants.LEVEL]?.toConstantValue(session) as? EnumValue)?.enumEntryName?.asString()) {
+        when (argumentMapping[RequireKotlinConstants.LEVEL]?.toConstantValue<EnumValue>(session)?.enumEntryName?.asString()) {
             DeprecationLevel.ERROR.name -> {
                 // ERROR is the default level
             }
@@ -1118,7 +1117,7 @@ class FirElementSerializer private constructor(
             DeprecationLevel.HIDDEN.name -> proto.level = ProtoBuf.VersionRequirement.Level.HIDDEN
         }
 
-        when ((argumentMapping[RequireKotlinConstants.VERSION_KIND]?.toConstantValue(session) as? EnumValue)?.enumEntryName?.asString()) {
+        when (argumentMapping[RequireKotlinConstants.VERSION_KIND]?.toConstantValue<EnumValue>(session)?.enumEntryName?.asString()) {
             ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION.name -> {
                 // LANGUAGE_VERSION is the default kind
             }
@@ -1128,7 +1127,7 @@ class FirElementSerializer private constructor(
                 proto.versionKind = ProtoBuf.VersionRequirement.VersionKind.API_VERSION
         }
 
-        val errorCode = (argumentMapping[RequireKotlinConstants.ERROR_CODE]?.toConstantValue(session) as? IntValue)?.value
+        val errorCode = argumentMapping[RequireKotlinConstants.ERROR_CODE]?.toConstantValue<IntValue>(session)?.value
         if (errorCode != null && errorCode != -1) {
             proto.errorCode = errorCode
         }

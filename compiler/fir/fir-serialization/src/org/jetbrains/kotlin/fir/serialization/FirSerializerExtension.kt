@@ -30,11 +30,12 @@ abstract class FirSerializerExtension {
 
     @OptIn(ConstValueProviderInternals::class)
     internal inline fun <T> processFile(firFile: FirFile, action: () -> T): T {
+        val previousFile = constValueProvider?.processingFirFile
         constValueProvider?.processingFirFile = firFile
         return try {
             action()
         } finally {
-            constValueProvider?.processingFirFile = null
+            constValueProvider?.processingFirFile = previousFile
         }
     }
 
