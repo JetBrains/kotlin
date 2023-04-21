@@ -292,6 +292,9 @@ fun createKotlinTestVersionedDocTask(version: String, isLatest: Boolean) =
         val moduleDirName = "kotlin-test"
         with(pluginsMapConfiguration) {
             put("org.jetbrains.dokka.base.DokkaBase", """{ "templatesDir": "$templatesDir" }""")
+            // workaround for kotlin-test-jvm and kotlin-test-js being unrelated source sets before 1.2
+            if (version == "1.1")
+                put("org.jetbrains.dokka.base.DokkaBase", """{ "mergeImplicitExpectActualDeclarations": "true", "templatesDir": "$templatesDir" }""")
             put("org.jetbrains.dokka.versioning.VersioningPlugin", """{ "version": "$version" }""")
         }
         if (isLatest) {
