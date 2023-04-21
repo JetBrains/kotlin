@@ -6,14 +6,10 @@
 package org.jetbrains.kotlin.test.services
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.util.text.StringUtilRt
 import com.intellij.openapi.vfs.StandardFileSystems
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
-import com.intellij.testFramework.LightVirtualFile
 import org.jetbrains.kotlin.KtInMemoryTextSourceFile
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
-import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.sourceFiles.LightTreeFile
 import org.jetbrains.kotlin.test.model.TestFile
@@ -115,12 +111,14 @@ fun SourceFileProvider.getKtFilesForSourceFiles(testFiles: Collection<TestFile>,
 }
 
 fun SourceFileProvider.getLightTreeKtFileForSourceFile(testFile: TestFile): LightTreeFile {
-    val shortName = testFile.name.substringAfterLast('/').substringAfterLast('\\')
+    val shortName = testFile.toLightTreeShortName()
     val sourceFile = KtInMemoryTextSourceFile(shortName, "/$shortName", getContentOfSourceFile(testFile))
     val linesMapping = sourceFile.text.toSourceLinesMapping()
     val lightTree = LightTree2Fir.buildLightTree(sourceFile.text)
     return LightTreeFile(lightTree, sourceFile, linesMapping)
 }
+
+fun TestFile.toLightTreeShortName() = name.substringAfterLast('/').substringAfterLast('\\')
 
 fun SourceFileProvider.getLightTreeFilesForSourceFiles(testFiles: Collection<TestFile>): Map<TestFile, LightTreeFile> {
     return testFiles.mapNotNull {

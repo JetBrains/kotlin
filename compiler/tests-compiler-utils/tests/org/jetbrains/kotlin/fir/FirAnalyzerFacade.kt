@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
-import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.fir.analysis.collectors.FirDiagnosticsCollector
@@ -48,6 +48,7 @@ class FirAnalyzerFacade(
     val irGeneratorExtensions: Collection<IrGenerationExtension>,
     val parser: FirParser,
     val enablePluginPhases: Boolean = false,
+    val diagnosticReporterForLightTree: DiagnosticReporter? = null
 ) : AbstractFirAnalyzerFacade() {
     private var firFiles: List<FirFile>? = null
     private var _scopeSession: ScopeSession? = null
@@ -61,7 +62,7 @@ class FirAnalyzerFacade(
         val firProvider = (session.firProvider as FirProviderImpl)
         firFiles = when (parser) {
             FirParser.LightTree -> {
-                val builder = LightTree2Fir(session, firProvider.kotlinScopeProvider)
+                val builder = LightTree2Fir(session, firProvider.kotlinScopeProvider, diagnosticReporterForLightTree)
                 lightTreeFiles.map {
                     builder.buildFirFile(it.lightTree, it.sourceFile, it.linesMapping).also { firFile ->
                         firProvider.recordFile(firFile)

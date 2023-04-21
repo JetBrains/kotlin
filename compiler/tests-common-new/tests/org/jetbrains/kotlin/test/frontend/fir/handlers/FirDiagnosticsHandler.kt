@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test.frontend.fir.handlers
 
-import com.intellij.lang.impl.PsiBuilderImpl
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.checkers.diagnostics.factories.DebugInfoDiagnosticFactory0
@@ -46,6 +45,7 @@ import org.jetbrains.kotlin.test.directives.model.singleValue
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.runners.lightTreeSyntaxDiagnosticsReporterHolder
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.utils.AbstractTwoAttributesMetaInfoProcessor
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -118,20 +118,20 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
                     )
             }
         } else {
-            collectLightTreeSyntaxErrors(firFile).flatMap { sourceElement ->
-                FirSyntaxErrors.SYNTAX.on(
-                    sourceElement,
-                    PsiBuilderImpl.getErrorMessage(sourceElement.lighterASTNode) ?: "Syntax error",
-                    positioningStrategy = null
-                ).toMetaInfos(
-                    module,
-                    testFile,
-                    globalMetadataInfoHandler1 = globalMetadataInfoHandler,
-                    lightTreeEnabled,
-                    lightTreeComparingModeEnabled,
-                    forceRenderArguments,
-                )
-            }
+            testServices.lightTreeSyntaxDiagnosticsReporterHolder
+                ?.reporter
+                ?.diagnosticsByFilePath
+                ?.get("/${testFile.toLightTreeShortName()}")
+                ?.flatMap {
+                    it.toMetaInfos(
+                        module,
+                        testFile,
+                        globalMetadataInfoHandler1 = globalMetadataInfoHandler,
+                        lightTreeEnabled,
+                        lightTreeComparingModeEnabled,
+                        forceRenderArguments,
+                    )
+                }.orEmpty()
         }
 
         globalMetadataInfoHandler.addMetadataInfosForFile(testFile, metaInfos)
