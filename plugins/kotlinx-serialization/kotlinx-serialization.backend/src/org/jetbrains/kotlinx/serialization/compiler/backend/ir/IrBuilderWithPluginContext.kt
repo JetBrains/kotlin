@@ -161,6 +161,30 @@ interface IrBuilderWithPluginContext {
         }
     }
 
+    fun IrClass.addValPropertyWithJvmFieldInitializer(
+        type: IrType,
+        name: Name,
+        visibility: DescriptorVisibility = DescriptorVisibilities.PRIVATE,
+        initializer: IrBuilderWithScope.() -> IrExpression
+    ): IrProperty {
+        return generateSimplePropertyWithBackingField(name, type, this, visibility).apply {
+            val field = backingField!!
+
+            val builder = DeclarationIrBuilder(
+                compilerContext,
+                field.symbol,
+                field.startOffset,
+                field.endOffset
+            )
+            field.initializer = IrExpressionBodyImpl(builder.initializer())
+
+            val annotationCtor = compilerContext.jvmFieldClassSymbol.constructors.single { it.owner.isPrimary }
+            val annotationType = compilerContext.jvmFieldClassSymbol.defaultType
+
+            field.annotations += IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, annotationType, annotationCtor)
+        }
+    }
+
     /**
      * Add all statements to the builder, except the last one.
      * The last statement should be an expression, it will return as a result

@@ -262,8 +262,6 @@ public final class ListOfUsers : java/lang/Object {
           AASTORE
           ALOAD (0)
           PUTSTATIC (ListOfUsers, $childSerializers, [Lkotlinx/serialization/KSerializer;)
-        LABEL (L1)
-        LINENUMBER (13)
           RETURN
     }
 

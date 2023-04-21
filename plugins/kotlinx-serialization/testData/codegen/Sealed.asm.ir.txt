@@ -223,8 +223,6 @@ public final class Container : java/lang/Object {
           AASTORE
           ALOAD (0)
           PUTSTATIC (Container, $childSerializers, [Lkotlinx/serialization/KSerializer;)
-        LABEL (L1)
-        LINENUMBER (19)
           RETURN
     }
 

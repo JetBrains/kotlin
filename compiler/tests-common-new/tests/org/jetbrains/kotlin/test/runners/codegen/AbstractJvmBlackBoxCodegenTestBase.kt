@@ -111,14 +111,4 @@ abstract class AbstractJvmBlackBoxCodegenTestBase<R : ResultingArtifact.Frontend
 
         enableMetaInfoHandler()
     }
-
-    private fun TestConfigurationBuilder.configureModernJavaTest(jdkKind: TestJdkKind, jvmTarget: JvmTarget) {
-        defaultDirectives {
-            JDK_KIND with jdkKind
-            JVM_TARGET with jvmTarget
-            +WITH_STDLIB
-            +USE_JAVAC_BASED_ON_JVM_TARGET
-            +IGNORE_DEXING
-        }
-    }
 }

@@ -398,8 +398,8 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
         val kSerializerType = kSerializerClass.typeWith(compilerContext.irBuiltIns.anyType)
         val arrayType = compilerContext.irBuiltIns.arrayClass.typeWith(kSerializerType)
 
-        return addValPropertyWithJvmField(arrayType, SerialEntityNames.CACHED_CHILD_SERIALIZERS_PROPERTY_NAME) {
-            +createArrayOfExpression(kSerializerType, cacheableSerializers.map { it ?: irNull() })
+        return addValPropertyWithJvmFieldInitializer(arrayType, SerialEntityNames.CACHED_CHILD_SERIALIZERS_PROPERTY_NAME) {
+            createArrayOfExpression(kSerializerType, cacheableSerializers.map { it ?: irNull() })
         }
     }
 
