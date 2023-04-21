@@ -1004,6 +1004,12 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
             }
 
             @Test
+            @TestMetadata("expectIntersectionOverride.kt")
+            public void testExpectIntersectionOverride() throws Exception {
+                runTest("compiler/testData/ir/irText/declarations/multiplatform/expectIntersectionOverride.kt");
+            }
+
+            @Test
             @TestMetadata("expectedEnumClass.kt")
             public void testExpectedEnumClass() throws Exception {
                 runTest("compiler/testData/ir/irText/declarations/multiplatform/expectedEnumClass.kt");

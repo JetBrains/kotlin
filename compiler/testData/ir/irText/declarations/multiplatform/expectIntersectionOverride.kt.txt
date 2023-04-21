@@ -1,0 +1,44 @@
+// MODULE: <common>
+// FILE: common.kt
+
+interface I1 {
+  abstract fun f(): String
+
+  abstract val p: Int
+    abstract get
+
+}
+
+interface I2 {
+  abstract fun f(): String
+
+  abstract val p: Int
+    abstract get
+
+}
+
+expect class C : I1, I2 {
+  expect constructor() /* primary */
+
+}
+
+// MODULE: platform
+// FILE: platform.kt
+
+class C : I1, I2 {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  override fun f(): String {
+    return "OK"
+  }
+
+  override val p: Int
+    field = 42
+    override get
+
+}
+
