@@ -37,10 +37,12 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion;
 import org.jetbrains.kotlin.config.Services;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static org.jetbrains.kotlin.maven.Util.joinArrays;
 
@@ -79,10 +81,12 @@ public abstract class KotlinCompileMojoBase<A extends CommonCompilerArguments> e
     private boolean multiPlatform = false;
 
     protected List<String> getSourceFilePaths() {
-        List<String> list = new ArrayList<>();
-        if (sourceDirs != null && !sourceDirs.isEmpty()) list.addAll(sourceDirs);
-        list.addAll(project.getCompileSourceRoots());
-        return list;
+        List<String> sourceFilePaths = new ArrayList<>();
+        if (sourceDirs != null && !sourceDirs.isEmpty()) sourceFilePaths.addAll(sourceDirs);
+        sourceFilePaths.addAll(project.getCompileSourceRoots());
+
+        return sourceFilePaths.stream().map(path -> new File(path).toPath().normalize().toString())
+                .distinct().collect(Collectors.toList());
     }
 
     @NotNull
