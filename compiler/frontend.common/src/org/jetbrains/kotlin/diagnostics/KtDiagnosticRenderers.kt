@@ -16,6 +16,11 @@ object KtDiagnosticRenderers {
         element.toString()
     }
 
+    val OPTIONAL_COLON_TO_STRING = Renderer { element: Any? ->
+        val string = element.toString()
+        if (string.isNotEmpty()) ": $string" else ""
+    }
+
     val EMPTY = Renderer { _: Any? -> "" }
 
     val VISIBILITY = Renderer { visibility: Visibility ->

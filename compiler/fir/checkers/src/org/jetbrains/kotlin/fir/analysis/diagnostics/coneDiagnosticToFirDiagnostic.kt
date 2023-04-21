@@ -102,6 +102,7 @@ private fun ConeDiagnostic.toKtDiagnostic(
 
     is ConeSimpleDiagnostic -> when {
         source.kind is KtFakeSourceElementKind && source.kind != KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess -> null
+        kind == DiagnosticKind.Syntax -> FirSyntaxErrors.SYNTAX.createOn(qualifiedAccessSource ?: source, reason)
         else -> this.getFactory(source).createOn(qualifiedAccessSource ?: source)
     }
 
@@ -486,7 +487,6 @@ private val NewConstraintError.upperConeType: ConeKotlinType get() = upperType a
 
 private fun ConeSimpleDiagnostic.getFactory(source: KtSourceElement): KtDiagnosticFactory0 {
     return when (kind) {
-        DiagnosticKind.Syntax -> FirSyntaxErrors.SYNTAX
         DiagnosticKind.ReturnNotAllowed -> FirErrors.RETURN_NOT_ALLOWED
         DiagnosticKind.NotAFunctionLabel -> FirErrors.NOT_A_FUNCTION_LABEL
         DiagnosticKind.UnresolvedLabel -> FirErrors.UNRESOLVED_LABEL
@@ -532,6 +532,7 @@ private fun ConeSimpleDiagnostic.getFactory(source: KtSourceElement): KtDiagnost
         DiagnosticKind.UnresolvedSupertype,
         DiagnosticKind.UnresolvedExpandedType,
         DiagnosticKind.Other -> FirErrors.OTHER_ERROR
+        DiagnosticKind.Syntax -> error("Must not be called on `Syntax` because a message is required.")
     }
 }
 

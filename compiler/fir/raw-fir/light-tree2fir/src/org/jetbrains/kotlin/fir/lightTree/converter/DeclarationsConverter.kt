@@ -90,11 +90,12 @@ class DeclarationsConverter(
 
     override fun reportSyntaxError(node: LighterASTNode) {
         val message = PsiBuilderImpl.getErrorMessage(node)
-        if (message == null) {
-            diagnosticsReporter?.reportOn(node.toFirSourceElement(), FirSyntaxErrors.SYNTAX, diagnosticContext!!)
-        } else {
-            diagnosticsReporter?.reportOn(node.toFirSourceElement(), FirSyntaxErrors.SYNTAX_WITH_MESSAGE, message, diagnosticContext!!)
-        }
+        diagnosticsReporter?.reportOn(
+            node.toFirSourceElement(),
+            FirSyntaxErrors.SYNTAX,
+            message ?: "Unspecified",
+            diagnosticContext!!,
+        )
     }
 
     /**

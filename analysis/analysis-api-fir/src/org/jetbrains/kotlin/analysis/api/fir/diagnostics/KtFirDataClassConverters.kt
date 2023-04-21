@@ -5083,12 +5083,6 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirSyntaxErrors.SYNTAX) { firDiagnostic ->
         SyntaxImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirSyntaxErrors.SYNTAX_WITH_MESSAGE) { firDiagnostic ->
-        SyntaxWithMessageImpl(
             firDiagnostic.a,
             firDiagnostic as KtPsiDiagnostic,
             token,

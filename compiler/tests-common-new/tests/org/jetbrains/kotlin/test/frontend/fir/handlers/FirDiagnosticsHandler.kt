@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.frontend.fir.handlers
 
+import com.intellij.lang.impl.PsiBuilderImpl
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.checkers.diagnostics.factories.DebugInfoDiagnosticFactory0
@@ -106,7 +107,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
     ) {
         val metaInfos = if (firFile.psi != null) {
             AnalyzingUtils.getSyntaxErrorRanges(firFile.psi!!).flatMap {
-                FirSyntaxErrors.SYNTAX.on(KtRealPsiSourceElement(it), positioningStrategy = null)
+                FirSyntaxErrors.SYNTAX.on(KtRealPsiSourceElement(it), it.errorDescription, positioningStrategy = null)
                     .toMetaInfos(
                         module,
                         testFile,
@@ -118,15 +119,18 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
             }
         } else {
             collectLightTreeSyntaxErrors(firFile).flatMap { sourceElement ->
-                FirSyntaxErrors.SYNTAX.on(sourceElement, positioningStrategy = null)
-                    .toMetaInfos(
-                        module,
-                        testFile,
-                        globalMetadataInfoHandler1 = globalMetadataInfoHandler,
-                        lightTreeEnabled,
-                        lightTreeComparingModeEnabled,
-                        forceRenderArguments,
-                    )
+                FirSyntaxErrors.SYNTAX.on(
+                    sourceElement,
+                    PsiBuilderImpl.getErrorMessage(sourceElement.lighterASTNode) ?: "Syntax error",
+                    positioningStrategy = null
+                ).toMetaInfos(
+                    module,
+                    testFile,
+                    globalMetadataInfoHandler1 = globalMetadataInfoHandler,
+                    lightTreeEnabled,
+                    lightTreeComparingModeEnabled,
+                    forceRenderArguments,
+                )
             }
         }
 

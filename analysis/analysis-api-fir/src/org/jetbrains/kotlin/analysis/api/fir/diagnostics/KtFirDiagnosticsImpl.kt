@@ -4279,13 +4279,8 @@ internal class WrongOperationWithDynamicImpl(
 ) : KtFirDiagnostic.WrongOperationWithDynamic(), KtAbstractFirDiagnostic<KtElement>
 
 internal class SyntaxImpl(
-    override val firDiagnostic: KtPsiDiagnostic,
-    override val token: KtLifetimeToken,
-) : KtFirDiagnostic.Syntax(), KtAbstractFirDiagnostic<PsiElement>
-
-internal class SyntaxWithMessageImpl(
     override val message: String,
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,
-) : KtFirDiagnostic.SyntaxWithMessage(), KtAbstractFirDiagnostic<PsiElement>
+) : KtFirDiagnostic.Syntax(), KtAbstractFirDiagnostic<PsiElement>
 

@@ -6,14 +6,12 @@
 package org.jetbrains.kotlin.fir.builder
 
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
-import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.TO_STRING
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.OPTIONAL_COLON_TO_STRING
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
-import org.jetbrains.kotlin.diagnostics.rendering.Renderer
 
 @Suppress("unused")
 object FirSyntaxErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
     override val MAP = KtDiagnosticFactoryToRendererMap("FIR").also { map ->
-        map.put(FirSyntaxErrors.SYNTAX, "Syntax error")
-        map.put(FirSyntaxErrors.SYNTAX_WITH_MESSAGE, "Syntax error: {0}", TO_STRING)
+        map.put(FirSyntaxErrors.SYNTAX, "Syntax error{0}", OPTIONAL_COLON_TO_STRING)
     }
 }
