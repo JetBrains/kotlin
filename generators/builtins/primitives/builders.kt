@@ -60,7 +60,9 @@ internal abstract class AnnotatedAndDocumented {
         }
 
         if (additionalDoc != null) {
-            appendLine("// $additionalDoc")
+            additionalDoc!!.lines().forEach { line ->
+                appendLine("// $line")
+            }
         }
     }
 
