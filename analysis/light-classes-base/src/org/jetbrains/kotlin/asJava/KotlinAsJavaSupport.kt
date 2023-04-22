@@ -45,6 +45,8 @@ abstract class KotlinAsJavaSupport {
 
     abstract fun findFilesForFacadeByPackage(packageFqName: FqName, searchScope: GlobalSearchScope): Collection<KtFile>
 
+    abstract fun findFilesForScript(scriptFqName: FqName, searchScope: GlobalSearchScope): Collection<KtScript>
+
     abstract fun findClassOrObjectDeclarations(fqName: FqName, searchScope: GlobalSearchScope): Collection<KtClassOrObject>
 
     abstract fun packageExists(fqName: FqName, scope: GlobalSearchScope): Boolean

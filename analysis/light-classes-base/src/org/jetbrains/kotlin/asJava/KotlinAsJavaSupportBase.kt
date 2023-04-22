@@ -207,9 +207,7 @@ abstract class KotlinAsJavaSupportBase<TModule>(protected val project: Project) 
             return emptyList()
         }
 
-        return findFilesForPackage(scriptFqName.parent(), scope).mapNotNull { file ->
-            file.script?.takeIf { it.fqName == scriptFqName }?.let { getLightClassForScript(it) }
-        }
+        return findFilesForScript(scriptFqName, scope).mapNotNull { getLightClassForScript(it) }
     }
 }
 

@@ -24,10 +24,7 @@ import org.jetbrains.kotlin.analysis.providers.KotlinPackageProvider
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
-import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.*
 import java.util.concurrent.ConcurrentHashMap
@@ -179,6 +176,15 @@ private class LLFirResolveExtensionToolDeclarationProvider(
     override fun findInternalFilesForFacade(facadeFqName: FqName): Collection<KtFile> = forbidAnalysis {
         // no decompiled files here (see the `org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider.findInternalFilesForFacade` KDoc)
         return emptyList()
+    }
+
+    override fun findFilesForScript(scriptFqName: FqName): Collection<KtScript> = forbidAnalysis {
+        if (scriptFqName.isRoot) return emptyList()
+        val packageFqName = scriptFqName.parent()
+        return getDeclarationProvidersByPackage(packageFqName) { file ->
+            scriptFqName.shortName() == NameUtils.getScriptNameForFile(file.getFileName())
+        }
+            .mapNotNullTo(mutableListOf()) { it.kotlinFile.script }
     }
 
     private inline fun getDeclarationProvidersByPackage(

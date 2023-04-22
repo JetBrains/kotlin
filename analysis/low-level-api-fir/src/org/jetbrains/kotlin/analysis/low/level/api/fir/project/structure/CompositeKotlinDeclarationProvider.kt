@@ -61,6 +61,10 @@ private constructor(
         return providers.flatMapTo(mutableListOf()) { it.findInternalFilesForFacade(facadeFqName) }
     }
 
+    override fun findFilesForScript(scriptFqName: FqName): Collection<KtScript> {
+        return providers.flatMapTo(mutableListOf()) { it.findFilesForScript(scriptFqName) }
+    }
+
     companion object {
         fun create(providers: List<KotlinDeclarationProvider>): KotlinDeclarationProvider {
             return when (providers.size) {
