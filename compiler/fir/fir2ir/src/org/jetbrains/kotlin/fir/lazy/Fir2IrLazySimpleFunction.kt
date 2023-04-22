@@ -76,7 +76,7 @@ class Fir2IrLazySimpleFunction(
 
             fir.valueParameters.mapIndexedTo(this) { index, valueParameter ->
                 declarationStorage.createIrParameter(
-                    valueParameter, index, skipDefaultParameter = isFakeOverride
+                    valueParameter, index + contextReceiverParametersCount, skipDefaultParameter = isFakeOverride
                 ).apply {
                     this.parent = this@Fir2IrLazySimpleFunction
                 }
