@@ -374,6 +374,7 @@ class InlineClassLowering(val context: CommonBackendContext) {
             function.parent,
             function.toInlineClassImplementationName(),
             function,
-            typeParametersFromContext = extractTypeParameters(function.parentAsClass)
+            typeParametersFromContext = extractTypeParameters(function.parentAsClass),
+            remapMultiFieldValueClassStructure = context::remapMultiFieldValueClassStructure
         )
 }

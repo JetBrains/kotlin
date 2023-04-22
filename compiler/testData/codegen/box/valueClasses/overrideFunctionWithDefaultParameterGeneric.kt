@@ -2,9 +2,7 @@
 // WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses, +GenericInlineClassParameter
 
-// TARGET_BACKEND: JVM
-// IGNORE_BACKEND: JVM_IR
-// Depends on KT-57973
+// TARGET_BACKEND: JVM_IR
 // JVM_TARGET: 1.8
 
 interface Path {

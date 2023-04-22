@@ -154,11 +154,11 @@ public final class GenericFakeOverrideMFVC {
     public method hashCode(): int
     public static method hashCode-impl(p0: double, p1: double): int
     public synthetic bridge method setP(p0: java.lang.Object): void
-    public method setP-nuuzChU(@org.jetbrains.annotations.NotNull p0: DPoint): void
     public static method setP-nuuzChU(p0: double, p1: double, p2: double, p3: double): void
+    public method setP-nuuzChU(p0: java.lang.Object): void
     public synthetic bridge method setP1(p0: java.lang.Object): void
-    public method setP1-nuuzChU(@org.jetbrains.annotations.NotNull p0: DPoint): void
     public static method setP1-nuuzChU(p0: double, p1: double, p2: double, p3: double): void
+    public method setP1-nuuzChU(p0: java.lang.Object): void
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public static method toString-impl(p0: double, p1: double): java.lang.String
     public synthetic final method unbox-impl-field1(): double

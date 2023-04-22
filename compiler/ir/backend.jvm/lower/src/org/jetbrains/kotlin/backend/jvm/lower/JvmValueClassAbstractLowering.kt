@@ -211,7 +211,7 @@ internal abstract class JvmValueClassAbstractLowering(
             }
         )
 
-        // Update the overridden symbols to point to their inline class replacements
+        // Update the overridden symbols to point to their value class replacements
         bridgeFunction.overriddenSymbols = replacement.overriddenSymbols
 
         // Replace the function body with a wrapper

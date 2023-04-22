@@ -27,10 +27,16 @@ import org.jetbrains.kotlin.name.Name
 
 typealias TypeArguments = Map<IrTypeParameterSymbol, IrType>
 
+/**
+ * Instance-agnostic tree node describing structure of multi-field value class
+ */
 sealed interface MfvcNode {
     val type: IrType
     val leavesCount: Int
 
+    /**
+     * Create instance-specific [ReceiverBasedMfvcNodeInstance] from instance-agnostic [MfvcNode] using a boxed [receiver] as data source.
+     */
     fun createInstanceFromBox(
         scope: IrBlockBuilder,
         typeArguments: TypeArguments,
@@ -40,6 +46,9 @@ sealed interface MfvcNode {
     ): ReceiverBasedMfvcNodeInstance
 }
 
+/**
+ * Create instance-specific [ReceiverBasedMfvcNodeInstance] from instance-agnostic [MfvcNode] using a boxed [receiver] as data source.
+ */
 fun MfvcNode.createInstanceFromBox(
     scope: IrBlockBuilder,
     receiver: IrExpression,
@@ -48,10 +57,16 @@ fun MfvcNode.createInstanceFromBox(
 ) =
     createInstanceFromBox(scope, makeTypeArgumentsFromType(receiver.type as IrSimpleType), receiver, accessType, saveVariable)
 
+/**
+ * Create instance-specific [ValueDeclarationMfvcNodeInstance] from instance-agnostic [MfvcNode] using new flattened variables as data source.
+ */
 fun MfvcNode.createInstanceFromValueDeclarationsAndBoxType(
     scope: IrBuilderWithScope, type: IrSimpleType, name: Name, saveVariable: (IrVariable) -> Unit, isVar: Boolean
 ): ValueDeclarationMfvcNodeInstance = createInstanceFromValueDeclarations(scope, makeTypeArgumentsFromType(type), name, saveVariable, isVar)
 
+/**
+ * Create instance-specific [ValueDeclarationMfvcNodeInstance] from instance-agnostic [MfvcNode] using new flattened variables as data source.
+ */
 fun MfvcNode.createInstanceFromValueDeclarations(
     scope: IrBuilderWithScope, typeArguments: TypeArguments, name: Name, saveVariable: (IrVariable) -> Unit, isVar: Boolean
 ): ValueDeclarationMfvcNodeInstance {
@@ -67,6 +82,9 @@ fun MfvcNode.createInstanceFromValueDeclarations(
     return ValueDeclarationMfvcNodeInstance(this, typeArguments, valueDeclarations)
 }
 
+/**
+ * Create instance-specific [ValueDeclarationMfvcNodeInstance] from instance-agnostic [MfvcNode] using flattened [fieldValues] as data source.
+ */
 fun MfvcNode.createInstanceFromValueDeclarationsAndBoxType(
     type: IrSimpleType, fieldValues: List<IrValueDeclaration>
 ): ValueDeclarationMfvcNodeInstance =
@@ -83,19 +101,41 @@ fun makeTypeArgumentsFromType(type: IrSimpleType): TypeArguments {
 
 }
 
+/**
+ * Non-root [MfvcNode]. It contains an unbox method and a name.
+ */
 sealed interface NameableMfvcNode : MfvcNode {
     val namedNodeImpl: NameableMfvcNodeImpl
     val hasPureUnboxMethod: Boolean
 }
 
+/**
+ * List of names of the root node of the [NameableMfvcNode] up to the node.
+ */
 val NameableMfvcNode.nameParts: List<Name>
     get() = namedNodeImpl.nameParts
+
+/**
+ * The last [nameParts] which distinguishes the [NameableMfvcNode] from its parent.
+ */
 val NameableMfvcNode.name: Name
     get() = nameParts.last()
+
+/**
+ * Unbox method of the [NameableMfvcNode].
+ */
 val NameableMfvcNode.unboxMethod: IrSimpleFunction
     get() = namedNodeImpl.unboxMethod
+
+/**
+ * An unbox function or getter function method name of the [NameableMfvcNode].
+ */
 val NameableMfvcNode.fullMethodName: Name
     get() = namedNodeImpl.fullMethodName
+
+/**
+ * A field name corresponding to the [NameableMfvcNode].
+ */
 val NameableMfvcNode.fullFieldName: Name
     get() = namedNodeImpl.fullFieldName
 
@@ -138,7 +178,9 @@ fun MfvcNode.getSubnodeAndIndices(name: Name): Pair<NameableMfvcNode, IntRange>?
     val indices = subnodeIndices[node] ?: error("existing node without indices")
     return node to indices
 }
-
+/**
+ * Non-leaf [MfvcNode]. It contains a box method and children.
+ */
 sealed class MfvcNodeWithSubnodes(val subnodes: List<NameableMfvcNode>) : MfvcNode {
     abstract override val type: IrSimpleType
     abstract val boxMethod: IrSimpleFunction
@@ -159,6 +201,9 @@ sealed class MfvcNodeWithSubnodes(val subnodes: List<NameableMfvcNode>) : MfvcNo
         }
     }
 
+    /**
+     * Get child by [name].
+     */
     operator fun get(name: Name): NameableMfvcNode? = mapping[name]
 
     val leaves: List<LeafMfvcNode> = subnodes.leaves
@@ -178,6 +223,9 @@ sealed class MfvcNodeWithSubnodes(val subnodes: List<NameableMfvcNode>) : MfvcNo
 
 }
 
+/**
+ * Creates a box expression for the given [MfvcNodeWithSubnodes] by calling box methods with the given [typeArguments] and [valueArguments].
+ */
 fun MfvcNodeWithSubnodes.makeBoxedExpression(
     scope: IrBuilderWithScope,
     typeArguments: TypeArguments,
@@ -195,6 +243,9 @@ fun MfvcNodeWithSubnodes.makeBoxedExpression(
     registerPossibleExtraBoxCreation()
 }
 
+/**
+ * A shortcut to get children by name several times.
+ */
 operator fun MfvcNodeWithSubnodes.get(names: List<Name>): MfvcNode? {
     var cur: MfvcNode = this
     for (name in names) {
@@ -267,6 +318,9 @@ private fun validateGettingAccessorParameters(function: IrSimpleFunction) {
     require(function.typeParameters.isEmpty()) { "Type parameters are not expected for ${function.render()}" }
 }
 
+/**
+ * [MfvcNode] which corresponds to non-MFVC field which is a field of some MFVC.
+ */
 class LeafMfvcNode(
     override val type: IrType,
     methodFullNameMode: MethodFullNameMode,
@@ -310,6 +364,9 @@ val MfvcNode.fields
         is LeafMfvcNode -> field?.let(::listOf)
     }
 
+/**
+ * [MfvcNode] which corresponds to MFVC field which is a field of some class.
+ */
 class IntermediateMfvcNode(
     override val type: IrSimpleType,
     methodFullNameMode: MethodFullNameMode,
@@ -373,7 +430,9 @@ fun IrSimpleFunction.getGetterField(): IrField? {
     val statement = (body?.statements?.singleOrNull() as? IrReturn)?.value as? IrGetField ?: return null
     return statement.symbol.owner
 }
-
+/**
+ * [MfvcNode] which corresponds to MFVC itself.
+ */
 class RootMfvcNode internal constructor(
     val mfvc: IrClass,
     subnodes: List<NameableMfvcNode>,

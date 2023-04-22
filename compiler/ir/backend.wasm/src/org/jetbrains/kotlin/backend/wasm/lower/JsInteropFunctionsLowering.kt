@@ -110,7 +110,8 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         val newFun = context.irFactory.createStaticFunctionWithReceivers(
             function.parent,
             name = Name.identifier(function.name.asStringStripSpecialMarkers() + "__externalAdapter"),
-            function
+            function,
+            remapMultiFieldValueClassStructure = context::remapMultiFieldValueClassStructure
         )
 
         function.valueParameters.forEachIndexed { index, newParameter ->
@@ -157,7 +158,8 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         val newFun = context.irFactory.createStaticFunctionWithReceivers(
             function.parent,
             name = Name.identifier(function.name.asStringStripSpecialMarkers() + "__JsExportAdapter"),
-            function
+            function,
+            remapMultiFieldValueClassStructure = context::remapMultiFieldValueClassStructure
         )
 
         newFun.valueParameters.forEachIndexed { index, newParameter ->

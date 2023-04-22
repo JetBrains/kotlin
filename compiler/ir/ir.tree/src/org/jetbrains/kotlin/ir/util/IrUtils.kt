@@ -7,10 +7,12 @@ package org.jetbrains.kotlin.ir.util
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.*
+import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.declarations.addConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildReceiverParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildTypeParameter
+import org.jetbrains.kotlin.ir.builders.irImplicitCast
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
@@ -1183,7 +1185,8 @@ fun IrFactory.createStaticFunctionWithReceivers(
     visibility: DescriptorVisibility = oldFunction.visibility,
     isFakeOverride: Boolean = oldFunction.isFakeOverride,
     copyMetadata: Boolean = true,
-    typeParametersFromContext: List<IrTypeParameter> = listOf()
+    typeParametersFromContext: List<IrTypeParameter> = listOf(),
+    remapMultiFieldValueClassStructure: (IrFunction, IrFunction, Map<IrValueParameter, IrValueParameter>?) -> Unit
 ): IrSimpleFunction {
     return createFunction(
         oldFunction.startOffset, oldFunction.endOffset,
@@ -1271,11 +1274,18 @@ fun IrFactory.createStaticFunctionWithReceivers(
             )
         }
 
+        remapMultiFieldValueClassStructure(oldFunction, this, null)
+
         if (copyMetadata) metadata = oldFunction.metadata
 
         copyAttributes(oldFunction as? IrAttributeContainer)
     }
 }
+
+fun IrBuilderWithScope.irCastIfNeeded(expression: IrExpression, to: IrType): IrExpression =
+    if (expression.type == to || to.isAny() || to.isNullableAny()) expression else irImplicitCast(expression, to)
+
+fun IrContainerExpression.unwrapBlock(): IrExpression = statements.singleOrNull() as? IrExpression ?: this
 
 /**
  * Appends the parameters in [contextParameters] to the type parameters of
