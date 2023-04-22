@@ -254,7 +254,7 @@ class StringBuilderTest {
     }
 
     @Test
-    @Suppress("DEPRECATION_ERROR")
+    @Suppress("DEPRECATION")
     fun capacityTest() {
 //        assertEquals(100, StringBuilder(100).capacity()) // not implemented in JS
 
