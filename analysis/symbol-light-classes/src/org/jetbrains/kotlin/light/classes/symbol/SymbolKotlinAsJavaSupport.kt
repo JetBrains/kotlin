@@ -55,6 +55,10 @@ class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupportBase<KtMo
         return project.createDeclarationProvider(searchScope).findFilesForFacadeByPackage(packageFqName)
     }
 
+    override fun findFilesForScript(scriptFqName: FqName, searchScope: GlobalSearchScope): Collection<KtScript> {
+        return project.createDeclarationProvider(searchScope).findFilesForScript(scriptFqName)
+    }
+
     private fun FqName.toClassIdSequence(): Sequence<ClassId> {
         var currentName = shortNameOrSpecial()
         if (currentName.isSpecial) return emptySequence()

@@ -112,6 +112,13 @@ class CliKotlinAsJavaSupport(project: Project, private val traceHolder: CliTrace
         }.orEmpty()
     }
 
+    override fun findFilesForScript(scriptFqName: FqName, searchScope: GlobalSearchScope): Collection<KtScript> {
+        return findFilesForPackage(scriptFqName.parent(), searchScope)
+            .mapNotNull { file ->
+                file.script?.takeIf { it.fqName == scriptFqName }
+            }
+    }
+
     override fun createFacadeForSyntheticFile(file: KtFile): KtLightClassForFacade = error("Should not be called")
     override fun declarationLocation(file: KtFile): DeclarationLocation = DeclarationLocation.ProjectSources
     override fun createInstanceOfDecompiledLightClass(classOrObject: KtClassOrObject): KtLightClass = error("Should not be called")

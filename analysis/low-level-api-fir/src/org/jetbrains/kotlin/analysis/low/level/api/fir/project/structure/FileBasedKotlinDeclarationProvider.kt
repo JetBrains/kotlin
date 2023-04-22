@@ -130,6 +130,9 @@ internal class FileBasedKotlinDeclarationProvider(val kotlinFile: KtFile) : Kotl
 
     override fun findInternalFilesForFacade(facadeFqName: FqName): Collection<KtFile> = emptyList()
 
+    override fun findFilesForScript(scriptFqName: FqName): Collection<KtScript> =
+        listOfNotNull(kotlinFile.script?.takeIf { it.fqName == scriptFqName })
+
     private inline fun <reified T : KtCallableDeclaration> getTopLevelCallables(callableId: CallableId): Collection<T> {
         require(callableId.classId == null)
         return getTopLevelDeclarations(callableId.packageName, callableId.callableName)
