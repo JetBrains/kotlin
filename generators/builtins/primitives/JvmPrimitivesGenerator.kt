@@ -12,4 +12,12 @@ class JvmPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(writ
     override fun ClassBuilder.modifyGeneratedClass(thisKind: PrimitiveType) {
         appendDoc("On the JVM, non-nullable values of this type are represented as values of the primitive type `${thisKind.name.lowercase()}`.")
     }
+
+    override fun MethodBuilder.modifyGeneratedRangeTo(thisKind: PrimitiveType, otherKind: PrimitiveType, opReturnType: PrimitiveType) {
+        noBody()
+    }
+
+    override fun MethodBuilder.modifyGeneratedRangeUntil(thisKind: PrimitiveType, otherKind: PrimitiveType, opReturnType: PrimitiveType) {
+        noBody()
+    }
 }

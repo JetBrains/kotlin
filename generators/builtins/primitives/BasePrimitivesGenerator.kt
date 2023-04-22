@@ -447,7 +447,10 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
                     }
                     returnType = "${opReturnType.capitalized}Range"
                 }
-            }.modifyGeneratedRangeTo(thisKind)
+                val thisCasted = "this${thisKind.castToIfNecessary(opReturnType)}"
+                val otherCasted = "other${otherKind.castToIfNecessary(opReturnType)}"
+                "${returnType}($thisCasted, $otherCasted)".addAsSingleLineBody(bodyOnNewLine = true)
+            }.modifyGeneratedRangeTo(thisKind, otherKind, opReturnType)
         }
     }
 
@@ -477,7 +480,8 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
                     }
                     returnType = "${opReturnType.capitalized}Range"
                 }
-            }.modifyGeneratedRangeUntil(thisKind)
+                "this until $parameterName".addAsSingleLineBody(bodyOnNewLine = false)
+            }.modifyGeneratedRangeUntil(thisKind, otherKind, opReturnType)
         }
     }
 
@@ -620,8 +624,8 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
     internal open fun MethodBuilder.modifyGeneratedCompareTo(thisKind: PrimitiveType, otherKind: PrimitiveType) {}
     internal open fun MethodBuilder.modifyGeneratedBinaryOperation(thisKind: PrimitiveType, otherKind: PrimitiveType) {}
     internal open fun MethodBuilder.modifyGeneratedUnaryOperation(thisKind: PrimitiveType) {}
-    internal open fun MethodBuilder.modifyGeneratedRangeTo(thisKind: PrimitiveType) {}
-    internal open fun MethodBuilder.modifyGeneratedRangeUntil(thisKind: PrimitiveType) {}
+    internal open fun MethodBuilder.modifyGeneratedRangeTo(thisKind: PrimitiveType, otherKind: PrimitiveType, opReturnType: PrimitiveType) {}
+    internal open fun MethodBuilder.modifyGeneratedRangeUntil(thisKind: PrimitiveType, otherKind: PrimitiveType, opReturnType: PrimitiveType) {}
     internal open fun MethodBuilder.modifyGeneratedBitShiftOperators(thisKind: PrimitiveType) {}
     internal open fun MethodBuilder.modifyGeneratedBitwiseOperators(thisKind: PrimitiveType) {}
     internal open fun MethodBuilder.modifyGeneratedConversions(thisKind: PrimitiveType) {}

@@ -299,24 +299,20 @@ public final class Byte private constructor() : Number(), Comparable<Byte> {
         -this.toInt()
 
     /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Byte): IntRange {
-        return IntRange(this.toInt(), other.toInt())
-    }
+    public operator fun rangeTo(other: Byte): IntRange =
+        IntRange(this.toInt(), other.toInt())
 
     /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Short): IntRange {
-        return IntRange(this.toInt(), other.toInt())
-    }
+    public operator fun rangeTo(other: Short): IntRange =
+        IntRange(this.toInt(), other.toInt())
 
     /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Int): IntRange {
-        return IntRange(this.toInt(), other)
-    }
+    public operator fun rangeTo(other: Int): IntRange =
+        IntRange(this.toInt(), other)
 
     /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Long): LongRange {
-        return LongRange(this.toLong(), other)
-    }
+    public operator fun rangeTo(other: Long): LongRange =
+        LongRange(this.toLong(), other)
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -730,24 +726,20 @@ public final class Short private constructor() : Number(), Comparable<Short> {
         -this.toInt()
 
     /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Byte): IntRange {
-        return IntRange(this.toInt(), other.toInt())
-    }
+    public operator fun rangeTo(other: Byte): IntRange =
+        IntRange(this.toInt(), other.toInt())
 
     /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Short): IntRange {
-        return IntRange(this.toInt(), other.toInt())
-    }
+    public operator fun rangeTo(other: Short): IntRange =
+        IntRange(this.toInt(), other.toInt())
 
     /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Int): IntRange {
-        return IntRange(this.toInt(), other)
-    }
+    public operator fun rangeTo(other: Int): IntRange =
+        IntRange(this.toInt(), other)
 
     /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Long): LongRange {
-        return LongRange(this.toLong(), other)
-    }
+    public operator fun rangeTo(other: Long): LongRange =
+        LongRange(this.toLong(), other)
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -1159,24 +1151,20 @@ public final class Int private constructor() : Number(), Comparable<Int> {
     external public operator fun unaryMinus(): Int
 
     /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Byte): IntRange {
-        return IntRange(this, other.toInt())
-    }
+    public operator fun rangeTo(other: Byte): IntRange =
+        IntRange(this, other.toInt())
 
     /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Short): IntRange {
-        return IntRange(this, other.toInt())
-    }
+    public operator fun rangeTo(other: Short): IntRange =
+        IntRange(this, other.toInt())
 
     /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Int): IntRange {
-        return IntRange(this, other)
-    }
+    public operator fun rangeTo(other: Int): IntRange =
+        IntRange(this, other)
 
     /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Long): LongRange {
-        return LongRange(this.toLong(), other)
-    }
+    public operator fun rangeTo(other: Long): LongRange =
+        LongRange(this.toLong(), other)
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.
@@ -1641,24 +1629,20 @@ public final class Long private constructor() : Number(), Comparable<Long> {
     external public operator fun unaryMinus(): Long
 
     /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Byte): LongRange {
-        return LongRange(this, other.toLong())
-    }
+    public operator fun rangeTo(other: Byte): LongRange =
+        LongRange(this, other.toLong())
 
     /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Short): LongRange {
-        return LongRange(this, other.toLong())
-    }
+    public operator fun rangeTo(other: Short): LongRange =
+        LongRange(this, other.toLong())
 
     /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Int): LongRange {
-        return LongRange(this, other.toLong())
-    }
+    public operator fun rangeTo(other: Int): LongRange =
+        LongRange(this, other.toLong())
 
     /** Creates a range from this value to the specified [other] value. */
-    public operator fun rangeTo(other: Long): LongRange {
-        return LongRange(this, other)
-    }
+    public operator fun rangeTo(other: Long): LongRange =
+        LongRange(this, other)
 
     /**
      * Creates a range from this value up to but excluding the specified [other] value.

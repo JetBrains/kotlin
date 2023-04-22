@@ -273,6 +273,8 @@ internal class MethodBuilder : AnnotatedAndDocumented(), PrimitiveBuilder {
         }
     }
 
+    fun noBody() { body = null }
+
     fun String.addAsSingleLineBody(bodyOnNewLine: Boolean = false) {
         val skip = if (bodyOnNewLine) "$END_LINE    " else " "
         body = " =$skip$this"

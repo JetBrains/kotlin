@@ -153,17 +153,6 @@ class WasmPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(wri
         }
     }
 
-    override fun MethodBuilder.modifyGeneratedRangeTo(thisKind: PrimitiveType) {
-        val rangeType = PrimitiveType.valueOf(returnType.replace("Range", "").uppercase())
-        val thisCasted = "this" + thisKind.castToIfNecessary(rangeType)
-        val otherCasted = parameterName + parameterType.toPrimitiveType().castToIfNecessary(rangeType)
-        "return ${returnType}($thisCasted, $otherCasted)".addAsMultiLineBody()
-    }
-
-    override fun MethodBuilder.modifyGeneratedRangeUntil(thisKind: PrimitiveType) {
-        "this until $parameterName".addAsSingleLineBody(bodyOnNewLine = false)
-    }
-
     override fun MethodBuilder.modifyGeneratedBitShiftOperators(thisKind: PrimitiveType) {
         if (thisKind == PrimitiveType.INT) {
             implementAsIntrinsic(thisKind, methodName)
