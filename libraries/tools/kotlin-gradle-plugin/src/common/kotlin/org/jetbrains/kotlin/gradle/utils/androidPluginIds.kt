@@ -14,7 +14,8 @@ internal val androidPluginIds = listOf(
     "com.android.test",
     // Deprecated android plugins
     "com.android.instantapp",
-    "com.android.feature"
+    "com.android.feature",
+    "com.android.kotlin.multiplatform"
     // For following plugins 'kotlin-android' should never be applied
     // see https://issuetracker.google.com/issues/228449122
     //"com.android.asset-pack",
