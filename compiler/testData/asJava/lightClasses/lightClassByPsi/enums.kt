@@ -1,6 +1,3 @@
-// IGNORE_FIR
-// Ignored due to KT-53573
-
 import java.util.function.*
 
 annotation class Some
