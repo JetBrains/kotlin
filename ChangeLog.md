@@ -1,3 +1,34 @@
+## 1.8.21
+
+### Compiler
+
+- [`KT-57848`](https://youtrack.jetbrains.com/issue/KT-57848) Native: compilation of dynamic/static library fails with Xcode 14.3
+- [`KT-57875`](https://youtrack.jetbrains.com/issue/KT-57875) Native compilation failure: Suspend functions should be lowered out at this point, but FUN LOCAL_FUNCTION_FOR_LAMBDA
+- [`KT-57946`](https://youtrack.jetbrains.com/issue/KT-57946) KAPT: "RuntimeException: No type for expression" with delegate
+
+### JavaScript
+
+- [`KT-57356`](https://youtrack.jetbrains.com/issue/KT-57356) KJS: StackOverflowException on @JsExport with type parameters referring to one another
+
+### Tools. Compiler plugins. Serialization
+
+- [`KT-58067`](https://youtrack.jetbrains.com/issue/KT-58067) Serialization: NullPointerException caused by @Contextual property with type with generic
+- [`KT-57730`](https://youtrack.jetbrains.com/issue/KT-57730) Serialization: "IllegalStateException: Serializer for element of type <root>.Foo has not been found" caused by serialization of Java type
+
+### Tools. Gradle. JS
+
+- [`KT-57766`](https://youtrack.jetbrains.com/issue/KT-57766) KJS / Gradle "Module not found: Error: Can't resolve 'kotlin-kotlin-stdlib-js-ir'" when using "useEsModules"
+
+### Tools. Kapt
+
+- [`KT-58027`](https://youtrack.jetbrains.com/issue/KT-58027) Kotlin 1.8.20 kapt issue "null: KtCallExpression: build()"
+
+### Tools. Maven
+
+- [`KT-58048`](https://youtrack.jetbrains.com/issue/KT-58048) Maven: "Too many source module declarations found" after upgrading to 1.8.20
+- [`KT-58101`](https://youtrack.jetbrains.com/issue/KT-58101) 'Unable to access class' in kotlin-maven-plugin after updating to Kotlin 1.8.20
+
+
 ## 1.8.20-RC2
 
 ### Compiler
