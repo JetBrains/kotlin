@@ -150,6 +150,7 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
         val name = typeAlias.nameAsSafeName
         val local = c.childContext(typeAlias, containingDeclarationSymbol = aliasSymbol)
         return buildTypeAlias {
+            source = KtRealPsiSourceElement(typeAlias)
             moduleData = c.moduleData
             origin = FirDeclarationOrigin.Library
             this.name = name
