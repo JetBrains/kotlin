@@ -20,6 +20,7 @@ internal class ImplementAsErrorThrowingStubs(
     override fun <T : IrOverridableMember> computeCustomization(overridableMember: T, parent: IrClass) =
         if (overridableMember.isAbstract
             && parent.isConcrete
+            && !parent.isExternal
             && !parent.delegatesToNothing
             && !partialLinkageSupport.shouldBeSkipped(parent)
         ) {
