@@ -33,7 +33,6 @@ class NpmVersions : Serializable {
     val karmaSafariLauncher = NpmPackageVersion("karma-safari-launcher", "1.0.0")
     val karmaMocha = NpmPackageVersion("karma-mocha", "2.0.1")
     val karmaWebpack = NpmPackageVersion("karma-webpack", "5.0.0")
-    val karmaCoverage = NpmPackageVersion("karma-coverage", "2.2.0")
     val karmaSourcemapLoader = NpmPackageVersion("karma-sourcemap-loader", "0.4.0")
     val typescript = NpmPackageVersion("typescript", "4.9.5")
 

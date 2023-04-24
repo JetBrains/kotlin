@@ -304,44 +304,6 @@ class KotlinKarma(
         }
     }
 
-    fun useCoverage(
-        html: Boolean = true,
-        lcov: Boolean = true,
-        cobertura: Boolean = false,
-        teamcity: Boolean = true,
-        text: Boolean = false,
-        textSummary: Boolean = false,
-        json: Boolean = false,
-        jsonSummary: Boolean = false
-    ) {
-        if (listOf(
-                html, lcov, cobertura,
-                teamcity, text, textSummary,
-                json, jsonSummary
-            ).all { !it }
-        ) return
-
-        requiredDependencies.add(versions.karmaCoverage)
-        config.reporters.add("coverage")
-        addPreprocessor("coverage") { !it.endsWith("_test.js") }
-
-        configurators.add {
-            val reportDir = project.reportsDir.resolve("coverage/${it.name}")
-            reportDir.mkdirs()
-
-            config.coverageReporter = CoverageReporter(reportDir.canonicalPath).also { coverage ->
-                if (html) coverage.reporters.add(Reporter("html"))
-                if (lcov) coverage.reporters.add(Reporter("lcovonly"))
-                if (cobertura) coverage.reporters.add(Reporter("cobertura"))
-                if (teamcity) coverage.reporters.add(Reporter("teamcity"))
-                if (text) coverage.reporters.add(Reporter("text"))
-                if (textSummary) coverage.reporters.add(Reporter("text-summary"))
-                if (json) coverage.reporters.add(Reporter("json"))
-                if (jsonSummary) coverage.reporters.add(Reporter("json-summary"))
-            }
-        }
-    }
-
     fun useSourceMapSupport() {
         requiredDependencies.add(versions.karmaSourcemapLoader)
         sourceMaps = true
