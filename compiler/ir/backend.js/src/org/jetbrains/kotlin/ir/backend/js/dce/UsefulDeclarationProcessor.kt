@@ -84,7 +84,7 @@ abstract class UsefulDeclarationProcessor(
     private fun addReachabilityInfoIfNeeded(
         from: IrDeclaration,
         to: IrDeclaration,
-        description: String?,
+        description: String,
         isContagiousOverridableDeclaration: Boolean,
     ) {
         reachabilityInfos?.add(ReachabilityInfo(from, to, description, isContagiousOverridableDeclaration))
@@ -92,7 +92,7 @@ abstract class UsefulDeclarationProcessor(
 
     protected fun IrDeclaration.enqueue(
         from: IrDeclaration,
-        description: String?,
+        description: String,
         isContagious: Boolean = true,
     ) {
         // Ignore non-external IrProperty because we don't want to generate code for them and codegen doesn't support it.
@@ -290,7 +290,7 @@ abstract class UsefulDeclarationProcessor(
 private data class ReachabilityInfo(
     val source: IrDeclaration,
     val target: IrDeclaration,
-    val description: String?,
+    val description: String,
     val isTargetContagious: Boolean
 )
 
@@ -303,7 +303,7 @@ private fun transformToStringBy(
 
     return reachabilityInfos
         .map {
-            transformer(it.source.fqnOrUnknown(), it.target.fqnOrUnknown(), it.description ?: "", it.isTargetContagious)
+            transformer(it.source.fqnOrUnknown(), it.target.fqnOrUnknown(), it.description, it.isTargetContagious)
         }
         .distinct()
         .joinToString(separator)
