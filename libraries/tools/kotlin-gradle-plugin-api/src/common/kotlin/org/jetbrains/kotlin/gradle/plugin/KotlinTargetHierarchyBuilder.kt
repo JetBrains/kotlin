@@ -16,6 +16,24 @@ interface KotlinTargetHierarchyBuilder {
     }
 
     /* Declaring groups */
+
+    /**
+     * Shortcut for `group("common") { }`:
+     * Most hierarchies should attach their nodes/groups to 'common'
+     *
+     * e.g.
+     * ```
+     * common {
+     *     group("native") {
+     *         withIos()
+     *         withMacos()
+     *     }
+     * }
+     * ```
+     * applying the shown hierarchy to the main compilations will create a 'nativeMain' source set which will
+     * depend on the usual 'commonMain'
+     *
+     */
     fun common(build: KotlinTargetHierarchyBuilder.() -> Unit) = group("common", build)
     fun group(name: String, build: KotlinTargetHierarchyBuilder.() -> Unit = {})
 
