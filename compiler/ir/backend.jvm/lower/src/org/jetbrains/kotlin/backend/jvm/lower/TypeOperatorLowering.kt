@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.unboxInlineClass
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -736,26 +737,19 @@ private class TypeOperatorLowering(private val backendContext: JvmBackendContext
                 irNot(lowerInstanceOf(expression.argument.transformVoid(), expression.typeOperand))
 
             IrTypeOperator.IMPLICIT_NOTNULL -> {
-                val owner = scope.scopeOwnerSymbol.owner
-                val source = if (owner is IrFunction && owner.isDelegated()) {
-                    "${owner.name.asString()}(...)"
-                } else {
-                    val declarationParent = parent as? IrDeclaration
-                    val sourceView = declarationParent?.let(::sourceViewFor)
-                    val (startOffset, endOffset) = expression.extents()
-                    if (sourceView?.validSourcePosition(startOffset, endOffset) == true) {
-                        sourceView.subSequence(startOffset, endOffset).toString()
-                    } else {
-                        // Fallback for inconsistent line numbers
-                        (declarationParent as? IrDeclarationWithName)?.name?.asString() ?: "Unknown Declaration"
-                    }
-                }
+                val text = computeNotNullAssertionText(expression)
 
                 irLetS(expression.argument.transformVoid(), irType = context.irBuiltIns.anyNType) { valueSymbol ->
                     irComposite(resultType = expression.type) {
-                        +irCall(checkExpressionValueIsNotNull).apply {
-                            putValueArgument(0, irGet(valueSymbol.owner))
-                            putValueArgument(1, irString(source.trimForRuntimeAssertion()))
+                        if (text != null) {
+                            +irCall(checkExpressionValueIsNotNull).apply {
+                                putValueArgument(0, irGet(valueSymbol.owner))
+                                putValueArgument(1, irString(text.trimForRuntimeAssertion()))
+                            }
+                        } else {
+                            +irCall(backendContext.ir.symbols.checkNotNull).apply {
+                                putValueArgument(0, irGet(valueSymbol.owner))
+                            }
                         }
                         +irGet(valueSymbol.owner)
                     }
@@ -766,6 +760,30 @@ private class TypeOperatorLowering(private val backendContext: JvmBackendContext
                 expression.transformChildrenVoid()
                 expression
             }
+        }
+    }
+
+    private fun IrBuilderWithScope.computeNotNullAssertionText(typeOperatorCall: IrTypeOperatorCall): String? {
+        if (backendContext.state.languageVersionSettings.supportsFeature(LanguageFeature.NoSourceCodeInNotNullAssertionExceptions)) {
+            return when (val argument = typeOperatorCall.argument) {
+                is IrCall -> "${argument.symbol.owner.name.asString()}(...)"
+                is IrGetField -> argument.symbol.owner.name.asString()
+                else -> null
+            }
+        }
+
+        val owner = scope.scopeOwnerSymbol.owner
+        if (owner is IrFunction && owner.isDelegated())
+            return "${owner.name.asString()}(...)"
+
+        val declarationParent = parent as? IrDeclaration
+        val sourceView = declarationParent?.let(::sourceViewFor)
+        val (startOffset, endOffset) = typeOperatorCall.extents()
+        return if (sourceView?.validSourcePosition(startOffset, endOffset) == true) {
+            sourceView.subSequence(startOffset, endOffset).toString()
+        } else {
+            // Fallback for inconsistent line numbers
+            (declarationParent as? IrDeclarationWithName)?.name?.asString() ?: "Unknown Declaration"
         }
     }
 

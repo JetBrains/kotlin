@@ -21705,6 +21705,16 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
             }
 
             @Nested
+            @TestMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/expressionAssertionMessages")
+            @TestDataPath("$PROJECT_ROOT")
+            public class ExpressionAssertionMessages {
+                @Test
+                public void testAllFilesPresentInExpressionAssertionMessages() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/notNullAssertions/expressionAssertionMessages"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+                }
+            }
+
+            @Nested
             @TestMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/nullCheckOnLambdaReturnValue")
             @TestDataPath("$PROJECT_ROOT")
             public class NullCheckOnLambdaReturnValue {

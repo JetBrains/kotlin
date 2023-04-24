@@ -23520,11 +23520,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/destructuringAssignmentWithNullabilityAssertionOnExtensionReceiver_lv12.kt");
             }
 
-            @TestMetadata("errorMessage.kt")
-            public void testErrorMessage() throws Exception {
-                runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/errorMessage.kt");
-            }
-
             @TestMetadata("extensionReceiverParameter.kt")
             public void testExtensionReceiverParameter() throws Exception {
                 runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/extensionReceiverParameter.kt");
@@ -23610,11 +23605,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/privateOperatorParameterAssertions.kt");
             }
 
-            @TestMetadata("staticCallErrorMessage.kt")
-            public void testStaticCallErrorMessage() throws Exception {
-                runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/staticCallErrorMessage.kt");
-            }
-
             @TestMetadata("typeParameterWithMultipleNotNullableBounds.kt")
             public void testTypeParameterWithMultipleNotNullableBounds() throws Exception {
                 runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/typeParameterWithMultipleNotNullableBounds.kt");
@@ -23675,6 +23665,69 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 @TestMetadata("inTopLevelPropertyInitializer.kt")
                 public void testInTopLevelPropertyInitializer() throws Exception {
                     runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/enhancedNullability/inTopLevelPropertyInitializer.kt");
+                }
+            }
+
+            @TestMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/expressionAssertionMessages")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class ExpressionAssertionMessages extends AbstractLightAnalysisModeTest {
+                @TestMetadata("field_after.kt")
+                public void ignoreField_after() throws Exception {
+                    runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/expressionAssertionMessages/field_after.kt");
+                }
+
+                @TestMetadata("localVariable_after.kt")
+                public void ignoreLocalVariable_after() throws Exception {
+                    runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/expressionAssertionMessages/localVariable_after.kt");
+                }
+
+                @TestMetadata("simple_after.kt")
+                public void ignoreSimple_after() throws Exception {
+                    runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/expressionAssertionMessages/simple_after.kt");
+                }
+
+                @TestMetadata("staticCall_after.kt")
+                public void ignoreStaticCall_after() throws Exception {
+                    runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/expressionAssertionMessages/staticCall_after.kt");
+                }
+
+                @TestMetadata("syntheticProperty_after.kt")
+                public void ignoreSyntheticProperty_after() throws Exception {
+                    runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/expressionAssertionMessages/syntheticProperty_after.kt");
+                }
+
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInExpressionAssertionMessages() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/notNullAssertions/expressionAssertionMessages"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
+                }
+
+                @TestMetadata("field_before.kt")
+                public void testField_before() throws Exception {
+                    runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/expressionAssertionMessages/field_before.kt");
+                }
+
+                @TestMetadata("localVariable_before.kt")
+                public void testLocalVariable_before() throws Exception {
+                    runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/expressionAssertionMessages/localVariable_before.kt");
+                }
+
+                @TestMetadata("simple_before.kt")
+                public void testSimple_before() throws Exception {
+                    runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/expressionAssertionMessages/simple_before.kt");
+                }
+
+                @TestMetadata("staticCall_before.kt")
+                public void testStaticCall_before() throws Exception {
+                    runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/expressionAssertionMessages/staticCall_before.kt");
+                }
+
+                @TestMetadata("syntheticProperty_before.kt")
+                public void testSyntheticProperty_before() throws Exception {
+                    runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/expressionAssertionMessages/syntheticProperty_before.kt");
                 }
             }
 
