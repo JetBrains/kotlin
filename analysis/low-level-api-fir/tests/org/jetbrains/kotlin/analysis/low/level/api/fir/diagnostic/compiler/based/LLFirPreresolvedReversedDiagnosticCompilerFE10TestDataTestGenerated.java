@@ -33998,6 +33998,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
                 }
 
                 @Test
+                @TestMetadata("implicitIntegerCoercionOverloading.kt")
+                public void testImplicitIntegerCoercionOverloading() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/unsignedTypes/conversions/implicitIntegerCoercionOverloading.kt");
+                }
+
+                @Test
                 @TestMetadata("inferenceForSignedAndUnsignedTypes.kt")
                 public void testInferenceForSignedAndUnsignedTypes() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/unsignedTypes/conversions/inferenceForSignedAndUnsignedTypes.kt");
