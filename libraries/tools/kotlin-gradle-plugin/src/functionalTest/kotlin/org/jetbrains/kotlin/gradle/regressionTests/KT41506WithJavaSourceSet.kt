@@ -23,7 +23,6 @@ class KT41506WithJavaSourceSet {
                 jvm {
                     compilations.create("integrationTest")
                     withJava()
-                    //compilations.create("integrationTest")
                 }
             }
         }
