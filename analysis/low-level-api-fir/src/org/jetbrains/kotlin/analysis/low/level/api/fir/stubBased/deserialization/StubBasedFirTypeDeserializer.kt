@@ -254,6 +254,12 @@ class StubBasedFirTypeDeserializer(
     }
 }
 
+/**
+ * Retrieves classId from [KtUserType] for compiled code only.
+ *
+ * It relies on [org.jetbrains.kotlin.psi.stubs.impl.KotlinNameReferenceExpressionStubImpl.isClassRef],
+ * which is set during cls analysis only.
+ */
 internal fun KtUserType.classId(): ClassId {
     val packageFragments = mutableListOf<String>()
     val classFragments = mutableListOf<String>()

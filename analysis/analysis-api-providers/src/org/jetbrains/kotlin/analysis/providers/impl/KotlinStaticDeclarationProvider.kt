@@ -21,6 +21,7 @@ import com.intellij.util.containers.CollectionFactory
 import com.intellij.util.indexing.FileContent
 import com.intellij.util.indexing.FileContentImpl
 import com.intellij.util.io.URLUtil
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInDecompiler
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsKotlinBinaryClassCache
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.KotlinClsStubBuilder
@@ -332,6 +333,11 @@ public class KotlinStaticDeclarationProviderFactory(
     }
 }
 
+/**
+ * Test application service to store stubs of shared between tests libraries.
+ *
+ * Otherwise, each test would start indexing of stdlib from scratch,
+ * and under the lock which makes tests extremely slow*/
 class KotlinFakeClsStubsCache {
     private val fakeFileClsStubs = CollectionFactory.createConcurrentWeakValueMap<String, List<KotlinFileStubImpl>>()
 

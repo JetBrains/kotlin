@@ -32,6 +32,10 @@ class JvmStubBasedDeserializedSymbolProviderFactory : JvmFirDeserializedSymbolPr
         scope: GlobalSearchScope
     ): List<FirSymbolProvider> {
         return buildList {
+            //stub based provider here works over kotlin-only indices and thus provides only kotlin declarations
+            //in order to find java declarations, one need to explicitly setup java symbol provider.
+            //for ProtoBuf based provider (used in compiler), there is no need in separated java provider, 
+            //because all declarations are retrieved at once and are not distinguished
             add(
                 JvmStubBasedFirDeserializedSymbolProvider(
                     session,

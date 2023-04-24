@@ -27,6 +27,18 @@ import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragmen
 
 typealias DeserializedTypeAliasPostProcessor = (FirTypeAliasSymbol) -> Unit
 
+/**
+ * [JvmStubBasedFirDeserializedSymbolProvider] works over existing stubs,
+ * retrieving them by classId/callableId from [KotlinDeclarationProvider].
+ *
+ * It works in IDE only, in standalone mode works [JvmClassFileBasedSymbolProvider].
+ *
+ * Because it works over existing stubs, there is no need to keep huge protobuf in memory.
+ * At the same time, there is no need to guess sources for fir elements anymore,
+ * they are set during deserialization.
+ *
+ * Same as [JvmClassFileBasedSymbolProvider], resulting fir elements are already resolved.
+ */
 class JvmStubBasedFirDeserializedSymbolProvider(
     session: FirSession,
     moduleDataProvider: SingleModuleDataProvider,
