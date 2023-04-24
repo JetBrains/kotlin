@@ -13,7 +13,6 @@ internal class LLFirLazyResolveContractChecker {
     private val currentTransformerPhase = ThreadLocal.withInitial<FirResolvePhase?> { null }
 
     inline fun lazyResolveToPhaseInside(phase: FirResolvePhase, resolve: () -> Unit) {
-        if (currentTransformerPhase.get() == FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS) return
         checkIfCanLazyResolveToPhase(phase)
         val previousPhase = currentTransformerPhase.get()
         currentTransformerPhase.set(phase)
