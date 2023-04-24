@@ -27642,6 +27642,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("completePropertyBeforeInvoke.kt")
+                public void testCompletePropertyBeforeInvoke() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/resolve/invoke/completePropertyBeforeInvoke.kt");
+                }
+
+                @Test
                 @TestMetadata("extensionValueAsNonExtension.kt")
                 public void testExtensionValueAsNonExtension() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/resolve/invoke/extensionValueAsNonExtension.kt");
@@ -27699,6 +27705,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 @TestMetadata("invokeAsMemberExtensionToExplicitReceiver.kt")
                 public void testInvokeAsMemberExtensionToExplicitReceiver() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/resolve/invoke/invokeAsMemberExtensionToExplicitReceiver.kt");
+                }
+
+                @Test
+                @TestMetadata("invokeCommonSystem.kt")
+                public void testInvokeCommonSystem() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/resolve/invoke/invokeCommonSystem.kt");
+                }
+
+                @Test
+                @TestMetadata("invokeCommonSystem2.kt")
+                public void testInvokeCommonSystem2() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/resolve/invoke/invokeCommonSystem2.kt");
                 }
 
                 @Test

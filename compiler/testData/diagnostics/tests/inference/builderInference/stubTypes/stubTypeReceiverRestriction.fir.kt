@@ -63,7 +63,7 @@ fun test5() {
 val <T> T.genericLambda: T.((T) -> Unit) -> Unit get() = {}
 
 fun test6() {
-    b {
+    <!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>b<!> {
         extension()
         genericLambda { }
         genericLambda { it.extension() }
