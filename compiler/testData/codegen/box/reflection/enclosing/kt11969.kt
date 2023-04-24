@@ -1,5 +1,7 @@
 // WITH_STDLIB
 // TARGET_BACKEND: JVM
+// LAMBDAS: CLASS
+
 package test
 
 interface Z {

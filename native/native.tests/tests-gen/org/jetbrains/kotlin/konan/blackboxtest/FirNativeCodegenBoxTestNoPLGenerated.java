@@ -15845,12 +15845,6 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
             }
 
             @Test
-            @TestMetadata("functionNtoStringNoReflect.kt")
-            public void testFunctionNtoStringNoReflect() throws Exception {
-                runTest("compiler/testData/codegen/box/functions/functionNtoStringNoReflect.kt");
-            }
-
-            @Test
             @TestMetadata("infixRecursiveCall.kt")
             public void testInfixRecursiveCall() throws Exception {
                 runTest("compiler/testData/codegen/box/functions/infixRecursiveCall.kt");

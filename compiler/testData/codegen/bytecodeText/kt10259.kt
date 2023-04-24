@@ -1,3 +1,5 @@
+// LAMBDAS: CLASS
+
 fun box(): String {
     var encl1 = "fail"
     var encl2 = "fail"

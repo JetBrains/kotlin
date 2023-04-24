@@ -12516,11 +12516,6 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/functions/functionNtoStringGeneric.kt");
         }
 
-        @TestMetadata("functionNtoStringNoReflect.kt")
-        public void testFunctionNtoStringNoReflect() throws Exception {
-            runTest("compiler/testData/codegen/box/functions/functionNtoStringNoReflect.kt");
-        }
-
         @TestMetadata("infixRecursiveCall.kt")
         public void testInfixRecursiveCall() throws Exception {
             runTest("compiler/testData/codegen/box/functions/infixRecursiveCall.kt");
