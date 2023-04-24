@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -200,7 +201,7 @@ fun translateCall(
             Pair(function, superQualifier.owner)
         }
 
-        if (expression.isSyntheticDelegatingReplacement || currentDispatchReceiver.canUseSuperRef(function, context, klass)) {
+        if (expression.isSyntheticDelegatingReplacement || currentDispatchReceiver.canUseSuperRef(context, klass)) {
             return JsInvocation(JsNameRef(context.getNameForMemberFunction(target), JsSuperRef()), arguments)
         }
 
@@ -655,10 +656,10 @@ private val nameMappingOriginAllowList = setOf(
     JsLoweredDeclarationOrigin.JS_SHADOWED_DEFAULT_PARAMETER,
 )
 
-private fun IrClass?.canUseSuperRef(function: IrFunction, context: JsGenerationContext, superClass: IrClass): Boolean {
+private fun IrClass?.canUseSuperRef(context: JsGenerationContext, superClass: IrClass): Boolean {
+    val currentFunction = context.currentFunction ?: return false
     return this != null &&
-            function.origin != IrDeclarationOrigin.LOWERED_SUSPEND_FUNCTION &&
             context.staticContext.backendContext.es6mode &&
-            !superClass.isInterface && !isInner && !isLocal &&
-            context.currentFunction?.isEs6ConstructorReplacement != true
+            !superClass.isInterface &&
+            !isInner && !isLocal && !currentFunction.isEs6ConstructorReplacement && currentFunction.parentClassOrNull?.superClass?.symbol != context.staticContext.backendContext.coroutineSymbols.coroutineImpl
 }
