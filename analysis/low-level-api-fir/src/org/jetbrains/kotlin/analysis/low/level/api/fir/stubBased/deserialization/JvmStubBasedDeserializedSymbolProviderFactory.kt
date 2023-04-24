@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.java.FirJavaFacade
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
+import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 
 class JvmStubBasedDeserializedSymbolProviderFactory : JvmFirDeserializedSymbolProviderFactory() {
     override fun createJvmFirDeserializedSymbolProviders(
@@ -43,7 +44,7 @@ class JvmStubBasedDeserializedSymbolProviderFactory : JvmFirDeserializedSymbolPr
                     kotlinScopeProvider,
                     project.createDeclarationProvider(object : DelegatingGlobalSearchScope(project, scope) {
                         override fun contains(file: VirtualFile): Boolean {
-                            if (file.extension == "kotlin_builtins") return false
+                            if (file.extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION) return false
                             return super.contains(file)
                         }
                     })

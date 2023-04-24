@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserializatio
 import org.jetbrains.kotlin.KtFakeSourceElement
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtRealPsiSourceElement
+import org.jetbrains.kotlin.descriptors.EffectiveVisibility
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
@@ -28,10 +30,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
 import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -298,14 +297,6 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
             typeParameters += local.typeDeserializer.ownTypeParameters.map { it.fir }
             annotations +=
                 c.annotationDeserializer.loadAnnotations(property, AnnotationUseSiteTarget.PROPERTY)
-            annotations +=
-                c.annotationDeserializer.loadAnnotations(
-                    property
-                )
-            annotations +=
-                c.annotationDeserializer.loadAnnotations(
-                    property
-                )
             if (getter != null) {
                 this.getter = loadPropertyGetter(
                     getter,
@@ -524,4 +515,33 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
 
     private fun KtTypeReference.toTypeRef(context: StubBasedFirDeserializationContext): FirTypeRef =
         context.typeDeserializer.typeRef(this)
+
+    fun loadEnumEntry(
+        declaration: KtEnumEntry,
+        symbol: FirRegularClassSymbol,
+        classId: ClassId
+    ): FirEnumEntry {
+        val enumEntryName = declaration.name ?: error("Enum entry doesn't provide name $declaration")
+
+        val enumType = ConeClassLikeTypeImpl(symbol.toLookupTag(), emptyArray(), false)
+        val enumEntry = buildEnumEntry {
+            source = KtRealPsiSourceElement(declaration)
+            this.moduleData = c.moduleData
+            this.origin = FirDeclarationOrigin.Library
+            returnTypeRef = buildResolvedTypeRef { type = enumType }
+            name = Name.identifier(enumEntryName)
+            this.symbol = FirEnumEntrySymbol(CallableId(classId, name))
+            this.status = FirResolvedDeclarationStatusImpl(
+                Visibilities.Public,
+                Modality.FINAL,
+                EffectiveVisibility.Public
+            ).apply {
+                isStatic = true
+            }
+            resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
+        }.apply {
+            containingClassForStaticMemberAttr = c.dispatchReceiver!!.lookupTag
+        }
+        return enumEntry
+    }
 }

@@ -46,16 +46,16 @@ class JvmStubBasedFirDeserializedSymbolProvider(
     private val declarationProvider: KotlinDeclarationProvider
 ) : FirSymbolProvider(session) {
     private val moduleData = moduleDataProvider.getModuleData(null)
-    private val packageNamesForNonClassDeclarations: Set<String> by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    private val packageSetWithTopLevelCallableDeclarations: Set<String> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         declarationProvider.computePackageSetWithTopLevelCallableDeclarations()
     }
 
-    private val classLikeNamesByPackage: FirCache<FqName, Set<Name>, Nothing?> =
+    private val classLikeNamesByPackage =
         session.firCachesFactory.createCache { fqName: FqName ->
             declarationProvider.getTopLevelKotlinClassLikeDeclarationNamesInPackage(fqName)
         }
 
-    private val allCallableNamesByPackage: FirCache<FqName, Set<Name>, Nothing?> =
+    private val allCallableNamesByPackage =
         session.firCachesFactory.createCache { fqName: FqName ->
             declarationProvider.getTopLevelCallableNamesInPackage(fqName)
         }
@@ -78,7 +78,7 @@ class JvmStubBasedFirDeserializedSymbolProvider(
     private val propertyCache = session.firCachesFactory.createCache(::loadPropertiesByCallableId)
 
     override fun computePackageSetWithTopLevelCallables(): Set<String> {
-        return packageNamesForNonClassDeclarations
+        return packageSetWithTopLevelCallableDeclarations
     }
 
     override fun computeCallableNamesInPackage(packageFqName: FqName): Set<Name> =
@@ -143,9 +143,9 @@ class JvmStubBasedFirDeserializedSymbolProvider(
                         .replace(".", "/") + "/" + virtualFile.nameWithoutExtension in KotlinBuiltins
                 ) return@mapNotNull null
                 val symbol = FirNamedFunctionSymbol(callableId)
-                val createRootContext =
+                val rootContext =
                     StubBasedFirDeserializationContext.createRootContext(session, moduleData, callableId, original, symbol)
-                createRootContext.memberDeserializer.loadFunction(original, null, session, symbol).symbol
+                rootContext.memberDeserializer.loadFunction(original, null, session, symbol).symbol
             }
     }
 
@@ -154,9 +154,9 @@ class JvmStubBasedFirDeserializedSymbolProvider(
             .mapNotNull { property ->
                 val original = property.originalElement as? KtProperty ?: return@mapNotNull null
                 val symbol = FirPropertySymbol(callableId)
-                val createRootContext =
+                val rootContext =
                     StubBasedFirDeserializationContext.createRootContext(session, moduleData, callableId, original, symbol)
-                createRootContext.memberDeserializer.loadProperty(original, null, symbol).symbol
+                rootContext.memberDeserializer.loadProperty(original, null, symbol).symbol
             }
     }
 
@@ -180,7 +180,7 @@ class JvmStubBasedFirDeserializedSymbolProvider(
     }
 
     private fun <C : FirCallableSymbol<*>> FirCache<CallableId, List<C>, Nothing?>.getCallables(id: CallableId): List<C> {
-        if (id.packageName.asString() !in packageNamesForNonClassDeclarations) return emptyList()
+        if (id.packageName.asString() !in packageSetWithTopLevelCallableDeclarations) return emptyList()
         if (id.callableName !in allCallableNamesByPackage.getValue(id.packageName)) return emptyList()
         return getValue(id)
     }
@@ -197,7 +197,7 @@ class JvmStubBasedFirDeserializedSymbolProvider(
 
     override fun getPackage(fqName: FqName): FqName? {
         return if (classLikeNamesByPackage.getValue(fqName)
-                .isNotEmpty() || packageNamesForNonClassDeclarations.contains(fqName.asString())
+                .isNotEmpty() || packageSetWithTopLevelCallableDeclarations.contains(fqName.asString())
         ) {
             fqName
         } else null

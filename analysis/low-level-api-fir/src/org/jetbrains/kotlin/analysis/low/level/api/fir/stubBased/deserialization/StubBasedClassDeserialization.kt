@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserializatio
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtFakeSourceElement
 import org.jetbrains.kotlin.KtRealPsiSourceElement
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.createDataClassCopyFunction
@@ -27,7 +26,6 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
-import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal val KtModifierListOwner.visibility: Visibility
     get() = with(modifierList) {
@@ -81,7 +79,6 @@ fun deserializeClassToSymbol(
     ).apply {
         isExpect = classOrObject.hasModifier(KtTokens.EXPECT_KEYWORD)
         isActual = false
-        classOrObject is KtObjectDeclaration && classOrObject.isCompanion()
         isInner = classOrObject.hasModifier(KtTokens.INNER_KEYWORD)
         isCompanion = (classOrObject as? KtObjectDeclaration)?.isCompanion() == true
         isData = classOrObject.hasModifier(KtTokens.DATA_KEYWORD)
@@ -128,7 +125,7 @@ fun deserializeClassToSymbol(
             typeParameters += parentContext?.allTypeParameters?.map { buildOuterClassTypeParameterRef { this.symbol = it } }.orEmpty()
 
         val typeDeserializer = context.typeDeserializer
-        val classDeserializer = context.memberDeserializer
+        val memberDeserializer = context.memberDeserializer
 
         val superTypeList = classOrObject.getSuperTypeList()
         if (superTypeList != null) {
@@ -142,40 +139,16 @@ fun deserializeClassToSymbol(
         }
 
         val firPrimaryConstructor = classOrObject.primaryConstructor?.let {
-            val constructor = classDeserializer.loadConstructor(it, classOrObject, this)
+            val constructor = memberDeserializer.loadConstructor(it, classOrObject, this)
             addDeclaration(constructor)
             constructor
         }
         classOrObject.body?.declarations?.forEach { declaration ->
             when (declaration) {
-                is KtConstructor<*> -> addDeclaration(classDeserializer.loadConstructor(declaration, classOrObject, this))
-                is KtNamedFunction -> addDeclaration(classDeserializer.loadFunction(declaration, symbol, session))
-                is KtProperty -> addDeclaration(classDeserializer.loadProperty(declaration, symbol))
-                is KtEnumEntry -> {
-                    val enumEntryName = declaration.name ?: error("Enum entry doesn't provide name $declaration")
-
-                    val enumType = ConeClassLikeTypeImpl(symbol.toLookupTag(), emptyArray(), false)
-                    val property = buildEnumEntry {
-                        source = KtRealPsiSourceElement(declaration)
-                        this.moduleData = moduleData
-                        this.origin = FirDeclarationOrigin.Library
-                        returnTypeRef = buildResolvedTypeRef { type = enumType }
-                        name = Name.identifier(enumEntryName)
-                        this.symbol = FirEnumEntrySymbol(CallableId(classId, name))
-                        this.status = FirResolvedDeclarationStatusImpl(
-                            Visibilities.Public,
-                            Modality.FINAL,
-                            EffectiveVisibility.Public
-                        ).apply {
-                            isStatic = true
-                        }
-                        resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
-                    }.apply {
-                        containingClassForStaticMemberAttr = context.dispatchReceiver!!.lookupTag
-                    }
-
-                    addDeclaration(property)
-                }
+                is KtConstructor<*> -> addDeclaration(memberDeserializer.loadConstructor(declaration, classOrObject, this))
+                is KtNamedFunction -> addDeclaration(memberDeserializer.loadFunction(declaration, symbol, session))
+                is KtProperty -> addDeclaration(memberDeserializer.loadProperty(declaration, symbol))
+                is KtEnumEntry -> addDeclaration(memberDeserializer.loadEnumEntry(declaration, symbol, classId))
                 is KtClassOrObject -> {
                     val nestedClassId =
                         classId.createNestedClassId(Name.identifier(declaration.name ?: error("Class doesn't have name $declaration")))
@@ -224,7 +197,7 @@ fun deserializeClassToSymbol(
         })
         companionObjectSymbol = (declarations.firstOrNull { it is FirRegularClass && it.isCompanion } as FirRegularClass?)?.symbol
 
-        contextReceivers.addAll(classDeserializer.createContextReceiversForClass(classOrObject))
+        contextReceivers.addAll(memberDeserializer.createContextReceiversForClass(classOrObject))
     }.apply {
         //todo sealed inheritors
         //if (modality == Modality.SEALED) {

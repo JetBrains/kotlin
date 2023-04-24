@@ -45,20 +45,20 @@ class StubBasedFirTypeDeserializer(
     private val containingSymbol: FirBasedSymbol<*>?,
     owner: KtTypeParameterListOwner
 ) {
-    private val typeParameterNames: Map<String, FirTypeParameterSymbol>
+    private val typeParametersByName: Map<String, FirTypeParameterSymbol>
 
     val ownTypeParameters: List<FirTypeParameterSymbol>
-        get() = typeParameterNames.values.toList()
+        get() = typeParametersByName.values.toList()
 
     init {
         val typeParameters = owner.typeParameters
         if (typeParameters.isNotEmpty()) {
-            typeParameterNames = mutableMapOf()
+            typeParametersByName = mutableMapOf()
             val builders = mutableListOf<FirTypeParameterBuilder>()
             for (typeParameter in typeParameters) {
                 val name = typeParameter.nameAsSafeName
                 val symbol = FirTypeParameterSymbol().also {
-                    typeParameterNames[name.asString()] = it
+                    typeParametersByName[name.asString()] = it
                 }
                 builders += FirTypeParameterBuilder().apply {
                     source = KtRealPsiSourceElement(typeParameter)
@@ -85,7 +85,7 @@ class StubBasedFirTypeDeserializer(
                 }.build()
             }
         } else {
-            typeParameterNames = emptyMap()
+            typeParametersByName = emptyMap()
         }
     }
 
@@ -125,7 +125,7 @@ class StubBasedFirTypeDeserializer(
         when (type) {
             is KotlinTypeParameterTypeBean -> {
                 val lookupTag =
-                    typeParameterNames[type.typeParameterName]?.toLookupTag() ?: parent?.typeParameterSymbol(type.typeParameterName)
+                    typeParametersByName[type.typeParameterName]?.toLookupTag() ?: parent?.typeParameterSymbol(type.typeParameterName)
                     ?: return null
                 return ConeTypeParameterTypeImpl(lookupTag, isNullable = type.nullable).let {
                     if (type.definitelyNotNull)
@@ -182,7 +182,7 @@ class StubBasedFirTypeDeserializer(
     }
 
     private fun typeParameterSymbol(typeParameterName: String): ConeTypeParameterLookupTag? =
-        typeParameterNames[typeParameterName]?.toLookupTag() ?: parent?.typeParameterSymbol(typeParameterName)
+        typeParametersByName[typeParameterName]?.toLookupTag() ?: parent?.typeParameterSymbol(typeParameterName)
 
     fun FirClassLikeSymbol<*>.typeParameters(): List<FirTypeParameterSymbol> =
         (fir as? FirTypeParameterRefsOwner)?.typeParameters?.map { it.symbol }.orEmpty()
@@ -269,7 +269,7 @@ internal fun KtUserType.classId(): ClassId {
         if (userType != null) {
             collectFragments(userType)
         }
-        val referenceExpression = userType?.referenceExpression as? KtNameReferenceExpression
+        val referenceExpression = type.referenceExpression as? KtNameReferenceExpression
         if (referenceExpression != null) {
             val referencedName = referenceExpression.getReferencedName()
             val stub = referenceExpression.stub
@@ -281,7 +281,6 @@ internal fun KtUserType.classId(): ClassId {
         }
     }
     collectFragments(this)
-    referencedName?.let { classFragments.add(it) }
     return ClassId(
         FqName.fromSegments(packageFragments),
         FqName.fromSegments(classFragments),
