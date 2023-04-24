@@ -26,6 +26,8 @@ import kotlin.system.measureTimeMillis
 
 class KotlinBuildStatHandler {
     companion object {
+        const val DOKKA_PLUGIN = "org.jetbrains.dokka"
+
         @JvmStatic
         internal fun getLogger() = Logging.getLogger(KotlinBuildStatHandler::class.java)
 
@@ -101,6 +103,9 @@ class KotlinBuildStatHandler {
 
         val statisticOverhead = measureTimeMillis {
             gradle.allprojects { project ->
+                project.plugins.findPlugin(DOKKA_PLUGIN)?.also {
+                    sessionLogger.report(BooleanMetrics.ENABLED_DOKKA, true)
+                }
                 for (configuration in project.configurations) {
                     val configurationName = configuration.name
                     val dependencies = configuration.dependencies
