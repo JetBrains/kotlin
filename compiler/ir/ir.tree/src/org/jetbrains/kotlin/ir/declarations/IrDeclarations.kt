@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.name.Name
 import java.io.File
 
 fun <D : IrAttributeContainer> D.copyAttributes(other: IrAttributeContainer?): D = apply {
@@ -37,6 +38,7 @@ fun IrClass.addAll(members: List<IrDeclaration>) {
 
 val IrFile.path: String get() = fileEntry.name
 val IrFile.name: String get() = File(path).name
+val IrFile.nameWithPackage: String get() = fqName.child(Name.identifier(name)).asString()
 
 @ObsoleteDescriptorBasedAPI
 fun IrFunction.getIrValueParameter(parameter: ValueParameterDescriptor): IrValueParameter =

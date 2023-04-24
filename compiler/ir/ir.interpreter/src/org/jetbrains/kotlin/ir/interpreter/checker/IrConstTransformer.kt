@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.constant.ErrorValue
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.name
+import org.jetbrains.kotlin.ir.declarations.nameWithPackage
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrErrorExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.ir.interpreter.toConstantValue
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.name.Name
 
 fun IrFile.transformConst(
     interpreter: IrInterpreter,
@@ -99,7 +98,7 @@ internal abstract class IrConstTransformer(
         }
 
         evaluatedConstTracker?.save(
-            result.startOffset, result.endOffset, irFile.fqName.child(Name.identifier(irFile.name)).asString(),
+            result.startOffset, result.endOffset, irFile.nameWithPackage,
             constant = if (result is IrErrorExpression) ErrorValue.create(result.description)
             else (result as IrConst<*>).toConstantValue()
         )

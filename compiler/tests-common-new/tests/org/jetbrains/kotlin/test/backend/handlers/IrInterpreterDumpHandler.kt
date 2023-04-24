@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.constant.ErrorValue
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.ir.declarations.IrFile
-import org.jetbrains.kotlin.ir.declarations.name
+import org.jetbrains.kotlin.ir.declarations.nameWithPackage
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_K2
 import org.jetbrains.kotlin.test.model.*
@@ -51,7 +51,7 @@ interface IrInterpreterDumpHandler {
 
     private fun EvaluatedConstTracker.processFile(testFile: TestFile, irFile: IrFile) {
         val rangesThatAreNotSupposedToBeRendered = testFile.extractRangesWithoutRender()
-        this.load(irFile.name)?.forEach { (pair, constantValue) ->
+        this.load(irFile.nameWithPackage)?.forEach { (pair, constantValue) ->
             val (start, end) = pair
             if (rangesThatAreNotSupposedToBeRendered.any { start >= it.first && start <= it.second }) return@forEach
 
