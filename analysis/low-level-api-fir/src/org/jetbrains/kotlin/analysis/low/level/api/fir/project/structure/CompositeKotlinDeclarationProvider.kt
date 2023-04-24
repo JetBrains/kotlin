@@ -65,8 +65,8 @@ private constructor(
         return providers.flatMapTo(mutableListOf()) { it.findFilesForScript(scriptFqName) }
     }
 
-    override fun computePackageSetWithNonClassDeclarations(): Set<String> {
-        return providers.flatMapTo(mutableSetOf()) { it.computePackageSetWithNonClassDeclarations() }
+     override fun computePackageSetWithTopLevelCallableDeclarations(): Set<String> {
+        return providers.flatMapTo(mutableSetOf()) { it.computePackageSetWithTopLevelCallableDeclarations() }
     }
 
     companion object {

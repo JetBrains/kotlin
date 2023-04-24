@@ -93,7 +93,7 @@ public class KotlinStaticDeclarationProvider internal constructor(
         return index.scriptMap[scriptFqName].orEmpty().filter { it.containingKtFile.virtualFile in scope }
     }
 
-    override fun computePackageSetWithNonClassDeclarations(): Set<String> {
+    override fun computePackageSetWithTopLevelCallableDeclarations(): Set<String> {
         val packageNames = index.topLevelPropertyMap.keys + index.topLevelFunctionMap.keys
         return packageNames.mapTo(mutableSetOf()) { it.asString() }
     }

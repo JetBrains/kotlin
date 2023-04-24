@@ -35,7 +35,7 @@ class JvmStubBasedFirDeserializedSymbolProvider(
 ) : FirSymbolProvider(session) {
     private val moduleData = moduleDataProvider.getModuleData(null)
     private val packageNamesForNonClassDeclarations: Set<String> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        declarationProvider.computePackageSetWithNonClassDeclarations()
+        declarationProvider.computePackageSetWithTopLevelCallableDeclarations()
     }
 
     private val classLikeNamesByPackage: FirCache<FqName, Set<Name>, Nothing?> =

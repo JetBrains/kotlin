@@ -187,7 +187,7 @@ private class LLFirResolveExtensionToolDeclarationProvider(
             .mapNotNullTo(mutableListOf()) { it.kotlinFile.script }
     }
 
-    override fun computePackageSetWithNonClassDeclarations(): Set<String> {
+    override fun computePackageSetWithTopLevelCallableDeclarations(): Set<String> {
         return emptySet() //todo
     }
 
