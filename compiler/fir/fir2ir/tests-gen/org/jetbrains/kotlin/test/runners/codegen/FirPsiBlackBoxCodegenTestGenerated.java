@@ -32898,6 +32898,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         }
 
         @Test
+        @TestMetadata("callToJavaSuper.kt")
+        public void testCallToJavaSuper() throws Exception {
+            runTest("compiler/testData/codegen/box/multiplatform/callToJavaSuper.kt");
+        }
+
+        @Test
         @TestMetadata("commonInternal.kt")
         public void testCommonInternal() throws Exception {
             runTest("compiler/testData/codegen/box/multiplatform/commonInternal.kt");

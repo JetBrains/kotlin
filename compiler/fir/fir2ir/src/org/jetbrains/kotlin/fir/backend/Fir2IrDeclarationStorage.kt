@@ -110,8 +110,24 @@ class Fir2IrDeclarationStorage(
     //
     // Note: reusing is necessary here, because sometimes (see testFakeOverridesInPlatformModule)
     // we have to match fake override in platform class with overridden fake overrides in common class
-    private val fakeOverridesInClass: MutableMap<IrClass, MutableMap<FirCallableDeclaration, FirCallableDeclaration>> =
+    private val fakeOverridesInClass: MutableMap<IrClass, MutableMap<FakeOverrideKey, FirCallableDeclaration>> =
         commonMemberStorage.fakeOverridesInClass
+
+    sealed class FakeOverrideKey {
+        data class Signature(val signature: IdSignature) : FakeOverrideKey()
+
+        /*
+         * Used for declarations which don't have id signature (e.g. members of local classes)
+         */
+        data class Declaration(val declaration: FirCallableDeclaration) : FakeOverrideKey()
+    }
+
+    private fun FirCallableDeclaration.asFakeOverrideKey(): FakeOverrideKey {
+        return when (val signature = signatureComposer.composeSignature(this)) {
+            null -> FakeOverrideKey.Declaration(this)
+            else -> FakeOverrideKey.Signature(signature)
+        }
+    }
 
     // For pure fields (from Java) only
     private val fieldToPropertyCache: ConcurrentHashMap<Pair<FirField, IrDeclarationParent>, IrProperty> = ConcurrentHashMap()
@@ -1028,7 +1044,7 @@ class Fir2IrDeclarationStorage(
         originalDeclaration: FirCallableDeclaration,
         fakeOverride: FirCallableDeclaration
     ) {
-        fakeOverridesInClass.getOrPut(irClass, ::mutableMapOf)[originalDeclaration] = fakeOverride
+        fakeOverridesInClass.getOrPut(irClass, ::mutableMapOf)[originalDeclaration.asFakeOverrideKey()] = fakeOverride
     }
 
     fun getFakeOverrideInClass(
@@ -1038,7 +1054,8 @@ class Fir2IrDeclarationStorage(
         if (irClass is Fir2IrLazyClass) {
             irClass.getFakeOverridesByName(callableDeclaration.symbol.callableId.callableName)
         }
-        return fakeOverridesInClass[irClass]?.get(callableDeclaration)
+        val map = fakeOverridesInClass[irClass]
+        return map?.get(callableDeclaration.asFakeOverrideKey())
     }
 
     fun getCachedIrDelegateOrBackingField(field: FirField): IrField? = fieldCache[field]

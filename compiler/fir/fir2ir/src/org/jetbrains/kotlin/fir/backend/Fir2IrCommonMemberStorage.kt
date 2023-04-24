@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.signaturer.FirBasedSignatureComposer
 import org.jetbrains.kotlin.fir.signaturer.FirMangler
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.IdSignatureComposer
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import java.util.concurrent.ConcurrentHashMap
@@ -49,5 +50,5 @@ class Fir2IrCommonMemberStorage(
 
     val propertyCache: ConcurrentHashMap<FirProperty, IrProperty> = ConcurrentHashMap()
 
-    val fakeOverridesInClass: MutableMap<IrClass, MutableMap<FirCallableDeclaration, FirCallableDeclaration>> = mutableMapOf()
+    val fakeOverridesInClass: MutableMap<IrClass, MutableMap<Fir2IrDeclarationStorage.FakeOverrideKey, FirCallableDeclaration>> = mutableMapOf()
 }
