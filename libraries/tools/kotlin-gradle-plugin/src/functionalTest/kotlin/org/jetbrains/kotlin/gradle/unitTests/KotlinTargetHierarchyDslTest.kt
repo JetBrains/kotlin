@@ -388,6 +388,63 @@ class KotlinTargetHierarchyDslTest {
         )
     }
 
+    /**
+     * Example from the documentation is supposed to create
+     *                       commonMain
+     *                           |
+     *              +------------+----------+
+     *              |                       |
+     *          frontendMain            appleMain
+     *              |                        |
+     *    +---------+------------+-----------+----------+
+     *    |                      |                      |
+     * jvmMain                iosMain               macosX64Main
+     *                           |
+     *                           |
+     *                      +----+----+
+     *                      |         |
+     *                iosX64Main   iosArm64Main
+     */
+    @Test
+    fun `test - diamond hierarchy from documentation example`() {
+        kotlin.targetHierarchy.custom {
+            common {
+                group("ios") {
+                    withIos()
+                }
+                group("frontend") {
+                    withJvm()
+                    group("ios") // <- ! We can again reference the 'ios' group
+                }
+                group("apple") {
+                    withMacos()
+                    group("ios") // <- ! We can again reference the 'ios' group
+                }
+            }
+        }
+
+        kotlin.iosX64()
+        kotlin.iosArm64()
+        kotlin.macosX64()
+        kotlin.jvm()
+
+        assertEquals(
+            stringSetOf("frontendMain", "appleMain"), kotlin.dependingSourceSetNames("commonMain")
+        )
+
+        assertEquals(
+            stringSetOf("jvmMain", "iosMain"), kotlin.dependingSourceSetNames("frontendMain")
+        )
+
+        assertEquals(
+            stringSetOf("macosX64Main", "iosMain"), kotlin.dependingSourceSetNames("appleMain")
+        )
+
+        assertEquals(
+            stringSetOf("iosArm64Main", "iosX64Main"), kotlin.dependingSourceSetNames("iosMain")
+        )
+    }
+
 }
 
 private fun KotlinMultiplatformExtension.dependingSourceSetNames(sourceSetName: String) =

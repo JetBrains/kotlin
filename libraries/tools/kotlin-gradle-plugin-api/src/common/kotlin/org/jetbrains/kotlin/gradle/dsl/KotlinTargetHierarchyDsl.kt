@@ -85,6 +85,90 @@ interface KotlinTargetHierarchyDsl {
      */
     fun default(describeExtension: (KotlinTargetHierarchyBuilder.Root.() -> Unit)? = null)
 
+    /**
+     * Allows to create a fully custom hierarchy (no defaults applied)
+     * Note: Using the custom hierarchy will also require to set the edges to 'commonMain' and 'commonTest' SourceSets by
+     * using the `common` group.
+     *
+     * ####  Example 1:
+     * Sharing code between iOS and a jvmTarget:
+     * ```kotlin
+     * targetHierarchy.custom {
+     *     common {
+     *         withJvm()
+     *         group("ios") {
+     *             withIos()
+     *         }
+     *     }
+     * }
+     * ```
+     *
+     * Will create two [SourceSetTree] using the 'common' and 'ios' groups, applied on the "test" and "main" compilations:
+     * When the following targets are specified:
+     * - jvm()
+     * - iosX64()
+     * - iosArm64()
+     * ```
+     *                    "main"                               "test"
+     *                  commonMain                           commonTest
+     *                      |                                    |
+     *                      |                                    |
+     *           +----------+----------+              +----------+----------+
+     *           |                     |              |                     |
+     *         iosMain               jvmMain        iosTest               jvmTest
+     *           |                                    |
+     *      +----+-----+                         +----+-----+
+     *      |          |                         |          |
+     * iosX64Main   iosArm64Main            iosX64Test   iosArm64Test
+     * ```
+     *
+     * #### Example 2: Creating a 'diamond structure'
+     * ```kotlin
+     * targetHierarchy.custom {
+     *     common {
+     *         group("ios") {
+     *             withIos()
+     *         }
+     *
+     *         group("frontend") {
+     *             withJvm()
+     *             group("ios") // <- ! We can again reference the 'ios' group
+     *         }
+     *
+     *         group("apple") {
+     *             withMacos()
+     *             group("ios") // <- ! We can again reference the 'ios' group
+     *         }
+     *     }
+     * }
+     * ```
+     *
+     * In this case, the _group_ "ios" can be created with 'group("ios")' and later referenced with the same construction to build
+     * the tree. Applying the descriptor from the example to the following targets:
+     * - iosX64()
+     * - iosArm64()
+     * - macosX64()
+     * - jvm()
+     *
+     * will create the following 'main' SourceSetTree:
+     *
+     * ```
+     *                      commonMain
+     *                           |
+     *              +------------+----------+
+     *              |                       |
+     *          frontendMain            appleMain
+     *              |                        |
+     *    +---------+------------+-----------+----------+
+     *    |                      |                      |
+     * jvmMain                iosMain               macosX64Main
+     *                           |
+     *                           |
+     *                      +----+----+
+     *                      |         |
+     *                iosX64Main   iosArm64Main
+     * ```
+     */
     fun custom(describe: KotlinTargetHierarchyBuilder.Root.() -> Unit)
 
     @ExperimentalKotlinGradlePluginApi
