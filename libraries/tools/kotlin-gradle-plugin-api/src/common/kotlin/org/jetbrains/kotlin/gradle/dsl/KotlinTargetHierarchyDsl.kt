@@ -171,9 +171,41 @@ interface KotlinTargetHierarchyDsl {
      */
     fun custom(describe: KotlinTargetHierarchyBuilder.Root.() -> Unit)
 
+    /**
+     * Configure Android specific settings within the context of [KotlinTargetHierarchy].
+     * The difference between Android and other targets is that the build author is free to choose
+     * the names of compilations, whereas Android is using predefined SourceSet names.
+     *
+     * ### Default dependsOn edges
+     * By default, Kotlin Multiplatform will set the following default dependsOn edges:
+     * - `androidMain` -> `commonMain`
+     * - `androidUnitTest` -> `commonTest`
+     *
+     * In this default setup, SourceSets like `androidInstrumentedTest` will *not* dependOn `commonTest`.
+     * This API can be used to change the default behavior
+     *
+     * #### Example 1: Setting up androidInstrumentedTest -> commonTest
+     * This can be done by putting the 'androidInstrumentedTest' variants into the 'test' [SourceSetTree]:
+     * ```kotlin
+     * targetHierarchy.android {
+     *     instrumentedTest.sourceSetTree.set(SourceSetTree.test)
+     * }
+     * ```
+     *
+     * #### Example 2: Setting up androidInstrumentedTest -> commonTest and removing 'unitTests' from the 'test' [SourceSetTree]
+     * ```kotlin
+     * targetHierarchy.android {
+     *     instrumentedTest.sourceSetTree.set(SourceSetTree.test)
+     *     unitTest.sourceSetTree.set(SourceSetTree.unitTest) // ! <- Anything *other* than 'test'
+     * }
+     * ```
+     */
     @ExperimentalKotlinGradlePluginApi
     fun android(configure: KotlinAndroidTargetHierarchyDsl.() -> Unit)
 
+    /**
+     * See [android]
+     */
     @ExperimentalKotlinGradlePluginApi
     val android: KotlinAndroidTargetHierarchyDsl
 }
@@ -202,6 +234,8 @@ interface KotlinAndroidVariantHierarchyDsl {
      *
      * Will ensure that all android instrumented tests (androidInstrumentedTest, androidInstrumentedTestDebug, ...)
      * will be placed into the 'test' SourceSet tree (with 'commonTest' as root)
+     *
+     * See [KotlinTargetHierarchyDsl.android]
      */
     val sourceSetTree: Property<SourceSetTree>
 }
