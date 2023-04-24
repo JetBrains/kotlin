@@ -36,7 +36,8 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
     fun createTypeReferenceStub(
         parent: StubElement<out PsiElement>,
         type: Type,
-        additionalAnnotations: () -> List<AnnotationWithTarget> = { emptyList() }
+        additionalAnnotations: () -> List<AnnotationWithTarget> = { emptyList() },
+        loadTypeAnnotations: (Type) -> List<AnnotationWithArgs> = { c.components.annotationLoader.loadTypeAnnotations(it, c.nameResolver) }
     ) {
         val abbreviatedType = type.abbreviatedType(c.typeTable)
         if (abbreviatedType != null) {
@@ -45,14 +46,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
 
         val typeReference = KotlinPlaceHolderStubImpl<KtTypeReference>(parent, KtStubElementTypes.TYPE_REFERENCE)
 
-        val allAnnotationsInType = c.components.annotationLoader.loadTypeAnnotations(type, c.nameResolver)
-        if (parent is KotlinParameterStubImpl) {
-            for (annotationWithArgs in allAnnotationsInType) {
-                if (annotationWithArgs.classId.asSingleFqName() == StandardNames.FqNames.parameterName) {
-                    parent.functionTypeParameterName = (annotationWithArgs.args.values.firstOrNull() as? StringValue)?.value
-                }
-            }
-        }
+        val allAnnotationsInType = loadTypeAnnotations(type)
         val annotations = allAnnotationsInType.filterNot {
             val isTopLevelClass = !it.classId.isNestedClass
             isTopLevelClass && it.classId.asSingleFqName() in ANNOTATIONS_NOT_LOADED_FOR_TYPES
@@ -278,8 +272,8 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         var suspendParameterType: Type? = null
 
         for ((index, argument) in typeArgumentsWithoutReceiverAndReturnType.withIndex()) {
+            val parameterType = argument.type(c.typeTable)!!
             if (isSuspend && index == typeArgumentsWithoutReceiverAndReturnType.size - 1) {
-                val parameterType = argument.type(c.typeTable)!!
                 if (parameterType.hasClassName() && parameterType.argumentCount == 1) {
                     val classId = c.nameResolver.getClassId(parameterType.className)
                     val fqName = classId.asSingleFqName()
@@ -293,11 +287,27 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                     continue
                 }
             }
-            val parameter = KotlinParameterStubImpl(
-                parameterList, fqName = null, name = null, isMutable = false, hasValOrVar = false, hasDefaultValue = false
-            )
+            val annotations = c.components.annotationLoader.loadTypeAnnotations(parameterType, c.nameResolver)
 
-            createTypeReferenceStub(parameter, argument.type(c.typeTable)!!)
+            fun getFunctionTypeParameterName(annotations: List<AnnotationWithArgs>): String? {
+                for (annotationWithArgs in annotations) {
+                    if (annotationWithArgs.classId.asSingleFqName() == StandardNames.FqNames.parameterName) {
+                        return (annotationWithArgs.args.values.firstOrNull() as? StringValue)?.value
+                    }
+                }
+                return null
+            }
+
+            val parameter = KotlinParameterStubImpl(
+                parameterList,
+                fqName = null,
+                name = null,
+                isMutable = false,
+                hasValOrVar = false,
+                hasDefaultValue = false,
+                functionTypeParameterName = getFunctionTypeParameterName(annotations)
+            )
+            createTypeReferenceStub(parameter, parameterType, loadTypeAnnotations = { annotations })
         }
 
 

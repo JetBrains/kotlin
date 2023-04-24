@@ -30,9 +30,9 @@ class KotlinParameterStubImpl(
     private val name: StringRef?,
     private val isMutable: Boolean,
     private val hasValOrVar: Boolean,
-    private val hasDefaultValue: Boolean
+    private val hasDefaultValue: Boolean,
+    val functionTypeParameterName: String? = null
 ) : KotlinStubBaseImpl<KtParameter>(parent, KtStubElementTypes.VALUE_PARAMETER), KotlinParameterStub {
-    var functionTypeParameterName: String? = null
 
     override fun getName(): String? {
         return StringRef.toString(name)
