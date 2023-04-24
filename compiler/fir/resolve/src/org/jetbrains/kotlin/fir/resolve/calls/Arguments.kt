@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.returnExpressions
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -275,6 +276,10 @@ fun Candidate.resolvePlainArgumentType(
             substitutor.substituteOrSelf(argumentTypeForApplicabilityCheck)
             usesFunctionConversion = true
         }
+
+        argumentFunctionTypeCoercionToUnit(session, expectedType, argumentType)?.let {
+            argumentTypeForApplicabilityCheck = it
+        }
     }
 
     checkApplicabilityForArgumentType(
@@ -310,6 +315,35 @@ private fun argumentTypeWithCustomConversion(
             invokeSymbol.fir.returnTypeRef.coneType,
         )
     }
+}
+
+private fun argumentFunctionTypeCoercionToUnit(
+    session: FirSession,
+    expectedType: ConeKotlinType,
+    argumentType: ConeKotlinType
+): ConeKotlinType? {
+    if (!expectedType.isSomeFunctionType(session) || !argumentType.isSomeFunctionType(session)) {
+        return null
+    }
+
+    val expectedTypeLastParameter = expectedType.typeArguments.lastOrNull()?.type
+        ?: error("Functional type without type parameters")
+    val argumentTypeLastArgument = argumentType.typeArguments.lastOrNull()?.type
+        ?: error("Functional type without type arguments")
+
+    if (!expectedTypeLastParameter.isUnit || argumentTypeLastArgument.isUnit) {
+        return null
+    }
+
+    val functionClassId = argumentType.classId
+        ?: error("Functional type without classId")
+
+    return ConeClassLikeTypeImpl(
+        functionClassId.toLookupTag(),
+        (argumentType.typeArguments.dropLast(1) + expectedTypeLastParameter).toTypedArray(),
+        isNullable = argumentType.isNullable,
+        attributes = argumentType.attributes,
+    )
 }
 
 fun Candidate.prepareCapturedType(argumentType: ConeKotlinType, context: ResolutionContext): ConeKotlinType {

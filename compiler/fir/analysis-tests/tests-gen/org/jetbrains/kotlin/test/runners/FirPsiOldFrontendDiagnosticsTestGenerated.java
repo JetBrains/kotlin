@@ -35666,6 +35666,24 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
         }
 
         @Test
+        @TestMetadata("expectingUnitLambda1.kt")
+        public void testExpectingUnitLambda1() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/expectingUnitLambda1.kt");
+        }
+
+        @Test
+        @TestMetadata("expectingUnitLambda2.kt")
+        public void testExpectingUnitLambda2() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/expectingUnitLambda2.kt");
+        }
+
+        @Test
+        @TestMetadata("expectingUnitLambda3.kt")
+        public void testExpectingUnitLambda3() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/expectingUnitLambda3.kt");
+        }
+
+        @Test
         @TestMetadata("genericContainer.kt")
         public void testGenericContainer() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithStdLib/genericContainer.kt");
