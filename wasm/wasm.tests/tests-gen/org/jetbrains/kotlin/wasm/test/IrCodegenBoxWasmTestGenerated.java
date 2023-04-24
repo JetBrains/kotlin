@@ -4819,6 +4819,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/constants/kt9532.kt");
         }
 
+        @TestMetadata("literalToLongConversion.kt")
+        public void testLiteralToLongConversion() throws Exception {
+            runTest("compiler/testData/codegen/box/constants/literalToLongConversion.kt");
+        }
+
         @TestMetadata("long.kt")
         public void testLong() throws Exception {
             runTest("compiler/testData/codegen/box/constants/long.kt");

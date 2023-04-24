@@ -5472,6 +5472,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
         }
 
         @Test
+        @TestMetadata("literalToLongConversion.kt")
+        public void testLiteralToLongConversion() throws Exception {
+            runTest("compiler/testData/codegen/box/constants/literalToLongConversion.kt");
+        }
+
+        @Test
         @TestMetadata("long.kt")
         public void testLong() throws Exception {
             runTest("compiler/testData/codegen/box/constants/long.kt");

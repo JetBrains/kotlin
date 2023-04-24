@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.serialization.constant.ConstValueProvider
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.name.Name
 
 class ConstValueProviderImpl(
@@ -28,7 +29,7 @@ class ConstValueProviderImpl(
         return if (firExpression is FirQualifiedAccessExpression) {
             // TODO check that this behavior is expected in ConversionUtils and if not fix it
             val calleeReference = firExpression.calleeReference
-            val start = calleeReference.source?.startOffsetSkippingComments() ?: calleeReference.source?.startOffset ?: return null
+            val start = calleeReference.source?.startOffsetSkippingComments() ?: calleeReference.source?.startOffset ?: UNDEFINED_OFFSET
             val end = firExpression.source?.endOffset ?: return null
             evaluatedConstTracker.load(start, end, fileName)
         } else {
