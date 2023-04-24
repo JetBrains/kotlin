@@ -60,6 +60,7 @@ dependencies {
     }
     commonCompileOnly(project(":kotlin-tooling-metadata"))
 
+
     commonImplementation(project(":kotlin-gradle-plugin-idea"))
     commonImplementation(project(":kotlin-gradle-plugin-idea-proto"))
     commonImplementation(project(":kotlin-util-klib"))
@@ -109,6 +110,8 @@ dependencies {
     testImplementation(project(":kotlin-gradle-statistics"))
     testImplementation(project(":kotlin-tooling-metadata"))
 }
+
+configurations.commonCompileClasspath.get().exclude("org.jetbrains.kotlinx", "kotlinx-coroutines-core")
 
 if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     configurations.commonApi.get().exclude("com.android.tools.external.com-intellij", "intellij-core")

@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
-import kotlinx.coroutines.currentCoroutineContext
-import kotlinx.coroutines.withContext
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.*
@@ -127,7 +125,7 @@ internal fun Project.startKotlinPluginLifecycle() {
  * the currently running coroutine. Throws if this coroutine was not started using a [KotlinPluginLifecycle]
  */
 internal suspend fun currentKotlinPluginLifecycle(): KotlinPluginLifecycle {
-    return currentCoroutineContext()[KotlinPluginLifecycleCoroutineContextElement]?.lifecycle
+    return coroutineContext[KotlinPluginLifecycleCoroutineContextElement]?.lifecycle
         ?: error("Missing $KotlinPluginLifecycleCoroutineContextElement in currentCoroutineContext")
 }
 
@@ -234,8 +232,17 @@ internal suspend fun <T> requireCurrentStage(block: suspend () -> T): T {
  * ```
  */
 internal suspend fun <T> withRestrictedStages(allowed: Set<Stage>, block: suspend () -> T): T {
-    return withContext(RestrictedLifecycleStages(currentKotlinPluginLifecycle(), allowed)) {
-        block()
+    val newCoroutineContext = coroutineContext + RestrictedLifecycleStages(currentKotlinPluginLifecycle(), allowed)
+    return suspendCoroutine { continuation ->
+        val newContinuation = object : Continuation<T> {
+            override val context: CoroutineContext
+                get() = newCoroutineContext
+
+            override fun resumeWith(result: Result<T>) {
+                continuation.resumeWith(result)
+            }
+        }
+        block.startCoroutine(newContinuation)
     }
 }
 

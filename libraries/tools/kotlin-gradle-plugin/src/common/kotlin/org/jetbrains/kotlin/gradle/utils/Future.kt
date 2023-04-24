@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.utils
 
-import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.completeWith
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.plugin.HasProject
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
@@ -17,6 +14,9 @@ import org.jetbrains.kotlin.tooling.core.ExtrasLazyProperty
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 import org.jetbrains.kotlin.tooling.core.extrasLazyProperty
 import java.io.Serializable
+import kotlin.coroutines.Continuation
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 /**
  * See [KotlinPluginLifecycle]:
@@ -95,9 +95,8 @@ internal fun <T> CompletableFuture(): CompletableFuture<T> {
     return FutureImpl()
 }
 
-@OptIn(ExperimentalCoroutinesApi::class)
 private class FutureImpl<T>(
-    private val deferred: CompletableDeferred<T> = CompletableDeferred(),
+    private val deferred: Completable<T> = Completable(),
     private val lifecycle: KotlinPluginLifecycle? = null
 ) : CompletableFuture<T>, Serializable {
     fun completeWith(result: Result<T>) = deferred.completeWith(result)
@@ -123,7 +122,7 @@ private class FutureImpl<T>(
 
     private class Surrogate<T>(private val value: T) : Serializable {
         private fun readResolve(): Any {
-            return FutureImpl(CompletableDeferred(value))
+            return FutureImpl(Completable(value))
         }
     }
 }
@@ -153,7 +152,7 @@ private class LenientFutureImpl<T>(
 
     private class Surrogate<T>(private val value: T) : Serializable {
         private fun readResolve(): Any {
-            return LenientFutureImpl(FutureImpl(CompletableDeferred(value)))
+            return LenientFutureImpl(FutureImpl(Completable(value)))
         }
     }
 }
@@ -173,7 +172,63 @@ private class LazyFutureImpl<T>(private val future: Lazy<Future<T>>) : Future<T>
 
     private class Surrogate<T>(private val value: T) : Serializable {
         private fun readResolve(): Any {
-            return FutureImpl(CompletableDeferred(value))
+            return FutureImpl(Completable(value))
         }
+    }
+}
+
+/**
+ * Simple, Single Threaded, replacement for kotlinx.coroutines.CompletableDeferred.
+ */
+private class Completable<T>(
+    private var value: Result<T>? = null
+) {
+    constructor(value: T) : this(Result.success(value))
+
+    val isCompleted: Boolean get() = value != null
+
+    private val waitingContinuations = mutableListOf<Continuation<Result<T>>>()
+
+    fun completeWith(result: Result<T>) {
+        check(value == null) { "Already completed with $value" }
+        value = result
+
+        /* Capture and clear current waiting continuations */
+        val continuations = waitingContinuations.toList()
+        waitingContinuations.clear()
+
+        continuations.forEach { continuation ->
+            continuation.resume(result)
+        }
+
+        /*
+        Safety check:
+        We do not expect any coroutines waiting:
+        Any continuation that, during its above .resume, calls into '.await()' shall
+        directly resume and receive the value currently set.
+
+        If the waiting continuations are not empty, then those would be leaking.
+         */
+        assert(waitingContinuations.isEmpty())
+    }
+
+    fun complete(value: T) {
+        completeWith(Result.success(value))
+    }
+
+    fun getCompleted(): T {
+        val value = this.value ?: throw IllegalStateException("Not completed yet")
+        return value.getOrThrow()
+    }
+
+    suspend fun await(): T {
+        val value = this.value
+        if (value != null) {
+            return value.getOrThrow()
+        }
+
+        return suspendCoroutine<Result<T>> { continuation ->
+            waitingContinuations.add(continuation)
+        }.getOrThrow()
     }
 }
