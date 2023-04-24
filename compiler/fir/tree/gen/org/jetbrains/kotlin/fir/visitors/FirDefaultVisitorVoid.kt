@@ -128,6 +128,7 @@ import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.expressions.FirWhenSubjectExpression
 import org.jetbrains.kotlin.fir.expressions.FirDesugaredAssignmentValueReferenceExpression
 import org.jetbrains.kotlin.fir.expressions.FirWrappedDelegateExpression
+import org.jetbrains.kotlin.fir.expressions.FirEnumEntryDeserializedAccessExpression
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirNamedReferenceWithCandidateBase
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
@@ -278,6 +279,8 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
     override fun visitDesugaredAssignmentValueReferenceExpression(desugaredAssignmentValueReferenceExpression: FirDesugaredAssignmentValueReferenceExpression)  = visitExpression(desugaredAssignmentValueReferenceExpression)
 
     override fun visitWrappedDelegateExpression(wrappedDelegateExpression: FirWrappedDelegateExpression)  = visitWrappedExpression(wrappedDelegateExpression)
+
+    override fun visitEnumEntryDeserializedAccessExpression(enumEntryDeserializedAccessExpression: FirEnumEntryDeserializedAccessExpression)  = visitExpression(enumEntryDeserializedAccessExpression)
 
     override fun visitNamedReference(namedReference: FirNamedReference)  = visitReference(namedReference)
 

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.lazy
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
+import org.jetbrains.kotlin.descriptors.isAnnotationClass
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.lazy.lazyVar
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.types.IrErrorType
@@ -32,7 +34,7 @@ import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
 class Fir2IrLazyProperty(
-    components: Fir2IrComponents,
+    private val components: Fir2IrComponents,
     override val startOffset: Int,
     override val endOffset: Int,
     override var origin: IrDeclarationOrigin,
@@ -93,12 +95,22 @@ class Fir2IrLazyProperty(
     }
 
     private fun toIrInitializer(initializer: FirExpression?): IrExpressionBody? {
-        return if (initializer is FirConstExpression<*>) {
-            // TODO: Normally we shouldn't have error type here
-            val constType = with(typeConverter) { initializer.typeRef.toIrType().takeIf { it !is IrErrorType } ?: type }
-            factory.createExpressionBody(initializer.toIrConst(constType))
-        } else {
-            null
+        // Annotations need full initializer information to instantiate them correctly
+        return when {
+            containingClass?.classKind?.isAnnotationClass == true -> {
+                when (val elem = initializer?.accept(Fir2IrVisitor(components, Fir2IrConversionScope()), null)) {
+                    is IrExpressionBody -> elem
+                    is IrExpression -> factory.createExpressionBody(elem)
+                    else -> null
+                }
+            }
+            // Setting initializers to every other class causes some cryptic errors in lowerings
+            initializer is FirConstExpression<*> -> {
+                // TODO: Normally we shouldn't have error type here
+                val constType = with(typeConverter) { initializer.typeRef.toIrType().takeIf { it !is IrErrorType } ?: type }
+                factory.createExpressionBody(initializer.toIrConst(constType))
+            }
+            else -> null
         }
     }
 

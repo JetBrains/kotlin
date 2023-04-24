@@ -164,6 +164,15 @@ abstract class AbstractAnnotationDeserializer(
     ): List<FirAnnotation> {
         return emptyList()
     }
+    open fun loadAnnotationPropertyDefaultValue(
+        containerSource: DeserializedContainerSource?,
+        propertyProto: ProtoBuf.Property,
+        expectedPropertyType: FirTypeRef,
+        nameResolver: NameResolver,
+        typeTable: TypeTable
+    ): FirExpression? {
+        return null
+    }
 
     abstract fun loadTypeAnnotations(typeProto: ProtoBuf.Type, nameResolver: NameResolver): List<FirAnnotation>
 

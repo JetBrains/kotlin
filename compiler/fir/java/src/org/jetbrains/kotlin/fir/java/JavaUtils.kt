@@ -61,12 +61,12 @@ internal fun Any?.createConstantOrError(session: FirSession): FirExpression {
     }
 }
 
-internal fun Any?.createConstantIfAny(session: FirSession): FirExpression? {
+internal fun Any?.createConstantIfAny(session: FirSession, unsigned: Boolean = false): FirExpression? {
     return when (this) {
-        is Byte -> buildConstExpression(null, ConstantValueKind.Byte, this).setProperType(session)
-        is Short -> buildConstExpression(null, ConstantValueKind.Short, this).setProperType(session)
-        is Int -> buildConstExpression(null, ConstantValueKind.Int, this).setProperType(session)
-        is Long -> buildConstExpression(null, ConstantValueKind.Long, this).setProperType(session)
+        is Byte -> buildConstExpression(null, if (unsigned) ConstantValueKind.UnsignedByte else ConstantValueKind.Byte, this).setProperType(session)
+        is Short -> buildConstExpression(null, if (unsigned) ConstantValueKind.UnsignedShort else ConstantValueKind.Short, this).setProperType(session)
+        is Int -> buildConstExpression(null, if (unsigned) ConstantValueKind.UnsignedInt else ConstantValueKind.Int, this).setProperType(session)
+        is Long -> buildConstExpression(null, if (unsigned) ConstantValueKind.UnsignedLong else ConstantValueKind.Long, this).setProperType(session)
         is Char -> buildConstExpression(null, ConstantValueKind.Char, this).setProperType(session)
         is Float -> buildConstExpression(null, ConstantValueKind.Float, this).setProperType(session)
         is Double -> buildConstExpression(null, ConstantValueKind.Double, this).setProperType(session)

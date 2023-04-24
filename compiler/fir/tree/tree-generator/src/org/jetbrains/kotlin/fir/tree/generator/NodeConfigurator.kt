@@ -644,6 +644,11 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field("delegateProvider", expression).withReplace()
         }
 
+        enumEntryDeserializedAccessExpression.configure {
+            +field("enumClassId", classIdType)
+            +field("enumEntryName", nameType)
+        }
+
         namedReference.configure {
             +name
         }
