@@ -61,4 +61,26 @@ class LifecycleAwarePropertyTest {
             assertFailsWith<IllegalStateException> { property.set(2) }
         }
     }
+
+    @Test
+    fun `test - creating a property - after finaliseIn stage already passed`() = project.runLifecycleAwareTest {
+        launchInStage(KotlinPluginLifecycle.Stage.last) {
+            val property by project.newKotlinPluginLifecycleAwareProperty<String>(Companion.first)
+
+            /* Property was finalised immediately */
+            assertFailsWith<IllegalStateException> { property.set("Expected to fail") }
+            assertNull(property.orNull)
+        }
+    }
+
+    @Test
+    fun `test - creating a property - in finaliseIn stage`() = project.runLifecycleAwareTest {
+        launchInStage(KotlinPluginLifecycle.Stage.FinaliseDsl) {
+            val property by project.newKotlinPluginLifecycleAwareProperty<String>(FinaliseDsl)
+
+            /* Property was finalised immediately */
+            assertFailsWith<IllegalStateException> { property.set("Expected to fail") }
+            assertNull(property.orNull)
+        }
+    }
 }
