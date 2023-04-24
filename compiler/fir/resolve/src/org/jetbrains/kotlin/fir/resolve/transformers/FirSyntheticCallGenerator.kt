@@ -22,11 +22,13 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
+import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.createErrorReferenceWithExistingCandidate
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
+import org.jetbrains.kotlin.fir.resolve.toErrorReference
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.symbols.SyntheticCallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -183,8 +185,17 @@ class FirSyntheticCallGenerator(
             this.argumentList = argumentList
         }
 
-        val argument = components.callCompleter.completeCall(fakeCallElement, ResolutionMode.ContextIndependent).result.argument
-        return argument as FirCallableReferenceAccess?
+        val result = components.callCompleter.completeCall(fakeCallElement, ResolutionMode.ContextIndependent).result
+        val completedCallableReference = result.argument as FirCallableReferenceAccess?
+
+        val callCalleeReference = result.calleeReference
+        if (callCalleeReference.isError()) {
+            (completedCallableReference?.calleeReference as? FirNamedReferenceWithCandidate)
+                ?.toErrorReference(callCalleeReference.diagnostic)
+                ?.let { completedCallableReference.replaceCalleeReference(it) }
+        }
+
+        return completedCallableReference
     }
 
     private fun generateCalleeReferenceWithCandidate(

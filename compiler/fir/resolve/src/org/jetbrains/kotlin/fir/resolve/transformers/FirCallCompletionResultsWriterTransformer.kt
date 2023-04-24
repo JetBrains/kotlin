@@ -385,22 +385,6 @@ class FirCallCompletionResultsWriterTransformer(
         }
     }
 
-    private fun FirNamedReferenceWithCandidate.toErrorReference(diagnostic: ConeDiagnostic): FirNamedReference {
-        val calleeReference = this
-        return when (calleeReference.candidateSymbol) {
-            is FirErrorPropertySymbol, is FirErrorFunctionSymbol -> buildErrorNamedReference {
-                source = calleeReference.source
-                this.diagnostic = diagnostic
-            }
-            else -> buildResolvedErrorReference {
-                source = calleeReference.source
-                name = calleeReference.name
-                resolvedSymbol = calleeReference.candidateSymbol
-                this.diagnostic = diagnostic
-            }
-        }
-    }
-
     override fun transformSmartCastExpression(smartCastExpression: FirSmartCastExpression, data: ExpectedArgumentType?): FirStatement {
         return smartCastExpression.transformOriginalExpression(this, data)
     }

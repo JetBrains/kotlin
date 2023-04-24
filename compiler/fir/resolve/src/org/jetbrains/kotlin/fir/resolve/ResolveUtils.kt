@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.references.*
+import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
+import org.jetbrains.kotlin.fir.references.builder.buildResolvedErrorReference
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.FirPropertyWithExplicitBackingFieldResolvedNamedReference
@@ -608,5 +610,21 @@ fun createConeDiagnosticForCandidateWithError(
         CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER -> ConeInapplicableWrongReceiver(listOf(candidate))
         CandidateApplicability.K2_NO_COMPANION_OBJECT -> ConeNoCompanionObject(candidate)
         else -> ConeInapplicableCandidateError(applicability, candidate)
+    }
+}
+
+fun FirNamedReferenceWithCandidate.toErrorReference(diagnostic: ConeDiagnostic): FirNamedReference {
+    val calleeReference = this
+    return when (calleeReference.candidateSymbol) {
+        is FirErrorPropertySymbol, is FirErrorFunctionSymbol -> buildErrorNamedReference {
+            source = calleeReference.source
+            this.diagnostic = diagnostic
+        }
+        else -> buildResolvedErrorReference {
+            source = calleeReference.source
+            name = calleeReference.name
+            resolvedSymbol = calleeReference.candidateSymbol
+            this.diagnostic = diagnostic
+        }
     }
 }
