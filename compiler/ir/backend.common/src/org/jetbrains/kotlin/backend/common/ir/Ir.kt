@@ -26,13 +26,7 @@ abstract class Ir<out T : CommonBackendContext>(val context: T) {
 
     abstract val symbols: Symbols
 
-    val defaultParameterDeclarationsCache = mutableMapOf<IrFunction, IrFunction>()
-
     internal val localScopeWithCounterMap = LocalDeclarationsLowering.LocalScopeWithCounterMap()
-
-    // If irType is an inline class type, return the underlying type according to the
-    // unfolding rules of the current backend. Otherwise, returns null.
-    open fun unfoldInlineClassType(irType: IrType): IrType? = null
 
     open fun shouldGenerateHandlerParameterForDefaultBodyFun() = false
 }

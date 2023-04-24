@@ -293,10 +293,6 @@ class JvmBackendContext(
     ) : Ir<JvmBackendContext>(this) {
         override val symbols = JvmSymbols(this@JvmBackendContext, symbolTable)
 
-        override fun unfoldInlineClassType(irType: IrType): IrType? {
-            return InlineClassAbi.unboxType(irType)
-        }
-
         override fun shouldGenerateHandlerParameterForDefaultBodyFun() = true
     }
 

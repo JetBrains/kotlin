@@ -22,16 +22,15 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.util.copyAnnotations
-import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.isTopLevel
 import org.jetbrains.kotlin.ir.util.isVararg
 
-class JsDefaultParameterInjector(override val context: JsIrBackendContext) :
-    DefaultParameterInjector(
+class JsDefaultParameterInjector(context: JsIrBackendContext) :
+    DefaultParameterInjector<JsIrBackendContext>(
         context,
+        factory = JsDefaultArgumentFunctionFactory(context),
         skipExternalMethods = true,
-        forceSetOverrideSymbols = false,
-        factory = JsDefaultArgumentFunctionFactory(context)
+        forceSetOverrideSymbols = false
     ) {
     override fun nullConst(startOffset: Int, endOffset: Int, irParameter: IrValueParameter): IrExpression? =
         if (irParameter.isVararg && !irParameter.hasDefaultValue()) {

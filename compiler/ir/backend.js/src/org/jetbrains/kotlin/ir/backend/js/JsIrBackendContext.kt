@@ -288,10 +288,6 @@ class JsIrBackendContext(
             }
         }
 
-        override fun unfoldInlineClassType(irType: IrType): IrType? {
-            return inlineClassesUtils.getInlinedClass(irType)?.typeWith()
-        }
-
         override fun shouldGenerateHandlerParameterForDefaultBodyFun() = true
     }
 

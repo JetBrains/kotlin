@@ -12,9 +12,11 @@ import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 
-internal class KonanDefaultArgumentStubGenerator(override val context: Context)
-    : DefaultArgumentStubGenerator(context, skipInlineMethods = false)
-{
+internal class NativeDefaultArgumentStubGenerator(context: Context) : DefaultArgumentStubGenerator<Context>(
+        context = context,
+        factory = NativeDefaultArgumentFunctionFactory(context),
+        skipInlineMethods = false
+) {
     override fun IrBlockBodyBuilder.selectArgumentOrDefault(
             defaultFlag: IrExpression,
             parameter: IrValueParameter,

@@ -226,9 +226,9 @@ private val volatilePhase = createFileLoweringPhase(
 
 private val defaultParameterExtentPhase = createFileLoweringPhase(
         { context, irFile ->
-            KonanDefaultArgumentStubGenerator(context).lower(irFile)
+            NativeDefaultArgumentStubGenerator(context).lower(irFile)
             DefaultParameterCleaner(context, replaceDefaultValuesWithStubs = true).lower(irFile)
-            KonanDefaultParameterInjector(context).lower(irFile)
+            NativeDefaultParameterInjector(context).lower(irFile)
         },
         name = "DefaultParameterExtent",
         description = "Default parameter extent lowering",

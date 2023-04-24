@@ -29,12 +29,12 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
-class JsDefaultArgumentStubGenerator(override val context: JsIrBackendContext) :
-    DefaultArgumentStubGenerator(
-        context,
+class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
+    DefaultArgumentStubGenerator<JsIrBackendContext>(
+        context = context,
+        factory = JsDefaultArgumentFunctionFactory(context),
         skipExternalMethods = true,
-        forceSetOverrideSymbols = false,
-        factory = JsDefaultArgumentFunctionFactory(context)
+        forceSetOverrideSymbols = false
     ) {
 
     private fun IrBuilderWithScope.createDefaultResolutionExpression(

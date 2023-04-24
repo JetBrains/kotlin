@@ -33,12 +33,12 @@ import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
 // TODO: fix expect/actual default parameters
 
-open class DefaultArgumentStubGenerator(
-    open val context: CommonBackendContext,
+open class DefaultArgumentStubGenerator<TContext : CommonBackendContext>(
+    val context: TContext,
+    private val factory: DefaultArgumentFunctionFactory,
     private val skipInlineMethods: Boolean = true,
     private val skipExternalMethods: Boolean = false,
-    private val forceSetOverrideSymbols: Boolean = true,
-    private val factory: DefaultArgumentFunctionFactory = MaskedDefaultArgumentFunctionFactory(context)
+    private val forceSetOverrideSymbols: Boolean = true
 ) : DeclarationTransformer {
     override val withLocalDeclarations: Boolean get() = true
 
@@ -255,12 +255,12 @@ open class DefaultArgumentStubGenerator(
     private fun log(msg: () -> String) = context.log { "DEFAULT-REPLACER: ${msg()}" }
 }
 
-open class DefaultParameterInjector(
-    open val context: CommonBackendContext,
+open class DefaultParameterInjector<TContext : CommonBackendContext>(
+    protected val context: TContext,
+    protected val factory: DefaultArgumentFunctionFactory,
     protected val skipInline: Boolean = true,
     protected val skipExternalMethods: Boolean = false,
     protected val forceSetOverrideSymbols: Boolean = true,
-    protected val factory: DefaultArgumentFunctionFactory = MaskedDefaultArgumentFunctionFactory(context),
 ) : IrElementTransformerVoid(), BodyLoweringPass {
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
@@ -499,8 +499,8 @@ class DefaultParameterPatchOverridenSymbolsLowering(
     }
 }
 
-private class MaskedDefaultArgumentFunctionFactory(context: CommonBackendContext) : DefaultArgumentFunctionFactory(context) {
-    override fun IrFunction.generateDefaultArgumentStubFrom(original: IrFunction, useConstructorMarker: Boolean) {
+open class MaskedDefaultArgumentFunctionFactory(context: CommonBackendContext) : DefaultArgumentFunctionFactory(context) {
+    final override fun IrFunction.generateDefaultArgumentStubFrom(original: IrFunction, useConstructorMarker: Boolean) {
         copyAttributesFrom(original)
         copyTypeParametersFrom(original)
         copyReturnTypeFrom(original)

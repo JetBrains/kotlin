@@ -15,12 +15,14 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.name.Name
 
-abstract class DefaultArgumentFunctionFactory(open val context: CommonBackendContext) {
+abstract class DefaultArgumentFunctionFactory(val context: CommonBackendContext) {
+
     protected fun IrFunction.generateDefaultArgumentsFunctionName() =
         Name.identifier("${name}\$default")
 
@@ -40,11 +42,19 @@ abstract class DefaultArgumentFunctionFactory(open val context: CommonBackendCon
         contextReceiverParametersCount = original.contextReceiverParametersCount
     }
 
-    protected fun IrFunction.copyValueParametersFrom(original: IrFunction, wrapWithNullable: Boolean = true) {
+    /**
+     * Whether `null` will be used for this type if no argument is passed.
+     * In that case, the type of the default dispatch function will be made nullable.
+     *
+     * By default, always returns `true` – this is valid, but suboptimal.
+     * Better performance can be achieved in a backend-specific way.
+     */
+    protected open fun IrType.hasNullAsUndefinedValue(): Boolean = true
+
+    protected fun IrFunction.copyValueParametersFrom(original: IrFunction) {
         valueParameters = original.valueParameters.memoryOptimizedMap {
             val newType = it.type.remapTypeParameters(original.classIfConstructor, classIfConstructor)
-            val makeNullable = wrapWithNullable && it.defaultValue != null &&
-                    (context.ir.unfoldInlineClassType(it.type) ?: it.type) !in context.irBuiltIns.primitiveIrTypes
+            val makeNullable = it.defaultValue != null && it.type.hasNullAsUndefinedValue()
             it.copyTo(
                 this,
                 type = if (makeNullable) newType.makeNullable() else newType,

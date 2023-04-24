@@ -16,10 +16,12 @@ import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.IrType
 
-class JvmDefaultParameterInjector(context: JvmBackendContext) :
-    DefaultParameterInjector(context, skipInline = false, skipExternalMethods = false) {
-
-    override val context: JvmBackendContext get() = super.context as JvmBackendContext
+class JvmDefaultParameterInjector(context: JvmBackendContext) : DefaultParameterInjector<JvmBackendContext>(
+    context = context,
+    factory = JvmDefaultArgumentFunctionFactory(context),
+    skipInline = false,
+    skipExternalMethods = false
+) {
 
     override fun nullConst(startOffset: Int, endOffset: Int, irParameter: IrValueParameter): IrExpression? =
         nullConst(startOffset, endOffset, irParameter.type)

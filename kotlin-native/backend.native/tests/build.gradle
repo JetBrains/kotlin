@@ -6487,6 +6487,10 @@ fileCheckTest("filecheck_intrinsics") {
     annotatedSource = project.file('filecheck/intrinsics.kt')
 }
 
+fileCheckTest("filecheck_default_parameters_dont_box") {
+    annotatedSource = project.file('filecheck/default_parameters_dont_box.kt')
+}
+
 task kt53119_side_effect(type: KonanLocalTest) {
     useGoldenData = true
     source = "codegen/stringConcatenationTypeNarrowing/kt53119_side_effect.kt"
