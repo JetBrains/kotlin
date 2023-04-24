@@ -26,10 +26,12 @@ import org.jetbrains.kotlin.fir.analysis.js.checkers.JsExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.JvmDeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.JvmExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.JvmTypeCheckers
+import org.jetbrains.kotlin.fir.analysis.native.checkers.NativeDeclarationCheckers
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.platform.SimplePlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
 import org.jetbrains.kotlin.platform.JsPlatform
+import org.jetbrains.kotlin.platform.konan.NativePlatform
 
 internal abstract class AbstractLLFirDiagnosticsCollector(
     session: FirSession,
@@ -81,6 +83,7 @@ private object CheckersFactory {
                 when (platform) {
                     is JvmPlatform -> add(JvmDeclarationCheckers)
                     is JsPlatform -> add(JsDeclarationCheckers)
+                    is NativePlatform -> add(NativeDeclarationCheckers)
                     else -> {}
                 }
                 addAll(extensionCheckers.map { it.declarationCheckers })

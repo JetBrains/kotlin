@@ -24,10 +24,10 @@ import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.constructClassType
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.includedForwardDeclarations
 import org.jetbrains.kotlin.library.isInterop
 import org.jetbrains.kotlin.library.metadata.impl.ForwardDeclarationKind
-import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -36,7 +36,7 @@ class NativeForwardDeclarationsSymbolProvider(
     session: FirSession,
     private val forwardDeclarationsModuleData: FirModuleData,
     private val kotlinScopeProvider: FirKotlinScopeProvider,
-    private val resolvedLibraries: Collection<KotlinResolvedLibrary>,
+    private val kotlinLibraries: Collection<KotlinLibrary>,
 ) : FirSymbolProvider(session) {
     private companion object {
         private val validPackages = ForwardDeclarationKind.packageFqNameToKind.keys
@@ -44,8 +44,7 @@ class NativeForwardDeclarationsSymbolProvider(
 
     private val includedForwardDeclarations: Set<ClassId> by lazy {
         buildSet {
-            for (resolvedLibrary in resolvedLibraries) {
-                val library = resolvedLibrary.library
+            for (library in kotlinLibraries) {
                 if (!library.isInterop) continue
 
                 for (fqName in library.includedForwardDeclarations) {
