@@ -7,7 +7,7 @@ plugins {
 }
 
 dependencies {
-    implementation(kotlinStdlib())
+    implementation(kotlinStdlib("jdk8"))
     @Suppress("UNCHECKED_CAST")
     rootProject.extra["kotlinJpsPluginEmbeddedDependencies"]
         .let { it as List<String> }
