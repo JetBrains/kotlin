@@ -17,6 +17,7 @@
 # OWNER_LIST: Yan.Zhulanow
 # OWNER_LIST: Alexander.Udalov
 # OWNER_LIST: Zalim.Bashorov
+# OWNER_LIST: Ilya.Goncharov
 # OWNER_LIST: Alexander.Shabalin Pavel.Kunyavskiy Svyatoslav.Scherbina
 # Kotlin Libraries
 # OWNER_LIST: A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov Sergey.Shanshin Leonid.Startsev
@@ -299,7 +300,7 @@
 /libraries/tools/kotlin-gradle-plugin-integration-tests/ "Kotlin Build Tools" "Kotlin Multiplatform"
 /libraries/tools/kotlin-gradle-plugin-kpm-android/ "Kotlin Multiplatform"
 /libraries/tools/kotlin-gradle-plugin-model/ "Kotlin Build Tools"
-/libraries/tools/kotlin-gradle-plugin-npm-versions-codegen/ "Kotlin Build Tools"
+/libraries/tools/kotlin-gradle-plugin-npm-versions-codegen/ Ilya.Goncharov
 /libraries/tools/kotlin-gradle-plugin-test-utils-embeddable/ "Kotlin Build Tools"
 /libraries/tools/kotlin-gradle-plugin-tcs-android/ "Kotlin Multiplatform"
 /libraries/tools/kotlin-gradle-statistics/ "Kotlin Build Tools"
