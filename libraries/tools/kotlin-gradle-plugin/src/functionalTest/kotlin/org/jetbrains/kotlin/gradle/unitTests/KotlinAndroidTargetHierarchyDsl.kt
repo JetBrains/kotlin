@@ -15,41 +15,41 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinal
 import org.jetbrains.kotlin.gradle.plugin.awaitFinalValue
 import org.jetbrains.kotlin.gradle.plugin.currentKotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.kotlinPluginLifecycle
-import org.jetbrains.kotlin.gradle.targets.android.KotlinAndroidTargetVariantTypeDslImpl
+import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.KotlinAndroidVariantHierarchyDslImpl
 import org.jetbrains.kotlin.gradle.util.*
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
 
-class KotlinAndroidTargetVariantTypeDslImplTest {
-    private val project = buildProjectWithMPP()
-    private val dsl = KotlinAndroidTargetVariantTypeDslImpl(project)
-
+class KotlinAndroidTargetHierarchyDsl {
 
     @Test
-    fun `test -  module - not set`() = project.runLifecycleAwareTest {
+    fun `test -  module - not set`() = buildProjectWithMPP().runLifecycleAwareTest {
+        val dsl = KotlinAndroidVariantHierarchyDslImpl(project.kotlinPluginLifecycle)
         project.kotlinPluginLifecycle.launch {
-            assertNull(dsl.targetHierarchy.sourceSetTree.orNull)
-            assertNull(dsl.targetHierarchy.sourceSetTree.awaitFinalValue())
+            assertNull(dsl.sourceSetTree.orNull)
+            assertNull(dsl.sourceSetTree.awaitFinalValue())
         }
     }
 
     @Test
-    fun `test - module - can be set in users afterEvaluate`() = project.runLifecycleAwareTest {
-        afterEvaluate { dsl.targetHierarchy.sourceSetTree.set(KotlinTargetHierarchy.SourceSetTree("x")) }
-        dsl.targetHierarchy.sourceSetTree.set(KotlinTargetHierarchy.SourceSetTree("-set-before-after-evaluate-"))
-        assertEquals("x", dsl.targetHierarchy.sourceSetTree.awaitFinalValue()?.name)
+    fun `test - module - can be set in users afterEvaluate`() = buildProjectWithMPP().runLifecycleAwareTest {
+        val dsl = KotlinAndroidVariantHierarchyDslImpl(project.kotlinPluginLifecycle)
+        afterEvaluate { dsl.sourceSetTree.set(KotlinTargetHierarchy.SourceSetTree("x")) }
+        dsl.sourceSetTree.set(KotlinTargetHierarchy.SourceSetTree("-set-before-after-evaluate-"))
+        assertEquals("x", dsl.sourceSetTree.awaitFinalValue()?.name)
         assertEquals(KotlinPluginLifecycle.Stage.FinaliseDsl, currentKotlinPluginLifecycle().stage)
     }
 
     @Test
-    fun `test - module - cannot be set after FinaliseDsl`() = project.runLifecycleAwareTest {
+    fun `test - module - cannot be set after FinaliseDsl`() = buildProjectWithMPP().runLifecycleAwareTest {
+        val dsl = KotlinAndroidVariantHierarchyDslImpl(project.kotlinPluginLifecycle)
         launchInStage(KotlinPluginLifecycle.Stage.FinaliseDsl.previousOrThrow) {
-            dsl.targetHierarchy.sourceSetTree.set(KotlinTargetHierarchy.SourceSetTree("x"))
+            dsl.sourceSetTree.set(KotlinTargetHierarchy.SourceSetTree("x"))
         }
 
         launchInStage(KotlinPluginLifecycle.Stage.FinaliseDsl) {
-            assertFails { dsl.targetHierarchy.sourceSetTree.set(KotlinTargetHierarchy.SourceSetTree("y")) }
+            assertFails { dsl.sourceSetTree.set(KotlinTargetHierarchy.SourceSetTree("y")) }
         }
     }
 
@@ -63,9 +63,11 @@ class KotlinAndroidTargetVariantTypeDslImplTest {
 
         val kotlin = project.multiplatformExtension
         project.runLifecycleAwareTest {
-            kotlin.android {
-                unitTest.targetHierarchy.sourceSetTree.set(KotlinTargetHierarchy.SourceSetTree.test)
-                instrumentedTest.targetHierarchy.sourceSetTree.set(KotlinTargetHierarchy.SourceSetTree.test)
+            kotlin.android()
+
+            kotlin.targetHierarchy.android {
+                unitTest.sourceSetTree.set(KotlinTargetHierarchy.SourceSetTree.test)
+                instrumentedTest.sourceSetTree.set(KotlinTargetHierarchy.SourceSetTree.test)
             }
 
             AfterFinaliseRefinesEdges.await()
@@ -85,9 +87,11 @@ class KotlinAndroidTargetVariantTypeDslImplTest {
 
         val kotlin = project.multiplatformExtension
         project.runLifecycleAwareTest {
-            kotlin.android {
-                unitTest.targetHierarchy.sourceSetTree.set(KotlinTargetHierarchy.SourceSetTree("xxx"))
-                instrumentedTest.targetHierarchy.sourceSetTree.set(KotlinTargetHierarchy.SourceSetTree("yyy"))
+            kotlin.android()
+
+            kotlin.targetHierarchy.android {
+                unitTest.sourceSetTree.set(KotlinTargetHierarchy.SourceSetTree("xxx"))
+                instrumentedTest.sourceSetTree.set(KotlinTargetHierarchy.SourceSetTree("yyy"))
             }
 
             kotlin.targetHierarchy.default {

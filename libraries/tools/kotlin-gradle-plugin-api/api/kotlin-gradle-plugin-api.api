@@ -142,6 +142,16 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KaptJavacOption 
 	public abstract fun option (Ljava/lang/Object;Ljava/lang/Object;)V
 }
 
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinAndroidTargetHierarchyDsl {
+	public abstract fun getInstrumentedTest ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinAndroidVariantHierarchyDsl;
+	public abstract fun getMain ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinAndroidVariantHierarchyDsl;
+	public abstract fun getUnitTest ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinAndroidVariantHierarchyDsl;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinAndroidVariantHierarchyDsl {
+	public abstract fun getSourceSetTree ()Lorg/gradle/api/provider/Property;
+}
+
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinArtifact : org/gradle/api/Named, org/gradle/api/plugins/ExtensionAware {
 	public abstract fun getArtifactName ()Ljava/lang/String;
 	public abstract fun getModules ()Ljava/util/Set;
@@ -520,9 +530,11 @@ public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinNativeXCFr
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/dsl/KotlinTargetHierarchyDsl {
+	public abstract fun android (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun apply (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyDescriptor;Lkotlin/jvm/functions/Function1;)V
 	public abstract fun custom (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun default (Lkotlin/jvm/functions/Function1;)V
+	public abstract fun getAndroid ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinAndroidTargetHierarchyDsl;
 }
 
 public final class org/jetbrains/kotlin/gradle/dsl/KotlinTargetHierarchyDsl$DefaultImpls {
@@ -1066,8 +1078,8 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetE
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy {
 }
 
-public final class org/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$ModuleName {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$ModuleName$Companion;
+public final class org/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$SourceSetTree {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$SourceSetTree$Companion;
 	public fun <init> (Ljava/lang/String;)V
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getName ()Ljava/lang/String;
@@ -1075,12 +1087,12 @@ public final class org/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$Modu
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class org/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$ModuleName$Companion {
-	public final fun getInstrumentedTest ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$ModuleName;
-	public final fun getIntegrationTest ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$ModuleName;
-	public final fun getMain ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$ModuleName;
-	public final fun getTest ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$ModuleName;
-	public final fun getUnitTest ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$ModuleName;
+public final class org/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$SourceSetTree$Companion {
+	public final fun getInstrumentedTest ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$SourceSetTree;
+	public final fun getIntegrationTest ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$SourceSetTree;
+	public final fun getMain ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$SourceSetTree;
+	public final fun getTest ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$SourceSetTree;
+	public final fun getUnitTest ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$SourceSetTree;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyBuilder {
@@ -1140,9 +1152,9 @@ public final class org/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyBuild
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyBuilder$Root : org/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyBuilder {
-	public abstract fun excludeModule ([Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$ModuleName;)V
-	public abstract fun modules ([Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$ModuleName;)V
-	public abstract fun withModule ([Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$ModuleName;)V
+	public abstract fun excludeSourceSetTree ([Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$SourceSetTree;)V
+	public abstract fun sourceSetTrees ([Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$SourceSetTree;)V
+	public abstract fun withSourceSetTree ([Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchy$SourceSetTree;)V
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/KotlinTargetHierarchyBuilder$Root$DefaultImpls {

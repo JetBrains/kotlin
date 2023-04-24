@@ -5,8 +5,11 @@
 
 package org.jetbrains.kotlin.gradle.dsl
 
+import org.gradle.api.provider.Property
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchy
+import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchy.SourceSetTree
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchyBuilder
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchyDescriptor
 
@@ -81,5 +84,40 @@ interface KotlinTargetHierarchyDsl {
      * @see KotlinTargetHierarchyDescriptor.extend
      */
     fun default(describeExtension: (KotlinTargetHierarchyBuilder.Root.() -> Unit)? = null)
+
     fun custom(describe: KotlinTargetHierarchyBuilder.Root.() -> Unit)
+
+    @ExperimentalKotlinGradlePluginApi
+    fun android(configure: KotlinAndroidTargetHierarchyDsl.() -> Unit)
+
+    @ExperimentalKotlinGradlePluginApi
+    val android: KotlinAndroidTargetHierarchyDsl
+}
+
+
+@ExperimentalKotlinGradlePluginApi
+interface KotlinAndroidTargetHierarchyDsl {
+    val main: KotlinAndroidVariantHierarchyDsl
+    val unitTest: KotlinAndroidVariantHierarchyDsl
+    val instrumentedTest: KotlinAndroidVariantHierarchyDsl
+}
+
+@ExperimentalKotlinGradlePluginApi
+interface KotlinAndroidVariantHierarchyDsl {
+    /**
+     * Configures under which [SourceSetTree] the currently configured Android Variant shall be placed.
+     * e.g.
+     *
+     * ```kotlin
+     * kotlin {
+     *     targetHierarchy.android {
+     *         instrumentedTest.sourceSetTree.set(SourceSetTree.test)
+     *     }
+     * }
+     * ```
+     *
+     * Will ensure that all android instrumented tests (androidInstrumentedTest, androidInstrumentedTestDebug, ...)
+     * will be placed into the 'test' SourceSet tree (with 'commonTest' as root)
+     */
+    val sourceSetTree: Property<SourceSetTree>
 }
