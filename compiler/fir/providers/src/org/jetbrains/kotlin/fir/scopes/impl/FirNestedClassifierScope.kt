@@ -31,10 +31,15 @@ abstract class FirNestedClassifierScope(val klass: FirClass, val useSiteSession:
         processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit
     ) {
         val matchedClass = getNestedClassSymbol(name) ?: return
-        val substitution = klass.typeParameters.associate {
-            it.symbol to it.toConeType()
+        val substitutor = if (klass.typeParameters.isEmpty()) {
+            ConeSubstitutor.Empty
+        } else {
+            val substitution = klass.typeParameters.associate {
+                it.symbol to it.toConeType()
+            }
+            ConeSubstitutorByMap(substitution, useSiteSession)
         }
-        processor(matchedClass, ConeSubstitutorByMap(substitution, useSiteSession))
+        processor(matchedClass, substitutor)
     }
 
     abstract fun isEmpty(): Boolean
