@@ -448,7 +448,20 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 )
             }
             this.containerSource = c.containerSource
-            this.initializer = c.constDeserializer.loadConstant(proto, symbol.callableId, c.nameResolver)
+            this.initializer = when {
+                Flags.HAS_CONSTANT.get(proto.flags) -> c.constDeserializer.loadConstant(proto, symbol.callableId, c.nameResolver)
+                // classSymbol?.classKind?.isAnnotationClass throws 'Fir is not initialized for FirRegularClassSymbol kotlin/String'
+                classProto != null && Flags.CLASS_KIND.get(classProto.flags) == ProtoBuf.Class.Kind.ANNOTATION_CLASS -> {
+                    c.annotationDeserializer.loadAnnotationPropertyDefaultValue(
+                        c.containerSource,
+                        proto,
+                        returnTypeRef,
+                        local.nameResolver,
+                        local.typeTable
+                    )
+                }
+                else -> null
+            }
             deprecationsProvider = annotations.getDeprecationsProviderFromAnnotations(c.session, fromJava = false)
 
             proto.contextReceiverTypes(c.typeTable).mapTo(contextReceivers, ::loadContextReceiver)

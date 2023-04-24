@@ -4576,6 +4576,11 @@ public class IrLoadJavaTestGenerated extends AbstractIrLoadJavaTest {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
+            @TestMetadata("annotationClassDefaultValues.kt")
+            public void testAnnotationClassDefaultValues() throws Exception {
+                runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations/annotationClassDefaultValues.kt");
+            }
+
             @TestMetadata("AnnotationInAnnotationArguments.kt")
             public void testAnnotationInAnnotationArguments() throws Exception {
                 runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations/AnnotationInAnnotationArguments.kt");

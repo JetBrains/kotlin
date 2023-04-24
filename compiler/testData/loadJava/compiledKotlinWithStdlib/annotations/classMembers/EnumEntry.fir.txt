@@ -1,8 +1,8 @@
 public final annotation class Anno : R|kotlin/Annotation| {
-    public final val value: R|kotlin/String|
+    public final val value: R|kotlin/String| = String(0)
         public get(): R|kotlin/String|
 
-    public final val x: R|kotlin/Int|
+    public final val x: R|kotlin/Int| = Int(0)
         public get(): R|kotlin/Int|
 
     public constructor(value: R|kotlin/String| = STUB, x: R|kotlin/Int| = STUB): R|test/Anno|

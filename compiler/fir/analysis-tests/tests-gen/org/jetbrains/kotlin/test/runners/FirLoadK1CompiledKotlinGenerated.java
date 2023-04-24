@@ -3217,6 +3217,12 @@ public class FirLoadK1CompiledKotlinGenerated extends AbstractFirLoadK1CompiledK
             }
 
             @Test
+            @TestMetadata("annotationClassDefaultValues.kt")
+            public void testAnnotationClassDefaultValues() throws Exception {
+                runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations/annotationClassDefaultValues.kt");
+            }
+
+            @Test
             @TestMetadata("AnnotationInAnnotationArguments.kt")
             public void testAnnotationInAnnotationArguments() throws Exception {
                 runTest("compiler/testData/loadJava/compiledKotlinWithStdlib/annotations/AnnotationInAnnotationArguments.kt");

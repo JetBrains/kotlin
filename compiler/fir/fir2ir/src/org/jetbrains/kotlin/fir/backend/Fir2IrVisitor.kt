@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.declarations.utils.isSealed
 import org.jetbrains.kotlin.fir.declarations.utils.isSynthetic
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.deserialization.toQualifiedPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
@@ -950,6 +951,13 @@ class Fir2IrVisitor(
                 errorExpression.diagnostic.reason
             )
         }
+    }
+
+    override fun visitEnumEntryDeserializedAccessExpression(
+        enumEntryDeserializedAccessExpression: FirEnumEntryDeserializedAccessExpression,
+        data: Any?
+    ): IrElement {
+        return visitPropertyAccessExpression(enumEntryDeserializedAccessExpression.toQualifiedPropertyAccessExpression(session), data)
     }
 
     override fun visitElvisExpression(elvisExpression: FirElvisExpression, data: Any?): IrElement {

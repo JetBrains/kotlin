@@ -394,6 +394,14 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             }
         }
 
+        impl(enumEntryDeserializedAccessExpression) {
+            noSource()
+            default("typeRef") {
+                value = "buildResolvedTypeRef { type = enumClassId.toLookupTag().constructClassType(emptyArray(), false) }"
+                useTypes(buildResolvedTypeRefImport, toLookupTagImport, constructClassTypeImport)
+            }
+        }
+
         impl(smartCastExpression) {
             default("isStable") {
                 value = "smartcastStability == SmartcastStability.STABLE_VALUE"

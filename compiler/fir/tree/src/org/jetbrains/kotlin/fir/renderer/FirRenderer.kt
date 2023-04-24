@@ -651,6 +651,12 @@ class FirRenderer(
             wrappedDelegateExpression.expression.accept(this)
         }
 
+        override fun visitEnumEntryDeserializedAccessExpression(enumEntryDeserializedAccessExpression: FirEnumEntryDeserializedAccessExpression) {
+            with(enumEntryDeserializedAccessExpression) {
+                print("$enumClassId.$enumEntryName")
+            }
+        }
+
         override fun visitNamedArgumentExpression(namedArgumentExpression: FirNamedArgumentExpression) {
             print(namedArgumentExpression.name)
             print(" = ")

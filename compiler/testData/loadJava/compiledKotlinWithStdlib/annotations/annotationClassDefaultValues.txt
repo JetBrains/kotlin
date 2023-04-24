@@ -1,0 +1,63 @@
+package test
+
+public final annotation class A : kotlin.Annotation {
+    /*primary*/ public constructor A(/*0*/ i: kotlin.Int = ..., /*1*/ s: kotlin.String = ..., /*2*/ kClass: kotlin.reflect.KClass<*> = ..., /*3*/ kClassArray: kotlin.Array<kotlin.reflect.KClass<*>> = ..., /*4*/ e: test.E = ..., /*5*/ anno: test.Empty = ..., /*6*/ aS: kotlin.Array<kotlin.String> = ..., /*7*/ aI: kotlin.IntArray = ...)
+    public final val aI: kotlin.IntArray = {1, 2}
+        public final fun `<get-aI>`(): kotlin.IntArray
+    public final val aS: kotlin.Array<kotlin.String> = {"a", "b"}
+        public final fun `<get-aS>`(): kotlin.Array<kotlin.String>
+    public final val anno: test.Empty = test.Empty
+        public final fun `<get-anno>`(): test.Empty
+    public final val e: test.E = E.E0
+        public final fun `<get-e>`(): test.E
+    public final val i: kotlin.Int = 42
+        public final fun `<get-i>`(): kotlin.Int
+    public final val kClass: kotlin.reflect.KClass<*> = kotlin.Int::class
+        public final fun `<get-kClass>`(): kotlin.reflect.KClass<*>
+    public final val kClassArray: kotlin.Array<kotlin.reflect.KClass<*>> = {test.A::class}
+        public final fun `<get-kClassArray>`(): kotlin.Array<kotlin.reflect.KClass<*>>
+    public final val s: kotlin.String = "foo"
+        public final fun `<get-s>`(): kotlin.String
+}
+
+public final enum class E : kotlin.Enum<test.E> {
+    enum entry E0
+
+    /*primary*/ private constructor E()
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
+        public final override /*1*/ /*fake_override*/ fun `<get-name>`(): kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+        public final override /*1*/ /*fake_override*/ fun `<get-ordinal>`(): kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: test.E): kotlin.Int
+    protected/*protected and package*/ final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun finalize(): kotlin.Unit
+    public final override /*1*/ /*fake_override*/ /*isHiddenForResolutionEverywhereBesideSupercalls*/ fun getDeclaringClass(): java.lang.Class<test.E!>!
+
+    // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<test.E>
+        public final /*synthesized*/ fun `<get-entries>`(): kotlin.enums.EnumEntries<test.E>
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): test.E
+    public final /*synthesized*/ fun values(): kotlin.Array<test.E>
+}
+
+public final annotation class Empty : kotlin.Annotation {
+    /*primary*/ public constructor Empty()
+}
+
+public final annotation class OtherArrays : kotlin.Annotation {
+    /*primary*/ public constructor OtherArrays(/*0*/ doublesArray: kotlin.DoubleArray = ..., /*1*/ enumArray: kotlin.Array<kotlin.text.RegexOption> = ..., /*2*/ annotationsArray: kotlin.Array<kotlin.jvm.JvmStatic> = ..., /*3*/ namesArray: kotlin.Array<kotlin.jvm.JvmName> = ...)
+    public final val annotationsArray: kotlin.Array<kotlin.jvm.JvmStatic> = {}
+        public final fun `<get-annotationsArray>`(): kotlin.Array<kotlin.jvm.JvmStatic>
+    public final val doublesArray: kotlin.DoubleArray = {1.5.toDouble()}
+        public final fun `<get-doublesArray>`(): kotlin.DoubleArray
+    public final val enumArray: kotlin.Array<kotlin.text.RegexOption> = {RegexOption.IGNORE_CASE}
+        public final fun `<get-enumArray>`(): kotlin.Array<kotlin.text.RegexOption>
+    public final val namesArray: kotlin.Array<kotlin.jvm.JvmName> = {kotlin.jvm.JvmName(name = "foo")}
+        public final fun `<get-namesArray>`(): kotlin.Array<kotlin.jvm.JvmName>
+}
+
+public final annotation class UnsignedValue : kotlin.Annotation {
+    /*primary*/ public constructor UnsignedValue(/*0*/ uint: kotlin.UInt = ...)
+    public final val uint: kotlin.UInt = -2147483639.toUInt()
+        public final fun `<get-uint>`(): kotlin.UInt
+}
