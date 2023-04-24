@@ -5,36 +5,35 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization
 
-import com.intellij.psi.util.PsiUtil
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
-import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
+import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.java.deserialization.KotlinBuiltins
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.*
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.KtTypeAlias
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragment
-import java.nio.file.Path
-import java.nio.file.Paths
-
-typealias DeserializedClassPostProcessor = (FirRegularClassSymbol) -> Unit
 
 typealias DeserializedTypeAliasPostProcessor = (FirTypeAliasSymbol) -> Unit
 
 class JvmStubBasedFirDeserializedSymbolProvider(
     session: FirSession,
-    private val moduleDataProvider: ModuleDataProvider,
+    moduleDataProvider: SingleModuleDataProvider,
     private val kotlinScopeProvider: FirKotlinScopeProvider,
     private val declarationProvider: KotlinDeclarationProvider
 ) : FirSymbolProvider(session) {
+    private val moduleData = moduleDataProvider.getModuleData(null)
     private val packageNamesForNonClassDeclarations: Set<String> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         declarationProvider.computePackageSetWithNonClassDeclarations()
     }
@@ -59,13 +58,8 @@ class JvmStubBasedFirDeserializedSymbolProvider(
             }
         )
     private val classCache: FirCache<ClassId, FirRegularClassSymbol?, StubBasedFirDeserializationContext?> =
-        session.firCachesFactory.createCacheWithPostCompute(
-            createValue = { classId, context -> findAndDeserializeClass(classId, context) },
-            postCompute = { _, symbol, postProcessor ->
-                if (postProcessor != null && symbol != null) {
-                    postProcessor.invoke(symbol)
-                }
-            }
+        session.firCachesFactory.createCache(
+            createValue = { classId, context -> findAndDeserializeClass(classId, context) }
         )
 
     private val functionCache = session.firCachesFactory.createCache(::loadFunctionsByCallableId)
@@ -82,16 +76,9 @@ class JvmStubBasedFirDeserializedSymbolProvider(
         return classLikeNamesByPackage.getValue(packageFqName).map { it.asString() }.toSet()
     }
 
-    private fun KtDeclaration.containingLibrary(): Path? {
-        PsiUtil.getVirtualFile(this)?.path?.split("!/")?.firstOrNull()?.let {
-            return Paths.get(it).normalize()
-        } ?: return null
-    }
-
     private fun findAndDeserializeTypeAlias(classId: ClassId): Pair<FirTypeAliasSymbol?, DeserializedTypeAliasPostProcessor?> {
         val classLikeDeclaration = declarationProvider.getClassLikeDeclarationByClassId(classId)?.originalElement
         if (classLikeDeclaration is KtTypeAlias) {
-            val moduleData = moduleDataProvider.getModuleData(classLikeDeclaration.containingLibrary()) ?: return null to null
             val symbol = FirTypeAliasSymbol(classId)
             val postProcessor: DeserializedTypeAliasPostProcessor = {
                 val rootContext = StubBasedFirDeserializationContext.createRootContext(
@@ -112,11 +99,10 @@ class JvmStubBasedFirDeserializedSymbolProvider(
     private fun findAndDeserializeClass(
         classId: ClassId,
         parentContext: StubBasedFirDeserializationContext? = null
-    ): Pair<FirRegularClassSymbol?, DeserializedClassPostProcessor?> {
-        val classLikeDeclaration = declarationProvider.getClassLikeDeclarationByClassId(classId)?.originalElement ?: return null to null
+    ): FirRegularClassSymbol? {
+        val classLikeDeclaration = declarationProvider.getClassLikeDeclarationByClassId(classId)?.originalElement ?: return null
         val symbol = FirRegularClassSymbol(classId)
         if (classLikeDeclaration is KtClassOrObject) {
-            val moduleData = moduleDataProvider.getModuleData(classLikeDeclaration.containingLibrary()) ?: return null to null
             deserializeClassToSymbol(
                 classId,
                 classLikeDeclaration,
@@ -129,47 +115,36 @@ class JvmStubBasedFirDeserializedSymbolProvider(
                 JvmFromStubDecompilerSource(JvmClassName.byClassId(classId)),
                 deserializeNestedClass = this::getClass,
             )
-            return symbol to { loadAnnotationsFromFile() }
+            return symbol
         }
-        return null to null
-    }
-
-    private fun loadAnnotationsFromFile(
-        //symbol: FirRegularClassSymbol
-    ) {
-        //todo annotations
-        //val annotations = mutableListOf<FirAnnotation>()
-        //symbol.fir.replaceAnnotations(annotations.toMutableOrEmpty())
-        //symbol.fir.replaceDeprecationsProvider(symbol.fir.getDeprecationsProvider(session))
+        return null
     }
 
     private fun loadFunctionsByCallableId(callableId: CallableId): List<FirNamedFunctionSymbol> {
         return declarationProvider.getTopLevelFunctions(callableId)
-            .mapNotNull { it.originalElement as? KtNamedFunction }
             .mapNotNull { function ->
-                val file = function.containingKtFile
+                val original = function.originalElement as? KtNamedFunction ?: return@mapNotNull null
+                val file = original.containingKtFile
                 val virtualFile = file.virtualFile
                 if (virtualFile.extension == MetadataPackageFragment.METADATA_FILE_EXTENSION) return@mapNotNull null
                 if (file.packageFqName.asString()
                         .replace(".", "/") + "/" + virtualFile.nameWithoutExtension in KotlinBuiltins
                 ) return@mapNotNull null
-                val moduleData = moduleDataProvider.getModuleData(function.containingLibrary()) ?: return@mapNotNull null
                 val symbol = FirNamedFunctionSymbol(callableId)
                 val createRootContext =
-                    StubBasedFirDeserializationContext.createRootContext(session, moduleData, callableId, function, symbol)
-                createRootContext.memberDeserializer.loadFunction(function, null, session, symbol).symbol
+                    StubBasedFirDeserializationContext.createRootContext(session, moduleData, callableId, original, symbol)
+                createRootContext.memberDeserializer.loadFunction(original, null, session, symbol).symbol
             }
     }
 
     private fun loadPropertiesByCallableId(callableId: CallableId): List<FirPropertySymbol> {
         return declarationProvider.getTopLevelProperties(callableId)
-            .mapNotNull { it.originalElement as? KtProperty }
             .mapNotNull { property ->
-                val moduleData = moduleDataProvider.getModuleData(property.containingLibrary()) ?: return@mapNotNull null
+                val original = property.originalElement as? KtProperty ?: return@mapNotNull null
                 val symbol = FirPropertySymbol(callableId)
                 val createRootContext =
-                    StubBasedFirDeserializationContext.createRootContext(session, moduleData, callableId, property, symbol)
-                createRootContext.memberDeserializer.loadProperty(property, null, symbol).symbol
+                    StubBasedFirDeserializationContext.createRootContext(session, moduleData, callableId, original, symbol)
+                createRootContext.memberDeserializer.loadProperty(original, null, symbol).symbol
             }
     }
 
