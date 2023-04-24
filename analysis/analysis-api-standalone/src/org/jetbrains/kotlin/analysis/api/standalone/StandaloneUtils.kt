@@ -71,7 +71,7 @@ public fun configureApplicationEnvironment(app: MockApplication) {
  *   * [ClsJavaStubByVirtualFileCache]
  *   * [KotlinModificationTrackerFactory]
  *   * [KotlinAnnotationsResolverFactory]
- *   * [LLfirResolveSessionService]
+ *   * [org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveSessionService]
  *   * [FirSealedClassInheritorsProcessorFactory]
  *   * [KtModuleScopeProvider]
  *   * [ProjectStructureProvider]
