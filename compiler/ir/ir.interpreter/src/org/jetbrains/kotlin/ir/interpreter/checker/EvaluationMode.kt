@@ -36,7 +36,7 @@ enum class EvaluationMode(protected val mustCheckBody: Boolean) {
         }
 
         private fun IrFunction?.isCompileTimePropertyAccessor(): Boolean {
-            val property = (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner ?: return false
+            val property = this?.property ?: return false
             if (property.isConst) return true
             if (property.isMarkedAsCompileTime() || property.isCompileTimeTypeAlias()) return true
 
@@ -63,7 +63,7 @@ enum class EvaluationMode(protected val mustCheckBody: Boolean) {
         ).map { IrBuiltIns.KOTLIN_INTERNAL_IR_FQN.child(Name.identifier(it)).asString() }.toSet()
 
         override fun canEvaluateFunction(function: IrFunction, context: IrCall?): Boolean {
-            if ((function as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.isConst == true) return true
+            if (function.property?.isConst == true) return true
 
             val fqName = function.fqNameWhenAvailable?.asString()
             val parent = function.parentClassOrNull
@@ -89,7 +89,7 @@ enum class EvaluationMode(protected val mustCheckBody: Boolean) {
         }
 
         private fun IrFunction?.isCompileTimePropertyAccessor(): Boolean {
-            val property = (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner ?: return false
+            val property = this?.property ?: return false
             return property.isConst || (property.resolveFakeOverride() ?: property).isMarkedAsIntrinsicConstEvaluation()
         }
 
@@ -104,7 +104,7 @@ enum class EvaluationMode(protected val mustCheckBody: Boolean) {
         private fun IrCall?.isIntrinsicConstEvaluationNameProperty(): Boolean {
             if (this == null) return false
             val owner = this.symbol.owner
-            val property = (owner as? IrSimpleFunction)?.correspondingPropertySymbol?.owner ?: return false
+            val property = owner.property ?: return false
             return owner.isCompileTimePropertyAccessor() && property.name.asString() == "name"
         }
     };
@@ -114,7 +114,7 @@ enum class EvaluationMode(protected val mustCheckBody: Boolean) {
     abstract fun canEvaluateReference(reference: IrCallableReference<*>, context: IrCall? = null): Boolean
 
     fun mustCheckBodyOf(function: IrFunction): Boolean {
-        if (function is IrSimpleFunction && function.correspondingPropertySymbol != null) return true
+        if (function.property != null) return true
         return (mustCheckBody || function.isLocal) && !function.isContract() && !function.isMarkedAsEvaluateIntrinsic()
     }
 
@@ -134,3 +134,6 @@ enum class EvaluationMode(protected val mustCheckBody: Boolean) {
         return (this.parent as? IrClass)?.isMarkedWith(annotation) ?: false
     }
 }
+
+private val IrFunction.property: IrProperty?
+    get() = (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner
