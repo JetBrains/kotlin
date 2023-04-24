@@ -22699,6 +22699,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                     runTest("compiler/testData/codegen/box/invokedynamic/sam/specializedGenerics/genericWithInProjection.kt");
                 }
 
+                @TestMetadata("genericWithInProjectionWithIndyLambdas.kt")
+                public void testGenericWithInProjectionWithIndyLambdas() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/specializedGenerics/genericWithInProjectionWithIndyLambdas.kt");
+                }
+
                 @TestMetadata("genericWithStarProjection.kt")
                 public void testGenericWithStarProjection() throws Exception {
                     runTest("compiler/testData/codegen/box/invokedynamic/sam/specializedGenerics/genericWithStarProjection.kt");

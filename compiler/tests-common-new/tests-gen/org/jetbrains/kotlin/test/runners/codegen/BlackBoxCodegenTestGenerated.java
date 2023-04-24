@@ -26902,6 +26902,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
                 }
 
                 @Test
+                @TestMetadata("genericWithInProjectionWithIndyLambdas.kt")
+                public void testGenericWithInProjectionWithIndyLambdas() throws Exception {
+                    runTest("compiler/testData/codegen/box/invokedynamic/sam/specializedGenerics/genericWithInProjectionWithIndyLambdas.kt");
+                }
+
+                @Test
                 @TestMetadata("genericWithStarProjection.kt")
                 public void testGenericWithStarProjection() throws Exception {
                     runTest("compiler/testData/codegen/box/invokedynamic/sam/specializedGenerics/genericWithStarProjection.kt");
