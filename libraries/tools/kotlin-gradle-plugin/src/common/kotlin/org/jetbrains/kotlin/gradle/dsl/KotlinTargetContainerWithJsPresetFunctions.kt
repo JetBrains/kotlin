@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 
 interface KotlinTargetContainerWithJsPresetFunctions :
-    KotlinTargetContainerWithPresetFunctions,
+    KotlinTargetsContainerWithPresets,
     KotlinJsCompilerTypeHolder {
     fun js(
         name: String = "js",
