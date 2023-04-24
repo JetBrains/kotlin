@@ -340,6 +340,7 @@ enum class LanguageFeature(
     ImplicitSignedToUnsignedIntegerConversion(sinceVersion = null), // KT-56583
     ForbidInferringTypeVariablesIntoEmptyIntersection(sinceVersion = null, kind = BUG_FIX), // KT-51221
     IntrinsicConstEvaluation(sinceVersion = null, kind = UNSTABLE_FEATURE), // KT-49303
+    NoSourceCodeInNotNullAssertionExceptions(sinceVersion = null, sinceApiVersion = ApiVersion.KOTLIN_1_4, kind = OTHER), // KT-57570
     ;
 
     init {
