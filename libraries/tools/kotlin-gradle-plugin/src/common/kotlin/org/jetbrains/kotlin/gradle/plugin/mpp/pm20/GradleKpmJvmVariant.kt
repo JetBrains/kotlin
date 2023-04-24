@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
+import org.jetbrains.kotlin.gradle.utils.configureExperimentalTryK2
 import javax.inject.Inject
 
 abstract class GradleKpmJvmVariant @Inject constructor(
@@ -40,8 +41,9 @@ class GradleKpmJvmVariantCompilationData(val variant: GradleKpmJvmVariant) : Gra
 
     override val compilerOptions: HasCompilerOptions<KotlinJvmCompilerOptions> =
         object : HasCompilerOptions<KotlinJvmCompilerOptions> {
-            override val options: KotlinJvmCompilerOptions =
-                variant.project.objects.newInstance(KotlinJvmCompilerOptionsDefault::class.java)
+            override val options: KotlinJvmCompilerOptions = variant.project.objects
+                .newInstance(KotlinJvmCompilerOptionsDefault::class.java)
+                .configureExperimentalTryK2(variant.project)
         }
 
     // TODO pull out to the variant

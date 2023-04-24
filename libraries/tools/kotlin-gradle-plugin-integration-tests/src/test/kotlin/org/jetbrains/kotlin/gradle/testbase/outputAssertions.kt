@@ -236,3 +236,19 @@ fun findParameterInOutput(name: String, output: String): String? =
         val (key, value) = line.split('=', limit = 2).takeIf { it.size == 2 } ?: return@mapNotNull null
         if (key.endsWith(name)) value else null
     }.firstOrNull()
+
+fun BuildResult.assertCompilerArgument(
+    taskPath: String,
+    expectedArgument: String,
+) {
+    val taskOutput = getOutputForTask(taskPath)
+    val compilerArguments = taskOutput.lines().first {
+        it.contains("Kotlin compiler args:")
+    }.substringAfter("Kotlin compiler args:")
+
+    assert(compilerArguments.contains(expectedArgument)) {
+        printBuildOutput()
+
+        "$taskPath task compiler arguments don't contain $expectedArgument. Actual content: $compilerArguments"
+    }
+}

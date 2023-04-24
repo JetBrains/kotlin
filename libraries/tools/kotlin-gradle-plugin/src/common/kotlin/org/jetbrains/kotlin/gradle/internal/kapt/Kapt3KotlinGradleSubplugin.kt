@@ -434,7 +434,7 @@ class Kapt3GradleSubplugin @Inject internal constructor(private val registry: To
 
     private fun Kapt3SubpluginContext.createKaptGenerateStubsTask(): TaskProvider<KaptGenerateStubsTask> {
         val kaptTaskName = kotlinCompile.kaptGenerateStubsTaskName
-        val kaptTaskProvider = project.registerTask<KaptGenerateStubsTask>(kaptTaskName)
+        val kaptTaskProvider = project.registerTask<KaptGenerateStubsTask>(kaptTaskName, listOf(project))
 
         val taskConfig = KaptGenerateStubsConfig(kotlinCompilation)
         taskConfig.configureTask {

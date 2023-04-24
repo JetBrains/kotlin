@@ -116,8 +116,9 @@ internal open class GradleKpmCommonFragmentMetadataCompilationDataImpl(
 
     override val compilerOptions: HasCompilerOptions<KotlinMultiplatformCommonCompilerOptions> =
         object : HasCompilerOptions<KotlinMultiplatformCommonCompilerOptions> {
-            override val options: KotlinMultiplatformCommonCompilerOptions =
-                project.objects.newInstance(KotlinMultiplatformCommonCompilerOptionsDefault::class.java)
+            override val options: KotlinMultiplatformCommonCompilerOptions = project.objects
+                .newInstance(KotlinMultiplatformCommonCompilerOptionsDefault::class.java)
+                .configureExperimentalTryK2(project)
         }
 
 

@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSingleTargetPreset
 import org.jetbrains.kotlin.gradle.tasks.CompileUsingKotlinDaemon
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAware
+import org.jetbrains.kotlin.gradle.utils.configureExperimentalTryK2
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
@@ -183,8 +184,9 @@ abstract class KotlinJvmProjectExtension(project: Project) : KotlinSingleJavaTar
 
     open fun target(body: KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions>.() -> Unit) = target.run(body)
 
-    val compilerOptions: KotlinJvmCompilerOptions =
-        project.objects.newInstance(KotlinJvmCompilerOptionsDefault::class.java)
+    val compilerOptions: KotlinJvmCompilerOptions = project.objects
+        .newInstance(KotlinJvmCompilerOptionsDefault::class.java)
+        .configureExperimentalTryK2(project)
 
     fun compilerOptions(configure: Action<KotlinJvmCompilerOptions>) {
         configure.execute(compilerOptions)
@@ -406,8 +408,9 @@ abstract class KotlinAndroidProjectExtension(project: Project) : KotlinSingleTar
 
     open fun target(body: KotlinAndroidTarget.() -> Unit) = target.run(body)
 
-    val compilerOptions: KotlinJvmCompilerOptions =
-        project.objects.newInstance(KotlinJvmCompilerOptionsDefault::class.java)
+    val compilerOptions: KotlinJvmCompilerOptions = project.objects
+        .newInstance(KotlinJvmCompilerOptionsDefault::class.java)
+        .configureExperimentalTryK2(project)
 
     fun compilerOptions(configure: Action<KotlinJvmCompilerOptions>) {
         configure.execute(compilerOptions)

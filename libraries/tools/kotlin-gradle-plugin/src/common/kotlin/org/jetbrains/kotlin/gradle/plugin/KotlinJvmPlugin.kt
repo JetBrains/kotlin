@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.tasks.*
+import org.jetbrains.kotlin.gradle.utils.configureExperimentalTryK2
 
 const val KOTLIN_DSL_NAME = "kotlin"
 
@@ -59,7 +60,9 @@ internal open class KotlinJvmPlugin(
             {
                 object : HasCompilerOptions<KotlinJvmCompilerOptions> {
                     override val options: KotlinJvmCompilerOptions =
-                        project.objects.newInstance(KotlinJvmCompilerOptionsDefault::class.java)
+                        project.objects
+                            .newInstance(KotlinJvmCompilerOptionsDefault::class.java)
+                            .configureExperimentalTryK2(project)
                 }
             },
             { compilerOptions: KotlinJvmCompilerOptions ->

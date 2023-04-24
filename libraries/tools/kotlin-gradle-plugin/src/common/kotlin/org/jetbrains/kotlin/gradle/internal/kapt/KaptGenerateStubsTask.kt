@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.gradle.internal
 
+import org.gradle.api.Project
 import org.gradle.api.file.*
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.file.ConfigurableFileCollection
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.gradle.report.BuildReportMode
 import org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.toSingleCompilerPluginOptions
+import org.jetbrains.kotlin.gradle.utils.configureExperimentalTryK2
 import org.jetbrains.kotlin.gradle.utils.toPathsArray
 import org.jetbrains.kotlin.incremental.classpathAsList
 import org.jetbrains.kotlin.incremental.destinationAsFile
@@ -40,10 +42,13 @@ import javax.inject.Inject
 
 @CacheableTask
 abstract class KaptGenerateStubsTask @Inject constructor(
+    project: Project,
     workerExecutor: WorkerExecutor,
-    objectFactory: ObjectFactory
+    objectFactory: ObjectFactory,
 ) : KotlinCompile(
-    objectFactory.newInstance(KotlinJvmCompilerOptionsDefault::class.java),
+    objectFactory
+        .newInstance(KotlinJvmCompilerOptionsDefault::class.java)
+        .configureExperimentalTryK2(project),
     workerExecutor,
     objectFactory
 ), KaptGenerateStubs {

@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.utils.SingleWarningPerBuild
+import org.jetbrains.kotlin.gradle.utils.configureExperimentalTryK2
 
 class KotlinJvmWithJavaTargetPreset(
     private val project: Project
@@ -36,8 +37,9 @@ class KotlinJvmWithJavaTargetPreset(
             name,
             {
                 object : HasCompilerOptions<KotlinJvmCompilerOptions> {
-                    override val options: KotlinJvmCompilerOptions =
-                        project.objects.newInstance(KotlinJvmCompilerOptionsDefault::class.java)
+                    override val options: KotlinJvmCompilerOptions = project.objects
+                        .newInstance(KotlinJvmCompilerOptionsDefault::class.java)
+                        .configureExperimentalTryK2(project)
                 }
             },
             { compilerOptions: KotlinJvmCompilerOptions ->
