@@ -9,7 +9,7 @@ configureKotlinCompileTasksGradleCompatibility()
 extensions.extraProperties["kotlin.stdlib.default.dependency"] = "false"
 
 dependencies {
-    compileOnly(project(":kotlin-stdlib"))
+    compileOnly(kotlinStdlib())
 }
 
 tasks.withType<KotlinJvmCompile>().configureEach {
