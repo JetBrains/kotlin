@@ -111,10 +111,7 @@ private fun FirAnnotationContainer.isDefinitelyEmpty(anchorElement: FirBasedSymb
 fun FirAnnotationContainer.resolvedAnnotationsWithClassIds(anchorElement: FirBasedSymbol<*>): List<FirAnnotation> {
     if (isDefinitelyEmpty(anchorElement)) return emptyList()
 
-    when (anchorElement) {
-        is FirBackingFieldSymbol -> anchorElement.propertySymbol
-        else -> anchorElement
-    }.lazyResolveToPhase(FirResolvePhase.TYPES)
+    anchorElement.lazyResolveToPhase(FirResolvePhase.TYPES)
 
     return annotations
 }
