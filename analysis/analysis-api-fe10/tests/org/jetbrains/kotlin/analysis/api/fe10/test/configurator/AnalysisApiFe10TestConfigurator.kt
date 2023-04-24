@@ -9,6 +9,7 @@ import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiFile
 import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiBaseTestServiceRegistrar
+import org.jetbrains.kotlin.analysis.api.impl.base.test.configurators.AnalysisApiDecompiledCodeTestServiceRegistrar
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtModuleProjectStructure
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtModuleFactory
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtSourceModuleFactory
@@ -43,6 +44,7 @@ object AnalysisApiFe10TestConfigurator : AnalysisApiTestConfigurator() {
 
     override val serviceRegistrars: List<AnalysisApiTestServiceRegistrar> = listOf(
         AnalysisApiBaseTestServiceRegistrar,
+        AnalysisApiDecompiledCodeTestServiceRegistrar,
         AnalysisApiFe10TestServiceRegistrar,
     )
 

@@ -72,10 +72,6 @@ object AnalysisApiBaseTestServiceRegistrar: AnalysisApiTestServiceRegistrar()  {
     }
 
     override fun registerApplicationServices(application: MockApplication, testServices: TestServices) {
-        if (application.getService(FileAttributeService::class.java) == null) {
-            application.registerService(FileAttributeService::class.java, DummyFileAttributeService)
-            application.registerService(ClsKotlinBinaryClassCache::class.java, ClsKotlinBinaryClassCache())
-            application.registerService(KotlinFakeClsStubsCache::class.java, KotlinFakeClsStubsCache())
-        }
+        application.registerService(KotlinFakeClsStubsCache::class.java, KotlinFakeClsStubsCache())
     }
 }
