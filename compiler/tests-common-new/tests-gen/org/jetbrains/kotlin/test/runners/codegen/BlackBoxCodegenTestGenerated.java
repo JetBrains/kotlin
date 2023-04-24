@@ -27199,6 +27199,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             runTest("compiler/testData/codegen/box/involvesIrInterpreter/kt56215.kt");
         }
 
+        @Test
+        @TestMetadata("kt57028.kt")
+        public void testKt57028() throws Exception {
+            runTest("compiler/testData/codegen/box/involvesIrInterpreter/kt57028.kt");
+        }
+
         @Nested
         @TestMetadata("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst")
         @TestDataPath("$PROJECT_ROOT")

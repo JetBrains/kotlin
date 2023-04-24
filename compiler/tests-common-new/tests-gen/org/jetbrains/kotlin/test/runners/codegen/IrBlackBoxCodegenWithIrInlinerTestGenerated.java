@@ -28334,6 +28334,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
         }
 
         @Test
+        @TestMetadata("kt57028.kt")
+        public void testKt57028() throws Exception {
+            runTest("compiler/testData/codegen/box/involvesIrInterpreter/kt57028.kt");
+        }
+
+        @Test
         @TestMetadata("kt57313.kt")
         public void testKt57313() throws Exception {
             runTest("compiler/testData/codegen/box/involvesIrInterpreter/kt57313.kt");

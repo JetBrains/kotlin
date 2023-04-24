@@ -51,7 +51,10 @@ enum class EvaluationMode(protected val mustCheckBody: Boolean) {
 
     ONLY_BUILTINS(mustCheckBody = false) {
         private val forbiddenMethodsOnPrimitives = setOf("inc", "dec", "rangeTo", "rangeUntil", "hashCode")
-        private val forbiddenMethodsOnStrings = setOf("subSequence", "hashCode", "<init>")
+        private val forbiddenMethodsOnStrings = setOf(
+            "subSequence", "hashCode", "<init>",
+            "chars", "codePoints" // from java.lang.CharSequence; they are represented as member declarations from "kotlin.String"
+        )
         private val allowedExtensionFunctions = setOf(
             "kotlin.floorDiv", "kotlin.mod", "kotlin.NumbersKt.floorDiv", "kotlin.NumbersKt.mod", "kotlin.<get-code>"
         )
@@ -64,6 +67,9 @@ enum class EvaluationMode(protected val mustCheckBody: Boolean) {
 
         override fun canEvaluateFunction(function: IrFunction, context: IrCall?): Boolean {
             if (function.property?.isConst == true) return true
+
+            val returnType = function.returnType
+            if (!returnType.isPrimitiveType() && !returnType.isString() && !returnType.isUnsignedType()) return false
 
             val fqName = function.fqNameWhenAvailable?.asString()
             val parent = function.parentClassOrNull
