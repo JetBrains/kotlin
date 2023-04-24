@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.utils.classId
@@ -45,10 +46,12 @@ import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.resolve.jvm.KotlinFinderMarker
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
+val FirSession.javaElementFinder: FirJavaElementFinder? by FirSession.nullableSessionComponentAccessor<FirJavaElementFinder>()
+
 class FirJavaElementFinder(
     private val session: FirSession,
     project: Project
-) : PsiElementFinder(), KotlinFinderMarker {
+) : PsiElementFinder(), KotlinFinderMarker, FirSessionComponent {
     private val psiManager = PsiManager.getInstance(project)
 
     private val firProviders: List<FirProvider> = buildList {

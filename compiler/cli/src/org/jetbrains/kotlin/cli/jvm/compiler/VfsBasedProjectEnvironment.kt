@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.KtVirtualFileSourceFile
 import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.java.FirJavaElementFinder
 import org.jetbrains.kotlin.fir.java.FirJavaFacadeForSource
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
@@ -62,12 +63,16 @@ open class VfsBasedProjectEnvironment(
     override fun getPackagePartProvider(fileSearchScope: AbstractProjectFileSearchScope): PackagePartProvider =
         getPackagePartProviderFn(fileSearchScope.asPsiSearchScope())
 
+    @OptIn(SessionConfiguration::class)
     override fun registerAsJavaElementFinder(firSession: FirSession) {
         val psiFinderExtensionPoint = PsiElementFinder.EP.getPoint(project)
         if (psiFinderExtensionPoint.extensionList.any { it is JavaElementFinder }) {
             psiFinderExtensionPoint.unregisterExtension(JavaElementFinder::class.java)
         }
-        psiFinderExtensionPoint.registerExtension(FirJavaElementFinder(firSession, project), project)
+
+        val firJavaElementFinder = FirJavaElementFinder(firSession, project)
+        firSession.register(FirJavaElementFinder::class, firJavaElementFinder)
+        psiFinderExtensionPoint.registerExtension(firJavaElementFinder, project)
     }
 
     private fun List<VirtualFile>.toSearchScope(allowOutOfProjectRoots: Boolean) =
