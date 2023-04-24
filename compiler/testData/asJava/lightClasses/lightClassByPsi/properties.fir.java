@@ -1,12 +1,41 @@
-public final class Foo /* Foo*/ {
-  @org.jetbrains.annotations.NotNull()
-  private error.NonExistentClass delegatedProp$delegate;
+public abstract interface A /* A*/ {
+  protected abstract int getInt1();//  getInt1()
 
+  public abstract int getInt2();//  getInt2()
+
+  public abstract void setInt2(int);//  setInt2(int)
+}
+
+public static final class Companion /* Foo.Companion*/ {
+  private  Companion();//  .ctor()
+
+  public final int getF1();//  getF1()
+
+  public final int getProp3();//  getProp3()
+
+  public final int getProp7();//  getProp7()
+
+  public final void setProp7(int);//  setProp7(int)
+}
+
+public final class Foo /* Foo*/ {
   @org.jetbrains.annotations.NotNull()
   private final Foo b;
 
   @org.jetbrains.annotations.NotNull()
-  private final java.lang.Object arrayConst;
+  private final MyProperty<Foo> delegatedProp2$delegate;
+
+  @org.jetbrains.annotations.NotNull()
+  private final error.NonExistentClass delegatedProp$delegate;
+
+  @org.jetbrains.annotations.NotNull()
+  private final error.NonExistentClass privateDelegated$delegate;
+
+  @org.jetbrains.annotations.NotNull()
+  private final java.lang.Object arrayConst = {1, 2} /* initializer type: null */;
+
+  @org.jetbrains.annotations.NotNull()
+  private final kotlin.Lazy<java.lang.String> lazyProp$delegate;
 
   @org.jetbrains.annotations.NotNull()
   private final kotlin.jvm.functions.Function1<java.lang.Integer, java.lang.Integer> sum;
@@ -15,22 +44,21 @@ public final class Foo /* Foo*/ {
   private java.lang.Object privateVarWithGet;
 
   @org.jetbrains.annotations.NotNull()
-  private java.lang.String name;
+  private java.lang.String name = "x" /* initializer type: java.lang.String */;
 
   @org.jetbrains.annotations.NotNull()
   private java.lang.String noAccessors;
 
   @org.jetbrains.annotations.NotNull()
-  private java.lang.String protectedWithPrivateSet;
+  private java.lang.String protectedWithPrivateSet = "" /* initializer type: java.lang.String */;
 
   @org.jetbrains.annotations.NotNull()
-  private kotlin.Lazy<java.lang.String> lazyProp$delegate;
+  public final java.lang.String CONSTANT_WITH_ESCAPES = "A\tB\nC\rD'E\"F\\G$H" /* initializer type: java.lang.String */ /* constant value A	B
+  C
+D'E"F\G$H */;
 
   @org.jetbrains.annotations.NotNull()
-  public final java.lang.String CONSTANT_WITH_ESCAPES = "A\tB\nC\rD'E\"F\\G$H" /* initializer type: java.lang.String */;
-
-  @org.jetbrains.annotations.NotNull()
-  public final java.lang.String SUBSYSTEM_DEPRECATED = "This subsystem is deprecated" /* initializer type: java.lang.String */;
+  public final java.lang.String SUBSYSTEM_DEPRECATED = "This subsystem is deprecated" /* initializer type: java.lang.String */ /* constant value This subsystem is deprecated */;
 
   @org.jetbrains.annotations.NotNull()
   public static final Foo.Companion Companion;
@@ -42,39 +70,34 @@ public final class Foo /* Foo*/ {
   private java.lang.Boolean islowercase;
 
   @org.jetbrains.annotations.Nullable()
-  private java.lang.Integer counter2;
-
-  @org.jetbrains.annotations.Nullable()
   private java.lang.Integer getInt;
 
   @org.jetbrains.annotations.Nullable()
   private java.lang.Integer isEmptyInt;
 
-  private MyProperty<Foo> delegatedProp2$delegate;
-
   private boolean c;
-
-  private error.NonExistentClass privateDelegated$delegate;
 
   private final error.NonExistentClass d;
 
-  private final error.NonExistentClass intConst;
+  private final error.NonExistentClass intConst = 30 /* initializer type: int */;
 
-  private final int f1;
+  private final int f1 = 2 /* initializer type: int */;
 
-  private final long e;
+  private final long e = 2L /* initializer type: long */;
 
-  private int counter;
+  private int counter = 0 /* initializer type: int */;
 
-  private int f2;
+  private int f2 = 3 /* initializer type: int */;
 
-  private int internalWithPrivateSet;
+  private int internalWithPrivateSet = 1 /* initializer type: int */;
 
   private int privateVarWithPrivateSet;
 
+  private java.lang.String internalVarPrivateSet;
+
   private static final error.NonExistentClass contextBean;
 
-  private static final int f1;
+  private static final int f1 = 4 /* initializer type: int */;
 
   private static final int prop3;
 
@@ -82,9 +105,7 @@ public final class Foo /* Foo*/ {
 
   protected java.lang.String protectedLateinitVar;
 
-  public error.NonExistentClass subject;
-
-  public java.lang.String internalVarPrivateSet;
+  public Unresolved subject;
 
   @org.jetbrains.annotations.NotNull()
   protected final java.lang.String getProtectedLateinitVar();//  getProtectedLateinitVar()
@@ -94,6 +115,9 @@ public final class Foo /* Foo*/ {
 
   @org.jetbrains.annotations.NotNull()
   public final Foo getB();//  getB()
+
+  @org.jetbrains.annotations.NotNull()
+  public final Unresolved getSubject();//  getSubject()
 
   @org.jetbrains.annotations.NotNull()
   public final java.lang.Object getArrayConst();//  getArrayConst()
@@ -153,15 +177,13 @@ public final class Foo /* Foo*/ {
 
   public final error.NonExistentClass getIntConst();//  getIntConst()
 
-  public final error.NonExistentClass getSubject();//  getSubject()
-
   public final int getCounter();//  getCounter()
 
   public final int getDelegatedProp2();//  getDelegatedProp2()
 
   public final int getF1();//  getF1()
 
-  public final int getIntProp(@org.jetbrains.annotations.NotNull() int);//  getIntProp(int)
+  public final int getIntProp(int);//  getIntProp(int)
 
   public final int getInternalWithPrivateSet$light_idea_test_case();//  getInternalWithPrivateSet$light_idea_test_case()
 
@@ -189,24 +211,30 @@ public final class Foo /* Foo*/ {
 
   public final void setStringRepresentation$light_idea_test_case(@org.jetbrains.annotations.NotNull() java.lang.String);//  setStringRepresentation$light_idea_test_case(java.lang.String)
 
-  public final void setSubject(error.NonExistentClass);//  setSubject(error.NonExistentClass)
-
+  public final void setSubject(@org.jetbrains.annotations.NotNull() Unresolved);//  setSubject(Unresolved)
 
   class Companion ...
+}
 
-  }
+public final class Foo2 /* Foo2*/ {
+  @org.jetbrains.annotations.NotNull()
+  public final Foo getFoo();//  getFoo()
 
-public static final class Companion /* Foo.Companion*/ {
-  private  Companion();//  .ctor()
+  @org.jetbrains.annotations.NotNull()
+  public final Foo getFoo2();//  getFoo2()
 
-  public final int getF1();//  getF1()
+  @org.jetbrains.annotations.NotNull()
+  public final Foo getMeNonNullFoo();//  getMeNonNullFoo()
 
-  public final int getProp3();//  getProp3()
+  public  Foo2();//  .ctor()
+}
 
-  public final int getProp7();//  getProp7()
+public final class Modifiers /* Modifiers*/ {
+  private final int plainField = 1 /* initializer type: int */;
 
-  public final void setProp7(int);//  setProp7(int)
+  public  Modifiers();//  .ctor()
 
+  public final int getPlainField();//  getPlainField()
 }
 
 public final class MyProperty /* MyProperty*/<T>  {
@@ -215,36 +243,4 @@ public final class MyProperty /* MyProperty*/<T>  {
   public final int getValue(T, @org.jetbrains.annotations.NotNull() kotlin.reflect.KProperty<?>);//  getValue(T, kotlin.reflect.KProperty<?>)
 
   public final void setValue(T, @org.jetbrains.annotations.NotNull() kotlin.reflect.KProperty<?>, int);//  setValue(T, kotlin.reflect.KProperty<?>, int)
-
-}
-
-public final class Modifiers /* Modifiers*/ {
-  private final int plainField;
-
-  public  Modifiers();//  .ctor()
-
-  public final int getPlainField();//  getPlainField()
-
-}
-
-public abstract interface A /* A*/ {
-  protected abstract int getInt1();//  getInt1()
-
-  public abstract int getInt2();//  getInt2()
-
-  public abstract void setInt2(int);//  setInt2(int)
-
-}
-
-public final class Foo /* Foo*/ {
-  @org.jetbrains.annotations.NotNull()
-  public final Foo getFoo2();//  getFoo2()
-
-  @org.jetbrains.annotations.NotNull()
-  public final Foo getMeNonNullFoo();//  getMeNonNullFoo()
-
-  public  Foo();//  .ctor()
-
-  public final error.NonExistentClass getFoo();//  getFoo()
-
 }
