@@ -38,8 +38,8 @@ internal object MultiplatformLayoutV2DependsOnConfigurator : KotlinAndroidSource
                 return@launchInStage
             }
 
-            val module = KotlinTargetHierarchy.ModuleName.orNull(target, variantType) ?: return@launchInStage
-            val commonSourceSetName = lowerCamelCaseName("common", module.name)
+            val sourceSetTree = KotlinTargetHierarchy.SourceSetTree.orNull(target, variantType) ?: return@launchInStage
+            val commonSourceSetName = lowerCamelCaseName("common", sourceSetTree.name)
             val commonSourceSet = target.project.kotlinExtension.sourceSets.findByName(commonSourceSetName) ?: return@launchInStage
             kotlinSourceSet.dependsOn(commonSourceSet)
         }

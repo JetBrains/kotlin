@@ -6,32 +6,32 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy
 
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchy.ModuleName
+import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchy.SourceSetTree
 import org.jetbrains.kotlin.gradle.plugin.awaitFinalValue
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
 import org.jetbrains.kotlin.gradle.plugin.sources.android.AndroidVariantType
 import org.jetbrains.kotlin.gradle.plugin.sources.android.type
 
-internal suspend fun ModuleName.Companion.orNull(compilation: KotlinCompilation<*>): ModuleName? =
+internal suspend fun SourceSetTree.Companion.orNull(compilation: KotlinCompilation<*>): SourceSetTree? =
     when (compilation) {
         is KotlinJvmAndroidCompilation -> orNull(compilation.target, compilation.androidVariant.type)
         else -> when (compilation.name) {
             "main" -> main
             "test" -> test
-            else -> ModuleName(compilation.name)
+            else -> SourceSetTree(compilation.name)
         }
     }
 
-internal suspend fun ModuleName.Companion.orNull(
+internal suspend fun SourceSetTree.Companion.orNull(
     target: KotlinAndroidTarget,
     variantType: AndroidVariantType
-): ModuleName? = when (variantType) {
+): SourceSetTree? = when (variantType) {
     AndroidVariantType.Main ->
-        target.main.targetHierarchy.module.awaitFinalValue() ?: main
+        target.main.targetHierarchy.sourceSetTree.awaitFinalValue() ?: main
     AndroidVariantType.UnitTest ->
-        target.unitTest.targetHierarchy.module.awaitFinalValue() ?: test
+        target.unitTest.targetHierarchy.sourceSetTree.awaitFinalValue() ?: test
     AndroidVariantType.InstrumentedTest ->
-        target.instrumentedTest.targetHierarchy.module.awaitFinalValue() ?: instrumentedTest
+        target.instrumentedTest.targetHierarchy.sourceSetTree.awaitFinalValue() ?: instrumentedTest
     AndroidVariantType.Unknown -> null
 }

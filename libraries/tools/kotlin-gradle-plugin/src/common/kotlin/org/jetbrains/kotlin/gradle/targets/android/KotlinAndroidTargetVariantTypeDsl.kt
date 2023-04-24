@@ -16,7 +16,10 @@ import org.jetbrains.kotlin.gradle.plugin.newKotlinPluginLifecycleAwareProperty
 @ExperimentalKotlinGradlePluginApi
 interface KotlinAndroidTargetVariantTypeDsl {
     interface TargetHierarchyDsl {
-        val module: Property<KotlinTargetHierarchy.ModuleName>
+        /**
+         * See [KotlinTargetHierarchy.SourceSetTree]
+         */
+        val sourceSetTree: Property<KotlinTargetHierarchy.SourceSetTree>
     }
 
     val targetHierarchy: TargetHierarchyDsl
@@ -27,7 +30,8 @@ interface KotlinAndroidTargetVariantTypeDsl {
 
 internal class KotlinAndroidTargetVariantTypeDslImpl(private val project: Project) : KotlinAndroidTargetVariantTypeDsl {
     internal inner class TargetHierarchyDslImpl : KotlinAndroidTargetVariantTypeDsl.TargetHierarchyDsl {
-        override val module: Property<KotlinTargetHierarchy.ModuleName> by project.newKotlinPluginLifecycleAwareProperty(FinaliseDsl)
+        override val sourceSetTree: Property<KotlinTargetHierarchy.SourceSetTree>
+                by project.newKotlinPluginLifecycleAwareProperty(FinaliseDsl)
     }
 
     override val targetHierarchy: KotlinAndroidTargetVariantTypeDsl.TargetHierarchyDsl = TargetHierarchyDslImpl()

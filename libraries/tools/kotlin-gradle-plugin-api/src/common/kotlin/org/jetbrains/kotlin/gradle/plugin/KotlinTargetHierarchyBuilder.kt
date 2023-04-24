@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.konan.target.DEPRECATED_TARGET_MESSAGE
 interface KotlinTargetHierarchyBuilder {
 
     interface Root : KotlinTargetHierarchyBuilder {
-        fun modules(vararg module: KotlinTargetHierarchy.ModuleName)
-        fun withModule(vararg module: KotlinTargetHierarchy.ModuleName)
-        fun excludeModule(vararg module: KotlinTargetHierarchy.ModuleName)
+        fun sourceSetTrees(vararg tree: KotlinTargetHierarchy.SourceSetTree)
+        fun withSourceSetTree(vararg tree: KotlinTargetHierarchy.SourceSetTree)
+        fun excludeSourceSetTree(vararg tree: KotlinTargetHierarchy.SourceSetTree)
     }
 
     /* Declaring groups */

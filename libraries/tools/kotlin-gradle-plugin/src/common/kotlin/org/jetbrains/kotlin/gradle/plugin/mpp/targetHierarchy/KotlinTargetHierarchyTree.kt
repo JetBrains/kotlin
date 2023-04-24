@@ -26,8 +26,8 @@ internal data class KotlinTargetHierarchyTree(
 
         data class Group(val name: String) : Node() {
             override suspend fun sharedSourceSetName(compilation: KotlinCompilation<*>): String? {
-                val moduleName = KotlinTargetHierarchy.ModuleName.orNull(compilation)?.name ?: return null
-                return lowerCamelCaseName(name, moduleName)
+                val sourceSetTree = KotlinTargetHierarchy.SourceSetTree.orNull(compilation)?.name ?: return null
+                return lowerCamelCaseName(name, sourceSetTree)
             }
         }
 
