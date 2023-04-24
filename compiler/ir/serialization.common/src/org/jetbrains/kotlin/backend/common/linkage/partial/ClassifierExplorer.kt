@@ -203,10 +203,19 @@ internal class ClassifierExplorer(
 
     private fun IrClass.exploreSuperClasses(superTypeSymbols: Set<IrClassSymbol>): Unusable? {
         if (isInterface) {
-            // Can inherit only from other interfaces.
-            val realSuperClassSymbols = superTypeSymbols.filter { it != builtIns.anyClass && !it.owner.isInterface }
-            if (realSuperClassSymbols.isNotEmpty())
-                return InvalidInheritance(symbol, realSuperClassSymbols) // Interface inherits from a real class(es).
+            // Regular interface can inherit only from other regular interfaces.
+            // External interface can inherit from external interfaces and external class, but not regular ones.
+            val illegalSuperClassSymbols = if (isExternal)
+                superTypeSymbols.filter { superTypeSymbol ->
+                    superTypeSymbol != builtIns.anyClass && superTypeSymbol.owner.let { superClass ->
+                        !superClass.isExternal || !(superClass.isInterface || superClass.isClass)
+                    }
+                }
+            else
+                superTypeSymbols.filter { it != builtIns.anyClass && !it.owner.isInterface }
+
+            if (illegalSuperClassSymbols.isNotEmpty())
+                return InvalidInheritance(symbol, illegalSuperClassSymbols)
         } else {
             // Check the number of non-interface supertypes.
             val superClassSymbols = superTypeSymbols.filter { !it.owner.isInterface }
