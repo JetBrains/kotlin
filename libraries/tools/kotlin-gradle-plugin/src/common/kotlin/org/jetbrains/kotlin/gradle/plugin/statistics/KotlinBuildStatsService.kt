@@ -13,6 +13,9 @@ import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.gradle.initialization.BuildRequestMetaData
 import org.gradle.invocation.DefaultGradle
+import org.gradle.tooling.events.OperationCompletionListener
+import org.gradle.tooling.events.task.TaskFinishEvent
+import org.jetbrains.kotlin.gradle.plugin.BuildEventsListenerRegistryHolder
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatHandler.Companion.runSafe
 import org.jetbrains.kotlin.gradle.plugin.statistics.old.Pre232IdeaKotlinBuildStatsMXBean
 import org.jetbrains.kotlin.gradle.plugin.statistics.old.Pre232IdeaKotlinBuildStatsService
@@ -131,6 +134,14 @@ internal abstract class KotlinBuildStatsService internal constructor() : BuildAd
                         if (!isConfigurationCacheAvailable(gradle)) {
                             gradle.addBuildListener(instance!!)
                         }
+
+                        BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(project.provider {
+                            OperationCompletionListener { event ->
+                                if (event is TaskFinishEvent) {
+                                    reportTaskIfNeed(event.descriptor.name)
+                                }
+                            }
+                        })
                     }
                     instance
                 }
@@ -145,6 +156,24 @@ internal abstract class KotlinBuildStatsService internal constructor() : BuildAd
                 mbs.registerMBean(StandardMBean(newInstance, Pre232IdeaKotlinBuildStatsMXBean::class.java), beanName)
                 log.debug("Register JMX service for backward compatibility")
             }
+        }
+
+        protected fun reportTaskIfNeed(task: String) {
+            val metric = when (task.substringAfterLast(":")) {
+                "dokkaHtml" -> BooleanMetrics.ENABLED_DOKKA_HTML
+                "dokkaGfm" -> BooleanMetrics.ENABLED_DOKKA_GFM
+                "dokkaJavadoc" -> BooleanMetrics.ENABLED_DOKKA_JAVADOC
+                "dokkaJekyll" -> BooleanMetrics.ENABLED_DOKKA_JEKYLL
+                "dokkaHtmlMultiModule" -> BooleanMetrics.ENABLED_DOKKA_HTML_MULTI_MODULE
+                "dokkaGfmMultiModule" -> BooleanMetrics.ENABLED_DOKKA_GFM_MULTI_MODULE
+                "dokkaJekyllMultiModule" -> BooleanMetrics.ENABLED_DOKKA_JEKYLL_MULTI_MODULE
+                "dokkaHtmlCollector" -> BooleanMetrics.ENABLED_DOKKA_HTML_COLLECTOR
+                "dokkaGfmCollector" -> BooleanMetrics.ENABLED_DOKKA_GFM_COLLECTOR
+                "dokkaJavadocCollector" -> BooleanMetrics.ENABLED_DOKKA_JAVADOC_COLLECTOR
+                "dokkaJekyllCollector" -> BooleanMetrics.ENABLED_DOKKA_JEKYLL_COLLECTOR
+                else -> null
+            }
+            metric?.also { getInstance()?.report(it, true) }
         }
 
 
@@ -220,14 +249,31 @@ internal class JMXKotlinBuildStatsService(private val mbs: MBeanServer, private 
 
 internal abstract class AbstractKotlinBuildStatsService(
     gradle: Gradle,
-    protected val beanName: ObjectName
+    protected val beanName: ObjectName,
 ) : KotlinBuildStatsService() {
+    companion object {
+        //test only
+        const val CUSTOM_LOGGER_ROOT_PATH = "kotlin.session.logger.root.path"
+
+        private val logger = Logging.getLogger(AbstractKotlinBuildStatsService::class.java)
+    }
+
     private val forcePropertiesValidation = if (gradle.rootProject.hasProperty(FORCE_VALUES_VALIDATION)) {
         gradle.rootProject.property(FORCE_VALUES_VALIDATION).toString().toBoolean()
     } else {
         false
     }
-    protected val sessionLogger = BuildSessionLogger(gradle.gradleUserHomeDir, forceValuesValidation = forcePropertiesValidation)
+
+    private val customSessionLoggerRootPath =
+        gradle.rootProject.properties[CUSTOM_LOGGER_ROOT_PATH]?.also {
+            logger.warn("$CUSTOM_LOGGER_ROOT_PATH property for test purpose only")
+        } as String?
+
+
+    private val sessionLoggerRootPath =
+        customSessionLoggerRootPath?.let { File(it) } ?: gradle.gradleUserHomeDir
+
+    protected val sessionLogger = BuildSessionLogger(sessionLoggerRootPath, forceValuesValidation = forcePropertiesValidation)
 
     private fun gradleBuildStartTime(gradle: Gradle): Long? {
         return (gradle as? DefaultGradle)?.services?.get(BuildRequestMetaData::class.java)?.startTime
