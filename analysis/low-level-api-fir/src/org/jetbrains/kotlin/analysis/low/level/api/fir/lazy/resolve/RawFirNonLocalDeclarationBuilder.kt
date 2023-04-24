@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
 import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.fir.*
@@ -300,7 +301,9 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
         if (parent !is FirRegularClass) return moveNext(iterator, containingClass = null)
 
         val classOrObject = parent.psi
-        check(classOrObject is KtClassOrObject)
+        if (classOrObject !is KtClassOrObject) {
+            errorWithFirSpecificEntries("Expected KtClassOrObject is not found", fir = parent, psi = classOrObject)
+        }
 
         withChildClassName(classOrObject.nameAsSafeName, isExpect = classOrObject.hasExpectModifier() || context.containerIsExpect) {
             withCapturedTypeParameters(
