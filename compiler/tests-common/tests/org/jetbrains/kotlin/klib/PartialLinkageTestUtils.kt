@@ -24,7 +24,7 @@ object PartialLinkageTestUtils {
         fun customizeModuleSources(moduleName: String, moduleSourceDir: File) = Unit
 
         // Build a KLIB from a module.
-        fun buildKlib(moduleName: String, moduleSourceDir: File, dependencies: Dependencies, klibFile: File)
+        fun buildKlib(moduleName: String, buildDirs: ModuleBuildDirs, dependencies: Dependencies, klibFile: File)
 
         // Build a binary (executable) file given the main KLIB and dependencies.
         fun buildBinaryAndRun(mainModuleKlibFile: File, dependencies: Dependencies)
@@ -105,14 +105,12 @@ object PartialLinkageTestUtils {
 
                 customizeModuleSources(moduleName, moduleBuildDirs.sourceDir)
 
-                val moduleOutputDir = moduleBuildDirs.outputDir.apply { mkdirs() }
-                val klibFile = moduleOutputDir.resolve("$moduleName.klib")
+                moduleBuildDirs.outputDir.apply { mkdirs() }
 
                 this[moduleName] = ModuleUnderTest(
                     info = moduleInfo,
                     testDir = moduleTestDir,
-                    buildDirs = moduleBuildDirs,
-                    klibFile = klibFile
+                    buildDirs = moduleBuildDirs
                 )
             }
         }
@@ -122,9 +120,8 @@ object PartialLinkageTestUtils {
 
         projectInfo.steps.forEach { projectStep ->
             projectStep.order.forEach { moduleName ->
-                val (moduleInfo, moduleTestDir, moduleBuildDirs, klibFile) = modulesMap[moduleName]
-                    ?: fail { "No module $moduleName found on step ${projectStep.id}" }
-
+                val moduleUnderTest = modulesMap[moduleName] ?: fail { "No module $moduleName found on step ${projectStep.id}" }
+                val (moduleInfo, moduleTestDir, moduleBuildDirs) = moduleUnderTest
                 val moduleStep = moduleInfo.steps.getValue(projectStep.id)
 
                 moduleStep.modifications.forEach { modification ->
@@ -141,9 +138,9 @@ object PartialLinkageTestUtils {
                     if (dependency.moduleName == "stdlib")
                         regularDependencies += Dependency("stdlib", stdlibFile)
                     else {
-                        val moduleFile = modulesMap[dependency.moduleName]?.klibFile
+                        val klibFile = modulesMap[dependency.moduleName]?.klibFile
                             ?: fail { "No module ${dependency.moduleName} found on step ${projectStep.id}" }
-                        val moduleDependency = Dependency(dependency.moduleName, moduleFile)
+                        val moduleDependency = Dependency(dependency.moduleName, klibFile)
                         regularDependencies += moduleDependency
                         if (dependency.isFriend) friendDependencies += moduleDependency
                     }
@@ -152,7 +149,7 @@ object PartialLinkageTestUtils {
                 val dependencies = Dependencies(regularDependencies, friendDependencies)
                 binaryDependencies = binaryDependencies.mergeWith(dependencies)
 
-                buildKlib(moduleInfo.moduleName, moduleBuildDirs.sourceDir, dependencies, klibFile)
+                buildKlib(moduleInfo.moduleName, moduleBuildDirs, dependencies, moduleUnderTest.klibFile)
             }
         }
 
@@ -166,7 +163,7 @@ object PartialLinkageTestUtils {
     private fun copySources(from: File, to: File, patchSourceFile: ((String) -> String)? = null) {
         var anyFilePatched = false
 
-        from.walk().filter { it.isFile && it.extension == "kt" }.forEach { sourceFile ->
+        from.walk().filter { it.isFile && (it.extension == "kt" || it.extension == "js") }.forEach { sourceFile ->
             val destFile = to.resolve(sourceFile.relativeTo(from))
             destFile.parentFile.mkdirs()
             sourceFile.copyTo(destFile)
@@ -200,12 +197,9 @@ object PartialLinkageTestUtils {
         }
     }
 
-    private data class ModuleUnderTest(
-        val info: ModuleInfo,
-        val testDir: File,
-        val buildDirs: ModuleBuildDirs,
-        val klibFile: File
-    )
+    private data class ModuleUnderTest(val info: ModuleInfo, val testDir: File, val buildDirs: ModuleBuildDirs) {
+        val klibFile get() = buildDirs.outputDir.resolve("${info.moduleName}.klib")
+    }
 
     const val MAIN_MODULE_NAME = "main"
     private const val PL_UTILS_DIR = "__utils__"
