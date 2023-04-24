@@ -4230,6 +4230,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("onlyInputTypesOnCallableReference.kt")
+                public void testOnlyInputTypesOnCallableReference() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/callableReference/resolve/onlyInputTypesOnCallableReference.kt");
+                }
+
+                @Test
                 @TestMetadata("overloadAmbiguityForSimpleLastExpressionOfBlock.kt")
                 public void testOverloadAmbiguityForSimpleLastExpressionOfBlock() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/callableReference/resolve/overloadAmbiguityForSimpleLastExpressionOfBlock.kt");
