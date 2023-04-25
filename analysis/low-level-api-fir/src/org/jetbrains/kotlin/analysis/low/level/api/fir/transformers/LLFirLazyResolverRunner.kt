@@ -22,8 +22,6 @@ internal object LLFirLazyResolverRunner {
         val lazyResolver = LLFirLazyPhaseResolverByPhase.getByPhase(phase)
         val firFile = target.firFile
         val session = firFile.moduleData.session
-
-        // TODO: global lock should be dropped in the context of KT-56550
         lockProvider.withGlobalLock(firFile) {
             lockProvider.withGlobalPhaseLock(phase) {
                 lazyResolver.resolve(target, lockProvider, session, scopeSession, towerDataContextCollector)

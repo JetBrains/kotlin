@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder
 
 import com.intellij.openapi.diagnostic.Logger
+import com.intellij.openapi.util.registry.Registry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirLazyResolveContractChecker
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.lockWithPCECheck
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
@@ -18,8 +20,6 @@ import java.util.concurrent.locks.ReentrantLock
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
-import org.jetbrains.kotlin.fir.declarations.FirFile
 
 /**
  * Keyed locks provider.
@@ -34,22 +34,26 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
     inline fun <R> withGlobalLock(
         key: FirFile,
         lockingIntervalMs: Long = DEFAULT_LOCKING_INTERVAL,
-        action: () -> R
-    ): R = globalLock.lockWithPCECheck(lockingIntervalMs) {
-        val session = key.llFirSession
-        if (!session.isValid && shouldRetryFlag.get()) {
-            val description = session.ktModule.moduleDescription
-            throw InvalidSessionException("Session '$description' is invalid", description)
-        }
+        action: () -> R,
+    ): R {
+        if (!globalLockEnabled) return action()
 
-        // Normally, analysis should not be allowed on an invalid session.
-        // However, there isn't an easy way to cancel or redo it in general case, as it must then be supported on use-site.
-        withRetryFlag(false, action)
+        return globalLock.lockWithPCECheck(lockingIntervalMs) {
+            val session = key.llFirSession
+            if (!session.isValid && shouldRetryFlag.get()) {
+                val description = session.ktModule.moduleDescription
+                throw InvalidSessionException("Session '$description' is invalid", description)
+            }
+
+            // Normally, analysis should not be allowed on an invalid session.
+            // However, there isn't an easy way to cancel or redo it in general case, as it must then be supported on use-site.
+            withRetryFlag(false, action)
+        }
     }
 
     fun withGlobalPhaseLock(
         phase: FirResolvePhase,
-        action: () -> Unit
+        action: () -> Unit,
     ) {
         val lock = when (phase) {
             FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE -> implicitTypesLock
@@ -77,7 +81,7 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
     inline fun withWriteLock(
         target: FirElementWithResolveState,
         phase: FirResolvePhase,
-        action: () -> Unit
+        action: () -> Unit,
     ) {
         withLock(target, phase, updatePhase = true, action)
     }
@@ -93,7 +97,7 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
     inline fun withReadLock(
         target: FirElementWithResolveState,
         phase: FirResolvePhase,
-        action: () -> Unit
+        action: () -> Unit,
     ) {
         withLock(target, phase, updatePhase = false, action)
     }
@@ -102,7 +106,7 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
         target: FirElementWithResolveState,
         phase: FirResolvePhase,
         updatePhase: Boolean,
-        action: () -> Unit
+        action: () -> Unit,
     ) {
         checker.lazyResolveToPhaseInside(phase) {
             target.withCriticalSection(toPhase = phase, updatePhase = updatePhase, action = action)
@@ -112,7 +116,7 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
     inline fun withJumpingLock(
         target: FirElementWithResolveState,
         phase: FirResolvePhase,
-        action: () -> Unit
+        action: () -> Unit,
     ) {
         checker.lazyResolveToPhaseInside(phase, isJumpingPhase = true) {
             target.withCriticalSection(toPhase = phase, updatePhase = true, action = action)
@@ -142,7 +146,7 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
     private inline fun FirElementWithResolveState.withCriticalSection(
         toPhase: FirResolvePhase,
         updatePhase: Boolean,
-        action: () -> Unit
+        action: () -> Unit,
     ) {
         while (true) {
             checkCanceled()
@@ -183,14 +187,14 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
     }
 
     private fun waitOnBarrier(
-        stateSnapshot: FirInProcessOfResolvingToPhaseStateWithBarrier
+        stateSnapshot: FirInProcessOfResolvingToPhaseStateWithBarrier,
     ): Boolean {
         return stateSnapshot.barrier.await(DEFAULT_LOCKING_INTERVAL, TimeUnit.MILLISECONDS)
     }
 
     private fun FirElementWithResolveState.trySettingBarrier(
         toPhase: FirResolvePhase,
-        stateSnapshot: FirResolveState
+        stateSnapshot: FirResolveState,
     ) {
         val latch = CountDownLatch(1)
         val newState = FirInProcessOfResolvingToPhaseStateWithBarrier(toPhase, latch)
@@ -199,7 +203,7 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
 
     private fun FirElementWithResolveState.tryLock(
         toPhase: FirResolvePhase,
-        stateSnapshot: FirResolveState
+        stateSnapshot: FirResolveState,
     ): Boolean {
         val newState = FirInProcessOfResolvingToPhaseStateWithoutBarrier(toPhase)
         return resolveStateFieldUpdater.compareAndSet(this, stateSnapshot, newState)
@@ -223,6 +227,10 @@ private val resolveStateFieldUpdater = AtomicReferenceFieldUpdater.newUpdater(
     FirResolveState::class.java,
     "resolveState"
 )
+
+private val globalLockEnabled: Boolean by lazy(LazyThreadSafetyMode.PUBLICATION) {
+    Registry.`is`("kotlin.parallel.resolve.under.global.lock", false)
+}
 
 private const val DEFAULT_LOCKING_INTERVAL = 50L
 
