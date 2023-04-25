@@ -14,13 +14,15 @@ import org.jetbrains.kotlin.gradle.BaseGradleIT.Companion.acceptAndroidSdkLicens
 import org.jetbrains.kotlin.gradle.model.ModelContainer
 import org.jetbrains.kotlin.gradle.model.ModelFetcherBuildAction
 import org.jetbrains.kotlin.gradle.native.disableKotlinNativeCaches
-import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.gradle.report.BuildReportType
+import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
-import java.nio.file.*
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 import kotlin.io.path.*
 import kotlin.test.assertTrue
 
@@ -316,7 +318,7 @@ class TestProject(
     fun subProject(name: String) = GradleProject(name, projectPath.resolve(name))
 
     fun addKotlinCompilerArgumentsPlugin() {
-        if (buildOptions.languageVersion != null || buildOptions.languageApiVersion != null ) {
+        if (buildOptions.languageVersion != null || buildOptions.languageApiVersion != null) {
             projectPath.toFile().walkTopDown().forEach { file ->
                 when {
                     file.name.equals("build.gradle") -> file.modify {
@@ -336,17 +338,28 @@ class TestProject(
         }
     }
 
+    /**
+     * Includes another project as a submodule in the current project.
+     * @param otherProjectName The name of the other project to include as a submodule.
+     * @param pathPrefix An optional prefix to prepend to the submodule's path. Defaults to an empty string.
+     * @param newSubmoduleName An optional new name for the submodule. Defaults to the otherProjectName.
+     * @param isKts Whether to update a .kts settings file instead of a .gradle settings file. Defaults to false.
+     */
     fun includeOtherProjectAsSubmodule(
         otherProjectName: String,
-        pathPrefix: String
+        pathPrefix: String,
+        newSubmoduleName: String = otherProjectName,
+        isKts: Boolean = false
     ) {
         val otherProjectPath = "$pathPrefix/$otherProjectName".testProjectPath
-        otherProjectPath.copyRecursively(projectPath.resolve(otherProjectName))
+        otherProjectPath.copyRecursively(projectPath.resolve(newSubmoduleName))
 
-        settingsGradle.append(
+        val gradleSettingToUpdate = if (isKts) settingsGradleKts else settingsGradle
+
+        gradleSettingToUpdate.append(
             """
-            
-            include ':$otherProjectName'
+                
+            include(":$newSubmoduleName")
             """.trimIndent()
         )
     }
