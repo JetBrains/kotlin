@@ -60,7 +60,8 @@ public abstract class KtAnalysisSession(final override val token: KtLifetimeToke
     KtAnalysisScopeProviderMixIn,
     KtSignatureSubstitutorMixIn,
     KtScopeSubstitutionMixIn,
-    KtSymbolProviderByJavaPsiMixIn {
+    KtSymbolProviderByJavaPsiMixIn,
+    KtSymbolFromResolveExtensionProviderMixIn {
 
     public abstract val useSiteModule: KtModule
 
@@ -154,6 +155,9 @@ public abstract class KtAnalysisSession(final override val token: KtLifetimeToke
 
     internal val scopeSubstitution: KtScopeSubstitution get() = scopeSubstitutionImpl
     protected abstract val scopeSubstitutionImpl: KtScopeSubstitution
+
+    internal val resolveExtensionProvider: KtSymbolFromResolveExtensionProvider get() = resolveExtensionProviderImpl
+    protected abstract val resolveExtensionProviderImpl: KtSymbolFromResolveExtensionProvider
 
     @KtAnalysisApiInternals
     public val substitutorFactory: KtSubstitutorFactory get() = substitutorFactoryImpl
