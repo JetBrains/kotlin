@@ -10,6 +10,7 @@ import org.gradle.api.Task
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Copy
 import org.gradle.language.base.plugins.LifecycleBasePlugin
+import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
@@ -174,7 +175,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     task.doNotTrackStateCompat("Tracked by external webpack tool")
 
                     task.commonConfigure(
-                        compilation = compilation,
+                        binary = binary,
                         mode = mode,
                         inputFilesDirectory = binary.linkSyncTask.map { it.destinationDir },
                         entryModuleName = binary.linkTask.flatMap { it.compilerOptions.moduleName },
@@ -238,7 +239,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     task.dependsOn(binary.linkSyncTask)
 
                     task.commonConfigure(
-                        compilation = compilation,
+                        binary = binary,
                         mode = mode,
                         inputFilesDirectory = binary.linkSyncTask.map { it.destinationDir },
                         entryModuleName = binary.linkTask.flatMap { it.compilerOptions.moduleName },
@@ -271,7 +272,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     }
 
     private fun KotlinWebpack.commonConfigure(
-        compilation: KotlinJsCompilation,
+        binary: JsIrBinary,
         mode: KotlinJsBinaryMode,
         inputFilesDirectory: Provider<File>,
         entryModuleName: Provider<String>,
@@ -288,7 +289,15 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
         this.inputFilesDirectory.fileProvider(inputFilesDirectory)
 
+        val platformType = binary.compilation.platformType
+        val moduleKind = binary.linkTask.flatMap { it.compilerOptions.moduleKind }
+
         this.entryModuleName.set(entryModuleName)
+        this.esModules.set(
+            project.provider {
+                platformType == KotlinPlatformType.wasm || moduleKind.get() == JsModuleKind.MODULE_ES
+            }
+        )
 
         configurationActions.forEach { configure ->
             configure.execute(this)

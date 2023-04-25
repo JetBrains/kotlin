@@ -308,6 +308,8 @@ abstract class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
             }
         )
 
+        this.esModules.set(false)
+
         resolveFromModulesFirst = true
 
         configurationActions.forEach { configure ->
