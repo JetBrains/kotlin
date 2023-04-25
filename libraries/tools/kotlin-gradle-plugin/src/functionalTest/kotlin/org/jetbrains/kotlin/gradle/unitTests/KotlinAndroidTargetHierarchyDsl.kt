@@ -63,7 +63,7 @@ class KotlinAndroidTargetHierarchyDsl {
 
         val kotlin = project.multiplatformExtension
         project.runLifecycleAwareTest {
-            kotlin.android()
+            kotlin.androidTarget()
 
             kotlin.targetHierarchy.android {
                 unitTest.sourceSetTree.set(KotlinTargetHierarchy.SourceSetTree.test)
@@ -87,7 +87,7 @@ class KotlinAndroidTargetHierarchyDsl {
 
         val kotlin = project.multiplatformExtension
         project.runLifecycleAwareTest {
-            kotlin.android()
+            kotlin.androidTarget()
 
             kotlin.targetHierarchy.android {
                 unitTest.sourceSetTree.set(KotlinTargetHierarchy.SourceSetTree("xxx"))

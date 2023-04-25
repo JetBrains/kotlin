@@ -43,7 +43,7 @@ class JvmAndAndroidIntermediateSourceSetTest {
         /* Kotlin Setup */
         kotlin = project.multiplatformExtension
         kotlin.jvm()
-        kotlin.android()
+        kotlin.androidTarget()
         jvmAndAndroidMain = kotlin.sourceSets.create("jvmAndAndroidMain")
         kotlin.sourceSets.run {
             jvmAndAndroidMain.dependsOn(getByName("commonMain"))

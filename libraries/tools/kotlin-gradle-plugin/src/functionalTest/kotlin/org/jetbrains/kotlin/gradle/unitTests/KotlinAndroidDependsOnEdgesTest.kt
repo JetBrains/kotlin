@@ -31,7 +31,7 @@ class KotlinAndroidDependsOnEdgesTest {
 
         /* Minimal MPP setup */
         val kotlin = project.kotlinExtension as KotlinMultiplatformExtension
-        kotlin.android("android")
+        kotlin.androidTarget("android")
 
         /* Force evaluation */
         project as ProjectInternal
@@ -71,7 +71,7 @@ class KotlinAndroidDependsOnEdgesTest {
 
         /* Custom MPP setup */
         val kotlin = project.kotlinExtension as KotlinMultiplatformExtension
-        kotlin.android("android")
+        kotlin.androidTarget("android")
         kotlin.sourceSets.apply {
             val jvmMain = create("jvmMain") {
                 it.dependsOn(getByName("commonMain"))

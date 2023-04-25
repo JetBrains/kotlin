@@ -49,7 +49,7 @@ class WhenEvaluatedAndroidOrderingTest {
         }
 
         project.applyAndroidLibraryPlugin()
-        kotlin.android()
+        kotlin.androidTarget()
 
         project.evaluate()
 

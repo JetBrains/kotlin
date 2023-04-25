@@ -269,7 +269,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
                 @Suppress("DEPRECATION")
                 js(BOTH)
                 linuxX64("linux")
-                android()
+                androidTarget()
             }
         }
 

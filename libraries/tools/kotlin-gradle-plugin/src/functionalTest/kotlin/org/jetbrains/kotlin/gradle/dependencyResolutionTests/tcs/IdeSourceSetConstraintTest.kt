@@ -121,7 +121,7 @@ class IdeSourceSetConstraintTest {
         val project = buildMppProjectWithAndroidPlugin()
         val kotlin = project.multiplatformExtension
         kotlin.jvm()
-        kotlin.android()
+        kotlin.androidTarget()
 
         val commonMain = kotlin.sourceSets.getByName("commonMain")
         val commonTest = kotlin.sourceSets.getByName("commonTest")

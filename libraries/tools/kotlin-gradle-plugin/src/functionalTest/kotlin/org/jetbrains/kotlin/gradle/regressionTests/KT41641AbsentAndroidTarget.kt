@@ -30,7 +30,7 @@ class KT41641AbsentAndroidTarget : MultiplatformExtensionTest() {
 
         /* Previously failed with 'Collection is empty.' */
         assertNull(project.findAndroidTarget())
-        assertSame(kotlin.android(), project.findAndroidTarget())
+        assertSame(kotlin.androidTarget(), project.findAndroidTarget())
     }
 
     @Test
@@ -50,7 +50,7 @@ class KT41641AbsentAndroidTarget : MultiplatformExtensionTest() {
         assertNotNull(warningMessage, "Expected warning message to be logged")
 
         // Present android target -> expect no warning message anymore
-        kotlin.android()
+        kotlin.androidTarget()
         project.runMissingAndroidTargetProjectConfigurationHealthCheck(warningLogger = {
             fail("Expected no warning message to be logged. Received: $it")
         })

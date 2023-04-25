@@ -180,7 +180,7 @@ class KotlinTargetHierarchyDslTest {
             }
         }
 
-        kotlin.android()
+        kotlin.androidTarget()
         kotlin.jvm()
 
         project.evaluate()
@@ -208,7 +208,7 @@ class KotlinTargetHierarchyDslTest {
         /* Check all source sets: All from jvm and android target + expected common source sets */
         assertEquals(
             setOf("commonMain", "commonTest", "jvmAndAndroidMain", "jvmAndAndroidTest") +
-                    kotlin.android().compilations.flatMap { it.kotlinSourceSets }.map { it.name } +
+                    kotlin.androidTarget().compilations.flatMap { it.kotlinSourceSets }.map { it.name } +
                     kotlin.jvm().compilations.flatMap { it.kotlinSourceSets }.map { it.name },
             kotlin.sourceSets.map { it.name }.toStringSet()
         )

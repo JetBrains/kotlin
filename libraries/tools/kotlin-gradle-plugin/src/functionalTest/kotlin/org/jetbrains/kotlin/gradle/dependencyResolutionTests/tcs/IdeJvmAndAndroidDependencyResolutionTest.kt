@@ -47,7 +47,7 @@ class IdeJvmAndAndroidDependencyResolutionTest {
         }
 
         project.multiplatformExtension.jvm()
-        project.multiplatformExtension.android()
+        project.multiplatformExtension.androidTarget()
 
     }
 
