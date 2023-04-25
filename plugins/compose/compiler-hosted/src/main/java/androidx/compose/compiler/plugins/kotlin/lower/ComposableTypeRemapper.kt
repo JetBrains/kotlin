@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrLocalDelegatedProperty
 import org.jetbrains.kotlin.ir.declarations.IrMetadataSourceOwner
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -186,6 +187,13 @@ class DeepCopyIrTreeWithSymbolsPreservingMetadata(
         }
         return super.visitConstructorCall(expression)
     }
+
+    override fun visitLocalDelegatedProperty(
+        declaration: IrLocalDelegatedProperty
+    ): IrLocalDelegatedProperty =
+        super.visitLocalDelegatedProperty(declaration).apply {
+            metadata = declaration.metadata
+        }
 
     private fun IrFunction.needsComposableRemapping(): Boolean {
         if (
