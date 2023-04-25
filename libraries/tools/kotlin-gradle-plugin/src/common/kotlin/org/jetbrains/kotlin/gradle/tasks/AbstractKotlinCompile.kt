@@ -102,7 +102,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     internal open fun isIncrementalCompilationEnabled(): Boolean =
         incremental
 
-    @Deprecated("Scheduled for removal with Kotlin 1.9", ReplaceWith("moduleName"))
+    @Deprecated("Scheduled for removal with Kotlin 2.0", ReplaceWith("moduleName"))
     @get:Input
     abstract val ownModuleName: Property<String>
 
