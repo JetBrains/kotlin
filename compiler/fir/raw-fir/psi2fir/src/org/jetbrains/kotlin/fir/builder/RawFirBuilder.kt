@@ -65,16 +65,6 @@ open class RawFirBuilder(
     var mode: BodyBuildingMode = bodyBuildingMode
         private set
 
-    private inline fun <T> disabledLazyMode(body: () -> T): T {
-        if (mode != BodyBuildingMode.LAZY_BODIES) return body()
-        return try {
-            mode = BodyBuildingMode.NORMAL
-            body()
-        } finally {
-            mode = BodyBuildingMode.LAZY_BODIES
-        }
-    }
-
     private inline fun <T> runOnStubs(crossinline body: () -> T): T {
         return when (mode) {
             BodyBuildingMode.NORMAL -> body()
@@ -85,7 +75,7 @@ open class RawFirBuilder(
     }
 
     fun buildFirFile(file: KtFile): FirFile {
-        return file.accept(Visitor(), Unit) as FirFile
+        return runOnStubs { file.accept(Visitor(), Unit) as FirFile }
     }
 
     fun buildAnnotationCall(annotation: KtAnnotationEntry): FirAnnotationCall {
@@ -865,7 +855,7 @@ open class RawFirBuilder(
                     is KtDelegatedSuperTypeEntry -> {
                         val type = superTypeListEntry.typeReference.toFirOrErrorType()
                         val delegateExpression =
-                            disabledLazyMode { { superTypeListEntry.delegateExpression }.toFirExpression("Should have delegate") }
+                            { superTypeListEntry.delegateExpression }.toFirExpression("Should have delegate")
                         container.superTypeRefs += type
                         val delegateSource =
                             superTypeListEntry.delegateExpression?.toFirSourceElement(KtFakeSourceElementKind.ClassDelegationField)
@@ -976,7 +966,7 @@ open class RawFirBuilder(
                                     ?: this@buildDelegatedConstructorCall.source?.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
                             superTypeRef = this@buildDelegatedConstructorCall.constructedTypeRef
                         }
-                        disabledLazyMode { superTypeCallEntry?.extractArgumentsTo(this) }
+                        superTypeCallEntry?.extractArgumentsTo(this)
                     }
                 }
             }
@@ -1716,7 +1706,7 @@ open class RawFirBuilder(
                         this.superTypeRef = this@buildDelegatedConstructorCall.constructedTypeRef
                     }
                 }
-                disabledLazyMode { extractArgumentsTo(this) }
+                extractArgumentsTo(this)
             }
         }
 
