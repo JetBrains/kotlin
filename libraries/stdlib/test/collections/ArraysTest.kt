@@ -3,8 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("SIGNED_CONSTANT_CONVERTED_TO_UNSIGNED")
-
 package test.collections
 
 import test.assertStaticTypeIs
@@ -987,20 +985,20 @@ class ArraysTest {
 
         doTest(
             UIntArray::copyInto, { e, a, msg -> assertTrue(e contentEquals a, msg) }, UIntArray::contentToString,
-            uintArrayOf(1, 2, 3), uintArrayOf(4, 5, 6),
-            uintArrayOf(5, 6, 3), uintArrayOf(6, 3, 3), uintArrayOf(6, 6, 3)
+            uintArrayOf(1u, 2u, 3u), uintArrayOf(4u, 5u, 6u),
+            uintArrayOf(5u, 6u, 3u), uintArrayOf(6u, 3u, 3u), uintArrayOf(6u, 6u, 3u)
         )
 
         doTest(
             ULongArray::copyInto, { e, a, msg -> assertTrue(e contentEquals a, msg) }, ULongArray::contentToString,
-            ulongArrayOf(1, 2, 3), ulongArrayOf(4, 5, 6),
-            ulongArrayOf(5, 6, 3), ulongArrayOf(6, 3, 3), ulongArrayOf(6, 6, 3)
+            ulongArrayOf(1u, 2u, 3u), ulongArrayOf(4u, 5u, 6u),
+            ulongArrayOf(5u, 6u, 3u), ulongArrayOf(6u, 3u, 3u), ulongArrayOf(6u, 6u, 3u)
         )
 
         doTest(
             UByteArray::copyInto, { e, a, msg -> assertTrue(e contentEquals a, msg) }, UByteArray::contentToString,
-            ubyteArrayOf(1, 2, 3), ubyteArrayOf(4, 5, 6),
-            ubyteArrayOf(5, 6, 3), ubyteArrayOf(6, 3, 3), ubyteArrayOf(6, 6, 3)
+            ubyteArrayOf(1u, 2u, 3u), ubyteArrayOf(4u, 5u, 6u),
+            ubyteArrayOf(5u, 6u, 3u), ubyteArrayOf(6u, 3u, 3u), ubyteArrayOf(6u, 6u, 3u)
         )
     }
 

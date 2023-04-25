@@ -10,8 +10,8 @@ expect fun f4(s: () -> String)
 expect inline fun f5(s: () -> String)
 expect inline fun f6(crossinline s: () -> String)
 
-expect fun f7(x: Any)
-expect fun f8(vararg x: Any)
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect fun f7(x: Any)<!>
+<!NO_ACTUAL_FOR_EXPECT{JVM}!>expect fun f8(vararg x: Any)<!>
 
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt

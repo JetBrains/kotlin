@@ -18,10 +18,18 @@ namespace kotlin::alloc {
 
 bool TryResetMark(void* ptr) noexcept;
 
-// Returns true if swept successfully, i.e., if the extraobject can be reclaimed now.
-bool SweepExtraObject(ExtraObjectCell* extraObjectCell, AtomicStack<ExtraObjectCell>& finalizerQueue) noexcept;
+enum class ExtraObjectStatus {
+    TO_BE_FINALIZED,
+    KEPT,
+    SWEPT,
+};
+
+ExtraObjectStatus SweepExtraObject(ExtraObjectCell* extraObjectCell, AtomicStack<ExtraObjectCell>& finalizerQueue) noexcept;
 
 void* SafeAlloc(uint64_t size) noexcept;
+void Free(void* ptr, size_t size) noexcept;
+
+size_t GetAllocatedBytes() noexcept;
 
 } // namespace kotlin::alloc
 

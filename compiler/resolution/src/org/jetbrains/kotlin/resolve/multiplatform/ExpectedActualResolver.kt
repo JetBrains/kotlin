@@ -370,8 +370,18 @@ object ExpectedActualResolver {
             !equalBy(expected, actual) { p -> p.isVar } -> Incompatible.PropertyKind
             !equalBy(expected, actual) { p -> p.isLateInit } -> Incompatible.PropertyLateinitModifier
             expected.isConst && !actual.isConst -> Incompatible.PropertyConstModifier
+            !arePropertySettersWithCompatibleVisibilities(expected, actual) -> Incompatible.PropertySetterVisibility
             else -> Compatible
         }
+    }
+
+    private fun arePropertySettersWithCompatibleVisibilities(expected: PropertyDescriptor, actual: PropertyDescriptor): Boolean {
+        val expectedSetter = expected.setter
+        val actualSetter = actual.setter
+        if (expectedSetter == null || actualSetter == null) {
+            return true
+        }
+        return areDeclarationsWithCompatibleVisibilities(expectedSetter, actualSetter)
     }
 
     private fun areCompatibleClassifiers(a: ClassDescriptor, other: ClassifierDescriptor): ExpectActualCompatibility<MemberDescriptor> {
@@ -387,6 +397,9 @@ object ExpectedActualResolver {
         if (a.kind != b.kind) return Incompatible.ClassKind
 
         if (!equalBy(a, b) { listOf(it.isCompanionObject, it.isInner, it.isInline || it.isValue) }) return Incompatible.ClassModifiers
+        if (a.isFun && !b.isFun && b.isNotJavaSamInterface()) {
+            return Incompatible.FunInterfaceModifier
+        }
 
         val aTypeParams = a.declaredTypeParameters
         val bTypeParams = b.declaredTypeParameters
@@ -563,3 +576,7 @@ fun DeclarationDescriptor.findActuals(inModule: ModuleDescriptor): List<MemberDe
 val DeclarationDescriptorWithSource.couldHaveASource: Boolean
     get() = this.source.containingFile != SourceFile.NO_SOURCE_FILE ||
             this is DeserializedDescriptor
+
+private fun ClassDescriptor.isNotJavaSamInterface(): Boolean {
+    return isDefinitelyNotSamInterface || defaultFunctionTypeForSamInterface == null
+}

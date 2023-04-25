@@ -1,3 +1,5 @@
+@file:OptIn(kotlin.native.runtime.NativeRuntimeApi::class)
+
 import kotlin.native.ref.WeakReference
 import kotlinx.cinterop.*
 import kotlin.test.*
@@ -9,7 +11,7 @@ import objcTests.*
 @Test
 fun testKT41811() {
     // Attempt to make the state predictable:
-    kotlin.native.internal.GC.collect()
+    kotlin.native.runtime.GC.collect()
 
     deallocRetainReleaseDeallocated = false
     assertFalse(deallocRetainReleaseDeallocated)
@@ -17,12 +19,12 @@ fun testKT41811() {
     createGarbageDeallocRetainRelease()
 
     // Runs [DeallocRetainRelease dealloc]:
-    kotlin.native.internal.GC.collect()
+    kotlin.native.runtime.GC.collect()
 
     assertTrue(deallocRetainReleaseDeallocated)
 
     // Might crash due to double-dispose if the dealloc applied addRef/releaseRef to reclaimed Kotlin object:
-    kotlin.native.internal.GC.collect()
+    kotlin.native.runtime.GC.collect()
 }
 
 private fun createGarbageDeallocRetainRelease() {
@@ -55,7 +57,7 @@ fun testKT41811LoadKotlinWeak() {
 
 private fun testKT41811LoadWeak(weakRef: WeakReferenceProtocol) {
     // Attempt to make the state predictable:
-    kotlin.native.internal.GC.collect()
+    kotlin.native.runtime.GC.collect()
 
     deallocLoadWeakDeallocated = false
     assertFalse(deallocLoadWeakDeallocated)
@@ -63,12 +65,12 @@ private fun testKT41811LoadWeak(weakRef: WeakReferenceProtocol) {
     createGarbageDeallocLoadWeak(weakRef)
 
     // Runs [DeallocLoadWeak dealloc]:
-    kotlin.native.internal.GC.collect()
+    kotlin.native.runtime.GC.collect()
 
     assertTrue(deallocLoadWeakDeallocated)
 
     // Might crash due to double-dispose if the dealloc applied addRef/releaseRef to reclaimed Kotlin object:
-    kotlin.native.internal.GC.collect()
+    kotlin.native.runtime.GC.collect()
 
     weakDeallocLoadWeak = null
 }
@@ -85,7 +87,7 @@ private fun createGarbageDeallocLoadWeak(weakRef: WeakReferenceProtocol) {
 @Test
 fun testKT41811WithGlobal() {
     // Attempt to make the state predictable:
-    kotlin.native.internal.GC.collect()
+    kotlin.native.runtime.GC.collect()
 
     deallocRetainReleaseDeallocated = false
     assertFalse(deallocRetainReleaseDeallocated)
@@ -99,7 +101,7 @@ fun testKT41811WithGlobal() {
     assertFalse(deallocRetainReleaseDeallocated)
 
     // Clean up local DeallocRetainRelease on Kotlin side
-    kotlin.native.internal.GC.collect()
+    kotlin.native.runtime.GC.collect()
 
     assertFalse(deallocRetainReleaseDeallocated)
 
@@ -112,7 +114,48 @@ fun testKT41811WithGlobal() {
     // on ObjC side, which triggers `retain` and `release` of `self`. If these messages
     // were to reach Kotlin side, the `release` would have immediately scheduled the
     // second disposal of Kotlin object.
-    kotlin.native.internal.GC.collect()
+    kotlin.native.runtime.GC.collect()
 
     assertTrue(deallocRetainReleaseDeallocated)
+}
+
+var localDeallocRetainAndAccessDeallocated = false
+
+@Test
+fun testKT41811WithAccess() {
+    // Legacy MM crashes with an assertion failure.
+    @OptIn(kotlin.ExperimentalStdlibApi::class)
+    if (!isExperimentalMM())
+        return
+
+    // Attempt to make the state predictable:
+    kotlin.native.internal.GC.collect()
+
+    deallocRetainAndAccessDeallocated = false
+    localDeallocRetainAndAccessDeallocated = false
+
+    createGarbageDeallocRetainAndAccess()
+
+    // Runs [DeallocRetainAndAccess dealloc]:
+    kotlin.native.internal.GC.collect()
+
+    assertTrue(deallocRetainAndAccessDeallocated)
+    assertTrue(localDeallocRetainAndAccessDeallocated)
+
+    // Might crash due to double-dispose if the dealloc applied addRef/releaseRef to reclaimed Kotlin object:
+    kotlin.native.internal.GC.collect()
+}
+
+private fun createGarbageDeallocRetainAndAccess() {
+    autoreleasepool {
+        object : DeallocRetainAndAccess() {
+            init {
+                onDealloc = {
+                    assertNull(it)
+                    assertFalse(localDeallocRetainAndAccessDeallocated)
+                    localDeallocRetainAndAccessDeallocated = true
+                }
+            }
+        }
+    }
 }

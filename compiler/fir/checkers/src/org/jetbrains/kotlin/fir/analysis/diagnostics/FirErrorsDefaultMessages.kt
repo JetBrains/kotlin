@@ -134,7 +134,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONST_VAL_WITHOUT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONST_VAL_WITH_DELEGATE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONST_VAL_WITH_GETTER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONST_VAL_WITH_NON_CONST_INITIALIZER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONTRACT_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CREATING_AN_INSTANCE_OF_ABSTRACT_CLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLE_IN_ANNOTATION_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLIC_CONSTRUCTOR_DELEGATION_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLIC_GENERIC_UPPER_BOUND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CYCLIC_INHERITANCE_HIERARCHY
@@ -145,6 +147,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_VARARG
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_WITHOUT_PARAMETERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_OBJECT_CUSTOM_EQUALS_OR_HASH_CODE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DECLARATION_CANT_BE_INLINED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEFINITELY_NON_NULLABLE_AS_REIFIED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATED_PROPERTY_INSIDE_VALUE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATED_PROPERTY_IN_INTERFACE
@@ -218,7 +221,11 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FINAL_SUPERTYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FINAL_UPPER_BOUND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FLOAT_LITERAL_OUT_OF_RANGE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_BINARY_MOD
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_IDENTITY_EQUALS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FORBIDDEN_BINARY_MOD
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FORBIDDEN_IDENTITY_EQUALS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FORBIDDEN_IDENTITY_EQUALS_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FORBIDDEN_VARARG_PARAMETER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUNCTION_CALL_EXPECTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUNCTION_DECLARATION_WITH_NO_NAME
@@ -246,6 +253,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_SUSPEND_F
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_SUSPEND_PROPERTY_ACCESS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_UNDERSCORE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLEMENTATION_BY_DELEGATION_IN_EXPECT_CLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLICIT_BOXING_IN_IDENTITY_EQUALS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLICIT_NOTHING_PROPERTY_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IMPLICIT_NOTHING_RETURN_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_CANDIDATE
@@ -255,9 +263,11 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_LATE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_OPERATOR_MODIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_PARAM_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_TARGET_ON_PROPERTY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_TARGET_ON_PROPERTY_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_TARGET_PROPERTY_HAS_NO_BACKING_FIELD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_TARGET_PROPERTY_HAS_NO_DELEGATE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_ENUM_COMPARISON
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_ENUM_COMPARISON_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_MODIFIERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_TYPES
@@ -289,6 +299,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_CHARACTER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_DEFAULT_FUNCTIONAL_PARAMETER_FOR_INLINE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_IF_AS_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVALID_TYPE_OF_ANNOTATION_MEMBER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVISIBLE_REFERENCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVISIBLE_SETTER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IS_ENUM_ENTRY
@@ -472,6 +483,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.REPEATED_MODIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RESERVED_MEMBER_INSIDE_VALUE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RESOLUTION_TO_CLASSIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RESOLVED_TO_UNDERSCORE_NAMED_CATCH_PARAMETER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RESULT_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_FOR_BUILT_IN_SUSPEND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY
@@ -513,6 +525,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.THROWABLE_TYPE_MI
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TOO_MANY_ARGUMENTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TOPLEVEL_TYPEALIASES_ONLY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPEALIAS_EXPANSION_DEPRECATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPEALIAS_EXPANSION_DEPRECATION_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPEALIAS_SHOULD_EXPAND_TO_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED
@@ -597,6 +611,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_OVERRIDDEN_BY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_TYPE_MISMATCH_ON_INHERITANCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_TYPE_MISMATCH_ON_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VIRTUAL_MEMBER_HIDDEN
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VOLATILE_ON_DELEGATE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VOLATILE_ON_VALUE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_ANNOTATION_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_EXTENSION_FUNCTION_TYPE
@@ -647,6 +663,9 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER, "''{0}'' on secondary constructor parameter is not allowed", TO_STRING)
         map.put(DEPRECATION, "''{0}'' is deprecated. {1}", SYMBOL, STRING)
         map.put(DEPRECATION_ERROR, "''{0}'' is deprecated. {1}", SYMBOL, STRING)
+        map.put(TYPEALIAS_EXPANSION_DEPRECATION, "''{0}'' uses ''{1}'', which is deprecated. {2}", SYMBOL, SYMBOL, STRING)
+        map.put(TYPEALIAS_EXPANSION_DEPRECATION_ERROR, "''{0}'' uses ''{1}'', which is an error. {2}", SYMBOL, SYMBOL, STRING)
+
         map.put(
             API_NOT_AVAILABLE,
             "This declaration is only available since Kotlin {0} and cannot be used with the specified API version {1}",
@@ -705,16 +724,16 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(FUNCTION_CALL_EXPECTED, "Function invocation ''{0}({1})'' expected", TO_STRING, FUNCTION_PARAMETERS)
         map.put(
             FUNCTION_EXPECTED,
-            "Expression ''{0}'' of type {1} cannot be invoked as a function. The function 'invoke()' is not found", TO_STRING, RENDER_TYPE
+            "Expression ''{0}'' of type {1} cannot be invoked as a function. The function ''invoke()'' is not found", TO_STRING, RENDER_TYPE
         )
         map.put(
             RESOLUTION_TO_CLASSIFIER,
-            "Constructor of inner class {0} can be called only with receiver of containing class",
+            "Constructor of the inner class {0} can only be called with a receiver of the containing class",
             SYMBOL
         )
         map.put(
             AMBIGUOUS_ALTERED_ASSIGN,
-            "Multiple extensions tried to alter this assignement at the same time. Extensions: {0}",
+            "Multiple extensions tried to alter this assignment at the same time. Extensions: {0}",
             COLLECTION(NULLABLE_STRING)
         )
         map.put(DEPRECATED_BINARY_MOD, "Convention for ''{0}'' is forbidden. Use ''{1}''", SYMBOL, STRING)
@@ -740,11 +759,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(SINGLETON_IN_SUPERTYPE, "Cannot inherit from a singleton")
         map.put(NULLABLE_SUPERTYPE, "A supertype cannot be nullable")
         map.put(REDUNDANT_NULLABLE, "Redundant '?'")
-        map.put(PLATFORM_CLASS_MAPPED_TO_KOTLIN, "This class shouldn't be used in Kotlin. Use {0} instead.", TO_STRING)
+        map.put(PLATFORM_CLASS_MAPPED_TO_KOTLIN, "This class shouldn''t be used in Kotlin. Use {0} instead.", TO_STRING)
         map.put(MANY_CLASSES_IN_SUPERTYPE_LIST, "Only one class may appear in a supertype list")
         map.put(SUPERTYPE_APPEARS_TWICE, "A supertype appears twice")
         map.put(CLASS_IN_SUPERTYPE_FOR_ENUM, "Enum class cannot inherit from classes")
-        map.put(SEALED_SUPERTYPE, "This type is sealed, so it can be inherited by only its own nested classes or objects")
+        map.put(SEALED_SUPERTYPE, "This type is sealed, so it can only be inherited by its own nested classes or objects")
         map.put(SEALED_SUPERTYPE_IN_LOCAL_CLASS, "{0} cannot extend a sealed {1}", STRING, CLASS_KIND)
         map.put(
             SEALED_INHERITOR_IN_DIFFERENT_PACKAGE,
@@ -777,7 +796,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             AMBIGUOUS_SUPER,
-            "Many supertypes available, please specify the one you mean in angle brackets, e.g. 'super<Foo>'",
+            "Many supertypes available, please specify the one you mean in angle brackets, e.g. ''super<Foo>''",
             NOT_RENDERED
         )
 
@@ -801,10 +820,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(DATA_CLASS_NOT_PROPERTY_PARAMETER, "Data class primary constructor must only have property (val / var) parameters")
 
         // Annotations
-        map.put(ANNOTATION_USED_AS_ANNOTATION_ARGUMENT, "An annotation can't be used as the annotations argument")
+        map.put(ANNOTATION_USED_AS_ANNOTATION_ARGUMENT, "An annotation can't be used as an annotation argument")
         map.put(ANNOTATION_CLASS_MEMBER, "Members are not allowed in annotation class")
         map.put(ANNOTATION_ARGUMENT_MUST_BE_CONST, "An annotation argument must be a compile-time constant")
-        map.put(ANNOTATION_ARGUMENT_MUST_BE_ENUM_CONST, "An enum annotation argument must be a enum constant")
+        map.put(ANNOTATION_ARGUMENT_MUST_BE_ENUM_CONST, "An enum annotation argument must be an enum constant")
         map.put(ANNOTATION_ARGUMENT_MUST_BE_KCLASS_LITERAL, "An annotation argument must be a class literal (T::class)")
         map.put(
             ANNOTATION_ARGUMENT_KCLASS_LITERAL_OF_TYPE_PARAMETER_ERROR,
@@ -837,11 +856,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             DEPRECATED_SINCE_KOTLIN_WITHOUT_DEPRECATED,
-            " DeprecatedSinceKotlin annotation can be used only together with Deprecated annotation"
+            "DeprecatedSinceKotlin annotation can only be used together with Deprecated annotation"
         )
         map.put(
             DEPRECATED_SINCE_KOTLIN_WITH_DEPRECATED_LEVEL,
-            "DeprecatedSinceKotlin annotation can be used only with unspecified deprecation level of Deprecated annotation"
+            "DeprecatedSinceKotlin annotation can only be used with an unspecified deprecation level of Deprecated annotation"
         )
         map.put(
             DEPRECATED_SINCE_KOTLIN_OUTSIDE_KOTLIN_SUBPACKAGE,
@@ -849,20 +868,26 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             OVERRIDE_DEPRECATION,
-            "This declaration overrides deprecated member but not marked as deprecated itself. Please add @Deprecated annotation or suppress",
+            "This declaration overrides a deprecated member but is not marked as deprecated itself. Please add the @Deprecated annotation or suppress",
             EMPTY,
             EMPTY
         )
         map.put(ANNOTATION_ON_SUPERCLASS, "Annotations on superclass are meaningless")
+        map.put(RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION, "Expression annotations with retention other than SOURCE are prohibited")
         map.put(WRONG_ANNOTATION_TARGET, "This annotation is not applicable to target ''{0}''", TO_STRING)
-        map.put(INAPPLICABLE_TARGET_ON_PROPERTY, "''@{0}:'' annotations could be applied only to property declarations", TO_STRING)
-        map.put(INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE, "''@{0}:'' annotations could be applied only to mutable properties", TO_STRING)
-        map.put(INAPPLICABLE_TARGET_PROPERTY_HAS_NO_DELEGATE, "'@delegate:' annotations could be applied only to delegated properties")
+        map.put(INAPPLICABLE_TARGET_ON_PROPERTY, "''@{0}:'' annotations can only be applied to property declarations", TO_STRING)
+        map.put(
+            INAPPLICABLE_TARGET_ON_PROPERTY_WARNING,
+            "''@{0}:'' annotations can only be applied to property declarations. It will be an error in a future release. See https://youtrack.jetbrains.com/issue/KT-15470",
+            TO_STRING
+        )
+        map.put(INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE, "''@{0}:'' annotations can only be applied to mutable properties", TO_STRING)
+        map.put(INAPPLICABLE_TARGET_PROPERTY_HAS_NO_DELEGATE, "'@delegate:' annotations can only be applied to delegated properties")
         map.put(
             INAPPLICABLE_TARGET_PROPERTY_HAS_NO_BACKING_FIELD,
-            "'@field:' annotations could be applied only to properties with backing fields"
+            "'@field:' annotations can only be applied to properties with backing fields"
         )
-        map.put(INAPPLICABLE_PARAM_TARGET, "'@param:' annotations could be applied only to primary constructor parameters")
+        map.put(INAPPLICABLE_PARAM_TARGET, "'@param:' annotations can only be applied to primary constructor parameters")
         map.put(REDUNDANT_ANNOTATION_TARGET, "Redundant annotation target ''{0}''", TO_STRING)
         map.put(INAPPLICABLE_FILE_TARGET, "'@file:' annotations can only be applied before package declaration")
         map.put(
@@ -873,7 +898,9 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(REPEATED_ANNOTATION, "This annotation is not repeatable")
         map.put(REPEATED_ANNOTATION_WARNING, "This annotation is not repeatable")
-        map.put(NON_INTERNAL_PUBLISHED_API, "@PublishedApi annotation is only applicable for internal declaration")
+        map.put(NON_INTERNAL_PUBLISHED_API, "@PublishedApi annotation is only applicable to internal declaration")
+        map.put(VOLATILE_ON_VALUE, "'@Volatile' annotation cannot be used on immutable properties")
+        map.put(VOLATILE_ON_DELEGATE, "'@Volatile' annotation cannot be used on delegated properties")
 
         // OptIn
         map.put(OPT_IN_USAGE, "{1}", TO_STRING, STRING)
@@ -929,13 +956,13 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             PLUGIN_ANNOTATION_AMBIGUITY,
-            "Resolution of annotation type is ambiguous between {1} and plugin annotation {0}. Please specify fully qualified name of annotation",
+            "Resolution of the annotation type is ambiguous between {1} and the plugin annotation {0}. Please specify a fully qualified annotation name",
             RENDER_TYPE,
             RENDER_TYPE
         )
         map.put(
             AMBIGUOUS_ANNOTATION_ARGUMENT,
-            "Resolution of annotation argument is ambiguous between {0}. Please specify fully qualified name of argument",
+            "Resolution of the annotation argument is ambiguous between {0}. Please use a fully qualified name as argument",
             SYMBOLS,
         )
 
@@ -956,6 +983,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(EXPOSED_RECEIVER_TYPE, "{0} member exposes its {2} receiver type ''{1}''", TO_STRING, DECLARATION_NAME, TO_STRING)
         map.put(EXPOSED_PROPERTY_TYPE, "{0} property exposes its {2} type ''{1}''", TO_STRING, DECLARATION_NAME, TO_STRING)
+        map.put(EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR, "''{0}'' property exposes its ''{2}'' type{1}", TO_STRING, TO_STRING, TO_STRING)
         map.put(EXPOSED_PARAMETER_TYPE, "{0} function exposes its {2} parameter type ''{1}''", TO_STRING, DECLARATION_NAME, TO_STRING)
         map.put(EXPOSED_SUPER_INTERFACE, "{0} sub-interface exposes its {2} supertype ''{1}''", TO_STRING, DECLARATION_NAME, TO_STRING)
         map.put(EXPOSED_SUPER_CLASS, "{0} subclass exposes its {2} supertype ''{1}''", TO_STRING, DECLARATION_NAME, TO_STRING)
@@ -968,7 +996,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
 
         // Modifiers
-        map.put(INAPPLICABLE_INFIX_MODIFIER, "''infix'' modifier is inapplicable on this function")
+        map.put(INAPPLICABLE_INFIX_MODIFIER, "''infix'' modifier is inapplicable to this function")
         map.put(REPEATED_MODIFIER, "Repeated ''{0}''", TO_STRING)
         map.put(REDUNDANT_MODIFIER, "Modifier ''{0}'' is redundant because ''{1}'' is present", TO_STRING, TO_STRING)
         map.put(DEPRECATED_MODIFIER, "Modifier ''{0}'' is deprecated, use ''{1}'' instead", TO_STRING, TO_STRING)
@@ -1084,7 +1112,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(NEXT_MISSING, "Method ''next()'' cannot be called on ''iterator()''")
         map.put(NEXT_AMBIGUITY, "Method ''next()'' is ambiguous for this expression: {0}", SYMBOLS)
-        map.put(AMBIGUOUS_FUNCTION_TYPE_KIND, "Multiple functional type conversions are not allowed for single type. Detected type conversions: {0}", FUNCTIONAL_TYPE_KINDS)
+        map.put(AMBIGUOUS_FUNCTION_TYPE_KIND, "Multiple functional type conversions are not allowed for a single type. Detected type conversions: {0}", FUNCTIONAL_TYPE_KINDS)
         map.put(NEXT_NONE_APPLICABLE, "None of the ''next()'' functions is applicable for ''iterator()'' of type ''{0}''", SYMBOLS)
 
         map.put(NO_CONTEXT_RECEIVER, "No required context receiver found: {0}", RENDER_TYPE)
@@ -1095,7 +1123,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             AMBIGUOUS_CALL_WITH_IMPLICIT_CONTEXT_RECEIVER,
-            "With implicit context receiver, call is ambiguous. Specify the receiver explicitly"
+            "With implicit context receivers, the call is ambiguous. Please specify the receiver explicitly"
         )
         map.put(
             UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL,
@@ -1143,7 +1171,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             OUTER_CLASS_ARGUMENTS_REQUIRED,
-            "Type arguments should be specified for an outer {0}. Use full class name to specify them",
+            "Type arguments should be specified for an outer {0}. Use the full class name to specify them",
             RENDER_CLASS_OR_OBJECT_NAME
         )
         map.put(TYPE_PARAMETERS_IN_OBJECT, "Type parameters are not allowed for objects")
@@ -1158,7 +1186,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION,
-            "Conflicting projection in type alias expansion in intermediate type '{0}'",
+            "Conflicting projection in type alias expansion in intermediate type ''{0}''",
             RENDER_TYPE
         )
         map.put(
@@ -1191,6 +1219,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             REIFIED_TYPE_FORBIDDEN_SUBSTITUTION,
             "Cannot use ''{0}'' as reified type parameter",
             RENDER_TYPE
+        )
+        map.put(
+            DEFINITELY_NON_NULLABLE_AS_REIFIED,
+            "Cannot use definitely-non-nullable type as reified type argument",
         )
         map.put(
             FINAL_UPPER_BOUND,
@@ -1249,7 +1281,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER, "Type parameter of a property must be used in its receiver type")
 
-        map.put(NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY, "A 'return' expression required in a function with a block body ('{...}')")
+        map.put(NO_RETURN_IN_FUNCTION_WITH_BLOCK_BODY, "A 'return' expression is required in a function with a block body ('{...}')")
 
         map.put(
             RETURN_TYPE_MISMATCH,
@@ -1261,7 +1293,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
 
         map.put(IMPLICIT_NOTHING_RETURN_TYPE, "'Nothing' return type needs to be specified explicitly")
-        map.put(IMPLICIT_NOTHING_PROPERTY_TYPE, "'Nothing' property type needs to be specified explicitly");
+        map.put(IMPLICIT_NOTHING_PROPERTY_TYPE, "'Nothing' property type needs to be specified explicitly")
 
         map.put(CYCLIC_GENERIC_UPPER_BOUND, "Type parameter has cyclic upper bounds")
 
@@ -1287,7 +1319,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(CALLABLE_REFERENCE_LHS_NOT_A_CLASS, "Left-hand side of a callable reference cannot be a type parameter")
         map.put(CALLABLE_REFERENCE_TO_ANNOTATION_CONSTRUCTOR, "Annotation class cannot be instantiated")
 
-        map.put(CLASS_LITERAL_LHS_NOT_A_CLASS, "Only classes are allowed on the left hand side of a class literal")
+        map.put(CLASS_LITERAL_LHS_NOT_A_CLASS, "Only classes are allowed on the left-hand side of a class literal")
         map.put(NULLABLE_TYPE_IN_CLASS_LITERAL_LHS, "Type in a class literal must not be nullable")
         map.put(
             EXPRESSION_OF_NULLABLE_TYPE_IN_CLASS_LITERAL_LHS,
@@ -1297,7 +1329,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         // Value classes
         map.put(VALUE_CLASS_NOT_TOP_LEVEL, "Value class cannot be local or inner")
-        map.put(VALUE_CLASS_NOT_FINAL, "Value class can be only final")
+        map.put(VALUE_CLASS_NOT_FINAL, "Value class can only be final")
         map.put(ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS, "Primary constructor is required for value class")
         map.put(INLINE_CLASS_CONSTRUCTOR_WRONG_PARAMETERS_SIZE, "Inline class must have exactly one primary constructor parameter")
         map.put(VALUE_CLASS_EMPTY_CONSTRUCTOR, "Value class must have at least one primary constructor parameter")
@@ -1323,10 +1355,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             SECONDARY_CONSTRUCTOR_WITH_BODY_INSIDE_VALUE_CLASS,
-            "Secondary constructors with bodies are reserved for for future releases"
+            "Secondary constructors with bodies are reserved for future releases"
         )
         map.put(RESERVED_MEMBER_INSIDE_VALUE_CLASS, "Member with the name ''{0}'' is reserved for future releases", TO_STRING)
-        map.put(TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS, "Type arguments for typed value class equals must be only star projections")
+        map.put(TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS, "Type arguments for typed value class equals must all be star projections")
         map.put(INNER_CLASS_INSIDE_VALUE_CLASS, "Value class cannot have inner classes")
         map.put(VALUE_CLASS_CANNOT_BE_CLONEABLE, "Value class cannot be Cloneable")
         map.put(
@@ -1384,10 +1416,16 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             RENDER_CLASS_OR_OBJECT,
             DECLARATION_NAME
         )
+        map.put(
+            INVISIBLE_ABSTRACT_MEMBER_FROM_SUPER,
+            "{0} inherits invisible abstract members: {1}",
+            DECLARATION_NAME,
+            FQ_NAMES_IN_TYPES
+        )
         map.put(AMBIGUOUS_ANONYMOUS_TYPE_INFERRED, "Right-hand side has anonymous type. Please specify type explicitly", NOT_RENDERED)
         map.put(
             MANY_IMPL_MEMBER_NOT_IMPLEMENTED,
-            "{0} must override {1} because it inherits many implementations of it",
+            "{0} must override {1} because it inherits multiple implementations of it",
             RENDER_CLASS_OR_OBJECT,
             DECLARATION_NAME
         )
@@ -1511,12 +1549,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         // Invalid local declarations
         map.put(
             LOCAL_OBJECT_NOT_ALLOWED,
-            "Named object ''{0}'' is a singleton and cannot be local. Try to use anonymous object instead",
+            "Named object ''{0}'' is a singleton and cannot be local. Try to use an anonymous object instead",
             TO_STRING
         ) // +
         map.put(
             LOCAL_INTERFACE_NOT_ALLOWED,
-            "''{0}'' is an interface so it cannot be local. Try to use anonymous object or abstract class instead",
+            "''{0}'' is an interface, so it cannot be local. Try to use an anonymous object or abstract class instead",
             TO_STRING
         )
 
@@ -1544,8 +1582,8 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Fun interface must have exactly one abstract function"
         )
         map.put(FUN_INTERFACE_CANNOT_HAVE_ABSTRACT_PROPERTIES, "Fun interface can not have abstract properties")
-        map.put(FUN_INTERFACE_ABSTRACT_METHOD_WITH_TYPE_PARAMETERS, "Fun interface can not have abstract metod with type parameters")
-        map.put(FUN_INTERFACE_ABSTRACT_METHOD_WITH_DEFAULT_VALUE, "Fun interface abstract method can not have default value")
+        map.put(FUN_INTERFACE_ABSTRACT_METHOD_WITH_TYPE_PARAMETERS, "Fun interface can not have abstract method with type parameters")
+        map.put(FUN_INTERFACE_ABSTRACT_METHOD_WITH_DEFAULT_VALUE, "Fun interface abstract method can not have a default value")
         map.put(FUN_INTERFACE_WITH_SUSPEND_FUNCTION, "Fun interface abstract method can not be suspend")
 
         map.put(MULTIPLE_VARARG_PARAMETERS, "Multiple vararg-parameters are prohibited")
@@ -1607,7 +1645,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER,
-            "It''s forbidden using extension property type parameter ''{0}'' in delegate. See https://youtrack.jetbrains.com/issue/KT-24643",
+            "It''s forbidden to use the extension property type parameter ''{0}'' in delegate. See https://youtrack.jetbrains.com/issue/KT-24643",
             SYMBOL
         )
         map.put(INITIALIZER_TYPE_MISMATCH, "Initializer type mismatch: expected {0}, actual {1}", RENDER_TYPE, RENDER_TYPE, NOT_RENDERED)
@@ -1650,11 +1688,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             PROPERTY_MUST_HAVE_GETTER,
-            "This property needs a custom getter, because it's type is not a supertype of the backing field's type"
+            "This property needs a custom getter, because its type is not a supertype of the backing field's type"
         )
         map.put(
             PROPERTY_MUST_HAVE_SETTER,
-            "This property needs a custom setter, because it's type is not a subtype of the backing field's type"
+            "This property needs a custom setter, because its type is not a subtype of the backing field's type"
         )
         map.put(
             EXPLICIT_BACKING_FIELD_IN_INTERFACE,
@@ -1670,7 +1708,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             REDUNDANT_EXPLICIT_BACKING_FIELD,
-            "There's no need in an explicit backing field declaration if it has the same type as the property"
+            "There's no need for an explicit backing field declaration if it has the same type as the property"
         )
         map.put(ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS, "This property cannot be declared abstract")
         map.put(LOCAL_VARIABLE_WITH_TYPE_PARAMETERS_WARNING, "Type parameters for local variables are deprecated")
@@ -1684,13 +1722,14 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(LOCAL_EXTENSION_PROPERTY, "Local extension properties are not allowed")
 
-        map.put(CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT, "Const 'val' are only allowed on top level, in named objects, or in companion objects")
+        map.put(CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT, "Const 'val' is only allowed on top level, in named objects, or in companion objects")
         map.put(CONST_VAL_WITH_GETTER, "Const 'val' should not have a getter")
         map.put(CONST_VAL_WITH_DELEGATE, "Const 'val' should not have a delegate")
         map.put(TYPE_CANT_BE_USED_FOR_CONST_VAL, "Const ''val'' has type ''{0}''. Only primitives and String are allowed", RENDER_TYPE)
         map.put(CONST_VAL_WITHOUT_INITIALIZER, "Const 'val' should have an initializer")
         map.put(CONST_VAL_WITH_NON_CONST_INITIALIZER, "Const 'val' initializer should be a constant value")
         map.put(NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION, "Only 'const val' can be used in constant expressions")
+        map.put(CYCLE_IN_ANNOTATION_PARAMETER, "Type of this parameter is cyclic")
 
         // Multi-platform projects
         map.put(EXPECTED_DECLARATION_WITH_BODY, "Expected declaration must not have a body")
@@ -1851,7 +1890,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             SAFE_CALL_WILL_CHANGE_NULLABILITY,
             """
                 |Safe call on a non-null receiver will have nullable type in future releases
-                |  Right now safe call on non nullable receiver has not null type: SomeType
+                |  Right now safe call on non-nullable receiver has not null type: SomeType
                 |  In future releases all safe calls will have nullable type: SomeType?""".trimMargin()
         )
         map.put(UNEXPECTED_SAFE_CALL, "Safe-call is not allowed here")
@@ -1873,7 +1912,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(INVALID_IF_AS_EXPRESSION, "'if' must have both main and 'else' branches if used as an expression")
         map.put(
             NON_EXHAUSTIVE_WHEN_STATEMENT,
-            "Non exhaustive ''when'' statements on {0} will be prohibited in 1.7, add {1}",
+            "Non-exhaustive ''when'' statements on {0} will be prohibited in 1.7, add {1}",
             TO_STRING,
             WHEN_MISSING_CASES
         )
@@ -1897,7 +1936,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(TYPE_PARAMETER_IS_NOT_AN_EXPRESSION, "Type parameter ''{0}'' is not an expression", SYMBOL)
         map.put(
             TYPE_PARAMETER_ON_LHS_OF_DOT,
-            "Type parameter ''{0}'' cannot have or inherit a companion object, so it cannot be on the left hand side of dot",
+            "Type parameter ''{0}'' cannot have or inherit a companion object, so it cannot be on the left-hand side of dot",
             SYMBOL
         )
         map.put(
@@ -1909,6 +1948,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         // Function contracts
         map.put(ERROR_IN_CONTRACT_DESCRIPTION, "Error in contract description", TO_STRING)
+        map.put(CONTRACT_NOT_ALLOWED, "{0}", TO_STRING)
 
         // Conventions
         map.put(NO_GET_METHOD, "No get method providing array access")
@@ -1945,7 +1985,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             UNDERSCORE_USAGE_WITHOUT_BACKTICKS,
-            "Names _, __, ___, ... can be used only in back-ticks (`_`, `__`, `___`, ...)"
+            "Names _, __, ___, ... can only be used in back-ticks (`_`, `__`, `___`, ...)"
         )
         map.put(
             RESOLVED_TO_UNDERSCORE_NAMED_CATCH_PARAMETER,
@@ -1978,6 +2018,36 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             INCOMPATIBLE_ENUM_COMPARISON_ERROR,
             "Comparison of incompatible enums ''{0}'' and ''{1}'' is always unsuccessful",
+            RENDER_TYPE,
+            RENDER_TYPE
+        )
+        map.put(
+            INCOMPATIBLE_ENUM_COMPARISON,
+            "Comparison of incompatible enums ''{0}'' and ''{1}'' is always unsuccessful",
+            RENDER_TYPE,
+            RENDER_TYPE
+        )
+        map.put(
+            FORBIDDEN_IDENTITY_EQUALS,
+            "Identity equality for arguments of types {0} and {1} is forbidden",
+            RENDER_TYPE,
+            RENDER_TYPE
+        )
+        map.put(
+            FORBIDDEN_IDENTITY_EQUALS_WARNING,
+            "Identity equality for arguments of types {0} and {1} is forbidden",
+            RENDER_TYPE,
+            RENDER_TYPE
+        )
+        map.put(
+            DEPRECATED_IDENTITY_EQUALS,
+            "Identity equality for arguments of types {0} and {1} is deprecated",
+            RENDER_TYPE,
+            RENDER_TYPE
+        )
+        map.put(
+            IMPLICIT_BOXING_IN_IDENTITY_EQUALS,
+            "Identity equality for arguments of types {0} and {1} can be unstable because of implicit boxing",
             RENDER_TYPE,
             RENDER_TYPE
         )
@@ -2069,7 +2139,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(SUPER_CALL_FROM_PUBLIC_INLINE, "Accessing super members from public-API inline function is deprecated", SYMBOL)
 
-        map.put(ILLEGAL_INLINE_PARAMETER_MODIFIER, "Modifier is allowed only for function parameters of an inline function")
+        map.put(ILLEGAL_INLINE_PARAMETER_MODIFIER, "Modifier is only allowed for function parameters of an inline function")
 
         map.put(
             INLINE_SUSPEND_FUNCTION_TYPE_UNSUPPORTED,
@@ -2096,7 +2166,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(PACKAGE_CANNOT_BE_IMPORTED, "Packages cannot be imported")
         map.put(
             CANNOT_BE_IMPORTED,
-            "Cannot import ''{0}'', functions and properties can be imported only from packages or objects",
+            "Cannot import ''{0}'', functions and properties can only be imported from packages or objects",
             TO_STRING
         )
         map.put(
@@ -2109,15 +2179,15 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         // Suspend
         map.put(
             ILLEGAL_SUSPEND_FUNCTION_CALL,
-            "Suspend function ''{0}'' should be called only from a coroutine or another suspend function",
+            "Suspend function ''{0}'' should only be called from a coroutine or another suspend function",
             SYMBOL
         )
         map.put(
             ILLEGAL_SUSPEND_PROPERTY_ACCESS,
-            "Suspend property ''{0}'' should be accessed only from a coroutine or suspend function",
+            "Suspend property ''{0}'' should only be accessed from a coroutine or suspend function",
             SYMBOL
         )
-        map.put(NON_LOCAL_SUSPENSION_POINT, "Suspension functions can be called only within coroutine body")
+        map.put(NON_LOCAL_SUSPENSION_POINT, "Suspension functions can only be called within coroutine body")
         map.put(
             ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL,
             "Restricted suspending functions can only invoke member or extension suspending functions on their restricted coroutine scope"
@@ -2159,8 +2229,6 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(ASSIGNED_VALUE_IS_NEVER_READ, "Assigned value is never read")
         map.put(VARIABLE_INITIALIZER_IS_REDUNDANT, "Initializer is redundant")
         map.put(VARIABLE_NEVER_READ, "Variable is never read")
-
-        map.checkMissingMessages(FirErrors)
     }
 }
 

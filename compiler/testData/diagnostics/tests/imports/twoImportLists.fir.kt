@@ -10,14 +10,14 @@ import b.C.Companion.bar    //function from companion object
 import b.C.Companion.cValue //property from companion object
 import b.<!UNRESOLVED_IMPORT!>constant<!>.fff     //function from val
 import b.<!UNRESOLVED_IMPORT!>constant<!>.dValue  //property from val
-import smth.illegal
+import <!UNRESOLVED_IMPORT!>smth<!>.illegal
 import b.C.<!UNRESOLVED_IMPORT!>smth<!>.illegal
 
 <!SYNTAX!><<!><!SYNTAX!><<!><!SYNTAX!><<!><!SYNTAX!>HEAD<!><!SYNTAX!><!>
 import b.<!UNRESOLVED_IMPORT!>bar<!>.smth
 import b.<!UNRESOLVED_IMPORT!>bar<!>.*
 import b.<!UNRESOLVED_IMPORT!>unr<!>.unr.unr
-import unr.unr.unr
+import <!UNRESOLVED_IMPORT!>unr<!>.unr.unr
 import b.constant
 import b.E.Companion.f      //val from companion object
 

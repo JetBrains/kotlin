@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
+import org.jetbrains.kotlin.resolve.checkers.ExpectedActualDeclarationChecker.Companion.isCompatibleOrWeakCompatible
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectedActualResolver
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
@@ -27,7 +28,9 @@ object ExpectActualInTheSameModuleChecker : DeclarationChecker {
         // Only look for top level actual members; class members will be handled as a part of that expected class
         if (descriptor.containingDeclaration !is PackageFragmentDescriptor) return
         val module = descriptor.module
-        val actuals = ExpectedActualResolver.findActualForExpected(descriptor, module)?.flatMap { it.value }
+        val actuals = ExpectedActualResolver.findActualForExpected(descriptor, module)
+            ?.filter { (compatibility, _) -> compatibility.isCompatibleOrWeakCompatible() }
+            ?.flatMap { (_, members) -> members }
             ?.takeIf(List<MemberDescriptor>::isNotEmpty) ?: return
 
         // There are 4 cases:

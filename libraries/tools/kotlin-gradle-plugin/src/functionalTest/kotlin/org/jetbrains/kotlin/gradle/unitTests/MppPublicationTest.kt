@@ -201,6 +201,30 @@ class MppPublicationTest {
         }
     }
 
+    @Test
+    fun `test that no sourcesElements should be consumable when sources are published`() {
+        kotlin.linuxX64("linux")
+        kotlin.withSourcesJar(publish = true)
+
+        project.evaluate()
+        kotlin.targets.forEach {
+            val sourcesElements = project.configurations.getByName(it.sourcesElementsConfigurationName)
+            if (!sourcesElements.isCanBeConsumed) fail("Configuration '${it.sourcesElementsConfigurationName}' should be consumable")
+        }
+    }
+
+    @Test
+    fun `test that no sourcesElements should be consumable when sources are not published`() {
+        kotlin.linuxX64("linux")
+        kotlin.withSourcesJar(publish = false)
+
+        project.evaluate()
+        kotlin.targets.forEach {
+            val sourcesElements = project.configurations.getByName(it.sourcesElementsConfigurationName)
+            if (sourcesElements.isCanBeConsumed) fail("Configuration '${it.sourcesElementsConfigurationName}' should not be consumable")
+        }
+    }
+
     private fun SoftwareComponent.attributesOfUsageContext(usageContextName: String): AttributeContainer {
         this as SoftwareComponentInternal
         return usages.first { it.name == usageContextName }.attributes

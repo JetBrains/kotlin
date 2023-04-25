@@ -1,4 +1,3 @@
-
 fun foo(): Int = 42
 
 object ThrowInTryWithCatch {

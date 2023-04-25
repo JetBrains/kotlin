@@ -84,4 +84,28 @@ class OptionalAnnotationClassesProvider(
 
     override fun getPackage(fqName: FqName): FqName? =
         if (optionalAnnotationClassesAndPackages.second.contains(fqName.asString())) fqName else null
+
+    companion object {
+        /**
+         * Creates a new [OptionalAnnotationClassesProvider] if [packagePartProvider] has any optional annotation classes. Otherwise, the
+         * symbol provider does not need to be created because it would provide no symbols.
+         */
+        fun createIfNeeded(
+            session: FirSession,
+            moduleDataProvider: ModuleDataProvider,
+            kotlinScopeProvider: FirKotlinScopeProvider,
+            packagePartProvider: PackagePartProvider,
+            defaultDeserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library,
+        ): OptionalAnnotationClassesProvider? {
+            if (!packagePartProvider.mayHaveOptionalAnnotationClasses()) return null
+
+            return OptionalAnnotationClassesProvider(
+                session,
+                moduleDataProvider,
+                kotlinScopeProvider,
+                packagePartProvider,
+                defaultDeserializationOrigin,
+            )
+        }
+    }
 }

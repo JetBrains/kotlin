@@ -129,7 +129,7 @@ class Fir2IrLazyProperty(
                     }
                 }
             }
-            fir.initializer != null || fir.getter is FirDefaultPropertyGetter || fir.isVar && fir.setter is FirDefaultPropertySetter -> {
+            fir.hasBackingField && origin != IrDeclarationOrigin.FAKE_OVERRIDE -> {
                 with(declarationStorage) {
                     createBackingField(
                         fir, IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
@@ -170,6 +170,8 @@ class Fir2IrLazyProperty(
                 when {
                     origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB -> origin
                     fir.delegate != null -> IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
+                    origin == IrDeclarationOrigin.FAKE_OVERRIDE -> origin
+                    origin == IrDeclarationOrigin.DELEGATED_MEMBER -> origin
                     fir.getter is FirDefaultPropertyGetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
                     else -> origin
                 },
@@ -180,9 +182,7 @@ class Fir2IrLazyProperty(
             correspondingPropertySymbol = this@Fir2IrLazyProperty.symbol
             with(classifierStorage) {
                 setTypeParameters(
-                    this@Fir2IrLazyProperty.fir, ConversionTypeContext(
-                        origin = ConversionTypeOrigin.DEFAULT
-                    )
+                    this@Fir2IrLazyProperty.fir, ConversionTypeContext.DEFAULT
                 )
             }
         }
@@ -203,6 +203,8 @@ class Fir2IrLazyProperty(
                     when {
                         origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB -> origin
                         fir.delegate != null -> IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR
+                        origin == IrDeclarationOrigin.FAKE_OVERRIDE -> origin
+                        origin == IrDeclarationOrigin.DELEGATED_MEMBER -> origin
                         fir.setter is FirDefaultPropertySetter -> IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
                         else -> origin
                     },
@@ -212,9 +214,7 @@ class Fir2IrLazyProperty(
                     correspondingPropertySymbol = this@Fir2IrLazyProperty.symbol
                     with(classifierStorage) {
                         setTypeParameters(
-                            this@Fir2IrLazyProperty.fir, ConversionTypeContext(
-                                origin = ConversionTypeOrigin.SETTER
-                            )
+                            this@Fir2IrLazyProperty.fir, ConversionTypeContext.IN_SETTER
                         )
                     }
                 }
@@ -235,4 +235,5 @@ class Fir2IrLazyProperty(
         get() = fir.containerSource
 
     override var attributeOwnerId: IrAttributeContainer = this
+    override var originalBeforeInline: IrAttributeContainer? = null
 }

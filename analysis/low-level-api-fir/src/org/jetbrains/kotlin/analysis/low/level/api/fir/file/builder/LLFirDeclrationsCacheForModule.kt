@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder
 
-import com.intellij.concurrency.ConcurrentCollectionFactory
+import com.google.common.collect.MapMaker
 import org.jetbrains.kotlin.analysis.api.impl.barebone.annotations.ThreadSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.psi.KtFile
 import java.util.*
+import java.util.concurrent.ConcurrentMap
 
 /**
  * Caches mapping [KtFile] -> [FirFile] of module [KtModule]
@@ -33,7 +34,7 @@ internal abstract class ModuleFileCache {
 }
 
 internal class ModuleFileCacheImpl(override val moduleComponents: LLFirModuleResolveComponents) : ModuleFileCache() {
-    private val ktFileToFirFile = ConcurrentCollectionFactory.createConcurrentIdentityMap<KtFile, FirFile>()
+    private val ktFileToFirFile: ConcurrentMap<KtFile, FirFile> = MapMaker().weakKeys().makeMap()
     override fun fileCached(file: KtFile, createValue: () -> FirFile): FirFile =
         ktFileToFirFile.computeIfAbsent(file) { createValue() }
 

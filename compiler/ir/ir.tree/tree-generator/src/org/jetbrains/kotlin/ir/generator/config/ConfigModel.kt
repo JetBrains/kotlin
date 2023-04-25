@@ -40,6 +40,7 @@ class ElementConfig(
 
     var generationCallback: (TypeSpec.Builder.() -> Unit)? = null
     var suppressPrint = false
+    var kDoc: String? = null
 
     override val element get() = this
     override val args get() = emptyMap<NamedTypeParameterRef, TypeRef>()
@@ -90,6 +91,8 @@ sealed class FieldConfig(
     var printProperty = true
     var strictCastInTransformChildren = false
 
+    var kdoc: String? = null
+
     var generationCallback: (PropertySpec.Builder.() -> Unit)? = null
 
     override fun toString() = name
@@ -113,6 +116,7 @@ class ListFieldConfig(
     enum class Mutability {
         Immutable,
         Var,
-        List
+        List,
+        Array
     }
 }

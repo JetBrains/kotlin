@@ -19,13 +19,13 @@ FILE fqName:<root> fileName:/dataClassWithJvmRecord.kt
           RETURN type=kotlin.Nothing from='public final fun <get-name> (): kotlin.String declared in <root>.MyRec'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:name type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
               receiver: GET_VAR '<this>: <root>.MyRec declared in <root>.MyRec.<get-name>' type=<root>.MyRec origin=null
-    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.MyRec) returnType:kotlin.String [operator]
+    FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.MyRec) returnType:kotlin.String [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.MyRec
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.String [operator] declared in <root>.MyRec'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:name type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
             receiver: GET_VAR '<this>: <root>.MyRec declared in <root>.MyRec.component1' type=<root>.MyRec origin=null
-    FUN name:copy visibility:public modality:FINAL <> ($this:<root>.MyRec, name:kotlin.String) returnType:<root>.MyRec
+    FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:<root>.MyRec, name:kotlin.String) returnType:<root>.MyRec
       $this: VALUE_PARAMETER name:<this> type:<root>.MyRec
       VALUE_PARAMETER name:name index:0 type:kotlin.String
         EXPRESSION_BODY
@@ -85,8 +85,7 @@ FILE fqName:<root> fileName:/dataClassWithJvmRecord.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.MyRec'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="MyRec("
-            CONST String type=kotlin.String value="name="
+            CONST String type=kotlin.String value="MyRec(name="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:name type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
               receiver: GET_VAR '<this>: <root>.MyRec declared in <root>.MyRec.toString' type=<root>.MyRec origin=null
             CONST String type=kotlin.String value=")"

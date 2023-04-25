@@ -32,7 +32,7 @@ FILE: missingBooleanBranch.kt
             }
         }
 
-        lval x: R|kotlin/Int| = when (R|<local>/cond|) {
+        lval y: R|kotlin/Int| = when (R|<local>/cond|) {
             ==($subj$, Boolean(true)) ->  {
                 Int(1)
             }

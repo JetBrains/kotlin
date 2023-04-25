@@ -16,7 +16,7 @@
 #include "ObjectOps.hpp"
 #include "Porting.h"
 #include "Runtime.h"
-#include "StableRefRegistry.hpp"
+#include "StableRef.hpp"
 #include "ThreadData.hpp"
 #include "ThreadRegistry.hpp"
 #include "ThreadState.hpp"
@@ -24,35 +24,12 @@
 
 using namespace kotlin;
 
-// TODO: This name does not make sense anymore.
-// Delete all means of creating this type directly as it only serves
-// as a typedef for `mm::StableRefRegistry::Node`.
-class ForeignRefManager : Pinned {
-public:
-    ForeignRefManager() = delete;
-    ~ForeignRefManager() = delete;
-};
-
-namespace {
-
-// `reinterpret_cast` to it and back to the same type
-// will yield precisely the same pointer, so it's safe.
-ALWAYS_INLINE ForeignRefManager* ToForeignRefManager(mm::StableRefRegistry::Node* data) {
-    return reinterpret_cast<ForeignRefManager*>(data);
-}
-
-ALWAYS_INLINE mm::StableRefRegistry::Node* FromForeignRefManager(ForeignRefManager* manager) {
-    return reinterpret_cast<mm::StableRefRegistry::Node*>(manager);
-}
-
-} // namespace
-
 ObjHeader* ObjHeader::GetWeakCounter() {
-    return mm::ExtraObjectData::FromMetaObjHeader(this->meta_object()).GetWeakReferenceCounter();
+    RuntimeFail("Only for legacy MM");
 }
 
 ObjHeader* ObjHeader::GetOrSetWeakCounter(ObjHeader* counter) {
-    return mm::ExtraObjectData::FromMetaObjHeader(this->meta_object()).GetOrSetWeakReferenceCounter(this, counter);
+    RuntimeFail("Only for legacy MM");
 }
 
 #ifdef KONAN_OBJC_INTEROP
@@ -464,24 +441,6 @@ extern "C" RUNTIME_NOTHROW void PerformFullGC(MemoryState* memory) {
     threadData->gc().ScheduleAndWaitFullGCWithFinalizers();
 }
 
-extern "C" bool TryAddHeapRef(const ObjHeader* object) {
-    RuntimeFail("Only for legacy MM");
-}
-
-extern "C" RUNTIME_NOTHROW void ReleaseHeapRefNoCollect(const ObjHeader* object) {
-    RuntimeFail("Only for legacy MM");
-}
-
-extern "C" RUNTIME_NOTHROW OBJ_GETTER(TryRef, ObjHeader* object) {
-    // TODO: With CMS this needs:
-    //       * during marking phase if `object` is unmarked: barrier (might be automatic because of the stack write)
-    //         and return `object`;
-    //       * during marking phase if `object` is marked: return `object`;
-    //       * during sweeping phase if `object` is unmarked: return nullptr;
-    //       * during sweeping phase if `object` is marked: return `object`;
-    RETURN_OBJ(object);
-}
-
 extern "C" RUNTIME_NOTHROW bool ClearSubgraphReferences(ObjHeader* root, bool checked) {
     // TODO: Remove when legacy MM is gone.
     return true;
@@ -491,24 +450,23 @@ extern "C" RUNTIME_NOTHROW void* CreateStablePointer(ObjHeader* object) {
     if (!object)
         return nullptr;
 
-    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
-    AssertThreadState(threadData, ThreadState::kRunnable);
-    return mm::StableRefRegistry::Instance().RegisterStableRef(threadData, object);
+    AssertThreadState(ThreadState::kRunnable);
+    return static_cast<mm::RawSpecialRef*>(mm::StableRef::create(object));
 }
 
 extern "C" RUNTIME_NOTHROW void DisposeStablePointer(void* pointer) {
-    DisposeStablePointerFor(kotlin::mm::GetMemoryState(), pointer);
+    if (!pointer) return;
+
+    // Can be safely called in any thread state.
+    mm::StableRef(static_cast<mm::RawSpecialRef*>(pointer)).dispose();
 }
 
 extern "C" RUNTIME_NOTHROW void DisposeStablePointerFor(MemoryState* memoryState, void* pointer) {
     if (!pointer)
         return;
 
-    auto* threadData = memoryState->GetThreadData();
-    AssertThreadState(threadData, ThreadState::kRunnable);
-
-    auto* node = static_cast<mm::StableRefRegistry::Node*>(pointer);
-    mm::StableRefRegistry::Instance().UnregisterStableRef(threadData, node);
+    // Can be safely called in any thread state.
+    mm::StableRef(static_cast<mm::RawSpecialRef*>(pointer)).disposeOn(*mm::FromMemoryState(memoryState)->Get());
 }
 
 extern "C" RUNTIME_NOTHROW OBJ_GETTER(DerefStablePointer, void* pointer) {
@@ -516,24 +474,19 @@ extern "C" RUNTIME_NOTHROW OBJ_GETTER(DerefStablePointer, void* pointer) {
         RETURN_OBJ(nullptr);
 
     AssertThreadState(ThreadState::kRunnable);
-
-    auto* node = static_cast<mm::StableRefRegistry::Node*>(pointer);
-    ObjHeader* object = **node;
-    RETURN_OBJ(object);
+    RETURN_OBJ(*mm::StableRef(static_cast<mm::RawSpecialRef*>(pointer)));
 }
 
 extern "C" RUNTIME_NOTHROW OBJ_GETTER(AdoptStablePointer, void* pointer) {
     if (!pointer)
         RETURN_OBJ(nullptr);
 
-    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
-    AssertThreadState(threadData, ThreadState::kRunnable);
-    auto* node = static_cast<mm::StableRefRegistry::Node*>(pointer);
-    ObjHeader* object = **node;
-    // Make sure `object` stays in the rootset: put it on the stack before removing it from `StableRefRegistry`.
-    mm::SetStackRef(OBJ_RESULT, object);
-    mm::StableRefRegistry::Instance().UnregisterStableRef(threadData, node);
-    return object;
+    AssertThreadState(ThreadState::kRunnable);
+    mm::StableRef stableRef(static_cast<mm::RawSpecialRef*>(pointer));
+    auto* obj = *stableRef;
+    mm::SetStackRef(OBJ_RESULT, obj);
+    std::move(stableRef).dispose();
+    return obj;
 }
 
 extern "C" void MutationCheck(ObjHeader* obj) {
@@ -560,39 +513,6 @@ extern "C" void EnsureNeverFrozen(ObjHeader* obj) {
     if (!mm::EnsureNeverFrozen(obj)) {
         ThrowFreezingException(obj, obj);
     }
-}
-
-extern "C" ForeignRefContext InitLocalForeignRef(ObjHeader* object) {
-    AssertThreadState(ThreadState::kRunnable);
-    // TODO: Remove when legacy MM is gone.
-    // Nothing to do.
-    return nullptr;
-}
-
-extern "C" ForeignRefContext InitForeignRef(ObjHeader* object) {
-    AssertThreadState(ThreadState::kRunnable);
-    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
-    auto* node = mm::StableRefRegistry::Instance().RegisterStableRef(threadData, object);
-    return ToForeignRefManager(node);
-}
-
-extern "C" void DeinitForeignRef(ObjHeader* object, ForeignRefContext context) {
-    AssertThreadState(ThreadState::kRunnable);
-    RuntimeAssert(context != nullptr, "DeinitForeignRef must not be called for InitLocalForeignRef");
-    auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
-    auto* node = FromForeignRefManager(context);
-    RuntimeAssert(object == **node, "Must correspond to the same object");
-    mm::StableRefRegistry::Instance().UnregisterStableRef(threadData, node);
-}
-
-extern "C" bool IsForeignRefAccessible(ObjHeader* object, ForeignRefContext context) {
-    // TODO: Remove when legacy MM is gone.
-    return true;
-}
-
-extern "C" void AdoptReferenceFromSharedVariable(ObjHeader* object) {
-    // TODO: Remove when legacy MM is gone.
-    // Nothing to do.
 }
 
 extern "C" void CheckGlobalsAccessible() {
@@ -660,4 +580,31 @@ RUNTIME_NOTHROW ALWAYS_INLINE extern "C" void Kotlin_processFieldInMark(void* st
 RUNTIME_NOTHROW ALWAYS_INLINE extern "C" void Kotlin_processEmptyObjectInMark(void* state, ObjHeader* object) {
     // Empty object. Nothing to do.
     // TODO: Try to generate it in the code generator.
+}
+
+extern "C" OBJ_GETTER(makePermanentWeakReferenceImpl, ObjHeader*);
+extern "C" OBJ_GETTER(makeObjCWeakReferenceImpl, void*);
+
+RUNTIME_NOTHROW extern "C" OBJ_GETTER(Konan_getWeakReferenceImpl, ObjHeader* referred) {
+    if (referred->permanent()) {
+        RETURN_RESULT_OF(makePermanentWeakReferenceImpl, referred);
+    }
+#if KONAN_OBJC_INTEROP
+    if (IsInstance(referred, theObjCObjectWrapperTypeInfo)) {
+        RETURN_RESULT_OF(makeObjCWeakReferenceImpl, referred->GetAssociatedObject());
+    }
+#endif // KONAN_OBJC_INTEROP
+    RETURN_RESULT_OF(mm::createRegularWeakReferenceImpl, referred);
+}
+
+RUNTIME_NOTHROW extern "C" OBJ_GETTER(Konan_WeakReferenceCounterLegacyMM_get, ObjHeader* counter) {
+    RuntimeFail("Legacy MM only");
+}
+
+RUNTIME_NOTHROW extern "C" OBJ_GETTER(Konan_RegularWeakReferenceImpl_get, ObjHeader* weakRef) {
+    RETURN_RESULT_OF(mm::derefRegularWeakReferenceImpl, weakRef);
+}
+
+RUNTIME_NOTHROW extern "C" void DisposeRegularWeakReferenceImpl(ObjHeader* weakRef) {
+    mm::disposeRegularWeakReferenceImpl(weakRef);
 }

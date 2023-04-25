@@ -1,4 +1,3 @@
-// WASM_FAILS_IN: SM
 // EXPECTED_REACHABLE_NODES: 1285
 package foo
 

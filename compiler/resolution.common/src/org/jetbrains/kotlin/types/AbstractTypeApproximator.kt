@@ -118,7 +118,7 @@ abstract class AbstractTypeApproximator(
             is FlexibleTypeMarker -> {
                 if (type.isDynamic()) {
                     return if (conf.dynamic) null else type.bound()
-                } else if (type.asRawType() != null) {
+                } else if (type.isRawType()) {
                     return if (conf.rawType) null else type.bound()
                 }
 
@@ -143,7 +143,7 @@ abstract class AbstractTypeApproximator(
 
                     val lowerResult = approximateTo(lowerBound, conf, depth)
 
-                    val upperResult = if (type !is RawTypeMarker && lowerBound.typeConstructor() == upperBound.typeConstructor())
+                    val upperResult = if (!type.isRawType() && lowerBound.typeConstructor() == upperBound.typeConstructor())
                         lowerResult?.withNullability(upperBound.isMarkedNullable())
                     else
                         approximateTo(upperBound, conf, depth)
@@ -297,6 +297,18 @@ abstract class AbstractTypeApproximator(
             type.isMarkedNullable() -> baseResult.withNullability(true)
             type.isProjectionNotNull() -> baseResult.withNullability(false)
             else -> baseResult
+        }.let {
+            when {
+                // This is just a hack that is necessary to preserve compatibility with K1 where return type of the calls
+                // if they contain a captured types with RAW supertype would be approximated to a regular non-raw flexible type
+                // See CapturedTypeApproximationKt.approximateCapturedTypes and especially the comment
+                // "// tod*: dynamic & raw type?" before it :)
+                // If we don't repeat that behavior, we would stumble upon KT-56616 with hardly having any workarounds.
+                isK2 && conf.convertToNonRawVersionAfterApproximationInK2 && it.isRawType() -> {
+                    it.convertToNonRaw()
+                }
+                else -> it
+            }
         }
     }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildAnonymousFunctionCopy
 import org.jetbrains.kotlin.fir.declarations.builder.buildContextReceiver
@@ -22,7 +23,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirLazyBlock
 import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
@@ -36,13 +36,14 @@ import org.jetbrains.kotlin.fir.resolve.inference.extractLambdaInfoFromFunctionT
 import org.jetbrains.kotlin.fir.resolve.substitution.createTypeSubstitutorByTypeConstructor
 import org.jetbrains.kotlin.fir.resolve.transformers.FirCallCompletionResultsWriterTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.FirStatusResolver
+import org.jetbrains.kotlin.fir.resolve.transformers.contracts.runContractResolveForFunction
 import org.jetbrains.kotlin.fir.resolve.transformers.transformVarargTypeToArrayType
 import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
@@ -534,18 +535,27 @@ open class FirDeclarationsResolveTransformer(
         return typeAlias
     }
 
-    private fun doTransformRegularClass(
+    protected fun doTransformRegularClass(
         regularClass: FirRegularClass,
         data: ResolutionMode
+    ): FirRegularClass = withRegularClass(regularClass) {
+        transformDeclarationContent(regularClass, data) as FirRegularClass
+    }
+
+    open fun withRegularClass(
+        regularClass: FirRegularClass,
+        action: () -> FirRegularClass
     ): FirRegularClass {
-        dataFlowAnalyzer.enterClass(regularClass, !implicitTypeOnly)
+        dataFlowAnalyzer.enterClass(regularClass, buildGraph = transformer.preserveCFGForClasses)
         val result = context.withRegularClass(regularClass, components) {
-            transformDeclarationContent(regularClass, data) as FirRegularClass
+            action()
         }
+
         val controlFlowGraph = dataFlowAnalyzer.exitClass()
         if (controlFlowGraph != null) {
             result.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(controlFlowGraph))
         }
+
         return result
     }
 
@@ -590,6 +600,10 @@ open class FirDeclarationsResolveTransformer(
                 // For class members everything should be already prepared
                 prepareSignatureForBodyResolve(simpleFunction)
                 simpleFunction.transformStatus(this, simpleFunction.resolveStatus().mode())
+
+                if (simpleFunction.contractDescription != FirEmptyContractDescription) {
+                    simpleFunction.runContractResolveForFunction(session, scopeSession, context)
+                }
             }
             context.forFunctionBody(simpleFunction, components) {
                 withFullBodyResolve {
@@ -730,6 +744,11 @@ open class FirDeclarationsResolveTransformer(
             anonymousFunction.transformReceiverParameter(transformer, ResolutionMode.ContextIndependent)
             anonymousFunction.valueParameters.forEach { it.transformReturnTypeRef(transformer, ResolutionMode.ContextIndependent) }
         }
+
+        if (anonymousFunction.contractDescription != FirEmptyContractDescription) {
+            anonymousFunction.runContractResolveForFunction(session, scopeSession, context)
+        }
+
         return when (data) {
             is ResolutionMode.ContextDependent, is ResolutionMode.ContextDependentDelegate -> {
                 context.storeContextForAnonymousFunction(anonymousFunction)
@@ -743,7 +762,7 @@ open class FirDeclarationsResolveTransformer(
             is ResolutionMode.WithExpectedType ->
                 transformAnonymousFunctionWithExpectedType(anonymousFunction, data.expectedTypeRef, data)
             is ResolutionMode.ContextIndependent, is ResolutionMode.AssignmentLValue, is ResolutionMode.ReceiverResolution ->
-                transformAnonymousFunctionWithExpectedType(anonymousFunction, buildImplicitTypeRef(), data)
+                transformAnonymousFunctionWithExpectedType(anonymousFunction, FirImplicitTypeRefImplWithoutSource, data)
             is ResolutionMode.WithStatus ->
                 throw AssertionError("Should not be here in WithStatus/WithExpectedTypeFromCast mode")
         }

@@ -53,6 +53,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
     private val isObjectSymbol get() = context.intrinsics.isObjectSymbol
 
     private val instanceOfIntrinsicSymbol = context.intrinsics.jsInstanceOf
+    private val isExternalObjectSymbol = context.intrinsics.isExternalObject
     private val typeOfIntrinsicSymbol = context.intrinsics.jsTypeOf
     private val jsClassIntrinsicSymbol = context.intrinsics.jsClass
 
@@ -270,6 +271,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                             generateInterfaceCheck(argument, toType)
                         }
                     }
+                    toType.isExternalObject() -> generateIsExternalObject(argument, toType)
                     else -> generateNativeInstanceOf(argument, toType)
                 }
             }
@@ -355,6 +357,14 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
             private fun generateInterfaceCheck(argument: IrExpression, toType: IrType): IrExpression {
                 val irType = wrapTypeReference(toType)
                 return JsIrBuilder.buildCall(isInterfaceSymbol).apply {
+                    putValueArgument(0, argument)
+                    putValueArgument(1, irType)
+                }
+            }
+
+            private fun generateIsExternalObject(argument: IrExpression, toType: IrType): IrExpression {
+                val irType = wrapTypeReference(toType)
+                return JsIrBuilder.buildCall(isExternalObjectSymbol).apply {
                     putValueArgument(0, argument)
                     putValueArgument(1, irType)
                 }

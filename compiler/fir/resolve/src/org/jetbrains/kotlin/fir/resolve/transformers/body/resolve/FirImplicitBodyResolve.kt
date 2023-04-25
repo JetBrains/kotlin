@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFull
 import org.jetbrains.kotlin.fir.resolve.transformers.contracts.runContractResolveForLocalClass
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.scopes.fakeOverrideSubstitution
-import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
+import org.jetbrains.kotlin.fir.delegatedWrapperData
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -60,7 +60,9 @@ class FirImplicitTypeBodyResolveTransformerAdapter(session: FirSession, scopeSes
     }
 
     override fun transformFile(file: FirFile, data: Any?): FirFile {
-        return file.transform(transformer, ResolutionMode.ContextIndependent)
+        return withFileAnalysisExceptionWrapping(file) {
+            file.transform(transformer, ResolutionMode.ContextIndependent)
+        }
     }
 }
 
@@ -257,6 +259,10 @@ private class ReturnTypeCalculatorWithJump(
                 val coneType = substitutor.substituteOrSelf(baseReturnType)
                 val returnType = declaration.returnTypeRef.resolvedTypeFromPrototype(coneType)
                 declaration.replaceReturnTypeRef(returnType)
+                if (declaration is FirProperty) {
+                    declaration.getter?.replaceReturnTypeRef(returnType)
+                    declaration.setter?.valueParameters?.firstOrNull()?.replaceReturnTypeRef(returnType)
+                }
                 return returnType
             }
         }
@@ -270,8 +276,6 @@ private class ReturnTypeCalculatorWithJump(
     }
 
     private fun resolvedToContractsIfNecessary(declaration: FirCallableDeclaration) {
-        if (declaration.resolvePhase >= FirResolvePhase.CONTRACTS) return
-
         val canHaveContracts = when {
             declaration is FirProperty && !declaration.isLocal -> true
             declaration is FirSimpleFunction && !declaration.isLocal -> true

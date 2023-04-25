@@ -6,8 +6,7 @@
 #include "Logging.hpp"
 
 #include <array>
-
-
+#include <cinttypes>
 
 #include "Format.h"
 #include "KAssert.h"
@@ -133,6 +132,24 @@ std_support::span<char> FormatTags(std_support::span<char> buffer, std_support::
     return FormatToSpan(buffer, "]");
 }
 
+std_support::span<char> FormatTimestamp(std_support::span<char> buffer, kotlin::nanoseconds timestamp) noexcept {
+    auto s = static_cast<double>(timestamp.count().value) / 1'000'000'000;
+    return FormatToSpan(buffer, "[%.3fs]", s);
+}
+
+std_support::span<char> FormatThread(std_support::span<char> buffer, int threadId) noexcept {
+    return FormatToSpan(buffer, "[tid#%d]", threadId);
+}
+
+struct DefaultLogContext {
+    ::LogFilter logFilter;
+    StderrLogger logger;
+    kotlin::steady_clock::time_point initialTimestamp;
+
+    explicit DefaultLogContext(std::string_view tagsFilter) noexcept :
+        logFilter(tagsFilter), initialTimestamp(kotlin::steady_clock::now()) {}
+};
+
 } // namespace
 
 std_support::unique_ptr<logging::internal::LogFilter> logging::internal::CreateLogFilter(std::string_view tagsFilter) noexcept {
@@ -147,11 +164,15 @@ std_support::span<char> logging::internal::FormatLogEntry(
         std_support::span<char> buffer,
         logging::Level level,
         std_support::span<const char* const> tags,
+        int threadId,
+        kotlin::nanoseconds timestamp,
         const char* format,
         std::va_list args) noexcept {
     auto subbuffer = buffer.subspan(0, buffer.size() - 1);
     subbuffer = FormatLevel(subbuffer, level);
     subbuffer = FormatTags(subbuffer, tags);
+    subbuffer = FormatThread(subbuffer, threadId);
+    subbuffer = FormatTimestamp(subbuffer, timestamp);
     subbuffer = FormatToSpan(subbuffer, " ");
     subbuffer = VFormatToSpan(subbuffer, format, args);
     buffer = buffer.subspan(subbuffer.data() - buffer.data());
@@ -164,12 +185,14 @@ void logging::internal::Log(
         const Logger& logger,
         Level level,
         std_support::span<const char* const> tags,
+        int threadId,
+        kotlin::nanoseconds timestamp,
         const char* format,
         std::va_list args) noexcept {
     if (!logFilter.Enabled(level, tags)) return;
     // TODO: This might be suboptimal.
     std::array<char, 1024> logEntry;
-    auto rest = FormatLogEntry(logEntry, level, tags, format, args);
+    auto rest = FormatLogEntry(logEntry, level, tags, threadId, timestamp, format, args);
     logger.Log(level, tags, std::string_view(logEntry.data(), rest.data() - logEntry.data()));
 }
 
@@ -181,9 +204,10 @@ void logging::Log(Level level, std::initializer_list<const char*> tags, const ch
 }
 
 void logging::VLog(Level level, std::initializer_list<const char*> tags, const char* format, std::va_list args) noexcept {
-    [[clang::no_destroy]] static auto logFilter = internal::CreateLogFilter(compiler::runtimeLogs());
-    [[clang::no_destroy]] static auto logger = internal::CreateStderrLogger();
+    [[clang::no_destroy]] static DefaultLogContext ctx(compiler::runtimeLogs());
     RuntimeAssert(tags.size() > 0, "Cannot Log without tags");
     std_support::span<const char* const> tagsSpan(std::data(tags), std::size(tags));
-    internal::Log(*logFilter, *logger, level, tagsSpan, format, args);
+    auto threadId = konan::currentThreadId();
+    auto timestamp = kotlin::steady_clock::now();
+    internal::Log(ctx.logFilter, ctx.logger, level, tagsSpan, threadId, timestamp - ctx.initialTimestamp, format, args);
 }

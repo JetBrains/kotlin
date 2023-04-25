@@ -1,0 +1,79 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] functionParameter.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: Int): <implicit> { LAZY_BLOCK }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] functionParameter.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: Int): <implicit> { LAZY_BLOCK }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] functionParameter.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun foo([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] param: Int): <implicit> { LAZY_BLOCK }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] functionParameter.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(COMPANION_GENERATION)] fun foo([ResolvedTo(COMPANION_GENERATION)] param: Int): <implicit> { LAZY_BLOCK }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] functionParameter.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(SUPER_TYPES)] fun foo([ResolvedTo(SUPER_TYPES)] param: Int): <implicit> { LAZY_BLOCK }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] functionParameter.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(TYPES)] fun foo([ResolvedTo(TYPES)] param: R|kotlin/Int|): <implicit> { LAZY_BLOCK }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] functionParameter.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|kotlin/Int|): <implicit> { LAZY_BLOCK }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] functionParameter.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun foo([ResolvedTo(EXPECT_ACTUAL_MATCHING)] param: R|kotlin/Int|): <implicit> { LAZY_BLOCK }
+
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] functionParameter.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun foo([ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] param: R|kotlin/Int|): <implicit> { LAZY_BLOCK }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] functionParameter.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(CONTRACTS)] fun foo([ResolvedTo(CONTRACTS)] param: R|kotlin/Int|): <implicit> {
+        ^foo String(boo)
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] functionParameter.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] param: R|kotlin/Int|): R|kotlin/String| {
+        ^foo String(boo)
+    }
+
+ANNOTATIONS_ARGUMENTS_MAPPING:
+FILE: [ResolvedTo(IMPORTS)] functionParameter.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun foo([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] param: R|kotlin/Int|): R|kotlin/String| {
+        ^foo String(boo)
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] functionParameter.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] param: R|kotlin/Int|): R|kotlin/String| {
+        ^foo String(boo)
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(IMPORTS)] functionParameter.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] param: R|kotlin/Int|): R|kotlin/String| {
+        ^foo String(boo)
+    }

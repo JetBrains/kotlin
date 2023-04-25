@@ -1,0 +1,50 @@
+element: e
+implicit receivers:
+  type: ERROR(Cannot infer argument for type parameter E)
+  owner symbol: KtFirAnonymousFunctionSymbol
+
+  type: List<ERROR(Cannot infer argument for type parameter E)>
+  owner symbol: KtFirAnonymousFunctionSymbol
+
+scopes:
+  SimpleTypeScope, index = 0, empty
+
+  LocalScope, index = 1, empty
+
+  LocalScope, index = 2, empty
+
+  SimpleTypeScope, index = 3
+    classifiers: 0
+    callables: 5
+      fun add(e: T)
+      fun get(index: kotlin.Int): T
+      fun equals(other: kotlin.Any?): kotlin.Boolean
+      fun hashCode(): kotlin.Int
+      fun toString(): kotlin.String
+
+  LocalScope, index = 4, empty
+
+  LocalScope, index = 5, empty
+
+  LocalScope, index = 6, empty
+
+  ExplicitSimpleImportingScope, index = 7, empty
+
+  PackageMemberScope, index = 8
+    classifiers: 1
+      interface List<T>
+    callables: 2
+      fun <E> buildList(f: List<E>.() -> kotlin.Unit): List<E>
+      fun test()
+
+  DefaultSimpleImportingScope, index = 9
+
+  DefaultSimpleImportingScope, index = 10
+
+  ExplicitStarImportingScope, index = 11, empty
+
+  DefaultSimpleImportingScope, index = 12
+
+  DefaultStarImportingScope, index = 13
+
+  DefaultStarImportingScope, index = 14

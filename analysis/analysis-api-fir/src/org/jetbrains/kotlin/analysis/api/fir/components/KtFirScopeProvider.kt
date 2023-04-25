@@ -1,14 +1,12 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.analysis.api.components.KtImplicitReceiver
-import org.jetbrains.kotlin.analysis.api.components.KtScopeContext
-import org.jetbrains.kotlin.analysis.api.components.KtScopeProvider
+import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.scopes.*
@@ -28,6 +26,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
+import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
 import org.jetbrains.kotlin.analysis.utils.printer.getElementTextInContext
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
@@ -39,6 +38,8 @@ import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.java.JavaScopeProvider
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.analysis.api.fir.scopes.JavaClassDeclaredMembersEnhancementScope
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirPsiJavaClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithDeclarations
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticPropertiesScope
 import org.jetbrains.kotlin.fir.resolve.scope
@@ -68,6 +69,7 @@ internal class KtFirScopeProvider(
     private inline fun <T> KtSymbolWithMembers.withFirForScope(crossinline body: (FirClass) -> T): T? {
         return when (this) {
             is KtFirNamedClassOrObjectSymbol -> body(firSymbol.fir)
+            is KtFirPsiJavaClassSymbol -> body(firSymbol.fir)
             is KtFirAnonymousObjectSymbol -> body(firSymbol.fir)
             is KtFirEnumEntrySymbol -> {
                 firSymbol.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
@@ -76,7 +78,7 @@ internal class KtFirScopeProvider(
                 body(initializer.anonymousObject)
             }
 
-            else -> error { "Unknown KtSymbolWithDeclarations implementation ${this::class.qualifiedName}" }
+            else -> error("Unknown ${KtSymbolWithDeclarations::class.simpleName} implementation ${this::class.qualifiedName}")
         }
     }
 
@@ -87,7 +89,8 @@ internal class KtFirScopeProvider(
             fir.unsubstitutedScope(
                 firSession,
                 getScopeSession(),
-                withForcedTypeCalculator = false
+                withForcedTypeCalculator = false,
+                memberRequiredPhase = null,
             )
         }?.applyIf(classSymbol is KtEnumEntrySymbol, ::EnumEntryContainingNamesAwareScope)
             ?: return getEmptyScope()
@@ -139,7 +142,7 @@ internal class KtFirScopeProvider(
     }
 
     override fun getFileScope(fileSymbol: KtFileSymbol): KtScope {
-            check(fileSymbol is KtFirFileSymbol) { "KtFirScopeProvider can only work with KtFirFileSymbol, but ${fileSymbol::class} was provided" }
+        check(fileSymbol is KtFirFileSymbol) { "KtFirScopeProvider can only work with KtFirFileSymbol, but ${fileSymbol::class} was provided" }
         return KtFirFileScope(fileSymbol, builder)
     }
 
@@ -175,31 +178,36 @@ internal class KtFirScopeProvider(
         val towerDataContext =
             analysisSession.firResolveSession.getTowerContextProvider(originalFile).getClosestAvailableParentContext(positionInFakeFile)
                 ?: error("Cannot find enclosing declaration for ${positionInFakeFile.getElementTextInContext()}")
+        val towerDataElementsIndexed = towerDataContext.towerDataElements.asReversed().withIndex()
 
-        val implicitReceivers = towerDataContext.nonLocalTowerDataElements.mapNotNull { it.implicitReceiver }.distinct()
-        val implicitKtReceivers = implicitReceivers.map { receiver ->
-            KtImplicitReceiver(
-                token,
-                builder.typeBuilder.buildKtType(receiver.type),
-                builder.buildSymbol(receiver.boundSymbol.fir),
-            )
+        val implicitReceivers = towerDataElementsIndexed.flatMap { (index, towerDataElement) ->
+            val receivers = listOfNotNull(towerDataElement.implicitReceiver) + towerDataElement.contextReceiverGroup.orEmpty()
+
+            receivers.map { receiver ->
+                KtImplicitReceiver(
+                    token,
+                    builder.typeBuilder.buildKtType(receiver.type),
+                    builder.buildSymbol(receiver.boundSymbol.fir),
+                    index
+                )
+            }
         }
 
-        val implicitReceiverScopes = implicitReceivers.mapNotNull { it.implicitScope }
-        val nonLocalScopes = towerDataContext.nonLocalTowerDataElements.mapNotNull { it.scope }.distinct()
-        val firLocalScopes = towerDataContext.localScopes
-
-        val allKtScopes = buildList<KtScope> {
-            implicitReceiverScopes.mapTo(this, ::convertToKtScope)
-            nonLocalScopes.mapTo(this, ::convertToKtScope)
-            firLocalScopes.mapTo(this, ::convertToKtScope)
+        val firScopes = towerDataElementsIndexed.flatMap { (index, towerDataElement) ->
+            val availableScopes = towerDataElement.getAvailableScopes().flatMap { flattenFirScope(it) }
+            availableScopes.map { IndexedValue(index, it) }
+        }
+        val scopes = firScopes.map { (index, firScope) ->
+            KtScopeWithKind(convertToKtScope(firScope), getScopeKind(firScope, index), token)
         }
 
-        return KtScopeContext(
-            getCompositeScope(allKtScopes.asReversed()),
-            implicitKtReceivers.asReversed(),
-            token
-        )
+        return KtScopeContext(scopes, implicitReceivers, token)
+    }
+
+    private fun flattenFirScope(firScope: FirScope): List<FirScope> = when (firScope) {
+        is FirCompositeScope -> firScope.scopes.flatMap { flattenFirScope(it) }
+        is FirNameAwareCompositeScope -> firScope.scopes.flatMap { flattenFirScope(it) }
+        else -> listOf(firScope)
     }
 
     private fun convertToKtScope(firScope: FirScope): KtScope {
@@ -210,6 +218,28 @@ internal class KtFirScopeProvider(
             is FirContainingNamesAwareScope -> KtFirDelegatingScope(firScope, builder)
             else -> TODO(firScope::class.toString())
         }
+    }
+
+    private fun getScopeKind(firScope: FirScope, indexInTower: Int): KtScopeKind = when (firScope) {
+        is FirNameAwareOnlyCallablesScope -> getScopeKind(firScope.delegate, indexInTower)
+        is FirNameAwareOnlyClassifiersScope -> getScopeKind(firScope.delegate, indexInTower)
+
+        is FirLocalScope -> KtScopeKind.LocalScope(indexInTower)
+        is FirTypeScope -> KtScopeKind.SimpleTypeScope(indexInTower)
+        is FirTypeParameterScope -> KtScopeKind.TypeParameterScope(indexInTower)
+        is FirPackageMemberScope -> KtScopeKind.PackageMemberScope(indexInTower)
+
+        is FirNestedClassifierScope -> KtScopeKind.StaticMemberScope(indexInTower)
+        is FirNestedClassifierScopeWithSubstitution -> KtScopeKind.StaticMemberScope(indexInTower)
+        is FirLazyNestedClassifierScope -> KtScopeKind.StaticMemberScope(indexInTower)
+        is FirStaticScope -> KtScopeKind.StaticMemberScope(indexInTower)
+
+        is FirExplicitSimpleImportingScope -> KtScopeKind.ExplicitSimpleImportingScope(indexInTower)
+        is FirExplicitStarImportingScope -> KtScopeKind.ExplicitStarImportingScope(indexInTower)
+        is FirDefaultSimpleImportingScope -> KtScopeKind.DefaultSimpleImportingScope(indexInTower)
+        is FirDefaultStarImportingScope -> KtScopeKind.DefaultStarImportingScope(indexInTower)
+
+        else -> unexpectedElementError("scope", firScope)
     }
 
     private fun createPackageScope(fqName: FqName): KtFirPackageScope {
@@ -240,16 +270,26 @@ internal class KtFirScopeProvider(
         )
     }
 
-    private fun buildJavaEnhancementDeclaredMemberScope(useSiteSession: FirSession, symbol: FirRegularClassSymbol, scopeSession: ScopeSession): JavaClassDeclaredMembersEnhancementScope {
+    private fun buildJavaEnhancementDeclaredMemberScope(
+        useSiteSession: FirSession,
+        symbol: FirRegularClassSymbol,
+        scopeSession: ScopeSession,
+    ): JavaClassDeclaredMembersEnhancementScope {
         return scopeSession.getOrBuild(symbol, JAVA_ENHANCEMENT_FOR_DECLARED_MEMBER) {
             val firJavaClass = symbol.fir
             require(firJavaClass is FirJavaClass) {
                 "${firJavaClass.classId} is expected to be FirJavaClass, but ${firJavaClass::class} found"
             }
+
             JavaClassDeclaredMembersEnhancementScope(
                 useSiteSession,
                 firJavaClass,
-                JavaScopeProvider.getUseSiteMemberScope(firJavaClass, useSiteSession, scopeSession)
+                JavaScopeProvider.getUseSiteMemberScope(
+                    firJavaClass,
+                    useSiteSession,
+                    scopeSession,
+                    memberRequiredPhase = FirResolvePhase.TYPES,
+                )
             )
         }
     }

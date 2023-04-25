@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.substitution
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeTypeVariableTypeIsNotInferred
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
@@ -15,7 +16,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
@@ -172,7 +172,7 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
 fun substitutorByMap(substitution: Map<FirTypeParameterSymbol, ConeKotlinType>, useSiteSession: FirSession): ConeSubstitutor {
     // If all arguments match parameters, then substitutor isn't needed
     if (substitution.all { (parameterSymbol, argumentType) ->
-            (argumentType as? ConeTypeParameterType)?.lookupTag?.typeParameterSymbol == parameterSymbol
+            (argumentType as? ConeTypeParameterType)?.lookupTag?.typeParameterSymbol == parameterSymbol && !argumentType.isMarkedNullable
         }
     ) return ConeSubstitutor.Empty
     return ConeSubstitutorByMap(substitution, useSiteSession)
@@ -203,16 +203,9 @@ class ConeSubstitutorByMap(
 
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
         if (type !is ConeTypeParameterType) return null
-        val result =
-            substitution[type.lookupTag.symbol].updateNullabilityIfNeeded(type)
-                ?.withCombinedAttributesFrom(type)
-                ?: return null
-        if (type.isUnsafeVarianceType(useSiteSession)) {
-            return useSiteSession.typeApproximator.approximateToSuperType(
-                result, TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
-            ) ?: result
-        }
-        return result
+        return substitution[type.lookupTag.symbol].updateNullabilityIfNeeded(type)
+            ?.withCombinedAttributesFrom(type)
+            ?: return null
     }
 
     override fun equals(other: Any?): Boolean {
@@ -236,7 +229,7 @@ class ConeRawScopeSubstitutor(
         return when {
             type is ConeTypeParameterType -> {
                 substituteOrSelf(
-                    listOf(type.lookupTag.symbol).eraseToUpperBounds(useSiteSession)[0] as ConeKotlinType
+                    listOf(type.lookupTag.symbol).getProjectionsForRawType(useSiteSession)[0] as ConeKotlinType
                 )
             }
             type is ConeClassLikeType && type.typeArguments.isNotEmpty() -> {
@@ -251,7 +244,7 @@ class ConeRawScopeSubstitutor(
 
                 val firClass = type.fullyExpandedType(useSiteSession).lookupTag.toFirRegularClassSymbol(useSiteSession) ?: return null
                 ConeRawType.create(
-                    type.withArguments(firClass.typeParameterSymbols.eraseToUpperBounds(useSiteSession)),
+                    type.withArguments(firClass.typeParameterSymbols.getProjectionsForRawType(useSiteSession)),
                     type.replaceArgumentsWithStarProjections()
                 )
             }
@@ -320,7 +313,7 @@ class ConeStubAndTypeVariableToErrorTypeSubstitutor(
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
         return when (type) {
             is ConeTypeVariableType -> ConeErrorType(
-                ConeSimpleDiagnostic("Type for ${type.lookupTag.debugName} is not inferred", DiagnosticKind.InferenceError),
+                ConeTypeVariableTypeIsNotInferred(type),
                 isUninferredParameter = true
             )
             is ConeStubType -> runIf(type.constructor in stubTypesToReplace) {

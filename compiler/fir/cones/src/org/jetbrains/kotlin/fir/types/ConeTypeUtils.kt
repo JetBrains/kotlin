@@ -131,3 +131,4 @@ fun ConeKotlinType.renderReadableWithFqNames(): String {
     return builder.toString()
 }
 
+fun ConeKotlinType.hasError(): Boolean = contains { it is ConeErrorType }

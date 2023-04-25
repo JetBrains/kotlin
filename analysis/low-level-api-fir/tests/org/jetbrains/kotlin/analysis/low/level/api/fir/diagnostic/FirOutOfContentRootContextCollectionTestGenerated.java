@@ -37,6 +37,12 @@ public class FirOutOfContentRootContextCollectionTestGenerated extends AbstractF
     }
 
     @Test
+    @TestMetadata("constructors.kt")
+    public void testConstructors() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/constructors.kt");
+    }
+
+    @Test
     @TestMetadata("danglingAnnotationClassLevel.kt")
     public void testDanglingAnnotationClassLevel() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/fileStructure/danglingAnnotationClassLevel.kt");
@@ -106,6 +112,12 @@ public class FirOutOfContentRootContextCollectionTestGenerated extends AbstractF
     @TestMetadata("propertyAccessors.kt")
     public void testPropertyAccessors() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/fileStructure/propertyAccessors.kt");
+    }
+
+    @Test
+    @TestMetadata("superClassCall.kt")
+    public void testSuperClassCall() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/fileStructure/superClassCall.kt");
     }
 
     @Test

@@ -5,7 +5,7 @@ enum class MyEnum {
     E
 }
 
-// 1 INVOKEDYNAMIC
+// 0 INVOKEDYNAMIC
 // 1 kotlin.enums.EnumEntries<MyEnum> getEntries\(\)
 // 1 private final static synthetic Lkotlin/enums/EnumEntries; \$ENTRIES
 // 1 public static getEntries\(\)Lkotlin/enums/EnumEntries;

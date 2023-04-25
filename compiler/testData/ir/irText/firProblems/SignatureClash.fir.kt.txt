@@ -71,7 +71,7 @@ data class DataClass : Derived, Delegate {
   }
 
   override fun toString(): String {
-    return "DataClass(" + "delegate=" + <this>.#delegate + ")"
+    return "DataClass(delegate=" + <this>.#delegate + ")"
   }
 
 }

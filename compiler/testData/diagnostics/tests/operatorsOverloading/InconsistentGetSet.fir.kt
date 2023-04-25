@@ -18,7 +18,7 @@ object MismatchingTypes {
 }
 
 fun testMismatchingTypes() {
-    ++<!ARGUMENT_TYPE_MISMATCH!>MismatchingTypes[0]<!>
+    <!ARGUMENT_TYPE_MISMATCH!>++MismatchingTypes[0]<!>
     <!ARGUMENT_TYPE_MISMATCH!>MismatchingTypes[0]++<!>
     MismatchingTypes[0] <!UNRESOLVED_REFERENCE!>+=<!> 1
 }

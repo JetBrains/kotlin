@@ -52,16 +52,13 @@ import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.FirTypeProjection
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.FirUserTypeRef
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.*
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
-import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
@@ -575,7 +572,7 @@ class DeclarationsConverter(
                         hasDefaultConstructor = if (primaryConstructor != null) !primaryConstructor!!.hasValueParameters()
                         else secondaryConstructors.isEmpty() || secondaryConstructors.any { !it.hasValueParameters() },
                         delegatedSelfTypeRef = selfType,
-                        delegatedSuperTypeRef = delegatedSuperTypeRef ?: buildImplicitTypeRef(),
+                        delegatedSuperTypeRef = delegatedSuperTypeRef ?: FirImplicitTypeRefImplWithoutSource,
                         superTypeCallEntry = superTypeCallEntry
                     )
                     //parse primary constructor
@@ -714,7 +711,7 @@ class DeclarationsConverter(
                         superTypeRefs += implicitAnyType
                         delegatedSuperTypeRef = implicitAnyType
                     }
-                    val delegatedSuperType = delegatedSuperTypeRef ?: buildImplicitTypeRef()
+                    val delegatedSuperType = delegatedSuperTypeRef ?: FirImplicitTypeRefImplWithoutSource
 
                     annotations += modifiers.annotations
                     this.superTypeRefs += superTypeRefs
@@ -1048,8 +1045,9 @@ class DeclarationsConverter(
             annotations += modifiers.annotations
             typeParameters += constructorTypeParametersFromConstructedClass(classWrapper.classBuilder.typeParameters)
             valueParameters += firValueParameters.map { it.firValueParameter }
-            val (body, _) = convertFunctionBody(block, null, allowLegacyContractDescription = true)
+            val (body, contractDescription) = convertFunctionBody(block, null, allowLegacyContractDescription = true)
             this.body = body
+            contractDescription?.let { this.contractDescription = it }
             context.firFunctionTargets.removeLast()
             this.contextReceivers.addAll(convertContextReceivers(secondaryConstructor.getParent()!!.getParent()!!))
         }.also {
@@ -1188,7 +1186,11 @@ class DeclarationsConverter(
                     accessors += it
                 }
                 BACKING_FIELD -> fieldDeclaration = it
-                else -> if (it.isExpression()) propertyInitializer = expressionConverter.getAsFirExpression(it, "Should have initializer")
+                else -> if (it.isExpression()) {
+                    context.calleeNamesForLambda += null
+                    propertyInitializer = expressionConverter.getAsFirExpression(it, "Should have initializer")
+                    context.calleeNamesForLambda.removeLast()
+                }
             }
         }
 
@@ -1237,9 +1239,8 @@ class DeclarationsConverter(
                     delegateBuilder,
                     baseModuleData,
                     classWrapper?.classBuilder?.ownerRegularOrAnonymousObjectSymbol,
-                    classWrapper?.classBuilder?.ownerRegularClassTypeParametersCount,
-                    isExtension = false,
-                    context = context
+                    context = context,
+                    isExtension = false
                 )
             } else {
                 this.isLocal = false
@@ -1311,7 +1312,6 @@ class DeclarationsConverter(
                         delegateBuilder,
                         baseModuleData,
                         classWrapper?.classBuilder?.ownerRegularOrAnonymousObjectSymbol,
-                        classWrapper?.classBuilder?.ownerRegularClassTypeParametersCount,
                         context,
                         isExtension = receiverType != null,
                     )
@@ -1331,7 +1331,7 @@ class DeclarationsConverter(
     /**
      * @see org.jetbrains.kotlin.fir.builder.RawFirBuilder.Visitor.visitDestructuringDeclaration
      */
-    private fun convertDestructingDeclaration(destructingDeclaration: LighterASTNode): DestructuringDeclaration {
+    internal fun convertDestructingDeclaration(destructingDeclaration: LighterASTNode): DestructuringDeclaration {
         var modifiers = Modifier()
         var isVar = false
         val entries = mutableListOf<FirVariable?>()
@@ -1739,13 +1739,14 @@ class DeclarationsConverter(
                     ).map { it.firValueParameter }
                 }
 
-                val allowLegacyContractDescription = outerContractDescription == null && !isLocal
+                val allowLegacyContractDescription = outerContractDescription == null
                 val bodyWithContractDescription = convertFunctionBody(block, expression, allowLegacyContractDescription)
                 this.body = bodyWithContractDescription.first
                 val contractDescription = outerContractDescription ?: bodyWithContractDescription.second
                 contractDescription?.let {
-                    // TODO: add error reporting for contracts on lambdas
                     if (this is FirSimpleFunctionBuilder) {
+                        this.contractDescription = it
+                    } else if (this is FirAnonymousFunctionBuilder) {
                         this.contractDescription = it
                     }
                 }
@@ -1841,7 +1842,7 @@ class DeclarationsConverter(
                     delegatedSuperTypeRef = first
                     superTypeRefs += first
                     superTypeCallEntry += second
-                    delegateConstructorSource = it.toFirSourceElement(KtFakeSourceElementKind.DelegatingConstructorCall)
+                    delegateConstructorSource = it.toFirSourceElement()
                     index++
                 }
                 DELEGATED_SUPER_TYPE_ENTRY -> {

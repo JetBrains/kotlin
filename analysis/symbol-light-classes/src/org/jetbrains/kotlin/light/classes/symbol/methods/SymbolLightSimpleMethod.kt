@@ -11,6 +11,8 @@ import kotlinx.collections.immutable.mutate
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.annotations.hasAnnotation
 import org.jetbrains.kotlin.analysis.api.symbols.KtFunctionSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.types.KtNonErrorClassType
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
 import org.jetbrains.kotlin.asJava.builder.LightMemberOrigin
@@ -177,6 +179,25 @@ internal class SymbolLightSimpleMethod(
         if (isTopLevel) false else withFunctionSymbol { it.isOverride }
     }
 
+    // Inspired by KotlinTypeMapper#forceBoxedReturnType
+    private fun forceBoxedReturnType(): Boolean {
+        return withFunctionSymbol { functionSymbol ->
+            val returnType = functionSymbol.returnType
+            // 'invoke' methods for lambdas, function literals, and callable references
+            // implicitly override generic 'invoke' from a corresponding base class.
+            if (functionSymbol.isBuiltinFunctionInvoke && returnType.isInlineClassType)
+                return@withFunctionSymbol true
+
+            returnType.isPrimitive &&
+                    functionSymbol.getAllOverriddenSymbols().any { overriddenSymbol ->
+                        !overriddenSymbol.returnType.isPrimitive
+                    }
+        }
+    }
+
+    private val KtType.isInlineClassType: Boolean
+        get() = ((this as? KtNonErrorClassType)?.classSymbol as? KtNamedClassOrObjectSymbol)?.isInline == true
+
     private val KtType.isVoidType: Boolean get() = isUnit && nullabilityType != NullabilityType.Nullable
 
     private val _returnedType: PsiType by lazyPub {
@@ -187,10 +208,12 @@ internal class SymbolLightSimpleMethod(
                 functionSymbol.returnType.takeUnless { it.isVoidType } ?: return@withFunctionSymbol PsiType.VOID
             }
 
+            val typeMappingMode = if (forceBoxedReturnType()) KtTypeMappingMode.RETURN_TYPE_BOXED else KtTypeMappingMode.RETURN_TYPE
+
             ktType.asPsiTypeElement(
                 this@SymbolLightSimpleMethod,
                 allowErrorTypes = true,
-                KtTypeMappingMode.RETURN_TYPE,
+                typeMappingMode,
                 this@SymbolLightSimpleMethod.containingClass.isAnnotationType,
             )?.let {
                 annotateByKtType(it.type, ktType, it, modifierList)

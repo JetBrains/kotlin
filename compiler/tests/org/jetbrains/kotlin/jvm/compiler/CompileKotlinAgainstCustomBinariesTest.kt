@@ -132,16 +132,11 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
             when (compiler) {
                 is K2JSCompiler -> compileJsLibrary(
                     libraryName,
-                    additionalOptions = libraryOptions + "-Xlegacy-deprecated-no-warn" + "-Xuse-deprecated-legacy-compiler"
+                    additionalOptions = libraryOptions + "-Xforce-deprecated-legacy-compiler-usage"
                 )
                 is K2JVMCompiler -> compileLibrary(libraryName, additionalOptions = libraryOptions)
                 else -> throw UnsupportedOperationException(compiler.toString())
             }
-
-        if (compiler is K2JSCompiler) {
-            // TODO: It will be deleted after all of our internal vendors will use the new Kotlin/JS compiler
-            CompilerSystemProperties.KOTLIN_JS_COMPILER_LEGACY_FORCE_ENABLED.value = "true"
-        }
 
         compileKotlin(
             "source.kt", usageDestination, listOf(result), compiler,
@@ -797,6 +792,25 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
             classpath = listOf(library14, library16),
             additionalOptions = listOf("-language-version", "1.6", "-Xmulti-platform"),
             expectedFileName = "output16.txt",
+        )
+    }
+
+    fun testDeserializedAnnotationReferencesJava() {
+        // Only Java
+        val libraryAnnotation = compileLibrary("libraryAnnotation")
+        // Specifically, use K1
+        // Remove "-Xuse-k2=false" argument once it becomes forbidden
+        val libraryUsingAnnotation = compileLibrary(
+            "libraryUsingAnnotation",
+            additionalOptions = listOf("-language-version", "1.8", "-Xuse-k2=false"),
+            extraClassPath = listOf(libraryAnnotation)
+        )
+
+        compileKotlin(
+            "usage.kt",
+            output = tmpdir,
+            classpath = listOf(libraryAnnotation, libraryUsingAnnotation),
+            additionalOptions = listOf("-language-version", "2.0")
         )
     }
 

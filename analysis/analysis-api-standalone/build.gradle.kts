@@ -10,7 +10,6 @@ kotlin {
 dependencies {
     implementation(intellijCore())
     implementation(project(":compiler:psi"))
-    implementation(project(":compiler:cli"))
     api(project(":analysis:analysis-api"))
     api(project(":analysis:analysis-api-providers"))
     api(project(":analysis:project-structure"))

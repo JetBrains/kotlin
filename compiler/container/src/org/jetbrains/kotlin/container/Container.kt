@@ -25,6 +25,8 @@ import java.lang.reflect.WildcardType
 class ContainerConsistencyException(message: String) : Exception(message)
 
 interface ComponentContainer {
+    val containerId: String
+
     fun createResolveContext(requestingDescriptor: ValueDescriptor): ValueResolveContext
 }
 
@@ -108,7 +110,7 @@ class StorageComponentContainer(
     }
 
     override fun <T> create(request: Class<T>): T {
-        val constructorBinding = request.bindToConstructor(unknownContext)
+        val constructorBinding = request.bindToConstructor(containerId, unknownContext)
         val args = constructorBinding.argumentDescriptors.map { it.getValue() }.toTypedArray()
         return runWithUnwrappingInvocationException {
             @Suppress("UNCHECKED_CAST")
@@ -116,7 +118,10 @@ class StorageComponentContainer(
         }
     }
 
-    override fun toString() = "Container $id"
+    override val containerId
+        get() = "Container: $id"
+
+    override fun toString() = containerId
 }
 
 fun StorageComponentContainer.registerSingleton(klass: Class<*>): StorageComponentContainer {

@@ -74,9 +74,6 @@ public class KaptJVMCompilerMojo extends K2JVMCompileMojo {
     @Component
     private ArtifactHandlerManager artifactHandlerManager;
 
-    @Parameter(defaultValue = "${session}", readonly = true, required = true)
-    private MavenSession session;
-
     @Component
     private ResolutionErrorHandler resolutionErrorHandler;
 

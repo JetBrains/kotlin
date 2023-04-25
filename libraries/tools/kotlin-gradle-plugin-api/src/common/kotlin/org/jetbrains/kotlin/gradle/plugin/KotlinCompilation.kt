@@ -17,12 +17,13 @@ import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptionsDeprecated
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompileDeprecated
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 
 interface KotlinCompilation<out T : KotlinCommonOptionsDeprecated> : Named,
+    HasProject,
+    HasMutableExtras,
     HasAttributes,
     HasKotlinDependencies {
-
-    val project: Project
 
     val target: KotlinTarget
 

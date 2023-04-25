@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,21 +14,21 @@ import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.getExplicitBackingField
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.impl.FirLazyBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyDelegatedConstructorCall
-import org.jetbrains.kotlin.fir.expressions.impl.FirLazyExpression
 import org.jetbrains.kotlin.fir.extensions.registeredPluginAnnotations
+import org.jetbrains.kotlin.fir.resolve.transformers.plugin.CompilerRequiredAnnotationsHelper
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
+import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.FirUserTypeRef
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.Deprecated
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.DeprecatedSinceKotlin
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.JvmRecord
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.WasExperimental
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.SinceKotlin
+import org.jetbrains.kotlin.fir.types.customAnnotations
+import org.jetbrains.kotlin.fir.types.forEachType
 
 internal object FirLazyBodiesCalculator {
     fun calculateLazyBodiesInside(designation: FirDesignation) {
@@ -44,7 +44,7 @@ internal object FirLazyBodiesCalculator {
         firFile.transform<FirElement, PersistentList<FirRegularClass>>(FirLazyBodiesCalculatorTransformer, persistentListOf())
     }
 
-    fun calculateAnnotations(firElement: FirElementWithResolvePhase) {
+    fun calculateAnnotations(firElement: FirElementWithResolveState) {
         calculateAnnotations(firElement, firElement.moduleData.session)
     }
 
@@ -55,7 +55,7 @@ internal object FirLazyBodiesCalculator {
         )
     }
 
-    fun calculateCompilerAnnotations(firElement: FirElementWithResolvePhase) {
+    fun calculateCompilerAnnotations(firElement: FirElementWithResolveState) {
         firElement.transform<FirElement, FirLazyAnnotationTransformerData>(
             FirLazyAnnotationTransformer,
             FirLazyAnnotationTransformerData(firElement.moduleData.session, FirLazyAnnotationTransformerScope.COMPILER_ONLY)
@@ -107,6 +107,7 @@ internal object FirLazyBodiesCalculator {
 
         constructor.apply {
             replaceBody(newConstructor.body)
+            replaceContractDescription(newConstructor.contractDescription)
             replaceDelegatedConstructor(newConstructor.delegatedConstructor)
             replaceValueParameterDefaultValues(valueParameters, newConstructor.valueParameters)
         }
@@ -210,13 +211,9 @@ private data class FirLazyAnnotationTransformerData(
 )
 
 private object FirLazyAnnotationTransformer : FirTransformer<FirLazyAnnotationTransformerData>() {
-    private val COMPILER_ANNOTATION_NAMES: Set<Name> = setOf(
-        Deprecated,
-        DeprecatedSinceKotlin,
-        WasExperimental,
-        JvmRecord,
-        SinceKotlin,
-    ).mapTo(mutableSetOf()) { it.shortClassName }
+    private val COMPILER_ANNOTATION_NAMES: Set<Name> = CompilerRequiredAnnotationsHelper.REQUIRED_ANNOTATIONS
+        .plus(SinceKotlin)
+        .mapTo(mutableSetOf()) { it.shortClassName }
 
     private fun canBeCompilerAnnotation(annotationCall: FirAnnotationCall, session: FirSession): Boolean {
         val annotationTypeRef = annotationCall.annotationTypeRef
@@ -229,6 +226,16 @@ private object FirLazyAnnotationTransformer : FirTransformer<FirLazyAnnotationTr
     override fun <E : FirElement> transformElement(element: E, data: FirLazyAnnotationTransformerData): E {
         element.transformChildren(this, data)
         return element
+    }
+
+    override fun transformResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: FirLazyAnnotationTransformerData): FirTypeRef {
+        resolvedTypeRef.coneType.forEachType { coneType ->
+            for (typeArgumentAnnotation in coneType.customAnnotations) {
+                typeArgumentAnnotation.accept(this, data)
+            }
+        }
+
+        return super.transformResolvedTypeRef(resolvedTypeRef, data)
     }
 
     override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: FirLazyAnnotationTransformerData): FirStatement {

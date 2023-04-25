@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.utils
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
@@ -47,6 +48,9 @@ fun IrAnnotationContainer.getJsQualifier(): String? =
 
 fun IrAnnotationContainer.getJsName(): String? =
     getAnnotation(JsAnnotations.jsNameFqn)?.getSingleConstStringArgument()
+
+fun IrAnnotationContainer.getDeprecated(): String? =
+    getAnnotation(StandardNames.FqNames.deprecated)?.getSingleConstStringArgument()
 
 fun IrAnnotationContainer.hasJsPolyfill(): Boolean =
     hasAnnotation(JsAnnotations.JsPolyfillFqn)

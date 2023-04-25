@@ -136,10 +136,11 @@ configurations.all {
 }
 
 dependencies {
-    api(kotlinStdlib())
+    api(kotlinStdlib("jdk8"))
     api(project(":kotlin-script-runtime"))
     api(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     api(commonDependency("org.jetbrains.intellij.deps", "trove4j"))
+    api(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core"))
 
     proguardLibraries(project(":kotlin-annotations-jvm"))
 
@@ -207,12 +208,15 @@ dependencies {
     fatJarContents(commonDependency("org.jetbrains.kotlinx:kotlinx-collections-immutable-jvm")) { isTransitive = false }
 
     fatJarContents(intellijCore())
-    fatJarContents(commonDependency("net.java.dev.jna:jna-platform")) { isTransitive = false }
+    fatJarContents(commonDependency("org.jetbrains.intellij.deps.jna:jna")) { isTransitive = false }
+    fatJarContents(commonDependency("org.jetbrains.intellij.deps.jna:jna-platform")) { isTransitive = false }
     fatJarContents(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil")) { isTransitive = false }
     fatJarContents(commonDependency("org.lz4:lz4-java")) { isTransitive = false }
     fatJarContents(commonDependency("org.jetbrains.intellij.deps:asm-all")) { isTransitive = false }
     fatJarContents(commonDependency("com.google.guava:guava")) { isTransitive = false }
-    fatJarContents(commonDependency("net.java.dev.jna:jna")) { isTransitive = false }
+
+    fatJarContentsStripServices(commonDependency("com.fasterxml:aalto-xml")) { isTransitive = false }
+    fatJarContents(commonDependency("org.codehaus.woodstox:stax2-api")) { isTransitive = false }
 
     fatJarContentsStripServices(jpsModel()) { isTransitive = false }
     fatJarContentsStripServices(jpsModelImpl()) { isTransitive = false }

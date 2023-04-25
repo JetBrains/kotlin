@@ -57,7 +57,8 @@ interface CompileTimeConstant<out T> {
         val isUnsignedLongNumberLiteral: Boolean,
         val usesVariableAsConstant: Boolean,
         val usesNonConstValAsConstant: Boolean,
-        // `isConvertableConstVal` means that this is `const val` that has `ImplicitIntegerCoercion` annotation
+        // `isConvertableConstVal` means that this is `const val` that can participate in signed to unsigned conversion
+        // see LanguageFeature.ImplicitSignedToUnsignedIntegerConversion
         val isConvertableConstVal: Boolean
     )
 

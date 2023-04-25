@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedParentInImport
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
@@ -46,15 +47,16 @@ open class FirImportResolveTransformer protected constructor(
 
     override fun transformFile(file: FirFile, data: Any?): FirFile {
         checkSessionConsistency(file)
-        return file.also {
+        withFileAnalysisExceptionWrapping(file) {
             val prevValue = currentFile
             currentFile = file
             try {
-                it.transformChildren(this, null)
+                file.transformChildren(this, null)
             } finally {
                 currentFile = prevValue
             }
         }
+        return file
     }
 
     override fun transformImport(import: FirImport, data: Any?): FirImport {

@@ -8,10 +8,8 @@ package org.jetbrains.kotlin.fir.backend.generators
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.backend.*
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.containingClassLookupTag
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
@@ -24,6 +22,7 @@ import org.jetbrains.kotlin.fir.resolve.calls.getExpectedType
 import org.jetbrains.kotlin.fir.resolve.calls.isFunctional
 import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
+import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
@@ -44,7 +43,6 @@ import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi2ir.generators.implicitCastTo
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.TypeVariance
@@ -223,8 +221,6 @@ internal class AdapterGenerator(
             isExpect = false,
             isFakeOverride = false
         ).also { irAdapterFunction ->
-            irAdapterFunction.metadata = FirMetadataSource.Function(firAdaptee)
-
             symbolTable.enterScope(irAdapterFunction)
             irAdapterFunction.dispatchReceiverParameter = null
             val boundReceiver = boundDispatchReceiver ?: boundExtensionReceiver
@@ -324,7 +320,12 @@ internal class AdapterGenerator(
             )
             if (boundDispatchReceiver != null) irCall.dispatchReceiver = receiverValue
             else irCall.extensionReceiver = receiverValue
-        } else if (callableReferenceAccess.explicitReceiver is FirResolvedQualifier && ((firAdaptee as? FirMemberDeclaration)?.isStatic != true)) {
+        } else if (
+            callableReferenceAccess.explicitReceiver is FirResolvedQualifier &&
+            (firAdaptee !is FirConstructor ||
+                    firAdaptee.containingClassLookupTag()?.toFirRegularClassSymbol(session)?.isInner == true) &&
+            ((firAdaptee as? FirMemberDeclaration)?.isStatic != true)
+        ) {
             // Unbound callable reference 'A::foo'
             val adaptedReceiverParameter = adapterFunction.valueParameters[0]
             val adaptedReceiverValue = IrGetValueImpl(
@@ -346,7 +347,7 @@ internal class AdapterGenerator(
             return adapterFunction.valueParameters[parameterIndex + parameterShift].toIrGetValue(startOffset, endOffset)
         }
 
-        adapteeFunction.valueParameters.zip(firAdaptee.valueParameters).mapIndexed { index, (valueParameter, firParameter) ->
+        adapteeFunction.valueParameters.zip(firAdaptee.valueParameters).forEachIndexed { index, (valueParameter, firParameter) ->
             when (val mappedArgument = mappedArguments?.get(firParameter)) {
                 is ResolvedCallArgument.VarargArgument -> {
                     val valueArgument = if (mappedArgument.arguments.isEmpty()) {

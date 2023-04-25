@@ -15,13 +15,13 @@ class Delegate {
     get
     set
 
-  operator fun getValue(_context_receiver_0: Int, thisRef: Any?, property: KProperty<*>): String {
-    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = _context_receiver_0))
+  operator fun getValue($context_receiver_0: Int, thisRef: Any?, property: KProperty<*>): String {
+    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
     return <this>.<get-delegateValue>()
   }
 
-  operator fun setValue(_context_receiver_0: Int, thisRef: Any?, property: KProperty<*>, value: String) {
-    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = _context_receiver_0))
+  operator fun setValue($context_receiver_0: Int, thisRef: Any?, property: KProperty<*>, value: String) {
+    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
     <this>.<set-delegateValue>(<set-?> = value)
   }
 
@@ -29,9 +29,9 @@ class Delegate {
 
 class Result {
   private /* final field */ val contextReceiverField0: Int
-  constructor(_context_receiver_0: Int) /* primary */ {
+  constructor($context_receiver_0: Int) /* primary */ {
     super/*Any*/()
-    <this>.#contextReceiverField0 = _context_receiver_0
+    <this>.#contextReceiverField0 = $context_receiver_0
     /* <init>() */
 
   }
@@ -39,17 +39,17 @@ class Result {
   var s: String /* by */
     field = Delegate()
     get(): String {
-      return <this>.#s$delegate.getValue(_context_receiver_0 = <this>.#contextReceiverField0, thisRef = <this>, property = Result::s)
+      return <this>.#s$delegate.getValue($context_receiver_0 = <this>.#contextReceiverField0, thisRef = <this>, property = Result::s)
     }
     set(<set-?>: String) {
-      <this>.#s$delegate.setValue(_context_receiver_0 = <this>.#contextReceiverField0, thisRef = <this>, property = Result::s, value = <set-?>)
+      <this>.#s$delegate.setValue($context_receiver_0 = <this>.#contextReceiverField0, thisRef = <this>, property = Result::s, value = <set-?>)
     }
 
 }
 
 fun box(): String {
   val result: Result = with<Int, Result>(receiver = 1, block = local fun Int.<anonymous>(): Result {
-    return Result(_context_receiver_0 = $this$with)
+    return Result($context_receiver_0 = $this$with)
   }
 )
   result.<set-s>(<set-?> = "OK")

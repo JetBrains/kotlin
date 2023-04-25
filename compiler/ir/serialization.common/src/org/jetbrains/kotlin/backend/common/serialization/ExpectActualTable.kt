@@ -62,7 +62,7 @@ class ExpectActualTable(val expectDescriptorToSymbol: MutableMap<DeclarationDesc
     }
 
     private fun IrDeclaration.recordRightHandSide(): Map<DeclarationDescriptor, IrSymbol> {
-        val rightHandSide = mutableMapOf<DeclarationDescriptor, IrSymbol>()
+        val rightHandSide = hashMapOf<DeclarationDescriptor, IrSymbol>()
 
         this.acceptVoid(object : IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {

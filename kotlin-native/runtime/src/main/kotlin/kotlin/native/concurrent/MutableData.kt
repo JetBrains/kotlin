@@ -5,6 +5,7 @@
 
 package kotlin.native.concurrent
 
+import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.internal.*
 import kotlinx.cinterop.*
 
@@ -32,6 +33,7 @@ public class MutableData constructor(capacity: Int = 16) {
 
     private var buffer_ = ByteArray(capacity).apply { share() }
     private var buffer: ByteArray
+        @OptIn(ExperimentalNativeApi::class)
         get() =
             when (kotlin.native.Platform.memoryModel) {
                 kotlin.native.MemoryModel.EXPERIMENTAL -> buffer_
@@ -42,6 +44,7 @@ public class MutableData constructor(capacity: Int = 16) {
     private val lock = Lock()
 
     private fun resizeDataLocked(newSize: Int): Int {
+        @OptIn(ExperimentalNativeApi::class)
         assert(newSize >= size)
         if (newSize > buffer.size) {
             val actualSize = maxOf(buffer.size * 3 / 2 + 1, newSize)

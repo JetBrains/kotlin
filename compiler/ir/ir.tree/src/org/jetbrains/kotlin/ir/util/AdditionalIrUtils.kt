@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrClassPublicSymbolImpl
@@ -19,9 +20,17 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 import java.io.File
 
 val IrConstructor.constructedClass get() = this.parent as IrClass
+
+fun IrClassifierSymbol?.isArrayOrPrimitiveArray(builtins: IrBuiltIns): Boolean =
+    this == builtins.arrayClass || this in builtins.primitiveArraysToPrimitiveTypes
+
+// Constructors can't be marked as inline in metadata, hence this check.
+fun IrFunction.isInlineArrayConstructor(builtIns: IrBuiltIns): Boolean =
+    this is IrConstructor && valueParameters.size == 2 && constructedClass.symbol.isArrayOrPrimitiveArray(builtIns)
 
 val IrDeclarationParent.fqNameForIrSerialization: FqName
     get() = when (this) {
@@ -223,17 +232,19 @@ class NaiveSourceBasedFileEntryImpl(
         }
     }
 
+    private val lineNumberLock = Any()
+
     override fun getLineNumber(offset: Int): Int {
         if (offset == SYNTHETIC_OFFSET) return 0
-        if (offset < 0) return -1
-        return calculatedBeforeLineNumbers.get(offset)
+        if (offset < 0) return UNDEFINED_LINE_NUMBER
+        return synchronized(lineNumberLock) { calculatedBeforeLineNumbers.get(offset) }
     }
 
     override fun getColumnNumber(offset: Int): Int {
         if (offset == SYNTHETIC_OFFSET) return 0
-        if (offset < 0) return -1
+        if (offset < 0) return UNDEFINED_COLUMN_NUMBER
         val lineNumber = getLineNumber(offset)
-        return if (lineNumber < 0) -1 else offset - lineStartOffsets[lineNumber]
+        return if (lineNumber < 0) UNDEFINED_COLUMN_NUMBER else offset - lineStartOffsets[lineNumber]
     }
 
     override fun getSourceRangeInfo(beginOffset: Int, endOffset: Int): SourceRangeInfo =
@@ -249,7 +260,7 @@ class NaiveSourceBasedFileEntryImpl(
 }
 
 private fun IrClass.getPropertyDeclaration(name: String): IrProperty? {
-    val properties = declarations.filterIsInstance<IrProperty>().filter { it.name.asString() == name }
+    val properties = declarations.filterIsInstanceAnd<IrProperty> { it.name.asString() == name }
     if (properties.size > 1) {
         error(
             "More than one property with name $name in class $fqNameWhenAvailable:\n" +

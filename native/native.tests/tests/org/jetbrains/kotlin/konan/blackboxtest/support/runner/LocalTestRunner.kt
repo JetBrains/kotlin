@@ -38,47 +38,59 @@ internal class LocalTestRunner(private val testRun: TestRun) : AbstractLocalProc
         }
     }
 
-    override fun buildResultHandler(runResult: RunResult) = ResultHandler(runResult)
+    override fun buildResultHandler(runResult: RunResult) = ResultHandler(
+        runResult = runResult,
+        visibleProcessName = visibleProcessName,
+        checks = testRun.checks,
+        testRun = testRun,
+        loggedParameters = getLoggedParameters()
+    )
 
     override fun handleUnexpectedFailure(t: Throwable) = fail {
         LoggedData.TestRunUnexpectedFailure(getLoggedParameters(), t)
             .withErrorMessage("Test execution failed with unexpected exception.")
     }
+}
 
-    inner class ResultHandler(runResult: RunResult) : AbstractLocalProcessRunner<Unit>.ResultHandler(runResult) {
-        override fun getLoggedRun() = LoggedData.TestRun(getLoggedParameters(), runResult)
+internal class ResultHandler(
+    runResult: RunResult,
+    visibleProcessName: String,
+    checks: TestRunChecks,
+    private val testRun: TestRun,
+    private val loggedParameters: LoggedData.TestRunParameters
+) : LocalResultHandler<Unit>(runResult, visibleProcessName, checks) {
+    override fun getLoggedRun() = LoggedData.TestRun(loggedParameters, runResult)
 
-        override fun doHandle() {
-            verifyTestReport(runResult.processOutput.stdOut.testReport)
+    override fun doHandle() {
+        verifyTestReport(runResult.processOutput.stdOut.testReport)
+    }
+
+    private fun verifyTestReport(testReport: TestReport?) {
+        if (testReport == null) return
+
+        verifyExpectation(!testReport.isEmpty()) { "No tests have been found." }
+
+        testRun.runParameters.get<TestRunParameter.WithFilter> {
+            verifyNoSuchTests(
+                testReport.passedTests.filter { testName -> !testMatches(testName) },
+                "Excessive tests have been executed"
+            )
+
+            verifyNoSuchTests(
+                testReport.ignoredTests.filter { testName -> !testMatches(testName) },
+                "Excessive tests have been ignored"
+            )
         }
 
-        private fun verifyTestReport(testReport: TestReport?) {
-            if (testReport == null) return
+        verifyNoSuchTests(testReport.failedTests, "There are failed tests")
 
-            verifyExpectation(!testReport.isEmpty()) { "No tests have been found." }
+        assumeFalse(testReport.ignoredTests.isNotEmpty() && testReport.passedTests.isEmpty(), "Test case is disabled")
+    }
 
-            testRun.runParameters.get<TestRunParameter.WithFilter> {
-                verifyNoSuchTests(
-                    testReport.passedTests.filter { testName -> !testMatches(testName) },
-                    "Excessive tests have been executed"
-                )
-
-                verifyNoSuchTests(
-                    testReport.ignoredTests.filter { testName -> !testMatches(testName) },
-                    "Excessive tests have been ignored"
-                )
-            }
-
-            verifyNoSuchTests(testReport.failedTests, "There are failed tests")
-
-            assumeFalse(testReport.ignoredTests.isNotEmpty() && testReport.passedTests.isEmpty(), "Test case is disabled")
-        }
-
-        private fun verifyNoSuchTests(tests: Collection<TestName>, subject: String) = verifyExpectation(tests.isEmpty()) {
-            buildString {
-                append(subject).append(':')
-                tests.forEach { appendLine().append(" - ").append(it) }
-            }
+    private fun verifyNoSuchTests(tests: Collection<TestName>, subject: String) = verifyExpectation(tests.isEmpty()) {
+        buildString {
+            append(subject).append(':')
+            tests.forEach { appendLine().append(" - ").append(it) }
         }
     }
 }

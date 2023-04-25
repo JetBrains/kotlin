@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 object ConeTypeIntersector {
     fun intersectTypes(
         context: ConeInferenceContext,
-        types: List<ConeKotlinType>
+        types: Collection<ConeKotlinType>
     ): ConeKotlinType {
         when (types.size) {
             0 -> error("Expected some types")

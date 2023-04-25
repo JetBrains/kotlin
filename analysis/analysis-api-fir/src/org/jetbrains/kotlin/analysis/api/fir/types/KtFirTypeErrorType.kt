@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.types.KtTypeErrorType
 import org.jetbrains.kotlin.analysis.api.types.KtTypeNullability
 import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferTypeParameterType
+import org.jetbrains.kotlin.fir.diagnostics.ConeTypeVariableTypeIsNotInferred
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.renderForDebugging
 
@@ -29,6 +30,7 @@ internal class KtFirTypeErrorType(
     override fun tryRenderAsNonErrorType(): String? = withValidityAssertion {
         when (val diagnostic = coneType.diagnostic) {
             is ConeCannotInferTypeParameterType -> diagnostic.typeParameter.name.asString()
+            is ConeTypeVariableTypeIsNotInferred -> diagnostic.typeVariableType.lookupTag.debugName
             else -> null
         }
     }

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
+import org.jetbrains.kotlin.utils.SmartList
 
 class IrBlockBodyImpl(
     override val startOffset: Int,
@@ -33,7 +34,7 @@ class IrBlockBodyImpl(
         this.initializer()
     }
 
-    override val statements: MutableList<IrStatement> = ArrayList()
+    override val statements: MutableList<IrStatement> = ArrayList(2)
 
     override val factory: IrFactory
         get() = IrFactoryImpl

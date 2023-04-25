@@ -62,6 +62,7 @@ internal class KtFe10PsiTypeProvider(
             KtTypeMappingMode.GENERIC_ARGUMENT -> TypeMappingMode.GENERIC_ARGUMENT
             KtTypeMappingMode.SUPER_TYPE -> TypeMappingMode.SUPER_TYPE
             KtTypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS -> TypeMappingMode.SUPER_TYPE_KOTLIN_COLLECTIONS_AS_IS
+            KtTypeMappingMode.RETURN_TYPE_BOXED -> TypeMappingMode.RETURN_TYPE_BOXED
             KtTypeMappingMode.RETURN_TYPE ->
                 typeMapper.typeContext.getOptimalModeForReturnType(type.fe10Type, isAnnotationMethod)
             KtTypeMappingMode.VALUE_PARAMETER ->

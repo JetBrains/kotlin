@@ -66,8 +66,12 @@ class K2MetadataCompiler : CLICompiler<K2MetadataCompilerArguments>() {
 
         val commonSources = arguments.commonSources?.toSet() ?: emptySet()
         val hmppCliModuleStructure = configuration.get(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE)
+        if (hmppCliModuleStructure != null) {
+            collector.report(ERROR, "HMPP module structure should not be passed during metadata compilation. Please remove `-Xfragments` and related flags")
+            return ExitCode.COMPILATION_ERROR
+        }
         for (arg in arguments.freeArgs) {
-            configuration.addKotlinSourceRoot(arg, isCommon = arg in commonSources, hmppCliModuleStructure?.getModuleNameForSource(arg))
+            configuration.addKotlinSourceRoot(arg, isCommon = arg in commonSources, hmppModuleName = null)
         }
         if (arguments.classpath != null) {
             configuration.addJvmClasspathRoots(arguments.classpath!!.split(File.pathSeparatorChar).map(::File))

@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 
 /**
  * A non-leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.valueAccessExpression
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.valueAccessExpression]
  */
 abstract class IrValueAccessExpression : IrDeclarationReference() {
     abstract override val symbol: IrValueSymbol

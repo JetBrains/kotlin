@@ -144,8 +144,11 @@ class StringNumberConversionTest {
             assertProduces("7.7e1", 77.0)
             assertProduces("+770e-1", 77.0)
 
-            assertProduces("-NaN", -Double.NaN)
+            assertProduces("NaN", Double.NaN)
+            assertProduces("Infinity", Double.POSITIVE_INFINITY)
             assertProduces("+Infinity", Double.POSITIVE_INFINITY)
+            assertProduces("-NaN", -Double.NaN)
+            assertProduces("-Infinity", Double.NEGATIVE_INFINITY)
 
             assertFailsOrNull("7..7")
             assertFailsOrNull("007 not a number")
@@ -165,8 +168,11 @@ class StringNumberConversionTest {
             assertProduces("7.7e1", 77.0f)
             assertProduces("+770e-1", 77.0f)
 
-            assertProduces("-NaN", -Float.NaN)
+            assertProduces("NaN", Float.NaN)
+            assertProduces("Infinity", Float.POSITIVE_INFINITY)
             assertProduces("+Infinity", Float.POSITIVE_INFINITY)
+            assertProduces("-NaN", -Float.NaN)
+            assertProduces("-Infinity", Float.NEGATIVE_INFINITY)
 
             assertFailsOrNull("7..7")
             assertFailsOrNull("007 not a number")
@@ -233,17 +239,16 @@ class StringNumberConversionTest {
             assertFailsOrNull("   ")
         }
 
-        @Suppress("SIGNED_CONSTANT_CONVERTED_TO_UNSIGNED")
         compareConversionWithRadix(String::toUInt, String::toUIntOrNull) {
             assertProduces(10, "0", 0u)
             assertProduces(10, "473", 473u)
             assertProduces(10, "+42", 42u)
             assertProduces(10, "2147483647", 2147483647u)
 
-            assertProduces(16, "FF", 255)
+            assertProduces(16, "FF", 255u)
             assertProduces(16, "ffFFff01", 0u - 255u)
-            assertProduces(2, "1100110", 102)
-            assertProduces(27, "Kona", 411787)
+            assertProduces(2, "1100110", 102u)
+            assertProduces(27, "Kona", 411787u)
 
             assertFailsOrNull(10, "-0")
             assertFailsOrNull(10, "42949672940")

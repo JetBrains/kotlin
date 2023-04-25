@@ -18,10 +18,11 @@ import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
+import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.CaptureStatus
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.SmartSet
@@ -178,27 +179,52 @@ inline fun <reified ID : Any, reified FS : FirScope> scopeSessionKey(): ScopeSes
 val USE_SITE = scopeSessionKey<FirClassSymbol<*>, FirTypeScope>()
 
 /* TODO REMOVE */
-fun createSubstitution(
+fun createSubstitutionForScope(
     typeParameters: List<FirTypeParameterRef>, // TODO: or really declared?
     type: ConeClassLikeType,
     session: FirSession
 ): Map<FirTypeParameterSymbol, ConeKotlinType> {
     val capturedOrType = session.typeContext.captureFromArguments(type, CaptureStatus.FROM_EXPRESSION) ?: type
-    val typeArguments = (capturedOrType as ConeClassLikeType).typeArguments
-    return typeParameters.zip(typeArguments) { typeParameter, typeArgument ->
-        val typeParameterSymbol = typeParameter.symbol
-        typeParameterSymbol to when (typeArgument) {
-            is ConeKotlinTypeProjection -> {
-                typeArgument.type
-            }
-            else /* StarProjection */ -> {
-                ConeTypeIntersector.intersectTypes(
-                    session.typeContext,
-                    typeParameterSymbol.resolvedBounds.map { it.coneType }
-                )
-            }
+    val capturedTypeArguments = (capturedOrType as ConeClassLikeType).typeArguments
+
+    return typeParameters.withIndex().mapNotNull { (index, typeParameter) ->
+        val capturedTypeArgument = capturedTypeArguments.getOrNull(index) ?: return@mapNotNull null
+        require(capturedTypeArgument is ConeKotlinType) {
+            "There should left no projections after capture conversion, but $capturedTypeArgument found at $index"
         }
+        val originalTypeArgument = type.typeArguments.getOrNull(index) ?: return@mapNotNull null
+
+        val typeParameterSymbol = typeParameter.symbol
+        val resultingArgument =
+            computeNonTrivialTypeArgumentForScopeSubstitutor(typeParameterSymbol, originalTypeArgument, session, capturedTypeArgument)
+                ?: capturedTypeArgument
+
+        typeParameterSymbol to resultingArgument
     }.toMap()
+}
+
+/**
+ * Returns null if `capturedTypeArgument` should be used
+ */
+private fun computeNonTrivialTypeArgumentForScopeSubstitutor(
+    typeParameterSymbol: FirTypeParameterSymbol,
+    originalTypeArgument: ConeTypeProjection,
+    session: FirSession,
+    capturedTypeArgument: ConeKotlinType
+): ConeKotlinType? {
+    // We don't do anything for contravariant parameters (IN), because their UnsafeVariance usages are mostly return type.
+    // And if we continue using captured types for them, they will just be approximated (as return types) as they've been before.
+    if (typeParameterSymbol.variance != Variance.OUT_VARIANCE) return null
+
+    return when (originalTypeArgument.kind) {
+        // Out<out T> is the same as Out<T>
+        ProjectionKind.OUT -> originalTypeArgument.type!!
+        // Out<*> is the same as Out<SubstitutedUpperBounds> (i.e. Out<Supertype(CapturedType(*))>)
+        ProjectionKind.STAR -> session.typeApproximator.approximateToSuperType(
+            capturedTypeArgument, TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference
+        )
+        else -> null
+    }
 }
 
 private fun ConeClassLikeType.computePartialExpansion(

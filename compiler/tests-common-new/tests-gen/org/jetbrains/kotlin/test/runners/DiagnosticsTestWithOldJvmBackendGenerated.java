@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosticsTestWithOldJvmBackend {
     @Test
     public void testAllFilesPresentInTestsWithJvmBackend() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), TargetBackend.JVM_OLD, true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_OLD, true);
     }
 
     @Test
@@ -35,6 +35,18 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
     @TestMetadata("inlineCycle.kt")
     public void testInlineCycle() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithJvmBackend/inlineCycle.kt");
+    }
+
+    @Test
+    @TestMetadata("kt57104.kt")
+    public void testKt57104() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/kt57104.kt");
+    }
+
+    @Test
+    @TestMetadata("kt57104_2.kt")
+    public void testKt57104_2() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJvmBackend/kt57104_2.kt");
     }
 
     @Test
@@ -67,7 +79,7 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
     public class DuplicateJvmSignature {
         @Test
         public void testAllFilesPresentInDuplicateJvmSignature() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), TargetBackend.JVM_OLD, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_OLD, true);
         }
 
         @Test
@@ -100,7 +112,7 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
 
             @Test
             public void testAllFilesPresentInAccidentalOverrides() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), TargetBackend.JVM_OLD, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/accidentalOverrides"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_OLD, true);
             }
 
             @Test
@@ -182,7 +194,7 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
         public class Bridges {
             @Test
             public void testAllFilesPresentInBridges() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/bridges"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), TargetBackend.JVM_OLD, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/bridges"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_OLD, true);
             }
 
             @Test
@@ -210,7 +222,7 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
         public class Erasure {
             @Test
             public void testAllFilesPresentInErasure() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), TargetBackend.JVM_OLD, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/erasure"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_OLD, true);
             }
 
             @Test
@@ -322,7 +334,7 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
         public class FinalMembersFromBuiltIns {
             @Test
             public void testAllFilesPresentInFinalMembersFromBuiltIns() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/finalMembersFromBuiltIns"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), TargetBackend.JVM_OLD, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/finalMembersFromBuiltIns"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_OLD, true);
             }
 
             @Test
@@ -344,7 +356,7 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
         public class FunctionAndProperty {
             @Test
             public void testAllFilesPresentInFunctionAndProperty() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/functionAndProperty"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), TargetBackend.JVM_OLD, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/functionAndProperty"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_OLD, true);
             }
 
             @Test
@@ -457,12 +469,22 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
         }
 
         @Nested
+        @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/inlineClasses")
+        @TestDataPath("$PROJECT_ROOT")
+        public class InlineClasses {
+            @Test
+            public void testAllFilesPresentInInlineClasses() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_OLD, true);
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames")
         @TestDataPath("$PROJECT_ROOT")
         public class SpecialNames {
             @Test
             public void testAllFilesPresentInSpecialNames() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), TargetBackend.JVM_OLD, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_OLD, true);
             }
 
             @Test
@@ -532,7 +554,7 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
         public class Statics {
             @Test
             public void testAllFilesPresentInStatics() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/statics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), TargetBackend.JVM_OLD, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/statics"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_OLD, true);
             }
 
             @Test
@@ -578,7 +600,7 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
         public class Synthesized {
             @Test
             public void testAllFilesPresentInSynthesized() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/synthesized"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), TargetBackend.JVM_OLD, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/synthesized"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_OLD, true);
             }
 
             @Test
@@ -594,7 +616,7 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
         public class TraitImpl {
             @Test
             public void testAllFilesPresentInTraitImpl() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/traitImpl"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), TargetBackend.JVM_OLD, true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/traitImpl"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_OLD, true);
             }
 
             @Test
@@ -633,6 +655,16 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
                 runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/traitImpl/twoTraits_old.kt");
             }
         }
+
+        @Nested
+        @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/valueClasses")
+        @TestDataPath("$PROJECT_ROOT")
+        public class ValueClasses {
+            @Test
+            public void testAllFilesPresentInValueClasses() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/valueClasses"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_OLD, true);
+            }
+        }
     }
 
     @Nested
@@ -641,7 +673,7 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
     public class MultifileClasses {
         @Test
         public void testAllFilesPresentInMultifileClasses() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/multifileClasses"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), TargetBackend.JVM_OLD, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/multifileClasses"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_OLD, true);
         }
 
         @Test
@@ -657,7 +689,7 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
     public class Scripts {
         @Test
         public void testAllFilesPresentInScripts() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/scripts"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), TargetBackend.JVM_OLD, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/scripts"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_OLD, true);
         }
     }
 
@@ -667,7 +699,7 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
     public class TypeOf {
         @Test
         public void testAllFilesPresentInTypeOf() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/typeOf"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), TargetBackend.JVM_OLD, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/typeOf"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_OLD, true);
         }
 
         @Test
@@ -689,7 +721,7 @@ public class DiagnosticsTestWithOldJvmBackendGenerated extends AbstractDiagnosti
     public class ValueClasses {
         @Test
         public void testAllFilesPresentInValueClasses() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/valueClasses"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), TargetBackend.JVM_OLD, true);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/valueClasses"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), TargetBackend.JVM_OLD, true);
         }
 
         @Test

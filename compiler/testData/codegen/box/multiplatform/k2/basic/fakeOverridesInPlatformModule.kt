@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM
+// IGNORE_BACKEND_K1: JS, JS_IR, JS_IR_ES6, NATIVE
 // !LANGUAGE: +MultiPlatformProjects
 
 // MODULE: common
@@ -11,9 +11,8 @@ interface Foo {
 
 fun test(e: Foo) = e.ok()
 
-// MODULE: jvm()()(common)
-// TARGET_PLATFORM: JVM
-// FILE: main.kt
+// MODULE: platform()()(common)
+// FILE: platform.kt
 
 interface Bar : Foo
 

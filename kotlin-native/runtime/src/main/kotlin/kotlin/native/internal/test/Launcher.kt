@@ -7,6 +7,7 @@
 
 package kotlin.native.internal.test
 
+import kotlin.experimental.ExperimentalNativeApi
 import kotlin.system.exitProcess
 import kotlin.native.concurrent.*
 
@@ -15,21 +16,24 @@ import kotlin.native.concurrent.*
 // So we keep this object public but protect it with @ExperimentalStdlibApi
 // to stress that it is not a part of the stable API.
 // Related YT issue: KT-47915.
-@ExperimentalStdlibApi
+@ExperimentalNativeApi
 @ThreadLocal
 public object GeneratedSuites {
    val suites = mutableListOf<TestSuite>()
    fun add(suite: TestSuite) = suites.add(suite)
 }
 
+@ExperimentalNativeApi
 public fun registerSuite(suite: TestSuite): Unit {
     GeneratedSuites.add(suite)
 }
 
+@ExperimentalNativeApi
 fun testLauncherEntryPoint(args: Array<String>): Int {
     return TestRunner(GeneratedSuites.suites, args).run()
 }
 
+@ExperimentalNativeApi
 fun main(args: Array<String>) {
     val exitCode = testLauncherEntryPoint(args)
     if (exitCode != 0) {
@@ -38,6 +42,8 @@ fun main(args: Array<String>) {
 }
 
 @OptIn(FreezingIsDeprecated::class)
+@ExperimentalNativeApi
+@ObsoleteWorkersApi
 fun worker(args: Array<String>) {
     val worker = Worker.start()
     val exitCode = worker.execute(TransferMode.SAFE, { args.freeze() }) {
@@ -49,6 +55,7 @@ fun worker(args: Array<String>) {
     }
 }
 
+@ExperimentalNativeApi
 fun mainNoExit(args: Array<String>) {
     testLauncherEntryPoint(args)
 }

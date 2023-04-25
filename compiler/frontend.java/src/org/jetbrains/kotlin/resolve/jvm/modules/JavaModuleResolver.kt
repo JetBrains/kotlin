@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.resolve.jvm.modules
 
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.load.java.JavaModuleAnnotationsProvider
@@ -32,6 +31,6 @@ interface JavaModuleResolver : JavaModuleAnnotationsProvider {
     }
 
     companion object SERVICE {
-        fun getInstance(project: Project): JavaModuleResolver = ServiceManager.getService(project, JavaModuleResolver::class.java)
+        fun getInstance(project: Project): JavaModuleResolver = project.getService(JavaModuleResolver::class.java)
     }
 }

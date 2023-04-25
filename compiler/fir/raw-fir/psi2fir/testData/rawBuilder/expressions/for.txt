@@ -4,7 +4,10 @@ FILE: for.kt
             lval <iterator>: <implicit> = IntegerLiteral(1).rangeTo#(IntegerLiteral(10)).iterator#()
             while(R|<local>/<iterator>|.hasNext#()) {
                 lval i: <implicit> = R|<local>/<iterator>|.next#()
-                println#(i#)
+                 {
+                    println#(i#)
+                }
+
             }
 
         }
@@ -16,13 +19,16 @@ FILE: for.kt
             lval <iterator>: <implicit> = IntegerLiteral(1).rangeTo#(IntegerLiteral(10)).iterator#()
             label@while(R|<local>/<iterator>|.hasNext#()) {
                 lval i: <implicit> = R|<local>/<iterator>|.next#()
-                when () {
-                    ==(i#, IntegerLiteral(5)) ->  {
-                        continue@@@[R|<local>/<iterator>|.hasNext#()]
+                 {
+                    when () {
+                        ==(i#, IntegerLiteral(5)) ->  {
+                            continue@@@[R|<local>/<iterator>|.hasNext#()]
+                        }
                     }
+
+                    println#(i#)
                 }
 
-                println#(i#)
             }
 
         }
@@ -34,7 +40,10 @@ FILE: for.kt
             lval <iterator>: <implicit> = list#.subList#(IntegerLiteral(0), IntegerLiteral(10)).iterator#()
             while(R|<local>/<iterator>|.hasNext#()) {
                 lval element: <implicit> = R|<local>/<iterator>|.next#()
-                println#(element#)
+                 {
+                    println#(element#)
+                }
+
             }
 
         }
@@ -43,7 +52,10 @@ FILE: for.kt
             lval <iterator>: <implicit> = list#.subList#(IntegerLiteral(10), IntegerLiteral(20)).iterator#()
             while(R|<local>/<iterator>|.hasNext#()) {
                 lval element: <implicit> = R|<local>/<iterator>|.next#()
-                println#(element#)
+                 {
+                    println#(element#)
+                }
+
             }
 
         }
@@ -74,7 +86,10 @@ FILE: for.kt
                 lval <destruct>: <implicit> = R|<local>/<iterator>|.next#()
                 lval x: <implicit> = R|<local>/<destruct>|.component1#()
                 lval y: <implicit> = R|<local>/<destruct>|.component2#()
-                println#(<strcat>(String(x = ), x#, String( y = ), y#))
+                 {
+                    println#(<strcat>(String(x = ), x#, String( y = ), y#))
+                }
+
             }
 
         }
@@ -85,7 +100,10 @@ FILE: for.kt
             lval <iterator>: <implicit> = list#.iterator#()
             while(R|<local>/<iterator>|.hasNext#()) {
                 lval s: Some = R|<local>/<iterator>|.next#()
-                println#(s#)
+                 {
+                    println#(s#)
+                }
+
             }
 
         }

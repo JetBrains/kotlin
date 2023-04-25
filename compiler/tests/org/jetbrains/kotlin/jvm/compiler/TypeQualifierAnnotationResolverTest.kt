@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.jvm.compiler
 
 import org.jetbrains.kotlin.checkers.FOREIGN_ANNOTATIONS_SOURCES_PATH
+import org.jetbrains.kotlin.checkers.JSR_305_SOURCES_PATH
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
@@ -27,16 +28,19 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.resolveClassByFqName
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.AnnotationTypeQualifierResolver
+import org.jetbrains.kotlin.load.java.JavaTypeEnhancementState
 import org.jetbrains.kotlin.load.java.lazy.JavaResolverComponents
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.renderer.AnnotationArgumentsRenderingPolicy
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.lazy.JvmResolveUtil
-import org.jetbrains.kotlin.test.*
+import org.jetbrains.kotlin.test.ConfigurationKind
+import org.jetbrains.kotlin.test.KotlinTestUtils
+import org.jetbrains.kotlin.test.MockLibraryUtilExt
+import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.test.util.KtTestUtil
-import org.jetbrains.kotlin.load.java.JavaTypeEnhancementState
 import java.io.File
 
 class TypeQualifierAnnotationResolverTest : KtUsefulTestCase() {
@@ -83,14 +87,19 @@ class TypeQualifierAnnotationResolverTest : KtUsefulTestCase() {
     }
 
     private fun buildTypeQualifierResolverAndFindClass(className: String): Pair<AnnotationTypeQualifierResolver, ClassDescriptor> {
+        val jsr305Jar = MockLibraryUtilExt.compileJavaFilesLibraryToJar(JSR_305_SOURCES_PATH, "jsr305")
         val configuration = KotlinTestUtils.newConfiguration(
             ConfigurationKind.ALL, TestJdkKind.FULL_JDK,
             listOf(
                 KtTestUtil.getAnnotationsJar(),
                 MockLibraryUtilExt.compileJavaFilesLibraryToJar(
                     FOREIGN_ANNOTATIONS_SOURCES_PATH,
-                    "foreign-annotations"
-                )
+                    "foreign-annotations",
+                    extraClasspath = listOf(
+                        jsr305Jar.absolutePath
+                    )
+                ),
+                jsr305Jar,
             ),
             listOf(File(TEST_DATA_PATH))
         ).apply {

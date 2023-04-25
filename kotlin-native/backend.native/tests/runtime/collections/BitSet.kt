@@ -3,6 +3,8 @@
  * that can be found in the LICENSE file.
  */
 
+@file:OptIn(kotlin.native.ObsoleteNativeApi::class)
+
 package runtime.collections.BitSet
 
 import kotlin.test.*

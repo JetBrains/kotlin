@@ -68,7 +68,7 @@ abstract class IncrementalCachesManager<PlatformCache : AbstractIncrementalCache
 
 }
 
-class IncrementalJvmCachesManager(
+open class IncrementalJvmCachesManager(
     icContext: IncrementalCompilationContext,
     outputDir: File?,
     cachesRootDir: File,

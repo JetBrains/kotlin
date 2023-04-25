@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -45,7 +45,6 @@ abstract class AbstractPartialRawFirBuilderTestCase : AbstractLowLevelApiSingleF
             else -> testServices.assertions.fail { "No '$FUNCTION_DIRECTIVE' or '$PROPERTY_DIRECTIVE' directives found!" }
         }
     }
-
 
     private fun testFunctionPartialBuilding(ktFile: KtFile, nameToFind: String) {
         testPartialBuilding(
@@ -97,18 +96,24 @@ abstract class AbstractPartialRawFirBuilderTestCase : AbstractLowLevelApiSingleF
         val elementToBuild = findPsiElement(file) as KtDeclaration
 
         val scopeProvider = object : FirScopeProvider() {
-            override fun getUseSiteMemberScope(klass: FirClass, useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope =
-                error("Should not be called")
+            override fun getUseSiteMemberScope(
+                klass: FirClass,
+                useSiteSession: FirSession,
+                scopeSession: ScopeSession,
+                memberRequiredPhase: FirResolvePhase?,
+            ): FirTypeScope = error("Should not be called")
 
             override fun getStaticMemberScopeForCallables(
                 klass: FirClass,
                 useSiteSession: FirSession,
-                scopeSession: ScopeSession
-            ): FirContainingNamesAwareScope? =
-                error("Should not be called")
+                scopeSession: ScopeSession,
+            ): FirContainingNamesAwareScope? = error("Should not be called")
 
-            override fun getNestedClassifierScope(klass: FirClass, useSiteSession: FirSession, scopeSession: ScopeSession): FirContainingNamesAwareScope? =
-                error("Should not be called")
+            override fun getNestedClassifierScope(
+                klass: FirClass,
+                useSiteSession: FirSession,
+                scopeSession: ScopeSession,
+            ): FirContainingNamesAwareScope? = error("Should not be called")
         }
 
         val session = FirSessionFactoryHelper.createEmptySession()

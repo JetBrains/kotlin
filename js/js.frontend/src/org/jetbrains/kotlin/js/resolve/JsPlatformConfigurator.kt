@@ -22,6 +22,7 @@ object JsPlatformConfigurator : PlatformConfiguratorBase(
         NativeInvokeChecker(), NativeGetterChecker(), NativeSetterChecker(),
         JsNameChecker, JsModuleChecker, JsExternalFileChecker,
         JsExternalChecker, JsInheritanceChecker, JsMultipleInheritanceChecker,
+        JsExternalInheritorOnlyChecker,
         JsRuntimeAnnotationChecker,
         JsDynamicDeclarationChecker,
         JsExportAnnotationChecker,
@@ -31,7 +32,8 @@ object JsPlatformConfigurator : PlatformConfiguratorBase(
         JsModuleCallChecker,
         JsDynamicCallChecker,
         JsDefinedExternallyCallChecker,
-        LateinitIntrinsicApplicabilityChecker(isWarningInPre19 = true)
+        LateinitIntrinsicApplicabilityChecker(isWarningInPre19 = true),
+        JsExternalArgumentCallChecker
     ),
 ) {
     override fun configureModuleComponents(container: StorageComponentContainer) {

@@ -19,7 +19,9 @@ class TemporaryDirectoryManagerImpl(testServices: TestServices) : TemporaryDirec
         val testInfo = testServices.testInfo
         val className = testInfo.className
         val methodName = testInfo.methodName
-        if (!onWindows) return@run KtTestUtil.tmpDirForTest(className, methodName)
+        if (!onWindows && className.length + methodName.length < 255) {
+            return@run KtTestUtil.tmpDirForTest(className, methodName)
+        }
 
         // This code will simplify directory name for windows. This is needed because there can occur errors due to long name
         val lastDot = className.lastIndexOf('.')

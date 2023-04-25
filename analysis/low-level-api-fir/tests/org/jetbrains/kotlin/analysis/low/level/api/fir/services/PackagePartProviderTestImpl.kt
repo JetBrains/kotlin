@@ -37,6 +37,7 @@ internal class PackagePartProviderTestImpl(
                 return providers.flatMapTo(mutableSetOf()) { it.getAllOptionalAnnotationClasses() }.toList()
             }
 
+            override fun mayHaveOptionalAnnotationClasses(): Boolean = providers.any { it.mayHaveOptionalAnnotationClasses() }
         }
     }
 }

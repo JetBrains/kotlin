@@ -8,24 +8,17 @@ public final class A /* A*/ {
   public static final java.util.Collection<?> c;
 
   @kotlin.jvm.JvmField()
-  public int b;
+  public int b = 1 /* initializer type: int */;
 
   @kotlin.jvm.JvmField()
-  public static int d;
+  public static int d = 1 /* initializer type: int */;
 
   @org.jetbrains.annotations.NotNull()
   public static final A.Companion Companion;
 
   public  A();//  .ctor()
 
-
   class Companion ...
-
-  }
-
-public static final class Companion /* A.Companion*/ {
-  private  Companion();//  .ctor()
-
 }
 
 public abstract interface B /* B*/ {
@@ -36,14 +29,7 @@ public abstract interface B /* B*/ {
   @org.jetbrains.annotations.NotNull()
   public static final B.Companion Companion;
 
-
   class Companion ...
-
-  }
-
-public static final class Companion /* B.Companion*/ {
-  private  Companion();//  .ctor()
-
 }
 
 public final class C /* C*/ {
@@ -52,10 +38,17 @@ public final class C /* C*/ {
   public final java.util.Collection<?> a;
 
   @kotlin.jvm.JvmField()
-  public int b;
+  public int b = 1 /* initializer type: int */;
 
   public  C();//  .ctor()
 
-  public  C(@kotlin.jvm.JvmField() @org.jetbrains.annotations.NotNull() java.util.Collection<?>, @kotlin.jvm.JvmField() int);//  .ctor(java.util.Collection<?>, int)
+  public  C(@org.jetbrains.annotations.NotNull() java.util.Collection<?>, int);//  .ctor(java.util.Collection<?>, int)
+}
 
+public static final class Companion /* A.Companion*/ {
+  private  Companion();//  .ctor()
+}
+
+public static final class Companion /* B.Companion*/ {
+  private  Companion();//  .ctor()
 }

@@ -192,8 +192,8 @@ class UpToDateIT : KGPBaseTest() {
         }
 
         override fun checkAfterRebuild(buildResult: BuildResult) = with(buildResult) {
-            assertTasksExecuted(":compileKotlin", ":kaptGenerateStubsKotlin")
-            assertTasksUpToDate(":kaptKotlin")
+            assertTasksExecuted(":compileKotlin")
+            assertTasksUpToDate(":kaptGenerateStubsKotlin", ":kaptKotlin")
         }
     }
 

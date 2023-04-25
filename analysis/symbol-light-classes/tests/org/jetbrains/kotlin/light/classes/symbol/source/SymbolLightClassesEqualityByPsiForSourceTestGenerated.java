@@ -115,6 +115,12 @@ public class SymbolLightClassesEqualityByPsiForSourceTestGenerated extends Abstr
     }
 
     @Test
+    @TestMetadata("enumMembers.kt")
+    public void testEnumMembers() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/enumMembers.kt");
+    }
+
+    @Test
     @TestMetadata("enums.kt")
     public void testEnums() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/enums.kt");
@@ -307,9 +313,21 @@ public class SymbolLightClassesEqualityByPsiForSourceTestGenerated extends Abstr
     }
 
     @Test
+    @TestMetadata("unresolvedGenericSupertypes.kt")
+    public void testUnresolvedGenericSupertypes() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/unresolvedGenericSupertypes.kt");
+    }
+
+    @Test
     @TestMetadata("unresolvedWithAliasedImport.kt")
     public void testUnresolvedWithAliasedImport() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/unresolvedWithAliasedImport.kt");
+    }
+
+    @Test
+    @TestMetadata("unsafePropertyInitializers.kt")
+    public void testUnsafePropertyInitializers() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/unsafePropertyInitializers.kt");
     }
 
     @Test

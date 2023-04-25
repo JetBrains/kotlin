@@ -584,9 +584,9 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
                 tasks.named("compileKotlin") {
                     doLast {
                         def actualJvmTarget = compilerOptions.jvmTarget.orNull
-                        if (actualJvmTarget != null) {
+                        if (actualJvmTarget != org.jetbrains.kotlin.gradle.dsl.JvmTarget.DEFAULT) {
                             //noinspection GroovyAssignabilityCheck
-                            throw new GradleException("Expected `jvmTarget` value is 'null' but the actual value was ${'$'}actualJvmTarget")
+                            throw new GradleException("Expected `jvmTarget` value is 'JvmTarget.DEFAULT' but the actual value was ${'$'}actualJvmTarget")
                         }
                     }
                 }

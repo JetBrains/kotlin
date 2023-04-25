@@ -381,7 +381,7 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
             if (!cache.isMultifileFacade(className)) return emptySet()
 
             val name = previousMappings.getName(className.internalName)
-            return previousMappings.getClassSources(name)?.toSet() ?: emptySet()
+            return previousMappings.getClassSources(name).toSet()
         }
 
         for ((target, outputs) in outputItems) {

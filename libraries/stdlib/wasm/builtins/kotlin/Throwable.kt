@@ -6,6 +6,7 @@
 package kotlin
 
 import kotlin.wasm.internal.ExternalInterfaceType
+import kotlin.wasm.internal.getSimpleName
 import kotlin.wasm.internal.jsToKotlinStringAdapter
 
 /**
@@ -21,11 +22,19 @@ public open class Throwable(open val message: String?, open val cause: kotlin.Th
 
     constructor() : this(null, null)
 
-    private val jsStack: ExternalInterfaceType = captureStackTrace()
+    internal val jsStack: ExternalInterfaceType = captureStackTrace()
 
-    internal val stack: String by lazy {
-        jsToKotlinStringAdapter(jsStack).removePrefix("Error\n")
-    }
+    private var _stack: String? = null
+    internal val stack: String
+        get() {
+            var value = _stack
+            if (value == null) {
+                value = jsToKotlinStringAdapter(jsStack).removePrefix("Error\n")
+                _stack = value
+            }
+
+            return value
+        }
 
     internal var suppressedExceptionsList: MutableList<Throwable>? = null
 
@@ -34,11 +43,10 @@ public open class Throwable(open val message: String?, open val cause: kotlin.Th
      * followed by the exception message if it is not null.
      */
     public override fun toString(): String {
-        val kClass = this::class
-        val s = kClass.simpleName ?: "Throwable"
+        val s = getSimpleName(this.typeInfo)
         return if (message != null) s + ": " + message.toString() else s
     }
 }
 
-@JsFun("() => new Error().stack")
-private external fun captureStackTrace(): ExternalInterfaceType
+private fun captureStackTrace(): ExternalInterfaceType =
+    js("new Error().stack")

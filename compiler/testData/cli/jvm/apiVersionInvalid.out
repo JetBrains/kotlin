@@ -1,3 +1,3 @@
 error: unknown API version: 239.42
-Supported API versions: 1.4 (deprecated), 1.5 (deprecated), 1.6, 1.7, 1.8, 1.9, 2.0 (experimental)
+Supported API versions: 1.4 (deprecated), 1.5 (deprecated), 1.6, 1.7, 1.8, 1.9, 2.0 (experimental), 2.1 (experimental)
 COMPILATION_ERROR

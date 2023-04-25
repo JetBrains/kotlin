@@ -22,7 +22,9 @@ import kotlin.test.assertNotNull
 
 class SourceSetVisibilityInferenceTest {
     private val project = buildProjectWithMPP()
-    private val kotlin = project.multiplatformExtension
+    private val kotlin = project.multiplatformExtension.apply {
+        targetHierarchy.default()
+    }
 
     @Test
     fun testBasicSuccessful() {

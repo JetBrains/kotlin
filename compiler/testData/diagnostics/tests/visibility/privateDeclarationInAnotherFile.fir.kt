@@ -6,7 +6,7 @@ private class Private {
 
 // FILE: 2.kt
 
-import Private.Public
+import <!INVISIBLE_REFERENCE!>Private<!>.Public
 
 private fun test_1(x: <!INVISIBLE_REFERENCE!>Private.Public<!>, y: <!INVISIBLE_REFERENCE!>Public<!>) {
 

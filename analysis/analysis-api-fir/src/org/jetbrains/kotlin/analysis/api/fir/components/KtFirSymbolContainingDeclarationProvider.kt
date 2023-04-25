@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolKind
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.originalDeclaration
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
@@ -45,7 +46,9 @@ internal class KtFirSymbolContainingDeclarationProvider(
             is KtLocalVariableSymbol -> getParentSymbolByPsi()
             is KtAnonymousFunctionSymbol -> getParentSymbolByPsi()
             is KtAnonymousObjectSymbol -> getParentSymbolByPsi()
-            is KtSamConstructorSymbol -> null // SAM constructors are always toplevel
+
+            is KtSamConstructorSymbol -> null // SAM constructors are always top-level
+            is KtScriptSymbol -> null // Scripts are always top-level
 
             is KtClassInitializerSymbol -> {
                 val outerFirClassifier = symbol.firSymbol.getContainingClassSymbol(symbol.firSymbol.llFirSession)
@@ -69,8 +72,6 @@ internal class KtFirSymbolContainingDeclarationProvider(
                 val outerFirClassifier = symbol.firSymbol.llFirSession.firProvider.getFirClassifierByFqName(outerClassId) ?: return null
                 firSymbolBuilder.buildSymbol(outerFirClassifier) as? KtDeclarationSymbol
             }
-
-
         }
     }
 
@@ -113,5 +114,5 @@ internal class KtFirSymbolContainingDeclarationProvider(
         when (val container = this.parentOfType<KtDeclaration>()) {
             is KtDestructuringDeclaration -> container.parentOfType()
             else -> container
-        }
+        }?.let { it.originalDeclaration ?: it }
 }

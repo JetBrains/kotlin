@@ -14,4 +14,6 @@ class JpsPluginSettings : Freezable() {
             checkFrozen()
             field = value
         }
+
+    override fun copyOf(): Freezable = copyJpsPluginSettings(this, JpsPluginSettings())
 }

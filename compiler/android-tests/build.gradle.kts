@@ -29,7 +29,7 @@ dependencies {
     testApi(jpsBuildTest())
 
     testRuntimeOnly(intellijCore())
-    testRuntimeOnly(commonDependency("net.java.dev.jna:jna"))
+    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
 
     testApi("org.junit.platform:junit-platform-launcher:${commonDependencyVersion("org.junit.platform", "")}")
 }
@@ -57,7 +57,7 @@ projectTest {
     useAndroidEmulator(this)
 }
 
-val generateAndroidTests by generator("org.jetbrains.kotlin.android.tests.CodegenTestsOnAndroidGenerator")
-
-generateAndroidTests.workingDir = rootDir
-generateAndroidTests.dependsOn(rootProject.tasks.named("dist"))
+val generateAndroidTests by generator("org.jetbrains.kotlin.android.tests.CodegenTestsOnAndroidGenerator") {
+    workingDir = rootDir
+    dependsOn(rootProject.tasks.named("dist"))
+}

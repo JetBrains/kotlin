@@ -20,7 +20,7 @@ dependencies {
 }
 
 application {
-    mainClassName = "org.jetbrains.kotlin.ir.generator.MainKt"
+    mainClass.set("org.jetbrains.kotlin.ir.generator.MainKt")
 }
 
 sourceSets {

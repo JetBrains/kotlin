@@ -1,4 +1,6 @@
 // FIR_IDENTICAL
+// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS_IR_ES6
 
 fun testScalar(a: Any): IntArray {
     if (a !is Int) return intArrayOf()

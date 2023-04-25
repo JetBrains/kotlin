@@ -10,16 +10,22 @@ import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.BasePluginConvention
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.ProviderFactory
 import org.jetbrains.kotlin.gradle.utils.chainedFinalizeValueOnRead
 import org.jetbrains.kotlin.gradle.utils.propertyWithConvention
 
 internal class BasePluginConfigurationG70(
     private val basePluginConvention: BasePluginConvention,
-    private val objects: ObjectFactory
+    private val objects: ObjectFactory,
+    private val providerFactory: ProviderFactory,
 ) : BasePluginConfiguration {
     override val archivesName: Property<String>
         get() = objects
-            .propertyWithConvention(basePluginConvention.archivesBaseName)
+            .propertyWithConvention(
+                providerFactory.provider {
+                    basePluginConvention.archivesBaseName
+                }
+            )
             .chainedFinalizeValueOnRead()
 
     override val distsDirectory: DirectoryProperty
@@ -32,7 +38,8 @@ internal class BasePluginConfigurationG70(
         override fun getInstance(project: Project): BasePluginConfiguration {
             return BasePluginConfigurationG70(
                 project.convention.getPlugin(BasePluginConvention::class.java),
-                project.objects
+                project.objects,
+                project.providers
             )
         }
     }

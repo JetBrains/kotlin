@@ -55,7 +55,7 @@ internal class GranularAnnotationsBox(
             return annotations.find { it.qualifiedName == qualifiedName }
         }
 
-        specialAnnotationsList[qualifiedName]?.let { specialAnnotationClassId ->
+        specialAnnotationsListWithSafeArgumentsResolve[qualifiedName]?.let { specialAnnotationClassId ->
             val annotationApplication = annotationsProvider[specialAnnotationClassId].firstOrNull() ?: return null
             return SymbolLightLazyAnnotation(annotationsProvider, annotationApplication, owner)
         }
@@ -90,13 +90,22 @@ internal class GranularAnnotationsBox(
         )
 
         /**
+         * We can safety reduce resolve only for annotations without arguments
+         *
+         * @see org.jetbrains.kotlin.fir.resolve.transformers.plugin.CompilerRequiredAnnotationsHelper
+         */
+        private val specialAnnotationsListWithSafeArgumentsResolve: Map<String, ClassId> = listOf(
+            StandardClassIds.Annotations.JvmRecord,
+        ).associateBy { it.asFqNameString() }
+
+        /**
          * @see org.jetbrains.kotlin.fir.resolve.transformers.plugin.CompilerRequiredAnnotationsHelper
          */
         private val specialAnnotationsList: Map<String, ClassId> = listOf(
             StandardClassIds.Annotations.Deprecated,
             StandardClassIds.Annotations.DeprecatedSinceKotlin,
             StandardClassIds.Annotations.WasExperimental,
-            StandardClassIds.Annotations.JvmRecord,
-        ).associateBy { it.asFqNameString() }
+            StandardClassIds.Annotations.Target,
+        ).associateBy { it.asFqNameString() } + specialAnnotationsListWithSafeArgumentsResolve
     }
 }

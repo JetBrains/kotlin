@@ -164,12 +164,16 @@ fun CompilerConfiguration.configureJdkHome(arguments: K2JVMCompilerArguments): B
         messageCollector.report(LOGGING, "Using JDK home directory $jdkHome")
         put(JVMConfigurationKeys.JDK_HOME, jdkHome)
     } else {
-        val javaHome = File(System.getProperty("java.home"))
-        messageCollector.report(LOGGING, "Using JDK home inferred from java.home: $javaHome")
-        put(JVMConfigurationKeys.JDK_HOME, javaHome)
+        configureJdkHomeFromSystemProperty()
     }
 
     return true
+}
+
+fun CompilerConfiguration.configureJdkHomeFromSystemProperty() {
+    val javaHome = File(System.getProperty("java.home"))
+    messageCollector.report(LOGGING, "Using JDK home inferred from java.home: $javaHome")
+    put(JVMConfigurationKeys.JDK_HOME, javaHome)
 }
 
 fun CompilerConfiguration.configureJavaModulesContentRoots(arguments: K2JVMCompilerArguments) {
@@ -305,9 +309,9 @@ fun CompilerConfiguration.configureAdvancedJvmOptions(arguments: K2JVMCompilerAr
     put(JVMConfigurationKeys.LINK_VIA_SIGNATURES, arguments.linkViaSignatures)
 
     put(JVMConfigurationKeys.ENABLE_DEBUG_MODE, arguments.enableDebugMode)
-    put(JVMConfigurationKeys.IGNORE_CONST_OPTIMIZATION_ERRORS, arguments.ignoreConstOptimizationErrors)
     put(JVMConfigurationKeys.NO_NEW_JAVA_ANNOTATION_TARGETS, arguments.noNewJavaAnnotationTargets)
     put(JVMConfigurationKeys.OLD_INNER_CLASSES_LOGIC, arguments.oldInnerClassesLogic)
+    put(JVMConfigurationKeys.ENABLE_IR_INLINER, arguments.enableIrInliner)
 
     val assertionsMode =
         JVMAssertionsMode.fromStringOrNull(arguments.assertionsMode)

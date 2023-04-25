@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.fir.FirLabel
 import org.jetbrains.kotlin.fir.FirModuleData
+import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.declarations.DeprecationsProvider
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
@@ -19,9 +20,11 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirResolveState
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.InlineStatus
+import org.jetbrains.kotlin.fir.declarations.asResolveState
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
@@ -33,6 +36,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
+import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
 
 /*
  * This file was generated automatically
@@ -41,6 +45,7 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 internal class FirAnonymousFunctionImpl(
     override val source: KtSourceElement?,
+    resolvePhase: FirResolvePhase,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val moduleData: FirModuleData,
     override val origin: FirDeclarationOrigin,
@@ -54,6 +59,7 @@ internal class FirAnonymousFunctionImpl(
     override var controlFlowGraphReference: FirControlFlowGraphReference?,
     override val valueParameters: MutableList<FirValueParameter>,
     override var body: FirBlock?,
+    override var contractDescription: FirContractDescription,
     override val symbol: FirAnonymousFunctionSymbol,
     override var label: FirLabel?,
     override var invocationKind: EventOccurrencesRange?,
@@ -63,12 +69,12 @@ internal class FirAnonymousFunctionImpl(
     override val typeParameters: MutableList<FirTypeParameter>,
     override var typeRef: FirTypeRef,
 ) : FirAnonymousFunction() {
-    @Volatile
-    override var resolvePhase: FirResolvePhase = FirResolvePhase.DECLARATIONS
     override var status: FirDeclarationStatus = FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
 
     init {
         symbol.bind(this)
+        @OptIn(ResolveStateAccess::class)
+        resolveState = resolvePhase.asResolveState()
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
@@ -80,6 +86,7 @@ internal class FirAnonymousFunctionImpl(
         controlFlowGraphReference?.accept(visitor, data)
         valueParameters.forEach { it.accept(visitor, data) }
         body?.accept(visitor, data)
+        contractDescription.accept(visitor, data)
         label?.accept(visitor, data)
         typeParameters.forEach { it.accept(visitor, data) }
         typeRef.accept(visitor, data)
@@ -94,6 +101,7 @@ internal class FirAnonymousFunctionImpl(
         controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
         transformValueParameters(transformer, data)
         transformBody(transformer, data)
+        transformContractDescription(transformer, data)
         label = label?.transform(transformer, data)
         transformTypeParameters(transformer, data)
         typeRef = typeRef.transform(transformer, data)
@@ -130,13 +138,14 @@ internal class FirAnonymousFunctionImpl(
         return this
     }
 
-    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionImpl {
-        typeParameters.transformInplace(transformer, data)
+    override fun <D> transformContractDescription(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionImpl {
+        contractDescription = contractDescription.transform(transformer, data)
         return this
     }
 
-    override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
-        resolvePhase = newResolvePhase
+    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirAnonymousFunctionImpl {
+        typeParameters.transformInplace(transformer, data)
+        return this
     }
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
@@ -174,6 +183,10 @@ internal class FirAnonymousFunctionImpl(
 
     override fun replaceBody(newBody: FirBlock?) {
         body = newBody
+    }
+
+    override fun replaceContractDescription(newContractDescription: FirContractDescription) {
+        contractDescription = newContractDescription
     }
 
     override fun replaceInvocationKind(newInvocationKind: EventOccurrencesRange?) {

@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.resolve.jvm;
 
 import com.intellij.openapi.Disposable;
-import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.DumbService;
 import com.intellij.openapi.project.Project;
@@ -39,6 +38,7 @@ import com.intellij.psi.util.PsiModificationTracker;
 import com.intellij.util.CommonProcessors;
 import com.intellij.util.ConcurrencyUtil;
 import com.intellij.util.Query;
+import com.intellij.util.SmartList;
 import com.intellij.util.messages.MessageBusConnection;
 import kotlin.collections.CollectionsKt;
 import org.jetbrains.annotations.NotNull;
@@ -86,7 +86,7 @@ public class KotlinJavaPsiFacade implements Disposable {
     private final LightModifierList emptyModifierList;
 
     public static KotlinJavaPsiFacade getInstance(Project project) {
-        return ServiceManager.getService(project, KotlinJavaPsiFacade.class);
+        return project.getService(KotlinJavaPsiFacade.class);
     }
 
     public KotlinJavaPsiFacade(@NotNull Project project) {
@@ -197,6 +197,31 @@ public class KotlinJavaPsiFacade implements Disposable {
     }
 
     @NotNull
+    public List<JavaClass> findClasses(@NotNull JavaClassFinder.Request request, @NotNull GlobalSearchScope scope) {
+        if (scope == GlobalSearchScope.EMPTY_SCOPE) return Collections.emptyList();
+
+        // We hope this method is being called often enough to cancel daemon processes smoothly
+        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
+
+        assert !shouldUseSlowResolve() : "`findClasses` should not be called from dumb mode, as results may be incomplete.";
+
+        ClassId classId = request.getClassId();
+        String qualifiedName = classId.asSingleFqName().asString();
+
+        List<JavaClass> javaClasses = new SmartList<>();
+
+        for (KotlinPsiElementFinderWrapper finder : finders()) {
+            ProgressIndicatorAndCompilationCanceledStatus.checkCanceled();
+
+            for (PsiClass psiClass : finder.findClasses(qualifiedName, scope)) {
+                javaClasses.add(createJavaClass(classId, psiClass));
+            }
+        }
+
+        return javaClasses;
+    }
+
+    @NotNull
     private static JavaClass createJavaClass(@NotNull ClassId classId, @NotNull PsiClass psiClass) {
         JavaClassImpl javaClass = new JavaClassImpl(psiClass);
         FqName fqName = classId.asSingleFqName();
@@ -220,11 +245,16 @@ public class KotlinJavaPsiFacade implements Disposable {
 
         KotlinPsiElementFinderWrapper[] finders = finders();
 
-        if (finders.length == 1 && finders[0] instanceof CliFinder) {
+        if (canComputeKnownClassNamesInPackage()) {
             return ((CliFinder) finders[0]).knownClassNamesInPackage(packageFqName);
         }
 
         return null;
+    }
+
+    public Boolean canComputeKnownClassNamesInPackage() {
+        KotlinPsiElementFinderWrapper[] finders = finders();
+        return finders.length == 1 && finders[0] instanceof CliFinder;
     }
 
     @NotNull
@@ -291,7 +321,7 @@ public class KotlinJavaPsiFacade implements Disposable {
 
     @NotNull
     private static JavaFileManager findJavaFileManager(@NotNull Project project) {
-        JavaFileManager javaFileManager = ServiceManager.getService(project, JavaFileManager.class);
+        JavaFileManager javaFileManager = project.getService(JavaFileManager.class);
         if (javaFileManager == null) {
             throw new IllegalStateException("JavaFileManager component is not found in project");
         }
@@ -437,6 +467,7 @@ public class KotlinJavaPsiFacade implements Disposable {
 
     interface KotlinPsiElementFinderWrapper {
         PsiClass findClass(@NotNull String qualifiedName, @NotNull GlobalSearchScope scope);
+        PsiClass[] findClasses(@NotNull String qualifiedName, @NotNull GlobalSearchScope scope);
         PsiPackage findPackage(@NotNull String qualifiedName, @NotNull GlobalSearchScope scope);
         boolean isSameResultForAnyScope();
     }
@@ -451,6 +482,11 @@ public class KotlinJavaPsiFacade implements Disposable {
         @Override
         public PsiClass findClass(@NotNull String qualifiedName, @NotNull GlobalSearchScope scope) {
             return finder.findClass(qualifiedName, scope);
+        }
+
+        @Override
+        public PsiClass[] findClasses(@NotNull String qualifiedName, @NotNull GlobalSearchScope scope) {
+            return finder.findClasses(qualifiedName, scope);
         }
 
         @Override
@@ -492,6 +528,11 @@ public class KotlinJavaPsiFacade implements Disposable {
             return javaFileManager.findClass(request, scope);
         }
 
+        @Override
+        public PsiClass[] findClasses(@NotNull String qualifiedName, @NotNull GlobalSearchScope scope) {
+            return javaFileManager.findClasses(qualifiedName, scope);
+        }
+
         @Nullable
         public Set<String> knownClassNamesInPackage(@NotNull FqName packageFqName) {
             return javaFileManager.knownClassNamesInPackage(packageFqName);
@@ -522,6 +563,11 @@ public class KotlinJavaPsiFacade implements Disposable {
         @Override
         public PsiClass findClass(@NotNull String qualifiedName, @NotNull GlobalSearchScope scope) {
             return javaFileManager.findClass(qualifiedName, scope);
+        }
+
+        @Override
+        public PsiClass[] findClasses(@NotNull String qualifiedName, @NotNull GlobalSearchScope scope) {
+            return javaFileManager.findClasses(qualifiedName, scope);
         }
 
         @Override

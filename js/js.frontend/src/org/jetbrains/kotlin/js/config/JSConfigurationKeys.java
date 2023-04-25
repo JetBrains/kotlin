@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.js.config;
 
+import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor;
 import org.jetbrains.kotlin.config.CompilerConfigurationKey;
 import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker;
 import org.jetbrains.kotlin.incremental.js.IncrementalDataProvider;
@@ -12,7 +13,6 @@ import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer;
 import org.jetbrains.kotlin.serialization.js.ModuleKind;
 
 import java.io.File;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -100,9 +100,6 @@ public class JSConfigurationKeys {
     public static final CompilerConfigurationKey<ErrorTolerancePolicy> ERROR_TOLERANCE_POLICY =
             CompilerConfigurationKey.create("set up policy to ignore compilation errors");
 
-    public static final CompilerConfigurationKey<Boolean> PARTIAL_LINKAGE =
-            CompilerConfigurationKey.create("allows some symbols in klibs be missed");
-
     public static final CompilerConfigurationKey<Boolean> PROPERTY_LAZY_INITIALIZATION =
             CompilerConfigurationKey.create("perform lazy initialization for properties");
 
@@ -120,4 +117,10 @@ public class JSConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> WASM_GENERATE_WAT =
             CompilerConfigurationKey.create("generate wat file");
+
+    public static final CompilerConfigurationKey<ZipFileSystemAccessor> ZIP_FILE_SYSTEM_ACCESSOR =
+            CompilerConfigurationKey.create("zip file system accessor, used for klib reading");
+
+    public static final CompilerConfigurationKey<Boolean> OPTIMIZE_GENERATED_JS =
+            CompilerConfigurationKey.create("perform additional optimizations on the generated JS code");
 }

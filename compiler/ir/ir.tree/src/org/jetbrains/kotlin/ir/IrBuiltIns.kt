@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.name.FqName
@@ -115,6 +116,7 @@ abstract class IrBuiltIns {
     abstract val primitiveArrayForType: Map<IrType?, IrClassSymbol>
 
     abstract val unsignedTypesToUnsignedArrays: Map<UnsignedType, IrClassSymbol>
+    abstract val unsignedArraysElementTypes: Map<IrClassSymbol, IrType?>
 
     abstract val lessFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol>
     abstract val lessOrEqualFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol>
@@ -158,6 +160,7 @@ abstract class IrBuiltIns {
     // TODO: drop variants from segments, add helper from whole fqn
     abstract fun findFunctions(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): Iterable<IrSimpleFunctionSymbol>
     abstract fun findFunctions(name: Name, packageFqName: FqName): Iterable<IrSimpleFunctionSymbol>
+    abstract fun findProperties(name: Name, packageFqName: FqName): Iterable<IrPropertySymbol>
     abstract fun findClass(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): IrClassSymbol?
     abstract fun findClass(name: Name, packageFqName: FqName): IrClassSymbol?
 

@@ -5,10 +5,12 @@
 
 package kotlin.native.internal.test
 
+import kotlin.experimental.ExperimentalNativeApi
 import kotlin.IllegalArgumentException
 import kotlin.system.getTimeMillis
 import kotlin.system.measureTimeMillis
 
+@ExperimentalNativeApi
 public interface TestCase {
     val name: String
     val ignored: Boolean
@@ -17,8 +19,10 @@ public interface TestCase {
     fun run()
 }
 
+@ExperimentalNativeApi
 internal val TestCase.prettyName get() = "${suite.name}.$name"
 
+@ExperimentalNativeApi
 public interface TestSuite {
     val name: String
     val ignored: Boolean
@@ -29,6 +33,7 @@ public interface TestSuite {
     fun doAfterClass()
 }
 
+@ExperimentalNativeApi
 public enum class TestFunctionKind {
     BEFORE_TEST,
     AFTER_TEST,
@@ -36,6 +41,7 @@ public enum class TestFunctionKind {
     AFTER_CLASS
 }
 
+@ExperimentalNativeApi
 public abstract class AbstractTestSuite<F: Function<Unit>>(override val name: String, override val ignored: Boolean)
     : TestSuite {
     override fun toString(): String = name
@@ -69,6 +75,7 @@ public abstract class AbstractTestSuite<F: Function<Unit>>(override val name: St
         get() = testCases.size
 }
 
+@ExperimentalNativeApi
 public abstract class BaseClassSuite<INSTANCE, COMPANION>(name: String, ignored: Boolean)
     : AbstractTestSuite<INSTANCE.() -> Unit>(name, ignored) {
 
@@ -134,6 +141,7 @@ public abstract class BaseClassSuite<INSTANCE, COMPANION>(name: String, ignored:
 
 private typealias TopLevelFun = () -> Unit
 
+@ExperimentalNativeApi
 public class TopLevelSuite(name: String): AbstractTestSuite<TopLevelFun>(name, false) {
 
     class TestCase(name: String, override val suite: TopLevelSuite, testFunction: TopLevelFun, ignored: Boolean)

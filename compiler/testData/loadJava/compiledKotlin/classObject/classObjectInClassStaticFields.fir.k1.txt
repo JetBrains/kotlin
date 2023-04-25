@@ -1,0 +1,36 @@
+public final class Test : R|kotlin/Any| {
+    public constructor(): R|test/Test|
+
+    public final companion object Companion : R|kotlin/Any| {
+        public final fun incProp4(): R|kotlin/Unit|
+
+        public final const val constProp8: R|kotlin/Int| = Int(80)
+            public get(): R|kotlin/Int|
+
+        public final val prop1: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+        public final var prop2: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+            protected set(<set-?>: R|kotlin/Int|): R|kotlin/Unit|
+
+        public final val prop3: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+
+        public final var prop4: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        public final var prop5: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+            public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+        public final var prop7: R|kotlin/Int|
+            public get(): R|kotlin/Int|
+            public set(i: R|kotlin/Int|): R|kotlin/Unit|
+
+        private constructor(): R|test/Test.Companion|
+
+    }
+
+}

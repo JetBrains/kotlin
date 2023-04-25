@@ -48,18 +48,13 @@ public class IncrementalFirLightTreeJvmCompilerRunnerTestGenerated extends Abstr
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/addFileWithFunctionOverload/");
         }
 
-        @TestMetadata("addMemberTypeAlias")
-        public void testAddMemberTypeAlias() throws Exception {
-            runTest("jps/jps-plugin/testData/incremental/pureKotlin/addMemberTypeAlias/");
-        }
-
         @TestMetadata("addTopLevelTypeAlias")
         public void testAddTopLevelTypeAlias() throws Exception {
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/addTopLevelTypeAlias/");
         }
 
         public void testAllFilesPresentInPureKotlin() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/pureKotlin"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("(^.*Expect.*)"), TargetBackend.JVM_IR, false);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/pureKotlin"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^.*Expect.*)|(^removeMemberTypeAlias)|(^addMemberTypeAlias)|(^companionConstantChanged))"), TargetBackend.JVM_IR, false);
         }
 
         @TestMetadata("annotations")
@@ -120,11 +115,6 @@ public class IncrementalFirLightTreeJvmCompilerRunnerTestGenerated extends Abstr
         @TestMetadata("classSignatureUnchanged")
         public void testClassSignatureUnchanged() throws Exception {
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/classSignatureUnchanged/");
-        }
-
-        @TestMetadata("companionConstantChanged")
-        public void testCompanionConstantChanged() throws Exception {
-            runTest("jps/jps-plugin/testData/incremental/pureKotlin/companionConstantChanged/");
         }
 
         @TestMetadata("compilationErrorThenFixedOtherPackage")
@@ -560,11 +550,6 @@ public class IncrementalFirLightTreeJvmCompilerRunnerTestGenerated extends Abstr
         @TestMetadata("removeFileWithFunctionOverload")
         public void testRemoveFileWithFunctionOverload() throws Exception {
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/removeFileWithFunctionOverload/");
-        }
-
-        @TestMetadata("removeMemberTypeAlias")
-        public void testRemoveMemberTypeAlias() throws Exception {
-            runTest("jps/jps-plugin/testData/incremental/pureKotlin/removeMemberTypeAlias/");
         }
 
         @TestMetadata("removeTopLevelTypeAlias")
@@ -1408,6 +1393,11 @@ public class IncrementalFirLightTreeJvmCompilerRunnerTestGenerated extends Abstr
                 runTest("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/rawErrorTypeDuringSerialization/");
             }
 
+            @TestMetadata("removeAnnotation")
+            public void testRemoveAnnotation() throws Exception {
+                runTest("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/removeAnnotation/");
+            }
+
             @TestMetadata("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/changeFieldType")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
@@ -1678,6 +1668,19 @@ public class IncrementalFirLightTreeJvmCompilerRunnerTestGenerated extends Abstr
 
                 public void testAllFilesPresentInRawErrorTypeDuringSerialization() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/rawErrorTypeDuringSerialization"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
+                }
+            }
+
+            @TestMetadata("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/removeAnnotation")
+            @TestDataPath("$PROJECT_ROOT")
+            @RunWith(JUnit3RunnerWithInners.class)
+            public static class RemoveAnnotation extends AbstractIncrementalFirLightTreeJvmCompilerRunnerTest {
+                private void runTest(String testDataFilePath) throws Exception {
+                    KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
+                }
+
+                public void testAllFilesPresentInRemoveAnnotation() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/withJava/javaUsedInKotlin/removeAnnotation"), Pattern.compile("^([^\\.]+)$"), null, TargetBackend.JVM_IR, true);
                 }
             }
 

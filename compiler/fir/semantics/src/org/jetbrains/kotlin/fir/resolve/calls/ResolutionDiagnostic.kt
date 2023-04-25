@@ -33,7 +33,8 @@ class InferredEmptyIntersectionDiagnostic(
     val incompatibleTypes: Collection<ConeKotlinType>,
     val causingTypes: Collection<ConeKotlinType>,
     val typeVariable: ConeTypeVariable,
-    val kind: EmptyIntersectionTypeKind
+    val kind: EmptyIntersectionTypeKind,
+    val isError: Boolean
 ) : ResolutionDiagnostic(INAPPLICABLE)
 
 class TooManyArguments(

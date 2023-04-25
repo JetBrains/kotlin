@@ -77,7 +77,7 @@ fun case_6(x: Boolean?) {
 // TESTCASE NUMBER: 7
 fun case_7(x: Boolean?) {
     while (true) {
-        if (!(x === false)) return
+        if (!(<!IMPLICIT_BOXING_IN_IDENTITY_EQUALS!>x === false<!>)) return
     }
 
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>

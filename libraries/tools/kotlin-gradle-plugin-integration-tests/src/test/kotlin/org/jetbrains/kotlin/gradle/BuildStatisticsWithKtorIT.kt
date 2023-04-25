@@ -17,6 +17,7 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.util.*
 import io.ktor.util.collections.*
+import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.stat.*
 import org.jetbrains.kotlin.gradle.report.BuildReportType
@@ -193,7 +194,7 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
     @GradleTest
     fun testHttpRequest(gradleVersion: GradleVersion) {
         simpleTestHttpReport(gradleVersion) { taskData ->
-            assertContains(taskData.tags, "NON_INCREMENTAL")
+            assertContains(taskData.tags, StatTag.NON_INCREMENTAL)
             assertContains(taskData.nonIncrementalAttributes.map { it.name }, "UNKNOWN_CHANGES_IN_GRADLE_INPUTS")
             assertFalse(taskData.performanceMetrics.keys.isEmpty())
             assertFalse(taskData.buildTimesMetrics.keys.isEmpty())
@@ -216,7 +217,7 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
                 """.trimMargin()
             )
         }) { taskData ->
-            assertContains(taskData.tags, "NON_INCREMENTAL")
+            assertContains(taskData.tags, StatTag.NON_INCREMENTAL)
             assertContains(taskData.nonIncrementalAttributes.map { it.name }, "UNKNOWN_CHANGES_IN_GRADLE_INPUTS")
             assertFalse(taskData.performanceMetrics.keys.isEmpty())
             assertFalse(taskData.buildTimesMetrics.keys.isEmpty())
@@ -246,15 +247,22 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
             }
             validateTaskData(port) { taskData ->
                 assertEquals(":lib:compileKotlin", taskData.taskName)
-                assertContentEquals(listOf("ARTIFACT_TRANSFORM", "CONFIGURATION_CACHE", "NON_INCREMENTAL"), taskData.tags.sorted(), )
+                assertContentEquals(
+                    listOf(
+                        StatTag.ARTIFACT_TRANSFORM,
+                        StatTag.NON_INCREMENTAL,
+                        StatTag.CONFIGURATION_CACHE,
+                        StatTag.KOTLIN_1,
+                    ), taskData.tags.sorted(),
+                )
                 assertEquals(
                     defaultBuildOptions.kotlinVersion, taskData.kotlinVersion,
-                    "Unexpected kotlinVersion: ${taskData.kotlinVersion} instead of ${defaultBuildOptions.kotlinVersion}"
+                                           "Unexpected kotlinVersion: ${taskData.kotlinVersion} instead of ${defaultBuildOptions.kotlinVersion}"
                 )
             }
             validateTaskData(port) { taskData ->
                 assertEquals(":app:compileKotlin", taskData.taskName)
-                assertContentEquals(taskData.tags.sorted(), listOf("ARTIFACT_TRANSFORM", "CONFIGURATION_CACHE", "NON_INCREMENTAL"))
+                assertContentEquals(listOf(StatTag.ARTIFACT_TRANSFORM, StatTag.NON_INCREMENTAL, StatTag.CONFIGURATION_CACHE, StatTag.KOTLIN_1), taskData.tags.sorted())
                 assertEquals(
                     defaultBuildOptions.kotlinVersion, taskData.kotlinVersion,
                     "Unexpected kotlinVersion: ${taskData.kotlinVersion} instead of ${defaultBuildOptions.kotlinVersion}"
@@ -266,11 +274,11 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
             //second build
             validateTaskData(port) { taskData ->
                 assertEquals(":lib:compileKotlin", taskData.taskName)
-                assertContentEquals(taskData.tags.sorted(), listOf("ARTIFACT_TRANSFORM", "CONFIGURATION_CACHE", "INCREMENTAL"))
+                assertContentEquals(listOf(StatTag.ARTIFACT_TRANSFORM, StatTag.INCREMENTAL, StatTag.CONFIGURATION_CACHE, StatTag.KOTLIN_1), taskData.tags.sorted())
             }
             validateTaskData(port) { taskData ->
                 assertEquals(":app:compileKotlin", taskData.taskName)
-                assertContentEquals(taskData.tags.sorted(), listOf("ARTIFACT_TRANSFORM", "CONFIGURATION_CACHE", "INCREMENTAL"))
+                assertContentEquals(listOf(StatTag.ARTIFACT_TRANSFORM, StatTag.INCREMENTAL, StatTag.CONFIGURATION_CACHE, StatTag.KOTLIN_1), taskData.tags.sorted())
             }
         }
     }

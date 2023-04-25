@@ -17,16 +17,15 @@ import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.ExpressionReceiverValue
-import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitReceiverValue
 import org.jetbrains.kotlin.fir.resolve.calls.ReceiverValue
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.resolve.providers.getContainingFile
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
@@ -237,18 +236,8 @@ abstract class FirVisibilityChecker : FirSessionComponent {
                 if (declaration.moduleData == session.moduleData) {
                     when {
                         ownerLookupTag == null -> {
-                            val candidateFile = when (symbol) {
-                                is FirSyntheticFunctionSymbol -> {
-                                    // SAM case
-                                    val classId = ClassId(symbol.callableId.packageName, symbol.callableId.callableName)
-                                    provider.getFirClassifierContainerFile(classId)
-                                }
-                                is FirClassLikeSymbol<*> -> provider.getFirClassifierContainerFileIfAny(symbol)
-                                is FirCallableSymbol<*> -> provider.getFirCallableContainerFile(symbol)
-                                else -> null
-                            }
                             // Top-level: visible in file
-                            candidateFile == useSiteFile
+                            provider.getContainingFile(symbol) == useSiteFile
                         }
                         declaration is FirConstructor && declaration.isFromSealedClass -> {
                             // Sealed class constructor: visible in same package
@@ -537,15 +526,6 @@ fun FirBasedSymbol<*>.getOwnerLookupTag(): ConeClassLikeLookupTag? {
         is FirCallableSymbol<*> -> containingClassLookupTag()
         is FirScriptSymbol -> null
         else -> error("Unsupported owner search for ${fir.javaClass}: ${fir.render()}")
-    }
-}
-
-fun FirClassLikeSymbol<*>.getContainingClassLookupTag(): ConeClassLikeLookupTag? {
-    return if (classId.isLocal) {
-        (fir as? FirRegularClass)?.containingClassForLocal()
-    } else {
-        val ownerId = classId.outerClassId
-        ownerId?.let { it.toLookupTag() }
     }
 }
 

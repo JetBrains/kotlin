@@ -1,4 +1,7 @@
 // FIR_IDENTICAL
+// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS_IR_ES6
+
 fun <R : Number> Number.convert(): R = TODO()
 
 fun foo(arg: Number) {

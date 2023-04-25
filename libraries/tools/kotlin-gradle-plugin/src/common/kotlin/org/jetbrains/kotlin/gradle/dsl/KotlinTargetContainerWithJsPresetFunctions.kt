@@ -113,7 +113,7 @@ private fun KotlinTargetContainerWithJsPresetFunctions.jsInternal(
         ) as KotlinTargetPreset<KotlinJsTargetDsl>,
         configure
     ).also { target ->
-        warnAboutDeprecatedCompiler(target.project, kotlinJsCompilerType ?: compilerTypeFromProperties)
+        warnAboutDeprecatedCompiler(target.project, compilerOrDefault)
     }
 }
 

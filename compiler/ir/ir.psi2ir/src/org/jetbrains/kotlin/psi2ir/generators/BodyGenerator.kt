@@ -39,11 +39,11 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.getSuperClassOrAny
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 
-interface LoopResolver {
+internal interface LoopResolver {
     fun getLoop(expression: KtExpression): IrLoop?
 }
 
-class BodyGenerator(
+internal class BodyGenerator(
     val scopeOwnerSymbol: IrSymbol,
     override val context: GeneratorContext,
     private val parentLoopResolver: LoopResolver?

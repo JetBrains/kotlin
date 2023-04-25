@@ -219,8 +219,8 @@ public class DirectiveTestUtils {
         @Override
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
             String functionName = arguments.getNamedArgument("function");
-            String countStr = arguments.getNamedArgument("count");
-            int expectedCount = Integer.valueOf(countStr);
+            String countStr = arguments.findNamedArgument("count");
+            String maxCountStr = arguments.findNamedArgument("max");
 
             JsFunction function = AstSearchUtil.getFunction(ast, functionName);
             List<T> nodes = collectInstances(klass, function.getBody());
@@ -230,10 +230,24 @@ public class DirectiveTestUtils {
                 actualCount += getActualCountFor(node, arguments);
             }
 
-            String message = "Function " + functionName + " contains " + actualCount +
-                             " nodes of type " + klass.getName() +
-                             ", but expected count is " + expectedCount;
-            assertEquals(message, expectedCount, actualCount);
+            if (countStr != null) {
+                int expectedCount = Integer.valueOf(countStr);
+
+                String message = "Function " + functionName + " contains " + actualCount +
+                                 " nodes of type " + klass.getName() +
+                                 ", but expected count is " + expectedCount;
+                assertEquals(message, expectedCount, actualCount);
+            } else if (maxCountStr != null) {
+                int expectedCount = Integer.valueOf(maxCountStr);
+
+                String message = "Function " + functionName + " contains " + actualCount +
+                                 " nodes of type " + klass.getName() +
+                                 ", but expected max is " + expectedCount;
+                assertTrue(message, expectedCount >= actualCount);
+
+            } else {
+                throw new IllegalArgumentException("'max' or 'count' argument should be provided");
+            }
         }
 
         protected int getActualCountFor(@NotNull T node, @NotNull ArgumentsHelper arguments) {

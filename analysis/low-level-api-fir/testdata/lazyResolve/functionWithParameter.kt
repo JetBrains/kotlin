@@ -1,3 +1,3 @@
 interface I
 
-fun resolveMe(param: I) = Unit
+fun resolve<caret>Me(param: I) = Unit

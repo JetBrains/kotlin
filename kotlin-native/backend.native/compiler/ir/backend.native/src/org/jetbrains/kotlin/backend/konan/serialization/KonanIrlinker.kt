@@ -16,6 +16,9 @@
 
 package org.jetbrains.kotlin.backend.konan.serialization
 
+import org.jetbrains.kotlin.backend.common.linkage.issues.UserVisibleIrModulesSupport
+import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.lower.parents
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideClassFilter
@@ -23,17 +26,13 @@ import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinaryNameAndType
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.backend.common.serialization.encodings.FunctionFlags
-import org.jetbrains.kotlin.backend.common.serialization.isForwardDeclarationModule
-import org.jetbrains.kotlin.backend.common.serialization.linkerissues.UserVisibleIrModulesSupport
 import org.jetbrains.kotlin.backend.konan.*
-import org.jetbrains.kotlin.backend.konan.descriptors.*
 import org.jetbrains.kotlin.backend.konan.descriptors.ClassLayoutBuilder
 import org.jetbrains.kotlin.backend.konan.descriptors.findPackage
+import org.jetbrains.kotlin.backend.konan.descriptors.isFromInteropLibrary
 import org.jetbrains.kotlin.backend.konan.descriptors.isInteropLibrary
 import org.jetbrains.kotlin.backend.konan.ir.interop.IrProviderForCEnumAndCStructStubs
 import org.jetbrains.kotlin.descriptors.*
-import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
-import org.jetbrains.kotlin.library.metadata.klibModuleOrigin
 import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -52,6 +51,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
+import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
+import org.jetbrains.kotlin.library.metadata.klibModuleOrigin
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -349,12 +350,12 @@ internal class KonanIrLinker(
         private val stubGenerator: DeclarationStubGenerator,
         private val cenumsProvider: IrProviderForCEnumAndCStructStubs,
         exportedDependencies: List<ModuleDescriptor>,
-        partialLinkageEnabled: Boolean,
+        override val partialLinkageSupport: PartialLinkageSupportForLinker,
         private val cachedLibraries: CachedLibraries,
         private val lazyIrForCaches: Boolean,
         private val libraryBeingCached: PartialCacheInfo?,
         override val userVisibleIrModulesSupport: UserVisibleIrModulesSupport
-) : KotlinIrLinker(currentModule, messageLogger, builtIns, symbolTable, exportedDependencies, partialLinkageEnabled) {
+) : KotlinIrLinker(currentModule, messageLogger, builtIns, symbolTable, exportedDependencies) {
 
     companion object {
         private val C_NAMES_NAME = Name.identifier("cnames")
@@ -375,7 +376,7 @@ internal class KonanIrLinker(
             mangler = KonanManglerIr,
             typeSystem = IrTypeSystemContextImpl(builtIns),
             friendModules = friendModules,
-            partialLinkageEnabled = partialLinkageSupport.partialLinkageEnabled,
+            partialLinkageSupport = partialLinkageSupport,
             platformSpecificClassFilter = KonanFakeOverrideClassFilter
     )
 
@@ -406,9 +407,9 @@ internal class KonanIrLinker(
                 }
             }
 
-    override fun postProcess() {
+    override fun postProcess(inOrAfterLinkageStep: Boolean) {
         stubGenerator.unboundSymbolGeneration = true
-        super.postProcess()
+        super.postProcess(inOrAfterLinkageStep)
     }
 
     private val inlineFunctionFiles = mutableMapOf<IrExternalPackageFragment, IrFile>()
@@ -794,12 +795,17 @@ internal class KonanIrLinker(
                 }
             }
 
-            partialLinkageSupport.markUsedClassifiersExcludingUnlinkedFromFakeOverrideBuilding(fakeOverrideBuilder)
-            partialLinkageSupport.markUsedClassifiersInInlineLazyIrFunction(function)
+            partialLinkageSupport.exploreClassifiers(fakeOverrideBuilder)
+            partialLinkageSupport.exploreClassifiersInInlineLazyIrFunction(function)
 
             fakeOverrideBuilder.provideFakeOverrides()
 
-            partialLinkageSupport.processUnlinkedDeclarations(linker.messageLogger) { listOf(function) }
+            partialLinkageSupport.generateStubsAndPatchUsages(symbolTable, function)
+
+            linker.checkNoUnboundSymbols(
+                    symbolTable,
+                    "after deserializing lazy-IR function ${function.name.asString()} in inline functions lowering"
+            )
 
             return InlineFunctionOriginInfo(function, fileDeserializationState.file, inlineFunctionReference.startOffset, inlineFunctionReference.endOffset)
         }
@@ -811,7 +817,9 @@ internal class KonanIrLinker(
             }
         }
 
-        fun deserializeClassFields(irClass: IrClass, outerThisFieldInfo: ClassLayoutBuilder.FieldInfo?): List<ClassLayoutBuilder.FieldInfo> {
+        private val lock = Any()
+
+        fun deserializeClassFields(irClass: IrClass, outerThisFieldInfo: ClassLayoutBuilder.FieldInfo?): List<ClassLayoutBuilder.FieldInfo> = synchronized(lock) {
             irClass.getPackageFragment() as? IrExternalPackageFragment
                     ?: error("Expected an external package fragment for ${irClass.render()}")
             val signature = irClass.symbol.signature
@@ -992,7 +1000,7 @@ internal class KonanIrLinker(
             if (actualModule !== moduleDescriptor) {
                 val moduleDeserializer = resolveModuleDeserializer(actualModule, idSig)
                 moduleDeserializer.addModuleReachableTopLevel(idSig)
-                return symbolTable.referenceClass(idSig, false)
+                return symbolTable.referenceClass(idSig)
             }
 
             return declaredDeclaration.getOrPut(idSig) { buildForwardDeclarationStub(descriptor) }.symbol

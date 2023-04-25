@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -75,6 +75,16 @@ public fun <T> emptyList(): List<T> = EmptyList
  * @sample samples.collections.Collections.Lists.readOnlyList
  */
 public fun <T> listOf(vararg elements: T): List<T> = if (elements.size > 0) elements.asList() else emptyList()
+
+/**
+ * Returns a new read-only list containing only the specified object [element].
+ *
+ * The returned list is serializable (JVM).
+ *
+ * @sample samples.collections.Collections.Lists.singletonReadOnlyList
+ */
+@SinceKotlin("1.9")
+public expect fun <T> listOf(element: T): List<T>
 
 /**
  * Returns an empty read-only list.  The returned list is serializable (JVM).

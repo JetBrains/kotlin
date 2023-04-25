@@ -20,7 +20,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.script
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.script]
  */
 abstract class IrScript : IrDeclarationBase(), IrDeclarationWithName, IrDeclarationParent,
         IrStatementContainer, IrMetadataSourceOwner {

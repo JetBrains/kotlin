@@ -6,13 +6,18 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirFileBuilder
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.CompositeKotlinDeclarationProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.CompositeKotlinPackageProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.LLFirResolveExtensionTool
+import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.llResolveExtensionTool
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirCompositeSymbolProviderNameCache
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirKotlinSymbolProviderNameCache
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.KotlinPackageProvider
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
@@ -27,14 +32,30 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
+import org.jetbrains.kotlin.psi.KtFile
 
 internal class LLFirProviderHelper(
     firSession: FirSession,
     private val firFileBuilder: LLFirFileBuilder,
-    private val declarationProvider: KotlinDeclarationProvider,
-    private val packageProvider: KotlinPackageProvider,
+    mainDeclarationProvider: KotlinDeclarationProvider,
+    mainPackageProvider: KotlinPackageProvider,
     canContainKotlinPackage: Boolean,
 ) {
+    private val extensionTool: LLFirResolveExtensionTool? = firSession.llResolveExtensionTool
+
+    private val declarationProvider = CompositeKotlinDeclarationProvider.create(
+        listOfNotNull(
+            mainDeclarationProvider,
+            extensionTool?.declarationProvider,
+        )
+    )
+
+    private val packageProvider = CompositeKotlinPackageProvider.create(
+        listOfNotNull(
+            mainPackageProvider,
+            extensionTool?.packageProvider,
+        )
+    )
     private val allowKotlinPackage = canContainKotlinPackage ||
             firSession.languageVersionSettings.getFlag(AnalysisFlags.allowKotlinPackage)
 
@@ -48,16 +69,23 @@ internal class LLFirProviderHelper(
                 ?: error("Classifier $classId was found in file ${ktClass.containingKtFile.virtualFilePath} but was not found in FirFile")
         }
 
-
-    private val callablesByCallableId = firSession.firCachesFactory.createCache<CallableId, List<FirCallableSymbol<*>>> { callableId ->
-        val files = declarationProvider.getTopLevelCallableFiles(callableId).ifEmpty { return@createCache emptyList() }
-        buildList {
-            files.forEach { ktFile ->
-                val firFile = firFileBuilder.buildRawFirFileWithCaching(ktFile)
-                firFile.collectCallableDeclarationsTo(this, callableId.callableName)
+    private val callablesByCallableId =
+        firSession.firCachesFactory.createCache<CallableId, List<FirCallableSymbol<*>>, Collection<KtFile>?> { callableId, context ->
+            val files = context ?: declarationProvider.getTopLevelCallableFiles(callableId).ifEmpty { return@createCache emptyList() }
+            buildList {
+                files.forEach { ktFile ->
+                    val firFile = firFileBuilder.buildRawFirFileWithCaching(ktFile)
+                    firFile.collectCallableDeclarationsTo(this, callableId.callableName)
+                }
             }
         }
-    }
+
+    val symbolNameCache = LLFirCompositeSymbolProviderNameCache.create(
+        listOfNotNull(
+            LLFirKotlinSymbolProviderNameCache(firSession, declarationProvider),
+            extensionTool?.symbolNameCache,
+        )
+    )
 
     fun getFirClassifierByFqNameAndDeclaration(
         classId: ClassId,
@@ -74,12 +102,29 @@ internal class LLFirProviderHelper(
         return callablesByCallableId.getValue(callableId)
     }
 
+    /**
+     * [callableFiles] are the [KtFile]s which contain callables of the given package and name. If already known, they can be provided to
+     * avoid index accesses.
+     */
+    fun getTopLevelCallableSymbols(callableId: CallableId, callableFiles: Collection<KtFile>?): List<FirCallableSymbol<*>> {
+        if (!allowKotlinPackage && callableId.packageName.isKotlinPackage()) return emptyList()
+        return callablesByCallableId.getValue(callableId, callableFiles)
+    }
+
     fun getTopLevelFunctionSymbols(packageFqName: FqName, name: Name): List<FirNamedFunctionSymbol> {
         return getTopLevelCallableSymbols(packageFqName, name).filterIsInstance<FirNamedFunctionSymbol>()
     }
 
+    fun getTopLevelFunctionSymbols(callableId: CallableId, callableFiles: Collection<KtFile>): List<FirNamedFunctionSymbol> {
+        return getTopLevelCallableSymbols(callableId, callableFiles).filterIsInstance<FirNamedFunctionSymbol>()
+    }
+
     fun getTopLevelPropertySymbols(packageFqName: FqName, name: Name): List<FirPropertySymbol> {
         return getTopLevelCallableSymbols(packageFqName, name).filterIsInstance<FirPropertySymbol>()
+    }
+
+    fun getTopLevelPropertySymbols(callableId: CallableId, callableFiles: Collection<KtFile>): List<FirPropertySymbol> {
+        return getTopLevelCallableSymbols(callableId, callableFiles).filterIsInstance<FirPropertySymbol>()
     }
 
     private fun FirFile.collectCallableDeclarationsTo(list: MutableList<FirCallableSymbol<*>>, name: Name) {

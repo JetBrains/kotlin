@@ -29,15 +29,22 @@ class DependencyListForCliModule(
         private val allFriendsDependencies = mutableListOf<FirModuleData>()
         private val allDependsOnDependencies = mutableListOf<FirModuleData>()
 
-        private val filtersMap: Map<FirModuleData, MutableSet<Path>> =
+        private val filtersMap =
             listOf(
                 binaryModuleData.dependsOn,
                 binaryModuleData.friends,
                 binaryModuleData.regular
-            ).associateWith { mutableSetOf() }
+            ).associateWithTo(mutableMapOf<FirModuleData, MutableSet<Path>>()) { mutableSetOf() }
 
         fun dependency(vararg path: Path) {
             filtersMap.getValue(binaryModuleData.regular) += path
+        }
+
+        fun dependency(moduleData: FirModuleData, vararg path: Path) {
+            filtersMap.getOrPut(moduleData) {
+                allRegularDependencies.add(moduleData)
+                mutableSetOf()
+            } += path
         }
 
         fun dependency(vararg path: String) {
@@ -47,6 +54,18 @@ class DependencyListForCliModule(
         @JvmName("dependenciesString")
         fun dependencies(paths: Collection<String>) {
             paths.mapTo(filtersMap.getValue(binaryModuleData.regular)) { Paths.get(it) }
+        }
+
+        @JvmName("dependenciesString")
+        fun dependencies(moduleData: FirModuleData, paths: Collection<String>) {
+            paths.mapTo(
+                filtersMap.getOrPut(moduleData) {
+                    allRegularDependencies.add(moduleData)
+                    mutableSetOf()
+                }
+            ) {
+                Paths.get(it)
+            }
         }
 
         @JvmName("friendDependenciesString")

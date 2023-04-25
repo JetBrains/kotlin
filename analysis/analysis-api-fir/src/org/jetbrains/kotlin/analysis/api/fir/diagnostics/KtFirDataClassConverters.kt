@@ -313,6 +313,24 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.TYPEALIAS_EXPANSION_DEPRECATION_ERROR) { firDiagnostic ->
+        TypealiasExpansionDeprecationErrorImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firSymbolBuilder.buildSymbol(firDiagnostic.b),
+            firDiagnostic.c,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.TYPEALIAS_EXPANSION_DEPRECATION) { firDiagnostic ->
+        TypealiasExpansionDeprecationImpl(
+            firSymbolBuilder.buildSymbol(firDiagnostic.a),
+            firSymbolBuilder.buildSymbol(firDiagnostic.b),
+            firDiagnostic.c,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.API_NOT_AVAILABLE) { firDiagnostic ->
         ApiNotAvailableImpl(
             firDiagnostic.a,
@@ -925,6 +943,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.INAPPLICABLE_TARGET_ON_PROPERTY_WARNING) { firDiagnostic ->
+        InapplicableTargetOnPropertyWarningImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE) { firDiagnostic ->
         InapplicableTargetPropertyImmutableImpl(
             firDiagnostic.a,
@@ -1012,6 +1037,18 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             firDiagnostic.a.map { firBasedSymbol ->
                 firSymbolBuilder.buildSymbol(firBasedSymbol)
             },
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.VOLATILE_ON_VALUE) { firDiagnostic ->
+        VolatileOnValueImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.VOLATILE_ON_DELEGATE) { firDiagnostic ->
+        VolatileOnDelegateImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -2037,6 +2074,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.DEFINITELY_NON_NULLABLE_AS_REIFIED) { firDiagnostic ->
+        DefinitelyNonNullableAsReifiedImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.FINAL_UPPER_BOUND) { firDiagnostic ->
         FinalUpperBoundImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
@@ -2224,8 +2267,20 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION) { firDiagnostic ->
-        InferredTypeVariableIntoEmptyIntersectionImpl(
+    add(FirErrors.INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION.errorFactory) { firDiagnostic ->
+        InferredTypeVariableIntoEmptyIntersectionErrorImpl(
+            firDiagnostic.a,
+            firDiagnostic.b.map { coneKotlinType ->
+                firSymbolBuilder.typeBuilder.buildKtType(coneKotlinType)
+            },
+            firDiagnostic.c,
+            firDiagnostic.d,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION.warningFactory) { firDiagnostic ->
+        InferredTypeVariableIntoEmptyIntersectionWarningImpl(
             firDiagnostic.a,
             firDiagnostic.b.map { coneKotlinType ->
                 firSymbolBuilder.typeBuilder.buildKtType(coneKotlinType)
@@ -3196,8 +3251,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
         NoActualForExpectImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
             firDiagnostic.b,
-            firDiagnostic.c.mapKeys { (incompatible, _) ->
-                incompatible
+            firDiagnostic.c.mapKeys { (expectActualCompatibility, _) ->
+                expectActualCompatibility
             }.mapValues { (_, collection) -> 
                 collection.map { firBasedSymbol ->
                                     firSymbolBuilder.buildSymbol(firBasedSymbol)
@@ -3210,8 +3265,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     add(FirErrors.ACTUAL_WITHOUT_EXPECT) { firDiagnostic ->
         ActualWithoutExpectImpl(
             firSymbolBuilder.buildSymbol(firDiagnostic.a),
-            firDiagnostic.b.mapKeys { (incompatible, _) ->
-                incompatible
+            firDiagnostic.b.mapKeys { (expectActualCompatibility, _) ->
+                expectActualCompatibility
             }.mapValues { (_, collection) -> 
                 collection.map { firBasedSymbol ->
                                     firSymbolBuilder.buildSymbol(firBasedSymbol)
@@ -3678,6 +3733,13 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.CONTRACT_NOT_ALLOWED) { firDiagnostic ->
+        ContractNotAllowedImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.NO_GET_METHOD) { firDiagnostic ->
         NoGetMethodImpl(
             firDiagnostic as KtPsiDiagnostic,
@@ -3816,6 +3878,46 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.INCOMPATIBLE_ENUM_COMPARISON_ERROR) { firDiagnostic ->
         IncompatibleEnumComparisonErrorImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.INCOMPATIBLE_ENUM_COMPARISON) { firDiagnostic ->
+        IncompatibleEnumComparisonImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.FORBIDDEN_IDENTITY_EQUALS) { firDiagnostic ->
+        ForbiddenIdentityEqualsImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.FORBIDDEN_IDENTITY_EQUALS_WARNING) { firDiagnostic ->
+        ForbiddenIdentityEqualsWarningImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.DEPRECATED_IDENTITY_EQUALS) { firDiagnostic ->
+        DeprecatedIdentityEqualsImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.IMPLICIT_BOXING_IN_IDENTITY_EQUALS) { firDiagnostic ->
+        ImplicitBoxingInIdentityEqualsImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
             firDiagnostic as KtPsiDiagnostic,
@@ -4334,18 +4436,6 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirJvmErrors.VOLATILE_ON_VALUE) { firDiagnostic ->
-        VolatileOnValueImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirJvmErrors.VOLATILE_ON_DELEGATE) { firDiagnostic ->
-        VolatileOnDelegateImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
     add(FirJvmErrors.SYNCHRONIZED_ON_ABSTRACT) { firDiagnostic ->
         SynchronizedOnAbstractImpl(
             firDiagnostic as KtPsiDiagnostic,
@@ -4785,14 +4875,6 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirJvmErrors.JAVA_SHADOWED_PROTECTED_FIELD_REFERENCE) { firDiagnostic ->
-        JavaShadowedProtectedFieldReferenceImpl(
-            firDiagnostic.a,
-            firDiagnostic.b,
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
     add(FirJsErrors.IMPLEMENTING_FUNCTION_INTERFACE) { firDiagnostic ->
         ImplementingFunctionInterfaceImpl(
             firDiagnostic as KtPsiDiagnostic,
@@ -4897,6 +4979,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJsErrors.ENUM_CLASS_IN_EXTERNAL_DECLARATION_WARNING) { firDiagnostic ->
+        EnumClassInExternalDeclarationWarningImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJsErrors.INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING) { firDiagnostic ->
         InlineClassInExternalDeclarationWarningImpl(
             firDiagnostic as KtPsiDiagnostic,
@@ -4928,8 +5016,85 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJsErrors.CANNOT_CHECK_FOR_EXTERNAL_INTERFACE) { firDiagnostic ->
+        CannotCheckForExternalInterfaceImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.UNCHECKED_CAST_TO_EXTERNAL_INTERFACE) { firDiagnostic ->
+        UncheckedCastToExternalInterfaceImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.EXTERNAL_INTERFACE_AS_CLASS_LITERAL) { firDiagnostic ->
+        ExternalInterfaceAsClassLiteralImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.JS_EXTERNAL_INHERITORS_ONLY) { firDiagnostic ->
+        JsExternalInheritorsOnlyImpl(
+            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.a),
+            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.b),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.JS_EXTERNAL_ARGUMENT) { firDiagnostic ->
+        JsExternalArgumentImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.NESTED_JS_EXPORT) { firDiagnostic ->
+        NestedJsExportImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.WRONG_EXPORTED_DECLARATION) { firDiagnostic ->
+        WrongExportedDeclarationImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.NON_EXPORTABLE_TYPE) { firDiagnostic ->
+        NonExportableTypeImpl(
+            firDiagnostic.a,
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.NON_CONSUMABLE_EXPORTED_IDENTIFIER) { firDiagnostic ->
+        NonConsumableExportedIdentifierImpl(
+            firDiagnostic.a,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJsErrors.DELEGATION_BY_DYNAMIC) { firDiagnostic ->
         DelegationByDynamicImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.SPREAD_OPERATOR_IN_DYNAMIC_CALL) { firDiagnostic ->
+        SpreadOperatorInDynamicCallImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirJsErrors.WRONG_OPERATION_WITH_DYNAMIC) { firDiagnostic ->
+        WrongOperationWithDynamicImpl(
+            firDiagnostic.a,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

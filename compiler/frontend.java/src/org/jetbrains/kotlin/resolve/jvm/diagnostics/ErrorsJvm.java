@@ -46,8 +46,6 @@ public interface ErrorsJvm {
 
     DiagnosticFactory0<KtAnnotationEntry> STRICTFP_ON_CLASS = DiagnosticFactory0.create(WARNING);
 
-    DiagnosticFactory0<KtAnnotationEntry> VOLATILE_ON_VALUE = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<KtAnnotationEntry> VOLATILE_ON_DELEGATE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtAnnotationEntry> SYNCHRONIZED_ON_ABSTRACT = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtElement> SYNCHRONIZED_ON_INLINE = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<KtElement> SYNCHRONIZED_ON_VALUE_CLASS = DiagnosticFactory0.create(WARNING);

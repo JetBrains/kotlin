@@ -26,6 +26,18 @@ public class FirPsiJsOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiJ
     }
 
     @Test
+    @TestMetadata("dynamicUnresolved.kt")
+    public void testDynamicUnresolved() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicUnresolved.kt");
+    }
+
+    @Test
+    @TestMetadata("externalInterfaceClassLiteral.kt")
+    public void testExternalInterfaceClassLiteral() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJsStdLib/externalInterfaceClassLiteral.kt");
+    }
+
+    @Test
     @TestMetadata("funConstructorCallJS.kt")
     public void testFunConstructorCallJS() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/funConstructorCallJS.kt");
@@ -38,6 +50,24 @@ public class FirPsiJsOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiJ
     }
 
     @Test
+    @TestMetadata("jsExternalArgument.kt")
+    public void testJsExternalArgument() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJsStdLib/jsExternalArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("jsExternalInheritorsOnly.kt")
+    public void testJsExternalInheritorsOnly() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJsStdLib/jsExternalInheritorsOnly.kt");
+    }
+
+    @Test
+    @TestMetadata("jsExternalSuperclassWithoutArguments.kt")
+    public void testJsExternalSuperclassWithoutArguments() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJsStdLib/jsExternalSuperclassWithoutArguments.kt");
+    }
+
+    @Test
     @TestMetadata("localClassMetadata.kt")
     public void testLocalClassMetadata() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/localClassMetadata.kt");
@@ -47,6 +77,12 @@ public class FirPsiJsOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiJ
     @TestMetadata("noImpl.kt")
     public void testNoImpl() throws Exception {
         runTest("compiler/testData/diagnostics/testsWithJsStdLib/noImpl.kt");
+    }
+
+    @Test
+    @TestMetadata("overridesMemberWithPlatformDependent.kt")
+    public void testOverridesMemberWithPlatformDependent() throws Exception {
+        runTest("compiler/testData/diagnostics/testsWithJsStdLib/overridesMemberWithPlatformDependent.kt");
     }
 
     @Test
@@ -195,6 +231,12 @@ public class FirPsiJsOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiJ
         }
 
         @Test
+        @TestMetadata("dynamicExtensionCallableReference.kt")
+        public void testDynamicExtensionCallableReference() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/dynamicExtensionCallableReference.kt");
+        }
+
+        @Test
         @TestMetadata("dynamicSafeCalls.kt")
         public void testDynamicSafeCalls() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/dynamicSafeCalls.kt");
@@ -255,6 +297,12 @@ public class FirPsiJsOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiJ
         }
 
         @Test
+        @TestMetadata("kt57960.kt")
+        public void testKt57960() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/kt57960.kt");
+        }
+
+        @Test
         @TestMetadata("membersOfAny.kt")
         public void testMembersOfAny() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/membersOfAny.kt");
@@ -276,6 +324,12 @@ public class FirPsiJsOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiJ
         @TestMetadata("nullable.kt")
         public void testNullable() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/nullable.kt");
+        }
+
+        @Test
+        @TestMetadata("objectAccessInLambdaWithDynamicReceiver.kt")
+        public void testObjectAccessInLambdaWithDynamicReceiver() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/objectAccessInLambdaWithDynamicReceiver.kt");
         }
 
         @Test
@@ -324,6 +378,12 @@ public class FirPsiJsOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiJ
         @TestMetadata("reified.kt")
         public void testReified() throws Exception {
             runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/reified.kt");
+        }
+
+        @Test
+        @TestMetadata("setOperatorOnDynamic.kt")
+        public void testSetOperatorOnDynamic() throws Exception {
+            runTest("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes/setOperatorOnDynamic.kt");
         }
 
         @Test

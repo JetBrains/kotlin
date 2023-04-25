@@ -382,15 +382,9 @@ class BodyResolveContext(
     fun <T> withRegularClass(
         regularClass: FirRegularClass,
         holder: SessionHolder,
-        forContracts: Boolean = false,
         f: () -> T
     ): T {
         storeClassIfNotNested(regularClass, holder.session)
-        if (forContracts) {
-            return withTypeParametersOf(regularClass) {
-                withContainerClass(regularClass, f)
-            }
-        }
         return withTowerDataModeCleanup {
             if (!regularClass.isInner && containerIfAny is FirRegularClass) {
                 towerDataMode = if (regularClass.isCompanion) {

@@ -73,6 +73,7 @@ class IncrementalCompilationOptions(
     kotlinScriptExtensions: Array<String>? = null,
     val withAbiSnapshot: Boolean = false,
     val preciseCompilationResultsBackup: Boolean = false,
+    val keepIncrementalCompilationCachesInMemory: Boolean = false,
 ) : CompilationOptions(
     compilerMode,
     targetPlatform,
@@ -82,7 +83,7 @@ class IncrementalCompilationOptions(
     kotlinScriptExtensions
 ) {
     companion object {
-        const val serialVersionUID: Long = 1
+        const val serialVersionUID: Long = 2
     }
 
     override fun toString(): String {

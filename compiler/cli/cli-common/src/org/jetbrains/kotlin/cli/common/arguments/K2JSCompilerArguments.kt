@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
-import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -540,11 +539,18 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
             field = if (value.isNullOrEmpty()) null else value
         }
 
-    @Argument(value = "-Xpartial-linkage", description = "Allow unlinked symbols")
-    var partialLinkage = false
+    @Argument(value = "-Xpartial-linkage", valueDescription = "{enable|disable}", description = "Use partial linkage mode")
+    var partialLinkageMode: String? = null
         set(value) {
             checkFrozen()
-            field = value
+            field = if (value.isNullOrEmpty()) null else value
+        }
+
+    @Argument(value = "-Xpartial-linkage-loglevel", valueDescription = "{info|warning|error}", description = "Partial linkage compile-time log level")
+    var partialLinkageLogLevel: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
         }
 
     @Argument(value = "-Xwasm", description = "Use experimental WebAssembly compiler backend")
@@ -590,20 +596,20 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
         }
 
     @Argument(
-        value = "-Xuse-deprecated-legacy-compiler",
-        description = "Use deprecated legacy compiler without error"
+        value = "-Xforce-deprecated-legacy-compiler-usage",
+        description = "The flag is used only for our inner infrastructure. It will be removed soon, so it's unsafe to use it nowadays."
     )
-    var useDeprecatedLegacyCompiler = false
+    var forceDeprecatedLegacyCompilerUsage = false
         set(value) {
             checkFrozen()
             field = value
         }
 
     @Argument(
-        value = "-Xlegacy-deprecated-no-warn",
-        description = "Disable warnings of deprecation of legacy compiler"
+        value = "-Xoptimize-generated-js",
+        description = "Perform additional optimizations on the generated JS code"
     )
-    var legacyDeprecatedNoWarn = false
+    var optimizeGeneratedJs = true
         set(value) {
             checkFrozen()
             field = value
@@ -622,11 +628,6 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
         collector.deprecationWarn(enableJsScripting, false, "-Xenable-js-scripting")
         collector.deprecationWarn(irBaseClassInMetadata, false, "-Xir-base-class-in-metadata")
         collector.deprecationWarn(irNewIr2Js, true, "-Xir-new-ir2js")
-
-        if (languageVersion >= LanguageVersion.KOTLIN_1_9 && CompilerSystemProperties.KOTLIN_JS_COMPILER_LEGACY_FORCE_ENABLED.value != "true") {
-            collector.deprecationWarn(legacyDeprecatedNoWarn, false, "-Xlegacy-deprecated-no-warn")
-            collector.deprecationWarn(useDeprecatedLegacyCompiler, false, "-Xuse-deprecated-legacy-compiler")
-        }
 
         return super.configureAnalysisFlags(collector, languageVersion).also {
             it[allowFullyQualifiedNameInKClass] = wasm && wasmKClassFqn //Only enabled WASM BE supports this flag
@@ -662,6 +663,8 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
             }
         }
     }
+
+    override fun copyOf(): Freezable = copyK2JSCompilerArguments(this, K2JSCompilerArguments())
 }
 
 fun K2JSCompilerArguments.isPreIrBackendDisabled(): Boolean =

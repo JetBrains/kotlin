@@ -46,16 +46,16 @@ var operationScore: Int
   get
   set
 
-operator fun Result.unaryMinus(_context_receiver_0: Int): Result {
+operator fun Result.unaryMinus($context_receiver_0: Int): Result {
   { // BLOCK
-    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = _context_receiver_0))
+    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
   }
   return Result(i = <this>.<get-i>().unaryMinus())
 }
 
-operator fun Result.unaryPlus(_context_receiver_0: Int): Result {
+operator fun Result.unaryPlus($context_receiver_0: Int): Result {
   { // BLOCK
-    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = _context_receiver_0))
+    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
   }
   return Result(i = when {
     less(arg0 = <this>.<get-i>(), arg1 = 0) -> <this>.<get-i>().unaryMinus()
@@ -63,16 +63,16 @@ operator fun Result.unaryPlus(_context_receiver_0: Int): Result {
   })
 }
 
-operator fun Result.inc(_context_receiver_0: Int): Result {
+operator fun Result.inc($context_receiver_0: Int): Result {
   { // BLOCK
-    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = _context_receiver_0))
+    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
   }
   return Result(i = <this>.<get-i>().plus(other = 1))
 }
 
-operator fun Result.dec(_context_receiver_0: Int): Result {
+operator fun Result.dec($context_receiver_0: Int): Result {
   { // BLOCK
-    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = _context_receiver_0))
+    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
   }
   return Result(i = <this>.<get-i>().minus(other = 1))
 }
@@ -82,19 +82,19 @@ fun box(): String {
   with<Int, Result>(receiver = 1, block = local fun Int.<anonymous>(): Result {
     { // BLOCK
       val tmp0: Result = result
-      result = tmp0.inc(_context_receiver_0 = $this$with)
+      result = tmp0.inc($context_receiver_0 = $this$with)
       tmp0
     } /*~> Unit */
     { // BLOCK
       val tmp1: Result = result
-      result = tmp1.inc(_context_receiver_0 = $this$with)
+      result = tmp1.inc($context_receiver_0 = $this$with)
       tmp1
     } /*~> Unit */
-    result.unaryMinus(_context_receiver_0 = $this$with) /*~> Unit */
-    result.unaryPlus(_context_receiver_0 = $this$with) /*~> Unit */
+    result.unaryMinus($context_receiver_0 = $this$with) /*~> Unit */
+    result.unaryPlus($context_receiver_0 = $this$with) /*~> Unit */
     return { // BLOCK
       val tmp2: Result = result
-      result = tmp2.dec(_context_receiver_0 = $this$with)
+      result = tmp2.dec($context_receiver_0 = $this$with)
       tmp2
     }
   }

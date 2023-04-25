@@ -53,7 +53,7 @@ private external fun parseFloatImpl(s: String, e: Int): Float
  * Used to parse a string and return either a single or double precision
  * floating point number.
  */
-object FloatingPointParser {
+internal object FloatingPointParser {
     /*
      * All number with exponent larger than MAX_EXP can be treated as infinity.
      * All number with exponent smaller than MIN_EXP can be treated as zero.

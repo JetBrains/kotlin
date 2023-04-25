@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiSingleFileTest
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
+import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
@@ -20,10 +21,11 @@ import org.jetbrains.kotlin.types.Variance
 abstract class AbstractAnalysisApiGetSuperTypesTest : AbstractAnalysisApiSingleFileTest(){
     override fun doTestByFileStructure(ktFile: KtFile, module: TestModule, testServices: TestServices) {
         val expression = testServices.expressionMarkerProvider.getSelectedElement(ktFile)
+        expression as? KtExpression ?: error("unexpected expression kind ${expression::class}")
 
         val actual = executeOnPooledThreadInReadAction {
             analyze(expression) {
-                val expectedType = expression.getExpectedType() ?: error("expect to get type of expression '${expression.text}'")
+                val expectedType = expression.getKtType() ?: error("expect to get type of expression '${expression.text}'")
                 val directSuperTypes = expectedType.getDirectSuperTypes()
                 val approximatedDirectSuperTypes = expectedType.getDirectSuperTypes(shouldApproximate = true)
                 val allSuperTypes = expectedType.getAllSuperTypes()

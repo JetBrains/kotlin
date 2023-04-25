@@ -12,9 +12,13 @@ import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
-import org.gradle.api.attributes.*
+import org.gradle.api.attributes.Attribute
+import org.gradle.api.attributes.AttributeContainer
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
+import org.jetbrains.kotlin.gradle.targets.android.KotlinAndroidTargetVariantTypeDsl
+import org.jetbrains.kotlin.gradle.targets.android.KotlinAndroidTargetVariantTypeDslImpl
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
 import org.jetbrains.kotlin.gradle.utils.forAllAndroidVariants
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
@@ -35,6 +39,15 @@ abstract class KotlinAndroidTarget @Inject constructor(
 
     override val compilations: NamedDomainObjectContainer<out KotlinJvmAndroidCompilation> =
         project.container(KotlinJvmAndroidCompilation::class.java)
+
+    @ExperimentalKotlinGradlePluginApi
+    val main: KotlinAndroidTargetVariantTypeDsl = KotlinAndroidTargetVariantTypeDslImpl(project)
+
+    @ExperimentalKotlinGradlePluginApi
+    val unitTest: KotlinAndroidTargetVariantTypeDsl = KotlinAndroidTargetVariantTypeDslImpl(project)
+
+    @ExperimentalKotlinGradlePluginApi
+    val instrumentedTest: KotlinAndroidTargetVariantTypeDsl = KotlinAndroidTargetVariantTypeDslImpl(project)
 
     /** Names of the Android library variants that should be published from the target's project within the default publications which are
      * set up if the `maven-publish` Gradle plugin is applied.

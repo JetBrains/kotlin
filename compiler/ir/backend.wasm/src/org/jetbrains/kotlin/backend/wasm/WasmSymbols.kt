@@ -39,6 +39,8 @@ class WasmSymbols(
         context.module.getPackage(FqName("kotlin.enums"))
     private val wasmInternalPackage: PackageViewDescriptor =
         context.module.getPackage(FqName("kotlin.wasm.internal"))
+    private val kotlinJsPackage: PackageViewDescriptor =
+        context.module.getPackage(FqName("kotlin.js"))
     private val collectionsPackage: PackageViewDescriptor =
         context.module.getPackage(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME)
     private val builtInsPackage: PackageViewDescriptor =
@@ -61,6 +63,7 @@ class WasmSymbols(
         override val primitiveClassesObject = getInternalClass("PrimitiveClasses")
         override val kTypeClass: IrClassSymbol = getIrClass(FqName("kotlin.reflect.KClass"))
 
+        val getTypeInfoTypeDataByPtr: IrSimpleFunctionSymbol = getInternalFunction("getTypeInfoTypeDataByPtr")
         val wasmTypeInfoData: IrClassSymbol = getInternalClass("TypeInfoData")
     }
 
@@ -71,6 +74,10 @@ class WasmSymbols(
     internal val isNotFirstWasmExportCall: IrPropertySymbol = symbolTable.referenceProperty(
         getProperty(FqName.fromSegments(listOf("kotlin", "wasm", "internal", "isNotFirstWasmExportCall")))
     )
+
+    internal val initAssociatedObjects = getInternalFunction("initAssociatedObjects")
+    internal val addAssociatedObject = getInternalFunction("addAssociatedObject")
+
     internal val throwAsJsException: IrSimpleFunctionSymbol = getInternalFunction("throwAsJsException")
 
     override val throwNullPointerException = getInternalFunction("THROW_NPE")
@@ -106,8 +113,11 @@ class WasmSymbols(
 
     val enumEntries = getIrClass(FqName.fromSegments(listOf("kotlin", "enums", "EnumEntries")))
     val createEnumEntries = findFunctions(enumsInternalPackage.memberScope, Name.identifier("enumEntries"))
-        .find { it.valueParameters.firstOrNull()?.type?.isFunctionType == true }
+        .find { it.valueParameters.firstOrNull()?.type?.isFunctionType == false }
         .let { symbolTable.referenceSimpleFunction(it!!) }
+
+    val enumValueOfIntrinsic = getInternalFunction("enumValueOfIntrinsic")
+    val enumValuesIntrinsic = getInternalFunction("enumValuesIntrinsic")
 
     val coroutineEmptyContinuation: IrPropertySymbol = symbolTable.referenceProperty(
         getProperty(FqName.fromSegments(listOf("kotlin", "wasm", "internal", "EmptyContinuation")))
@@ -199,8 +209,7 @@ class WasmSymbols(
     val suiteFun = maybeGetFunction("suite", kotlinTestPackage)
     val startUnitTests = maybeGetFunction("startUnitTests", kotlinTestPackage)
 
-    val wasmClassId = getInternalFunction("wasmClassId")
-    val wasmInterfaceId = getInternalFunction("wasmInterfaceId")
+    val wasmTypeId = getInternalFunction("wasmTypeId")
 
     val wasmIsInterface = getInternalFunction("wasmIsInterface")
 
@@ -285,8 +294,8 @@ class WasmSymbols(
 
     val wasmAnyRefClass = getIrClass(FqName("kotlin.wasm.internal.reftypes.anyref"))
 
-    private val externalInterfaceClass = getIrClass(FqName("kotlin.wasm.internal.ExternalInterfaceType"))
-    val externalInterfaceType by lazy { externalInterfaceClass.defaultType }
+    private val jsAnyClass = getIrClass(FqName("kotlin.js.JsAny"))
+    val jsAnyType by lazy { jsAnyClass.defaultType }
 
     inner class JsInteropAdapters {
         val kotlinToJsStringAdapter = getInternalFunction("kotlinToJsStringAdapter")
@@ -328,6 +337,8 @@ class WasmSymbols(
 
     private val jsFunClass = getIrClass(FqName("kotlin.JsFun"))
     val jsFunConstructor by lazy { jsFunClass.constructors.single() }
+
+    val jsCode = getFunction("js", kotlinJsPackage)
 
     private fun findClass(memberScope: MemberScope, name: Name): ClassDescriptor =
         memberScope.getContributedClassifier(name, NoLookupLocation.FROM_BACKEND) as ClassDescriptor

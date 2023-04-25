@@ -121,6 +121,12 @@ public class SerializationPluginDiagnosticTestGenerated extends AbstractSerializ
     }
 
     @Test
+    @TestMetadata("repeatableSerialInfo.kt")
+    public void testRepeatableSerialInfo() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/diagnostics/repeatableSerialInfo.kt");
+    }
+
+    @Test
     @TestMetadata("SerializableEnums.kt")
     public void testSerializableEnums() throws Exception {
         runTest("plugins/kotlinx-serialization/testData/diagnostics/SerializableEnums.kt");
@@ -130,6 +136,12 @@ public class SerializationPluginDiagnosticTestGenerated extends AbstractSerializ
     @TestMetadata("SerializableIgnored.kt")
     public void testSerializableIgnored() throws Exception {
         runTest("plugins/kotlinx-serialization/testData/diagnostics/SerializableIgnored.kt");
+    }
+
+    @Test
+    @TestMetadata("serializerFromOtherModule.kt")
+    public void testSerializerFromOtherModule() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/diagnostics/serializerFromOtherModule.kt");
     }
 
     @Test
@@ -148,5 +160,17 @@ public class SerializationPluginDiagnosticTestGenerated extends AbstractSerializ
     @TestMetadata("Transients.kt")
     public void testTransients() throws Exception {
         runTest("plugins/kotlinx-serialization/testData/diagnostics/Transients.kt");
+    }
+
+    @Test
+    @TestMetadata("typeAliases.kt")
+    public void testTypeAliases() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/diagnostics/typeAliases.kt");
+    }
+
+    @Test
+    @TestMetadata("typeAliasesCustomized.kt")
+    public void testTypeAliasesCustomized() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/diagnostics/typeAliasesCustomized.kt");
     }
 }

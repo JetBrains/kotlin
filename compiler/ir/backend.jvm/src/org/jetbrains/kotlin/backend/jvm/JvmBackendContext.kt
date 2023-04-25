@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.backend.jvm.caches.BridgeLoweringCache
 import org.jetbrains.kotlin.backend.jvm.caches.CollectionStubComputer
 import org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
 import org.jetbrains.kotlin.backend.jvm.mapping.MethodSignatureMapper
+import org.jetbrains.kotlin.codegen.inline.SMAP
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
@@ -29,7 +30,6 @@ import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
@@ -105,6 +105,9 @@ class JvmBackendContext(
 
     lateinit var getIntrinsic: (IrFunctionSymbol) -> IntrinsicMarker?
 
+    // Store evaluated SMAP for anonymous classes. Used only with IR inliner.
+    val typeToCachedSMAP = mutableMapOf<Type, SMAP>()
+
     private val localClassType = ConcurrentHashMap<IrAttributeContainer, Type>()
 
     val isCompilingAgainstJdk8OrLater = state.jvmBackendClassResolver.resolveToClassDescriptors(
@@ -157,7 +160,7 @@ class JvmBackendContext(
 
     override val internalPackageFqn = FqName("kotlin.jvm")
 
-    val suspendLambdaToOriginalFunctionMap = ConcurrentHashMap<IrFunctionReference, IrFunction>()
+    val suspendLambdaToOriginalFunctionMap = ConcurrentHashMap<IrAttributeContainer, IrFunction>()
     val suspendFunctionOriginalToView = ConcurrentHashMap<IrSimpleFunction, IrSimpleFunction>()
 
     val staticDefaultStubs = ConcurrentHashMap<IrSimpleFunctionSymbol, IrSimpleFunction>()
@@ -172,6 +175,8 @@ class JvmBackendContext(
     val inlineMethodGenerationLock = Any()
 
     val publicAbiSymbols = mutableSetOf<IrClassSymbol>()
+
+    val visitedDeclarationsForRegenerationLowering: MutableSet<IrDeclaration> = ConcurrentHashMap.newKeySet()
 
     init {
         state.mapInlineClass = { descriptor ->

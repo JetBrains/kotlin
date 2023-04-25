@@ -16,17 +16,17 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 
 class TransformerForCompanionGenerator(context: IrPluginContext) : AbstractTransformerForGenerator(context, visitBodies = true) {
-    override fun interestedIn(key: GeneratedDeclarationKey): Boolean {
+    override fun interestedIn(key: GeneratedDeclarationKey?): Boolean {
         return key == CompanionGenerator.Key
     }
 
-    override fun generateBodyForFunction(function: IrSimpleFunction, key: GeneratedDeclarationKey): IrBody {
+    override fun generateBodyForFunction(function: IrSimpleFunction, key: GeneratedDeclarationKey?): IrBody {
         val const = IrConstImpl(-1, -1, irBuiltIns.intType, IrConstKind.Int, value = 10)
         val returnStatement = IrReturnImpl(-1, -1, irBuiltIns.nothingType, function.symbol, const)
         return irFactory.createBlockBody(-1, -1, listOf(returnStatement))
     }
 
-    override fun generateBodyForConstructor(constructor: IrConstructor, key: GeneratedDeclarationKey): IrBody? {
+    override fun generateBodyForConstructor(constructor: IrConstructor, key: GeneratedDeclarationKey?): IrBody? {
         return generateBodyForDefaultConstructor(constructor)
     }
 }

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal val bodyMap: Map<IdSignature, IrBody>) {
+class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal val bodyMap: Map<IdSignature, IrBody> = emptyMap()) {
     val irBuiltIns: IrBuiltIns
         get() = environment.irBuiltIns
     private val callStack: CallStack
@@ -239,7 +239,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
         constructor.valueParameters.forEachIndexed { i, param -> callStack.storeState(param.symbol, valueArguments[i]) }
         callStack.storeState(constructor.symbol, KTypeState(returnType, environment.kTypeClass.owner))
 
-        val superReceiver = when (val irStatement = constructor.body?.statements?.get(0)) {
+        val superReceiver = when (val irStatement = constructor.body?.statements?.getOrNull(0)) {
             null -> null // for jvm
             is IrTypeOperatorCall -> (irStatement.argument as IrFunctionAccessExpression).getThisReceiver() // for enums
             is IrFunctionAccessExpression -> irStatement.getThisReceiver()
@@ -293,6 +293,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
 
             return callStack.pushCompoundInstruction(constructorCall)
         }
+
         callStack.pushState(expression.toPrimitive())
     }
 

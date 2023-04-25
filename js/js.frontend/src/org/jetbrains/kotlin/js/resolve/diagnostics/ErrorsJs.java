@@ -33,6 +33,7 @@ public interface ErrorsJs {
     DiagnosticFactory0<KtElement> EXTENSION_FUNCTION_IN_EXTERNAL_DECLARATION = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
     DiagnosticFactory0<KtExpression> NESTED_EXTERNAL_DECLARATION = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
     DiagnosticFactory0<KtElement> INLINE_CLASS_IN_EXTERNAL_DECLARATION = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
+    DiagnosticFactory0<KtElement> ENUM_CLASS_IN_EXTERNAL_DECLARATION_WARNING = DiagnosticFactory0.create(WARNING, DECLARATION_SIGNATURE_OR_DEFAULT);
     DiagnosticFactory0<KtElement> INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING = DiagnosticFactory0.create(WARNING, DECLARATION_SIGNATURE_OR_DEFAULT);
 
     DiagnosticFactory2<KtElement, String, DeclarationDescriptor> JS_NAME_CLASH = DiagnosticFactory2.create(
@@ -112,6 +113,12 @@ public interface ErrorsJs {
     DiagnosticFactory2<PsiElement, String, KotlinType> NON_EXPORTABLE_TYPE = DiagnosticFactory2.create(WARNING, DECLARATION_SIGNATURE_OR_DEFAULT);
 
     DiagnosticFactory1<PsiElement, String> NON_CONSUMABLE_EXPORTED_IDENTIFIER = DiagnosticFactory1.create(WARNING, DEFAULT);
+
+    DiagnosticFactory2<PsiElement, DeclarationDescriptor, DeclarationDescriptor> JS_EXTERNAL_INHERITORS_ONLY = DiagnosticFactory2.create(
+            ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
+
+    DiagnosticFactory1<PsiElement, KotlinType> JS_EXTERNAL_ARGUMENT = DiagnosticFactory1.create(
+            ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
 
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {

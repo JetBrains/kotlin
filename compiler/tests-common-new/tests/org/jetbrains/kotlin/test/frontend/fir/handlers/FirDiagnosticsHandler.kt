@@ -15,14 +15,11 @@ import org.jetbrains.kotlin.diagnostics.rendering.Renderers
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.references.*
-import org.jetbrains.kotlin.fir.renderForDebugInfo
+import org.jetbrains.kotlin.fir.references.FirNamedReference
+import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -31,6 +28,10 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
 import org.jetbrains.kotlin.name.FqNameUnsafe
+import org.jetbrains.kotlin.platform.isCommon
+import org.jetbrains.kotlin.platform.isJs
+import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
@@ -69,6 +70,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
 
             val lightTreeComparingModeEnabled = FirDiagnosticsDirectives.COMPARE_WITH_LIGHT_TREE in currentModule.directives
             val lightTreeEnabled = currentModule.directives.singleValue(FirDiagnosticsDirectives.FIR_PARSER) == FirParser.LightTree
+            val forceRenderArguments = FirDiagnosticsDirectives.RENDER_DIAGNOSTICS_MESSAGES in currentModule.directives
 
             for (file in currentModule.files) {
                 val firFile = info.mainFirFiles[file] ?: continue
@@ -79,25 +81,15 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
                 if (LanguageSettingsDirectives.API_VERSION in currentModule.directives) {
                     diagnostics = diagnostics.filter { it.factory.name != FirErrors.NEWER_VERSION_IN_SINCE_KOTLIN.name }
                 }
-                val diagnosticsMetadataInfos = diagnostics.flatMap { diagnostic ->
-                    if (!diagnosticsService.shouldRenderDiagnostic(
-                            currentModule,
-                            diagnostic.factory.name,
-                            diagnostic.severity
-                        )
-                    ) return@flatMap emptyList()
-                    // SYNTAX errors will be reported later
-                    if (diagnostic.factory == FirSyntaxErrors.SYNTAX) return@flatMap emptyList()
-                    if (!diagnostic.isValid) return@flatMap emptyList()
-                    diagnostic.toMetaInfos(
-                        file,
-                        globalMetadataInfoHandler,
-                        lightTreeEnabled,
-                        lightTreeComparingModeEnabled
+                val diagnosticsMetadataInfos =
+                    diagnostics.diagnosticCodeMetaInfos(
+                        currentModule, file,
+                        diagnosticsService, globalMetadataInfoHandler,
+                        lightTreeEnabled, lightTreeComparingModeEnabled,
+                        forceRenderArguments,
                     )
-                }
                 globalMetadataInfoHandler.addMetadataInfosForFile(file, diagnosticsMetadataInfos)
-                collectSyntaxDiagnostics(file, firFile, lightTreeEnabled, lightTreeComparingModeEnabled)
+                collectSyntaxDiagnostics(currentModule, file, firFile, lightTreeEnabled, lightTreeComparingModeEnabled, forceRenderArguments)
                 collectDebugInfoDiagnostics(currentModule, file, firFile, lightTreeEnabled, lightTreeComparingModeEnabled)
             }
         }
@@ -105,29 +97,35 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
 
     @OptIn(InternalDiagnosticFactoryMethod::class)
     private fun collectSyntaxDiagnostics(
+        module: TestModule,
         testFile: TestFile,
         firFile: FirFile,
         lightTreeEnabled: Boolean,
-        lightTreeComparingModeEnabled: Boolean
+        lightTreeComparingModeEnabled: Boolean,
+        forceRenderArguments: Boolean,
     ) {
         val metaInfos = if (firFile.psi != null) {
             AnalyzingUtils.getSyntaxErrorRanges(firFile.psi!!).flatMap {
                 FirSyntaxErrors.SYNTAX.on(KtRealPsiSourceElement(it), positioningStrategy = null)
                     .toMetaInfos(
+                        module,
                         testFile,
                         globalMetadataInfoHandler1 = globalMetadataInfoHandler,
                         lightTreeEnabled,
-                        lightTreeComparingModeEnabled
+                        lightTreeComparingModeEnabled,
+                        forceRenderArguments,
                     )
             }
         } else {
             collectLightTreeSyntaxErrors(firFile).flatMap { sourceElement ->
                 FirSyntaxErrors.SYNTAX.on(sourceElement, positioningStrategy = null)
                     .toMetaInfos(
+                        module,
                         testFile,
                         globalMetadataInfoHandler1 = globalMetadataInfoHandler,
                         lightTreeEnabled,
-                        lightTreeComparingModeEnabled
+                        lightTreeComparingModeEnabled,
+                        forceRenderArguments,
                     )
             }
         }
@@ -237,6 +235,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
 
         val codeMetaInfos = result.flatMap { diagnostic ->
             diagnostic.toMetaInfos(
+                module,
                 testFile,
                 globalMetadataInfoHandler,
                 lightTreeEnabled,
@@ -321,6 +320,34 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
+}
+
+fun List<KtDiagnostic>.diagnosticCodeMetaInfos(
+    module: TestModule,
+    file: TestFile,
+    diagnosticsService: DiagnosticsService,
+    globalMetadataInfoHandler: GlobalMetadataInfoHandler,
+    lightTreeEnabled: Boolean,
+    lightTreeComparingModeEnabled: Boolean,
+    forceRenderArguments: Boolean = false,
+): List<FirDiagnosticCodeMetaInfo> = flatMap { diagnostic ->
+    if (!diagnosticsService.shouldRenderDiagnostic(
+            module,
+            diagnostic.factory.name,
+            diagnostic.severity
+        )
+    ) return@flatMap emptyList()
+    // SYNTAX errors will be reported later
+    if (diagnostic.factory == FirSyntaxErrors.SYNTAX) return@flatMap emptyList()
+    if (!diagnostic.isValid) return@flatMap emptyList()
+    diagnostic.toMetaInfos(
+        module,
+        file,
+        globalMetadataInfoHandler,
+        lightTreeEnabled,
+        lightTreeComparingModeEnabled,
+        forceRenderArguments,
+    )
 }
 
 private fun FirTypeRef.isFunctionTypeWithDynamicReceiver(session: FirSession) =
@@ -498,6 +525,7 @@ class PsiLightTreeMetaInfoProcessor(testServices: TestServices) : AbstractTwoAtt
 }
 
 fun KtDiagnostic.toMetaInfos(
+    module: TestModule,
     file: TestFile,
     globalMetadataInfoHandler1: GlobalMetadataInfoHandler,
     lightTreeEnabled: Boolean,
@@ -512,6 +540,16 @@ fun KtDiagnostic.toMetaInfos(
     }
     if (lightTreeComparingModeEnabled) {
         metaInfo.attributes += if (lightTreeEnabled) PsiLightTreeMetaInfoProcessor.LT else PsiLightTreeMetaInfoProcessor.PSI
+    }
+    if (file !in module.files) {
+        val targetPlatform = module.targetPlatform
+        metaInfo.attributes += when {
+            targetPlatform.isJvm() -> "JVM"
+            targetPlatform.isJs() -> "JS"
+            targetPlatform.isNative() -> "NATIVE"
+            targetPlatform.isCommon() -> "COMMON"
+            else -> error("Should not be here")
+        }
     }
     metaInfo
 }

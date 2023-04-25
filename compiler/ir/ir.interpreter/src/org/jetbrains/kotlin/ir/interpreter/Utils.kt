@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import org.jetbrains.kotlin.utils.keysToMap
 import java.lang.invoke.MethodType
+import kotlin.math.floor
 
 val intrinsicConstEvaluationAnnotation = FqName("kotlin.internal.IntrinsicConstEvaluation")
 val compileTimeAnnotation = FqName("kotlin.CompileTimeCalculation")
@@ -131,7 +132,9 @@ fun IrFunctionAccessExpression.getVarargType(index: Int): IrType? {
     }
 }
 
-internal fun IrFunction.getCapitalizedFileName() = this.file.name.replace(".kt", "Kt").capitalizeAsciiOnly()
+internal fun IrFunction.getCapitalizedFileName(): String {
+    return this.fileOrNull?.name?.replace(".kt", "Kt")?.capitalizeAsciiOnly() ?: "<UNKNOWN>"
+}
 
 internal fun IrClass.isSubclassOfThrowable(): Boolean {
     return generateSequence(this) { irClass ->
@@ -294,7 +297,8 @@ internal fun IrClass.getSingleAbstractMethod(): IrFunction {
     return declarations.filterIsInstance<IrSimpleFunction>().single { it.modality == Modality.ABSTRACT }
 }
 
-internal fun IrGetValue.isAccessToNotNullableObject(): Boolean {
+internal fun IrExpression?.isAccessToNotNullableObject(): Boolean {
+    if (this !is IrGetValue) return false
     val owner = this.symbol.owner
     val expectedClass = this.type.classOrNull?.owner
     if (expectedClass == null || !expectedClass.isObject || this.type.isNullable()) return false
@@ -311,6 +315,14 @@ internal fun State.unsignedToString(): String {
         is Short -> value.toUShort().toString()
         is Int -> value.toUInt().toString()
         else -> (value as Number).toLong().toULong().toString()
+    }
+}
+
+internal fun Any?.specialToStringForJs(): String {
+    return when {
+        this is Float && !this.isInfinite() && floor(this) == this -> this.toInt().toString()
+        this is Double && !this.isInfinite() && floor(this) == this -> this.toLong().toString()
+        else -> this.toString()
     }
 }
 

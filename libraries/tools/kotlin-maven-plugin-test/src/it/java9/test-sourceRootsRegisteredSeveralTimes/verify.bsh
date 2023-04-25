@@ -1,0 +1,6 @@
+import java.io.*;
+
+File file = new File(basedir, "target/test-sourceRootsRegisteredSeveralTimes-1.0-SNAPSHOT.jar");
+if (!file.exists() || !file.isFile()) {
+    throw new FileNotFoundException("Could not find generated JAR: " + file);
+}

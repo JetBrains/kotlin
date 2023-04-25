@@ -5,10 +5,9 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOriginImpl
 
-object JsLoweredDeclarationOrigin : IrDeclarationOrigin {
+object JsLoweredDeclarationOrigin {
     object JS_INTRINSICS_STUB : IrDeclarationOriginImpl("JS_INTRINSICS_STUB")
     object JS_CLOSURE_BOX_CLASS_DECLARATION : IrDeclarationOriginImpl("JS_CLOSURE_BOX_CLASS_DECLARATION")
     object BRIDGE_WITH_STABLE_NAME : IrDeclarationOriginImpl("BRIDGE_WITH_STABLE_NAME")

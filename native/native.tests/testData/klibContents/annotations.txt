@@ -1,11 +1,14 @@
     annotation class AnnoBackingField constructor() : Annotation
     annotation class AnnoClass constructor() : Annotation
+    @Target(allowedTargets = {AnnotationTarget.TYPE_PARAMETER}) annotation class AnnoClassTypeParameter constructor() : Annotation
+    @Target(allowedTargets = {AnnotationTarget.TYPE}) annotation class AnnoClassUsageTypeParameter constructor() : Annotation
     annotation class AnnoConstructor constructor() : Annotation
     annotation class AnnoConstructorParameter constructor() : Annotation
     annotation class AnnoDelegatedField constructor() : Annotation
     annotation class AnnoFunction constructor() : Annotation
     annotation class AnnoFunctionExtensionReceiver constructor() : Annotation
     annotation class AnnoFunctionParam constructor() : Annotation
+    @Target(allowedTargets = {AnnotationTarget.TYPE_PARAMETER}) annotation class AnnoFunctionTypeParameter constructor() : Annotation
     annotation class AnnoGetter constructor() : Annotation
     annotation class AnnoProperty constructor() : Annotation
     annotation class AnnoPropertyExtensionReceiver constructor() : Annotation
@@ -13,6 +16,7 @@
     annotation class AnnoSetParam2 constructor() : Annotation
     annotation class AnnoSetter constructor() : Annotation
     annotation class AnnoSetter2 constructor() : Annotation
+    class B<@AnnoClassTypeParameter T> constructor()
     @AnnoClass class Foo @AnnoConstructor constructor(@AnnoConstructorParameter i: Int) {
         @delegate:AnnoDelegatedField val immutableProp: Int
         var mutableProp: Int
@@ -23,3 +27,4 @@
     }
     @AnnoPropertyExtensionReceiver val Foo.extProp: Int
     @AnnoFunction fun @receiver:AnnoFunctionExtensionReceiver Foo.extfun(@AnnoFunctionParam x: Int)
+    fun <@AnnoFunctionTypeParameter T> f(x: B<@AnnoClassUsageTypeParameter Int>)

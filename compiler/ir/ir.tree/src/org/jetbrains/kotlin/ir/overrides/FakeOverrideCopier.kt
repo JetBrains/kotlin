@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.overrides
 
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.linkage.partial.IrUnimplementedOverridesStrategy
 import org.jetbrains.kotlin.ir.util.*
 
 class FakeOverrideCopier(
@@ -62,10 +63,6 @@ class FakeOverrideCopier(
                 extensionReceiverParameter = declaration.extensionReceiverParameter?.transform()
                 returnType = typeRemapper.remapType(declaration.returnType)
                 valueParameters = declaration.valueParameters.transform()
-
-                if (customization.needToCreateBody && body == null) {
-                    body = factory.createBlockBody(startOffset, endOffset)
-                }
             }
         }
     }

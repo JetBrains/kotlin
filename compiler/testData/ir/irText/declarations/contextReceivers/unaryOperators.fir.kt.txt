@@ -36,7 +36,7 @@ data class Result {
   }
 
   override fun toString(): String {
-    return "Result(" + "i=" + <this>.#i + ")"
+    return "Result(i=" + <this>.#i + ")"
   }
 
 }
@@ -46,26 +46,26 @@ var operationScore: Int
   get
   set
 
-operator fun Result.unaryMinus(_context_receiver_0: Int): Result {
-  <set-operationScore>(<set-?> = <get-operationScore>().plus(other = _context_receiver_0))
+operator fun Result.unaryMinus($context_receiver_0: Int): Result {
+  <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
   return Result(i = <this>.<get-i>().unaryMinus())
 }
 
-operator fun Result.unaryPlus(_context_receiver_0: Int): Result {
-  <set-operationScore>(<set-?> = <get-operationScore>().plus(other = _context_receiver_0))
+operator fun Result.unaryPlus($context_receiver_0: Int): Result {
+  <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
   return Result(i = when {
     less(arg0 = <this>.<get-i>(), arg1 = 0) -> <this>.<get-i>().unaryMinus()
     else -> <this>.<get-i>()
   })
 }
 
-operator fun Result.inc(_context_receiver_0: Int): Result {
-  <set-operationScore>(<set-?> = <get-operationScore>().plus(other = _context_receiver_0))
+operator fun Result.inc($context_receiver_0: Int): Result {
+  <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
   return Result(i = <this>.<get-i>().plus(other = 1))
 }
 
-operator fun Result.dec(_context_receiver_0: Int): Result {
-  <set-operationScore>(<set-?> = <get-operationScore>().plus(other = _context_receiver_0))
+operator fun Result.dec($context_receiver_0: Int): Result {
+  <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
   return Result(i = <this>.<get-i>().minus(other = 1))
 }
 
@@ -74,19 +74,19 @@ fun box(): String {
   with<Int, Result>(receiver = 1, block = local fun Int.<anonymous>(): Result {
     { // BLOCK
       val <unary>: Result = result
-      result = <unary>.inc(_context_receiver_0 = $this$with)
+      result = <unary>.inc($context_receiver_0 = $this$with)
       <unary>
     } /*~> Unit */
     { // BLOCK
       val <unary>: Result = result
-      result = <unary>.inc(_context_receiver_0 = $this$with)
+      result = <unary>.inc($context_receiver_0 = $this$with)
       <unary>
     } /*~> Unit */
-    result.unaryMinus(_context_receiver_0 = $this$with) /*~> Unit */
-    result.unaryPlus(_context_receiver_0 = $this$with) /*~> Unit */
+    result.unaryMinus($context_receiver_0 = $this$with) /*~> Unit */
+    result.unaryPlus($context_receiver_0 = $this$with) /*~> Unit */
     return { // BLOCK
       val <unary>: Result = result
-      result = <unary>.dec(_context_receiver_0 = $this$with)
+      result = <unary>.dec($context_receiver_0 = $this$with)
       <unary>
     }
   }

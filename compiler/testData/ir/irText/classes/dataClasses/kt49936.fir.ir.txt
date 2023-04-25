@@ -25,13 +25,13 @@ FILE fqName:<root> fileName:/kt49936.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.String declared in <root>.A'
             GET_VAR '<this>: kotlin.String declared in <root>.A.<get-x>' type=kotlin.String origin=null
-    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Int [operator]
+    FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Int [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.A
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Int [operator] declared in <root>.A'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
             receiver: GET_VAR '<this>: <root>.A declared in <root>.A.component1' type=<root>.A origin=null
-    FUN name:copy visibility:public modality:FINAL <> ($this:<root>.A, x:kotlin.Int) returnType:<root>.A
+    FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:<root>.A, x:kotlin.Int) returnType:<root>.A
       $this: VALUE_PARAMETER name:<this> type:<root>.A
       VALUE_PARAMETER name:x index:0 type:kotlin.Int
         EXPRESSION_BODY
@@ -91,8 +91,7 @@ FILE fqName:<root> fileName:/kt49936.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.A'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="A("
-            CONST String type=kotlin.String value="x="
+            CONST String type=kotlin.String value="A(x="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.A declared in <root>.A.toString' type=<root>.A origin=null
             CONST String type=kotlin.String value=")"

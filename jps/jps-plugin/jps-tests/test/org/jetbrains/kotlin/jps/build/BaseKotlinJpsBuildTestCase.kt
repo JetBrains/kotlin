@@ -37,7 +37,6 @@ abstract class BaseKotlinJpsBuildTestCase : JpsBuildTestCase() {
     override fun setUp() {
         super.setUp()
         System.setProperty("kotlin.jps.tests", "true")
-        CompilerSystemProperties.KOTLIN_JS_COMPILER_LEGACY_FORCE_ENABLED.value = "true"
     }
 
     override fun shouldRunTest(): Boolean {

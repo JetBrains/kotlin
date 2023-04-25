@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import java.util.*
 
 class FirRenderer(
@@ -46,6 +47,7 @@ class FirRenderer(
     override val typeRenderer: ConeTypeRenderer = ConeTypeRendererForDebugging(),
     override val valueParameterRenderer: FirValueParameterRenderer? = FirValueParameterRenderer(),
     override val errorExpressionRenderer: FirErrorExpressionRenderer? = FirErrorExpressionOnlyErrorRenderer(),
+    override val fileAnnotationsContainerRenderer: FirFileAnnotationsContainerRenderer? = null,
 ) : FirRendererComponents {
 
     override val visitor = Visitor()
@@ -59,7 +61,10 @@ class FirRenderer(
             )
 
         fun withResolvePhase(): FirRenderer =
-            FirRenderer(resolvePhaseRenderer = FirResolvePhaseRenderer())
+            FirRenderer(
+                resolvePhaseRenderer = FirResolvePhaseRenderer(),
+                fileAnnotationsContainerRenderer = FirFileAnnotationsContainerRenderer(),
+            )
 
         fun withDeclarationAttributes(): FirRenderer =
             FirRenderer(declarationRenderer = FirDeclarationRendererWithAttributes())
@@ -81,11 +86,12 @@ class FirRenderer(
         typeRenderer.idRenderer = idRenderer
         valueParameterRenderer?.components = this
         errorExpressionRenderer?.components = this
+        fileAnnotationsContainerRenderer?.components = this
     }
 
-    fun renderElementAsString(element: FirElement): String {
+    fun renderElementAsString(element: FirElement, trim: Boolean = false): String {
         element.accept(visitor)
-        return printer.toString()
+        return printer.toString().applyIf(trim, String::trim)
     }
 
     fun renderElementWithTypeAsString(element: FirElement): String {
@@ -162,13 +168,24 @@ class FirRenderer(
         }
 
         override fun visitFile(file: FirFile) {
-            printer.println("FILE: ${file.name}")
+            printer.print("FILE: ")
+            resolvePhaseRenderer?.render(file)
+            printer.println(file.name)
+
             printer.pushIndent()
-            annotationRenderer?.render(file)
+            visitFileAnnotationsContainer(file.annotationsContainer)
             visitPackageDirective(file.packageDirective)
             file.imports.forEach { it.accept(this) }
             file.declarations.forEach { it.accept(this) }
             printer.popIndent()
+        }
+
+        override fun visitFileAnnotationsContainer(fileAnnotationsContainer: FirFileAnnotationsContainer) {
+            if (fileAnnotationsContainerRenderer != null) {
+                fileAnnotationsContainerRenderer.render(fileAnnotationsContainer)
+            } else {
+                annotationRenderer?.render(fileAnnotationsContainer)
+            }
         }
 
         override fun visitAnnotation(annotation: FirAnnotation) {
@@ -579,19 +596,20 @@ class FirRenderer(
         }
 
         override fun visitExpression(expression: FirExpression) {
-            if (expression !is FirLazyExpression) {
-                annotationRenderer?.render(expression)
-            }
+            annotationRenderer?.render(expression)
             print(
                 when (expression) {
                     is FirExpressionStub -> "STUB"
-                    is FirLazyExpression -> "LAZY_EXPRESSION"
                     is FirUnitExpression -> "Unit"
                     is FirElseIfTrueCondition -> "else"
                     is FirNoReceiverExpression -> ""
                     else -> "??? ${expression.javaClass}"
                 }
             )
+        }
+
+        override fun visitLazyExpression(lazyExpression: FirLazyExpression) {
+            print("LAZY_EXPRESSION")
         }
 
         override fun <T> visitConstExpression(constExpression: FirConstExpression<T>) {

@@ -22,11 +22,13 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.references.impl.FirStubReference
+import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.createErrorReferenceWithExistingCandidate
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
+import org.jetbrains.kotlin.fir.resolve.toErrorReference
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.symbols.SyntheticCallableId
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
@@ -183,8 +185,17 @@ class FirSyntheticCallGenerator(
             this.argumentList = argumentList
         }
 
-        val argument = components.callCompleter.completeCall(fakeCallElement, ResolutionMode.ContextIndependent).result.argument
-        return argument as FirCallableReferenceAccess?
+        val result = components.callCompleter.completeCall(fakeCallElement, ResolutionMode.ContextIndependent).result
+        val completedCallableReference = result.argument as FirCallableReferenceAccess?
+
+        val callCalleeReference = result.calleeReference
+        if (callCalleeReference.isError()) {
+            (completedCallableReference?.calleeReference as? FirNamedReferenceWithCandidate)
+                ?.toErrorReference(callCalleeReference.diagnostic)
+                ?.let { completedCallableReference.replaceCalleeReference(it) }
+        }
+
+        return completedCallableReference
     }
 
     private fun generateCalleeReferenceWithCandidate(
@@ -239,7 +250,10 @@ class FirSyntheticCallGenerator(
         containingDeclarations = components.containingDeclarations
     )
 
-    private fun generateSyntheticSelectTypeParameter(functionSymbol: FirSyntheticFunctionSymbol): Pair<FirTypeParameter, FirResolvedTypeRef> {
+    private fun generateSyntheticSelectTypeParameter(
+        functionSymbol: FirSyntheticFunctionSymbol,
+        isNullableBound: Boolean = true,
+    ): Pair<FirTypeParameter, FirResolvedTypeRef> {
         val typeParameterSymbol = FirTypeParameterSymbol()
         val typeParameter =
             buildTypeParameter {
@@ -251,7 +265,12 @@ class FirSyntheticCallGenerator(
                 containingDeclarationSymbol = functionSymbol
                 variance = Variance.INVARIANT
                 isReified = false
-                addDefaultBoundIfNecessary()
+
+                if (!isNullableBound) {
+                    bounds += moduleData.session.builtinTypes.anyType
+                } else {
+                    addDefaultBoundIfNecessary()
+                }
             }
 
         val typeParameterTypeRef = buildResolvedTypeRef { type = ConeTypeParameterTypeImpl(typeParameterSymbol.toLookupTag(), false) }
@@ -280,13 +299,9 @@ class FirSyntheticCallGenerator(
 
     private fun generateSyntheticCheckNotNullFunction(): FirSimpleFunction {
         // Synthetic function signature:
-        //   fun <K> checkNotNull(arg: K?): K
-        //
-        // Note: The upper bound of `K` cannot be `Any` because of the following case:
-        //   fun <X> test(a: X) = a!!
-        // `X` is not a subtype of `Any` and hence cannot satisfy `K` if it had an upper bound of `Any`.
+        //   fun <K : Any> checkNotNull(arg: K?): K
         val functionSymbol = FirSyntheticFunctionSymbol(SyntheticCallableId.CHECK_NOT_NULL)
-        val (typeParameter, returnType) = generateSyntheticSelectTypeParameter(functionSymbol)
+        val (typeParameter, returnType) = generateSyntheticSelectTypeParameter(functionSymbol, isNullableBound = false)
 
         val argumentType = buildResolvedTypeRef {
             type = returnType.type.withNullability(ConeNullability.NULLABLE, session.typeContext)

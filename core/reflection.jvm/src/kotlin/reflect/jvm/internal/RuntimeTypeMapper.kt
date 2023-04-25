@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.resolve.DescriptorFactory
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.resolve.isInlineClass
+import org.jetbrains.kotlin.resolve.isMultiFieldValueClass
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
@@ -51,6 +52,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import java.lang.reflect.Constructor
 import java.lang.reflect.Field
 import java.lang.reflect.Method
+import kotlin.reflect.jvm.internal.calls.toJvmDescriptor
 
 internal sealed class JvmFunctionSignature {
     abstract fun asString(): String
@@ -174,10 +176,27 @@ internal object RuntimeTypeMapper {
                 }
                 if (proto is ProtoBuf.Constructor) {
                     JvmProtoBufUtil.getJvmConstructorSignature(proto, function.nameResolver, function.typeTable)?.let { signature ->
-                        return if (possiblySubstitutedFunction.containingDeclaration.isInlineClass())
-                            JvmFunctionSignature.KotlinFunction(signature)
-                        else
-                            JvmFunctionSignature.KotlinConstructor(signature)
+                        return when {
+                            possiblySubstitutedFunction.containingDeclaration.isInlineClass() ->
+                                JvmFunctionSignature.KotlinFunction(signature)
+                            possiblySubstitutedFunction.containingDeclaration.isMultiFieldValueClass() -> {
+                                val realSignature = if ((possiblySubstitutedFunction as ConstructorDescriptor).isPrimary) {
+                                    require(signature.name == "constructor-impl" && signature.desc.endsWith(")V")) { "Invalid signature: $signature" }
+                                    signature
+                                } else {
+                                    require(signature.name == "constructor-impl") { "Invalid signature: $signature" }
+                                    val constructedClass = possiblySubstitutedFunction.constructedClass.toJvmDescriptor()
+                                    if (signature.desc.endsWith(")V")) {
+                                        signature.copy(desc = signature.desc.removeSuffix("V") + constructedClass)
+                                    } else {
+                                        require(signature.desc.endsWith(constructedClass)) { "Invalid signature: $signature" }
+                                        signature
+                                    }
+                                }
+                                JvmFunctionSignature.KotlinFunction(realSignature)
+                            }
+                            else -> JvmFunctionSignature.KotlinConstructor(signature)
+                        }
                     }
                 }
                 return mapJvmFunctionSignature(function)

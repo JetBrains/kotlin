@@ -1,4 +1,4 @@
-fun resolveMe() {
+fun resolve<caret>Me() {
     receive(property)
 }
 

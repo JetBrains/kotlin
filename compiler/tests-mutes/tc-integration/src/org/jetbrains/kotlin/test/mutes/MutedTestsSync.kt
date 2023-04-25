@@ -19,17 +19,8 @@ fun main() {
 fun syncMutedTestsOnTeamCityWithDatabase() {
     val remotelyMutedTests = RemotelyMutedTests()
     val locallyMutedTests = LocallyMutedTests()
-    val bunches = Bunches.parseRulesToBunches(locallyMutedTests.tests.keys)
 
     syncMutedTests(remotelyMutedTests.projectTests, locallyMutedTests.projectTests)
-
-    for ((originalBunchId, foundBunchId) in bunches) {
-        getBuildTypeIds(originalBunchId)?.let { buildTypeIds ->
-            for (buildTypeId in buildTypeIds.split(",")) {
-                syncMutedTests(remotelyMutedTests.getTestsJson(buildTypeId), locallyMutedTests.getTestsJson(foundBunchId, buildTypeId))
-            }
-        }
-    }
 }
 
 private fun syncMutedTests(
@@ -42,62 +33,26 @@ private fun syncMutedTests(
     uploadMutedTests(uploadList)
 }
 
-internal fun getMandatoryProperty(propertyName: String) = (System.getProperty(propertyName)
-    ?: throw Exception("Property $propertyName must be set"))
+internal fun getMandatoryProperty(propertyName: String) =
+    System.getProperty(propertyName) ?: throw Exception("Property $propertyName must be set")
 
-object Bunches {
-    private val bunchRules: List<String> = readAllRulesFromFile()
-    internal val baseBunchId = bunchRules.first()
-
-    internal fun parseRulesToBunches(platforms: Set<String>): Map<String, String> {
-        return bunchRules
-            .map { it.split('_') }
-            .map { rule ->
-                rule.first() to (rule.find { platforms.contains(it) } ?: baseBunchId)
-            }.toMap()
-    }
-
-    private fun readAllRulesFromFile(): List<String> {
-        val file = File("../../..", ".bunch")
-        if (!file.exists()) {
-            throw BunchException("Can't build list of rules. File '${file.canonicalPath}' doesn't exist")
-        }
-        return file.readLines()
-            .map { it.trim() }
-            .filter { it.isNotEmpty() }
-    }
-
-    private class BunchException(msg: String? = null) : Exception(msg)
-}
-
-private const val mutesPackageName = "org.jetbrains.kotlin.test.mutes"
-internal val projectId = getMandatoryProperty("$mutesPackageName.tests.project.id")
-internal fun getBuildTypeIds(bunchId: String) = System.getProperty("$mutesPackageName.$bunchId")
+private const val MUTES_PACKAGE_NAME = "org.jetbrains.kotlin.test.mutes"
+internal val projectId = getMandatoryProperty("$MUTES_PACKAGE_NAME.tests.project.id")
 
 class RemotelyMutedTests {
-    val tests = getMutedTestsOnTeamcityForRootProject(projectId)
-    val projectTests = getTestsJson(projectId, false)
-    internal fun getTestsJson(scopeId: String, isBuildType: Boolean = true): Map<String, MuteTestJson> {
-        return filterMutedTestsByScope(tests, scopeId, isBuildType)
+    private val tests = getMutedTestsOnTeamcityForRootProject(projectId)
+    val projectTests = getTestsJson(projectId)
+    private fun getTestsJson(scopeId: String): Map<String, MuteTestJson> {
+        return filterMutedTestsByScope(tests, scopeId)
     }
 }
 
 class LocallyMutedTests {
-    private val muteCommonTestKey = "COMMON"
-    val tests = getMutedTestsFromDatabase()
-    val projectTests = getTestsJson(muteCommonTestKey, projectId, false)
+    val projectTests = transformMutedTestsToJson(getCommonMuteTests(), projectId)
 
-    internal fun getTestsJson(platformId: String, scopeId: String, isBuildType: Boolean = true): Map<String, MuteTestJson> {
-        return transformMutedTestsToJson(tests[platformId], scopeId, isBuildType)
-    }
-
-    private fun getMutedTestsFromDatabase(): Map<String, List<MutedTest>> {
+    private fun getCommonMuteTests(): List<MutedTest> {
         val databaseDir = "../../../tests"
-
         val commonDatabaseFile = File(databaseDir, "mute-common.csv")
-
-        val mutedTestsMap = mutableMapOf<String, List<MutedTest>>()
-        mutedTestsMap[muteCommonTestKey] = flakyTests(commonDatabaseFile)
-        return mutedTestsMap
+        return flakyTests(commonDatabaseFile)
     }
 }

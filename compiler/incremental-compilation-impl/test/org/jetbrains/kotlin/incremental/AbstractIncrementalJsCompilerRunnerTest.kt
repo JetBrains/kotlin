@@ -43,9 +43,7 @@ abstract class AbstractIncrementalJsCompilerRunnerTest : AbstractIncrementalComp
             outputFile = File(destinationDir, "${testDir.name}.js").path
             sourceMap = true
             metaInfo = true
-            useDeprecatedLegacyCompiler = true
-            // TODO: It will be deleted after all of our internal vendors will use the new Kotlin/JS compiler
-            CompilerSystemProperties.KOTLIN_JS_COMPILER_LEGACY_FORCE_ENABLED.value = "true"
+            forceDeprecatedLegacyCompilerUsage = true
         }
 
     protected open val scopeExpansionMode = CompileScopeExpansionMode.NEVER

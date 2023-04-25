@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.gradle.idea.tcs.extras.sourcesClasspath
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.ide.KlibExtra
-import org.jetbrains.kotlin.gradle.plugin.sources.project
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.library.ToolingSingleFileKlibResolveStrategy
 import org.jetbrains.kotlin.library.resolveSingleFileKlib

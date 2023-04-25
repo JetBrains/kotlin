@@ -13,27 +13,25 @@ import org.gradle.api.tasks.Copy
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.distsDirectory
 import org.jetbrains.kotlin.gradle.report.BuildMetricsService
-import org.jetbrains.kotlin.gradle.targets.js.addWasmExperimentalArguments
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalDceDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
+import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.karma.KotlinKarma
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
 import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackDevtool
-import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion.Companion.choose
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.utils.doNotTrackStateCompat
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
+import org.jetbrains.kotlin.gradle.utils.relativeOrAbsolute
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.File
 import javax.inject.Inject
@@ -42,14 +40,10 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     KotlinJsIrSubTarget(target, "browser"),
     KotlinJsBrowserDsl {
 
-    private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
+    private val nodeJs = project.rootProject.kotlinNodeJsExtension
 
     private val webpackTaskConfigurations: MutableList<Action<KotlinWebpack>> = mutableListOf()
     private val runTaskConfigurations: MutableList<Action<KotlinWebpack>> = mutableListOf()
-
-    private val propertiesProvider = PropertiesProvider(project)
-    private val webpackMajorVersion
-        get() = propertiesProvider.webpackMajorVersion
 
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside browser using karma and webpack"
@@ -66,7 +60,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         if (test.testFramework == null) {
             test.useKarma {
                 if (compilation.platformType == KotlinPlatformType.wasm) {
-                    useChromeCanaryHeadlessWasmGc()
+                    useChromeHeadlessWasmGc()
                 } else {
                     useChromeHeadless()
                 }
@@ -110,9 +104,6 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     override fun configureRun(
         compilation: KotlinJsIrCompilation
     ) {
-        val project = compilation.target.project
-        val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
-
         val commonRunTask = registerSubTargetTask<Task>(disambiguateCamelCased(RUN_TASK_NAME)) {}
 
         compilation.binaries
@@ -121,7 +112,6 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                 binary as Executable
 
                 val mode = binary.mode
-                val distsDirectory = project.distsDirectory
                 val archivesName = project.archivesName
 
                 val runTask = registerSubTargetTask<KotlinWebpack>(
@@ -132,53 +122,28 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     listOf(compilation)
                 ) { task ->
                     task.dependsOn(binary.linkSyncTask)
-                    task.outputDirectory.convention(distsDirectory).finalizeValueOnRead()
 
-                    webpackMajorVersion.choose(
-                        { task.args.add(0, "serve") },
-                        { task.bin = "webpack-dev-server/bin/webpack-dev-server.js" }
-                    )()
+                    task.args.add(0, "serve")
                     task.description = "start ${mode.name.toLowerCaseAsciiOnly()} webpack dev server"
 
-                    val openValue = if (compilation.platformType == KotlinPlatformType.wasm) {
-                        KotlinWebpackConfig.DevServer.App(
-                            KotlinWebpackConfig.DevServer.App.Browser(
-                                "chrome canary",
-                                listOf(
-                                    "--js-flags=" +
-                                            mutableListOf<String>()
-                                                .apply { addWasmExperimentalArguments() }
-                                                .joinToString(" ")
-                                )
-                            ),
+                    val npmProject = compilation.npmProject
+                    task.devServer = KotlinWebpackConfig.DevServer(
+                        open = true,
+                        static = mutableListOf(
+                            npmProject.dist.normalize().relativeOrAbsolute(npmProject.dir),
+                            compilation.output.resourcesDir.relativeOrAbsolute(npmProject.dir),
+                        ),
+                        client = KotlinWebpackConfig.DevServer.Client(
+                            KotlinWebpackConfig.DevServer.Client.Overlay(
+                                errors = true,
+                                warnings = false
+                            )
                         )
-                    } else {
-                        true
-                    }
+                    )
 
-                    webpackMajorVersion.choose(
-                        {
-                            task.devServer = KotlinWebpackConfig.DevServer(
-                                open = openValue,
-                                static = mutableListOf(
-                                    "./kotlin",
-                                    compilation.output.resourcesDir.canonicalPath,
-                                ),
-                                client = KotlinWebpackConfig.DevServer.Client(
-                                    KotlinWebpackConfig.DevServer.Client.Overlay(
-                                        errors = true,
-                                        warnings = false
-                                    )
-                                )
-                            )
-                        },
-                        {
-                            task.devServer = KotlinWebpackConfig.DevServer(
-                                open = true,
-                                contentBase = mutableListOf(compilation.output.resourcesDir.canonicalPath)
-                            )
-                        }
-                    )()
+                    task.watchOptions = KotlinWebpackConfig.WatchOptions(
+                        ignored = arrayOf("*.kt")
+                    )
 
 
                     task.doNotTrackStateCompat("Tracked by external webpack tool")
@@ -186,7 +151,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     task.commonConfigure(
                         compilation = compilation,
                         mode = mode,
-                        inputFilesDirectory = binary.linkSyncTask.map { it.destinationDir },
+                        inputFilesDirectory = binary.linkSyncTask.flatMap { it.destinationDirectory },
                         entryModuleName = binary.linkTask.flatMap { it.compilerOptions.moduleName },
                         configurationActions = runTaskConfigurations,
                         nodeJs = nodeJs,
@@ -205,7 +170,6 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         compilation: KotlinJsIrCompilation
     ) {
         val project = compilation.target.project
-        val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
 
         val processResourcesTask = target.project.tasks.named(compilation.processResourcesTaskName)
 
@@ -224,9 +188,24 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                         binary.name,
                         DISTRIBUTE_RESOURCES_TASK_NAME
                     )
-                ) {
-                    it.from(processResourcesTask)
-                    it.into(binary.distribution.directory)
+                ) { copy ->
+                    copy.from(processResourcesTask)
+
+                    if (binary.compilation.platformType == KotlinPlatformType.wasm) {
+                        copy.from(
+                            binary.linkSyncTask.flatMap { linkSyncTask ->
+                                linkSyncTask.destinationDirectory.map { destDir ->
+                                    binary.linkTask.map { linkTask ->
+                                        linkTask.compilerOptions.moduleName.map {
+                                            destDir.resolve("$it.wasm")
+                                        }
+                                    }
+                                }
+                            }
+                        )
+                    }
+
+                    copy.into(binary.distribution.directory)
                 }
 
                 val webpackTask = registerSubTargetTask<KotlinWebpack>(
@@ -252,7 +231,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     task.commonConfigure(
                         compilation = compilation,
                         mode = mode,
-                        inputFilesDirectory = binary.linkSyncTask.map { it.destinationDir },
+                        inputFilesDirectory = binary.linkSyncTask.flatMap { it.destinationDirectory },
                         entryModuleName = binary.linkTask.flatMap { it.compilerOptions.moduleName },
                         configurationActions = webpackTaskConfigurations,
                         nodeJs = nodeJs,

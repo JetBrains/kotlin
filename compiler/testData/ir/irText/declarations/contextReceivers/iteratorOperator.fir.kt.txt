@@ -37,7 +37,7 @@ data class Counter {
   }
 
   override fun toString(): String {
-    return "Counter(" + "i=" + <this>.#i + ")"
+    return "Counter(i=" + <this>.#i + ")"
   }
 
 }
@@ -80,16 +80,16 @@ data class CounterConfig {
   }
 
   override fun toString(): String {
-    return "CounterConfig(" + "max=" + <this>.#max + ")"
+    return "CounterConfig(max=" + <this>.#max + ")"
   }
 
 }
 
 class CounterIterator : Iterator<Int> {
   private /* final field */ val contextReceiverField0: CounterConfig
-  constructor(_context_receiver_0: CounterConfig, counter: Counter) /* primary */ {
+  constructor($context_receiver_0: CounterConfig, counter: Counter) /* primary */ {
     super/*Any*/()
-    <this>.#contextReceiverField0 = _context_receiver_0
+    <this>.#contextReceiverField0 = $context_receiver_0
     /* <init>() */
 
   }
@@ -113,9 +113,9 @@ class CounterIterator : Iterator<Int> {
 
 }
 
-operator fun Counter.iterator(_context_receiver_0: CounterConfig): CounterIterator {
-  return with<CounterConfig, CounterIterator>(receiver = _context_receiver_0, block = local fun CounterConfig.<anonymous>(): CounterIterator {
-    return CounterIterator(_context_receiver_0 = $this$with, counter = <this>)
+operator fun Counter.iterator($context_receiver_0: CounterConfig): CounterIterator {
+  return with<CounterConfig, CounterIterator>(receiver = $context_receiver_0, block = local fun CounterConfig.<anonymous>(): CounterIterator {
+    return CounterIterator($context_receiver_0 = $this$with, counter = <this>)
   }
 )
 }
@@ -124,7 +124,7 @@ fun box(): String {
   var result: Int = 0
   with<CounterConfig, Unit>(receiver = CounterConfig(), block = local fun CounterConfig.<anonymous>() {
     { // BLOCK
-      val <iterator>: CounterIterator = Counter().iterator(_context_receiver_0 = $this$with)
+      val <iterator>: CounterIterator = Counter().iterator($context_receiver_0 = $this$with)
       while (<iterator>.hasNext()) { // BLOCK
         val i: Int = <iterator>.next()
         { // BLOCK

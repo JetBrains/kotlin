@@ -7,14 +7,13 @@ package org.jetbrains.kotlin.backend.konan
 
 import com.google.common.io.Files
 import com.intellij.openapi.project.Project
-import org.jetbrains.kotlin.backend.common.serialization.linkerissues.UserVisibleIrModulesSupport
+import org.jetbrains.kotlin.backend.common.linkage.issues.UserVisibleIrModulesSupport
 import org.jetbrains.kotlin.backend.konan.serialization.KonanUserVisibleIrModulesSupport
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.KotlinCompilerVersion
+import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.library.KonanLibrary
 import org.jetbrains.kotlin.konan.properties.loadProperties
@@ -82,22 +81,25 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     val memoryModel: MemoryModel by lazy {
         when (configuration.get(BinaryOptions.memoryModel)) {
-            MemoryModel.STRICT -> MemoryModel.STRICT
+            MemoryModel.STRICT -> {
+                configuration.report(CompilerMessageSeverity.STRONG_WARNING, "Legacy MM is deprecated and will be removed in version 1.9.20")
+                MemoryModel.STRICT
+            }
             MemoryModel.RELAXED -> {
                 configuration.report(CompilerMessageSeverity.ERROR,
-                        "Relaxed MM is deprecated and isn't expected to work right way with current Kotlin version. Using legacy MM.")
+                        "Relaxed MM is deprecated and isn't expected to work right way with current Kotlin version.")
                 MemoryModel.STRICT
             }
             MemoryModel.EXPERIMENTAL -> {
                 if (!target.supportsThreads()) {
                     configuration.report(CompilerMessageSeverity.STRONG_WARNING,
-                            "New MM requires threads, which are not supported on target ${target.name}. Using legacy MM.")
+                            "New MM requires threads, which are not supported on a deprecated target ${target.name}. Using deprecated legacy MM.")
                     MemoryModel.STRICT
                 } else {
                     MemoryModel.EXPERIMENTAL
                 }
             }
-            null -> defaultMemoryModel
+            null -> defaultMemoryModel // If target does not support threads, it's deprecated, no need to spam with our own deprecation message.
         }.also {
             if (it == MemoryModel.EXPERIMENTAL && destroyRuntimeMode == DestroyRuntimeMode.LEGACY) {
                 configuration.report(CompilerMessageSeverity.ERROR,
@@ -396,7 +398,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     internal val useDebugInfoInNativeLibs= configuration.get(BinaryOptions.stripDebugInfoFromNativeLibs) == false
 
-    internal val partialLinkage = configuration.get(KonanConfigKeys.PARTIAL_LINKAGE) == true
+    internal val partialLinkageConfig = configuration.partialLinkageConfig
 
     internal val additionalCacheFlags by lazy { platformManager.loader(target).additionalCacheFlags }
 
@@ -430,8 +432,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
 
     private val userCacheFlavorString = buildString {
         appendCommonCacheFlavor()
-
-        if (partialLinkage) append("-pl")
+        if (partialLinkageConfig.isEnabled) append("-pl")
     }
 
     private val systemCacheRootDirectory = File(distribution.konanHome).child("klib").child("cache")
@@ -476,11 +477,6 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         }
                 ?: File(outputPath).name
 
-    val infoArgsOnly = (configuration.kotlinSourceRoots.isEmpty()
-            && configuration[KonanConfigKeys.INCLUDED_LIBRARIES].isNullOrEmpty()
-            && configuration[KonanConfigKeys.EXPORTED_LIBRARIES].isNullOrEmpty()
-            && libraryToCache == null)
-
     /**
      * Do not compile binary when compiling framework.
      * This is useful when user care only about framework's interface.
@@ -493,6 +489,35 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             }
         }
     }
+
+    /**
+     * Continue from bitcode. Skips the frontend and codegen phase of the compiler
+     * and instead reads the provided bitcode file.
+     * This option can be used for continuing the compilation from a previous invocation.
+     */
+    internal val compileFromBitcode: String? by lazy {
+        configuration.get(KonanConfigKeys.COMPILE_FROM_BITCODE)
+    }
+
+    /**
+     * Path to serialized dependencies to use for bitcode compilation.
+     */
+    internal val readSerializedDependencies: String? by lazy {
+        configuration.get(KonanConfigKeys.SERIALIZED_DEPENDENCIES)
+    }
+
+    /**
+     * Path to store backend dependency information.
+     */
+    internal val writeSerializedDependencies: String? by lazy {
+        configuration.get(KonanConfigKeys.SAVE_DEPENDENCIES_PATH)
+    }
+
+    val infoArgsOnly = (configuration.kotlinSourceRoots.isEmpty()
+            && configuration[KonanConfigKeys.INCLUDED_LIBRARIES].isNullOrEmpty()
+            && configuration[KonanConfigKeys.EXPORTED_LIBRARIES].isNullOrEmpty()
+            && libraryToCache == null && compileFromBitcode.isNullOrEmpty())
+
 
     /**
      * Directory to store LLVM IR from -Xsave-llvm-ir-after.

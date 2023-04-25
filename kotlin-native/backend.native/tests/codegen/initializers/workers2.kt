@@ -12,6 +12,7 @@ class Z(val x: Int)
 val z = Z(42)
 
 // FILE: main.kt
+@file:OptIn(ObsoleteWorkersApi::class)
 import kotlin.native.concurrent.*
 
 fun main() {

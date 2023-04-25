@@ -1,3 +1,6 @@
+// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS_IR_ES6
+
 enum class Enum { A }
 object A
 val a = 0

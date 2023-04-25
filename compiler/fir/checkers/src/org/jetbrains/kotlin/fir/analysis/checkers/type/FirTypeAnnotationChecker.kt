@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.type
 
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -24,13 +25,18 @@ object FirTypeAnnotationChecker : FirTypeRefChecker() {
 
         for (annotation in typeRef.annotations) {
             if (annotation.source == null) continue
-
+            val useSiteTarget = annotation.useSiteTarget
             val annotationTargets = annotation.getAllowedAnnotationTargets(context.session)
-            if (KotlinTarget.TYPE !in annotationTargets) {
-                val useSiteTarget = annotation.useSiteTarget
-                if (useSiteTarget == null || KotlinTarget.USE_SITE_MAPPING[useSiteTarget] !in annotationTargets) {
-                    reporter.reportOn(annotation.source, FirErrors.WRONG_ANNOTATION_TARGET, "type usage", context)
-                }
+
+            // Annotations like `@receiver:` go
+            // into FirReceiverParameter, not FirTypeRef
+            if (useSiteTarget != null) {
+                reporter.reportOn(
+                    annotation.source, FirErrors.WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET,
+                    "type usage", useSiteTarget.renderName, context
+                )
+            } else if (KotlinTarget.TYPE !in annotationTargets) {
+                reporter.reportOn(annotation.source, FirErrors.WRONG_ANNOTATION_TARGET, "type usage", context)
             }
             if (annotation.toAnnotationClassId(context.session) == StandardClassIds.Annotations.ExtensionFunctionType) {
                 if (!typeRef.type.isSomeFunctionType(context.session)) {

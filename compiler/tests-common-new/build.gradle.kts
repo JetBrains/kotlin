@@ -8,11 +8,13 @@ plugins {
 dependencies {
     testApi(project(":compiler:fir:entrypoint"))
     testApi(project(":compiler:fir:fir-serialization"))
+    testApi(project(":compiler:fir:fir2ir:jvm-backend"))
     testApi(project(":compiler:cli"))
     testImplementation(project(":compiler:ir.tree"))
     testImplementation(project(":compiler:backend.jvm.entrypoint"))
     testImplementation(project(":compiler:backend.jvm.lower"))
     testImplementation(intellijCore())
+    testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 
     testRuntimeOnly(project(":core:descriptors.runtime"))
 
@@ -30,7 +32,7 @@ dependencies {
      */
     testApi(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
     testApi(commonDependency("one.util:streamex"))
-    testApi(commonDependency("net.java.dev.jna:jna"))
+    testApi(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
     testApi(jpsModel()) { isTransitive = false }
     testApi(jpsModelImpl()) { isTransitive = false }
     testApi(intellijJavaRt())

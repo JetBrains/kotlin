@@ -42,7 +42,7 @@ FILE fqName:<root> fileName:/kt35550.kt
         $receiver: VALUE_PARAMETER name:<this> type:T of <root>.A.<get-id>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun <get-id> <T> (): T of <root>.A.<get-id> declared in <root>.A'
-            CALL 'public open fun <get-id> <T> (): T of <root>.I.<get-id> declared in <root>.I' type=T of <root>.A.<get-id> origin=null
+            CALL 'public open fun <get-id> <T> (): T of <root>.I.<get-id> declared in <root>.I' type=T of <root>.I.<get-id> origin=null
               <T>: T of <root>.A.<get-id>
               $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.I visibility:private [final]' type=<root>.I origin=null
                 receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-id>' type=<root>.A origin=null

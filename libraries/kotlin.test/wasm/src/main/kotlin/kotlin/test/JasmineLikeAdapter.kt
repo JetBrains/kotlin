@@ -9,25 +9,27 @@ import kotlin.test.FrameworkAdapter
 import kotlin.js.Promise
 
 // Need to wrap into additional lambdas so that js launcher will work without Mocha or any other testing framework
-@JsFun("(name, fn) => describe(name, fn)")
-private external fun describe(name: String, fn: () -> Unit)
+private fun describe(name: String, fn: () -> Unit): Unit =
+    js("describe(name, fn)")
 
-@JsFun("(name, fn) => xdescribe(name, fn)")
-private external fun xdescribe(name: String, fn: () -> Unit)
+private fun xdescribe(name: String, fn: () -> Unit): Unit =
+    js("xdescribe(name, fn)")
 
-@JsFun("(name, fn) => it(name, fn)")
-private external fun it(name: String, fn: () -> Any?)
+private fun it(name: String, fn: () -> JsAny?): Unit =
+    js("it(name, fn)")
 
-@JsFun("(name, fn) => xit(name, fn)")
-private external fun xit(name: String, fn: () -> Any?)
+private fun xit(name: String, fn: () -> JsAny?): Unit =
+    js("xit(name, fn)")
 
-@JsFun("(e) => { throw e }")
-private external fun jsThrow(jsException: Dynamic)
+private fun jsThrow(jsException: JsAny) {
+    js("throw e")
+}
 
-@JsFun("(message, stack) => { const e = new Error(); e.message = message; e.stack = stack; return e; }")
-private external fun throwableToJsError(message: String, stack: String): Dynamic
+private fun throwableToJsError(message: String, stack: String): JsAny {
+    js("var e = new Error(); e.message = message; e.stack = stack; return e;")
+}
 
-private fun Throwable.toJsError(): Dynamic =
+private fun Throwable.toJsError(): JsAny =
     throwableToJsError(message ?: "", stackTraceToString())
 
 /**
@@ -43,14 +45,14 @@ internal class JasmineLikeAdapter : FrameworkAdapter {
         }
     }
 
-    private fun callTest(testFn: () -> Any?): Any? =
+    private fun callTest(testFn: () -> Any?): JsAny? =
         try {
             (testFn() as? Promise<*>)?.catch { exception ->
                 val jsException = exception
                     .toThrowableOrNull()
                     ?.let { it.toJsError() }
                     ?: exception
-                Promise.reject(jsException) as Dynamic
+                Promise.reject(jsException)
             }
         } catch (exception: Throwable) {
             jsThrow(exception.toJsError())

@@ -132,7 +132,7 @@ public actual class StringBuilder actual constructor(content: String) : Appendab
      */
     @SinceKotlin("1.3")
 //    @ExperimentalStdlibApi
-    @Deprecated("Obtaining StringBuilder capacity is not supported in JS and common code.", level = DeprecationLevel.ERROR)
+    @Deprecated("Obtaining StringBuilder capacity is not supported in JS and common code.", level = DeprecationLevel.WARNING)
     actual fun capacity(): Int = length
 
     /**

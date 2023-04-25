@@ -9,21 +9,22 @@ import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
-import org.jetbrains.kotlin.diagnostics.KtDiagnostic
-import org.jetbrains.kotlin.diagnostics.Severity
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.AbstractFirAnalyzerFacade
 import org.jetbrains.kotlin.fir.FirAnalyzerFacade
 import org.jetbrains.kotlin.fir.backend.*
+import org.jetbrains.kotlin.fir.backend.js.FirJsKotlinMangler
 import org.jetbrains.kotlin.fir.backend.jvm.Fir2IrJvmSpecialAnnotationSymbolProvider
-import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
-import org.jetbrains.kotlin.fir.serialization.FirElementAwareSerializableStringTable
 import org.jetbrains.kotlin.fir.serialization.FirKLibSerializerExtension
 import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -69,7 +70,7 @@ class Fir2IrJsResultsConverter(
         val commonMemberStorage = Fir2IrCommonMemberStorage(
             generateSignatures = false,
             signatureComposerCreator = null,
-            manglerCreator = { FirJvmKotlinMangler() } // TODO: replace with potentially simpler JS version
+            manglerCreator = ::FirJsKotlinMangler
         )
 
         for ((index, part) in inputArtifact.partsForDependsOnModules.withIndex()) {
@@ -101,11 +102,7 @@ class Fir2IrJsResultsConverter(
 
         val metadataVersion = configuration.metadataVersion(module.languageVersionSettings.languageVersion)
 
-        // At this point, checkers will already have been run by a previous test step. `runCheckers` returns the cached diagnostics map.
-        val diagnosticsMap = inputArtifact.partsForDependsOnModules.fold(mutableMapOf<FirFile, List<KtDiagnostic>>()) { result, part ->
-            result.also { it.putAll(part.firAnalyzerFacade.runCheckers()) }
-        }
-        val hasErrors = diagnosticsMap.any { entry -> entry.value.any { it.severity == Severity.ERROR } }
+        var actualizedExpectDeclarations: Set<FirDeclaration>? = null
 
         return IrBackendInput.JsIrBackendInput(
             mainIrPart,
@@ -114,15 +111,24 @@ class Fir2IrJsResultsConverter(
             sourceFiles,
             configuration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList(),
             expectDescriptorToSymbol = mutableMapOf(),
-            hasErrors = hasErrors
-        ) { file ->
+            diagnosticsCollector = DiagnosticReporterFactory.createReporter(),
+            hasErrors = inputArtifact.hasErrors
+        ) { file, irActualizedResult ->
             val (firFile, components) = firFilesAndComponentsBySourceFile[file]
                 ?: error("cannot find FIR file by source file ${file.name} (${file.path})")
+            if (actualizedExpectDeclarations == null && irActualizedResult != null) {
+                actualizedExpectDeclarations = irActualizedResult.extractFirDeclarations()
+            }
             serializeSingleFirFile(
                 firFile,
                 components.session,
                 components.scopeSession,
-                FirKLibSerializerExtension(components.session, metadataVersion, FirElementAwareSerializableStringTable()),
+                actualizedExpectDeclarations,
+                FirKLibSerializerExtension(
+                    components.session, metadataVersion,
+                    ConstValueProviderImpl(components),
+                    allowErrorTypes = false, exportKDoc = false
+                ),
                 configuration.languageVersionSettings,
             )
         }
@@ -143,15 +149,20 @@ fun AbstractFirAnalyzerFacade.convertToJsIr(
     val libraries = resolveJsLibraries(module, testServices, configuration)
     val (dependencies, builtIns) = loadResolvedLibraries(libraries, configuration.languageVersionSettings, testServices)
 
+    val fir2IrConfiguration = Fir2IrConfiguration(
+        languageVersionSettings = configuration.languageVersionSettings,
+        linkViaSignatures = false,
+        evaluatedConstTracker = configuration
+            .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
+    )
     return Fir2IrConverter.createModuleFragmentWithSignaturesIfNeeded(
         session, scopeSession, firFiles.toList(),
-        languageVersionSettings,
         fir2IrExtensions,
+        fir2IrConfiguration,
         JsManglerIr, IrFactoryImpl,
         Fir2IrVisibilityConverter.Default,
         Fir2IrJvmSpecialAnnotationSymbolProvider(), // TODO: replace with appropriate (probably empty) implementation
         irGeneratorExtensions,
-        generateSignatures = false,
         kotlinBuiltIns = builtIns ?: DefaultBuiltIns.Instance, // TODO: consider passing externally,
         commonMemberStorage = commonMemberStorage,
         initializedIrBuiltIns = irBuiltIns

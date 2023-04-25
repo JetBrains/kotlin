@@ -1,3 +1,6 @@
+// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS_IR_ES6
+
 fun <T> magic(): T = throw Exception()
 
 fun <T> test(value: T, value2: T) {

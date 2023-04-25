@@ -1,6 +1,5 @@
 // Char issues
 // IGNORE_BACKEND: JS_IR
-// WASM_FAILS_IN: SM 
 
 // MODULE: main
 // FILE: externals.js
@@ -89,7 +88,7 @@ function createJsLambda() {
 
 // FILE: externals.kt
 
-external fun createJsLambda(): (Boolean, Byte, Short, Char, Int, Long, Float, Double, String, EI, DC, (DC) -> Int) -> Int
+external fun createJsLambda(): (Boolean, Byte, Short, Char, Int, Long, Float, Double, String, EI, JSDC, (JSDC) -> Int) -> Int
 
 external fun apply7(f: (String) -> ((String) -> ((String) -> ((String) -> ((String) -> ((String) -> ((String) -> String))))))): String
 
@@ -99,10 +98,11 @@ external fun is123Array(x: EI): Boolean
 external fun create123Array(): EI
 
 data class DC(val x: Int, val y: Int)
+typealias JSDC = JsReference<DC>
 
 external fun extenalWithLambda(
-    x: (Boolean, Byte, Short, Char, Int, Long, Float, Double, String, EI, DC) -> Unit,
-    dc: DC,
+    x: (Boolean, Byte, Short, Char, Int, Long, Float, Double, String, EI, JSDC) -> Unit,
+    dc: JSDC,
 )
 
 external fun externalWithLambdas2(
@@ -116,8 +116,8 @@ external fun externalWithLambdas2(
     double: () -> Double,
     string: () -> String,
     ei: () -> EI,
-    dc: () -> DC,
-    dcGetY: (DC) -> Int,
+    dc: () -> JSDC,
+    dcGetY: (JSDC) -> Int,
 ): Int
 
 @JsExport
@@ -166,7 +166,8 @@ fun box(): String {
                         double: Double,
                         string: String,
                         ei: EI,
-                        dc: DC ->
+                        jsdc: JSDC ->
+            val dc = jsdc.get()
             test(bool == true)
             test(byte == 1.toByte())
             test(short == 2.toShort())
@@ -178,7 +179,7 @@ fun box(): String {
             test(string == "S")
             test(is123Array(ei))
             test(dc.x == 100 && dc.y == 200)
-         }, DC(100, 200))
+         }, DC(100, 200).toJsReference())
 
 
     if (extenalWithLambdasCount != 11) return "Fail 1"
@@ -194,8 +195,8 @@ fun box(): String {
         double = { 600.5 },
         string = { "700" },
         ei = { create123Array() },
-        dc = { DC(800, 800) },
-        dcGetY = { it.y }
+        dc = { DC(800, 800).toJsReference() },
+        dcGetY = { it.get().y }
     )
     if (externalWithLambdas2Count != 11) return "Fail externalWithLambdas2"
 
@@ -211,8 +212,8 @@ fun box(): String {
         { 600.5 },
         { "700" },
         { create123Array() },
-        { DC(800, 800) },
-        { it.y }
+        { DC(800, 800).toJsReference() },
+        { it.get().y }
     )
     if (externalWithLambdas2RefCount != 11) return "Fail externalWithLambdas2"
 
@@ -229,8 +230,8 @@ fun box(): String {
             600.5,
             "700",
             create123Array(),
-            DC(800, 800),
-            { it.y }
+            DC(800, 800).toJsReference(),
+            { it.get().y }
         )
         if (jsLambdaCount != 11)
             return "Fail 3"
@@ -241,15 +242,15 @@ fun box(): String {
     return "OK"
 }
 
-// TODO: Rewrite test to use module system
-@JsFun("() => { globalThis.main = wasmExports; }")
-external fun hackNonModuleExport()
+// FILE: entry.mjs
 
-fun main() {
-    hackNonModuleExport()
+import main from "./index.mjs"
+
+const boxResult = main.box();
+
+if (boxResult != "OK") {
+    throw `Wrong box result '${boxResult}'; Expected "OK"`;
 }
-
-// FILE: functionTypes__after.js
 
 const exportedFres = main.exportedF()(1, 20, 300)("<", ">");
 if (exportedFres !== "<321>")

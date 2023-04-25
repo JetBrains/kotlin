@@ -4,7 +4,7 @@ FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
 object : R|kotlin/Any| {
-    private constructor(): R|<anonymous>| {
+    private [ResolvedTo(BODY_RESOLVE)] constructor(): R|<anonymous>| {
         super<R|kotlin/Any|>()
     }
 

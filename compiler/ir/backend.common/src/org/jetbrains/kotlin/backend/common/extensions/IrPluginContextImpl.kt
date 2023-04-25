@@ -71,7 +71,7 @@ open class IrPluginContextImpl constructor(
         if (symbol.isBound) return symbol
 
         linker.getDeclaration(symbol)
-        linker.postProcess()
+        linker.postProcess(inOrAfterLinkageStep = false)
 
         return symbol
     }
@@ -95,7 +95,7 @@ open class IrPluginContextImpl constructor(
 
         symbols.forEach { if (!it.isBound) linker.getDeclaration(it) }
 
-        linker.postProcess()
+        linker.postProcess(inOrAfterLinkageStep = false)
 
         return symbols
     }
@@ -173,7 +173,7 @@ open class IrPluginContextImpl constructor(
         moduleDescriptor: ModuleDescriptor
     ): IrSymbol? {
         val symbol = linker.resolveBySignatureInModule(signature, kind, moduleDescriptor.name)
-        linker.postProcess()
+        linker.postProcess(inOrAfterLinkageStep = false)
         return symbol
     }
 }

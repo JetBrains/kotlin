@@ -11,4 +11,5 @@ FILE fqName:<root> fileName:/lambdaReturningUnit.kt
         block: FUN_EXPR type=kotlin.Function0<kotlin.Any?> origin=LAMBDA
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.Any?
             BLOCK_BODY
-              GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
+              RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.Any? declared in <root>.box'
+                GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit

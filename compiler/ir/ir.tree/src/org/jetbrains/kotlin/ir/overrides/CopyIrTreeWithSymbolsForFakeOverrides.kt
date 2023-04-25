@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrOverridableMember
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.linkage.partial.IrUnimplementedOverridesStrategy
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.ir.types.impl.buildSimpleType
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 // This is basically modelled after the inliner copier.
 class CopyIrTreeWithSymbolsForFakeOverrides(
@@ -50,7 +52,7 @@ class CopyIrTreeWithSymbolsForFakeOverrides(
         override fun leaveScope() {}
 
         private fun remapTypeArguments(arguments: List<IrTypeArgument>) =
-            arguments.map { argument ->
+            arguments.memoryOptimizedMap { argument ->
                 (argument as? IrTypeProjection)?.let { makeTypeProjection(remapType(it.type), it.variance) }
                     ?: argument
             }
@@ -65,7 +67,7 @@ class CopyIrTreeWithSymbolsForFakeOverrides(
                     kotlinType = null
                     classifier = symbolRemapper.getReferencedClassifier(type.classifier)
                     arguments = remapTypeArguments(type.arguments)
-                    annotations = type.annotations.map { it.transform(copier, null) as IrConstructorCall }
+                    annotations = type.annotations.memoryOptimizedMap { it.transform(copier, null) as IrConstructorCall }
                 }
             }
         }

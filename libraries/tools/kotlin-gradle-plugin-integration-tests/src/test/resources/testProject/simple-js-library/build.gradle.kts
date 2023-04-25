@@ -18,9 +18,13 @@ kotlin {
     sourceSets {
         main {
             dependencies {
-                implementation("org.jetbrains.kotlinx:kotlinx-datetime:latest.release")
+                implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.3.3")
                 implementation(npm("kotlin", "*"))
             }
         }
     }
+}
+
+tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile> {
+    kotlinOptions.freeCompilerArgs += "-Xforce-deprecated-legacy-compiler-usage"
 }

@@ -123,7 +123,7 @@ class K2JVMCompilerArguments : CommonCompilerArguments() {
     @Argument(
         value = "-jvm-target",
         valueDescription = "<version>",
-        description = "Target version of the generated JVM bytecode (${JvmTarget.SUPPORTED_VERSIONS_DESCRIPTION}), default is 1.8"
+        description = "Target version of the generated JVM bytecode (${JvmTarget.SUPPORTED_VERSIONS_DESCRIPTION}), default is 1.8",
     )
     var jvmTarget: String? = null
         set(value) {
@@ -821,16 +821,6 @@ Also sets `-jvm-target` value equal to the selected JDK version"""
         }
 
     @Argument(
-        value = "-Xignore-const-optimization-errors",
-        description = "Ignore all compilation exceptions while optimizing some constant expressions."
-    )
-    var ignoreConstOptimizationErrors = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xno-new-java-annotation-targets",
         description = "Do not generate Java 1.8+ targets for Kotlin annotation classes"
     )
@@ -859,6 +849,17 @@ Also sets `-jvm-target` value equal to the selected JDK version"""
             checkFrozen()
             field = value
         }
+
+    @Argument(
+        value = "-Xir-inliner",
+        description = "Inline functions using IR inliner instead of bytecode inliner"
+    )
+    var enableIrInliner: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
 
     override fun configureAnalysisFlags(collector: MessageCollector, languageVersion: LanguageVersion): MutableMap<AnalysisFlag<*>, Any> {
         val result = super.configureAnalysisFlags(collector, languageVersion)
@@ -922,4 +923,6 @@ Also sets `-jvm-target` value equal to the selected JDK version"""
             )
         }
     }
+
+    override fun copyOf(): Freezable = copyK2JVMCompilerArguments(this, K2JVMCompilerArguments())
 }

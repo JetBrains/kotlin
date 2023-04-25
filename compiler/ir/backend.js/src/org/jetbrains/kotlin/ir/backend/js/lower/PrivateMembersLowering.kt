@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
 private val STATIC_THIS_PARAMETER = object : IrDeclarationOriginImpl("STATIC_THIS_PARAMETER") {}
 
@@ -61,10 +62,11 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : DeclarationTrans
             it.parent = function.parent
         }
 
-        staticFunction.typeParameters += function.typeParameters.map { it.deepCopyWithSymbols(staticFunction) }
+        staticFunction.typeParameters =
+            staticFunction.typeParameters memoryOptimizedPlus function.typeParameters.map { it.deepCopyWithSymbols(staticFunction) }
 
         staticFunction.extensionReceiverParameter = function.extensionReceiverParameter?.copyTo(staticFunction)
-        staticFunction.valueParameters += buildValueParameter(staticFunction) {
+        staticFunction.valueParameters = staticFunction.valueParameters memoryOptimizedPlus buildValueParameter(staticFunction) {
             origin = STATIC_THIS_PARAMETER
             name = Name.identifier("\$this")
             index = 0
@@ -73,7 +75,7 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : DeclarationTrans
 
         function.correspondingStatic = staticFunction
 
-        staticFunction.valueParameters += function.valueParameters.map {
+        staticFunction.valueParameters = staticFunction.valueParameters memoryOptimizedPlus function.valueParameters.map {
             // TODO better way to avoid copying default value
             it.copyTo(staticFunction, index = it.index + 1, defaultValue = null)
         }

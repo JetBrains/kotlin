@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.IrBasedClassConstructorDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.getPublicSignature
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -30,20 +29,14 @@ import org.jetbrains.kotlin.types.typeUtil.supertypes
 
 internal val interopPackageName = InteropFqNames.packageName
 internal val objCObjectFqName = interopPackageName.child(Name.identifier("ObjCObject"))
-internal val objCObjectIdSignature = getTopLevelPublicSignature(objCObjectFqName)
 private val objCClassFqName = interopPackageName.child(Name.identifier("ObjCClass"))
-private val objCClassIdSignature = getTopLevelPublicSignature(objCClassFqName)
 private val objCProtocolFqName = interopPackageName.child(Name.identifier("ObjCProtocol"))
-private val objCProtocolIdSignature = getTopLevelPublicSignature(objCProtocolFqName)
 internal val externalObjCClassFqName = interopPackageName.child(Name.identifier("ExternalObjCClass"))
-private val objCMethodFqName = interopPackageName.child(Name.identifier("ObjCMethod"))
-private val objCDirectFqName = interopPackageName.child(Name.identifier("ObjCDirect"))
-private val objCConstructorFqName = FqName("kotlinx.cinterop.ObjCConstructor")
-private val objCFactoryFqName = interopPackageName.child(Name.identifier("ObjCFactory"))
+internal val objCDirectFqName = interopPackageName.child(Name.identifier("ObjCDirect"))
+internal val objCMethodFqName = interopPackageName.child(Name.identifier("ObjCMethod"))
+internal val objCConstructorFqName = FqName("kotlinx.cinterop.ObjCConstructor")
+internal val objCFactoryFqName = interopPackageName.child(Name.identifier("ObjCFactory"))
 private val objcnamesForwardDeclarationsPackageName = Name.identifier("objcnames")
-
-private fun getTopLevelPublicSignature(fqName: FqName): IdSignature.CommonSignature =
-        getPublicSignature(fqName.parent(), fqName.shortName().asString())
 
 fun ClassDescriptor.isObjCClass(): Boolean =
                 this.containingDeclaration.fqNameSafe != interopPackageName &&
@@ -59,7 +52,7 @@ private fun IrClass.selfOrAnySuperClass(pred: (IrClass) -> Boolean): Boolean {
 }
 
 internal fun IrClass.isObjCClass() = this.packageFqName != interopPackageName &&
-        selfOrAnySuperClass { objCObjectIdSignature == it.symbol.signature }
+        selfOrAnySuperClass { it.hasEqualFqName(objCObjectFqName) }
 
 fun ClassDescriptor.isExternalObjCClass(): Boolean = this.isObjCClass() &&
         this.parentsWithSelf.filterIsInstance<ClassDescriptor>().any {
@@ -78,10 +71,10 @@ fun ClassDescriptor.isObjCMetaClass(): Boolean = this.getAllSuperClassifiers().a
 }
 
 fun IrClass.isObjCMetaClass(): Boolean = selfOrAnySuperClass {
-    objCClassIdSignature == it.symbol.signature
+    it.hasEqualFqName(objCClassFqName)
 }
 
-fun IrClass.isObjCProtocolClass(): Boolean = objCProtocolIdSignature == symbol.signature
+fun IrClass.isObjCProtocolClass(): Boolean = hasEqualFqName(objCProtocolFqName)
 
 fun ClassDescriptor.isObjCProtocolClass(): Boolean =
         this.fqNameSafe == objCProtocolFqName
@@ -123,9 +116,7 @@ private fun FunctionDescriptor.decodeObjCMethodAnnotation(): ObjCMethodInfo? {
                 selector = it.getStringValue("selector"),
                 encoding = it.getStringValue("encoding"),
                 isStret = it.getArgumentValueOrNull<Boolean>("isStret") ?: false,
-                directSymbol = this.annotations.findAnnotation(objCDirectFqName)?.let {
-                    it.getStringValue("symbol")
-                },
+                directSymbol = this.annotations.findAnnotation(objCDirectFqName)?.getStringValue("symbol"),
         )
     }
 

@@ -8,6 +8,7 @@ package kotlin.native.internal
 /**
  * This class is used to allocate closure-captured variables in the heap.
  */
-class Ref<T> {
+@PublishedApi
+internal class Ref<T> {
     var element: T = undefined()
 }

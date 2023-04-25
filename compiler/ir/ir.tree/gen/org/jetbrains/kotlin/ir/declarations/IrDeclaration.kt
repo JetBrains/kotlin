@@ -14,7 +14,8 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 
 /**
  * A non-leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.declaration
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.declaration]
  */
 interface IrDeclaration : IrStatement, IrSymbolOwner, IrMutableAnnotationContainer {
     @ObsoleteDescriptorBasedAPI

@@ -26,7 +26,7 @@ abstract class BinaryVersion(private vararg val numbers: Int) {
     } else emptyList()
 
     @Deprecated("Please use isCompatibleWithCurrentCompilerVersion()", ReplaceWith("isCompatibleWithCurrentCompilerVersion()"))
-    fun isCompatible(): Boolean = isCompatibleWithCurrentCompilerVersion()
+    open fun isCompatible(): Boolean = isCompatibleWithCurrentCompilerVersion()
 
     abstract fun isCompatibleWithCurrentCompilerVersion(): Boolean
 

@@ -14,14 +14,10 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.logging.Logging
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.extraProperties
+import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ArtifactMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
-import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfiguration
-import org.jetbrains.kotlin.gradle.utils.getOrPut
+import org.jetbrains.kotlin.gradle.utils.*
 import java.util.*
 
 internal sealed class MetadataDependencyResolution(
@@ -117,12 +113,9 @@ internal class GranularMetadataTransformation(
 
     class ProjectData(
         val path: String,
-        sourceSetMetadataOutputsProvider: () -> Map<String, SourceSetMetadataOutputs>,
-        moduleIdProvider: () -> ModuleDependencyIdentifier
+        val sourceSetMetadataOutputs: LenientFuture<Map<String, SourceSetMetadataOutputs>>,
+        val moduleId: LenientFuture<ModuleDependencyIdentifier>
     ) {
-        val sourceSetMetadataOutputs by lazy(sourceSetMetadataOutputsProvider)
-        val moduleId by lazy(moduleIdProvider)
-
         override fun toString(): String = "ProjectData[path='$path']"
     }
 
@@ -143,7 +136,7 @@ internal class GranularMetadataTransformation(
                 params.resolvedMetadataConfiguration
                     .root
                     .dependencies
-                    .filter { !it.isConstraint}
+                    .filter { !it.isConstraint }
                     .filterIsInstance<ResolvedDependencyResult>()
             )
         }
@@ -274,7 +267,7 @@ internal class GranularMetadataTransformation(
         val metadataProvider = when (mppDependencyMetadataExtractor) {
             is ProjectMppDependencyProjectStructureMetadataExtractor -> ProjectMetadataProvider(
                 sourceSetMetadataOutputs = params.projectData[mppDependencyMetadataExtractor.projectPath]?.sourceSetMetadataOutputs
-                    ?: error("Unexpected project path '${mppDependencyMetadataExtractor.projectPath}'")
+                    ?.getOrThrow() ?: error("Unexpected project path '${mppDependencyMetadataExtractor.projectPath}'")
             )
 
             is JarMppDependencyProjectStructureMetadataExtractor -> ArtifactMetadataProvider(
@@ -307,7 +300,7 @@ internal class GranularMetadataTransformation(
             is ModuleComponentIdentifier -> ModuleDependencyIdentifier(componentId.group, componentId.module)
             is ProjectComponentIdentifier -> {
                 if (componentId.build.isCurrentBuild) {
-                    params.projectData[componentId.projectPath]?.moduleId
+                    params.projectData[componentId.projectPath]?.moduleId?.getOrThrow()
                         ?: error("Cant find project Module ID by ${componentId.projectPath}")
                 } else {
                     ModuleDependencyIdentifier(
@@ -332,16 +325,22 @@ internal val ResolvedComponentResult.currentBuildProjectIdOrNull
         }
     }
 
-private val Project.allProjectsData: Map<String, GranularMetadataTransformation.ProjectData> get() = rootProject
-    .extraProperties
-    .getOrPut("all${GranularMetadataTransformation.ProjectData::class.java.simpleName}") { collectAllProjectsData() }
+private val Project.allProjectsData: Map<String, GranularMetadataTransformation.ProjectData>
+    get() = rootProject
+        .extraProperties
+        .getOrPut("all${GranularMetadataTransformation.ProjectData::class.java.simpleName}") {
+            collectAllProjectsData()
+        }
 
 private fun Project.collectAllProjectsData(): Map<String, GranularMetadataTransformation.ProjectData> {
-    return rootProject.allprojects.associateBy { it.path }.mapValues { (path, subProject) ->
+    return rootProject.allprojects.associateBy { it.path }.mapValues { (path, currentProject) ->
         GranularMetadataTransformation.ProjectData(
             path = path,
-            sourceSetMetadataOutputsProvider = { subProject.collectSourceSetMetadataOutputs() },
-            moduleIdProvider = { ModuleIds.idOfRootModule(subProject) }
+            sourceSetMetadataOutputs = currentProject.future { currentProject.collectSourceSetMetadataOutputs() }.lenient,
+            moduleId = currentProject.future {
+                KotlinPluginLifecycle.Stage.AfterFinaliseDsl.await()
+                ModuleIds.idOfRootModule(currentProject)
+            }.lenient
         )
     }
 }

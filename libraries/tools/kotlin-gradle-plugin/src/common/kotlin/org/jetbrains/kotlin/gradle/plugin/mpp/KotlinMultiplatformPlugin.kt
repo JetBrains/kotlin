@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTargetPreset
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinWasmTargetPreset
+import org.jetbrains.kotlin.gradle.targets.native.createFatFrameworks
 import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.registerKotlinArtifactsExtension
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompileTool
 import org.jetbrains.kotlin.gradle.tasks.locateTask
@@ -80,6 +81,7 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
         project.locateOrRegisterIdeResolveDependenciesTask()
 
         project.addBuildListenerForXcode()
+        project.whenEvaluated { kotlinMultiplatformExtension.createFatFrameworks() }
     }
 
     private fun exportProjectStructureMetadataForOtherBuilds(
@@ -168,14 +170,18 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
     private fun configureSourceSets(project: Project) = with(project.multiplatformExtension) {
         val production = sourceSets.create(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME)
         val test = sourceSets.create(KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME)
-
         targets.all { target ->
-            target.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME)?.let { mainCompilation ->
-                mainCompilation.defaultSourceSet.takeIf { it != production }?.dependsOn(production)
-            }
+            project.launchInStage(KotlinPluginLifecycle.Stage.FinaliseRefinesEdges) {
+                /* Only setup default refines edges when no KotlinTargetHierarchy was applied */
+                if (project.multiplatformExtension.internalKotlinTargetHierarchy.appliedDescriptors.isNotEmpty()) return@launchInStage
 
-            target.compilations.findByName(KotlinCompilation.TEST_COMPILATION_NAME)?.let { testCompilation ->
-                testCompilation.defaultSourceSet.takeIf { it != test }?.dependsOn(test)
+                target.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME)?.let { mainCompilation ->
+                    mainCompilation.defaultSourceSet.takeIf { it != production }?.dependsOn(production)
+                }
+
+                target.compilations.findByName(KotlinCompilation.TEST_COMPILATION_NAME)?.let { testCompilation ->
+                    testCompilation.defaultSourceSet.takeIf { it != test }?.dependsOn(test)
+                }
             }
 
             val targetName = if (target is KotlinNativeTarget)
@@ -187,8 +193,10 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
 
         UnusedSourceSetsChecker.checkSourceSets(project)
 
-        project.runProjectConfigurationHealthCheckWhenEvaluated {
-            checkSourceSetVisibilityRequirements(project)
+        project.launchInStage(KotlinPluginLifecycle.Stage.ReadyForExecution) {
+            project.runProjectConfigurationHealthCheck {
+                checkSourceSetVisibilityRequirements(project)
+            }
         }
     }
 
@@ -211,12 +219,12 @@ internal fun applyUserDefinedAttributes(target: AbstractKotlinTarget) {
         // To copy the attributes to the output configurations, find those output configurations and their producing compilations
         // based on the target's components:
         val outputConfigurationsWithCompilations = target.kotlinComponents.filterIsInstance<KotlinVariant>().flatMap { kotlinVariant ->
-                kotlinVariant.usages.mapNotNull { usageContext ->
-                    project.configurations.findByName(usageContext.dependencyConfigurationName)?.let { configuration ->
-                        configuration to usageContext.compilation
-                    }
+            kotlinVariant.usages.mapNotNull { usageContext ->
+                project.configurations.findByName(usageContext.dependencyConfigurationName)?.let { configuration ->
+                    configuration to usageContext.compilation
                 }
-            }.toMutableList()
+            }
+        }.toMutableList()
 
         val mainCompilation = target.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME)
         val defaultTargetConfiguration = project.configurations.findByName(target.defaultConfigurationName)
@@ -244,20 +252,31 @@ internal fun applyUserDefinedAttributes(target: AbstractKotlinTarget) {
                 .mapNotNull { configurationName -> target.project.configurations.findByName(configurationName) }
                 .forEach { configuration -> copyAttributes(compilationAttributes, configuration.attributes) }
         }
+
+        // Copy to host-specific metadata elements configurations
+        if (target is KotlinNativeTarget) {
+            val hostSpecificMetadataElements = project.configurations.findByName(target.hostSpecificMetadataElementsConfigurationName)
+            if (hostSpecificMetadataElements != null) {
+                copyAttributes(from = target.attributes, to = hostSpecificMetadataElements.attributes)
+            }
+        }
     }
 }
 
 internal fun sourcesJarTask(compilation: KotlinCompilation<*>, componentName: String, artifactNameAppendix: String): TaskProvider<Jar> =
     sourcesJarTask(
         compilation.target.project,
-        lazy { compilation.allKotlinSourceSets.associate { it.name to it.kotlin } },
+        compilation.target.project.future {
+            KotlinPluginLifecycle.Stage.AfterFinaliseCompilations.await()
+            compilation.allKotlinSourceSets.associate { it.name to it.kotlin }
+        },
         componentName,
         artifactNameAppendix
     )
 
 private fun sourcesJarTask(
     project: Project,
-    sourceSets: Lazy<Map<String, Iterable<File>>>,
+    sourceSets: Future<Map<String, Iterable<File>>>,
     taskNamePrefix: String,
     artifactNameAppendix: String
 ): TaskProvider<Jar> =
@@ -267,7 +286,7 @@ internal fun sourcesJarTaskNamed(
     taskName: String,
     componentName: String,
     project: Project,
-    sourceSets: Lazy<Map<String, Iterable<File>>>,
+    sourceSets: Future<Map<String, Iterable<File>>>,
     artifactNameAppendix: String,
     componentTypeName: String = "target",
 ): TaskProvider<Jar> {
@@ -284,9 +303,9 @@ internal fun sourcesJarTaskNamed(
         sourcesJar.description = "Assembles a jar archive containing the sources of $componentTypeName '$componentName'."
     }
 
-    project.whenEvaluated {
-        result.configure {
-            sourceSets.value.forEach { (sourceSetName, sourceSetFiles) ->
+    result.configure {
+        project.launch {
+            sourceSets.await().forEach { (sourceSetName, sourceSetFiles) ->
                 it.from(sourceSetFiles) { copySpec ->
                     copySpec.into(sourceSetName)
                     // Duplicates are coming from `SourceSets` that `sourceSet` depends on.

@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
@@ -398,6 +399,12 @@ class IrBuiltInsOverDescriptors(
             if (array == null) null else unsignedType to array
         }.toMap()
 
+    override val unsignedArraysElementTypes: Map<IrClassSymbol, IrType?> by lazy {
+        unsignedTypesToUnsignedArrays.map { (k, v) ->
+            v to builtIns.builtInsModule.findClassAcrossModuleDependencies(k.classId)?.defaultType?.toIrType()
+        }.toMap()
+    }
+
     override val lessFunByOperandType = primitiveIrTypesWithComparisons.defineComparisonOperatorForEachIrType(BuiltInOperatorNames.LESS)
     override val lessOrEqualFunByOperandType =
         primitiveIrTypesWithComparisons.defineComparisonOperatorForEachIrType(BuiltInOperatorNames.LESS_OR_EQUAL)
@@ -480,6 +487,11 @@ class IrBuiltInsOverDescriptors(
     override fun findFunctions(name: Name, packageFqName: FqName): Iterable<IrSimpleFunctionSymbol> =
         builtIns.builtInsModule.getPackage(packageFqName).memberScope.getContributedFunctions(name, NoLookupLocation.FROM_BACKEND).map {
             symbolTable.referenceSimpleFunction(it)
+        }
+
+    override fun findProperties(name: Name, packageFqName: FqName): Iterable<IrPropertySymbol> =
+        builtIns.builtInsModule.getPackage(packageFqName).memberScope.getContributedVariables(name, NoLookupLocation.FROM_BACKEND).map {
+            symbolTable.referenceProperty(it)
         }
 
     override fun findClass(name: Name, vararg packageNameSegments: String): IrClassSymbol? =

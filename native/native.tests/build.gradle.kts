@@ -18,6 +18,8 @@ dependencies {
     testImplementation(projectTests(":compiler:tests-common-new"))
     testImplementation(projectTests(":compiler:test-infrastructure"))
     testImplementation(projectTests(":generators:test-generator"))
+    testImplementation(project(":native:kotlin-native-utils"))
+    testImplementation(project(":native:executors"))
     testApiJUnit5()
     testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-coroutines-core")) { isTransitive = false }
 
@@ -50,8 +52,7 @@ val stdlibTest = nativeTest("stdlibTest", "stdlib")
 val stdlibK2Test = nativeTest("stdlibK2Test", "stdlibK2")
 val kotlinTestLibraryTest = nativeTest("kotlinTestLibraryTest", "kotlin-test")
 val kotlinTestK2LibraryTest = nativeTest("kotlinTestK2LibraryTest", "kotlin-testK2")
-val klibAbiTest = nativeTest("klibAbiTest", "klib-abi")
-val klibBinaryCompatibilityTest = nativeTest("klibBinaryCompatibilityTest", "klib-binary-compatibility")
+val partialLinkageTest = nativeTest("partialLinkageTest", "partial-linkage")
 val cinteropTest = nativeTest("cinteropTest", "cinterop")
 val debuggerTest = nativeTest("debuggerTest", "debugger")
 val cachesTest = nativeTest("cachesTest", "caches")

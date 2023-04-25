@@ -30,7 +30,7 @@ private const val VALUE_DELIMITER = ": "
 open class AbstractSymbolLightClassesStructureTestBase(
     configurator: AnalysisApiTestConfigurator,
     protected val testPrefix: String,
-    override val stopIfCompilationErrorDirectivePresent: Boolean
+    override val isTestAgainstCompiledCode: Boolean,
 ) : AbstractSymbolLightClassesTestBase(configurator) {
     override val currentExtension: String get() = throw UnsupportedOperationException()
     protected fun doTestInheritors(ktFiles: List<KtFile>, testServices: TestServices) {

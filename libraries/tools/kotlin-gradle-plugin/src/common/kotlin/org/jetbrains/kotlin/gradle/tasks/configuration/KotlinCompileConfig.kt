@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.tasks.configuration
 import org.gradle.api.Project
 import org.gradle.api.attributes.Attribute
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.dsl.KotlinAndroidProjectExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
 import org.jetbrains.kotlin.gradle.internal.transforms.ClasspathEntrySnapshotTransform
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
@@ -40,12 +42,8 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
 
             taskProvider.configure { task ->
                 task.incremental = propertiesProvider.incrementalJvm ?: true
-
-                if (propertiesProvider.useK2 == true) {
-                    task.compilerOptions.useK2.value(true)
-                }
                 task.usePreciseJavaTracking = propertiesProvider.usePreciseJavaTracking ?: true
-                task.jvmTargetValidationMode.set(propertiesProvider.jvmTargetValidationMode)
+                task.jvmTargetValidationMode.convention(propertiesProvider.jvmTargetValidationMode).finalizeValueOnRead()
                 task.useKotlinAbiSnapshot.value(propertiesProvider.useKotlinAbiSnapshot).disallowChanges()
 
                 task.classpathSnapshotProperties.useClasspathSnapshot.value(useClasspathSnapshot).disallowChanges()
@@ -88,6 +86,14 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
                     providers.provider {
                         task.parentKotlinOptions.orNull?.moduleName ?: compilationInfo.moduleName
                     })
+
+                // In case of 'org.jetbrains.kotlin.jvm' and 'org.jetbrains.kotlin.android' plugins module name will be pre-configured
+                if (ext !is KotlinJvmProjectExtension && ext !is KotlinAndroidProjectExtension) {
+                    @Suppress("DEPRECATION")
+                    task.moduleName.set(providers.provider { compilationInfo.moduleName })
+                } else {
+                    task.nagTaskModuleNameUsage.set(true)
+                }
             }
         }
     }

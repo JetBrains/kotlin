@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchyDescriptor
 interface KotlinTargetHierarchyDsl {
     fun apply(
         hierarchyDescriptor: KotlinTargetHierarchyDescriptor,
-        describeExtension: (KotlinTargetHierarchyBuilder.() -> Unit)? = null
+        describeExtension: (KotlinTargetHierarchyBuilder.Root.() -> Unit)? = null
     )
 
     /**
@@ -80,6 +80,6 @@ interface KotlinTargetHierarchyDsl {
      * @param describeExtension: Additional groups can  be described to extend the 'default'/'natural' hierarchy:
      * @see KotlinTargetHierarchyDescriptor.extend
      */
-    fun default(describeExtension: (KotlinTargetHierarchyBuilder.() -> Unit)? = null)
-    fun custom(describe: KotlinTargetHierarchyBuilder.() -> Unit)
+    fun default(describeExtension: (KotlinTargetHierarchyBuilder.Root.() -> Unit)? = null)
+    fun custom(describe: KotlinTargetHierarchyBuilder.Root.() -> Unit)
 }

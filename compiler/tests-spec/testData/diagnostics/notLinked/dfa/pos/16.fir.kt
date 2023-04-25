@@ -114,7 +114,7 @@ fun case_9(x: String?) {
 
 // TESTCASE NUMBER: 10
 fun case_10(x: Float?) {
-    if (true && true && true && x !== null) else return
+    if (true && true && true && <!FORBIDDEN_IDENTITY_EQUALS_WARNING!>x !== null<!>) else return
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>x<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>x<!>.equals(null)
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>x<!>.propT
@@ -465,7 +465,7 @@ fun case_33(x: Any?) {
 // TESTCASE NUMBER: 34
 fun case_34(x: Float?) {
     (l@ {
-        if (true && true && true && x !== null) else return@l
+        if (true && true && true && <!FORBIDDEN_IDENTITY_EQUALS_WARNING!>x !== null<!>) else return@l
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>x<!>.equals(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>x<!>.propT
@@ -477,7 +477,7 @@ fun case_34(x: Float?) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>x<!>.funNullableT()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>x<!>.funNullableAny()
     }).equals(l@ {
-        if (true && true && true && x !== null) else return@l
+        if (true && true && true && <!FORBIDDEN_IDENTITY_EQUALS_WARNING!>x !== null<!>) else return@l
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>x<!>.equals(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>x<!>.propT

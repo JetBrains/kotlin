@@ -5,28 +5,40 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
+import org.gradle.api.Project
+import org.gradle.api.Task
+import org.gradle.api.file.ArchiveOperations
+import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileSystemOperations
-import org.jetbrains.kotlin.gradle.utils.ArchiveOperationsCompat
-import org.jetbrains.kotlin.gradle.utils.FileSystemOperationsCompat
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.Internal
+import org.jetbrains.kotlin.gradle.report.BuildMetricsService
+import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
+import org.jetbrains.kotlin.gradle.report.reportingSettings
+import org.jetbrains.kotlin.gradle.tasks.withType
+import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 import java.io.File
 import javax.inject.Inject
+
+internal interface UsesGradleNodeModulesCache : Task {
+    @get:Internal
+    val gradleNodeModules: Property<GradleNodeModulesCache>
+}
 
 /**
  * Cache for storing already created [GradleNodeModule]s
  */
-internal abstract class GradleNodeModulesCache : AbstractNodeModulesCache() {
+abstract class GradleNodeModulesCache : AbstractNodeModulesCache() {
 
-    // TODO: replace by injected service org.gradle.api.file.FileSystemOperations once min support Gradle is 6.2
-    // https://github.com/gradle/gradle/commit/d02b9d84c08dba64775fb9581e3280f88d319a21
-    @Transient
-    lateinit var fs: FileSystemOperationsCompat
+    @get:Inject
+    abstract val fs: FileSystemOperations
 
     override val type: String
         get() = "gradle"
 
-    // TODO: replace by injected service org.gradle.api.file.ArchiveOperations once min supported Gradle is 6.6
-    @Transient
-    lateinit var archiveOperations: ArchiveOperationsCompat
+    @get:Inject
+    abstract val archiveOperations: ArchiveOperations
 
     override fun buildImportedPackage(
         name: String,
@@ -36,5 +48,45 @@ internal abstract class GradleNodeModulesCache : AbstractNodeModulesCache() {
         val module = GradleNodeModuleBuilder(fs, archiveOperations, name, version, listOf(file), parameters.cacheDir.get().asFile)
         module.visitArtifacts()
         return module.rebuild()
+    }
+
+    companion object {
+        private val serviceClass = GradleNodeModulesCache::class.java
+        private val serviceName = serviceClass.name
+
+        private fun registerIfAbsentImpl(
+            project: Project,
+            rootProjectDir: File?,
+            cacheDir: File?
+        ): Provider<GradleNodeModulesCache> {
+            project.gradle.sharedServices.registrations.findByName(serviceName)?.let {
+                @Suppress("UNCHECKED_CAST")
+                return it.service as Provider<GradleNodeModulesCache>
+            }
+
+            val message = {
+                "Build service Gradle Node Modules should be already registered"
+            }
+
+            requireNotNull(rootProjectDir, message)
+            requireNotNull(cacheDir, message)
+
+            return project.gradle.sharedServices.registerIfAbsent(serviceName, serviceClass) {
+                it.parameters.rootProjectDir.set(rootProjectDir)
+                it.parameters.cacheDir.set(cacheDir)
+            }
+        }
+
+        fun registerIfAbsent(
+            project: Project,
+            rootProjectDir: File?,
+            cacheDir: File?
+        ) = registerIfAbsentImpl(project, rootProjectDir, cacheDir).also { serviceProvider ->
+            SingleActionPerProject.run(project, UsesGradleNodeModulesCache::class.java.name) {
+                project.tasks.withType<UsesGradleNodeModulesCache>().configureEach { task ->
+                    task.usesService(serviceProvider)
+                }
+            }
+        }
     }
 }

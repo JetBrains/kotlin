@@ -20,7 +20,9 @@ import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.lower.*
 import org.jetbrains.kotlin.ir.backend.js.lower.calls.CallsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.cleanup.CleanupLowering
-import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.*
+import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.AddContinuationToFunctionCallsLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendArityStoreLowering
+import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.*
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -278,7 +280,7 @@ private val saveInlineFunctionsBeforeInlining = makeDeclarationTransformerPhase(
 )
 
 private val functionInliningPhase = makeBodyLoweringPhase(
-    { FunctionInlining(it, JsInlineFunctionResolver(it), it.innerClassesSupport) },
+    { FunctionInlining(it, JsInlineFunctionResolver(it), it.innerClassesSupport, allowExternalInlining = true) },
     name = "FunctionInliningPhase",
     description = "Perform function inlining",
     prerequisite = setOf(saveInlineFunctionsBeforeInlining)
@@ -365,7 +367,7 @@ private val enumEntryCreateGetInstancesFunsLoweringPhase = makeDeclarationTransf
 )
 
 private val enumSyntheticFunsLoweringPhase = makeDeclarationTransformerPhase(
-    { EnumSyntheticFunctionsAndPropertiesLowering(it, supportRawFunctionReference = true) },
+    ::EnumSyntheticFunctionsAndPropertiesLowering,
     name = "EnumSyntheticFunctionsAndPropertiesLowering",
     description = "Implement `valueOf, `values` and `entries`",
     prerequisite = setOf(

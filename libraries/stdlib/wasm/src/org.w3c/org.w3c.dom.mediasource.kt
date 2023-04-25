@@ -16,14 +16,14 @@ import org.w3c.dom.events.*
 /**
  * Exposes the JavaScript [MediaSource](https://developer.mozilla.org/en/docs/Web/API/MediaSource) to Kotlin
  */
-public external open class MediaSource : EventTarget, MediaProvider {
+public external open class MediaSource : EventTarget, MediaProvider, JsAny {
     open val sourceBuffers: SourceBufferList
     open val activeSourceBuffers: SourceBufferList
     open val readyState: ReadyState
     var duration: Double
-    var onsourceopen: ((Event) -> Dynamic?)?
-    var onsourceended: ((Event) -> Dynamic?)?
-    var onsourceclose: ((Event) -> Dynamic?)?
+    var onsourceopen: ((Event) -> JsAny?)?
+    var onsourceended: ((Event) -> JsAny?)?
+    var onsourceclose: ((Event) -> JsAny?)?
     fun addSourceBuffer(type: String): SourceBuffer
     fun removeSourceBuffer(sourceBuffer: SourceBuffer)
     fun endOfStream(error: EndOfStreamError = definedExternally)
@@ -38,7 +38,7 @@ public external open class MediaSource : EventTarget, MediaProvider {
 /**
  * Exposes the JavaScript [SourceBuffer](https://developer.mozilla.org/en/docs/Web/API/SourceBuffer) to Kotlin
  */
-public external abstract class SourceBuffer : EventTarget {
+public external abstract class SourceBuffer : EventTarget, JsAny {
     open var mode: AppendMode
     open val updating: Boolean
     open val buffered: TimeRanges
@@ -48,12 +48,12 @@ public external abstract class SourceBuffer : EventTarget {
     open val textTracks: TextTrackList
     open var appendWindowStart: Double
     open var appendWindowEnd: Double
-    open var onupdatestart: ((Event) -> Dynamic?)?
-    open var onupdate: ((Event) -> Dynamic?)?
-    open var onupdateend: ((Event) -> Dynamic?)?
-    open var onerror: ((Event) -> Dynamic?)?
-    open var onabort: ((Event) -> Dynamic?)?
-    fun appendBuffer(data: Dynamic?)
+    open var onupdatestart: ((Event) -> JsAny?)?
+    open var onupdate: ((Event) -> JsAny?)?
+    open var onupdateend: ((Event) -> JsAny?)?
+    open var onerror: ((Event) -> JsAny?)?
+    open var onabort: ((Event) -> JsAny?)?
+    fun appendBuffer(data: JsAny?)
     fun abort()
     fun remove(start: Double, end: Double)
 }
@@ -61,47 +61,48 @@ public external abstract class SourceBuffer : EventTarget {
 /**
  * Exposes the JavaScript [SourceBufferList](https://developer.mozilla.org/en/docs/Web/API/SourceBufferList) to Kotlin
  */
-public external abstract class SourceBufferList : EventTarget {
+public external abstract class SourceBufferList : EventTarget, JsAny {
     open val length: Int
-    open var onaddsourcebuffer: ((Event) -> Dynamic?)?
-    open var onremovesourcebuffer: ((Event) -> Dynamic?)?
+    open var onaddsourcebuffer: ((Event) -> JsAny?)?
+    open var onremovesourcebuffer: ((Event) -> JsAny?)?
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline operator fun SourceBufferList.get(index: Int): SourceBuffer? = asDynamic().getAny(index)
+@Suppress("UNUSED_PARAMETER")
+internal fun getMethodImplForSourceBufferList(obj: SourceBufferList, index: Int): SourceBuffer? { js("return obj[index];") }
+
+public operator fun SourceBufferList.get(index: Int): SourceBuffer? = getMethodImplForSourceBufferList(this, index)
 
 /* please, don't implement this interface! */
 @JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
-public external interface ReadyState {
+public external interface ReadyState : JsAny {
     companion object
 }
 
-public inline val ReadyState.Companion.CLOSED: ReadyState get() = "closed".asDynamic().unsafeCast<ReadyState>()
+public inline val ReadyState.Companion.CLOSED: ReadyState get() = "closed".toJsString().unsafeCast<ReadyState>()
 
-public inline val ReadyState.Companion.OPEN: ReadyState get() = "open".asDynamic().unsafeCast<ReadyState>()
+public inline val ReadyState.Companion.OPEN: ReadyState get() = "open".toJsString().unsafeCast<ReadyState>()
 
-public inline val ReadyState.Companion.ENDED: ReadyState get() = "ended".asDynamic().unsafeCast<ReadyState>()
+public inline val ReadyState.Companion.ENDED: ReadyState get() = "ended".toJsString().unsafeCast<ReadyState>()
 
 /* please, don't implement this interface! */
 @JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
-public external interface EndOfStreamError {
+public external interface EndOfStreamError : JsAny {
     companion object
 }
 
-public inline val EndOfStreamError.Companion.NETWORK: EndOfStreamError get() = "network".asDynamic().unsafeCast<EndOfStreamError>()
+public inline val EndOfStreamError.Companion.NETWORK: EndOfStreamError get() = "network".toJsString().unsafeCast<EndOfStreamError>()
 
-public inline val EndOfStreamError.Companion.DECODE: EndOfStreamError get() = "decode".asDynamic().unsafeCast<EndOfStreamError>()
+public inline val EndOfStreamError.Companion.DECODE: EndOfStreamError get() = "decode".toJsString().unsafeCast<EndOfStreamError>()
 
 /* please, don't implement this interface! */
 @JsName("null")
 @Suppress("NESTED_CLASS_IN_EXTERNAL_INTERFACE")
-public external interface AppendMode {
+public external interface AppendMode : JsAny {
     companion object
 }
 
-public inline val AppendMode.Companion.SEGMENTS: AppendMode get() = "segments".asDynamic().unsafeCast<AppendMode>()
+public inline val AppendMode.Companion.SEGMENTS: AppendMode get() = "segments".toJsString().unsafeCast<AppendMode>()
 
-public inline val AppendMode.Companion.SEQUENCE: AppendMode get() = "sequence".asDynamic().unsafeCast<AppendMode>()
+public inline val AppendMode.Companion.SEQUENCE: AppendMode get() = "sequence".toJsString().unsafeCast<AppendMode>()

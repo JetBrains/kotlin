@@ -3,6 +3,6 @@ FIR element: FirAnonymousFunctionExpressionImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-run@fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
+[ResolvedTo(BODY_RESOLVE)] run@fun <anonymous>(): R|kotlin/Int| <inline=Unknown>  {
     ^ Int(1)
 }

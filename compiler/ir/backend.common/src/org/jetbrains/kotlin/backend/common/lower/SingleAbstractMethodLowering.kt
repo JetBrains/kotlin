@@ -29,6 +29,9 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.findIsInstanceAnd
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
+import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
 abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) : FileLoweringPass, IrElementTransformerVoidWithContext() {
     // SAM wrappers are cached, either in the file class (if it exists), or in a top-level enclosing class.
@@ -79,8 +82,7 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
     override fun lower(irFile: IrFile) {
         cachedImplementations.clear()
         inlineCachedImplementations.clear()
-        enclosingContainer = irFile.declarations.filterIsInstance<IrClass>().find { it.isFileClass }
-            ?: irFile
+        enclosingContainer = irFile.declarations.findIsInstanceAnd<IrClass> { it.isFileClass } ?: irFile
         irFile.transformChildrenVoid()
 
         for (wrapper in cachedImplementations.values + inlineCachedImplementations.values) {
@@ -177,7 +179,7 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
             setSourceRange(createFor)
         }.apply {
             createImplicitParameterDeclarationWithWrappedDescriptor()
-            superTypes = listOf(superType) + getAdditionalSupertypes(superType)
+            superTypes = listOf(superType) memoryOptimizedPlus getAdditionalSupertypes(superType)
             parent = enclosingContainer!!
         }
 
@@ -221,7 +223,7 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
             overriddenSymbols = listOf(originalSuperMethod.symbol)
             dispatchReceiverParameter = subclass.thisReceiver!!.copyTo(this)
             extensionReceiverParameter = originalSuperMethod.extensionReceiverParameter?.copyTo(this)
-            valueParameters = originalSuperMethod.valueParameters.map { it.copyTo(this) }
+            valueParameters = originalSuperMethod.valueParameters.memoryOptimizedMap { it.copyTo(this) }
             body = context.createIrBuilder(symbol).irBlockBody {
                 +irReturn(
                     irCall(

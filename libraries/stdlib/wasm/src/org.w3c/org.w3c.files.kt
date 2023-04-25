@@ -17,77 +17,65 @@ import org.w3c.xhr.*
 /**
  * Exposes the JavaScript [Blob](https://developer.mozilla.org/en/docs/Web/API/Blob) to Kotlin
  */
-public external open class Blob(blobParts: Array<Dynamic?> = definedExternally, options: BlobPropertyBag = definedExternally) : MediaProvider, ImageBitmapSource {
-    open val size: Number
+public external open class Blob(blobParts: JsArray<JsAny?> = definedExternally, options: BlobPropertyBag = definedExternally) : MediaProvider, ImageBitmapSource, JsAny {
+    open val size: JsNumber
     open val type: String
     open val isClosed: Boolean
     fun slice(start: Int = definedExternally, end: Int = definedExternally, contentType: String = definedExternally): Blob
     fun close()
 }
 
-public external interface BlobPropertyBag {
+public external interface BlobPropertyBag : JsAny {
     var type: String? /* = "" */
         get() = definedExternally
         set(value) = definedExternally
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun BlobPropertyBag(type: String? = ""): BlobPropertyBag {
-    val o = js("({})")
-    o["type"] = type
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as BlobPropertyBag
-}
+@Suppress("UNUSED_PARAMETER")
+public fun BlobPropertyBag(type: String? = ""): BlobPropertyBag { js("return { type };") }
 
 /**
  * Exposes the JavaScript [File](https://developer.mozilla.org/en/docs/Web/API/File) to Kotlin
  */
-public external open class File(fileBits: Array<Dynamic?>, fileName: String, options: FilePropertyBag = definedExternally) : Blob {
+public external open class File(fileBits: JsArray<JsAny?>, fileName: String, options: FilePropertyBag = definedExternally) : Blob, JsAny {
     open val name: String
     open val lastModified: Int
 }
 
-public external interface FilePropertyBag : BlobPropertyBag {
+public external interface FilePropertyBag : BlobPropertyBag, JsAny {
     var lastModified: Int?
         get() = definedExternally
         set(value) = definedExternally
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline fun FilePropertyBag(lastModified: Int? = undefined, type: String? = ""): FilePropertyBag {
-    val o = js("({})")
-    o["lastModified"] = lastModified
-    o["type"] = type
-    @Suppress("UNCHECKED_CAST_TO_EXTERNAL_INTERFACE")
-    return o as FilePropertyBag
-}
+@Suppress("UNUSED_PARAMETER")
+public fun FilePropertyBag(lastModified: Int? = undefined, type: String? = ""): FilePropertyBag { js("return { lastModified, type };") }
 
 /**
  * Exposes the JavaScript [FileList](https://developer.mozilla.org/en/docs/Web/API/FileList) to Kotlin
  */
-public external abstract class FileList : ItemArrayLike<File> {
+public external abstract class FileList : ItemArrayLike<File>, JsAny {
     override fun item(index: Int): File?
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline operator fun FileList.get(index: Int): File? = asDynamic().getAny(index)
+@Suppress("UNUSED_PARAMETER")
+internal fun getMethodImplForFileList(obj: FileList, index: Int): File? { js("return obj[index];") }
+
+public operator fun FileList.get(index: Int): File? = getMethodImplForFileList(this, index)
 
 /**
  * Exposes the JavaScript [FileReader](https://developer.mozilla.org/en/docs/Web/API/FileReader) to Kotlin
  */
-public external open class FileReader : EventTarget {
+public external open class FileReader : EventTarget, JsAny {
     open val readyState: Short
-    open val result: Dynamic?
-    open val error: Dynamic?
-    var onloadstart: ((ProgressEvent) -> Dynamic?)?
-    var onprogress: ((ProgressEvent) -> Dynamic?)?
-    var onload: ((Event) -> Dynamic?)?
-    var onabort: ((Event) -> Dynamic?)?
-    var onerror: ((Event) -> Dynamic?)?
-    var onloadend: ((Event) -> Dynamic?)?
+    open val result: JsAny?
+    open val error: JsAny?
+    var onloadstart: ((ProgressEvent) -> JsAny?)?
+    var onprogress: ((ProgressEvent) -> JsAny?)?
+    var onload: ((Event) -> JsAny?)?
+    var onabort: ((Event) -> JsAny?)?
+    var onerror: ((Event) -> JsAny?)?
+    var onloadend: ((Event) -> JsAny?)?
     fun readAsArrayBuffer(blob: Blob)
     fun readAsBinaryString(blob: Blob)
     fun readAsText(blob: Blob, label: String = definedExternally)
@@ -104,7 +92,7 @@ public external open class FileReader : EventTarget {
 /**
  * Exposes the JavaScript [FileReaderSync](https://developer.mozilla.org/en/docs/Web/API/FileReaderSync) to Kotlin
  */
-public external open class FileReaderSync {
+public external open class FileReaderSync : JsAny {
     fun readAsArrayBuffer(blob: Blob): ArrayBuffer
     fun readAsBinaryString(blob: Blob): String
     fun readAsText(blob: Blob, label: String = definedExternally): String

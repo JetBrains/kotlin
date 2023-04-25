@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
+import kotlin.collections.set
 
 class IrFrameMap : FrameMapBase<IrSymbol>() {
     private val typeMap = mutableMapOf<IrSymbol, Type>()
@@ -68,7 +69,10 @@ fun IrFrameMap.leave(irDeclaration: IrSymbolOwner): Int {
 }
 
 fun JvmBackendContext.getSourceMapper(declaration: IrClass): SourceMapper {
-    val fileEntry = declaration.fileParent.fileEntry
+    val irFile = declaration.fileParentBeforeInline
+    val type = declaration.getAttributeOwnerBeforeInline()?.let { getLocalClassType(it) } ?: defaultTypeMapper.mapClass(declaration)
+
+    val fileEntry = irFile.fileEntry
     // NOTE: apparently inliner requires the source range to cover the
     //       whole file the class is declared in rather than the class only.
     val endLineNumber = when (fileEntry) {
@@ -77,12 +81,12 @@ fun JvmBackendContext.getSourceMapper(declaration: IrClass): SourceMapper {
     }
     val sourceFileName = when (fileEntry) {
         is MultifileFacadeFileEntry -> fileEntry.partFiles.singleOrNull()?.name
-        else -> declaration.fileParent.name
+        else -> irFile.name
     }
     return SourceMapper(
         SourceInfo(
             sourceFileName,
-            defaultTypeMapper.mapClass(declaration).internalName,
+            type.internalName,
             endLineNumber + 1
         )
     )

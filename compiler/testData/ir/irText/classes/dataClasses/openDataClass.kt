@@ -1,3 +1,6 @@
+// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS_IR_ES6
+
 // This test emulates 'allopen' compiler plugin.
 
 @Suppress("INCOMPATIBLE_MODIFIERS")

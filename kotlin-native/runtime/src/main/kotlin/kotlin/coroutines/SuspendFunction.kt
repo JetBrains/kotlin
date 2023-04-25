@@ -5,12 +5,11 @@
 
 package kotlin.coroutines
 
-import kotlin.native.internal.FixmeReflection
-
 /**
  * Represents a value of a functional type, such as a lambda, an anonymous function or a function reference.
  *
  * @param R return type of the function.
  */
-@FixmeReflection
+@Deprecated("This interface will be removed in a future release")
+@DeprecatedSinceKotlin(warningSince = "1.9")
 public interface SuspendFunction<out R>

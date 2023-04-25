@@ -11,5 +11,5 @@ open class B1 {
 }
 
 class D1 : B1() {
-    <!NOTHING_TO_OVERRIDE!>override<!> fun foo() {}
+    <!NOTHING_TO_OVERRIDE("foo")!>override<!> fun foo() {}
 }

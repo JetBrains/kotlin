@@ -36,7 +36,6 @@ class SerializationFirSupertypesExtension(session: FirSession) : FirSupertypeGen
     }
 
     context(TypeResolveServiceContainer)
-    @Suppress("IncorrectFormatting") // KTIJ-22227
     override fun computeAdditionalSupertypes(
         classLikeDeclaration: FirClassLikeDeclaration,
         resolvedSupertypes: List<FirResolvedTypeRef>
@@ -59,7 +58,6 @@ class SerializationFirSupertypesExtension(session: FirSession) : FirSupertypeGen
 
     // Function helps to resolve class call from annotation argument to `ConeKotlinType`
     context(TypeResolveServiceContainer)
-    @Suppress("IncorrectFormatting") // KTIJ-22227
     private fun resolveConeTypeFromArgument(getClassCall: FirGetClassCall): ConeKotlinType {
         val typeToResolve = buildUserTypeFromQualifierParts(isMarkedNullable = false) {
             fun visitQualifiers(expression: FirExpression) {

@@ -328,12 +328,18 @@ open class HierarchicalMppIT : KGPBaseTest() {
     fun testMultiModulesHmppKt48370(gradleVersion: GradleVersion) {
         project(
             "hierarchical-mpp-multi-modules",
-            gradleVersion,
-            buildOptions = defaultBuildOptions.suppressDeprecationWarningsSinceGradleVersion(
-                TestVersions.Gradle.G_7_4,
-                gradleVersion,
-                "Workaround for KT-55751"
-            )
+            gradleVersion
+        ) {
+            build("assemble")
+        }
+    }
+
+    @GradleTest
+    @DisplayName("KT-57369 K2/MPP: supertypes established in actual-classifiers from other source sets are not visible")
+    fun testHmppActualHasAdditionalSuperTypes(gradleVersion: GradleVersion) {
+        project(
+            "hierarchical-mpp-actual-has-additional-supertypes",
+            gradleVersion
         ) {
             build("assemble")
         }
@@ -1134,6 +1140,57 @@ open class HierarchicalMppIT : KGPBaseTest() {
             }
         }
     }
+
+    @GradleTest
+    @DisplayName("KT-57531: Kotlin Native Link with cycle in dependency constraints")
+    fun `test Kotlin Native Link with cycle in dependency constraints`(gradleVersion: GradleVersion) {
+        project("kt-57531-KotlinNativeLink-with-cycle-in-dependency-constraints", gradleVersion) {
+            build("publish")
+            build("assemble") {
+                assertTasksExecuted(":consumer:linkDebugExecutableLinuxX64")
+            }
+        }
+    }
+
+    @GradleTest
+    @DisplayName("It should be possible to disable default publications for stdlib and other kotlin libraries")
+    fun `test disable default publications`(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
+        project("mppCustomPublicationLayout", gradleVersion = gradleVersion, localRepoDir = tempDir) {
+            build(":libWithCustomLayout:publishKotlinPublicationToMavenRepository") {
+                listOf("jvm.jar", "linuxArm64.klib", "linuxX64.klib")
+                    .map { tempDir.resolve("test/libWithCustomLayout/1.0/libWithCustomLayout-1.0-$it") }
+                    .forEach { if (!it.exists()) fail("Artifact $it does not exist") }
+            }
+
+            build(":libWithDefaultLayout:publish") {
+                val pom = tempDir.resolve("test/libWithDefaultLayout-jvm/1.0/libWithDefaultLayout-jvm-1.0.pom").readText()
+                val expectedDependency = """
+                    |    <dependency>
+                    |      <groupId>test</groupId>
+                    |      <artifactId>libWithCustomLayout</artifactId>
+                    |      <version>1.0</version>
+                    |      <scope>compile</scope>
+                    |    </dependency>
+                """.trimMargin()
+
+                fun String.asOneLine() = lines().joinToString(" ") { it.trim() }
+                if (expectedDependency.asOneLine() !in pom.asOneLine()) {
+                    fail("Expected to find:\n$expectedDependency\nin pom file:\n$pom")
+                }
+            }
+
+            build(":app:assemble")
+        }
+    }
+
+    @GradleTest
+    @DisplayName("KT-56380: correct nullability inference in metadata compilations")
+    fun `test correct nullability inference in metadata compilation`(gradleVersion: GradleVersion) {
+        project("kt-56380_correct_nullability_inference", gradleVersion) {
+            build(":b:compileCommonMainKotlinMetadata")
+        }
+    }
+
 
     private fun TestProject.testDependencyTransformations(
         subproject: String? = null,

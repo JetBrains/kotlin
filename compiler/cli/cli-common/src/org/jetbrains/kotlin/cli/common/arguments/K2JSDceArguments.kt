@@ -80,6 +80,8 @@ class K2JSDceArguments : CommonToolArguments() {
             checkFrozen()
             field = if (value.isNullOrEmpty()) null else value
         }
+
+    override fun copyOf(): Freezable = copyK2JSDceArguments(this, K2JSDceArguments())
 }
 
 object DevModeOverwritingStrategies {

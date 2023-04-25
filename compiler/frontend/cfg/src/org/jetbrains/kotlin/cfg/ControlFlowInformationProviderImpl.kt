@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
 import org.jetbrains.kotlin.resolve.calls.util.*
 import org.jetbrains.kotlin.resolve.checkers.PlatformDiagnosticSuppressor
+import org.jetbrains.kotlin.resolve.descriptorUtil.firstOverridden
 import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExtensionReceiver
@@ -494,15 +495,19 @@ class ControlFlowInformationProviderImpl private constructor(
 
             if (DescriptorVisibilityUtils.isVisible(receiverValue, variableDescriptor, descriptor, languageVersionSettings)
                 && setterDescriptor != null
-                && !DescriptorVisibilityUtils.isVisible(receiverValue, setterDescriptor, descriptor, languageVersionSettings)
             ) {
-                report(
-                    Errors.INVISIBLE_SETTER.on(
-                        expression, variableDescriptor, setterDescriptor.visibility,
-                        setterDescriptor
-                    ), ctxt
-                )
-                return true
+                if (!DescriptorVisibilityUtils.isVisible(receiverValue, setterDescriptor, descriptor, languageVersionSettings)) {
+                    report(
+                        INVISIBLE_SETTER.on(
+                            expression, variableDescriptor, setterDescriptor.visibility,
+                            setterDescriptor
+                        ), ctxt
+                    )
+                    return true
+                } else {
+                    // don't return anything as only warning is reported (not error), so further diagnostics are also important
+                    reportVisibilityWarningForInternalFakeSetterOverride(setterDescriptor, expression, variableDescriptor, ctxt)
+                }
             }
         }
         val isThisOrNoDispatchReceiver = PseudocodeUtil.isThisOrNoDispatchReceiver(writeValueInstruction, trace.bindingContext)
@@ -558,6 +563,35 @@ class ControlFlowInformationProviderImpl private constructor(
             }
         }
         return false
+    }
+
+    private fun reportVisibilityWarningForInternalFakeSetterOverride(
+        setterDescriptor: PropertySetterDescriptor,
+        expression: KtExpression,
+        variableDescriptor: PropertyDescriptor,
+        ctxt: VariableInitContext
+    ) {
+        if (setterDescriptor.kind.isReal) return
+        if (setterDescriptor.visibility.isPublicAPI) return
+
+        val containingClass = setterDescriptor.containingDeclaration as? ClassDescriptor ?: return
+        val firstRealOverridden = setterDescriptor.firstOverridden { it.kind.isReal } ?: return
+
+        val visibleOverrides = OverridingUtil.filterVisibleFakeOverrides(containingClass, listOf(firstRealOverridden))
+        if (visibleOverrides.isEmpty()) {
+            val diagnostic =
+                when (languageVersionSettings.supportsFeature(LanguageFeature.ProhibitAccessToInvisibleSetterFromDerivedClass)) {
+                    true -> INVISIBLE_SETTER
+                    else -> INVISIBLE_SETTER_FROM_DERIVED
+                }
+
+            report(
+                diagnostic.on(
+                    expression, variableDescriptor, setterDescriptor.visibility,
+                    setterDescriptor
+                ), ctxt
+            )
+        }
     }
 
     private fun reportValReassigned(expression: KtExpression, variableDescriptor: VariableDescriptor, ctxt: VariableInitContext) {
@@ -690,6 +724,14 @@ class ControlFlowInformationProviderImpl private constructor(
     private val VariableDescriptor.isLocalVariableWithDelegate: Boolean
         get() = this is LocalVariableDescriptor && this.isDelegated
 
+    private val VariableDescriptor.isLocalVariableWithProvideDelegate: Boolean
+        get() {
+            if (!isLocalVariableWithDelegate) return false
+            if (this !is VariableDescriptorWithAccessors) return false
+
+            return trace.bindingContext[PROVIDE_DELEGATE_RESOLVED_CALL, this] != null
+        }
+
     private fun processUnusedDeclaration(
         element: KtNamedDeclaration,
         variableDescriptor: VariableDescriptor,
@@ -704,8 +746,11 @@ class ControlFlowInformationProviderImpl private constructor(
                 element is KtDestructuringDeclarationEntry && element.parent.parent?.parent is KtParameterList ->
                     report(Errors.UNUSED_DESTRUCTURED_PARAMETER_ENTRY.on(element, variableDescriptor), ctxt)
 
-                KtPsiUtil.isRemovableVariableDeclaration(element) ->
-                    report(Errors.UNUSED_VARIABLE.on(element, variableDescriptor), ctxt)
+                KtPsiUtil.isRemovableVariableDeclaration(element) -> {
+                    if (!variableDescriptor.isLocalVariableWithProvideDelegate) {
+                        report(Errors.UNUSED_VARIABLE.on(element, variableDescriptor), ctxt)
+                    }
+                }
 
                 element is KtParameter ->
                     processUnusedParameter(ctxt, element, variableDescriptor)
@@ -731,7 +776,7 @@ class ControlFlowInformationProviderImpl private constructor(
 
         if (functionDescriptor.isExpect || functionDescriptor.isActual ||
             functionDescriptor.isEffectivelyExternal() ||
-            !diagnosticSuppressor.shouldReportUnusedParameter(variableDescriptor)
+            !diagnosticSuppressor.shouldReportUnusedParameter(variableDescriptor, trace.bindingContext)
         ) return
 
         when (val owner = element.parent.parent) {
@@ -940,6 +985,11 @@ class ControlFlowInformationProviderImpl private constructor(
     }
 
     private fun markAnnotationArguments() {
+        if (subroutine.containingKtFile.isCompiled) {
+            //annotation arguments are not included in the decompiled code,
+            //so no need to search for them
+            return
+        }
         if (subroutine is KtAnnotationEntry) {
             markAnnotationArguments(subroutine)
         } else {

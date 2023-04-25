@@ -35,7 +35,7 @@
 }
 
 -(void)dealloc {
-  refHolder.disposeFromNative();
+  refHolder.dispose();
   [super dealloc];
 }
 
@@ -74,9 +74,7 @@ void objc_release(id obj);
 }
 
 // Called when removing Kotlin object.
--(void)releaseAsAssociatedObject:(ReleaseMode)mode {
-  if (!ReleaseModeHasRelease(mode))
-    return;
+-(void)releaseAsAssociatedObject {
   objc_destroyWeak(&referred);
   objc_release(self);
 }

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +RestrictionOfWrongAnnotationsWithUseSiteTargetsOnTypes
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 

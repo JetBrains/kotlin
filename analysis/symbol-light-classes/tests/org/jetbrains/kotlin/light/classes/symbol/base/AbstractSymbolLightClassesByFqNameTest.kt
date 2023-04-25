@@ -18,14 +18,14 @@ import java.nio.file.Path
 abstract class AbstractSymbolLightClassesByFqNameTest(
     configurator: AnalysisApiTestConfigurator,
     override val currentExtension: String,
-    override val stopIfCompilationErrorDirectivePresent: Boolean,
+    override val isTestAgainstCompiledCode: Boolean,
 ) : AbstractSymbolLightClassesTestBase(configurator) {
     override fun getRenderResult(ktFile: KtFile, ktFiles: List<KtFile>, testDataFile: Path, module: TestModule, project: Project): String {
         return LightClassTestCommon.getActualLightClassText(
             testDataFile.toFile(),
             { fqName -> findLightClass(fqName, project) },
             LightClassTestCommon::removeEmptyDefaultImpls,
-            if (stopIfCompilationErrorDirectivePresent) MembersFilterForCompiledClasses else PsiClassRenderer.MembersFilter.DEFAULT,
+            if (isTestAgainstCompiledCode) MembersFilterForCompiledClasses else PsiClassRenderer.MembersFilter.DEFAULT,
         )
     }
 }

@@ -16,7 +16,6 @@ import org.gradle.api.artifacts.type.ArtifactTypeDefinition
 import org.gradle.api.attributes.*
 import org.gradle.api.attributes.Usage.USAGE_ATTRIBUTE
 import org.gradle.api.file.FileCollection
-import org.gradle.api.internal.artifacts.ArtifactAttributes
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.plugins.JavaBasePlugin
@@ -26,6 +25,7 @@ import org.gradle.api.tasks.bundling.Zip
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
+import org.jetbrains.kotlin.gradle.plugin.internal.artifactTypeAttribute
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
@@ -207,6 +207,7 @@ abstract class AbstractKotlinTargetConfigurator<KotlinTargetType : KotlinTarget>
             isCanBeResolved = false
             isCanBeConsumed = true
             configureSourcesPublicationAttributes(target)
+            project.whenEvaluated { isCanBeConsumed = target.internal.isSourcesPublishable }
         }
 
         if (createTestCompilation) {
@@ -336,25 +337,25 @@ abstract class KotlinOnlyTargetConfigurator<KotlinCompilationType : KotlinCompil
 
                 val apiElementsConfiguration = project.configurations.getByName(target.apiElementsConfigurationName)
                 // If the target adds its own artifact to this configuration until this happens, don't add another one:
-                addJarIfNoArtifactsPresent(apiElementsConfiguration, jarArtifact)
+                addJarIfNoArtifactsPresent(project, apiElementsConfiguration, jarArtifact)
 
                 if (mainCompilation is KotlinCompilationToRunnableFiles<*>) {
                     val runtimeConfiguration = mainCompilation.internal.configurations.deprecatedRuntimeConfiguration
                     val runtimeElementsConfiguration = project.configurations.getByName(target.runtimeElementsConfigurationName)
-                    runtimeConfiguration?.let { addJarIfNoArtifactsPresent(runtimeConfiguration, jarArtifact) }
-                    addJarIfNoArtifactsPresent(runtimeElementsConfiguration, jarArtifact)
+                    runtimeConfiguration?.let { addJarIfNoArtifactsPresent(project, runtimeConfiguration, jarArtifact) }
+                    addJarIfNoArtifactsPresent(project, runtimeElementsConfiguration, jarArtifact)
                 }
             }
         }
     }
 
-    private fun addJarIfNoArtifactsPresent(configuration: Configuration, jarArtifact: PublishArtifact) {
+    private fun addJarIfNoArtifactsPresent(project: Project, configuration: Configuration, jarArtifact: PublishArtifact) {
         if (configuration.artifacts.isEmpty()) {
             val publications = configuration.outgoing
 
             // Configure an implicit variant
             publications.artifacts.add(jarArtifact)
-            publications.attributes.attribute(ArtifactAttributes.ARTIFACT_FORMAT, archiveType)
+            publications.attributes.attribute(project.artifactTypeAttribute, archiveType)
         }
     }
 }

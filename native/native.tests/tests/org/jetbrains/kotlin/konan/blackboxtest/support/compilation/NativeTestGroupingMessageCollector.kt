@@ -51,10 +51,6 @@ internal class NativeTestGroupingMessageCollector(
         null
     }
 
-    private val partialLinkageEnabled: Boolean by lazy {
-        "-Xpartial-linkage" in compilerArgs
-    }
-
     override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) =
         super.report(adjustSeverity(severity, message, location), message, location)
 
@@ -72,7 +68,7 @@ internal class NativeTestGroupingMessageCollector(
                     || isUnsafeCompilerArgumentsWarning(message)
                     || isLibraryIncludedMoreThanOnceWarning(message)
                     || isK2Experimental(message)
-                    || isPartialLinkageWarning(message) -> {
+                    || isLegacyMMWarning(message) -> {
                 // These warnings are known and should not be reported as errors.
                 severity
             }
@@ -111,11 +107,10 @@ internal class NativeTestGroupingMessageCollector(
         return libraryPath == pathOfCachedLibraryWithTests
     }
 
-    private fun isPartialLinkageWarning(message: String): Boolean =
-        partialLinkageEnabled && message.matches(PARTIAL_LINKAGE_WARNING_REGEX)
-
-
     private fun isK2Experimental(message: String): Boolean = message.startsWith(K2_NATIVE_EXPERIMENTAL_WARNING_PREFIX)
+
+    // Legacy MM is deprecated and will be removed in 1.9.20. Until that moment we still need to run tests with it.
+    private fun isLegacyMMWarning(message: String): Boolean = message.startsWith(LEGACY_MM_WARNING_PREFIX)
 
     override fun hasErrors() = hasWarningsWithRaisedSeverity || super.hasErrors()
 
@@ -124,7 +119,7 @@ internal class NativeTestGroupingMessageCollector(
         private const val UNSAFE_COMPILER_ARGS_WARNING_PREFIX = "ATTENTION!\nThis build uses unsafe internal compiler arguments:\n\n"
         private const val LIBRARY_INCLUDED_MORE_THAN_ONCE_WARNING_PREFIX = "library included more than once: "
         private const val K2_NATIVE_EXPERIMENTAL_WARNING_PREFIX = "Language version 2.0 is experimental"
-        private val PARTIAL_LINKAGE_WARNING_REGEX = Regex(".+ uses unlinked symbols(:.*)?")
+        private const val LEGACY_MM_WARNING_PREFIX = "Legacy MM is deprecated and will be removed"
 
         private fun parseLanguageFeatureArg(arg: String): String? =
             substringAfter(arg, "-XXLanguage:-") ?: substringAfter(arg, "-XXLanguage:+")

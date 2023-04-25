@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
+import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
 /**
  * Replaces suspend functions with regular non-suspend functions with additional
@@ -79,12 +81,12 @@ private fun transformSuspendFunction(context: CommonBackendContext, function: Ir
         newBody.statements.lastOrNull() !is IrReturn
     ) {
         // Adding explicit return of Unit.
-        // Set both offsets of the IrReturn to body.endOffset - 1 so that a breakpoint set at the closing brace of a lambda expression
-        // could be hit.
+        // Set both offsets of the IrReturn to body.endOffset.previousOffset (check the description of the `previousOffset` method)
+        // so that a breakpoint set at the closing brace of a lambda expression could be hit.
         newBody.statements += context.createIrBuilder(
             newFunctionWithContinuation.symbol,
-            startOffset = newBody.endOffset - 1,
-            endOffset = newBody.endOffset - 1
+            startOffset = newBody.endOffset.previousOffset,
+            endOffset = newBody.endOffset.previousOffset
         ).irReturnUnit()
     }
 
@@ -120,12 +122,12 @@ private fun IrSimpleFunction.createSuspendFunctionStub(context: CommonBackendCon
         val substitutionMap = makeTypeParameterSubstitutionMap(this, function)
         function.copyReceiverParametersFrom(this, substitutionMap)
 
-        function.overriddenSymbols += overriddenSymbols.map {
+        function.overriddenSymbols = function.overriddenSymbols memoryOptimizedPlus overriddenSymbols.map {
             factory.stageController.restrictTo(it.owner) {
                 it.owner.getOrCreateFunctionWithContinuationStub(context).symbol
             }
         }
-        function.valueParameters = valueParameters.map { it.copyTo(function) }
+        function.valueParameters = valueParameters.memoryOptimizedMap { it.copyTo(function) }
 
         val mapping = mutableMapOf<IrValueSymbol, IrValueSymbol>()
         valueParameters.forEach { mapping[it.symbol] = function.valueParameters[it.index].symbol }

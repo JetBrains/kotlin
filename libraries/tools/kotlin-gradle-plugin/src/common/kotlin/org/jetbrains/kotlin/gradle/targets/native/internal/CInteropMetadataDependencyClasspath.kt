@@ -74,7 +74,7 @@ private fun Project.createCInteropMetadataDependencyClasspathFromAssociatedCompi
     forIde: Boolean
 ): FileCollection {
     return filesProvider files@{
-        val commonizerTarget = getSharedCommonizerTarget(sourceSet) ?: return@files emptySet<File>()
+        val commonizerTarget = sourceSet.sharedCommonizerTarget.getOrThrow() ?: return@files emptySet<File>()
 
         /*
         We will find the 'most suitable' / 'closest matching' source set
@@ -83,7 +83,7 @@ private fun Project.createCInteropMetadataDependencyClasspathFromAssociatedCompi
          */
         val (associatedSourceSet, _) = sourceSet.getAdditionalVisibleSourceSets()
             .filterIsInstance<DefaultKotlinSourceSet>()
-            .mapNotNull { otherSourceSet -> otherSourceSet to (getSharedCommonizerTarget(otherSourceSet) ?: return@mapNotNull null) }
+            .mapNotNull { otherSourceSet -> otherSourceSet to (otherSourceSet.sharedCommonizerTarget.getOrThrow() ?: return@mapNotNull null) }
             .filter { (_, otherCommonizerTarget) -> otherCommonizerTarget.targets.containsAll(commonizerTarget.targets) }
             .minByOrNull { (_, otherCommonizerTarget) -> otherCommonizerTarget.targets.size } ?: return@files emptySet<File>()
 

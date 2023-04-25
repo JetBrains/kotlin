@@ -41,25 +41,25 @@ FILE fqName:<root> fileName:/dataClasses.kt
           RETURN type=kotlin.Nothing from='public final fun <get-z> (): kotlin.Any declared in <root>.Test1'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.Any visibility:private [final]' type=kotlin.Any origin=null
               receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.<get-z>' type=<root>.Test1 origin=null
-    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:kotlin.Int [operator]
+    FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:kotlin.Int [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.Test1
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Int [operator] declared in <root>.Test1'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
             receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.component1' type=<root>.Test1 origin=null
-    FUN name:component2 visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:kotlin.String [operator]
+    FUN GENERATED_DATA_CLASS_MEMBER name:component2 visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:kotlin.String [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.Test1
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component2 (): kotlin.String [operator] declared in <root>.Test1'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
             receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.component2' type=<root>.Test1 origin=null
-    FUN name:component3 visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:kotlin.Any [operator]
+    FUN GENERATED_DATA_CLASS_MEMBER name:component3 visibility:public modality:FINAL <> ($this:<root>.Test1) returnType:kotlin.Any [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.Test1
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component3 (): kotlin.Any [operator] declared in <root>.Test1'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.Any visibility:private [final]' type=kotlin.Any origin=null
             receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.component3' type=<root>.Test1 origin=null
-    FUN name:copy visibility:public modality:FINAL <> ($this:<root>.Test1, x:kotlin.Int, y:kotlin.String, z:kotlin.Any) returnType:<root>.Test1
+    FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:<root>.Test1, x:kotlin.Int, y:kotlin.String, z:kotlin.Any) returnType:<root>.Test1
       $this: VALUE_PARAMETER name:<this> type:<root>.Test1
       VALUE_PARAMETER name:x index:0 type:kotlin.Int
         EXPRESSION_BODY
@@ -167,16 +167,13 @@ FILE fqName:<root> fileName:/dataClasses.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.Test1'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="Test1("
-            CONST String type=kotlin.String value="x="
+            CONST String type=kotlin.String value="Test1(x="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.toString' type=<root>.Test1 origin=null
-            CONST String type=kotlin.String value=", "
-            CONST String type=kotlin.String value="y="
+            CONST String type=kotlin.String value=", y="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
               receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.toString' type=<root>.Test1 origin=null
-            CONST String type=kotlin.String value=", "
-            CONST String type=kotlin.String value="z="
+            CONST String type=kotlin.String value=", z="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:z type:kotlin.Any visibility:private [final]' type=kotlin.Any origin=null
               receiver: GET_VAR '<this>: <root>.Test1 declared in <root>.Test1.toString' type=<root>.Test1 origin=null
             CONST String type=kotlin.String value=")"
@@ -198,13 +195,13 @@ FILE fqName:<root> fileName:/dataClasses.kt
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.Any? declared in <root>.Test2'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Any? visibility:private [final]' type=kotlin.Any? origin=null
               receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.<get-x>' type=<root>.Test2 origin=null
-    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.Test2) returnType:kotlin.Any? [operator]
+    FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.Test2) returnType:kotlin.Any? [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.Test2
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Any? [operator] declared in <root>.Test2'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Any? visibility:private [final]' type=kotlin.Any? origin=null
             receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.component1' type=<root>.Test2 origin=null
-    FUN name:copy visibility:public modality:FINAL <> ($this:<root>.Test2, x:kotlin.Any?) returnType:<root>.Test2
+    FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:<root>.Test2, x:kotlin.Any?) returnType:<root>.Test2
       $this: VALUE_PARAMETER name:<this> type:<root>.Test2
       VALUE_PARAMETER name:x index:0 type:kotlin.Any?
         EXPRESSION_BODY
@@ -273,8 +270,7 @@ FILE fqName:<root> fileName:/dataClasses.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.Test2'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="Test2("
-            CONST String type=kotlin.String value="x="
+            CONST String type=kotlin.String value="Test2(x="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Any? visibility:private [final]' type=kotlin.Any? origin=null
               receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.toString' type=<root>.Test2 origin=null
             CONST String type=kotlin.String value=")"
@@ -332,31 +328,31 @@ FILE fqName:<root> fileName:/dataClasses.kt
           RETURN type=kotlin.Nothing from='public final fun <get-df> (): kotlin.Float? declared in <root>.Test3'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:df type:kotlin.Float? visibility:private [final]' type=kotlin.Float? origin=null
               receiver: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.<get-df>' type=<root>.Test3 origin=null
-    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.Test3) returnType:kotlin.Double [operator]
+    FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.Test3) returnType:kotlin.Double [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.Test3
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Double [operator] declared in <root>.Test3'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:d type:kotlin.Double visibility:private [final]' type=kotlin.Double origin=null
             receiver: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.component1' type=<root>.Test3 origin=null
-    FUN name:component2 visibility:public modality:FINAL <> ($this:<root>.Test3) returnType:kotlin.Double? [operator]
+    FUN GENERATED_DATA_CLASS_MEMBER name:component2 visibility:public modality:FINAL <> ($this:<root>.Test3) returnType:kotlin.Double? [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.Test3
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component2 (): kotlin.Double? [operator] declared in <root>.Test3'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:dn type:kotlin.Double? visibility:private [final]' type=kotlin.Double? origin=null
             receiver: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.component2' type=<root>.Test3 origin=null
-    FUN name:component3 visibility:public modality:FINAL <> ($this:<root>.Test3) returnType:kotlin.Float [operator]
+    FUN GENERATED_DATA_CLASS_MEMBER name:component3 visibility:public modality:FINAL <> ($this:<root>.Test3) returnType:kotlin.Float [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.Test3
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component3 (): kotlin.Float [operator] declared in <root>.Test3'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:f type:kotlin.Float visibility:private [final]' type=kotlin.Float origin=null
             receiver: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.component3' type=<root>.Test3 origin=null
-    FUN name:component4 visibility:public modality:FINAL <> ($this:<root>.Test3) returnType:kotlin.Float? [operator]
+    FUN GENERATED_DATA_CLASS_MEMBER name:component4 visibility:public modality:FINAL <> ($this:<root>.Test3) returnType:kotlin.Float? [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.Test3
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component4 (): kotlin.Float? [operator] declared in <root>.Test3'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:df type:kotlin.Float? visibility:private [final]' type=kotlin.Float? origin=null
             receiver: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.component4' type=<root>.Test3 origin=null
-    FUN name:copy visibility:public modality:FINAL <> ($this:<root>.Test3, d:kotlin.Double, dn:kotlin.Double?, f:kotlin.Float, df:kotlin.Float?) returnType:<root>.Test3
+    FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:<root>.Test3, d:kotlin.Double, dn:kotlin.Double?, f:kotlin.Float, df:kotlin.Float?) returnType:<root>.Test3
       $this: VALUE_PARAMETER name:<this> type:<root>.Test3
       VALUE_PARAMETER name:d index:0 type:kotlin.Double
         EXPRESSION_BODY
@@ -505,20 +501,16 @@ FILE fqName:<root> fileName:/dataClasses.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.Test3'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="Test3("
-            CONST String type=kotlin.String value="d="
+            CONST String type=kotlin.String value="Test3(d="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:d type:kotlin.Double visibility:private [final]' type=kotlin.Double origin=null
               receiver: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.toString' type=<root>.Test3 origin=null
-            CONST String type=kotlin.String value=", "
-            CONST String type=kotlin.String value="dn="
+            CONST String type=kotlin.String value=", dn="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:dn type:kotlin.Double? visibility:private [final]' type=kotlin.Double? origin=null
               receiver: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.toString' type=<root>.Test3 origin=null
-            CONST String type=kotlin.String value=", "
-            CONST String type=kotlin.String value="f="
+            CONST String type=kotlin.String value=", f="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:f type:kotlin.Float visibility:private [final]' type=kotlin.Float origin=null
               receiver: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.toString' type=<root>.Test3 origin=null
-            CONST String type=kotlin.String value=", "
-            CONST String type=kotlin.String value="df="
+            CONST String type=kotlin.String value=", df="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:df type:kotlin.Float? visibility:private [final]' type=kotlin.Float? origin=null
               receiver: GET_VAR '<this>: <root>.Test3 declared in <root>.Test3.toString' type=<root>.Test3 origin=null
             CONST String type=kotlin.String value=")"

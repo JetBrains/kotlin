@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.java.enhancement.FirAnnotationTypeQualifierResol
 import org.jetbrains.kotlin.fir.java.enhancement.FirEnhancedSymbolsStorage
 import org.jetbrains.kotlin.fir.java.scopes.JavaOverridabilityRules
 import org.jetbrains.kotlin.fir.java.FirSyntheticPropertiesStorage
+import org.jetbrains.kotlin.fir.java.enhancement.JavaCompilerRequiredAnnotationEnhancementProvider
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticNamesProvider
@@ -37,10 +38,12 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirTypeResolverImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.FirDummyCompilerLazyDeclarationResolver
 import org.jetbrains.kotlin.fir.resolve.transformers.PlatformSupertypeUpdater
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.GeneratedClassIndex
+import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.FirOverrideService
 import org.jetbrains.kotlin.fir.scopes.FirPlatformClassMapper
 import org.jetbrains.kotlin.fir.scopes.PlatformSpecificOverridabilityRules
 import org.jetbrains.kotlin.fir.scopes.impl.*
+import org.jetbrains.kotlin.fir.serialization.FirProvidedDeclarationsForMetadataService
 import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.fir.types.FirCorrespondingSupertypesCache
 import org.jetbrains.kotlin.fir.types.FirFunctionTypeKindService
@@ -49,6 +52,7 @@ import org.jetbrains.kotlin.fir.types.TypeComponents
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
+import org.jetbrains.kotlin.fir.resolve.transformers.plugin.CompilerRequiredAnnotationEnhancementProvider
 
 // -------------------------- Required components --------------------------
 
@@ -67,14 +71,18 @@ fun FirSession.registerCommonComponents(languageVersionSettings: LanguageVersion
 
     register(FirSubstitutionOverrideStorage::class, FirSubstitutionOverrideStorage(this))
     register(FirIntersectionOverrideStorage::class, FirIntersectionOverrideStorage(this))
+    register(FirGeneratedMemberDeclarationsStorage::class, FirGeneratedMemberDeclarationsStorage(this))
     register(FirSamConstructorStorage::class, FirSamConstructorStorage(this))
     register(FirOverrideService::class, FirOverrideService(this))
     register(FirDynamicMembersStorage::class, FirDynamicMembersStorage(this))
+    register(FirEnumEntriesSupport::class, FirEnumEntriesSupport(this))
+    register(FirOverrideChecker::class, FirStandardOverrideChecker(this))
 }
 
 @OptIn(SessionConfiguration::class)
 fun FirSession.registerCommonComponentsAfterExtensionsAreConfigured() {
     register(FirFunctionTypeKindService::class, FirFunctionTypeKindServiceImpl(this))
+    register(FirProvidedDeclarationsForMetadataService::class, FirProvidedDeclarationsForMetadataService.create(this))
 }
 
 @OptIn(SessionConfiguration::class)
@@ -102,6 +110,7 @@ fun FirSession.registerCommonJavaComponents(javaModuleResolver: JavaModuleResolv
     register(PlatformSpecificOverridabilityRules::class, JavaOverridabilityRules(this))
     register(DeserializedClassConfigurator::class, JvmDeserializedClassConfigurator(this))
     register(FirEnumEntriesSupport::class, FirJvmEnumEntriesSupport(this))
+    register(CompilerRequiredAnnotationEnhancementProvider::class, JavaCompilerRequiredAnnotationEnhancementProvider)
 }
 
 // -------------------------- Resolve components --------------------------

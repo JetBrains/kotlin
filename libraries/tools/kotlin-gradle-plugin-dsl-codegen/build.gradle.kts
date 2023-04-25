@@ -15,6 +15,7 @@ val generateMppTargetContainerWithPresets by generator(
     sourceSets["main"]
 ) {
     group = generateGroupName
+    setOutputSourceRoot()
 }
 
 val generateAbstractBinaryContainer by generator(
@@ -22,6 +23,7 @@ val generateAbstractBinaryContainer by generator(
     sourceSets["main"]
 ) {
     group = generateGroupName
+    setOutputSourceRoot()
 }
 
 val generateAbstractKotlinArtifactsExtensionImplementation by generator(
@@ -29,10 +31,7 @@ val generateAbstractKotlinArtifactsExtensionImplementation by generator(
     sourceSets["main"]
 ) {
     group = generateGroupName
-    systemProperty(
-        "org.jetbrains.kotlin.generators.gradle.dsl.outputSourceRoot",
-        project(":kotlin-gradle-plugin").projectDir.resolve("src/common/kotlin").absolutePath
-    )
+    setOutputSourceRoot()
 }
 
 val generateKpmNativeVariants by generator(
@@ -40,12 +39,12 @@ val generateKpmNativeVariants by generator(
     sourceSets["main"]
 ) {
     group = generateGroupName
+    setOutputSourceRoot()
 }
 
-listOf(generateMppTargetContainerWithPresets, generateAbstractBinaryContainer, generateKpmNativeVariants).forEach {
-    it.systemProperty(
+fun JavaExec.setOutputSourceRoot() {
+    systemProperty(
         "org.jetbrains.kotlin.generators.gradle.dsl.outputSourceRoot",
         project(":kotlin-gradle-plugin").projectDir.resolve("src/common/kotlin").absolutePath
     )
 }
-

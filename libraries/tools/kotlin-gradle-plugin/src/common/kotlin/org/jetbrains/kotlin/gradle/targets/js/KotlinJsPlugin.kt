@@ -19,9 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.setupGeneralKotlinExtensionParamet
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSingleTargetPreset
 import org.jetbrains.kotlin.gradle.utils.*
 
-open class KotlinJsPlugin(
-    private val kotlinPluginVersion: String
-) : Plugin<Project> {
+open class KotlinJsPlugin: Plugin<Project> {
 
     override fun apply(project: Project) {
         project.setupGeneralKotlinExtensionParameters()
@@ -33,13 +31,14 @@ open class KotlinJsPlugin(
 
         checkGradleCompatibility()
 
+        project.enableKgpDependencyResolution(isEnabled = false)
+
         val kotlinExtension = project.kotlinExtension as KotlinJsProjectExtension
         customizeKotlinDependencies(project)
 
         kotlinExtension.apply {
             irPreset = KotlinJsIrSingleTargetPreset(project)
             legacyPreset = KotlinJsSingleTargetPreset(project)
-            compilerTypeFromProperties = PropertiesProvider(project).jsCompiler
         }
 
         project.runProjectConfigurationHealthCheckWhenEvaluated {
@@ -58,6 +57,13 @@ open class KotlinJsPlugin(
                     """.trimIndent()
                 )
             }
+
+            project.logger.warn(
+                """
+                        w: 'kotlin-js' Gradle plugin is deprecated and will be removed in the future. 
+                        Please use 'kotlin("multiplatform")' plugin with a 'js()' target instead. See the migration guide: https://kotl.in/t6m3vu
+                    """.trimIndent()
+            )
         }
 
         // Explicitly create configurations for main and test

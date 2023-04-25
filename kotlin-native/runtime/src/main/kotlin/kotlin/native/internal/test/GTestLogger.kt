@@ -5,6 +5,9 @@
 
 package kotlin.native.internal.test
 
+import kotlin.experimental.ExperimentalNativeApi
+
+@ExperimentalNativeApi
 internal class GTestLogger : TestLoggerWithStatistics() {
 
     private val Collection<TestSuite>.totalTestsNotIgnored: Int

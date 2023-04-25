@@ -8,7 +8,9 @@ package org.jetbrains.kotlin.fir.scopes.jvm
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.constructors
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -17,11 +19,12 @@ import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.impl.FirFakeOverrideGenerator
+import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
+import org.jetbrains.kotlin.fir.scopes.impl.buildSubstitutorForOverridesCheck
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
-import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents.inJavaLang
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 
@@ -36,6 +39,8 @@ class JvmMappedScope(
     private val functionsCache = mutableMapOf<FirNamedFunctionSymbol, FirNamedFunctionSymbol>()
 
     private val constructorsCache = mutableMapOf<FirConstructorSymbol, FirConstructorSymbol>()
+
+    private val overrideChecker = FirStandardOverrideChecker(session)
 
     private val substitutor = ConeSubstitutorByMap(
         firJavaClass.typeParameters.zip(firKotlinClass.typeParameters).associate { (javaParameter, kotlinParameter) ->
@@ -96,19 +101,40 @@ class JvmMappedScope(
         processor: (FirNamedFunctionSymbol, FirTypeScope) -> ProcessorAction
     ) = ProcessorAction.NONE
 
+    private val firKotlinClassConstructors by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        firKotlinClass.constructors(session)
+    }
+
     override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
-        val hiddenConstructors = signatures.hiddenConstructors
-        if (hiddenConstructors.isNotEmpty()) {
-            javaMappedClassUseSiteScope.processDeclaredConstructors { symbol ->
-                val jvmSignature = symbol.fir.computeJvmDescriptor()
-                if (jvmSignature !in hiddenConstructors) {
-                    val newSymbol = getOrCreateCopy(symbol)
-                    processor(newSymbol)
+        javaMappedClassUseSiteScope.processDeclaredConstructors { javaCtorSymbol ->
+
+            fun FirConstructor.isShadowedBy(ctorFromKotlin: FirConstructorSymbol): Boolean {
+                // assuming already checked for visibility
+                val valueParams = valueParameters
+                val valueParamsFromKotlin = ctorFromKotlin.fir.valueParameters
+                if (valueParams.size != valueParamsFromKotlin.size) return false
+                val substitutor = buildSubstitutorForOverridesCheck(ctorFromKotlin.fir, this@isShadowedBy, session) ?: return false
+                return valueParamsFromKotlin.zip(valueParams).all { (kotlinCtorParam, javaCtorParam) ->
+                    overrideChecker.isEqualTypes(kotlinCtorParam.returnTypeRef, javaCtorParam.returnTypeRef, substitutor)
                 }
             }
-        } else {
-            javaMappedClassUseSiteScope.processDeclaredConstructors { symbol ->
-                val newSymbol = getOrCreateCopy(symbol)
+
+            fun FirConstructor.isTrivialCopyConstructor(): Boolean =
+                valueParameters.singleOrNull()?.let {
+                    val type = substitutor.substituteOrSelf(it.returnTypeRef.coneType)
+                    type == firKotlinClass.defaultType()
+                } ?: false
+
+            // In K1 it is handled by JvmBuiltInsCustomizer.getConstructors
+            // Here the logic is generally the same, but simplified for performance by reordering checks and avoiding checking
+            // for the impossible combinations
+            val javaCtor = javaCtorSymbol.fir
+            if (javaCtor.status.visibility.isPublicAPI &&
+                javaCtor.computeJvmDescriptor() !in signatures.hiddenConstructors &&
+                !javaCtor.isTrivialCopyConstructor() &&
+                firKotlinClassConstructors.none { javaCtor.isShadowedBy(it) }
+            ) {
+                val newSymbol = getOrCreateCopy(javaCtorSymbol)
                 processor(newSymbol)
             }
         }

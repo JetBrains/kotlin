@@ -9,17 +9,16 @@ import org.jetbrains.kotlin.config.ExplicitApiMode
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
-import org.jetbrains.kotlin.test.Constructor
-import org.jetbrains.kotlin.test.TestJdkKind
-import org.jetbrains.kotlin.test.bind
+import org.jetbrains.kotlin.test.*
+import org.jetbrains.kotlin.test.backend.ir.ActualizerOnlyFacade
+import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
 import org.jetbrains.kotlin.test.builders.firHandlersStep
-import org.jetbrains.kotlin.test.coerce
+import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.WITH_EXTENDED_CHECKERS
-import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.JDK_KIND
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WITH_REFLECT
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
@@ -37,6 +36,8 @@ import org.jetbrains.kotlin.test.services.fir.FirOldFrontendMetaConfigurator
 import org.jetbrains.kotlin.test.services.service
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
+import org.jetbrains.kotlin.test.FirParser
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 
 abstract class AbstractFirDiagnosticTestBase(val parser: FirParser) : AbstractKotlinCompilerTest() {
     override fun TestConfigurationBuilder.configuration() {
@@ -48,6 +49,34 @@ abstract class AbstractFirDiagnosticTestBase(val parser: FirParser) : AbstractKo
 
 abstract class AbstractFirPsiDiagnosticTest : AbstractFirDiagnosticTestBase(FirParser.Psi)
 abstract class AbstractFirLightTreeDiagnosticsTest : AbstractFirDiagnosticTestBase(FirParser.LightTree)
+
+abstract class AbstractFirWithActualizerDiagnosticsTest(val parser: FirParser) : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        with (builder) {
+            defaultDirectives {
+                +CodegenTestDirectives.IGNORE_FIR2IR_EXCEPTIONS_IF_FIR_CONTAINS_ERRORS
+            }
+        }
+    }
+
+    override fun TestConfigurationBuilder.configuration() {
+        configureFirParser(parser)
+        baseFirDiagnosticTestConfiguration()
+
+        facadeStep(::Fir2IrResultsConverter)
+        facadeStep(::ActualizerOnlyFacade)
+        irHandlersStep {
+            useHandlers(
+                ::IrDiagnosticsHandler
+            )
+        }
+    }
+}
+
+open class AbstractFirPsiWithActualizerDiagnosticsTest : AbstractFirWithActualizerDiagnosticsTest(FirParser.Psi)
+
+open class AbstractFirLightTreeWithActualizerDiagnosticsTest : AbstractFirWithActualizerDiagnosticsTest(FirParser.LightTree)
 
 fun TestConfigurationBuilder.configurationForClassicAndFirTestsAlongside() {
     useAfterAnalysisCheckers(

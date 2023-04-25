@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -124,6 +125,7 @@ class Fir2IrVisitor(
             classifierStorage.putEnumEntryClassInScope(enumEntry, correspondingClass)
             val anonymousObject = (enumEntry.initializer as FirAnonymousObjectExpression).anonymousObject
             converter.processAnonymousObjectMembers(anonymousObject, correspondingClass, processHeaders = true)
+            converter.bindFakeOverridesInClass(correspondingClass)
             conversionScope.withParent(correspondingClass) {
                 conversionScope.withContainingFirClass(anonymousObject) {
                     memberGenerator.convertClassContent(correspondingClass, anonymousObject)
@@ -152,8 +154,8 @@ class Fir2IrVisitor(
             }
         } else if (irParentEnumClass != null && initializer == null) {
             // a default-ish enum entry whose initializer would be a delegating constructor call
-            val constructor =
-                irParentEnumClass.defaultConstructor ?: error("Assuming that default constructor should exist and be converted at this point")
+            val constructor = irParentEnumClass.defaultConstructor
+                ?: error("Assuming that default constructor should exist and be converted at this point")
             enumEntry.convertWithOffsets { startOffset, endOffset ->
                 irEnumEntry.initializerExpression = irFactory.createExpressionBody(
                     IrEnumConstructorCallImpl(
@@ -217,13 +219,14 @@ class Fir2IrVisitor(
         return visitAnonymousObject(anonymousObjectExpression.anonymousObject, data)
     }
 
-    override fun visitAnonymousObject(anonymousObject: FirAnonymousObject, data: Any?): IrElement = whileAnalysing(session, anonymousObject) {
+    override fun visitAnonymousObject(anonymousObject: FirAnonymousObject, data: Any?): IrElement = whileAnalysing(
+        session, anonymousObject
+    ) {
         val irParent = conversionScope.parentFromStack()
         // NB: for implicit types it is possible that anonymous object is already cached
         val irAnonymousObject = classifierStorage.getCachedIrClass(anonymousObject)?.apply { this.parent = irParent }
-            ?: classifierStorage.createIrAnonymousObject(anonymousObject, irParent = irParent).also { irClass ->
-                converter.processAnonymousObjectMembers(anonymousObject, irClass, processHeaders = true)
-            }
+            ?: converter.processLocalClassAndNestedClasses(anonymousObject, irParent)
+
         conversionScope.withParent(irAnonymousObject) {
             conversionScope.withContainingFirClass(anonymousObject) {
                 memberGenerator.convertClassContent(irAnonymousObject, anonymousObject)
@@ -651,6 +654,13 @@ class Fir2IrVisitor(
         return callGenerator.convertToIrSetCall(variableAssignment, explicitReceiverExpression)
     }
 
+    override fun visitDesugaredAssignmentValueReferenceExpression(
+        desugaredAssignmentValueReferenceExpression: FirDesugaredAssignmentValueReferenceExpression,
+        data: Any?
+    ): IrElement {
+        return desugaredAssignmentValueReferenceExpression.expressionRef.value.accept(this, null)
+    }
+
     override fun <T> visitConstExpression(constExpression: FirConstExpression<T>, data: Any?): IrElement {
         return constExpression.toIrConst(constExpression.typeRef.toIrType())
     }
@@ -982,7 +992,7 @@ class Fir2IrVisitor(
                     if (notNullType == originalType) {
                         irGetLhsValue()
                     } else {
-                        implicitCastInserter.implicitCastOrExpression(
+                        Fir2IrImplicitCastInserter.implicitCastOrExpression(
                             irGetLhsValue(),
                             firLhsVariable.returnTypeRef.resolvedTypeFromPrototype(notNullType).toIrType()
                         )
@@ -1288,7 +1298,9 @@ class Fir2IrVisitor(
         }
     }
 
-    override fun visitCheckNotNullCall(checkNotNullCall: FirCheckNotNullCall, data: Any?): IrElement = whileAnalysing(session, checkNotNullCall) {
+    override fun visitCheckNotNullCall(checkNotNullCall: FirCheckNotNullCall, data: Any?): IrElement = whileAnalysing(
+        session, checkNotNullCall
+    ) {
         return checkNotNullCall.convertWithOffsets { startOffset, endOffset ->
             IrCallImpl(
                 startOffset, endOffset,

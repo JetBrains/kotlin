@@ -44,6 +44,12 @@ public class FirLightTreeBlackBoxCodegenTestForAssignmentPluginGenerated extends
     }
 
     @Test
+    @TestMetadata("qualifiedAnnotation.kt")
+    public void testQualifiedAnnotation() throws Exception {
+        runTest("plugins/assign-plugin/testData/codegen/qualifiedAnnotation.kt");
+    }
+
+    @Test
     @TestMetadata("supportedUsage.kt")
     public void testSupportedUsage() throws Exception {
         runTest("plugins/assign-plugin/testData/codegen/supportedUsage.kt");

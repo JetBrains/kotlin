@@ -139,7 +139,7 @@ internal enum class ImportedSignaturesState { UNKNOWN, MODIFIED, NON_MODIFIED }
 
 internal class UpdatedDependenciesMetadata(oldMetadata: KotlinSourceFileMetadata) : KotlinSourceFileMetadata() {
     private val oldInverseDependencies = oldMetadata.inverseDependencies
-    private val newExportedSignatures: Set<IdSignature> by lazy { inverseDependencies.flatSignatures() }
+    private val newExportedSignatures: Set<IdSignature> by lazy(LazyThreadSafetyMode.NONE) { inverseDependencies.flatSignatures() }
 
     var importedSignaturesState = ImportedSignaturesState.UNKNOWN
 

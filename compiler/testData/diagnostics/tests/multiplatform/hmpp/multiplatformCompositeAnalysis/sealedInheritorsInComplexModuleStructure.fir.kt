@@ -18,4 +18,4 @@ class SimpleShared : <!SEALED_INHERITOR_IN_DIFFERENT_MODULE, UNRESOLVED_REFERENC
 // TARGET_PLATFORM: JVM
 package foo
 
-actual sealed class SealedWithPlatformActuals <!ACTUAL_WITHOUT_EXPECT, NON_PRIVATE_OR_PROTECTED_CONSTRUCTOR_IN_SEALED!>actual constructor()<!>: <!SEALED_INHERITOR_IN_DIFFERENT_MODULE!>SealedWithSharedActual<!>()
+actual sealed class SealedWithPlatformActuals <!ACTUAL_WITHOUT_EXPECT!>actual constructor()<!>: <!SEALED_INHERITOR_IN_DIFFERENT_MODULE!>SealedWithSharedActual<!>()

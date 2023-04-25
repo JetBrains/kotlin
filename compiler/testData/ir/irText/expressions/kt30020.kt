@@ -1,4 +1,6 @@
 // WITH_STDLIB
+// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS_IR_ES6
 
 interface X {
     val xs: MutableList<Any>

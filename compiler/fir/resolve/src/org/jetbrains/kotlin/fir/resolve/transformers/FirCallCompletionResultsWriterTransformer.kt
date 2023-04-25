@@ -385,22 +385,6 @@ class FirCallCompletionResultsWriterTransformer(
         }
     }
 
-    private fun FirNamedReferenceWithCandidate.toErrorReference(diagnostic: ConeDiagnostic): FirNamedReference {
-        val calleeReference = this
-        return when (calleeReference.candidateSymbol) {
-            is FirErrorPropertySymbol, is FirErrorFunctionSymbol -> buildErrorNamedReference {
-                source = calleeReference.source
-                this.diagnostic = diagnostic
-            }
-            else -> buildResolvedErrorReference {
-                source = calleeReference.source
-                name = calleeReference.name
-                resolvedSymbol = calleeReference.candidateSymbol
-                this.diagnostic = diagnostic
-            }
-        }
-    }
-
     override fun transformSmartCastExpression(smartCastExpression: FirSmartCastExpression, data: ExpectedArgumentType?): FirStatement {
         return smartCastExpression.transformOriginalExpression(this, data)
     }
@@ -562,10 +546,7 @@ class FirCallCompletionResultsWriterTransformer(
                 expectedArgumentType.isSomeFunctionType(session) -> expectedArgumentType
                 // fun interface (a.k.a. SAM), then unwrap it and build a functional type from that interface function
                 expectedArgumentType is ConeClassLikeType -> {
-                    val firRegularClass =
-                        session.symbolProvider.getClassLikeSymbolByClassId(expectedArgumentType.lookupTag.classId)?.fir as? FirRegularClass
-
-                    firRegularClass?.let answer@{
+                    expectedArgumentType.lookupTag.toFirRegularClass(session)?.let answer@{ firRegularClass ->
                         val functionType = samResolver.getFunctionTypeForPossibleSamType(firRegularClass.defaultType())
                             ?: return@answer null
                         val kind = functionType.functionTypeKind(session) ?: FunctionTypeKind.Function
@@ -802,8 +783,9 @@ class FirCallCompletionResultsWriterTransformer(
         return varargArgumentsExpression
     }
 
+    // TODO: report warning with a checker and return true here only in case of errors
     private fun FirNamedReferenceWithCandidate.hasAdditionalResolutionErrors(): Boolean =
-        candidate.system.errors.any { it is InferredEmptyIntersection && it.kind.isDefinitelyEmpty }
+        candidate.system.errors.any { it is InferredEmptyIntersection }
 
     private fun FirNamedReferenceWithCandidate.toResolvedReference(): FirNamedReference {
         val errorDiagnostic = when {

@@ -16,7 +16,7 @@
 #include "ObjectTraversal.hpp"
 #include "RootSet.hpp"
 #include "Runtime.h"
-#include "StableRefRegistry.hpp"
+#include "SpecialRefRegistry.hpp"
 #include "ThreadData.hpp"
 #include "Types.h"
 
@@ -74,16 +74,16 @@ bool collectRoot(typename Traits::MarkQueue& markQueue, ObjHeader* object) noexc
 // TODO: Consider making it noinline to keep loop in `Mark` small.
 template <typename Traits>
 void processExtraObjectData(GCHandle::GCMarkScope& markHandle, typename Traits::MarkQueue& markQueue, mm::ExtraObjectData& extraObjectData, ObjHeader* object) noexcept {
-    if (auto weakCounter = extraObjectData.GetWeakReferenceCounter()) {
+    if (auto weakReference = extraObjectData.GetRegularWeakReferenceImpl()) {
         RuntimeAssert(
-                weakCounter->heap(), "Weak counter must be a heap object. object=%p counter=%p permanent=%d local=%d", object, weakCounter,
-                weakCounter->permanent(), weakCounter->local());
-        // Do not schedule WeakReferenceCounter but process it right away.
+                weakReference->heap(), "Weak reference must be a heap object. object=%p weak=%p permanent=%d local=%d", object,
+                weakReference, weakReference->permanent(), weakReference->local());
+        // Do not schedule RegularWeakReferenceImpl but process it right away.
         // This will skip markQueue interaction.
-        if (Traits::tryMark(weakCounter)) {
-            markHandle.addObject(mm::GetAllocatedHeapSize(weakCounter));
-            // WeakReferenceCounter is empty, but keeping this just in case.
-            Traits::processInMark(markQueue, weakCounter);
+        if (Traits::tryMark(weakReference)) {
+            markHandle.addObject(mm::GetAllocatedHeapSize(weakReference));
+            // RegularWeakReferenceImpl is empty, but keeping this just in case.
+            Traits::processInMark(markQueue, weakReference);
         }
     }
 }
@@ -108,26 +108,33 @@ void Mark(GCHandle handle, typename Traits::MarkQueue& markQueue) noexcept {
 }
 
 template <typename Traits>
-void SweepExtraObjects(GCHandle handle, typename Traits::ExtraObjectsFactory& objectFactory) noexcept {
-    objectFactory.ProcessDeletions();
+void SweepExtraObjects(GCHandle handle, typename Traits::ExtraObjectsFactory::Iterable& factoryIter) noexcept {
     auto sweepHandle = handle.sweepExtraObjects();
-    auto iter = objectFactory.LockForIter();
-    for (auto it = iter.begin(); it != iter.end();) {
+    factoryIter.ApplyDeletions();
+    for (auto it = factoryIter.begin(); it != factoryIter.end();) {
         auto &extraObject = *it;
         if (!extraObject.getFlag(mm::ExtraObjectData::FLAGS_IN_FINALIZER_QUEUE) && !Traits::IsMarkedByExtraObject(extraObject)) {
-            extraObject.ClearWeakReferenceCounter();
+            extraObject.ClearRegularWeakReferenceImpl();
             if (extraObject.HasAssociatedObject()) {
-                extraObject.DetachAssociatedObject();
                 extraObject.setFlag(mm::ExtraObjectData::FLAGS_IN_FINALIZER_QUEUE);
                 ++it;
+                sweepHandle.addKeptObject();
             } else {
                 extraObject.Uninstall();
-                objectFactory.EraseAndAdvance(it);
+                it.EraseAndAdvance();
+                sweepHandle.addSweptObject();
             }
         } else {
             ++it;
+            sweepHandle.addKeptObject();
         }
     }
+}
+
+template <typename Traits>
+void SweepExtraObjects(GCHandle handle, typename Traits::ExtraObjectsFactory& factory) noexcept {
+    auto iter = factory.LockForIter();
+    return SweepExtraObjects<Traits>(handle, iter);
 }
 
 template <typename Traits>
@@ -138,8 +145,10 @@ typename Traits::ObjectFactory::FinalizerQueue Sweep(GCHandle handle, typename T
     for (auto it = objectFactoryIter.begin(); it != objectFactoryIter.end();) {
         if (Traits::TryResetMark(*it)) {
             ++it;
+            sweepHandle.addKeptObject();
             continue;
         }
+        sweepHandle.addSweptObject();
         auto* objHeader = it->GetObjHeader();
         if (HasFinalizers(objHeader)) {
             objectFactoryIter.MoveAndAdvance(finalizerQueue, it);
@@ -179,7 +188,6 @@ void collectRootSetForThread(GCHandle gcHandle, typename Traits::MarkQueue& mark
 template <typename Traits>
 void collectRootSetGlobals(GCHandle gcHandle, typename Traits::MarkQueue& markQueue) noexcept {
     auto handle = gcHandle.collectGlobalRoots();
-    mm::StableRefRegistry::Instance().ProcessDeletions();
     // TODO: Remove useless mm::GlobalRootSet abstraction.
     for (auto value : mm::GlobalRootSet()) {
         if (internal::collectRoot<Traits>(markQueue, value.object)) {
@@ -206,6 +214,28 @@ void collectRootSet(GCHandle handle, typename Traits::MarkQueue& markQueue, F&& 
         collectRootSetForThread<Traits>(handle, markQueue, thread);
     }
     collectRootSetGlobals<Traits>(handle, markQueue);
+}
+
+template <typename Traits>
+void processWeaks(GCHandle gcHandle, mm::SpecialRefRegistry& registry) noexcept {
+    auto handle = gcHandle.processWeaks();
+    for (auto& object : registry.lockForIter()) {
+        auto* obj = object;
+        if (!obj) {
+            // We already processed it at some point.
+            handle.addUndisposed();
+            continue;
+        }
+        if (obj->permanent() || Traits::IsMarked(obj)) {
+            // TODO: Let's not put permanent objects in here at all?
+            // Object is alive. Nothing to do.
+            handle.addAlive();
+            continue;
+        }
+        // Object is not alive. Clear it out.
+        object = nullptr;
+        handle.addNulled();
+    }
 }
 
 } // namespace gc

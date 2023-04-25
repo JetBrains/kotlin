@@ -187,6 +187,12 @@ private val wasmStringSwitchOptimizerLowering = makeWasmModulePhase(
     description = "Replace when with constant string cases to binary search by string hashcodes"
 )
 
+private val jsCodeCallsLowering = makeWasmModulePhase(
+    ::JsCodeCallsLowering,
+    name = "JsCodeCallsLowering",
+    description = "Lower calls to js('code') into @JsFun",
+)
+
 private val complexExternalDeclarationsToTopLevelFunctionsLowering = makeWasmModulePhase(
     ::ComplexExternalDeclarationsToTopLevelFunctionsLowering,
     name = "ComplexExternalDeclarationsToTopLevelFunctionsLowering",
@@ -252,7 +258,7 @@ private val enumEntryCreateGetInstancesFunsLoweringPhase = makeWasmModulePhase(
 )
 
 private val enumSyntheticFunsLoweringPhase = makeWasmModulePhase(
-    { EnumSyntheticFunctionsAndPropertiesLowering(it, syntheticFieldsShouldBeReinitialized = true) },
+    ::EnumSyntheticFunctionsAndPropertiesLowering,
     name = "EnumSyntheticFunctionsAndPropertiesLowering",
     description = "Implement `valueOf`, `values` and `entries`",
     prerequisite = setOf(
@@ -503,6 +509,13 @@ private val builtInsLoweringPhase = makeWasmModulePhase(
     description = "Lower IR builtins"
 )
 
+private val associatedObjectsLowering = makeWasmModulePhase(
+    ::AssociatedObjectsLowering,
+    name = "AssociatedObjectsLowering",
+    description = "Load associated object init body",
+    prerequisite = setOf(localClassExtractionPhase)
+)
+
 private val objectDeclarationLoweringPhase = makeWasmModulePhase(
     ::ObjectDeclarationLowering,
     name = "ObjectDeclarationLowering",
@@ -592,6 +605,7 @@ val wasmPhases = SameTypeNamedCompilerPhase(
     name = "IrModuleLowering",
     description = "IR module lowering",
     lower = validateIrBeforeLowering then
+            jsCodeCallsLowering then
             generateTests then
             excludeDeclarationsFromCodegenPhase then
             expectDeclarationsRemovingPhase then
@@ -680,6 +694,9 @@ val wasmPhases = SameTypeNamedCompilerPhase(
             expressionBodyTransformer then
             eraseVirtualDispatchReceiverParametersTypes then
             bridgesConstructionPhase then
+
+            associatedObjectsLowering then
+
             objectDeclarationLoweringPhase then
             fieldInitializersLoweringPhase then
             genericReturnTypeLowering then

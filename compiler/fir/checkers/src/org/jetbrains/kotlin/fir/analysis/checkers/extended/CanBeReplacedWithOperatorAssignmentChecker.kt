@@ -9,20 +9,18 @@ import com.intellij.lang.LighterASTNode
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtLightSourceElement
-import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.KtPsiSourceElement
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirVariableAssignmentChecker
-import org.jetbrains.kotlin.fir.analysis.checkers.getChildren
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.dispatchReceiverClassTypeOrNull
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 import org.jetbrains.kotlin.fir.expressions.calleeReference
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.types.coneType
@@ -30,6 +28,7 @@ import org.jetbrains.kotlin.fir.types.isPrimitive
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
+import org.jetbrains.kotlin.util.getChildren
 
 object CanBeReplacedWithOperatorAssignmentChecker : FirVariableAssignmentChecker() {
     override fun check(expression: FirVariableAssignment, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -75,7 +74,7 @@ object CanBeReplacedWithOperatorAssignmentChecker : FirVariableAssignmentChecker
         prevOperator: LighterASTNode? = null
     ): Boolean {
         val tree = source.treeStructure
-        val children = expression.getChildren(tree).filterNotNull()
+        val children = expression.getChildren(tree)
 
         val operator = children.firstOrNull { it.tokenType == KtNodeTypes.OPERATION_REFERENCE }
         if (prevOperator != null && !isLightNodesHierarchicallyTrue(prevOperator, operator)) return false

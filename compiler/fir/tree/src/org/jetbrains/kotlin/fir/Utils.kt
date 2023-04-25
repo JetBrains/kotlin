@@ -52,9 +52,9 @@ fun <R : FirTypeRef> R.copyWithNewSource(newSource: KtSourceElement?): R {
             qualifier += typeRef.qualifier
             annotations += typeRef.annotations
         }
-        is FirImplicitTypeRef -> buildImplicitTypeRefCopy(typeRef) {
-            source = newSource
-        }
+        is FirImplicitTypeRef -> newSource?.let {
+            buildImplicitTypeRefCopy(typeRef) { source = it }
+        } ?: FirImplicitTypeRefImplWithoutSource
         is FirFunctionTypeRefImpl -> buildFunctionTypeRefCopy(typeRef) {
             source = newSource
         }
@@ -172,7 +172,7 @@ object FirCliExceptionHandler : FirExceptionHandler() {
     override fun handleExceptionOnFileAnalysis(file: FirFile, throwable: Throwable): Nothing {
         throw throwable.wrapIntoFileAnalysisExceptionIfNeeded(
             file.sourceFile?.path,
-            file.source
+            file.source,
         ) { file.sourceFileLinesMapping?.getLineAndColumnByOffset(it) }
     }
 }

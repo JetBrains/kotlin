@@ -5,13 +5,18 @@
 
 package org.jetbrains.kotlin.konan.blackboxtest.support
 
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageConfig
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageLogLevel
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageMode
 import org.jetbrains.kotlin.konan.blackboxtest.support.NativeTestSupport.createSimpleTestRunSettings
 import org.jetbrains.kotlin.konan.blackboxtest.support.NativeTestSupport.createTestRunSettings
 import org.jetbrains.kotlin.konan.blackboxtest.support.NativeTestSupport.getOrCreateSimpleTestRunProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.NativeTestSupport.getOrCreateTestRunProvider
+import org.jetbrains.kotlin.konan.blackboxtest.support.group.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.DisabledTests
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.DisabledTestsIfProperty
-import org.jetbrains.kotlin.konan.blackboxtest.support.group.K2Pipeline
+import org.jetbrains.kotlin.konan.blackboxtest.support.group.FirPipeline
+import org.jetbrains.kotlin.konan.blackboxtest.support.group.UsePartialLinkage
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.TestCaseGroupProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.SimpleTestRunProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunProvider
@@ -23,6 +28,7 @@ import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.test.TestMetadata
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.junit.jupiter.api.extension.BeforeAllCallback
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
@@ -199,7 +205,7 @@ private object NativeTestSupport {
         output += computeTimeouts(enforcedProperties)
         // Parse annotations of current class, since there's no way to put annotations to upper-level enclosing class
         output += computePipelineType(testClass.get())
-
+        output += computeUsedPartialLinkageConfig(enclosingTestClass)
         output += computeCompilerOutputInterceptor(enforcedProperties)
 
         return nativeTargets
@@ -260,7 +266,7 @@ private object NativeTestSupport {
             CacheMode.Alias.values(),
             default = CacheMode.defaultForTestTarget(distribution, kotlinNativeTargets)
         )
-        val staticCacheRequiredForEveryLibrary = when (cacheMode) {
+        val useStaticCacheForUserLibraries = when (cacheMode) {
             CacheMode.Alias.NO -> return CacheMode.WithoutCache
             CacheMode.Alias.STATIC_ONLY_DIST -> false
             CacheMode.Alias.STATIC_EVERYWHERE -> true
@@ -268,7 +274,13 @@ private object NativeTestSupport {
         }
         val makePerFileCaches = cacheMode == CacheMode.Alias.STATIC_PER_FILE_EVERYWHERE
 
-        return CacheMode.WithStaticCache(distribution, kotlinNativeTargets, optimizationMode, staticCacheRequiredForEveryLibrary, makePerFileCaches)
+        return CacheMode.WithStaticCache(
+            distribution,
+            kotlinNativeTargets,
+            optimizationMode,
+            useStaticCacheForUserLibraries,
+            makePerFileCaches
+        )
     }
 
     private fun computeTestMode(enforcedProperties: EnforcedProperties): TestMode =
@@ -441,9 +453,27 @@ private object NativeTestSupport {
     }
 
     private fun computePipelineType(testClass: Class<*>): PipelineType {
-        return if (testClass.annotations.any { it is K2Pipeline })
+        return if (testClass.annotations.any { it is FirPipeline })
             PipelineType.K2
         else PipelineType.K1
+    }
+
+    private fun computeUsedPartialLinkageConfig(enclosingTestClass: Class<*>): UsedPartialLinkageConfig {
+        val findPartialLinkageMode: (Class<*>) -> UsePartialLinkage.Mode? = { clazz ->
+            clazz.allInheritedAnnotations.firstIsInstanceOrNull<UsePartialLinkage>()?.mode
+        }
+
+        val mode = findPartialLinkageMode(enclosingTestClass)
+            ?: enclosingTestClass.declaredClasses.firstNotNullOfOrNull { findPartialLinkageMode(it) }
+            ?: UsePartialLinkage.Mode.ENABLED_WITH_ERROR // The default mode.
+
+        val config = when (mode) {
+            UsePartialLinkage.Mode.DISABLED -> PartialLinkageConfig(PartialLinkageMode.DISABLE, PartialLinkageLogLevel.ERROR)
+            UsePartialLinkage.Mode.ENABLED_WITH_WARNING -> PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.WARNING)
+            UsePartialLinkage.Mode.ENABLED_WITH_ERROR -> PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.ERROR)
+        }
+
+        return UsedPartialLinkageConfig(config)
     }
 
     /*************** Test class settings (simplified) ***************/

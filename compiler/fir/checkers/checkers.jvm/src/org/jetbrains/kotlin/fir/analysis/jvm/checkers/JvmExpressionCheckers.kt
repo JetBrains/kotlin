@@ -22,7 +22,7 @@ object JvmExpressionCheckers : ExpressionCheckers() {
 
     override val callableReferenceAccessCheckers: Set<FirCallableReferenceAccessChecker>
         get() = setOf(
-            FirJavaShadowedFieldReferenceChecker,
+            FirUnsupportedSyntheticCallableReferenceChecker,
         )
 
     override val functionCallCheckers: Set<FirFunctionCallChecker>

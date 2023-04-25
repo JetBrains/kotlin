@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.name.Name
 // TODO: do not serialize descriptors of non-exported declarations.
 
 object KonanBinaryInterface {
-    private val mangler = object : AbstractKonanIrMangler(true) {}
+    private val mangler = object : AbstractKonanIrMangler(withReturnType = true, allowOutOfScopeTypeParameters = true) {}
 
     private val exportChecker = mangler.getExportChecker(compatibleMode = true)
 

@@ -9,6 +9,7 @@
 #include "gtest/gtest.h"
 
 #include "ShadowStack.hpp"
+#include "StableRef.hpp"
 #include "std_support/Memory.hpp"
 #include "std_support/Vector.hpp"
 
@@ -97,19 +98,19 @@ TEST(GlobalRootSetTest, Basic) {
     globalsProducer.Insert(&global1);
     globalsProducer.Insert(&global2);
 
-    mm::StableRefRegistry stableRefs;
-    mm::StableRefRegistry::ThreadQueue stableRefsProducer(stableRefs);
+    mm::SpecialRefRegistry specialRefsRegistry;
+    mm::SpecialRefRegistry::ThreadQueue stableRefsProducer(specialRefsRegistry);
     ObjHeader* stableRef1 = reinterpret_cast<ObjHeader*>(3);
     ObjHeader* stableRef2 = reinterpret_cast<ObjHeader*>(4);
     ObjHeader* stableRef3 = reinterpret_cast<ObjHeader*>(5);
-    stableRefsProducer.Insert(stableRef1);
-    stableRefsProducer.Insert(stableRef2);
-    stableRefsProducer.Insert(stableRef3);
+    auto stableRefHandle1 = stableRefsProducer.createStableRef(stableRef1);
+    auto stableRefHandle2 = stableRefsProducer.createStableRef(stableRef2);
+    auto stableRefHandle3 = stableRefsProducer.createStableRef(stableRef3);
 
     globalsProducer.Publish();
-    stableRefsProducer.Publish();
+    stableRefsProducer.publish();
 
-    mm::GlobalRootSet iter(globals, stableRefs);
+    mm::GlobalRootSet iter(globals, specialRefsRegistry);
 
     std_support::vector<mm::GlobalRootSet::Value> actual;
     for (auto object : iter) {
@@ -120,15 +121,19 @@ TEST(GlobalRootSetTest, Basic) {
     auto asStableRef = [](ObjHeader*& object) -> mm::GlobalRootSet::Value { return {object, mm::GlobalRootSet::Source::kStableRef}; };
     EXPECT_THAT(
             actual,
-            testing::ElementsAre(
+            testing::UnorderedElementsAre(
                     asGlobal(global1), asGlobal(global2), asStableRef(stableRef1), asStableRef(stableRef2), asStableRef(stableRef3)));
+
+    std::move(stableRefHandle1).dispose();
+    std::move(stableRefHandle2).dispose();
+    std::move(stableRefHandle3).dispose();
 }
 
 TEST(GlobalRootSetTest, Empty) {
     mm::GlobalsRegistry globals;
-    mm::StableRefRegistry stableRefs;
+    mm::SpecialRefRegistry specialRefsRegistry;
 
-    mm::GlobalRootSet iter(globals, stableRefs);
+    mm::GlobalRootSet iter(globals, specialRefsRegistry);
 
     std_support::vector<mm::GlobalRootSet::Value> actual;
     for (auto object : iter) {

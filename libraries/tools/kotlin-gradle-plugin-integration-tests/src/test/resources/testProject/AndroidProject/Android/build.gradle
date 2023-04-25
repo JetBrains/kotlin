@@ -5,8 +5,13 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 }
 
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(8))
+}
+
 android {
     compileSdkVersion 22
+    namespace 'org.jetbrains.kotlin.gradle.test.androidalfa'
 
     sourceSets {
         main.java.srcDirs += 'src/main/java2'
@@ -40,11 +45,6 @@ android {
     }
 
     publishNonDefault true
-
-    kotlinOptions {
-        noJdk = true
-    }
-
     lintOptions.abortOnError = false
 }
 

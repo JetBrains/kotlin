@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.isStatic
 import org.jetbrains.kotlin.fir.types.isNullableAny
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
@@ -72,6 +71,12 @@ class Fir2IrLazyClass(
     override var attributeOwnerId: IrAttributeContainer
         get() = this
         set(_) = mutationNotSupported()
+
+    override var originalBeforeInline: IrAttributeContainer?
+        get() = null
+        set(_) {
+            error("Mutating Fir2Ir lazy elements is not possible")
+        }
 
     override var kind: ClassKind
         get() = fir.classKind
@@ -149,7 +154,7 @@ class Fir2IrLazyClass(
         val result = mutableListOf<IrDeclaration>()
         // NB: it's necessary to take all callables from scope,
         // e.g. to avoid accessing un-enhanced Java declarations with FirJavaTypeRef etc. inside
-        val scope = fir.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true)
+        val scope = fir.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true, memberRequiredPhase = null)
         scope.processDeclaredConstructors {
             if (shouldBuildStub(it.fir)) {
                 result += declarationStorage.getIrConstructorSymbol(it, forceTopLevelPrivate = isTopLevelPrivate).owner

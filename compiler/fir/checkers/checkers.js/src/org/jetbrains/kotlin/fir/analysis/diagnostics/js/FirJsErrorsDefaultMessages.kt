@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers
-import org.jetbrains.kotlin.fir.analysis.diagnostics.checkMissingMessages
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.CALL_TO_DEFINED_EXTERNALLY_FROM_NON_EXTERNAL_DECLARATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.CANNOT_CHECK_FOR_EXTERNAL_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.EXTENSION_FUNCTION_IN_EXTERNAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.EXTERNAL_ANONYMOUS_INITIALIZER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.EXTERNAL_CLASS_CONSTRUCTOR_PROPERTY_PARAMETER
@@ -20,10 +20,14 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.EXTERNAL_DEL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.EXTERNAL_ENUM_ENTRY_WITH_BODY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.DELEGATION_BY_DYNAMIC
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.EXTERNAL_INTERFACE_AS_CLASS_LITERAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.IMPLEMENTING_FUNCTION_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.INLINE_CLASS_IN_EXTERNAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.ENUM_CLASS_IN_EXTERNAL_DECLARATION_WARNING
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_EXTERNAL_INHERITORS_ONLY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.INLINE_EXTERNAL_DECLARATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_EXTERNAL_ARGUMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_MODULE_PROHIBITED_ON_NON_NATIVE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.JS_MODULE_PROHIBITED_ON_VAR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NESTED_JS_MODULE_PROHIBITED
@@ -41,18 +45,25 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NATIVE_INDEX
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NATIVE_SETTER_WRONG_RETURN_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NESTED_CLASS_IN_EXTERNAL_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NESTED_EXTERNAL_DECLARATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NESTED_JS_EXPORT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NON_ABSTRACT_MEMBER_OF_EXTERNAL_INTERFACE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NON_CONSUMABLE_EXPORTED_IDENTIFIER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NON_EXPORTABLE_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS_WITH_FAKE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.RUNTIME_ANNOTATION_NOT_SUPPORTED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.RUNTIME_ANNOTATION_ON_EXTERNAL_DECLARATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.SPREAD_OPERATOR_IN_DYNAMIC_CALL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.UNCHECKED_CAST_TO_EXTERNAL_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_BODY_OF_EXTERNAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_DEFAULT_VALUE_FOR_EXTERNAL_FUN_PARAMETER
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_EXPORTED_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_EXTERNAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_INITIALIZER_OF_EXTERNAL_DECLARATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_JS_QUALIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_MULTIPLE_INHERITANCE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors.WRONG_OPERATION_WITH_DYNAMIC
 
 @Suppress("unused")
 object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
@@ -70,6 +81,8 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             FirDiagnosticRenderers.SYMBOL
         )
         map.put(DELEGATION_BY_DYNAMIC, "Can't delegate to dynamic value")
+        map.put(SPREAD_OPERATOR_IN_DYNAMIC_CALL, "Can't apply spread operator in dynamic call")
+        map.put(WRONG_OPERATION_WITH_DYNAMIC, "Wrong operation with dynamic value: {0}", CommonRenderers.STRING)
         map.put(IMPLEMENTING_FUNCTION_INTERFACE, "Implementing function interface is prohibited in JavaScript")
         map.put(OVERRIDING_EXTERNAL_FUN_WITH_OPTIONAL_PARAMS, "Overriding `external` function with optional parameters")
         map.put(
@@ -97,7 +110,7 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             WRONG_DEFAULT_VALUE_FOR_EXTERNAL_FUN_PARAMETER,
             "Wrong default value for parameter of external function. Must be ' = definedExternally'"
         )
-        map.put(NESTED_EXTERNAL_DECLARATION, "Non top-level `external` declaration")
+        map.put(NESTED_EXTERNAL_DECLARATION, "Non-top-level `external` declaration")
         map.put(WRONG_EXTERNAL_DECLARATION, "Declaration of such kind ({0}) can''t be external", CommonRenderers.STRING)
         map.put(NESTED_CLASS_IN_EXTERNAL_INTERFACE, "Interface can't contain nested classes and objects")
         map.put(EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE, "External type extends non-external type")
@@ -105,6 +118,10 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING,
             "Using value classes as parameter type or return type of external declarations is experimental"
+        )
+        map.put(
+            ENUM_CLASS_IN_EXTERNAL_DECLARATION_WARNING,
+            "Using enum classes with an `external` qualifier becomes deprecated and will be an error in future releases"
         )
         map.put(
             INLINE_CLASS_IN_EXTERNAL_DECLARATION,
@@ -141,13 +158,47 @@ object FirJsErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Can''t put non-external declarations in file marked with {0} annotation",
             FirDiagnosticRenderers.RENDER_TYPE
         )
+        map.put(
+            JS_EXTERNAL_INHERITORS_ONLY,
+            "External {0} can''t be a parent of non-external {1}",
+            FirDiagnosticRenderers.RENDER_CLASS_OR_OBJECT_NAME,
+            FirDiagnosticRenderers.RENDER_CLASS_OR_OBJECT_NAME
+        )
+        map.put(
+            JS_EXTERNAL_ARGUMENT,
+            "Expected argument with external type, but type {0} is non-external",
+            FirDiagnosticRenderers.RENDER_TYPE
+        )
         map.put(JS_NAME_PROHIBITED_FOR_EXTENSION_PROPERTY, "@JsName is prohibited for extension properties")
-        map.put(JS_NAME_IS_NOT_ON_ALL_ACCESSORS, "@JsName should be on all of the property accessors")
+        map.put(JS_NAME_IS_NOT_ON_ALL_ACCESSORS, "@JsName should be on all the property accessors")
         map.put(JS_NAME_PROHIBITED_FOR_NAMED_NATIVE, "@JsName is prohibited for external declaration with explicit name")
         map.put(JS_NAME_PROHIBITED_FOR_OVERRIDE, "@JsName is prohibited for overridden members")
         map.put(JS_NAME_ON_PRIMARY_CONSTRUCTOR_PROHIBITED, "@JsName annotation is prohibited for primary constructors")
         map.put(JS_NAME_ON_ACCESSOR_AND_PROPERTY, "@JsName can be either on a property or its accessors, not both of them")
-
-        map.checkMissingMessages(FirJsErrors)
+        map.put(
+            CANNOT_CHECK_FOR_EXTERNAL_INTERFACE,
+            "Cannot check for external interface: {0}",
+            FirDiagnosticRenderers.RENDER_TYPE,
+        )
+        map.put(
+            UNCHECKED_CAST_TO_EXTERNAL_INTERFACE,
+            "Unchecked cast to external interface: {0} to {1}",
+            FirDiagnosticRenderers.RENDER_TYPE,
+            FirDiagnosticRenderers.RENDER_TYPE,
+        )
+        map.put(EXTERNAL_INTERFACE_AS_CLASS_LITERAL, "Can't refer to external interface from class literal")
+        map.put(NESTED_JS_EXPORT, "@JsExport is only allowed on files and top-level declarations")
+        map.put(WRONG_EXPORTED_DECLARATION, "Declaration of such kind ({0}) can''t be exported to JS", CommonRenderers.STRING)
+        map.put(
+            NON_EXPORTABLE_TYPE,
+            "Exported declaration uses non-exportable {0} type: {1}",
+            CommonRenderers.STRING,
+            FirDiagnosticRenderers.RENDER_TYPE,
+        )
+        map.put(
+            NON_CONSUMABLE_EXPORTED_IDENTIFIER,
+            "Exported declaration contains non-consumable identifier '${0}', that can't be represented inside TS definitions and ESM",
+            CommonRenderers.STRING,
+        )
     }
 }

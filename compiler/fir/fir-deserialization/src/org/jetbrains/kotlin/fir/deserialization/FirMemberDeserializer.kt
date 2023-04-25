@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -265,7 +265,8 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 visibility,
                 propertySymbol,
                 propertyModality,
-                effectiveVisibility
+                effectiveVisibility,
+                resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES,
             )
         }.apply {
             replaceAnnotations(
@@ -324,7 +325,8 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 visibility,
                 propertySymbol,
                 propertyModality,
-                effectiveVisibility
+                effectiveVisibility,
+                resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES,
             )
         }.apply {
             replaceAnnotations(
@@ -571,7 +573,9 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 Modality.FINAL,
                 visibility.toEffectiveVisibility(classBuilder.symbol)
             ).apply {
-                isExpect = Flags.IS_EXPECT_FUNCTION.get(flags)
+                // We don't store information about expect modifier on constructors
+                // It is inherited from containing class
+                isExpect = Flags.IS_EXPECT_CLASS.get(classProto.flags)
                 hasStableParameterNames = !Flags.IS_CONSTRUCTOR_WITH_NON_STABLE_PARAMETER_NAMES.get(flags)
                 isActual = false
                 isOverride = false

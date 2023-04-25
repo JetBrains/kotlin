@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle.targets.js.yarn
 
 import org.jetbrains.kotlin.gradle.tasks.internal.CleanableStore
 import java.io.File
-import java.io.Serializable
 
 data class YarnEnv(
     val downloadUrl: String,
@@ -20,4 +19,5 @@ data class YarnEnv(
     val yarnLockMismatchReport: YarnLockMismatchReport,
     val reportNewYarnLock: Boolean,
     val yarnLockAutoReplace: Boolean,
-) : Serializable
+    val yarnResolutions: List<YarnResolution>
+)

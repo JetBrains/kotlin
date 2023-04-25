@@ -1,3 +1,5 @@
+@file:OptIn(kotlin.native.runtime.NativeRuntimeApi::class)
+
 import kotlinx.cinterop.*
 import kotlin.test.*
 import objcTests.*
@@ -13,7 +15,7 @@ import objcTests.*
     }
 
     test()
-    kotlin.native.internal.GC.collect()
+    kotlin.native.runtime.GC.collect()
     assertTrue(customStringDeallocated)
 }
 

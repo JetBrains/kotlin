@@ -70,10 +70,33 @@ public final class DSegment {
 @kotlin.Metadata
 public final class DependencyKt {
     // source: 'dependency.kt'
-    public final static method getLength1-sUp7gFk(p0: double, p1: double, p2: double, p3: double): double
-    public final static @org.jetbrains.annotations.NotNull method getMiddle1-sUp7gFk(p0: double, p1: double, p2: double, p3: double): DPoint
-    public final static @org.jetbrains.annotations.NotNull method myLet-GPBa7dw(p0: double, p1: double, p2: double, p3: double, @org.jetbrains.annotations.NotNull p4: kotlin.jvm.functions.Function1): DPoint
+    public final static method getLength1-3dRLH6g(p0: double, p1: double, p2: double, p3: double): double
+    public final static @org.jetbrains.annotations.NotNull method getMiddle1-3dRLH6g(p0: double, p1: double, p2: double, p3: double): DPoint
+    public final static @org.jetbrains.annotations.NotNull method myLet-X39isKk(p0: double, p1: double, p2: double, p3: double, @org.jetbrains.annotations.NotNull p4: kotlin.jvm.functions.Function1): DPoint
     public final static method square(p0: double): double
+}
+
+@kotlin.Metadata
+public final class InfiniteDPoints$DPointsIterator {
+    // source: 'test.kt'
+    private field i: double
+    public method <init>(): void
+    public synthetic deprecated static @kotlin.PublishedApi method getI$annotations(): void
+    public final method getI(): double
+    public final method hasNext(): boolean
+    public final @org.jetbrains.annotations.NotNull method next(): DPoint
+    public final method setI(p0: double): void
+    public final inner class InfiniteDPoints$DPointsIterator
+}
+
+@kotlin.Metadata
+public final class InfiniteDPoints {
+    // source: 'test.kt'
+    public final static @org.jetbrains.annotations.NotNull field INSTANCE: InfiniteDPoints
+    static method <clinit>(): void
+    private method <init>(): void
+    public final @org.jetbrains.annotations.NotNull method iterator(): InfiniteDPoints$DPointsIterator
+    public final inner class InfiniteDPoints$DPointsIterator
 }
 
 @kotlin.coroutines.jvm.internal.DebugMetadata
@@ -109,7 +132,9 @@ public final class TestKt {
     inner (anonymous) class TestKt$suspendFun$1
     public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
     public final static @org.jetbrains.annotations.Nullable method f(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final static method forStatement(): void
     public final static method supply(@org.jetbrains.annotations.Nullable p0: java.lang.Object): void
     public final static @org.jetbrains.annotations.Nullable method suspendFun(@org.jetbrains.annotations.NotNull p0: kotlin.coroutines.Continuation): java.lang.Object
+    public final inner class InfiniteDPoints$DPointsIterator
     public final inner class kotlin/jvm/internal/Ref$IntRef
 }

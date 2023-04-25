@@ -19,15 +19,20 @@ import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.types.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.SideEffectKind
+import org.jetbrains.kotlin.js.backend.ast.metadata.sideEffects
 import org.jetbrains.kotlin.js.common.isValidES5Identifier
 import org.jetbrains.kotlin.js.config.SourceMapNamesPolicy
 import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
+import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 import java.io.FileInputStream
 import java.io.IOException
 import java.io.InputStreamReader
@@ -83,18 +88,18 @@ fun objectCreate(prototype: JsExpression, context: JsStaticContext) =
         prototype
     )
 
-fun defineProperty(obj: JsExpression, name: String, getter: JsExpression?, setter: JsExpression?, context: JsStaticContext) =
-    JsInvocation(
+fun defineProperty(obj: JsExpression, name: String, getter: JsExpression?, setter: JsExpression?, context: JsStaticContext): JsExpression {
+    val undefined by lazy(LazyThreadSafetyMode.NONE) { jsUndefined(context, context.backendContext) }
+    return JsInvocation(
         context
             .getNameForStaticFunction(context.backendContext.intrinsics.jsDefinePropertySymbol.owner)
             .makeRef(),
         obj,
         JsStringLiteral(name),
-        *listOf(getter, setter)
-            .dropLastWhile { it == null }
-            .map { it ?: jsUndefined(context, context.backendContext) }
-            .toTypedArray()
+        getter ?: undefined,
+        setter ?: undefined
     )
+}
 
 fun translateFunction(declaration: IrFunction, name: JsName?, context: JsGenerationContext): JsFunction {
     context.staticContext.backendContext.getJsCodeForFunction(declaration.symbol)?.let { function ->
@@ -196,7 +201,7 @@ fun translateCall(
             Pair(function, superQualifier.owner)
         }
 
-        if (expression.isSyntheticDelegatingReplacement || currentDispatchReceiver.canUseSuperRef(function, context, klass)) {
+        if (expression.isSyntheticDelegatingReplacement || currentDispatchReceiver.canUseSuperRef(context, klass)) {
             return JsInvocation(JsNameRef(context.getNameForMemberFunction(target), JsSuperRef()), arguments)
         }
 
@@ -210,7 +215,7 @@ fun translateCall(
             JsNameRef(Namer.CALL_FUNCTION, qPrototype)
         }
 
-        return JsInvocation(callRef, jsDispatchReceiver?.let { receiver -> listOf(receiver) + arguments } ?: arguments)
+        return JsInvocation(callRef, jsDispatchReceiver?.let { receiver -> listOf(receiver) memoryOptimizedPlus arguments } ?: arguments)
     }
 
     val varargParameterIndex = function.varargParameterIndex()
@@ -289,7 +294,14 @@ fun translateCall(
             }
         }
     } else {
-        JsInvocation(ref, listOfNotNull(jsExtensionReceiver) + arguments)
+        JsInvocation(ref, listOfNotNull(jsExtensionReceiver) memoryOptimizedPlus arguments).pureIfPossible(function, context)
+    }
+}
+
+private fun JsInvocation.pureIfPossible(function: IrFunction, context: JsGenerationContext) = apply {
+    if (function.symbol.isUnitInstanceFunction(context.staticContext.backendContext)) {
+        sideEffects = SideEffectKind.PURE
+        qualifier.sideEffects = SideEffectKind.PURE
     }
 }
 
@@ -383,36 +395,35 @@ fun translateCallArguments(
     val varargParameterIndex = function.realOverrideTarget.varargParameterIndex()
 
     val validWithNullArgs = expression.validWithNullArgs()
-    val arguments = (0 until size)
-        .mapTo(ArrayList(size)) { index ->
-            expression.getValueArgument(index).checkOnNullability(
-                validWithNullArgs || function.valueParameters[index].isBoxParameter
-            )
-        }
-        .dropLastWhile {
-            allowDropTailVoids &&
-                    it is IrGetField &&
-                    it.symbol.owner.correspondingPropertySymbol == context.staticContext.backendContext.intrinsics.void
-        }
-        .map {
-            it?.accept(transformer, context)
-        }
-        .mapIndexed { index, result ->
-            val isEmptyExternalVararg = validWithNullArgs &&
-                    varargParameterIndex == index &&
-                    result is JsArrayLiteral &&
-                    result.expressions.isEmpty()
+    val jsUndefined by lazy(LazyThreadSafetyMode.NONE) { jsUndefined(context, context.staticContext.backendContext) }
 
-            if (isEmptyExternalVararg && index == size - 1) {
-                null
-            } else result
+    val arguments = (0 until size)
+        .mapIndexedTo(ArrayList(size)) { i, _ ->
+            expression.getValueArgument(i).checkOnNullability(validWithNullArgs || function.valueParameters[i].isBoxParameter)
+        }
+        .mapIndexed { i, it ->
+            val jsArgument = when {
+                allowDropTailVoids && (it == null || it.isVoidGetter(context)) -> null
+                else -> it?.accept(transformer, context)
+            }
+
+            val isEmptyExternalVararg = validWithNullArgs &&
+                    varargParameterIndex == i &&
+                    jsArgument is JsArrayLiteral &&
+                    jsArgument.expressions.isEmpty()
+
+            jsArgument.takeIf { !isEmptyExternalVararg || i != size - 1 }
         }
         .dropLastWhile { it == null }
-        .map { it ?: jsUndefined(context, context.staticContext.backendContext) }
+        .memoryOptimizedMap { it ?: jsUndefined }
 
     check(!expression.symbol.isSuspend) { "Suspend functions should be lowered" }
     return arguments
 }
+
+private fun IrExpression.isVoidGetter(context: JsGenerationContext): Boolean = this is IrGetField &&
+        symbol.owner.correspondingPropertySymbol == context.staticContext.backendContext.intrinsics.void
+
 
 private fun IrExpression?.checkOnNullability(validWithNullArgs: Boolean) =
     also {
@@ -645,10 +656,10 @@ private val nameMappingOriginAllowList = setOf(
     JsLoweredDeclarationOrigin.JS_SHADOWED_DEFAULT_PARAMETER,
 )
 
-private fun IrClass?.canUseSuperRef(function: IrFunction, context: JsGenerationContext, superClass: IrClass): Boolean {
+private fun IrClass?.canUseSuperRef(context: JsGenerationContext, superClass: IrClass): Boolean {
+    val currentFunction = context.currentFunction ?: return false
     return this != null &&
-            function.origin != IrDeclarationOrigin.LOWERED_SUSPEND_FUNCTION &&
             context.staticContext.backendContext.es6mode &&
-            !superClass.isInterface && !isInner && !isLocal &&
-            context.currentFunction?.isEs6ConstructorReplacement != true
+            !superClass.isInterface &&
+            !isInner && !isLocal && !currentFunction.isEs6ConstructorReplacement && currentFunction.parentClassOrNull?.superClass?.symbol != context.staticContext.backendContext.coroutineSymbols.coroutineImpl
 }

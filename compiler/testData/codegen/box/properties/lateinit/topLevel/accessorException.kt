@@ -10,6 +10,8 @@ object C {
 }
 
 // FILE: test.kt
+@file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
+
 import kotlin.UninitializedPropertyAccessException
 
 fun box(): String {

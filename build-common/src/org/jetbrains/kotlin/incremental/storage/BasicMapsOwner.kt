@@ -21,7 +21,7 @@ import java.io.File
 import java.io.IOException
 
 open class BasicMapsOwner(val cachesDir: File) {
-    private val maps = arrayListOf<BasicMap<*, *>>()
+    private val maps = arrayListOf<BasicMap<*, *, *>>()
 
     companion object {
         val CACHE_EXTENSION = "tab"
@@ -31,17 +31,17 @@ open class BasicMapsOwner(val cachesDir: File) {
         get() = File(cachesDir, this + "." + CACHE_EXTENSION)
 
     @Synchronized
-    protected fun <K, V, M : BasicMap<K, V>> registerMap(map: M): M {
+    protected fun <K, V, S, M : BasicMap<K, V, S>> registerMap(map: M): M {
         maps.add(map)
         return map
     }
 
     open fun clean() {
-        forEachMapSafe("clean", BasicMap<*, *>::clean)
+        forEachMapSafe("clean", BasicMap<*, *, *>::clean)
     }
 
     open fun close() {
-        forEachMapSafe("close", BasicMap<*, *>::close)
+        forEachMapSafe("close", BasicMap<*, *, *>::close)
     }
 
     open fun flush(memoryCachesOnly: Boolean) {
@@ -49,7 +49,7 @@ open class BasicMapsOwner(val cachesDir: File) {
     }
 
     @Synchronized
-    private fun forEachMapSafe(actionName: String, action: (BasicMap<*, *>) -> Unit) {
+    private fun forEachMapSafe(actionName: String, action: (BasicMap<*, *, *>) -> Unit) {
         val actionExceptions = LinkedHashMap<String, Exception>()
         maps.forEach {
             try {

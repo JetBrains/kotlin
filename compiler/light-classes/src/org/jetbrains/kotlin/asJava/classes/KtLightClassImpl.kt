@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -117,10 +117,8 @@ abstract class KtLightClassImpl(
     abstract override fun copy(): PsiElement
 
     private val _containingFile: PsiFile by lazyPub {
-        object : FakeFileForLightClass(
-            classOrObject.containingKtFile,
-            { if (classOrObject.isTopLevel()) this else getOutermostClassOrObject(classOrObject).toLightClass()!! },
-        ) {
+        val lightClass = if (classOrObject.isTopLevel()) this else getOutermostClassOrObject(classOrObject).toLightClass()!!
+        object : FakeFileForLightClass(classOrObject.containingKtFile, lightClass) {
             override fun findReferenceAt(offset: Int) = ktFile.findReferenceAt(offset)
 
             override fun processDeclarations(

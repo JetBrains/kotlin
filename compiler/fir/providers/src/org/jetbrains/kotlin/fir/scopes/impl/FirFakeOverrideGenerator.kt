@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,10 +10,10 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
-import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
-import org.jetbrains.kotlin.fir.declarations.synthetic.buildSyntheticProperty
-import org.jetbrains.kotlin.fir.declarations.utils.isExpect
-import org.jetbrains.kotlin.fir.declarations.utils.isStatic
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ChainedSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
@@ -23,12 +23,11 @@ import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 object FirFakeOverrideGenerator {
@@ -113,6 +112,8 @@ object FirFakeOverrideGenerator {
         newVisibility: Visibility? = null,
         fakeOverrideSubstitution: FakeOverrideSubstitution? = null
     ): FirSimpleFunction {
+        checkStatusIsResolved(baseFunction)
+
         return buildSimpleFunction {
             source = baseFunction.source
             moduleData = session.nullableModuleData ?: baseFunction.moduleData
@@ -148,6 +149,8 @@ object FirFakeOverrideGenerator {
         isExpect: Boolean,
         fakeOverrideSubstitution: FakeOverrideSubstitution?
     ): FirConstructor {
+        checkStatusIsResolved(baseConstructor)
+
         // TODO: consider using here some light-weight functions instead of pseudo-real FirMemberFunctionImpl
         // As second alternative, we can invent some light-weight kind of FirRegularClass
         return buildConstructor {
@@ -269,7 +272,7 @@ object FirFakeOverrideGenerator {
         }
 
         if (fakeOverrideSubstitution != null) {
-            returnTypeRef = buildImplicitTypeRef()
+            returnTypeRef = FirImplicitTypeRefImplWithoutSource
             attributes.fakeOverrideSubstitution = fakeOverrideSubstitution
         } else {
             returnTypeRef = baseFunction.returnTypeRef.withReplacedReturnType(newReturnType)
@@ -351,6 +354,8 @@ object FirFakeOverrideGenerator {
         newVisibility: Visibility? = null,
         fakeOverrideSubstitution: FakeOverrideSubstitution? = null
     ): FirProperty {
+        checkStatusIsResolved(baseProperty)
+
         return buildProperty {
             source = baseProperty.source
             moduleData = session.moduleData
@@ -374,8 +379,114 @@ object FirFakeOverrideGenerator {
                 fakeOverrideSubstitution
             )
             deprecationsProvider = baseProperty.deprecationsProvider
+
+            getter = baseProperty.getter?.buildCopyIfNeeded(
+                moduleData = session.moduleData,
+                origin = origin,
+                propertyReturnTypeRef = this@buildProperty.returnTypeRef,
+                propertySymbol = newSymbol,
+                dispatchReceiverType = dispatchReceiverType,
+                derivedClassLookupTag = derivedClassLookupTag,
+                baseProperty = baseProperty,
+            )
+
+            setter = baseProperty.setter?.buildCopyIfNeeded(
+                moduleData = session.moduleData,
+                origin = origin,
+                propertyReturnTypeRef = this@buildProperty.returnTypeRef,
+                propertySymbol = newSymbol,
+                dispatchReceiverType = dispatchReceiverType,
+                derivedClassLookupTag = derivedClassLookupTag,
+                baseProperty = baseProperty,
+            )
         }.apply {
             containingClassForStaticMemberAttr = derivedClassLookupTag.takeIf { shouldOverrideSetContainingClass(baseProperty) }
+        }
+    }
+
+    private fun FirPropertyAccessor.buildCopyIfNeeded(
+        moduleData: FirModuleData,
+        origin: FirDeclarationOrigin,
+        propertyReturnTypeRef: FirTypeRef,
+        propertySymbol: FirPropertySymbol,
+        dispatchReceiverType: ConeSimpleKotlinType?,
+        derivedClassLookupTag: ConeClassLikeLookupTag?,
+        baseProperty: FirProperty,
+    ) = when {
+        annotations.isNotEmpty() || visibility != baseProperty.visibility -> buildCopy(
+            moduleData,
+            origin,
+            propertyReturnTypeRef,
+            propertySymbol,
+            dispatchReceiverType,
+            derivedClassLookupTag,
+            baseProperty,
+        )
+        else -> null
+    }
+
+    private fun FirPropertyAccessor.buildCopy(
+        moduleData: FirModuleData,
+        origin: FirDeclarationOrigin,
+        propertyReturnTypeRef: FirTypeRef,
+        propertySymbol: FirPropertySymbol,
+        dispatchReceiverType: ConeSimpleKotlinType?,
+        derivedClassLookupTag: ConeClassLikeLookupTag?,
+        baseProperty: FirProperty,
+    ) = when (this) {
+        is FirDefaultPropertyGetter -> FirDefaultPropertyGetter(
+            source = source,
+            moduleData = moduleData,
+            origin = origin,
+            propertyTypeRef = propertyReturnTypeRef,
+            visibility = visibility,
+            propertySymbol = propertySymbol,
+            modality = modality ?: Modality.FINAL,
+            effectiveVisibility = effectiveVisibility,
+            resolvePhase = resolvePhase,
+        ).apply {
+            replaceAnnotations(annotations)
+        }
+        is FirDefaultPropertySetter -> FirDefaultPropertySetter(
+            source = source,
+            moduleData = moduleData,
+            origin = origin,
+            propertyTypeRef = propertyReturnTypeRef,
+            visibility = visibility,
+            propertySymbol = propertySymbol,
+            modality = modality ?: Modality.FINAL,
+            effectiveVisibility = effectiveVisibility,
+            resolvePhase = resolvePhase,
+        ).apply {
+            replaceAnnotations(annotations)
+        }
+        else -> buildPropertyAccessorCopy(this) {
+            this.symbol = FirPropertyAccessorSymbol()
+            this.moduleData = moduleData
+            this.origin = origin
+            this.propertySymbol = propertySymbol
+            this.dispatchReceiverType = dispatchReceiverType
+            this.body = null
+        }.also {
+            if (it.isSetter) {
+                val newParameter = buildValueParameterCopy(it.valueParameters.first()) {
+                    this.symbol = FirValueParameterSymbol(symbol.name)
+                    this.returnTypeRef = propertyReturnTypeRef
+                }
+                it.replaceValueParameters(listOf(newParameter))
+            } else {
+                it.replaceReturnTypeRef(propertyReturnTypeRef)
+            }
+        }
+    }.also { accessor ->
+        when (accessor.origin) {
+            FirDeclarationOrigin.IntersectionOverride -> accessor.originalForIntersectionOverrideAttr = this
+            FirDeclarationOrigin.SubstitutionOverride -> accessor.originalForSubstitutionOverrideAttr = this
+            else -> {}
+        }
+
+        accessor.containingClassForStaticMemberAttr = derivedClassLookupTag.takeIf {
+            accessor is FirDefaultPropertyAccessor || shouldOverrideSetContainingClass(baseProperty)
         }
     }
 
@@ -504,7 +615,7 @@ object FirFakeOverrideGenerator {
         }
 
         if (fakeOverrideSubstitution != null) {
-            returnTypeRef = buildImplicitTypeRef()
+            returnTypeRef = FirImplicitTypeRefImplWithoutSource
             attributes.fakeOverrideSubstitution = fakeOverrideSubstitution
         } else {
             returnTypeRef = baseVariable.returnTypeRef.withReplacedReturnType(newReturnType)
@@ -554,60 +665,6 @@ object FirFakeOverrideGenerator {
             containingClassForStaticMemberAttr = derivedClassLookupTag.takeIf { shouldOverrideSetContainingClass(baseField) }
         }
         return symbol
-    }
-
-    fun createSubstitutionOverrideSyntheticProperty(
-        session: FirSession,
-        baseProperty: FirSyntheticProperty,
-        derivedClassLookupTag: ConeClassLikeLookupTag,
-        baseSymbol: FirSyntheticPropertySymbol,
-        newDispatchReceiverType: ConeSimpleKotlinType?,
-        newContextReceiverTypes: List<ConeKotlinType?>?,
-        newReturnType: ConeKotlinType?,
-        newGetterParameterTypes: List<ConeKotlinType?>?,
-        newSetterParameterTypes: List<ConeKotlinType?>?,
-        fakeOverrideSubstitution: FakeOverrideSubstitution?
-    ): FirSyntheticPropertySymbol {
-        val getterSymbol = FirNamedFunctionSymbol(baseSymbol.getterId)
-        val getter = createSubstitutionOverrideFunction(
-            getterSymbol,
-            session,
-            baseProperty.getter.delegate,
-            derivedClassLookupTag,
-            newDispatchReceiverType,
-            newReceiverType = null,
-            newContextReceiverTypes,
-            newReturnType,
-            newGetterParameterTypes,
-            newTypeParameters = null,
-            fakeOverrideSubstitution = fakeOverrideSubstitution
-        )
-        val setterSymbol = FirNamedFunctionSymbol(baseSymbol.getterId)
-        val baseSetter = baseProperty.setter
-        val setter = if (baseSetter == null) null else createSubstitutionOverrideFunction(
-            setterSymbol,
-            session,
-            baseSetter.delegate,
-            derivedClassLookupTag,
-            newDispatchReceiverType,
-            newReceiverType = null,
-            newContextReceiverTypes,
-            StandardClassIds.Unit.constructClassLikeType(emptyArray(), isNullable = false),
-            newSetterParameterTypes,
-            newTypeParameters = null,
-            fakeOverrideSubstitution = fakeOverrideSubstitution
-        )
-        return buildSyntheticProperty {
-            moduleData = session.moduleData
-            name = baseProperty.name
-            symbol = baseSymbol.copy()
-            delegateGetter = getter
-            delegateSetter = setter
-            status = baseProperty.status
-            deprecationsProvider = getDeprecationsProviderFromAccessors(session, getter, setter)
-        }.apply {
-            containingClassForStaticMemberAttr = derivedClassLookupTag.takeIf { shouldOverrideSetContainingClass(baseProperty) }
-        }.symbol
     }
 
     // Returns a list of type parameters, and a substitutor that should be used for all other types
@@ -674,5 +731,13 @@ object FirFakeOverrideGenerator {
     private sealed class Maybe<out A> {
         class Value<out A>(val value: A) : Maybe<A>()
         object Nothing : Maybe<kotlin.Nothing>()
+    }
+
+    private fun checkStatusIsResolved(member: FirCallableDeclaration) {
+        check(member.status is FirResolvedDeclarationStatus) {
+            "Status should be resolved for a declaration to create it fake override, " +
+                    "otherwise the status of the fake override will never be resolved." +
+                    "The status was unresolved for ${member::class.java.simpleName}"
+        }
     }
 }

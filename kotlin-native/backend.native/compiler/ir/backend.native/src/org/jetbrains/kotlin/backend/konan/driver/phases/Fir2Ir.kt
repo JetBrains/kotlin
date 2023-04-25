@@ -5,17 +5,25 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
+import org.jetbrains.kotlin.backend.common.actualizer.IrActualizedResult
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.fir2Ir
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
-import org.jetbrains.kotlin.fir.backend.Fir2IrResult
+import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
+import org.jetbrains.kotlin.fir.backend.Fir2IrPluginContext
 import org.jetbrains.kotlin.fir.pipeline.FirResult
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 
 internal data class Fir2IrOutput(
         val firResult: FirResult,
-        val fir2irResult: Fir2IrResult,
-        val symbols: KonanSymbols
+        val symbols: KonanSymbols,
+        val irModuleFragment: IrModuleFragment,
+        val components: Fir2IrComponents,
+        val pluginContext: Fir2IrPluginContext,
+        val irActualizedResult: IrActualizedResult?,
+        val usedLibraries: Set<KotlinResolvedLibrary>
 )
 
 internal val Fir2IrPhase = createSimpleNamedCompilerPhase(

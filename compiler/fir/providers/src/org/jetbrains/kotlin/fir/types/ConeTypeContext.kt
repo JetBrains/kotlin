@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.ValueClassKind
-import org.jetbrains.kotlin.descriptors.valueClassLoweringKind
+import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
@@ -113,9 +110,9 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return this as? ConeDynamicType
     }
 
-    override fun FlexibleTypeMarker.asRawType(): RawTypeMarker? {
-        require(this is ConeFlexibleType)
-        return this as? ConeRawType
+    override fun KotlinTypeMarker.isRawType(): Boolean {
+        require(this is ConeKotlinType)
+        return this.isRaw()
     }
 
     override fun FlexibleTypeMarker.upperBound(): SimpleTypeMarker {
@@ -480,13 +477,12 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return when (this) {
             is ConeFlexibleType -> this.upperBound.isNullableType()
             is ConeTypeParameterType -> lookupTag.symbol.allBoundsAreNullableOrUnresolved()
-            is ConeTypeVariableType -> {
-                val symbol = lookupTag.toSymbol(session) ?: return false
-                when (symbol) {
-                    is FirClassSymbol -> false
-                    is FirTypeAliasSymbol -> symbol.fir.expandedConeType?.isNullableType() ?: false
-                    is FirTypeParameterSymbol -> symbol.allBoundsAreNullableOrUnresolved()
-                }
+            // NB: There's no branch for ConeTypeVariableType, i.e. it always returns false for them
+            // And while it seems reasonable to have similar semantics as for stub types, it would make some diagnostic test failing
+            // Thus, we leave the same semantics only for stubs (similar to TypeUtils.isNullableType)
+            is ConeStubType -> {
+                val symbol = (this.constructor.variable.defaultType.lookupTag.originalTypeParameter as? ConeTypeParameterLookupTag)?.symbol
+                symbol == null || symbol.allBoundsAreNullableOrUnresolved()
             }
             is ConeIntersectionType -> intersectedTypes.all { it.isNullableType() }
             is ConeClassLikeType -> directExpansionType(session)?.isNullableType() ?: false
@@ -522,9 +518,16 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     override fun TypeConstructorMarker.isFinalClassOrEnumEntryOrAnnotationClassConstructor(): Boolean {
         val firRegularClass = toFirRegularClass() ?: return false
 
-        return firRegularClass.modality == Modality.FINAL ||
-                firRegularClass.classKind == ClassKind.ENUM_ENTRY ||
-                firRegularClass.classKind == ClassKind.ANNOTATION_CLASS
+        // NB: This API is used to determine if a given type [isMostPreciseCovariantArgument] (at `typeMappingUtil.kt`),
+        // affecting the upper bound wildcard when mapping the enclosing type to [PsiType]. See KT-57578 for more details.
+        // The counterpart in K1, [ClassicTypeSystemContext], uses [ClassDescriptor.isFinalClass] in `ModalityUtils.kt`,
+        // which filters out `enum` class. It seems [ClassDescriptor.isFinalOrEnum] is for truly `final` class.
+        // That is, the overall API name---isFinalClassOr...---is misleading.
+        val classKind = firRegularClass.classKind
+        return classKind.isEnumEntry ||
+                classKind.isAnnotationClass ||
+                classKind.isObject ||
+                classKind.isClass && firRegularClass.symbol.modality == Modality.FINAL
     }
 
     override fun KotlinTypeMarker.hasAnnotation(fqName: FqName): Boolean {

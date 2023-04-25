@@ -1,4 +1,6 @@
 //ALLOW_AST_ACCESS
+// IGNORE_FIR_METADATA_LOADING_K2
+//   Ignore reason: KT-58028
 package test
 
 class ConstructorTypeParamClassObjectTypeConflict<test> {

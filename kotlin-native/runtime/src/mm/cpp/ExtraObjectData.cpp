@@ -7,7 +7,6 @@
 
 #include "PointerBits.h"
 #include "ThreadData.hpp"
-#include "Weak.h"
 
 #ifdef KONAN_OBJC_INTEROP
 #include "ObjCMMAPI.h"
@@ -55,17 +54,13 @@ mm::ExtraObjectData& mm::ExtraObjectData::Install(ObjHeader* object) noexcept {
 void mm::ExtraObjectData::Uninstall() noexcept {
     auto *object = GetBaseObject();
     atomicSetRelease(const_cast<const TypeInfo**>(&object->typeInfoOrMeta_), typeInfo_);
-    RuntimeAssert(!object->has_meta_object(), "Object has metaobject after removing metaobject");
+    RuntimeAssert(
+            !object->has_meta_object(), "Object %p has metaobject %p after removing metaobject %p", object, object->meta_object_or_null(),
+            this);
 
 #ifdef KONAN_OBJC_INTEROP
     Kotlin_ObjCExport_releaseAssociatedObject(associatedObject_);
     associatedObject_ = nullptr;
-#endif
-}
-
-void mm::ExtraObjectData::DetachAssociatedObject() noexcept {
-#ifdef KONAN_OBJC_INTEROP
-    Kotlin_ObjCExport_detachAssociatedObject(associatedObject_);
 #endif
 }
 
@@ -77,22 +72,25 @@ bool mm::ExtraObjectData::HasAssociatedObject() noexcept {
 #endif
 }
 
-
-void mm::ExtraObjectData::ClearWeakReferenceCounter() noexcept {
-    if (!HasWeakReferenceCounter()) return;
-
+void mm::ExtraObjectData::ClearRegularWeakReferenceImpl() noexcept {
     auto *object = GetBaseObject();
-    WeakReferenceCounterClear(GetWeakReferenceCounter());
     // Not using `mm::SetHeapRef here`, because this code is called during sweep phase by the GC thread,
     // and so cannot affect marking.
     // TODO: Asserts on the above?
-    weakReferenceCounterOrBaseObject_ = object;
+    weakReferenceOrBaseObject_ = object;
 }
 
 mm::ExtraObjectData::~ExtraObjectData() {
-    RuntimeAssert(!HasWeakReferenceCounter(), "Object must have cleared weak references");
+    auto* weakReference = weakReferenceOrBaseObject_.load(std::memory_order_relaxed);
+    if (hasPointerBits(weakReference, WEAK_REF_TAG)) {
+        weakReference = clearPointerBits(weakReference, WEAK_REF_TAG);
+    } else {
+        weakReference = nullptr;
+    }
+    RuntimeAssert(weakReference == nullptr, "ExtraObjectData %p must have cleared weak reference %p", this, weakReference);
 
 #ifdef KONAN_OBJC_INTEROP
-    RuntimeAssert(associatedObject_ == nullptr, "Object must have cleared associated object");
+    auto* associatedObject = associatedObject_.load(std::memory_order_relaxed);
+    RuntimeAssert(associatedObject == nullptr, "ExtraObjectData %p must have cleared associated object %p", this, associatedObject);
 #endif
 }

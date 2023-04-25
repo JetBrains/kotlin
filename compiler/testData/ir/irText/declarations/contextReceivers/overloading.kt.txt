@@ -1,14 +1,14 @@
-fun foo(_context_receiver_0: Int, _context_receiver_1: String): Int {
-  return _context_receiver_0.plus(other = 42)
+fun foo($context_receiver_0: Int, $context_receiver_1: String): Int {
+  return $context_receiver_0.plus(other = 42)
 }
 
-fun foo(_context_receiver_0: Int): Int {
-  return _context_receiver_0.plus(other = 42)
+fun foo($context_receiver_0: Int): Int {
+  return $context_receiver_0.plus(other = 42)
 }
 
 fun test() {
   with<Int, Int>(receiver = 42, block = local fun Int.<anonymous>(): Int {
-    return foo(_context_receiver_0 = $this$with)
+    return foo($context_receiver_0 = $this$with)
   }
 ) /*~> Unit */
 }

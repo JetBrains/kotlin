@@ -24,3 +24,8 @@ class RegularClassWithComponentMethods {
 
 fun component1() = 5
 fun component4() = 6
+
+data class DataClassWithStrangeNames(val component124: Int, val componentABC: Int) {
+    operator fun component15() = component124
+    fun component16() = component124
+}

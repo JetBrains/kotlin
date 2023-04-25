@@ -5,12 +5,11 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.common.lower.ANNOTATION_IMPLEMENTATION
-import org.jetbrains.kotlin.backend.common.psi.PsiSourceManager
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.MultifileFacadeFileEntry
+import org.jetbrains.kotlin.backend.jvm.extensions.descriptorOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.mapping.IrTypeMapper
 import org.jetbrains.kotlin.backend.jvm.mapping.MethodSignatureMapper
@@ -33,7 +32,6 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
@@ -57,9 +55,9 @@ import org.jetbrains.kotlin.name.JvmNames.VOLATILE_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtPropertyDelegate
 import org.jetbrains.kotlin.resolve.jvm.checkers.JvmSimpleNameBacktickChecker
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.*
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.MemberKind
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.RawSignature
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmClassSignature
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.org.objectweb.asm.*
@@ -83,6 +81,7 @@ class ClassCodegen private constructor(
         )
     }
 
+    val smap = context.getSourceMapper(irClass)
     private val state get() = context.state
 
     private val innerClasses = mutableSetOf<IrClass>()
@@ -111,9 +110,7 @@ class ClassCodegen private constructor(
 
     private val jvmSignatureClashDetector = JvmSignatureClashDetector(this)
 
-    private val classOrigin = irClass.descriptorOrigin
-
-    private val visitor = state.factory.newVisitor(classOrigin, type, irClass.fileParent.loadSourceFilesInfo()).apply {
+    private val visitor = state.factory.newVisitor(irClass.descriptorOrigin, type, irClass.fileParent.loadSourceFilesInfo()).apply {
         val signature = typeMapper.mapClassSignature(irClass, type, context.state.classBuilderMode.generateBodies)
         // Ensure that the backend only produces class names that would be valid in the frontend for JVM.
         if (context.state.classBuilderMode.generateBodies && signature.hasInvalidName()) {
@@ -134,9 +131,9 @@ class ClassCodegen private constructor(
     private val regeneratedObjectNameGenerators = mutableMapOf<String, NameGenerator>()
 
     fun getRegeneratedObjectNameGenerator(function: IrFunction): NameGenerator {
-        val name = if (function.name.isSpecial) "special" else function.name.asString()
+        val name = if (function.name.isSpecial) SPECIAL_TRANSFORMATION_NAME else "\$${function.name.asString()}"
         return regeneratedObjectNameGenerators.getOrPut(name) {
-            NameGenerator("${type.internalName}\$$name\$\$inlined")
+            NameGenerator("${type.internalName}$name$INLINE_CALL_TRANSFORMATION_SUFFIX")
         }
     }
 
@@ -162,7 +159,6 @@ class ClassCodegen private constructor(
         // Generating a method node may cause the addition of a field with an initializer if an inline function
         // call uses `assert` and the JVM assertions mode is enabled. To avoid concurrent modification errors,
         // there is a very specific generation order.
-        val smap = context.getSourceMapper(irClass)
         // 1. Any method other than `<clinit>` can add a field and a `<clinit>` statement:
         for (method in irClass.declarations.filterIsInstance<IrFunction>()) {
             if (method.name.asString() != "<clinit>" &&
@@ -218,7 +214,7 @@ class ClassCodegen private constructor(
         generateInnerAndOuterClasses()
 
         visitor.done(state.generateSmapCopyToAnnotation)
-        jvmSignatureClashDetector.reportErrors(classOrigin)
+        jvmSignatureClashDetector.reportErrors()
     }
 
     private fun shouldSkipCodeGenerationAccordingToGenerationFilter(): Boolean {
@@ -525,41 +521,6 @@ class ClassCodegen private constructor(
         while (!c.isTopLevelDeclaration && innerClasses.add(c)) {
             c = c.parentClassOrNull ?: break
         }
-    }
-
-    private val IrDeclaration.descriptorOrigin: JvmDeclarationOrigin
-        get() {
-            val psiElement = findPsiElementForDeclarationOrigin()
-            return when {
-                origin == IrDeclarationOrigin.FILE_CLASS ->
-                    JvmDeclarationOrigin(JvmDeclarationOriginKind.PACKAGE_PART, psiElement, toIrBasedDescriptor())
-                (this is IrSimpleFunction && isSuspend && isEffectivelyInlineOnly()) ||
-                        origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE ||
-                        origin == JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE_CAPTURES_CROSSINLINE ->
-                    JvmDeclarationOrigin(JvmDeclarationOriginKind.INLINE_VERSION_OF_SUSPEND_FUN, psiElement, toIrBasedDescriptor())
-                else -> OtherOrigin(psiElement, toIrBasedDescriptor())
-            }
-        }
-
-    private fun IrDeclaration.findPsiElementForDeclarationOrigin(): PsiElement? {
-        // For synthetic $annotations methods for properties, use the PSI for the property or the constructor parameter.
-        // It's used in KAPT stub generation to sort the properties correctly based on their source position (see KT-44130).
-        if (this is IrFunction && name.asString().endsWith("\$annotations")) {
-            val metadata = metadata as? DescriptorMetadataSource.Property
-            if (metadata != null) {
-                return metadata.descriptor.psiElement
-            }
-        }
-
-        val element = PsiSourceManager.findPsiElement(this)
-
-        // Offsets for accessors and field of delegated property in IR point to the 'by' keyword, so the closest PSI element is the
-        // KtPropertyDelegate (`by ...` expression). However, old JVM backend passed the PSI element of the property instead.
-        // This is important for example in case of KAPT stub generation in the "correct error types" mode, which tries to find the
-        // PSI element for each declaration with unresolved types and tries to heuristically "resolve" those unresolved types to
-        // generate them into the Java stub. In case of delegated property accessors, it should look for the property declaration,
-        // since the type can only be provided there, and not in the `by ...` expression.
-        return if (element is KtPropertyDelegate) element.parent else element
     }
 
     private fun storeSerializedIr(serializedIr: ByteArray) {

@@ -32,7 +32,7 @@ class KotlinSuperTypeListBuilder(
         override fun getParent() = this@KotlinSuperTypeListBuilder
 
         val kotlinOrigin by lazyPub {
-            element.qualifiedName?.let { this@KotlinSuperTypeListBuilder.myKotlinOrigin?.findEntry(it) }
+            element.nameFromSource?.let { this@KotlinSuperTypeListBuilder.myKotlinOrigin?.findEntry(it) }
         }
 
         override fun delete() {
@@ -81,3 +81,9 @@ class KotlinSuperTypeListBuilder(
         return null
     }
 }
+
+private val PsiQualifiedReference.nameFromSource: String?
+    get() {
+        val name = referenceName ?: return null
+        return (qualifier as? PsiQualifiedReference)?.let { "${it.nameFromSource}.$name" } ?: name
+    }

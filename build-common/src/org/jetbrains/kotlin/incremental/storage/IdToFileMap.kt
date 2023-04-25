@@ -24,7 +24,7 @@ import java.io.File
 internal class IdToFileMap(
     file: File,
     icContext: IncrementalCompilationContext,
-) : BasicMap<Int, String>(file, ExternalIntegerKeyDescriptor(), EnumeratorStringDescriptor.INSTANCE, icContext) {
+) : NonAppendableBasicMap<Int, String>(file, ExternalIntegerKeyDescriptor(), EnumeratorStringDescriptor.INSTANCE, icContext) {
     override fun dumpKey(key: Int): String = key.toString()
 
     override fun dumpValue(value: String): String = value

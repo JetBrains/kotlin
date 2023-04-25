@@ -7,7 +7,7 @@ open class A protected constructor(x: Int) {
 }
 
 fun foo() {
-    <!NONE_APPLICABLE!>A<!>()
+    <!INVISIBLE_REFERENCE!>A<!>()
     A(1.0)
 }
 

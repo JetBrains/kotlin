@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 
-class DelegatedLocalPropertyLValue(
+internal class DelegatedLocalPropertyLValue(
     private val context: IrGeneratorContext,
     val startOffset: Int,
     val endOffset: Int,

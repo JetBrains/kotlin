@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.build.report.debug
 import org.jetbrains.kotlin.build.report.metrics.BuildTime
 import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollector
+import org.jetbrains.kotlin.incremental.storage.InMemoryStorageWrapper
 import org.jetbrains.kotlin.konan.file.use
 import java.io.Closeable
 import java.io.File
@@ -35,6 +36,18 @@ interface CompilationTransaction : Closeable {
      * Marks the transaction as successful, so it should not revert changes if it is able to perform revert.
      */
     fun markAsSuccessful()
+
+    /**
+     * A closeable object (caches manager) that is had to be closed on the transaction close
+     */
+    var cachesManager: Closeable?
+
+    /**
+     * A throwable that was thrown during the transaction execution
+     */
+    var executionThrowable: Throwable?
+
+    fun registerInMemoryStorageWrapper(inMemoryStorageWrapper: InMemoryStorageWrapper<*, *>)
 }
 
 fun CompilationTransaction.write(file: Path, writeAction: () -> Unit) {
@@ -55,10 +68,76 @@ fun CompilationTransaction.writeBytes(file: Path, array: ByteArray) {
     }
 }
 
+inline fun <R> CompilationTransaction.runWithin(
+    exceptionTransformer: (Throwable) -> R = { throw it },
+    body: (CompilationTransaction) -> R
+): R {
+    return runCatching {
+        use {
+            try {
+                body(this)
+            } catch (t: Throwable) {
+                executionThrowable = t
+                throw t
+            }
+        }
+    }.recover { exceptionTransformer(it) }.getOrThrow() // some exceptions may be transformed into results
+}
+
+abstract class BaseCompilationTransaction : CompilationTransaction {
+    private val inMemoryStorageWrappers = hashSetOf<InMemoryStorageWrapper<*, *>>()
+
+    protected var isSuccessful: Boolean = false
+
+    override fun markAsSuccessful() {
+        isSuccessful = true
+    }
+
+    override fun registerInMemoryStorageWrapper(inMemoryStorageWrapper: InMemoryStorageWrapper<*, *>) {
+        inMemoryStorageWrappers.add(inMemoryStorageWrapper)
+    }
+
+    override var cachesManager: Closeable? = null
+        set(value) {
+            check(field == null) {
+                "cachesManager is already set"
+            }
+            field = value
+        }
+
+    override var executionThrowable: Throwable? = null
+        set(value) {
+            check(field == null) {
+                "executionThrowable is already set"
+            }
+            field = value
+        }
+
+    protected fun closeCachesManager() = runCatching {
+        if (!isSuccessful) {
+            for (wrapper in inMemoryStorageWrappers) {
+                wrapper.resetInMemoryChanges()
+            }
+        }
+        cachesManager?.close()
+    }.exceptionOrNull()?.run {
+        isSuccessful = false
+        val exception = CachesManagerCloseException(this)
+        executionThrowable?.addSuppressed(exception)
+        executionThrowable ?: exception
+    }
+
+    protected fun checkForExecutionException() {
+        if (executionThrowable != null) {
+            isSuccessful = false
+        }
+    }
+}
+
 /**
- * A dummy implementation of compilation transaction
+ * A non-recoverable implementation of compilation transaction. Changes reverting on failure should be performed externally if needed.
  */
-class DummyCompilationTransaction : CompilationTransaction {
+class NonRecoverableCompilationTransaction : CompilationTransaction, BaseCompilationTransaction() {
     override fun registerAddedOrChangedFile(outputFile: Path) {
         // do nothing
     }
@@ -69,14 +148,12 @@ class DummyCompilationTransaction : CompilationTransaction {
         }
     }
 
-    override fun markAsSuccessful() {
-        // do nothing
-    }
-
     override fun close() {
-        // do nothing
+        checkForExecutionException()
+        closeCachesManager()?.let {
+            throw it
+        }
     }
-
 }
 
 /**
@@ -88,10 +165,9 @@ class DummyCompilationTransaction : CompilationTransaction {
 class RecoverableCompilationTransaction(
     private val reporter: BuildReporter,
     private val stashDir: Path,
-) : CompilationTransaction {
+) : CompilationTransaction, BaseCompilationTransaction() {
     private val fileRelocationRegistry = hashMapOf<Path, Path?>()
     private var filesCounter = 0
-    private var successful = false
 
     /**
      * Moves the original [outputFile] before change to the [stashDir].
@@ -169,16 +245,24 @@ class RecoverableCompilationTransaction(
         }
     }
 
-    override fun markAsSuccessful() {
-        successful = true
-    }
-
     override fun close() {
-        if (successful) {
-            cleanupStash()
-        } else {
-            revertChanges()
-            cleanupStash()
+        checkForExecutionException()
+        val mainException = closeCachesManager()
+        val exceptionToThrow = runCatching {
+            if (isSuccessful) {
+                cleanupStash()
+            } else {
+                revertChanges()
+                cleanupStash()
+            }
+        }.exceptionOrNull().run {
+            if (this != null) {
+                mainException?.addSuppressed(this)
+            }
+            mainException ?: this
+        }
+        if (exceptionToThrow != null) {
+            throw exceptionToThrow
         }
     }
 }

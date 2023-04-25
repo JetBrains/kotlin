@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.getField
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.getField]
  */
 abstract class IrGetField : IrFieldAccessExpression() {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =

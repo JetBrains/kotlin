@@ -15,10 +15,14 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 
-abstract class AbstractKonanIrMangler(private val withReturnType: Boolean) : IrBasedKotlinManglerImpl() {
+abstract class AbstractKonanIrMangler(
+        private val withReturnType: Boolean,
+        private val allowOutOfScopeTypeParameters: Boolean = false
+) : IrBasedKotlinManglerImpl() {
     override fun getExportChecker(compatibleMode: Boolean): IrExportCheckerVisitor = KonanIrExportChecker(compatibleMode)
 
-    override fun getMangleComputer(mode: MangleMode, compatibleMode: Boolean): IrMangleComputer = KonanIrManglerComputer(StringBuilder(256), mode, compatibleMode, withReturnType)
+    override fun getMangleComputer(mode: MangleMode, compatibleMode: Boolean): IrMangleComputer =
+            KonanIrManglerComputer(StringBuilder(256), mode, compatibleMode, withReturnType, allowOutOfScopeTypeParameters)
 
     override fun IrDeclaration.isPlatformSpecificExport(): Boolean {
         if (this is IrSimpleFunction) if (isFakeOverride) return false
@@ -51,8 +55,15 @@ abstract class AbstractKonanIrMangler(private val withReturnType: Boolean) : IrB
         override fun IrDeclaration.isPlatformSpecificExported(): Boolean = isPlatformSpecificExport()
     }
 
-    private class KonanIrManglerComputer(builder: StringBuilder, mode: MangleMode, compatibleMode: Boolean, private val withReturnType: Boolean) : IrMangleComputer(builder, mode, compatibleMode) {
-        override fun copy(newMode: MangleMode): IrMangleComputer = KonanIrManglerComputer(builder, newMode, compatibleMode, withReturnType)
+    private class KonanIrManglerComputer(
+            builder: StringBuilder,
+            mode: MangleMode,
+            compatibleMode: Boolean,
+            private val withReturnType: Boolean,
+            allowOutOfScopeTypeParameters: Boolean,
+    ) : IrMangleComputer(builder, mode, compatibleMode, allowOutOfScopeTypeParameters) {
+        override fun copy(newMode: MangleMode): IrMangleComputer =
+                KonanIrManglerComputer(builder, newMode, compatibleMode, withReturnType, allowOutOfScopeTypeParameters)
 
         override fun addReturnType(): Boolean = withReturnType
 

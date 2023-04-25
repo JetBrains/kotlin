@@ -9,7 +9,16 @@ import org.jetbrains.kotlin.test.TestCaseWithTmpdir
 import java.io.File
 
 abstract class AbstractKotlinpTest : TestCaseWithTmpdir() {
+    abstract fun useK2(): Boolean
+
     protected fun doTest(fileName: String) {
-        compileAndPrintAllFiles(File(fileName), testRootDisposable, tmpdir, compareWithTxt = true, readWriteAndCompare = true)
+        compileAndPrintAllFiles(
+            File(fileName),
+            testRootDisposable,
+            tmpdir,
+            compareWithTxt = true,
+            readWriteAndCompare = true,
+            useK2 = useK2()
+        )
     }
 }

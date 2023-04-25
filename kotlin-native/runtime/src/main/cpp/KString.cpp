@@ -339,11 +339,6 @@ KBoolean Kotlin_String_unsafeRangeEquals(KString thiz, KInt thizOffset, KString 
   ) == 0;
 }
 
-KBoolean Kotlin_Char_isIdentifierIgnorable(KChar ch) {
-  RuntimeAssert(false, "Kotlin_Char_isIdentifierIgnorable() is not implemented");
-  return false;
-}
-
 KBoolean Kotlin_Char_isISOControl(KChar ch) {
   return (ch <= 0x1F) || (ch >= 0x7F && ch <= 0x9F);
 }

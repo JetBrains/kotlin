@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.builder.buildOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.name.ClassId
@@ -27,7 +28,7 @@ class Context<T> {
     val currentClassId get() = ClassId(packageFqName, className, inLocalContext)
 
     val firFunctionTargets = mutableListOf<FirFunctionTarget>()
-    val calleeNamesForLambda = mutableListOf<Name>()
+    val calleeNamesForLambda = mutableListOf<Name?>()
 
     @PrivateForInline
     val _firLabels = mutableListOf<FirLabel>()
@@ -48,6 +49,7 @@ class Context<T> {
     var forcedElementSourceKind: KtSourceElementKind? = null
     val dispatchReceiverTypesStack = mutableListOf<ConeClassLikeType>()
     var containerIsExpect: Boolean = false
+    var containingFileSymbol: FirFileSymbol? = null
 
     fun pushFirTypeParameters(isInnerOrLocal: Boolean, parameters: List<FirTypeParameterRef>) {
         capturedTypeParameters.add(StatusFirTypeParameterSymbolList(isInnerOrLocal, parameters.map { it.symbol }))

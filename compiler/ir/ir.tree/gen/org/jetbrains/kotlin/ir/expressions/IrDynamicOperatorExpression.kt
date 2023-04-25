@@ -14,7 +14,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.dynamicOperatorExpression
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.dynamicOperatorExpression]
  */
 abstract class IrDynamicOperatorExpression : IrDynamicExpression() {
     abstract var operator: IrDynamicOperator

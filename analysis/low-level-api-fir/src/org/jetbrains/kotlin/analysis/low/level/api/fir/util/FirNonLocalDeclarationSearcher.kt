@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
 import org.jetbrains.kotlin.analysis.utils.errors.requireWithAttachmentBuilder
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.render
@@ -33,11 +30,17 @@ object FirElementFinder {
         val classIdPathSegment = classId.relativeClassName.pathSegments()
         var result: FirClassLikeDeclaration? = null
 
-        fun find(declarations: List<FirDeclaration>, classIdPathIndex: Int) {
+        fun find(declarations: Iterable<FirDeclaration>, classIdPathIndex: Int) {
             if (result != null) return
             val currentClassSegment = classIdPathSegment[classIdPathIndex]
 
             for (subDeclaration in declarations) {
+                if (subDeclaration is FirScript) {
+                    val scriptDeclarations = subDeclaration.statements.asSequence().filterIsInstance<FirDeclaration>()
+                    find(scriptDeclarations.asIterable(), classIdPathIndex)
+                    continue
+                }
+
                 if (subDeclaration is FirClassLikeDeclaration && currentClassSegment == subDeclaration.symbol.name) {
                     if (classIdPathIndex == classIdPathSegment.lastIndex) {
                         result = subDeclaration
@@ -76,23 +79,24 @@ object FirElementFinder {
                 }
             }
 
+            @OptIn(ResolveStateAccess::class)
             override fun visitRegularClass(regularClass: FirRegularClass) {
                 // Checking the rest super types that weren't resolved on the first OUTER_CLASS_ARGUMENTS_REQUIRED check in FirTypeResolver
-                val oldResolvePhase = regularClass.resolvePhase
+                val oldResolveState = regularClass.resolveState
                 val oldList = regularClass.superTypeRefs.toList()
 
                 try {
                     super.visitRegularClass(regularClass)
                 } catch (e: ConcurrentModificationException) {
-                    val newResolvePhase = regularClass.resolvePhase
+                    val newResolveState = regularClass.resolveState
                     val newList = regularClass.superTypeRefs.toList()
 
                     throw IllegalStateException(
                         """
                         CME while traversing superTypeRefs of declaration=${regularClass.render()}:
                         classId: ${regularClass.classId},
-                        oldPhase: $oldResolvePhase, oldList: ${oldList.joinToString(",", "[", "]") { it.render() }},
-                        newPhase: $newResolvePhase, newList: ${newList.joinToString(",", "[", "]") { it.render() }}
+                        oldState: $oldResolveState, oldList: ${oldList.joinToString(",", "[", "]") { it.render() }},
+                        newState: $newResolveState, newList: ${newList.joinToString(",", "[", "]") { it.render() }}
                         """.trimIndent(), e
                     )
                 }

@@ -1,4 +1,6 @@
 // !LANGUAGE: +InlineClasses
+// IGNORE_BACKEND_K2: JVM_IR
+// FIR status: KT-57216 K2: non-trivial enum declaration does not have ACC_FINAL in the bytecode
 
 inline class Z(val x: Int)
 

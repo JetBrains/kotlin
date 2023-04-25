@@ -34,7 +34,8 @@ import kotlin.io.path.createTempDirectory
 enum class JavaForeignAnnotationType(val path: String) {
     Annotations("third-party/annotations"),
     Java8Annotations("third-party/java8-annotations"),
-    Java9Annotations("third-party/java9-annotations");
+    Java9Annotations("third-party/java9-annotations"),
+    Jsr305("third-party/jsr305");
 }
 
 open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
@@ -87,14 +88,18 @@ open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : Envir
         val javaFilesDir = createTempDirectory().toFile().also {
             File(annotationPath.path).copyRecursively(it)
         }
+
+        val jsr305JarFile = createJsr305Jar(configuration)
+
         val foreignAnnotationsJar = MockLibraryUtil.compileJavaFilesLibraryToJar(
             javaFilesDir.path,
             "foreign-annotations",
             assertions = JUnit5Assertions,
-            extraClasspath = configuration.jvmClasspathRoots.map { it.absolutePath },
+            extraClasspath = configuration.jvmClasspathRoots.map { it.absolutePath } + jsr305JarFile.absolutePath,
             useJava11 = useJava11ToCompileIncludedJavaFiles
         )
         configuration.addModularRootIfNotNull(useJava11ToCompileIncludedJavaFiles, "java9_annotations", foreignAnnotationsJar)
+        testServices.register(AdditionalClassPathForJavaCompilationOrAnalysis::class, AdditionalClassPathForJavaCompilationOrAnalysis(listOf(jsr305JarFile.absolutePath)))
         configuration.addJvmClasspathRoot(testServices.standardLibrariesPathProvider.jvmAnnotationsForTests())
 
         if (JvmEnvironmentConfigurationDirectives.WITH_JSR305_TEST_ANNOTATIONS in registeredDirectives) {
@@ -106,10 +111,23 @@ open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : Envir
                     jsr305AnnotationsDir.path,
                     "jsr-305-test-annotations",
                     assertions = JUnit5Assertions,
-                    extraClasspath = configuration.jvmClasspathRoots.map { it.absolutePath }
+                    extraClasspath = configuration.jvmClasspathRoots.map { it.absolutePath } + jsr305JarFile.absolutePath
                 )
             )
             configuration.addJvmClasspathRoot(KtTestUtil.getAnnotationsJar())
         }
+    }
+
+    private fun createJsr305Jar(configuration: CompilerConfiguration): File {
+        val jsr305FilesDir = createTempDirectory().toFile().also {
+            File(JavaForeignAnnotationType.Jsr305.path).copyRecursively(it)
+        }
+
+        return MockLibraryUtil.compileJavaFilesLibraryToJar(
+            jsr305FilesDir.path,
+            "jsr305",
+            assertions = JUnit5Assertions,
+            extraClasspath = configuration.jvmClasspathRoots.map { it.absolutePath },
+        )
     }
 }

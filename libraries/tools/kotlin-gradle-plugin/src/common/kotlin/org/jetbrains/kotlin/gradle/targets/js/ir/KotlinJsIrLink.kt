@@ -16,13 +16,12 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptionsDefault
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.ContributeCompilerArgumentsContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.DEVELOPMENT
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode.PRODUCTION
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
@@ -94,8 +93,27 @@ abstract class KotlinJsIrLink @Inject constructor(
         }
     }
 
-    override fun processArgs(args: K2JSCompilerArguments) {
-        super.processArgs(args)
+    override fun contributeAdditionalCompilerArguments(context: ContributeCompilerArgumentsContext<K2JSCompilerArguments>) {
+        super.contributeAdditionalCompilerArguments(context)
+
+        context.primitive { args ->
+            // moduleName can start with @ for group of NPM packages
+            // but args parsing @ as start of argfile
+            // so WA we provide moduleName as one parameter
+            if (args.moduleName != null) {
+                args.freeArgs += "-ir-output-name=${args.moduleName}"
+                args.moduleName = null
+            }
+
+            args.includes = entryModule.get().asFile.canonicalPath
+
+            if (usingCacheDirectory()) {
+                args.cacheDirectory = rootCacheDirectory.get().asFile.also { it.mkdirs() }.absolutePath
+            }
+        }
+    }
+
+    override fun processArgsBeforeCompile(args: K2JSCompilerArguments) {
         KotlinBuildStatsService.applyIfInitialised {
             it.report(BooleanMetrics.JS_IR_INCREMENTAL, incrementalJsIr)
             val newArgs = K2JSCompilerArguments()
@@ -107,20 +125,6 @@ abstract class KotlinJsIrLink @Inject constructor(
                 else
                     KotlinJsIrOutputGranularity.WHOLE_PROGRAM.name.toLowerCaseAsciiOnly()
             )
-        }
-
-        // moduleName can start with @ for group of NPM packages
-        // but args parsing @ as start of argfile
-        // so WA we provide moduleName as one parameter
-        if (args.moduleName != null) {
-            args.freeArgs += "-ir-output-name=${args.moduleName}"
-            args.moduleName = null
-        }
-
-        args.includes = entryModule.get().asFile.canonicalPath
-
-        if (usingCacheDirectory()) {
-            args.cacheDirectory = rootCacheDirectory.get().asFile.also { it.mkdirs() }.absolutePath
         }
     }
 

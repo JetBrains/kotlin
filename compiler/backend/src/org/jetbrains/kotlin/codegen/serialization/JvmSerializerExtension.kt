@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.codegen.serialization.JvmSerializationBindings.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
 import org.jetbrains.kotlin.config.JvmDefaultMode
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.DescriptorsJvmAbiUtil
 import org.jetbrains.kotlin.load.java.lazy.types.RawTypeImpl
@@ -29,7 +28,6 @@ import org.jetbrains.kotlin.protobuf.GeneratedMessageLite
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isInterface
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
-import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyPrivateApi
 import org.jetbrains.kotlin.resolve.descriptorUtil.nonSourceAnnotations
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmDefaultNoCompatibilityAnnotation
 import org.jetbrains.kotlin.resolve.jvm.annotations.hasJvmDefaultWithCompatibilityAnnotation
@@ -64,22 +62,6 @@ class JvmSerializerExtension @JvmOverloads constructor(
     private val useOldManglingScheme = state.useOldManglingSchemeForFunctionsWithInlineClassesInSignatures
 
     override fun shouldUseTypeTable(): Boolean = useTypeTable
-    override fun shouldSerializeFunction(descriptor: FunctionDescriptor): Boolean {
-        return classBuilderMode != ClassBuilderMode.ABI || descriptor.visibility != DescriptorVisibilities.PRIVATE
-    }
-
-    override fun shouldSerializeProperty(descriptor: PropertyDescriptor): Boolean {
-        return classBuilderMode != ClassBuilderMode.ABI || descriptor.visibility != DescriptorVisibilities.PRIVATE
-    }
-
-    override fun shouldSerializeTypeAlias(descriptor: TypeAliasDescriptor): Boolean {
-        // TODO: do not serialize private type aliases in ABI class builder mode once KT-17229 is fixed.
-        return true
-    }
-
-    override fun shouldSerializeNestedClass(descriptor: ClassDescriptor): Boolean {
-        return classBuilderMode != ClassBuilderMode.ABI || !descriptor.isEffectivelyPrivateApi
-    }
 
     override fun serializeClass(
         descriptor: ClassDescriptor,

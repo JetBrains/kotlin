@@ -17,8 +17,10 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirErrorFunction
 import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.FirResolveState
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.asResolveState
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -32,6 +34,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
+import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
 
 /*
  * This file was generated automatically
@@ -40,8 +43,7 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 internal class FirErrorFunctionImpl(
     override val source: KtSourceElement?,
-    @Volatile
-    override var resolvePhase: FirResolvePhase,
+    resolvePhase: FirResolvePhase,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val moduleData: FirModuleData,
     override val origin: FirDeclarationOrigin,
@@ -54,15 +56,17 @@ internal class FirErrorFunctionImpl(
     override val diagnostic: ConeDiagnostic,
     override val symbol: FirErrorFunctionSymbol,
 ) : FirErrorFunction() {
+    override val typeParameters: List<FirTypeParameterRef> get() = emptyList()
     override var status: FirDeclarationStatus = FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
     override var returnTypeRef: FirTypeRef = FirErrorTypeRefImpl(null, null, diagnostic, false)
     override val receiverParameter: FirReceiverParameter? get() = null
     override var controlFlowGraphReference: FirControlFlowGraphReference? = null
     override val body: FirBlock? get() = null
-    override val typeParameters: List<FirTypeParameter> get() = emptyList()
 
     init {
         symbol.bind(this)
+        @OptIn(ResolveStateAccess::class)
+        resolveState = resolvePhase.asResolveState()
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
@@ -89,6 +93,10 @@ internal class FirErrorFunctionImpl(
         return this
     }
 
+    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirErrorFunctionImpl {
+        return this
+    }
+
     override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirErrorFunctionImpl {
         status = status.transform(transformer, data)
         return this
@@ -110,14 +118,6 @@ internal class FirErrorFunctionImpl(
 
     override fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirErrorFunctionImpl {
         return this
-    }
-
-    override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirErrorFunctionImpl {
-        return this
-    }
-
-    override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
-        resolvePhase = newResolvePhase
     }
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {

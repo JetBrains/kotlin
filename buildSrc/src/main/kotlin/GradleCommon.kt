@@ -13,7 +13,6 @@ import org.gradle.api.attributes.*
 import org.gradle.api.attributes.java.TargetJvmEnvironment
 import org.gradle.api.attributes.java.TargetJvmVersion
 import org.gradle.api.attributes.plugin.GradlePluginApiVersion
-import org.gradle.api.file.FileCollection
 import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.api.plugins.JavaLibraryPlugin
 import org.gradle.api.plugins.JavaPlugin
@@ -31,15 +30,13 @@ import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.dokka.gradle.GradleExternalDocumentationLinkBuilder
 import org.jetbrains.kotlin.gradle.dsl.KotlinSingleJavaTargetExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
 import java.net.URL
-import java.util.*
 
 /**
- * Gradle plugins common variants.
+ * Gradle's plugins common variants.
  *
  * [minimalSupportedGradleVersion] - minimal Gradle version that is supported in this variant
  * [gradleApiVersion] - Gradle API dependency version. Usually should be the same as [minimalSupportedGradleVersion].
@@ -55,7 +52,8 @@ enum class GradlePluginVariant(
     GRADLE_71("gradle71", "7.1", "7.1", "https://docs.gradle.org/7.1.1/javadoc/"),
     GRADLE_74("gradle74", "7.4", "7.4", "https://docs.gradle.org/7.4.2/javadoc/"),
     GRADLE_75("gradle75", "7.5", "7.5", "https://docs.gradle.org/7.5.1/javadoc/"),
-    GRADLE_76("gradle76", "7.6", "7.6", "https://docs.gradle.org/7.6/javadoc/"),
+    GRADLE_76("gradle76", "7.6", "7.6", "https://docs.gradle.org/7.6.1/javadoc/"),
+    GRADLE_80("gradle80", "8.0", "8.0", "https://docs.gradle.org/8.0.2/javadoc/"),
 }
 
 val commonSourceSetName = "common"
@@ -104,6 +102,8 @@ fun Project.excludeGradleCommonDependencies(sourceSet: SourceSet) {
     configurations[sourceSet.runtimeOnlyConfigurationName].excludeGradleCommonDependencies()
 }
 
+private val testPlugins = setOf("kotlin-gradle-plugin-api", "android-test-fixes", "gradle-warnings-detector", "kotlin-compiler-args-properties")
+
 /**
  * Common sources for all variants.
  * Should contain classes that are independent of Gradle API version or using minimal supported Gradle api.
@@ -122,11 +122,8 @@ fun Project.createGradleCommonSourceSet(): SourceSet {
 
         dependencies {
             compileOnlyConfigurationName(kotlinStdlib())
-            "commonGradleApiCompileOnly"("dev.gradleplugins:gradle-api:7.6")
-            if (this@createGradleCommonSourceSet.name != "kotlin-gradle-plugin-api" &&
-                this@createGradleCommonSourceSet.name != "android-test-fixes" &&
-                this@createGradleCommonSourceSet.name != "gradle-warnings-detector"
-            ) {
+            "commonGradleApiCompileOnly"("dev.gradleplugins:gradle-api:8.0")
+            if (this@createGradleCommonSourceSet.name !in testPlugins) {
                 compileOnlyConfigurationName(project(":kotlin-gradle-plugin-api")) {
                     capabilities {
                         requireCapability("org.jetbrains.kotlin:kotlin-gradle-plugin-api-common")
@@ -251,6 +248,7 @@ fun Project.wireGradleVariantToCommonGradleVariant(
             from(wireSourceSet.output, commonSourceSet.output)
             setupPublicJar(archiveBaseName.get())
             addEmbeddedRuntime()
+            addEmbeddedRuntime(wireSourceSet.embeddedConfigurationName)
         } else if (name == wireSourceSet.sourcesJarTaskName) {
             from(wireSourceSet.allSource, commonSourceSet.allSource)
         }
@@ -276,10 +274,7 @@ fun Project.reconfigureMainSourcesSetForGradlePlugin(
             // Decoupling gradle-api artifact from current project Gradle version. Later would be useful for
             // gradle plugin variants
             "compileOnly"("dev.gradleplugins:gradle-api:${GradlePluginVariant.GRADLE_MIN.gradleApiVersion}")
-            if (this@reconfigureMainSourcesSetForGradlePlugin.name != "kotlin-gradle-plugin-api" &&
-                this@reconfigureMainSourcesSetForGradlePlugin.name != "android-test-fixes" &&
-                this@reconfigureMainSourcesSetForGradlePlugin.name != "gradle-warnings-detector"
-            ) {
+            if (this@reconfigureMainSourcesSetForGradlePlugin.name !in testPlugins) {
                 "api"(project(":kotlin-gradle-plugin-api"))
             }
         }
@@ -305,6 +300,15 @@ fun Project.reconfigureMainSourcesSetForGradlePlugin(
                         withJavadocJar()
                     }
                 }
+
+            configurations.create(sourceSets.getByName("main").embeddedConfigurationName) {
+                isCanBeConsumed = false
+                isCanBeResolved = true
+                attributes {
+                    attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+                    attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
+                }
+            }
         }
 
         // Workaround for https://youtrack.jetbrains.com/issue/KT-52987
@@ -361,7 +365,8 @@ fun Project.reconfigureMainSourcesSetForGradlePlugin(
                     if (attributes.keySet() != expectedAttributes) {
                         error("Wrong set of attributes:\n" +
                                       "  Expected: ${expectedAttributes.joinToString(", ")}\n" +
-                                      "  Actual: ${attributes.keySet().joinToString(", ") { "${it.name}=${attributes.getAttribute(it)}" }}")
+                                      "  Actual: ${attributes.keySet().joinToString(", ") { "${it.name}=${attributes.getAttribute(it)}" }}"
+                        )
                     }
 
                     javaComponent.addVariantsFromConfiguration(this) {
@@ -425,10 +430,20 @@ fun Project.createGradlePluginVariant(
 
             configurations.named(variantSourceSet.apiElementsConfigurationName, commonVariantAttributes())
             configurations.named(variantSourceSet.runtimeElementsConfigurationName, commonVariantAttributes())
+
+            configurations.create(variantSourceSet.embeddedConfigurationName) {
+                isCanBeConsumed = false
+                isCanBeResolved = true
+                attributes {
+                    attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+                    attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
+                }
+            }
         }
 
         tasks.named<Jar>(variantSourceSet.sourcesJarTaskName) {
             addEmbeddedSources()
+            addEmbeddedSources(variantSourceSet.embeddedConfigurationName)
         }
     }
 
@@ -441,7 +456,7 @@ fun Project.createGradlePluginVariant(
     }
 
     configurations.configureEach {
-        if (isCanBeConsumed && this@configureEach.name.startsWith(variantSourceSet.name)) {
+        if (this@configureEach.name.startsWith(variantSourceSet.name)) {
             attributes {
                 attribute(
                     GradlePluginApiVersion.GRADLE_PLUGIN_API_VERSION_ATTRIBUTE,
@@ -462,10 +477,7 @@ fun Project.createGradlePluginVariant(
     dependencies {
         variantSourceSet.compileOnlyConfigurationName(kotlinStdlib())
         variantSourceSet.compileOnlyConfigurationName("dev.gradleplugins:gradle-api:${variant.gradleApiVersion}")
-        if (this@createGradlePluginVariant.name != "kotlin-gradle-plugin-api" &&
-            this@createGradlePluginVariant.name != "android-test-fixes" &&
-            this@createGradlePluginVariant.name != "gradle-warnings-detector"
-        ) {
+        if (this@createGradlePluginVariant.name !in testPlugins) {
             variantSourceSet.apiConfigurationName(project(":kotlin-gradle-plugin-api")) {
                 capabilities {
                     requireCapability("org.jetbrains.kotlin:kotlin-gradle-plugin-api-${variant.sourceSetName}")
@@ -518,13 +530,17 @@ fun Project.publishShadowedJar(
             jarTask.flatMap { it.archiveClassifier }
         )
         addEmbeddedRuntime()
+        addEmbeddedRuntime(sourceSet.embeddedConfigurationName)
         from(sourceSet.output)
         from(commonSourceSet.output)
 
         // When Gradle traverses the inputs, reject the shaded compiler JAR,
         // which leads to the content of that JAR being excluded as well:
-        val compilerDummyJarConfiguration: FileCollection = project.configurations.getByName("compilerDummyJar")
-        exclude { it.file == compilerDummyJarConfiguration.singleFile }
+        exclude {
+            // Docstring says `file` never returns null, but it does
+            @Suppress("UNNECESSARY_SAFE_CALL", "SAFE_CALL_WILL_CHANGE_NULLABILITY")
+            it.file?.name?.startsWith("kotlin-compiler-embeddable") ?: false
+        }
     }
 
     // Removing artifact produced by Jar task
@@ -563,6 +579,7 @@ fun Project.addBomCheckTask() {
         val exceptions = listOf(
             project(":gradle:android-test-fixes").path,
             project(":gradle:gradle-warnings-detector").path,
+            project(":gradle:kotlin-compiler-args-properties").path,
             project(":kotlin-gradle-build-metrics").path,
             project(":kotlin-gradle-statistics").path,
         )
@@ -651,7 +668,7 @@ fun Project.configureDokkaPublication(
 
             project.dependencies {
                 // Version is required due to https://github.com/Kotlin/dokka/issues/2812
-                "dokkaPlugin"("org.jetbrains.dokka:versioning-plugin:1.8.0-dev-189")
+                "dokkaPlugin"("org.jetbrains.dokka:versioning-plugin:1.8.10")
             }
 
             tasks.register<DokkaTask>("dokkaKotlinlangDocumentation") {
@@ -696,7 +713,11 @@ fun Project.configureDokkaPublication(
 // Workaround for https://github.com/Kotlin/dokka/issues/2097
 // Gradle 7.6 javadoc does not have published 'package-list' file
 private fun GradleExternalDocumentationLinkBuilder.addWorkaroundForElementList(pluginVariant: GradlePluginVariant) {
-    if (pluginVariant == GradlePluginVariant.GRADLE_76) {
+    if (pluginVariant == GradlePluginVariant.GRADLE_76 ||
+        pluginVariant == GradlePluginVariant.GRADLE_80
+    ) {
         packageListUrl.set(URL("${pluginVariant.gradleApiJavadocUrl}element-list"))
     }
 }
+
+private val SourceSet.embeddedConfigurationName get() = "${name}Embedded"

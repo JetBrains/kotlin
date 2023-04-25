@@ -1,0 +1,26 @@
+package lib1
+
+abstract class AbstractClassWithFunctions {
+    fun foo(): Int = 42
+    open fun bar(): Int = 42
+    open fun baz(): Int = 42
+}
+
+interface InterfaceWithFunctions {
+    fun foo(): Int = 42
+    fun bar(): Int = 42
+}
+
+abstract class AbstractClassWithProperties {
+    val foo1: Int = 42
+    val foo2: Int get() = 42
+    open val bar1: Int = 42
+    open val bar2: Int get() = 42
+    open val baz1: Int = 42
+    open val baz2: Int get() = 42
+}
+
+interface InterfaceWithProperties {
+    val foo: Int get() = 42
+    val bar: Int get() = 42
+}

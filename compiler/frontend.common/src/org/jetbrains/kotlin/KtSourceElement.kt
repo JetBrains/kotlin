@@ -58,6 +58,10 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     // with a fake source which refers to containing class
     object ImplicitConstructor : KtFakeSourceElementKind()
 
+    // for constructor type parameters, because they refer to the same source
+    // as the class type parameters themselves
+    object ConstructorTypeParameter : KtFakeSourceElementKind()
+
     // for constructors which do not have delegated constructor call the fake one is generated
     // with a fake sources which refers to the original constructor
     object DelegatingConstructorCall : KtFakeSourceElementKind()
@@ -132,6 +136,9 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     // x++ -> x = x.inc()
     // x = x++ -> x = { val <unary> = x; x = <unary>.inc(); <unary> }
     object DesugaredIncrementOrDecrement : KtFakeSourceElementKind()
+
+    // In ++a[1], a.get(1) will be called twice. This kind is used for the second call reference.
+    object DesugaredPrefixSecondGetReference : KtFakeSourceElementKind()
 
     // ++x --> `inc` calleeReference
     object DesugaredPrefixNameReference : KtFakeSourceElementKind()

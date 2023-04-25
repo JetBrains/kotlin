@@ -22,13 +22,15 @@ import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.createFunctionType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnsupportedCallableReferenceTarget
 import org.jetbrains.kotlin.fir.resolve.inference.extractInputOutputTypesFromCallableReferenceExpectedType
+import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
+import org.jetbrains.kotlin.fir.resolve.scope
+import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
-import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.runTransaction
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.expressions.CoercionStrategy
@@ -62,7 +64,8 @@ internal object CheckCallableReferenceExpectedType : CheckerStage() {
         candidate.outerConstraintBuilderEffect = fun ConstraintSystemOperation.() {
             addOtherSystem(candidate.system.currentStorage())
 
-            val position = SimpleConstraintSystemConstraintPosition //TODO
+            // Callable references are either arguments to a call or are wrapped in a synthetic call for resolution.
+            val position = ConeArgumentConstraintPosition(callInfo.callSite)
 
             if (expectedType != null && !resultingType.contains {
                     it is ConeTypeVariableType && it.lookupTag !in outerCsBuilder.currentStorage().allTypeVariables
@@ -173,8 +176,9 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
     if (expectedArgumentsCount < 0) return null
 
     val fakeArguments = createFakeArgumentsForReference(function, expectedArgumentsCount, inputTypes, unboundReceiverCount)
-    // TODO: Use correct originScope
-    val argumentMapping = mapArguments(fakeArguments, function, originScope = null, callSiteIsOperatorCall = false)
+    val originScope = function.dispatchReceiverType
+        ?.scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing, requiredPhase = FirResolvePhase.STATUS)
+    val argumentMapping = mapArguments(fakeArguments, function, originScope = originScope, callSiteIsOperatorCall = false)
     if (argumentMapping.diagnostics.any { !it.applicability.isSuccess }) return null
 
     /**
@@ -440,7 +444,7 @@ private fun createKPropertyType(
 private fun FirVariable.canBeMutableReference(candidate: Candidate): Boolean {
     if (!isVar) return false
     if (this is FirField) return true
-    val original = this.unwrapFakeOverrides()
+    val original = this.unwrapFakeOverridesOrDelegated()
     return original.source?.kind == KtFakeSourceElementKind.PropertyFromParameter ||
             (original.setter is FirMemberDeclaration &&
                     candidate.callInfo.session.visibilityChecker.isVisible(original.setter!!, candidate))

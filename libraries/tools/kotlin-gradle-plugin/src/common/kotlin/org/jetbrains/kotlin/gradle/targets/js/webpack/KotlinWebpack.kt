@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporterImpl
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
 import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
@@ -34,7 +33,7 @@ import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWebpackRulesContainer
 import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl.Companion.webpackRulesContainer
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig.Mode
@@ -55,9 +54,8 @@ constructor(
     private val objects: ObjectFactory
 ) : DefaultTask(), RequiresNpmDependencies, WebpackRulesDsl, UsesBuildMetricsService {
     @Transient
-    private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
+    private val nodeJs = project.rootProject.kotlinNodeJsExtension
     private val versions = nodeJs.versions
-    private val resolutionManager = nodeJs.npmResolutionManager
     private val rootPackageDir by lazy { nodeJs.rootPackageDir }
 
     private val npmProject = compilation.npmProject
@@ -148,6 +146,7 @@ constructor(
         }
 
     @get:OutputDirectory
+    @get:Optional
     abstract val outputDirectory: DirectoryProperty
 
     @get:Internal
@@ -196,14 +195,15 @@ constructor(
     var devServer: KotlinWebpackConfig.DevServer? = null
 
     @Input
+    @Optional
+    var watchOptions: KotlinWebpackConfig.WatchOptions? = null
+
+    @Input
     var devtool: String = WebpackDevtool.EVAL_SOURCE_MAP
 
     @Incubating
     @Internal
     var generateConfigOnly: Boolean = false
-
-    @Input
-    val webpackMajorVersion = PropertiesProvider(project).webpackMajorVersion
 
     fun webpackConfigApplier(body: Action<KotlinWebpackConfig>) {
         webpackConfigAppliers.add(body)
@@ -226,7 +226,7 @@ constructor(
         mode = mode,
         entry = if (forNpmDependencies) null else entry.get().asFile,
         output = output,
-        outputPath = if (forNpmDependencies) null else outputDirectory.get().asFile,
+        outputPath = if (forNpmDependencies) null else outputDirectory.getOrNull()?.asFile,
         outputFileName = mainOutputFileName.get(),
         configDirectory = configDirectory,
         rules = rules,
@@ -234,7 +234,6 @@ constructor(
         devtool = devtool,
         sourceMaps = sourceMaps,
         resolveFromModulesFirst = resolveFromModulesFirst,
-        webpackMajorVersion = webpackMajorVersion
     )
 
     private fun createRunner(): KotlinWebpackRunner {
@@ -262,9 +261,6 @@ constructor(
         )
     }
 
-    override val nodeModulesRequired: Boolean
-        @Internal get() = true
-
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
         @Internal get() = createWebpackConfig(true).getRequiredDependencies(versions)
 
@@ -272,8 +268,6 @@ constructor(
 
     @TaskAction
     fun doExecute() {
-        resolutionManager.checkRequiredDependencies(task = this)
-
         val runner = createRunner()
 
         if (generateConfigOnly) {

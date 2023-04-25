@@ -22,26 +22,17 @@ class JvmAbiCommandLineProcessor : CommandLineProcessor {
                 "Output path for generated files. This can be either a directory or a jar file.",
                 true
             )
-
-        val LEGACY_ABI_GEN_OPTION: CliOption =
-            CliOption(
-                "useLegacyAbiGen",
-                "true|false",
-                "Use the legacy two pass implementation of jvm-abi-gen.",
-                false
-            )
     }
 
     override val pluginId: String
         get() = COMPILER_PLUGIN_ID
 
     override val pluginOptions: Collection<CliOption>
-        get() = listOf(OUTPUT_PATH_OPTION, LEGACY_ABI_GEN_OPTION)
+        get() = listOf(OUTPUT_PATH_OPTION)
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) {
         when (option) {
             OUTPUT_PATH_OPTION -> configuration.put(JvmAbiConfigurationKeys.OUTPUT_PATH, value)
-            LEGACY_ABI_GEN_OPTION -> configuration.put(JvmAbiConfigurationKeys.LEGACY_ABI_GEN, value == "true")
             else -> throw CliOptionProcessingException("Unknown option: ${option.optionName}")
         }
     }

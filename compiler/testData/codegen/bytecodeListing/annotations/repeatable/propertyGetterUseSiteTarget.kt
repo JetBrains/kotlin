@@ -4,6 +4,9 @@
 // FULL_JDK
 // JVM_TARGET: 1.8
 
+// IGNORE_BACKEND_K2: JVM_IR
+// FIR status: KT-57219 K2: incorrect relative order of normal and use-site-targeted annotations on property getter in the resulting bytecode
+
 @Repeatable
 annotation class A(val v: String)
 
@@ -19,5 +22,4 @@ val ef: Int
 
 @get:A("g")
 val ghi: Int
-    // "i" is not detected because of KT-48141.
-    @A("h") @get:A("i") get() = 0
+    @A("h") get() = 0

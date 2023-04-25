@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveSessionService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.FirSealedClassInheritorsProcessorFactory
-import org.jetbrains.kotlin.analysis.low.level.api.fir.createFirResolveSessionForNoCaching
 import org.jetbrains.kotlin.analysis.low.level.api.fir.services.LLFirSealedClassInheritorsProcessorFactoryForTests
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
@@ -51,7 +51,7 @@ class SealedClassesInheritorsCaclulatorPreAnalysisHandler(
             val ktModuleProvider = project.getService(ProjectStructureProvider::class.java)
             val ktModule = ktFiles.map(ktModuleProvider::getKtModuleForKtElement).distinct().single()
 
-            val tmpFirResolveSession = createFirResolveSessionForNoCaching(ktModule, project)
+            val tmpFirResolveSession = LLFirResolveSessionService.getInstance(project).getFirResolveSessionNoCaching(ktModule)
             val firFiles = ktFiles.map { it.getOrBuildFirFile(tmpFirResolveSession) }
             val sealedInheritors = collectSealedClassInheritors(firFiles, tmpFirResolveSession)
             val provider =

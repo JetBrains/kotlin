@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.extensions.internal.CandidateInterceptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.ImplicitIntegerCoercion.isEnabledFor
 import org.jetbrains.kotlin.resolve.calls.ArgumentTypeResolver
 import org.jetbrains.kotlin.resolve.calls.CallTransformer
 import org.jetbrains.kotlin.resolve.calls.DiagnosticReporterByTrackingStrategy
@@ -370,7 +371,7 @@ class KotlinToResolvedCallTransformer(
 
         var reportErrorDuringTypeCheck = reportErrorForTypeMismatch
 
-        if (parameter != null && ImplicitIntegerCoercion.isEnabledForParameter(parameter)) {
+        if (parameter != null && isEnabledFor(parameter, context.languageVersionSettings)) {
             val argumentCompileTimeValue = context.trace[BindingContext.COMPILE_TIME_VALUE, deparenthesized]
             if (argumentCompileTimeValue != null && argumentCompileTimeValue.parameters.isConvertableConstVal) {
                 val generalNumberType = createTypeForConvertableConstant(argumentCompileTimeValue)

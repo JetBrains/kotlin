@@ -103,6 +103,13 @@ static mem_region_t regions[MI_REGION_MAX];
 // Allocated regions
 static _Atomic(uintptr_t) regions_count; // = 0;
 
+#if KONAN_MI_MALLOC
+static _Atomic(size_t) allocated_size = 0;
+
+size_t mi_allocated_size(void) mi_attr_noexcept {
+    return mi_atomic_load_relaxed(&allocated_size);
+}
+#endif
 
 /* ----------------------------------------------------------------------------
 Utility functions
@@ -379,6 +386,9 @@ void* _mi_mem_alloc_aligned(size_t size, size_t alignment, bool* commit, bool* l
 #if (MI_DEBUG>=2)
     if (*commit) { ((uint8_t*)p)[0] = 0; } // ensure the memory is committed
 #endif
+#if KONAN_MI_MALLOC
+    mi_atomic_add_relaxed(&allocated_size, size);
+#endif
   }
   return p;
 }
@@ -443,6 +453,9 @@ void _mi_mem_free(void* p, size_t size, size_t id, bool full_commit, bool any_re
     bool all_unclaimed = mi_bitmap_unclaim(&region->in_use, 1, blocks, bit_idx);
     mi_assert_internal(all_unclaimed); UNUSED(all_unclaimed);
   }
+#if KONAN_MI_MALLOC
+  mi_atomic_sub_relaxed(&allocated_size, size);
+#endif
 }
 
 

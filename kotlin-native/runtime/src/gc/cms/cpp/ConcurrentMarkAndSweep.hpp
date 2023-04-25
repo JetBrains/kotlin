@@ -108,7 +108,11 @@ public:
 
     using Allocator = ThreadData::Allocator;
 
+#ifdef CUSTOM_ALLOCATOR
+    explicit ConcurrentMarkAndSweep(GCScheduler& scheduler) noexcept;
+#else
     ConcurrentMarkAndSweep(mm::ObjectFactory<ConcurrentMarkAndSweep>& objectFactory, GCScheduler& scheduler) noexcept;
+#endif
     ~ConcurrentMarkAndSweep();
 
     void StartFinalizerThreadIfNeeded() noexcept;

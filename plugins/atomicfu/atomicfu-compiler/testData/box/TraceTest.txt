@@ -5,7 +5,6 @@ final enum class TraceTest$Status {
     private synthetic final static field $VALUES: TraceTest$Status[]
     public final enum static field END: TraceTest$Status
     public final enum static field START: TraceTest$Status
-    private synthetic final static method $entries(): TraceTest$Status[]
     private synthetic final static method $values(): TraceTest$Status[]
     static method <clinit>(): void
     private method <init>(p0: java.lang.String, p1: int): void

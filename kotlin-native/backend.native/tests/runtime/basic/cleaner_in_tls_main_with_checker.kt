@@ -7,7 +7,8 @@
 import kotlin.test.*
 
 import kotlin.native.concurrent.*
-import kotlin.native.internal.*
+import kotlin.native.ref.Cleaner
+import kotlin.native.ref.createCleaner
 import kotlin.native.Platform
 
 @ThreadLocal

@@ -12,6 +12,8 @@ import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.model.ObjectFactory
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
+import org.jetbrains.kotlin.gradle.plugin.internal.ProjectIsolationStartParameterAccessor
+import org.jetbrains.kotlin.gradle.plugin.internal.ProjectIsolationStartParameterAccessorG76
 import javax.inject.Inject
 
 private const val PLUGIN_VARIANT_NAME = "gradle76"
@@ -137,7 +139,16 @@ open class KotlinPlatformCommonPlugin : KotlinPlatformPluginBase("common") {
     }
 }
 
-@Suppress("UnusedReceiverParameter")
-private fun Project.registerVariantImplementations() {
+open class KotlinApiPlugin : KotlinBaseApiPlugin() {
 
+    override fun apply(project: Project) {
+        project.registerVariantImplementations()
+        super.apply(project)
+    }
+}
+
+private fun Project.registerVariantImplementations() {
+    val factories = VariantImplementationFactoriesConfigurator.get(gradle)
+    factories[ProjectIsolationStartParameterAccessor.Factory::class] =
+        ProjectIsolationStartParameterAccessorG76.Factory()
 }

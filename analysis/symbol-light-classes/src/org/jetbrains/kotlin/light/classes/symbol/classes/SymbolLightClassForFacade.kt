@@ -102,7 +102,7 @@ internal class SymbolLightClassForFacade(
         }
     }
 
-    private val multiFileClass: Boolean get() = files.size > 1 || firstFileInFacade.isJvmMultifileClassFile
+    override val multiFileClass: Boolean get() = files.size > 1 || firstFileInFacade.isJvmMultifileClassFile
 
     context(KtAnalysisSession)
     private fun loadFieldsFromFile(
@@ -116,18 +116,10 @@ internal class SymbolLightClassForFacade(
             // If this facade represents multiple files, only `const` properties need to be generated.
             if (multiFileClass && !propertySymbol.isConst) continue
 
-            val forceStaticAndPropertyVisibility = propertySymbol.isConst ||
-                    propertySymbol.hasJvmFieldAnnotation() ||
-                    propertySymbol.isLateInit &&
-                    propertySymbol.getter.isNullOrPublic() &&
-                    propertySymbol.setter.isNullOrPublic()
-
             createField(
                 propertySymbol,
                 nameGenerator,
-                isTopLevel = true,
-                forceStatic = forceStaticAndPropertyVisibility,
-                takePropertyVisibility = forceStaticAndPropertyVisibility,
+                isStatic = true,
                 result,
             )
         }
@@ -152,7 +144,7 @@ internal class SymbolLightClassForFacade(
 
     private val packageClsFile = FakeFileForLightClass(
         firstFileInFacade,
-        lightClass = { this },
+        lightClass = this,
         packageFqName = facadeClassFqName.parent()
     )
 

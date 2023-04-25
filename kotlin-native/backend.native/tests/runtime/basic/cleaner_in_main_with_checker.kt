@@ -4,7 +4,8 @@
  */
 @file:OptIn(ExperimentalStdlibApi::class)
 
-import kotlin.native.internal.*
+import kotlin.native.ref.Cleaner
+import kotlin.native.ref.createCleaner
 import kotlin.native.Platform
 
 fun main() {

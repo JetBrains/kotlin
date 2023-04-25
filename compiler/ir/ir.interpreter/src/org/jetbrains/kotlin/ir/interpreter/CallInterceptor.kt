@@ -19,10 +19,7 @@ import org.jetbrains.kotlin.ir.interpreter.intrinsics.IntrinsicEvaluator
 import org.jetbrains.kotlin.ir.interpreter.proxy.wrap
 import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
 import org.jetbrains.kotlin.ir.interpreter.state.*
-import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classOrNull
-import org.jetbrains.kotlin.ir.types.isArray
-import org.jetbrains.kotlin.ir.types.isUnsignedType
+import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.name.FqName
@@ -91,7 +88,9 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
                 verify(handleIntrinsicMethods(irConstructor)) { "Unsupported intrinsic constructor: ${irConstructor.render()}" }
             }
             irClass.defaultType.isUnsignedType() -> {
-                val propertySymbol = irClass.declarations.single { it is IrProperty }.symbol
+                // Check for type is a hack needed for Native;
+                // in UInt, for example, we may have (after lowerings, I guess) additional property "$companion".
+                val propertySymbol = irClass.declarations.single { it is IrProperty && it.getter?.returnType?.isPrimitiveType() == true }.symbol
                 callStack.pushState(receiver.apply { this.setField(propertySymbol, args.single()) })
             }
             else -> defaultAction()
@@ -152,13 +151,25 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
         }
 
         val receiverType = irFunction.dispatchReceiverParameter?.type ?: irFunction.extensionReceiverParameter?.type
-        val argsType = listOfNotNull(receiverType) + irFunction.valueParameters.map { it.type }
+        val argsType = (listOfNotNull(receiverType) + irFunction.valueParameters.map { it.type }).map {
+            // TODO: for consistency with current K/JS implementation Float constant should be treated as a Double (KT-35422)
+            if (environment.configuration.treatFloatInSpecialWay && it.makeNotNull().isFloat()) {
+                if (it.isNullable()) irBuiltIns.doubleType.makeNullable() else irBuiltIns.doubleType
+            } else {
+                it
+            }
+        }
         val argsValues = args.wrap(this, irFunction)
 
         // TODO replace unary, binary, ternary functions with vararg
         withExceptionHandler(environment) {
             val result = when (argsType.size) {
-                1 -> interpretUnaryFunction(methodName, argsType[0].getOnlyName(), argsValues[0])
+                1 -> when {
+                    methodName == "toString" && environment.configuration.treatFloatInSpecialWay && (argsValues[0] is Double || argsValues[0] is Float) -> {
+                        argsValues[0].specialToStringForJs()
+                    }
+                    else -> interpretUnaryFunction(methodName, argsType[0].getOnlyName(), argsValues[0])
+                }
                 2 -> when (methodName) {
                     "rangeTo" -> return calculateRangeTo(irFunction.returnType, args)
                     else -> interpretBinaryFunction(

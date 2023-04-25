@@ -66,8 +66,11 @@ dependencies {
      *   which depend on current one
      */
     testApi(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
+    testApi(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
     testApi(commonDependency("one.util:streamex"))
-    testApi(commonDependency("net.java.dev.jna:jna"))
+    testApi(commonDependency("org.codehaus.woodstox:stax2-api"))
+    testApi(commonDependency("com.fasterxml:aalto-xml"))
+
     testApi(jpsModel()) { isTransitive = false }
     testApi(jpsModelImpl()) { isTransitive = false }
     testApi(intellijJavaRt())

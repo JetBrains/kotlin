@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.name.Name
 
 fun FirVariable.toQualifiedAccess(
@@ -51,9 +52,7 @@ fun generateTemporaryVariable(
         this.source = source
         this.moduleData = moduleData
         origin = FirDeclarationOrigin.Source
-        returnTypeRef = typeRef ?: buildImplicitTypeRef {
-            this.source = source
-        }
+        returnTypeRef = typeRef ?: FirImplicitTypeRefImplWithoutSource
         this.name = name
         this.initializer = initializer
         symbol = FirPropertySymbol(name)

@@ -9,34 +9,39 @@ class JsImport(
     val module: String,
     val target: Target,
 ) : SourceInfoAwareJsNode(), JsStatement {
-    constructor(module: String, elements: MutableList<Element> = mutableListOf()) : this(module, Target.Elements(elements))
+    constructor(module: String, vararg elements: Element) : this(module, Target.Elements(elements.toMutableList()))
 
     val elements: MutableList<Element>
         get() = (target as Target.Elements).elements
 
     sealed class Target {
         class Elements(val elements: MutableList<Element>) : Target()
-        class Default(val name: JsName) : Target() {
-            constructor(name: String) : this(JsName(name, false))
+        class Default(val name: JsNameRef) : Target() {
+            constructor(name: String) : this(JsNameRef(name))
         }
 
-        class All(val alias: JsName) : Target() {
-            constructor(alias: String) : this(JsName(alias, false))
+        class All(val alias: JsNameRef) : Target() {
+            constructor(alias: String) : this(JsNameRef(alias))
         }
     }
 
     class Element(
         val name: JsName,
-        val alias: JsName?
-    ) {
-        constructor(name: String, alias: String?) : this(JsName(name, false), alias?.let { JsName(it, false) })
-    }
+        val alias: JsNameRef?
+    )
 
     override fun accept(visitor: JsVisitor) {
         visitor.visitImport(this)
     }
 
     override fun acceptChildren(visitor: JsVisitor) {
+        when (target) {
+            is Target.All -> visitor.accept(target.alias)
+            is Target.Default -> visitor.accept(target.name)
+            is Target.Elements -> target.elements.forEach {
+                it.alias?.let(visitor::accept)
+            }
+        }
     }
 
     override fun deepCopy(): JsStatement =

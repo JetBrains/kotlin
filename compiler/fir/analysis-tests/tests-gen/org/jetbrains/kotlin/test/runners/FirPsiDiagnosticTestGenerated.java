@@ -1622,6 +1622,12 @@ public class FirPsiDiagnosticTestGenerated extends AbstractFirPsiDiagnosticTest 
             }
 
             @Test
+            @TestMetadata("callOnThisInDelegateExpression.kt")
+            public void testCallOnThisInDelegateExpression() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/delegates/callOnThisInDelegateExpression.kt");
+            }
+
+            @Test
             @TestMetadata("delegateInference.kt")
             public void testDelegateInference() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/delegates/delegateInference.kt");
@@ -3527,6 +3533,12 @@ public class FirPsiDiagnosticTestGenerated extends AbstractFirPsiDiagnosticTest 
             @TestMetadata("implicitInLocalClasses.kt")
             public void testImplicitInLocalClasses() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/localClasses/implicitInLocalClasses.kt");
+            }
+
+            @Test
+            @TestMetadata("lambdaWithAnonymousObject.kt")
+            public void testLambdaWithAnonymousObject() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/localClasses/lambdaWithAnonymousObject.kt");
             }
 
             @Test
@@ -6292,6 +6304,12 @@ public class FirPsiDiagnosticTestGenerated extends AbstractFirPsiDiagnosticTest 
             }
 
             @Test
+            @TestMetadata("lambdaForKfunction.kt")
+            public void testLambdaForKfunction() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/lambdaForKfunction.kt");
+            }
+
+            @Test
             @TestMetadata("ParentOfType.kt")
             public void testParentOfType() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/intellij/ParentOfType.kt");
@@ -6691,6 +6709,12 @@ public class FirPsiDiagnosticTestGenerated extends AbstractFirPsiDiagnosticTest 
             @TestMetadata("capturedTypeInEquality.kt")
             public void testCapturedTypeInEquality() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/capturedTypeInEquality.kt");
+            }
+
+            @Test
+            @TestMetadata("classCastWithRawKotlinType.kt")
+            public void testClassCastWithRawKotlinType() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/problems/classCastWithRawKotlinType.kt");
             }
 
             @Test

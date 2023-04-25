@@ -25,13 +25,13 @@ FILE fqName:<root> fileName:/arrayAccessCompositeOperators.kt
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:i type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.MyContainer declared in <root>.MyContainer.<set-i>' type=<root>.MyContainer origin=null
             value: GET_VAR '<set-?>: kotlin.Int declared in <root>.MyContainer.<set-i>' type=kotlin.Int origin=null
-    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.MyContainer) returnType:kotlin.Int [operator]
+    FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.MyContainer) returnType:kotlin.Int [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.MyContainer
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Int [operator] declared in <root>.MyContainer'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:i type:kotlin.Int visibility:private' type=kotlin.Int origin=null
             receiver: GET_VAR '<this>: <root>.MyContainer declared in <root>.MyContainer.component1' type=<root>.MyContainer origin=null
-    FUN name:copy visibility:public modality:FINAL <> ($this:<root>.MyContainer, i:kotlin.Int) returnType:<root>.MyContainer
+    FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:<root>.MyContainer, i:kotlin.Int) returnType:<root>.MyContainer
       $this: VALUE_PARAMETER name:<this> type:<root>.MyContainer
       VALUE_PARAMETER name:i index:0 type:kotlin.Int
         EXPRESSION_BODY
@@ -91,8 +91,7 @@ FILE fqName:<root> fileName:/arrayAccessCompositeOperators.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.MyContainer'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="MyContainer("
-            CONST String type=kotlin.String value="i="
+            CONST String type=kotlin.String value="MyContainer(i="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:i type:kotlin.Int visibility:private' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.MyContainer declared in <root>.MyContainer.toString' type=<root>.MyContainer origin=null
             CONST String type=kotlin.String value=")"
@@ -111,17 +110,17 @@ FILE fqName:<root> fileName:/arrayAccessCompositeOperators.kt
       BLOCK_BODY
         SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:operationScore type:kotlin.Int visibility:private [static]' type=kotlin.Unit origin=null
           value: GET_VAR '<set-?>: kotlin.Int declared in <root>.<set-operationScore>' type=kotlin.Int origin=null
-  FUN name:get visibility:public modality:FINAL <> ($receiver:<root>.MyContainer, _context_receiver_0:kotlin.Int, index:kotlin.Int) returnType:kotlin.Int [operator]
+  FUN name:get visibility:public modality:FINAL <> ($receiver:<root>.MyContainer, $context_receiver_0:kotlin.Int, index:kotlin.Int) returnType:kotlin.Int [operator]
     contextReceiverParametersCount: 1
     $receiver: VALUE_PARAMETER name:<this> type:<root>.MyContainer
-    VALUE_PARAMETER name:_context_receiver_0 index:0 type:kotlin.Int
+    VALUE_PARAMETER name:$context_receiver_0 index:0 type:kotlin.Int
     VALUE_PARAMETER name:index index:1 type:kotlin.Int
     BLOCK_BODY
       CALL 'public final fun <set-operationScore> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
         <set-?>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
           $this: CALL 'public final fun <get-operationScore> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
-          other: GET_VAR '_context_receiver_0: kotlin.Int declared in <root>.get' type=kotlin.Int origin=null
-      RETURN type=kotlin.Nothing from='public final fun get (_context_receiver_0: kotlin.Int, index: kotlin.Int): kotlin.Int [operator] declared in <root>'
+          other: GET_VAR '$context_receiver_0: kotlin.Int declared in <root>.get' type=kotlin.Int origin=null
+      RETURN type=kotlin.Nothing from='public final fun get ($context_receiver_0: kotlin.Int, index: kotlin.Int): kotlin.Int [operator] declared in <root>'
         WHEN type=kotlin.Int origin=IF
           BRANCH
             if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
@@ -132,16 +131,16 @@ FILE fqName:<root> fileName:/arrayAccessCompositeOperators.kt
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Int type=kotlin.Int value=-1
-  FUN name:plusAssign visibility:public modality:FINAL <> ($receiver:<root>.MyContainer, _context_receiver_0:kotlin.Int, other:<root>.MyContainer) returnType:kotlin.Unit [operator]
+  FUN name:plusAssign visibility:public modality:FINAL <> ($receiver:<root>.MyContainer, $context_receiver_0:kotlin.Int, other:<root>.MyContainer) returnType:kotlin.Unit [operator]
     contextReceiverParametersCount: 1
     $receiver: VALUE_PARAMETER name:<this> type:<root>.MyContainer
-    VALUE_PARAMETER name:_context_receiver_0 index:0 type:kotlin.Int
+    VALUE_PARAMETER name:$context_receiver_0 index:0 type:kotlin.Int
     VALUE_PARAMETER name:other index:1 type:<root>.MyContainer
     BLOCK_BODY
       CALL 'public final fun <set-operationScore> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
         <set-?>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
           $this: CALL 'public final fun <get-operationScore> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
-          other: GET_VAR '_context_receiver_0: kotlin.Int declared in <root>.plusAssign' type=kotlin.Int origin=null
+          other: GET_VAR '$context_receiver_0: kotlin.Int declared in <root>.plusAssign' type=kotlin.Int origin=null
       CALL 'public final fun <set-i> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.MyContainer' type=kotlin.Unit origin=EQ
         $this: GET_VAR '<this>: <root>.MyContainer declared in <root>.plusAssign' type=<root>.MyContainer origin=null
         <set-?>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
@@ -149,16 +148,16 @@ FILE fqName:<root> fileName:/arrayAccessCompositeOperators.kt
             $this: GET_VAR '<this>: <root>.MyContainer declared in <root>.plusAssign' type=<root>.MyContainer origin=null
           other: CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.MyContainer' type=kotlin.Int origin=GET_PROPERTY
             $this: GET_VAR 'other: <root>.MyContainer declared in <root>.plusAssign' type=<root>.MyContainer origin=null
-  FUN name:inc visibility:public modality:FINAL <> ($receiver:<root>.MyContainer, _context_receiver_0:kotlin.Int) returnType:<root>.MyContainer [operator]
+  FUN name:inc visibility:public modality:FINAL <> ($receiver:<root>.MyContainer, $context_receiver_0:kotlin.Int) returnType:<root>.MyContainer [operator]
     contextReceiverParametersCount: 1
     $receiver: VALUE_PARAMETER name:<this> type:<root>.MyContainer
-    VALUE_PARAMETER name:_context_receiver_0 index:0 type:kotlin.Int
+    VALUE_PARAMETER name:$context_receiver_0 index:0 type:kotlin.Int
     BLOCK_BODY
       CALL 'public final fun <set-operationScore> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
         <set-?>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
           $this: CALL 'public final fun <get-operationScore> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
-          other: GET_VAR '_context_receiver_0: kotlin.Int declared in <root>.inc' type=kotlin.Int origin=null
-      RETURN type=kotlin.Nothing from='public final fun inc (_context_receiver_0: kotlin.Int): <root>.MyContainer [operator] declared in <root>'
+          other: GET_VAR '$context_receiver_0: kotlin.Int declared in <root>.inc' type=kotlin.Int origin=null
+      RETURN type=kotlin.Nothing from='public final fun inc ($context_receiver_0: kotlin.Int): <root>.MyContainer [operator] declared in <root>'
         CONSTRUCTOR_CALL 'public constructor <init> (i: kotlin.Int) [primary] declared in <root>.MyContainer' type=<root>.MyContainer origin=null
           i: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
             $this: CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.MyContainer' type=kotlin.Int origin=GET_PROPERTY
@@ -177,20 +176,20 @@ FILE fqName:<root> fileName:/arrayAccessCompositeOperators.kt
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:kotlin.Int) returnType:kotlin.Unit
             $receiver: VALUE_PARAMETER name:$this$with type:kotlin.Int
             BLOCK_BODY
-              CALL 'public final fun plusAssign (_context_receiver_0: kotlin.Int, other: <root>.MyContainer): kotlin.Unit [operator] declared in <root>' type=kotlin.Unit origin=null
+              CALL 'public final fun plusAssign ($context_receiver_0: kotlin.Int, other: <root>.MyContainer): kotlin.Unit [operator] declared in <root>' type=kotlin.Unit origin=null
                 $receiver: GET_VAR 'var myContainer: <root>.MyContainer [var] declared in <root>.box' type=<root>.MyContainer origin=null
-                _context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
+                $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
                 other: CONSTRUCTOR_CALL 'public constructor <init> (i: kotlin.Int) [primary] declared in <root>.MyContainer' type=<root>.MyContainer origin=null
-                  i: CALL 'public final fun get (_context_receiver_0: kotlin.Int, index: kotlin.Int): kotlin.Int [operator] declared in <root>' type=kotlin.Int origin=null
+                  i: CALL 'public final fun get ($context_receiver_0: kotlin.Int, index: kotlin.Int): kotlin.Int [operator] declared in <root>' type=kotlin.Int origin=null
                     $receiver: BLOCK type=<root>.MyContainer origin=null
                       VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:<root>.MyContainer [val]
                         GET_VAR 'var myContainer: <root>.MyContainer [var] declared in <root>.box' type=<root>.MyContainer origin=null
                       SET_VAR 'var myContainer: <root>.MyContainer [var] declared in <root>.box' type=kotlin.Unit origin=EQ
-                        CALL 'public final fun inc (_context_receiver_0: kotlin.Int): <root>.MyContainer [operator] declared in <root>' type=<root>.MyContainer origin=null
+                        CALL 'public final fun inc ($context_receiver_0: kotlin.Int): <root>.MyContainer [operator] declared in <root>' type=<root>.MyContainer origin=null
                           $receiver: GET_VAR 'val tmp_1: <root>.MyContainer [val] declared in <root>.box.<anonymous>' type=<root>.MyContainer origin=null
-                          _context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
+                          $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
                       GET_VAR 'val tmp_1: <root>.MyContainer [val] declared in <root>.box.<anonymous>' type=<root>.MyContainer origin=null
-                    _context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
+                    $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
                     index: CONST Int type=kotlin.Int value=0
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'
         WHEN type=kotlin.String origin=IF

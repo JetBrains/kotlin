@@ -1,0 +1,3 @@
+internal final var topLevelVar: R|kotlin/Int|
+    internal get(): R|kotlin/Int|
+    private set(<set-?>: R|kotlin/Int|): R|kotlin/Unit|

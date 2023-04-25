@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.psi.*
 internal data class RawFirReplacement(val from: KtElement, val to: KtElement) {
     companion object {
         fun isApplicableForReplacement(element: KtElement) = when (element) {
-            is KtFile, is KtClassInitializer, is KtClassOrObject, is KtObjectLiteralExpression, is KtTypeAlias,
+            is KtFile, is KtScript, is KtClassInitializer, is KtClassOrObject, is KtObjectLiteralExpression, is KtTypeAlias,
             is KtNamedFunction, is KtLambdaExpression, is KtAnonymousInitializer, is KtProperty, is KtTypeReference,
             is KtAnnotationEntry, is KtTypeParameter, is KtTypeProjection, is KtParameter, is KtBlockExpression,
             is KtSimpleNameExpression, is KtConstantExpression, is KtStringTemplateExpression, is KtReturnExpression,

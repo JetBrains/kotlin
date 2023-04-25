@@ -1,0 +1,11 @@
+FILE: upperBoundViolation.fir.kt
+    public final fun <T : R|kotlin/Number|> printGenericNumber(t: R|T|): R|kotlin/Unit| {
+        ^printGenericNumber R|kotlin/io/println|(<strcat>(String(Number is ), R|<local>/t|))
+    }
+    public final fun main(): R|kotlin/Unit| {
+        R|kotlin/collections/buildList|<R|kotlin/String|>(<L> = buildList@fun R|kotlin/collections/MutableList<kotlin/String>|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(String(Boom))
+            R|/printGenericNumber|<R|kotlin/String|>(this@R|special/anonymous|.R|SubstitutionOverride<kotlin/collections/MutableList.get: R|Stub (chain inference): TypeVariable(E)|>|(Int(0)))
+        }
+        )
+    }

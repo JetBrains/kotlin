@@ -18,13 +18,13 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): T of <root>.Test1 declared in <root>.Test1'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Test1 visibility:private [final]' type=T of <root>.Test1 origin=null
               receiver: GET_VAR '<this>: <root>.Test1<T of <root>.Test1> declared in <root>.Test1.<get-x>' type=<root>.Test1<T of <root>.Test1> origin=null
-    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.Test1<T of <root>.Test1>) returnType:T of <root>.Test1 [operator]
+    FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.Test1<T of <root>.Test1>) returnType:T of <root>.Test1 [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.Test1<T of <root>.Test1>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): T of <root>.Test1 [operator] declared in <root>.Test1'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Test1 visibility:private [final]' type=T of <root>.Test1 origin=null
             receiver: GET_VAR '<this>: <root>.Test1<T of <root>.Test1> declared in <root>.Test1.component1' type=<root>.Test1<T of <root>.Test1> origin=null
-    FUN name:copy visibility:public modality:FINAL <> ($this:<root>.Test1<T of <root>.Test1>, x:T of <root>.Test1) returnType:<root>.Test1<T of <root>.Test1>
+    FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:<root>.Test1<T of <root>.Test1>, x:T of <root>.Test1) returnType:<root>.Test1<T of <root>.Test1>
       $this: VALUE_PARAMETER name:<this> type:<root>.Test1<T of <root>.Test1>
       VALUE_PARAMETER name:x index:0 type:T of <root>.Test1
         EXPRESSION_BODY
@@ -94,8 +94,7 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.Test1'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="Test1("
-            CONST String type=kotlin.String value="x="
+            CONST String type=kotlin.String value="Test1(x="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Test1 visibility:private [final]' type=T of <root>.Test1 origin=null
               receiver: GET_VAR '<this>: <root>.Test1<T of <root>.Test1> declared in <root>.Test1.toString' type=<root>.Test1<T of <root>.Test1> origin=null
             CONST String type=kotlin.String value=")"
@@ -118,13 +117,13 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): T of <root>.Test2 declared in <root>.Test2'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Test2 visibility:private [final]' type=T of <root>.Test2 origin=null
               receiver: GET_VAR '<this>: <root>.Test2<T of <root>.Test2> declared in <root>.Test2.<get-x>' type=<root>.Test2<T of <root>.Test2> origin=null
-    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.Test2<T of <root>.Test2>) returnType:T of <root>.Test2 [operator]
+    FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.Test2<T of <root>.Test2>) returnType:T of <root>.Test2 [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.Test2<T of <root>.Test2>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): T of <root>.Test2 [operator] declared in <root>.Test2'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Test2 visibility:private [final]' type=T of <root>.Test2 origin=null
             receiver: GET_VAR '<this>: <root>.Test2<T of <root>.Test2> declared in <root>.Test2.component1' type=<root>.Test2<T of <root>.Test2> origin=null
-    FUN name:copy visibility:public modality:FINAL <> ($this:<root>.Test2<T of <root>.Test2>, x:T of <root>.Test2) returnType:<root>.Test2<T of <root>.Test2>
+    FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:<root>.Test2<T of <root>.Test2>, x:T of <root>.Test2) returnType:<root>.Test2<T of <root>.Test2>
       $this: VALUE_PARAMETER name:<this> type:<root>.Test2<T of <root>.Test2>
       VALUE_PARAMETER name:x index:0 type:T of <root>.Test2
         EXPRESSION_BODY
@@ -185,8 +184,7 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.Test2'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="Test2("
-            CONST String type=kotlin.String value="x="
+            CONST String type=kotlin.String value="Test2(x="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:T of <root>.Test2 visibility:private [final]' type=T of <root>.Test2 origin=null
               receiver: GET_VAR '<this>: <root>.Test2<T of <root>.Test2> declared in <root>.Test2.toString' type=<root>.Test2<T of <root>.Test2> origin=null
             CONST String type=kotlin.String value=")"
@@ -209,13 +207,13 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.collections.List<T of <root>.Test3> declared in <root>.Test3'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.collections.List<T of <root>.Test3> visibility:private [final]' type=kotlin.collections.List<T of <root>.Test3> origin=null
               receiver: GET_VAR '<this>: <root>.Test3<T of <root>.Test3> declared in <root>.Test3.<get-x>' type=<root>.Test3<T of <root>.Test3> origin=null
-    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.Test3<T of <root>.Test3>) returnType:kotlin.collections.List<T of <root>.Test3> [operator]
+    FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.Test3<T of <root>.Test3>) returnType:kotlin.collections.List<T of <root>.Test3> [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.Test3<T of <root>.Test3>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.collections.List<T of <root>.Test3> [operator] declared in <root>.Test3'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.collections.List<T of <root>.Test3> visibility:private [final]' type=kotlin.collections.List<T of <root>.Test3> origin=null
             receiver: GET_VAR '<this>: <root>.Test3<T of <root>.Test3> declared in <root>.Test3.component1' type=<root>.Test3<T of <root>.Test3> origin=null
-    FUN name:copy visibility:public modality:FINAL <> ($this:<root>.Test3<T of <root>.Test3>, x:kotlin.collections.List<T of <root>.Test3>) returnType:<root>.Test3<T of <root>.Test3>
+    FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:<root>.Test3<T of <root>.Test3>, x:kotlin.collections.List<T of <root>.Test3>) returnType:<root>.Test3<T of <root>.Test3>
       $this: VALUE_PARAMETER name:<this> type:<root>.Test3<T of <root>.Test3>
       VALUE_PARAMETER name:x index:0 type:kotlin.collections.List<T of <root>.Test3>
         EXPRESSION_BODY
@@ -276,8 +274,7 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.Test3'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="Test3("
-            CONST String type=kotlin.String value="x="
+            CONST String type=kotlin.String value="Test3(x="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.collections.List<T of <root>.Test3> visibility:private [final]' type=kotlin.collections.List<T of <root>.Test3> origin=null
               receiver: GET_VAR '<this>: <root>.Test3<T of <root>.Test3> declared in <root>.Test3.toString' type=<root>.Test3<T of <root>.Test3> origin=null
             CONST String type=kotlin.String value=")"
@@ -299,13 +296,13 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
           RETURN type=kotlin.Nothing from='public final fun <get-x> (): kotlin.collections.List<kotlin.String> declared in <root>.Test4'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.collections.List<kotlin.String> visibility:private [final]' type=kotlin.collections.List<kotlin.String> origin=null
               receiver: GET_VAR '<this>: <root>.Test4 declared in <root>.Test4.<get-x>' type=<root>.Test4 origin=null
-    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.Test4) returnType:kotlin.collections.List<kotlin.String> [operator]
+    FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.Test4) returnType:kotlin.collections.List<kotlin.String> [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.Test4
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.collections.List<kotlin.String> [operator] declared in <root>.Test4'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.collections.List<kotlin.String> visibility:private [final]' type=kotlin.collections.List<kotlin.String> origin=null
             receiver: GET_VAR '<this>: <root>.Test4 declared in <root>.Test4.component1' type=<root>.Test4 origin=null
-    FUN name:copy visibility:public modality:FINAL <> ($this:<root>.Test4, x:kotlin.collections.List<kotlin.String>) returnType:<root>.Test4
+    FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:<root>.Test4, x:kotlin.collections.List<kotlin.String>) returnType:<root>.Test4
       $this: VALUE_PARAMETER name:<this> type:<root>.Test4
       VALUE_PARAMETER name:x index:0 type:kotlin.collections.List<kotlin.String>
         EXPRESSION_BODY
@@ -365,8 +362,7 @@ FILE fqName:<root> fileName:/dataClassesGeneric.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.Test4'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="Test4("
-            CONST String type=kotlin.String value="x="
+            CONST String type=kotlin.String value="Test4(x="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.collections.List<kotlin.String> visibility:private [final]' type=kotlin.collections.List<kotlin.String> origin=null
               receiver: GET_VAR '<this>: <root>.Test4 declared in <root>.Test4.toString' type=<root>.Test4 origin=null
             CONST String type=kotlin.String value=")"

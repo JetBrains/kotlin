@@ -64,6 +64,8 @@ public final class PropertiesKt /* PropertiesKt*/ {
 
   public static error.NonExistentClass subject;
 
+  public static java.lang.String lateInit;
+
   @org.jetbrains.annotations.NotNull()
   protected static final java.lang.String getProtectedLateinitVar();//  getProtectedLateinitVar()
 
@@ -78,6 +80,9 @@ public final class PropertiesKt /* PropertiesKt*/ {
 
   @org.jetbrains.annotations.NotNull()
   public static final java.lang.String getInternalVarPrivateSet();//  getInternalVarPrivateSet()
+
+  @org.jetbrains.annotations.NotNull()
+  public static final java.lang.String getLateInit();//  getLateInit()
 
   @org.jetbrains.annotations.NotNull()
   public static final java.lang.String getLazyProp();//  getLazyProp()
@@ -161,6 +166,8 @@ public final class PropertiesKt /* PropertiesKt*/ {
   public static final void setInt2(int);//  setInt2(int)
 
   public static final void setIslowercase(@org.jetbrains.annotations.Nullable() java.lang.Boolean);//  setIslowercase(java.lang.Boolean)
+
+  public static final void setLateInit(@org.jetbrains.annotations.NotNull() java.lang.String);//  setLateInit(java.lang.String)
 
   public static final void setLazyProp(@org.jetbrains.annotations.NotNull() java.lang.String);//  setLazyProp(java.lang.String)
 

@@ -46,6 +46,21 @@ class FirExtensionSyntheticFunctionInterfaceProvider(
     moduleData: FirModuleData,
     kotlinScopeProvider: FirKotlinScopeProvider
 ) : FirSyntheticFunctionInterfaceProviderBase(session, moduleData, kotlinScopeProvider) {
+    companion object {
+        /**
+         * A [FirExtensionSyntheticFunctionInterfaceProvider] only needs to be created if the session's function type service has extension
+         * function kinds. Otherwise, the provider would be useless.
+         */
+        fun createIfNeeded(
+            session: FirSession,
+            moduleData: FirModuleData,
+            kotlinScopeProvider: FirKotlinScopeProvider,
+        ): FirExtensionSyntheticFunctionInterfaceProvider? {
+            if (!session.functionTypeService.hasExtensionKinds()) return null
+            return FirExtensionSyntheticFunctionInterfaceProvider(session, moduleData, kotlinScopeProvider)
+        }
+    }
+
     override fun FunctionTypeKind.isAcceptable(): Boolean {
         return !this.isBuiltin
     }
@@ -69,9 +84,14 @@ abstract class FirSyntheticFunctionInterfaceProviderBase(
     val moduleData: FirModuleData,
     val kotlinScopeProvider: FirKotlinScopeProvider
 ) : FirSymbolProvider(session) {
+    @OptIn(FirSymbolProviderInternals::class)
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? {
-        return cache.getValue(classId)
+        if (!classId.mayBeSyntheticFunctionClassName()) return null
+        return getClassLikeSymbolByClassIdWithoutClassIdChecks(classId)
     }
+
+    @FirSymbolProviderInternals
+    fun getClassLikeSymbolByClassIdWithoutClassIdChecks(classId: ClassId): FirRegularClassSymbol? = cache.getValue(classId)
 
     @FirSymbolProviderInternals
     override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
@@ -84,6 +104,9 @@ abstract class FirSyntheticFunctionInterfaceProviderBase(
     @FirSymbolProviderInternals
     override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {
     }
+
+    @FirSymbolProviderInternals
+    fun getFunctionKindPackageNames(): Set<FqName> = session.functionTypeService.getFunctionKindPackageNames()
 
     override fun getPackage(fqName: FqName): FqName? {
         return fqName.takeIf { session.functionTypeService.hasKindWithSpecificPackage(it) }
@@ -233,4 +256,14 @@ abstract class FirSyntheticFunctionInterfaceProviderBase(
     }
 
     private fun FunctionTypeKind.classId(arity: Int) = ClassId(packageFqName, numberedClassName(arity))
+
+    companion object {
+        /**
+         * A [ClassId] can only be a name for a generated function class if it ends with a digit. See [FunctionTypeKind].
+         *
+         * Checking this first is usually faster than checking `functionTypeService.getKindByClassNamePrefix` or a class cache.
+         */
+        @FirSymbolProviderInternals
+        fun ClassId.mayBeSyntheticFunctionClassName(): Boolean = relativeClassName.asString().lastOrNull()?.isDigit() == true
+    }
 }

@@ -1,4 +1,3 @@
-import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootPlugin
 import org.gradle.internal.os.OperatingSystem
 import de.undercouch.gradle.tasks.download.Download
 import java.util.*
@@ -18,6 +17,7 @@ dependencies {
 
 val generationRoot = projectDir.resolve("tests-gen")
 
+useD8Plugin()
 optInToExperimentalCompilerApi()
 
 sourceSets {
@@ -25,19 +25,6 @@ sourceSets {
     "test" {
         projectDefault()
         this.java.srcDir(generationRoot.name)
-    }
-}
-
-val d8Plugin = D8RootPlugin.apply(rootProject)
-d8Plugin.version = v8Version
-
-fun Test.setupV8() {
-    dependsOn(d8Plugin.setupTaskProvider)
-    val v8ExecutablePath = project.provider {
-        d8Plugin.requireConfigured().executablePath.absolutePath
-    }
-    doFirst {
-        systemProperty("javascript.engine.path.V8", v8ExecutablePath.get())
     }
 }
 
@@ -90,7 +77,8 @@ val currentOsType = run {
     OsType(osName, osArch)
 }
 
-val jsShellDirectory = "https://archive.mozilla.org/pub/firefox/nightly/2023/01/2023-01-23-09-44-44-mozilla-central"
+val jsShellVersion = "2023-04-11-21-59-06-mozilla-central"
+val jsShellDirectory = "https://archive.mozilla.org/pub/firefox/nightly/2023/04/$jsShellVersion"
 val jsShellSuffix = when (currentOsType) {
     OsType(OsName.LINUX, OsArch.X86_32) -> "linux-i686"
     OsType(OsName.LINUX, OsArch.X86_64) -> "linux-x86_64"
@@ -106,14 +94,14 @@ val downloadedTools = File(buildDir, "tools")
 
 val downloadJsShell by task<Download> {
     src(jsShellLocation)
-    dest(File(downloadedTools, "jsshell-$jsShellSuffix.zip"))
+    dest(File(downloadedTools, "jsshell-$jsShellSuffix-$jsShellVersion.zip"))
     overwrite(false)
 }
 
 val unzipJsShell by task<Copy> {
     dependsOn(downloadJsShell)
     from(zipTree(downloadJsShell.get().dest))
-    val unpackedDir = File(downloadedTools, "jsshell-$jsShellSuffix")
+    val unpackedDir = File(downloadedTools, "jsshell-$jsShellSuffix-$jsShellVersion")
     into(unpackedDir)
 }
 

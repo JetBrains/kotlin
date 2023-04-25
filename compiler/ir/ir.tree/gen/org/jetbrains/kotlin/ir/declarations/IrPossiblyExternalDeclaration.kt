@@ -11,7 +11,8 @@ package org.jetbrains.kotlin.ir.declarations
 
 /**
  * A non-leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.possiblyExternalDeclaration
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.possiblyExternalDeclaration]
  */
 interface IrPossiblyExternalDeclaration : IrDeclarationWithName {
     var isExternal: Boolean

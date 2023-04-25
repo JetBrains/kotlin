@@ -1,8 +1,9 @@
-FILE: propertyWithGetterAndSetter.kt
-    public final [BODY_RESOLVE] var withGetterAndSetter: R|kotlin/Int| = Int(42)
-        public [BODY_RESOLVE] get(): R|kotlin/Int| {
+FILE: [ResolvedTo(IMPORTS)] propertyWithGetterAndSetter.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public final [ResolvedTo(BODY_RESOLVE)] var withGetterAndSetter: R|kotlin/Int| = Int(42)
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
             ^ F|/withGetterAndSetter|
         }
-        public [BODY_RESOLVE] set([BODY_RESOLVE] value: R|kotlin/Int|): R|kotlin/Unit| {
+        public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit| {
             F|/withGetterAndSetter| = R|<local>/value|
         }

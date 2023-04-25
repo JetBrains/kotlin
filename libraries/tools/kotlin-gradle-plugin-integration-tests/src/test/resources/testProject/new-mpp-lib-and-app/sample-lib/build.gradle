@@ -96,6 +96,10 @@ kotlin {
                 }
             }
         }
+
+        nativeMain { dependsOn commonMain }
+        linux64Main { dependsOn nativeMain }
+        macos64Main { dependsOn nativeMain }
     }
 }
 
@@ -116,4 +120,8 @@ afterEvaluate {
             assemble.dependsOn compileKotlinTask
         }
     }
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile) {
+    kotlinOptions.freeCompilerArgs += "-Xforce-deprecated-legacy-compiler-usage"
 }

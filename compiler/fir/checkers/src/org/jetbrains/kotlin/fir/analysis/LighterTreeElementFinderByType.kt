@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.fir.analysis
 
 import com.intellij.lang.LighterASTNode
-import com.intellij.openapi.util.Ref
 import com.intellij.psi.tree.IElementType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
+import org.jetbrains.kotlin.util.getChildren
 
 class LighterTreeElementFinderByType(
     private val tree: FlyweightCapableTreeStructure<LighterASTNode>,
@@ -34,7 +34,7 @@ class LighterTreeElementFinderByType(
 
         if (currentDepth == depth) return null
 
-        val children = if (reverse) node.getChildren().asReversed() else node.getChildren()
+        val children = if (reverse) node.getChildren(tree).asReversed() else node.getChildren(tree)
         for (child in children) {
             val result = visitNode(child, currentDepth + 1)
             if (result != null) return result
@@ -42,11 +42,4 @@ class LighterTreeElementFinderByType(
 
         return null
     }
-
-    private fun LighterASTNode.getChildren(): List<LighterASTNode> {
-        val ref = Ref<Array<LighterASTNode?>>()
-        tree.getChildren(this, ref)
-        return ref.get()?.filterNotNull() ?: emptyList()
-    }
-
 }

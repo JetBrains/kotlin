@@ -278,6 +278,12 @@ public class FirStandaloneNormalAnalysisSourceModuleHLExpressionTypeTestGenerate
         }
 
         @Test
+        @TestMetadata("arrayAssignmentTargetWithTypeParameters.kt")
+        public void testArrayAssignmentTargetWithTypeParameters() throws Exception {
+            runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignment/arrayAssignmentTargetWithTypeParameters.kt");
+        }
+
+        @Test
         @TestMetadata("arrayCompoundAssignementTarget.kt")
         public void testArrayCompoundAssignementTarget() throws Exception {
             runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/assignment/arrayCompoundAssignementTarget.kt");

@@ -334,7 +334,11 @@ class ModuleStructureExtractorImpl(
             moduleDirectives.forEach { it.checkDirectiveApplicability(contextIsGlobal = isImplicitModule, contextIsModule = true) }
 
             val targetBackend = currentModuleTargetBackend ?: defaultsProvider.defaultTargetBackend
-            currentModuleLanguageVersionSettingsBuilder.configureUsingDirectives(moduleDirectives, environmentConfigurators, targetBackend)
+            val frontendKind = currentModuleFrontendKind ?: defaultsProvider.defaultFrontend
+
+            currentModuleLanguageVersionSettingsBuilder.configureUsingDirectives(
+                moduleDirectives, environmentConfigurators, targetBackend, useK2 = frontendKind == FrontendKinds.FIR
+            )
             val moduleName = currentModuleName
                 ?: testServices.defaultDirectives[ModuleStructureDirectives.MODULE].firstOrNull()
                 ?: DEFAULT_MODULE_NAME
@@ -351,10 +355,9 @@ class ModuleStructureExtractorImpl(
                 directives = moduleDirectives,
                 languageVersionSettings = currentModuleLanguageVersionSettingsBuilder.build()
             )
-            modules += testModule
             if (testModule.frontendKind != FrontendKinds.FIR ||
                 !testModule.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects) ||
-                testModule.dependsOnDependencies.isEmpty()
+                modules.isEmpty()
             ) {
                 additionalSourceProviders.flatMapTo(filesOfCurrentModule) { additionalSourceProvider ->
                     additionalSourceProvider.produceAdditionalFiles(
@@ -367,6 +370,7 @@ class ModuleStructureExtractorImpl(
                     }
                 }
             }
+            modules += testModule
             firstFileInModule = true
             resetModuleCaches()
         }
@@ -440,7 +444,6 @@ class ModuleStructureExtractorImpl(
                 moduleDirectivesBuilder = directivesBuilder
             }
             currentFileName = null
-            allowFilesWithSameNames = false
             resetDirectivesBuilder()
             fileDirectivesBuilder = directivesBuilder
         }

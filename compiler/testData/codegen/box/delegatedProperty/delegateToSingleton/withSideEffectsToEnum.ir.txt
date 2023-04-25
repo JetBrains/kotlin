@@ -13,7 +13,6 @@ public final enum class E {
     private synthetic final static field $VALUES: E[]
     public final static @org.jetbrains.annotations.NotNull field Companion: E$Companion
     public final enum static field X: E
-    private synthetic final static method $entries(): E[]
     private synthetic final static method $values(): E[]
     static method <clinit>(): void
     private method <init>(p0: java.lang.String, p1: int): void

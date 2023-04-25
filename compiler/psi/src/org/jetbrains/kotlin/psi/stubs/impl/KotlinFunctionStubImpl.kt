@@ -16,13 +16,17 @@
 
 package org.jetbrains.kotlin.psi.stubs.impl
 
+import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
+import com.intellij.psi.stubs.StubInputStream
+import com.intellij.psi.stubs.StubOutputStream
 import com.intellij.util.io.StringRef
+import org.jetbrains.kotlin.contracts.description.KtContractDescriptionElement
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.stubs.KotlinFunctionStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
-import org.jetbrains.kotlin.name.FqName
-import com.intellij.psi.PsiElement
+import java.io.IOException
 
 class KotlinFunctionStubImpl(
     parent: StubElement<out PsiElement>?,
@@ -33,7 +37,8 @@ class KotlinFunctionStubImpl(
     private val hasBlockBody: Boolean,
     private val hasBody: Boolean,
     private val hasTypeParameterListBeforeFunctionName: Boolean,
-    private val mayHaveContract: Boolean
+    private val mayHaveContract: Boolean,
+    val contract: List<KtContractDescriptionElement<KotlinTypeBean, Nothing?>>?
 ) : KotlinStubBaseImpl<KtNamedFunction>(parent, KtStubElementTypes.FUNCTION), KotlinFunctionStub {
     init {
         if (isTopLevel && fqName == null) {
@@ -50,4 +55,24 @@ class KotlinFunctionStubImpl(
     override fun hasBody() = hasBody
     override fun hasTypeParameterListBeforeFunctionName() = hasTypeParameterListBeforeFunctionName
     override fun mayHaveContract(): Boolean = mayHaveContract
+
+    @Throws(IOException::class)
+    fun serializeContract(dataStream: StubOutputStream) {
+        val effects: List<KtContractDescriptionElement<KotlinTypeBean, Nothing?>>? = contract
+        dataStream.writeInt(effects?.size ?: 0)
+        val visitor = KotlinContractSerializationVisitor(dataStream)
+        effects?.forEach { it.accept(visitor, null) }
+    }
+
+    companion object {
+        fun deserializeContract(dataStream: StubInputStream): List<KtContractDescriptionElement<KotlinTypeBean, Nothing?>> {
+            val effects = mutableListOf<KtContractDescriptionElement<KotlinTypeBean, Nothing?>>()
+            val count: Int = dataStream.readInt()
+            for (i in 0 until count) {
+                val effectType: KotlinContractEffectType = KotlinContractEffectType.values()[dataStream.readInt()]
+                effects.add(effectType.deserialize(dataStream))
+            }
+            return effects
+        }
+    }
 }

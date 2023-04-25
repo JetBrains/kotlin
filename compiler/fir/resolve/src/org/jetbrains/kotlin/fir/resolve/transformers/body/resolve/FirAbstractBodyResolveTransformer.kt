@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,6 +9,9 @@ import org.jetbrains.kotlin.fir.FirCallResolver
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirLazyBlock
+import org.jetbrains.kotlin.fir.expressions.FirLazyExpression
+import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionStageRunner
@@ -21,8 +24,8 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.*
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirLocalScope
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.builder.buildImplicitTypeRef
 
 abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAbstractPhaseTransformer<ResolutionMode>(phase) {
     abstract val context: BodyResolveContext
@@ -32,9 +35,6 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
     @set:PrivateForInline
     abstract var implicitTypeOnly: Boolean
         internal set
-
-    override val transformerPhase: FirResolvePhase
-        get() = if (implicitTypeOnly) baseTransformerPhase else FirResolvePhase.BODY_RESOLVE
 
     final override val session: FirSession get() = components.session
 
@@ -53,6 +53,21 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         }
     }
 
+    override fun transformLazyExpression(lazyExpression: FirLazyExpression, data: ResolutionMode): FirStatement {
+        suppressOrThrowError("FirLazyExpression should be calculated before accessing")
+        return lazyExpression
+    }
+
+    override fun transformLazyBlock(lazyBlock: FirLazyBlock, data: ResolutionMode): FirStatement {
+        suppressOrThrowError("FirLazyBlock should be calculated before accessing")
+        return lazyBlock
+    }
+
+    private fun suppressOrThrowError(message: String) {
+        if (System.getProperty("kotlin.suppress.lazy.expression.access").toBoolean()) return
+        error(message)
+    }
+
     protected inline val localScopes: List<FirLocalScope> get() = components.localScopes
 
     protected inline val noExpectedType: FirTypeRef get() = components.noExpectedType
@@ -66,7 +81,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
     protected inline val typeResolverTransformer: FirSpecificTypeResolverTransformer get() = components.typeResolverTransformer
     protected inline val callResolver: FirCallResolver get() = components.callResolver
     protected inline val callCompleter: FirCallCompleter get() = components.callCompleter
-    protected inline val dataFlowAnalyzer: FirDataFlowAnalyzer get() = components.dataFlowAnalyzer
+    inline val dataFlowAnalyzer: FirDataFlowAnalyzer get() = components.dataFlowAnalyzer
     protected inline val scopeSession: ScopeSession get() = components.scopeSession
     protected inline val file: FirFile get() = components.file
 
@@ -91,7 +106,7 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         override val returnTypeCalculator: ReturnTypeCalculator get() = context.returnTypeCalculator
         override val container: FirDeclaration get() = context.containerIfAny!!
 
-        override val noExpectedType: FirTypeRef = buildImplicitTypeRef()
+        override val noExpectedType: FirTypeRef = FirImplicitTypeRefImplWithoutSource
         override val symbolProvider: FirSymbolProvider = session.symbolProvider
 
         override val resolutionStageRunner: ResolutionStageRunner = ResolutionStageRunner()

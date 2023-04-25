@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.backend.common.actualizer
 
+import org.jetbrains.kotlin.KtDiagnosticReporterWithImplicitIrBasedContext
+import org.jetbrains.kotlin.backend.common.CommonBackendErrors
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
@@ -20,9 +22,10 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 
-class MissingFakeOverridesAdder(
+internal class MissingFakeOverridesAdder(
     private val expectActualMap: Map<IrSymbol, IrSymbol>,
-    private val typeAliasMap: Map<FqName, FqName>
+    private val typeAliasMap: Map<FqName, FqName>,
+    private val diagnosticsReporter: KtDiagnosticReporterWithImplicitIrBasedContext
 ) : IrElementVisitorVoid {
     override fun visitClass(declaration: IrClass) {
         if (!declaration.isExpect) {
@@ -37,9 +40,12 @@ class MissingFakeOverridesAdder(
 
     private fun processSupertypes(declaration: IrClass) {
         val members by lazy(LazyThreadSafetyMode.NONE) {
-            declaration.declarations.filter { !it.isBuiltinMember() }.associateBy {
-                generateIrElementFullName(it, expectActualMap, typeAliasMap)
+            val notBuiltinMembers = declaration.declarations.filterNot { it.isBuiltinMember() }
+            val result = mutableMapOf<String, MutableList<IrDeclaration>>()
+            for (member in notBuiltinMembers) {
+                result.getOrPut(generateIrElementFullNameFromExpect(member, typeAliasMap)) { mutableListOf() }.add(member)
             }
+            result
         }
 
         for (superType in declaration.superTypes) {
@@ -68,24 +74,24 @@ class MissingFakeOverridesAdder(
 
     private fun addFakeOverride(
         actualMember: IrDeclaration,
-        members: Map<String, IrDeclaration>,
+        members: MutableMap<String, MutableList<IrDeclaration>>,
         declaration: IrClass
     ) {
-        when (actualMember) {
-            is IrFunctionImpl,
-            is IrPropertyImpl -> {
-                if (members[generateIrElementFullName(actualMember, expectActualMap, typeAliasMap)] != null) {
-                    reportManyInterfacesMembersNotImplemented(declaration, actualMember as IrDeclarationWithName)
-                    return
-                }
+        val newMember = when (actualMember) {
+            is IrFunctionImpl -> createFakeOverrideFunction(actualMember, declaration)
+            is IrPropertyImpl -> createFakeOverrideProperty(actualMember, declaration)
+            else -> return
+        }
 
-                val newMember = if (actualMember is IrFunctionImpl) {
-                    createFakeOverrideFunction(actualMember, declaration)
-                } else {
-                    createFakeOverrideProperty(actualMember as IrPropertyImpl, declaration)
-                }
-                declaration.declarations.add(newMember)
-            }
+        if (members.getMatches(newMember, expectActualMap, typeAliasMap).isEmpty()) {
+            declaration.declarations.add(newMember)
+            members.getOrPut(generateIrElementFullNameFromExpect(newMember, typeAliasMap)) { mutableListOf() }.add(newMember)
+        } else {
+            diagnosticsReporter.at(declaration).report(
+                CommonBackendErrors.MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED,
+                declaration.name.asString(),
+                (actualMember as IrDeclarationWithName).name.asString()
+            )
         }
     }
 }

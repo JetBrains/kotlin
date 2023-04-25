@@ -18,15 +18,15 @@ interface KotlinJvmOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 
     private val kotlin.String?.jvmTargetCompilerOption get() = if (this != null) org.jetbrains.kotlin.gradle.dsl.JvmTarget.fromTarget(this) else null
 
-    private val org.jetbrains.kotlin.gradle.dsl.JvmTarget?.jvmTargetKotlinOption get() = this?.target
+    private val org.jetbrains.kotlin.gradle.dsl.JvmTarget.jvmTargetKotlinOption get() = this.target
 
     /**
-     * Target version of the generated JVM bytecode (1.8, 9, 10, ..., 19), default is 1.8
-     * Possible values: "1.8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19"
-     * Default value: null
+     * Target version of the generated JVM bytecode (1.8, 9, 10, ..., 20), default is 1.8
+     * Possible values: "1.8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"
+     * Default value: JvmTarget.DEFAULT
      */
-    var jvmTarget: kotlin.String?
-        get() = options.jvmTarget.orNull.jvmTargetKotlinOption
+    var jvmTarget: kotlin.String
+        get() = options.jvmTarget.get().jvmTargetKotlinOption
         set(value) = options.jvmTarget.set(value.jvmTargetCompilerOption)
 
     /**

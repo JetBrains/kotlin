@@ -44,7 +44,7 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value="-include-binary", deprecatedName = "-includeBinary", shortName = "-ib", valueDescription = "<path>", description = "Pack external binary within the klib")
     var includeBinaries: Array<String>? = null
 
-    @Argument(value = "-library", shortName = "-l", valueDescription = "<path>", description = "Link with the library", delimiter = "")
+    @Argument(value = "-library", shortName = "-l", valueDescription = "<path>", description = "Link with the library", delimiter = Argument.Delimiters.none)
     var libraries: Array<String>? = null
 
     @Argument(value = "-library-version", shortName = "-lv", valueDescription = "<version>", description = "Set library version")
@@ -76,7 +76,7 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
         deprecatedName = "-nativelibrary",
         shortName = "-nl",
         valueDescription = "<path>",
-        description = "Include the native bitcode library", delimiter = ""
+        description = "Include the native bitcode library", delimiter = Argument.Delimiters.none
     )
     var nativeLibraries: Array<String>? = null
 
@@ -95,7 +95,7 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value="-linker-options", deprecatedName = "-linkerOpts", valueDescription = "<arg>", description = "Pass arguments to linker", delimiter = " ")
     var linkerArguments: Array<String>? = null
 
-    @Argument(value="-linker-option", valueDescription = "<arg>", description = "Pass argument to linker", delimiter = "")
+    @Argument(value="-linker-option", valueDescription = "<arg>", description = "Pass argument to linker", delimiter = Argument.Delimiters.none)
     var singleLinkerArguments: Array<String>? = null
 
     @Argument(value = "-nostdlib", description = "Don't link with stdlib")
@@ -138,7 +138,7 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
         value = "-Xcache-directory",
         valueDescription = "<path>",
         description = "Path to the directory containing caches",
-        delimiter = ""
+        delimiter = Argument.Delimiters.none
     )
     var cacheDirectories: Array<String>? = null
 
@@ -146,7 +146,7 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
         value = CACHED_LIBRARY,
         valueDescription = "<library path>,<cache path>",
         description = "Comma-separated paths of a library and its cache",
-        delimiter = ""
+        delimiter = Argument.Delimiters.none
     )
     var cachedLibraries: Array<String>? = null
 
@@ -155,7 +155,7 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
         valueDescription = "<path>",
         description = "Path to the root directory from which dependencies are to be cached automatically.\n" +
                 "By default caches will be placed into the kotlin-native system cache directory.",
-        delimiter = ""
+        delimiter = Argument.Delimiters.none
     )
     var autoCacheableFrom: Array<String>? = null
 
@@ -163,7 +163,7 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
         value = "-Xauto-cache-dir",
         valueDescription = "<path>",
         description = "Path to the directory where to put caches for auto-cacheable dependencies",
-        delimiter = ""
+        delimiter = Argument.Delimiters.none
     )
     var autoCacheDir: String? = null
 
@@ -184,7 +184,7 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
         valueDescription = "<path>",
         description = "A library to be included into produced framework API.\n" +
                 "Must be one of libraries passed with '-library'",
-        delimiter = ""
+        delimiter = Argument.Delimiters.none
     )
     var exportedLibraries: Array<String>? = null
 
@@ -232,7 +232,7 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
         value = ADD_CACHE,
         valueDescription = "<path>",
         description = "Path to the library to be added to cache",
-        delimiter = ""
+        delimiter = Argument.Delimiters.none
     )
     var libraryToAddToCache: String? = null
 
@@ -240,12 +240,21 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
         value = "-Xfile-to-cache",
         valueDescription = "<path>",
         description = "Path to file to cache",
-        delimiter = ""
+        delimiter = Argument.Delimiters.none
     )
     var filesToCache: Array<String>? = null
 
     @Argument(value = "-Xmake-per-file-cache", description = "Force compiler to produce per-file cache")
     var makePerFileCache: Boolean = false
+
+    @Argument(
+        value = "-Xbackend-threads",
+        valueDescription = "<N>",
+        description = "Run codegen by file in N parallel threads.\n" +
+                "0 means use a thread per processor core.\n" +
+                "Default value is 1"
+    )
+    var backendThreads: String = "1"
 
     @Argument(value = "-Xexport-kdoc", description = "Export KDoc in framework header")
     var exportKDoc: Boolean = false
@@ -332,7 +341,7 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
         valueDescription = "<path>",
         description = "Provide code coverage for the given library.\n" +
                 "Must be one of libraries passed with '-library'",
-        delimiter = ""
+        delimiter = Argument.Delimiters.none
     )
     var coveredLibraries: Array<String>? = null
 
@@ -415,11 +424,35 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xlazy-ir-for-caches", valueDescription = "{disable|enable}", description = "Use lazy IR for cached libraries")
     var lazyIrForCaches: String? = null
 
-    @Argument(value = "-Xpartial-linkage", description = "Allow unlinked symbols")
-    var partialLinkage: Boolean = false
+    @Argument(value = "-Xpartial-linkage", valueDescription = "{enable|disable}", description = "Use partial linkage mode")
+    var partialLinkageMode: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
+
+    @Argument(value = "-Xpartial-linkage-loglevel", valueDescription = "{info|warning|error}", description = "Partial linkage compile-time log level")
+    var partialLinkageLogLevel: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
 
     @Argument(value = "-Xomit-framework-binary", description = "Omit binary when compiling framework")
     var omitFrameworkBinary: Boolean = false
+
+    @Argument(value = "-Xcompile-from-bitcode", description = "Continue compilation from bitcode file", valueDescription = "<path>")
+    var compileFromBitcode: String? = null
+
+    @Argument(
+        value = "-Xread-dependencies-from",
+        description = "Serialized dependencies to use for linking",
+        valueDescription = "<path>"
+    )
+    var serializedDependencies: String? = null
+
+    @Argument(value = "-Xwrite-dependencies-to", description = "Path for writing backend dependencies")
+    var saveDependenciesPath: String? = null
 
     @Argument(value = "-Xsave-llvm-ir-directory", description = "Directory that should contain results of -Xsave-llvm-ir-after=<phase>")
     var saveLlvmIrDirectory: String? = null
@@ -442,6 +475,8 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
             )
         }
     }
+
+    override fun copyOf(): Freezable = copyK2NativeCompilerArguments(this, K2NativeCompilerArguments())
 
     companion object {
         const val EMBED_BITCODE_FLAG = "-Xembed-bitcode"

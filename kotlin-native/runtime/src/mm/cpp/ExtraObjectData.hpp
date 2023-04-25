@@ -13,7 +13,7 @@
 #include "Memory.h"
 #include "TypeInfo.h"
 #include "Utils.hpp"
-#include "Weak.h"
+#include "Weak.hpp"
 
 namespace kotlin {
 namespace mm {
@@ -47,38 +47,36 @@ public:
     std::atomic<void*>& AssociatedObject() noexcept { return associatedObject_; }
 #endif
     bool HasAssociatedObject() noexcept;
-    void DetachAssociatedObject() noexcept;
 
     bool getFlag(Flags value) noexcept { return (flags_.load() & (1u << static_cast<uint32_t>(value))) != 0; }
     void setFlag(Flags value) noexcept { flags_.fetch_or(1u << static_cast<uint32_t>(value)); }
 
-
-    bool HasWeakReferenceCounter() noexcept { return hasPointerBits(weakReferenceCounterOrBaseObject_.load(), WEAK_REF_TAG); }
-    void ClearWeakReferenceCounter() noexcept;
-    ObjHeader* GetWeakReferenceCounter() noexcept {
-        auto *pointer = weakReferenceCounterOrBaseObject_.load();
+    bool HasRegularWeakReferenceImpl() noexcept { return hasPointerBits(weakReferenceOrBaseObject_.load(), WEAK_REF_TAG); }
+    void ClearRegularWeakReferenceImpl() noexcept; // TODO: Only exists for the sake of GetBaseObject. Refactor to remove the need for it.
+    ObjHeader* GetRegularWeakReferenceImpl() noexcept {
+        auto* pointer = weakReferenceOrBaseObject_.load();
         if (hasPointerBits(pointer, WEAK_REF_TAG)) return clearPointerBits(pointer, WEAK_REF_TAG);
         return nullptr;
     }
-    ObjHeader* GetOrSetWeakReferenceCounter(ObjHeader* object, ObjHeader* counter) noexcept {
-        if (weakReferenceCounterOrBaseObject_.compare_exchange_strong(object, setPointerBits(counter, WEAK_REF_TAG))) {
-            return counter;
+    ObjHeader* GetOrSetRegularWeakReferenceImpl(ObjHeader* object, ObjHeader* weakRef) noexcept {
+        if (weakReferenceOrBaseObject_.compare_exchange_strong(object, setPointerBits(weakRef, WEAK_REF_TAG))) {
+            return weakRef;
         } else {
-            return clearPointerBits(object, WEAK_REF_TAG); // on fail current value of counter is stored to object
+            return clearPointerBits(object, WEAK_REF_TAG); // on fail current value of weakRef is stored to object
         }
     }
     ObjHeader* GetBaseObject() noexcept {
-        auto *header = weakReferenceCounterOrBaseObject_.load();
+        auto* header = weakReferenceOrBaseObject_.load();
         if (hasPointerBits(header, WEAK_REF_TAG)) {
-            return UnsafeWeakReferenceCounterGet(clearPointerBits(header, WEAK_REF_TAG));
+            return regularWeakReferenceImplBaseObjectUnsafe(clearPointerBits(header, WEAK_REF_TAG));
         } else {
             return header;
         }
     }
 
     // info must be equal to objHeader->type_info(), but it needs to be loaded in advance to avoid data races
-    explicit ExtraObjectData(ObjHeader* objHeader, const TypeInfo *info) noexcept :
-        typeInfo_(nullptr), weakReferenceCounterOrBaseObject_(objHeader) {
+    explicit ExtraObjectData(ObjHeader* objHeader, const TypeInfo* info) noexcept :
+        typeInfo_(nullptr), weakReferenceOrBaseObject_(objHeader) {
         atomicSetRelease(&typeInfo_, info);
     }
     ~ExtraObjectData();
@@ -92,7 +90,7 @@ private:
     std::atomic<void*> associatedObject_ = nullptr;
 #endif
 
-    std::atomic<ObjHeader*> weakReferenceCounterOrBaseObject_;
+    std::atomic<ObjHeader*> weakReferenceOrBaseObject_;
 };
 
 } // namespace mm

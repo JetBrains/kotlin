@@ -222,6 +222,7 @@ public actual val Char.category: CharCategory
  * Checks whether the given [radix] is valid radix for string to number and number to string conversion.
  */
 @PublishedApi
+@Suppress("DEPRECATION")
 internal actual fun checkRadix(radix: Int): Int {
     if(radix !in Char.MIN_RADIX..Char.MAX_RADIX) {
         throw IllegalArgumentException("radix $radix was not in valid range ${Char.MIN_RADIX..Char.MAX_RADIX}")
@@ -234,7 +235,7 @@ internal actual fun checkRadix(radix: Int): Int {
 // TODO: Make public when supplementary codepoints are supported.
 /** Converts a unicode code point to lower case. */
 internal fun Char.Companion.toLowerCase(codePoint: Int): Int =
-    if (codePoint < MIN_SUPPLEMENTARY_CODE_POINT) {
+    if (codePoint <= MAX_VALUE.code) {
         @Suppress("DEPRECATION")
         codePoint.toChar().lowercaseChar().toInt()
     } else {
@@ -243,40 +244,9 @@ internal fun Char.Companion.toLowerCase(codePoint: Int): Int =
 
 /** Converts a unicode code point to upper case. */
 internal fun Char.Companion.toUpperCase(codePoint: Int): Int =
-    if (codePoint < MIN_SUPPLEMENTARY_CODE_POINT) {
+    if (codePoint <= MAX_VALUE.code) {
         @Suppress("DEPRECATION")
         codePoint.toChar().uppercaseChar().toInt()
     } else {
         codePoint // TODO: Implement this transformation for supplementary codepoints.
-    }
-
-/** Converts a surrogate pair to a unicode code point. Doesn't validate that the characters are a valid surrogate pair. */
-// TODO: Consider removing from public API
-public fun Char.Companion.toCodePoint(high: Char, low: Char): Int =
-    (((high - MIN_HIGH_SURROGATE) shl 10) or (low - MIN_LOW_SURROGATE)) + 0x10000
-
-/** Checks if the codepoint specified is a supplementary codepoint or not. */
-// TODO: Consider removing from public API
-public fun Char.Companion.isSupplementaryCodePoint(codepoint: Int): Boolean =
-    codepoint in MIN_SUPPLEMENTARY_CODE_POINT..MAX_CODE_POINT
-
-// TODO: Consider removing from public API
-public fun Char.Companion.isSurrogatePair(high: Char, low: Char): Boolean = high.isHighSurrogate() && low.isLowSurrogate()
-
-/**
- * Converts the codepoint specified to a char array. If the codepoint is not supplementary, the method will
- * return an array with one element otherwise it will return an array A with a high surrogate in A[0] and
- * a low surrogate in A[1].
- */
-// TODO: Consider removing from public API
-@Suppress("DEPRECATION")
-public fun Char.Companion.toChars(codePoint: Int): CharArray =
-    when {
-        codePoint in 0 until MIN_SUPPLEMENTARY_CODE_POINT -> charArrayOf(codePoint.toChar())
-        codePoint in MIN_SUPPLEMENTARY_CODE_POINT..MAX_CODE_POINT -> {
-            val low = ((codePoint - 0x10000) and 0x3FF) + MIN_LOW_SURROGATE.toInt()
-            val high = (((codePoint - 0x10000) ushr 10) and 0x3FF) + MIN_HIGH_SURROGATE.toInt()
-            charArrayOf(high.toChar(), low.toChar())
-        }
-        else -> throw IllegalArgumentException()
     }

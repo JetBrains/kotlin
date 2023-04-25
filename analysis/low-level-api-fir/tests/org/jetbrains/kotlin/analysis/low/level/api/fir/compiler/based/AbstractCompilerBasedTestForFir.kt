@@ -1,16 +1,16 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based
 
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveSessionService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
-import org.jetbrains.kotlin.analysis.low.level.api.fir.createFirResolveSessionForNoCaching
+import org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostic.compiler.based.facades.LLFirAnalyzerFacadeFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.FirLowLevelCompilerBasedTestConfigurator
-import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyTransformer
 import org.jetbrains.kotlin.analysis.test.framework.AbstractCompilerBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.base.registerAnalysisApiBaseTestServices
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtSourceModuleByCompilerConfiguration
@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.FirParser
-import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.builders.testConfiguration
@@ -64,7 +63,8 @@ abstract class AbstractCompilerBasedTestForFir : AbstractCompilerBasedTest() {
     open fun TestConfigurationBuilder.configureTest() {}
 
     inner class LowLevelFirFrontendFacade(
-        testServices: TestServices
+        testServices: TestServices,
+        private val facadeFactory: LLFirAnalyzerFacadeFactory,
     ) : FirFrontendFacade(testServices) {
         override val additionalServices: List<ServiceRegistrationData>
             get() = emptyList()
@@ -86,8 +86,8 @@ abstract class AbstractCompilerBasedTestForFir : AbstractCompilerBasedTest() {
             val moduleInfoProvider = testServices.ktModuleProvider
             val ktModule = moduleInfoProvider.getModule(module.name) as KtSourceModuleByCompilerConfiguration
 
-            val project = testServices.compilerConfigurationProvider.getProject(module)
-            val firResolveSession = createFirResolveSessionForNoCaching(ktModule, project)
+            val project = ktModule.project
+            val firResolveSession = LLFirResolveSessionService.getInstance(project).getFirResolveSessionNoCaching(ktModule)
 
             val allFirFiles =
                 module.files.filter { it.isKtFile }.zip(
@@ -100,7 +100,7 @@ abstract class AbstractCompilerBasedTestForFir : AbstractCompilerBasedTest() {
                 DiagnosticCheckerFilter.EXTENDED_AND_COMMON_CHECKERS
             } else DiagnosticCheckerFilter.ONLY_COMMON_CHECKERS
 
-            val analyzerFacade = LowLevelFirAnalyzerFacade(firResolveSession, allFirFiles.toMap(), diagnosticCheckerFilter)
+            val analyzerFacade = facadeFactory.createFirFacade(firResolveSession, allFirFiles.toMap(), diagnosticCheckerFilter)
             return FirOutputPartForDependsOnModule(
                 module,
                 firResolveSession.useSiteFirSession,
@@ -116,12 +116,7 @@ abstract class AbstractCompilerBasedTestForFir : AbstractCompilerBasedTest() {
         if (ignoreTest(filePath, configuration)) {
             return
         }
-        val oldEnableDeepEnsure = LLFirLazyTransformer.needCheckingIfClassMembersAreResolved
-        try {
-            LLFirLazyTransformer.needCheckingIfClassMembersAreResolved = true
-            super.runTest(filePath)
-        } finally {
-            LLFirLazyTransformer.needCheckingIfClassMembersAreResolved = oldEnableDeepEnsure
-        }
+
+        super.runTest(filePath)
     }
 }

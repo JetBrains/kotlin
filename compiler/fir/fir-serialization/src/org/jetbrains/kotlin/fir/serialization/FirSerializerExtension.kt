@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.fir.serialization
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.types.ConeFlexibleType
+import org.jetbrains.kotlin.fir.serialization.constant.ConstValueProviderInternals
+import org.jetbrains.kotlin.fir.serialization.constant.ConstValueProvider
 import org.jetbrains.kotlin.fir.types.ConeErrorType
+import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
@@ -22,14 +24,22 @@ abstract class FirSerializerExtension {
 
     abstract val metadataVersion: BinaryVersion
 
-    val annotationSerializer by lazy { FirAnnotationSerializer(session, stringTable) }
+    val annotationSerializer by lazy { FirAnnotationSerializer(session, stringTable, constValueProvider) }
 
-    open fun shouldSerializeNestedClass(nestedClass: FirRegularClass): Boolean = true
-    open fun shouldSerializeTypeAlias(typeAlias: FirTypeAlias): Boolean = true
+    protected abstract val constValueProvider: ConstValueProvider?
+
+    @OptIn(ConstValueProviderInternals::class)
+    internal inline fun <T> processFile(firFile: FirFile, action: () -> T): T {
+        constValueProvider?.processingFirFile = firFile
+        return try {
+            action()
+        } finally {
+            constValueProvider?.processingFirFile = null
+        }
+    }
+
     open fun shouldUseTypeTable(): Boolean = false
     open fun shouldUseNormalizedVisibility(): Boolean = false
-    abstract fun shouldSerializeFunction(function: FirFunction): Boolean
-    abstract fun shouldSerializeProperty(property: FirProperty): Boolean
 
     open fun serializePackage(packageFqName: FqName, proto: ProtoBuf.Package.Builder) {
     }
@@ -74,13 +84,16 @@ abstract class FirSerializerExtension {
     open fun serializeFlexibleType(type: ConeFlexibleType, lowerProto: ProtoBuf.Type.Builder, upperProto: ProtoBuf.Type.Builder) {
     }
 
-    open fun serializeTypeAnnotation(annotation: FirAnnotation, proto: ProtoBuf.Type.Builder) {
+    open fun serializeTypeAnnotations(annotations: List<FirAnnotation>, proto: ProtoBuf.Type.Builder) {
     }
 
     open fun serializeTypeParameter(typeParameter: FirTypeParameter, proto: ProtoBuf.TypeParameter.Builder) {
     }
 
     open fun serializeTypeAlias(typeAlias: FirTypeAlias, proto: ProtoBuf.TypeAlias.Builder) {
+        for (annotation in typeAlias.nonSourceAnnotations(session)) {
+            proto.addAnnotation(annotationSerializer.serializeAnnotation(annotation))
+        }
     }
 
     open fun serializeErrorType(type: ConeErrorType, builder: ProtoBuf.Type.Builder) {
@@ -93,5 +106,4 @@ abstract class FirSerializerExtension {
     interface ClassMembersProducer {
         fun getCallableMembers(klass: FirClass): Collection<FirCallableDeclaration>
     }
-
 }

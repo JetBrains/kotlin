@@ -6,7 +6,6 @@ public final enum class Test {
     public deprecated final enum static @kotlin.Deprecated(message="") field ENTRY1: Test
     public final enum static field ENTRY2: Test
     public deprecated final enum static @kotlin.Deprecated(message="") field ENTRY3: Test
-    private synthetic final static method $entries(): Test[]
     private synthetic final static method $values(): Test[]
     static method <clinit>(): void
     private method <init>(p0: java.lang.String, p1: int): void

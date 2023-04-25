@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.getDescriptorsFiltered
+import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
 class FakeOverrideChecker(
     private val irMangler: KotlinMangler.IrMangler,
@@ -39,25 +40,25 @@ class FakeOverrideChecker(
 
         val descriptorFakeOverrides = classDescriptor.unsubstitutedMemberScope
             .getDescriptorsFiltered(DescriptorKindFilter.CALLABLES)
+            .asSequence()
             .filterIsInstance<CallableMemberDescriptor>()
             .filter { it.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE }
             .filterNot { it.visibility == DescriptorVisibilities.PRIVATE || it.visibility == DescriptorVisibilities.INVISIBLE_FAKE }
 
         val descriptorSignatures = descriptorFakeOverrides
             .map { with(descriptorMangler) { it.signatureString(compatibleMode) } }
-            .sorted()
+            .toMutableList()
+            .apply { sort() }
 
-        val irFakeOverrides = clazz.declarations
+        val irFakeOverrides = clazz.declarations.asSequence()
             .filterIsInstance<IrOverridableMember>()
             .filter { it.isFakeOverride }
-
-        irFakeOverrides.forEach {
-            checkOverriddenSymbols(it)
-        }
+            .onEach { checkOverriddenSymbols(it) }
 
         val irSignatures = irFakeOverrides
             .map { with(irMangler) { it.signatureString(compatibleMode) } }
-            .sorted()
+            .toMutableList()
+            .apply { sort() }
 
         // We can't have equality here because dependency libraries could have
         // been compiled with -friend-modules.

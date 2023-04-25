@@ -62,7 +62,7 @@ FILE fqName:<root> fileName:/nullCheckOnInterfaceDelegation.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun foo (): kotlin.String declared in <root>.Delegated'
           TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-            CALL 'public open fun foo (): @[FlexibleNullability] kotlin.String? declared in <root>.Derived' type=kotlin.String origin=null
+            CALL 'public open fun foo (): @[FlexibleNullability] kotlin.String? declared in <root>.Derived' type=@[FlexibleNullability] kotlin.String? origin=null
               $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Derived visibility:private [final]' type=<root>.Derived origin=null
                 receiver: GET_VAR '<this>: <root>.Delegated declared in <root>.Delegated.foo' type=<root>.Delegated origin=null
     FIELD DELEGATE name:$$delegate_0 type:<root>.Derived visibility:private [final]

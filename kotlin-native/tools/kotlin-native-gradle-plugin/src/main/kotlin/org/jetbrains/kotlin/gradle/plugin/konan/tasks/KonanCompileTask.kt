@@ -147,7 +147,7 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
     // Don't include coverage flags into the first stage because they are not supported when compiling a klib.
     private fun firstStageExtraOpts() = extraOpts
         .excludeFlags("-Xcoverage")
-        .excludeArguments("-Xcoverage-file", "-Xlibrary-to-cover")
+        .excludeArguments("-Xcoverage-file", "-Xlibrary-to-cover", "-Xpartial-linkage", "-Xpartial-linkage-loglevel")
 
     // Don't include the -Xemit-lazy-objc-header flag into
     // the second stage because this stage have no sources.
@@ -234,6 +234,11 @@ abstract class KonanCompileTask: KonanBuildingTask(), KonanCompileSpec {
 
         linkerOpts.forEach {
             addArg("-linker-option", it)
+        }
+
+        if (produce != CompilerOutputKind.LIBRARY) {
+            add("-Xpartial-linkage=enable")
+            add("-Xpartial-linkage-loglevel=error")
         }
 
         addAll(extraOpts)

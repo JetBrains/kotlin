@@ -7,21 +7,28 @@ package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.ir.ValueRemapper
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
+import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.utils.hasStrictSignature
+import org.jetbrains.kotlin.ir.builders.irEqeqeqWithoutBox
+import org.jetbrains.kotlin.ir.builders.irGet
+import org.jetbrains.kotlin.ir.builders.irIfThen
+import org.jetbrains.kotlin.ir.builders.irSet
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
-import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.utils.Namer
 import org.jetbrains.kotlin.ir.types.makeNullable
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.isLocal
+import org.jetbrains.kotlin.ir.util.parentAsClass
+import org.jetbrains.kotlin.ir.util.superClass
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
 object ES6_BOX_PARAMETER : IrDeclarationOriginImpl("ES6_BOX_PARAMETER")
 object ES6_BOX_PARAMETER_DEFAULT_RESOLUTION : IrStatementOriginImpl("ES6_BOX_PARAMETER_DEFAULT_RESOLUTION")
@@ -52,7 +59,7 @@ class ES6AddBoxParameterToConstructorsLowering(val context: JsIrBackendContext) 
 
     private fun IrConstructor.addBoxParameter() {
         val irClass = parentAsClass
-        val boxParameter = generateBoxParameter(irClass).also { valueParameters += it }
+        val boxParameter = generateBoxParameter(irClass).also { valueParameters = valueParameters memoryOptimizedPlus it }
 
         val body = body as? IrBlockBody ?: return
         val isBoxUsed = body.replaceThisWithBoxBeforeSuperCall(irClass, boxParameter.symbol)

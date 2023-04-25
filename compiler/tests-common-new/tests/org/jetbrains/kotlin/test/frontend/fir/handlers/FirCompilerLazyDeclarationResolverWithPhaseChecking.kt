@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.test.frontend.fir.handlers
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
+import org.jetbrains.kotlin.fir.symbols.FirLazyResolveContractViolationException
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 
 
 class FirCompilerLazyDeclarationResolverWithPhaseChecking : FirLazyDeclarationResolver() {
@@ -19,7 +21,11 @@ class FirCompilerLazyDeclarationResolverWithPhaseChecking : FirLazyDeclarationRe
         exceptions
 
     override fun lazyResolveToPhase(symbol: FirBasedSymbol<*>, toPhase: FirResolvePhase) {
-        checkIfCanLazyResolveToPhase(symbol, toPhase)
+        checkIfCanLazyResolveToPhase(toPhase)
+    }
+
+    override fun lazyResolveToPhaseWithCallableMembers(symbol: FirClassSymbol<*>, toPhase: FirResolvePhase) {
+        checkIfCanLazyResolveToPhase(toPhase)
     }
 
     override fun startResolvingPhase(phase: FirResolvePhase) {
@@ -32,7 +38,7 @@ class FirCompilerLazyDeclarationResolverWithPhaseChecking : FirLazyDeclarationRe
         currentTransformerPhase = null
     }
 
-    private fun checkIfCanLazyResolveToPhase(symbol: FirBasedSymbol<*>, requestedPhase: FirResolvePhase) {
+    private fun checkIfCanLazyResolveToPhase(requestedPhase: FirResolvePhase) {
         if (!lazyResolveContractChecksEnabled) return
 
         val currentPhase = currentTransformerPhase
@@ -45,13 +51,9 @@ class FirCompilerLazyDeclarationResolverWithPhaseChecking : FirLazyDeclarationRe
         // but due to usage of already resolved stdlib classes we don't see it
         if (requestedPhase >= currentPhase) {
             exceptions += FirLazyResolveContractViolationException(
-                """`lazyResolveToPhase($requestedPhase)` cannot be called from a transformer with a phase $currentPhase.
-                    lazyResolveToPhase was called on a $symbol.
-                    `lazyResolveToPhase` can be called only from a transformer with a phase which is strictly greater than a requested phase;
-                     i.e., `lazyResolveToPhase(A)` may be only called from a lazy transformer with a phase B, where A < B. This is a contract of lazy resolve""".trimIndent()
+                currentPhase = currentPhase,
+                requestedPhase = requestedPhase,
             )
         }
     }
 }
-
-class FirLazyResolveContractViolationException(message: String) : IllegalStateException(message)

@@ -920,7 +920,11 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         // TODO special blocks using `origin`
         // TODO inlineFunctionSymbol for IrReturnableBlock
         // TODO no tests for IrReturnableBlock?
-        val kind = if (expression is IrReturnableBlock) "RETURNABLE BLOCK" else "BLOCK"
+        val kind = when (expression) {
+            is IrReturnableBlock -> "RETURNABLE BLOCK"
+            is IrInlinedFunctionBlock -> "INLINED FUNCTION BLOCK"
+            else -> "BLOCK"
+        }
         // it's not valid kotlin
         expression.printStatementContainer("{ // $kind", "}", data)
     }

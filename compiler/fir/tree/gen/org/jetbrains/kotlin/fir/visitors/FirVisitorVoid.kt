@@ -17,8 +17,9 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvedDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirControlFlowGraphOwner
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirLazyExpression
 import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
-import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
+import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
@@ -61,6 +62,7 @@ import org.jetbrains.kotlin.fir.expressions.FirErrorLoop
 import org.jetbrains.kotlin.fir.expressions.FirDoWhileLoop
 import org.jetbrains.kotlin.fir.expressions.FirWhileLoop
 import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.fir.expressions.FirLazyBlock
 import org.jetbrains.kotlin.fir.expressions.FirBinaryLogicExpression
 import org.jetbrains.kotlin.fir.expressions.FirJump
 import org.jetbrains.kotlin.fir.expressions.FirLoopJump
@@ -129,6 +131,7 @@ import org.jetbrains.kotlin.fir.expressions.FirWrappedDelegateExpression
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirNamedReferenceWithCandidateBase
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
+import org.jetbrains.kotlin.fir.references.FirFromMissingDependenciesNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
@@ -145,6 +148,7 @@ import org.jetbrains.kotlin.fir.types.FirDynamicTypeRef
 import org.jetbrains.kotlin.fir.types.FirFunctionTypeRef
 import org.jetbrains.kotlin.fir.types.FirIntersectionTypeRef
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
+import org.jetbrains.kotlin.fir.contracts.FirContractElementDeclaration
 import org.jetbrains.kotlin.fir.contracts.FirEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
@@ -203,12 +207,16 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(expression)
     }
 
+    open fun visitLazyExpression(lazyExpression: FirLazyExpression) {
+        visitElement(lazyExpression)
+    }
+
     open fun visitContextReceiver(contextReceiver: FirContextReceiver) {
         visitElement(contextReceiver)
     }
 
-    open fun visitElementWithResolvePhase(elementWithResolvePhase: FirElementWithResolvePhase) {
-        visitElement(elementWithResolvePhase)
+    open fun visitElementWithResolveState(elementWithResolveState: FirElementWithResolveState) {
+        visitElement(elementWithResolveState)
     }
 
     open fun visitFileAnnotationsContainer(fileAnnotationsContainer: FirFileAnnotationsContainer) {
@@ -377,6 +385,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitBlock(block: FirBlock) {
         visitElement(block)
+    }
+
+    open fun visitLazyBlock(lazyBlock: FirLazyBlock) {
+        visitElement(lazyBlock)
     }
 
     open fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression) {
@@ -651,6 +663,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitElement(errorNamedReference)
     }
 
+    open fun visitFromMissingDependenciesNamedReference(fromMissingDependenciesNamedReference: FirFromMissingDependenciesNamedReference) {
+        visitElement(fromMissingDependenciesNamedReference)
+    }
+
     open fun visitSuperReference(superReference: FirSuperReference) {
         visitElement(superReference)
     }
@@ -713,6 +729,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     open fun visitImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef) {
         visitElement(implicitTypeRef)
+    }
+
+    open fun visitContractElementDeclaration(contractElementDeclaration: FirContractElementDeclaration) {
+        visitElement(contractElementDeclaration)
     }
 
     open fun visitEffectDeclaration(effectDeclaration: FirEffectDeclaration) {
@@ -783,12 +803,16 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitExpression(expression)
     }
 
+    final override fun visitLazyExpression(lazyExpression: FirLazyExpression, data: Nothing?) {
+        visitLazyExpression(lazyExpression)
+    }
+
     final override fun visitContextReceiver(contextReceiver: FirContextReceiver, data: Nothing?) {
         visitContextReceiver(contextReceiver)
     }
 
-    final override fun visitElementWithResolvePhase(elementWithResolvePhase: FirElementWithResolvePhase, data: Nothing?) {
-        visitElementWithResolvePhase(elementWithResolvePhase)
+    final override fun visitElementWithResolveState(elementWithResolveState: FirElementWithResolveState, data: Nothing?) {
+        visitElementWithResolveState(elementWithResolveState)
     }
 
     final override fun visitFileAnnotationsContainer(fileAnnotationsContainer: FirFileAnnotationsContainer, data: Nothing?) {
@@ -957,6 +981,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitBlock(block: FirBlock, data: Nothing?) {
         visitBlock(block)
+    }
+
+    final override fun visitLazyBlock(lazyBlock: FirLazyBlock, data: Nothing?) {
+        visitLazyBlock(lazyBlock)
     }
 
     final override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: Nothing?) {
@@ -1231,6 +1259,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
         visitErrorNamedReference(errorNamedReference)
     }
 
+    final override fun visitFromMissingDependenciesNamedReference(fromMissingDependenciesNamedReference: FirFromMissingDependenciesNamedReference, data: Nothing?) {
+        visitFromMissingDependenciesNamedReference(fromMissingDependenciesNamedReference)
+    }
+
     final override fun visitSuperReference(superReference: FirSuperReference, data: Nothing?) {
         visitSuperReference(superReference)
     }
@@ -1293,6 +1325,10 @@ abstract class FirVisitorVoid : FirVisitor<Unit, Nothing?>() {
 
     final override fun visitImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: Nothing?) {
         visitImplicitTypeRef(implicitTypeRef)
+    }
+
+    final override fun visitContractElementDeclaration(contractElementDeclaration: FirContractElementDeclaration, data: Nothing?) {
+        visitContractElementDeclaration(contractElementDeclaration)
     }
 
     final override fun visitEffectDeclaration(effectDeclaration: FirEffectDeclaration, data: Nothing?) {

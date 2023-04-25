@@ -5,15 +5,15 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
-import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.ModificationTracker
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.project.structure.KtNotUnderContentRootModule
 import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 
 internal class LLFirNonUnderContentRootResolvableModuleSession @PrivateSessionConstructor constructor(
-    override val ktModule: KtNotUnderContentRootModule,
-    override val project: Project,
+    ktModule: KtNotUnderContentRootModule,
+    dependencyTracker: ModificationTracker,
     override val moduleComponents: LLFirModuleResolveComponents,
     builtinTypes: BuiltinTypes,
-) : LLFirResolvableModuleSession(builtinTypes)
+) : LLFirResolvableModuleSession(ktModule, dependencyTracker, builtinTypes)

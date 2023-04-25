@@ -44,16 +44,12 @@ public:
     // when it's asked by GC to stop.
     void ProcessThread(mm::ThreadData* threadData) noexcept;
 
-    // Lock registry and apply deletions. Should be called on GC thread after all threads have published, and before `LockForIter`.
-    void ProcessDeletions() noexcept;
-
     // Lock registry for safe iteration.
     Iterable LockForIter() noexcept { return extraObjects_.LockForIter(); }
 
     void ClearForTests() noexcept { extraObjects_.ClearForTests(); }
 
     size_t GetSizeUnsafe() noexcept { return extraObjects_.GetSizeUnsafe(); }
-    size_t GetTotalObjectsSizeUnsafe() noexcept { return extraObjects_.GetSizeUnsafe() * sizeof(ExtraObjectData); }
 
     // requires LockForIter
     void EraseAndAdvance(Iterator &it) { extraObjects_.EraseAndAdvance(it); }

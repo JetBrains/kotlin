@@ -6,15 +6,20 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
+import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.containingDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirFileBuilder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
+import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
+import org.jetbrains.kotlin.psi.psiUtil.parameterIndex
 
 /**
  * 'Non-local' stands for not local classes/functions/etc.
@@ -61,9 +66,13 @@ internal fun KtElement.findSourceByTraversingWholeTree(
     val firFile = containerFirFile ?: firFileBuilder.buildRawFirFileWithCaching(containingKtFile)
     val originalDeclaration = (this as? KtDeclaration)?.originalDeclaration
     val isDeclaration = this is KtDeclaration
-    return FirElementFinder.findElementIn(firFile, canGoInside = { it is FirRegularClass }) { firDeclaration ->
-        firDeclaration.psi == this || isDeclaration && firDeclaration.psi == originalDeclaration
-    }
+    return FirElementFinder.findElementIn(
+        firFile,
+        canGoInside = { it is FirRegularClass || it is FirScript },
+        predicate = { firDeclaration ->
+            firDeclaration.psi == this || isDeclaration && firDeclaration.psi == originalDeclaration
+        }
+    )
 }
 
 private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
@@ -91,7 +100,7 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
              */
             declarations?.firstOrNull { it.psi == this || it.psi == original }
         }
-        this is KtConstructor<*> -> {
+        this is KtConstructor<*> || this is KtClassInitializer -> {
             val containingClass = containingClassOrObject
                 ?: errorWithFirSpecificEntries("Container class should be not null for KtConstructor", psi = this)
             val containerClassFir = containingClass.findFir(provider) as? FirRegularClass ?: return null
@@ -103,9 +112,57 @@ private fun KtDeclaration.findSourceNonLocalFirDeclarationByProvider(
             firFile.declarations.firstOrNull { it.psi == this }
         }
         this is KtScript -> containerFirFile?.declarations?.singleOrNull { it is FirScript }
+        this is KtPropertyAccessor -> {
+            val firPropertyDeclaration = property.findSourceNonLocalFirDeclaration(
+                firFileBuilder,
+                provider,
+                containerFirFile,
+            ) as FirVariable
+
+            if (isGetter) {
+                firPropertyDeclaration.getter
+            } else {
+                firPropertyDeclaration.setter
+            }
+        }
+        this is KtParameter -> {
+            val ownerFunction = ownerFunction
+                ?: errorWithFirSpecificEntries("Containing function should be not null for KtParameter", psi = this)
+
+            val firFunctionDeclaration = ownerFunction.findSourceNonLocalFirDeclarationByProvider(
+                firFileBuilder,
+                provider,
+                containerFirFile,
+            ) as FirFunction
+
+            firFunctionDeclaration.valueParameters[parameterIndex()]
+        }
+        this is KtTypeParameter -> {
+            val declaration = containingDeclaration
+                ?: errorWithFirSpecificEntries("Containing declaration should be not null for KtTypeParameter", psi = this)
+
+            val firTypeParameterOwner = declaration.findSourceNonLocalFirDeclarationByProvider(
+                firFileBuilder,
+                provider,
+                containerFirFile,
+            ) as FirTypeParameterRefsOwner
+
+            val index = (parent as KtTypeParameterList).parameters.indexOf(this)
+            firTypeParameterOwner.typeParameters[index] as FirDeclaration
+        }
         else -> errorWithFirSpecificEntries("Invalid container", psi = this)
     }
     return candidate?.takeIf { it.realPsi == this }
+}
+
+fun FirAnonymousInitializer.containingClass(): FirRegularClass {
+    val dispatchReceiverType = this.dispatchReceiverType as? ConeLookupTagBasedType
+        ?: error("dispatchReceiverType for FirAnonymousInitializer modifier cannot be null")
+
+    val dispatchReceiverSymbol = dispatchReceiverType.lookupTag.toSymbol(llFirSession)
+        ?: error("symbol for FirAnonymousInitializer cannot be null")
+
+    return dispatchReceiverSymbol.fir as FirRegularClass
 }
 
 val ORIGINAL_DECLARATION_KEY = com.intellij.openapi.util.Key<KtDeclaration>("ORIGINAL_DECLARATION_KEY")
@@ -116,14 +173,12 @@ var KtFile.originalKtFile by UserDataProperty(ORIGINAL_KT_FILE_KEY)
 
 
 private fun KtClassLikeDeclaration.findFir(provider: FirProvider): FirClassLikeDeclaration? {
-    val declaration = if (provider is LLFirProvider) {
+    return if (provider is LLFirProvider) {
         provider.getFirClassifierByDeclaration(this)
     } else {
         val classId = getClassId() ?: return null
         provider.getFirClassifierByFqName(classId)
     }
-
-    return declaration as? FirRegularClass
 }
 
 

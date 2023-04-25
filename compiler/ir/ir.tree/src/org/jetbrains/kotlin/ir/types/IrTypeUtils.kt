@@ -67,6 +67,7 @@ fun IrType.getArrayElementType(irBuiltIns: IrBuiltIns): IrType =
     } else {
         val classifier = this.classOrNull!!
         irBuiltIns.primitiveArrayElementTypes[classifier]
+            ?: irBuiltIns.unsignedArraysElementTypes[classifier]
             ?: throw AssertionError("Primitive array expected: $classifier")
     }
 

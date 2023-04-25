@@ -27,8 +27,8 @@ inline val FirCallableSymbol<*>.effectiveVisibility: EffectiveVisibility get() =
 inline val FirCallableSymbol<*>.allowsToHaveFakeOverride: Boolean
     get() = !Visibilities.isPrivate(visibility) && visibility != Visibilities.InvisibleFake
 
-inline val FirCallableSymbol<*>.isActual: Boolean get() = resolvedStatus.isActual
-inline val FirCallableSymbol<*>.isExpect: Boolean get() = resolvedStatus.isExpect
+inline val FirCallableSymbol<*>.isActual: Boolean get() = rawStatus.isActual
+inline val FirCallableSymbol<*>.isExpect: Boolean get() = rawStatus.isExpect
 inline val FirCallableSymbol<*>.isInner: Boolean get() = rawStatus.isInner
 inline val FirCallableSymbol<*>.isStatic: Boolean get() = rawStatus.isStatic
 inline val FirCallableSymbol<*>.isOverride: Boolean get() = rawStatus.isOverride
@@ -59,8 +59,8 @@ inline val FirClassLikeSymbol<*>.isFinal: Boolean
 inline val FirClassLikeSymbol<*>.visibility: Visibility get() = resolvedStatus.visibility
 inline val FirClassLikeSymbol<*>.effectiveVisibility: EffectiveVisibility get() = resolvedStatus.effectiveVisibility
 
-inline val FirClassLikeSymbol<*>.isActual: Boolean get() = resolvedStatus.isActual
-inline val FirClassLikeSymbol<*>.isExpect: Boolean get() = resolvedStatus.isExpect
+inline val FirClassLikeSymbol<*>.isActual: Boolean get() = rawStatus.isActual
+inline val FirClassLikeSymbol<*>.isExpect: Boolean get() = rawStatus.isExpect
 inline val FirClassLikeSymbol<*>.isInner: Boolean get() = rawStatus.isInner
 inline val FirClassLikeSymbol<*>.isStatic: Boolean get() = rawStatus.isStatic
 inline val FirClassLikeSymbol<*>.isInline: Boolean get() = rawStatus.isInline
@@ -83,11 +83,17 @@ inline val FirClassSymbol<*>.isLocalClassOrAnonymousObject: Boolean
     get() = classId.isLocal || this is FirAnonymousObjectSymbol
 
 
+inline val FirClassSymbol<*>.isClass: Boolean
+    get() = classKind.isClass
+
 inline val FirClassSymbol<*>.isInterface: Boolean
     get() = classKind.isInterface
 
 inline val FirClassSymbol<*>.isEnumClass: Boolean
     get() = classKind.isEnumClass
+
+inline val FirClassSymbol<*>.isEnumEntry: Boolean
+    get() = classKind.isEnumEntry
 
 // ---------------------- specific callables ----------------------
 

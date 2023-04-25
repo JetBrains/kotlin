@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.gradle.targets.metadata.getPublishedPlatformCompilat
 import org.jetbrains.kotlin.gradle.targets.metadata.isNativeSourceSet
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerCompositeMetadataJarBundling.cinteropMetadataDirectoryPath
 import org.jetbrains.kotlin.gradle.utils.compositeBuildRootProject
+import org.jetbrains.kotlin.gradle.utils.future
 import org.jetbrains.kotlin.gradle.utils.getOrPut
 import org.w3c.dom.Document
 import org.w3c.dom.Element
@@ -166,7 +167,8 @@ private fun buildKotlinProjectStructureMetadata(extension: KotlinMultiplatformEx
         .getByName(KotlinMultiplatformPlugin.METADATA_TARGET_NAME)
         .compilations.associateBy { it.defaultSourceSet }
 
-    val publishedVariantsNamesWithCompilation = getPublishedPlatformCompilations(project).mapKeys { it.key.name }
+    val publishedVariantsNamesWithCompilation = project.future { getPublishedPlatformCompilations(project).mapKeys { it.key.name } }
+        .getOrThrow()
 
     return KotlinProjectStructureMetadata(
         sourceSetNamesByVariantName = publishedVariantsNamesWithCompilation.mapValues { (_, compilation) ->
@@ -181,7 +183,7 @@ private fun buildKotlinProjectStructureMetadata(extension: KotlinMultiplatformEx
              * published as API dependencies of the metadata module to get into the resolution result, see
              * [KotlinMetadataTargetConfigurator.exportDependenciesForPublishing].
              */
-            val isNativeSharedSourceSet = isNativeSourceSet(sourceSet)
+            val isNativeSharedSourceSet = sourceSet.isNativeSourceSet.getOrThrow()
             val scopes = listOfNotNull(
                 KotlinDependencyScope.API_SCOPE,
                 KotlinDependencyScope.IMPLEMENTATION_SCOPE.takeIf { isNativeSharedSourceSet }
@@ -198,9 +200,9 @@ private fun buildKotlinProjectStructureMetadata(extension: KotlinMultiplatformEx
             sourceSet.name to sourceSetExportedDependencies.map { ModuleIds.fromDependency(it) }.toSet()
         },
         sourceSetCInteropMetadataDirectory = sourceSetsWithMetadataCompilations.keys
-            .filter { isNativeSourceSet(it) }
+            .filter { it.isNativeSourceSet.getOrThrow() }
             .associate { sourceSet -> sourceSet.name to cinteropMetadataDirectoryPath(sourceSet.name) },
-        hostSpecificSourceSets = getHostSpecificSourceSets(project)
+        hostSpecificSourceSets = project.future { getHostSpecificSourceSets(project) }.getOrThrow()
             .filter { it in sourceSetsWithMetadataCompilations }.map { it.name }
             .toSet(),
         sourceSetBinaryLayout = sourceSetsWithMetadataCompilations.keys.associate { sourceSet ->
@@ -239,7 +241,7 @@ internal fun buildProjectStructureMetadata(module: GradleKpmModule): KotlinProje
         sourceSetBinaryLayout = module.fragments.associate { it.name to SourceSetMetadataLayout.KLIB },
         sourceSetModuleDependencies = fragmentDependencies,
         sourceSetCInteropMetadataDirectory = emptyMap(), // Not supported yet
-        hostSpecificSourceSets = getHostSpecificFragments(module).mapTo(mutableSetOf()) { it.name },
+        hostSpecificSourceSets = module.project.future { getHostSpecificFragments(module).mapTo(mutableSetOf()) { it.name } }.getOrThrow(),
         isPublishedAsRoot = true,
         sourceSetNames = module.fragments.map { it.name }.toSet()
     )

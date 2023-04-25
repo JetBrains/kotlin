@@ -5,24 +5,26 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
-import org.jetbrains.kotlin.ir.backend.js.utils.isTheLastReturnStatementIn
-import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.common.ir.inlineFunction
+import org.jetbrains.kotlin.backend.common.ir.innerInlinedBlockOrThis
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
 import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
+import org.jetbrains.kotlin.ir.backend.js.utils.isTheLastReturnStatementIn
+import org.jetbrains.kotlin.ir.backend.js.utils.isUnitInstanceFunction
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
-import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.util.constructedClassType
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.backend.ast.metadata.synthetic
+import org.jetbrains.kotlin.utils.toSmartList
 
 @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
 class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsStatement, JsGenerationContext> {
@@ -32,15 +34,16 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
     }
 
     override fun visitBlockBody(body: IrBlockBody, context: JsGenerationContext): JsStatement {
-        return JsBlock(body.statements.map { it.accept(this, context) }).withSource(body, context, container = context.currentFunction)
+        return JsBlock(body.statements.map { it.accept(this, context) }.toSmartList()).withSource(body, context, container = context.currentFunction)
     }
 
     override fun visitBlock(expression: IrBlock, context: JsGenerationContext): JsStatement {
-        val newContext = (expression as? IrReturnableBlock)?.inlineFunctionSymbol?.let {
-            context.newFile(it.owner.file, context.currentFunction, context.localNames)
+        val newContext = (expression as? IrReturnableBlock)?.inlineFunction?.let {
+            context.newFile(it.file, context.currentFunction, context.localNames)
         } ?: context
 
-        val statements = expression.statements.map { it.accept(this, newContext) }
+        val container = expression.innerInlinedBlockOrThis.statements
+        val statements = container.map { it.accept(this, newContext) }.toSmartList()
 
         return if (expression is IrReturnableBlock) {
             val label = context.getNameForReturnableBlock(expression)
@@ -57,9 +60,9 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
     }
 
     private fun List<JsStatement>.wrapInCommentsInlineFunctionCall(expression: IrReturnableBlock): List<JsStatement> {
-        val inlineFunctionSymbol = expression.inlineFunctionSymbol ?: return this
-        val correspondingProperty = (inlineFunctionSymbol.owner as? IrSimpleFunction)?.correspondingPropertySymbol
-        val owner = correspondingProperty?.owner ?: inlineFunctionSymbol.owner
+        val inlineFunction = expression.inlineFunction ?: return this
+        val correspondingProperty = (inlineFunction as? IrSimpleFunction)?.correspondingPropertySymbol
+        val owner = correspondingProperty?.owner ?: inlineFunction
         val funName = owner.fqNameWhenAvailable ?: owner.name
         return listOf(JsSingleLineComment(" Inline function '$funName' call")) + this
     }
@@ -68,7 +71,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
         return if (expression.statements.isEmpty()) {
             JsEmpty
         } else {
-            JsBlock(expression.statements.map { it.accept(this, context) }).withSource(expression, context)
+            JsBlock(expression.statements.map { it.accept(this, context) }.toSmartList()).withSource(expression, context)
         }
     }
 
@@ -90,50 +93,56 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
         return JsContinue(context.getNameForLoop(jump.loop)?.let { JsNameRef(it) }).withSource(jump, context)
     }
 
-    private fun IrExpression.maybeOptimizeIntoSwitch(context: JsGenerationContext, transformer: (JsExpression) -> JsStatement): JsStatement {
+    private fun IrExpression.maybeOptimizeIntoSwitch(
+        context: JsGenerationContext,
+        transformer: (() -> JsExpression) -> JsStatement
+    ): JsStatement {
         if (this is IrWhen) {
-            val stmtTransformer = { stmt: JsStatement ->
-                assert(stmt is JsExpressionStatement) { "${render()} is not a statement $stmt" }
-                transformer((stmt as JsExpressionStatement).expression)
+            val stmtTransformer: (() -> JsStatement) -> JsStatement = {
+                transformer {
+                    val stmt = it()
+                    assert(stmt is JsExpressionStatement) { "${render()} is not a statement $stmt" }
+                    (stmt as JsExpressionStatement).expression
+                }
             }
             SwitchOptimizer(context, isExpression = true, stmtTransformer).tryOptimize(this)?.let { return it }
         }
 
-        return transformer(accept(IrElementToJsExpressionTransformer(), context))
+        return transformer { accept(IrElementToJsExpressionTransformer(), context) }
     }
 
     override fun visitSetField(expression: IrSetField, context: JsGenerationContext): JsStatement {
         val fieldName = context.getNameForField(expression.symbol.owner)
         val expressionTransformer = IrElementToJsExpressionTransformer()
         val dest = jsElementAccess(fieldName, expression.receiver?.accept(expressionTransformer, context))
-        return expression.value.maybeOptimizeIntoSwitch(context) { jsAssignment(dest, it).withSource(expression, context).makeStmt() }
+        return expression.value.maybeOptimizeIntoSwitch(context) { jsAssignment(dest, it()).withSource(expression, context).makeStmt() }
     }
 
     override fun visitSetValue(expression: IrSetValue, context: JsGenerationContext): JsStatement {
         val owner = expression.symbol.owner
         val ref = JsNameRef(context.getNameForValueDeclaration(owner))
-        return expression.value.maybeOptimizeIntoSwitch(context) { jsAssignment(ref, it).withSource(expression, context).makeStmt() }
+        return expression.value.maybeOptimizeIntoSwitch(context) { jsAssignment(ref, it()).withSource(expression, context).makeStmt() }
     }
 
     override fun visitReturn(expression: IrReturn, context: JsGenerationContext): JsStatement {
         val targetSymbol = expression.returnTargetSymbol
-        val lastStatementTransformer: (JsExpression) -> JsStatement =
+        val lastStatementTransformer: (() -> JsExpression) -> JsStatement =
             if (targetSymbol is IrReturnableBlockSymbol) {
                 // TODO assert that value is Unit?
                 {
                     context.getNameForReturnableBlock(targetSymbol.owner)
-                    .takeIf { !expression.isTheLastReturnStatementIn(targetSymbol) }
-                    ?.run { JsBreak(makeRef()) } ?: JsEmpty
+                        .takeIf { !expression.isTheLastReturnStatementIn(targetSymbol) }
+                        ?.run { JsBreak(makeRef()) } ?: JsEmpty
                 }
             } else {
-                { JsReturn(it) }
+                { JsReturn(it()) }
             }
 
         return expression.value.maybeOptimizeIntoSwitch(context, lastStatementTransformer).withSource(expression, context)
     }
 
     override fun visitThrow(expression: IrThrow, context: JsGenerationContext): JsStatement {
-        return expression.value.maybeOptimizeIntoSwitch(context) { JsThrow(it) }.withSource(expression, context)
+        return expression.value.maybeOptimizeIntoSwitch(context) { JsThrow(it()) }.withSource(expression, context)
     }
 
     override fun visitVariable(declaration: IrVariable, context: JsGenerationContext): JsStatement {
@@ -142,8 +151,8 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
 
         if (value is IrWhen) {
             val varRef = varName.makeRef()
-            val transformer = { stmt: JsStatement ->
-                val expr = (stmt as JsExpressionStatement).expression
+            val transformer: (() -> JsStatement) -> JsStatement = {
+                val expr = (it() as JsExpressionStatement).expression
                 JsBinaryOperation(JsBinaryOperator.ASG, varRef, expr).makeStmt()
             }
 
@@ -153,7 +162,19 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
         }
 
         val jsInitializer = value?.accept(IrElementToJsExpressionTransformer(), context)
-        return JsVars(JsVars.JsVar(varName, jsInitializer).withSource(declaration, context, useNameOf = declaration))
+
+        val syntheticVariable = when (declaration.origin) {
+            is IrDeclarationOrigin.IR_TEMPORARY_VARIABLE -> true
+            is IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER -> true
+            is IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_EXTENSION_RECEIVER -> true
+            else -> false
+        }
+
+        val variable = JsVars.JsVar(varName, jsInitializer).apply {
+            withSource(declaration, context, useNameOf = declaration)
+            synthetic = syntheticVariable
+        }
+        return JsVars(variable).apply { synthetic = syntheticVariable }
     }
 
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, context: JsGenerationContext): JsStatement {
@@ -164,7 +185,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
     }
 
     override fun visitCall(expression: IrCall, data: JsGenerationContext): JsStatement {
-        if (expression.symbol.isUnitInstanceFunction(data)) {
+        if (expression.symbol.isUnitInstanceFunction(data.staticContext.backendContext)) {
             return JsEmpty
         }
         if (data.checkIfJsCode(expression.symbol) || data.checkIfHasAssociatedJsCode(expression.symbol)) {
@@ -173,13 +194,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
         return translateCall(expression, data, IrElementToJsExpressionTransformer()).withSource(expression, data).makeStmt()
     }
 
-    private fun IrFunctionSymbol.isUnitInstanceFunction(context: JsGenerationContext): Boolean {
-        return owner.origin === JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION &&
-                owner.returnType.classifierOrNull === context.staticContext.backendContext.irBuiltIns.unitClass
-    }
-
     override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall, context: JsGenerationContext): JsStatement {
-
         // TODO: implement
         return JsEmpty
     }
@@ -206,8 +221,10 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
     override fun visitWhileLoop(loop: IrWhileLoop, context: JsGenerationContext): JsStatement {
         //TODO what if body null?
         val label = context.getNameForLoop(loop)
-        val loopStatement = JsWhile(loop.condition.accept(IrElementToJsExpressionTransformer(), context),
-                                    loop.body?.accept(this, context) ?: JsEmpty)
+        val loopStatement = JsWhile(
+            loop.condition.accept(IrElementToJsExpressionTransformer(), context),
+            loop.body?.accept(this, context) ?: JsEmpty
+        )
         return label?.let { JsLabel(it, loopStatement) } ?: loopStatement
     }
 

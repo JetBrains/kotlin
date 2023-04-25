@@ -49,7 +49,7 @@ internal object EmptyArrayMap : ArrayMap<Nothing> {
   override operator fun iterator(): Iterator<Nothing> {
     return { // BLOCK
       local class <no name provided> : Iterator<Nothing> {
-        private constructor() /* primary */ {
+        constructor() /* primary */ {
           super/*Any*/()
           /* <init>() */
 
@@ -109,7 +109,7 @@ internal class OneElementArrayMap<T : Any> : ArrayMap<T> {
   override operator fun iterator(): Iterator<T> {
     return { // BLOCK
       local class <no name provided> : Iterator<T> {
-        private constructor() /* primary */ {
+        constructor() /* primary */ {
           super/*Any*/()
           /* <init>() */
 
@@ -211,7 +211,7 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
   override operator fun iterator(): Iterator<T> {
     return { // BLOCK
       local class <no name provided> : AbstractIterator<T> {
-        private constructor() /* primary */ {
+        constructor() /* primary */ {
           super/*AbstractIterator*/<T>()
           /* <init>() */
 
@@ -320,7 +320,7 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
     }
 
     override fun toString(): String {
-      return "Entry(" + "key=" + <this>.#key + ", " + "value=" + <this>.#value + ")"
+      return "Entry(key=" + <this>.#key + ", value=" + <this>.#value + ")"
     }
 
   }

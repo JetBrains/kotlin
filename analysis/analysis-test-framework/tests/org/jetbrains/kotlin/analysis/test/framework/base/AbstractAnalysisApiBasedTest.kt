@@ -177,17 +177,18 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
     private fun isFirDisabledForTheTest(): Boolean =
         AnalysisApiTestDirectives.IGNORE_FIR in testServices.moduleStructure.allDirectives
 
-    protected fun <R> analyseForTest(contextElement: KtElement, action: KtAnalysisSession.() -> R): R {
+    protected fun <R> analyseForTest(contextElement: KtElement, action: KtAnalysisSession.(KtElement) -> R): R {
         return if (configurator.analyseInDependentSession) {
             val originalContainingFile = contextElement.containingKtFile
             val fileCopy = originalContainingFile.copy() as KtFile
+            val sameElementInCopy = PsiTreeUtil.findSameElementInCopy(contextElement, fileCopy)
             analyzeInDependedAnalysisSession(
                 originalContainingFile,
-                PsiTreeUtil.findSameElementInCopy(contextElement, fileCopy),
-                action = action
+                sameElementInCopy,
+                action = { action(sameElementInCopy) }
             )
         } else {
-            analyze(contextElement, action = action)
+            analyze(contextElement, action = { action(contextElement) })
         }
     }
 

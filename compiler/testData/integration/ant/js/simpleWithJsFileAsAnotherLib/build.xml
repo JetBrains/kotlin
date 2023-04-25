@@ -6,14 +6,14 @@
     <mkdir dir="${temp.library.path}"/>
 
     <kotlin2js src="${library.path}" output="${temp.library.path}/jslib-example.js" metaInfo="true">
-      <compilerarg value="-Xuse-deprecated-legacy-compiler"/>
+      <compilerarg value="-Xforce-deprecated-legacy-compiler-usage"/>
     </kotlin2js>
 
     <kotlin2js src="${test.data}/root1" output="${temp}/out.js" main="call">
       <libraries>
         <pathelement path="${temp.library.path}/jslib-example.meta.js"/>
       </libraries>
-      <compilerarg value="-Xuse-deprecated-legacy-compiler"/>
+      <compilerarg value="-Xforce-deprecated-legacy-compiler-usage"/>
     </kotlin2js>
     <copy todir="${temp}">
       <fileset dir="${temp.library.path}">

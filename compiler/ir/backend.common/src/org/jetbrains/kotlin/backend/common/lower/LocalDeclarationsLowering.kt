@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
+import org.jetbrains.kotlin.backend.common.ir.isFunctionInlining
 import org.jetbrains.kotlin.backend.common.lower.inline.isInlineParameter
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -34,6 +35,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
+import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
 interface VisibilityPolicy {
     fun forClass(declaration: IrClass, inInlineFunctionScope: Boolean): DescriptorVisibility =
@@ -102,6 +105,15 @@ class LocalDeclarationsLowering(
         classesToLower: Set<IrClass>, functionsToSkip: Set<IrSimpleFunction>
     ) {
         LocalDeclarationsTransformer(irBlock, container, closestParent, classesToLower, functionsToSkip).lowerLocalDeclarations()
+    }
+
+    fun lowerWithoutActualChange(irBody: IrBody, container: IrDeclaration) {
+        val oldCapturedConstructors = context.mapping.capturedConstructors.keys
+            .mapNotNull { context.mapping.capturedConstructors[it] }
+        LocalDeclarationsTransformer(irBody, container).cacheLocalConstructors()
+        oldCapturedConstructors
+            .filter { context.mapping.capturedConstructors[it] != null }
+            .forEach { context.mapping.capturedConstructors[it] = null }
     }
 
     internal class ScopeWithCounter(val irElement: IrElement) {
@@ -265,6 +277,15 @@ class LocalDeclarationsLowering(
         val newParameterToOld: MutableMap<IrValueParameter, IrValueParameter> = mutableMapOf()
         val oldParameterToNew: MutableMap<IrValueParameter, IrValueParameter> = mutableMapOf()
         val newParameterToCaptured: MutableMap<IrValueParameter, IrValueSymbol> = mutableMapOf()
+
+        fun cacheLocalConstructors() {
+            collectLocalDeclarations()
+            collectClosureForLocalDeclarations()
+
+            localClassConstructors.values.forEach {
+                createTransformedConstructorDeclaration(it)
+            }
+        }
 
         fun lowerLocalDeclarations() {
             collectLocalDeclarations()
@@ -518,13 +539,16 @@ class LocalDeclarationsLowering(
 
             // NOTE: if running before InitializersLowering, we can instead look for constructors that have
             //   IrInstanceInitializerCall. However, Native runs these two lowerings in opposite order.
-            val constructorsCallingSuper = constructors
+            val constructorsByDelegationKinds: Map<ConstructorDelegationKind, List<LocalClassConstructorContext>> = constructors
                 .asSequence()
                 .map { localClassConstructors[it]!! }
-                .filter { it.declaration.callsSuper(context.irBuiltIns) }
-                .toList()
+                .groupBy { it.declaration.delegationKind(context.irBuiltIns) }
 
-            assert(constructorsCallingSuper.any()) { "Expected at least one constructor calling super; class: $irClass" }
+            val constructorsCallingSuper = constructorsByDelegationKinds[ConstructorDelegationKind.CALLS_SUPER].orEmpty()
+
+            assert(constructorsCallingSuper.isNotEmpty() || constructorsByDelegationKinds[ConstructorDelegationKind.PARTIAL_LINKAGE_ERROR] != null) {
+                "Expected at least one constructor calling super; class: $irClass"
+            }
 
             val usedCaptureFields = createFieldsForCapturedValues(localClassContext)
             irClass.declarations += usedCaptureFields
@@ -686,7 +710,7 @@ class LocalDeclarationsLowering(
             )
             // Type parameters of oldDeclaration may depend on captured type parameters, so deal with that after copying.
             newDeclaration.typeParameters.drop(newTypeParameters.size).forEach { tp ->
-                tp.superTypes = tp.superTypes.map { localFunctionContext.remapType(it) }
+                tp.superTypes = tp.superTypes.memoryOptimizedMap { localFunctionContext.remapType(it) }
             }
 
             newDeclaration.parent = ownerParent
@@ -699,7 +723,7 @@ class LocalDeclarationsLowering(
             }
             newDeclaration.copyAttributes(oldDeclaration)
 
-            newDeclaration.valueParameters += createTransformedValueParameters(
+            newDeclaration.valueParameters = newDeclaration.valueParameters memoryOptimizedPlus createTransformedValueParameters(
                 capturedValues, localFunctionContext, oldDeclaration, newDeclaration,
                 isExplicitLocalFunction = oldDeclaration.origin == IrDeclarationOrigin.LOCAL_FUNCTION
             )
@@ -777,6 +801,20 @@ class LocalDeclarationsLowering(
             val localClassContext = localClasses[oldDeclaration.parent]!!
             val capturedValues = localClassContext.closure.capturedValues
 
+            // Restore context if constructor was cached
+            context.mapping.capturedConstructors[oldDeclaration]?.let { newDeclaration ->
+                transformedDeclarations[oldDeclaration] = newDeclaration
+                constructorContext.transformedDeclaration = newDeclaration
+                newDeclaration.valueParameters.zip(capturedValues).forEach { (it, capturedValue) ->
+                    newParameterToCaptured[it] = capturedValue
+                }
+                oldDeclaration.valueParameters.zip(newDeclaration.valueParameters).forEach { (v, it) ->
+                    newParameterToOld.putAbsentOrSame(it, v)
+                }
+                newDeclaration.recordTransformedValueParameters(constructorContext)
+                return
+            }
+
             val newDeclaration = context.irFactory.buildConstructor {
                 updateFrom(oldDeclaration)
                 visibility = visibilityPolicy.forConstructor(oldDeclaration, constructorContext.inInlineFunctionScope)
@@ -795,7 +833,7 @@ class LocalDeclarationsLowering(
                 throw AssertionError("Local class constructor can't have extension receiver: ${ir2string(oldDeclaration)}")
             }
 
-            newDeclaration.valueParameters += createTransformedValueParameters(
+            newDeclaration.valueParameters = newDeclaration.valueParameters memoryOptimizedPlus createTransformedValueParameters(
                 capturedValues, localClassContext, oldDeclaration, newDeclaration
             )
             newDeclaration.recordTransformedValueParameters(constructorContext)
@@ -955,6 +993,11 @@ class LocalDeclarationsLowering(
                     element.acceptChildren(this, data)
                 }
 
+                override fun visitBlock(expression: IrBlock, data: Data) {
+                    if (expression !is IrInlinedFunctionBlock) return super.visitBlock(expression, data)
+                    super.visitBlock(expression, data.withInline(expression.isFunctionInlining()))
+                }
+
                 override fun visitFunctionExpression(expression: IrFunctionExpression, data: Data) {
                     // TODO: For now IrFunctionExpression can only be encountered here if this was called from the inliner,
                     // then all IrFunctionExpression will be replaced by IrFunctionReferenceExpression.
@@ -1011,7 +1054,7 @@ class LocalDeclarationsLowering(
                     //   other restrictions on IR (e.g. after the initializers are moved you can no longer create fields
                     //   with initializers) which makes that hard to implement.
                     val constructorContext = declaration.constructors.mapNotNull { localClassConstructors[it] }
-                        .singleOrNull { it.declaration.callsSuper(context.irBuiltIns) }
+                        .singleOrNull { it.declaration.delegationKind(context.irBuiltIns) == ConstructorDelegationKind.CALLS_SUPER }
                     localClasses[declaration] = LocalClassContext(declaration, data.inInlineFunctionScope, constructorContext)
                 }
 

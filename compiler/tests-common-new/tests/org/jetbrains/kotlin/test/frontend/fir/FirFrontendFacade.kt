@@ -17,18 +17,24 @@ import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmModularRoots
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.constant.EvaluatedConstTracker
+import org.jetbrains.kotlin.container.topologicalSort
 import org.jetbrains.kotlin.fir.*
+import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
+import org.jetbrains.kotlin.fir.session.FirCommonSessionFactory
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
 import org.jetbrains.kotlin.fir.session.FirNativeSessionFactory
 import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
+import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
@@ -36,9 +42,9 @@ import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
-import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.singleValue
 import org.jetbrains.kotlin.test.getAnalyzerServices
@@ -87,40 +93,30 @@ open class FirFrontendFacade(
 
         val (moduleDataMap, moduleDataProvider) = initializeModuleData(sortedModules)
 
+        val project = testServices.compilerConfigurationProvider.getProject(module)
+        val extensionRegistrars = FirExtensionRegistrar.getInstances(project)
         val projectEnvironment = createLibrarySession(
             module,
-            testServices.compilerConfigurationProvider.getProject(module),
+            project,
             Name.special("<${module.name}>"),
             testServices.firModuleInfoProvider.firSessionProvider,
             moduleDataProvider,
-            testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+            testServices.compilerConfigurationProvider.getCompilerConfiguration(module),
+            extensionRegistrars
         )
 
         val targetPlatform = module.targetPlatform
         val firOutputPartForDependsOnModules = sortedModules.map {
-            analyze(it, moduleDataMap[it]!!, targetPlatform, projectEnvironment)
+            analyze(it, moduleDataMap[it]!!, targetPlatform, projectEnvironment, extensionRegistrars)
         }
 
         return FirOutputArtifactImpl(firOutputPartForDependsOnModules)
     }
 
     protected fun sortDependsOnTopologically(module: TestModule): List<TestModule> {
-        val sortedModules = mutableListOf<TestModule>()
-        val visitedModules = mutableSetOf<TestModule>()
-        val modulesQueue = ArrayDeque<TestModule>()
-        modulesQueue.add(module)
-
-        while (modulesQueue.isNotEmpty()) {
-            val currentModule = modulesQueue.removeFirst()
-            if (!visitedModules.add(currentModule)) continue
-            sortedModules.add(currentModule)
-
-            for (dependency in currentModule.dependsOnDependencies) {
-                modulesQueue.add(testServices.dependencyProvider.getTestModule(dependency.moduleName))
-            }
+        return topologicalSort(listOf(module), reverseOrder = true) { item ->
+            item.dependsOnDependencies.map { testServices.dependencyProvider.getTestModule(it.moduleName) }
         }
-
-        return sortedModules.reversed()
     }
 
     private fun initializeModuleData(modules: List<TestModule>): Pair<Map<TestModule, FirModuleData>, ModuleDataProvider> {
@@ -194,14 +190,15 @@ open class FirFrontendFacade(
         moduleName: Name,
         sessionProvider: FirProjectSessionProvider,
         moduleDataProvider: ModuleDataProvider,
-        configuration: CompilerConfiguration
+        configuration: CompilerConfiguration,
+        extensionRegistrars: List<FirExtensionRegistrar>
     ): AbstractProjectEnvironment? {
         val compilerConfigurationProvider = testServices.compilerConfigurationProvider
         val projectEnvironment: AbstractProjectEnvironment?
         val languageVersionSettings = module.languageVersionSettings
+        val isCommon = module.targetPlatform.isCommon()
         when {
-            // TODO: use common session for common target platform when it's implemented
-            module.targetPlatform.isCommon() || module.targetPlatform.isJvm() -> {
+            isCommon || module.targetPlatform.isJvm() -> {
                 val packagePartProviderFactory = compilerConfigurationProvider.getPackagePartProviderFactory(module)
                 projectEnvironment = VfsBasedProjectEnvironment(
                     project, VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),
@@ -209,16 +206,32 @@ open class FirFrontendFacade(
                 val projectFileSearchScope = PsiBasedProjectFileSearchScope(ProjectScope.getLibrariesScope(project))
                 val packagePartProvider = projectEnvironment.getPackagePartProvider(projectFileSearchScope)
 
-                FirJvmSessionFactory.createLibrarySession(
-                    moduleName,
-                    sessionProvider,
-                    moduleDataProvider,
-                    projectEnvironment,
-                    projectFileSearchScope,
-                    packagePartProvider,
-                    languageVersionSettings,
-                    registerExtraComponents = ::registerExtraComponents,
-                )
+                if (isCommon) {
+                    FirCommonSessionFactory.createLibrarySession(
+                        mainModuleName = moduleName,
+                        sessionProvider = sessionProvider,
+                        moduleDataProvider = moduleDataProvider,
+                        projectEnvironment = projectEnvironment,
+                        extensionRegistrars = extensionRegistrars,
+                        librariesScope = projectFileSearchScope,
+                        resolvedKLibs = emptyList(),
+                        packageAndMetadataPartProvider = packagePartProvider as PackageAndMetadataPartProvider,
+                        languageVersionSettings = languageVersionSettings,
+                        registerExtraComponents = ::registerExtraComponents
+                    )
+                } else {
+                    FirJvmSessionFactory.createLibrarySession(
+                        moduleName,
+                        sessionProvider,
+                        moduleDataProvider,
+                        projectEnvironment,
+                        extensionRegistrars,
+                        projectFileSearchScope,
+                        packagePartProvider,
+                        languageVersionSettings,
+                        registerExtraComponents = ::registerExtraComponents,
+                    )
+                }
             }
             module.targetPlatform.isJs() -> {
                 projectEnvironment = null
@@ -229,6 +242,7 @@ open class FirFrontendFacade(
                     module,
                     testServices,
                     configuration,
+                    extensionRegistrars,
                     languageVersionSettings,
                     registerExtraComponents = ::registerExtraComponents,
                 )
@@ -240,6 +254,7 @@ open class FirFrontendFacade(
                     listOf(),
                     sessionProvider,
                     moduleDataProvider,
+                    extensionRegistrars,
                     languageVersionSettings,
                     registerExtraComponents = ::registerExtraComponents,
                 )
@@ -253,7 +268,8 @@ open class FirFrontendFacade(
         module: TestModule,
         moduleData: FirModuleData,
         targetPlatform: TargetPlatform,
-        projectEnvironment: AbstractProjectEnvironment?
+        projectEnvironment: AbstractProjectEnvironment?,
+        extensionRegistrars: List<FirExtensionRegistrar>,
     ): FirOutputPartForDependsOnModule {
         val compilerConfigurationProvider = testServices.compilerConfigurationProvider
         val moduleInfoProvider = testServices.firModuleInfoProvider
@@ -270,7 +286,6 @@ open class FirFrontendFacade(
             FirParser.Psi -> testServices.sourceFileProvider.getKtFilesForSourceFiles(module.files, project).values to emptyList()
         }
 
-        val extensionRegistrars = FirExtensionRegistrar.getInstances(project)
         val sessionConfigurator: FirSessionConfigurator.() -> Unit = {
             if (FirDiagnosticsDirectives.WITH_EXTENDED_CHECKERS in module.directives) {
                 registerExtendedCommonCheckers()
@@ -293,13 +308,17 @@ open class FirFrontendFacade(
         val enablePluginPhases = FirDiagnosticsDirectives.ENABLE_PLUGIN_PHASES in module.directives
         val firAnalyzerFacade = FirAnalyzerFacade(
             moduleBasedSession,
-            module.languageVersionSettings,
+            Fir2IrConfiguration(
+                languageVersionSettings = module.languageVersionSettings,
+                linkViaSignatures = module.targetBackend == TargetBackend.JVM_IR_SERIALIZE,
+                evaluatedConstTracker = compilerConfigurationProvider.getCompilerConfiguration(module)
+                    .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
+            ),
             ktFiles,
             lightTreeFiles,
             IrGenerationExtension.getInstances(project),
             parser,
             enablePluginPhases,
-            generateSignatures = module.targetBackend == TargetBackend.JVM_IR_SERIALIZE
         )
         val firFiles = firAnalyzerFacade.runResolution()
         val filesMap = firFiles.mapNotNull { firFile ->
@@ -323,8 +342,19 @@ open class FirFrontendFacade(
     ): FirSession {
         val languageVersionSettings = module.languageVersionSettings
         return when {
-            // TODO: use common session for common target platform when it's implemented
-            targetPlatform.isCommon() || targetPlatform.isJvm() -> {
+            targetPlatform.isCommon() -> {
+                FirCommonSessionFactory.createModuleBasedSession(
+                    moduleData = moduleData,
+                    sessionProvider = sessionProvider,
+                    projectEnvironment = projectEnvironment!!,
+                    incrementalCompilationContext = null,
+                    extensionRegistrars = extensionRegistrars,
+                    languageVersionSettings = languageVersionSettings,
+                    registerExtraComponents = ::registerExtraComponents,
+                    init = sessionConfigurator,
+                )
+            }
+            targetPlatform.isJvm() -> {
                 FirJvmSessionFactory.createModuleBasedSession(
                     moduleData,
                     sessionProvider,
@@ -333,11 +363,9 @@ open class FirFrontendFacade(
                     incrementalCompilationContext = null,
                     extensionRegistrars,
                     languageVersionSettings,
-                    lookupTracker = null,
-                    enumWhenTracker = null,
                     needRegisterJavaElementFinder = true,
                     registerExtraComponents = ::registerExtraComponents,
-                    sessionConfigurator,
+                    init = sessionConfigurator,
                 )
             }
             targetPlatform.isJs() -> {

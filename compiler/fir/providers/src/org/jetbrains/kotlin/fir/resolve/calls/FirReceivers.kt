@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildThisReceiverExpression
 import org.jetbrains.kotlin.fir.references.builder.buildImplicitThisReference
 import org.jetbrains.kotlin.fir.renderWithType
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.smartcastScope
 import org.jetbrains.kotlin.fir.scopes.FakeOverrideTypeCalculator
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.SmartcastStability
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
 interface Receiver
 
@@ -87,6 +89,8 @@ sealed class ImplicitReceiverValue<S : FirBasedSymbol<*>>(
     abstract val isContextReceiver: Boolean
 
     val originalType: ConeKotlinType = type
+
+    val expandedType: ConeKotlinType = type.applyIf(type is ConeClassLikeType) { fullyExpandedType(useSiteSession) }
 
     var implicitScope: FirTypeScope? =
         type.scope(useSiteSession, scopeSession, FakeOverrideTypeCalculator.DoNothing, requiredPhase = FirResolvePhase.STATUS)

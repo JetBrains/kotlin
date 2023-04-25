@@ -1,6 +1,8 @@
 // WITH_STDLIB
 // WASM_MUTE_REASON: REFLECTION
 
+@file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
+
 import kotlin.UninitializedPropertyAccessException
 
 fun runNoInline(f: () -> Unit) = f()

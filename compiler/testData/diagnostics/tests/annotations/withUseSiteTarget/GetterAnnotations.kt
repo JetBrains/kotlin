@@ -1,4 +1,3 @@
-// FIR_IDENTICAL
 import kotlin.reflect.KProperty
 
 annotation class Ann
@@ -7,10 +6,10 @@ class CustomDelegate {
     operator fun getValue(thisRef: Any?, prop: KProperty<*>): String = prop.name
 }
 
-<!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@get:Ann<!>
+<!INAPPLICABLE_TARGET_ON_PROPERTY_WARNING, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@get:Ann<!>
 class SomeClass {
 
-    <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@get:Ann<!>
+    <!INAPPLICABLE_TARGET_ON_PROPERTY_WARNING, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@get:Ann<!>
     constructor()
 
     @get:Ann
@@ -29,11 +28,14 @@ class SomeClass {
     val propertyWithCustomGetter: Int
         get() = 5
 
-    <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@get:Ann<!>
+    val useSiteTarget: Int
+        <!INAPPLICABLE_TARGET_ON_PROPERTY_WARNING!>@get:Ann<!> get() = 5
+
+    <!INAPPLICABLE_TARGET_ON_PROPERTY_WARNING, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@get:Ann<!>
     fun annotationOnFunction(a: Int) = a + 5
 
     fun anotherFun() {
-        <!WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@get:Ann<!>
+        <!INAPPLICABLE_TARGET_ON_PROPERTY_WARNING, WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET!>@get:Ann<!>
         val localVariable = 5
     }
 

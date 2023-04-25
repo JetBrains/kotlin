@@ -34,6 +34,12 @@ public class FirPsiPluginDiagnosticTestGenerated extends AbstractFirPsiPluginDia
         }
 
         @Test
+        @TestMetadata("dependencyWithoutAttributePlugin.kt")
+        public void testDependencyWithoutAttributePlugin() throws Exception {
+            runTest("plugins/fir-plugin-prototype/testData/diagnostics/checkers/dependencyWithoutAttributePlugin.kt");
+        }
+
+        @Test
         @TestMetadata("signedNumbersCheckers.kt")
         public void testSignedNumbersCheckers() throws Exception {
             runTest("plugins/fir-plugin-prototype/testData/diagnostics/checkers/signedNumbersCheckers.kt");
@@ -59,6 +65,12 @@ public class FirPsiPluginDiagnosticTestGenerated extends AbstractFirPsiPluginDia
         @TestMetadata("ambigousKinds.kt")
         public void testAmbigousKinds() throws Exception {
             runTest("plugins/fir-plugin-prototype/testData/diagnostics/functionalTypes/ambigousKinds.kt");
+        }
+
+        @Test
+        @TestMetadata("dependencyWithoutFunctionalKindPlugin.kt")
+        public void testDependencyWithoutFunctionalKindPlugin() throws Exception {
+            runTest("plugins/fir-plugin-prototype/testData/diagnostics/functionalTypes/dependencyWithoutFunctionalKindPlugin.kt");
         }
 
         @Test

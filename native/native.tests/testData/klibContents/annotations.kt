@@ -1,4 +1,7 @@
+// KT-57135 K2 dosen't take into account `field` target on annotation for property
+// MUTED_WHEN: K2
 package test
+
 annotation class AnnoClass
 annotation class AnnoConstructor
 annotation class AnnoConstructorParameter
@@ -14,6 +17,14 @@ annotation class AnnoFunction
 annotation class AnnoFunctionParam
 annotation class AnnoFunctionExtensionReceiver
 annotation class AnnoPropertyExtensionReceiver
+
+@Target(AnnotationTarget.TYPE_PARAMETER)
+annotation class AnnoFunctionTypeParameter
+@Target(AnnotationTarget.TYPE_PARAMETER)
+annotation class AnnoClassTypeParameter
+@Target(AnnotationTarget.TYPE)
+annotation class AnnoClassUsageTypeParameter
+
 @AnnoClass
 class Foo @AnnoConstructor constructor(@AnnoConstructorParameter i: Int) {
     @AnnoProperty
@@ -36,3 +47,6 @@ class Foo @AnnoConstructor constructor(@AnnoConstructorParameter i: Int) {
 fun @receiver:AnnoFunctionExtensionReceiver Foo.extfun(@AnnoFunctionParam x: Int) {}
 @AnnoPropertyExtensionReceiver
 val Foo.extProp get() = this.prop
+
+fun <@AnnoFunctionTypeParameter T> f(x : B<@AnnoClassUsageTypeParameter Int>) {}
+class B<@AnnoClassTypeParameter T>

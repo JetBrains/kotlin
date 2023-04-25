@@ -9,17 +9,16 @@ import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.GroupedKtSources
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.fir.DependencyListForCliModule
-import org.jetbrains.kotlin.fir.FirModuleData
-import org.jetbrains.kotlin.fir.FirModuleDataImpl
-import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
+import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.load.kotlin.PackageAndMetadataPartProvider
 import org.jetbrains.kotlin.name.Name
@@ -55,7 +54,7 @@ fun <F> prepareJvmSessions(
     files: List<F>,
     configuration: CompilerConfiguration,
     projectEnvironment: AbstractProjectEnvironment,
-    rootModuleName: String,
+    rootModuleName: Name,
     extensionRegistrars: List<FirExtensionRegistrar>,
     librariesScope: AbstractProjectFileSearchScope,
     libraryList: DependencyListForCliModule,
@@ -67,19 +66,19 @@ fun <F> prepareJvmSessions(
 
     return prepareSessions(
         files, configuration, rootModuleName, JvmPlatforms.unspecifiedJvmPlatform,
-        JvmPlatformAnalyzerServices, libraryList, isCommonSource, fileBelongsToModule,
+        JvmPlatformAnalyzerServices, metadataCompilationMode = false, libraryList, isCommonSource, fileBelongsToModule,
         createLibrarySession = { sessionProvider ->
             FirJvmSessionFactory.createLibrarySession(
-                Name.identifier(rootModuleName),
+                rootModuleName,
                 sessionProvider,
                 libraryList.moduleDataProvider,
                 projectEnvironment,
+                extensionRegistrars,
                 librariesScope,
                 projectEnvironment.getPackagePartProvider(librariesScope),
                 configuration.languageVersionSettings,
                 registerExtraComponents = {},
             )
-
         }
     ) { moduleFiles, moduleData, sessionProvider, sessionConfigurator ->
         FirJvmSessionFactory.createModuleBasedSession(
@@ -109,22 +108,25 @@ fun <F> prepareJvmSessions(
 fun <F> prepareJsSessions(
     files: List<F>,
     configuration: CompilerConfiguration,
-    rootModuleName: String,
-    resolvedLibraries: List<KotlinResolvedLibrary>,
+    rootModuleName: Name,
+    resolvedLibraries: List<KotlinLibrary>,
     libraryList: DependencyListForCliModule,
     extensionRegistrars: List<FirExtensionRegistrar>,
     isCommonSource: (F) -> Boolean,
     fileBelongsToModule: (F, String) -> Boolean,
+    lookupTracker: LookupTracker?,
+    icData: KlibIcData?,
 ): List<SessionWithSources<F>> {
     return prepareSessions(
         files, configuration, rootModuleName, JsPlatforms.defaultJsPlatform, JsPlatformAnalyzerServices,
-        libraryList, isCommonSource, fileBelongsToModule,
+        metadataCompilationMode = false, libraryList, isCommonSource, fileBelongsToModule,
         createLibrarySession = { sessionProvider ->
             FirJsSessionFactory.createLibrarySession(
-                Name.identifier(rootModuleName),
+                rootModuleName,
                 resolvedLibraries,
                 sessionProvider,
                 libraryList.moduleDataProvider,
+                extensionRegistrars,
                 configuration.languageVersionSettings,
                 registerExtraComponents = {},
             )
@@ -135,7 +137,8 @@ fun <F> prepareJsSessions(
             sessionProvider,
             extensionRegistrars,
             configuration.languageVersionSettings,
-            null,
+            lookupTracker,
+            icData = icData,
             registerExtraComponents = {},
             init = sessionConfigurator,
         )
@@ -152,23 +155,25 @@ fun <F> prepareJsSessions(
 fun <F> prepareNativeSessions(
     files: List<F>,
     configuration: CompilerConfiguration,
-    rootModuleName: String,
+    rootModuleName: Name,
     resolvedLibraries: List<KotlinResolvedLibrary>,
     libraryList: DependencyListForCliModule,
     extensionRegistrars: List<FirExtensionRegistrar>,
     isCommonSource: (F) -> Boolean,
     fileBelongsToModule: (F, String) -> Boolean,
+    registerExtraComponents: ((FirSession) -> Unit) = {},
 ): List<SessionWithSources<F>> {
     return prepareSessions(
         files, configuration, rootModuleName, NativePlatforms.unspecifiedNativePlatform, NativePlatformAnalyzerServices,
-        libraryList, isCommonSource, fileBelongsToModule, createLibrarySession = { sessionProvider ->
+        metadataCompilationMode = false, libraryList, isCommonSource, fileBelongsToModule, createLibrarySession = { sessionProvider ->
             FirNativeSessionFactory.createLibrarySession(
-                Name.identifier(rootModuleName),
+                rootModuleName,
                 resolvedLibraries,
                 sessionProvider,
                 libraryList.moduleDataProvider,
+                extensionRegistrars,
                 configuration.languageVersionSettings,
-                registerExtraComponents = {},
+                registerExtraComponents,
             )
         }
     ) { _, moduleData, sessionProvider, sessionConfigurator ->
@@ -178,38 +183,40 @@ fun <F> prepareNativeSessions(
             extensionRegistrars,
             configuration.languageVersionSettings,
             sessionConfigurator,
+            registerExtraComponents,
         )
     }
 }
 
 /**
  * Creates library session and sources session for Common platform (for metadata compilation)
- * Number of created session depends on mode of MPP:
- *   - disabled
- *   - legacy (one platform and one common module)
- *   - HMPP (multiple number of modules)
+ * Number of created sessions is always one, in this mode modules are compiled against compiled
+ *   metadata of dependent modules
  */
 fun <F> prepareCommonSessions(
     files: List<F>,
     configuration: CompilerConfiguration,
     projectEnvironment: AbstractProjectEnvironment,
-    rootModuleName: String,
+    rootModuleName: Name,
     extensionRegistrars: List<FirExtensionRegistrar>,
     librariesScope: AbstractProjectFileSearchScope,
     libraryList: DependencyListForCliModule,
+    resolvedLibraries: List<KotlinResolvedLibrary>,
     isCommonSource: (F) -> Boolean,
     fileBelongsToModule: (F, String) -> Boolean,
     createProviderAndScopeForIncrementalCompilation: (List<F>) -> IncrementalCompilationContext?,
 ): List<SessionWithSources<F>> {
     return prepareSessions(
         files, configuration, rootModuleName, CommonPlatforms.defaultCommonPlatform, CommonPlatformAnalyzerServices,
-        libraryList, isCommonSource, fileBelongsToModule, createLibrarySession = { sessionProvider ->
+        metadataCompilationMode = true, libraryList, isCommonSource, fileBelongsToModule, createLibrarySession = { sessionProvider ->
             FirCommonSessionFactory.createLibrarySession(
-                Name.identifier(rootModuleName),
+                rootModuleName,
                 sessionProvider,
                 libraryList.moduleDataProvider,
                 projectEnvironment,
+                extensionRegistrars,
                 librariesScope,
+                resolvedLibraries,
                 projectEnvironment.getPackagePartProvider(librariesScope) as PackageAndMetadataPartProvider,
                 configuration.languageVersionSettings,
                 registerExtraComponents = {},
@@ -219,14 +226,12 @@ fun <F> prepareCommonSessions(
         FirCommonSessionFactory.createModuleBasedSession(
             moduleData,
             sessionProvider,
-            librariesScope,
             projectEnvironment,
             incrementalCompilationContext = createProviderAndScopeForIncrementalCompilation(moduleFiles),
             extensionRegistrars,
             configuration.languageVersionSettings,
             lookupTracker = configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER),
             enumWhenTracker = configuration.get(CommonConfigurationKeys.ENUM_WHEN_TRACKER),
-            needRegisterJavaElementFinder = true,
             registerExtraComponents = {},
             init = sessionConfigurator
         )
@@ -240,9 +245,10 @@ private typealias FirSessionProducer<F> = (List<F>, FirModuleData, FirProjectSes
 private inline fun <F> prepareSessions(
     files: List<F>,
     configuration: CompilerConfiguration,
-    rootModuleName: String,
+    rootModuleName: Name,
     targetPlatform: TargetPlatform,
     analyzerServices: PlatformDependentAnalyzerServices,
+    metadataCompilationMode: Boolean,
     libraryList: DependencyListForCliModule,
     isCommonSource: (F) -> Boolean,
     fileBelongsToModule: (F, String) -> Boolean,
@@ -264,8 +270,8 @@ private inline fun <F> prepareSessions(
     }
 
     return when {
-        !isMppEnabled -> listOf(
-            createSessionForNonMppProject(
+        metadataCompilationMode || !isMppEnabled -> listOf(
+            createSingleSession(
                 files, rootModuleName, libraryList, targetPlatform, analyzerServices,
                 sessionProvider, sessionConfigurator, createSourceSession
             )
@@ -277,15 +283,15 @@ private inline fun <F> prepareSessions(
         )
 
         else -> createSessionsForHmppProject(
-            files, hmppModuleStructure, libraryList, targetPlatform, analyzerServices,
+            files, rootModuleName, hmppModuleStructure, libraryList, targetPlatform, analyzerServices,
             sessionProvider, sessionConfigurator, fileBelongsToModule, createSourceSession
         )
     }
 }
 
-private inline fun <F> createSessionForNonMppProject(
+private inline fun <F> createSingleSession(
     files: List<F>,
-    rootModuleName: String,
+    rootModuleName: Name,
     libraryList: DependencyListForCliModule,
     targetPlatform: TargetPlatform,
     analyzerServices: PlatformDependentAnalyzerServices,
@@ -294,9 +300,9 @@ private inline fun <F> createSessionForNonMppProject(
     createFirSession: FirSessionProducer<F>,
 ): SessionWithSources<F> {
     val platformModuleData = FirModuleDataImpl(
-        Name.identifier(rootModuleName),
+        rootModuleName,
         libraryList.regularDependencies,
-        dependsOnDependencies = emptyList(),
+        libraryList.dependsOnDependencies,
         libraryList.friendsDependencies,
         targetPlatform,
         analyzerServices
@@ -308,7 +314,7 @@ private inline fun <F> createSessionForNonMppProject(
 
 private inline fun <F> createSessionsForLegacyMppProject(
     files: List<F>,
-    rootModuleName: String,
+    rootModuleName: Name,
     libraryList: DependencyListForCliModule,
     targetPlatform: TargetPlatform,
     analyzerServices: PlatformDependentAnalyzerServices,
@@ -318,7 +324,7 @@ private inline fun <F> createSessionsForLegacyMppProject(
     createFirSession: FirSessionProducer<F>,
 ): List<SessionWithSources<F>> {
     val commonModuleData = FirModuleDataImpl(
-        Name.identifier("${rootModuleName}-common"),
+        Name.identifier("${rootModuleName.asString()}-common"),
         libraryList.regularDependencies,
         listOf(),
         libraryList.friendsDependencies,
@@ -327,7 +333,7 @@ private inline fun <F> createSessionsForLegacyMppProject(
     )
 
     val platformModuleData = FirModuleDataImpl(
-        Name.identifier(rootModuleName),
+        rootModuleName,
         libraryList.regularDependencies,
         listOf(commonModuleData),
         libraryList.friendsDependencies,
@@ -352,6 +358,7 @@ private inline fun <F> createSessionsForLegacyMppProject(
 
 private inline fun <F> createSessionsForHmppProject(
     files: List<F>,
+    rootModuleName: Name,
     hmppModuleStructure: HmppCliModuleStructure,
     libraryList: DependencyListForCliModule,
     targetPlatform: TargetPlatform,
@@ -368,7 +375,7 @@ private inline fun <F> createSessionsForHmppProject(
             ?.map { moduleDataForHmppModule.getValue(it) }
             .orEmpty()
         val moduleData = FirModuleDataImpl(
-            Name.identifier(module.name),
+            rootModuleName,
             libraryList.regularDependencies,
             dependsOnDependencies = dependencies,
             libraryList.friendsDependencies,

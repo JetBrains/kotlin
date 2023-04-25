@@ -350,6 +350,12 @@ public class FirLightTreeBytecodeTextTestGenerated extends AbstractFirLightTreeB
     }
 
     @Test
+    @TestMetadata("kt56923.kt")
+    public void testKt56923() throws Exception {
+        runTest("compiler/testData/codegen/bytecodeText/kt56923.kt");
+    }
+
+    @Test
     @TestMetadata("kt7188.kt")
     public void testKt7188() throws Exception {
         runTest("compiler/testData/codegen/bytecodeText/kt7188.kt");
@@ -2246,6 +2252,18 @@ public class FirLightTreeBytecodeTextTestGenerated extends AbstractFirLightTreeB
         @TestMetadata("kt18731_2.kt")
         public void testKt18731_2() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/enum/kt18731_2.kt");
+        }
+
+        @Test
+        @TestMetadata("kt57671_1.kt")
+        public void testKt57671_1() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/enum/kt57671_1.kt");
+        }
+
+        @Test
+        @TestMetadata("kt57671_2.kt")
+        public void testKt57671_2() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/enum/kt57671_2.kt");
         }
     }
 
@@ -4152,6 +4170,12 @@ public class FirLightTreeBytecodeTextTestGenerated extends AbstractFirLightTreeB
         @TestMetadata("kt56104.kt")
         public void testKt56104() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/innerClasses/kt56104.kt");
+        }
+
+        @Test
+        @TestMetadata("kt57714.kt")
+        public void testKt57714() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/innerClasses/kt57714.kt");
         }
 
         @Test

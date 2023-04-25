@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.doWhileLoop
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.doWhileLoop]
  */
 abstract class IrDoWhileLoop : IrLoop() {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =

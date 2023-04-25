@@ -155,9 +155,8 @@ class FirBuilderInferenceSession(
         val commonSystem = components.session.inferenceComponents.createConstraintSystem()
         val nonFixedToVariablesSubstitutor = createNonFixedTypeToVariableSubstitutor()
 
-        integrateConstraints(commonSystem, initialStorage, nonFixedToVariablesSubstitutor, false)
-
-        var effectivelyEmptyCommonSystem = true
+        var effectivelyEmptyCommonSystem =
+            !integrateConstraints(commonSystem, initialStorage, nonFixedToVariablesSubstitutor, false)
 
         for ((_, candidate) in commonCalls) {
             val hasConstraints =

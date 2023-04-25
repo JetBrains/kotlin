@@ -451,6 +451,19 @@ __attribute__((swift_name("RegularClassWithComponentMethods")))
 @end
 
 __attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("DataClassWithStrangeNames")))
+@interface KtDataClassWithStrangeNames : KtBase
+- (instancetype)initWithComponent124:(int32_t)component124 componentABC:(int32_t)componentABC __attribute__((swift_name("init(component124:componentABC:)"))) __attribute__((objc_designated_initializer));
+- (int32_t)component16 __attribute__((swift_name("component16()")));
+- (BOOL)isEqual:(id _Nullable)other __attribute__((swift_name("isEqual(_:)")));
+- (NSUInteger)hash __attribute__((swift_name("hash()")));
+- (NSString *)description __attribute__((swift_name("description()")));
+- (KtDataClassWithStrangeNames *)doCopyComponent124:(int32_t)component124 componentABC:(int32_t)componentABC __attribute__((swift_name("doCopy(component124:componentABC:)")));
+@property (readonly) int32_t component124 __attribute__((swift_name("component124")));
+@property (readonly) int32_t componentABC __attribute__((swift_name("componentABC")));
+@end
+
+__attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("DataClassComponentMethodsKt")))
 @interface KtDataClassComponentMethodsKt : KtBase
 + (int32_t)component1 __attribute__((swift_name("component1()")));
@@ -468,6 +481,8 @@ __attribute__((swift_name("DeallocRetainKt")))
 @interface KtDeallocRetainKt : KtBase
 + (void)garbageCollect __attribute__((swift_name("garbageCollect()")));
 + (KtKotlinWeakReference<id> *)createWeakReferenceValue:(id)value __attribute__((swift_name("createWeakReference(value:)")));
++ (void)assertNullValue:(id _Nullable)value __attribute__((swift_name("assertNull(value:)")));
++ (BOOL)isExperimentalMM __attribute__((swift_name("isExperimentalMM()")));
 @end
 
 __attribute__((objc_subclassing_restricted))

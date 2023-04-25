@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.PositioningStrategy
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.psi.*
@@ -78,6 +79,7 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
         val NESTED_CLASS_IN_EXTERNAL_INTERFACE by error<KtExpression>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
         val EXTERNAL_TYPE_EXTENDS_NON_EXTERNAL_TYPE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
         val INLINE_EXTERNAL_DECLARATION by error<KtDeclaration>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
+        val ENUM_CLASS_IN_EXTERNAL_DECLARATION_WARNING by warning<KtDeclaration>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
         val INLINE_CLASS_IN_EXTERNAL_DECLARATION_WARNING by warning<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
         val INLINE_CLASS_IN_EXTERNAL_DECLARATION by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
         val EXTENSION_FUNCTION_IN_EXTERNAL_DECLARATION by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT)
@@ -85,9 +87,42 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
         val NON_EXTERNAL_DECLARATION_IN_INAPPROPRIATE_FILE by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<ConeKotlinType>("type")
         }
+        val CANNOT_CHECK_FOR_EXTERNAL_INTERFACE by error<KtElement> {
+            parameter<ConeKotlinType>("targetType")
+        }
+        val UNCHECKED_CAST_TO_EXTERNAL_INTERFACE by warning<KtElement> {
+            parameter<ConeKotlinType>("sourceType")
+            parameter<ConeKotlinType>("targetType")
+        }
+        val EXTERNAL_INTERFACE_AS_CLASS_LITERAL by error<KtElement>()
+        val JS_EXTERNAL_INHERITORS_ONLY by error<KtDeclaration>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
+            parameter<FirClassLikeSymbol<*>>("parent")
+            parameter<FirClassLikeSymbol<*>>("kid")
+        }
+        val JS_EXTERNAL_ARGUMENT by error<KtExpression>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
+            parameter<ConeKotlinType>("argType")
+        }
+    }
+
+    val EXPORT by object : DiagnosticGroup("Export") {
+        val NESTED_JS_EXPORT by error<KtElement>()
+        val WRONG_EXPORTED_DECLARATION by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
+            parameter<String>("kind")
+        }
+        val NON_EXPORTABLE_TYPE by warning<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
+            parameter<String>("kind")
+            parameter<ConeKotlinType>("type")
+        }
+        val NON_CONSUMABLE_EXPORTED_IDENTIFIER by warning<KtElement>(PositioningStrategy.DEFAULT) {
+            parameter<String>("name")
+        }
     }
 
     val DYNAMICS by object : DiagnosticGroup("Dynamics") {
         val DELEGATION_BY_DYNAMIC by error<KtElement>()
+        val SPREAD_OPERATOR_IN_DYNAMIC_CALL by error<KtElement>(PositioningStrategy.SPREAD_OPERATOR)
+        val WRONG_OPERATION_WITH_DYNAMIC by error<KtElement> {
+            parameter<String>("operation")
+        }
     }
 }

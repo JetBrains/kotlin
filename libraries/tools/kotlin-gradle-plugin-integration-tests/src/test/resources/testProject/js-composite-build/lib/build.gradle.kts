@@ -34,5 +34,6 @@ rootProject.tasks
 
 dependencies {
     implementation(kotlin("stdlib-js"))
+    implementation("com.example:base2")
     implementation(npm("async", "2.6.2"))
 }

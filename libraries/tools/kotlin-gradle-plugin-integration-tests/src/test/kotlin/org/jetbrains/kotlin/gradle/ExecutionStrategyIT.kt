@@ -193,7 +193,8 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
         project(
             projectName = "kotlinBuiltins",
             gradleVersion = gradleVersion,
-            addHeapDumpOptions = addHeapDumpOptions
+            addHeapDumpOptions = addHeapDumpOptions,
+            buildOptions = defaultBuildOptions.copy(useDaemonFallbackStrategy = testFallbackStrategy)
         ) {
             setupProject(this)
             additionalProjectConfiguration()

@@ -51,13 +51,13 @@ FILE fqName:<root> fileName:/kt52677.kt
           RETURN type=kotlin.Nothing from='public final fun <get-id> (): @[MySerializable(c = ...)] <root>.Uuid1 declared in <root>.LoginSuccessPacket'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:id type:@[MySerializable(c = ...)] <root>.Uuid1 visibility:private [final]' type=@[MySerializable(c = CLASS_REFERENCE 'CLASS OBJECT name:UuidSerializer modality:FINAL visibility:public superTypes:[<root>.MySerializer<@[MySerializable(c = ...)] <root>.Uuid1>]' type=kotlin.reflect.KClass<<root>.UuidSerializer>)] <root>.Uuid1 origin=null
               receiver: GET_VAR '<this>: <root>.LoginSuccessPacket declared in <root>.LoginSuccessPacket.<get-id>' type=<root>.LoginSuccessPacket origin=null
-    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.LoginSuccessPacket) returnType:@[MySerializable(c = CLASS_REFERENCE 'CLASS OBJECT name:UuidSerializer modality:FINAL visibility:public superTypes:[<root>.MySerializer<@[MySerializable(c = ...)] <root>.Uuid1>]' type=kotlin.reflect.KClass<<root>.UuidSerializer>)] <root>.Uuid1 [operator]
+    FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.LoginSuccessPacket) returnType:@[MySerializable(c = CLASS_REFERENCE 'CLASS OBJECT name:UuidSerializer modality:FINAL visibility:public superTypes:[<root>.MySerializer<@[MySerializable(c = ...)] <root>.Uuid1>]' type=kotlin.reflect.KClass<<root>.UuidSerializer>)] <root>.Uuid1 [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.LoginSuccessPacket
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): @[MySerializable(c = ...)] <root>.Uuid1 [operator] declared in <root>.LoginSuccessPacket'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:id type:@[MySerializable(c = ...)] <root>.Uuid1 visibility:private [final]' type=@[MySerializable(c = CLASS_REFERENCE 'CLASS OBJECT name:UuidSerializer modality:FINAL visibility:public superTypes:[<root>.MySerializer<@[MySerializable(c = ...)] <root>.Uuid1>]' type=kotlin.reflect.KClass<<root>.UuidSerializer>)] <root>.Uuid1 origin=null
             receiver: GET_VAR '<this>: <root>.LoginSuccessPacket declared in <root>.LoginSuccessPacket.component1' type=<root>.LoginSuccessPacket origin=null
-    FUN name:copy visibility:public modality:FINAL <> ($this:<root>.LoginSuccessPacket, id:@[MySerializable(c = CLASS_REFERENCE 'CLASS OBJECT name:UuidSerializer modality:FINAL visibility:public superTypes:[<root>.MySerializer<@[MySerializable(c = ...)] <root>.Uuid1>]' type=kotlin.reflect.KClass<<root>.UuidSerializer>)] <root>.Uuid1) returnType:<root>.LoginSuccessPacket
+    FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:<root>.LoginSuccessPacket, id:@[MySerializable(c = CLASS_REFERENCE 'CLASS OBJECT name:UuidSerializer modality:FINAL visibility:public superTypes:[<root>.MySerializer<@[MySerializable(c = ...)] <root>.Uuid1>]' type=kotlin.reflect.KClass<<root>.UuidSerializer>)] <root>.Uuid1) returnType:<root>.LoginSuccessPacket
       $this: VALUE_PARAMETER name:<this> type:<root>.LoginSuccessPacket
       VALUE_PARAMETER name:id index:0 type:@[MySerializable(c = CLASS_REFERENCE 'CLASS OBJECT name:UuidSerializer modality:FINAL visibility:public superTypes:[<root>.MySerializer<@[MySerializable(c = ...)] <root>.Uuid1>]' type=kotlin.reflect.KClass<<root>.UuidSerializer>)] <root>.Uuid1
         EXPRESSION_BODY
@@ -117,8 +117,7 @@ FILE fqName:<root> fileName:/kt52677.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.LoginSuccessPacket'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="LoginSuccessPacket("
-            CONST String type=kotlin.String value="id="
+            CONST String type=kotlin.String value="LoginSuccessPacket(id="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:id type:@[MySerializable(c = ...)] <root>.Uuid1 visibility:private [final]' type=@[MySerializable(c = CLASS_REFERENCE 'CLASS OBJECT name:UuidSerializer modality:FINAL visibility:public superTypes:[<root>.MySerializer<@[MySerializable(c = ...)] <root>.Uuid1>]' type=kotlin.reflect.KClass<<root>.UuidSerializer>)] <root>.Uuid1 origin=null
               receiver: GET_VAR '<this>: <root>.LoginSuccessPacket declared in <root>.LoginSuccessPacket.toString' type=<root>.LoginSuccessPacket origin=null
             CONST String type=kotlin.String value=")"

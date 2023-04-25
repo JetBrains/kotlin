@@ -1,5 +1,3 @@
-// KT-56189 -3.14 is not constant
-// MUTED_WHEN: K2
 package test
 
 annotation class PrimitiveArrays(

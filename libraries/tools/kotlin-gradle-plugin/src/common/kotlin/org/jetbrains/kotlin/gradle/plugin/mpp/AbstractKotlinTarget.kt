@@ -203,7 +203,7 @@ internal fun Project.buildAdhocComponentsFromKotlinVariants(kotlinVariants: Set<
     return kotlinVariants.map { kotlinVariant ->
         val adhocVariant = softwareComponentFactory.adhoc(kotlinVariant.name)
 
-        project.whenEvaluated {
+        project.launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseCompilations) {
             (kotlinVariant as SoftwareComponentInternal).usages.filterIsInstance<KotlinUsageContext>().forEach { kotlinUsageContext ->
                 val publishedConfigurationName = publishedConfigurationName(kotlinUsageContext.name)
                 val configuration = project.configurations.findByName(publishedConfigurationName)

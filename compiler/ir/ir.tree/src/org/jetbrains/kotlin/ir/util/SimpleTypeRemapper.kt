@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrTypeAbbreviationImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 class SimpleTypeRemapper(
     private val symbolRemapper: SymbolRemapper
@@ -26,7 +27,7 @@ class SimpleTypeRemapper(
             type
         else {
             val symbol = symbolRemapper.getReferencedClassifier(type.classifier)
-            val arguments = type.arguments.map { remapTypeArgument(it) }
+            val arguments = type.arguments.memoryOptimizedMap { remapTypeArgument(it) }
             if (symbol == type.classifier && arguments == type.arguments)
                 type
             else {
@@ -51,7 +52,7 @@ class SimpleTypeRemapper(
         IrTypeAbbreviationImpl(
             symbolRemapper.getReferencedTypeAlias(typeAlias),
             hasQuestionMark,
-            arguments.map { remapTypeArgument(it) },
+            arguments.memoryOptimizedMap { remapTypeArgument(it) },
             annotations
         )
 }

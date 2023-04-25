@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusIm
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
+import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.expressions.impl.buildSingleExpressionBlock
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
@@ -126,6 +127,7 @@ class ExpressionsConverter(
 
             OBJECT_LITERAL -> declarationsConverter.convertObjectLiteral(expression)
             FUN -> declarationsConverter.convertFunctionDeclaration(expression)
+            DESTRUCTURING_DECLARATION -> declarationsConverter.convertDestructingDeclaration(expression).toFirDestructingDeclaration(baseModuleData)
             else -> buildErrorExpression(null, ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected))
         }
     }
@@ -200,6 +202,13 @@ class ExpressionsConverter(
             body = if (block != null) {
                 declarationsConverter.withOffset(expressionSource.startOffset) {
                     declarationsConverter.convertBlockExpressionWithoutBuilding(block!!).apply {
+                        statements.firstOrNull()?.let {
+                            if (it.isContractBlockFirCheck()) {
+                                this@buildAnonymousFunction.contractDescription = it.toLegacyRawContractDescription()
+                                statements[0] = FirContractCallBlock(it)
+                            }
+                        }
+
                         if (statements.isEmpty()) {
                             statements.add(
                                 buildReturnExpression {
@@ -258,6 +267,8 @@ class ExpressionsConverter(
         val operationToken = operationTokenName.getOperationSymbol()
         if (operationToken == IDENTIFIER) {
             context.calleeNamesForLambda += operationTokenName.nameAsSafeName()
+        } else {
+            context.calleeNamesForLambda += null
         }
 
         val rightArgAsFir =
@@ -268,10 +279,8 @@ class ExpressionsConverter(
 
         val leftArgAsFir = getAsFirExpression<FirExpression>(leftArgNode, "No left operand")
 
-        if (operationToken == IDENTIFIER) {
-            // No need for the callee name since arguments are already generated
-            context.calleeNamesForLambda.removeLast()
-        }
+        // No need for the callee name since arguments are already generated
+        context.calleeNamesForLambda.removeLast()
 
         when (operationToken) {
             ELVIS ->
@@ -826,22 +835,24 @@ class ExpressionsConverter(
         }
 
         val calculatedFirExpression = firExpression ?: buildErrorExpression(
-            null,
+            source = null,
             ConeSimpleDiagnostic("No expression in condition with expression", DiagnosticKind.Syntax)
         )
 
-        return if (whenRefWithSubject != null) {
-            buildEqualityOperatorCall {
-                source = whenCondition.toFirSourceElement(KtFakeSourceElementKind.WhenCondition)
-                operation = FirOperation.EQ
-                argumentList = buildBinaryArgumentList(
-                    buildWhenSubjectExpression {
-                        whenRef = whenRefWithSubject
-                    }, calculatedFirExpression
-                )
-            }
-        } else {
-            calculatedFirExpression
+        if (whenRefWithSubject == null) {
+            return calculatedFirExpression
+        }
+
+        return buildEqualityOperatorCall {
+            source = whenCondition.toFirSourceElement(KtFakeSourceElementKind.WhenCondition)
+            operation = FirOperation.EQ
+            argumentList = buildBinaryArgumentList(
+                left = buildWhenSubjectExpression {
+                    source = whenCondition.toFirSourceElement()
+                    whenRef = whenRefWithSubject
+                },
+                right = calculatedFirExpression
+            )
         }
     }
 
@@ -909,6 +920,7 @@ class ExpressionsConverter(
 
         val subjectExpression = if (whenRefWithSubject != null) {
             buildWhenSubjectExpression {
+                source = whenCondition.toFirSourceElement()
                 whenRef = whenRefWithSubject
             }
         } else {
@@ -1120,10 +1132,8 @@ class ExpressionsConverter(
                 // So, prepare the loop target after building the condition.
                 target = prepareTarget(forLoop)
             }.configure(target) {
-                // NB: just body.toFirBlock() isn't acceptable here because we need to add some statements
                 buildBlock block@{
                     source = blockNode?.toFirSourceElement()
-                    statements += convertLoopBody(blockNode).statements
                     val valueParameter = parameter ?: return@block
                     val multiDeclaration = valueParameter.destructuringDeclaration
                     val firLoopParameter = generateTemporaryVariable(
@@ -1147,10 +1157,11 @@ class ExpressionsConverter(
                             firLoopParameter,
                             tmpVariable = true
                         )
-                        statements.addAll(0, destructuringBlock.statements)
+                        statements.addAll(destructuringBlock.statements)
                     } else {
-                        statements.add(0, firLoopParameter)
+                        statements.add(firLoopParameter)
                     }
+                    statements += convertLoopBody(blockNode)
                 }
             }
         }
@@ -1190,7 +1201,7 @@ class ExpressionsConverter(
      */
     private fun convertTryExpression(tryExpression: LighterASTNode): FirExpression {
         lateinit var tryBlock: FirBlock
-        val catchClauses = mutableListOf<Pair<ValueParameter?, FirBlock>>()
+        val catchClauses = mutableListOf<Triple<ValueParameter?, FirBlock, KtLightSourceElement>>()
         var finallyBlock: FirBlock? = null
         tryExpression.forEachChildren {
             when (it.tokenType) {
@@ -1203,7 +1214,7 @@ class ExpressionsConverter(
             source = tryExpression.toFirSourceElement()
             this.tryBlock = tryBlock
             this.finallyBlock = finallyBlock
-            for ((parameter, block) in catchClauses) {
+            for ((parameter, block, clauseSource) in catchClauses) {
                 if (parameter == null) continue
                 catches += buildCatch {
                     this.parameter = buildProperty {
@@ -1221,6 +1232,7 @@ class ExpressionsConverter(
                         it.isCatchParameter = true
                     }
                     this.block = block
+                    this.source = clauseSource
                 }
             }
         }
@@ -1229,7 +1241,7 @@ class ExpressionsConverter(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseTry
      */
-    private fun convertCatchClause(catchClause: LighterASTNode): Pair<ValueParameter?, FirBlock>? {
+    private fun convertCatchClause(catchClause: LighterASTNode): Triple<ValueParameter?, FirBlock, KtLightSourceElement>? {
         var valueParameter: ValueParameter? = null
         var blockNode: LighterASTNode? = null
         catchClause.forEachChildren {
@@ -1240,7 +1252,7 @@ class ExpressionsConverter(
             }
         }
 
-        return Pair(valueParameter, declarationsConverter.convertBlock(blockNode))
+        return Triple(valueParameter, declarationsConverter.convertBlock(blockNode), catchClause.toFirSourceElement())
     }
 
     /**

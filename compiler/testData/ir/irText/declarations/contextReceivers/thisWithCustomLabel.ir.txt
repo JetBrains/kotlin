@@ -93,43 +93,43 @@ FILE fqName:<root> fileName:/thisWithCustomLabel.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  FUN name:f visibility:public modality:FINAL <> (_context_receiver_0:<root>.A<kotlin.Int>, _context_receiver_1:<root>.A<kotlin.String>, _context_receiver_2:<root>.B) returnType:kotlin.Unit
+  FUN name:f visibility:public modality:FINAL <> ($context_receiver_0:<root>.A<kotlin.Int>, $context_receiver_1:<root>.A<kotlin.String>, $context_receiver_2:<root>.B) returnType:kotlin.Unit
     contextReceiverParametersCount: 3
-    VALUE_PARAMETER name:_context_receiver_0 index:0 type:<root>.A<kotlin.Int>
-    VALUE_PARAMETER name:_context_receiver_1 index:1 type:<root>.A<kotlin.String>
-    VALUE_PARAMETER name:_context_receiver_2 index:2 type:<root>.B
+    VALUE_PARAMETER name:$context_receiver_0 index:0 type:<root>.A<kotlin.Int>
+    VALUE_PARAMETER name:$context_receiver_1 index:1 type:<root>.A<kotlin.String>
+    VALUE_PARAMETER name:$context_receiver_2 index:2 type:<root>.B
     BLOCK_BODY
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public open fun toFloat (): kotlin.Float declared in kotlin.Int' type=kotlin.Float origin=null
           $this: CALL 'public final fun <get-a> (): T of <root>.A declared in <root>.A' type=kotlin.Int origin=GET_PROPERTY
-            $this: GET_VAR '_context_receiver_0: <root>.A<kotlin.Int> declared in <root>.f' type=<root>.A<kotlin.Int> origin=null
+            $this: GET_VAR '$context_receiver_0: <root>.A<kotlin.Int> declared in <root>.f' type=<root>.A<kotlin.Int> origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public open fun <get-length> (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=GET_PROPERTY
           $this: CALL 'public final fun <get-a> (): T of <root>.A declared in <root>.A' type=kotlin.String origin=GET_PROPERTY
-            $this: GET_VAR '_context_receiver_1: <root>.A<kotlin.String> declared in <root>.f' type=<root>.A<kotlin.String> origin=null
+            $this: GET_VAR '$context_receiver_1: <root>.A<kotlin.String> declared in <root>.f' type=<root>.A<kotlin.String> origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CALL 'public final fun <get-b> (): kotlin.Any declared in <root>.B' type=kotlin.Any origin=GET_PROPERTY
-          $this: GET_VAR '_context_receiver_2: <root>.B declared in <root>.f' type=<root>.B origin=null
+          $this: GET_VAR '$context_receiver_2: <root>.B declared in <root>.f' type=<root>.B origin=null
   PROPERTY name:p visibility:public modality:FINAL [val]
-    FUN name:<get-p> visibility:public modality:FINAL <> ($receiver:<root>.C, _context_receiver_0:<root>.A<kotlin.Int>, _context_receiver_1:<root>.A<kotlin.String>, _context_receiver_2:<root>.B) returnType:kotlin.Int
+    FUN name:<get-p> visibility:public modality:FINAL <> ($receiver:<root>.C, $context_receiver_0:<root>.A<kotlin.Int>, $context_receiver_1:<root>.A<kotlin.String>, $context_receiver_2:<root>.B) returnType:kotlin.Int
       correspondingProperty: PROPERTY name:p visibility:public modality:FINAL [val]
       contextReceiverParametersCount: 3
       $receiver: VALUE_PARAMETER name:<this> type:<root>.C
-      VALUE_PARAMETER name:_context_receiver_0 index:0 type:<root>.A<kotlin.Int>
-      VALUE_PARAMETER name:_context_receiver_1 index:1 type:<root>.A<kotlin.String>
-      VALUE_PARAMETER name:_context_receiver_2 index:2 type:<root>.B
+      VALUE_PARAMETER name:$context_receiver_0 index:0 type:<root>.A<kotlin.Int>
+      VALUE_PARAMETER name:$context_receiver_1 index:1 type:<root>.A<kotlin.String>
+      VALUE_PARAMETER name:$context_receiver_2 index:2 type:<root>.B
       BLOCK_BODY
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           CALL 'public open fun toFloat (): kotlin.Float declared in kotlin.Int' type=kotlin.Float origin=null
             $this: CALL 'public final fun <get-a> (): T of <root>.A declared in <root>.A' type=kotlin.Int origin=GET_PROPERTY
-              $this: GET_VAR '_context_receiver_0: <root>.A<kotlin.Int> declared in <root>.<get-p>' type=<root>.A<kotlin.Int> origin=null
+              $this: GET_VAR '$context_receiver_0: <root>.A<kotlin.Int> declared in <root>.<get-p>' type=<root>.A<kotlin.Int> origin=null
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           CALL 'public open fun <get-length> (): kotlin.Int declared in kotlin.String' type=kotlin.Int origin=GET_PROPERTY
             $this: CALL 'public final fun <get-a> (): T of <root>.A declared in <root>.A' type=kotlin.String origin=GET_PROPERTY
-              $this: GET_VAR '_context_receiver_1: <root>.A<kotlin.String> declared in <root>.<get-p>' type=<root>.A<kotlin.String> origin=null
+              $this: GET_VAR '$context_receiver_1: <root>.A<kotlin.String> declared in <root>.<get-p>' type=<root>.A<kotlin.String> origin=null
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           CALL 'public final fun <get-b> (): kotlin.Any declared in <root>.B' type=kotlin.Any origin=GET_PROPERTY
-            $this: GET_VAR '_context_receiver_2: <root>.B declared in <root>.<get-p>' type=<root>.B origin=null
+            $this: GET_VAR '$context_receiver_2: <root>.B declared in <root>.<get-p>' type=<root>.B origin=null
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           CALL 'public final fun <get-c> (): kotlin.Any declared in <root>.C' type=kotlin.Any origin=GET_PROPERTY
             $this: GET_VAR '<this>: <root>.C declared in <root>.<get-p>' type=<root>.C origin=null
@@ -139,5 +139,5 @@ FILE fqName:<root> fileName:/thisWithCustomLabel.kt
         TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
           CALL 'public final fun <get-c> (): kotlin.Any declared in <root>.C' type=kotlin.Any origin=GET_PROPERTY
             $this: GET_VAR '<this>: <root>.C declared in <root>.<get-p>' type=<root>.C origin=null
-        RETURN type=kotlin.Nothing from='public final fun <get-p> (_context_receiver_0: <root>.A<kotlin.Int>, _context_receiver_1: <root>.A<kotlin.String>, _context_receiver_2: <root>.B): kotlin.Int declared in <root>'
+        RETURN type=kotlin.Nothing from='public final fun <get-p> ($context_receiver_0: <root>.A<kotlin.Int>, $context_receiver_1: <root>.A<kotlin.String>, $context_receiver_2: <root>.B): kotlin.Int declared in <root>'
           CONST Int type=kotlin.Int value=1

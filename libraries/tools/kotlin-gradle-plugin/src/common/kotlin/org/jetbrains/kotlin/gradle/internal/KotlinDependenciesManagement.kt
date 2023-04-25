@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.gradle.utils.withType
 
 internal const val KOTLIN_MODULE_GROUP = "org.jetbrains.kotlin"
 internal const val KOTLIN_COMPILER_EMBEDDABLE = "kotlin-compiler-embeddable"
+internal const val KOTLIN_BUILD_TOOLS_API_IMPL = "kotlin-build-tools-impl"
 internal const val PLATFORM_INTEGERS_SUPPORT_LIBRARY = "platform-integers"
 
 internal fun customizeKotlinDependencies(project: Project) {

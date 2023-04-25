@@ -9,8 +9,13 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 }
 
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(8))
+}
+
 android {
     compileSdkVersion 22
+    namespace 'org.jetbrains.kotlin.gradle.test.android.test'
 
     defaultConfig {
         minSdkVersion 7

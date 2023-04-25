@@ -9,6 +9,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import groovy.lang.Closure
+import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsOptions
@@ -52,6 +53,19 @@ open class KotlinJsCompilation @Inject internal constructor(
 
     override val processResourcesTaskName: String
         get() = disambiguateName("processResources")
+
+    val npmConfigurationName
+        get() = compilation.disambiguateName("npm")
+
+    val publicPackageJsonConfigurationName
+        get() = compilation.disambiguateName("publicPackageJsonConfiguration")
+
+    override val relatedConfigurationNames: List<String>
+        get() = super.relatedConfigurationNames + npmConfigurationName + publicPackageJsonConfigurationName
+
+    override fun getAttributes(): AttributeContainer {
+        return compilation.attributes
+    }
 
     @Suppress("DEPRECATION")
     @Deprecated("Accessing task instance directly is deprecated", replaceWith = ReplaceWith("compileTaskProvider"))

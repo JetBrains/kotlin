@@ -23,7 +23,6 @@ interface DefinitelyNotNullTypeMarker : SimpleTypeMarker
 
 interface FlexibleTypeMarker : KotlinTypeMarker
 interface DynamicTypeMarker : FlexibleTypeMarker
-interface RawTypeMarker : FlexibleTypeMarker
 interface StubTypeMarker : SimpleTypeMarker
 
 interface TypeArgumentListMarker
@@ -312,6 +311,11 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
      */
     fun useRefinedBoundsForTypeVariableInFlexiblePosition(): Boolean
 
+    /**
+     * It's only relevant for K2 (and is not expected to be implemented properly in other contexts)
+     */
+    fun KotlinTypeMarker.convertToNonRaw(): KotlinTypeMarker
+
     fun createCapturedStarProjectionForSelfType(
         typeVariable: TypeVariableTypeConstructorMarker,
         typesForRecursiveTypeParameters: List<KotlinTypeMarker>,
@@ -356,7 +360,8 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun KotlinTypeMarker.isUninferredParameter(): Boolean
     fun FlexibleTypeMarker.asDynamicType(): DynamicTypeMarker?
 
-    fun FlexibleTypeMarker.asRawType(): RawTypeMarker?
+    fun KotlinTypeMarker.isRawType(): Boolean
+
     fun FlexibleTypeMarker.upperBound(): SimpleTypeMarker
 
     fun FlexibleTypeMarker.lowerBound(): SimpleTypeMarker

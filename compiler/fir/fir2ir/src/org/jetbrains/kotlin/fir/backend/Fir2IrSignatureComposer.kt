@@ -18,6 +18,7 @@ interface Fir2IrSignatureComposer {
         declaration: FirDeclaration,
         containingClass: ConeClassLikeLookupTag? = null,
         forceTopLevelPrivate: Boolean = false,
+        forceExpect: Boolean = false,
     ): IdSignature?
 
     fun composeAccessorSignature(
@@ -26,6 +27,7 @@ interface Fir2IrSignatureComposer {
         containingClass: ConeClassLikeLookupTag? = null,
         forceTopLevelPrivate: Boolean = false
     ): IdSignature?
+
     fun composeTypeParameterSignature(typeParameter: FirTypeParameter, index: Int, containerSignature: IdSignature?): IdSignature?
     fun withFileSignature(sig: IdSignature.FileSignature, body: () -> Unit)
 }

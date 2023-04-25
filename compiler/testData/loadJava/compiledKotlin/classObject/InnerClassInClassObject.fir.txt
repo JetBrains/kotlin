@@ -1,0 +1,24 @@
+public final class TestFirst : R|kotlin/Any| {
+    public constructor(): R|test/TestFirst|
+
+    public final companion object Companion : R|kotlin/Any| {
+        public final fun testing(a: R|test/TestFirst.InnerClass|): R|kotlin/Int|
+
+        public final fun testing(a: R|test/TestFirst.NotInnerClass|): R|kotlin/Int|
+
+        private constructor(): R|test/TestFirst.Companion|
+
+    }
+
+    public final inner class InnerClass : R|kotlin/Any| {
+        public test/TestFirst.constructor(): R|test/TestFirst.InnerClass|
+
+    }
+
+    public final inner class NotInnerClass : R|kotlin/Any| {
+        public test/TestFirst.constructor(): R|test/TestFirst.NotInnerClass|
+
+    }
+
+}
+

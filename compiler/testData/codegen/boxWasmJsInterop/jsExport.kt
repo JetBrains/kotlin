@@ -1,15 +1,14 @@
-// IGNORE_BACKEND: JS_IR, JS
-// WASM_FAILS_IN: SM
+// TARGET_BACKEND: WASM
 // MODULE: main
 // FILE: externals.kt
 
 class C(val x: Int)
 
 @JsExport
-fun makeC(x: Int): C = C(x)
+fun makeC(x: Int): JsReference<C> = C(x).toJsReference()
 
 @JsExport
-fun getX(c: C): Int = c.x
+fun getX(c: JsReference<C>): Int = c.get().x
 
 @JsExport
 fun getString(s: String): String = "Test string $s";
@@ -20,23 +19,16 @@ fun isEven(x: Int): Boolean = x % 2 == 0
 external interface EI
 
 @JsExport
-fun eiAsAny(ei: EI): Any = ei
+fun eiAsAny(ei: EI): JsReference<Any> = ei.toJsReference()
 
 @JsExport
-fun anyAsEI(any: Any): EI = any as EI
+fun anyAsEI(any: JsReference<Any>): EI = any.get() as EI
 
 fun box(): String = "OK"
 
-// TODO: Rewrite test to use module system
+// FILE: entry.mjs
 
-@JsFun("() => { globalThis.main = wasmExports; }")
-external fun hackNonModuleExport()
-
-fun main() {
-    hackNonModuleExport()
-}
-
-// FILE: jsExport__after.js
+import main from "./index.mjs"
 
 const c = main.makeC(300);
 if (main.getX(c) !== 300) {

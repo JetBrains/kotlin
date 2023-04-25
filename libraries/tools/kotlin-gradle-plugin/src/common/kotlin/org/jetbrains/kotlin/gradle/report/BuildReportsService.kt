@@ -54,7 +54,7 @@ abstract class BuildReportsService : BuildService<BuildReportsService.Parameters
     private val buildUuid = UUID.randomUUID().toString()
     private var executorService: ExecutorService = Executors.newSingleThreadExecutor()
 
-    private val tags = LinkedHashSet<String>()
+    private val tags = LinkedHashSet<StatTag>()
     private var customValues = 0 // doesn't need to be thread-safe
 
     init {
@@ -201,13 +201,8 @@ abstract class BuildReportsService : BuildService<BuildReportsService.Parameters
 
     private fun addBuildScanReport(data: CompileStatisticsData, customValuesLimit: Int, buildScan: BuildScanExtensionHolder) {
         val elapsedTime = measureTimeMillis {
+            data.tags.forEach { tags.add(it) }
             buildScan.buildScan?.also {
-                data.tags
-                    .filter { !tags.contains(it) }
-                    .forEach {
-                        addBuildScanTag(buildScan, it)
-                    }
-
                 if (customValues < customValuesLimit) {
                     readableString(data).forEach {
                         if (customValues < customValuesLimit) {
@@ -237,11 +232,6 @@ abstract class BuildReportsService : BuildService<BuildReportsService.Parameters
         customValues++
     }
 
-    private fun addBuildScanTag(buildScan: BuildScanExtensionHolder, tag: String) {
-        buildScan.buildScan?.tag(tag)
-        tags.add(tag)
-    }
-
     private fun readableString(data: CompileStatisticsData): List<String> {
         val readableString = StringBuilder()
         if (data.nonIncrementalAttributes.isEmpty()) {
@@ -255,13 +245,17 @@ abstract class BuildReportsService : BuildService<BuildReportsService.Parameters
             ) { it.readableString }
         }
 
+        data.kotlinLanguageVersion?.version?.also {
+            readableString.append("Kotlin language version: $it; ")
+        }
+
         val timeData =
             data.buildTimesMetrics.map { (key, value) -> "${key.readableString}: ${value}ms" } //sometimes it is better to have separate variable to be able debug
         val perfData = data.performanceMetrics.map { (key, value) ->
             when (key.type) {
                 ValueType.BYTES -> "${key.readableString}: ${formatSize(value)}"
                 ValueType.MILLISECONDS -> DATE_FORMATTER.format(value)
-                else -> "${key.readableString}: $value}"
+                else -> "${key.readableString}: $value"
             }
         }
         timeData.union(perfData).joinTo(readableString, ",", "Performance: [", "]")
@@ -293,6 +287,32 @@ abstract class BuildReportsService : BuildService<BuildReportsService.Parameters
         buildScan.buildScan?.tag(buildUuid)
         parameters.label.orNull?.also {
             buildScan.buildScan?.tag(it)
+        }
+    }
+
+    private fun addCollectedTags(buildScan: BuildScanExtensionHolder) {
+        replaceWithCombinedTag(
+            StatTag.KOTLIN_1,
+            StatTag.KOTLIN_2,
+            StatTag.KOTLIN_1_AND_2
+        )
+
+        replaceWithCombinedTag(
+            StatTag.INCREMENTAL,
+            StatTag.NON_INCREMENTAL,
+            StatTag.INCREMENTAL_AND_NON_INCREMENTAL
+        )
+
+        tags.forEach { buildScan.buildScan?.tag(it.readableString) }
+    }
+
+    private fun replaceWithCombinedTag(firstTag: StatTag, secondTag: StatTag, combinedTag: StatTag) {
+        val containsFirstTag = tags.remove(firstTag)
+        val containsSecondTag = tags.remove(secondTag)
+        when {
+            containsFirstTag && containsSecondTag -> tags.add(combinedTag)
+            containsFirstTag -> tags.add(firstTag)
+            containsSecondTag -> tags.add(secondTag)
         }
     }
 
@@ -342,19 +362,23 @@ abstract class BuildReportsService : BuildService<BuildReportsService.Parameters
 
                 //init gradle tags for build scan and http reports
                 it.parameters.additionalTags.value(setupTags(gradle))
-            }.also {
+            }.also { buildServiceProvider ->
                 if (reportingSettings.httpReportSettings != null) {
-                    BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(it)
+                    BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(buildServiceProvider)
                 }
 
                 val buildScanExtension = project.rootProject.extensions.findByName("buildScan")
                 if (reportingSettings.buildScanReportSettings != null && buildScanExtension != null) {
-                    it.get().initBuildScanTags(BuildScanExtensionHolder(buildScanExtension))
+                    val buildScan = BuildScanExtensionHolder(buildScanExtension)
+                    buildServiceProvider.get().initBuildScanTags(buildScan)
                     BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(project.provider {
                         OperationCompletionListener { event ->
-                            it.get().addBuildScanReport(event, BuildScanExtensionHolder(buildScanExtension))
+                            buildServiceProvider.get().addBuildScanReport(event, buildScan)
                         }
                     })
+                    buildScan.buildScan?.buildFinished {
+                        buildServiceProvider.get().addCollectedTags(buildScan)
+                    }
                 }
             }
         }

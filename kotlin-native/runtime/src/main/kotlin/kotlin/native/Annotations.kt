@@ -40,6 +40,7 @@ public annotation class SymbolName(val name: String)
  */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
+@Deprecated("This annotation will be removed in a future release")
 public annotation class Retain
 
 /**
@@ -47,6 +48,7 @@ public annotation class Retain
  */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
+@Deprecated("This annotation will be removed in a future release")
 public annotation class RetainForTarget(val target: String)
 
 
@@ -55,6 +57,8 @@ public annotation class RetainForTarget(val target: String)
 public typealias Throws = kotlin.Throws
 
 /** @suppress */
+@Deprecated("Use kotlin.native.concurrent.ThreadLocal instead.", ReplaceWith("ThreadLocal", "kotlin.native.concurrent.ThreadLocal"))
+@DeprecatedSinceKotlin(warningSince = "1.9")
 public typealias ThreadLocal = kotlin.native.concurrent.ThreadLocal
 
 /** @suppress */
@@ -99,6 +103,7 @@ public actual annotation class CName(actual val externName: String = "", actual 
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
 @ExperimentalObjCName
+@SinceKotlin("1.8")
 public actual annotation class ObjCName(actual val name: String = "", actual val swiftName: String = "", actual val exact: Boolean = false)
 
 /**
@@ -113,6 +118,7 @@ public actual annotation class ObjCName(actual val name: String = "", actual val
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
 @ExperimentalObjCRefinement
+@SinceKotlin("1.8")
 public actual annotation class HidesFromObjC
 
 /**
@@ -123,6 +129,7 @@ public actual annotation class HidesFromObjC
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
 @ExperimentalObjCRefinement
+@SinceKotlin("1.8")
 public actual annotation class HiddenFromObjC
 
 /**
@@ -141,6 +148,7 @@ public actual annotation class HiddenFromObjC
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
 @ExperimentalObjCRefinement
+@SinceKotlin("1.8")
 public actual annotation class RefinesInSwift
 
 /**
@@ -154,4 +162,5 @@ public actual annotation class RefinesInSwift
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
 @ExperimentalObjCRefinement
+@SinceKotlin("1.8")
 public actual annotation class ShouldRefineInSwift

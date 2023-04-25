@@ -1,4 +1,6 @@
 // WITH_STDLIB
+// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS_IR_ES6
 
 fun testEmpty(ss: List<String>) {
     for (s in ss);

@@ -56,7 +56,7 @@ FILE: main.kt
             }
         }
         .<Unresolved name: plus>#(Int(0))
-        lval a: R|kotlin/Int| = when (R|<local>/e|) {
+        lval b: R|kotlin/Int| = when (R|<local>/e|) {
             ==($subj$, Q|JavaEnum|.R|/JavaEnum.A|) ->  {
                 Int(1)
             }
@@ -71,7 +71,7 @@ FILE: main.kt
             }
         }
         .R|kotlin/Int.plus|(Int(0))
-        lval a: R|kotlin/Int| = when (R|<local>/e|) {
+        lval c: R|kotlin/Int| = when (R|<local>/e|) {
             ==($subj$, Q|JavaEnum|.R|/JavaEnum.A|) ->  {
                 Int(1)
             }

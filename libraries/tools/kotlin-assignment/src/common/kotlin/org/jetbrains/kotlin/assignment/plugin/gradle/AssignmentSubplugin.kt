@@ -18,7 +18,7 @@ class AssignmentSubplugin
 ) : KotlinCompilerPluginSupportPlugin {
 
     companion object {
-        const val COMPILER_PLUGIN_ARTIFACT_NAME = "kotlin-assignment"
+        const val COMPILER_PLUGIN_ARTIFACT_NAME = "kotlin-assignment-compiler-plugin-embeddable"
         const val COMPILER_PLUGIN_ID = "org.jetbrains.kotlin.assignment"
         private const val ANNOTATION_ARG_NAME = "annotation"
     }

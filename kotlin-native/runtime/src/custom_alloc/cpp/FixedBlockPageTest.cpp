@@ -44,52 +44,62 @@ TEST(CustomAllocTest, FixedBlockPageConsequtiveAlloc) {
 }
 
 TEST(CustomAllocTest, FixedBlockPageSweepEmptyPage) {
+    auto gcHandle = kotlin::gc::GCHandle::createFakeForTests();
+    auto gcScope = gcHandle.sweep();
     for (uint32_t size = 2; size <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE; ++size) {
         FixedBlockPage* page = FixedBlockPage::Create(size);
-        EXPECT_FALSE(page->Sweep());
+        EXPECT_FALSE(page->Sweep(gcScope));
         page->Destroy();
     }
 }
 
 TEST(CustomAllocTest, FixedBlockPageSweepFullUnmarkedPage) {
+    auto gcHandle = kotlin::gc::GCHandle::createFakeForTests();
+    auto gcScope = gcHandle.sweep();
     for (uint32_t size = 2; size <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE; ++size) {
         FixedBlockPage* page = FixedBlockPage::Create(size);
         uint32_t count = 0;
         while (alloc(page, size)) ++count;
         EXPECT_EQ(count, FIXED_BLOCK_PAGE_CELL_COUNT / size);
-        EXPECT_FALSE(page->Sweep());
+        EXPECT_FALSE(page->Sweep(gcScope));
         page->Destroy();
     }
 }
 
 TEST(CustomAllocTest, FixedBlockPageSweepSingleMarked) {
+    auto gcHandle = kotlin::gc::GCHandle::createFakeForTests();
+    auto gcScope = gcHandle.sweep();
     for (uint32_t size = 2; size <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE; ++size) {
         FixedBlockPage* page = FixedBlockPage::Create(size);
         uint8_t* ptr = alloc(page, size);
         mark(ptr);
-        EXPECT_TRUE(page->Sweep());
+        EXPECT_TRUE(page->Sweep(gcScope));
         page->Destroy();
     }
 }
 
 TEST(CustomAllocTest, FixedBlockPageSweepSingleReuse) {
+    auto gcHandle = kotlin::gc::GCHandle::createFakeForTests();
+    auto gcScope = gcHandle.sweep();
     for (uint32_t size = 2; size <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE; ++size) {
         FixedBlockPage* page = FixedBlockPage::Create(size);
         uint8_t* ptr = alloc(page, size);
-        EXPECT_FALSE(page->Sweep());
+        EXPECT_FALSE(page->Sweep(gcScope));
         EXPECT_EQ(alloc(page, size), ptr);
         page->Destroy();
     }
 }
 
 TEST(CustomAllocTest, FixedBlockPageSweepReuse) {
+    auto gcHandle = kotlin::gc::GCHandle::createFakeForTests();
+    auto gcScope = gcHandle.sweep();
     for (uint32_t size = 2; size <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE; ++size) {
         FixedBlockPage* page = FixedBlockPage::Create(size);
         uint8_t* ptr;
         for (int count = 0; (ptr = alloc(page, size)); ++count) {
             if (count % 2 == 0) mark(ptr);
         }
-        EXPECT_TRUE(page->Sweep());
+        EXPECT_TRUE(page->Sweep(gcScope));
         uint32_t count = 0;
         for (; (ptr = alloc(page, size)); ++count) {
             if (count % 2 == 0) mark(ptr);

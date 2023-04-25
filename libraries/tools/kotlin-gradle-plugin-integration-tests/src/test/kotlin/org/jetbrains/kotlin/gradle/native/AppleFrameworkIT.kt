@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.native
 
+import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.gradle.testbase.TestVersions
@@ -28,7 +29,8 @@ class AppleFrameworkIT : BaseGradleIT() {
     override val defaultGradleVersion = GradleVersionRequired.FOR_MPP_SUPPORT
     override fun defaultBuildOptions() = super.defaultBuildOptions().copy(
         androidHome = KtTestUtil.findAndroidSdk(),
-        androidGradlePluginVersion = AGPVersion.v4_2_0
+        androidGradlePluginVersion = AGPVersion.v7_4_0,
+        javaHome = KtTestUtil.getJdk17Home()
     )
 
     @Test
@@ -46,7 +48,7 @@ class AppleFrameworkIT : BaseGradleIT() {
             ).suppressDeprecationWarningsSinceGradleVersion(
                 TestVersions.Gradle.G_7_4,
                 currentGradleVersion,
-                "Workaround for KT-55751"
+                "Workaround for KT-57483"
             )
             build("assembleDebugAppleFrameworkForXcodeIosArm64", options = options) {
                 assertSuccessful()
@@ -79,7 +81,7 @@ class AppleFrameworkIT : BaseGradleIT() {
             ).suppressDeprecationWarningsSinceGradleVersion(
                 TestVersions.Gradle.G_7_4,
                 currentGradleVersion,
-                "Workaround for KT-55751"
+                "Workaround for KT-57483"
             )
             build("assembleReleaseAppleFrameworkForXcode", options = options) {
                 assertSuccessful()
@@ -108,7 +110,7 @@ class AppleFrameworkIT : BaseGradleIT() {
             ).suppressDeprecationWarningsSinceGradleVersion(
                 TestVersions.Gradle.G_7_4,
                 currentGradleVersion,
-                "Workaround for KT-55751"
+                "Workaround for KT-57483"
             )
             build(":shared:embedAndSignAppleFrameworkForXcode", options = options) {
                 assertSuccessful()
@@ -221,7 +223,7 @@ class AppleFrameworkIT : BaseGradleIT() {
             ).suppressDeprecationWarningsSinceGradleVersion(
                 TestVersions.Gradle.G_7_4,
                 currentGradleVersion,
-                "Workaround for KT-55751"
+                "Workaround for KT-57483"
             )
             setupWorkingDir()
             projectDir.resolve("shared/build.gradle.kts").modify {
@@ -375,6 +377,48 @@ class AppleFrameworkIT : BaseGradleIT() {
             ) {
                 assertFailed()
                 assertContains("/sharedAppleFramework/shared/src/commonMain/kotlin/com/github/jetbrains/myapplication/Greeting.kt:7:2: error: Expecting a top level declaration")
+            }
+        }
+    }
+
+    @Test
+    fun `frameworks can be consumed from other gradle project`() {
+        with(Project("consumableAppleFrameworks", minLogLevel = LogLevel.INFO)) {
+            setupWorkingDir()
+            build(":consumer:help") {
+                assertContains("RESOLUTION_SUCCESS")
+                assertNotContains("RESOLUTION_FAILURE")
+            }
+        }
+    }
+
+    @Test
+    fun `smoke test with apple gradle plugin`() {
+        with(Project("appleGradlePluginConsumesAppleFrameworks", minLogLevel = LogLevel.INFO)) {
+            setupWorkingDir()
+
+            fun dependencyInsight(configuration: String) = arrayOf(
+                ":iosApp:dependencyInsight", "--configuration", configuration, "--dependency", "iosLib"
+            )
+            build(*dependencyInsight("iosAppIosX64DebugImplementation")) {
+                assertSuccessful()
+                assertContains("variant \"mainDynamicDebugFrameworkIos\"")
+            }
+
+            build(*dependencyInsight("iosAppIosX64ReleaseImplementation")) {
+                assertSuccessful()
+                assertContains("variant \"mainDynamicReleaseFrameworkIos\"")
+            }
+
+            // NB: '0' is required at the end since dependency is added with custom attribute and it creates new configuration
+            build(*dependencyInsight("iosAppIosX64DebugImplementation0"), "-PmultipleFrameworks") {
+                assertSuccessful()
+                assertContains("variant \"mainStaticDebugFrameworkIos\"")
+            }
+
+            build(*dependencyInsight("iosAppIosX64ReleaseImplementation0"), "-PmultipleFrameworks") {
+                assertSuccessful()
+                assertContains("variant \"mainStaticReleaseFrameworkIos\"")
             }
         }
     }

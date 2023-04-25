@@ -1,6 +1,3 @@
-// IGNORE_BACKEND_K2: JVM_IR, JS_IR, NATIVE
-// FIR status: don't support legacy feature; questionable test, probably should not support.
-// Currently fails because prefix increment only calls getter once.
 var log = ""
 
 fun <T> logged(value: T): T =

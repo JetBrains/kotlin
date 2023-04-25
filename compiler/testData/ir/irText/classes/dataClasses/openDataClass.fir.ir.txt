@@ -31,19 +31,19 @@ FILE fqName:<root> fileName:/openDataClass.kt
           RETURN type=kotlin.Nothing from='public open fun <get-test2> (): kotlin.String declared in <root>.ValidatedProperties'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:test2 type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
               receiver: GET_VAR '<this>: <root>.ValidatedProperties declared in <root>.ValidatedProperties.<get-test2>' type=<root>.ValidatedProperties origin=null
-    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.ValidatedProperties) returnType:kotlin.String [operator]
+    FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.ValidatedProperties) returnType:kotlin.String [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.ValidatedProperties
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.String [operator] declared in <root>.ValidatedProperties'
           CALL 'public open fun <get-test1> (): kotlin.String declared in <root>.ValidatedProperties' type=kotlin.String origin=null
             $this: GET_VAR '<this>: <root>.ValidatedProperties declared in <root>.ValidatedProperties.component1' type=<root>.ValidatedProperties origin=null
-    FUN name:component2 visibility:public modality:FINAL <> ($this:<root>.ValidatedProperties) returnType:kotlin.String [operator]
+    FUN GENERATED_DATA_CLASS_MEMBER name:component2 visibility:public modality:FINAL <> ($this:<root>.ValidatedProperties) returnType:kotlin.String [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.ValidatedProperties
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component2 (): kotlin.String [operator] declared in <root>.ValidatedProperties'
           CALL 'public open fun <get-test2> (): kotlin.String declared in <root>.ValidatedProperties' type=kotlin.String origin=null
             $this: GET_VAR '<this>: <root>.ValidatedProperties declared in <root>.ValidatedProperties.component2' type=<root>.ValidatedProperties origin=null
-    FUN name:copy visibility:public modality:FINAL <> ($this:<root>.ValidatedProperties, test1:kotlin.String, test2:kotlin.String) returnType:<root>.ValidatedProperties
+    FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:<root>.ValidatedProperties, test1:kotlin.String, test2:kotlin.String) returnType:<root>.ValidatedProperties
       $this: VALUE_PARAMETER name:<this> type:<root>.ValidatedProperties
       VALUE_PARAMETER name:test1 index:0 type:kotlin.String
         EXPRESSION_BODY
@@ -128,12 +128,10 @@ FILE fqName:<root> fileName:/openDataClass.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.ValidatedProperties'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="ValidatedProperties("
-            CONST String type=kotlin.String value="test1="
+            CONST String type=kotlin.String value="ValidatedProperties(test1="
             CALL 'public open fun <get-test1> (): kotlin.String declared in <root>.ValidatedProperties' type=kotlin.String origin=null
               $this: GET_VAR '<this>: <root>.ValidatedProperties declared in <root>.ValidatedProperties.toString' type=<root>.ValidatedProperties origin=null
-            CONST String type=kotlin.String value=", "
-            CONST String type=kotlin.String value="test2="
+            CONST String type=kotlin.String value=", test2="
             CALL 'public open fun <get-test2> (): kotlin.String declared in <root>.ValidatedProperties' type=kotlin.String origin=null
               $this: GET_VAR '<this>: <root>.ValidatedProperties declared in <root>.ValidatedProperties.toString' type=<root>.ValidatedProperties origin=null
             CONST String type=kotlin.String value=")"

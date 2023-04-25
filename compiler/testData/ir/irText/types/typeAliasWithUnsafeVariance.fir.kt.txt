@@ -37,7 +37,7 @@ data class Tag<out RenderingT : Any?> {
   }
 
   override fun toString(): String {
-    return "Tag(" + "action=" + <this>.#action + ")"
+    return "Tag(action=" + <this>.#action + ")"
   }
 
 }

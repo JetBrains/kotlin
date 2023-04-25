@@ -415,16 +415,7 @@ open class CommonizerIT : BaseGradleIT() {
     @Test
     fun `test KT-49735 two kotlin targets with same konanTarget`() {
         with(Project("commonize-kt-49735-twoKotlinTargets-oneKonanTarget")) {
-            val currentGradleVersion = chooseWrapperVersionOrFinishTest()
-            build(
-                ":assemble",
-                options = defaultBuildOptions()
-                    .suppressDeprecationWarningsSinceGradleVersion(
-                        TestVersions.Gradle.G_7_4,
-                        currentGradleVersion,
-                        "Workaround for KT-55751"
-                    )
-            ) {
+            build(":assemble") {
                 assertTasksExecuted(":compileCommonMainKotlinMetadata")
                 assertSuccessful()
             }
@@ -708,6 +699,20 @@ open class CommonizerIT : BaseGradleIT() {
             }
         }
     }
+
+    @Test
+    fun `test KT-57796 commonization with two cinterop commonizer groups`() {
+        with(Project("commonize-kt-57796-twoCInteropCommonizerGroups")) {
+            build(":app:commonizeCIntero") {
+                assertSuccessful()
+                assertTasksExecuted(":lib:transformCommonMainCInteropDependenciesMetadata")
+                assertTasksExecuted(":lib:commonizeCInterop")
+                assertTasksExecuted(":app:transformCommonMainCInteropDependenciesMetadata")
+                assertTasksExecuted(":app:commonizeCInterop")
+            }
+        }
+    }
+
 
     @Test
     fun `test KT-56729 commonization with library containing two roots`() {

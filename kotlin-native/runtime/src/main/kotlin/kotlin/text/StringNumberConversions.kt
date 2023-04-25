@@ -137,16 +137,14 @@ public actual inline fun String.toLong(radix: Int): Long = toLongOrNull(radix) ?
  * Parses the string as a [Float] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
-@kotlin.internal.InlineOnly
-public actual inline fun String.toFloat(): Float = FloatingPointParser.parseFloat(this)
+public actual fun String.toFloat(): Float = FloatingPointParser.parseFloat(this)
 
 
 /**
  * Parses the string as a [Double] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
-@kotlin.internal.InlineOnly
-public actual inline fun String.toDouble(): Double = FloatingPointParser.parseDouble(this)
+public actual fun String.toDouble(): Double = FloatingPointParser.parseDouble(this)
 
 /**
  * Parses the string as a [Float] number and returns the result

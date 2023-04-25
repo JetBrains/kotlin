@@ -17,13 +17,13 @@ FILE fqName:<root> fileName:/kt31649.kt
           RETURN type=kotlin.Nothing from='public final fun <get-nn> (): kotlin.Nothing? declared in <root>.TestData'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:nn type:kotlin.Nothing? visibility:private [final]' type=kotlin.Nothing? origin=null
               receiver: GET_VAR '<this>: <root>.TestData declared in <root>.TestData.<get-nn>' type=<root>.TestData origin=null
-    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.TestData) returnType:kotlin.Nothing? [operator]
+    FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.TestData) returnType:kotlin.Nothing? [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.TestData
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Nothing? [operator] declared in <root>.TestData'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:nn type:kotlin.Nothing? visibility:private [final]' type=kotlin.Nothing? origin=null
             receiver: GET_VAR '<this>: <root>.TestData declared in <root>.TestData.component1' type=<root>.TestData origin=null
-    FUN name:copy visibility:public modality:FINAL <> ($this:<root>.TestData, nn:kotlin.Nothing?) returnType:<root>.TestData
+    FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:<root>.TestData, nn:kotlin.Nothing?) returnType:<root>.TestData
       $this: VALUE_PARAMETER name:<this> type:<root>.TestData
       VALUE_PARAMETER name:nn index:0 type:kotlin.Nothing?
         EXPRESSION_BODY
@@ -92,8 +92,7 @@ FILE fqName:<root> fileName:/kt31649.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.TestData'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="TestData("
-            CONST String type=kotlin.String value="nn="
+            CONST String type=kotlin.String value="TestData(nn="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:nn type:kotlin.Nothing? visibility:private [final]' type=kotlin.Nothing? origin=null
               receiver: GET_VAR '<this>: <root>.TestData declared in <root>.TestData.toString' type=<root>.TestData origin=null
             CONST String type=kotlin.String value=")"
@@ -167,8 +166,7 @@ FILE fqName:<root> fileName:/kt31649.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.TestInline'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="TestInline("
-            CONST String type=kotlin.String value="nn="
+            CONST String type=kotlin.String value="TestInline(nn="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:nn type:kotlin.Nothing? visibility:private [final]' type=kotlin.Nothing? origin=null
               receiver: GET_VAR '<this>: <root>.TestInline declared in <root>.TestInline.toString' type=<root>.TestInline origin=null
             CONST String type=kotlin.String value=")"

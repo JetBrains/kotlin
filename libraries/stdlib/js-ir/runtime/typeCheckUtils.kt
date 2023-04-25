@@ -27,24 +27,26 @@ internal fun setMetadataFor(
 
     if (interfaces != null) {
         val receiver = if (metadata.iid != null) ctor else ctor.prototype
-        receiver.`$imask$` = implement(*interfaces)
+        receiver.`$imask$` = implement(interfaces)
     }
 }
 
 // There was a problem with per-module compilation (KT-55758) when the top-level state (iid) was reinitialized during stdlib module initialization
 // As a result we miss already incremented iid and had the same iids in two different modules
-// So, to keep the state consistent it was moved into the object
-private object InterfaceIdService {
-    var iid: Int = 0
+// So, to keep the state consistent it was moved into the next lateinit variable and function
+private lateinit var iid: Any
+
+private fun generateInterfaceId(): Int {
+    if (!::iid.isInitialized) {
+        iid = 0
+    }
+    iid = iid.unsafeCast<Int>() + 1
+    return iid.unsafeCast<Int>()
 }
 
-private fun InterfaceIdService.generateInterfaceId(): Int {
-    iid += 1
-    return iid
-}
 
 internal fun interfaceMeta(name: String?, associatedObjectKey: Number?, associatedObjects: dynamic, suspendArity: Array<Int>?): Metadata {
-    return createMetadata("interface", name, associatedObjectKey, associatedObjects, suspendArity, InterfaceIdService.generateInterfaceId())
+    return createMetadata("interface", name, associatedObjectKey, associatedObjects, suspendArity, generateInterfaceId())
 }
 
 internal fun objectMeta(name: String?, associatedObjectKey: Number?, associatedObjects: dynamic, suspendArity: Array<Int>?): Metadata {
@@ -88,6 +90,8 @@ internal external interface Metadata {
     val iid: Int?
 
     var `$kClass$`: dynamic
+
+    var errorInfo: Int? // Bits set for overridden properties: "message" => 0x1, "cause" => 0x2
 }
 
 internal external interface Ctor {
@@ -97,9 +101,32 @@ internal external interface Ctor {
     val prototype: dynamic
 }
 
-@Suppress("UNUSED_PARAMETER")
-private fun getPrototypeOf(obj: dynamic) =
-    js("Object.getPrototypeOf(obj)")
+private fun hasProp(proto: dynamic, propName: String): Boolean = proto.hasOwnProperty(propName)
+
+internal fun calculateErrorInfo(proto: dynamic): Int {
+    val metadata: Metadata? = proto.constructor?.`$metadata$`
+
+    metadata?.errorInfo?.let { return it } // cached
+
+    var result = 0
+    if (hasProp(proto, "message")) result = result or 0x1
+    if (hasProp(proto, "cause")) result = result or 0x2
+
+    if (result != 0x3) { //
+        val parentProto = getPrototypeOf(proto)
+        if (parentProto != js("Error").prototype) {
+            result = result or calculateErrorInfo(parentProto)
+        }
+    }
+
+    if (metadata != null) {
+        metadata.errorInfo = result
+    }
+
+    return result
+}
+
+private fun getPrototypeOf(obj: dynamic) = JsObject.getPrototypeOf(obj)
 
 private fun searchForMetadata(obj: dynamic): Metadata? {
     if (obj == null) {
@@ -239,3 +266,8 @@ internal fun isComparable(value: dynamic): Boolean {
 @OptIn(JsIntrinsic::class)
 internal fun isCharSequence(value: dynamic): Boolean =
     jsTypeOf(value) == "string" || isInterface(value, jsClassIntrinsic<CharSequence>())
+
+
+@OptIn(JsIntrinsic::class)
+internal fun isExternalObject(value: dynamic, ktExternalObject: dynamic) =
+    jsEqeqeq(value, ktExternalObject) || (jsTypeOf(ktExternalObject) == "function" && jsInstanceOf(value, ktExternalObject))

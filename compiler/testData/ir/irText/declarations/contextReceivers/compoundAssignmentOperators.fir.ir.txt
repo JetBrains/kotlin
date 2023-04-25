@@ -25,13 +25,13 @@ FILE fqName:<root> fileName:/compoundAssignmentOperators.kt
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:i type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.Result declared in <root>.Result.<set-i>' type=<root>.Result origin=null
             value: GET_VAR '<set-?>: kotlin.Int declared in <root>.Result.<set-i>' type=kotlin.Int origin=null
-    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.Result) returnType:kotlin.Int [operator]
+    FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.Result) returnType:kotlin.Int [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.Result
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Int [operator] declared in <root>.Result'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:i type:kotlin.Int visibility:private' type=kotlin.Int origin=null
             receiver: GET_VAR '<this>: <root>.Result declared in <root>.Result.component1' type=<root>.Result origin=null
-    FUN name:copy visibility:public modality:FINAL <> ($this:<root>.Result, i:kotlin.Int) returnType:<root>.Result
+    FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:<root>.Result, i:kotlin.Int) returnType:<root>.Result
       $this: VALUE_PARAMETER name:<this> type:<root>.Result
       VALUE_PARAMETER name:i index:0 type:kotlin.Int
         EXPRESSION_BODY
@@ -91,8 +91,7 @@ FILE fqName:<root> fileName:/compoundAssignmentOperators.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.Result'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="Result("
-            CONST String type=kotlin.String value="i="
+            CONST String type=kotlin.String value="Result(i="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:i type:kotlin.Int visibility:private' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.Result declared in <root>.Result.toString' type=<root>.Result origin=null
             CONST String type=kotlin.String value=")"
@@ -111,33 +110,33 @@ FILE fqName:<root> fileName:/compoundAssignmentOperators.kt
       BLOCK_BODY
         SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:operationScore type:kotlin.Int visibility:private [static]' type=kotlin.Unit origin=null
           value: GET_VAR '<set-?>: kotlin.Int declared in <root>.<set-operationScore>' type=kotlin.Int origin=null
-  FUN name:plus visibility:public modality:FINAL <> ($receiver:<root>.Result, _context_receiver_0:kotlin.Int, other:<root>.Result) returnType:<root>.Result [operator]
+  FUN name:plus visibility:public modality:FINAL <> ($receiver:<root>.Result, $context_receiver_0:kotlin.Int, other:<root>.Result) returnType:<root>.Result [operator]
     contextReceiverParametersCount: 1
     $receiver: VALUE_PARAMETER name:<this> type:<root>.Result
-    VALUE_PARAMETER name:_context_receiver_0 index:0 type:kotlin.Int
+    VALUE_PARAMETER name:$context_receiver_0 index:0 type:kotlin.Int
     VALUE_PARAMETER name:other index:1 type:<root>.Result
     BLOCK_BODY
       CALL 'public final fun <set-operationScore> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
         <set-?>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
           $this: CALL 'public final fun <get-operationScore> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
-          other: GET_VAR '_context_receiver_0: kotlin.Int declared in <root>.plus' type=kotlin.Int origin=null
-      RETURN type=kotlin.Nothing from='public final fun plus (_context_receiver_0: kotlin.Int, other: <root>.Result): <root>.Result [operator] declared in <root>'
+          other: GET_VAR '$context_receiver_0: kotlin.Int declared in <root>.plus' type=kotlin.Int origin=null
+      RETURN type=kotlin.Nothing from='public final fun plus ($context_receiver_0: kotlin.Int, other: <root>.Result): <root>.Result [operator] declared in <root>'
         CONSTRUCTOR_CALL 'public constructor <init> (i: kotlin.Int) [primary] declared in <root>.Result' type=<root>.Result origin=null
           i: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=PLUS
             $this: CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.Result' type=kotlin.Int origin=GET_PROPERTY
               $this: GET_VAR '<this>: <root>.Result declared in <root>.plus' type=<root>.Result origin=null
             other: CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.Result' type=kotlin.Int origin=GET_PROPERTY
               $this: GET_VAR 'other: <root>.Result declared in <root>.plus' type=<root>.Result origin=null
-  FUN name:plusAssign visibility:public modality:FINAL <> ($receiver:<root>.Result, _context_receiver_0:kotlin.Int, other:<root>.Result) returnType:kotlin.Unit [operator]
+  FUN name:plusAssign visibility:public modality:FINAL <> ($receiver:<root>.Result, $context_receiver_0:kotlin.Int, other:<root>.Result) returnType:kotlin.Unit [operator]
     contextReceiverParametersCount: 1
     $receiver: VALUE_PARAMETER name:<this> type:<root>.Result
-    VALUE_PARAMETER name:_context_receiver_0 index:0 type:kotlin.Int
+    VALUE_PARAMETER name:$context_receiver_0 index:0 type:kotlin.Int
     VALUE_PARAMETER name:other index:1 type:<root>.Result
     BLOCK_BODY
       CALL 'public final fun <set-operationScore> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
         <set-?>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
           $this: CALL 'public final fun <get-operationScore> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
-          other: GET_VAR '_context_receiver_0: kotlin.Int declared in <root>.plusAssign' type=kotlin.Int origin=null
+          other: GET_VAR '$context_receiver_0: kotlin.Int declared in <root>.plusAssign' type=kotlin.Int origin=null
       CALL 'public final fun <set-i> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Result' type=kotlin.Unit origin=EQ
         $this: GET_VAR '<this>: <root>.Result declared in <root>.plusAssign' type=<root>.Result origin=null
         <set-?>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
@@ -145,33 +144,33 @@ FILE fqName:<root> fileName:/compoundAssignmentOperators.kt
             $this: GET_VAR '<this>: <root>.Result declared in <root>.plusAssign' type=<root>.Result origin=null
           other: CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.Result' type=kotlin.Int origin=GET_PROPERTY
             $this: GET_VAR 'other: <root>.Result declared in <root>.plusAssign' type=<root>.Result origin=null
-  FUN name:minus visibility:public modality:FINAL <> ($receiver:<root>.Result, _context_receiver_0:kotlin.Int, other:<root>.Result) returnType:<root>.Result [operator]
+  FUN name:minus visibility:public modality:FINAL <> ($receiver:<root>.Result, $context_receiver_0:kotlin.Int, other:<root>.Result) returnType:<root>.Result [operator]
     contextReceiverParametersCount: 1
     $receiver: VALUE_PARAMETER name:<this> type:<root>.Result
-    VALUE_PARAMETER name:_context_receiver_0 index:0 type:kotlin.Int
+    VALUE_PARAMETER name:$context_receiver_0 index:0 type:kotlin.Int
     VALUE_PARAMETER name:other index:1 type:<root>.Result
     BLOCK_BODY
       CALL 'public final fun <set-operationScore> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
         <set-?>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
           $this: CALL 'public final fun <get-operationScore> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
-          other: GET_VAR '_context_receiver_0: kotlin.Int declared in <root>.minus' type=kotlin.Int origin=null
-      RETURN type=kotlin.Nothing from='public final fun minus (_context_receiver_0: kotlin.Int, other: <root>.Result): <root>.Result [operator] declared in <root>'
+          other: GET_VAR '$context_receiver_0: kotlin.Int declared in <root>.minus' type=kotlin.Int origin=null
+      RETURN type=kotlin.Nothing from='public final fun minus ($context_receiver_0: kotlin.Int, other: <root>.Result): <root>.Result [operator] declared in <root>'
         CONSTRUCTOR_CALL 'public constructor <init> (i: kotlin.Int) [primary] declared in <root>.Result' type=<root>.Result origin=null
           i: CALL 'public final fun minus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=MINUS
             $this: CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.Result' type=kotlin.Int origin=GET_PROPERTY
               $this: GET_VAR '<this>: <root>.Result declared in <root>.minus' type=<root>.Result origin=null
             other: CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.Result' type=kotlin.Int origin=GET_PROPERTY
               $this: GET_VAR 'other: <root>.Result declared in <root>.minus' type=<root>.Result origin=null
-  FUN name:minusAssign visibility:public modality:FINAL <> ($receiver:<root>.Result, _context_receiver_0:kotlin.Int, other:<root>.Result) returnType:kotlin.Unit [operator]
+  FUN name:minusAssign visibility:public modality:FINAL <> ($receiver:<root>.Result, $context_receiver_0:kotlin.Int, other:<root>.Result) returnType:kotlin.Unit [operator]
     contextReceiverParametersCount: 1
     $receiver: VALUE_PARAMETER name:<this> type:<root>.Result
-    VALUE_PARAMETER name:_context_receiver_0 index:0 type:kotlin.Int
+    VALUE_PARAMETER name:$context_receiver_0 index:0 type:kotlin.Int
     VALUE_PARAMETER name:other index:1 type:<root>.Result
     BLOCK_BODY
       CALL 'public final fun <set-operationScore> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
         <set-?>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
           $this: CALL 'public final fun <get-operationScore> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
-          other: GET_VAR '_context_receiver_0: kotlin.Int declared in <root>.minusAssign' type=kotlin.Int origin=null
+          other: GET_VAR '$context_receiver_0: kotlin.Int declared in <root>.minusAssign' type=kotlin.Int origin=null
       CALL 'public final fun <set-i> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Result' type=kotlin.Unit origin=EQ
         $this: GET_VAR '<this>: <root>.Result declared in <root>.minusAssign' type=<root>.Result origin=null
         <set-?>: CALL 'public final fun minus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
@@ -179,33 +178,33 @@ FILE fqName:<root> fileName:/compoundAssignmentOperators.kt
             $this: GET_VAR '<this>: <root>.Result declared in <root>.minusAssign' type=<root>.Result origin=null
           other: CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.Result' type=kotlin.Int origin=GET_PROPERTY
             $this: GET_VAR 'other: <root>.Result declared in <root>.minusAssign' type=<root>.Result origin=null
-  FUN name:times visibility:public modality:FINAL <> ($receiver:<root>.Result, _context_receiver_0:kotlin.Int, other:<root>.Result) returnType:<root>.Result [operator]
+  FUN name:times visibility:public modality:FINAL <> ($receiver:<root>.Result, $context_receiver_0:kotlin.Int, other:<root>.Result) returnType:<root>.Result [operator]
     contextReceiverParametersCount: 1
     $receiver: VALUE_PARAMETER name:<this> type:<root>.Result
-    VALUE_PARAMETER name:_context_receiver_0 index:0 type:kotlin.Int
+    VALUE_PARAMETER name:$context_receiver_0 index:0 type:kotlin.Int
     VALUE_PARAMETER name:other index:1 type:<root>.Result
     BLOCK_BODY
       CALL 'public final fun <set-operationScore> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
         <set-?>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
           $this: CALL 'public final fun <get-operationScore> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
-          other: GET_VAR '_context_receiver_0: kotlin.Int declared in <root>.times' type=kotlin.Int origin=null
-      RETURN type=kotlin.Nothing from='public final fun times (_context_receiver_0: kotlin.Int, other: <root>.Result): <root>.Result [operator] declared in <root>'
+          other: GET_VAR '$context_receiver_0: kotlin.Int declared in <root>.times' type=kotlin.Int origin=null
+      RETURN type=kotlin.Nothing from='public final fun times ($context_receiver_0: kotlin.Int, other: <root>.Result): <root>.Result [operator] declared in <root>'
         CONSTRUCTOR_CALL 'public constructor <init> (i: kotlin.Int) [primary] declared in <root>.Result' type=<root>.Result origin=null
           i: CALL 'public final fun times (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=MUL
             $this: CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.Result' type=kotlin.Int origin=GET_PROPERTY
               $this: GET_VAR '<this>: <root>.Result declared in <root>.times' type=<root>.Result origin=null
             other: CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.Result' type=kotlin.Int origin=GET_PROPERTY
               $this: GET_VAR 'other: <root>.Result declared in <root>.times' type=<root>.Result origin=null
-  FUN name:timesAssign visibility:public modality:FINAL <> ($receiver:<root>.Result, _context_receiver_0:kotlin.Int, other:<root>.Result) returnType:kotlin.Unit [operator]
+  FUN name:timesAssign visibility:public modality:FINAL <> ($receiver:<root>.Result, $context_receiver_0:kotlin.Int, other:<root>.Result) returnType:kotlin.Unit [operator]
     contextReceiverParametersCount: 1
     $receiver: VALUE_PARAMETER name:<this> type:<root>.Result
-    VALUE_PARAMETER name:_context_receiver_0 index:0 type:kotlin.Int
+    VALUE_PARAMETER name:$context_receiver_0 index:0 type:kotlin.Int
     VALUE_PARAMETER name:other index:1 type:<root>.Result
     BLOCK_BODY
       CALL 'public final fun <set-operationScore> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
         <set-?>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
           $this: CALL 'public final fun <get-operationScore> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
-          other: GET_VAR '_context_receiver_0: kotlin.Int declared in <root>.timesAssign' type=kotlin.Int origin=null
+          other: GET_VAR '$context_receiver_0: kotlin.Int declared in <root>.timesAssign' type=kotlin.Int origin=null
       CALL 'public final fun <set-i> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Result' type=kotlin.Unit origin=EQ
         $this: GET_VAR '<this>: <root>.Result declared in <root>.timesAssign' type=<root>.Result origin=null
         <set-?>: CALL 'public final fun times (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
@@ -213,33 +212,33 @@ FILE fqName:<root> fileName:/compoundAssignmentOperators.kt
             $this: GET_VAR '<this>: <root>.Result declared in <root>.timesAssign' type=<root>.Result origin=null
           other: CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.Result' type=kotlin.Int origin=GET_PROPERTY
             $this: GET_VAR 'other: <root>.Result declared in <root>.timesAssign' type=<root>.Result origin=null
-  FUN name:div visibility:public modality:FINAL <> ($receiver:<root>.Result, _context_receiver_0:kotlin.Int, other:<root>.Result) returnType:<root>.Result [operator]
+  FUN name:div visibility:public modality:FINAL <> ($receiver:<root>.Result, $context_receiver_0:kotlin.Int, other:<root>.Result) returnType:<root>.Result [operator]
     contextReceiverParametersCount: 1
     $receiver: VALUE_PARAMETER name:<this> type:<root>.Result
-    VALUE_PARAMETER name:_context_receiver_0 index:0 type:kotlin.Int
+    VALUE_PARAMETER name:$context_receiver_0 index:0 type:kotlin.Int
     VALUE_PARAMETER name:other index:1 type:<root>.Result
     BLOCK_BODY
       CALL 'public final fun <set-operationScore> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
         <set-?>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
           $this: CALL 'public final fun <get-operationScore> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
-          other: GET_VAR '_context_receiver_0: kotlin.Int declared in <root>.div' type=kotlin.Int origin=null
-      RETURN type=kotlin.Nothing from='public final fun div (_context_receiver_0: kotlin.Int, other: <root>.Result): <root>.Result [operator] declared in <root>'
+          other: GET_VAR '$context_receiver_0: kotlin.Int declared in <root>.div' type=kotlin.Int origin=null
+      RETURN type=kotlin.Nothing from='public final fun div ($context_receiver_0: kotlin.Int, other: <root>.Result): <root>.Result [operator] declared in <root>'
         CONSTRUCTOR_CALL 'public constructor <init> (i: kotlin.Int) [primary] declared in <root>.Result' type=<root>.Result origin=null
           i: CALL 'public final fun div (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=DIV
             $this: CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.Result' type=kotlin.Int origin=GET_PROPERTY
               $this: GET_VAR '<this>: <root>.Result declared in <root>.div' type=<root>.Result origin=null
             other: CALL 'public final fun <get-i> (): kotlin.Int declared in <root>.Result' type=kotlin.Int origin=GET_PROPERTY
               $this: GET_VAR 'other: <root>.Result declared in <root>.div' type=<root>.Result origin=null
-  FUN name:divAssign visibility:public modality:FINAL <> ($receiver:<root>.Result, _context_receiver_0:kotlin.Int, other:<root>.Result) returnType:kotlin.Unit [operator]
+  FUN name:divAssign visibility:public modality:FINAL <> ($receiver:<root>.Result, $context_receiver_0:kotlin.Int, other:<root>.Result) returnType:kotlin.Unit [operator]
     contextReceiverParametersCount: 1
     $receiver: VALUE_PARAMETER name:<this> type:<root>.Result
-    VALUE_PARAMETER name:_context_receiver_0 index:0 type:kotlin.Int
+    VALUE_PARAMETER name:$context_receiver_0 index:0 type:kotlin.Int
     VALUE_PARAMETER name:other index:1 type:<root>.Result
     BLOCK_BODY
       CALL 'public final fun <set-operationScore> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
         <set-?>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
           $this: CALL 'public final fun <get-operationScore> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
-          other: GET_VAR '_context_receiver_0: kotlin.Int declared in <root>.divAssign' type=kotlin.Int origin=null
+          other: GET_VAR '$context_receiver_0: kotlin.Int declared in <root>.divAssign' type=kotlin.Int origin=null
       CALL 'public final fun <set-i> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>.Result' type=kotlin.Unit origin=EQ
         $this: GET_VAR '<this>: <root>.Result declared in <root>.divAssign' type=<root>.Result origin=null
         <set-?>: CALL 'public final fun div (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
@@ -260,40 +259,40 @@ FILE fqName:<root> fileName:/compoundAssignmentOperators.kt
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:kotlin.Int) returnType:kotlin.Unit
             $receiver: VALUE_PARAMETER name:$this$with type:kotlin.Int
             BLOCK_BODY
-              CALL 'public final fun plusAssign (_context_receiver_0: kotlin.Int, other: <root>.Result): kotlin.Unit [operator] declared in <root>' type=kotlin.Unit origin=null
+              CALL 'public final fun plusAssign ($context_receiver_0: kotlin.Int, other: <root>.Result): kotlin.Unit [operator] declared in <root>' type=kotlin.Unit origin=null
                 $receiver: GET_VAR 'val result: <root>.Result [val] declared in <root>.box' type=<root>.Result origin=null
-                _context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
-                other: CALL 'public final fun plus (_context_receiver_0: kotlin.Int, other: <root>.Result): <root>.Result [operator] declared in <root>' type=<root>.Result origin=PLUS
+                $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
+                other: CALL 'public final fun plus ($context_receiver_0: kotlin.Int, other: <root>.Result): <root>.Result [operator] declared in <root>' type=<root>.Result origin=PLUS
                   $receiver: CONSTRUCTOR_CALL 'public constructor <init> (i: kotlin.Int) [primary] declared in <root>.Result' type=<root>.Result origin=null
                     i: CONST Int type=kotlin.Int value=1
-                  _context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
+                  $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
                   other: CONSTRUCTOR_CALL 'public constructor <init> (i: kotlin.Int) [primary] declared in <root>.Result' type=<root>.Result origin=null
                     i: CONST Int type=kotlin.Int value=1
-              CALL 'public final fun minusAssign (_context_receiver_0: kotlin.Int, other: <root>.Result): kotlin.Unit [operator] declared in <root>' type=kotlin.Unit origin=null
+              CALL 'public final fun minusAssign ($context_receiver_0: kotlin.Int, other: <root>.Result): kotlin.Unit [operator] declared in <root>' type=kotlin.Unit origin=null
                 $receiver: GET_VAR 'val result: <root>.Result [val] declared in <root>.box' type=<root>.Result origin=null
-                _context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
-                other: CALL 'public final fun minus (_context_receiver_0: kotlin.Int, other: <root>.Result): <root>.Result [operator] declared in <root>' type=<root>.Result origin=MINUS
+                $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
+                other: CALL 'public final fun minus ($context_receiver_0: kotlin.Int, other: <root>.Result): <root>.Result [operator] declared in <root>' type=<root>.Result origin=MINUS
                   $receiver: CONSTRUCTOR_CALL 'public constructor <init> (i: kotlin.Int) [primary] declared in <root>.Result' type=<root>.Result origin=null
                     i: CONST Int type=kotlin.Int value=1
-                  _context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
+                  $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
                   other: CONSTRUCTOR_CALL 'public constructor <init> (i: kotlin.Int) [primary] declared in <root>.Result' type=<root>.Result origin=null
                     i: CONST Int type=kotlin.Int value=0
-              CALL 'public final fun timesAssign (_context_receiver_0: kotlin.Int, other: <root>.Result): kotlin.Unit [operator] declared in <root>' type=kotlin.Unit origin=null
+              CALL 'public final fun timesAssign ($context_receiver_0: kotlin.Int, other: <root>.Result): kotlin.Unit [operator] declared in <root>' type=kotlin.Unit origin=null
                 $receiver: GET_VAR 'val result: <root>.Result [val] declared in <root>.box' type=<root>.Result origin=null
-                _context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
-                other: CALL 'public final fun times (_context_receiver_0: kotlin.Int, other: <root>.Result): <root>.Result [operator] declared in <root>' type=<root>.Result origin=MUL
+                $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
+                other: CALL 'public final fun times ($context_receiver_0: kotlin.Int, other: <root>.Result): <root>.Result [operator] declared in <root>' type=<root>.Result origin=MUL
                   $receiver: CONSTRUCTOR_CALL 'public constructor <init> (i: kotlin.Int) [primary] declared in <root>.Result' type=<root>.Result origin=null
                     i: CONST Int type=kotlin.Int value=1
-                  _context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
+                  $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
                   other: CONSTRUCTOR_CALL 'public constructor <init> (i: kotlin.Int) [primary] declared in <root>.Result' type=<root>.Result origin=null
                     i: CONST Int type=kotlin.Int value=2
-              CALL 'public final fun divAssign (_context_receiver_0: kotlin.Int, other: <root>.Result): kotlin.Unit [operator] declared in <root>' type=kotlin.Unit origin=null
+              CALL 'public final fun divAssign ($context_receiver_0: kotlin.Int, other: <root>.Result): kotlin.Unit [operator] declared in <root>' type=kotlin.Unit origin=null
                 $receiver: GET_VAR 'val result: <root>.Result [val] declared in <root>.box' type=<root>.Result origin=null
-                _context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
-                other: CALL 'public final fun div (_context_receiver_0: kotlin.Int, other: <root>.Result): <root>.Result [operator] declared in <root>' type=<root>.Result origin=DIV
+                $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
+                other: CALL 'public final fun div ($context_receiver_0: kotlin.Int, other: <root>.Result): <root>.Result [operator] declared in <root>' type=<root>.Result origin=DIV
                   $receiver: CONSTRUCTOR_CALL 'public constructor <init> (i: kotlin.Int) [primary] declared in <root>.Result' type=<root>.Result origin=null
                     i: CONST Int type=kotlin.Int value=4
-                  _context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
+                  $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
                   other: CONSTRUCTOR_CALL 'public constructor <init> (i: kotlin.Int) [primary] declared in <root>.Result' type=<root>.Result origin=null
                     i: CONST Int type=kotlin.Int value=2
       RETURN type=kotlin.Nothing from='public final fun box (): kotlin.String declared in <root>'

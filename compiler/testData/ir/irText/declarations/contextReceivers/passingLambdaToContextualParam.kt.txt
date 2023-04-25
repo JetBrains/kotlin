@@ -16,8 +16,8 @@ fun contextual(f: @ContextFunctionTypeParams(count = 1) Function1<C, String>): S
 }
 
 fun box(): String {
-  return contextual(f = local fun <anonymous>(_context_receiver_0: C): String {
-    return _context_receiver_0.<get-result>()
+  return contextual(f = local fun <anonymous>($context_receiver_0: C): String {
+    return $context_receiver_0.<get-result>()
   }
 )
 }

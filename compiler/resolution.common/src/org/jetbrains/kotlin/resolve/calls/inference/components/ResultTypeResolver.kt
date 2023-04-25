@@ -265,8 +265,9 @@ class ResultTypeResolver(
     }
 
     private fun Context.computeUpperType(upperConstraints: List<Constraint>): KotlinTypeMarker {
-        // TODO: Remove this after stopping support of K1
-        return if (!isK2) {
+        return if (languageVersionSettings.supportsFeature(LanguageFeature.AllowEmptyIntersectionsInResultTypeResolver)) {
+            intersectTypes(upperConstraints.map { it.type })
+        } else {
             val intersectionUpperType = intersectTypes(upperConstraints.map { it.type })
             val resultIsActuallyIntersection = intersectionUpperType.typeConstructor().isIntersection()
 
@@ -291,8 +292,6 @@ class ResultTypeResolver(
                 if (filteredUpperConstraints.isNotEmpty()) intersectTypes(filteredUpperConstraints) else intersectionUpperType
             } else intersectionUpperType
             upperType
-        } else {
-            intersectTypes(upperConstraints.map { it.type })
         }
     }
 

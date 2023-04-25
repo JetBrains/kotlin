@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.plugin
 import kotlin.reflect.KClass
 
 annotation class AllOpen
+annotation class AllOpen2
 
 annotation class DummyFunction
 annotation class ExternalClassWithNested
@@ -34,8 +35,7 @@ annotation class SupertypeWithTypeArgument(val kClass: KClass<*>)
 
 annotation class MetaSupertype
 
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.TYPE, AnnotationTarget.EXPRESSION)
-@Retention(AnnotationRetention.SOURCE)
+@Target(AnnotationTarget.FUNCTION, AnnotationTarget.TYPE)
 annotation class MyComposable
 
 annotation class AllPropertiesConstructor

@@ -39,7 +39,7 @@ data class Some<T : Any?> {
   }
 
   override fun toString(): String {
-    return "Some(" + "value=" + <this>.#value + ")"
+    return "Some(value=" + <this>.#value + ")"
   }
 
 }

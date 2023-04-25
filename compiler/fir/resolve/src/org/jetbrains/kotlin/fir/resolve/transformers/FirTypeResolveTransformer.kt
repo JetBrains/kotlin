@@ -5,14 +5,17 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
-import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.*
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.copyWithNewSourceKind
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isFromVararg
+import org.jetbrains.kotlin.fir.declarations.utils.isInner
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeAmbiguouslyResolvedAnnotationFromPlugin
@@ -55,15 +58,26 @@ fun <F : FirClassLikeDeclaration> F.runTypeResolvePhaseForLocalClass(
     return this.transform(transformer, null)
 }
 
+@OptIn(PrivateForInline::class)
 open class FirTypeResolveTransformer(
     final override val session: FirSession,
-    private val scopeSession: ScopeSession,
+    @property:PrivateForInline val scopeSession: ScopeSession,
     initialScopes: List<FirScope> = emptyList(),
     initialCurrentFile: FirFile? = null,
-    private val classDeclarationsStack: ArrayDeque<FirClass> = ArrayDeque()
+    @property:PrivateForInline val classDeclarationsStack: ArrayDeque<FirClass> = ArrayDeque()
 ) : FirAbstractTreeTransformer<Any?>(FirResolvePhase.TYPES) {
-    private val scopes = mutableListOf<FirScope>()
-    private val towerScope = scopes.asReversed()
+    /**
+     * All current scopes sorted from outermost to innermost.
+     */
+    @PrivateForInline
+    var scopes = initialScopes.asReversed().toPersistentList()
+
+    /**
+     * Scopes that are accessible statically, i.e. [scopes] minus type parameter scopes.
+     */
+    @PrivateForInline
+    var staticScopes = scopes
+
     private var currentDeclaration: FirDeclaration? = null
 
     private inline fun <T> withDeclaration(declaration: FirDeclaration, crossinline action: () -> T): T {
@@ -76,36 +90,47 @@ open class FirTypeResolveTransformer(
         }
     }
 
-    init {
-        scopes.addAll(initialScopes.asReversed())
-    }
-
     private val typeResolverTransformer: FirSpecificTypeResolverTransformer = FirSpecificTypeResolverTransformer(session)
-    private var currentFile: FirFile? = initialCurrentFile
+
+    @PrivateForInline
+    var currentFile: FirFile? = initialCurrentFile
 
     override fun transformFile(file: FirFile, data: Any?): FirFile {
         checkSessionConsistency(file)
+        return withFileScope(file) {
+            super.transformFile(file, data)
+        }
+    }
+
+    inline fun <R> withFileScope(file: FirFile, crossinline action: () -> R): R {
         currentFile = file
         return withScopeCleanup {
-            scopes.addAll(createImportingScopes(file, session, scopeSession))
-            super.transformFile(file, data)
+            addScopes(createImportingScopes(file, session, scopeSession))
+            action()
         }
     }
 
     override fun transformRegularClass(regularClass: FirRegularClass, data: Any?): FirStatement {
         whileAnalysing(session, regularClass) {
-            withClassDeclarationCleanup(classDeclarationsStack, regularClass) {
-                withScopeCleanup {
-                    regularClass.addTypeParametersScope()
-                    regularClass.typeParameters.forEach {
-                        it.accept(this, data)
-                    }
-                    unboundCyclesInTypeParametersSupertypes(regularClass)
-                }
-
+            withClassDeclarationCleanup(regularClass) {
+                transformClassTypeParameters(regularClass, data)
                 return resolveClassContent(regularClass, data)
             }
         }
+    }
+
+    fun transformClassTypeParameters(regularClass: FirRegularClass, data: Any?) {
+        withScopeCleanup {
+            addTypeParametersScope(regularClass)
+            regularClass.typeParameters.forEach {
+                it.accept(this, data)
+            }
+            unboundCyclesInTypeParametersSupertypes(regularClass)
+        }
+    }
+
+    inline fun <R> withClassDeclarationCleanup(regularClass: FirRegularClass, action: () -> R): R {
+        return withClassDeclarationCleanup(classDeclarationsStack, regularClass, action)
     }
 
     override fun transformAnonymousObject(anonymousObject: FirAnonymousObject, data: Any?): FirStatement {
@@ -116,7 +141,7 @@ open class FirTypeResolveTransformer(
 
     override fun transformConstructor(constructor: FirConstructor, data: Any?): FirConstructor = whileAnalysing(session, constructor) {
         return withScopeCleanup {
-            constructor.addTypeParametersScope()
+            addTypeParametersScope(constructor)
             val result = transformDeclaration(constructor, data) as FirConstructor
 
             if (result.isPrimary) {
@@ -127,13 +152,14 @@ open class FirTypeResolveTransformer(
                 }
             }
 
+            calculateDeprecations(result)
             result
         }
     }
 
     override fun transformTypeAlias(typeAlias: FirTypeAlias, data: Any?): FirTypeAlias = whileAnalysing(session, typeAlias) {
         withScopeCleanup {
-            typeAlias.addTypeParametersScope()
+            addTypeParametersScope(typeAlias)
             transformDeclaration(typeAlias, data)
         } as FirTypeAlias
     }
@@ -142,6 +168,7 @@ open class FirTypeResolveTransformer(
         enumEntry.transformReturnTypeRef(this, data)
         enumEntry.transformTypeParameters(this, data)
         enumEntry.transformAnnotations(this, data)
+        calculateDeprecations(enumEntry)
         enumEntry
     }
 
@@ -152,7 +179,7 @@ open class FirTypeResolveTransformer(
     override fun transformProperty(property: FirProperty, data: Any?): FirProperty = whileAnalysing(session, property) {
         withScopeCleanup {
             withDeclaration(property) {
-                property.addTypeParametersScope()
+                addTypeParametersScope(property)
                 property.transformTypeParameters(this, data)
                     .transformReturnTypeRef(this, data)
                     .transformReceiverParameter(this, data)
@@ -174,9 +201,18 @@ open class FirTypeResolveTransformer(
                     }
                     property.returnTypeRef !is FirResolvedTypeRef && property.initializer == null &&
                             property.getter?.returnTypeRef is FirResolvedTypeRef -> {
-                        property.replaceReturnTypeRef(
-                            property.getter!!.returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.PropertyTypeFromGetterReturnType)
+                        val returnTypeRef = property.getter!!.returnTypeRef
+
+                        property.replaceReturnTypeRef(returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.PropertyTypeFromGetterReturnType))
+                        property.backingField?.replaceReturnTypeRef(
+                            returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.PropertyTypeFromGetterReturnType)
                         )
+
+                        property.setter?.valueParameters?.forEach {
+                            it.replaceReturnTypeRef(
+                                returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.PropertyTypeFromGetterReturnType)
+                            )
+                        }
                     }
                 }
 
@@ -186,6 +222,7 @@ open class FirTypeResolveTransformer(
                     property.removeDuplicateAnnotationsOfPrimaryConstructorElement()
                 }
 
+                calculateDeprecations(property)
                 property
             }
         }
@@ -199,6 +236,7 @@ open class FirTypeResolveTransformer(
     override fun transformField(field: FirField, data: Any?): FirField = whileAnalysing(session, field) {
         withScopeCleanup {
             field.transformReturnTypeRef(this, data).transformAnnotations(this, data)
+            calculateDeprecations(field)
             field
         }
     }
@@ -209,9 +247,10 @@ open class FirTypeResolveTransformer(
     ): FirSimpleFunction = whileAnalysing(session, simpleFunction) {
         withScopeCleanup {
             withDeclaration(simpleFunction) {
-                simpleFunction.addTypeParametersScope()
+                addTypeParametersScope(simpleFunction)
                 transformDeclaration(simpleFunction, data).also {
                     unboundCyclesInTypeParametersSupertypes(it as FirTypeParametersOwner)
+                    calculateDeprecations(simpleFunction)
                 }
             }
         } as FirSimpleFunction
@@ -252,9 +291,18 @@ open class FirTypeResolveTransformer(
 
     override fun transformTypeRef(typeRef: FirTypeRef, data: Any?): FirResolvedTypeRef {
         return typeResolverTransformer.withFile(currentFile) {
+            val scopes = scopes
+            // optimized implementation of reversed Iterable on top of PersistentList
+            val reversedScopes = object : Iterable<FirScope> {
+                override fun iterator() = object : Iterator<FirScope> {
+                    private val iter = scopes.listIterator(scopes.size)
+                    override fun hasNext() = iter.hasPrevious()
+                    override fun next() = iter.previous()
+                }
+            }
             typeRef.transform(
                 typeResolverTransformer,
-                ScopeClassDeclaration(towerScope, classDeclarationsStack, containerDeclaration = currentDeclaration)
+                ScopeClassDeclaration(reversedScopes, classDeclarationsStack, containerDeclaration = currentDeclaration)
             )
         }
     }
@@ -267,6 +315,7 @@ open class FirTypeResolveTransformer(
             valueParameter.transformReturnTypeRef(this, data)
             valueParameter.transformAnnotations(this, data)
             valueParameter.transformVarargTypeToArrayType()
+            calculateDeprecations(valueParameter)
             valueParameter
         }
     }
@@ -318,83 +367,116 @@ open class FirTypeResolveTransformer(
                 annotationCall.replaceAnnotationTypeRef(transformedTypeRef)
             }
         }
+
         return annotationCall
     }
 
-    private inline fun <T> withScopeCleanup(crossinline l: () -> T): T {
-        val sizeBefore = scopes.size
+    inline fun <T> withScopeCleanup(crossinline l: () -> T): T {
+        val scopesBefore = scopes
+        val staticScopesBefore = staticScopes
+
         val result = l()
-        val size = scopes.size
-        assert(size >= sizeBefore)
-        repeat(size - sizeBefore) {
-            scopes.removeAt(scopes.lastIndex)
-        }
+
+        scopes = scopesBefore
+        staticScopes = staticScopesBefore
+
         return result
     }
 
     private fun resolveClassContent(
         firClass: FirClass,
         data: Any?
-    ): FirStatement {
+    ): FirStatement = withClassScopes(
+        firClass,
+        actionInsideStaticScope = {
+            withScopeCleanup {
+                firClass.transformAnnotations(this, null)
 
-        withScopeCleanup {
-            firClass.transformAnnotations(this, null)
+                if (firClass is FirRegularClass) {
+                    addTypeParametersScope(firClass)
+                }
 
-            if (firClass is FirRegularClass) {
-                firClass.addTypeParametersScope()
-            }
-
-            // ConstructedTypeRef should be resolved only with type parameters, but not with nested classes and classes from supertypes
-            for (constructor in firClass.declarations.filterIsInstance<FirConstructor>()) {
-                constructor.delegatedConstructor?.let(this::resolveConstructedTypeRefForDelegatedConstructorCall)
-            }
-
-        }
-
-        return withScopeCleanup {
-            // ? Is it Ok to use original file session here ?
-            val superTypes = lookupSuperTypes(
-                firClass,
-                lookupInterfaces = false,
-                deep = true,
-                substituteTypes = true,
-                useSiteSession = session
-            ).asReversed()
-            for (superType in superTypes) {
-                superType.lookupTag.getNestedClassifierScope(session, scopeSession)?.let { nestedClassifierScope ->
-                    val scope = nestedClassifierScope.wrapNestedClassifierScopeWithSubstitutionForSuperType(superType, session)
-                    scopes.add(scope)
+                // ConstructedTypeRef should be resolved only with type parameters, but not with nested classes and classes from supertypes
+                for (constructor in firClass.declarations.filterIsInstance<FirConstructor>()) {
+                    transformDelegatedConstructorCall(constructor)
                 }
             }
-            session.nestedClassifierScope(firClass)?.let(scopes::add)
-            if (firClass is FirRegularClass) {
-                val companionObject = firClass.companionObjectSymbol?.fir
-                if (companionObject != null) {
-                    session.nestedClassifierScope(companionObject)?.let(scopes::add)
-                }
-                firClass.addTypeParametersScope()
+        }
+    ) {
+        // Note that annotations are still visited here
+        // again, although there's no need in it
+        transformElement(firClass, data)
+    }
+
+    fun transformDelegatedConstructorCall(constructor: FirConstructor) {
+        constructor.delegatedConstructor?.let(this::resolveConstructedTypeRefForDelegatedConstructorCall)
+    }
+
+    inline fun <R> withClassScopes(
+        firClass: FirClass,
+        crossinline actionInsideStaticScope: () -> Unit = {},
+        crossinline action: () -> R,
+    ): R = withScopeCleanup {
+        // Remove type parameter scopes for classes that are neither inner nor local
+        if (!firClass.isInner && !firClass.isLocal) {
+            this.scopes = staticScopes
+        }
+
+        actionInsideStaticScope()
+
+        // ? Is it Ok to use original file session here ?
+        val superTypes = lookupSuperTypes(
+            firClass,
+            lookupInterfaces = false,
+            deep = true,
+            substituteTypes = true,
+            useSiteSession = session
+        ).asReversed()
+
+        val scopesToAdd = mutableListOf<FirScope>()
+
+        for (superType in superTypes) {
+            superType.lookupTag.getNestedClassifierScope(session, scopeSession)?.let { nestedClassifierScope ->
+                val scope = nestedClassifierScope.wrapNestedClassifierScopeWithSubstitutionForSuperType(superType, session)
+                scopesToAdd.add(scope)
+            }
+        }
+
+        session.nestedClassifierScope(firClass)?.let(scopesToAdd::add)
+        if (firClass is FirRegularClass) {
+            val companionObject = firClass.companionObjectSymbol?.fir
+            if (companionObject != null) {
+                session.nestedClassifierScope(companionObject)?.let(scopesToAdd::add)
             }
 
-            // Note that annotations are still visited here
-            // again, although there's no need in it
-            transformElement(firClass, data)
+            addScopes(scopesToAdd)
+            addTypeParametersScope(firClass)
+        } else {
+            addScopes(scopesToAdd)
         }
+
+        action()
     }
 
     private fun resolveConstructedTypeRefForDelegatedConstructorCall(
         delegatedConstructorCall: FirDelegatedConstructorCall
     ) {
-        delegatedConstructorCall.replaceConstructedTypeRef(
-            delegatedConstructorCall.constructedTypeRef.transform<FirTypeRef, Any?>(this, null)
-        )
-
+        delegatedConstructorCall.replaceConstructedTypeRef(delegatedConstructorCall.constructedTypeRef.transformSingle(this, null))
         delegatedConstructorCall.transformCalleeReference(this, null)
     }
 
-    private fun FirMemberDeclaration.addTypeParametersScope() {
-        if (typeParameters.isNotEmpty()) {
-            scopes.add(FirMemberTypeParameterScope(this))
+    fun addTypeParametersScope(firMemberDeclaration: FirMemberDeclaration) {
+        if (firMemberDeclaration.typeParameters.isNotEmpty()) {
+            scopes = scopes.add(FirMemberTypeParameterScope(firMemberDeclaration))
         }
+    }
+
+    fun addScopes(list: List<FirScope>) {
+        // small optimization to skip unnecessary allocations
+        val scopesAreTheSame = scopes === staticScopes
+
+        scopes = scopes.addAll(list)
+        staticScopes = if (scopesAreTheSame) scopes else staticScopes.addAll(list)
     }
 
     /**
@@ -421,5 +503,11 @@ open class FirTypeResolveTransformer(
                     // CONSTRUCTOR_PARAMETER !in targets && !isParameter
                     AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER in it.useSiteTargetsFromMetaAnnotation(session) == isParameter
         })
+    }
+
+    private fun calculateDeprecations(callableDeclaration: FirCallableDeclaration) {
+        if (callableDeclaration.deprecationsProvider is UnresolvedDeprecationProvider) {
+            callableDeclaration.replaceDeprecationsProvider(callableDeclaration.getDeprecationsProvider(session))
+        }
     }
 }

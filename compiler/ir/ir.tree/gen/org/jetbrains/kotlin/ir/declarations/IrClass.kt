@@ -24,7 +24,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.class
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.class]
  */
 abstract class IrClass : IrDeclarationBase(), IrPossiblyExternalDeclaration,
         IrDeclarationWithVisibility, IrTypeParametersContainer, IrDeclarationContainer,
@@ -58,6 +59,14 @@ abstract class IrClass : IrDeclarationBase(), IrPossiblyExternalDeclaration,
 
     abstract var valueClassRepresentation: ValueClassRepresentation<IrSimpleType>?
 
+    /**
+     * If this is a sealed class or interface, this list contains symbols of all its immediate
+     * subclasses.
+     * Otherwise, this is an empty list.
+     *
+     * NOTE: If this [IrClass] was deserialized from a klib, this list will always be empty!
+     * See [KT-54028](https://youtrack.jetbrains.com/issue/KT-54028).
+     */
     abstract var sealedSubclasses: List<IrClassSymbol>
 
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =

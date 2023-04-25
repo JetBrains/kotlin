@@ -1,11 +1,12 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.generators.tests.analysis.api
 
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.annotations.AbstractAnalysisApiAnnotationsOnDeclarationsTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.annotations.AbstractAnalysisApiSpecificAnnotationOnDeclarationTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.annotations.AbstractAnalysisApiAnnotationsOnDeclarationsWithMetaTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.annotations.AbstractAnalysisApiAnnotationsOnFilesTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.annotations.AbstractAnalysisApiAnnotationsOnTypesTest
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.importO
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.multiplatformInfoProvider.AbstractExpectForActualTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiTypeProvider.AbstractAnalysisApiExpressionPsiTypeProviderTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.psiTypeProvider.AbstractAnalysisApiPsiTypeProviderTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.scopeProvider.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatureSubstitution.AbstractAnalysisApiSignatureContractsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatureSubstitution.AbstractAnalysisApiSignatureSubstitutionTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.signatureSubstitution.AbstractAnalysisApiSymbolAsSignatureTest
@@ -45,8 +47,8 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typePro
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractHasCommonSubtypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractTypeReferenceTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceResolveTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceResolveWithResolveExtensionTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceShortenerTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.scopes.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSingleSymbolByPsi
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSymbolByFqNameTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.symbols.AbstractSymbolByPsiTest
@@ -86,46 +88,24 @@ internal fun AnalysisApiTestGroup.generateAnalysisApiTests() {
     group(filter = testModuleKindIs(TestModuleKind.Source)) {
         generateAnalysisApiComponentsTests()
         generateAnalysisApiNonComponentsTests()
+        generateResolveExtensionsTests()
+    }
+}
+
+private fun AnalysisApiTestGroup.generateResolveExtensionsTests() {
+    group(
+        "resolveExtensions",
+        filter = analysisSessionModeIs(AnalysisSessionMode.Normal) and
+                frontendIs(FrontendKind.Fir) and
+                testModuleKindIs(TestModuleKind.Source)
+    ) {
+        test(AbstractReferenceResolveWithResolveExtensionTest::class) {
+            model("referenceResolve")
+        }
     }
 }
 
 private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
-    group("scopes", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
-        test(
-            AbstractSubstitutionOverridesUnwrappingTest::class,
-            filter = frontendIs(FrontendKind.Fir),
-        ) {
-            model("substitutionOverridesUnwrapping")
-        }
-
-        test(
-            AbstractMemberScopeByFqNameTest::class,
-            filter = frontendIs(FrontendKind.Fir),
-        ) {
-            when (it.analysisApiMode) {
-                AnalysisApiMode.Ide ->
-                    model("memberScopeByFqName")
-                AnalysisApiMode.Standalone ->
-                    model("memberScopeByFqName", excludeDirsRecursively = listOf("withTestCompilerPluginEnabled"))
-            }
-        }
-
-        test(AbstractFileScopeTest::class) {
-            model("fileScopeTest", extension = "kt")
-        }
-
-        test(AbstractDelegateMemberScopeTest::class) {
-            model("delegatedMemberScope")
-        }
-
-        test(
-            AbstractDeclaredMemberScopeTest::class,
-            filter = frontendIs(FrontendKind.Fir),
-        ) {
-            model("declaredMemberScope")
-        }
-    }
-
     group("symbols", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
         test(AbstractSymbolByPsiTest::class) {
             model("symbolByPsi")
@@ -173,6 +153,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
 
         test(AbstractAnalysisApiAnnotationsOnDeclarationsTest::class) {
             model("annotationsOnDeclaration")
+        }
+
+        test(AbstractAnalysisApiSpecificAnnotationOnDeclarationTest::class) {
+            model("specificAnnotations")
         }
 
         test(
@@ -414,6 +398,46 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
         group(filter = frontendIs(FrontendKind.Fir)) {
             test(AbstractTypeScopeTest::class) {
                 model("typeScope")
+            }
+
+            test(AbstractScopeContextForPositionTest::class) {
+                model("scopeContextForPosition")
+            }
+        }
+
+        group(filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
+            test(
+                AbstractSubstitutionOverridesUnwrappingTest::class,
+                filter = frontendIs(FrontendKind.Fir),
+            ) {
+                model("substitutionOverridesUnwrapping")
+            }
+
+            test(
+                AbstractMemberScopeByFqNameTest::class,
+                filter = frontendIs(FrontendKind.Fir),
+            ) {
+                when (it.analysisApiMode) {
+                    AnalysisApiMode.Ide ->
+                        model("memberScopeByFqName")
+                    AnalysisApiMode.Standalone ->
+                        model("memberScopeByFqName", excludeDirsRecursively = listOf("withTestCompilerPluginEnabled"))
+                }
+            }
+
+            test(AbstractFileScopeTest::class) {
+                model("fileScopeTest", extension = "kt")
+            }
+
+            test(AbstractDelegateMemberScopeTest::class) {
+                model("delegatedMemberScope")
+            }
+
+            test(
+                AbstractDeclaredMemberScopeTest::class,
+                filter = frontendIs(FrontendKind.Fir),
+            ) {
+                model("declaredMemberScope")
             }
         }
     }

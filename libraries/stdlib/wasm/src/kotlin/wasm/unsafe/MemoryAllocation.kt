@@ -77,6 +77,7 @@ internal fun createAllocatorInTheNewScope(): ScopedMemoryAllocator {
 @UnsafeWasmMemoryApi
 internal var currentAllocator: ScopedMemoryAllocator? = null
 
+// TODO(KT-58041): Consider switching back to using ULong
 @PublishedApi
 @UnsafeWasmMemoryApi
 internal class ScopedMemoryAllocator(
@@ -87,10 +88,12 @@ internal class ScopedMemoryAllocator(
 ) : MemoryAllocator() {
     // true if allocator is out of scope
     private var destroyed = false
+
     // true if child allocator is active
     private var suspended = false
+
     // all memory is available starting from this address
-    private var availableAddress: ULong = startAddress.toULong()
+    private var availableAddress = startAddress
 
     override fun allocate(size: Int): Pointer {
         check(!destroyed) { "ScopedMemoryAllocator is destroyed when out of scope" }
@@ -98,28 +101,28 @@ internal class ScopedMemoryAllocator(
 
         // Pad available address to align it to 8
         // 8 is a max alignment number currently needed for Wasm component model canonical ABI
-        val align = 8uL
-        val result = (availableAddress + align - 1uL) and (align - 1uL).inv()
-        check(result % 8uL == 0uL)
+        val align = 8
+        val result = (availableAddress + align - 1) and (align - 1).inv()
+        check(result > 0 && result % align == 0) { "result must be > 0 and 8-byte aligned" }
 
-        availableAddress = result + size.toULong()
-
-        if (availableAddress > UInt.MAX_VALUE.toULong()) {
-            error("Out of linear memory. All available address space (4gb) is used.")
+        if (Int.MAX_VALUE - availableAddress < size) {
+            error("Out of linear memory. All available address space (2gb) is used.")
         }
 
-        val currentMaxSize = wasmMemorySize().toULong() * WASM_PAGE_SIZE_IN_BYTES.toULong()
+        availableAddress = result + size
+
+        val currentMaxSize = wasmMemorySize() * WASM_PAGE_SIZE_IN_BYTES
         if (availableAddress >= currentMaxSize) {
 
             val numPagesToGrow =
-                (availableAddress - currentMaxSize) / WASM_PAGE_SIZE_IN_BYTES.toULong() + 2uL
+                (availableAddress - currentMaxSize) / WASM_PAGE_SIZE_IN_BYTES + 2
 
-            if (wasmMemoryGrow(numPagesToGrow.toInt()) == -1) {
+            if (wasmMemoryGrow(numPagesToGrow) == -1) {
                 error("Out of linear memory. memory.grow returned -1")
             }
         }
 
-        check(availableAddress < wasmMemorySize().toULong() * WASM_PAGE_SIZE_IN_BYTES.toULong())
+        check(availableAddress < wasmMemorySize() * WASM_PAGE_SIZE_IN_BYTES)
 
         return Pointer(result.toUInt())
     }

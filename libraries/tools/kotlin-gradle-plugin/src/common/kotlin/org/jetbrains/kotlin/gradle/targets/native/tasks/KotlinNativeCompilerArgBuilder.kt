@@ -178,9 +178,7 @@ internal fun buildKotlinNativeCompileCommonArgs(
     }
 
     languageSettings.run {
-        addKey("-progressive", progressiveMode)
         enabledLanguageFeatures.forEach { add("-XXLanguage:+$it") }
-        optInAnnotationsInUse.forEach { add("-opt-in=$it") }
     }
 
     addArgIfNotNull("-language-version", compilerOptions.languageVersion.orNull?.version)
@@ -188,6 +186,11 @@ internal fun buildKotlinNativeCompileCommonArgs(
     addKey("-Werror", compilerOptions.allWarningsAsErrors.get())
     addKey("-nowarn", compilerOptions.suppressWarnings.get())
     addKey("-verbose", compilerOptions.verbose.get())
+    addKey("-progressive", compilerOptions.progressiveMode.get())
+    if (compilerOptions.useK2.get()) {
+        add("-Xuse-k2")
+    }
+    compilerOptions.optIn.get().forEach { add("-opt-in=$it") }
 
     addAll(compilerOptions.freeCompilerArgs.get())
 }

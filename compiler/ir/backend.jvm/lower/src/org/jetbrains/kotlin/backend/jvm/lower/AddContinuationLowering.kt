@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.codegen.coroutines.*
 import org.jetbrains.kotlin.codegen.inline.coroutines.FOR_INLINE_SUFFIX
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
@@ -36,9 +37,7 @@ import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.extractTypeParameters
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
-import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -291,9 +290,8 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
     }
 
     private fun addContinuationObjectAndContinuationParameterToSuspendFunctions(irFile: IrFile) {
-        class MutableFlag(var capturesCrossinline: Boolean)
-        irFile.accept(object : IrElementTransformer<MutableFlag?> {
-            override fun visitClass(declaration: IrClass, data: MutableFlag?): IrStatement {
+        irFile.accept(object : IrElementTransformerVoid() {
+            override fun visitClass(declaration: IrClass): IrStatement {
                 declaration.transformDeclarationsFlat {
                     if (it is IrSimpleFunction && it.isSuspend)
                         return@transformDeclarationsFlat transformToView(it)
@@ -304,9 +302,9 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
             }
 
             private fun transformToView(function: IrSimpleFunction): List<IrFunction> {
-                val flag = MutableFlag(false)
-                function.accept(this, flag)
+                function.accept(this, null)
 
+                val capturesCrossinline = function.isCapturingCrossinline()
                 val view = function.suspendFunctionViewOrStub(context)
                 val continuationParameter = view.continuationParameter()
                 val parameterMap = function.explicitParameters.zip(view.explicitParameters.filter { it != continuationParameter }).toMap()
@@ -327,7 +325,7 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
                     )
                 }
 
-                if (flag.capturesCrossinline || function.isInline) {
+                if (capturesCrossinline || function.isInline) {
                     result += context.irFactory.buildFun {
                         containerSource = view.containerSource
                         name = Name.identifier(context.defaultMethodSignatureMapper.mapFunctionName(view) + FOR_INLINE_SUFFIX)
@@ -359,7 +357,7 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
                         newFunction,
                         view.dispatchReceiverParameter,
                         function as IrAttributeContainer,
-                        flag.capturesCrossinline
+                        capturesCrossinline
                     )
                     if (newFunction.body is IrExpressionBody) {
                         +irReturn(newFunction.body!!.statements[0] as IrExpression)
@@ -372,10 +370,26 @@ private class AddContinuationLowering(context: JvmBackendContext) : SuspendLower
                 return result
             }
 
-            override fun visitFieldAccess(expression: IrFieldAccessExpression, data: MutableFlag?): IrExpression {
-                if (expression.symbol.owner.origin == LocalDeclarationsLowering.DECLARATION_ORIGIN_FIELD_FOR_CROSSINLINE_CAPTURED_VALUE)
-                    data?.capturesCrossinline = true
-                return super.visitFieldAccess(expression, data)
+            private fun IrSimpleFunction.isCapturingCrossinline(): Boolean {
+                var capturesCrossinline = false
+                (this.originalBeforeInline ?: this).acceptVoid(object : IrElementVisitorVoid {
+                    override fun visitElement(element: IrElement) {
+                        element.acceptChildrenVoid(this)
+                    }
+
+                    override fun visitFieldAccess(expression: IrFieldAccessExpression) {
+                        if (expression.symbol.owner.origin == LocalDeclarationsLowering.DECLARATION_ORIGIN_FIELD_FOR_CROSSINLINE_CAPTURED_VALUE) {
+                            capturesCrossinline = true
+                            return
+                        }
+                        super.visitFieldAccess(expression)
+                    }
+
+                    override fun visitClass(declaration: IrClass) {
+                        return
+                    }
+                })
+                return capturesCrossinline
             }
         }, null)
     }

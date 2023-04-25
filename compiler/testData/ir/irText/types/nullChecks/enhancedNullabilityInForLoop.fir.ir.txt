@@ -155,19 +155,19 @@ FILE fqName:<root> fileName:/enhancedNullabilityInForLoop.kt
           RETURN type=kotlin.Nothing from='public final fun <get-y> (): kotlin.Int declared in <root>.P'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.P declared in <root>.P.<get-y>' type=<root>.P origin=null
-    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.P) returnType:kotlin.Int [operator]
+    FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.P) returnType:kotlin.Int [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.P
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Int [operator] declared in <root>.P'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
             receiver: GET_VAR '<this>: <root>.P declared in <root>.P.component1' type=<root>.P origin=null
-    FUN name:component2 visibility:public modality:FINAL <> ($this:<root>.P) returnType:kotlin.Int [operator]
+    FUN GENERATED_DATA_CLASS_MEMBER name:component2 visibility:public modality:FINAL <> ($this:<root>.P) returnType:kotlin.Int [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.P
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component2 (): kotlin.Int [operator] declared in <root>.P'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
             receiver: GET_VAR '<this>: <root>.P declared in <root>.P.component2' type=<root>.P origin=null
-    FUN name:copy visibility:public modality:FINAL <> ($this:<root>.P, x:kotlin.Int, y:kotlin.Int) returnType:<root>.P
+    FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:<root>.P, x:kotlin.Int, y:kotlin.Int) returnType:<root>.P
       $this: VALUE_PARAMETER name:<this> type:<root>.P
       VALUE_PARAMETER name:x index:0 type:kotlin.Int
         EXPRESSION_BODY
@@ -252,12 +252,10 @@ FILE fqName:<root> fileName:/enhancedNullabilityInForLoop.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.P'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="P("
-            CONST String type=kotlin.String value="x="
+            CONST String type=kotlin.String value="P(x="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:x type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.P declared in <root>.P.toString' type=<root>.P origin=null
-            CONST String type=kotlin.String value=", "
-            CONST String type=kotlin.String value="y="
+            CONST String type=kotlin.String value=", y="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:y type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.P declared in <root>.P.toString' type=<root>.P origin=null
             CONST String type=kotlin.String value=")"

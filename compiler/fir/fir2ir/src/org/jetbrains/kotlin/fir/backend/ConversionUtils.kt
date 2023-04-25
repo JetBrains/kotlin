@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,17 +7,19 @@ package org.jetbrains.kotlin.fir.backend
 
 import com.intellij.psi.PsiCompiledElement
 import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.backend.common.actualizer.IrActualizedResult
 import org.jetbrains.kotlin.builtins.StandardNames.DATA_CLASS_COMPONENT_PREFIX
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.diagnostics.startOffsetSkippingComments
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.buildFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.builder.buildPackageDirective
-import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildFile
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isJava
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.extensions.FirExtensionApiInternals
@@ -61,6 +63,14 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
+fun AbstractKtSourceElement?.startOffsetSkippingComments(): Int? {
+    return when (this) {
+        is KtPsiSourceElement -> this.psi.startOffsetSkippingComments
+        is KtLightSourceElement -> this.startOffsetSkippingComments
+        else -> null
+    }
+}
+
 internal fun <T : IrElement> FirElement.convertWithOffsets(
     f: (startOffset: Int, endOffset: Int) -> T
 ): T {
@@ -70,9 +80,8 @@ internal fun <T : IrElement> FirElement.convertWithOffsets(
 internal fun <T : IrElement> KtSourceElement?.convertWithOffsets(
     f: (startOffset: Int, endOffset: Int) -> T
 ): T {
-    val psi = psi
     if (psi is PsiCompiledElement) return f(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
-    val startOffset = psi?.startOffsetSkippingComments ?: this?.startOffset ?: UNDEFINED_OFFSET
+    val startOffset = this?.startOffsetSkippingComments() ?: this?.startOffset ?: UNDEFINED_OFFSET
     val endOffset = this?.endOffset ?: UNDEFINED_OFFSET
     return f(startOffset, endOffset)
 }
@@ -87,9 +96,8 @@ internal fun <T : IrElement> FirStatement.convertWithOffsets(
     calleeReference: FirReference,
     f: (startOffset: Int, endOffset: Int) -> T
 ): T {
-    val psi = calleeReference.psi
     if (psi is PsiCompiledElement) return f(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
-    val startOffset = psi?.startOffsetSkippingComments ?: calleeReference.source?.startOffset ?: UNDEFINED_OFFSET
+    val startOffset = calleeReference.source?.startOffsetSkippingComments() ?: calleeReference.source?.startOffset ?: UNDEFINED_OFFSET
     val endOffset = source?.endOffset ?: UNDEFINED_OFFSET
     return f(startOffset, endOffset)
 }
@@ -101,11 +109,7 @@ internal enum class ConversionTypeOrigin {
     SETTER
 }
 
-class ConversionTypeContext internal constructor(internal val origin: ConversionTypeOrigin) {
-    fun inSetter() = ConversionTypeContext(
-        origin = ConversionTypeOrigin.SETTER
-    )
-
+class ConversionTypeContext private constructor(internal val origin: ConversionTypeOrigin) {
     companion object {
         internal val DEFAULT = ConversionTypeContext(
             origin = ConversionTypeOrigin.DEFAULT
@@ -221,7 +225,14 @@ private fun FirCallableSymbol<*>.toSymbolForCall(
         }
         // Member fake override or bound callable reference
         dispatchReceiver !is FirNoReceiverExpression -> {
-            dispatchReceiver.typeRef.coneType.let { it.findClassRepresentation(it, declarationStorage.session) }
+            val callSiteDispatchReceiverType = dispatchReceiver.typeRef.coneType
+            val declarationSiteDispatchReceiverType = dispatchReceiverType
+            val type = if (callSiteDispatchReceiverType is ConeDynamicType && declarationSiteDispatchReceiverType != null) {
+                declarationSiteDispatchReceiverType
+            } else {
+                callSiteDispatchReceiverType
+            }
+            type.findClassRepresentation(type, declarationStorage.session)
         }
         // Unbound callable reference to member (non-extension)
         isReference && fir.receiverParameter == null -> {
@@ -373,7 +384,7 @@ internal fun FirSimpleFunction.processOverriddenFunctionSymbols(
     containingClass: FirClass,
     processor: (FirNamedFunctionSymbol) -> Unit
 ) {
-    val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true)
+    val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true, memberRequiredPhase = null)
     scope.processFunctionsByName(name) {}
     scope.processOverriddenFunctionsFromSuperClasses(symbol, containingClass) { overriddenSymbol ->
         if (!session.visibilityChecker.isVisibleForOverriding(
@@ -447,7 +458,7 @@ internal fun FirProperty.processOverriddenPropertySymbols(
     containingClass: FirClass,
     processor: (FirPropertySymbol) -> Unit
 ): List<IrPropertySymbol> {
-    val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true)
+    val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true, memberRequiredPhase = null)
     scope.processPropertiesByName(name) {}
     val overriddenSet = mutableSetOf<IrPropertySymbol>()
     scope.processOverriddenPropertiesFromSuperClasses(symbol, containingClass) { overriddenSymbol ->
@@ -481,7 +492,7 @@ internal fun FirProperty.generateOverriddenPropertySymbols(containingClass: FirC
 
 context(Fir2IrComponents)
 internal fun FirProperty.generateOverriddenAccessorSymbols(containingClass: FirClass, isGetter: Boolean): List<IrSimpleFunctionSymbol> {
-    val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true)
+    val scope = containingClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true, memberRequiredPhase = null)
     scope.processPropertiesByName(name) {}
     val overriddenSet = mutableSetOf<IrSimpleFunctionSymbol>()
     val superClasses = containingClass.getSuperTypesAsIrClasses() ?: return emptyList()
@@ -741,3 +752,7 @@ fun FirCallableDeclaration.contextReceiversForFunctionOrContainingProperty(): Li
         this.propertySymbol.fir.contextReceivers
     else
         this.contextReceivers
+
+fun IrActualizedResult?.extractFirDeclarations(): Set<FirDeclaration>? {
+    return this?.actualizedExpectDeclarations?.mapNotNullTo(mutableSetOf()) { ((it as IrMetadataSourceOwner).metadata as FirMetadataSource).fir }
+}

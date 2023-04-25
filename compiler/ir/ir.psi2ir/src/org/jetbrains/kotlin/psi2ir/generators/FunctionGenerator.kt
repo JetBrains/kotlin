@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 
 @ObsoleteDescriptorBasedAPI
-class FunctionGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGeneratorExtension(declarationGenerator) {
+internal class FunctionGenerator(declarationGenerator: DeclarationGenerator) : DeclarationGeneratorExtension(declarationGenerator) {
 
     constructor(context: GeneratorContext) : this(DeclarationGenerator(context))
 
@@ -244,7 +244,8 @@ class FunctionGenerator(declarationGenerator: DeclarationGenerator) : Declaratio
         ) { irConstructor ->
             if (
                 primaryConstructorDescriptor.isExpect ||
-                primaryConstructorDescriptor.constructedClass.isEffectivelyExternal()
+                primaryConstructorDescriptor.constructedClass.isEffectivelyExternal() ||
+                context.configuration.skipBodies
             )
                 null
             else

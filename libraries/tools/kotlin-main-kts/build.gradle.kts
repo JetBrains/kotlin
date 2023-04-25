@@ -22,9 +22,11 @@ val proguardLibraryJars by configurations.creating {
     }
 }
 
-val relocatedJarContents by configurations.creating
-        
 val embedded by configurations
+
+val relocatedJarContents by configurations.creating {
+    extendsFrom(embedded)
+}
 
 dependencies {
     compileOnly(project(":compiler:cli-common"))
@@ -50,7 +52,6 @@ dependencies {
     proguardLibraryJars(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     proguardLibraryJars(project(":kotlin-compiler"))
 
-    relocatedJarContents(embedded)
     relocatedJarContents(mainSourceSet.output)
 }
 

@@ -64,11 +64,19 @@ object FirJsExternalChecker : FirBasicDeclarationChecker() {
             if (classKind != null) {
                 reporter.reportOn(declaration.source, FirJsErrors.WRONG_EXTERNAL_DECLARATION, classKind, context)
             }
+
+            if (declaration.isEnumClass) {
+                reporter.reportOn(declaration.source, FirJsErrors.ENUM_CLASS_IN_EXTERNAL_DECLARATION_WARNING, context)
+            }
         }
 
         if (declaration is FirPropertyAccessor && declaration.isDirectlyExternal(context.session)) {
             reporter.reportOn(declaration.source, FirJsErrors.WRONG_EXTERNAL_DECLARATION, "property accessor", context)
-        } else if (declaration !is FirPrimaryConstructor && declaration.isPrivateMemberOfExternalClass(context.session)) {
+        } else if (
+            declaration !is FirPrimaryConstructor &&
+            declaration !is FirField &&
+            declaration.isPrivateMemberOfExternalClass(context.session)
+        ) {
             reporter.reportOn(declaration.source, FirJsErrors.WRONG_EXTERNAL_DECLARATION, "private member of class", context)
         }
 
@@ -184,7 +192,7 @@ object FirJsExternalChecker : FirBasicDeclarationChecker() {
         declaration.checkAnonymousInitializer(context, reporter)
         declaration.checkEnumEntry(context, reporter)
         declaration.checkConstructorPropertyParam(context, reporter)
-    }
+   }
 
     private val KtSourceElement.allowsReporting
         get() = kind !is KtFakeSourceElementKind || kind == KtFakeSourceElementKind.PropertyFromParameter

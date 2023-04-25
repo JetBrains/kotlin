@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.getEnumValue
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.getEnumValue]
  */
 abstract class IrGetEnumValue : IrGetSingletonValue() {
     abstract override val symbol: IrEnumEntrySymbol

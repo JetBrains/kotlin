@@ -8,6 +8,8 @@ public final annotation class Synchronized : kotlin.Annotation {
 
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.FIELD})
 @kotlin.annotation.Retention(value = AnnotationRetention.SOURCE)
+@kotlin.Deprecated(message = "This annotation has no effect in Kotlin/JS. Use kotlin.concurrent.Volatile annotation in multiplatform code instead.", replaceWith = kotlin.ReplaceWith(expression = "kotlin.concurrent.Volatile", imports = {"kotlin.concurrent.Volatile"}))
+@kotlin.DeprecatedSinceKotlin(warningSince = "1.9")
 public final annotation class Volatile : kotlin.Annotation {
     public constructor Volatile()
 }

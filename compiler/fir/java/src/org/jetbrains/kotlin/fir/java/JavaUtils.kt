@@ -8,9 +8,6 @@ package org.jetbrains.kotlin.fir.java
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataKey
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataRegistry
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.FirArrayOfCall
@@ -23,6 +20,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildErrorExpression
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.expectedConeType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.createArrayType
+import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.load.java.RXJAVA3_ANNOTATIONS
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaClass
@@ -37,21 +35,25 @@ internal val JavaModifierListOwner.modality: Modality
         else -> Modality.OPEN
     }
 
-internal val JavaClass.modality: Modality
+val JavaClass.modality: Modality
     get() = when {
+        isAnnotationType || isEnum -> Modality.FINAL
         isSealed -> Modality.SEALED
         isAbstract -> Modality.ABSTRACT
         isFinal -> Modality.FINAL
         else -> Modality.OPEN
     }
 
-internal val JavaClass.classKind: ClassKind
+val JavaClass.classKind: ClassKind
     get() = when {
         isAnnotationType -> ClassKind.ANNOTATION_CLASS
         isInterface -> ClassKind.INTERFACE
         isEnum -> ClassKind.ENUM_CLASS
         else -> ClassKind.CLASS
     }
+
+fun JavaClass.hasMetadataAnnotation(): Boolean =
+    annotations.any { it.classId?.asSingleFqName() == JvmAnnotationNames.METADATA_FQ_NAME }
 
 internal fun Any?.createConstantOrError(session: FirSession): FirExpression {
     return createConstantIfAny(session) ?: buildErrorExpression {

@@ -29,9 +29,9 @@ private class D {
 package b
 
 import a.A
-import a.B
+import a.<!INVISIBLE_REFERENCE!>B<!>
 import a.C
-import a.D
+import a.<!INVISIBLE_REFERENCE!>D<!>
 
 fun test() {
     f(A)

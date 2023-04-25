@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_K2_LIGHT_TREE: JVM_IR
-//   Reason: KT-56755
 // Code generation problem with JVM backend.
 // IGNORE_BACKEND: JVM
 // FILE: test.kt
@@ -19,29 +17,29 @@ suspend fun box() {
 // The lambda object constructor has a local variables table on the IR backend.
 
 // EXPECTATIONS JVM JVM_IR
-// test.kt:16 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1
-// test.kt:6 <init>:
-// test.kt:16 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1
-// test.kt:9 foo1:
-// test.kt:10 foo1: $continuation:kotlin.coroutines.Continuation=TestKt$foo1$1, $result:java.lang.Object=null, $this$foo1:A=A, l:long=42:long
-// test.kt:8 foo: $this$foo:A=A, $completion:kotlin.coroutines.Continuation=TestKt$foo1$1
-// test.kt:10 foo1: $continuation:kotlin.coroutines.Continuation=TestKt$foo1$1, $result:java.lang.Object=null, $this$foo1:A=A, l:long=42:long
-// test.kt:11 foo1: $continuation:kotlin.coroutines.Continuation=TestKt$foo1$1, $result:java.lang.Object=null, l:long=42:long, $this$foo1:A=A
-// test.kt:8 foo: $this$foo:A=A, $completion:kotlin.coroutines.Continuation=TestKt$foo1$1
+// test.kt:14 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1
+// test.kt:4 <init>:
+// test.kt:14 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1
+// test.kt:7 foo1:
+// test.kt:8 foo1: $continuation:kotlin.coroutines.Continuation=TestKt$foo1$1, $result:java.lang.Object=null, $this$foo1:A=A, l:long=42:long
+// test.kt:6 foo: $this$foo:A=A, $completion:kotlin.coroutines.Continuation=TestKt$foo1$1
+// test.kt:8 foo1: $continuation:kotlin.coroutines.Continuation=TestKt$foo1$1, $result:java.lang.Object=null, $this$foo1:A=A, l:long=42:long
+// test.kt:9 foo1: $continuation:kotlin.coroutines.Continuation=TestKt$foo1$1, $result:java.lang.Object=null, l:long=42:long, $this$foo1:A=A
+// test.kt:6 foo: $this$foo:A=A, $completion:kotlin.coroutines.Continuation=TestKt$foo1$1
+// test.kt:9 foo1: $continuation:kotlin.coroutines.Continuation=TestKt$foo1$1, $result:java.lang.Object=null, l:long=42:long
+// test.kt:10 foo1: $continuation:kotlin.coroutines.Continuation=TestKt$foo1$1, $result:java.lang.Object=null, l:long=42:long
 // test.kt:11 foo1: $continuation:kotlin.coroutines.Continuation=TestKt$foo1$1, $result:java.lang.Object=null, l:long=42:long
-// test.kt:12 foo1: $continuation:kotlin.coroutines.Continuation=TestKt$foo1$1, $result:java.lang.Object=null, l:long=42:long
-// test.kt:13 foo1: $continuation:kotlin.coroutines.Continuation=TestKt$foo1$1, $result:java.lang.Object=null, l:long=42:long
-// test.kt:16 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1
-// test.kt:17 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1
+// test.kt:14 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1
+// test.kt:15 box: $completion:kotlin.coroutines.Continuation=Generated_Box_MainKt$main$1
 
 // EXPECTATIONS JS_IR
-// test.kt:16 box: $completion=EmptyContinuation
-// test.kt:6 <init>:
-// test.kt:16 box: $completion=EmptyContinuation
-// test.kt:16 box: $completion=EmptyContinuation
+// test.kt:15 box: $completion=EmptyContinuation
+// test.kt:4 <init>:
+// test.kt:14 box: $completion=EmptyContinuation
+// test.kt:14 box: $completion=EmptyContinuation
+// test.kt:8 doResume:
+// test.kt:6 foo: <this>=A, $completion=$foo1COROUTINE$0
+// test.kt:9 doResume:
+// test.kt:6 foo: <this>=A, $completion=$foo1COROUTINE$0
 // test.kt:10 doResume:
-// test.kt:8 foo: <this>=A, $completion=$foo1COROUTINE$0
-// test.kt:11 doResume:
-// test.kt:8 foo: <this>=A, $completion=$foo1COROUTINE$0
-// test.kt:12 doResume:
-// test.kt:13 doResume: dead=kotlin.Long
+// test.kt:11 doResume: dead=kotlin.Long

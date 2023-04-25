@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.light.classes.symbol.annotations.hasJvmStaticAnnotat
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForObject
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForProperty
 import org.jetbrains.kotlin.light.classes.symbol.isConstOrJvmField
-import org.jetbrains.kotlin.light.classes.symbol.isLateInit
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
@@ -114,9 +113,7 @@ abstract class SymbolLightClassForNamedClassLike : SymbolLightClassForClassLike<
                     fieldName = it.name.asString(),
                     containingClass = this,
                     lightMemberOrigin = null,
-                    isTopLevel = false,
-                    forceStatic = true,
-                    takePropertyVisibility = it.isConstOrJvmField || it.isLateInit,
+                    isStatic = true,
                 )
             }
     }

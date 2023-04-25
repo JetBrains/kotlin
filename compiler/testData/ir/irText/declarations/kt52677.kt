@@ -1,4 +1,6 @@
 // ISSUE: KT-52677
+// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS_IR_ES6
 
 @Target(AnnotationTarget.TYPE)
 annotation class MySerializable(val c: kotlin.reflect.KClass<*>)

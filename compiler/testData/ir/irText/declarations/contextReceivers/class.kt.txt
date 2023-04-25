@@ -13,9 +13,9 @@ class Outer {
 
 class Inner {
   private /* final field */ val contextReceiverField0: Outer
-  constructor(_context_receiver_0: Outer, arg: Any) /* primary */ {
+  constructor($context_receiver_0: Outer, arg: Any) /* primary */ {
     super/*Any*/()
-    <this>.#contextReceiverField0 = _context_receiver_0
+    <this>.#contextReceiverField0 = $context_receiver_0
     /* <init>() */
 
   }
@@ -28,7 +28,7 @@ class Inner {
 
 fun f(outer: Outer) {
   with<Outer, Inner>(receiver = outer, block = local fun Outer.<anonymous>(): Inner {
-    return Inner(_context_receiver_0 = $this$with, arg = 3)
+    return Inner($context_receiver_0 = $this$with, arg = 3)
   }
 ) /*~> Unit */
 }

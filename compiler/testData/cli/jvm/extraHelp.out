@@ -30,20 +30,19 @@ where advanced options include:
   -Xemit-jvm-type-annotations Emit JVM type annotations in bytecode
   -Xdebug                    Enable debug mode for compilation.
                              Currently this includes spilling all variables in a suspending context regardless their liveness.
+  -Xir-inliner               Inline functions using IR inliner instead of bytecode inliner
   -Xjvm-enable-preview       Allow using features from Java language that are in preview phase.
                              Works as `--enable-preview` in Java. All class files are marked as preview-generated thus it won't be possible to use them in release environment
   -Xenhance-type-parameter-types-to-def-not-null
                              Enhance not null annotated type parameter's types to definitely not null types (@NotNull T => T & Any)
   -Xfriend-paths=<path>      Paths to output directories for friend modules (whose internals should be visible)
-  -Xignore-const-optimization-errors
-                             Ignore all compilation exceptions while optimizing some constant expressions.
   -Xmultifile-parts-inherit  Compile multifile classes as a hierarchy of parts and facade
   -Xmodule-path=<path>       Paths where to find Java 9+ modules
   -Xjava-package-prefix      Package prefix for Java files
   -Xjava-source-roots=<path> Paths to directories with Java source files
   -Xjavac-arguments=<option[,]> Java compiler arguments
   -Xjdk-release=<version>    Compile against the specified JDK API version, similarly to javac's `-release`. Requires JDK 9 or newer.
-                             Supported versions depend on the used JDK; for JDK 17+ supported versions are 1.8, 9, 10, ..., 19.
+                             Supported versions depend on the used JDK; for JDK 17+ supported versions are 1.8, 9, 10, ..., 20.
                              Also sets `-jvm-target` value equal to the selected JDK version
   -Xjspecify-annotations=ignore|strict|warn
                              Specify behavior for jspecify annotations.
@@ -192,6 +191,8 @@ where advanced options include:
   -Xfragment-sources=<fragment name>:<path>
                              Adds sources to a specific fragment of a multiplatform compilation
   -Xfragments=<fragment name> Declares all known fragments of a multiplatform compilation
+  -Xignore-const-optimization-errors
+                             Ignore all compilation exceptions while optimizing some constant expressions.
   -Xenable-incremental-compilation
                              Enable incremental compilation
   -Xinference-compatibility  Enable compatibility changes for generic type inference algorithm

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -49,20 +49,18 @@ internal fun FirDeclaration.getKtDeclarationForFirElement(): KtDeclaration {
     return declaration
 }
 
-internal fun declarationCanBeLazilyResolved(declaration: KtDeclaration): Boolean {
-    return when (declaration) {
-        !is KtNamedDeclaration -> false
-        is KtDestructuringDeclarationEntry, is KtFunctionLiteral, is KtTypeParameter -> false
-        is KtPrimaryConstructor -> false
-        is KtParameter -> declaration.hasValOrVar() && declaration.containingClassOrObject?.getClassId() != null
-        is KtCallableDeclaration, is KtEnumEntry -> {
-            when (val parent = declaration.parent) {
-                is KtFile -> true
-                is KtClassBody -> (parent.parent as? KtClassOrObject)?.getClassId() != null
-                else -> false
-            }
+internal fun declarationCanBeLazilyResolved(declaration: KtDeclaration): Boolean = when (declaration) {
+    is KtDestructuringDeclarationEntry, is KtFunctionLiteral, is KtTypeParameter -> false
+    is KtPrimaryConstructor -> (declaration.parent as? KtClassOrObject)?.getClassId() != null
+    is KtParameter -> declaration.hasValOrVar() && declaration.containingClassOrObject?.getClassId() != null
+    is KtCallableDeclaration, is KtEnumEntry, is KtClassInitializer -> {
+        when (val parent = declaration.parent) {
+            is KtFile -> true
+            is KtClassBody -> (parent.parent as? KtClassOrObject)?.getClassId() != null
+            else -> false
         }
-        is KtClassLikeDeclaration -> declaration.getClassId() != null
-        else -> error("Unexpected ${declaration::class.qualifiedName}")
     }
+    !is KtNamedDeclaration -> false
+    is KtClassLikeDeclaration -> declaration.getClassId() != null
+    else -> error("Unexpected ${declaration::class.qualifiedName}")
 }

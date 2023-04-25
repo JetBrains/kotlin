@@ -44,6 +44,7 @@ package j {
         // Static members
         public final var javaP: kotlin.Int
         public/*package*/ final var javaPackageLocal: kotlin.Int
+        protected/*protected static*/ final var javaProtected: kotlin.Int
         public open fun javaM(): kotlin.Unit
     }
 }

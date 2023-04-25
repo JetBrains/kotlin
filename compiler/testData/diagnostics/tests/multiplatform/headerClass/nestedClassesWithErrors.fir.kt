@@ -15,7 +15,7 @@ expect class C {
 }
 
 expect class D {
-    class N
+    <!NO_ACTUAL_FOR_EXPECT{JVM}!>class N<!>
 }
 
 expect class E {

@@ -15,7 +15,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.propertyReference
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.propertyReference]
  */
 abstract class IrPropertyReference : IrCallableReference<IrPropertySymbol>() {
     abstract var field: IrFieldSymbol?

@@ -94,6 +94,7 @@ internal class KtSymbolByFirBuilder constructor(
             is FirTypeParameterSymbol -> classifierBuilder.buildTypeParameterSymbol(firSymbol)
             is FirCallableSymbol<*> -> callableBuilder.buildCallableSymbol(firSymbol)
             is FirFileSymbol -> buildFileSymbol(firSymbol)
+            is FirScriptSymbol -> buildScriptSymbol(firSymbol)
             else -> throwUnexpectedElementError(firSymbol)
         }
     }
@@ -102,6 +103,8 @@ internal class KtSymbolByFirBuilder constructor(
         symbolsCache.cache(firSymbol) { KtFirEnumEntrySymbol(firSymbol, analysisSession) }
 
     fun buildFileSymbol(firSymbol: FirFileSymbol) = KtFirFileSymbol(firSymbol, analysisSession)
+
+    fun buildScriptSymbol(firSymbol: FirScriptSymbol) = KtFirScriptSymbol(firSymbol, analysisSession)
 
     private val packageProvider = project.createPackageProvider(GlobalSearchScope.allScope(project))//todo scope
 

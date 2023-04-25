@@ -64,6 +64,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
             FirAssignmentOperatorCallChecker,
             FirNamedVarargChecker,
             FirUnderscoredTypeArgumentSyntaxChecker,
+            FirContractNotFirstStatementChecker,
         )
 
     override val propertyAccessExpressionCheckers: Set<FirPropertyAccessExpressionChecker>
@@ -114,7 +115,8 @@ object CommonExpressionCheckers : ExpressionCheckers() {
 
     override val blockCheckers: Set<FirBlockChecker>
         get() = setOf(
-            FirForLoopChecker
+            FirForLoopChecker,
+            FirConflictsExpressionChecker
         )
 
     override val checkNotNullCallCheckers: Set<FirCheckNotNullCallChecker>

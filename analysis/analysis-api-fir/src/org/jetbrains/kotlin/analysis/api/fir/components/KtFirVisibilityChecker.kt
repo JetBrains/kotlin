@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.components.KtVisibilityChecker
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirFileSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirPsiJavaClassSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirSymbol
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
@@ -17,11 +18,14 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithVisibility
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.java.JavaVisibilities
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.resolve.calls.ExpressionReceiverValue
 import org.jetbrains.kotlin.fir.resolve.transformers.publishedApiEffectiveVisibility
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -44,6 +48,10 @@ internal class KtFirVisibilityChecker(
         require(candidateSymbol is KtFirSymbol<*>)
         require(useSiteFile is KtFirFileSymbol)
 
+        if (candidateSymbol is KtFirPsiJavaClassSymbol) {
+            candidateSymbol.isVisibleByPsi(useSiteFile)?.let { return it }
+        }
+
         val useSiteFirFile = useSiteFile.firSymbol.fir
         val containers = collectContainingDeclarations(position)
 
@@ -63,6 +71,40 @@ internal class KtFirVisibilityChecker(
             containers,
             explicitDispatchReceiver
         )
+    }
+
+    /**
+     * [isVisibleByPsi] is a heuristic that decides visibility for most [KtFirPsiJavaClassSymbol]s without deferring to its FIR symbol,
+     * thereby avoiding lazy construction of the FIR class. The visibility rules are tailored specifically for Java classes accessed from
+     * Kotlin. They cover the most popular visibilities `private`, `public`, and default (package) visibility for top-level and nested
+     * classes.
+     *
+     * Returns `null` if visibility cannot be decided by the heuristic.
+     */
+    private fun KtFirPsiJavaClassSymbol.isVisibleByPsi(useSiteFile: KtFirFileSymbol): Boolean? {
+        when (visibility) {
+            Visibilities.Private ->
+                // Private classes from Java cannot be accessed from Kotlin.
+                return false
+
+            Visibilities.Public ->
+                return when (val outerClass = this.outerClass) {
+                    null -> true
+                    else -> outerClass.isVisibleByPsi(useSiteFile)
+                }
+
+            JavaVisibilities.PackageVisibility -> {
+                val isSamePackage = classIdIfNonLocal.packageFqName == useSiteFile.firSymbol.fir.packageFqName
+                if (!isSamePackage) return false
+
+                return when (val outerClass = this.outerClass) {
+                    null -> true
+                    else -> outerClass.isVisibleByPsi(useSiteFile)
+                }
+            }
+        }
+
+        return null
     }
 
     override fun isPublicApi(symbol: KtSymbolWithVisibility): Boolean {

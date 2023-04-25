@@ -6,46 +6,56 @@
 package kotlin.native.ref
 
 import kotlinx.cinterop.COpaquePointer
-import kotlin.native.internal.ExportForCppRuntime
-import kotlin.native.internal.Frozen
-import kotlin.native.internal.GCUnsafeCall
-import kotlin.native.internal.NoReorderFields
-import kotlin.native.internal.Escapes
+import kotlin.native.internal.*
 
 /**
  *   Theory of operations:
  *
- *  Weak references in Kotlin/Native are implemented in the following way. Whenever weak reference to an
- * object is created, we atomically modify type info pointer in the object to point into a metaobject.
- * This metaobject contains a strong reference to the counter object (instance of WeakReferenceCounter class).
- * Every other weak reference contains a strong reference to the counter object.
+ *  Weak references in Kotlin/Native are implemented in the following way. Whenever weak reference to a
+ * object is created, we try to create one of `WeakReferenceImpl`:
+ * `PermanentWeakReferenceImpl` for permanent objects,
+ * `ObjCWeakReferenceImpl` for objects coming from ObjC,
+ * or `RegularWeakReferenceImpl` for all other Kotlin objects.
+ * The latter are stored in object's extra data, so only one per object is created.
+ * Every other weak reference contains a strong reference to the impl object.
  *
- *         [weak1]  [weak2]
- *             \      /
- *             V     V
- *     .......[Counter] <----
- *     .                     |
- *     .                     |
- *      ->[Object] -> [Meta]-
+ *              [weak1]   [weak2]
+ *                 \       /
+ *                  V     V
+ *     ... [RegularWeakReferenceImpl] <-
+ *     .                                |
+ *     .                                |
+ *      ->[Object] -> [ExtraObjectData]-
  *
- *   References from weak reference objects to the counter and from the metaobject to the counter are strong,
- *  and from the counter to the object is nullably weak. So whenever an object dies, if it has a metaobject,
- *  it is traversed to find a counter object, and atomically nullify reference to the object. Afterward, all attempts
- *  to get the object would yield null.
+ * References from weak reference objects to the `RegularWeakReferenceImpl` and from the
+ * extra data to the `RegularWeakReferenceImpl` are strong, and from the
+ * `RegularWeakReferenceImpl` to the object is nullably weak. During GC if the object is
+ * considered dead, the reference inside `RegularWeakReferenceImpl` is nulled out.
  */
 
 // Clear holding the counter object, which refers to the actual object.
 @NoReorderFields
 @Frozen
 @OptIn(FreezingIsDeprecated::class)
-internal class WeakReferenceCounter(var referred: COpaquePointer?) : WeakReferenceImpl() {
+internal class WeakReferenceCounterLegacyMM(var referred: COpaquePointer?) : WeakReferenceImpl() {
     // Spinlock, potentially taken when materializing or removing 'referred' object.
     var lock: Int = 0
 
     // Optimization for concurrent access.
     var cookie: Int = 0
 
-    @GCUnsafeCall("Konan_WeakReferenceCounter_get")
+    @GCUnsafeCall("Konan_WeakReferenceCounterLegacyMM_get")
+    external override fun get(): Any?
+}
+
+@NoReorderFields
+@ExportTypeInfo("theRegularWeakReferenceImplTypeInfo")
+@HasFinalizer // TODO: Consider just using Cleaners.
+internal class RegularWeakReferenceImpl(
+    val weakRef: COpaquePointer,
+    val referred: COpaquePointer, // TODO: This exists only for the ExtraObjectData's sake. Refactor and remove.
+) : WeakReferenceImpl() {
+    @GCUnsafeCall("Konan_RegularWeakReferenceImpl_get")
     external override fun get(): Any?
 }
 
@@ -59,9 +69,13 @@ internal abstract class WeakReferenceImpl {
 @Escapes(0b01) // referent escapes.
 external internal fun getWeakReferenceImpl(referent: Any): WeakReferenceImpl
 
+// Create a counter object for legacy MM.
+@ExportForCppRuntime
+internal fun makeWeakReferenceCounterLegacyMM(referred: COpaquePointer) = WeakReferenceCounterLegacyMM(referred)
+
 // Create a counter object.
 @ExportForCppRuntime
-internal fun makeWeakReferenceCounter(referred: COpaquePointer) = WeakReferenceCounter(referred)
+internal fun makeRegularWeakReferenceImpl(weakRef: COpaquePointer, referred: COpaquePointer) = RegularWeakReferenceImpl(weakRef, referred)
 
 internal class PermanentWeakReferenceImpl(val referred: Any): kotlin.native.ref.WeakReferenceImpl() {
     override fun get(): Any? = referred

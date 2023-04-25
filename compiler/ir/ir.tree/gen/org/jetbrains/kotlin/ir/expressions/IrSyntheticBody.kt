@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.syntheticBody
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.syntheticBody]
  */
 abstract class IrSyntheticBody : IrBody() {
     abstract var kind: IrSyntheticBodyKind

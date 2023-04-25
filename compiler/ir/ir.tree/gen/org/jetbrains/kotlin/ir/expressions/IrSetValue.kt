@@ -14,7 +14,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.setValue
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.setValue]
  */
 abstract class IrSetValue : IrValueAccessExpression() {
     abstract override val symbol: IrValueSymbol

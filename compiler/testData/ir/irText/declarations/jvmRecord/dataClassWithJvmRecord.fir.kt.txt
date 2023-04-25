@@ -37,7 +37,7 @@ data class MyRec : Record {
   }
 
   override fun toString(): String {
-    return "MyRec(" + "name=" + <this>.#name + ")"
+    return "MyRec(name=" + <this>.#name + ")"
   }
 
 }

@@ -76,7 +76,7 @@ class DeclarationGenerator(
         }
 
         val wasmImportModule = declaration.getWasmImportDescriptor()
-        val jsCode = if (declaration.isExternal) declaration.getJsFunAnnotation() else null
+        val jsCode = declaration.getJsFunAnnotation()
         val importedName = when {
             wasmImportModule != null -> {
                 check(declaration.isExternal) { "Non-external fun with @WasmImport ${declaration.fqNameWhenAvailable}"}
@@ -330,7 +330,6 @@ class DeclarationGenerator(
     }
 
     override fun visitClass(declaration: IrClass) {
-        if (declaration.isAnnotationClass) return
         if (declaration.isExternal) return
         val symbol = declaration.symbol
 
@@ -417,7 +416,7 @@ class DeclarationGenerator(
 
         val superClass = classMetadata.klass.getSuperClass(context.backendContext.irBuiltIns)
         val superTypeId = superClass?.let {
-            ConstantDataIntField("SuperTypeId", context.referenceClassId(it.symbol))
+            ConstantDataIntField("SuperTypeId", context.referenceTypeId(it.symbol))
         } ?: ConstantDataIntField("SuperTypeId", -1)
 
         val typeInfoContent = mutableListOf(typeInfo, superTypeId)
@@ -436,7 +435,7 @@ class DeclarationGenerator(
         val size = ConstantDataIntField("size", interfaces.size)
         val interfaceIds = ConstantDataIntArray(
             "interfaceIds",
-            interfaces.map { context.referenceInterfaceId(it.symbol) },
+            interfaces.map { context.referenceTypeId(it.symbol) },
         )
 
         return ConstantDataStruct(

@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM
+// IGNORE_BACKEND_K1: JS, JS_IR, JS_IR_ES6, NATIVE
 // !LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-56329
 
@@ -15,7 +15,6 @@ expect fun <T> foo(y: T, x: S): String
 fun ok() = foo(1) + foo(2, "K" as S)
 
 // MODULE: jvm()()(common)
-// TARGET_PLATFORM: JVM
 // FILE: main.kt
 
 actual typealias S = String

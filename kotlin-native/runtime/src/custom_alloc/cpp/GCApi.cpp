@@ -5,6 +5,7 @@
 
 #include "GCApi.hpp"
 
+#include <atomic>
 #include <limits>
 
 #include "ConcurrentMarkAndSweep.hpp"
@@ -12,6 +13,12 @@
 #include "FinalizerHooks.hpp"
 #include "KAssert.h"
 #include "ObjectFactory.hpp"
+
+namespace {
+
+std::atomic<size_t> allocatedBytesCounter;
+
+}
 
 namespace kotlin::alloc {
 
@@ -39,42 +46,41 @@ static bool IsAlive(ObjHeader* baseObject) noexcept {
     return objectData.marked();
 }
 
-bool SweepExtraObject(ExtraObjectCell* extraObjectCell, AtomicStack<ExtraObjectCell>& finalizerQueue) noexcept {
+ExtraObjectStatus SweepExtraObject(ExtraObjectCell* extraObjectCell, AtomicStack<ExtraObjectCell>& finalizerQueue) noexcept {
     auto* extraObject = extraObjectCell->Data();
     if (extraObject->getFlag(mm::ExtraObjectData::FLAGS_FINALIZED)) {
         CustomAllocDebug("SweepIsCollectable(%p): already finalized", extraObject);
-        return true;
+        return ExtraObjectStatus::SWEPT;
     }
     auto* baseObject = extraObject->GetBaseObject();
     RuntimeAssert(baseObject->heap(), "SweepIsCollectable on a non-heap object");
     if (extraObject->getFlag(mm::ExtraObjectData::FLAGS_IN_FINALIZER_QUEUE)) {
         CustomAllocDebug("SweepIsCollectable(%p): already in finalizer queue, keep base object (%p) alive", extraObject, baseObject);
         KeepAlive(baseObject);
-        return false;
+        return ExtraObjectStatus::TO_BE_FINALIZED;
     }
     if (IsAlive(baseObject)) {
         CustomAllocDebug("SweepIsCollectable(%p): base object (%p) is alive", extraObject, baseObject);
-        return false;
+        return ExtraObjectStatus::KEPT;
     }
-    extraObject->ClearWeakReferenceCounter();
+    extraObject->ClearRegularWeakReferenceImpl();
     if (extraObject->HasAssociatedObject()) {
-        extraObject->DetachAssociatedObject();
         extraObject->setFlag(mm::ExtraObjectData::FLAGS_IN_FINALIZER_QUEUE);
         finalizerQueue.Push(extraObjectCell);
         KeepAlive(baseObject);
         CustomAllocDebug("SweepIsCollectable(%p): add to finalizerQueue", extraObject);
-        return false;
+        return ExtraObjectStatus::TO_BE_FINALIZED;
     } else {
         if (HasFinalizers(baseObject)) {
             extraObject->setFlag(mm::ExtraObjectData::FLAGS_IN_FINALIZER_QUEUE);
             finalizerQueue.Push(extraObjectCell);
             KeepAlive(baseObject);
             CustomAllocDebug("SweepIsCollectable(%p): addings to finalizerQueue, keep base object (%p) alive", extraObject, baseObject);
-            return false;
+            return ExtraObjectStatus::TO_BE_FINALIZED;
         }
         extraObject->Uninstall();
         CustomAllocDebug("SweepIsCollectable(%p): uninstalled extraObject", extraObject);
-        return true;
+        return ExtraObjectStatus::SWEPT;
     }
 }
 
@@ -84,7 +90,17 @@ void* SafeAlloc(uint64_t size) noexcept {
         konan::consoleErrorf("Out of memory trying to allocate %" PRIu64 "bytes. Aborting.\n", size);
         konan::abort();
     }
+    allocatedBytesCounter.fetch_add(static_cast<size_t>(size), std::memory_order_relaxed);
     return memory;
+}
+
+void Free(void* ptr, size_t size) noexcept {
+    std_support::free(ptr);
+    allocatedBytesCounter.fetch_sub(static_cast<size_t>(size), std::memory_order_relaxed);
+}
+
+size_t GetAllocatedBytes() noexcept {
+    return allocatedBytesCounter.load(std::memory_order_relaxed);
 }
 
 } // namespace kotlin::alloc

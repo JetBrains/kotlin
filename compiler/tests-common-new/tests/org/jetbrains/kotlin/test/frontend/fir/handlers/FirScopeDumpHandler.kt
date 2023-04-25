@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -84,7 +84,7 @@ class FirScopeDumpHandler(testServices: TestServices) : FirAnalysisHandler(testS
         println("$fqName: ")
 
         session.lazyDeclarationResolver.disableLazyResolveContractChecksInside {
-            val scope = firClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true)
+            val scope = firClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true, memberRequiredPhase = null)
             val names = namesFromDirective.takeIf { it.isNotEmpty() }?.map { Name.identifier(it) } ?: scope.getCallableNames()
             withIndent {
                 for (name in names) {

@@ -61,14 +61,16 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
 
     @MppGradlePluginTests
     @DisplayName("works with MPP publishing")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
+    @GradleTestVersions(
+        minVersion = TestVersions.Gradle.G_7_4,
+        additionalVersions = [TestVersions.Gradle.G_7_6],
+        maxVersion = TestVersions.Gradle.G_8_1
+    )
     @GradleTest
     fun testMppWithMavenPublish(gradleVersion: GradleVersion) {
         project("new-mpp-lib-and-app/sample-lib", gradleVersion) {
             val publishedTargets = listOf("kotlinMultiplatform", "jvm6", "nodeJs", "linux64", "mingw64", "mingw86")
-
             testConfigurationCacheOf(
-                ":buildKotlinToolingMetadata", // Remove it when KT-49933 is fixed and `kotlinMultiplatform` publication works
                 *(publishedTargets.map { ":publish${it.replaceFirstChar { it.uppercaseChar() }}PublicationToMavenRepository" }.toTypedArray()),
                 checkUpToDateOnRebuild = false
             )
@@ -77,7 +79,11 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
 
     @NativeGradlePluginTests
     @DisplayName("works with native tasks in complex project")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
+    @GradleTestVersions(
+        minVersion = TestVersions.Gradle.G_7_4,
+        additionalVersions = [TestVersions.Gradle.G_7_6],
+        maxVersion = TestVersions.Gradle.G_8_1
+    )
     @GradleTest
     fun testNativeTasks(gradleVersion: GradleVersion) {
         val expectedTasks = mutableListOf(
@@ -114,18 +120,21 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
 
     @NativeGradlePluginTests
     @DisplayName("works with commonizer")
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
+    @GradleTestVersions(
+        minVersion = TestVersions.Gradle.G_7_4,
+        additionalVersions = [TestVersions.Gradle.G_7_6],
+        maxVersion = TestVersions.Gradle.G_8_1
+    )
     @GradleTest
     fun testCommonizer(gradleVersion: GradleVersion) {
         project("native-configuration-cache", gradleVersion) {
+            // results of :commonizeNativeDistribution is not cleanable so just check if it works with configuration cache on first run
             build(
-                ":lib:commonizeCInterop",
                 ":commonizeNativeDistribution",
             ) {
-                // Reduce the problem numbers when a Task become compatible with GCC.
-                // When all tasks support GCC, replace these assertions with `testConfigurationCacheOf`
                 assertOutputContains("0 problems were found storing the configuration cache.")
             }
+            testConfigurationCacheOf(":lib:commonizeCInterop")
         }
     }
 
@@ -224,7 +233,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     }
 
     @JvmGradlePluginTests
-    @DisplayName("with build build scan report")
+    @DisplayName("with build scan report")
     @GradleTest
     fun testBuildScanReportSmokeTestForConfigurationCache(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {

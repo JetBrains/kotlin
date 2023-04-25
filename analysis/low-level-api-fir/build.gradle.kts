@@ -22,10 +22,13 @@ dependencies {
     api(project(":js:js.config"))
     testApi(project(":analysis:analysis-api-fir"))
     implementation(project(":compiler:frontend.common"))
-    implementation(project(":compiler:ir.psi2ir"))
     implementation(project(":compiler:fir:entrypoint"))
     implementation(project(":analysis:analysis-api-providers"))
+    implementation(project(":analysis:analysis-api"))
     implementation(project(":analysis:analysis-internal-utils"))
+
+    // We cannot use the latest version `3.1.5` because it doesn't support Java 8.
+    implementation("com.github.ben-manes.caffeine:caffeine:2.9.3")
 
     api(intellijCore())
 

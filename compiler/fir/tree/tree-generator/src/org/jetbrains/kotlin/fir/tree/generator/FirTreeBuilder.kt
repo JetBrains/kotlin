@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -26,12 +26,13 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
 
     val statement by element(Expression, annotationContainer)
     val expression by element(Expression, statement)
+    val lazyExpression by element(Expression, expression)
 
     val contextReceiver by element(Declaration)
 
-    val elementWithResolvePhase by element(Other)
-    val fileAnnotationsContainer by element(Other, elementWithResolvePhase, annotationContainer)
-    val declaration by sealedElement(Declaration, elementWithResolvePhase, annotationContainer)
+    val elementWithResolveState by element(Other)
+    val fileAnnotationsContainer by element(Other, elementWithResolveState, annotationContainer)
+    val declaration by sealedElement(Declaration, elementWithResolveState, annotationContainer)
     val typeParameterRefsOwner by sealedElement(Declaration)
     val typeParametersOwner by sealedElement(Declaration, typeParameterRefsOwner)
     val memberDeclaration by sealedElement(Declaration, declaration, typeParameterRefsOwner)
@@ -50,8 +51,8 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val functionTypeParameter by element(Other, baseFirElement)
 
     val classLikeDeclaration by sealedElement(Declaration, memberDeclaration, statement)
-    val klass by sealedElement("Class", Declaration, classLikeDeclaration, statement, typeParameterRefsOwner)
-    val regularClass by element(Declaration, klass, controlFlowGraphOwner)
+    val klass by sealedElement("Class", Declaration, classLikeDeclaration, statement, typeParameterRefsOwner, controlFlowGraphOwner)
+    val regularClass by element(Declaration, klass)
     val typeAlias by element(Declaration, classLikeDeclaration, typeParametersOwner)
 
     val function by sealedElement(Declaration, callableDeclaration, targetElement, controlFlowGraphOwner, statement)
@@ -60,15 +61,15 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val simpleFunction by element(Declaration, function, contractDescriptionOwner, typeParametersOwner)
     val propertyAccessor by element(Declaration, function, contractDescriptionOwner, typeParametersOwner)
     val backingField by element(Declaration, variable, typeParametersOwner, statement)
-    val constructor by element(Declaration, function, typeParameterRefsOwner)
+    val constructor by element(Declaration, function, typeParameterRefsOwner, contractDescriptionOwner)
     val file by element(Declaration, declaration)
     val script by element(Declaration, declaration)
     val packageDirective by element(Other)
 
-    val anonymousFunction by element(Declaration, function, typeParametersOwner)
+    val anonymousFunction by element(Declaration, function, typeParametersOwner, contractDescriptionOwner)
     val anonymousFunctionExpression by element(Expression, expression)
 
-    val anonymousObject by element(Declaration, klass, controlFlowGraphOwner)
+    val anonymousObject by element(Declaration, klass)
     val anonymousObjectExpression by element(Expression, expression)
 
     val diagnosticHolder by element(Diagnostics)
@@ -83,6 +84,8 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val whileLoop by element(Expression, loop)
 
     val block by element(Expression, expression)
+    val lazyBlock by element(Expression, block)
+
     val binaryLogicExpression by element(Expression, expression)
     val jump by sealedElement(Expression, expression)
     val loopJump by element(Expression, jump)
@@ -156,6 +159,7 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val namedReference by element(Reference, reference)
     val namedReferenceWithCandidateBase by element(Reference, namedReference)
     val errorNamedReference by element(Reference, namedReference, diagnosticHolder)
+    val fromMissingDependenciesNamedReference by element(Reference, namedReference)
     val superReference by element(Reference, reference)
     val thisReference by element(Reference, reference)
     val controlFlowGraphReference by element(Reference, reference)
@@ -176,7 +180,8 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val intersectionTypeRef by element(TypeRef, typeRefWithNullability)
     val implicitTypeRef by element(TypeRef, typeRef)
 
-    val effectDeclaration by element(Contracts)
+    val contractElementDeclaration by element(Contracts)
+    val effectDeclaration by element(Contracts, contractElementDeclaration)
 
     val contractDescription by element(Contracts)
     val legacyRawContractDescription by element(Contracts, contractDescription)

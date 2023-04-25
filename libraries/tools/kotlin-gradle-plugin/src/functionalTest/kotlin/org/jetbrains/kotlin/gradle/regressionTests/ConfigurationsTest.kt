@@ -11,6 +11,7 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.Dependency
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.ProjectDependency
+import org.gradle.api.attributes.Attribute
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.Usage
@@ -22,11 +23,13 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.targets
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
 import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.gradle.utils.toMap
 import java.util.*
 import kotlin.test.*
 
@@ -155,8 +158,9 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
     @Test
     fun `don't publish wasm targets with KotlinJsCompilerAttribute attribute`() {
         with(kotlin) {
-            js("nodeJs", KotlinJsCompilerType.IR)
-            js("browser", KotlinJsCompilerType.IR)
+            val jsAttribute = Attribute.of(String::class.java)
+            js("nodeJs", KotlinJsCompilerType.IR) { attributes { attribute(jsAttribute, "nodeJs") } }
+            js("browser", KotlinJsCompilerType.IR) { attributes { attribute(jsAttribute, "browser") } }
             @OptIn(ExperimentalWasmDsl::class)
             wasm()
 
@@ -552,5 +556,50 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
         assertFalse(isTestDependencyPresent("releaseRuntimeClasspath"))
         assertFalse(isTestDependencyPresent("releaseUnitTestCompileClasspath"))
         assertFalse(isTestDependencyPresent("releaseUnitTestRuntimeClasspath"))
+    }
+
+    // See KT-55751
+    @Test
+    fun `consumable configurations should have unique attribute set`() {
+        val project = buildProjectWithMPP {
+            plugins.apply("maven-publish")
+
+            val distinguishingAttribute = Attribute.of(String::class.java)
+            kotlin {
+                jvm { attributes { attribute(distinguishingAttribute, "jvm") } }
+                jvm("jvm2") { attributes { attribute(distinguishingAttribute, "jvm2") } }
+
+                macosX64 {
+                    binaries.framework("main", listOf(NativeBuildType.DEBUG))
+                }
+
+                linuxX64("linuxA") { attributes { attribute(distinguishingAttribute, "linuxA") } }
+                linuxX64("linuxB") { attributes { attribute(distinguishingAttribute, "linuxB") } }
+
+                targets.filterIsInstance<KotlinNativeTarget>().forEach {
+                    it.binaries {
+                        sharedLib("main", listOf(NativeBuildType.DEBUG))
+                        staticLib("main", listOf(NativeBuildType.DEBUG))
+                    }
+                }
+            }
+        }
+
+        project.evaluate()
+
+        val duplicatedConsumableConfigurations = project.configurations
+            .filter { it.isCanBeConsumed }
+            .filterNot { it.attributes.isEmpty }
+            .groupBy { it.attributes.toMap() }
+            .values
+            .filter { it.size > 1 }
+
+        if (duplicatedConsumableConfigurations.isNotEmpty()) {
+            val msg = duplicatedConsumableConfigurations.joinToString(separator = "\n") { configs ->
+                val list = configs.joinToString { it.name }
+                " * $list"
+            }
+            fail("Following configurations have the same attributes:\n$msg")
+        }
     }
 }

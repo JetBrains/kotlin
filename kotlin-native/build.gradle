@@ -118,8 +118,25 @@ void loadCommandLineProperties() {
     if (project.hasProperty("konanc_flags")) {
         throw new Error("Specify either -Ptest_flags or -Pbuild_flags.")
     }
-    ext.globalBuildArgs = project.hasProperty("build_flags") ? ext.build_flags.split() : []
-    ext.globalTestArgs = project.hasProperty("test_flags") ? ext.test_flags.split() : []
+
+    ext.globalBuildArgs = new ArrayList<String>()
+    if (project.hasProperty("build_flags")) {
+        for (String flag : ext.build_flags.toString().split("\\s")) {
+            flag = flag.trim()
+            if (!flag.isEmpty()) ext.globalBuildArgs.add(flag)
+        }
+    }
+
+    ext.globalTestArgs = new ArrayList<String>()
+    ext.globalTestArgs.add("-Xpartial-linkage=enable")
+    ext.globalTestArgs.add("-Xpartial-linkage-loglevel=error")
+    if (project.hasProperty("test_flags")) {
+        for (String flag : ext.test_flags.toString().split("\\s")) {
+            flag = flag.trim()
+            if (!flag.isEmpty()) ext.globalTestArgs.add(flag)
+        }
+    }
+
     ext.testTarget = project.hasProperty("test_target") ? ext.test_target : null
 }
 
@@ -627,14 +644,14 @@ task samples {
 
 task samplesZip(type: Zip)
 task samplesTar(type: Tar) {
-    extension = 'tar.gz'
+    archiveExtension = 'tar.gz'
     compression = Compression.GZIP
 }
 
 configure([samplesZip, samplesTar]) {
-    baseName "kotlin-native-samples-$kotlinVersion"
-    destinationDir = projectDir
-    into(baseName)
+    archiveBaseName = "kotlin-native-samples-$kotlinVersion"
+    destinationDirectory = projectDir
+    into(archiveBaseName)
 
     from(file('samples')) {
         // Process properties files separately.

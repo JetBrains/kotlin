@@ -2,24 +2,39 @@
 
 package abitestutils
 
-import abitestutils.ThrowableKind.*
+import abitestutils.TestMode.*
 
-/** API **/
+/** Public API **/
 
 interface TestBuilder {
-    fun prefixed(prefix: String): ErrorMessagePattern
-    fun nonImplementedCallable(callableTypeAndName: String, classifierTypeAndName: String): ErrorMessagePattern
+    val testMode: TestMode
 
-    fun expectFailure(errorMessagePattern: ErrorMessagePattern, block: Block<Any?>)
+    /** N.B. It is expected that [messageWithoutHashes] contains IR linkage error message without hashes in ID signatures. */
+    fun linkage(messageWithoutHashes: String): FailurePattern
+    fun nonImplementedCallable(callableTypeAndName: String, classifierTypeAndName: String): FailurePattern
+    fun noWhenBranch(): FailurePattern
+    fun custom(checker: (Throwable) -> Boolean): FailurePattern
+
+    fun expectFailure(failurePattern: FailurePattern, block: Block<Any?>)
     fun expectSuccess(block: Block<String>) // OK is expected
     fun <T : Any> expectSuccess(expectedOutcome: T, block: Block<T>)
 }
 
-const val OK_STATUS = "OK"
-
-sealed interface ErrorMessagePattern
+sealed interface FailurePattern
 
 private typealias Block<T> = () -> T
+
+enum class TestMode(val isJs: Boolean = false, val isNative: Boolean = false) {
+    JS_NO_IC(isJs = true),
+    JS_WITH_IC(isJs = true),
+    NATIVE_CACHE_NO(isNative = true),
+    NATIVE_CACHE_STATIC_ONLY_DIST(isNative = true),
+    NATIVE_CACHE_STATIC_EVERYWHERE(isNative = true);
+
+    init {
+        check(isJs xor isNative)
+    }
+}
 
 fun abiTest(init: TestBuilder.() -> Unit): String {
     val builder = TestBuilderImpl()
@@ -30,16 +45,23 @@ fun abiTest(init: TestBuilder.() -> Unit): String {
 
 /** Implementation **/
 
+private const val OK_STATUS = "OK"
+
 private class TestBuilderImpl : TestBuilder {
+    override val testMode = TestMode.__UNKNOWN__
+
     private val tests = mutableListOf<Test>()
 
-    override fun prefixed(prefix: String) = PrefixOfErrorMessage(prefix)
+    override fun linkage(messageWithoutHashes: String) = GeneralIrLinkageError(messageWithoutHashes)
 
     override fun nonImplementedCallable(callableTypeAndName: String, classifierTypeAndName: String) =
-        NonImplementedCallable(callableTypeAndName, classifierTypeAndName)
+        NonImplementedCallableIrLinkageError(callableTypeAndName, classifierTypeAndName)
 
-    override fun expectFailure(errorMessagePattern: ErrorMessagePattern, block: Block<Any?>) {
-        tests += FailingTest(errorMessagePattern, block)
+    override fun noWhenBranch() = NoWhenBranchFailure
+    override fun custom(checker: (Throwable) -> Boolean) = CustomThrowableFailure(checker)
+
+    override fun expectFailure(failurePattern: FailurePattern, block: Block<Any?>) {
+        tests += FailingTest(failurePattern as AbstractFailurePattern, block)
     }
 
     override fun expectSuccess(block: Block<String>) = expectSuccess(OK_STATUS, block)
@@ -57,14 +79,10 @@ private class TestBuilderImpl : TestBuilder {
             val testFailureDetails: TestFailureDetails? = when (test) {
                 is FailingTest -> {
                     try {
-                        test.block()
-                        TestSuccessfulButMustFail
+                        val result = test.block()
+                        TestSuccessfulButMustFail(result)
                     } catch (t: Throwable) {
-                        when (t.throwableKind) {
-                            IR_LINKAGE_ERROR -> test.checkIrLinkageErrorMessage(t)
-                            EXCEPTION -> TestFailedWithException(t)
-                            NON_EXCEPTION -> throw t // Something totally unexpected. Rethrow.
-                        }
+                        test.failurePattern.validateFailure(t)
                     }
                 }
 
@@ -76,40 +94,52 @@ private class TestBuilderImpl : TestBuilder {
                         else
                             TestMismatchedExpectation(test.expectedOutcome, result)
                     } catch (t: Throwable) {
-                        if (t.throwableKind == NON_EXCEPTION)
-                            throw t // Something totally unexpected. Rethrow.
-                        else
-                            TestFailedWithException(t)
+                        TestFailedWithException(t)
                     }
                 }
             }
 
-            if (testFailureDetails != null) TestFailure(serialNumber, testFailureDetails) else null
+            if (testFailureDetails != null) TestFailure(serialNumber, test.sourceLocation, testFailureDetails) else null
         }
 
         return if (testFailures.isEmpty()) OK_STATUS else testFailures.joinToString(prefix = "\n", separator = "\n", postfix = "\n")
     }
 }
 
-private sealed interface AbstractErrorMessagePattern : ErrorMessagePattern {
-    fun checkIrLinkageErrorMessage(errorMessage: String?): TestFailureDetails?
+private sealed interface AbstractFailurePattern : FailurePattern {
+    fun validateFailure(t: Throwable): TestFailureDetails?
 }
 
-private class PrefixOfErrorMessage(prefix: String) : AbstractErrorMessagePattern {
+private sealed class AbstractIrLinkageErrorPattern : AbstractFailurePattern {
+    final override fun validateFailure(t: Throwable) =
+        if (t.isLinkageError)
+            checkIrLinkageErrorMessage(t.message) // OK, this is IR linkage error. Validate the message.
+        else
+            TestFailedWithException(t) // Unexpected type of exception.
+
+    abstract fun checkIrLinkageErrorMessage(errorMessage: String?): TestFailureDetails?
+}
+
+private class GeneralIrLinkageError(private val expectedMessageWithoutHashes: String) : AbstractIrLinkageErrorPattern() {
     init {
-        check(prefix.isNotBlank()) { "Prefix is blank: [$prefix]" }
+        check(expectedMessageWithoutHashes.isNotBlank()) { "Message is blank: [$expectedMessageWithoutHashes]" }
     }
 
-    private val fullPrefix = "$prefix because it uses unlinked symbols"
-
     override fun checkIrLinkageErrorMessage(errorMessage: String?) =
-        if (errorMessage?.startsWith(fullPrefix) == true)
+        if (errorMessage?.replace(SIGNATURE_WITH_HASH) { it.groupValues[1] + "'" } == expectedMessageWithoutHashes)
             null // Success.
         else
-            TestMismatchedExpectation(fullPrefix, errorMessage)
+            TestMismatchedExpectation(expectedMessageWithoutHashes, errorMessage)
+
+    companion object {
+        val SIGNATURE_WITH_HASH = Regex("(symbol '/[\\da-zA-Z.<>_\\-]+)(\\|\\S+)'")
+    }
 }
 
-private class NonImplementedCallable(callableTypeAndName: String, classifierTypeAndName: String) : AbstractErrorMessagePattern {
+private class NonImplementedCallableIrLinkageError(
+    callableTypeAndName: String,
+    classifierTypeAndName: String
+) : AbstractIrLinkageErrorPattern() {
     init {
         check(callableTypeAndName.isNotBlank() && ' ' in callableTypeAndName) { "Invalid callable type & name: [$callableTypeAndName]" }
         check(classifierTypeAndName.isNotBlank() && ' ' in classifierTypeAndName) { "Invalid classifier type & name: [$classifierTypeAndName]" }
@@ -124,28 +154,65 @@ private class NonImplementedCallable(callableTypeAndName: String, classifierType
             TestMismatchedExpectation(fullMessage, errorMessage)
 }
 
-private sealed interface Test
-private class FailingTest(val errorMessagePattern: ErrorMessagePattern, val block: Block<Any?>) : Test
-private class SuccessfulTest(val expectedOutcome: Any, val block: Block<Any>) : Test
+private class CustomThrowableFailure(private val checker: (Throwable) -> Boolean) : AbstractFailurePattern {
+    override fun validateFailure(t: Throwable) =
+        if (checker(t))
+            null // Expected failure.
+        else
+            TestFailedWithException(t) // Unexpected type of exception.
+}
 
-private class TestFailure(val serialNumber: Int, val details: TestFailureDetails) {
-    override fun toString() = "#$serialNumber: ${details.description}"
+@Suppress("PrivatePropertyName", "INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
+private val NoWhenBranchFailure = CustomThrowableFailure { it is NoWhenBranchMatchedException }
+
+private sealed class Test {
+    val sourceLocation: String? = computeSourceLocation()
+}
+
+private class FailingTest(val failurePattern: AbstractFailurePattern, val block: Block<Any?>) : Test()
+private class SuccessfulTest(val expectedOutcome: Any, val block: Block<Any>) : Test()
+
+private class TestFailure(val serialNumber: Int, val sourceLocation: String?, val details: TestFailureDetails) {
+    override fun toString() = buildString {
+        append('#').append(serialNumber)
+        if (sourceLocation != null) append(" (").append(sourceLocation).append(")")
+        append(": ").append(details.description)
+    }
 }
 
 private sealed class TestFailureDetails(val description: String)
-private object TestSuccessfulButMustFail : TestFailureDetails("Test is successful but was expected to fail.")
+private class TestSuccessfulButMustFail(actualOutcome: Any?) : TestFailureDetails("Test was expected to fail, but passed successfully: $actualOutcome")
 private class TestFailedWithException(t: Throwable) : TestFailureDetails("Test unexpectedly failed with exception: $t")
 private class TestMismatchedExpectation(expectedOutcome: Any, actualOutcome: Any?) :
     TestFailureDetails("EXPECTED: $expectedOutcome, ACTUAL: $actualOutcome")
 
-private enum class ThrowableKind { IR_LINKAGE_ERROR, EXCEPTION, NON_EXCEPTION }
+private val Throwable.isLinkageError: Boolean
+    get() = this::class.simpleName == "IrLinkageError"
 
-private val Throwable.throwableKind: ThrowableKind
-    get() = when {
-        this::class.simpleName == "IrLinkageError" -> IR_LINKAGE_ERROR
-        this is Exception -> EXCEPTION
-        else -> NON_EXCEPTION
+fun computeSourceLocation(): String? {
+    fun extractSourceLocation(stackTraceLine: String): String? {
+        return stackTraceLine.substringAfterLast('(', missingDelimiterValue = "")
+            .substringBefore(')', missingDelimiterValue = "")
+            .takeIf { it.isNotEmpty() }
+            ?.split(':', limit = 2)
+            ?.takeIf { it.size == 2 && it[0].isNotEmpty() && it[1].isNotEmpty() }
+            ?.let { "${it[0].substringAfterLast('/').substringAfterLast('\\')}:${it[1]}" }
     }
 
-private fun FailingTest.checkIrLinkageErrorMessage(t: Throwable) =
-    (errorMessagePattern as AbstractErrorMessagePattern).checkIrLinkageErrorMessage(t.message)
+    var beenInTestBuilderImpl = false
+
+    // Capture the stack trace to find out the line number where the test was exactly configured.
+    return Throwable().stackTraceToString()
+        .lineSequence()
+        .dropWhile { stackTraceLine ->
+            val isInTestBuilderImpl = TestBuilderImpl::class.simpleName!! in stackTraceLine
+            if (isInTestBuilderImpl) {
+                beenInTestBuilderImpl = true
+                true
+            } else {
+                !beenInTestBuilderImpl
+            }
+        }
+        .mapNotNull(::extractSourceLocation)
+        .firstOrNull()
+}

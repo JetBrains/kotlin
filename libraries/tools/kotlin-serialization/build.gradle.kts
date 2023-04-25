@@ -14,8 +14,6 @@ dependencies {
 
     commonCompileOnly(project(":kotlin-gradle-plugin"))
     commonCompileOnly(project(":kotlin-compiler-embeddable"))
-
-    embedded(project(":kotlinx-serialization-compiler-plugin")) { isTransitive = false }
 }
 
 gradlePlugin {

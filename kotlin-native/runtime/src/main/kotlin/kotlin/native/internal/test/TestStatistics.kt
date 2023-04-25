@@ -5,6 +5,9 @@
 
 package kotlin.native.internal.test
 
+import kotlin.experimental.ExperimentalNativeApi
+
+@ExperimentalNativeApi
 internal interface TestStatistics {
     val total: Int
     val passed: Int
@@ -17,6 +20,7 @@ internal interface TestStatistics {
     val hasFailedTests: Boolean
 }
 
+@ExperimentalNativeApi
 internal class MutableTestStatistics: TestStatistics {
 
     override var total:   Int = 0; private set

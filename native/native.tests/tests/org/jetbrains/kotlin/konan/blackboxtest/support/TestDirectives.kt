@@ -242,13 +242,14 @@ internal fun parseModule(parsedDirective: RegisteredDirectivesParser.ParsedDirec
         val name = match.groupValues[1]
         val directDependencySymbols = match.groupValues[3].split(',').filter(String::isNotEmpty).toSet()
         val directFriendSymbols = match.groupValues[5].split(',').filter(String::isNotEmpty).toSet()
+        val directDependsOnSymbols = match.groupValues[7].split(',').filter(String::isNotEmpty).toSet()
 
         val friendsThatAreNotDependencies = directFriendSymbols - directDependencySymbols
         assertTrue(friendsThatAreNotDependencies.isEmpty()) {
             "$location: Found friends that are not dependencies: $friendsThatAreNotDependencies"
         }
 
-        TestModule.Exclusive(name, directDependencySymbols, directFriendSymbols)
+        TestModule.Exclusive(name, directDependencySymbols, directFriendSymbols, directDependsOnSymbols)
     }
 
     return module ?: fail {
@@ -259,7 +260,11 @@ internal fun parseModule(parsedDirective: RegisteredDirectivesParser.ParsedDirec
     }
 }
 
-private val TEST_MODULE_REGEX = Regex("^([a-zA-Z0-9_]+)(\\(([a-zA-Z0-9_,]*)\\)(\\(([a-zA-Z0-9_,]*)\\))?)?$")
+private val TEST_MODULE_REGEX = Regex("^([a-zA-Z0-9_]+)(" +          // name
+                                              "\\(([a-zA-Z0-9_,]*)\\)" +    // dependencies
+                                              "(\\(([a-zA-Z0-9_,]*)\\))?" + // friends
+                                              "(\\(([a-zA-Z0-9_,]*)\\))?" + // dependsOn
+                                              ")?$")
 
 internal fun parseFileName(parsedDirective: RegisteredDirectivesParser.ParsedDirective, location: Location): String {
     val fileName = parsedDirective.values.singleOrNull()?.toString()

@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeClassifierLookupTag
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.ConeClassLikeLookupTagImpl
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -110,13 +111,13 @@ class FirTypeDeserializer(
     fun typeRef(proto: ProtoBuf.Type): FirTypeRef {
         return buildResolvedTypeRef {
             annotations += annotationDeserializer.loadTypeAnnotations(proto, nameResolver)
-            type = type(proto, annotations.computeTypeAttributes(moduleData.session))
+            type = type(proto, annotations.computeTypeAttributes(moduleData.session, shouldExpandTypeAliases = false))
         }
     }
 
     private fun attributesFromAnnotations(proto: ProtoBuf.Type): ConeAttributes =
         annotationDeserializer.loadTypeAnnotations(proto, nameResolver)
-            .computeTypeAttributes(moduleData.session)
+            .computeTypeAttributes(moduleData.session, shouldExpandTypeAliases = false)
 
     fun type(proto: ProtoBuf.Type): ConeKotlinType {
         return type(proto, attributesFromAnnotations(proto))
@@ -176,10 +177,28 @@ class FirTypeDeserializer(
             argumentList + outerType(typeTable)?.collectAllArguments().orEmpty()
 
         val arguments = proto.collectAllArguments().map(this::typeArgument).toTypedArray()
-        val simpleType = if (Flags.SUSPEND_TYPE.get(proto.flags)) {
-            createSuspendFunctionType(constructor, arguments, isNullable = proto.nullable, attributes)
-        } else {
-            ConeClassLikeTypeImpl(constructor, arguments, isNullable = proto.nullable, attributes)
+
+        val extensionFunctionalKind = moduleData.session.functionTypeService.extractSingleExtensionKindForDeserializedConeType(
+            constructor.classId, attributes.customAnnotations
+        )
+
+        val simpleType = when {
+            extensionFunctionalKind != null -> {
+                val newConstructor = if (arguments.isNotEmpty()) {
+                    ConeClassLikeLookupTagImpl(extensionFunctionalKind.numberedClassId(arguments.size - 1))
+                } else {
+                    return ConeErrorType(
+                        ConeSimpleDiagnostic("Illegal number of arguments for extension functional type $extensionFunctionalKind"),
+                        typeArguments = arguments,
+                        attributes = attributes
+                    )
+                }
+                ConeClassLikeTypeImpl(newConstructor, arguments, isNullable = proto.nullable, attributes)
+            }
+            Flags.SUSPEND_TYPE.get(proto.flags) -> {
+                createSuspendFunctionType(constructor, arguments, isNullable = proto.nullable, attributes)
+            }
+            else -> ConeClassLikeTypeImpl(constructor, arguments, isNullable = proto.nullable, attributes)
         }
         val abbreviatedTypeProto = proto.abbreviatedType(typeTable) ?: return simpleType
         return simpleType(abbreviatedTypeProto, attributes)

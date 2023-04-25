@@ -6,15 +6,15 @@
 package org.jetbrains.kotlin.gradle.targets.js.typescript
 
 import org.gradle.api.DefaultTask
-import org.gradle.api.tasks.*
-import org.gradle.api.provider.Property
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.*
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.internal.execWithProgress
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinIrJsGeneratedTSValidationStrategy
-import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import javax.inject.Inject
@@ -30,14 +30,13 @@ constructor(
 
     @get:Internal
     @Transient
-    protected val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
+    protected val nodeJs = project.rootProject.kotlinNodeJsExtension
 
-    @get:Internal
-    override val nodeModulesRequired: Boolean get() = false
+    private val versions = nodeJs.versions
 
     @get:Internal
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
-        get() = setOf(nodeJs.versions.typescript)
+        get() = setOf(versions.typescript)
 
     @get:SkipWhenEmpty
     @get:NormalizeLineEndings
@@ -69,9 +68,8 @@ constructor(
 
         val message = "Oops, Kotlin/JS compiler generated invalid d.ts files."
 
-        when (validationStrategy) {
-            KotlinIrJsGeneratedTSValidationStrategy.ERROR -> error(message)
-            KotlinIrJsGeneratedTSValidationStrategy.IGNORE -> {}
+        if (validationStrategy == KotlinIrJsGeneratedTSValidationStrategy.ERROR) {
+            error(message)
         }
     }
 

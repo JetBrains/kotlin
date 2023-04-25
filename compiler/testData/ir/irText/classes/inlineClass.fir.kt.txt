@@ -25,7 +25,7 @@ value class Test {
   }
 
   override fun toString(): String {
-    return "Test(" + "x=" + <this>.#x + ")"
+    return "Test(x=" + <this>.#x + ")"
   }
 
 }

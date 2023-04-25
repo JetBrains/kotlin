@@ -5,40 +5,156 @@
 
 package org.jetbrains.kotlin.backend.common.actualizer
 
+import org.jetbrains.kotlin.KtDiagnosticReporterWithImplicitIrBasedContext
+import org.jetbrains.kotlin.backend.common.CommonBackendErrors
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
-import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.types.IrDynamicType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
+import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.kotlinFqName
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.module
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil
 
-fun generateIrElementFullName(
-    declaration: IrElement,
+private val FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME = StandardClassIds.Annotations.FlexibleNullability.asSingleFqName()
+
+internal fun Map<String, List<IrDeclaration>>.getMatches(
+    expectDeclaration: IrDeclaration,
     expectActualTypesMap: Map<IrSymbol, IrSymbol>,
-    typeAliasMap: Map<FqName, FqName>? = null
+    expectActualTypeAliasMap: Map<FqName, FqName>
+): List<IrDeclaration> {
+    val members = this[generateIrElementFullNameFromExpect(expectDeclaration, expectActualTypeAliasMap)] ?: return emptyList()
+    return when (expectDeclaration) {
+        is IrFunction -> members.getMatches(expectDeclaration, expectActualTypesMap) { it as IrFunction }
+        is IrProperty -> members.getMatches(expectDeclaration, expectActualTypesMap) { (it as IrProperty).getter!! }
+        else -> members
+    }
+}
+
+private inline fun List<IrDeclaration>.getMatches(
+    expect: IrDeclaration,
+    expectActualTypesMap: Map<IrSymbol, IrSymbol>,
+    functionExtractor: (IrDeclaration) -> IrFunction
+): List<IrDeclaration> {
+    val expectFunction = functionExtractor(expect)
+    return filter { expectFunction.match(functionExtractor(it), expectActualTypesMap) }
+}
+
+private fun IrFunction.match(actualFunction: IrFunction, expectActualTypesMap: Map<IrSymbol, IrSymbol>): Boolean {
+    fun getActualizedTypeClassifierSymbol(
+        expectParameter: IrValueParameter,
+        localTypeParametersMap: Map<IrTypeParameterSymbol, IrTypeParameterSymbol>? = null
+    ): IrSymbol {
+        return expectParameter.type.classifierOrFail.let {
+            val localMappedSymbol = if (localTypeParametersMap != null && it is IrTypeParameterSymbol) {
+                localTypeParametersMap[it]
+            } else {
+                null
+            }
+            localMappedSymbol ?: expectActualTypesMap[it] ?: it
+        }
+    }
+
+    fun checkParameter(
+        expectParameter: IrValueParameter?,
+        actualParameter: IrValueParameter?,
+        localTypeParametersMap: Map<IrTypeParameterSymbol, IrTypeParameterSymbol>
+    ): Boolean {
+        if (expectParameter == null) {
+            return actualParameter == null
+        }
+        if (actualParameter == null) {
+            return false
+        }
+
+        if (expectParameter.type is IrDynamicType || actualParameter.type is IrDynamicType) {
+            return true
+        }
+
+        if (expectParameter.type.isNullable() != actualParameter.type.isNullable() &&
+            !expectParameter.type.annotations.hasAnnotation(FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME) &&
+            !actualParameter.type.annotations.hasAnnotation(FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME)
+        ) {
+            return false
+        }
+
+        if (getActualizedTypeClassifierSymbol(expectParameter, localTypeParametersMap) !=
+            getActualizedTypeClassifierSymbol(actualParameter)
+        ) {
+            return false
+        }
+
+        return true
+    }
+
+    if (valueParameters.size != actualFunction.valueParameters.size || typeParameters.size != actualFunction.typeParameters.size) {
+        return false
+    }
+
+    val localTypeParametersMap = mutableMapOf<IrTypeParameterSymbol, IrTypeParameterSymbol>()
+    for ((expectTypeParameter, actualTypeParameter) in typeParameters.zip(actualFunction.typeParameters)) {
+        if (expectTypeParameter.name != actualTypeParameter.name) {
+            return false
+        }
+        localTypeParametersMap[expectTypeParameter.symbol] = actualTypeParameter.symbol
+    }
+
+    if (!checkParameter(extensionReceiverParameter, actualFunction.extensionReceiverParameter, localTypeParametersMap)) {
+        return false
+    }
+
+    for ((expectParameter, actualParameter) in valueParameters.zip(actualFunction.valueParameters)) {
+        if (!checkParameter(expectParameter, actualParameter, localTypeParametersMap)) {
+            return false
+        }
+    }
+
+    return true
+}
+
+internal fun generateActualIrClassOrTypeAliasFullName(declaration: IrElement) = generateIrElementFullNameFromExpect(declaration, emptyMap())
+
+internal fun generateIrElementFullNameFromExpect(
+    declaration: IrElement,
+    expectActualTypeAliasMap: Map<FqName, FqName>
 ): String {
-    return StringBuilder().apply { appendElementFullName(declaration, expectActualTypesMap, this, typeAliasMap) }.toString()
+    return buildString { appendElementFullName(declaration, this, expectActualTypeAliasMap) }
 }
 
 private fun appendElementFullName(
     declaration: IrElement,
-    expectActualTypesMap: Map<IrSymbol, IrSymbol>,
     result: StringBuilder,
-    typeAliasMap: Map<FqName, FqName>? = null
+    expectActualTypeAliasMap: Map<FqName, FqName>
 ) {
     if (declaration !is IrDeclarationBase) return
 
-    val parentName = declaration.parent.kotlinFqName
-    if (parentName.asString().isNotEmpty()) {
-        result.append(typeAliasMap?.get(parentName) ?: parentName.asString())
+    val parents = mutableListOf<String>()
+    var parent: IrDeclarationParent? = declaration.parent
+    while (parent != null) {
+        if (parent is IrDeclarationWithName) {
+            val parentParent = parent.parent
+            if (parentParent is IrClass) {
+                parents.add(parent.name.asString())
+                parent = parentParent
+                continue
+            }
+        }
+        val parentString = parent.kotlinFqName.let { (expectActualTypeAliasMap[it] ?: it).asString() }
+        if (parentString.isNotEmpty()) {
+            parents.add(parentString)
+        }
+        parent = null
+    }
+
+    if (parents.isNotEmpty()) {
+        result.append(parents.asReversed().joinToString(separator = "."))
         result.append('.')
     }
 
@@ -47,38 +163,17 @@ private fun appendElementFullName(
     }
 
     if (declaration is IrFunction) {
-        fun appendType(type: IrType) {
-            val typeClassifier = type.classifierOrFail
-            val actualizedTypeSymbol = expectActualTypesMap[typeClassifier] ?: typeClassifier
-            appendElementFullName(actualizedTypeSymbol.owner, expectActualTypesMap, result)
-        }
-
-        val extensionReceiverType = declaration.extensionReceiverParameter?.type
-        if (extensionReceiverType != null) {
-            result.append('[')
-            appendType(extensionReceiverType)
-            result.append(']')
-        }
-
-        result.append('(')
-        for ((index, parameter) in declaration.valueParameters.withIndex()) {
-            appendType(parameter.type)
-            if (index < declaration.valueParameters.size - 1) {
-                result.append(',')
-            }
-        }
-        result.append(')')
+        result.append("()")
     }
 }
 
-fun reportMissingActual(irElement: IrElement) {
-    // TODO: setup diagnostics reporting
-    throw AssertionError("Missing actual for ${irElement.render()}")
-}
-
-fun reportManyInterfacesMembersNotImplemented(declaration: IrClass, actualMember: IrDeclarationWithName) {
-    // TODO: setup diagnostics reporting
-    throw AssertionError("${declaration.name} must override ${actualMember.name} because it inherits multiple interface methods of it")
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+internal fun KtDiagnosticReporterWithImplicitIrBasedContext.reportMissingActual(irDeclaration: IrDeclaration) {
+    at(irDeclaration).report(
+        CommonBackendErrors.NO_ACTUAL_FOR_EXPECT,
+        (irDeclaration as? IrDeclarationWithName)?.name?.asString().orEmpty(),
+        irDeclaration.module
+    )
 }
 
 internal fun IrElement.containsOptionalExpectation(): Boolean {

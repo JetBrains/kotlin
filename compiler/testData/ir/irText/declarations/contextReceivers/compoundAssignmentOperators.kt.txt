@@ -47,16 +47,16 @@ var operationScore: Int
   get
   set
 
-operator fun Result.plus(_context_receiver_0: Int, other: Result): Result {
+operator fun Result.plus($context_receiver_0: Int, other: Result): Result {
   { // BLOCK
-    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = _context_receiver_0))
+    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
   }
   return Result(i = <this>.<get-i>().plus(other = other.<get-i>()))
 }
 
-operator fun Result.plusAssign(_context_receiver_0: Int, other: Result) {
+operator fun Result.plusAssign($context_receiver_0: Int, other: Result) {
   { // BLOCK
-    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = _context_receiver_0))
+    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
   }
   { // BLOCK
     val tmp0_this: Result = <this>
@@ -64,16 +64,16 @@ operator fun Result.plusAssign(_context_receiver_0: Int, other: Result) {
   }
 }
 
-operator fun Result.minus(_context_receiver_0: Int, other: Result): Result {
+operator fun Result.minus($context_receiver_0: Int, other: Result): Result {
   { // BLOCK
-    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = _context_receiver_0))
+    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
   }
   return Result(i = <this>.<get-i>().minus(other = other.<get-i>()))
 }
 
-operator fun Result.minusAssign(_context_receiver_0: Int, other: Result) {
+operator fun Result.minusAssign($context_receiver_0: Int, other: Result) {
   { // BLOCK
-    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = _context_receiver_0))
+    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
   }
   { // BLOCK
     val tmp0_this: Result = <this>
@@ -81,16 +81,16 @@ operator fun Result.minusAssign(_context_receiver_0: Int, other: Result) {
   }
 }
 
-operator fun Result.times(_context_receiver_0: Int, other: Result): Result {
+operator fun Result.times($context_receiver_0: Int, other: Result): Result {
   { // BLOCK
-    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = _context_receiver_0))
+    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
   }
   return Result(i = <this>.<get-i>().times(other = other.<get-i>()))
 }
 
-operator fun Result.timesAssign(_context_receiver_0: Int, other: Result) {
+operator fun Result.timesAssign($context_receiver_0: Int, other: Result) {
   { // BLOCK
-    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = _context_receiver_0))
+    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
   }
   { // BLOCK
     val tmp0_this: Result = <this>
@@ -98,16 +98,16 @@ operator fun Result.timesAssign(_context_receiver_0: Int, other: Result) {
   }
 }
 
-operator fun Result.div(_context_receiver_0: Int, other: Result): Result {
+operator fun Result.div($context_receiver_0: Int, other: Result): Result {
   { // BLOCK
-    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = _context_receiver_0))
+    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
   }
   return Result(i = <this>.<get-i>().div(other = other.<get-i>()))
 }
 
-operator fun Result.divAssign(_context_receiver_0: Int, other: Result) {
+operator fun Result.divAssign($context_receiver_0: Int, other: Result) {
   { // BLOCK
-    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = _context_receiver_0))
+    <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
   }
   { // BLOCK
     val tmp0_this: Result = <this>
@@ -118,10 +118,10 @@ operator fun Result.divAssign(_context_receiver_0: Int, other: Result) {
 fun box(): String {
   val result: Result = Result(i = 0)
   with<Int, Unit>(receiver = 1, block = local fun Int.<anonymous>() {
-    result.plusAssign(_context_receiver_0 = $this$with, other = Result(i = 1).plus(_context_receiver_0 = $this$with, other = Result(i = 1)))
-    result.minusAssign(_context_receiver_0 = $this$with, other = Result(i = 1).minus(_context_receiver_0 = $this$with, other = Result(i = 0)))
-    result.timesAssign(_context_receiver_0 = $this$with, other = Result(i = 1).times(_context_receiver_0 = $this$with, other = Result(i = 2)))
-    result.divAssign(_context_receiver_0 = $this$with, other = Result(i = 4).div(_context_receiver_0 = $this$with, other = Result(i = 2)))
+    result.plusAssign($context_receiver_0 = $this$with, other = Result(i = 1).plus($context_receiver_0 = $this$with, other = Result(i = 1)))
+    result.minusAssign($context_receiver_0 = $this$with, other = Result(i = 1).minus($context_receiver_0 = $this$with, other = Result(i = 0)))
+    result.timesAssign($context_receiver_0 = $this$with, other = Result(i = 1).times($context_receiver_0 = $this$with, other = Result(i = 2)))
+    result.divAssign($context_receiver_0 = $this$with, other = Result(i = 4).div($context_receiver_0 = $this$with, other = Result(i = 2)))
   }
 )
   return when {

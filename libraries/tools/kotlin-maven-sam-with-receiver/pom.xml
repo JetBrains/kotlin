@@ -5,12 +5,6 @@
 
     <modelVersion>4.0.0</modelVersion>
     <properties>
-        <sam.common.src>${basedir}/../../../plugins/sam-with-receiver/sam-with-receiver.common/src</sam.common.src>
-        <sam.k1.src>${basedir}/../../../plugins/sam-with-receiver/sam-with-receiver.k1/src</sam.k1.src>
-        <sam.k2.src>${basedir}/../../../plugins/sam-with-receiver/sam-with-receiver.k2/src</sam.k2.src>
-        <sam.backend.src>${basedir}/../../../plugins/sam-with-receiver/sam-with-receiver.backend/src</sam.backend.src>
-        <sam.cli.src>${basedir}/../../../plugins/sam-with-receiver/sam-with-receiver.cli/src</sam.cli.src>
-        <sam.resources>${basedir}/../../../plugins/sam-with-receiver/sam-with-receiver.cli/resources</sam.resources>
         <sam.maven.plugin.src>${basedir}/src/main/kotlin</sam.maven.plugin.src>
     </properties>
 
@@ -39,6 +33,11 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-sam-with-receiver-compiler-plugin</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-core</artifactId>
             <version>${maven.version}</version>
@@ -47,10 +46,6 @@
     </dependencies>
 
     <build>
-        <resources>
-            <resource><directory>${sam.resources}</directory></resource>
-        </resources>
-
         <plugins>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -61,11 +56,6 @@
                         <goals><goal>add-source</goal></goals>
                         <configuration>
                             <sources>
-                                <source>${sam.common.src}</source>
-                                <source>${sam.k1.src}</source>
-                                <source>${sam.k2.src}</source>
-                                <source>${sam.backend.src}</source>
-                                <source>${sam.cli.src}</source>
                                 <source>${sam.maven.plugin.src}</source>
                             </sources>
                         </configuration>
@@ -85,11 +75,6 @@
                         <goals> <goal>compile</goal> </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <args>
-                        <arg>-opt-in=org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi</arg>
-                    </args>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.plexus</groupId>

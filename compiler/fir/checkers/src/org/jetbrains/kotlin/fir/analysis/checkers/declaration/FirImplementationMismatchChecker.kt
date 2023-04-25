@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtRealSourceElementKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.impl.deduplicating
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.classId
@@ -24,7 +26,7 @@ import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenMembers
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenProperties
-import org.jetbrains.kotlin.fir.scopes.impl.delegatedWrapperData
+import org.jetbrains.kotlin.fir.delegatedWrapperData
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeErrorType
@@ -195,16 +197,14 @@ object FirImplementationMismatchChecker : FirClassChecker() {
     ) {
         val allFunctions = mutableListOf<FirNamedFunctionSymbol>()
         scope.processFunctionsByName(name) { sym ->
-            val declaredInThisClass = sym.callableId.classId == containingClass.classId
-            when {
-                sym is FirIntersectionOverrideFunctionSymbol && declaredInThisClass ->
-                    sym.intersections.mapNotNullTo(allFunctions) { it as? FirNamedFunctionSymbol }
-                !declaredInThisClass -> allFunctions.add(sym)
+            when (sym) {
+                is FirIntersectionOverrideFunctionSymbol -> sym.intersections.mapNotNullTo(allFunctions) { it as? FirNamedFunctionSymbol }
+                else -> allFunctions.add(sym)
             }
         }
 
         val sameArgumentGroups = allFunctions.groupBy { function ->
-            buildList<ConeKotlinType> {
+            buildList {
                 addIfNotNull(function.resolvedReceiverTypeRef?.type)
                 function.valueParameterSymbols.mapTo(this) { it.resolvedReturnTypeRef.coneType }
             }
@@ -216,8 +216,30 @@ object FirImplementationMismatchChecker : FirClassChecker() {
             }
         }
 
-        clashes.forEach {
-            reporter.reportOn(containingClass.source, FirErrors.CONFLICTING_INHERITED_MEMBERS, containingClass.symbol, it.toList(), context)
+        for (clash in clashes) {
+            val (first, second) = clash
+
+            val firstClassLookupTag = first.containingClassLookupTag()
+            val secondClassLookupTag = second.containingClassLookupTag()
+
+            if (firstClassLookupTag == secondClassLookupTag) {
+                // Don't report if both declarations came from the same class because either CONFLICTING_OVERLOADS was reported in the
+                // original class or it's ok to keep compatibility with K1. See KT-55860.
+                continue
+            }
+
+            val thisClassLookupTag = containingClass.symbol.toLookupTag()
+
+            // If one of the declarations is from this class, report CONFLICTING_OVERLOADS, otherwise CONFLICTING_INHERITED_MEMBERS
+            if (firstClassLookupTag == thisClassLookupTag && first.source?.kind is KtRealSourceElementKind) {
+                reporter.reportOn(first.source, FirErrors.CONFLICTING_OVERLOADS, clash.toList(), context)
+            } else if (secondClassLookupTag == thisClassLookupTag && second.source?.kind is KtRealSourceElementKind) {
+                reporter.reportOn(second.source, FirErrors.CONFLICTING_OVERLOADS, clash.toList(), context)
+            } else {
+                reporter.reportOn(
+                    containingClass.source, FirErrors.CONFLICTING_INHERITED_MEMBERS, containingClass.symbol, clash.toList(), context,
+                )
+            }
         }
     }
 

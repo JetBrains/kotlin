@@ -8,7 +8,7 @@ import org.jetbrains.gradle.ext.TopLevelArtifact
 import org.jetbrains.kotlin.ideaExt.*
 
 
-val ideaPluginDir: File by extra
+val distDir: String by extra
 val ideaSandboxDir: File by extra
 val ideaSdkPath: String
     get() = rootProject.ideaHomePathForTests().absolutePath
@@ -39,7 +39,7 @@ fun generateVmParametersForJpsConfiguration(path: String, additionalParameters: 
         "-Didea.ignore.disabled.plugins=true",
         "-Didea.home.path=$ideaSdkPath",
         "-Didea.use.native.fs.for.win=false",
-        "-Djps.kotlin.home=${ideaPluginDir.absolutePath}",
+        "-Djps.kotlin.home=${File(distDir).absolutePath}/kotlinc",
         "-Duse.jps=true",
         "-Djava.awt.headless=true"
     )

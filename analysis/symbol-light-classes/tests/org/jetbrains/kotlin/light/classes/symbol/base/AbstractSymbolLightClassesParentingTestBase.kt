@@ -22,7 +22,7 @@ import java.nio.file.Path
 open class AbstractSymbolLightClassesParentingTestBase(
     configurator: AnalysisApiTestConfigurator,
     override val currentExtension: String,
-    override val stopIfCompilationErrorDirectivePresent: Boolean
+    override val isTestAgainstCompiledCode: Boolean,
 ) : AbstractSymbolLightClassesTestBase(configurator) {
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
@@ -41,7 +41,7 @@ open class AbstractSymbolLightClassesParentingTestBase(
         Assume.assumeFalse("The test is not supported", Directives.IGNORE_PARENTING_CHECK in directives)
 
         // drop after KT-56882
-        val ignoreDecompiledClasses = stopIfCompilationErrorDirectivePresent
+        val ignoreDecompiledClasses = isTestAgainstCompiledCode
         return object : JavaElementVisitor() {
             private val declarationStack = ArrayDeque<PsiElement>()
 

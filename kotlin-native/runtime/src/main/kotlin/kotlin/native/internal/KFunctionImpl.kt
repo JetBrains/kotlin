@@ -16,7 +16,6 @@ internal class KFunctionDescription(
         val returnType: KType
 )
 
-@FixmeReflection
 internal abstract class KFunctionImpl<out R>(val description: KFunctionDescription): KFunction<R> {
     final override val returnType get() = description.returnType
     val flags get() = description.flags

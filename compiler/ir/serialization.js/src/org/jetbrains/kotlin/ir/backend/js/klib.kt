@@ -15,12 +15,14 @@ import org.jetbrains.kotlin.KtVirtualFileSourceFile
 import org.jetbrains.kotlin.analyzer.AbstractAnalyzerWithCompilerReport
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
+import org.jetbrains.kotlin.backend.common.CommonJsKLibResolver
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
+import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
+import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideChecker
 import org.jetbrains.kotlin.backend.common.serialization.*
-import org.jetbrains.kotlin.backend.common.serialization.linkerissues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.serialization.mangle.ManglerChecker
 import org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.Ir2DescriptorManglerAdapter
 import org.jetbrains.kotlin.backend.common.serialization.metadata.*
@@ -39,6 +41,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrDescriptorBasedFunctionFactory
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
+import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -70,6 +73,7 @@ import org.jetbrains.kotlin.util.DummyLogger
 import org.jetbrains.kotlin.util.Logger
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
+import org.jetbrains.kotlin.utils.memoryOptimizedFilter
 import java.io.File
 
 val KotlinLibrary.moduleName: String
@@ -123,6 +127,7 @@ fun generateKLib(
     icData: List<KotlinFileSerializedData>,
     expectDescriptorToSymbol: MutableMap<DeclarationDescriptor, IrSymbol>,
     moduleFragment: IrModuleFragment,
+    builtInsPlatform: BuiltInsPlatform = BuiltInsPlatform.JS,
     serializeSingleFile: (KtSourceFile) -> ProtoBuf.PackageFragment
 ) {
     val files = (depsDescriptors.mainModule as MainModule.SourceFiles).files.map(::KtPsiSourceFile)
@@ -145,6 +150,7 @@ fun generateKLib(
         depsDescriptors.jsFrontEndResult.hasErrors,
         abiVersion,
         jsOutputName,
+        builtInsPlatform,
         serializeSingleFile
     )
 }
@@ -196,7 +202,7 @@ fun loadIr(
     val allDependencies = depsDescriptors.allDependencies
     val errorPolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT
     val messageLogger = configuration.irMessageLogger
-    val partialLinkageEnabled = configuration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false
+    val partialLinkageEnabled = configuration.partialLinkageConfig.isEnabled
 
     val signaturer = IdSignatureDescriptor(JsManglerDesc)
     val symbolTable = SymbolTable(signaturer, irFactory)
@@ -258,15 +264,19 @@ fun getIrModuleInfoForKlib(
     val mainModuleLib = sortedDependencies.last()
     val typeTranslator = TypeTranslatorImpl(symbolTable, configuration.languageVersionSettings, moduleDescriptor)
     val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
-
-    val partialLinkageEnabled = configuration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false
+    val errorPolicy = configuration[JSConfigurationKeys.ERROR_TOLERANCE_POLICY] ?: ErrorTolerancePolicy.DEFAULT
 
     val irLinker = JsIrLinker(
         currentModule = null,
         messageLogger = messageLogger,
         builtIns = irBuiltIns,
         symbolTable = symbolTable,
-        partialLinkageEnabled = partialLinkageEnabled,
+        partialLinkageSupport = createPartialLinkageSupportForLinker(
+            partialLinkageConfig = configuration.partialLinkageConfig,
+            allowErrorTypes = errorPolicy.allowErrors,
+            builtIns = irBuiltIns,
+            messageLogger = messageLogger
+        ),
         translationPluginContext = null,
         icData = null,
         friendModules = friendModules
@@ -288,7 +298,7 @@ fun getIrModuleInfoForKlib(
 
     irLinker.init(null, emptyList())
     ExternalDependenciesGenerator(symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
-    irLinker.postProcess()
+    irLinker.postProcess(inOrAfterLinkageStep = true)
 
     return IrModuleInfo(
         moduleFragment,
@@ -318,15 +328,19 @@ fun getIrModuleInfoForSourceFiles(
     val feContext = psi2IrContext.run {
         JsIrLinker.JsFePluginContext(moduleDescriptor, symbolTable, typeTranslator, irBuiltIns)
     }
-
-    val partialLinkageEnabled = configuration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false
+    val errorPolicy = configuration[JSConfigurationKeys.ERROR_TOLERANCE_POLICY] ?: ErrorTolerancePolicy.DEFAULT
 
     val irLinker = JsIrLinker(
         currentModule = psi2IrContext.moduleDescriptor,
         messageLogger = messageLogger,
         builtIns = irBuiltIns,
         symbolTable = symbolTable,
-        partialLinkageEnabled = partialLinkageEnabled,
+        partialLinkageSupport = createPartialLinkageSupportForLinker(
+            partialLinkageConfig = configuration.partialLinkageConfig,
+            allowErrorTypes = errorPolicy.allowErrors,
+            builtIns = irBuiltIns,
+            messageLogger = messageLogger
+        ),
         translationPluginContext = feContext,
         icData = null,
         friendModules = friendModules,
@@ -469,9 +483,10 @@ class ModulesStructure(
     friendDependenciesPaths: Collection<String>,
 ) {
 
-    val allDependenciesResolution = jsResolveLibrariesWithoutDependencies(
+    val allDependenciesResolution = CommonJsKLibResolver.resolveWithoutDependencies(
         dependencies,
-        compilerConfiguration.resolverLogger
+        compilerConfiguration.resolverLogger,
+        compilerConfiguration.get(JSConfigurationKeys.ZIP_FILE_SYSTEM_ACCESSOR)
     )
 
     val allDependencies: List<KotlinLibrary>
@@ -479,7 +494,7 @@ class ModulesStructure(
 
     val friendDependencies = allDependencies.run {
         val friendAbsolutePaths = friendDependenciesPaths.map { File(it).canonicalPath }
-        filter {
+        memoryOptimizedFilter {
             it.libraryFile.absolutePath in friendAbsolutePaths
         }
     }
@@ -616,6 +631,7 @@ fun serializeModuleIntoKlib(
     containsErrorCode: Boolean = false,
     abiVersion: KotlinAbiVersion,
     jsOutputName: String?,
+    builtInsPlatform: BuiltInsPlatform = BuiltInsPlatform.JS,
     serializeSingleFile: (KtSourceFile) -> ProtoBuf.PackageFragment
 ) {
     assert(files.size == moduleFragment.files.size)
@@ -724,7 +740,7 @@ fun serializeModuleIntoKlib(
         perFile = perFile,
         output = klibPath,
         versions = versions,
-        builtInsPlatform = BuiltInsPlatform.JS
+        builtInsPlatform = builtInsPlatform
     )
 }
 

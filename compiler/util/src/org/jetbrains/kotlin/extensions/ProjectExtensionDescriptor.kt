@@ -16,7 +16,8 @@ open class ProjectExtensionDescriptor<T : Any>(name: String, private val extensi
         project.extensionArea.registerExtensionPoint(
             extensionPointName.name,
             extensionClass.name,
-            ExtensionPoint.Kind.INTERFACE
+            ExtensionPoint.Kind.INTERFACE,
+            false
         )
     }
 

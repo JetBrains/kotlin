@@ -12,15 +12,15 @@ class View {
 }
 
 val Int.dp: Int
-  get(_context_receiver_0: View): Int {
-    return _context_receiver_0.<get-coefficient>().times(other = <this>)
+  get($context_receiver_0: View): Int {
+    return $context_receiver_0.<get-coefficient>().times(other = <this>)
   }
 
 fun box(): String {
   with<View, Nothing>(receiver = View(), block = local fun View.<anonymous>(): Nothing {
     when {
       EQEQ(arg0 = listOf<Int>(elements = [1, 2, 10]).map<Int, Int>(transform = local fun <anonymous>(it: Int): Int {
-        return it.<get-dp>(_context_receiver_0 = $this$with)
+        return it.<get-dp>($context_receiver_0 = $this$with)
       }
 ), arg1 = listOf<Int>(elements = [42, 84, 420])) -> { // BLOCK
         return "OK"

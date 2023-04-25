@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isJava
 import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
@@ -30,10 +31,11 @@ object JavaScopeProvider : FirScopeProvider() {
     override fun getUseSiteMemberScope(
         klass: FirClass,
         useSiteSession: FirSession,
-        scopeSession: ScopeSession
+        scopeSession: ScopeSession,
+        memberRequiredPhase: FirResolvePhase?,
     ): FirTypeScope {
         val symbol = klass.symbol as FirRegularClassSymbol
-        val enhancementScope = buildJavaEnhancementScope(useSiteSession, symbol, scopeSession)
+        val enhancementScope = buildJavaEnhancementScope(useSiteSession, symbol, scopeSession, memberRequiredPhase)
         if (klass.classKind == ClassKind.ANNOTATION_CLASS) {
             return buildSyntheticScopeForAnnotations(useSiteSession, symbol, scopeSession, enhancementScope)
         }
@@ -54,7 +56,8 @@ object JavaScopeProvider : FirScopeProvider() {
     private fun buildJavaEnhancementScope(
         useSiteSession: FirSession,
         symbol: FirRegularClassSymbol,
-        scopeSession: ScopeSession
+        scopeSession: ScopeSession,
+        memberRequiredPhase: FirResolvePhase?,
     ): JavaClassMembersEnhancementScope {
         return scopeSession.getOrBuild(symbol, JAVA_ENHANCEMENT) {
             val firJavaClass = symbol.fir
@@ -64,7 +67,7 @@ object JavaScopeProvider : FirScopeProvider() {
             JavaClassMembersEnhancementScope(
                 useSiteSession,
                 symbol,
-                buildUseSiteMemberScopeWithJavaTypes(firJavaClass, useSiteSession, scopeSession)
+                buildUseSiteMemberScopeWithJavaTypes(firJavaClass, useSiteSession, scopeSession, memberRequiredPhase)
             )
         }
     }
@@ -81,6 +84,7 @@ object JavaScopeProvider : FirScopeProvider() {
         regularClass: FirJavaClass,
         useSiteSession: FirSession,
         scopeSession: ScopeSession,
+        memberRequiredPhase: FirResolvePhase?,
     ): JavaClassUseSiteMemberScope {
         return scopeSession.getOrBuild(regularClass.symbol, JAVA_USE_SITE) {
             val declaredScope = buildDeclaredMemberScope(useSiteSession, regularClass)
@@ -93,7 +97,7 @@ object JavaScopeProvider : FirScopeProvider() {
                     )
 
             val superTypeScopes = superTypes.mapNotNull {
-                it.scopeForSupertype(useSiteSession, scopeSession, regularClass)
+                it.scopeForSupertype(useSiteSession, scopeSession, regularClass, memberRequiredPhase = memberRequiredPhase)
             }
 
             JavaClassUseSiteMemberScope(

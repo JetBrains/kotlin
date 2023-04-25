@@ -30,9 +30,11 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.fir.FirAnalyzerFacade
 import org.jetbrains.kotlin.fir.FirTestSessionFactoryHelper
 import org.jetbrains.kotlin.fir.backend.Fir2IrCommonMemberStorage
+import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
@@ -121,17 +123,21 @@ object GenerationUtils {
         // TODO: add running checkers and check that it's safe to compile
         val firAnalyzerFacade = FirAnalyzerFacade(
             session,
-            configuration.languageVersionSettings,
+            Fir2IrConfiguration(
+                languageVersionSettings = configuration.languageVersionSettings,
+                linkViaSignatures = false,
+                evaluatedConstTracker = configuration
+                    .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
+            ),
             files,
             emptyList(),
             IrGenerationExtension.getInstances(project),
             FirParser.Psi,
-            generateSignatures = false
         )
         val fir2IrExtensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl(), JvmIrMangler)
 
         val commonMemberStorage = Fir2IrCommonMemberStorage(
-            generateSignatures = firAnalyzerFacade.generateSignatures,
+            generateSignatures = firAnalyzerFacade.fir2IrConfiguration.linkViaSignatures,
             signatureComposerCreator = { JvmIdSignatureDescriptor(JvmDescriptorMangler(null)) },
             manglerCreator = { FirJvmKotlinMangler() }
         )
@@ -160,7 +166,7 @@ object GenerationUtils {
         generationState.oldBEInitTrace(files)
         codegenFactory.generateModuleInFrontendIRMode(
             generationState, moduleFragment, components.symbolTable, components.irProviders,
-            fir2IrExtensions, FirJvmBackendExtension(components), pluginContext,
+            fir2IrExtensions, FirJvmBackendExtension(components, irActualizedResult = null), pluginContext,
         ) {}
 
         generationState.factory.done()

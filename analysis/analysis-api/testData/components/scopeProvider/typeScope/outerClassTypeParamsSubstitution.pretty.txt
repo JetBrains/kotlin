@@ -1,6 +1,6 @@
 KtTypeScope:
-fun foo(x: kotlin.Int, y: Y): kotlin.collections.Map<kotlin.Int, kotlin.collections.Map<Y, O>>
-val map: kotlin.collections.Map<kotlin.Int, O>
+fun foo(x: kotlin.Int, y: Y): kotlin.collections.Map<kotlin.Int, kotlin.collections.Map<Y, kotlin.String>>
+val map: kotlin.collections.Map<kotlin.Int, kotlin.String>
 fun equals(other: kotlin.Any?): kotlin.Boolean
 fun hashCode(): kotlin.Int
 fun toString(): kotlin.String

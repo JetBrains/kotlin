@@ -4,7 +4,6 @@
  */
 package org.jetbrains.kotlin.backend.konan.ir.interop.cstruct
 
-import org.jetbrains.kotlin.backend.konan.InteropBuiltIns
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.ir.interop.DescriptorToIrTranslationMixin
@@ -29,7 +28,6 @@ import org.jetbrains.kotlin.psi2ir.generators.GeneratorContext
 
 internal class CStructVarClassGenerator(
         context: GeneratorContext,
-        private val interopBuiltIns: InteropBuiltIns,
         private val companionGenerator: CStructVarCompanionGenerator,
         private val symbols: KonanSymbols
 ) : DescriptorToIrTranslationMixin {
@@ -266,15 +264,12 @@ internal class CStructVarClassGenerator(
 
     private fun createPrimaryConstructor(irClass: IrClass): IrConstructor {
         if (!irClass.descriptor.annotations.hasAnnotation(RuntimeNames.managedType)) {
-            val cStructVarConstructorSymbol = symbolTable.referenceConstructor(
-                    interopBuiltIns.cStructVar.unsubstitutedPrimaryConstructor!!
-            )
             return createConstructor(irClass.descriptor.unsubstitutedPrimaryConstructor!!).also { irConstructor ->
                 postLinkageSteps.add {
                     irConstructor.body = irBuilder(irBuiltIns, irConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
                         +IrDelegatingConstructorCallImpl.fromSymbolOwner(
                                 startOffset, endOffset,
-                                context.irBuiltIns.unitType, cStructVarConstructorSymbol
+                                context.irBuiltIns.unitType, symbols.cStructVarConstructorSymbol
                         ).also {
                             it.putValueArgument(0, irGet(irConstructor.valueParameters[0]))
                         }
@@ -284,14 +279,11 @@ internal class CStructVarClassGenerator(
             }
         } else {
             return createConstructor(irClass.descriptor.unsubstitutedPrimaryConstructor!!).also { irConstructor ->
-                val managedTypeConstructor = symbolTable.referenceConstructor(
-                        interopBuiltIns.managedType.unsubstitutedPrimaryConstructor!!
-                )
                 postLinkageSteps.add {
                     irConstructor.body = irBuilder(irBuiltIns, irConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
                         +IrDelegatingConstructorCallImpl.fromSymbolOwner(
                                 startOffset, endOffset,
-                                context.irBuiltIns.unitType, managedTypeConstructor
+                                context.irBuiltIns.unitType, symbols.managedTypeConstructor
                         ).also {
                                 it.putTypeArgument(0, irConstructor.valueParameters[0].type)
                                 it.putValueArgument(0, irGet(irConstructor.valueParameters[0]))

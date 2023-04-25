@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.backend.konan.optimizations
 
+import org.jetbrains.kotlin.backend.common.copy
+import org.jetbrains.kotlin.backend.common.forEachBit
 import org.jetbrains.kotlin.backend.common.pop
 import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
@@ -32,20 +34,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi2ir.generators.implicitCastTo
 import java.util.*
 import kotlin.collections.ArrayList
-
-inline fun BitSet.forEachBit(block: (Int) -> Unit) {
-    var i = -1
-    while (true) {
-        i = nextSetBit(i + 1)
-        if (i < 0) break
-        block(i)
-    }
-}
-
-fun BitSet.copy() = BitSet(this.size()).apply { this.or(this@copy) }
 
 // Devirtualization analysis is performed using Variable Type Analysis algorithm.
 // See http://web.cs.ucla.edu/~palsberg/tba/papers/sundaresan-et-al-oopsla00.pdf for details.

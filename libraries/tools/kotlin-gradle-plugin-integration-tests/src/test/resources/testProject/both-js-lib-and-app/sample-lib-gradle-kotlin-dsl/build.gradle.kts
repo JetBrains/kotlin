@@ -41,3 +41,7 @@ publishing {
         maven { setUrl("file://${projectDir.absolutePath.replace('\\', '/')}/repo") }
     }
 }
+
+tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile> {
+    kotlinOptions.freeCompilerArgs += "-Xforce-deprecated-legacy-compiler-usage"
+}

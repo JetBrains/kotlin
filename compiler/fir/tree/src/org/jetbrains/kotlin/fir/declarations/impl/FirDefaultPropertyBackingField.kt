@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -25,10 +25,11 @@ class FirDefaultPropertyBackingField(
     isVar: Boolean,
     propertySymbol: FirPropertySymbol,
     status: FirDeclarationStatus,
+    resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,
 ) : FirBackingFieldImpl(
     source = null,
     moduleData = moduleData,
-    resolvePhase = FirResolvePhase.RAW_FIR,
+    resolvePhase = resolvePhase,
     origin = FirDeclarationOrigin.Synthetic,
     attributes = FirDeclarationAttributes(),
     returnTypeRef = returnTypeRef,

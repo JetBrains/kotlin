@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.dce
 
+import org.jetbrains.kotlin.backend.common.ir.inlineFunction
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.utils.hasJsPolyfill
@@ -26,7 +27,7 @@ abstract class UsefulDeclarationProcessor(
     protected fun getMethodOfAny(name: String): IrDeclaration =
         context.irBuiltIns.anyClass.owner.declarations.filterIsInstance<IrFunction>().single { it.name.asString() == name }
 
-    protected val toStringMethod: IrDeclaration by lazy { getMethodOfAny("toString") }
+    protected val toStringMethod: IrDeclaration by lazy(LazyThreadSafetyMode.NONE) { getMethodOfAny("toString") }
     protected abstract fun isExported(declaration: IrDeclaration): Boolean
     protected abstract val bodyVisitor: BodyVisitorBase
 
@@ -54,7 +55,7 @@ abstract class UsefulDeclarationProcessor(
             super.visitBlock(expression, data)
 
             if (expression is IrReturnableBlock) {
-                expression.inlineFunctionSymbol?.owner?.addToUsefulPolyfilledDeclarations()
+                expression.inlineFunction?.addToUsefulPolyfilledDeclarations()
             }
         }
 

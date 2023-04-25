@@ -1,6 +1,6 @@
 #import "direct.h"
 
-#define TEST_METHOD_IMPL(NAME) (NSUInteger)NAME:(NSUInteger)arg { return arg; }
+#define TEST_METHOD_IMPL(NAME) (uint64_t)NAME:(uint64_t)arg { return arg; }
 
 @implementation CallingConventions : NSObject
 

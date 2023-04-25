@@ -1,16 +1,18 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 
+import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.low.level.api.fir.DeclarationCopyBuilder.withBodyFrom
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveSessionDepended
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FileTowerProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerDataContextAllElementsCollector
+import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FirElementsRecorder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.KtToFirMapping
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.RawFirNonLocalDeclarationBuilder
@@ -43,20 +45,31 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.containingClassOrObject
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
-import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 
 object LowLevelFirApiFacadeForResolveOnAir {
-    private fun findNonLocalParentMaybeSelf(position: KtElement): KtNamedDeclaration? {
-        return position.parentsWithSelf
-            .filterIsInstance<KtNamedDeclaration>()
-            .filter { it is KtNamedFunction || it is KtProperty || (it is KtClassOrObject && it !is KtEnumEntry) || it is KtTypeAlias }
-            .filter { !KtPsiUtil.isLocal(it) && it.containingClassOrObject !is KtEnumEntry }
-            .firstOrNull()
+    private fun PsiElement.onAirGetNonLocalContainingOrThisDeclarationFor(): KtDeclaration? {
+        return getNonLocalContainingOrThisDeclaration { declaration ->
+            when (declaration) {
+                is KtNamedFunction,
+                is KtProperty,
+                is KtTypeAlias,
+                is KtScript -> {
+                    true
+                }
+
+                is KtClassOrObject -> {
+                    declaration !is KtEnumEntry
+                }
+
+                else -> {
+                    false
+                }
+            }
+        }
     }
 
-    private fun recordOriginalDeclaration(targetDeclaration: KtNamedDeclaration, originalDeclaration: KtNamedDeclaration) {
+    private fun recordOriginalDeclaration(targetDeclaration: KtDeclaration, originalDeclaration: KtDeclaration) {
         require(originalDeclaration.containingKtFile !== targetDeclaration.containingKtFile)
         val originalDeclarationParents = originalDeclaration.parentsOfType<KtDeclaration>().toList()
         val fakeDeclarationParents = targetDeclaration.parentsOfType<KtDeclaration>().toList()
@@ -132,7 +145,11 @@ object LowLevelFirApiFacadeForResolveOnAir {
         val scopeSession = firResolveSession.getScopeSessionFor(session)
         firFile.lazyResolveToPhase(FirResolvePhase.IMPORTS)
 
-        val importingScopes = createImportingScopes(firFile, firFile.moduleData.session, scopeSession, useCaching = false)
+        return firFile.createTowerDataContext(scopeSession)
+    }
+
+    private fun FirFile.createTowerDataContext(scopeSession: ScopeSession): FirTowerDataContext {
+        val importingScopes = createImportingScopes(this, moduleData.session, scopeSession, useCaching = false)
         val fileScopeElements = importingScopes.map { it.asTowerDataElement(isLocal = false) }
         return FirTowerDataContext().addNonLocalTowerDataElements(fileScopeElements)
     }
@@ -145,13 +162,13 @@ object LowLevelFirApiFacadeForResolveOnAir {
         require(originalFirResolveSession is LLFirResolvableResolveSession)
         require(elementToAnalyze !is KtFile) { "KtFile for dependency element not supported" }
 
-        val dependencyNonLocalDeclaration = findNonLocalParentMaybeSelf(elementToAnalyze)
-            ?: return LLFirResolveSessionDepended(
-                originalFirResolveSession,
-                FileTowerProvider(elementToAnalyze.containingKtFile, onAirGetTowerContextForFile(originalFirResolveSession, originalKtFile)),
-                ktToFirMapping = null
-            )
+        val dependencyNonLocalDeclaration = elementToAnalyze.onAirGetNonLocalContainingOrThisDeclarationFor() as? KtNamedDeclaration
 
+        if (dependencyNonLocalDeclaration == null) {
+            val towerDataContext = onAirGetTowerContextForFile(originalFirResolveSession, originalKtFile)
+            val fileTowerProvider = FileTowerProvider(elementToAnalyze.containingKtFile, towerDataContext)
+            return LLFirResolveSessionDepended(originalFirResolveSession, fileTowerProvider, ktToFirMapping = null)
+        }
 
         val sameDeclarationInOriginalFile = PsiTreeUtil.findSameElementInCopy(dependencyNonLocalDeclaration, originalKtFile)
             ?: buildErrorWithAttachment("Cannot find original function matching") {
@@ -181,6 +198,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
         replacement: RawFirReplacement,
         firFile: FirFile,
         collector: FirTowerDataContextCollector? = null,
+        firResolveSession: LLFirResolvableResolveSession,
     ): FirAnnotation {
         val annotationCall = buildFileFirAnnotation(
             session = firFile.moduleData.session,
@@ -197,13 +215,15 @@ object LowLevelFirApiFacadeForResolveOnAir {
             ?: buildErrorWithAttachment("FirFile session expected to be a resolvable session but was ${firFile.llFirSession::class.java}") {
                 withEntry("firSession", firFile.llFirSession) { it.toString() }
             }
-        val declarationResolver = llFirResolvableSession.moduleComponents.firModuleLazyDeclarationResolver
 
+        val declarationResolver = llFirResolvableSession.moduleComponents.firModuleLazyDeclarationResolver
         declarationResolver.runLazyDesignatedOnAirResolveToBodyWithoutLock(
             FirDesignationWithFile(path = emptyList(), target = fileAnnotationsContainer, firFile),
             onAirCreatedDeclaration = true,
             collector
         )
+
+        collector?.addFileContext(firFile, firFile.createTowerDataContext(firResolveSession.getScopeSessionFor(llFirResolvableSession)))
 
         return annotationCall
     }
@@ -214,7 +234,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
         onAirCreatedDeclaration: Boolean,
         collector: FirTowerDataContextCollector? = null,
     ): FirElement {
-        val nonLocalDeclaration = findNonLocalParentMaybeSelf(replacement.from)
+        val nonLocalDeclaration = replacement.from.onAirGetNonLocalContainingOrThisDeclarationFor()
         val originalFirFile = firResolveSession.getOrBuildFirFile(replacement.from.containingKtFile)
 
         if (nonLocalDeclaration == null) {
@@ -226,6 +246,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
                     replacement = replacement,
                     firFile = originalFirFile,
                     collector = collector,
+                    firResolveSession = firResolveSession,
                 )
             } else {
                 error("Cannot find enclosing declaration for ${replacement.from.getElementTextInContext()}")
@@ -233,9 +254,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
         }
 
         val originalDeclaration = nonLocalDeclaration.getOrBuildFirOfType<FirDeclaration>(firResolveSession)
-
         val originalDesignation = originalDeclaration.collectDesignation()
-
         val newDeclarationWithReplacement = RawFirNonLocalDeclarationBuilder.buildWithReplacement(
             session = originalDeclaration.moduleData.session,
             scopeProvider = originalDeclaration.moduleData.session.kotlinScopeProvider,
@@ -245,59 +264,52 @@ object LowLevelFirApiFacadeForResolveOnAir {
         )
 
         val isInBodyReplacement = isInBodyReplacement(nonLocalDeclaration, replacement)
-
-        return firResolveSession.globalComponents.lockProvider.withLock(originalFirFile) {
-            val copiedFirDeclaration = if (isInBodyReplacement) {
-                when (originalDeclaration) {
-                    is FirSimpleFunction ->
-                        originalDeclaration.withBodyFrom(newDeclarationWithReplacement as FirSimpleFunction)
-                    is FirProperty ->
-                        originalDeclaration.withBodyFrom(newDeclarationWithReplacement as FirProperty)
-                    is FirRegularClass ->
-                        originalDeclaration.withBodyFrom(newDeclarationWithReplacement as FirRegularClass)
-                    is FirTypeAlias -> newDeclarationWithReplacement
-                    else -> error("Not supported type ${originalDeclaration::class.simpleName}")
-                }
-            } else newDeclarationWithReplacement
-
-            val onAirDesignation = FirDesignationWithFile(
-                path = originalDesignation.path,
-                target = copiedFirDeclaration,
-                firFile = originalFirFile
-            )
-            val resolvableSession = onAirDesignation.target.llFirResolvableSession
-                ?: error("Expected resolvable session")
-            resolvableSession.moduleComponents.firModuleLazyDeclarationResolver
-                .runLazyDesignatedOnAirResolveToBodyWithoutLock(
-                    designation = onAirDesignation,
-                    onAirCreatedDeclaration = onAirCreatedDeclaration,
-                    towerDataContextCollector = collector,
-                )
-            copiedFirDeclaration
+        val copiedFirDeclaration = if (isInBodyReplacement) {
+            when (originalDeclaration) {
+                is FirSimpleFunction -> originalDeclaration.withBodyFrom(newDeclarationWithReplacement as FirSimpleFunction)
+                is FirProperty -> originalDeclaration.withBodyFrom(newDeclarationWithReplacement as FirProperty)
+                is FirRegularClass -> originalDeclaration.withBodyFrom(newDeclarationWithReplacement as FirRegularClass)
+                is FirScript -> originalDeclaration.withBodyFrom(newDeclarationWithReplacement as FirScript)
+                is FirTypeAlias -> newDeclarationWithReplacement
+                else -> error("Not supported type ${originalDeclaration::class.simpleName}")
+            }
+        } else {
+            newDeclarationWithReplacement
         }
 
+        val onAirDesignation = FirDesignationWithFile(
+            path = originalDesignation.path,
+            target = copiedFirDeclaration,
+            firFile = originalFirFile
+        )
+
+        val resolvableSession = onAirDesignation.target.llFirResolvableSession ?: error("Expected resolvable session")
+        resolvableSession.moduleComponents.firModuleLazyDeclarationResolver.runLazyDesignatedOnAirResolveToBodyWithoutLock(
+            designation = onAirDesignation,
+            onAirCreatedDeclaration = onAirCreatedDeclaration,
+            towerDataContextCollector = collector,
+        )
+
+        return copiedFirDeclaration
     }
 
-    private fun isInBodyReplacement(ktDeclaration: KtDeclaration, replacement: RawFirReplacement): Boolean = when (ktDeclaration) {
-        is KtNamedFunction ->
-            ktDeclaration.bodyBlockExpression?.let { it.isAncestor(replacement.from, true) } ?: false
-        is KtProperty -> {
-            val insideGetterBody = ktDeclaration.getter?.bodyBlockExpression?.let {
-                it.isAncestor(replacement.from, true)
-            } ?: false
-
-            val insideGetterOrSetterBody = insideGetterBody || ktDeclaration.setter?.bodyBlockExpression?.let {
-                it.isAncestor(replacement.from, true)
-            } ?: false
-
-            insideGetterOrSetterBody || ktDeclaration.initializer?.let {
-                it.isAncestor(replacement.from, true)
-            } ?: false
+    private fun isInBodyReplacement(ktDeclaration: KtDeclaration, replacement: RawFirReplacement): Boolean {
+        fun check(container: KtElement?): Boolean {
+            return container != null && container.isAncestor(replacement.from, true)
         }
-        is KtClassOrObject ->
-            ktDeclaration.body?.let { it.isAncestor(replacement.from, true) } ?: false
-        is KtTypeAlias -> false
-        else -> error("Not supported type ${ktDeclaration::class.simpleName}")
+
+        return when (ktDeclaration) {
+            is KtNamedFunction -> check(ktDeclaration.bodyBlockExpression)
+            is KtProperty -> {
+                check(ktDeclaration.getter?.bodyBlockExpression)
+                        || check(ktDeclaration.setter?.bodyBlockExpression)
+                        || check(ktDeclaration.initializer)
+            }
+            is KtClassOrObject -> check(ktDeclaration.body)
+            is KtScript -> check(ktDeclaration.blockExpression)
+            is KtTypeAlias -> false
+            else -> error("Not supported type ${ktDeclaration::class.simpleName}")
+        }
     }
 
     fun onAirResolveTypeInPlace(

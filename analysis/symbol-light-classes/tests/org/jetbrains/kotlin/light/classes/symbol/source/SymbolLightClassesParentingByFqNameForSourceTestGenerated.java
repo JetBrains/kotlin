@@ -187,6 +187,18 @@ public class SymbolLightClassesParentingByFqNameForSourceTestGenerated extends A
     }
 
     @Test
+    @TestMetadata("InvalidJavaIdentifierAsAnnotationArgument.kt")
+    public void testInvalidJavaIdentifierAsAnnotationArgument() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/InvalidJavaIdentifierAsAnnotationArgument.kt");
+    }
+
+    @Test
+    @TestMetadata("InvalidJavaIdentifierAsPropertyInitializer.kt")
+    public void testInvalidJavaIdentifierAsPropertyInitializer() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/InvalidJavaIdentifierAsPropertyInitializer.kt");
+    }
+
+    @Test
     @TestMetadata("JavaBetween.kt")
     public void testJavaBetween() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/JavaBetween.kt");
@@ -593,6 +605,12 @@ public class SymbolLightClassesParentingByFqNameForSourceTestGenerated extends A
         @TestMetadata("Generic.kt")
         public void testGeneric() throws Exception {
             runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/Generic.kt");
+        }
+
+        @Test
+        @TestMetadata("ImplicitArrayWithFlexibleParameterTypes.kt")
+        public void testImplicitArrayWithFlexibleParameterTypes() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/nullabilityAnnotations/ImplicitArrayWithFlexibleParameterTypes.kt");
         }
 
         @Test

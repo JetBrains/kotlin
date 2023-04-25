@@ -13,5 +13,5 @@ class C<T> {
 class Out<out F>
 
 fun test(a: C<out CharSequence>, y: Out<CharSequence>) {
-    a + <!ARGUMENT_TYPE_MISMATCH!>y<!>
+    a + <!ARGUMENT_TYPE_MISMATCH("Out<@R|A|()  CapturedType(out kotlin/CharSequence)>; Out<kotlin/CharSequence>")!>y<!>
 }

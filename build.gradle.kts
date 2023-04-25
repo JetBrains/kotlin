@@ -34,7 +34,7 @@ plugins {
     idea
     id("jps-compatible")
     id("org.jetbrains.gradle.plugin.idea-ext")
-    id("org.gradle.crypto.checksum") version "1.2.0"
+    id("org.gradle.crypto.checksum") version "1.4.0"
     id("org.jetbrains.kotlinx.binary-compatibility-validator") version "0.13.0" apply false
     signing
     id("org.jetbrains.kotlin.jvm") apply false
@@ -63,7 +63,7 @@ val kotlinVersion by extra(
     } ?: buildNumber
 )
 
-val kotlinLanguageVersion by extra("1.9")
+val kotlinLanguageVersion: String by extra
 
 extra["kotlin_root"] = rootDir
 
@@ -101,7 +101,7 @@ IdeVersionConfigurator.setCurrentIde(project)
 
 if (!project.hasProperty("versions.kotlin-native")) {
     // BEWARE! Bumping this version doesn't take an immediate effect on TeamCity: KTI-1107
-    extra["versions.kotlin-native"] = "1.9.0-dev-2639"
+    extra["versions.kotlin-native"] = "1.9.0-dev-6050"
 }
 
 val irCompilerModules = arrayOf(
@@ -183,7 +183,6 @@ val fe10CompilerModules = arrayOf(
     ":compiler:serialization",
     ":compiler:frontend",
     ":compiler:container",
-    ":compiler:cli-common",
     ":core:deserialization",
     ":compiler:frontend:cfg",
     ":compiler:ir.psi2ir",
@@ -200,6 +199,8 @@ val fe10CompilerModules = arrayOf(
     ":compiler:backend",
     ":compiler:plugin-api",
     ":compiler:javac-wrapper",
+    ":compiler:cli-common",
+    ":compiler:cli-base",
     ":compiler:cli",
     ":compiler:cli-js",
     ":compiler:incremental-compilation-impl",
@@ -229,6 +230,7 @@ extra["compilerModules"] =
 // They are embedded just because we don't publish those dependencies as separate Maven artifacts (yet)
 extra["kotlinJpsPluginEmbeddedDependencies"] = listOf(
     ":compiler:cli-common",
+    ":kotlin-build-tools-enum-compat",
     ":kotlin-compiler-runner-unshaded",
     ":daemon-common",
     ":core:compiler.common",
@@ -285,6 +287,8 @@ extra["compilerArtifactsForIde"] = listOfNotNull(
     ":prepare:ide-plugin-dependencies:sam-with-receiver-compiler-plugin-for-ide",
     ":prepare:ide-plugin-dependencies:assignment-compiler-plugin-for-ide",
     ":prepare:ide-plugin-dependencies:parcelize-compiler-plugin-for-ide",
+    ":prepare:ide-plugin-dependencies:parcelize-compiler-plugin-fe10-for-ide",
+    ":prepare:ide-plugin-dependencies:parcelize-compiler-plugin-fir-for-ide",
     ":prepare:ide-plugin-dependencies:lombok-compiler-plugin-for-ide",
     ":prepare:ide-plugin-dependencies:kotlin-backend-native-for-ide".takeIf { kotlinBuildProperties.isKotlinNativeEnabled },
     ":prepare:ide-plugin-dependencies:kotlin-compiler-tests-for-ide",
@@ -389,7 +393,6 @@ val gradlePluginProjects = listOf(
     ":kotlin-gradle-plugin-kpm-android",
     ":kotlin-gradle-plugin-tcs-android",
     ":kotlin-allopen",
-    ":kotlin-annotation-processing-gradle",
     ":kotlin-noarg",
     ":kotlin-sam-with-receiver",
     ":kotlin-parcelize-compiler",
@@ -494,7 +497,6 @@ allprojects {
                 includeModule("org.jetbrains.kotlin", "protobuf-lite")
                 includeModule("org.jetbrains.kotlin", "protobuf-relocated")
                 includeModule("org.jetbrains.kotlinx", "kotlinx-metadata-klib")
-                includeGroup("org.jetbrains.dokka")
             }
         }
 
@@ -754,7 +756,7 @@ tasks {
     register("compilerPluginTest") {
         dependsOn(":kotlin-allopen-compiler-plugin:test")
         dependsOn(":kotlin-assignment-compiler-plugin:test")
-        dependsOn(":kotlinx-atomicfu-compiler-plugin:test")
+        dependsOn(":kotlin-atomicfu-compiler-plugin:test")
         dependsOn(":plugins:fir-plugin-prototype:test")
         dependsOn(":plugins:fir-plugin-prototype:fir-plugin-ic-test:test")
         dependsOn(":kotlin-imports-dumper-compiler-plugin:test")

@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.serialization.deserialization.IncompatibleVersionErr
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerAbiStability
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
-class KlibDeserializedContainerSource private constructor(
+class KlibDeserializedContainerSource(
     override val isPreReleaseInvisible: Boolean,
     override val presentableString: String,
     val isFromNativeInteropLibrary: Boolean

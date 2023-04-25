@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirFakeOverrideGenerator
 import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.symbols.impl.isStatic
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
@@ -62,7 +61,13 @@ class FakeOverrideGenerator(
 
     private fun IrClass.getFakeOverrides(klass: FirClass, realDeclarations: Collection<FirDeclaration>): List<IrDeclaration> {
         val result = mutableListOf<IrDeclaration>()
-        val useSiteMemberScope = klass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true)
+        val useSiteMemberScope = klass.unsubstitutedScope(
+            session,
+            scopeSession,
+            withForcedTypeCalculator = true,
+            memberRequiredPhase = null,
+        )
+
         val superTypesCallableNames = useSiteMemberScope.getCallableNames()
         val realDeclarationSymbols = realDeclarations.mapTo(mutableSetOf(), FirDeclaration::symbol)
 
@@ -77,7 +82,13 @@ class FakeOverrideGenerator(
         name: Name,
         firClass: FirClass
     ): List<IrDeclaration> = buildList {
-        val useSiteMemberScope = firClass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true)
+        val useSiteMemberScope = firClass.unsubstitutedScope(
+            session,
+            scopeSession,
+            withForcedTypeCalculator = true,
+            memberRequiredPhase = null,
+        )
+
         generateFakeOverridesForName(
             irClass, useSiteMemberScope, name, firClass, this,
             // This parameter is only needed for data-class methods that is irrelevant for lazy library classes
@@ -95,7 +106,6 @@ class FakeOverrideGenerator(
                 )
             }
         }
-        if (firClass.isEnumClass) return@buildList // F/O for values/valueOf/entries aren't needed, for other members aren't possible
         val staticScope = firClass.scopeProvider.getStaticMemberScopeForCallables(firClass, session, scopeSession)
         if (staticScope != null) {
             generateFakeOverridesForName(
@@ -204,7 +214,7 @@ class FakeOverrideGenerator(
         fakeOverride: IrSimpleFunction,
         originalSymbol: FirNamedFunctionSymbol,
     ) {
-        val scope = klass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true)
+        val scope = klass.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = true, memberRequiredPhase = null)
         val classLookupTag = klass.symbol.toLookupTag()
         val baseFirSymbolsForFakeOverride =
             if (originalSymbol.shouldHaveComputedBaseSymbolsForClass(classLookupTag)) {

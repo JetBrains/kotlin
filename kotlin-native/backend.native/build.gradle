@@ -113,6 +113,11 @@ kotlinNativeInterop {
 
 
 configurations {
+    compilerApi {
+        extendsFrom kotlinNativeInterop['llvm'].configuration
+        extendsFrom kotlinNativeInterop['files'].configuration
+        extendsFrom kotlinNativeInterop['env'].configuration
+    }
     kotlin_compiler_jar
     kotlin_stdlib_jar
     kotlin_reflect_jar
@@ -148,6 +153,7 @@ dependencies {
     compilerApi project(":compiler:util")
     compilerApi project(":native:frontend.native")
     compilerApi project(":compiler:cli-common")
+    compilerApi project(":compiler:cli-base")
     compilerApi project(":compiler:cli")
     compilerApi project(":kotlin-util-klib")
     compilerApi project(":kotlin-util-klib-metadata")
@@ -159,11 +165,6 @@ dependencies {
         compilerApi(intellijCore())
         compileOnly(jpsModel())
     }
-
-    compilerApi kotlinNativeInterop['llvm'].configuration
-    compilerApi kotlinNativeInterop['files'].configuration
-    compilerApi kotlinNativeInterop['env'].configuration
-
 
     cli_bcApi sourceSets.compiler.output
 

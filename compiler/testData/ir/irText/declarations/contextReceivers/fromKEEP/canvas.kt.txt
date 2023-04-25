@@ -5,7 +5,7 @@ interface Canvas {
 }
 
 interface Shape {
-  abstract fun draw(_context_receiver_0: Canvas): String
+  abstract fun draw($context_receiver_0: Canvas): String
 
 }
 
@@ -16,8 +16,8 @@ class Circle : Shape {
 
   }
 
-  override fun draw(_context_receiver_0: Canvas): String {
-    return "OK".plus(other = _context_receiver_0.<get-suffix>())
+  override fun draw($context_receiver_0: Canvas): String {
+    return "OK".plus(other = $context_receiver_0.<get-suffix>())
   }
 
 }
@@ -37,7 +37,7 @@ object MyCanvas : Canvas {
 
 fun box(): String {
   return with<MyCanvas, String>(receiver = MyCanvas, block = local fun MyCanvas.<anonymous>(): String {
-    return Circle().draw(_context_receiver_0 = $this$with)
+    return Circle().draw($context_receiver_0 = $this$with)
   }
 )
 }

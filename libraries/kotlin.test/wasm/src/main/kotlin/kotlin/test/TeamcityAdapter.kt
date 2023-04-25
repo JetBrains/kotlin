@@ -5,7 +5,6 @@
 
 package kotlin.test
 
-import kotlin.test.FrameworkAdapter
 import kotlin.math.abs
 import kotlin.js.*
 
@@ -17,7 +16,7 @@ private external fun nodeArguments(): String
 
 internal class TeamcityAdapter : FrameworkAdapter {
 
-    private var scheduleNextTaskAfter: Promise<Dynamic?>? = null
+    private var scheduleNextTaskAfter: Promise<JsAny?>? = null
     private fun runOrScheduleNext(block: () -> Unit) {
         if (scheduleNextTaskAfter == null) {
             block()
@@ -26,14 +25,14 @@ internal class TeamcityAdapter : FrameworkAdapter {
         }
     }
 
-    private fun runOrScheduleNextWithResult(block: () -> Promise<Dynamic?>?) {
+    private fun runOrScheduleNextWithResult(block: () -> Promise<JsAny?>?) {
         if (scheduleNextTaskAfter == null) {
             val result = block()
             if (result != null)
                 scheduleNextTaskAfter = result
         } else {
             scheduleNextTaskAfter = scheduleNextTaskAfter!!.then {
-                block() as Dynamic?
+                block()
             }
         }
     }
@@ -78,11 +77,18 @@ internal class TeamcityAdapter : FrameworkAdapter {
         println("##teamcity[$type name='${name.tcEscape()}' message='${errorMessage.tcEscape()}' $flowId]")
     }
 
+    private var _testArguments: FrameworkTestArguments? = null
+    private val testArguments: FrameworkTestArguments
+        get() {
+            var value = _testArguments
+            if (value == null) {
+                val arguments = d8Arguments().ifEmpty { nodeArguments() }
+                value = FrameworkTestArguments.parse(arguments.split(' '))
+                _testArguments = value
+            }
 
-    private val testArguments: FrameworkTestArguments by lazy {
-        val arguments = d8Arguments().takeIf { it.isNotEmpty() } ?: nodeArguments()
-        FrameworkTestArguments.parse(arguments.split(' '))
-    }
+            return value
+        }
 
     private fun runSuite(name: String, suiteFn: () -> Unit) {
         runOrScheduleNext {

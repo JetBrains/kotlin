@@ -39,8 +39,8 @@ internal fun test(name: String, ignored: Boolean, testFn: () -> Any?) {
 
 internal var currentAdapter: FrameworkAdapter? = null
 
-@JsFun("() => typeof describe === 'function' && typeof it === 'function'")
-private external fun isJasmine(): Boolean
+private fun isJasmine(): Boolean =
+    js("typeof describe === 'function' && typeof it === 'function'")
 
 internal fun adapter(): FrameworkAdapter {
     val result = currentAdapter ?: if (isJasmine()) JasmineLikeAdapter() else TeamcityAdapter()

@@ -82,7 +82,6 @@ fun box() {
 // test.kt:16 box
 // test.kt:1 toString
 // test.kt:17 box
-// test.kt:17 box
 // test.kt:1 component1
 // test.kt:17 box
 // test.kt:1 component2
@@ -107,7 +106,6 @@ fun box() {
 // test.kt:8 hashCode
 // test.kt:22 box
 // test.kt:6 toString
-// test.kt:23 box
 // test.kt:23 box
 // test.kt:1 component1
 // test.kt:23 box

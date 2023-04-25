@@ -39,8 +39,6 @@ import org.jetbrains.kotlin.light.classes.symbol.copy
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForEnumEntry
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightFieldForProperty
-import org.jetbrains.kotlin.light.classes.symbol.isConst
-import org.jetbrains.kotlin.light.classes.symbol.isLateInit
 import org.jetbrains.kotlin.light.classes.symbol.mapType
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightAccessorMethod
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightConstructor
@@ -364,9 +362,7 @@ context(KtAnalysisSession)
 internal fun SymbolLightClassBase.createField(
     declaration: KtPropertySymbol,
     nameGenerator: SymbolLightField.FieldNameGenerator,
-    isTopLevel: Boolean,
-    forceStatic: Boolean,
-    takePropertyVisibility: Boolean,
+    isStatic: Boolean,
     result: MutableList<KtLightField>
 ) {
     if (!hasBackingField(declaration)) return
@@ -383,9 +379,7 @@ internal fun SymbolLightClassBase.createField(
             fieldName = fieldName,
             containingClass = this,
             lightMemberOrigin = null,
-            isTopLevel = isTopLevel,
-            forceStatic = forceStatic,
-            takePropertyVisibility = takePropertyVisibility,
+            isStatic = isStatic,
         )
     )
 }
@@ -449,7 +443,8 @@ internal fun SymbolLightClassForClassLike<*>.createInheritanceList(
                 // We don't have Enum among enums supertype in sources neither we do for decompiled class-files and light-classes
                 if (isEnum && this.classId == StandardClassIds.Enum) return false
 
-                val classKind = (classSymbol as? KtClassOrObjectSymbol)?.classKind
+                // NB: need to expand type alias, e.g., kotlin.Comparator<T> -> java.util.Comparator<T>
+                val classKind = expandedClassSymbol?.classKind
                 val isJvmInterface = classKind == KtClassKind.INTERFACE || classKind == KtClassKind.ANNOTATION_CLASS
 
                 forExtendsList == !isJvmInterface
@@ -595,32 +590,24 @@ internal fun SymbolLightClassBase.addPropertyBackingFields(
             filter { containingClass?.isInterface == true && !it.hasJvmFieldAnnotation() }
         }
 
-    val propertyGroups = propertySymbols.groupBy { it.isFromPrimaryConstructor }
+    val (ctorProperties, memberProperties) = propertySymbols.partition { it.isFromPrimaryConstructor }
 
     val nameGenerator = SymbolLightField.FieldNameGenerator()
 
-    val forceStatic = symbolWithMembers is KtClassOrObjectSymbol && symbolWithMembers.classKind.isObject
+    val isStatic = symbolWithMembers is KtClassOrObjectSymbol && symbolWithMembers.classKind.isObject
     fun addPropertyBackingField(propertySymbol: KtPropertySymbol) {
-        val isJvmField = propertySymbol.hasJvmFieldAnnotation()
-        val isLateInit = propertySymbol.isLateInit
-        val isConst = propertySymbol.isConst
-
-        val takePropertyVisibility = isLateInit || isJvmField || isConst
-
         createField(
             declaration = propertySymbol,
             nameGenerator = nameGenerator,
-            isTopLevel = false,
-            forceStatic = forceStatic,
-            takePropertyVisibility = takePropertyVisibility,
+            isStatic = isStatic,
             result = result
         )
     }
 
     // First, properties from parameters
-    propertyGroups[true]?.forEach(::addPropertyBackingField)
+    ctorProperties.forEach(::addPropertyBackingField)
     // Then, regular member properties
-    propertyGroups[false]?.forEach(::addPropertyBackingField)
+    memberProperties.forEach(::addPropertyBackingField)
 }
 
 context(KtAnalysisSession)

@@ -10,6 +10,7 @@
 #include <cstdint>
 
 #include "AtomicStack.hpp"
+#include "GCStatistics.hpp"
 
 namespace kotlin::alloc {
 
@@ -30,7 +31,7 @@ public:
     // Tries to allocate in current page, returns null if no free block in page
     uint8_t* TryAllocate() noexcept;
 
-    bool Sweep() noexcept;
+    bool Sweep(gc::GCHandle::GCSweepScope& sweepHandle) noexcept;
 
 private:
     friend class AtomicStack<FixedBlockPage>;

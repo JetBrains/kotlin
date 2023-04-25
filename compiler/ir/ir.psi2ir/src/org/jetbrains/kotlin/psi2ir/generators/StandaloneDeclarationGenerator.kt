@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.types.KotlinType
 
-class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
+internal class StandaloneDeclarationGenerator(private val context: GeneratorContext) {
     private val typeTranslator = context.typeTranslator
     private val symbolTable = context.symbolTable
     private val irFactory = context.irFactory

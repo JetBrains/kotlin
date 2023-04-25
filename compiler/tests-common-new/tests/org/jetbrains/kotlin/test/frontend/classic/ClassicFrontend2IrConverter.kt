@@ -110,8 +110,9 @@ class ClassicFrontend2IrConverter(
             sourceFiles.map(::KtPsiSourceFile),
             icData,
             expectDescriptorToSymbol = expectDescriptorToSymbol,
+            diagnosticsCollector = DiagnosticReporterFactory.createReporter(),
             hasErrors
-        ) { file ->
+        ) { file, _ ->
             metadataSerializer.serializeScope(file, analysisResult.bindingContext, moduleFragment.descriptor)
         }
     }

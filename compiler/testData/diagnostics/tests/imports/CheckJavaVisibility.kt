@@ -1,3 +1,5 @@
+// FIR_IDENTICAL
+
 // FILE: j/JavaPublic.java
 package j;
 
@@ -5,6 +7,7 @@ public class JavaPublic {
     public static void javaM() {}
     public static int javaP = 4;
     static int javaPackageLocal = 5;
+    protected static int javaProtected = 6;
 }
 
 // FILE: j/JavaPackageLocal.java
@@ -39,6 +42,7 @@ import j.JavaPublic
 import j.JavaPublic.javaM
 import j.JavaPublic.javaP
 import j.JavaPublic.<!INVISIBLE_REFERENCE!>javaPackageLocal<!>
+import j.JavaPublic.javaProtected
 
 import j.<!INVISIBLE_REFERENCE!>JavaPackageLocal<!>
 import j.<!INVISIBLE_REFERENCE!>JavaPackageLocal<!>.<!INVISIBLE_REFERENCE!>javaMPackage<!>

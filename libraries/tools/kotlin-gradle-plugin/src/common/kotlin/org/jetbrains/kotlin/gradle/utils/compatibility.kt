@@ -28,6 +28,7 @@ import org.gradle.api.file.FileTree
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.internal.tasks.testing.TestDescriptorInternal
 import org.gradle.api.provider.Provider
+import org.gradle.api.specs.Spec
 import org.gradle.api.tasks.WorkResult
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.api.tasks.testing.TestDescriptor
@@ -53,45 +54,6 @@ internal fun checkGradleCompatibility(
 internal val AbstractArchiveTask.archivePathCompatible: File
     get() = archiveFile.get().asFile
 
-internal class ArchiveOperationsCompat(@Transient private val project: Project) : Serializable {
-    private val archiveOperations: Any? = try {
-        (project as ProjectInternal).services.get(ArchiveOperations::class.java)
-    } catch (e: NoClassDefFoundError) {
-        // Gradle version < 6.6
-        null
-    }
-
-    fun zipTree(obj: Any): FileTree {
-        return when (archiveOperations) {
-            is ArchiveOperations -> archiveOperations.zipTree(obj)
-            else -> project.zipTree(obj)
-        }
-    }
-
-    fun tarTree(obj: Any): FileTree {
-        return when (archiveOperations) {
-            is ArchiveOperations -> archiveOperations.tarTree(obj)
-            else -> project.tarTree(obj)
-        }
-    }
-}
-
-internal class FileSystemOperationsCompat(@Transient private val project: Project) : Serializable {
-    private val fileSystemOperations: Any? = try {
-        (project as ProjectInternal).services.get(FileSystemOperations::class.java)
-    } catch (e: NoClassDefFoundError) {
-        // Gradle version < 6.0
-        null
-    }
-
-    fun copy(action: (CopySpec) -> Unit): WorkResult? {
-        return when (fileSystemOperations) {
-            is FileSystemOperations -> fileSystemOperations.copy(action)
-            else -> project.copy(action)
-        }
-    }
-}
-
 // Gradle dropped out getOwnerBuildOperationId. Workaround to build correct plugin for Gradle < 6.8
 // See https://github.com/gradle/gradle/commit/0296f4441ae69ad608cfef6a90fef3fdf314fa2c
 internal interface LegacyTestDescriptorInternal : TestDescriptor {
@@ -114,6 +76,18 @@ internal fun Task.doNotTrackStateCompat(because: String) {
         outputs.upToDateWhen { false }
     } else {
         doNotTrackState(because)
+    }
+}
+
+/**
+ * According to [Gradle 7.6 release notes](https://docs.gradle.org/7.6/release-notes.html#introduced-ability-to-explain-why-a-task-was-skipped-with-a-message)
+ * [Task.onlyIf] has reason message`
+ */
+internal fun Task.onlyIfCompat(onlyIfReason: String, onlyIfSpec: Spec<in Task>) {
+    if (GradleVersion.current() < GradleVersion.version("7.6")) {
+        onlyIf(onlyIfSpec)
+    } else {
+        onlyIf(onlyIfReason, onlyIfSpec)
     }
 }
 

@@ -58,12 +58,11 @@ object FirActualCallableDeclarationChecker : FirCallableDeclarationChecker() {
                 context.session
             )
         ) {
-            @Suppress("UNCHECKED_CAST")
             reporter.reportOn(
                 callableDeclaration.source,
                 FirErrors.ACTUAL_WITHOUT_EXPECT,
                 actualFunctionSymbol,
-                actualFunctionSymbol.expectForActual as Map<ExpectActualCompatibility.Incompatible<FirBasedSymbol<*>>, Collection<FirBasedSymbol<*>>>,
+                actualFunctionSymbol.expectForActual as Map<ExpectActualCompatibility<FirBasedSymbol<*>>, Collection<FirBasedSymbol<*>>>,
                 context
             )
         }

@@ -11,14 +11,17 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationArtifact.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationResult.Companion.assertSuccess
+import org.jetbrains.kotlin.konan.blackboxtest.support.group.UsePartialLinkage
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
 import org.junit.jupiter.api.Tag
 import java.io.File
 
 @Tag("klib-contents")
+@UsePartialLinkage(UsePartialLinkage.Mode.DISABLED)
 abstract class AbstractNativeKlibContentsTest : AbstractNativeSimpleTest() {
 
     protected fun runTest(@TestDataFile testPath: String) {
@@ -31,15 +34,12 @@ abstract class AbstractNativeKlibContentsTest : AbstractNativeSimpleTest() {
         val kotlinNativeClassLoader = testRunSettings.get<KotlinNativeClassLoader>()
         val klibContents = testCompilationResult.assertSuccess().resultingArtifact.getContents(kotlinNativeClassLoader.classLoader)
         val klibContentsFiltered = filterContentsOutput(klibContents, linestoExclude = listOf("package test {", "}", ""))
-        val expectedContents = File("${testPathFull.canonicalPath.substringBeforeLast(".")}.txt").readText()
-        assertEquals(StringUtilRt.convertLineSeparators(expectedContents), StringUtilRt.convertLineSeparators(klibContentsFiltered)) {
-            "Test failed. Compilation result was: $testCompilationResult"
-        }
+        assertEqualsToFile(File("${testPathFull.canonicalPath.substringBeforeLast(".")}.txt"), StringUtilRt.convertLineSeparators(klibContentsFiltered))
     }
 
     private fun generateTestCaseWithSingleSource(source: File, extraArgs: List<String>): TestCase {
         val moduleName: String = source.name
-        val module = TestModule.Exclusive(moduleName, emptySet(), emptySet())
+        val module = TestModule.Exclusive(moduleName, emptySet(), emptySet(), emptySet())
         module.files += TestFile.createCommitted(source, module)
 
         return TestCase(

@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
 import com.intellij.openapi.diagnostic.Logger
-import org.jetbrains.kotlin.analysis.api.components.KtImplicitReceiver
-import org.jetbrains.kotlin.analysis.api.components.KtScopeContext
-import org.jetbrains.kotlin.analysis.api.components.KtScopeProvider
+import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.scopes.KtFe10FileScope
@@ -200,15 +198,16 @@ internal class KtFe10ScopeProvider(
         val elementToAnalyze = positionInFakeFile.containingNonLocalDeclaration() ?: originalFile
         val bindingContext = analysisContext.analyze(elementToAnalyze)
 
+        val scopeKind = KtScopeKind.LocalScope(0) // TODO
         val lexicalScope = positionInFakeFile.getResolutionScope(bindingContext)
         if (lexicalScope != null) {
             val compositeScope = KtCompositeScope(listOf(KtFe10ScopeLexical(lexicalScope, analysisContext)), token)
-            return KtScopeContext(compositeScope, collectImplicitReceivers(lexicalScope), token)
+            return KtScopeContext(listOf(KtScopeWithKind(compositeScope, scopeKind, token)), collectImplicitReceivers(lexicalScope), token)
         }
 
         val fileScope = analysisContext.resolveSession.fileScopeProvider.getFileResolutionScope(originalFile)
         val compositeScope = KtCompositeScope(listOf(KtFe10ScopeLexical(fileScope, analysisContext)), token)
-        return KtScopeContext(compositeScope, collectImplicitReceivers(fileScope), token)
+        return KtScopeContext(listOf(KtScopeWithKind(compositeScope, scopeKind, token)), collectImplicitReceivers(fileScope), token)
     }
 
     private inline fun <reified T : DeclarationDescriptor> getDescriptor(symbol: KtSymbol): T? {
@@ -225,7 +224,7 @@ internal class KtFe10ScopeProvider(
     private fun collectImplicitReceivers(scope: LexicalScope): MutableList<KtImplicitReceiver> {
         val result = mutableListOf<KtImplicitReceiver>()
 
-        for (implicitReceiver in scope.getImplicitReceiversHierarchy()) {
+        for ((index, implicitReceiver) in scope.getImplicitReceiversHierarchy().withIndex()) {
             val type = implicitReceiver.type.toKtType(analysisContext)
             val ownerDescriptor = implicitReceiver.containingDeclaration
             val owner = ownerDescriptor.toKtSymbol(analysisContext)
@@ -235,7 +234,7 @@ internal class KtFe10ScopeProvider(
                 continue
             }
 
-            result += KtImplicitReceiver(token, type, owner)
+            result += KtImplicitReceiver(token, type, owner, index)
         }
 
         return result

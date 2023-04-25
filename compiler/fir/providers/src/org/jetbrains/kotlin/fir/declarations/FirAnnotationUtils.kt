@@ -78,7 +78,7 @@ fun FirAnnotation.isJvmFieldAnnotation(session: FirSession): Boolean =
 fun FirAnnotation.useSiteTargetsFromMetaAnnotation(session: FirSession): Set<AnnotationUseSiteTarget> {
     return toAnnotationClass(session)
         ?.annotations
-        ?.find { it.toAnnotationClassId(session) == StandardClassIds.Annotations.Target }
+        ?.find { it.toAnnotationClassIdSafe(session) == StandardClassIds.Annotations.Target }
         ?.findUseSiteTargets()
         ?: DEFAULT_USE_SITE_TARGETS
 }
@@ -175,6 +175,12 @@ fun FirAnnotationContainer.getAnnotationsByClassId(classId: ClassId, session: Fi
 fun List<FirAnnotation>.getAnnotationsByClassId(classId: ClassId, session: FirSession): List<FirAnnotation> {
     return filter {
         it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType(session)?.lookupTag?.classId == classId
+    }
+}
+
+fun List<FirAnnotation>.getAnnotationByClassIds(classIds: Collection<ClassId>, session: FirSession): FirAnnotation? {
+    return firstOrNull {
+        it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType(session)?.lookupTag?.classId in classIds
     }
 }
 

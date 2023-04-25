@@ -17,6 +17,9 @@ public final class SmartSet /* SmartSet*/<T>  extends kotlin.collections.Abstrac
   public boolean add(T);//  add(T)
 
   @java.lang.Override()
+  public int getSize();//  getSize()
+
+  @java.lang.Override()
   public void clear();//  clear()
 
   @kotlin.jvm.JvmStatic()
@@ -28,8 +31,6 @@ public final class SmartSet /* SmartSet*/<T>  extends kotlin.collections.Abstrac
   public static final <T> SmartSet<T> create(@org.jetbrains.annotations.NotNull() java.util.Collection<? extends T>);// <T>  create(java.util.Collection<? extends T>)
 
   private  SmartSet();//  .ctor()
-
-  public int getSize();//  getSize()
 
   public void setSize(int);//  setSize(int)
 

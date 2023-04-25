@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.isGetterOfUnderlyingPropertyOfInlineClass
 import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
-import org.jetbrains.kotlin.resolve.jvm.shouldHideConstructorDueToInlineClassTypeValueParameters
+import org.jetbrains.kotlin.resolve.jvm.shouldHideConstructorDueToValueClassTypeValueParameters
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.builtIns
@@ -191,7 +191,7 @@ private fun getSignatureString(callable: CallableDescriptor, state: GenerationSt
 
     val accessor = when (callable) {
         is ClassConstructorDescriptor ->
-            if (shouldHideConstructorDueToInlineClassTypeValueParameters(callable))
+            if (shouldHideConstructorDueToValueClassTypeValueParameters(callable))
                 AccessorForConstructorDescriptor(callable, callable.containingDeclaration, null, AccessorKind.NORMAL)
             else
                 callable

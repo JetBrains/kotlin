@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -13,23 +13,31 @@ import org.jetbrains.kotlin.fir.analysis.checkers.getContainingDeclarationSymbol
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.copy
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.builder.*
+import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunctionCopy
 import org.jetbrains.kotlin.fir.declarations.origin
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.extensions.*
 import org.jetbrains.kotlin.fir.plugin.*
-import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.scopes.*
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
+import org.jetbrains.kotlin.fir.scopes.getFunctions
+import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.scopes.impl.toConeType
+import org.jetbrains.kotlin.fir.scopes.scopeForSupertype
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeTypeProjection
+import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.types.constructClassLikeType
+import org.jetbrains.kotlin.fir.types.constructType
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.platform.isJs
+import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIALIZER_FACTORY_INTERFACE_NAME
@@ -140,7 +148,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
         val scopes = lookupSuperTypes(
             owner, lookupInterfaces = true, deep = false, useSiteSession = session
         ).mapNotNull { useSiteSuperType ->
-            useSiteSuperType.scopeForSupertype(session, scopeSession, owner.fir)
+            useSiteSuperType.scopeForSupertype(session, scopeSession, owner.fir, memberRequiredPhase = null)
         }
         val targets = scopes.flatMap { extractor(it) }
         return targets.singleOrNull() ?: error("Multiple overrides found for ${callableId.callableName}")
@@ -302,10 +310,9 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
         get() = session.predicateBasedProvider.matches(FirSerializationPredicates.serializerFor, this)
 
     context(FirSession)
-    @Suppress("IncorrectFormatting") // KTIJ-22227
     private val FirClassSymbol<*>.companionNeedsSerializerFactory: Boolean
         get() {
-            if (!(moduleData.platform.isNative() || moduleData.platform.isJs())) return false
+            if (!(moduleData.platform.isNative() || moduleData.platform.isJs() || moduleData.platform.isWasm())) return false
             if (isSerializableObject) return true
             if (isSerializableEnum) return true
             if (isAbstractOrSealedSerializableClass) return true

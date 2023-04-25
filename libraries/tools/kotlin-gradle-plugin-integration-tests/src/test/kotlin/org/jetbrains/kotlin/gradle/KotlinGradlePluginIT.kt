@@ -418,7 +418,7 @@ class KotlinGradleIT : KGPBaseTest() {
                 
                 task sourcesJar(type: Jar) {
                     from sourceSets.main.allSource
-                    classifier 'source'
+                    archiveClassifier = 'source'
                     duplicatesStrategy = 'fail' // fail in case of Java source duplication, see KT-17564
                 }
 

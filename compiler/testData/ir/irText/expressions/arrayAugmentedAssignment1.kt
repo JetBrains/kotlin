@@ -1,3 +1,6 @@
+// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS_IR_ES6
+
 fun foo(): IntArray = intArrayOf(1, 2, 3)
 fun bar() = 42
 

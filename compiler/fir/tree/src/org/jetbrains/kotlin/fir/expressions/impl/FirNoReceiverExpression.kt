@@ -8,14 +8,14 @@ package org.jetbrains.kotlin.fir.expressions.impl
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImpl
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 
 object FirNoReceiverExpression : FirExpression() {
     override val source: KtSourceElement? = null
-    override val typeRef: FirTypeRef = FirImplicitTypeRefImpl(null)
+    override val typeRef: FirTypeRef = FirImplicitTypeRefImplWithoutSource
     override val annotations: List<FirAnnotation> get() = emptyList()
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}

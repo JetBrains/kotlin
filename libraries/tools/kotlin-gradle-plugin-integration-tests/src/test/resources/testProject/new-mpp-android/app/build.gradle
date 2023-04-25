@@ -4,12 +4,17 @@ apply plugin: 'kotlin-multiplatform'
 group 'com.example'
 version '1.0'
 
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(8))
+}
+
 android {
-    compileSdkVersion 27
+    compileSdkVersion 31
+    namespace 'app.example.com.app_sample'
     defaultConfig {
         applicationId "app.example.com.app_sample"
-        minSdkVersion 21
-        targetSdkVersion 30
+        minSdkVersion 26
+        targetSdkVersion 31
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -74,4 +79,8 @@ task printCompilerPluginOptions {
             println sourceSet.name + '=cp=>' + cp
         }
     }
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile) {
+    kotlinOptions.freeCompilerArgs += "-Xforce-deprecated-legacy-compiler-usage"
 }

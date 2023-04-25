@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
 import org.jetbrains.kotlin.ir.interpreter.proxy.Proxy
 import org.jetbrains.kotlin.ir.interpreter.stack.CallStack
@@ -118,8 +119,9 @@ class IrInterpreterEnvironment(
         return when (state) {
             is Primitive<*> ->
                 when {
-                    state.value == null -> state.value.toIrConst(type, start, end)
-                    type.isPrimitiveType() || type.isString() -> state.value.toIrConst(type, start, end)
+                    configuration.treatFloatInSpecialWay && state.value is Float -> IrConstImpl.float(start, end, type, state.value)
+                    configuration.treatFloatInSpecialWay && state.value is Double -> IrConstImpl.double(start, end, type, state.value)
+                    state.value == null || type.isPrimitiveType() || type.isString() -> state.value.toIrConst(type, start, end)
                     else -> original // TODO support for arrays
                 }
             is ExceptionState -> {

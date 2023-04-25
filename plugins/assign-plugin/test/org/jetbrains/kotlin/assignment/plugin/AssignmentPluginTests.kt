@@ -72,7 +72,10 @@ fun TestConfigurationBuilder.configureDiagnostics() {
 
 class AssignmentPluginEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     companion object {
-        private val TEST_ANNOTATIONS = listOf("ValueContainer")
+        private val TEST_ANNOTATIONS = listOf(
+            "ValueContainer",
+            "qualified.ValueContainer",
+        )
     }
 
     @OptIn(InternalNonStableExtensionPoints::class)

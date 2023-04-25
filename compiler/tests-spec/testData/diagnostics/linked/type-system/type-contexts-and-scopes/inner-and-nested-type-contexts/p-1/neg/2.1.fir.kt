@@ -5,7 +5,7 @@
 // TESTCASE NUMBER: 1
 class Case1<AT>(val x: AT) {
 
-    class B(val y: AT) {
+    class B(val y: <!UNRESOLVED_REFERENCE!>AT<!>) {
         fun case1() {
             val k: <!UNRESOLVED_REFERENCE!>AT<!>
         }
@@ -21,6 +21,6 @@ class Case1<AT>(val x: AT) {
     }
 
     class D() {
-        fun case1(x: Any) : AT = TODO()
+        fun case1(x: Any) : <!UNRESOLVED_REFERENCE!>AT<!> = TODO()
     }
 }

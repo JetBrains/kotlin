@@ -5,12 +5,17 @@ apply plugin: 'maven-publish'
 group 'com.example'
 version '1.0'
 
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(8))
+}
+
 android {
-    compileSdkVersion 27
+    compileSdkVersion 31
+    namespace 'app.example.com.lib'
 
     defaultConfig {
-        minSdkVersion 21
-        targetSdkVersion 30
+        minSdkVersion 26
+        targetSdkVersion 31
         versionCode 1
         versionName "1.0"
 
@@ -92,4 +97,8 @@ publishing {
             url = uri("$buildDir/repo")
         }
 	}
+}
+
+tasks.withType(org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile) {
+    kotlinOptions.freeCompilerArgs += "-Xforce-deprecated-legacy-compiler-usage"
 }

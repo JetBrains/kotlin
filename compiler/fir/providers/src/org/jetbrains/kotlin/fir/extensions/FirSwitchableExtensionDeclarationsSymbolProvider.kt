@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.fir.extensions
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -24,9 +27,8 @@ class FirSwitchableExtensionDeclarationsSymbolProvider private constructor(
     private val delegate: FirExtensionDeclarationsSymbolProvider
 ) : FirSymbolProvider(delegate.session) {
     companion object {
-        fun create(session: FirSession): FirSwitchableExtensionDeclarationsSymbolProvider? {
-            return FirExtensionDeclarationsSymbolProvider.create(session)?.let { FirSwitchableExtensionDeclarationsSymbolProvider(it) }
-        }
+        fun createIfNeeded(session: FirSession): FirSwitchableExtensionDeclarationsSymbolProvider? =
+            FirExtensionDeclarationsSymbolProvider.createIfNeeded(session)?.let { FirSwitchableExtensionDeclarationsSymbolProvider(it) }
     }
 
     private var disabled: Boolean = false

@@ -78,17 +78,17 @@ FILE fqName:<root> fileName:/functionalType.kt
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
       $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-  FUN name:f visibility:public modality:FINAL <T> ($receiver:<root>.K, _context_receiver_0:<root>.O, g:@[ExtensionFunctionType] kotlin.Function3<<root>.O, <root>.K, <root>.Param, T of <root>.f>) returnType:T of <root>.f
+  FUN name:f visibility:public modality:FINAL <T> ($receiver:<root>.K, $context_receiver_0:<root>.O, g:@[ExtensionFunctionType] kotlin.Function3<<root>.O, <root>.K, <root>.Param, T of <root>.f>) returnType:T of <root>.f
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     contextReceiverParametersCount: 1
     $receiver: VALUE_PARAMETER name:<this> type:<root>.K
-    VALUE_PARAMETER name:_context_receiver_0 index:0 type:<root>.O
+    VALUE_PARAMETER name:$context_receiver_0 index:0 type:<root>.O
     VALUE_PARAMETER name:g index:1 type:@[ExtensionFunctionType] kotlin.Function3<<root>.O, <root>.K, <root>.Param, T of <root>.f>
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun f <T> (_context_receiver_0: <root>.O, g: @[ExtensionFunctionType] kotlin.Function3<<root>.O, <root>.K, <root>.Param, T of <root>.f>): T of <root>.f declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun f <T> ($context_receiver_0: <root>.O, g: @[ExtensionFunctionType] kotlin.Function3<<root>.O, <root>.K, <root>.Param, T of <root>.f>): T of <root>.f declared in <root>'
         CALL 'public abstract fun invoke (p1: P1 of kotlin.Function3, p2: P2 of kotlin.Function3, p3: P3 of kotlin.Function3): R of kotlin.Function3 [operator] declared in kotlin.Function3' type=T of <root>.f origin=INVOKE
           $this: GET_VAR 'g: @[ExtensionFunctionType] kotlin.Function3<<root>.O, <root>.K, <root>.Param, T of <root>.f> declared in <root>.f' type=@[ExtensionFunctionType] kotlin.Function3<<root>.O, <root>.K, <root>.Param, T of <root>.f> origin=VARIABLE_AS_FUNCTION
-          p1: GET_VAR '_context_receiver_0: <root>.O declared in <root>.f' type=<root>.O origin=null
+          p1: GET_VAR '$context_receiver_0: <root>.O declared in <root>.f' type=<root>.O origin=null
           p2: GET_VAR '<this>: <root>.K declared in <root>.f' type=<root>.K origin=null
           p3: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.Param' type=<root>.Param origin=null
   FUN name:box visibility:public modality:FINAL <> () returnType:kotlin.String
@@ -103,18 +103,18 @@ FILE fqName:<root> fileName:/functionalType.kt
               $receiver: VALUE_PARAMETER name:$this$with type:<root>.O
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.box'
-                  CALL 'public final fun f <T> (_context_receiver_0: <root>.O, g: @[ExtensionFunctionType] kotlin.Function3<<root>.O, <root>.K, <root>.Param, T of <root>.f>): T of <root>.f declared in <root>' type=kotlin.String origin=null
+                  CALL 'public final fun f <T> ($context_receiver_0: <root>.O, g: @[ExtensionFunctionType] kotlin.Function3<<root>.O, <root>.K, <root>.Param, T of <root>.f>): T of <root>.f declared in <root>' type=kotlin.String origin=null
                     <T>: kotlin.String
                     $receiver: CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.K' type=<root>.K origin=null
-                    _context_receiver_0: GET_VAR '$this$with: <root>.O declared in <root>.box.<anonymous>' type=<root>.O origin=null
+                    $context_receiver_0: GET_VAR '$this$with: <root>.O declared in <root>.box.<anonymous>' type=<root>.O origin=null
                     g: FUN_EXPR type=@[ExtensionFunctionType] kotlin.Function3<<root>.O, <root>.K, <root>.Param, kotlin.String> origin=LAMBDA
-                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.K, _context_receiver_0:<root>.O, it:<root>.Param) returnType:kotlin.String
+                      FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:<root>.K, $context_receiver_0:<root>.O, it:<root>.Param) returnType:kotlin.String
                         contextReceiverParametersCount: 1
                         $receiver: VALUE_PARAMETER name:$this$f type:<root>.K
-                        VALUE_PARAMETER name:_context_receiver_0 index:0 type:<root>.O
+                        VALUE_PARAMETER name:$context_receiver_0 index:0 type:<root>.O
                         VALUE_PARAMETER name:it index:1 type:<root>.Param
                         BLOCK_BODY
-                          RETURN type=kotlin.Nothing from='local final fun <anonymous> (_context_receiver_0: <root>.O, it: <root>.Param): kotlin.String declared in <root>.box.<anonymous>'
+                          RETURN type=kotlin.Nothing from='local final fun <anonymous> ($context_receiver_0: <root>.O, it: <root>.Param): kotlin.String declared in <root>.box.<anonymous>'
                             CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=PLUS
                               $this: CALL 'public final fun <get-o> (): kotlin.String declared in <root>.O' type=kotlin.String origin=GET_PROPERTY
                                 $this: GET_VAR '$this$with: <root>.O declared in <root>.box.<anonymous>' type=<root>.O origin=null

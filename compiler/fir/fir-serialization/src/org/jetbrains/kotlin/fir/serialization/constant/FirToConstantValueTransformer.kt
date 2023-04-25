@@ -5,39 +5,60 @@
 
 package org.jetbrains.kotlin.fir.serialization.constant
 
+import org.jetbrains.kotlin.constant.*
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
+import org.jetbrains.kotlin.fir.declarations.utils.isConst
+import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationArgumentMapping
-import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCall
-import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.render
+import org.jetbrains.kotlin.fir.java.declarations.FirJavaField
 import org.jetbrains.kotlin.fir.resolve.toFirRegularClassSymbol
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirArrayOfCallTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirArrayOfCallTransformer.Companion.isArrayOfCall
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.classId
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
-import org.jetbrains.kotlin.fir.types.coneTypeUnsafe
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
 import org.jetbrains.kotlin.types.ConstantValueKind
 
-internal fun FirExpression.toConstantValue(session: FirSession): ConstantValue<*>? = accept(FirToConstantValueTransformer, session)
+internal fun FirExpression.toConstantValue(session: FirSession, constValueProvider: ConstValueProvider? = null): ConstantValue<*>? {
+    constValueProvider?.findConstantValueFor(this)?.let { return it }
+    return accept(FirToConstantValueTransformerUnsafe(), FirToConstantValueTransformerData(session, constValueProvider))
+}
 
-internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<*>?, FirSession>() {
+internal fun FirExpression?.hasConstantValue(session: FirSession): Boolean {
+    return this?.accept(FirToConstantValueChecker, session) == true
+}
+
+private class FirToConstantValueTransformerSafe : FirToConstantValueTransformer(failOnNonConst = false)
+
+private class FirToConstantValueTransformerUnsafe : FirToConstantValueTransformer(failOnNonConst = true)
+
+private data class FirToConstantValueTransformerData(
+    val session: FirSession,
+    val constValueProvider: ConstValueProvider?,
+)
+
+private abstract class FirToConstantValueTransformer(
+    private val failOnNonConst: Boolean,
+) : FirDefaultVisitor<ConstantValue<*>?, FirToConstantValueTransformerData>() {
     override fun visitElement(
         element: FirElement,
-        data: FirSession
+        data: FirToConstantValueTransformerData
     ): ConstantValue<*>? {
-        error("Illegal element as annotation argument: ${element::class.qualifiedName} -> ${element.render()}")
+        if (failOnNonConst) {
+            error("Illegal element as annotation argument: ${element::class.qualifiedName} -> ${element.render()}")
+        }
+        return null
     }
 
-    @OptIn(ExperimentalUnsignedTypes::class)
     override fun <T> visitConstExpression(
         constExpression: FirConstExpression<T>,
-        data: FirSession
+        data: FirToConstantValueTransformerData
     ): ConstantValue<*>? {
         val value = constExpression.value
         return when (constExpression.kind) {
@@ -49,74 +70,85 @@ internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<
             ConstantValueKind.UnsignedShort -> UShortValue((value as Number).toShort())
             ConstantValueKind.Int -> IntValue((value as Number).toInt())
             ConstantValueKind.UnsignedInt -> UIntValue((value as Number).toInt())
-            ConstantValueKind.Long -> LongValue(value as Long)
-            ConstantValueKind.UnsignedLong -> ULongValue(value as Long)
+            ConstantValueKind.Long -> LongValue((value as Number).toLong())
+            ConstantValueKind.UnsignedLong -> ULongValue((value as Number).toLong())
             ConstantValueKind.String -> StringValue(value as String)
-            ConstantValueKind.Float -> FloatValue(value as Float)
-            ConstantValueKind.Double -> DoubleValue(value as Double)
+            ConstantValueKind.Float -> FloatValue((value as Number).toFloat())
+            ConstantValueKind.Double -> DoubleValue((value as Number).toDouble())
             ConstantValueKind.Null -> NullValue
             else -> null
         }
     }
 
+    override fun visitStringConcatenationCall(
+        stringConcatenationCall: FirStringConcatenationCall,
+        data: FirToConstantValueTransformerData
+    ): ConstantValue<*>? {
+        val strings = stringConcatenationCall.argumentList.arguments.map { it.accept(this, data) }
+        if (strings.any { it == null || it !is StringValue }) return null
+        return StringValue(strings.joinToString(separator = "") { (it as StringValue).value })
+    }
+
     override fun visitArrayOfCall(
         arrayOfCall: FirArrayOfCall,
-        data: FirSession
+        data: FirToConstantValueTransformerData
     ): ConstantValue<*> {
         return ArrayValue(arrayOfCall.argumentList.arguments.mapNotNull { it.accept(this, data) })
     }
 
     override fun visitAnnotation(
         annotation: FirAnnotation,
-        data: FirSession
+        data: FirToConstantValueTransformerData
     ): ConstantValue<*> {
-        return AnnotationValue(annotation)
+        val mapping = annotation.argumentMapping.mapping.convertToConstantValues(data.session, data.constValueProvider)
+        return AnnotationValue.create(annotation.annotationTypeRef.coneType, mapping)
     }
 
-    override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: FirSession): ConstantValue<*> {
+    override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: FirToConstantValueTransformerData): ConstantValue<*> {
         return visitAnnotation(annotationCall, data)
     }
 
     override fun visitGetClassCall(
         getClassCall: FirGetClassCall,
-        data: FirSession
+        data: FirToConstantValueTransformerData
     ): ConstantValue<*>? {
-        return KClassValue.create(getClassCall.argument.typeRef.coneTypeUnsafe())
+        return create(getClassCall.argument.typeRef.coneTypeUnsafe())
     }
 
     override fun visitQualifiedAccessExpression(
         qualifiedAccessExpression: FirQualifiedAccessExpression,
-        data: FirSession
+        data: FirToConstantValueTransformerData
     ): ConstantValue<*>? {
         val symbol = qualifiedAccessExpression.toResolvedCallableSymbol() ?: return null
+        val fir = symbol.fir
 
         return when {
             symbol.fir is FirEnumEntry -> {
-                val classId = symbol.fir.returnTypeRef.coneTypeSafe<ConeClassLikeType>()?.classId ?: return null
+                val classId = symbol.callableId.classId ?: return null
                 EnumValue(classId, (symbol.fir as FirEnumEntry).name)
+            }
+
+            symbol is FirPropertySymbol -> {
+                if (symbol.fir.isConst) symbol.fir.initializer?.accept(this, data) else null
+            }
+
+            fir is FirJavaField -> {
+                if (fir.isFinal) {
+                    fir.initializer?.accept(this, data)
+                } else {
+                    null
+                }
             }
 
             symbol is FirConstructorSymbol -> {
                 val constructorCall = qualifiedAccessExpression as FirFunctionCall
-                val constructedClassSymbol = symbol.containingClassLookupTag()?.toFirRegularClassSymbol(data) ?: return null
-                return if (constructedClassSymbol.classKind == ClassKind.ANNOTATION_CLASS) {
-                    AnnotationValue(
-                        buildAnnotationCall {
-                            argumentMapping = buildAnnotationArgumentMapping {
-                                constructorCall.resolvedArgumentMapping?.forEach { (firExpression, firValueParameter) ->
-                                    mapping[firValueParameter.name] = firExpression
-                                }
-                            }
-                            annotationTypeRef = qualifiedAccessExpression.typeRef
-                            calleeReference = buildSimpleNamedReference {
-                                source = qualifiedAccessExpression.source
-                                name = qualifiedAccessExpression.calleeReference.name
-                            }
-                        }
-                    )
-                } else {
-                    null
-                }
+                val constructedClassSymbol = symbol.containingClassLookupTag()?.toFirRegularClassSymbol(data.session) ?: return null
+                if (constructedClassSymbol.classKind != ClassKind.ANNOTATION_CLASS) return null
+
+                val mapping = constructorCall.resolvedArgumentMapping
+                    ?.convertToConstantValues(data.session, data.constValueProvider)
+                    ?: return null
+                return AnnotationValue.create(qualifiedAccessExpression.typeRef.coneType, mapping)
             }
 
             symbol.callableId.packageName.asString() == "kotlin" -> {
@@ -128,7 +160,7 @@ internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<
                     "toShort" -> ShortValue((dispatchReceiverValue!!.value as Number).toShort())
                     "toFloat" -> FloatValue((dispatchReceiverValue!!.value as Number).toFloat())
                     "toDouble" -> DoubleValue((dispatchReceiverValue!!.value as Number).toDouble())
-                    "toChar" -> CharValue((dispatchReceiverValue!!.value as Number).toChar())
+                    "toChar" -> CharValue((dispatchReceiverValue!!.value as Number).toInt().toChar())
                     "unaryMinus" -> {
                         when (val receiverValue = dispatchReceiverValue) {
                             is ByteValue -> ByteValue((-receiverValue.value).toByte())
@@ -147,25 +179,116 @@ internal object FirToConstantValueTransformer : FirDefaultVisitor<ConstantValue<
         }
     }
 
-    override fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression, data: FirSession): ConstantValue<*>? {
+    override fun visitPropertyAccessExpression(
+        propertyAccessExpression: FirPropertyAccessExpression,
+        data: FirToConstantValueTransformerData
+    ): ConstantValue<*>? {
         return visitQualifiedAccessExpression(propertyAccessExpression, data)
     }
 
     override fun visitFunctionCall(
         functionCall: FirFunctionCall,
-        data: FirSession
+        data: FirToConstantValueTransformerData
     ): ConstantValue<*>? {
+        if (functionCall.isArrayOfCall) {
+            return FirArrayOfCallTransformer().transformFunctionCall(functionCall, null).accept(this, data)
+        }
         return visitQualifiedAccessExpression(functionCall, data)
     }
 
     override fun visitVarargArgumentsExpression(
         varargArgumentsExpression: FirVarargArgumentsExpression,
-        data: FirSession
+        data: FirToConstantValueTransformerData
     ): ConstantValue<*> {
         return ArrayValue(varargArgumentsExpression.arguments.mapNotNull { it.accept(this, data) })
     }
 
-    override fun visitNamedArgumentExpression(namedArgumentExpression: FirNamedArgumentExpression, data: FirSession): ConstantValue<*>? {
+    override fun visitNamedArgumentExpression(
+        namedArgumentExpression: FirNamedArgumentExpression,
+        data: FirToConstantValueTransformerData
+    ): ConstantValue<*>? {
+        return namedArgumentExpression.expression.accept(this, data)
+    }
+}
+
+internal object FirToConstantValueChecker : FirDefaultVisitor<Boolean, FirSession>() {
+    // `null` value is not treated as a const
+    private val supportedConstKinds = setOf<ConstantValueKind<*>>(
+        ConstantValueKind.Boolean, ConstantValueKind.Char, ConstantValueKind.String, ConstantValueKind.Float, ConstantValueKind.Double,
+        ConstantValueKind.Byte, ConstantValueKind.UnsignedByte, ConstantValueKind.Short, ConstantValueKind.UnsignedShort,
+        ConstantValueKind.Int, ConstantValueKind.UnsignedInt, ConstantValueKind.Long, ConstantValueKind.UnsignedLong,
+    )
+
+    private val constantIntrinsicCalls = setOf("toByte", "toLong", "toShort", "toFloat", "toDouble", "toChar", "unaryMinus")
+
+    override fun visitElement(element: FirElement, data: FirSession): Boolean {
+        return false
+    }
+
+    override fun <T> visitConstExpression(
+        constExpression: FirConstExpression<T>,
+        data: FirSession
+    ): Boolean {
+        return constExpression.kind in supportedConstKinds
+    }
+
+    override fun visitStringConcatenationCall(stringConcatenationCall: FirStringConcatenationCall, data: FirSession): Boolean {
+        return stringConcatenationCall.argumentList.arguments.all { it.accept(this, data) }
+    }
+
+    override fun visitArrayOfCall(arrayOfCall: FirArrayOfCall, data: FirSession): Boolean {
+        return arrayOfCall.arguments.all { it.accept(this, data) }
+    }
+
+    override fun visitAnnotation(annotation: FirAnnotation, data: FirSession): Boolean = true
+
+    override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: FirSession): Boolean = true
+
+    override fun visitGetClassCall(getClassCall: FirGetClassCall, data: FirSession): Boolean {
+        return create(getClassCall.argument.typeRef.coneTypeUnsafe()) != null
+    }
+
+    override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: FirSession): Boolean {
+        val symbol = qualifiedAccessExpression.toResolvedCallableSymbol() ?: return false
+        val fir = symbol.fir
+
+        return when {
+            symbol.fir is FirEnumEntry -> symbol.callableId.classId != null
+
+            symbol is FirPropertySymbol -> symbol.fir.isConst
+
+            fir is FirJavaField -> symbol.fir.isFinal
+
+            symbol is FirConstructorSymbol -> {
+                symbol.containingClassLookupTag()?.toFirRegularClassSymbol(data)?.classKind == ClassKind.ANNOTATION_CLASS
+            }
+
+            symbol.callableId.packageName.asString() == "kotlin" -> {
+                val dispatchReceiver = qualifiedAccessExpression.dispatchReceiver
+                when (symbol.callableId.callableName.asString()) {
+                    !in constantIntrinsicCalls -> false
+                    else -> dispatchReceiver.accept(this, data)
+                }
+            }
+
+            else -> false
+        }
+    }
+
+    override fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression, data: FirSession): Boolean {
+        return visitQualifiedAccessExpression(propertyAccessExpression, data)
+    }
+
+    override fun visitFunctionCall(functionCall: FirFunctionCall, data: FirSession): Boolean {
+        if (functionCall.isArrayOfCall) return functionCall.arguments.all { it.accept(this, data) }
+        return visitQualifiedAccessExpression(functionCall, data)
+    }
+
+    override fun visitVarargArgumentsExpression(varargArgumentsExpression: FirVarargArgumentsExpression, data: FirSession): Boolean {
+        return varargArgumentsExpression.arguments.all { it.accept(this, data) }
+    }
+
+    override fun visitNamedArgumentExpression(namedArgumentExpression: FirNamedArgumentExpression, data: FirSession): Boolean {
         return namedArgumentExpression.expression.accept(this, data)
     }
 }

@@ -8,7 +8,10 @@ package org.jetbrains.kotlinx.serialization.compiler.fir.checkers
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.diagnostics.*
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
+import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.containsRepeatableAnnotation
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirClassChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.isSingleFieldValueClass
@@ -21,13 +24,13 @@ import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.name.*
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.annotations.TRANSIENT_ANNOTATION_CLASS_ID
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlinx.serialization.compiler.diagnostic.RuntimeVersions
 import org.jetbrains.kotlinx.serialization.compiler.fir.*
 import org.jetbrains.kotlinx.serialization.compiler.fir.checkers.FirSerializationErrors.EXTERNAL_SERIALIZER_USELESS
-import org.jetbrains.kotlinx.serialization.compiler.fir.getSerializerForClass
 import org.jetbrains.kotlinx.serialization.compiler.fir.services.dependencySerializationInfoProvider
 import org.jetbrains.kotlinx.serialization.compiler.fir.services.findTypeSerializerOrContextUnchecked
 import org.jetbrains.kotlinx.serialization.compiler.fir.services.serializablePropertiesProvider
@@ -46,6 +49,7 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
         with(context) {
             val classSymbol = declaration.symbol
             checkMetaSerializableApplicable(classSymbol, reporter)
+            checkInheritableSerialInfoNotRepeatable(classSymbol, reporter)
             checkEnum(classSymbol, reporter)
             checkExternalSerializer(classSymbol, reporter)
             if (!canBeSerializedInternally(classSymbol, reporter)) return
@@ -72,7 +76,16 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
     }
 
     context(CheckerContext)
-    @Suppress("IncorrectFormatting") // KTIJ-22227
+    private fun checkInheritableSerialInfoNotRepeatable(classSymbol: FirClassSymbol<out FirClass>, reporter: DiagnosticReporter) {
+        if (classSymbol.classKind != ClassKind.ANNOTATION_CLASS) return
+        if (!classSymbol.containsRepeatableAnnotation(session)) return
+        val anno = classSymbol.resolvedAnnotationsWithClassIds
+            .find { it.toAnnotationClassId(session) == SerializationAnnotations.inheritableSerialInfoClassId }
+            ?: return
+        reporter.reportOn(anno.source, FirSerializationErrors.INHERITABLE_SERIALINFO_CANT_BE_REPEATABLE)
+    }
+
+    context(CheckerContext)
     private fun checkExternalSerializer(classSymbol: FirClassSymbol<*>, reporter: DiagnosticReporter) {
         val serializableKType = classSymbol.getSerializerForClass(session) ?: return
         val serializableClassSymbol = serializableKType.toRegularClassSymbol(session) ?: return
@@ -116,7 +129,6 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
     }
 
     context(CheckerContext)
-    @Suppress("IncorrectFormatting") // KTIJ-22227
     private fun checkInheritedAnnotations(classSymbol: FirClassSymbol<*>, reporter: DiagnosticReporter) {
         fun annotationsFilter(annotations: List<FirAnnotation>): List<Pair<ClassId, FirAnnotation>> {
             return annotations
@@ -146,7 +158,6 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
     }
 
     context(CheckerContext)
-    @Suppress("IncorrectFormatting") // KTIJ-22227
     private fun FirAnnotation.hasSameArguments(other: FirAnnotation): Boolean {
         val m1 = argumentMapping.mapping
         val m2 = other.argumentMapping.mapping
@@ -159,7 +170,6 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
     }
 
     context(CheckerContext)
-    @Suppress("IncorrectFormatting") // KTIJ-22227
     private fun FirExpression.isEqualTo(other: FirExpression): Boolean {
         return when {
             this is FirConstExpression<*> && other is FirConstExpression<*> -> kind == other.kind && value == other.value
@@ -190,7 +200,6 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
     }
 
     context(CheckerContext)
-    @Suppress("IncorrectFormatting") // KTIJ-22227
     private fun checkVersions(classSymbol: FirClassSymbol<*>, reporter: DiagnosticReporter) {
         val currentVersions = session.versionReader.runtimeVersions ?: return
         if (!currentVersions.implementationVersionMatchSupported()) {
@@ -214,7 +223,6 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
     }
 
     context(CheckerContext)
-    @Suppress("IncorrectFormatting") // KTIJ-22227
     private fun checkCorrectTransientAnnotationIsUsed(
         classSymbol: FirClassSymbol<*>,
         properties: List<FirSerializableProperty>,
@@ -234,7 +242,6 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
     }
 
     context(CheckerContext)
-    @Suppress("IncorrectFormatting") // KTIJ-22227
     private fun canBeSerializedInternally(classSymbol: FirClassSymbol<*>, reporter: DiagnosticReporter): Boolean {
         // if enum has meta or SerialInfo annotation on a class or entries and used plugin-generated serializer
         if (session.dependencySerializationInfoProvider.useGeneratedEnumSerializer && classSymbol.isSerializableEnumWithMissingSerializer) {
@@ -351,7 +358,6 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
 
 
     context(CheckerContext)
-    @Suppress("IncorrectFormatting") // KTIJ-22227
     private fun checkClassWithCustomSerializer(classSymbol: FirClassSymbol<*>, reporter: DiagnosticReporter) {
         val serializerType = classSymbol.getSerializableWith(session)?.fullyExpandedType(session) ?: return
         checkCustomSerializerMatch(classSymbol, source = null, classSymbol.defaultType(), serializerType, reporter)
@@ -359,7 +365,6 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
     }
 
     context(CheckerContext)
-    @Suppress("IncorrectFormatting") // KTIJ-22227
     private val FirClassSymbol<*>.isAnonymousObjectOrInsideIt: Boolean
         get() {
             if (this is FirAnonymousObjectSymbol) return true
@@ -367,7 +372,6 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
         }
 
     context(CheckerContext)
-    @Suppress("IncorrectFormatting") // KTIJ-22227
     private fun checkEnum(classSymbol: FirClassSymbol<*>, reporter: DiagnosticReporter) {
         if (!classSymbol.isEnumClass) return
         val entryBySerialName = mutableMapOf<String, FirEnumEntrySymbol>()
@@ -391,7 +395,6 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
 
 
     context(CheckerContext)
-    @Suppress("IncorrectFormatting") // KTIJ-22227
     private fun buildSerializableProperties(classSymbol: FirClassSymbol<*>, reporter: DiagnosticReporter): FirSerializableProperties? {
         with(session) {
             if (!classSymbol.hasSerializableOrMetaAnnotation) return null
@@ -419,7 +422,6 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
     }
 
     context(CheckerContext)
-    @Suppress("IncorrectFormatting") // KTIJ-22227
     private fun checkTransients(classSymbol: FirClassSymbol<*>, reporter: DiagnosticReporter) {
         for (propertySymbol in classSymbol.declarationSymbols.filterIsInstance<FirPropertySymbol>()) {
             val isInitialized = propertySymbol.isLateInit || declarationHasInitializer(propertySymbol)
@@ -443,7 +445,6 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
     }
 
     context(CheckerContext)
-    @Suppress("IncorrectFormatting") // KTIJ-22227
     private fun analyzePropertiesSerializers(
         classSymbol: FirClassSymbol<*>,
         properties: List<FirSerializableProperty>,
@@ -455,7 +456,7 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
             val serializerSymbol = customSerializerType?.toRegularClassSymbol(session)
             val propertySymbol = property.propertySymbol
             val typeRef = propertySymbol.resolvedReturnTypeRef
-            val propertyType = typeRef.coneType
+            val propertyType = typeRef.coneType.fullyExpandedType(session)
             val source = typeRef.source ?: propertySymbol.source
             if (customSerializerType != null && serializerSymbol != null) {
                 // Do not account for @Polymorphic and @Contextual, as they are serializers for T: Any
@@ -494,11 +495,10 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
     }
 
     context(CheckerContext)
-    @Suppress("IncorrectFormatting") // KTIJ-22227
     private fun checkTypeArguments(type: ConeKotlinType, source: KtSourceElement?, reporter: DiagnosticReporter) {
         for (typeArgument in type.typeArguments) {
             checkType(
-                typeArgument.type ?: continue,
+                typeArgument.type?.fullyExpandedType(session) ?: continue,
                 source,
                 reporter
             )
@@ -506,18 +506,15 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
     }
 
     context(CheckerContext)
-    @Suppress("IncorrectFormatting") // KTIJ-22227
     private fun canSupportInlineClasses(): Boolean {
         return session.versionReader.canSupportInlineClasses
     }
 
     context(CheckerContext)
-    @Suppress("IncorrectFormatting") // KTIJ-22227
     private val ConeKotlinType.isUnsupportedInlineType: Boolean
         get() = isSingleFieldValueClass(session) && !isPrimitiveOrNullablePrimitive
 
     context(CheckerContext)
-    @Suppress("IncorrectFormatting") // KTIJ-22227
     private fun checkType(type: ConeKotlinType, source: KtSourceElement?, reporter: DiagnosticReporter) {
         if (type.lowerBoundIfFlexible().isTypeParameter) return // type parameters always have serializer stored in class' field
         if (type.isUnsupportedInlineType && !canSupportInlineClasses()) {
@@ -539,7 +536,7 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
             }
             checkTypeArguments(type, source, reporter)
         } else {
-            if (!type.isEnum) {
+            if (type.toRegularClassSymbol(session)?.isEnumClass != true) {
                 // enums are always serializable
                 reporter.reportOn(source, FirSerializationErrors.SERIALIZER_NOT_FOUND, type)
             }
@@ -547,7 +544,6 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
     }
 
     context(CheckerContext)
-    @Suppress("IncorrectFormatting") // KTIJ-22227
     private fun checkCustomSerializerMatch(
         containingClassSymbol: FirClassSymbol<*>,
         source: KtSourceElement?,
@@ -571,7 +567,6 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
     }
 
     context(CheckerContext)
-    @Suppress("IncorrectFormatting") // KTIJ-22227
     private fun checkCustomSerializerIsNotLocal(
         source: KtSourceElement?,
         classSymbol: FirClassSymbol<*>,
@@ -589,7 +584,6 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
     }
 
     context(CheckerContext)
-    @Suppress("IncorrectFormatting") // KTIJ-22227
     private fun checkSerializerNullability(
         classType: ConeKotlinType,
         serializerType: ConeKotlinType,

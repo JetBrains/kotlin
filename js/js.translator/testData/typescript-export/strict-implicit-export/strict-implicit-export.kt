@@ -167,3 +167,16 @@ fun <T> acceptMoreGenericForthLike(forth: T) where T: IB, T: IC, T: Third {}
 
 @JsExport
 val forth = Forth()
+
+// Recursive definition KT-57356
+@JsExport
+interface Service<Self : Service<Self, TEvent>, in TEvent : Event<Self>>
+
+@JsExport
+interface Event<out TService : Service<out TService, *>>
+
+class SomeService : Service<SomeService, SomeEvent>
+class SomeEvent : Event<SomeService>
+
+@JsExport
+class SomeServiceRequest : Service<SomeService, SomeEvent>

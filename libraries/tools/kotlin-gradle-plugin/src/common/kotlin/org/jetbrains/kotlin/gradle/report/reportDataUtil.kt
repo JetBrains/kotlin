@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import java.lang.management.ManagementFactory
 import java.util.ArrayList
 import java.util.concurrent.TimeUnit
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 
 private fun availableForStat(taskPath: String): Boolean {
@@ -75,13 +76,16 @@ internal fun prepareData(
         projectName = projectName,
         taskName = taskPath,
         changes = changes,
-        tags = collectTags(taskExecutionResult, buildMetrics, additionalTags).map { it.name },
+        tags = collectTags(taskExecutionResult, buildMetrics, additionalTags),
         nonIncrementalAttributes = buildAttributes,
         hostName = BuildReportsService.hostName,
         kotlinVersion = kotlinVersion,
+        kotlinLanguageVersion = taskExecutionResult?.taskInfo?.kotlinLanguageVersion,
         buildUuid = uuid,
         finishTime = System.currentTimeMillis(),
-        compilerArguments = taskExecutionResult?.taskInfo?.compilerArguments?.asList() ?: emptyList()
+        compilerArguments = taskExecutionResult?.taskInfo?.compilerArguments?.asList() ?: emptyList(),
+        gcCountMetrics = buildMetrics?.gcMetrics?.asGcCountMap(),
+        gcTimeMetrics = buildMetrics?.gcMetrics?.asGcTimeMap()
     )
 }
 
@@ -154,7 +158,7 @@ private fun collectTags(
 private fun collectTags(
     taskExecutionResult: TaskExecutionResult?,
     additionalTags: List<StatTag>,
-): MutableList<StatTag>{
+): MutableList<StatTag> {
     val tags = ArrayList(additionalTags)
     val taskInfo = taskExecutionResult?.taskInfo
 
@@ -164,10 +168,20 @@ private fun collectTags(
     taskInfo?.withArtifactTransform?.ifTrue {
         tags.add(StatTag.ARTIFACT_TRANSFORM)
     }
+    taskInfo?.kotlinLanguageVersion?.also {
+        tags.add(getLanguageVersionTag(it))
+    }
 
     val debugConfiguration = "-agentlib:"
     if (ManagementFactory.getRuntimeMXBean().inputArguments.firstOrNull { it.startsWith(debugConfiguration) } != null) {
         tags.add(StatTag.GRADLE_DEBUG)
     }
     return tags
+}
+
+private fun getLanguageVersionTag(languageVersion: KotlinVersion): StatTag {
+    return when {
+        languageVersion < KotlinVersion.KOTLIN_2_0 -> StatTag.KOTLIN_1
+        else -> StatTag.KOTLIN_2
+    }
 }

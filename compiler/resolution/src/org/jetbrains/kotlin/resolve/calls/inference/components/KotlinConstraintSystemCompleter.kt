@@ -14,10 +14,7 @@ import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.error.ErrorUtils
-import org.jetbrains.kotlin.types.model.TypeConstructorMarker
-import org.jetbrains.kotlin.types.model.TypeVariableMarker
-import org.jetbrains.kotlin.types.model.TypeVariableTypeConstructorMarker
-import org.jetbrains.kotlin.types.model.safeSubstitute
+import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.utils.addIfNotNull
 
@@ -453,14 +450,23 @@ class KotlinConstraintSystemCompleter(
 
     private fun reportWarningIfFixedIntoDeclaredUpperBounds(
         diagnosticsHolder: KotlinDiagnosticsHolder,
-        variableWithConstraints: VariableWithConstraints
+        variableWithConstraints: VariableWithConstraints,
+        resultType: KotlinTypeMarker
     ) {
-        val areAllConstraintFromDeclaredUpperBounds = variableWithConstraints.constraints.all {
-            val position = it.position.from
-            position is BuilderInferenceSubstitutionConstraintPosition<*, *> && position.isFromNotSubstitutedDeclaredUpperBound
+        var upperBoundType: KotlinTypeMarker? = null
+        val constraintFromDeclaredUpperBoundExists = variableWithConstraints.constraints.any { constraint ->
+            val position = constraint.position.from.let { basicPosition ->
+                if (basicPosition is IncorporationConstraintPosition) basicPosition.from else basicPosition
+            }
+            if (position is BuilderInferenceSubstitutionConstraintPosition<*> && position.isFromNotSubstitutedDeclaredUpperBound) {
+                upperBoundType = constraint.type
+                true
+            } else {
+                false
+            }
         }
 
-        if (areAllConstraintFromDeclaredUpperBounds) {
+        if (constraintFromDeclaredUpperBoundExists && upperBoundType == resultType) {
             diagnosticsHolder.addDiagnostic(
                 KotlinConstraintSystemDiagnostic(InferredIntoDeclaredUpperBounds(variableWithConstraints.typeVariable))
             )
@@ -478,7 +484,7 @@ class KotlinConstraintSystemCompleter(
         val variable = variableWithConstraints.typeVariable
         val resolvedAtom = findResolvedAtomBy(variable, topLevelAtoms) ?: topLevelAtoms.firstOrNull()
 
-        reportWarningIfFixedIntoDeclaredUpperBounds(diagnosticsHolder, variableWithConstraints)
+        reportWarningIfFixedIntoDeclaredUpperBounds(diagnosticsHolder, variableWithConstraints, resultType)
 
         c.fixVariable(variable, resultType, FixVariableConstraintPositionImpl(variable, resolvedAtom))
     }

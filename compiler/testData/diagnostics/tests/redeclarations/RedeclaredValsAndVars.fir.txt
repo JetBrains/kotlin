@@ -1,0 +1,51 @@
+FILE: RedeclaredValsAndVars.fir.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final operator fun component1(): R|kotlin/Int| {
+            ^component1 Int(1)
+        }
+
+        public final operator fun component2(): R|kotlin/String| {
+            ^component2 String()
+        }
+
+    }
+    public final fun testRedeclaration(b: R|kotlin/Boolean|): R|kotlin/Unit| {
+        lval y: R|kotlin/Int| = Int(1)
+        lval y: R|kotlin/Int| = Int(2)
+        lval _: R|kotlin/Int| = Int(3)
+        lval _: R|kotlin/Int| = Int(4)
+        fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+            lvar a: R|kotlin/Int| = Int(10)
+            lvar a: R|kotlin/Int| = Int(11)
+        }
+
+    }
+    public final fun testNoRedeclaration(list: R|kotlin/collections/List<kotlin/Int>|, b: R|kotlin/Boolean|): R|kotlin/Unit| {
+         {
+            lval <iterator>: R|kotlin/collections/Iterator<kotlin/Int>| = R|<local>/list|.R|SubstitutionOverride<kotlin/collections/List.iterator: R|kotlin/collections/Iterator<kotlin/Int>|>|()
+            while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()) {
+                lval el: R|kotlin/Int| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|kotlin/Int|>|()
+                 {
+                    lval el: R|kotlin/Int| = Int(42)
+                }
+
+            }
+
+        }
+
+        when () {
+            R|<local>/b| ->  {
+                lval z: R|kotlin/Int| = Int(3)
+            }
+            else ->  {
+                lval z: R|kotlin/Int| = Int(4)
+            }
+        }
+
+        lval <destruct>: R|A| = R|/A.A|()
+        lval _: R|kotlin/Int| = R|<local>/<destruct>|.R|/A.component1|()
+    }

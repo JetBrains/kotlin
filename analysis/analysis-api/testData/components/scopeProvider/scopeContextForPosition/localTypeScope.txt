@@ -1,0 +1,301 @@
+element: e
+implicit receivers:
+  type: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: Y
+  owner symbol: KtFirNamedClassOrObjectSymbol
+
+scopes:
+  LocalScope, index = 0
+    classifiers: 0
+    callables: 1
+      KtLocalVariableSymbol:
+        annotationsList: []
+        callableIdIfNonLocal: null
+        contextReceivers: []
+        isExtension: false
+        isVal: true
+        name: localInX
+        origin: SOURCE
+        receiverParameter: null
+        returnType: KtUsualClassType:
+          annotationsList: []
+          ownTypeArguments: []
+          type: kotlin/Int
+        symbolKind: LOCAL
+        typeParameters: []
+
+  LocalScope, index = 1, empty
+
+  SimpleTypeScope, index = 2
+    classifiers: 0
+    callables: 5
+      KtKotlinPropertySymbol:
+        annotationsList: []
+        callableIdIfNonLocal: null
+        contextReceivers: []
+        getter: KtPropertyGetterSymbol:
+          annotationsList: []
+          callableIdIfNonLocal: null
+          contextReceivers: []
+          hasBody: false
+          hasStableParameterNames: true
+          isDefault: true
+          isExtension: false
+          isInline: false
+          isOverride: false
+          modality: FINAL
+          origin: SOURCE
+          receiverParameter: null
+          returnType: KtUsualClassType:
+            annotationsList: []
+            ownTypeArguments: []
+            type: kotlin/Int
+          symbolKind: ACCESSOR
+          typeParameters: []
+          valueParameters: []
+          visibility: Public
+        hasBackingField: true
+        hasGetter: true
+        hasSetter: false
+        initializer: KtConstantInitializerValue(2)
+        isConst: false
+        isDelegatedProperty: false
+        isExtension: false
+        isFromPrimaryConstructor: false
+        isLateInit: false
+        isOverride: false
+        isStatic: false
+        isVal: true
+        modality: FINAL
+        name: propertyInY
+        origin: SOURCE
+        receiverParameter: null
+        returnType: KtUsualClassType:
+          annotationsList: []
+          ownTypeArguments: []
+          type: kotlin/Int
+        setter: null
+        symbolKind: CLASS_MEMBER
+        typeParameters: []
+        visibility: Public
+      KtFunctionSymbol:
+        annotationsList: []
+        callableIdIfNonLocal: null
+        contextReceivers: []
+        contractEffects: []
+        hasStableParameterNames: true
+        isBuiltinFunctionInvoke: false
+        isExtension: false
+        isExternal: false
+        isInfix: false
+        isInline: false
+        isOperator: false
+        isOverride: false
+        isStatic: false
+        isSuspend: false
+        modality: FINAL
+        name: x
+        origin: SOURCE
+        receiverParameter: null
+        returnType: KtUsualClassType:
+          annotationsList: []
+          ownTypeArguments: []
+          type: kotlin/Unit
+        symbolKind: CLASS_MEMBER
+        typeParameters: []
+        valueParameters: []
+        visibility: Public
+      KtFunctionSymbol:
+        annotationsList: []
+        callableIdIfNonLocal: kotlin/Any.equals
+        contextReceivers: []
+        contractEffects: []
+        hasStableParameterNames: true
+        isBuiltinFunctionInvoke: false
+        isExtension: false
+        isExternal: false
+        isInfix: false
+        isInline: false
+        isOperator: true
+        isOverride: false
+        isStatic: false
+        isSuspend: false
+        modality: OPEN
+        name: equals
+        origin: LIBRARY
+        receiverParameter: null
+        returnType: KtUsualClassType:
+          annotationsList: []
+          ownTypeArguments: []
+          type: kotlin/Boolean
+        symbolKind: CLASS_MEMBER
+        typeParameters: []
+        valueParameters: [
+          KtValueParameterSymbol:
+            annotationsList: []
+            callableIdIfNonLocal: null
+            contextReceivers: []
+            generatedPrimaryConstructorProperty: null
+            hasDefaultValue: false
+            isCrossinline: false
+            isExtension: false
+            isImplicitLambdaParameter: false
+            isNoinline: false
+            isVararg: false
+            name: other
+            origin: LIBRARY
+            receiverParameter: null
+            returnType: KtUsualClassType:
+              annotationsList: []
+              ownTypeArguments: []
+              type: kotlin/Any?
+            symbolKind: LOCAL
+            typeParameters: []
+        ]
+        visibility: Public
+      KtFunctionSymbol:
+        annotationsList: []
+        callableIdIfNonLocal: kotlin/Any.hashCode
+        contextReceivers: []
+        contractEffects: []
+        hasStableParameterNames: true
+        isBuiltinFunctionInvoke: false
+        isExtension: false
+        isExternal: false
+        isInfix: false
+        isInline: false
+        isOperator: false
+        isOverride: false
+        isStatic: false
+        isSuspend: false
+        modality: OPEN
+        name: hashCode
+        origin: LIBRARY
+        receiverParameter: null
+        returnType: KtUsualClassType:
+          annotationsList: []
+          ownTypeArguments: []
+          type: kotlin/Int
+        symbolKind: CLASS_MEMBER
+        typeParameters: []
+        valueParameters: []
+        visibility: Public
+      KtFunctionSymbol:
+        annotationsList: []
+        callableIdIfNonLocal: kotlin/Any.toString
+        contextReceivers: []
+        contractEffects: []
+        hasStableParameterNames: true
+        isBuiltinFunctionInvoke: false
+        isExtension: false
+        isExternal: false
+        isInfix: false
+        isInline: false
+        isOperator: false
+        isOverride: false
+        isStatic: false
+        isSuspend: false
+        modality: OPEN
+        name: toString
+        origin: LIBRARY
+        receiverParameter: null
+        returnType: KtUsualClassType:
+          annotationsList: []
+          ownTypeArguments: []
+          type: kotlin/String
+        symbolKind: CLASS_MEMBER
+        typeParameters: []
+        valueParameters: []
+        visibility: Public
+
+  LocalScope, index = 3
+    classifiers: 1
+      KtNamedClassOrObjectSymbol:
+        annotationsList: []
+        classIdIfNonLocal: null
+        classKind: CLASS
+        companionObject: null
+        contextReceivers: []
+        isData: false
+        isExternal: false
+        isFun: false
+        isInline: false
+        isInner: false
+        modality: FINAL
+        name: Y
+        origin: SOURCE
+        superTypes: [
+          KtUsualClassType:
+            annotationsList: []
+            ownTypeArguments: []
+            type: kotlin/Any
+        ]
+        symbolKind: LOCAL
+        typeParameters: []
+        visibility: Local
+    callables: 1
+      KtLocalVariableSymbol:
+        annotationsList: []
+        callableIdIfNonLocal: null
+        contextReceivers: []
+        isExtension: false
+        isVal: true
+        name: localInZ
+        origin: SOURCE
+        receiverParameter: null
+        returnType: KtUsualClassType:
+          annotationsList: []
+          ownTypeArguments: []
+          type: kotlin/Int
+        symbolKind: LOCAL
+        typeParameters: []
+
+  LocalScope, index = 4, empty
+
+  ExplicitSimpleImportingScope, index = 5, empty
+
+  PackageMemberScope, index = 6
+    classifiers: 0
+    callables: 1
+      KtFunctionSymbol:
+        annotationsList: []
+        callableIdIfNonLocal: /z
+        contextReceivers: []
+        contractEffects: []
+        hasStableParameterNames: true
+        isBuiltinFunctionInvoke: false
+        isExtension: false
+        isExternal: false
+        isInfix: false
+        isInline: false
+        isOperator: false
+        isOverride: false
+        isStatic: false
+        isSuspend: false
+        modality: FINAL
+        name: z
+        origin: SOURCE
+        receiverParameter: null
+        returnType: KtUsualClassType:
+          annotationsList: []
+          ownTypeArguments: []
+          type: kotlin/Unit
+        symbolKind: TOP_LEVEL
+        typeParameters: []
+        valueParameters: []
+        visibility: Public
+
+  DefaultSimpleImportingScope, index = 7
+
+  DefaultSimpleImportingScope, index = 8
+
+  ExplicitStarImportingScope, index = 9, empty
+
+  DefaultSimpleImportingScope, index = 10
+
+  DefaultStarImportingScope, index = 11
+
+  DefaultStarImportingScope, index = 12
+

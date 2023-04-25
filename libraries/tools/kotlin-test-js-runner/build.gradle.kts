@@ -51,7 +51,6 @@ tasks {
             "tc-log-appender.js",
             "tc-log-error-webpack.js",
             "webpack-5-debug.js",
-            "detect-correct-browser.js",
             "package.json",
             "rollup.config.js",
             "tsconfig.json",

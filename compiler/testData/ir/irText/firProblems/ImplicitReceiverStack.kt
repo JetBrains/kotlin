@@ -1,6 +1,8 @@
 // WITH_STDLIB
 // FULL_JDK
 // JVM_TARGET: 1.8
+// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS_IR_ES6
 
 interface SymbolOwner<E : SymbolOwner<E>>
 

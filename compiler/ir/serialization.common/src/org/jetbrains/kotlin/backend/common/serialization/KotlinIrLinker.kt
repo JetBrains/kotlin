@@ -5,18 +5,20 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
+import org.jetbrains.kotlin.backend.common.linkage.issues.*
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.backend.common.overrides.FileLocalAwareLinker
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
-import org.jetbrains.kotlin.backend.common.serialization.linkerissues.*
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageSupport
-import org.jetbrains.kotlin.backend.common.serialization.unlinked.PartialLinkageSupportImpl
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.*
@@ -31,32 +33,29 @@ abstract class KotlinIrLinker(
     val builtIns: IrBuiltIns,
     val symbolTable: SymbolTable,
     private val exportedDependencies: List<ModuleDescriptor>,
-    partialLinkageEnabled: Boolean,
     val symbolProcessor: IrSymbolDeserializer.(IrSymbol, IdSignature) -> IrSymbol = { s, _ -> s },
 ) : IrDeserializer, FileLocalAwareLinker {
+    val internationService = IrInterningService()
 
     // Kotlin-MPP related data. Consider some refactoring
-    val expectUniqIdToActualUniqId = mutableMapOf<IdSignature, IdSignature>()
-    val topLevelActualUniqItToDeserializer = mutableMapOf<IdSignature, IrModuleDeserializer>()
-    internal val expectSymbols = mutableMapOf<IdSignature, IrSymbol>()
-    internal val actualSymbols = mutableMapOf<IdSignature, IrSymbol>()
+    val expectIdSignatureToActualIdSignature = mutableMapOf<IdSignature, IdSignature>()
+    val topLevelActualIdSignatureToModuleDeserializer = hashMapOf<IdSignature, IrModuleDeserializer>()
+    internal val expectSymbols = hashMapOf<IdSignature, IrSymbol>()
+    internal val actualSymbols = hashMapOf<IdSignature, IrSymbol>()
 
-    val modulesWithReachableTopLevels = mutableSetOf<IrModuleDeserializer>()
+    val modulesWithReachableTopLevels = hashSetOf<IrModuleDeserializer>()
 
-    protected val deserializersForModules = mutableMapOf<String, IrModuleDeserializer>()
+    protected val deserializersForModules = hashMapOf<String, IrModuleDeserializer>()
 
     abstract val fakeOverrideBuilder: FakeOverrideBuilder
 
     abstract val translationPluginContext: TranslationPluginContext?
 
-    private val triedToDeserializeDeclarationForSymbol = mutableSetOf<IrSymbol>()
+    private val triedToDeserializeDeclarationForSymbol = hashSetOf<IrSymbol>()
 
     private lateinit var linkerExtensions: Collection<IrDeserializer.IrLinkerExtension>
 
-    val partialLinkageSupport: PartialLinkageSupport = if (partialLinkageEnabled)
-        PartialLinkageSupportImpl(builtIns)
-    else
-        PartialLinkageSupport.DISABLED
+    open val partialLinkageSupport: PartialLinkageSupportForLinker get() = PartialLinkageSupportForLinker.DISABLED
 
     protected open val userVisibleIrModulesSupport: UserVisibleIrModulesSupport get() = UserVisibleIrModulesSupport.DEFAULT
 
@@ -74,11 +73,11 @@ abstract class KotlinIrLinker(
 
         // Note: It might happen that the top-level symbol still exists in KLIB, but nested symbol has been removed.
         // Then the `actualModuleDeserializer` will be non-null, but `actualModuleDeserializer.tryDeserializeIrSymbol()` call
-        // will return null.
+        // might return null (like KonanInteropModuleDeserializer does) or non-null unbound symbol (like JsModuleDeserializer does).
         val symbol: IrSymbol? = actualModuleDeserializer?.tryDeserializeIrSymbol(idSignature, symbolKind)
 
         return symbol ?: run {
-            if (partialLinkageSupport.partialLinkageEnabled)
+            if (partialLinkageSupport.isEnabled)
                 referenceDeserializedSymbol(symbolTable, null, symbolKind, idSignature)
             else
                 SignatureIdNotFoundInModuleWithDependencies(
@@ -160,9 +159,7 @@ abstract class KotlinIrLinker(
                     ?: tryResolveCustomDeclaration(symbol)
                     ?: return null
             } catch (e: IrSymbolTypeMismatchException) {
-                if (!partialLinkageSupport.partialLinkageEnabled) {
-                    SymbolTypeMismatch(e, deserializersForModules.values, userVisibleIrModulesSupport).raiseIssue(messageLogger)
-                }
+                SymbolTypeMismatch(e, deserializersForModules.values, userVisibleIrModulesSupport).raiseIssue(messageLogger)
             }
         }
 
@@ -211,18 +208,30 @@ abstract class KotlinIrLinker(
         deserializersForModules.values.forEach { it.init() }
     }
 
-    override fun postProcess() {
+    fun clear() {
+        internationService.clear()
+    }
+
+    override fun postProcess(inOrAfterLinkageStep: Boolean) {
+        // TODO: Expect/actual actualization should be fixed to cope with the situation when either expect or actual symbol is unbound.
         finalizeExpectActualLinker()
 
-        partialLinkageSupport.markUsedClassifiersExcludingUnlinkedFromFakeOverrideBuilding(fakeOverrideBuilder)
+        if (inOrAfterLinkageStep) {
+            // We have to exclude classifiers with unbound symbols in supertypes and in type parameter upper bounds from F.O. generation
+            // to avoid failing with `Symbol for <signature> is unbound` error or generating fake overrides with incorrect signatures.
+            partialLinkageSupport.exploreClassifiers(fakeOverrideBuilder)
+        }
 
+        // Fake override generator creates new IR declarations. This may have effect of binding for certain symbols.
         fakeOverrideBuilder.provideFakeOverrides()
         triedToDeserializeDeclarationForSymbol.clear()
 
-        partialLinkageSupport.processUnlinkedDeclarations(messageLogger) {
-            deserializersForModules.values.map { it.moduleFragment }
+        if (inOrAfterLinkageStep) {
+            // Finally, generate stubs for the remaining unbound symbols and patch every usage of any unbound symbol inside the IR tree.
+            partialLinkageSupport.generateStubsAndPatchUsages(symbolTable) {
+                deserializersForModules.values.asSequence().map { it.moduleFragment }
+            }
         }
-
         // TODO: fix IrPluginContext to make it not produce additional external reference
         // symbolTable.noUnboundLeft("unbound after fake overrides:")
     }
@@ -230,12 +239,12 @@ abstract class KotlinIrLinker(
     fun handleExpectActualMapping(idSig: IdSignature, rawSymbol: IrSymbol): IrSymbol {
 
         // Actual signature
-        if (idSig in expectUniqIdToActualUniqId.values) {
+        if (idSig in expectIdSignatureToActualIdSignature.values) {
             actualSymbols[idSig] = rawSymbol
         }
 
         // Expect signature
-        expectUniqIdToActualUniqId[idSig]?.let { actualSig ->
+        expectIdSignatureToActualIdSignature[idSig]?.let { actualSig ->
             assert(idSig.run { IdSignature.Flags.IS_EXPECT.test() })
 
             val referencingSymbol = wrapInDelegatedSymbol(rawSymbol)
@@ -243,7 +252,7 @@ abstract class KotlinIrLinker(
             expectSymbols[idSig] = referencingSymbol
 
             // Trigger actual symbol deserialization
-            topLevelActualUniqItToDeserializer[actualSig]?.let { moduleDeserializer -> // Not null if top-level
+            topLevelActualIdSignatureToModuleDeserializer[actualSig]?.let { moduleDeserializer -> // Not null if top-level
                 val actualSymbol = actualSymbols[actualSig]
                 // Check if
                 if (actualSymbol == null || !actualSymbol.isBound) {
@@ -306,7 +315,7 @@ abstract class KotlinIrLinker(
     // So we force deserialization of actuals for all deserialized expect symbols here.
     private fun finalizeExpectActualLinker() {
         // All actuals have been deserialized, retarget delegating symbols from expects to actuals.
-        expectUniqIdToActualUniqId.forEach {
+        expectIdSignatureToActualIdSignature.forEach {
             val expectSymbol = expectSymbols[it.key]
             val actualSymbol = actualSymbols[it.value]
             if (expectSymbol != null && actualSymbol != null) {

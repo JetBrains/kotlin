@@ -18,10 +18,36 @@ package org.jetbrains.kotlin.psi.stubs.impl
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.stubs.StubElement
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.psi.KtProjectionKind
 import org.jetbrains.kotlin.psi.KtUserType
 import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 class KotlinUserTypeStubImpl(
-    parent: StubElement<out PsiElement>?
+    parent: StubElement<out PsiElement>?,
+    val upperBound: KotlinTypeBean? = null
 ) : KotlinStubBaseImpl<KtUserType>(parent, KtStubElementTypes.USER_TYPE), KotlinUserTypeStub
+
+sealed interface KotlinTypeBean {
+    val nullable: Boolean
+}
+
+data class KotlinFlexibleTypeBean(val lowerBound: KotlinTypeBean, val upperBound: KotlinTypeBean) : KotlinTypeBean {
+    override val nullable: Boolean
+        get() = lowerBound.nullable
+}
+
+data class KotlinClassTypeBean(
+    val classId: ClassId,
+    val arguments: List<KotlinTypeArgumentBean>,
+    override val nullable: Boolean,
+) : KotlinTypeBean
+
+data class KotlinTypeArgumentBean(val projectionKind: KtProjectionKind, val type: KotlinTypeBean?)
+
+data class KotlinTypeParameterTypeBean(
+    val typeParameterName: String,
+    override val nullable: Boolean,
+    val definitelyNotNull: Boolean
+) : KotlinTypeBean

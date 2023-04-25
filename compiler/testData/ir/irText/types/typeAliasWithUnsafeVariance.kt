@@ -1,4 +1,5 @@
 // KT-42036
+// IGNORE_BACKEND: JS_IR
 
 typealias Action<RenderingT> = (@UnsafeVariance RenderingT) -> Unit
 

@@ -37,14 +37,14 @@ fun test_2(e: JavaEnum?) {
         JavaEnum.C -> 3
     }.<!UNRESOLVED_REFERENCE!>plus<!>(0)
 
-    val a = when (e) {
+    val b = when (e) {
         JavaEnum.A -> 1
         JavaEnum.B -> 2
         JavaEnum.C -> 3
         null -> 4
     }.plus(0)
 
-    val a = when (e) {
+    val c = when (e) {
         JavaEnum.A -> 1
         JavaEnum.B -> 2
         JavaEnum.C -> 3

@@ -22,7 +22,8 @@ package kotlin.native.internal
         AnnotationTarget.PROPERTY_SETTER
 )
 @Retention(AnnotationRetention.BINARY)
-public annotation class ExportForCppRuntime(val name: String = "")
+@PublishedApi
+internal annotation class ExportForCppRuntime(val name: String = "")
 
 /**
  * This annotation denotes that the element is intrinsic and its usages require special handling in compiler.
@@ -38,7 +39,8 @@ internal annotation class Intrinsic
  */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CONSTRUCTOR, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
-public annotation class ExportForCompiler
+@PublishedApi
+internal annotation class ExportForCompiler
 
 /**
  * Class is frozen by default. Also this annotation is (ab)used for marking objects
@@ -69,7 +71,8 @@ internal annotation class NoReorderFields
  */
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
-public annotation class ExportTypeInfo(val name: String)
+@PublishedApi
+internal annotation class ExportTypeInfo(val name: String)
 
 /**
  * If a lambda shall be carefully lowered by the compiler.
@@ -77,13 +80,6 @@ public annotation class ExportTypeInfo(val name: String)
 @Target(AnnotationTarget.VALUE_PARAMETER)
 @Retention(AnnotationRetention.BINARY)
 internal annotation class VolatileLambda
-
-/**
- * Need to be fixed because of reflection.
- */
-@Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
-@Retention(AnnotationRetention.SOURCE)
-internal annotation class FixmeReflection
 
 /**
  * Need to be fixed because of concurrency.
@@ -119,7 +115,8 @@ internal annotation class ConstantConstructorIntrinsic(val kind: String)
  */
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
-annotation class Independent
+@PublishedApi
+internal annotation class Independent
 
 /**
  * Indicates that `@SymbolName external` function can throw foreign exception to be filtered on callsite.
@@ -144,7 +141,8 @@ annotation class Independent
  */
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.SOURCE)
-public annotation class CanBePrecreated
+@PublishedApi
+internal annotation class CanBePrecreated
 
 /**
  * Marks a class that has a finalizer.

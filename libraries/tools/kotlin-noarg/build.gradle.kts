@@ -18,8 +18,6 @@ dependencies {
 
     testImplementation(gradleApi())
     testImplementation(commonDependency("junit"))
-
-    embedded(project(":kotlin-noarg-compiler-plugin")) { isTransitive = false }
 }
 
 gradlePlugin {

@@ -10,7 +10,7 @@ class SettingType<out V : Any>(
 )
 
 class SettingReference<V : Any, T : SettingType<V>>(
-    var t : T
+    var t : T,
     var v : V
 )
 

@@ -12,8 +12,9 @@ import org.jetbrains.kotlin.resolve.MemberComparator;
 import org.jetbrains.kotlin.utils.StringsKt;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
-import static kotlin.collections.CollectionsKt.*;
+import static kotlin.collections.CollectionsKt.map;
 import static org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.STRING;
 import static org.jetbrains.kotlin.diagnostics.rendering.Renderers.*;
 import static org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm.*;
@@ -22,10 +23,8 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
 
     private static final DiagnosticParameterRenderer<ConflictingJvmDeclarationsData> CONFLICTING_JVM_DECLARATIONS_DATA =
             (data, context) -> {
-                List<DeclarationDescriptor> renderedDescriptors = sortedWith(
-                        mapNotNull(data.getSignatureOrigins(), JvmDeclarationOrigin::getDescriptor),
-                        MemberComparator.INSTANCE
-                );
+                List<DeclarationDescriptor> renderedDescriptors =
+                        data.getSignatureDescriptors().stream().sorted(MemberComparator.INSTANCE).collect(Collectors.toList());
                 RenderingContext renderingContext = new RenderingContext.Impl(renderedDescriptors);
                 return "The following declarations have the same JVM signature " +
                        "(" + data.getSignature().getName() + data.getSignature().getDesc() + "):\n" +
@@ -53,13 +52,11 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(OVERLOADS_PRIVATE, "'@JvmOverloads' annotation has no effect on private declarations");
         MAP.put(OVERLOADS_LOCAL, "'@JvmOverloads' annotation cannot be used on local declarations");
         MAP.put(OVERLOADS_ANNOTATION_CLASS_CONSTRUCTOR, "'@JvmOverloads' annotation cannot be used on constructors of annotation classes");
-        MAP.put(OVERLOADS_ANNOTATION_HIDDEN_CONSTRUCTOR, "'@JvmOverloads' annotation cannot be used on constructors hidden by inline class rules");
-        MAP.put(OVERLOADS_ANNOTATION_MANGLED_FUNCTION, "'@JvmOverloads' annotation cannot be used on functions mangled by inline class rules");
+        MAP.put(OVERLOADS_ANNOTATION_HIDDEN_CONSTRUCTOR, "'@JvmOverloads' annotation cannot be used on constructors hidden by value class rules");
+        MAP.put(OVERLOADS_ANNOTATION_MANGLED_FUNCTION, "'@JvmOverloads' annotation cannot be used on functions mangled by value class rules");
         MAP.put(INAPPLICABLE_JVM_NAME, "'@JvmName' annotation is not applicable to this declaration");
         MAP.put(ILLEGAL_JVM_NAME, "Illegal JVM name");
 
-        MAP.put(VOLATILE_ON_VALUE, "'@Volatile' annotation cannot be used on immutable properties");
-        MAP.put(VOLATILE_ON_DELEGATE, "'@Volatile' annotation cannot be used on delegated properties");
         MAP.put(SYNCHRONIZED_ON_ABSTRACT, "'@Synchronized' annotation cannot be used on abstract functions");
         MAP.put(SYNCHRONIZED_ON_INLINE, "'@Synchronized' annotation has no effect on inline functions");
         MAP.put(SYNCHRONIZED_ON_VALUE_CLASS, "'@Synchronized' annotation has no effect on value classes");

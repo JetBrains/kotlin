@@ -2,9 +2,10 @@ package org.jetbrains.kotlin.backend.konan
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
+import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
+import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideChecker
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
-import org.jetbrains.kotlin.backend.common.serialization.linkerissues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.serialization.mangle.ManglerChecker
 import org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.Ir2DescriptorManglerAdapter
 import org.jetbrains.kotlin.backend.konan.descriptors.isForwardDeclarationModule
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.PropertyDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
+import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -51,13 +53,13 @@ internal fun PsiToIrContext.psiToIr(
     val (moduleDescriptor, environment, isProducingLibrary) = input
     // Translate AST to high level IR.
     val expectActualLinker = config.configuration[CommonConfigurationKeys.EXPECT_ACTUAL_LINKER] ?: false
-    val messageLogger = config.configuration[IrMessageLogger.IR_MESSAGE_LOGGER] ?: IrMessageLogger.None
+    val messageLogger = config.configuration.irMessageLogger
 
-    val partialLinkageEnabled = config.configuration[KonanConfigKeys.PARTIAL_LINKAGE] ?: false
+    val partialLinkageConfig = config.configuration.partialLinkageConfig
 
     val translator = Psi2IrTranslator(
             config.configuration.languageVersionSettings,
-            Psi2IrConfiguration(ignoreErrors = false, partialLinkageEnabled),
+            Psi2IrConfiguration(ignoreErrors = false, partialLinkageConfig.isEnabled),
             messageLogger::checkNoUnboundSymbols
     )
     val generatorContext = translator.createGeneratorContext(moduleDescriptor, bindingContext, symbolTable)
@@ -104,11 +106,13 @@ internal fun PsiToIrContext.psiToIr(
             override fun resolveBySignatureInModule(signature: IdSignature, kind: IrDeserializer.TopLevelSymbolKind, moduleName: Name): IrSymbol {
                 error("Should not be called")
             }
+
+            override fun postProcess(inOrAfterLinkageStep: Boolean) = Unit
         }
     } else {
         val exportedDependencies = (moduleDescriptor.getExportedDependencies(config) + libraryToCacheModule?.let { listOf(it) }.orEmpty()).distinct()
         val irProviderForCEnumsAndCStructs =
-                IrProviderForCEnumAndCStructStubs(generatorContext, interopBuiltIns, symbols)
+                IrProviderForCEnumAndCStructStubs(generatorContext, symbols)
 
         val translationContext = object : TranslationPluginContext {
             override val moduleDescriptor: ModuleDescriptor
@@ -141,7 +145,12 @@ internal fun PsiToIrContext.psiToIr(
                 stubGenerator = stubGenerator,
                 cenumsProvider = irProviderForCEnumsAndCStructs,
                 exportedDependencies = exportedDependencies,
-                partialLinkageEnabled = partialLinkageEnabled,
+                partialLinkageSupport = createPartialLinkageSupportForLinker(
+                        partialLinkageConfig = partialLinkageConfig,
+                        allowErrorTypes = false, // Kotlin/Native does not support error types.
+                        builtIns = generatorContext.irBuiltIns,
+                        messageLogger = messageLogger
+                ),
                 cachedLibraries = config.cachedLibraries,
                 lazyIrForCaches = config.lazyIrForCaches,
                 libraryBeingCached = config.libraryToCache,
@@ -217,7 +226,7 @@ internal fun PsiToIrContext.psiToIr(
             expectDescriptorToSymbol = if (expectActualLinker) expectDescriptorToSymbol else null
     ).toKonanModule()
 
-    irDeserializer.postProcess()
+    irDeserializer.postProcess(inOrAfterLinkageStep = true)
 
     // Enable lazy IR genration for newly-created symbols inside BE
     stubGenerator.unboundSymbolGeneration = true

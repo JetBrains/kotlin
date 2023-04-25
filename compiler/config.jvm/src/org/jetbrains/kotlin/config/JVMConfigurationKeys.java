@@ -160,12 +160,12 @@ public class JVMConfigurationKeys {
     public static final CompilerConfigurationKey<Boolean> ENABLE_DEBUG_MODE =
             CompilerConfigurationKey.create("Enable debug mode");
 
-    public static final CompilerConfigurationKey<Boolean> IGNORE_CONST_OPTIMIZATION_ERRORS =
-            CompilerConfigurationKey.create("Ignore errors from IrConstTransformer");
-
     public static final CompilerConfigurationKey<Boolean> NO_NEW_JAVA_ANNOTATION_TARGETS =
             CompilerConfigurationKey.create("Do not generate Java 1.8+ targets for Kotlin annotation classes");
 
     public static final CompilerConfigurationKey<Boolean> OLD_INNER_CLASSES_LOGIC =
             CompilerConfigurationKey.create("Use old logic for generation of InnerClasses attributes");
+
+    public static final CompilerConfigurationKey<Boolean> ENABLE_IR_INLINER =
+            CompilerConfigurationKey.create("Enable inlining on IR, instead of inlining on bytecode");
 }

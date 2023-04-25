@@ -73,6 +73,9 @@ class BuildReportsIT : KGPBaseTest() {
             //for non-incremental builds
             assertTrue { report.contains("Build attributes:") }
             assertTrue { report.contains("REBUILD_REASON:") }
+            //gc metrics
+            assertTrue {report.contains("GC count:")}
+            assertTrue {report.contains("GC time:")}
         }
     }
 

@@ -13,11 +13,12 @@ package org.jetbrains.kotlin.cli.js.klib
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
+import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.lower.ExpectDeclarationRemover
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideChecker
 import org.jetbrains.kotlin.backend.common.serialization.DescriptorByIdSignatureFinderImpl
 import org.jetbrains.kotlin.backend.common.serialization.ICData
-import org.jetbrains.kotlin.backend.common.serialization.linkerissues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.serialization.mangle.ManglerChecker
 import org.jetbrains.kotlin.backend.common.serialization.mangle.descriptor.Ir2DescriptorManglerAdapter
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.util.SymbolTable
@@ -59,11 +61,10 @@ fun generateIrForKlibSerialization(
 ): Pair<IrModuleFragment, IrPluginContext> {
     val errorPolicy = configuration.get(JSConfigurationKeys.ERROR_TOLERANCE_POLICY) ?: ErrorTolerancePolicy.DEFAULT
     val messageLogger = configuration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None
-    val allowUnboundSymbols = configuration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false
     val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), irFactory)
     val psi2Ir = Psi2IrTranslator(
         configuration.languageVersionSettings,
-        Psi2IrConfiguration(errorPolicy.allowErrors, allowUnboundSymbols),
+        Psi2IrConfiguration(errorPolicy.allowErrors, configuration.partialLinkageConfig.isEnabled),
         messageLogger::checkNoUnboundSymbols
     )
     val psi2IrContext = psi2Ir.createGeneratorContext(analysisResult.moduleDescriptor, analysisResult.bindingContext, symbolTable)
@@ -83,7 +84,12 @@ fun generateIrForKlibSerialization(
         messageLogger,
         psi2IrContext.irBuiltIns,
         psi2IrContext.symbolTable,
-        partialLinkageEnabled = configuration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false,
+        partialLinkageSupport = createPartialLinkageSupportForLinker(
+            partialLinkageConfig = configuration.partialLinkageConfig,
+            allowErrorTypes = errorPolicy.allowErrors,
+            builtIns = psi2IrContext.irBuiltIns,
+            messageLogger = messageLogger
+        ),
         feContext,
         ICData(icData.map { it.irData }, errorPolicy.allowErrors),
         stubGenerator = stubGenerator

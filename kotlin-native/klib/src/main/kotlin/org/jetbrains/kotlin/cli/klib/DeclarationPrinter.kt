@@ -79,16 +79,20 @@ class DeclarationPrinter(
 
         override fun visitPropertyDescriptor(descriptor: PropertyDescriptor, data: Unit) {
             printer.printPlain(header = headerRenderer.render(descriptor), signature = signatureRenderer.render(descriptor))
-            descriptor.getter?.takeIf { !it.annotations.isEmpty() }?.let { getter ->
+            descriptor.getter?.takeUnless { canSkipAccessor(it, descriptor) }?.let { getter ->
                 printer.pushIndent()
                 printer.printPlain(header = headerRenderer.render(getter), signature = signatureRenderer.render(getter))
                 printer.popIndent()
             }
-            descriptor.setter?.takeIf { !it.annotations.isEmpty() || it.visibility != descriptor.visibility }?.let { setter ->
+            descriptor.setter?.takeUnless { canSkipAccessor(it, descriptor) }?.let { setter ->
                 printer.pushIndent()
                 printer.printPlain(header = headerRenderer.render(setter), signature = signatureRenderer.render(setter))
                 printer.popIndent()
             }
+        }
+
+        private fun canSkipAccessor(accessor: PropertyAccessorDescriptor, property: PropertyDescriptor) : Boolean {
+            return accessor.annotations.isEmpty() && accessor.visibility == property.visibility && accessor.modality == property.modality
         }
 
         override fun visitConstructorDescriptor(descriptor: ConstructorDescriptor, data: Unit) {

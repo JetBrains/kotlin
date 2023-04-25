@@ -14,7 +14,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.when
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.when]
  */
 abstract class IrWhen : IrExpression() {
     abstract var origin: IrStatementOrigin?

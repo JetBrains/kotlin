@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 
 /**
  * A non-leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.declarationWithVisibility
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.declarationWithVisibility]
  */
 interface IrDeclarationWithVisibility : IrDeclaration {
     var visibility: DescriptorVisibility

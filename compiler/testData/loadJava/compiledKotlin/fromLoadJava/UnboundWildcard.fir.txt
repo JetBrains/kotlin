@@ -1,0 +1,10 @@
+public final class UnboundWildcard : R|kotlin/Any| {
+    public final fun foo(): R|test/UnboundWildcard.MyClass<*>?|
+
+    public constructor(): R|test/UnboundWildcard|
+
+    public abstract interface MyClass<T : R|kotlin/CharSequence?|> : R|kotlin/Any| {
+    }
+
+}
+

@@ -14,7 +14,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.simpleFunction
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.simpleFunction]
  */
 abstract class IrSimpleFunction : IrFunction(),
         IrOverridableDeclaration<IrSimpleFunctionSymbol>, IrAttributeContainer {

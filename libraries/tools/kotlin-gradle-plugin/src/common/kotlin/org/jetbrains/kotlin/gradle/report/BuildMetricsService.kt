@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 internal interface UsesBuildMetricsService : Task {
     @get:Internal
@@ -123,7 +124,8 @@ abstract class BuildMetricsService : BuildService<BuildServiceParameters.None>, 
                     buildMetrics = buildMetrics,
                     didWork = result is TaskExecutionResult,
                     skipMessage = (result as? TaskSkippedResult)?.skipMessage,
-                    icLogLines = taskExecutionResult?.icLogLines ?: emptyList()
+                    icLogLines = taskExecutionResult?.icLogLines ?: emptyList(),
+                    kotlinLanguageVersion = taskExecutionResult?.taskInfo?.kotlinLanguageVersion
                 )
             )
             if (result is TaskFailureResult) {
@@ -171,7 +173,8 @@ internal class TaskRecord(
     override val buildMetrics: BuildMetrics,
     override val didWork: Boolean,
     override val skipMessage: String?,
-    override val icLogLines: List<String>
+    override val icLogLines: List<String>,
+    val kotlinLanguageVersion: KotlinVersion?
 ) : BuildOperationRecord {
     override val isFromKotlinPlugin: Boolean = classFqName.startsWith("org.jetbrains.kotlin")
 }

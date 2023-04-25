@@ -89,8 +89,6 @@ fun buildSimpleAnnotation(irBuiltIns: IrBuiltIns, startOffset: Int, endOffset: I
 internal fun IrExpression.isBoxOrUnboxCall() =
         (this is IrCall && symbol.owner.origin == DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION)
 
-internal fun IrBranch.isUnconditional(): Boolean = (condition as? IrConst<*>)?.value == true
-
 internal val IrFunctionAccessExpression.actualCallee: IrFunction
     get() {
         val callee = symbol.owner
@@ -105,26 +103,24 @@ private fun IrClass.getOverridingOf(function: IrFunction) = (function as? IrSimp
 }
 
 val ModuleDescriptor.konanLibrary get() = (this.klibModuleOrigin as? DeserializedKlibModuleOrigin)?.library
-val IrModuleFragment.konanLibrary get() =
-    (this as? KonanIrModuleFragmentImpl)?.konanLibrary ?: descriptor.konanLibrary
-val IrPackageFragment.konanLibrary get() =
-        if (this is IrFile)
-            this.konanLibrary
-        else
-            this.packageFragmentDescriptor.containingDeclaration.konanLibrary
-val IrFile.konanLibrary get() =
-    (metadata as? KonanFileMetadataSource)?.module?.konanLibrary ?: packageFragmentDescriptor.containingDeclaration.konanLibrary
-val IrDeclaration.konanLibrary: KotlinLibrary? get() {
-    ((this as? IrMetadataSourceOwner)?.metadata as? KonanMetadata)?.let { return it.konanLibrary }
-    val result = when (val parent = parent) {
-        is IrFile -> parent.konanLibrary
-        is IrPackageFragment -> parent.packageFragmentDescriptor.containingDeclaration.konanLibrary
-        is IrDeclaration -> parent.konanLibrary
-        else -> TODO("Unexpected declaration parent: $parent")
+val IrModuleFragment.konanLibrary
+    get() = (this as? KonanIrModuleFragmentImpl)?.konanLibrary ?: descriptor.konanLibrary
+val IrPackageFragment.konanLibrary
+    get() = if (this is IrFile)
+        this.konanLibrary
+    else
+        this.packageFragmentDescriptor.containingDeclaration.konanLibrary
+val IrFile.konanLibrary
+    get() = (metadata as? KonanFileMetadataSource)?.module?.konanLibrary ?: packageFragmentDescriptor.containingDeclaration.konanLibrary
+val IrDeclaration.konanLibrary: KotlinLibrary?
+    get() {
+        ((this as? IrMetadataSourceOwner)?.metadata as? KonanMetadata)?.let { return it.konanLibrary }
+        return when (val parent = parent) {
+            is IrFile -> parent.konanLibrary
+            is IrPackageFragment -> parent.packageFragmentDescriptor.containingDeclaration.konanLibrary
+            is IrDeclaration -> parent.konanLibrary
+            else -> TODO("Unexpected declaration parent: $parent")
+        }
     }
-    if (this is IrMetadataSourceOwner && this !is IrLazyDeclarationBase)
-        metadata = KonanMetadata(metadata?.name, result)
-    return result
-}
 
 fun IrDeclaration.isFromInteropLibrary() = konanLibrary?.isInteropLibrary() == true

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers
 
 import org.gradle.api.artifacts.ArtifactView
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.DependencySubstitutions
 import org.gradle.api.artifacts.component.*
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.logging.Logger
@@ -31,7 +32,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.InternalKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
-import org.jetbrains.kotlin.gradle.plugin.sources.project
 import org.jetbrains.kotlin.gradle.utils.markResolvable
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
 
@@ -75,7 +75,8 @@ class IdeBinaryDependencyResolver(
         data class PlatformLikeSourceSet(
             internal val setupPlatformResolutionAttributes: AttributeContainer.(sourceSet: KotlinSourceSet) -> Unit,
             internal val setupArtifactViewAttributes: AttributeContainer.(sourceSet: KotlinSourceSet) -> Unit = {},
-            internal val componentFilter: ((ComponentIdentifier) -> Boolean)? = null
+            internal val componentFilter: ((ComponentIdentifier) -> Boolean)? = null,
+            internal val dependencySubstitution: ((DependencySubstitutions) -> Unit)? = null,
         ) : ArtifactResolutionStrategy()
     }
 
@@ -193,6 +194,9 @@ class IdeBinaryDependencyResolver(
         platformLikeCompileDependenciesConfiguration.markResolvable()
         platformLikeCompileDependenciesConfiguration.attributes.setupPlatformResolutionAttributes(sourceSet)
         platformLikeCompileDependenciesConfiguration.dependencies.addAll(sourceSet.resolvableMetadataConfiguration.allDependencies)
+
+        if (dependencySubstitution != null)
+            platformLikeCompileDependenciesConfiguration.resolutionStrategy.dependencySubstitution(dependencySubstitution)
 
         return platformLikeCompileDependenciesConfiguration.incoming.artifactView { view ->
             view.isLenient = true

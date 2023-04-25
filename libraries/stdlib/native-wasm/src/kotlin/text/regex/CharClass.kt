@@ -22,12 +22,15 @@
 @file:Suppress("DEPRECATION") // Char.toInt()
 package kotlin.text.regex
 
+import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.BitSet
+import kotlin.native.ObsoleteNativeApi
 
 /**
  * User defined character classes (e.g. [abef]).
  */
 // TODO: replace the implementation with one using BitSet for first 256 symbols and a hash table / tree for the rest of UTF.
+@OptIn(ObsoleteNativeApi::class)
 internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = false)  : AbstractCharClass()  {
 
     var invertedSurrogates = false
@@ -70,6 +73,7 @@ internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = fa
      * We can use this method safely even if nonBitSet != null
      * due to specific of range constructions in regular expressions.
      */
+    @OptIn(ExperimentalNativeApi::class)
     fun add(ch: Int): CharClass {
         var character = ch
         if (ignoreCase) {
@@ -213,6 +217,7 @@ internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = fa
         return this
     }
 
+    @OptIn(ExperimentalNativeApi::class)
     fun add(start: Int, end: Int): CharClass {
         if (start > end)
             throw IllegalArgumentException("Incorrect range of symbols (start > end)")
@@ -497,7 +502,7 @@ internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = fa
         }
     }
 
-    @OptIn(ExperimentalStdlibApi::class)
+    @OptIn(ExperimentalNativeApi::class)
     override val instance: AbstractCharClass
         get() {
 
@@ -531,7 +536,7 @@ internal class CharClass(val ignoreCase: Boolean = false, negative: Boolean = fa
             }
         }
 
-    @OptIn(ExperimentalStdlibApi::class)
+    @OptIn(ExperimentalNativeApi::class)
     //for debugging purposes only
     override fun toString(): String {
         val temp = StringBuilder()

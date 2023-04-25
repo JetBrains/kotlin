@@ -21,7 +21,7 @@ dependencies {
 
 task jarSources(type: Jar) {
     from sourceSets.main.allSource
-    classifier = 'source'
+    archiveClassifier = 'source'
 }
 artifacts {
     implementation jarSources

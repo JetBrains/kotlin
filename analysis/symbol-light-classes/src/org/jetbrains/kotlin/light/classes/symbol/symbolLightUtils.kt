@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.light.classes.symbol
 
+import com.intellij.openapi.project.Project
 import com.intellij.psi.*
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
@@ -150,53 +151,58 @@ internal fun KtType.isClassTypeWithClassId(classId: ClassId): Boolean {
     return this.classId == classId
 }
 
-private fun escapeString(str: String): String = buildString {
-    str.forEach { char ->
-        val escaped = when (char) {
-            '\n' -> "\\n"
-            '\r' -> "\\r"
-            '\t' -> "\\t"
-            '\"' -> "\\\""
-            '\\' -> "\\\\"
-            else -> "$char"
+private fun escapeString(s: String): String = buildString {
+    s.forEach {
+        when (it) {
+            '\n' -> append("\\n")
+            '\r' -> append("\\r")
+            '\t' -> append("\\t")
+            '"' -> append("\\\"")
+            '\\' -> append("\\\\")
+            else -> if (it.code in 32..128) {
+                append(it)
+            } else {
+                append("\\u%04X".format(it.code))
+            }
         }
-        append(escaped)
     }
 }
 
-internal fun KtAnnotationValue.toAnnotationMemberValue(parent: PsiElement): PsiAnnotationMemberValue? {
-    return when (this) {
-        is KtArrayAnnotationValue ->
-            SymbolPsiArrayInitializerMemberValue(sourcePsi, parent) { arrayLiteralParent ->
-                values.mapNotNull { element -> element.toAnnotationMemberValue(arrayLiteralParent) }
-            }
-
-        is KtAnnotationApplicationValue ->
-            SymbolLightSimpleAnnotation(
-                annotationValue.classId?.relativeClassName?.asString(),
-                parent,
-                annotationValue.arguments,
-                annotationValue.psi
-            )
-
-        is KtConstantAnnotationValue -> {
-            this.constantValue.createPsiLiteral(parent)?.let {
-                when (it) {
-                    is PsiLiteral -> SymbolPsiLiteral(sourcePsi, parent, it)
-                    else -> SymbolPsiExpression(sourcePsi, parent, it)
-                }
-            }
+internal fun KtAnnotationValue.toAnnotationMemberValue(parent: PsiElement): PsiAnnotationMemberValue? = when (this) {
+    is KtArrayAnnotationValue ->
+        SymbolPsiArrayInitializerMemberValue(sourcePsi, parent) { arrayLiteralParent ->
+            values.mapNotNull { element -> element.toAnnotationMemberValue(arrayLiteralParent) }
         }
 
-        is KtEnumEntryAnnotationValue -> {
-            val fqName = this.callableId?.asSingleFqName()?.asString() ?: return null
-            val psiReference = PsiElementFactory.getInstance(parent.project).createReferenceFromText(fqName, parent)
-            SymbolPsiReference(sourcePsi, parent, psiReference)
-        }
+    is KtAnnotationApplicationValue ->
+        SymbolLightSimpleAnnotation(
+            fqName = annotationValue.classId?.relativeClassName?.asString(),
+            parent = parent,
+            arguments = annotationValue.arguments,
+            kotlinOrigin = annotationValue.psi,
+        )
 
-        KtUnsupportedAnnotationValue -> null
-        is KtKClassAnnotationValue -> toAnnotationMemberValue(parent)
+    is KtConstantAnnotationValue -> {
+        constantValue.createPsiExpression(parent)?.let {
+            when (it) {
+                is PsiLiteral -> SymbolPsiLiteral(sourcePsi, parent, it)
+                else -> SymbolPsiExpression(sourcePsi, parent, it)
+            }
+        }
     }
+
+    is KtEnumEntryAnnotationValue -> asPsiReferenceExpression(parent)
+    is KtKClassAnnotationValue -> toAnnotationMemberValue(parent)
+    KtUnsupportedAnnotationValue -> null
+}
+
+private fun KtEnumEntryAnnotationValue.asPsiReferenceExpression(parent: PsiElement): SymbolPsiReference? {
+    val fqName = this.callableId?.asSingleFqName()?.asString() ?: return null
+    val psiReference = parent.project.withElementFactorySafe {
+        createReferenceFromText(fqName, parent)
+    } ?: return null
+
+    return SymbolPsiReference(sourcePsi, parent, psiReference)
 }
 
 private fun KtKClassAnnotationValue.toAnnotationMemberValue(parent: PsiElement): PsiExpression? {
@@ -205,35 +211,49 @@ private fun KtKClassAnnotationValue.toAnnotationMemberValue(parent: PsiElement):
         is KtKClassAnnotationValue.KtLocalKClassAnnotationValue -> null
         is KtKClassAnnotationValue.KtErrorClassAnnotationValue -> unresolvedQualifierName
     } ?: return null
+
     val canonicalText = psiType(
-        typeString, parent, boxPrimitiveType = false, /* TODO value.arrayNestedness > 0*/
+        kotlinFqName = typeString,
+        context = parent,
+        boxPrimitiveType = false, /* TODO value.arrayNestedness > 0*/
     ).let(TypeConversionUtil::erasure).getCanonicalText(false)
-    return try {
-        PsiElementFactory.getInstance(parent.project).createExpressionFromText("$canonicalText.class", parent)
-    } catch (_: IncorrectOperationException) {
-        null
+
+    return parent.project.withElementFactorySafe {
+        createExpressionFromText("$canonicalText.class", parent)
     }
 }
 
-private fun KtConstantValue.asStringForPsiLiteral(): String =
+private fun KtConstantValue.asStringForPsiExpression(): String =
     when (val value = value) {
-        is Char -> "'$value'"
+        Double.NEGATIVE_INFINITY -> "-1.0 / 0.0"
+        Double.NaN -> "0.0 / 0.0"
+        Double.POSITIVE_INFINITY -> "1.0 / 0.0"
+        Float.NEGATIVE_INFINITY -> "-1.0F / 0.0F"
+        Float.NaN -> "0.0F / 0.0F"
+        Float.POSITIVE_INFINITY -> "1.0F / 0.0F"
+        '\'' -> "'\\''"
+        is Char -> "'${escapeString(value.toString())}'"
         is String -> "\"${escapeString(value)}\""
         is Long -> "${value}L"
         is Float -> "${value}f"
-        else -> value?.toString() ?: "null"
+        else -> value.toString()
     }
 
+internal fun KtConstantValue.createPsiExpression(parent: PsiElement): PsiExpression? {
+    val asString = asStringForPsiExpression()
+    return parent.project.withElementFactorySafe {
+        createExpressionFromText(asString, parent)
+    }
+}
 
-internal fun KtConstantValue.createPsiLiteral(parent: PsiElement): PsiExpression? {
-    val asString = asStringForPsiLiteral()
+internal inline fun <T> Project.withElementFactorySafe(crossinline action: PsiElementFactory.() -> T): T? {
+    val instance = PsiElementFactory.getInstance(this)
     return try {
-        PsiElementFactory.getInstance(parent.project).createExpressionFromText(asString, parent)
+        instance.action()
     } catch (_: IncorrectOperationException) {
         null
     }
 }
-
 
 internal fun BitSet.copy(): BitSet = clone() as BitSet
 
@@ -270,6 +290,7 @@ internal inline fun <T : KtSymbol, R> KtSymbolPointer<T>.withSymbol(
 internal val KtPropertySymbol.isConstOrJvmField: Boolean get() = isConst || hasJvmFieldAnnotation()
 internal val KtPropertySymbol.isConst: Boolean get() = (this as? KtKotlinPropertySymbol)?.isConst == true
 internal val KtPropertySymbol.isLateInit: Boolean get() = (this as? KtKotlinPropertySymbol)?.isLateInit == true
+internal val KtPropertySymbol.canHaveNonPrivateField: Boolean get() = isConstOrJvmField || isLateInit
 
 internal inline fun <reified T> Collection<T>.toArrayIfNotEmptyOrDefault(default: Array<T>): Array<T> {
     return if (isNotEmpty()) toTypedArray() else default

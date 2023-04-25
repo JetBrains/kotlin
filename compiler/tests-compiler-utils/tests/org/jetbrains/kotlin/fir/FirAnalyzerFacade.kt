@@ -42,13 +42,12 @@ abstract class AbstractFirAnalyzerFacade {
 
 class FirAnalyzerFacade(
     val session: FirSession,
-    val languageVersionSettings: LanguageVersionSettings,
+    val fir2IrConfiguration: Fir2IrConfiguration,
     val ktFiles: Collection<KtFile> = emptyList(), // may be empty if light tree mode enabled
     val lightTreeFiles: Collection<LightTreeFile> = emptyList(), // may be empty if light tree mode disabled
     val irGeneratorExtensions: Collection<IrGenerationExtension>,
     val parser: FirParser,
     val enablePluginPhases: Boolean = false,
-    val generateSignatures: Boolean = false
 ) : AbstractFirAnalyzerFacade() {
     private var firFiles: List<FirFile>? = null
     private var _scopeSession: ScopeSession? = null
@@ -114,13 +113,12 @@ class FirAnalyzerFacade(
 
         return Fir2IrConverter.createModuleFragmentWithSignaturesIfNeeded(
             session, _scopeSession!!, firFiles!!,
-            languageVersionSettings,
             fir2IrExtensions,
+            fir2IrConfiguration,
             JvmIrMangler, IrFactoryImpl,
             FirJvmVisibilityConverter,
             Fir2IrJvmSpecialAnnotationSymbolProvider(),
             irGeneratorExtensions,
-            generateSignatures,
             kotlinBuiltIns = DefaultBuiltIns.Instance, // TODO: consider passing externally,
             commonMemberStorage = commonMemberStorage,
             initializedIrBuiltIns = irBuiltIns

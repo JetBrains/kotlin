@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.descriptors.Modality
 
 /**
  * A non-leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.overridableMember
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.overridableMember]
  */
 interface IrOverridableMember : IrDeclaration, IrDeclarationWithVisibility,
         IrDeclarationWithName, IrSymbolOwner {

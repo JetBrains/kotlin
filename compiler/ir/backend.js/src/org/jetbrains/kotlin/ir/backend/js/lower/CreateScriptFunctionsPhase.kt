@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 private object SCRIPT_FUNCTION : IrDeclarationOriginImpl("SCRIPT_FUNCTION")
 
@@ -37,12 +38,13 @@ class CreateScriptFunctionsPhase(val context: CommonBackendContext) : FileLoweri
         val (startOffset, endOffset) = getFunctionBodyOffsets(irScript)
 
         val initializeStatements = irScript.statements
+            .asSequence()
             .filterIsInstance<IrProperty>()
             .mapNotNull { it.backingField }
             .filter { it.initializer != null }
             .map { Pair(it, it.initializer!!.expression) }
-
-        initializeStatements.forEach { it.first.initializer = null }
+            .onEach { it.first.initializer = null }
+            .toList()
 
         val initializeScriptFunction = createFunction(irScript, "\$initializeScript\$", context.irBuiltIns.unitType).also {
             it.body = it.factory.createBlockBody(
@@ -51,7 +53,7 @@ class CreateScriptFunctionsPhase(val context: CommonBackendContext) : FileLoweri
                 initializeStatements.let {
                     if (irScript.resultProperty == null || initializeStatements.lastOrNull()?.first?.correspondingPropertySymbol != irScript.resultProperty) it
                     else it.dropLast(1)
-                }.map { (field, expression) -> createIrSetField(field, expression) }
+                }.memoryOptimizedMap { (field, expression) -> createIrSetField(field, expression) }
             )
         }
 

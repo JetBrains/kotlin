@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.hasError
 import org.jetbrains.kotlin.fir.types.isUnit
 
 object FirPropertyAccessorsTypesChecker : FirPropertyChecker() {
@@ -99,7 +100,7 @@ object FirPropertyAccessorsTypesChecker : FirPropertyChecker() {
             return
         }
 
-        if (valueSetterType != propertyType) {
+        if (valueSetterType != propertyType && !valueSetterType.hasError()) {
             reporter.reportOn(valueSetterTypeSource, FirErrors.WRONG_SETTER_PARAMETER_TYPE, propertyType, valueSetterType, context)
         }
 

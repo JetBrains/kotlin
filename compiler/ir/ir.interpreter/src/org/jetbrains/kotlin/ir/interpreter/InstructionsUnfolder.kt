@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.ir.interpreter
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
+import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.interpreter.exceptions.InterpreterError
 import org.jetbrains.kotlin.ir.interpreter.exceptions.handleUserException
 import org.jetbrains.kotlin.ir.interpreter.exceptions.verify
@@ -112,6 +114,19 @@ private fun unfoldConstructor(constructor: IrConstructor, callStack: CallStack) 
 
 private fun unfoldValueParameters(expression: IrFunctionAccessExpression, environment: IrInterpreterEnvironment) {
     val callStack = environment.callStack
+    val irFunction = expression.symbol.owner
+
+    if (irFunction.name.asString() == "<get-name>" && expression.dispatchReceiver is IrGetEnumValue) {
+        // this optimization allow us to avoid creation of enum object when we try to interpret simple `name` call; see KT-53480
+        callStack.pushSimpleInstruction(expression)
+        callStack.pushSimpleInstruction(irFunction.dispatchReceiverParameter!!)
+
+        val enumEntry = (expression.dispatchReceiver as IrGetEnumValue).symbol.owner
+        callStack.pushState(enumEntry.toState(environment.irBuiltIns))
+        return
+    }
+    // TODO do the same thing but for "KCallable.name" with "this" as receiver
+
     val hasDefaults = (0 until expression.valueArgumentsCount).any { expression.getValueArgument(it) == null }
     if (hasDefaults) {
         environment.getCachedFunction(expression.symbol, fromDelegatingCall = expression is IrDelegatingConstructorCall)?.let {
@@ -166,7 +181,6 @@ private fun unfoldValueParameters(expression: IrFunctionAccessExpression, enviro
         ).owner.createCall().apply { environment.irBuiltIns.copyArgs(expression, this) }
         callStack.pushCompoundInstruction(callToDefault)
     } else {
-        val irFunction = expression.symbol.owner
         callStack.pushSimpleInstruction(expression)
 
         fun IrValueParameter.schedule(arg: IrExpression?) {
@@ -277,14 +291,6 @@ private fun unfoldGetEnumValue(expression: IrGetEnumValue, environment: IrInterp
     val callStack = environment.callStack
     environment.mapOfEnums[expression.symbol]?.let { return callStack.pushState(it) }
 
-    val frameOwner = callStack.currentFrameOwner
-    if (frameOwner is IrCall && frameOwner.dispatchReceiver is IrGetEnumValue && frameOwner.symbol.owner.name.asString() == "<get-name>") {
-        // this optimization allow us to avoid creation of enum object when we try to interpret simple `name` call; see KT-53480
-        val enumEntry = (frameOwner.dispatchReceiver as IrGetEnumValue).symbol.owner
-        callStack.pushState(enumEntry.toState(environment.irBuiltIns))
-        return
-    }
-
     callStack.pushSimpleInstruction(expression)
     val enumEntry = expression.symbol.owner
     val enumClass = enumEntry.symbol.owner.parentAsClass
@@ -389,6 +395,16 @@ private fun unfoldStringConcatenation(expression: IrStringConcatenation, environ
     // this callback is used to check the need for an explicit toString call
     val explicitToStringCheck = fun() {
         when (val state = callStack.peekState()) {
+            is Primitive<*> -> {
+                // This block is not really needed, but this way it is easier to handle `toString` with `treatFloatInSpecialWay` enabled.
+                callStack.popState()
+                val toStringCall = IrCallImpl.fromSymbolOwner(
+                    UNDEFINED_OFFSET, UNDEFINED_OFFSET,
+                    if (state.isNull()) environment.irBuiltIns.extensionToString else environment.irBuiltIns.memberToString
+                )
+                callStack.pushSimpleInstruction(toStringCall)
+                callStack.pushState(state)
+            }
             is Common -> {
                 callStack.popState()
                 // TODO this check can be dropped after serialization introduction

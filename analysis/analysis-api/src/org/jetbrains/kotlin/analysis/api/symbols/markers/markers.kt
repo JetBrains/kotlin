@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.symbols.markers
 
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtTypeParameterSymbol
-import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.name.Name
 
 public interface KtPossiblyNamedSymbol : KtSymbol {

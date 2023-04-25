@@ -9,13 +9,15 @@ import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.impl.generateTestGroupSuite
 import org.jetbrains.kotlin.incremental.AbstractJsIrES6InvalidationTest
 import org.jetbrains.kotlin.incremental.AbstractJsIrInvalidationTest
+import org.jetbrains.kotlin.incremental.AbstractJsFirInvalidationTest
 import org.jetbrains.kotlin.js.test.*
 import org.jetbrains.kotlin.js.test.fir.*
 import org.jetbrains.kotlin.js.test.ir.*
 import org.jetbrains.kotlin.js.testOld.AbstractDceTest
-import org.jetbrains.kotlin.js.testOld.compatibility.binary.AbstractJsKlibBinaryCompatibilityTest
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.runners.ir.AbstractFirLightTreeIrJsTextTest
+import org.jetbrains.kotlin.js.test.fir.AbstractFirLightTreeJsIrTextTest
+import org.jetbrains.kotlin.js.testOld.klib.AbstractClassicJsKlibEvolutionTest
+import org.jetbrains.kotlin.js.testOld.klib.AbstractFirJsKlibEvolutionTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -37,16 +39,32 @@ fun main(args: Array<String>) {
         }
 
         testGroup("js/js.tests/tests-gen", "compiler/testData") {
-            testClass<AbstractJsKLibABIWithICTestCase> {
-                model("klibABI/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false, )
+            testClass<AbstractJsPartialLinkageWithICTestCase> {
+                model("klibABI/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
             }
         }
         testGroup("js/js.tests/tests-gen", "compiler/testData") {
-            testClass<AbstractJsKLibABINoICTestCase> {
-                model("klibABI/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false, )
+            testClass<AbstractJsPartialLinkageNoICTestCase> {
+                model("klibABI/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
+            }
+        }
+        testGroup("js/js.tests/tests-gen", "compiler/testData") {
+            testClass<AbstractFirJsPartialLinkageNoICTestCase> {
+                model("klibABI/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
             }
         }
 
+        testGroup("js/js.tests/tests-gen", "compiler/testData/binaryCompatibility", testRunnerMethodName = "runTest0") {
+            testClass<AbstractClassicJsKlibEvolutionTest> {
+                model("klibEvolution", targetBackend = TargetBackend.JS_IR)
+            }
+            testClass<AbstractFirJsKlibEvolutionTest> {
+                model("klibEvolution", targetBackend = TargetBackend.JS_IR)
+            }
+        }
+    }
+
+    generateTestGroupSuiteWithJUnit5(args) {
         testGroup("js/js.tests/tests-gen", "js/js.translator/testData") {
             testClass<AbstractJsIrInvalidationTest> {
                 model("incremental/invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
@@ -55,16 +73,12 @@ fun main(args: Array<String>) {
             testClass<AbstractJsIrES6InvalidationTest> {
                 model("incremental/invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR_ES6, recursive = false)
             }
-        }
 
-        testGroup("js/js.tests/tests-gen", "compiler/testData/binaryCompatibility", testRunnerMethodName = "runTest0") {
-            testClass<AbstractJsKlibBinaryCompatibilityTest> {
-                model("klibEvolution", targetBackend = TargetBackend.JS_IR)
+            testClass<AbstractJsFirInvalidationTest> {
+                model("incremental/invalidation/", pattern = "^([^_](.+))$", targetBackend = TargetBackend.JS_IR, recursive = false)
             }
         }
-    }
 
-    generateTestGroupSuiteWithJUnit5(args) {
         testGroup("js/js.tests/tests-gen", "js/js.translator/testData", testRunnerMethodName = "runTest0") {
             testClass<AbstractBoxJsTest> {
                 model("box/", pattern = "^([^_](.+))\\.kt$", excludeDirs = listOf("closure/inlineAnonymousFunctions", "es6classes"))
@@ -174,10 +188,16 @@ fun main(args: Array<String>) {
                 model("diagnostics/testsWithJsStdLib", pattern = "^([^_](.+))\\.kt$", excludedPattern = excludedFirTestdataPattern)
             }
 
-            testClass<AbstractFirLightTreeIrJsTextTest>(
-                suiteTestClassName = "FirLightTreeJsIrTextTestGenerated"
-            ) {
-                model("ir/irJsText")
+            testClass<AbstractClassicJsIrTextTest> {
+                model("ir/irText")
+            }
+
+            testClass<AbstractFirLightTreeJsIrTextTest> {
+                model("ir/irText")
+            }
+
+            testClass<AbstractFirPsiJsIrTextTest> {
+                model("ir/irText")
             }
 
             testClass<AbstractFirJsCodegenBoxTest> {

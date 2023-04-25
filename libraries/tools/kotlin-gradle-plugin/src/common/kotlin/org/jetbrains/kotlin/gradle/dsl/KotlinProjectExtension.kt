@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.dsl
 
 import org.gradle.api.Action
-import org.gradle.api.GradleException
 import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
@@ -14,12 +13,13 @@ import org.gradle.api.internal.plugins.DslObject
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.jvm.toolchain.JavaToolchainSpec
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
+import org.jetbrains.kotlin.gradle.internal.KOTLIN_BUILD_TOOLS_API_IMPL
+import org.jetbrains.kotlin.gradle.internal.KOTLIN_MODULE_GROUP
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsSingleTargetPreset
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmDefaultProjectModelContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.targets.js.calculateJsCompilerType
@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.gradle.utils.castIsolatedKotlinPluginClassLoaderAwar
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
-import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 import kotlin.reflect.KClass
 
@@ -135,17 +134,24 @@ abstract class KotlinTopLevelExtension(internal val project: Project) : KotlinTo
      */
     @ExperimentalKotlinGradlePluginApi
     fun <T : Named> NamedDomainObjectContainer<T>.invokeWhenCreated(name: String, configure: T.() -> Unit) {
-        val invoked = AtomicBoolean(false)
-        matching { it.name == name }.all { value -> if (!invoked.getAndSet(true)) value.configure() }
-        project.whenEvaluated {
-            if (!invoked.getAndSet(true)) {
-                /*
-                Expected to fail, since the listener was not called.
-                Letting Gradle fail here will result in a more natural error message
-                */
+        configureEach { if (it.name == name) it.configure() }
+        project.launchInStage(KotlinPluginLifecycle.Stage.ReadyForExecution) {
+            if (name !in names) {
+                /* Expect 'named' to throw corresponding exception */
                 named(name).configure(configure)
             }
         }
+    }
+
+    /**
+     * Allows to use a different version of the Kotlin Build Tools API implementation and effectively a different version of the compiler.
+     *
+     * By default, the Kotlin Build Tools API implementation of the same version as the KGP is used.
+     *
+     * Currently only has an effect if the `kotlin.compiler.runViaBuildToolsApi` Gradle property is set to `true`.
+     */
+    fun useCompilerVersion(version: String) {
+        project.dependencies.add(BUILD_TOOLS_API_CLASSPATH_CONFIGURATION_NAME, "$KOTLIN_MODULE_GROUP:$KOTLIN_BUILD_TOOLS_API_IMPL:$version")
     }
 }
 
@@ -156,6 +162,11 @@ open class KotlinProjectExtension @Inject constructor(project: Project) : Kotlin
         internal set(value) {
             DslObject(this).extensions.add("sourceSets", value)
         }
+
+    internal suspend fun awaitSourceSets(): NamedDomainObjectContainer<KotlinSourceSet> {
+        KotlinPluginLifecycle.Stage.AfterFinaliseDsl.await()
+        return sourceSets
+    }
 }
 
 abstract class KotlinSingleTargetExtension<TARGET : KotlinTarget>(project: Project) : KotlinProjectExtension(project) {
@@ -171,6 +182,17 @@ abstract class KotlinJvmProjectExtension(project: Project) : KotlinSingleJavaTar
         internal set
 
     open fun target(body: KotlinWithJavaTarget<KotlinJvmOptions, KotlinJvmCompilerOptions>.() -> Unit) = target.run(body)
+
+    val compilerOptions: KotlinJvmCompilerOptions =
+        project.objects.newInstance(KotlinJvmCompilerOptionsDefault::class.java)
+
+    fun compilerOptions(configure: Action<KotlinJvmCompilerOptions>) {
+        configure.execute(compilerOptions)
+    }
+
+    fun compilerOptions(configure: KotlinJvmCompilerOptions.() -> Unit) {
+        configure(compilerOptions)
+    }
 }
 
 abstract class Kotlin2JsProjectExtension(project: Project) : KotlinSingleJavaTargetExtension(project) {
@@ -222,14 +244,13 @@ abstract class KotlinJsProjectExtension(project: Project) :
             }
         }
 
-        internal fun warnAboutDeprecatedCompiler(project: Project, compilerType: KotlinJsCompilerType?) {
+        internal fun warnAboutDeprecatedCompiler(project: Project, compilerType: KotlinJsCompilerType) {
             if (PropertiesProvider(project).jsCompilerNoWarn) return
             val logger = project.logger
             when (compilerType) {
                 KotlinJsCompilerType.LEGACY -> logger.warn(LEGACY_DEPRECATED)
                 KotlinJsCompilerType.IR -> {}
                 KotlinJsCompilerType.BOTH -> logger.warn(BOTH_DEPRECATED)
-                null -> throw GradleException(DEFAULT_COMPILER_ERROR)
             }
         }
 
@@ -255,19 +276,6 @@ abstract class KotlinJsProjectExtension(project: Project) :
                 |==========
                 |
             """.trimMargin()
-
-        private val DEFAULT_COMPILER_ERROR =
-            """
-                |
-                |==========
-                |This project currently uses the Kotlin/JS Legacy compiler backend, which has been deprecated and will be removed in a future release.
-                |Please migrate the project to the new IR-based compiler (https://kotl.in/jsir) by adding:
-                |- kotlin.js.compiler=ir to your gradle.properties file.
-                |- js(IR) { ... } to your build file.
-                |You can continue to use the deprecated legacy compiler in the current version of the toolchain by specifying it explicitly.
-                |==========
-                |
-            """.trimMargin()
     }
 
     @Deprecated("Use js() instead", ReplaceWith("js()"))
@@ -280,7 +288,7 @@ abstract class KotlinJsProjectExtension(project: Project) :
             return _target!!
         }
 
-    override var compilerTypeFromProperties: KotlinJsCompilerType? = null
+    override val compilerTypeFromProperties: KotlinJsCompilerType? = project.kotlinPropertiesProvider.jsCompiler
 
     @Suppress("DEPRECATION")
     private fun jsInternal(
@@ -298,7 +306,7 @@ abstract class KotlinJsProjectExtension(project: Project) :
             val compilerOrFromProperties = compiler ?: compilerTypeFromProperties
             val compilerOrDefault = compilerOrFromProperties ?: defaultJsCompilerType
             reportJsCompilerMode(compilerOrDefault)
-            warnAboutDeprecatedCompiler(project, compilerOrFromProperties)
+            warnAboutDeprecatedCompiler(project, compilerOrDefault)
             val target: KotlinJsTargetDsl = when (compilerOrDefault) {
                 KotlinJsCompilerType.LEGACY -> legacyPreset
                     .also {
@@ -397,6 +405,17 @@ abstract class KotlinAndroidProjectExtension(project: Project) : KotlinSingleTar
         internal set
 
     open fun target(body: KotlinAndroidTarget.() -> Unit) = target.run(body)
+
+    val compilerOptions: KotlinJvmCompilerOptions =
+        project.objects.newInstance(KotlinJvmCompilerOptionsDefault::class.java)
+
+    fun compilerOptions(configure: Action<KotlinJvmCompilerOptions>) {
+        configure.execute(compilerOptions)
+    }
+
+    fun compilerOptions(configure: KotlinJvmCompilerOptions.() -> Unit) {
+        configure(compilerOptions)
+    }
 }
 
 enum class NativeCacheKind(val produce: String?, val outputKind: CompilerOutputKind?) {

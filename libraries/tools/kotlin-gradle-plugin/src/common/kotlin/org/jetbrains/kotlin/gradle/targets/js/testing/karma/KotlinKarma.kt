@@ -32,15 +32,13 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl.Companion.webp
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.targets.js.jsQuoted
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.*
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
-import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion
-import org.jetbrains.kotlin.gradle.targets.js.webpack.WebpackMajorVersion.Companion.choose
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
 import org.jetbrains.kotlin.gradle.utils.appendLine
-import org.jetbrains.kotlin.gradle.utils.isParentOf
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.slf4j.Logger
@@ -56,7 +54,7 @@ class KotlinKarma(
     private val npmProject = compilation.npmProject
 
     @Transient
-    private val nodeJs = NodeJsRootPlugin.apply(project.rootProject)
+    private val nodeJs = project.rootProject.kotlinNodeJsExtension
     private val nodeRootPackageDir by lazy { nodeJs.rootPackageDir }
     private val versions = nodeJs.versions
 
@@ -81,8 +79,6 @@ class KotlinKarma(
     override val settingsState: String
         get() = "KotlinKarma($config)"
 
-    private val webpackMajorVersion = PropertiesProvider(project).webpackMajorVersion
-
     val webpackConfig = KotlinWebpackConfig(
         configDirectory = project.projectDir.resolve("webpack.config.d"),
         optimization = KotlinWebpackConfig.Optimization(
@@ -94,13 +90,11 @@ class KotlinKarma(
         export = false,
         progressReporter = true,
         progressReporterPathFilter = nodeRootPackageDir,
-        webpackMajorVersion = webpackMajorVersion,
         rules = project.objects.webpackRulesContainer(),
         experiments = mutableSetOf("topLevelAwait")
     )
 
     init {
-        requiredDependencies.add(versions.kotlinJsTestRunner)
         requiredDependencies.add(versions.karma)
 
         useKotlinReporter()
@@ -201,10 +195,10 @@ class KotlinKarma(
 
     fun useChromeCanaryHeadless() = useChromeLike("ChromeCanaryHeadless")
 
-    fun useChromeCanaryHeadlessWasmGc() {
+    fun useChromeHeadlessWasmGc() {
         val chromeCanaryHeadlessWasmGc = "ChromeHeadlessWasmGc"
 
-        config.customLaunchers[chromeCanaryHeadlessWasmGc] = CustomLauncher("ChromeCanaryHeadless").apply {
+        config.customLaunchers[chromeCanaryHeadlessWasmGc] = CustomLauncher("ChromeHeadless").apply {
             flags.add("--js-flags=--experimental-wasm-gc")
         }
 
@@ -266,23 +260,13 @@ class KotlinKarma(
         config.frameworks.add("webpack")
         requiredDependencies.add(versions.karmaWebpack)
         requiredDependencies.add(
-            webpackMajorVersion.choose(
-                versions.webpack,
-                versions.webpack4
-            )
+            versions.webpack
         )
         requiredDependencies.add(
-            webpackMajorVersion.choose(
-                versions.webpackCli,
-                versions.webpackCli3
-            )
+            versions.webpackCli
         )
-        requiredDependencies.add(versions.formatUtil)
         requiredDependencies.add(
-            webpackMajorVersion.choose(
-                versions.sourceMapLoader,
-                versions.sourceMapLoader1
-            )
+            versions.sourceMapLoader
         )
 
         addPreprocessor("webpack")
@@ -298,14 +282,12 @@ class KotlinKarma(
                 // noinspection JSUnnecessarySemicolon
                 ;(function(config) {
                     const webpack = require('webpack');
-                    ${
-                    if (webpackMajorVersion != WebpackMajorVersion.V4) {
-                        """
-                            // https://github.com/webpack/webpack/issues/12951
-                            const PatchSourceMapSource = require('kotlin-test-js-runner/webpack-5-debug');
-                            config.plugins.push(new PatchSourceMapSource())
-                            """
-                    } else ""
+                ${
+                    """
+                    // https://github.com/webpack/webpack/issues/12951
+                    const PatchSourceMapSource = require('kotlin-test-js-runner/webpack-5-debug');
+                    config.plugins.push(new PatchSourceMapSource())
+                    """
                 }
                     config.plugins.push(new webpack.SourceMapDevToolPlugin({
                         moduleFilenameTemplate: "[absolute-resource-path]"
@@ -319,44 +301,6 @@ class KotlinKarma(
             it.appendLine()
             it.appendLine("config.set({webpack: createWebpackConfig()});")
             it.appendLine()
-        }
-    }
-
-    fun useCoverage(
-        html: Boolean = true,
-        lcov: Boolean = true,
-        cobertura: Boolean = false,
-        teamcity: Boolean = true,
-        text: Boolean = false,
-        textSummary: Boolean = false,
-        json: Boolean = false,
-        jsonSummary: Boolean = false
-    ) {
-        if (listOf(
-                html, lcov, cobertura,
-                teamcity, text, textSummary,
-                json, jsonSummary
-            ).all { !it }
-        ) return
-
-        requiredDependencies.add(versions.karmaCoverage)
-        config.reporters.add("coverage")
-        addPreprocessor("coverage") { !it.endsWith("_test.js") }
-
-        configurators.add {
-            val reportDir = project.reportsDir.resolve("coverage/${it.name}")
-            reportDir.mkdirs()
-
-            config.coverageReporter = CoverageReporter(reportDir.canonicalPath).also { coverage ->
-                if (html) coverage.reporters.add(Reporter("html"))
-                if (lcov) coverage.reporters.add(Reporter("lcovonly"))
-                if (cobertura) coverage.reporters.add(Reporter("cobertura"))
-                if (teamcity) coverage.reporters.add(Reporter("teamcity"))
-                if (text) coverage.reporters.add(Reporter("text"))
-                if (textSummary) coverage.reporters.add(Reporter("text-summary"))
-                if (json) coverage.reporters.add(Reporter("json"))
-                if (jsonSummary) coverage.reporters.add(Reporter("json-summary"))
-            }
         }
     }
 

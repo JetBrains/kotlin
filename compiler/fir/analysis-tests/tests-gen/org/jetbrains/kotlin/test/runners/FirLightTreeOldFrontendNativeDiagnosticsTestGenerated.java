@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 public class FirLightTreeOldFrontendNativeDiagnosticsTestGenerated extends AbstractFirLightTreeNativeDiagnosticsTest {
     @Test
     public void testAllFilesPresentInNativeTests() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/nativeTests"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(fir|ll)\\.kts?$"), true);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/nativeTests"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
     }
 
     @Test
@@ -52,6 +52,12 @@ public class FirLightTreeOldFrontendNativeDiagnosticsTestGenerated extends Abstr
     @TestMetadata("objCRefinement.kt")
     public void testObjCRefinement() throws Exception {
         runTest("compiler/testData/diagnostics/nativeTests/objCRefinement.kt");
+    }
+
+    @Test
+    @TestMetadata("overridesMemberWithPlatformDependent.kt")
+    public void testOverridesMemberWithPlatformDependent() throws Exception {
+        runTest("compiler/testData/diagnostics/nativeTests/overridesMemberWithPlatformDependent.kt");
     }
 
     @Test

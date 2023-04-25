@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -21,8 +21,6 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isAncestor
 import org.jetbrains.kotlin.psi.psiUtil.isObjectLiteral
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
-import org.jetbrains.kotlin.psi2ir.deparenthesize
-
 
 @ThreadSafe
 internal class FirElementBuilder(
@@ -30,9 +28,8 @@ internal class FirElementBuilder(
 ) {
     companion object {
         fun getPsiAsFirElementSource(element: KtElement): KtElement? {
-            val deparenthesized = if (element is KtPropertyDelegate) element.deparenthesize() else element
+            val deparenthesized = if (element is KtExpression) KtPsiUtil.safeDeparenthesize(element) else element
             return when {
-                deparenthesized is KtParenthesizedExpression -> deparenthesized.deparenthesize()
                 deparenthesized is KtPropertyDelegate -> deparenthesized.expression ?: element
                 deparenthesized is KtQualifiedExpression && deparenthesized.selectorExpression is KtCallExpression -> {
                     /*
@@ -51,7 +48,6 @@ internal class FirElementBuilder(
             }
         }
     }
-
 
     fun doKtElementHasCorrespondingFirElement(ktElement: KtElement): Boolean = when (ktElement) {
         is KtImportList -> false
@@ -85,8 +81,9 @@ internal class FirElementBuilder(
         val firFile = element.containingKtFile
         val fileStructure = moduleComponents.fileStructureCache.getFileStructure(firFile)
 
-        val mappings = fileStructure.getStructureElementFor(element).mappings
+        val structureElement = fileStructure.getStructureElementFor(element)
         val psi = getPsiAsFirElementSource(element) ?: return null
+        val mappings = structureElement.mappings
         return mappings.getFirOfClosestParent(psi, firResolveSession)
             ?: firResolveSession.getOrBuildFirFile(firFile)
     }
@@ -98,6 +95,21 @@ internal class FirElementBuilder(
     }
 }
 
+private fun KtDeclaration.isPartOf(callableDeclaration: KtCallableDeclaration): Boolean = when (this) {
+    is KtPropertyAccessor -> this.property == callableDeclaration
+    is KtParameter -> {
+        val ownerFunction = ownerFunction
+        ownerFunction == callableDeclaration || ownerFunction?.isPartOf(callableDeclaration) == true
+    }
+    is KtTypeParameter -> containingDeclaration == callableDeclaration
+    else -> false
+}
+
+internal val KtTypeParameter.containingDeclaration: KtDeclaration?
+    get() = (parent as? KtTypeParameterList)?.parent as? KtDeclaration
+
+internal val KtDeclaration.canBePartOfParentDeclaration: Boolean get() = this is KtPropertyAccessor || this is KtParameter || this is KtTypeParameter
+
 internal fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate: (KtDeclaration) -> Boolean = { true }): KtDeclaration? {
     var candidate: KtDeclaration? = null
 
@@ -108,8 +120,8 @@ internal fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate: (KtDec
     }
 
     for (parent in parentsWithSelf) {
-        if (candidate != null) {
-            if (parent is KtEnumEntry || parent is KtCallableDeclaration || parent is KtClassInitializer) {
+        candidate?.let { notNullCandidate ->
+            if (parent is KtEnumEntry || parent is KtCallableDeclaration && !notNullCandidate.isPartOf(parent) || parent is KtClassInitializer) {
                 // Candidate turned out to be local. Let's find another one.
                 candidate = null
             }
@@ -120,7 +132,23 @@ internal fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate: (KtDec
             when (parent) {
                 is KtScript -> propose(parent)
                 is KtDestructuringDeclaration -> propose(parent)
-                is KtNamedDeclaration -> {
+                is KtAnonymousInitializer -> {
+                    val container = parent.containingDeclaration
+                    if (container is KtClassOrObject &&
+                        !container.isObjectLiteral() &&
+                        declarationCanBeLazilyResolved(container) &&
+                        predicate(parent)
+                    ) {
+                        propose(parent)
+                    }
+                }
+                is KtDeclaration -> {
+                    if (parent.canBePartOfParentDeclaration) {
+                        if (predicate(parent)) {
+                            propose(parent)
+                        }
+                    }
+
                     val isKindApplicable = when (parent) {
                         is KtClassOrObject -> !parent.isObjectLiteral()
                         is KtDeclarationWithBody, is KtProperty, is KtTypeAlias -> true

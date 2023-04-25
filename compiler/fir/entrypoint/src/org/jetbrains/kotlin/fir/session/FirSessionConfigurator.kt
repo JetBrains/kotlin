@@ -12,9 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.type.TypeCheckers
 import org.jetbrains.kotlin.fir.analysis.checkersComponent
 import org.jetbrains.kotlin.fir.analysis.extensions.additionalCheckers
-import org.jetbrains.kotlin.fir.extensions.BunchOfRegisteredExtensions
-import org.jetbrains.kotlin.fir.extensions.extensionService
-import org.jetbrains.kotlin.fir.extensions.registerExtensions
+import org.jetbrains.kotlin.fir.extensions.*
 
 class FirSessionConfigurator(private val session: FirSession) {
     private val registeredExtensions: MutableList<BunchOfRegisteredExtensions> = mutableListOf(BunchOfRegisteredExtensions.empty())
@@ -38,9 +36,17 @@ class FirSessionConfigurator(private val session: FirSession) {
         session.checkersComponent.register(checkers)
     }
 
+    @OptIn(PluginServicesInitialization::class)
     @SessionConfiguration
     fun configure() {
-        session.extensionService.registerExtensions(registeredExtensions.reduce(BunchOfRegisteredExtensions::plus))
-        session.extensionService.additionalCheckers.forEach(session.checkersComponent::register)
+        var extensions = registeredExtensions.reduce(BunchOfRegisteredExtensions::plus)
+        if (session.kind == FirSession.Kind.Library) {
+            val filteredExtensions = extensions.extensions.filterKeys { it in FirExtensionRegistrar.ALLOWED_EXTENSIONS_FOR_LIBRARY_SESSION }
+            extensions = BunchOfRegisteredExtensions(filteredExtensions)
+        }
+        session.extensionService.registerExtensions(extensions)
+        if (session.kind == FirSession.Kind.Source) {
+            session.extensionService.additionalCheckers.forEach(session.checkersComponent::register)
+        }
     }
 }

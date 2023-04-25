@@ -1,0 +1,6 @@
+
+package objcinterop {
+    @ExternalObjCClass(protocolGetter = "kniprot_objcinterop0_Simple") interface SimpleProtocol : ObjCObject
+    @ExternalObjCClass(protocolGetter = "kniprot_objcinterop0_Simple") interface SimpleProtocolMeta : ObjCObjectMeta /* = ObjCClass */
+}
+

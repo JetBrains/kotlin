@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.attributes.Attribute
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -64,8 +65,9 @@ internal class CompilationSpecificPluginPath {
     fun `each compilation should have its own plugin classpath`() {
         val project = buildProjectWithMPP {
             kotlin {
-                jvm("jvm1")
-                jvm("jvm2")
+                val jvmAttribute = Attribute.of(String::class.java)
+                jvm("jvm1") { attributes { attribute(jvmAttribute, "jvm1") } }
+                jvm("jvm2") { attributes { attribute(jvmAttribute, "jvm2") } }
                 js("js") { browser() }
             }
         }
@@ -234,7 +236,7 @@ internal class CompilationSpecificPluginPath {
             kotlin {
                 jvm()
                 linuxX64("linux")
-                linuxX64("mac")
+                macosX64("mac")
             }
         }
 

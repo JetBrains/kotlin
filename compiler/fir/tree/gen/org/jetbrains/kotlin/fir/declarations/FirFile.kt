@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.FirPackageDirective
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.symbols.impl.FirFileSymbol
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
 
 /*
  * This file was generated automatically
@@ -23,7 +24,6 @@ import org.jetbrains.kotlin.fir.visitors.*
 
 abstract class FirFile : FirDeclaration() {
     abstract override val source: KtSourceElement?
-    abstract override val resolvePhase: FirResolvePhase
     abstract override val annotations: List<FirAnnotation>
     abstract override val moduleData: FirModuleData
     abstract override val origin: FirDeclarationOrigin
@@ -42,8 +42,6 @@ abstract class FirFile : FirDeclaration() {
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformFile(this, data) as E
-
-    abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 

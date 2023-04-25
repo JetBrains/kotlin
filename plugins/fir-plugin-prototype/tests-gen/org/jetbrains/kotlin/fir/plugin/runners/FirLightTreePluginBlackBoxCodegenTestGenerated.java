@@ -74,6 +74,18 @@ public class FirLightTreePluginBlackBoxCodegenTestGenerated extends AbstractFirL
     }
 
     @Test
+    @TestMetadata("superCompiledClassAnnotation.kt")
+    public void testSuperCompiledClassAnnotation() throws Exception {
+        runTest("plugins/fir-plugin-prototype/testData/box/superCompiledClassAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("superJavaClassAnnotation.kt")
+    public void testSuperJavaClassAnnotation() throws Exception {
+        runTest("plugins/fir-plugin-prototype/testData/box/superJavaClassAnnotation.kt");
+    }
+
+    @Test
     @TestMetadata("topLevelCallables.kt")
     public void testTopLevelCallables() throws Exception {
         runTest("plugins/fir-plugin-prototype/testData/box/topLevelCallables.kt");

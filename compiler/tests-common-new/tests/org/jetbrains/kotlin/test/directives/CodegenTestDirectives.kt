@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.test.directives
 import org.jetbrains.kotlin.backend.common.phaser.AnyNamedPhase
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.backend.TargetInliner
 import org.jetbrains.kotlin.test.backend.handlers.*
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability.File
@@ -46,6 +47,21 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
 
     val IGNORE_BACKEND_K2_MULTI_MODULE by enumDirective<TargetBackend>(
         description = "Ignore failures of multimodule test on target backend if test uses K2 frontend",
+        applicability = Global
+    )
+
+    val IGNORE_INLINER by enumDirective<TargetInliner>(
+        description = "Ignore failures of tests with given inliner for all frontend kinds",
+        applicability = Global
+    )
+
+    val IGNORE_INLINER_K1 by enumDirective<TargetInliner>(
+        description = "Ignore failures of tests with given inliner for K1 compiler",
+        applicability = Global
+    )
+
+    val IGNORE_INLINER_K2 by enumDirective<TargetInliner>(
+        description = "Ignore failures of tests with given inliner for K2 compiler",
         applicability = Global
     )
 
@@ -194,6 +210,24 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
         description = """
             Force run `box` method in separate process even if jdk of current process
             is same as required jdk for test
+        """.trimIndent()
+    )
+
+    val IGNORE_FIR2IR_EXCEPTIONS_IF_FIR_CONTAINS_ERRORS by directive(
+        description = """
+            Ignore FIR2IR exceptions if FIR reported some diagnostics with ERROR severity
+        """.trimIndent()
+    )
+
+    val IGNORE_FIR_METADATA_LOADING_K1 by directive(
+        description = """
+            Ignore exceptions in AbstractFirLoadK1CompiledKotlin tests
+        """.trimIndent()
+    )
+
+    val IGNORE_FIR_METADATA_LOADING_K2 by directive(
+        description = """
+            Ignore exceptions in AbstractFirLoadK2CompiledKotlin tests
         """.trimIndent()
     )
 }

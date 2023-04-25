@@ -10,7 +10,6 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.tooling.GradleConnector
 import org.gradle.util.GradleVersion
-import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_ARTIFACT_TRANSFORM
 import org.jetbrains.kotlin.gradle.model.ModelContainer
 import org.jetbrains.kotlin.gradle.model.ModelFetcherBuildAction
@@ -274,8 +273,8 @@ abstract class BaseGradleIT {
         val configurationCache: Boolean = false,
         val configurationCacheProblems: ConfigurationCacheProblems = ConfigurationCacheProblems.FAIL,
         val warningMode: WarningMode = WarningMode.Fail,
-        val useFir: Boolean = false,
         val languageVersion: String? = null,
+        val languageApiVersion: String? = null,
         val customEnvironmentVariables: Map<String, String> = mapOf(),
         val dryRun: Boolean = false,
         val abiSnapshot: Boolean = false,
@@ -283,6 +282,7 @@ abstract class BaseGradleIT {
         val enableCompatibilityMetadataVariant: Boolean? = null,
         val withReports: List<BuildReportType> = emptyList(),
         val enableKpmModelMapping: Boolean? = null,
+        val useDaemonFallbackStrategy: Boolean = false,
     ) {
         val safeAndroidGradlePluginVersion: AGPVersion
             get() = androidGradlePluginVersion ?: error("AGP version is expected to be set")
@@ -312,7 +312,7 @@ abstract class BaseGradleIT {
         open val resourcesRoot = File(resourcesRootFile, "testProject/$resourceDirName")
         val projectDir = File(workingDir.canonicalFile, projectName)
 
-        open fun setupWorkingDir(enableCacheRedirector: Boolean = true, applyAndroidTestFixes: Boolean = true) {
+        open fun setupWorkingDir(enableCacheRedirector: Boolean = true, applyAndroidTestFixes: Boolean = true, applyLanguageVersion: Boolean = true) {
             if (!projectDir.isDirectory || projectDir.listFiles().isEmpty()) {
                 copyRecursively(this.resourcesRoot, workingDir)
                 if (addHeapDumpOptions) {
@@ -323,6 +323,7 @@ abstract class BaseGradleIT {
                     addPluginManagementToSettings()
                     if (enableCacheRedirector) enableCacheRedirector()
                     if (applyAndroidTestFixes) applyAndroidTestFixes()
+                    if (applyLanguageVersion) applyKotlinCompilerArgsPlugin()
                 }
             }
         }
@@ -741,29 +742,6 @@ abstract class BaseGradleIT {
         }
     }
 
-    fun CompiledProject.getOutputForTask(taskName: String): String {
-        @Language("RegExp")
-        val taskOutputRegex = """
-            \[org\.gradle\.internal\.operations\.DefaultBuildOperationRunner] Build operation 'Task :$taskName' started
-            ([\s\S]+?)
-            \[org\.gradle\.internal\.operations\.DefaultBuildOperationRunner] Build operation 'Task :$taskName' completed
-            """.trimIndent()
-            .replace("\n", "")
-            .toRegex()
-
-        return taskOutputRegex.find(output)?.run { groupValues[1] } ?: error("Cannot find output for task $taskName")
-    }
-
-    fun CompiledProject.assertCompiledKotlinSources(
-        sources: Iterable<String>,
-        weakTesting: Boolean = false,
-        tasks: List<String>
-    ) {
-        for (task in tasks) {
-            assertCompiledKotlinSources(sources, weakTesting, getOutputForTask(task), suffix = " in task ${task}")
-        }
-    }
-
     fun CompiledProject.assertCompiledKotlinSources(
         expectedSourcesRelativePaths: Iterable<String>,
         weakTesting: Boolean = false,
@@ -937,14 +915,6 @@ abstract class BaseGradleIT {
                 add("-Pkotlin.js.compiler=$it")
             }
 
-            if (options.useFir) {
-                add("-Pkotlin.useK2=true")
-            }
-
-            if(options.languageVersion != null) {
-                add("-Pkotlin.internal.languageVersion=${options.languageVersion}")
-            }
-
             if (options.dryRun) {
                 add("--dry-run")
             }
@@ -968,6 +938,8 @@ abstract class BaseGradleIT {
                 add("-Pkotlin.kpm.experimentalModelMapping=${options.enableKpmModelMapping}")
             }
 
+            add("-Pkotlin.daemon.useFallbackStrategy=${options.useDaemonFallbackStrategy}")
+
             add("-Dorg.gradle.unsafe.configuration-cache=${options.configurationCache}")
             add("-Dorg.gradle.unsafe.configuration-cache-problems=${options.configurationCacheProblems.name.lowercase(Locale.getDefault())}")
 
@@ -979,6 +951,9 @@ abstract class BaseGradleIT {
             if (supportFailingBuildOnWarning && options.warningMode == WarningMode.Fail) {
                 add("--warning-mode=${WarningMode.Fail.name.lowercase(Locale.getDefault())}")
             }
+            options.languageVersion?.also { add("-Pkotlin.test.languageVersion=$it") }
+            options.languageApiVersion?.also { add("-Pkotlin.test.apiVersion=$it") }
+
             addAll(options.freeCommandLineArgs)
         }
 

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.light.classes.symbol.annotations
 import com.intellij.psi.PsiAnnotation
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiModifierList
-import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethod
+import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 
 internal object MethodAdditionalAnnotationsProvider : AdditionalAnnotationsProvider {
@@ -38,4 +38,4 @@ internal object MethodAdditionalAnnotationsProvider : AdditionalAnnotationsProvi
     override fun isSpecialQualifier(qualifiedName: String): Boolean = false
 }
 
-private fun PsiElement.isMethodWithOverride(): Boolean = this is SymbolLightMethod<*> && (isDelegated || isOverride())
+private fun PsiElement.isMethodWithOverride(): Boolean = this is SymbolLightMethodBase && (isDelegated || isOverride())

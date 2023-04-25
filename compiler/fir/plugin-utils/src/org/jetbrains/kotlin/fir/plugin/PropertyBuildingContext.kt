@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -93,18 +93,23 @@ public class PropertyBuildingContext(
             isVar = !isVal
             getter = FirDefaultPropertyGetter(
                 source = null, session.moduleData, key.origin, returnTypeRef, status.visibility, symbol,
-                Modality.FINAL, resolvedStatus.effectiveVisibility
+                Modality.FINAL, resolvedStatus.effectiveVisibility,
+                resolvePhase = FirResolvePhase.BODY_RESOLVE,
             )
             if (isVar) {
                 setter = FirDefaultPropertySetter(
                     source = null, session.moduleData, key.origin, returnTypeRef, setterVisibility ?: status.visibility,
-                    symbol, Modality.FINAL, resolvedStatus.effectiveVisibility
+                    symbol, Modality.FINAL, resolvedStatus.effectiveVisibility,
+                    resolvePhase = FirResolvePhase.BODY_RESOLVE,
                 )
             } else {
                 require(setterVisibility == null) { "isVar = false but setterVisibility is specified. Did you forget to set isVar = true?" }
             }
             if (hasBackingField) {
-                backingField = FirDefaultPropertyBackingField(session.moduleData, mutableListOf(), returnTypeRef, isVar, symbol, status)
+                backingField = FirDefaultPropertyBackingField(
+                    session.moduleData, mutableListOf(), returnTypeRef, isVar, symbol, status,
+                    resolvePhase = FirResolvePhase.BODY_RESOLVE,
+                )
             }
             isLocal = false
             bodyResolveState = FirPropertyBodyResolveState.EVERYTHING_RESOLVED

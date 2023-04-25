@@ -110,13 +110,13 @@ FILE fqName:<root> fileName:/SignatureClash.kt
           RETURN type=kotlin.Nothing from='public final fun <get-delegate> (): <root>.Delegate declared in <root>.DataClass'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:delegate type:<root>.Delegate visibility:private [final]' type=<root>.Delegate origin=null
               receiver: GET_VAR '<this>: <root>.DataClass declared in <root>.DataClass.<get-delegate>' type=<root>.DataClass origin=null
-    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.DataClass) returnType:<root>.Delegate [operator]
+    FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.DataClass) returnType:<root>.Delegate [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.DataClass
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): <root>.Delegate [operator] declared in <root>.DataClass'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:delegate type:<root>.Delegate visibility:private [final]' type=<root>.Delegate origin=null
             receiver: GET_VAR '<this>: <root>.DataClass declared in <root>.DataClass.component1' type=<root>.DataClass origin=null
-    FUN name:copy visibility:public modality:FINAL <> ($this:<root>.DataClass, delegate:<root>.Delegate) returnType:<root>.DataClass
+    FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:<root>.DataClass, delegate:<root>.Delegate) returnType:<root>.DataClass
       $this: VALUE_PARAMETER name:<this> type:<root>.DataClass
       VALUE_PARAMETER name:delegate index:0 type:<root>.Delegate
         EXPRESSION_BODY
@@ -176,8 +176,7 @@ FILE fqName:<root> fileName:/SignatureClash.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.DataClass'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="DataClass("
-            CONST String type=kotlin.String value="delegate="
+            CONST String type=kotlin.String value="DataClass(delegate="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:delegate type:<root>.Delegate visibility:private [final]' type=<root>.Delegate origin=null
               receiver: GET_VAR '<this>: <root>.DataClass declared in <root>.DataClass.toString' type=<root>.DataClass origin=null
             CONST String type=kotlin.String value=")"

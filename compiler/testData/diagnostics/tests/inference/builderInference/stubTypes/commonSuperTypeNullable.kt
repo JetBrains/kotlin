@@ -45,7 +45,7 @@ fun test() {
         <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.String>?")!>select(Test.foo(getInv()), getInv())<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.String>?")!>select(getInv(), Test.foo(getInv()))<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>select(id(get()), id(get()))<!>
-        build2 {
+        <!INFERRED_INTO_DECLARED_UPPER_BOUNDS!>build2<!> {
             emit(1)
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>select(this@build.get(), get())<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>select(Test.foo(this@build.get()), Test.foo(get()))<!>
@@ -67,7 +67,7 @@ fun test() {
         <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.String>?")!>select(Test.<!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>foo<!>(null), getInv())<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("Inv<kotlin.String>?")!>select(getInv(), Test.<!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>foo<!>(null))<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>select(<!IMPLICIT_NOTHING_TYPE_ARGUMENT_IN_RETURN_POSITION!>id<!>(null), id(get()))<!>
-        build2 {
+        <!INFERRED_INTO_DECLARED_UPPER_BOUNDS!>build2<!> {
             emit(1)
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>select(this@build.get(), get(), null)<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any?")!>select(Test.foo(this@build.get()), Test.foo(get()), null)<!>

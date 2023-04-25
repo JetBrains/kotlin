@@ -60,11 +60,19 @@ rootProject.plugins.withType<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJ
     val kotlinNodeJs = rootProject.extensions.getByType<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension>()
 
     tasks.register<Exec>("runWebpackResult") {
-        dependsOn(tasks.named("browserProductionWebpack"))
+        val webpackTask = tasks.named<org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack>("browserProductionWebpack")
+        dependsOn(webpackTask)
 
         executable(kotlinNodeJs.requireConfigured().nodeExecutable)
 
-        workingDir = File("${buildDir}").resolve("distributions")
+        workingDir(webpackTask.flatMap { it.outputDirectory.asFile })
         args("./${project.name}.js")
     }
+}
+
+tasks.named<org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile>("compileKotlinJs") {
+    kotlinOptions.freeCompilerArgs += "-Xforce-deprecated-legacy-compiler-usage"
+}
+tasks.named<org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile>("compileTestKotlinJs") {
+    kotlinOptions.freeCompilerArgs += "-Xforce-deprecated-legacy-compiler-usage"
 }

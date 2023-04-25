@@ -82,6 +82,7 @@ private fun SmartPrinter.printBuilder(builder: Builder) {
                 println("return ${builder.implementation.type}(")
                 withIndent {
                     for (field in builder.allFields) {
+                        if (field.invisibleField) continue
                         val name = field.name
                         print(name)
                         if (field.isMutableOrEmpty) print(".toMutableOrEmpty()")
@@ -127,25 +128,27 @@ private fun SmartPrinter.printBuilder(builder: Builder) {
     }
 }
 
+internal val Field.invisibleField: Boolean get() = customInitializationCall != null
 
 private val String.nullable: String get() = if (endsWith("?")) this else "$this?"
-private fun FieldWithDefault.needBackingField(fieldIsUseless: Boolean) = !nullable && origin !is FieldList && if (fieldIsUseless) {
-    defaultValueInImplementation == null
-} else {
-    defaultValueInBuilder == null
-}
+private fun FieldWithDefault.needBackingField(fieldIsUseless: Boolean) =
+    (!nullable || notNull) && origin !is FieldList && if (fieldIsUseless) {
+        defaultValueInImplementation == null
+    } else {
+        defaultValueInBuilder == null
+    }
 
 private fun FieldWithDefault.needNotNullDelegate(fieldIsUseless: Boolean) = needBackingField(fieldIsUseless) && (type == "Boolean" || type == "Int")
 
 
 private fun SmartPrinter.printFieldInBuilder(field: FieldWithDefault, builder: Builder, fieldIsUseless: Boolean): Pair<Boolean, Boolean> {
-    if (field.withGetter && !fieldIsUseless) return false to false
+    if (field.withGetter && !fieldIsUseless || field.invisibleField) return false to false
     if (field.origin is FieldList) {
         printFieldListInBuilder(field.origin, builder, fieldIsUseless)
         return true to false
     }
     val name = field.name
-    val type = field.typeWithArguments
+    val type = field.getTypeWithArguments(field.notNull)
     val defaultValue = if (fieldIsUseless)
         field.defaultValueInImplementation.also { requireNotNull(it) }
     else
@@ -303,8 +306,10 @@ private fun SmartPrinter.printDslBuildCopyFunction(
         println("val copyBuilder = $builderType()")
         for (field in builder.allFields) {
             when {
+                field.invisibleField -> {}
                 field.origin is FieldList -> println("copyBuilder.${field.name}.addAll(original.${field.name})")
                 field.type == declarationAttributesType.type -> println("copyBuilder.${field.name} = original.${field.name}.copy()")
+                field.notNull -> println("original.${field.name}?.let { copyBuilder.${field.name} = it }")
                 else -> println("copyBuilder.${field.name} = original.${field.name}")
             }
         }

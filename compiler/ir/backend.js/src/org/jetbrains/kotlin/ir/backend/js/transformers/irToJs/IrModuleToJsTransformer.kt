@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.js.sourceMap.SourceMap3Builder
 import org.jetbrains.kotlin.js.sourceMap.SourceMapBuilderConsumer
 import org.jetbrains.kotlin.js.util.TextOutputImpl
 import org.jetbrains.kotlin.serialization.js.ModuleKind
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import java.io.File
@@ -128,18 +129,14 @@ class IrModuleToJsTransformer(
     private fun doStaticMembersLowering(modules: Iterable<IrModuleFragment>) {
         modules.forEach { module ->
             module.files.forEach {
-                it.accept(
-                    backendContext.keeper,
-                    Keeper.KeepData(
-                        classInKeep = false,
-                        classShouldBeKept = false
-                    )
-                )
+                it.accept(backendContext.keeper, Keeper.KeepData(classInKeep = false, classShouldBeKept = false))
             }
         }
 
         modules.forEach { module ->
-            module.files.forEach { StaticMembersLowering(backendContext).lower(it) }
+            module.files.forEach {
+                StaticMembersLowering(backendContext).lower(it)
+            }
         }
     }
 
@@ -213,9 +210,7 @@ class IrModuleToJsTransformer(
                 JsIrModule(
                     data.fragment.safeName,
                     data.fragment.externalModuleName(),
-                    data.files.map {
-                        generateProgramFragment(it, mode.minimizedMemberNames)
-                    }
+                    data.files.map { generateProgramFragment(it, mode.minimizedMemberNames) }
                 )
             }
         )
@@ -225,6 +220,7 @@ class IrModuleToJsTransformer(
 
     private val generateFilePaths = backendContext.configuration.getBoolean(JSConfigurationKeys.GENERATE_COMMENTS_WITH_FILE_PATH)
     private val pathPrefixMap = backendContext.configuration.getMap(JSConfigurationKeys.FILE_PATHS_PREFIX_MAP)
+    private val optimizeGeneratedJs = backendContext.configuration.get(JSConfigurationKeys.OPTIMIZE_GENERATED_JS, true)
 
     private fun generateProgramFragment(fileExports: IrFileExports, minimizedMemberNames: Boolean): JsIrProgramFragment {
         val nameGenerator = JsNameLinkingNamer(backendContext, minimizedMemberNames)
@@ -288,7 +284,7 @@ class IrModuleToJsTransformer(
 
         staticContext.classModels.entries.forEach { (symbol, model) ->
             result.classes[nameGenerator.getNameForClass(symbol.owner)] =
-                JsIrIcClassModel(model.superClasses.map { staticContext.getNameForClass(it.owner) }).also {
+                JsIrIcClassModel(model.superClasses.memoryOptimizedMap { staticContext.getNameForClass(it.owner) }).also {
                     it.preDeclarationBlock.statements += model.preDeclarationBlock.statements
                     it.postDeclarationBlock.statements += model.postDeclarationBlock.statements
                 }
@@ -351,6 +347,10 @@ class IrModuleToJsTransformer(
                     }
                 }
             }
+        }
+
+        if (optimizeGeneratedJs) {
+            optimizeFragmentByJsAst(result)
         }
 
         return result

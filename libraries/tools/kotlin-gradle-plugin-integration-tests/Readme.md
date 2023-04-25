@@ -54,6 +54,15 @@ Tests run using [Gradle TestKit](https://docs.gradle.org/current/userguide/test_
 Shared TestKit caches are located in [./.testKitDir](.testKitDir) directory. It is cleared on CI after test run is finished, but not locally.
 You could clean it locally by running `cleanTestKitCache` task.
 
+#### How to debug Kotlin daemon
+
+1. Create `Remote JVM debug` configuration in IDEA. 
+   1. Modify debug port to be `5005`. 
+   2. In `Debugger mode` floating menu select `Listen to remote JVM`. 
+   3. (Optional) You can check `Auto restart` to automatically restart configuration after each debug session.
+2. Specify correct debug port in `build` call arguments `kotlinDaemonDebugPort = 5005`.
+3. Run newly created configuration in `Debug` mode and after that run test in simple `Run` mode.
+
 ##### Adding new test suite
 
 Select appropriate tag [annotation](src/test/kotlin/org/jetbrains/kotlin/gradle/testbase/testTags.kt) and add it to the test class, 

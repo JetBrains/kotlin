@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.ForbiddenNamedArgumentsTarget
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationInfo
+import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualCompatibility.Incompatible
 import org.jetbrains.kotlin.types.Variance
 import kotlin.properties.PropertyDelegateProvider
@@ -118,6 +119,17 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         }
 
         val DEPRECATION by warning<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
+            parameter<Symbol>("reference")
+            parameter<String>("message")
+        }
+
+        val TYPEALIAS_EXPANSION_DEPRECATION_ERROR by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
+            parameter<Symbol>("alias")
+            parameter<Symbol>("reference")
+            parameter<String>("message")
+        }
+        val TYPEALIAS_EXPANSION_DEPRECATION by warning<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
+            parameter<Symbol>("alias")
             parameter<Symbol>("reference")
             parameter<String>("message")
         }
@@ -292,6 +304,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val INAPPLICABLE_TARGET_ON_PROPERTY by error<KtAnnotationEntry> {
             parameter<String>("useSiteDescription")
         }
+        val INAPPLICABLE_TARGET_ON_PROPERTY_WARNING by error<KtAnnotationEntry> {
+            parameter<String>("useSiteDescription")
+        }
         val INAPPLICABLE_TARGET_PROPERTY_IMMUTABLE by error<KtAnnotationEntry> {
             parameter<String>("useSiteDescription")
         }
@@ -317,6 +332,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val AMBIGUOUS_ANNOTATION_ARGUMENT by error<PsiElement> {
             parameter<List<FirBasedSymbol<*>>>("symbols")
         }
+
+        val VOLATILE_ON_VALUE by error<KtAnnotationEntry>()
+        val VOLATILE_ON_DELEGATE by error<KtAnnotationEntry>()
     }
 
     val OPT_IN by object : DiagnosticGroup("OptIn") {
@@ -648,6 +666,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val REIFIED_TYPE_FORBIDDEN_SUBSTITUTION by error<PsiElement> {
             parameter<ConeKotlinType>("type")
         }
+        val DEFINITELY_NON_NULLABLE_AS_REIFIED by error<PsiElement>()
 
         val FINAL_UPPER_BOUND by warning<KtTypeReference> {
             parameter<ConeKotlinType>("type")
@@ -737,7 +756,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FqName>("kotlinClass")
         }
 
-        val INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION by error<PsiElement> {
+        val INFERRED_TYPE_VARIABLE_INTO_EMPTY_INTERSECTION by deprecationError<PsiElement>(
+            LanguageFeature.ForbidInferringTypeVariablesIntoEmptyIntersection
+        ) {
             parameter<String>("typeVariableDescription")
             parameter<Collection<ConeKotlinType>>("incompatibleTypes")
             parameter<String>("description")
@@ -1084,12 +1105,12 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val NO_ACTUAL_FOR_EXPECT by error<KtNamedDeclaration>(PositioningStrategy.INCOMPATIBLE_DECLARATION) {
             parameter<Symbol>("declaration")
             parameter<FirModuleData>("module")
-            parameter<Map<Incompatible<Symbol>, Collection<Symbol>>>("compatibility")
+            parameter<Map<ExpectActualCompatibility<Symbol>, Collection<Symbol>>>("compatibility")
         }
 
         val ACTUAL_WITHOUT_EXPECT by error<KtNamedDeclaration> {
             parameter<Symbol>("declaration")
-            parameter<Map<Incompatible<Symbol>, Collection<Symbol>>>("compatibility")
+            parameter<Map<ExpectActualCompatibility<Symbol>, Collection<Symbol>>>("compatibility")
         }
 
         val AMBIGUOUS_ACTUALS by error<KtNamedDeclaration>(PositioningStrategy.INCOMPATIBLE_DECLARATION) {
@@ -1272,6 +1293,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val ERROR_IN_CONTRACT_DESCRIPTION by error<KtElement>(PositioningStrategy.SELECTOR_BY_QUALIFIED) {
             parameter<String>("reason")
         }
+        val CONTRACT_NOT_ALLOWED by error<KtElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
+            parameter<String>("reason")
+        }
     }
 
     val CONVENTIONS by object : DiagnosticGroup("Conventions") {
@@ -1326,6 +1350,26 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("rightType")
         }
         val INCOMPATIBLE_ENUM_COMPARISON_ERROR by error<KtElement> {
+            parameter<ConeKotlinType>("leftType")
+            parameter<ConeKotlinType>("rightType")
+        }
+        val INCOMPATIBLE_ENUM_COMPARISON by warning<KtElement> {
+            parameter<ConeKotlinType>("leftType")
+            parameter<ConeKotlinType>("rightType")
+        }
+        val FORBIDDEN_IDENTITY_EQUALS by error<KtElement> {
+            parameter<ConeKotlinType>("leftType")
+            parameter<ConeKotlinType>("rightType")
+        }
+        val FORBIDDEN_IDENTITY_EQUALS_WARNING by warning<KtElement> {
+            parameter<ConeKotlinType>("leftType")
+            parameter<ConeKotlinType>("rightType")
+        }
+        val DEPRECATED_IDENTITY_EQUALS by warning<KtElement> {
+            parameter<ConeKotlinType>("leftType")
+            parameter<ConeKotlinType>("rightType")
+        }
+        val IMPLICIT_BOXING_IN_IDENTITY_EQUALS by warning<KtElement> {
             parameter<ConeKotlinType>("leftType")
             parameter<ConeKotlinType>("rightType")
         }

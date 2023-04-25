@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.ir.expressions.impl
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.utils.SmartList
 
 class IrStringConcatenationImpl(
     override val startOffset: Int,
@@ -34,5 +35,5 @@ class IrStringConcatenationImpl(
         this.arguments.addAll(arguments)
     }
 
-    override val arguments: MutableList<IrExpression> = ArrayList()
+    override val arguments: MutableList<IrExpression> = ArrayList(2)
 }

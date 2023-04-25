@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinarySourceElement
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.SerializationPluginMetadataExtensions
 import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.name.*
@@ -92,12 +93,9 @@ fun deserializeClassToSymbol(
             containerSource,
             outerClassSymbol = symbol,
             annotationDeserializer,
-            if (status.isCompanion) {
-                parentContext.constDeserializer
-            } else {
-                ((containerSource as? KotlinJvmBinarySourceElement)?.binaryClass)?.let {
-                    FirJvmConstDeserializer(session, it, serializerExtensionProtocol)
-                } ?: parentContext.constDeserializer
+            when {
+                status.isCompanion || jvmBinaryClass == null -> parentContext.constDeserializer
+                else -> constDeserializer // jvmBinaryClass != null => FirJvmConstDeserializer will be used
             },
             status.isInner
         ) ?: FirDeserializationContext.createForClass(
@@ -142,7 +140,7 @@ fun deserializeClassToSymbol(
         )
 
         addDeclarations(
-            classProto.propertyList.map {
+            classProto.propertiesInOrder(context).map {
                 classDeserializer.loadProperty(it, classProto, symbol)
             }
         )
@@ -158,6 +156,10 @@ fun deserializeClassToSymbol(
                 val nestedClassId = classId.createNestedClassId(Name.identifier(nameResolver.getString(nestedNameId)))
                 deserializeNestedClass(nestedClassId, context)?.fir
             }
+        )
+
+        addDeclarations(
+            classProto.typeAliasList.mapNotNull(classDeserializer::loadTypeAlias)
         )
 
         addDeclarations(
@@ -202,16 +204,6 @@ fun deserializeClassToSymbol(
             configure(classId)
         }
 
-        declarations.sortWith(object : Comparator<FirDeclaration> {
-            override fun compare(a: FirDeclaration, b: FirDeclaration): Int {
-                // Reorder members based on their type and name only.
-                // See FE 1.0's [DeserializedMemberScope#addMembers].
-                if (a is FirMemberDeclaration && b is FirMemberDeclaration) {
-                    return FirMemberDeclarationComparator.TypeAndNameComparator.compare(a, b)
-                }
-                return 0
-            }
-        })
         companionObjectSymbol = (declarations.firstOrNull { it is FirRegularClass && it.isCompanion } as FirRegularClass?)?.symbol
 
         contextReceivers.addAll(classDeserializer.createContextReceiversForClass(classProto))
@@ -323,9 +315,27 @@ abstract class DeserializedClassConfigurator(val session: FirSession) : FirSessi
     open fun FirRegularClass.configure(classId: ClassId) {}
 }
 
-class JvmDeserializedClassConfigurator(session: FirSession): DeserializedClassConfigurator(session) {
+class JvmDeserializedClassConfigurator(session: FirSession) : DeserializedClassConfigurator(session) {
     override fun FirRegularClassBuilder.configure(classId: ClassId) {
         addSerializableIfNeeded(classId)
+    }
+}
+
+private fun ProtoBuf.ClassOrBuilder.propertiesInOrder(context: FirDeserializationContext): List<ProtoBuf.Property> {
+    val properties = propertyList
+    val versionRequirements = VersionRequirement.create(this, context.nameResolver, context.versionRequirementTable)
+    if (versionRequirements.any { it.version.major >= 2 }) return properties
+    val order = getExtension(SerializationPluginMetadataExtensions.propertiesNamesInProgramOrder)
+        .takeIf { it.isNotEmpty() }
+        ?.toSet()
+        ?: return properties
+    val propertiesByName = properties.groupBy { it.name }
+    val orderedProperties = order.flatMap { propertiesByName[it] ?: emptyList() }
+    // non-serializable properties are not saved in SerializationPluginMetadataExtensions, so we need to pick up them if any
+    return if (orderedProperties.size == properties.size) {
+        orderedProperties
+    } else {
+        orderedProperties + properties.filter { it.name !in order }
     }
 }
 

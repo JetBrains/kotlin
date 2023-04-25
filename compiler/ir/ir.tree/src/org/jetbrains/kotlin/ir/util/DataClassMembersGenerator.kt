@@ -117,10 +117,11 @@ abstract class DataClassMembersGenerator(
                     irClass.defaultType,
                     constructedClass = irClass
                 ).apply {
-                    mapTypeParameters(::transform)
-                    mapValueParameters {
-                        val irValueParameter = irFunction.valueParameters[it.index]
-                        irGet(irValueParameter.type, irValueParameter.symbol)
+                    for ((i, typeParameter) in constructorSymbol.descriptor.typeParameters.withIndex()) {
+                        putTypeArgument(i, transform(typeParameter))
+                    }
+                    for ((i, valueParameter) in irFunction.valueParameters.withIndex()) {
+                        putValueArgument(i, irGet(valueParameter.type, valueParameter.symbol))
                     }
                 }
             )
@@ -267,7 +268,7 @@ abstract class DataClassMembersGenerator(
             ?: throw AssertionError("Class: ${irClass.descriptor}: unexpected property descriptor: $property")
 
     val IrClassifierSymbol?.isArrayOrPrimitiveArray: Boolean
-        get() = this == context.irBuiltIns.arrayClass || this in context.irBuiltIns.primitiveArraysToPrimitiveTypes
+        get() = isArrayOrPrimitiveArray(context.irBuiltIns)
 
     abstract fun declareSimpleFunction(startOffset: Int, endOffset: Int, functionDescriptor: FunctionDescriptor): IrFunction
 

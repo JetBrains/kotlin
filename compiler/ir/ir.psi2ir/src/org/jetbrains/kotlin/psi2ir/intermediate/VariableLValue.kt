@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrSetValueImpl
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 
-class VariableLValue(
+internal class VariableLValue(
     private val context: IrGeneratorContext,
     val startOffset: Int,
     val endOffset: Int,

@@ -73,6 +73,7 @@ dependencies {
 
     testImplementation(project(":kotlin-compiler-embeddable"))
     testImplementation(commonDependency("org.jetbrains.intellij.deps:jdom"))
+    testImplementation(project(":compiler:cli-common"))
     // testCompileOnly dependency on non-shaded artifacts is needed for IDE support
     // testRuntimeOnly on shaded artifact is needed for running tests with shaded compiler
     testCompileOnly(project(":kotlin-gradle-plugin-test-utils-embeddable"))
@@ -333,6 +334,7 @@ tasks.withType<Test> {
     dependsOnKotlinGradlePluginInstall()
     dependsOn(":gradle:android-test-fixes:install")
     dependsOn(":gradle:gradle-warnings-detector:install")
+    dependsOn(":gradle:kotlin-compiler-args-properties:install")
     dependsOn(":examples:annotation-processor-example:install")
     dependsOn(":kotlin-dom-api-compat:install")
 

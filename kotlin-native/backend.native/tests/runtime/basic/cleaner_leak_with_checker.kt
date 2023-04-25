@@ -6,7 +6,8 @@
 
 import kotlin.test.*
 
-import kotlin.native.internal.*
+import kotlin.native.ref.Cleaner
+import kotlin.native.ref.createCleaner
 import kotlin.native.Platform
 
 // This cleaner won't be run, because it's deinitialized with globals after

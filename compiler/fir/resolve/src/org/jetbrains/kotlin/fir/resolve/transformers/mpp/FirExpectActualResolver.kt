@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -55,7 +55,13 @@ object FirExpectActualResolver {
                         val actualTypeParameters = actualContainingClass
                             ?.typeParameterSymbols
                             .orEmpty()
-                        parentSubstitutor = createExpectActualTypeParameterSubstitutor(expectTypeParameters, actualTypeParameters, useSiteSession)
+
+                        parentSubstitutor = createExpectActualTypeParameterSubstitutor(
+                            expectTypeParameters,
+                            actualTypeParameters,
+                            useSiteSession,
+                        )
+
                         when (actualSymbol) {
                             is FirConstructorSymbol -> expectContainingClass?.getConstructors(scopeSession)
                             else -> expectContainingClass?.getMembers(callableId.callableName, scopeSession)
@@ -116,6 +122,9 @@ object FirExpectActualResolver {
 
         if (!equalBy(expectClassSymbol, actualClass) { listOf(it.isCompanion, it.isInner, it.isInline /*|| it.isValue*/) }) {
             return ExpectActualCompatibility.Incompatible.ClassModifiers
+        }
+        if (expectClassSymbol.isFun && !actualClass.isFun) {
+            return ExpectActualCompatibility.Incompatible.FunInterfaceModifier
         }
 
         val expectTypeParameterSymbols = expectClassSymbol.typeParameterSymbols
@@ -179,6 +188,9 @@ object FirExpectActualResolver {
 
         outer@ for (expectMember in expectClassSymbol.getMembers(scopeSession)) {
             // if (expectMember is CallableMemberDescriptor && !expectMember.kind.isReal) continue
+
+            // Skip non-expect declarations like equals, hashCode, toString and any inherited declarations from non-expect super types.
+            if (expectMember is FirCallableSymbol && !expectMember.isExpect) continue
 
             val actualMembers = when (expectMember) {
                 is FirConstructorSymbol -> actualConstructors
@@ -283,7 +295,12 @@ object FirExpectActualResolver {
             return ExpectActualCompatibility.Incompatible.TypeParameterCount
         }
 
-        val substitutor = createExpectActualTypeParameterSubstitutor(expectedTypeParameters, actualTypeParameters, actualSession, parentSubstitutor)
+        val substitutor = createExpectActualTypeParameterSubstitutor(
+            expectedTypeParameters,
+            actualTypeParameters,
+            actualSession,
+            parentSubstitutor,
+        )
 
         if (
             !areCompatibleTypeLists(
@@ -506,8 +523,21 @@ object FirExpectActualResolver {
             !equalBy(expected, actual) { p -> p.isVar } -> ExpectActualCompatibility.Incompatible.PropertyKind
             !equalBy(expected, actual) { p -> p.isLateInit } -> ExpectActualCompatibility.Incompatible.PropertyLateinitModifier
             expected.isConst && !actual.isConst -> ExpectActualCompatibility.Incompatible.PropertyConstModifier
+            !arePropertySettersWithCompatibleVisibilities(expected, actual) -> ExpectActualCompatibility.Incompatible.PropertySetterVisibility
             else -> ExpectActualCompatibility.Compatible
         }
+    }
+
+    private fun arePropertySettersWithCompatibleVisibilities(
+        expected: FirPropertySymbol,
+        actual: FirPropertySymbol,
+    ): Boolean {
+        val expectedSetterStatus = expected.setterSymbol?.resolvedStatus
+        val actualSetterStatus = actual.setterSymbol?.resolvedStatus
+        if (expectedSetterStatus == null || actualSetterStatus == null) {
+            return true
+        }
+        return areDeclarationsWithCompatibleVisibilities(expectedSetterStatus, actualSetterStatus)
     }
 
     // ---------------------------------------- Utils ----------------------------------------
@@ -551,10 +581,16 @@ object FirExpectActualResolver {
     private fun FirClassSymbol<*>.getConstructors(
         scopeSession: ScopeSession,
         session: FirSession = moduleData.session
-    ): Collection<FirConstructorSymbol> {
-        return mutableListOf<FirConstructorSymbol>().apply {
-            getConstructorsTo(this, unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false))
-        }
+    ): Collection<FirConstructorSymbol> = mutableListOf<FirConstructorSymbol>().apply {
+        getConstructorsTo(
+            this,
+            unsubstitutedScope(
+                session,
+                scopeSession,
+                withForcedTypeCalculator = false,
+                memberRequiredPhase = FirResolvePhase.STATUS,
+            )
+        )
     }
 
     private fun getConstructorsTo(destination: MutableList<in FirConstructorSymbol>, scope: FirTypeScope) {

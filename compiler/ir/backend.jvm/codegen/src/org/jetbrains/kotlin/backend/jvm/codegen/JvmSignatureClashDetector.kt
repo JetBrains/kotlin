@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.common.lower.ANNOTATION_IMPLEMENTATION
-import org.jetbrains.kotlin.backend.common.psi.PsiSourceManager
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
@@ -14,7 +13,10 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.isFakeOverride
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.*
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.ConflictingJvmDeclarationsData
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmBackendErrors
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.MemberKind
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.RawSignature
 import org.jetbrains.kotlin.utils.SmartSet
 
 class JvmSignatureClashDetector(
@@ -66,13 +68,13 @@ class JvmSignatureClashDetector(
     private fun IrFunction.isSpecialOverride(): Boolean =
         origin in SPECIAL_BRIDGES_AND_OVERRIDES
 
-    fun reportErrors(classOrigin: JvmDeclarationOrigin) {
-        reportMethodSignatureConflicts(classOrigin)
-        reportPredefinedMethodSignatureConflicts(classOrigin)
-        reportFieldSignatureConflicts(classOrigin)
+    fun reportErrors() {
+        reportMethodSignatureConflicts()
+        reportPredefinedMethodSignatureConflicts()
+        reportFieldSignatureConflicts()
     }
 
-    private fun reportMethodSignatureConflicts(classOrigin: JvmDeclarationOrigin) {
+    private fun reportMethodSignatureConflicts() {
         for ((rawSignature, methods) in methodsBySignature) {
             if (methods.size <= 1) continue
 
@@ -80,7 +82,7 @@ class JvmSignatureClashDetector(
             val specialOverridesCount = methods.count { it.isSpecialOverride() }
             val realMethodsCount = methods.size - fakeOverridesCount - specialOverridesCount
 
-            val conflictingJvmDeclarationsData = getConflictingJvmDeclarationsData(classOrigin, rawSignature, methods)
+            val conflictingJvmDeclarationsData = getConflictingJvmDeclarationsData(rawSignature, methods)
 
             when {
                 realMethodsCount == 0 && (fakeOverridesCount > 1 || specialOverridesCount > 1) ->
@@ -118,23 +120,22 @@ class JvmSignatureClashDetector(
         }
     }
 
-    private fun reportPredefinedMethodSignatureConflicts(classOrigin: JvmDeclarationOrigin) {
+    private fun reportPredefinedMethodSignatureConflicts() {
         for (predefinedSignature in PREDEFINED_SIGNATURES) {
             val knownMethods = methodsBySignature[predefinedSignature] ?: continue
             val methods = knownMethods.filter { !it.isFakeOverride && !it.isSpecialOverride() }
             if (methods.isEmpty()) continue
             val conflictingJvmDeclarationsData = ConflictingJvmDeclarationsData(
-                classCodegen.type.internalName, classOrigin, predefinedSignature,
-                methods.map { it.getJvmDeclarationOrigin() } + JvmDeclarationOrigin(JvmDeclarationOriginKind.OTHER, null, null)
+                classCodegen.type.internalName, null, predefinedSignature, null, methods.map(IrFunction::toIrBasedDescriptor),
             )
             reportJvmSignatureClash(JvmBackendErrors.ACCIDENTAL_OVERRIDE, methods, conflictingJvmDeclarationsData)
         }
     }
 
-    private fun reportFieldSignatureConflicts(classOrigin: JvmDeclarationOrigin) {
+    private fun reportFieldSignatureConflicts() {
         for ((rawSignature, fields) in fieldsBySignature) {
             if (fields.size <= 1) continue
-            val conflictingJvmDeclarationsData = getConflictingJvmDeclarationsData(classOrigin, rawSignature, fields)
+            val conflictingJvmDeclarationsData = getConflictingJvmDeclarationsData(rawSignature, fields)
             reportJvmSignatureClash(JvmBackendErrors.CONFLICTING_JVM_DECLARATIONS, fields, conflictingJvmDeclarationsData)
         }
     }
@@ -152,26 +153,12 @@ class JvmSignatureClashDetector(
     }
 
     private fun getConflictingJvmDeclarationsData(
-        classOrigin: JvmDeclarationOrigin,
         rawSignature: RawSignature,
         methods: Collection<IrDeclaration>
     ): ConflictingJvmDeclarationsData =
         ConflictingJvmDeclarationsData(
-            classCodegen.type.internalName,
-            classOrigin,
-            rawSignature,
-            methods.map { it.getJvmDeclarationOrigin() }
+            classCodegen.type.internalName, null, rawSignature, null, methods.map(IrDeclaration::toIrBasedDescriptor),
         )
-
-    private fun IrDeclaration.getJvmDeclarationOrigin(): JvmDeclarationOrigin {
-        // It looks like 'JvmDeclarationOriginKind' is not really used in error reporting.
-        // However, if needed, we can provide more meaningful information regarding function origin.
-        return JvmDeclarationOrigin(
-            JvmDeclarationOriginKind.OTHER,
-            PsiSourceManager.findPsiElement(this),
-            toIrBasedDescriptor()
-        )
-    }
 
     companion object {
         val SPECIAL_BRIDGES_AND_OVERRIDES = setOf(

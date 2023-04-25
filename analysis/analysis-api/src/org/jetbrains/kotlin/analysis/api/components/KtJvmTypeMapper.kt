@@ -12,6 +12,7 @@ import org.jetbrains.org.objectweb.asm.Type
 
 public abstract class KtJvmTypeMapper : KtAnalysisSessionComponent() {
     public abstract fun mapTypeToJvmType(type: KtType, mode: TypeMappingMode): Type
+    public abstract fun isPrimitiveBacked(type: KtType): Boolean
 }
 
 public interface KtJvmTypeMapperMixIn : KtAnalysisSessionMixIn {
@@ -22,4 +23,10 @@ public interface KtJvmTypeMapperMixIn : KtAnalysisSessionMixIn {
      */
     public fun KtType.mapTypeToJvmType(mode: TypeMappingMode = TypeMappingMode.DEFAULT): Type =
         withValidityAssertion { analysisSession.jvmTypeMapper.mapTypeToJvmType(this, mode) }
+
+    /**
+     * Returns true if the type is backed by a single JVM primitive type
+     */
+    public val KtType.isPrimitiveBacked: Boolean
+        get() = withValidityAssertion { analysisSession.jvmTypeMapper.isPrimitiveBacked(this) }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -58,12 +58,14 @@ fun debugCollectOverrides(symbol: FirCallableSymbol<*>, scope: FirTypeScope): Ma
 fun FirNamedFunctionSymbol.overriddenFunctions(
     containingClass: FirClassSymbol<*>,
     session: FirSession,
-    scopeSession: ScopeSession
+    scopeSession: ScopeSession,
+    memberRequiredPhase: FirResolvePhase?,
 ): List<FirFunctionSymbol<*>> {
     val firTypeScope = containingClass.unsubstitutedScope(
         session,
         scopeSession,
-        withForcedTypeCalculator = true
+        withForcedTypeCalculator = true,
+        memberRequiredPhase = memberRequiredPhase,
     )
 
     val overriddenFunctions = mutableListOf<FirFunctionSymbol<*>>()

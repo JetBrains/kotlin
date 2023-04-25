@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.cli.jvm.compiler.pipeline
 import com.intellij.core.CoreJavaFileManager
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
@@ -43,9 +42,11 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
@@ -65,6 +66,7 @@ import org.jetbrains.kotlin.load.kotlin.incremental.IncrementalPackagePartProvid
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
@@ -229,9 +231,16 @@ fun convertAnalyzedFirToIr(
         (environment.projectEnvironment as? VfsBasedProjectEnvironment)?.project?.let {
             IrGenerationExtension.getInstances(it)
         } ?: emptyList()
-    val linkViaSignatures = input.configuration.getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES)
-    val (irModuleFragment, components, pluginContext) =
-        analysisResults.convertToIrAndActualizeForJvm(extensions, irGenerationExtensions, linkViaSignatures)
+    val fir2IrConfiguration = Fir2IrConfiguration(
+        languageVersionSettings = input.configuration.languageVersionSettings,
+        linkViaSignatures = input.configuration.getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES),
+        evaluatedConstTracker = input.configuration
+            .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
+    )
+    val (irModuleFragment, components, pluginContext, irActualizedResult) =
+        analysisResults.convertToIrAndActualizeForJvm(
+            extensions, fir2IrConfiguration, irGenerationExtensions, environment.diagnosticsReporter,
+        )
 
     return ModuleCompilerIrBackendInput(
         input.targetId,
@@ -239,7 +248,8 @@ fun convertAnalyzedFirToIr(
         extensions,
         irModuleFragment,
         components,
-        pluginContext
+        pluginContext,
+        irActualizedResult
     )
 }
 
@@ -283,7 +293,7 @@ fun generateCodeFromIr(
         input.components.symbolTable,
         input.components.irProviders,
         input.extensions,
-        FirJvmBackendExtension(input.components),
+        FirJvmBackendExtension(input.components, input.irActualizedResult),
         input.pluginContext
     ) {
         performanceManager?.notifyIRLoweringFinished()
@@ -326,7 +336,7 @@ fun compileModuleToAnalyzedFir(
     // TODO: handle friends paths
     val libraryList = createLibraryListForJvm(rootModuleName, moduleConfiguration, friendPaths = emptyList())
     val sessionWithSources = prepareJvmSessions(
-        allSources, moduleConfiguration, projectEnvironment, rootModuleName,
+        allSources, moduleConfiguration, projectEnvironment, Name.identifier(rootModuleName),
         extensionRegistrars, librariesScope, libraryList,
         isCommonSource = input.groupedSources.isCommonSourceForLt,
         fileBelongsToModule = input.groupedSources.fileBelongsToModuleForLt,
@@ -471,7 +481,7 @@ fun createProjectEnvironment(
     val project = projectEnvironment.project
     val localFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
 
-    val javaFileManager = ServiceManager.getService(project, CoreJavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
+    val javaFileManager = project.getService(CoreJavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
 
     val releaseTarget = configuration.get(JVMConfigurationKeys.JDK_RELEASE)
 

@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM
+// IGNORE_BACKEND_K1: JS, JS_IR, JS_IR_ES6, NATIVE
 // !LANGUAGE: +MultiPlatformProjects
 
 // MODULE: common
@@ -11,9 +11,8 @@ expect fun BooleanArray.getChecked(index: Int): Boolean
 
 fun ok() = if (!BooleanArray(1).getChecked(0)) "OK" else "FAIL"
 
-// MODULE: jvm()()(common)
-// TARGET_PLATFORM: JVM
-// FILE: main.kt
+// MODULE: platform()()(common)
+// FILE: platform.kt
 
 actual fun <T> Array<T>.getChecked(index: Int) = get(index)
 

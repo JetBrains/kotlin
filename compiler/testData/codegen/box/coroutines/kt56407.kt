@@ -1,5 +1,6 @@
 // WITH_STDLIB
 // CHECK_BYTECODE_LISTING
+// IGNORE_INLINER: IR
 
 import kotlin.coroutines.*
 

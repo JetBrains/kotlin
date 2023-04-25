@@ -1,4 +1,5 @@
-import kotlin.native.concurrent.Worker
+@file:OptIn(ObsoleteWorkersApi::class)
+import kotlin.native.concurrent.*
 
 object RuntimeState {
     fun produceChange() {

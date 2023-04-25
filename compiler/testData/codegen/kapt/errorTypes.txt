@@ -6,3 +6,26 @@ public final class A {
     public method <init>(): void
     public final @org.jetbrains.annotations.NotNull method getA(): error.NonExistentClass
 }
+
+@kotlin.Metadata
+@kotlin.Suppress(names=["UNRESOLVED_REFERENCE"])
+public final class B {
+    // source: 'errorTypes.kt'
+    synthetic final static field $$delegatedProperties: kotlin.reflect.KProperty[]
+    private final @org.jetbrains.annotations.NotNull field a$delegate: error.NonExistentClass
+    public method <init>(): void
+    public synthetic deprecated static @kotlin.Suppress(names=["UNRESOLVED_REFERENCE_WRONG_RECEIVER"]) method getA$annotations(): void
+    public final @org.jetbrains.annotations.NotNull method getA(): java.lang.String
+}
+
+@kotlin.Metadata
+public class C {
+    // source: 'errorTypes.kt'
+    public method <init>(): void
+}
+
+@kotlin.Metadata
+public final class ErrorTypesKt {
+    // source: 'errorTypes.kt'
+    public final static @org.jetbrains.annotations.NotNull method flaf(@org.jetbrains.annotations.NotNull p0: C): java.lang.String
+}

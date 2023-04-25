@@ -15,7 +15,7 @@ public enum class AnnotationTarget {
     CLASS,
     /** Annotation class only */
     ANNOTATION_CLASS,
-    /** Generic type parameter (unsupported yet) */
+    /** Generic type parameter */
     TYPE_PARAMETER,
     /** Property */
     PROPERTY,

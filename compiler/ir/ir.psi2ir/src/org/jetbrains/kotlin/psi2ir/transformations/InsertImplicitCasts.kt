@@ -57,7 +57,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.*
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-fun insertImplicitCasts(file: IrFile, context: GeneratorContext) {
+internal fun insertImplicitCasts(file: IrFile, context: GeneratorContext) {
     InsertImplicitCasts(
         context.irBuiltIns,
         context.typeTranslator,

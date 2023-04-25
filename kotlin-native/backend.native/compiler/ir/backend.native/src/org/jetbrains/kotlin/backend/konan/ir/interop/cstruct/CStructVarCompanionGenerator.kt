@@ -4,9 +4,9 @@
  */
 package org.jetbrains.kotlin.backend.konan.ir.interop.cstruct
 
-import org.jetbrains.kotlin.backend.konan.InteropBuiltIns
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.descriptors.getArgumentValueOrNull
+import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.ir.interop.DescriptorToIrTranslationMixin
 import org.jetbrains.kotlin.backend.konan.ir.interop.irInstanceInitializer
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
@@ -29,7 +29,7 @@ private val varTypeAnnotationFqName = FqName("kotlinx.cinterop.internal.CStruct.
 
 internal class CStructVarCompanionGenerator(
         context: GeneratorContext,
-        private val interopBuiltIns: InteropBuiltIns
+        private val symbols: KonanSymbols
 ) : DescriptorToIrTranslationMixin {
 
     override val irBuiltIns: IrBuiltIns = context.irBuiltIns
@@ -76,13 +76,12 @@ internal class CStructVarCompanionGenerator(
                 }
             }
         } else {
-            val superConstructorSymbol = symbolTable.referenceConstructor(interopBuiltIns.cStructVarType.unsubstitutedPrimaryConstructor!!)
             return createConstructor(companionObjectDescriptor.unsubstitutedPrimaryConstructor!!).also { irConstructor ->
                 postLinkageSteps.add {
                     irConstructor.body = irBuilder(irBuiltIns, irConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
                         +IrDelegatingConstructorCallImpl.fromSymbolOwner(
                                 startOffset, endOffset, context.irBuiltIns.unitType,
-                                superConstructorSymbol
+                                symbols.structVarPrimaryConstructor
                         ).also {
                             it.putValueArgument(0, irLong(size))
                             it.putValueArgument(1, irInt(align))

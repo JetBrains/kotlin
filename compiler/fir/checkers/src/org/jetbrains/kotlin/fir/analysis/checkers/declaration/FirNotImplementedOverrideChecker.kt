@@ -21,8 +21,10 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.delegatedWrapperData
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.scopes.MemberWithBaseScope
 import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenMembersWithBaseScope
@@ -70,7 +72,12 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
                 val delegatedTo = delegatedWrapperData.wrapped.unwrapFakeOverrides().symbol
 
                 if (symbol.multipleDelegatesWithTheSameSignature == true) {
-                    manyImplementationsDelegationSymbols.add(symbol)
+                    if (directOverriddenMembersWithBaseScope.isNotEmpty() &&
+                        // We should report here if either 2+ members or single member with non-enhancement origin
+                        directOverriddenMembersWithBaseScope.singleOrNull()?.member?.origin != FirDeclarationOrigin.Enhancement
+                    ) {
+                        manyImplementationsDelegationSymbols.add(symbol)
+                    }
                 }
 
                 val firstFinal = filteredOverriddenMembers.firstOrNull { it.isFinal }

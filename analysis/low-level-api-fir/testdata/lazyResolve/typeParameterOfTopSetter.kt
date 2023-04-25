@@ -1,2 +1,1 @@
-var x: Int = 2
-    set(resolveMe) = Unit
+val <Ty<caret>pe> Type.x: Int get() = 42

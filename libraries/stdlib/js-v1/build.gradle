@@ -135,6 +135,7 @@ compileKotlin2Js {
             "-opt-in=kotlin.ExperimentalMultiplatform",
             "-opt-in=kotlin.contracts.ExperimentalContracts",
             "-XXLanguage:+RangeUntilOperator",
+            "-Xforce-deprecated-legacy-compiler-usage"
         ]
     }
 }
@@ -285,22 +286,15 @@ task libraryJarWithIr(type: Zip, dependsOn: libraryJarWithoutIr) {
 jar.dependsOn(libraryJarWithIr)
 
 task sourcesJar(type: Jar, dependsOn: compileJs) {
+    dependsOn(":kotlin-stdlib-js-ir:sourcesJar")
     archiveClassifier.set('sources')
     includeEmptyDirs false
     duplicatesStrategy = DuplicatesStrategy.FAIL
-    from("${builtinsDir}/native/kotlin") {
-        into 'kotlin'
-        include 'Comparable.kt'
-        include 'Enum.kt'
-    }
-    from(sourceSets.main.allSource) {
-        into 'kotlin'
-        exclude '**/*.java'
-        exclude 'org.w3c/**'
-        exclude 'js/**'
-    }
-    from(sourceSets.main.allSource) {
-        include 'org.w3c/**'
+    from({
+        def irSources = tasks.getByPath(":kotlin-stdlib-js-ir:sourcesJar")
+        zipTree(irSources.outputs.files.first().path)
+    }) {
+        exclude 'META-INF/*'
     }
 }
 
@@ -371,3 +365,7 @@ task runMocha(type: NodeTask, dependsOn: [testClasses, installMocha, ':kotlin-te
 }
 
 test.dependsOn runMocha
+
+tasks.withType(org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile) {
+    kotlinOptions.freeCompilerArgs += "-Xforce-deprecated-legacy-compiler-usage"
+}

@@ -17,7 +17,7 @@ if __name__ == '__main__':
     version = sys.argv[1]
     properties = 'gradle.properties'
     kotlinc = '.idea/kotlinc.xml'
-    update_content(properties, 'bootstrap.kotlin.default.version', f'bootstrap.kotlin.default.version={version}')
-    update_content(kotlinc, '    <option name="version" value=', f'    <option name="version" value="{version}" />')
+    update_content(properties, 'bootstrap.kotlin.default.version', f'bootstrap.kotlin.default.version={version}\n')
+    update_content(kotlinc, '    <option name="version" value=', f'    <option name="version" value="{version}" />\n')
     subprocess.run(['git', 'add', properties, kotlinc], check=True)
     subprocess.run(['git', 'commit', '-m', f'Advance bootstrap to {version}'])

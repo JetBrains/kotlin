@@ -1,0 +1,133 @@
+FILE fqName:events fileName:/kt38765.kt
+  CLASS CLASS name:internal modality:OPEN visibility:public [external] superTypes:[kotlin.Any]
+    $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:events.internal
+    CONSTRUCTOR visibility:public <> () returnType:events.internal [external,primary]
+    CLASS CLASS name:EventEmitterP modality:OPEN visibility:public [external] superTypes:[events.internal]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:events.internal.EventEmitterP
+      CONSTRUCTOR visibility:public <> () returnType:events.internal.EventEmitterP [external,primary]
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [external,fake_override,operator]
+        overridden:
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean [external,fake_override,operator] declared in events.internal
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+        VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [external,fake_override]
+        overridden:
+          public open fun hashCode (): kotlin.Int [external,fake_override] declared in events.internal
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [external,fake_override]
+        overridden:
+          public open fun toString (): kotlin.String [external,fake_override] declared in events.internal
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    CLASS CLASS name:EventEmitterS modality:OPEN visibility:public [external] superTypes:[events.internal]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:events.internal.EventEmitterS
+      CONSTRUCTOR visibility:public <> (a:kotlin.Any) returnType:events.internal.EventEmitterS [external]
+        VALUE_PARAMETER name:a index:0 type:kotlin.Any
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [external,fake_override,operator]
+        overridden:
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean [external,fake_override,operator] declared in events.internal
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+        VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [external,fake_override]
+        overridden:
+          public open fun hashCode (): kotlin.Int [external,fake_override] declared in events.internal
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [external,fake_override]
+        overridden:
+          public open fun toString (): kotlin.String [external,fake_override] declared in events.internal
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    CLASS OBJECT name:NestedExternalObject modality:FINAL visibility:public [external] superTypes:[events.internal]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:events.internal.NestedExternalObject
+      CONSTRUCTOR visibility:private <> () returnType:events.internal.NestedExternalObject [external,primary]
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [external,fake_override,operator]
+        overridden:
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean [external,fake_override,operator] declared in events.internal
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+        VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [external,fake_override]
+        overridden:
+          public open fun hashCode (): kotlin.Int [external,fake_override] declared in events.internal
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [external,fake_override]
+        overridden:
+          public open fun toString (): kotlin.String [external,fake_override] declared in events.internal
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    CLASS ENUM_CLASS name:NestedExternalEnum modality:FINAL visibility:public [external] superTypes:[kotlin.Enum<events.internal.NestedExternalEnum>]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:events.internal.NestedExternalEnum
+      CONSTRUCTOR visibility:private <> () returnType:events.internal.NestedExternalEnum [external,primary]
+      ENUM_ENTRY name:A
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [external,primary] declared in events.internal.NestedExternalEnum'
+      ENUM_ENTRY name:B
+        init: EXPRESSION_BODY
+          ENUM_CONSTRUCTOR_CALL 'private constructor <init> () [external,primary] declared in events.internal.NestedExternalEnum'
+      PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [external,fake_override,val]
+        overridden:
+          public final name: kotlin.String [val]
+        FUN FAKE_OVERRIDE name:<get-name> visibility:public modality:FINAL <> ($this:kotlin.Enum<events.internal.NestedExternalEnum>) returnType:kotlin.String [external,fake_override]
+          correspondingProperty: PROPERTY FAKE_OVERRIDE name:name visibility:public modality:FINAL [external,fake_override,val]
+          overridden:
+            public final fun <get-name> (): kotlin.String declared in kotlin.Enum
+          $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<events.internal.NestedExternalEnum>
+      PROPERTY FAKE_OVERRIDE name:ordinal visibility:public modality:FINAL [external,fake_override,val]
+        overridden:
+          public final ordinal: kotlin.Int [val]
+        FUN FAKE_OVERRIDE name:<get-ordinal> visibility:public modality:FINAL <> ($this:kotlin.Enum<events.internal.NestedExternalEnum>) returnType:kotlin.Int [external,fake_override]
+          correspondingProperty: PROPERTY FAKE_OVERRIDE name:ordinal visibility:public modality:FINAL [external,fake_override,val]
+          overridden:
+            public final fun <get-ordinal> (): kotlin.Int declared in kotlin.Enum
+          $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<events.internal.NestedExternalEnum>
+      FUN FAKE_OVERRIDE name:compareTo visibility:public modality:FINAL <> ($this:kotlin.Enum<events.internal.NestedExternalEnum>, other:events.internal.NestedExternalEnum) returnType:kotlin.Int [external,fake_override,operator]
+        overridden:
+          public final fun compareTo (other: E of kotlin.Enum): kotlin.Int [operator] declared in kotlin.Enum
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<events.internal.NestedExternalEnum>
+        VALUE_PARAMETER name:other index:0 type:events.internal.NestedExternalEnum
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:FINAL <> ($this:kotlin.Enum<events.internal.NestedExternalEnum>, other:kotlin.Any?) returnType:kotlin.Boolean [external,fake_override,operator]
+        overridden:
+          public final fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Enum
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<events.internal.NestedExternalEnum>
+        VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:FINAL <> ($this:kotlin.Enum<events.internal.NestedExternalEnum>) returnType:kotlin.Int [external,fake_override]
+        overridden:
+          public final fun hashCode (): kotlin.Int declared in kotlin.Enum
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<events.internal.NestedExternalEnum>
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Enum<events.internal.NestedExternalEnum>) returnType:kotlin.String [external,fake_override]
+        overridden:
+          public open fun toString (): kotlin.String declared in kotlin.Enum
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<events.internal.NestedExternalEnum>
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<events.internal.NestedExternalEnum> [external]
+        SYNTHETIC_BODY kind=ENUM_VALUES
+      FUN ENUM_CLASS_SPECIAL_MEMBER name:valueOf visibility:public modality:FINAL <> (value:kotlin.String) returnType:events.internal.NestedExternalEnum [external]
+        VALUE_PARAMETER name:value index:0 type:kotlin.String
+        SYNTHETIC_BODY kind=ENUM_VALUEOF
+      PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [external,val]
+        FUN ENUM_CLASS_SPECIAL_MEMBER name:<get-entries> visibility:public modality:FINAL <> () returnType:kotlin.enums.EnumEntries<events.internal.NestedExternalEnum> [external]
+          correspondingProperty: PROPERTY ENUM_CLASS_SPECIAL_MEMBER name:entries visibility:public modality:FINAL [external,val]
+          SYNTHETIC_BODY kind=ENUM_ENTRIES
+    CLASS INTERFACE name:NestedExternalInterface modality:ABSTRACT visibility:public [external] superTypes:[kotlin.Any]
+      $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:events.internal.NestedExternalInterface
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [external,fake_override,operator]
+        overridden:
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+        VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [external,fake_override]
+        overridden:
+          public open fun hashCode (): kotlin.Int declared in kotlin.Any
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [external,fake_override]
+        overridden:
+          public open fun toString (): kotlin.String declared in kotlin.Any
+        $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [external,fake_override,operator]
+      overridden:
+        public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+    FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.Int [external,fake_override]
+      overridden:
+        public open fun hashCode (): kotlin.Int declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any
+    FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.Any) returnType:kotlin.String [external,fake_override]
+      overridden:
+        public open fun toString (): kotlin.String declared in kotlin.Any
+      $this: VALUE_PARAMETER name:<this> type:kotlin.Any

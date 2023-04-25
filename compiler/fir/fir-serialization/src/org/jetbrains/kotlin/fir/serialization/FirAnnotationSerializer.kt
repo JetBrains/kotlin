@@ -5,37 +5,55 @@
 
 package org.jetbrains.kotlin.fir.serialization
 
+import org.jetbrains.kotlin.constant.AnnotationValue
+import org.jetbrains.kotlin.constant.ConstantValue
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
-import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.serialization.constant.ConstantValue
+import org.jetbrains.kotlin.fir.serialization.constant.ConstValueProvider
+import org.jetbrains.kotlin.fir.serialization.constant.coneTypeSafe
 import org.jetbrains.kotlin.fir.serialization.constant.toConstantValue
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.name.Name
 
-class FirAnnotationSerializer(private val session: FirSession, internal val stringTable: FirElementAwareStringTable) {
-    fun serializeAnnotation(annotation: FirAnnotation): ProtoBuf.Annotation = ProtoBuf.Annotation.newBuilder().apply {
-        val lookupTag = annotation.typeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag
-            ?: error { "Annotation without proper lookup tag: ${annotation.annotationTypeRef.coneType}" }
+class FirAnnotationSerializer(
+    private val session: FirSession,
+    internal val stringTable: FirElementAwareStringTable,
+    private val constValueProvider: ConstValueProvider?
+) {
+    fun serializeAnnotation(annotation: FirAnnotation): ProtoBuf.Annotation {
+        // TODO this logic can be significantly simplified if we will find the way to convert `IrAnnotation` to `AnnotationValue`
+        val annotationValue = annotation.toConstantValue(session, constValueProvider) as? AnnotationValue
+            ?: error("Cannot serialize annotation ${annotation.render()}")
+        return serializeAnnotation(annotationValue)
+    }
 
-        id = lookupTag.toSymbol(session)?.let { stringTable.getFqNameIndex(it.fir) }
-            ?: stringTable.getQualifiedClassNameIndex(lookupTag.classId)
+    fun serializeAnnotation(annotation: AnnotationValue): ProtoBuf.Annotation {
+        return serializeAnnotation(annotation.coneTypeSafe<ConeClassLikeType>(), annotation.value.argumentsMapping)
+    }
 
-        fun addArgument(argumentExpression: FirExpression, parameterName: Name) {
-            val argument = ProtoBuf.Annotation.Argument.newBuilder()
-            argument.nameId = stringTable.getStringIndex(parameterName.asString())
-            argument.setValue(valueProto(argumentExpression.toConstantValue(session) ?: return))
-            addArgument(argument)
-        }
+    private fun serializeAnnotation(coneType: ConeClassLikeType?, argumentsMapping: Map<Name, ConstantValue<*>>): ProtoBuf.Annotation {
+        return ProtoBuf.Annotation.newBuilder().apply {
+            val lookupTag = coneType?.lookupTag
+                ?: error { "Annotation without proper lookup tag: $coneType" }
 
-        for ((name, argument) in annotation.argumentMapping.mapping) {
-            addArgument(argument, name)
-        }
-    }.build()
+            id = lookupTag.toSymbol(session)?.let { stringTable.getFqNameIndex(it.fir) }
+                ?: stringTable.getQualifiedClassNameIndex(lookupTag.classId)
+
+            fun addArgument(argumentExpression: ConstantValue<*>, parameterName: Name) {
+                val argument = ProtoBuf.Annotation.Argument.newBuilder()
+                argument.nameId = stringTable.getStringIndex(parameterName.asString())
+                argument.setValue(valueProto(argumentExpression))
+                addArgument(argument)
+            }
+
+            for ((name, argument) in argumentsMapping) {
+                addArgument(argument, name)
+            }
+        }.build()
+    }
 
     internal fun valueProto(constant: ConstantValue<*>): ProtoBuf.Annotation.Argument.Value.Builder =
         ProtoBuf.Annotation.Argument.Value.newBuilder().apply {

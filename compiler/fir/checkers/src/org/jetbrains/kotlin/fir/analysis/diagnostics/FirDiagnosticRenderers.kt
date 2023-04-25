@@ -37,7 +37,7 @@ object FirDiagnosticRenderers {
                 callArgumentsRenderer = FirCallNoArgumentsRenderer(),
                 modifierRenderer = FirPartialModifierRenderer(),
                 valueParameterRenderer = FirValueParameterRendererNoDefaultValue(),
-            ).renderElementAsString(symbol.fir)
+            ).renderElementAsString(symbol.fir, trim = true)
             is FirTypeParameterSymbol -> symbol.name.asString()
             else -> "???"
         }
@@ -109,7 +109,7 @@ object FirDiagnosticRenderers {
         @OptIn(SymbolInternals::class)
         FirRenderer(
             annotationRenderer = null, bodyRenderer = null, idRenderer = ConeIdFullRenderer()
-        ).renderElementAsString(symbol.fir)
+        ).renderElementAsString(symbol.fir, trim = true)
     }
 
     val AMBIGUOUS_CALLS = Renderer { candidates: Collection<FirBasedSymbol<*>> ->

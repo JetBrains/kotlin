@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.container
 import java.util.ArrayList
 import java.util.HashSet
 
-fun <T> topologicalSort(items: Iterable<T>, dependencies: (T) -> Iterable<T>): List<T> {
+fun <T> topologicalSort(items: Iterable<T>, reverseOrder: Boolean = false, dependencies: (T) -> Iterable<T>): List<T> {
     val itemsInProgress = HashSet<T>()
     val completedItems = HashSet<T>()
     val result = ArrayList<T>()
@@ -45,7 +45,7 @@ fun <T> topologicalSort(items: Iterable<T>, dependencies: (T) -> Iterable<T>): L
     for (item in items)
         DfsVisit(item)
 
-    return result.apply { reverse() }
+    return result.apply { if (!reverseOrder) reverse() }
 }
 
 class CycleInTopoSortException : Exception()

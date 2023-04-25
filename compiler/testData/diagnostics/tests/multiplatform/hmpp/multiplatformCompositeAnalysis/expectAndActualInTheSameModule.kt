@@ -1,5 +1,7 @@
+// IGNORE_REVERSED_RESOLVE
 // MODULE: common
 // TARGET_PLATFORM: Common
+
 expect <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>class CommonClass<!> {
     fun memberFun()
     val memberProp: Int
@@ -22,6 +24,7 @@ actual val <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>commonProperty<!>: String
 
 // MODULE: intermediate()()(common)
 // TARGET_PLATFORM: Common
+
 expect <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>class IntermediateClass<!> {
     fun memberFun()
     val memberProp: Int
@@ -43,6 +46,7 @@ actual val <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>intermediateProperty<!>: Stri
     get() = "hello"
 
 // MODULE: main()()(intermediate)
+
 expect <!EXPECT_AND_ACTUAL_IN_THE_SAME_MODULE!>class PlatformClass<!> {
     fun memberFun()
     val memberProp: Int

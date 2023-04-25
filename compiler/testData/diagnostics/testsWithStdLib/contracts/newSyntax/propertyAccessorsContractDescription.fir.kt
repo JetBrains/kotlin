@@ -4,13 +4,13 @@ import kotlin.contracts.*
 class A {
     var x: Int = 0
         get() = f(x)
-        set(value) contract [returns() implies (value != null)] {
+        set(value) contract <!CONTRACT_NOT_ALLOWED!>[returns() implies (value != null)]<!> {
         field = value + 1
     }
 
     var y: Double = 0.0
         get() = g(y)
-        set(value) contract [returns() implies (value != null)] {
+        set(value) contract <!CONTRACT_NOT_ALLOWED!>[returns() implies (value != null)]<!> {
         field = value * 2
     }
 

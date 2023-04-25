@@ -3,4 +3,4 @@ FIR element: FirValueParameterImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-y: R|kotlin/String|
+[ResolvedTo(BODY_RESOLVE)] y: R|kotlin/String|

@@ -56,7 +56,7 @@ object Z {
   val anObject: Any
     field = { // BLOCK
       local class <no name provided> {
-        private constructor() /* primary */ {
+        constructor() /* primary */ {
           super/*Any*/()
           /* <init>() */
 

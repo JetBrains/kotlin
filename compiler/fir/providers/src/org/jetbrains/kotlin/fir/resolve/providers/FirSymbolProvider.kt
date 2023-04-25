@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.getSymbolByLookupTag
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirSyntheticFunctionInterfaceProviderBase.Companion.mayBeSyntheticFunctionClassName
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.scopes.getFunctions
@@ -16,10 +17,7 @@ import org.jetbrains.kotlin.fir.scopes.getProperties
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
-import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
-import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -114,6 +112,39 @@ inline fun <reified T : FirBasedSymbol<*>> FirSymbolProvider.getSymbolByTypeRef(
 
 fun FirSymbolProvider.getRegularClassSymbolByClassId(classId: ClassId): FirRegularClassSymbol? {
     return getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol
+}
+
+/**
+ * Whether [classId] may be contained in the set of known classifier names.
+ *
+ * If it's certain that [classId] cannot be a function class (for example when [classId] is known to come from a package without
+ * function classes), [mayBeFunctionClass] can be set to `false`. This avoids a hash map access in
+ * [org.jetbrains.kotlin.builtins.functions.FunctionTypeKindExtractor.getFunctionalClassKindWithArity].
+ */
+fun Set<String>.mayHaveTopLevelClassifier(
+    classId: ClassId,
+    session: FirSession,
+    mayBeFunctionClass: Boolean = true,
+): Boolean {
+    if (mayBeFunctionClass && isNameForFunctionClass(classId, session)) return true
+
+    if (classId.outerClassId == null) {
+        if (!mayHaveTopLevelClassifier(classId.shortClassName)) return false
+    } else {
+        if (!mayHaveTopLevelClassifier(classId.outermostClassId.shortClassName)) return false
+    }
+
+    return true
+}
+
+@Suppress("NOTHING_TO_INLINE")
+private inline fun Set<String>.mayHaveTopLevelClassifier(shortClassName: Name): Boolean =
+    shortClassName.asString() in this || shortClassName.isSpecial
+
+@OptIn(FirSymbolProviderInternals::class)
+private fun isNameForFunctionClass(classId: ClassId, session: FirSession): Boolean {
+    if (!classId.mayBeSyntheticFunctionClassName()) return false
+    return session.functionTypeService.getKindByClassNamePrefix(classId.packageFqName, classId.shortClassName.asString()) != null
 }
 
 fun ClassId.toSymbol(session: FirSession): FirClassifierSymbol<*>? {

@@ -6,10 +6,10 @@
 package org.jetbrains.kotlin.diagnostics
 
 import com.intellij.lang.LighterASTNode
-import com.intellij.openapi.util.Ref
 import com.intellij.openapi.util.TextRange
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.util.getChildren
 
 typealias Node = LighterASTNode
 
@@ -83,10 +83,4 @@ class UnreachableCodeLightTreeHelper(val tree: FlyweightCapableTreeStructure<Nod
         }
         return result
     }
-}
-
-internal fun LighterASTNode.getChildren(tree: FlyweightCapableTreeStructure<LighterASTNode>): List<LighterASTNode> {
-    val children = Ref<Array<LighterASTNode?>>()
-    val count = tree.getChildren(this, children)
-    return if (count > 0) children.get().filterNotNull() else emptyList()
 }

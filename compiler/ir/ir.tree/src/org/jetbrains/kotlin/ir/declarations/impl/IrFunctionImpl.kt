@@ -64,6 +64,7 @@ abstract class IrFunctionCommonImpl(
 
     @Suppress("LeakingThis")
     override var attributeOwnerId: IrAttributeContainer = this
+    override var originalBeforeInline: IrAttributeContainer? = null
 
     override var correspondingPropertySymbol: IrPropertySymbol? = null
 }

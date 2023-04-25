@@ -1,0 +1,37 @@
+package foo
+
+open external class A {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun foo(): String
+
+}
+
+open external class B : A {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  fun bar(): String
+
+}
+
+class C : B {
+  constructor() /* primary */ {
+    super/*B*/()
+    /* <init>() */
+
+  }
+
+}
+
+fun box(): String {
+  val c: C = C()
+  return "OK"
+}

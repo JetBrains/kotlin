@@ -1,0 +1,25 @@
+FILE: getOperatorOnDynamicThis.kt
+    public final inline fun <T : R|kotlin/Any|> jso(): R|T| {
+        ^jso R|kotlin/js/js|(String(({})))
+    }
+    public final inline fun <T : R|kotlin/Any|> jso(block: R|T.() -> kotlin/Unit|): R|T| {
+        ^jso R|/jso|<R|T|>().R|kotlin/apply|<R|T|>(R|<local>/block|)
+    }
+    public abstract external interface Z : R|kotlin/Any| {
+        public abstract var a: R|dynamic|
+            public get(): R|dynamic|
+            public set(value: R|dynamic|): R|kotlin/Unit|
+
+    }
+    public final fun foo(): R|kotlin/Unit| {
+        R|/jso|<R|Z|>().R|kotlin/apply|<R|Z|>(<L> = apply@fun R|Z|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            this@R|special/anonymous|.R|/Z.a| = R|/jso|<R|dynamic|>(<L> = jso@fun R|dynamic|.<anonymous>(): R|kotlin/Unit| <inline=Inline, kind=UNKNOWN>  {
+                this@R|special/anonymous|.R|<dynamic>/get|(vararg(this@R|special/anonymous|.R|<dynamic>/foo|.R|<dynamic>/bar|))
+            }
+            )
+        }
+        )
+    }
+    public final fun box(): R|kotlin/String| {
+        ^box String(OK)
+    }

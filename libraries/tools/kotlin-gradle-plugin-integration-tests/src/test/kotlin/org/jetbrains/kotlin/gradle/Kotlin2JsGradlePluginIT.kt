@@ -12,6 +12,7 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
+import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_TYPE
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
@@ -23,12 +24,12 @@ import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockCopyTask.Companion.YA
 import org.jetbrains.kotlin.gradle.tasks.USING_JS_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.tasks.USING_JS_IR_BACKEND_MESSAGE
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.testbase.TestVersions.Gradle.G_7_6
 import org.jetbrains.kotlin.gradle.util.jsCompilerType
 import org.jetbrains.kotlin.gradle.util.normalizePath
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.DisabledIf
 import java.nio.file.Files
-import java.nio.file.Path
 import java.nio.file.Paths
 import java.util.zip.ZipFile
 import kotlin.io.path.*
@@ -82,29 +83,35 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
 
     @DisplayName("js composite build works")
     @GradleTest
+    @GradleTestVersions(minVersion = G_7_6)
     fun testJsCompositeBuild(gradleVersion: GradleVersion) {
         project("js-composite-build", gradleVersion) {
             buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
-            gradleProperties.appendText(jsCompilerType(KotlinJsCompilerType.IR))
 
             subProject("lib").apply {
                 buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
-                gradleProperties.appendText(jsCompilerType(KotlinJsCompilerType.IR))
             }
 
-            fun asyncVersion(rootModulePath: String, moduleName: String): String =
+            subProject("base").apply {
+                buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
+            }
+
+            fun moduleVersion(rootModulePath: String, moduleName: String, pathToPackageJson: String): String =
                 NpmProjectModules(projectPath.resolve(rootModulePath).toFile())
                     .require(moduleName)
-                    .let { Paths.get(it).parent.parent.resolve(NpmProject.PACKAGE_JSON) }
+                    .let { Paths.get(it).parent.resolve(pathToPackageJson).resolve(NpmProject.PACKAGE_JSON) }
                     .let { fromSrcPackageJson(it.toFile()) }
                     .let { it!!.version }
 
             build("build") {
-                val appAsyncVersion = asyncVersion("build/js/node_modules/js-composite-build", "async")
+                val appAsyncVersion = moduleVersion("build/js/node_modules/js-composite-build", "async", "..")
                 assertEquals("3.2.0", appAsyncVersion)
 
-                val libAsyncVersion = asyncVersion("build/js/node_modules/lib2", "async")
+                val libAsyncVersion = moduleVersion("build/js/node_modules/lib2", "async", "..")
                 assertEquals("2.6.2", libAsyncVersion)
+
+                val appDecamelizeVersion = moduleVersion("build/js/node_modules/base2", "decamelize", ".")
+                assertEquals("1.1.1", appDecamelizeVersion)
             }
         }
     }
@@ -209,7 +216,6 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
                 assertTasksExecuted(":app:developmentExecutableCompileSync")
 
                 assertFileInProjectNotExists("build/js/packages/kotlin-js-browser-app/kotlin/foo/foo.txt")
-                assertFileInProjectNotExists("build/js/packages/kotlin-js-browser-app/sync-hashes/foo/foo.txt.hash")
             }
         }
     }
@@ -356,7 +362,7 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
     fun testKotlinJsPackageModuleName(gradleVersion: GradleVersion) {
         project("kotlin-js-package-module-name", gradleVersion) {
             build("assemble") {
-                assertFileInProjectExists("build/distributions/kotlin-js-package-module-name.js")
+                assertFileInProjectExists("build/${Distribution.DIST}/js/productionExecutable/kotlin-js-package-module-name.js")
                 assertFileInProjectExists("build/js/packages/@foo/bar/kotlin/@foo/bar.js")
             }
         }
@@ -386,9 +392,9 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
         }
     }
 
-    @DisplayName("JS IR implementation dependency")
+    @DisplayName("K1/JS IR implementation dependency")
     @GradleTest
-    fun testJsIrImplementationDependency(gradleVersion: GradleVersion) {
+    fun testK1JsIrImplementationDependency(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
             buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
 
@@ -399,6 +405,31 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
             }
 
             buildAndFail("assemble")
+        }
+    }
+
+    @DisplayName("K2/JS IR implementation dependency")
+    @GradleTest
+    fun testK2JsIrImplementationDependency(gradleVersion: GradleVersion) {
+        project("kotlin-js-browser-project", gradleVersion) {
+            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
+            buildGradleKts.append(
+                """
+                    rootProject.subprojects.forEach {
+                        it.tasks.withType<org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile> {
+                            kotlinOptions.languageVersion = "2.0"
+                        }
+                    }
+                """.trimIndent()
+            )
+
+            build(":app:compileProductionExecutableKotlinJs")
+
+            projectPath.resolve("app/src/main/kotlin/App.kt").modify {
+                it.replace("sheldon()", "best()")
+            }
+
+            buildAndFail(":app:compileProductionExecutableKotlinJs")
         }
     }
 
@@ -442,6 +473,31 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
             assertEquals(fingerprints[0], fingerprints[1], "fingerprints must be stable")
         }
     }
+
+    @DisplayName("Klib runtime dependency on module which already depends on dependent")
+    @GradleTest
+    fun testKlibRuntimeDependency(gradleVersion: GradleVersion) {
+        project("kotlin-js-ir-runtime-dependency", gradleVersion) {
+            build("assemble") {
+                assertTasksExecuted(":lib:otherKlib")
+                assertTasksExecuted(":lib:compileOtherKotlinJs")
+                assertTasksExecuted(":app:compileProductionExecutableKotlinJs")
+            }
+        }
+    }
+
+    @DisplayName("Multiple targets works without clash")
+    @GradleTest
+    fun testMultipleJsTargets(gradleVersion: GradleVersion) {
+        project("kotlin-js-multiple-targets", gradleVersion) {
+            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
+
+            build("assemble") {
+                assertTasksExecuted(":compileProductionExecutableKotlinServerSide")
+                assertTasksExecuted(":compileProductionExecutableKotlinClientSide")
+            }
+        }
+    }
 }
 
 @JsGradlePluginTests
@@ -464,6 +520,7 @@ class Kotlin2JsGradlePluginIT : AbstractKotlin2JsGradlePluginIT(false) {
                         |afterEvaluate {
                         |    tasks.named('compileKotlinJs') {
                         |        kotlinOptions.outputFile = "${'$'}{project.projectDir}/out/out.js"
+                        |        kotlinOptions.freeCompilerArgs += "-Xforce-deprecated-legacy-compiler-usage"
                         |    }
                         |}
                         |
@@ -1104,7 +1161,11 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
                 assertDirectoryInProjectExists("build/js/packages/kotlin-js-browser-lib")
                 assertDirectoryInProjectExists("build/js/packages/kotlin-js-browser-app")
 
-                assertFileInProjectExists("app/build/distributions/app.js")
+                if (irBackend) {
+                    assertFileInProjectExists("app/build/${Distribution.DIST}/js/productionExecutable/app.js")
+                } else {
+                    assertFileInProjectExists("app/build/distributions/app.js")
+                }
 
                 if (!irBackend) {
                     assertTasksExecuted(":app:processDceKotlinJs")
@@ -1126,7 +1187,11 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
                     if (irBackend) ":app:browserProductionExecutableDistributeResources" else ":app:browserDistributeResources"
                 )
 
-                assertFileInProjectExists("app/build/distributions/index.html")
+                if (irBackend) {
+                    assertFileInProjectExists("app/build/${Distribution.DIST}/js/productionExecutable/index.html")
+                } else {
+                    assertFileInProjectExists("app/build/distributions/index.html")
+                }
             }
         }
     }
@@ -1575,6 +1640,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
         project("kotlin-js-browser-project", gradleVersion) {
             buildGradleKts.modify { originalScript ->
                 buildString {
+                    append("import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNpmResolutionManager")
                     append(originalScript)
                     append(
                         """
@@ -1583,7 +1649,7 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
                         |    val nodejs = the<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension>()
                         |    tasks.named<org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinNpmInstallTask>("kotlinNpmInstall") {
                         |        doFirst {
-                        |            nodejs.npmResolutionManager.state = 
+                        |            project.rootProject.kotlinNpmResolutionManager.get().state = 
                         |            org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager.ResolutionState.Error(GradleException("someSpecialException"))
                         |        }
                         |    }
@@ -1599,6 +1665,16 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
             }
         }
     }
+
+    @DisplayName("test deprecated kotlin-js gradle plugin message reported")
+    @GradleTest
+    fun testDeprecatedMessageReported(gradleVersion: GradleVersion) {
+        project("kotlin2JsInternalTest", gradleVersion) {
+            build("help") { // just to trigger plugin registration
+                assertOutputContains("w: 'kotlin-js' Gradle plugin is deprecated and will be removed in the future.")
+            }
+        }
+    }
 }
 
 @JsGradlePluginTests
@@ -1608,7 +1684,7 @@ class GeneralKotlin2JsGradlePluginIT : KGPBaseTest() {
     fun testJsBothModeWithTests(gradleVersion: GradleVersion) {
         project("kotlin-js-both-mode-with-tests", gradleVersion) {
             build("build") {
-                assertNoBuildWarnings()
+                assertNoBuildWarnings(setOf("w: 'kotlin-js' Gradle plugin is deprecated and will be removed in the future."))
             }
         }
     }

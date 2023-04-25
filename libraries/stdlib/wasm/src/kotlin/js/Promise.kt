@@ -5,20 +5,26 @@
 
 package kotlin.js
 
+import kotlin.internal.LowPriorityInOverloadResolution
+
 /**
  * Exposes the JavaScript [Promise object](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise) to Kotlin.
  */
-public external class Promise<out T>(executor: (resolve: (Dynamic?) -> Unit, reject: (Dynamic) -> Unit) -> Unit) {
-    public fun then(onFulfilled: (Dynamic?) -> Dynamic?): Promise<Dynamic?>
-    public fun then(onFulfilled: (Dynamic?) -> Dynamic?, onRejected: (Dynamic) -> Dynamic?): Promise<Dynamic?>
-    public fun catch(onRejected: (Dynamic) -> Dynamic?): Promise<Dynamic?>
-    public fun finally(onFinally: () -> Unit): Promise<Dynamic?>
+public external class Promise<out T : JsAny?>(executor: (resolve: (T) -> Unit, reject: (JsAny) -> Unit) -> Unit) : JsAny {
+    @LowPriorityInOverloadResolution
+    public fun <S : JsAny?> then(onFulfilled: ((T) -> S)?): Promise<S>
 
-    public companion object {
-        public fun reject(e: Dynamic): Promise<Dynamic?>
-        public fun resolve(e: Dynamic): Promise<Dynamic?>
-        public fun resolve(e: Promise<Dynamic?>): Promise<Dynamic?>
+    @LowPriorityInOverloadResolution
+    public fun <S : JsAny?> then(onFulfilled: ((T) -> S)?, onRejected: ((JsAny) -> S)?): Promise<S>
+
+    public fun <S : JsAny?> catch(onRejected: (JsAny) -> S): Promise<S>
+    public fun finally(onFinally: () -> Unit): Promise<T>
+
+    companion object {
+        public fun <S : JsAny?> all(promise: JsArray<out Promise<S>>): Promise<JsArray<out S>>
+        public fun <S : JsAny?> race(promise: JsArray<out Promise<S>>): Promise<S>
+        public fun reject(e: JsAny): Promise<Nothing>
+        public fun <S : JsAny?> resolve(e: S): Promise<S>
+        public fun <S : JsAny?> resolve(e: Promise<S>): Promise<S>
     }
 }
-
-

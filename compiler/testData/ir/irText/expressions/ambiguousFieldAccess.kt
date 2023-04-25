@@ -1,3 +1,4 @@
+// TARGET_BACKEND: JVM_IR
 // SKIP_KLIB_TEST
 // Related to KT-49507
 // FILE: A.java

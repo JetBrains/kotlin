@@ -37,9 +37,8 @@ FILE: unary.kt
         lval x2: <implicit> =  {
             lval <array>: <implicit> = arr#
             lval <index_0>: <implicit> = IntegerLiteral(1)
-            lval <unary-result>: <implicit> = R|<local>/<array>|.get#(R|<local>/<index_0>|).inc#()
-            R|<local>/<array>|.set#(R|<local>/<index_0>|, R|<local>/<unary-result>|)
-            R|<local>/<unary-result>|
+            R|<local>/<array>|.set#(R|<local>/<index_0>|, R|<local>/<array>|.get#(R|<local>/<index_0>|).inc#())
+            R|<local>/<array>|.get#(R|<local>/<index_0>|)
         }
 
     }
@@ -64,9 +63,8 @@ FILE: unary.kt
         lval x2: <implicit> =  {
             lval <array>: <implicit> = y#.arr#
             lval <index_0>: <implicit> = IntegerLiteral(1)
-            lval <unary-result>: <implicit> = R|<local>/<array>|.get#(R|<local>/<index_0>|).inc#()
-            R|<local>/<array>|.set#(R|<local>/<index_0>|, R|<local>/<unary-result>|)
-            R|<local>/<unary-result>|
+            R|<local>/<array>|.set#(R|<local>/<index_0>|, R|<local>/<array>|.get#(R|<local>/<index_0>|).inc#())
+            R|<local>/<array>|.get#(R|<local>/<index_0>|)
         }
 
     }

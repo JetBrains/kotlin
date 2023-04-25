@@ -180,12 +180,12 @@ enum class ExportedForwardDeclarationChecker(val fqName: FqName) {
     ObjCClass(ForwardDeclarationsFqNames.objCNamesClasses) {
         override fun check(classifierDescriptor: ClassifierDescriptor): Boolean =
             classifierDescriptor is ClassDescriptor && classifierDescriptor.kind.isClass &&
-                    classifierDescriptor.isExternalObjCClass()
+                    classifierDescriptor.isObjCObjectBase()
     },
     ObjCProtocol(ForwardDeclarationsFqNames.objCNamesProtocols) {
         override fun check(classifierDescriptor: ClassifierDescriptor): Boolean =
             classifierDescriptor is ClassDescriptor && classifierDescriptor.kind.isInterface &&
-                    classifierDescriptor.isExternalObjCClass()
+                    classifierDescriptor.isObjCObject()
     }
     ;
 
@@ -193,11 +193,17 @@ enum class ExportedForwardDeclarationChecker(val fqName: FqName) {
 
     companion object {
         private val cStructVarFqName = FqName("kotlinx.cinterop.CStructVar")
-        private val externalObjCClassFqName = FqName("kotlinx.cinterop.ExternalObjCClass")
+        private val objCObjectBaseFqName = FqName("kotlinx.cinterop.ObjCObjectBase")
+        private val objCObjectFqName = FqName("kotlinx.cinterop.ObjCObject")
 
-        // We can check that there is kotlinx.cinterop.ObjCObjectBase among supertypes, but it seems slower.
-        private fun ClassifierDescriptor.isExternalObjCClass(): Boolean =
-            annotations.hasAnnotation(externalObjCClassFqName)
+        // We can stop at ObjCObjectBase when checking Obj-C classes.
+        // Checking @ExternalObjCClass would be faster, but this annotation is not commonized. See KT-57541.
+        private fun ClassifierDescriptor.isObjCObjectBase(): Boolean =
+            getAllSuperClassifiers().any { it.fqNameSafe == objCObjectBaseFqName }
+
+        // For protocols, we have to go all the way up to ObjCObject.
+        private fun ClassifierDescriptor.isObjCObject(): Boolean =
+            getAllSuperClassifiers().any { it.fqNameSafe == objCObjectFqName }
 
         private fun ClassifierDescriptor.isCStructVar(): Boolean =
             getAllSuperClassifiers().any { it.fqNameSafe == cStructVarFqName }

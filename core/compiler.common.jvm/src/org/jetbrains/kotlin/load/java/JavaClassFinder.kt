@@ -21,7 +21,25 @@ interface JavaClassFinder {
     fun findClass(request: Request): JavaClass?
     fun findClass(classId: ClassId): JavaClass? = findClass(Request(classId))
 
+    /**
+     * Finds all classes with the specified [ClassId]. This function should be used if the search space permits such ambiguities and if
+     * [findClass] is not guaranteed to disambiguate by itself. For example, in an IDE context, a broad search scope might lead to multiple
+     * valid candidates, which need to be disambiguated according to classpath order.
+     *
+     * [findClasses] may return a single [JavaClass], even if more could be found, if the resulting [JavaClass] is guaranteed to be the
+     * first in the dependency order.
+     */
+    fun findClasses(request: Request): List<JavaClass>
+
+    fun findClasses(classId: ClassId): List<JavaClass> = findClasses(Request(classId))
+
     fun findPackage(fqName: FqName, mayHaveAnnotations: Boolean = true): JavaPackage?
 
     fun knownClassNamesInPackage(packageFqName: FqName): Set<String>?
+
+    /**
+     * Whether [knownClassNamesInPackage] can be computed. When [canComputeKnownClassNamesInPackage] is `false`, [knownClassNamesInPackage]
+     * will always return `null`.
+     */
+    fun canComputeKnownClassNamesInPackage(): Boolean
 }

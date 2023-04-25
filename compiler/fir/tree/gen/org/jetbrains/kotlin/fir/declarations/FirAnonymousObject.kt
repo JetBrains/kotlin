@@ -15,27 +15,27 @@ import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
 
 /*
  * This file was generated automatically
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirAnonymousObject : FirClass(), FirControlFlowGraphOwner {
+abstract class FirAnonymousObject : FirClass() {
     abstract override val source: KtSourceElement?
-    abstract override val resolvePhase: FirResolvePhase
     abstract override val moduleData: FirModuleData
     abstract override val origin: FirDeclarationOrigin
     abstract override val attributes: FirDeclarationAttributes
     abstract override val typeParameters: List<FirTypeParameterRef>
     abstract override val status: FirDeclarationStatus
     abstract override val deprecationsProvider: DeprecationsProvider
+    abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract override val classKind: ClassKind
     abstract override val superTypeRefs: List<FirTypeRef>
     abstract override val declarations: List<FirDeclaration>
     abstract override val annotations: List<FirAnnotation>
     abstract override val scopeProvider: FirScopeProvider
-    abstract override val controlFlowGraphReference: FirControlFlowGraphReference?
     abstract override val symbol: FirAnonymousObjectSymbol
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitAnonymousObject(this, data)
@@ -44,17 +44,15 @@ abstract class FirAnonymousObject : FirClass(), FirControlFlowGraphOwner {
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformAnonymousObject(this, data) as E
 
-    abstract override fun replaceResolvePhase(newResolvePhase: FirResolvePhase)
-
     abstract override fun replaceStatus(newStatus: FirDeclarationStatus)
 
     abstract override fun replaceDeprecationsProvider(newDeprecationsProvider: DeprecationsProvider)
 
+    abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
+
     abstract override fun replaceSuperTypeRefs(newSuperTypeRefs: List<FirTypeRef>)
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
-
-    abstract override fun replaceControlFlowGraphReference(newControlFlowGraphReference: FirControlFlowGraphReference?)
 
     abstract override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirAnonymousObject
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 import org.jetbrains.kotlin.analysis.utils.errors.ExceptionAttachmentBuilder
 import org.jetbrains.kotlin.analysis.utils.errors.checkWithAttachmentBuilder
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
-import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
+import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
@@ -21,7 +23,7 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 internal inline fun checkTypeRefIsResolved(
     typeRef: FirTypeRef,
     typeRefName: String,
-    owner: FirElementWithResolvePhase,
+    owner: FirElementWithResolveState,
     acceptImplicitTypeRef: Boolean = false,
     extraAttachment: ExceptionAttachmentBuilder.() -> Unit = {}
 ) {
@@ -40,6 +42,27 @@ internal inline fun checkTypeRefIsResolved(
         withFirEntry("typeRef", typeRef)
         withFirEntry("firDeclaration", owner)
         extraAttachment()
+    }
+}
+
+internal fun checkBodyIsResolved(function: FirFunction) {
+    val block = function.body ?: return
+    checkTypeRefIsResolved(block.typeRef, "block type", function) {
+        withFirEntry("block", block)
+    }
+}
+
+internal fun checkInitializerIsResolved(variable: FirVariable) {
+    val initializer = variable.initializer ?: return
+    checkTypeRefIsResolved(initializer.typeRef, "initializer type", variable) {
+        withFirEntry("initializer", initializer)
+    }
+}
+
+internal fun checkDefaultValueIsResolved(parameter: FirValueParameter) {
+    val defaultValue = parameter.defaultValue ?: return
+    checkTypeRefIsResolved(defaultValue.typeRef, "default value type", parameter) {
+        withFirEntry("defaultValue", defaultValue)
     }
 }
 

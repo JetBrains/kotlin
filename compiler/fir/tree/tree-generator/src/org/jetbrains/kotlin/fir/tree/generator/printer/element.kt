@@ -1,18 +1,19 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.tree.generator.printer
 
 import org.jetbrains.kotlin.fir.tree.generator.context.AbstractFirTreeBuilder
-import org.jetbrains.kotlin.fir.tree.generator.model.*
+import org.jetbrains.kotlin.fir.tree.generator.model.Element
+import org.jetbrains.kotlin.fir.tree.generator.model.Field
 import org.jetbrains.kotlin.fir.tree.generator.model.Implementation.Kind
+import org.jetbrains.kotlin.fir.tree.generator.model.Importable
 import org.jetbrains.kotlin.fir.tree.generator.pureAbstractElementType
 import org.jetbrains.kotlin.fir.tree.generator.util.get
 import org.jetbrains.kotlin.util.SmartPrinter
 import org.jetbrains.kotlin.util.withIndent
-
 import java.io.File
 
 fun Element.generateCode(generationPath: File): GeneratedFile {
@@ -76,9 +77,12 @@ fun SmartPrinter.printElement(element: Element) {
         print(multipleUpperBoundsList())
         println("{")
         withIndent {
-            allFields.forEach {
-                abstract()
-                printField(it, isImplementation = false, override = it.fromParent, end = "")
+            allFields.forEach { field ->
+                if (field.isFinal && field.fromParent || field.isParameter) return@forEach
+                if (!field.isFinal) {
+                    abstract()
+                }
+                printField(field, isImplementation = false, override = field.fromParent, end = "")
             }
             if (allFields.isNotEmpty()) {
                 println()

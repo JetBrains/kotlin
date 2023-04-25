@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir
 
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -20,7 +21,7 @@ import org.jetbrains.kotlin.library.containsErrorCode
 
 class JsIrLinker(
     private val currentModule: ModuleDescriptor?, messageLogger: IrMessageLogger, builtIns: IrBuiltIns, symbolTable: SymbolTable,
-    partialLinkageEnabled: Boolean,
+    override val partialLinkageSupport: PartialLinkageSupportForLinker,
     override val translationPluginContext: TranslationPluginContext?,
     private val icData: ICData? = null,
     friendModules: Map<String, Collection<String>> = emptyMap(),
@@ -31,7 +32,6 @@ class JsIrLinker(
     builtIns = builtIns,
     symbolTable = symbolTable,
     exportedDependencies = emptyList(),
-    partialLinkageEnabled = partialLinkageEnabled,
     symbolProcessor = { symbol, idSig ->
         if (idSig.isLocal) {
             symbol.privateSignature = IdSignature.CompositeSignature(IdSignature.FileSignature(fileSymbol), idSig)
@@ -45,7 +45,7 @@ class JsIrLinker(
         mangler = JsManglerIr,
         typeSystem = IrTypeSystemContextImpl(builtIns),
         friendModules = friendModules,
-        partialLinkageEnabled = partialLinkageSupport.partialLinkageEnabled
+        partialLinkageSupport = partialLinkageSupport
     )
 
     override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean =
@@ -68,10 +68,11 @@ class JsIrLinker(
     }
 
     private inner class JsModuleDeserializer(moduleDescriptor: ModuleDescriptor, klib: IrLibrary, strategyResolver: (String) -> DeserializationStrategy, libraryAbiVersion: KotlinAbiVersion, allowErrorCode: Boolean) :
-        BasicIrModuleDeserializer(this, moduleDescriptor, klib, strategyResolver, libraryAbiVersion, allowErrorCode)
+        BasicIrModuleDeserializer(this, moduleDescriptor, klib, strategyResolver, libraryAbiVersion, allowErrorCode, false)
 
     override fun createCurrentModuleDeserializer(moduleFragment: IrModuleFragment, dependencies: Collection<IrModuleDeserializer>): IrModuleDeserializer {
         val currentModuleDeserializer = super.createCurrentModuleDeserializer(moduleFragment, dependencies)
+
         icData?.let {
             return CurrentModuleWithICDeserializer(currentModuleDeserializer, symbolTable, builtIns, it.icData) { lib ->
                 JsModuleDeserializer(currentModuleDeserializer.moduleDescriptor, lib, currentModuleDeserializer.strategyResolver, KotlinAbiVersion.CURRENT, it.containsErrorCode)

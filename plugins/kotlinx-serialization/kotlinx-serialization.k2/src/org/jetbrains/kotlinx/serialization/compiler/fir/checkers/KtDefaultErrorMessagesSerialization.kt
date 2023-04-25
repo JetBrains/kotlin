@@ -155,6 +155,10 @@ object KtDefaultErrorMessagesSerialization : BaseDiagnosticRendererFactory() {
             FirSerializationErrors.META_SERIALIZABLE_NOT_APPLICABLE,
             "@MetaSerializable annotation can be used only on top-level annotation classes."
         )
+        put(
+            FirSerializationErrors.INHERITABLE_SERIALINFO_CANT_BE_REPEATABLE,
+            "Repeatable serial info annotations can not be inheritable. Either remove @Repeatable or use a regular @SerialInfo annotation."
+        )
 
         put(
             FirSerializationErrors.EXTERNAL_SERIALIZER_USELESS,

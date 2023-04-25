@@ -7,8 +7,6 @@
 
 package kotlin.enums
 
-import kotlin.jvm.Volatile
-
 /**
  * A specialized immutable implementation of [List] interface that
  * contains all enum entries of the specified enum type [E].
@@ -23,78 +21,26 @@ public sealed interface EnumEntries<E : Enum<E>> : List<E>
 
 @PublishedApi
 @ExperimentalStdlibApi
-@SinceKotlin("1.8") // Used by JVM compiler
-internal fun <E : Enum<E>> enumEntries(entriesProvider: () -> Array<E>): EnumEntries<E> = EnumEntriesList(entriesProvider)
+@SinceKotlin("1.8") // Used by pre-1.9.0 JVM compiler for the feature in preview mode. Can be safely removed around 2.1
+internal fun <E : Enum<E>> enumEntries(entriesProvider: () -> Array<E>): EnumEntries<E> = EnumEntriesList(entriesProvider())
 
 @PublishedApi
 @ExperimentalStdlibApi
-@SinceKotlin("1.8") // Used by Native/JS compilers and Java serialization
-internal fun <E : Enum<E>> enumEntries(entries: Array<E>): EnumEntries<E> = EnumEntriesList { entries }.also {
-    /*
-     * Here we are enforcing initialization of _entries property.
-     * It is required because of two reasons.
-     *   1. In old Native mm the object will be frozen after creation, so it must be immutable
-     *   2. Native doesn't support @Volatile for now, so this initialization is not generally safe, if
-     *      done after object is published.
-     *
-     * This is very implementation-dependent hack, and it should be removed when/if both reasons above are gone.
-     */
-    it.size
-}
+@SinceKotlin("1.8")
+internal fun <E : Enum<E>> enumEntries(entries: Array<E>): EnumEntries<E> = EnumEntriesList(entries)
 
-/*
- * For enum class E, this class is instantiated in the following manner (NB it's pseudocode that does not
- * reflect code generation strategy precisely):
- * ```
- * class E extends Enum<E> {
- *    private static final E[] $VALUES
- *    private static final EnumEntries[] $ENTRIES
- *
- *    static {
- *        $VALUES = $values();
- *        val supplier = #invokedynamic ..args.. values;
- *        $ENTRIES = new EnumEntriesList(supplier);
- *    }
- *
- *    public static EnumEntries<MyEnum> getEntries() {
- *        return $ENTRIES;
- *    }
- *
- *    private synthetic static E[] $values() {
- *        return new E[] { ... };
- *    }
- * }
- * ```
- *
- * This machinery is required as a workaround for a long-standing issue when people do reflectively change `$VALUES` of
- * enums in order to workaround project-specific issues.
- * We allow racy initialization (e.g. entriesProvider can be invoked multiple times), but the resulting array is safely
- * published, preventing any read races after the initialization.
- */
 @SinceKotlin("1.8")
 @ExperimentalStdlibApi
-private class EnumEntriesList<T : Enum<T>>(private val entriesProvider: () -> Array<T>) : EnumEntries<T>, AbstractList<T>(), Serializable {
+private class EnumEntriesList<T : Enum<T>>(private val entries: Array<T>) : EnumEntries<T>, AbstractList<T>(), Serializable {
 // WA for JS IR bug:
-//  class type parameter MUST be different form E (AbstractList<E> type parameter),
+//  class type parameter name MUST be different from E (AbstractList<E> type parameter),
 //  otherwise the bridge names for contains() and indexOf() will be clashed with the original method names,
 //  and produced JS code will not contain type checks and will not work correctly.
-
-    @Volatile // Volatile is required for safe publication of the array. It doesn't incur any real-world penalties
-    private var _entries: Array<T>? = null
-    private val entries: Array<T>
-        get() {
-            var e = _entries
-            if (e != null) return e
-            e = entriesProvider()
-            _entries = e
-            return e
-        }
 
     override val size: Int
         get() = entries.size
 
     override fun get(index: Int): T {
-        val entries = entries
         checkElementIndex(index, entries.size)
         return entries[index]
     }
@@ -121,8 +67,9 @@ private class EnumEntriesList<T : Enum<T>>(private val entriesProvider: () -> Ar
 
     override fun lastIndexOf(element: T): Int = indexOf(element)
 
-    @Suppress("unused") // Used for Java serialization
+    @Suppress("unused")
     private fun writeReplace(): Any {
+        // Used for Java serialization: EESP ensures that deserialized object **always** reflects the state of the enum on the target classpath
         return EnumEntriesSerializationProxy(entries)
     }
 }

@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.incremental.testingUtils.BuildLogFinder
 import org.junit.jupiter.api.fail
 import java.io.File
-import java.io.FilenameFilter
 
 abstract class AbstractIncrementalFirJvmWithPluginCompilerRunnerTest : AbstractIncrementalFirJvmCompilerRunnerTest() {
     companion object {

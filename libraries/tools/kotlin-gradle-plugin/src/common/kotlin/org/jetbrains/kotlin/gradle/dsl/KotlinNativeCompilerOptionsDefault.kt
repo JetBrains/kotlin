@@ -11,14 +11,4 @@ internal abstract class KotlinNativeCompilerOptionsDefault @javax.inject.Inject 
 
     override val moduleName: org.gradle.api.provider.Property<kotlin.String> =
         objectFactory.property(kotlin.String::class.java)
-
-    internal fun fillCompilerArguments(args: org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments) {
-        super.fillCompilerArguments(args)
-        args.moduleName = moduleName.orNull
-    }
-
-    internal fun fillDefaultValues(args: org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments) {
-        super.fillDefaultValues(args)
-        args.moduleName = null
-    }
 }

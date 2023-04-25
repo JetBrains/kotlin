@@ -39,24 +39,24 @@ FILE fqName:<root> fileName:/delegatedPropertiesOperators.kt
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:delegateValue type:kotlin.String visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.Delegate declared in <root>.Delegate.<set-delegateValue>' type=<root>.Delegate origin=null
             value: GET_VAR '<set-?>: kotlin.String declared in <root>.Delegate.<set-delegateValue>' type=kotlin.String origin=null
-    FUN name:getValue visibility:public modality:FINAL <> ($this:<root>.Delegate, _context_receiver_0:kotlin.Int, thisRef:kotlin.Any?, property:kotlin.reflect.KProperty<*>) returnType:kotlin.String [operator]
+    FUN name:getValue visibility:public modality:FINAL <> ($this:<root>.Delegate, $context_receiver_0:kotlin.Int, thisRef:kotlin.Any?, property:kotlin.reflect.KProperty<*>) returnType:kotlin.String [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.Delegate
       contextReceiverParametersCount: 1
-      VALUE_PARAMETER name:_context_receiver_0 index:0 type:kotlin.Int
+      VALUE_PARAMETER name:$context_receiver_0 index:0 type:kotlin.Int
       VALUE_PARAMETER name:thisRef index:1 type:kotlin.Any?
       VALUE_PARAMETER name:property index:2 type:kotlin.reflect.KProperty<*>
       BLOCK_BODY
         CALL 'public final fun <set-operationScore> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
           <set-?>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
             $this: CALL 'public final fun <get-operationScore> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
-            other: GET_VAR '_context_receiver_0: kotlin.Int declared in <root>.Delegate.getValue' type=kotlin.Int origin=null
-        RETURN type=kotlin.Nothing from='public final fun getValue (_context_receiver_0: kotlin.Int, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): kotlin.String [operator] declared in <root>.Delegate'
+            other: GET_VAR '$context_receiver_0: kotlin.Int declared in <root>.Delegate.getValue' type=kotlin.Int origin=null
+        RETURN type=kotlin.Nothing from='public final fun getValue ($context_receiver_0: kotlin.Int, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): kotlin.String [operator] declared in <root>.Delegate'
           CALL 'public final fun <get-delegateValue> (): kotlin.String declared in <root>.Delegate' type=kotlin.String origin=GET_PROPERTY
             $this: GET_VAR '<this>: <root>.Delegate declared in <root>.Delegate.getValue' type=<root>.Delegate origin=null
-    FUN name:setValue visibility:public modality:FINAL <> ($this:<root>.Delegate, _context_receiver_0:kotlin.Int, thisRef:kotlin.Any?, property:kotlin.reflect.KProperty<*>, value:kotlin.String) returnType:kotlin.Unit [operator]
+    FUN name:setValue visibility:public modality:FINAL <> ($this:<root>.Delegate, $context_receiver_0:kotlin.Int, thisRef:kotlin.Any?, property:kotlin.reflect.KProperty<*>, value:kotlin.String) returnType:kotlin.Unit [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.Delegate
       contextReceiverParametersCount: 1
-      VALUE_PARAMETER name:_context_receiver_0 index:0 type:kotlin.Int
+      VALUE_PARAMETER name:$context_receiver_0 index:0 type:kotlin.Int
       VALUE_PARAMETER name:thisRef index:1 type:kotlin.Any?
       VALUE_PARAMETER name:property index:2 type:kotlin.reflect.KProperty<*>
       VALUE_PARAMETER name:value index:3 type:kotlin.String
@@ -64,7 +64,7 @@ FILE fqName:<root> fileName:/delegatedPropertiesOperators.kt
         CALL 'public final fun <set-operationScore> (<set-?>: kotlin.Int): kotlin.Unit declared in <root>' type=kotlin.Unit origin=EQ
           <set-?>: CALL 'public final fun plus (other: kotlin.Int): kotlin.Int [operator] declared in kotlin.Int' type=kotlin.Int origin=null
             $this: CALL 'public final fun <get-operationScore> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
-            other: GET_VAR '_context_receiver_0: kotlin.Int declared in <root>.Delegate.setValue' type=kotlin.Int origin=null
+            other: GET_VAR '$context_receiver_0: kotlin.Int declared in <root>.Delegate.setValue' type=kotlin.Int origin=null
         CALL 'public final fun <set-delegateValue> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Delegate' type=kotlin.Unit origin=EQ
           $this: GET_VAR '<this>: <root>.Delegate declared in <root>.Delegate.setValue' type=<root>.Delegate origin=null
           <set-?>: GET_VAR 'value: kotlin.String declared in <root>.Delegate.setValue' type=kotlin.String origin=null
@@ -84,13 +84,13 @@ FILE fqName:<root> fileName:/delegatedPropertiesOperators.kt
   CLASS CLASS name:Result modality:FINAL visibility:public superTypes:[kotlin.Any]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.Result
     FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:kotlin.Int visibility:private [final]
-    CONSTRUCTOR visibility:public <> (_context_receiver_0:kotlin.Int) returnType:<root>.Result [primary]
-      VALUE_PARAMETER name:_context_receiver_0 index:0 type:kotlin.Int
+    CONSTRUCTOR visibility:public <> ($context_receiver_0:kotlin.Int) returnType:<root>.Result [primary]
+      VALUE_PARAMETER name:$context_receiver_0 index:0 type:kotlin.Int
       BLOCK_BODY
         DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
         SET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:kotlin.Int visibility:private [final]' type=kotlin.Unit origin=null
           receiver: GET_VAR '<this>: <root>.Result declared in <root>.Result' type=<root>.Result origin=null
-          value: GET_VAR '_context_receiver_0: kotlin.Int declared in <root>.Result.<init>' type=kotlin.Int origin=null
+          value: GET_VAR '$context_receiver_0: kotlin.Int declared in <root>.Result.<init>' type=kotlin.Int origin=null
         INSTANCE_INITIALIZER_CALL classDescriptor='CLASS CLASS name:Result modality:FINAL visibility:public superTypes:[kotlin.Any]'
     PROPERTY name:s visibility:public modality:FINAL [delegated,var]
       FIELD PROPERTY_DELEGATE name:s$delegate type:<root>.Delegate visibility:private [final]
@@ -101,10 +101,10 @@ FILE fqName:<root> fileName:/delegatedPropertiesOperators.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Result
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-s> (): kotlin.String declared in <root>.Result'
-            CALL 'public final fun getValue (_context_receiver_0: kotlin.Int, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): kotlin.String [operator] declared in <root>.Delegate' type=kotlin.String origin=null
+            CALL 'public final fun getValue ($context_receiver_0: kotlin.Int, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): kotlin.String [operator] declared in <root>.Delegate' type=kotlin.String origin=null
               $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:s$delegate type:<root>.Delegate visibility:private [final]' type=<root>.Delegate origin=null
                 receiver: GET_VAR '<this>: <root>.Result declared in <root>.Result.<get-s>' type=<root>.Result origin=null
-              _context_receiver_0: GET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+              $context_receiver_0: GET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
                 receiver: GET_VAR '<this>: <root>.Result declared in <root>.Result.<get-s>' type=<root>.Result origin=null
               thisRef: GET_VAR '<this>: <root>.Result declared in <root>.Result.<get-s>' type=<root>.Result origin=null
               property: PROPERTY_REFERENCE 'public final s: kotlin.String [delegated,var]' field=null getter='public final fun <get-s> (): kotlin.String declared in <root>.Result' setter='public final fun <set-s> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Result' type=kotlin.reflect.KMutableProperty1<<root>.Result, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
@@ -113,10 +113,10 @@ FILE fqName:<root> fileName:/delegatedPropertiesOperators.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.Result
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.String
         BLOCK_BODY
-          CALL 'public final fun setValue (_context_receiver_0: kotlin.Int, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: kotlin.String): kotlin.Unit [operator] declared in <root>.Delegate' type=kotlin.Unit origin=null
+          CALL 'public final fun setValue ($context_receiver_0: kotlin.Int, thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: kotlin.String): kotlin.Unit [operator] declared in <root>.Delegate' type=kotlin.Unit origin=null
             $this: GET_FIELD 'FIELD PROPERTY_DELEGATE name:s$delegate type:<root>.Delegate visibility:private [final]' type=<root>.Delegate origin=null
               receiver: GET_VAR '<this>: <root>.Result declared in <root>.Result.<set-s>' type=<root>.Result origin=null
-            _context_receiver_0: GET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
+            $context_receiver_0: GET_FIELD 'FIELD FIELD_FOR_CLASS_CONTEXT_RECEIVER name:contextReceiverField0 type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.Result declared in <root>.Result.<set-s>' type=<root>.Result origin=null
             thisRef: GET_VAR '<this>: <root>.Result declared in <root>.Result.<set-s>' type=<root>.Result origin=null
             property: PROPERTY_REFERENCE 'public final s: kotlin.String [delegated,var]' field=null getter='public final fun <get-s> (): kotlin.String declared in <root>.Result' setter='public final fun <set-s> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Result' type=kotlin.reflect.KMutableProperty1<<root>.Result, kotlin.String> origin=PROPERTY_REFERENCE_FOR_DELEGATE
@@ -146,8 +146,8 @@ FILE fqName:<root> fileName:/delegatedPropertiesOperators.kt
               $receiver: VALUE_PARAMETER name:$this$with type:kotlin.Int
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): <root>.Result declared in <root>.box'
-                  CONSTRUCTOR_CALL 'public constructor <init> (_context_receiver_0: kotlin.Int) [primary] declared in <root>.Result' type=<root>.Result origin=null
-                    _context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
+                  CONSTRUCTOR_CALL 'public constructor <init> ($context_receiver_0: kotlin.Int) [primary] declared in <root>.Result' type=<root>.Result origin=null
+                    $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
       CALL 'public final fun <set-s> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.Result' type=kotlin.Unit origin=EQ
         $this: GET_VAR 'val result: <root>.Result [val] declared in <root>.box' type=<root>.Result origin=null
         <set-?>: CONST String type=kotlin.String value="OK"

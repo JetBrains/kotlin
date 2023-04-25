@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM
+// IGNORE_BACKEND_K1: JS, JS_IR, JS_IR_ES6, NATIVE
 // !LANGUAGE: +MultiPlatformProjects
 
 // MODULE: common
@@ -14,9 +14,8 @@ fun test(): String {
     return func() + prop
 }
 
-// MODULE: jvm()()(common)
-// TARGET_PLATFORM: JVM
-// FILE: main.kt
+// MODULE: platform()()(common)
+// FILE: platform.kt
 
 actual fun func(): String = "O"
 

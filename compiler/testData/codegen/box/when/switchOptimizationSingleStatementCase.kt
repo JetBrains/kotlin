@@ -1,15 +1,14 @@
 // CHECK_CASES_COUNT: function=test1 count=2 TARGET_BACKENDS=JS
 // CHECK_CASES_COUNT: function=test1 count=0 IGNORED_BACKENDS=JS
-// CHECK_IF_COUNT: function=test1 count=0 TARGET_BACKENDS=JS
-// CHECK_IF_COUNT: function=test1 count=1 IGNORED_BACKENDS=JS
 // CHECK_BREAKS_COUNT: function=test1 count=1 TARGET_BACKENDS=JS
 // CHECK_BREAKS_COUNT: function=test1 count=0 IGNORED_BACKENDS=JS
+// CHECK_IF_COUNT: function=test1 count=0
 
 // CHECK_CASES_COUNT: function=test2 count=2 TARGET_BACKENDS=JS
 // CHECK_CASES_COUNT: function=test2 count=0 IGNORED_BACKENDS=JS
-// CHECK_IF_COUNT: function=test2 count=0 TARGET_BACKENDS=JS
-// CHECK_IF_COUNT: function=test2 count=1 IGNORED_BACKENDS=JS
-// CHECK_BREAKS_COUNT: function=test2 count=1
+// CHECK_BREAKS_COUNT: function=test2 count=1 TARGET_BACKENDS=JS
+// CHECK_BREAKS_COUNT: function=test2 count=0 IGNORED_BACKENDS=JS
+// CHECK_IF_COUNT: function=test2 count=0
 
 fun test1(v: Int) {
     when (v) {

@@ -26,26 +26,26 @@ fun case_2(a: Out<<!REDUNDANT_PROJECTION!>out<!> Out<<!REDUNDANT_PROJECTION!>out
     if (a != null) {
         val b = <!DEBUG_INFO_EXPRESSION_TYPE("Out<out Out<out Out<out Out<out Out<out Out<out kotlin.Int?>?>?>?>?>?>? & Out<out Out<out Out<out Out<out Out<out Out<out kotlin.Int?>?>?>?>?>?>")!>a<!>.get()
         if (b != null) {
-            val c = <!DEBUG_INFO_EXPRESSION_TYPE("Out<Out<Out<Out<Out<kotlin.Any?>?>?>?>?>? & Out<Out<Out<Out<Out<kotlin.Any?>?>?>?>?>")!>b<!>.get()
+            val c = <!DEBUG_INFO_EXPRESSION_TYPE("Out<out Out<out Out<out Out<out Out<out kotlin.Int?>?>?>?>?>? & Out<out Out<out Out<out Out<out Out<out kotlin.Int?>?>?>?>?>")!>b<!>.get()
             if (c != null) {
-                val d = <!DEBUG_INFO_EXPRESSION_TYPE("Out<Out<Out<Out<kotlin.Any?>?>?>?>? & Out<Out<Out<Out<kotlin.Any?>?>?>?>")!>c<!>.get()
+                val d = <!DEBUG_INFO_EXPRESSION_TYPE("Out<out Out<out Out<out Out<out kotlin.Int?>?>?>?>? & Out<out Out<out Out<out Out<out kotlin.Int?>?>?>?>")!>c<!>.get()
                 if (d != null) {
-                    val e = <!DEBUG_INFO_EXPRESSION_TYPE("Out<Out<Out<kotlin.Any?>?>?>? & Out<Out<Out<kotlin.Any?>?>?>")!>d<!>.get()
+                    val e = <!DEBUG_INFO_EXPRESSION_TYPE("Out<out Out<out Out<out kotlin.Int?>?>?>? & Out<out Out<out Out<out kotlin.Int?>?>?>")!>d<!>.get()
                     if (e != null) {
-                        val f = <!DEBUG_INFO_EXPRESSION_TYPE("Out<Out<kotlin.Any?>?>? & Out<Out<kotlin.Any?>?>")!>e<!>.get()
+                        val f = <!DEBUG_INFO_EXPRESSION_TYPE("Out<out Out<out kotlin.Int?>?>? & Out<out Out<out kotlin.Int?>?>")!>e<!>.get()
                         if (f != null) {
-                            val g = <!DEBUG_INFO_EXPRESSION_TYPE("Out<kotlin.Any?>? & Out<kotlin.Any?>")!>f<!>.get()
+                            val g = <!DEBUG_INFO_EXPRESSION_TYPE("Out<out kotlin.Int?>? & Out<out kotlin.Int?>")!>f<!>.get()
                             if (g != null) {
-                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>g<!>
-                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>g<!>.equals(null)
-                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>g<!>.propT
-                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>g<!>.propAny
-                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>g<!>.propNullableT
-                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>g<!>.propNullableAny
-                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>g<!>.funT()
-                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>g<!>.funAny()
-                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>g<!>.funNullableT()
-                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>g<!>.funNullableAny()
+                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>g<!>
+                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>g<!>.equals(null)
+                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>g<!>.propT
+                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>g<!>.propAny
+                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>g<!>.propNullableT
+                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>g<!>.propNullableAny
+                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>g<!>.funT()
+                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>g<!>.funAny()
+                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>g<!>.funNullableT()
+                                <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>g<!>.funNullableAny()
                             }
                         }
                     }

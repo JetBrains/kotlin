@@ -21,6 +21,7 @@ public class Boolean private constructor() : Comparable<Boolean> {
      * Returns the inverse of this boolean.
      */
     @TypedIntrinsic(IntrinsicType.NOT)
+    @kotlin.internal.IntrinsicConstEvaluation
     external public operator fun not(): Boolean
 
     /**
@@ -28,6 +29,7 @@ public class Boolean private constructor() : Comparable<Boolean> {
      * this function does not perform short-circuit evaluation. Both `this` and [other] will always be evaluated.
      */
     @TypedIntrinsic(IntrinsicType.AND)
+    @kotlin.internal.IntrinsicConstEvaluation
     external public infix fun and(other: Boolean): Boolean
 
     /**
@@ -35,22 +37,28 @@ public class Boolean private constructor() : Comparable<Boolean> {
      * this function does not perform short-circuit evaluation. Both `this` and [other] will always be evaluated.
      */
     @TypedIntrinsic(IntrinsicType.OR)
+    @kotlin.internal.IntrinsicConstEvaluation
     external public infix fun or(other: Boolean): Boolean
 
     /**
      * Performs a logical `xor` operation between this Boolean and the [other] one.
      */
     @TypedIntrinsic(IntrinsicType.XOR)
+    @kotlin.internal.IntrinsicConstEvaluation
     external public infix fun xor(other: Boolean): Boolean
 
     @TypedIntrinsic(IntrinsicType.UNSIGNED_COMPARE_TO)
+    @kotlin.internal.IntrinsicConstEvaluation
     external public override fun compareTo(other: Boolean): Int
 
+    @kotlin.internal.IntrinsicConstEvaluation
     public fun equals(other: Boolean): Boolean = kotlin.native.internal.areEqualByValue(this, other)
 
+    @kotlin.internal.IntrinsicConstEvaluation
     public override fun equals(other: Any?): Boolean =
         other is Boolean && kotlin.native.internal.areEqualByValue(this, other)
 
+    @kotlin.internal.IntrinsicConstEvaluation
     public override fun toString() = if (this) "true" else "false"
 
     public override fun hashCode() = if (this) 1 else 0

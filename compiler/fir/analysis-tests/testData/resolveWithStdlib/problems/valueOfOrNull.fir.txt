@@ -51,10 +51,13 @@ FILE: valueOfOrNull.kt
             lval <iterator>: R|kotlin/collections/Iterator<E>| = R|kotlin/enumValues|<R|E|>().R|SubstitutionOverride<kotlin/Array.iterator: R|kotlin/collections/Iterator<E>|>|()
             while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()) {
                 lval enumValue: R|E| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|E|>|()
-                when () {
-                    ==(R|<local>/enumValue|.R|SubstitutionOverride<kotlin/Enum.name: R|kotlin/String|>|, R|<local>/value|) ->  {
-                        ^valueOfOrNull R|<local>/enumValue|
+                 {
+                    when () {
+                        ==(R|<local>/enumValue|.R|SubstitutionOverride<kotlin/Enum.name: R|kotlin/String|>|, R|<local>/value|) ->  {
+                            ^valueOfOrNull R|<local>/enumValue|
+                        }
                     }
+
                 }
 
             }

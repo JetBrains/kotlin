@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.setField
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.setField]
  */
 abstract class IrSetField : IrFieldAccessExpression() {
     abstract var value: IrExpression

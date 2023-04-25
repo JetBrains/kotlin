@@ -1,7 +1,5 @@
     class Class constructor() {
-        val a: Int = 10
         val arrayConst: Any = {1.toByte(), 2.toByte()}
-        val b: Int = 30
         val booleanConst: Boolean = true
         val byteConst: Byte = 10.toByte()
         val charConst: Char = \u0041 ('A')
@@ -18,9 +16,7 @@
         enum entry PAPER
         enum entry SCISSORS
     }
-    val a: Int = 10
     val arrayConst: Any = {1.toByte(), 2.toByte()}
-    val b: Int = 30
     val booleanConst: Boolean = true
     val byteConst: Byte = 10.toByte()
     val charConst: Char = \u0041 ('A')

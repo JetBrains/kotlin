@@ -226,6 +226,7 @@ class SmartCastManager(private val argumentTypeResolver: ArgumentTypeResolver) {
             if (KotlinBuiltIns.isNullableNothing(type)) return
             if (dataFlowValue.isStable) {
                 if (dataFlowValue.kind == DataFlowValue.Kind.LEGACY_ALIEN_BASE_PROPERTY ||
+                    dataFlowValue.kind == DataFlowValue.Kind.LEGACY_ALIEN_BASE_PROPERTY_INHERITED_IN_INVISIBLE_CLASS ||
                     dataFlowValue.kind == DataFlowValue.Kind.LEGACY_STABLE_LOCAL_DELEGATED_PROPERTY
                 ) {
                     trace.report(Errors.DEPRECATED_SMARTCAST.on(expression, type, expression.text, dataFlowValue.kind.description))

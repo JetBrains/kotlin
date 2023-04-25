@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM
+// IGNORE_BACKEND_K1: JS, JS_IR, JS_IR_ES6, NATIVE
 // !LANGUAGE: +MultiPlatformProjects
 
 // MODULE: common
@@ -14,9 +14,8 @@ open class A : S1, S2
 
 class B : A()
 
-// MODULE: jvm()()(common)
-// TARGET_PLATFORM: JVM
-// FILE: main.kt
+// MODULE: platform()()(common)
+// FILE: platform.kt
 
 actual interface S1 {
     fun o(): S = "O"

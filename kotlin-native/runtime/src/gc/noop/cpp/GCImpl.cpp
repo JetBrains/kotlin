@@ -67,17 +67,8 @@ size_t gc::GC::GetAllocatedHeapSize(ObjHeader* object) noexcept {
     return mm::ObjectFactory<GCImpl>::GetAllocatedHeapSize(object);
 }
 
-size_t gc::GC::GetHeapObjectsCountUnsafe() const noexcept {
-    return impl_->objectFactory().GetObjectsCountUnsafe();
-}
-size_t gc::GC::GetTotalHeapObjectsSizeUnsafe() const noexcept {
-    return impl_->objectFactory().GetTotalObjectsSizeUnsafe();
-}
-size_t gc::GC::GetExtraObjectsCountUnsafe() const noexcept {
-    return mm::GlobalData::Instance().extraObjectDataFactory().GetSizeUnsafe();
-}
-size_t gc::GC::GetTotalExtraObjectsSizeUnsafe() const noexcept {
-    return mm::GlobalData::Instance().extraObjectDataFactory().GetTotalObjectsSizeUnsafe();
+size_t gc::GC::GetTotalHeapObjectsSizeBytes() const noexcept {
+    return allocatedBytes();
 }
 
 gc::GCSchedulerConfig& gc::GC::gcSchedulerConfig() noexcept {

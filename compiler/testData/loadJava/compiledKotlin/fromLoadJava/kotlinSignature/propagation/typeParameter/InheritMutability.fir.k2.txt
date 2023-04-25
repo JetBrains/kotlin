@@ -1,0 +1,12 @@
+public abstract interface InheritMutability : R|kotlin/Any| {
+    public abstract interface Super : R|kotlin/Any| {
+        public abstract fun <A : R|kotlin/collections/MutableList<kotlin/String>|> foo(a: R|A|): R|kotlin/Unit|
+
+    }
+
+    public abstract interface Sub : R|test/InheritMutability.Super| {
+        public abstract fun <B : R|kotlin/collections/MutableList<kotlin/String>|> foo(a: R|B|): R|kotlin/Unit|
+
+    }
+
+}

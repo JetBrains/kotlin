@@ -31,7 +31,7 @@ fun test(d: dynamic) {
     <!DEBUG_INFO_DYNAMIC!>d()<!>
     <!DEBUG_INFO_DYNAMIC!>d(1)<!>
     <!DEBUG_INFO_DYNAMIC!>d(name = 1)<!>
-    <!DEBUG_INFO_DYNAMIC!>d <!VARARG_OUTSIDE_PARENTHESES!>{}<!><!>
+    <!DEBUG_INFO_DYNAMIC!>d {}<!>
 
     class C {
         val plus: dynamic = null

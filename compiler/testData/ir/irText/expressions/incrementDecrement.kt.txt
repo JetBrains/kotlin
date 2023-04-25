@@ -7,6 +7,48 @@ val arr: IntArray
   field = intArrayOf(elements = [1, 2, 3])
   get
 
+class C {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  var p: Int
+    field = 0
+    get
+    set
+
+  operator fun get(i: Int): Int {
+    return i
+  }
+
+  operator fun set(i: Int, value: Int) {
+  }
+
+}
+
+object O {
+  private constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  var p: Int
+    field = 0
+    get
+    set
+
+  operator fun get(i: Int): Int {
+    return i
+  }
+
+  operator fun set(i: Int, value: Int) {
+  }
+
+}
+
 fun testVarPrefix() {
   var x: Int = 0
   val x1: Int = { // BLOCK
@@ -58,8 +100,9 @@ fun testPropPostfix() {
   }
   val p2: Int = { // BLOCK
     { // BLOCK
-      <set-p>(<set-?> = <get-p>().dec())
-      <get-p>()
+      val tmp1: Int = <get-p>()
+      <set-p>(<set-?> = tmp1.dec())
+      tmp1
     }
   }
 }
@@ -92,6 +135,142 @@ fun testArrayPostfix() {
     val tmp4_index0: Int = 0
     val tmp5: Int = tmp3_array.get(index = tmp4_index0)
     tmp3_array.set(index = tmp4_index0, value = tmp5.dec())
+    tmp5
+  }
+}
+
+fun testClassPropPrefix() {
+  val p1: Int = { // BLOCK
+    val tmp0_this: C = C()
+    { // BLOCK
+      tmp0_this.<set-p>(<set-?> = tmp0_this.<get-p>().inc())
+      tmp0_this.<get-p>()
+    }
+  }
+  val p2: Int = { // BLOCK
+    val tmp1_this: C = C()
+    { // BLOCK
+      tmp1_this.<set-p>(<set-?> = tmp1_this.<get-p>().dec())
+      tmp1_this.<get-p>()
+    }
+  }
+}
+
+fun testClassPropPostfix() {
+  val p1: Int = { // BLOCK
+    val tmp0_this: C = C()
+    { // BLOCK
+      val tmp1: Int = tmp0_this.<get-p>()
+      tmp0_this.<set-p>(<set-?> = tmp1.inc())
+      tmp1
+    }
+  }
+  val p2: Int = { // BLOCK
+    val tmp2_this: C = C()
+    { // BLOCK
+      val tmp3: Int = tmp2_this.<get-p>()
+      tmp2_this.<set-p>(<set-?> = tmp3.dec())
+      tmp3
+    }
+  }
+}
+
+fun testClassOperatorPrefix() {
+  val a1: Int = { // BLOCK
+    val tmp0_array: C = C()
+    val tmp1_index0: Int = 0
+    tmp0_array.set(i = tmp1_index0, value = tmp0_array.get(i = tmp1_index0).inc())
+    tmp0_array.get(i = tmp1_index0)
+  }
+  val a2: Int = { // BLOCK
+    val tmp2_array: C = C()
+    val tmp3_index0: Int = 0
+    tmp2_array.set(i = tmp3_index0, value = tmp2_array.get(i = tmp3_index0).dec())
+    tmp2_array.get(i = tmp3_index0)
+  }
+}
+
+fun testClassOperatorPostfix() {
+  val a1: Int = { // BLOCK
+    val tmp0_array: C = C()
+    val tmp1_index0: Int = 0
+    val tmp2: Int = tmp0_array.get(i = tmp1_index0)
+    tmp0_array.set(i = tmp1_index0, value = tmp2.inc())
+    tmp2
+  }
+  val a2: Int = { // BLOCK
+    val tmp3_array: C = C()
+    val tmp4_index0: Int = 0
+    val tmp5: Int = tmp3_array.get(i = tmp4_index0)
+    tmp3_array.set(i = tmp4_index0, value = tmp5.dec())
+    tmp5
+  }
+}
+
+fun testObjectPropPrefix() {
+  val p1: Int = { // BLOCK
+    val tmp0_this: O = O
+    { // BLOCK
+      tmp0_this.<set-p>(<set-?> = tmp0_this.<get-p>().inc())
+      tmp0_this.<get-p>()
+    }
+  }
+  val p2: Int = { // BLOCK
+    val tmp1_this: O = O
+    { // BLOCK
+      tmp1_this.<set-p>(<set-?> = tmp1_this.<get-p>().dec())
+      tmp1_this.<get-p>()
+    }
+  }
+}
+
+fun testObjectPropPostfix() {
+  val p1: Int = { // BLOCK
+    val tmp0_this: O = O
+    { // BLOCK
+      val tmp1: Int = tmp0_this.<get-p>()
+      tmp0_this.<set-p>(<set-?> = tmp1.inc())
+      tmp1
+    }
+  }
+  val p2: Int = { // BLOCK
+    val tmp2_this: O = O
+    { // BLOCK
+      val tmp3: Int = tmp2_this.<get-p>()
+      tmp2_this.<set-p>(<set-?> = tmp3.dec())
+      tmp3
+    }
+  }
+}
+
+fun testObjectOperatorPrefix() {
+  val a1: Int = { // BLOCK
+    val tmp0_array: O = O
+    val tmp1_index0: Int = 0
+    tmp0_array.set(i = tmp1_index0, value = tmp0_array.get(i = tmp1_index0).inc())
+    tmp0_array.get(i = tmp1_index0)
+  }
+  val a2: Int = { // BLOCK
+    val tmp2_array: O = O
+    val tmp3_index0: Int = 0
+    tmp2_array.set(i = tmp3_index0, value = tmp2_array.get(i = tmp3_index0).dec())
+    tmp2_array.get(i = tmp3_index0)
+  }
+}
+
+fun testObjectOperatorPostfix() {
+  val a1: Int = { // BLOCK
+    val tmp0_array: O = O
+    val tmp1_index0: Int = 0
+    val tmp2: Int = tmp0_array.get(i = tmp1_index0)
+    tmp0_array.set(i = tmp1_index0, value = tmp2.inc())
+    tmp2
+  }
+  val a2: Int = { // BLOCK
+    val tmp3_array: O = O
+    val tmp4_index0: Int = 0
+    val tmp5: Int = tmp3_array.get(i = tmp4_index0)
+    tmp3_array.set(i = tmp4_index0, value = tmp5.dec())
     tmp5
   }
 }

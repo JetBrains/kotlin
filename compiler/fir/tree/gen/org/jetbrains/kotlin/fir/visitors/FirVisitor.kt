@@ -17,8 +17,9 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvedDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirControlFlowGraphOwner
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirLazyExpression
 import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
-import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
+import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
@@ -61,6 +62,7 @@ import org.jetbrains.kotlin.fir.expressions.FirErrorLoop
 import org.jetbrains.kotlin.fir.expressions.FirDoWhileLoop
 import org.jetbrains.kotlin.fir.expressions.FirWhileLoop
 import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.fir.expressions.FirLazyBlock
 import org.jetbrains.kotlin.fir.expressions.FirBinaryLogicExpression
 import org.jetbrains.kotlin.fir.expressions.FirJump
 import org.jetbrains.kotlin.fir.expressions.FirLoopJump
@@ -129,6 +131,7 @@ import org.jetbrains.kotlin.fir.expressions.FirWrappedDelegateExpression
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirNamedReferenceWithCandidateBase
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
+import org.jetbrains.kotlin.fir.references.FirFromMissingDependenciesNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
@@ -145,6 +148,7 @@ import org.jetbrains.kotlin.fir.types.FirDynamicTypeRef
 import org.jetbrains.kotlin.fir.types.FirFunctionTypeRef
 import org.jetbrains.kotlin.fir.types.FirIntersectionTypeRef
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
+import org.jetbrains.kotlin.fir.contracts.FirContractElementDeclaration
 import org.jetbrains.kotlin.fir.contracts.FirEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
@@ -181,9 +185,11 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitExpression(expression: FirExpression, data: D): R  = visitElement(expression, data)
 
+    open fun visitLazyExpression(lazyExpression: FirLazyExpression, data: D): R  = visitElement(lazyExpression, data)
+
     open fun visitContextReceiver(contextReceiver: FirContextReceiver, data: D): R  = visitElement(contextReceiver, data)
 
-    open fun visitElementWithResolvePhase(elementWithResolvePhase: FirElementWithResolvePhase, data: D): R  = visitElement(elementWithResolvePhase, data)
+    open fun visitElementWithResolveState(elementWithResolveState: FirElementWithResolveState, data: D): R  = visitElement(elementWithResolveState, data)
 
     open fun visitFileAnnotationsContainer(fileAnnotationsContainer: FirFileAnnotationsContainer, data: D): R  = visitElement(fileAnnotationsContainer, data)
 
@@ -268,6 +274,8 @@ abstract class FirVisitor<out R, in D> {
     open fun visitWhileLoop(whileLoop: FirWhileLoop, data: D): R  = visitElement(whileLoop, data)
 
     open fun visitBlock(block: FirBlock, data: D): R  = visitElement(block, data)
+
+    open fun visitLazyBlock(lazyBlock: FirLazyBlock, data: D): R  = visitElement(lazyBlock, data)
 
     open fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: D): R  = visitElement(binaryLogicExpression, data)
 
@@ -405,6 +413,8 @@ abstract class FirVisitor<out R, in D> {
 
     open fun visitErrorNamedReference(errorNamedReference: FirErrorNamedReference, data: D): R  = visitElement(errorNamedReference, data)
 
+    open fun visitFromMissingDependenciesNamedReference(fromMissingDependenciesNamedReference: FirFromMissingDependenciesNamedReference, data: D): R  = visitElement(fromMissingDependenciesNamedReference, data)
+
     open fun visitSuperReference(superReference: FirSuperReference, data: D): R  = visitElement(superReference, data)
 
     open fun visitThisReference(thisReference: FirThisReference, data: D): R  = visitElement(thisReference, data)
@@ -436,6 +446,8 @@ abstract class FirVisitor<out R, in D> {
     open fun visitIntersectionTypeRef(intersectionTypeRef: FirIntersectionTypeRef, data: D): R  = visitElement(intersectionTypeRef, data)
 
     open fun visitImplicitTypeRef(implicitTypeRef: FirImplicitTypeRef, data: D): R  = visitElement(implicitTypeRef, data)
+
+    open fun visitContractElementDeclaration(contractElementDeclaration: FirContractElementDeclaration, data: D): R  = visitElement(contractElementDeclaration, data)
 
     open fun visitEffectDeclaration(effectDeclaration: FirEffectDeclaration, data: D): R  = visitElement(effectDeclaration, data)
 

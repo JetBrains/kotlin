@@ -45,6 +45,8 @@ class Fir2IrCommonMemberStorage(
 
     val functionCache: ConcurrentHashMap<FirFunction, IrSimpleFunction> = ConcurrentHashMap()
 
+    val constructorCache: ConcurrentHashMap<FirConstructor, IrConstructor> = ConcurrentHashMap()
+
     val propertyCache: ConcurrentHashMap<FirProperty, IrProperty> = ConcurrentHashMap()
 
     val fakeOverridesInClass: MutableMap<IrClass, MutableMap<FirCallableDeclaration, FirCallableDeclaration>> = mutableMapOf()

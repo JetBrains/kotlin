@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.checkers.setupLanguageVersionSettingsForCompilerTest
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.codegen.GenerationUtils
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.jvm.compiler.AbstractLoadJavaTest
 import org.jetbrains.kotlin.kotlinp.Kotlinp
 import org.jetbrains.kotlin.kotlinp.KotlinpSettings
@@ -26,15 +26,26 @@ import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
 import kotlin.test.fail
 
-fun compileAndPrintAllFiles(file: File, disposable: Disposable, tmpdir: File, compareWithTxt: Boolean, readWriteAndCompare: Boolean) {
+fun compileAndPrintAllFiles(
+    file: File,
+    disposable: Disposable,
+    tmpdir: File,
+    compareWithTxt: Boolean,
+    readWriteAndCompare: Boolean,
+    useK2: Boolean
+) {
+    if (useK2 && InTextDirectivesUtils.findStringWithPrefixes(file.readText(), "// IGNORE K2") != null) {
+        return
+    }
+
     val main = StringBuilder()
     val afterVisitors = StringBuilder()
     val afterNodes = StringBuilder()
 
-    val kotlinp = Kotlinp(KotlinpSettings(isVerbose = true))
+    val kotlinp = Kotlinp(KotlinpSettings(isVerbose = true, sortDeclarations = true))
 
     @OptIn(UnstableMetadataApi::class)
-    compile(file, disposable, tmpdir) { outputFile ->
+    compile(file, disposable, tmpdir, useK2) { outputFile ->
         when (outputFile.extension) {
             "kotlin_module" -> {
                 val moduleFile = kotlinp.readModuleFile(outputFile)!!
@@ -74,10 +85,11 @@ fun compileAndPrintAllFiles(file: File, disposable: Disposable, tmpdir: File, co
     }
 }
 
-private fun compile(file: File, disposable: Disposable, tmpdir: File, forEachOutputFile: (File) -> Unit) {
+private fun compile(file: File, disposable: Disposable, tmpdir: File, useK2: Boolean, forEachOutputFile: (File) -> Unit) {
     val content = file.readText()
     val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK)
     configuration.put(JVMConfigurationKeys.IR, true)
+    configuration.put(CommonConfigurationKeys.USE_FIR, useK2)
     AbstractLoadJavaTest.updateConfigurationWithDirectives(content, configuration)
     val environment = KotlinCoreEnvironment.createForTests(disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES)
     setupLanguageVersionSettingsForCompilerTests(content, environment)

@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.fir.types
 
-import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirConstExpression
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitBuiltinTypeRef
 import org.jetbrains.kotlin.name.ClassId
@@ -28,6 +31,9 @@ val FirTypeRef.coneType: ConeKotlinType
     get() = coneTypeSafe()
         ?: error("Expected FirResolvedTypeRef with ConeKotlinType but was ${this::class.simpleName} ${render()}")
 
+val FirTypeRef.coneTypeOrNull: ConeKotlinType?
+    get() = coneTypeSafe()
+
 val FirTypeRef.isAny: Boolean get() = isBuiltinType(StandardClassIds.Any, false)
 val FirTypeRef.isNullableAny: Boolean get() = isBuiltinType(StandardClassIds.Any, true)
 val FirTypeRef.isNothing: Boolean get() = isBuiltinType(StandardClassIds.Nothing, false)
@@ -39,8 +45,9 @@ val FirTypeRef.isString: Boolean get() = isBuiltinType(StandardClassIds.String, 
 val FirTypeRef.isEnum: Boolean get() = isBuiltinType(StandardClassIds.Enum, false)
 val FirTypeRef.isArrayType: Boolean
     get() =
-        isBuiltinType(StandardClassIds.Array, false) ||
-                StandardClassIds.primitiveArrayTypeByElementType.values.any { isBuiltinType(it, false) }
+        isBuiltinType(StandardClassIds.Array, false)
+                || StandardClassIds.primitiveArrayTypeByElementType.values.any { isBuiltinType(it, false) }
+                || StandardClassIds.unsignedArrayTypeByElementType.values.any { isBuiltinType(it, false) }
 
 val FirExpression.isNullLiteral: Boolean
     get() = this is FirConstExpression<*> &&

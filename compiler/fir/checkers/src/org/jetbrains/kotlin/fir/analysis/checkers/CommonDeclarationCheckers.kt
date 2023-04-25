@@ -18,7 +18,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
     override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker>
         get() = setOf(
             FirModifierChecker,
-            FirConflictsChecker,
+            FirConflictsDeclarationChecker,
             FirProjectionRelationChecker,
             FirTypeConstraintsChecker,
             FirReservedUnderscoreDeclarationChecker,
@@ -58,6 +58,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirMemberFunctionsChecker,
             FirDataObjectContentChecker,
             ContractSyntaxV2FunctionChecker,
+            FirTopLevelFunctionsChecker,
         )
 
     override val propertyCheckers: Set<FirPropertyChecker>
@@ -76,6 +77,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirTopLevelPropertiesChecker,
             FirLocalExtensionPropertyChecker,
             ContractSyntaxV2PropertyChecker,
+            FirVolatileAnnotationChecker,
         )
 
     override val backingFieldCheckers: Set<FirBackingFieldChecker>
@@ -98,6 +100,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirSupertypesChecker,
             FirPrimaryConstructorSuperTypeChecker,
             FirDynamicSupertypeChecker,
+            FirEnumCompanionInEnumConstructorCallChecker,
         )
 
     override val regularClassCheckers: Set<FirRegularClassChecker>
@@ -164,11 +167,6 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
     override val anonymousInitializerCheckers: Set<FirAnonymousInitializerChecker>
         get() = setOf(
             FirAnonymousInitializerInInterfaceChecker
-        )
-
-    override val enumEntryCheckers: Set<FirEnumEntryChecker>
-        get() = setOf(
-            FirEnumCompanionInEnumConstructorCallChecker,
         )
 
     override val valueParameterCheckers: Set<FirValueParameterChecker>

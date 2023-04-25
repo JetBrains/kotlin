@@ -1,11 +1,11 @@
 expression: a
-KtType: Outer.A<kotlin.Int>
+KtType: Outer<kotlin.String>.A<kotlin.Int>
 
 KtTypeScope:
 KtFunctionLikeSignature:
   receiverType = null
-  returnType = kotlin.collections.Map<kotlin.Int, kotlin.collections.Map<Y, O>>
-  symbol = /Outer.A.foo(<dispatch receiver>: Outer.A<X>, x: X, y: Y): kotlin.collections.Map<X, kotlin.collections.Map<Y, O>>
+  returnType = kotlin.collections.Map<kotlin.Int, kotlin.collections.Map<Y, kotlin.String>>
+  symbol = /Outer.A.foo(<dispatch receiver>: Outer.A<X, O>, x: X, y: Y): kotlin.collections.Map<X, kotlin.collections.Map<Y, O>>
   valueParameters = [
     KtVariableLikeSignature:
       name = x
@@ -24,7 +24,7 @@ KtFunctionLikeSignature:
 KtVariableLikeSignature:
   name = map
   receiverType = null
-  returnType = kotlin.collections.Map<kotlin.Int, O>
+  returnType = kotlin.collections.Map<kotlin.Int, kotlin.String>
   symbol = val map: kotlin.collections.Map<X, O>
   callableIdIfNonLocal = /Outer.A.map
 KtFunctionLikeSignature:

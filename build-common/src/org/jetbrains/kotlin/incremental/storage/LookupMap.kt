@@ -23,7 +23,7 @@ class LookupMap(
     storage: File,
     icContext: IncrementalCompilationContext,
 ) :
-    BasicMap<LookupSymbolKey, Collection<Int>>(
+    AppendableBasicMap<LookupSymbolKey, Collection<Int>>(
         storage,
         LookupSymbolKeyDescriptor(icContext.storeFullFqNamesInLookupCache),
         IntCollectionExternalizer,

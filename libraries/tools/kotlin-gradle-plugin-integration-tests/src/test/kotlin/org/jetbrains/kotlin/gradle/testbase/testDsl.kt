@@ -74,6 +74,7 @@ fun KGPBaseTest.project(
     )
     localRepoDir?.let { testProject.configureLocalRepository(localRepoDir) }
     if (buildJdk != null) testProject.setupNonDefaultJdk(buildJdk)
+    testProject.addKotlinCompilerArgumentsPlugin()
 
     val result = runCatching {
         testProject.test()
@@ -314,6 +315,27 @@ class TestProject(
 ) : GradleProject(projectName, projectPath) {
     fun subProject(name: String) = GradleProject(name, projectPath.resolve(name))
 
+    fun addKotlinCompilerArgumentsPlugin() {
+        if (buildOptions.languageVersion != null || buildOptions.languageApiVersion != null ) {
+            projectPath.toFile().walkTopDown().forEach { file ->
+                when {
+                    file.name.equals("build.gradle") -> file.modify {
+                        it.replaceFirst(
+                            "plugins {",
+                            "plugins {\nid \"org.jetbrains.kotlin.test.kotlin-compiler-args-properties\""
+                        )
+                    }
+                    file.name.equals("build.gradle.kts") -> file.modify {
+                        it.replaceFirst(
+                            "plugins {",
+                            "plugins {\nid(\"org.jetbrains.kotlin.test.kotlin-compiler-args-properties\")"
+                        )
+                    }
+                }
+            }
+        }
+    }
+
     fun includeOtherProjectAsSubmodule(
         otherProjectName: String,
         pathPrefix: String
@@ -425,6 +447,8 @@ internal fun Path.addDefaultBuildFiles() {
 }
 
 internal fun Path.addPluginManagementToSettings() {
+    val buildGradle = resolve("build.gradle")
+    val buildGradleKts = resolve("build.gradle.kts")
     val settingsGradle = resolve("settings.gradle")
     val settingsGradleKts = resolve("settings.gradle.kts")
     when {
@@ -452,7 +476,11 @@ internal fun Path.addPluginManagementToSettings() {
             }
         }
 
-        else -> settingsGradle.toFile().writeText(DEFAULT_GROOVY_SETTINGS_FILE)
+        Files.exists(buildGradle) -> settingsGradle.toFile().writeText(DEFAULT_GROOVY_SETTINGS_FILE)
+
+        Files.exists(buildGradleKts) -> settingsGradleKts.toFile().writeText(DEFAULT_KOTLIN_SETTINGS_FILE)
+
+        else -> error("No build-file or settings file found")
     }
 
     if (Files.exists(resolve("buildSrc"))) {

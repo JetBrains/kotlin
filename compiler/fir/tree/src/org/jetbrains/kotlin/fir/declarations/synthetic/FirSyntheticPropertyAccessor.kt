@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -39,9 +39,6 @@ class FirSyntheticPropertyAccessor(
     override val returnTypeRef: FirTypeRef
         get() = delegate.returnTypeRef
 
-    override val resolvePhase: FirResolvePhase
-        get() = delegate.resolvePhase
-
     override val status: FirDeclarationStatus
         get() = delegate.status
 
@@ -50,7 +47,7 @@ class FirSyntheticPropertyAccessor(
 
     override val receiverParameter: FirReceiverParameter?
         get() = null
-    
+
     override val deprecationsProvider: DeprecationsProvider
         get() = delegate.deprecationsProvider
 
@@ -128,10 +125,6 @@ class FirSyntheticPropertyAccessor(
     }
 
     override fun <D> transformTypeParameters(transformer: FirTransformer<D>, data: D): FirPropertyAccessor {
-        notSupported()
-    }
-
-    override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
         notSupported()
     }
 

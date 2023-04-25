@@ -27,7 +27,7 @@ import java.nio.file.Path
 abstract class AbstractSymbolLightClassesAnnotationEqualityTest(
     configurator: AnalysisApiTestConfigurator,
     override val currentExtension: String,
-    override val stopIfCompilationErrorDirectivePresent: Boolean,
+    override val isTestAgainstCompiledCode: Boolean,
 ) : AbstractSymbolLightClassesTestBase(configurator) {
     override fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
         val directives = module.directives

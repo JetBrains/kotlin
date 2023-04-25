@@ -13,7 +13,6 @@ compiler/testData/cli/jvm/firMultiplatformCompilationWithError/jvm.kt:1:18: erro
 
     expect fun foo(): Unit
 
-
 actual interface A
                  ^
 COMPILATION_ERROR

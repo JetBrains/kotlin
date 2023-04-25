@@ -21,7 +21,7 @@ NextFitPage* NextFitPage::Create(uint32_t cellCount) noexcept {
 }
 
 void NextFitPage::Destroy() noexcept {
-    std_support::free(this);
+    Free(this, NEXT_FIT_PAGE_SIZE);
 }
 
 NextFitPage::NextFitPage(uint32_t cellCount) noexcept : curBlock_(cells_) {
@@ -39,7 +39,7 @@ uint8_t* NextFitPage::TryAllocate(uint32_t blockSize) noexcept {
     return curBlock_->TryAllocate(cellsNeeded);
 }
 
-bool NextFitPage::Sweep() noexcept {
+bool NextFitPage::Sweep(gc::GCHandle::GCSweepScope& sweepHandle) noexcept {
     CustomAllocDebug("NextFitPage@%p::Sweep()", this);
     Cell* end = cells_ + NEXT_FIT_PAGE_CELL_COUNT;
     bool alive = false;
@@ -47,8 +47,10 @@ bool NextFitPage::Sweep() noexcept {
         if (block->isAllocated_) {
             if (TryResetMark(block->data_)) {
                 alive = true;
+                sweepHandle.addKeptObject();
             } else {
                 block->Deallocate();
+                sweepHandle.addSweptObject();
             }
         }
     }

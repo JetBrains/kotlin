@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.modules.TargetId
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
@@ -356,7 +357,7 @@ private fun doCompileWithK2(
         friendPaths = emptyList()
     )
     val session = prepareJvmSessions(
-        sourceFiles, kotlinCompilerConfiguration, projectEnvironment, rootModuleName, extensionRegistrars,
+        sourceFiles, kotlinCompilerConfiguration, projectEnvironment, Name.identifier(rootModuleName), extensionRegistrars,
         librariesScope, libraryList, isCommonSourceForPsi, fileBelongsToModuleForPsi,
         createProviderAndScopeForIncrementalCompilation = { files ->
             createContextForIncrementalCompilation(

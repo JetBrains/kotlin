@@ -59,6 +59,12 @@ public class FirIdeNormalAnalysisSourceModuleAnalysisApiImportOptimizerTestGener
     }
 
     @Test
+    @TestMetadata("unusedExtensionFunctionFromObject_implicitReceiver.kt")
+    public void testUnusedExtensionFunctionFromObject_implicitReceiver() throws Exception {
+        runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedExtensionFunctionFromObject_implicitReceiver.kt");
+    }
+
+    @Test
     @TestMetadata("unusedFunctionImports.kt")
     public void testUnusedFunctionImports() throws Exception {
         runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedFunctionImports.kt");
@@ -68,6 +74,12 @@ public class FirIdeNormalAnalysisSourceModuleAnalysisApiImportOptimizerTestGener
     @TestMetadata("unusedGenericTypeQualifier.kt")
     public void testUnusedGenericTypeQualifier() throws Exception {
         runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedGenericTypeQualifier.kt");
+    }
+
+    @Test
+    @TestMetadata("unusedImportFromObject.kt")
+    public void testUnusedImportFromObject() throws Exception {
+        runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/unusedImportFromObject.kt");
     }
 
     @Test
@@ -89,6 +101,18 @@ public class FirIdeNormalAnalysisSourceModuleAnalysisApiImportOptimizerTestGener
     }
 
     @Test
+    @TestMetadata("usedExtensionFunctionFromObject_implicitReceiver.kt")
+    public void testUsedExtensionFunctionFromObject_implicitReceiver() throws Exception {
+        runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedExtensionFunctionFromObject_implicitReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("usedExtensionFunction_objectReceiver.kt")
+    public void testUsedExtensionFunction_objectReceiver() throws Exception {
+        runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedExtensionFunction_objectReceiver.kt");
+    }
+
+    @Test
     @TestMetadata("usedFunctionImport.kt")
     public void testUsedFunctionImport() throws Exception {
         runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedFunctionImport.kt");
@@ -98,6 +122,12 @@ public class FirIdeNormalAnalysisSourceModuleAnalysisApiImportOptimizerTestGener
     @TestMetadata("usedGenericTypeQualifier.kt")
     public void testUsedGenericTypeQualifier() throws Exception {
         runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedGenericTypeQualifier.kt");
+    }
+
+    @Test
+    @TestMetadata("usedImportFromObject.kt")
+    public void testUsedImportFromObject() throws Exception {
+        runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/usedImportFromObject.kt");
     }
 
     @Test
@@ -134,9 +164,63 @@ public class FirIdeNormalAnalysisSourceModuleAnalysisApiImportOptimizerTestGener
         }
 
         @Test
+        @TestMetadata("unresolvedFunction.kt")
+        public void testUnresolvedFunction() throws Exception {
+            runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors/unresolvedFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("unresolvedFunctionStarImport.kt")
+        public void testUnresolvedFunctionStarImport() throws Exception {
+            runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors/unresolvedFunctionStarImport.kt");
+        }
+
+        @Test
+        @TestMetadata("unresolvedProperty.kt")
+        public void testUnresolvedProperty() throws Exception {
+            runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors/unresolvedProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("unresolvedType.kt")
+        public void testUnresolvedType() throws Exception {
+            runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors/unresolvedType.kt");
+        }
+
+        @Test
+        @TestMetadata("unresolvedTypeArgument.kt")
+        public void testUnresolvedTypeArgument() throws Exception {
+            runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors/unresolvedTypeArgument.kt");
+        }
+
+        @Test
+        @TestMetadata("unresolvedTypeQualifier.kt")
+        public void testUnresolvedTypeQualifier() throws Exception {
+            runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors/unresolvedTypeQualifier.kt");
+        }
+
+        @Test
+        @TestMetadata("unresolvedTypeQualifierConstructor.kt")
+        public void testUnresolvedTypeQualifierConstructor() throws Exception {
+            runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors/unresolvedTypeQualifierConstructor.kt");
+        }
+
+        @Test
+        @TestMetadata("unresolvedViaImportAlias.kt")
+        public void testUnresolvedViaImportAlias() throws Exception {
+            runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors/unresolvedViaImportAlias.kt");
+        }
+
+        @Test
         @TestMetadata("unusedTypeHiddenByTypeParameter_invalidAsArgument.kt")
         public void testUnusedTypeHiddenByTypeParameter_invalidAsArgument() throws Exception {
             runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors/unusedTypeHiddenByTypeParameter_invalidAsArgument.kt");
+        }
+
+        @Test
+        @TestMetadata("unusedUnresolvedImport.kt")
+        public void testUnusedUnresolvedImport() throws Exception {
+            runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors/unusedUnresolvedImport.kt");
         }
 
         @Test

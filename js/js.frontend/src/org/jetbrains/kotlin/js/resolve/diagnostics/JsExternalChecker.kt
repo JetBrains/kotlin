@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.js.PredefinedAnnotation
 import org.jetbrains.kotlin.js.translate.utils.AnnotationsUtils
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.JsStandardClassIds
+import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -54,6 +55,10 @@ object JsExternalChecker : DeclarationChecker {
 
             if (classKind != null) {
                 trace.report(ErrorsJs.WRONG_EXTERNAL_DECLARATION.on(declaration, classKind))
+            }
+
+            if (DescriptorUtils.isEnumClass(descriptor) && context.moduleDescriptor.platform?.isWasm() != true) {
+                trace.report(ErrorsJs.ENUM_CLASS_IN_EXTERNAL_DECLARATION_WARNING.on(declaration))
             }
         }
 

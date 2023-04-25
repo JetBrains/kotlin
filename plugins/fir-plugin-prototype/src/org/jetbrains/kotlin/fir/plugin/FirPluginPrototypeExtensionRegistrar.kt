@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.ir.plugin.GeneratedDeclarationsIrBodyFiller
 class FirPluginPrototypeExtensionRegistrar : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
         +::AllOpenStatusTransformer
+        +::AllOpenMatcherBasedStatusTransformer
+        +::AllOpenPredicateMatcher
         +::AllPublicVisibilityTransformer
         +::SomeAdditionalSupertypeGenerator
         +::SupertypeWithArgumentGenerator

@@ -10,19 +10,19 @@ open class Class {
     fun member(x: Boolean) {
         <!CONTRACT_NOT_ALLOWED!>contract<!> { returns() implies (x) }
     }
-    
+
     inline fun inlineMember(x: Boolean) {
         <!CONTRACT_NOT_ALLOWED!>contract<!> { returns() implies (x) }
     }
-    
+
     abstract fun abstractMember(x: Boolean) {
         <!CONTRACT_NOT_ALLOWED, CONTRACT_NOT_ALLOWED!>contract<!> { returns() implies (x) }
     }
-    
+
     open fun openMemeber(x: Boolean) {
         <!CONTRACT_NOT_ALLOWED, CONTRACT_NOT_ALLOWED!>contract<!> { returns() implies (x) }
     }
-    
+
     suspend fun suspendMember(x: Boolean) {
         <!CONTRACT_NOT_ALLOWED!>contract<!> { returns() implies (x) }
     }

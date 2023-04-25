@@ -255,14 +255,38 @@ internal fun interpretBinaryFunction(name: String, typeA: String, typeB: String,
             "Comparable" -> if (typeB == "T") return (a as Comparable<Any?>).compareTo(b)
         }
         "equals" -> when (typeA) {
-            "Boolean" -> if (typeB == "Any?") return (a as Boolean).equals(b)
-            "Char" -> if (typeB == "Any?") return (a as Char).equals(b)
-            "Byte" -> if (typeB == "Any?") return (a as Byte).equals(b)
-            "Short" -> if (typeB == "Any?") return (a as Short).equals(b)
-            "Int" -> if (typeB == "Any?") return (a as Int).equals(b)
-            "Float" -> if (typeB == "Any?") return (a as Float).equals(b)
-            "Long" -> if (typeB == "Any?") return (a as Long).equals(b)
-            "Double" -> if (typeB == "Any?") return (a as Double).equals(b)
+            "Boolean" -> when (typeB) {
+                "Any?" -> return (a as Boolean).equals(b)
+                "Boolean" -> return (a as Boolean).equals(b as Boolean)
+            }
+            "Char" -> when (typeB) {
+                "Any?" -> return (a as Char).equals(b)
+                "Char" -> return (a as Char).equals(b as Char)
+            }
+            "Byte" -> when (typeB) {
+                "Any?" -> return (a as Byte).equals(b)
+                "Byte" -> return (a as Byte).equals(b as Byte)
+            }
+            "Short" -> when (typeB) {
+                "Any?" -> return (a as Short).equals(b)
+                "Short" -> return (a as Short).equals(b as Short)
+            }
+            "Int" -> when (typeB) {
+                "Any?" -> return (a as Int).equals(b)
+                "Int" -> return (a as Int).equals(b as Int)
+            }
+            "Float" -> when (typeB) {
+                "Any?" -> return (a as Float).equals(b)
+                "Float" -> return (a as Float).equals(b as Float)
+            }
+            "Long" -> when (typeB) {
+                "Any?" -> return (a as Long).equals(b)
+                "Long" -> return (a as Long).equals(b as Long)
+            }
+            "Double" -> when (typeB) {
+                "Any?" -> return (a as Double).equals(b)
+                "Double" -> return (a as Double).equals(b as Double)
+            }
             "String" -> if (typeB == "Any?") return (a as String).equals(b)
             "Any" -> if (typeB == "Any?") return (a as Any).equals(b)
         }

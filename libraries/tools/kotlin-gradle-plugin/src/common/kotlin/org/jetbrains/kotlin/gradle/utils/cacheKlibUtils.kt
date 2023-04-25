@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.utils
 import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.logging.Logger
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageMode
 import org.jetbrains.kotlin.library.resolveSingleFileKlib
 import org.jetbrains.kotlin.library.uniqueName
 import java.io.File
@@ -19,7 +20,7 @@ internal fun getCacheDirectory(
     dependency: ResolvedDependencyResult,
     artifact: ResolvedArtifactResult?,
     resolvedConfiguration: LazyResolvedConfiguration,
-    partialLinkage: Boolean
+    partialLinkageMode: String
 ): File {
     val moduleCacheDirectory = File(rootCacheDirectory, dependency.selected.moduleVersion?.name ?: "undefined")
     val versionCacheDirectory = File(moduleCacheDirectory, dependency.selected.moduleVersion?.version ?: "undefined")
@@ -41,14 +42,19 @@ internal fun getCacheDirectory(
         versionCacheDirectory.resolve(hash)
     } else versionCacheDirectory
 
-    return File(cacheDirectory, computeDependenciesHash(dependency, resolvedConfiguration, partialLinkage))
+    return File(cacheDirectory, computeDependenciesHash(dependency, resolvedConfiguration, partialLinkageMode))
 }
 
 internal fun ByteArray.toHexString() = joinToString("") { (0xFF and it.toInt()).toString(16).padStart(2, '0') }
 
-private fun computeDependenciesHash(dependency: ResolvedDependencyResult, resolvedConfiguration: LazyResolvedConfiguration, partialLinkage: Boolean): String {
+private fun computeDependenciesHash(
+    dependency: ResolvedDependencyResult,
+    resolvedConfiguration: LazyResolvedConfiguration,
+    partialLinkageMode: String
+): String {
     val hashedValue = buildString {
-        if (partialLinkage) append("#__PL__#")
+        if (PartialLinkageMode.resolveMode(partialLinkageMode)?.isEnabled == true)
+            append("#__PL__#")
 
         (listOf(dependency) + getAllDependencies(dependency))
             .flatMap { resolvedConfiguration.getArtifacts(it) }
@@ -68,7 +74,7 @@ internal fun getDependenciesCacheDirectories(
     dependency: ResolvedDependencyResult,
     resolvedConfiguration: LazyResolvedConfiguration,
     considerArtifact: Boolean,
-    partialLinkage: Boolean
+    partialLinkageMode: String
 ): List<File>? {
     return getAllDependencies(dependency)
         .flatMap { childDependency ->
@@ -79,7 +85,7 @@ internal fun getDependenciesCacheDirectories(
                         dependency = childDependency,
                         artifact = if (considerArtifact) it else null,
                         resolvedConfiguration = resolvedConfiguration,
-                        partialLinkage = partialLinkage
+                        partialLinkageMode = partialLinkageMode
                     )
                     if (!cacheDirectory.exists()) return null
                     cacheDirectory

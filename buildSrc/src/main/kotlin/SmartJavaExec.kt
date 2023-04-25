@@ -28,7 +28,9 @@ fun JavaExec.passClasspathInJar() {
         destinationDirectory.set(temporaryDir)
 
         doFirst {
-            val classPathString = classpath.joinToString(" ") { project.file(it).toURI().toString() }
+            val classPathString = classpath.joinToString(" ") {
+                it.toURI().toString()
+            }
             manifest {
                 attributes(
                     mapOf(

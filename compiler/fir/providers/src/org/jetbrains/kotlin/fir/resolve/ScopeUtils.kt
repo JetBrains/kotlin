@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -119,12 +119,12 @@ private fun ConeClassLikeType.classScope(
     val substitutor = when {
         attributes.contains(CompilerConeAttributes.RawType) -> ConeRawScopeSubstitutor(useSiteSession)
         else -> substitutorByMap(
-            createSubstitution(fir.typeParameters, fullyExpandedType, useSiteSession),
+            createSubstitutionForScope(fir.typeParameters, fullyExpandedType, useSiteSession),
             useSiteSession,
         )
     }
 
-    return fir.scopeForClass(substitutor, useSiteSession, scopeSession, memberOwnerLookupTag)
+    return fir.scopeForClass(substitutor, useSiteSession, scopeSession, memberOwnerLookupTag, requiredPhase)
 }
 
 private fun ConeClassLikeType.obtainFirOfClass(useSiteSession: FirSession, requiredPhase: FirResolvePhase): FirClass? {

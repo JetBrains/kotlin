@@ -71,5 +71,5 @@ open class CompilerPluginsIncrementalIT : KGPBaseTest() {
 
 @DisplayName("Compiler plugin incremental compilation with precise compilation outputs backup")
 class CompilerPluginsIncrementalWithPreciseBackupIT : CompilerPluginsIncrementalIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = true)
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(usePreciseOutputsBackup = true, keepIncrementalCompilationCachesInMemory = true)
 }

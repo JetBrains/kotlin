@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
 import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
 import org.jetbrains.kotlin.gradle.incremental.IncrementalModuleInfoBuildService
+import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.gradle.report.BuildMetricsService
 import org.jetbrains.kotlin.gradle.report.BuildReportsService
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KOTLIN_BUILD_DIR_NAME
+import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
 import org.jetbrains.kotlin.gradle.utils.providerWithLazyConvention
 import org.jetbrains.kotlin.project.model.LanguageSettings
 
@@ -38,7 +40,7 @@ import org.jetbrains.kotlin.project.model.LanguageSettings
  */
 internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile<*>>(
     project: Project,
-    private val ext: KotlinTopLevelExtension,
+    val ext: KotlinTopLevelExtension,
     private val languageSettings: Provider<LanguageSettings>
 ) : TaskConfigAction<TASK>(project) {
 
@@ -50,7 +52,11 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
                     if (it is KaptGenerateStubsTask) return@configure
 
                     applyLanguageSettingsToCompilerOptions(
-                        languageSettings.get(), (it as org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>).compilerOptions
+                        languageSettings.get(),
+                        (it as org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask<*>).compilerOptions,
+                        // KotlinJsIrTarget and KotlinJsIrTargetConfigurator add additional freeCompilerArgs essentially
+                        // always overwriting convention value
+                        addFreeCompilerArgsAsConvention = it !is Kotlin2JsCompile
                     )
                 }
             }
@@ -63,6 +69,8 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
             IncrementalModuleInfoBuildService.registerIfAbsent(project, objectFactory.providerWithLazyConvention {
                 GradleCompilerRunner.buildModulesInfo(project.gradle)
             })
+        val buildFinishedListenerService = BuildFinishedListenerService.registerIfAbsent(project)
+        val cachedClassLoadersService = ClassLoadersCachingBuildService.registerIfAbsent(project)
         configureTask { task ->
             val propertiesProvider = project.kotlinPropertiesProvider
 
@@ -100,9 +108,24 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
             task.taskOutputsBackupExcludes.addAll(task.preciseCompilationResultsBackup.map {
                 if (it) listOf(task.destinationDirectory.get().asFile, task.taskBuildLocalStateDirectory.get().asFile) else emptyList()
             })
+            task.keepIncrementalCompilationCachesInMemory
+                .convention(task.preciseCompilationResultsBackup.map { it && propertiesProvider.keepIncrementalCompilationCachesInMemory })
+                .finalizeValueOnRead()
+            task.taskOutputsBackupExcludes.addAll(task.keepIncrementalCompilationCachesInMemory.map {
+                if (it) listOf(task.taskBuildCacheableOutputDirectory.get().asFile) else emptyList()
+            })
+            task.suppressExperimentalIcOptimizationsWarning
+                .convention(propertiesProvider.suppressExperimentalICOptimizationsWarning)
+                .finalizeValueOnRead()
+            task.buildFinishedListenerService.value(buildFinishedListenerService).disallowChanges()
 
             task.incremental = false
             task.useModuleDetection.convention(false)
+            if (propertiesProvider.useK2 == true) {
+                task.compilerOptions.useK2.value(true)
+            }
+            task.runViaBuildToolsApi.convention(propertiesProvider.runKotlinCompilerViaBuildToolsApi).finalizeValueOnRead()
+            task.classLoadersCachingService.value(cachedClassLoadersService).disallowChanges()
         }
     }
 
@@ -127,7 +150,7 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
                     compilation.internal.configurations.pluginConfiguration
                 )
             }
-            task.moduleName.set(providers.provider { compilationInfo.moduleName })
+
             @Suppress("DEPRECATION")
             task.ownModuleName.set(project.provider { compilationInfo.moduleName })
             task.sourceSetName.value(providers.provider { compilationInfo.compilationName })

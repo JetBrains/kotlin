@@ -1,12 +1,11 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.analysis.checkers
 
 import com.intellij.lang.LighterASTNode
-import com.intellij.openapi.util.Ref
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -29,6 +28,7 @@ import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.multipleDelegatesWithTheSameSignature
+import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -43,14 +43,25 @@ import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeCheckerProviderContext
 import org.jetbrains.kotlin.util.ImplementationStatus
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.util.getChildren
 
 private val INLINE_ONLY_ANNOTATION_CLASS_ID: ClassId = ClassId.topLevel(FqName("kotlin.internal.InlineOnly"))
 
 fun FirClass.unsubstitutedScope(context: CheckerContext): FirTypeScope =
-    this.unsubstitutedScope(context.sessionHolder.session, context.sessionHolder.scopeSession, withForcedTypeCalculator = false)
+    this.unsubstitutedScope(
+        context.sessionHolder.session,
+        context.sessionHolder.scopeSession,
+        withForcedTypeCalculator = false,
+        memberRequiredPhase = null,
+    )
 
 fun FirClassSymbol<*>.unsubstitutedScope(context: CheckerContext): FirTypeScope =
-    this.unsubstitutedScope(context.sessionHolder.session, context.sessionHolder.scopeSession, withForcedTypeCalculator = false)
+    this.unsubstitutedScope(
+        context.sessionHolder.session,
+        context.sessionHolder.scopeSession,
+        withForcedTypeCalculator = false,
+        memberRequiredPhase = null,
+    )
 
 fun FirTypeRef.toClassLikeSymbol(session: FirSession): FirClassLikeSymbol<*>? {
     return coneTypeSafe<ConeClassLikeType>()?.toSymbol(session)
@@ -180,16 +191,18 @@ fun CheckerContext.findClosestClassOrObject(): FirClass? {
  */
 fun FirSimpleFunction.overriddenFunctions(
     containingClass: FirClassSymbol<*>,
-    context: CheckerContext
+    context: CheckerContext,
+    memberRequiredPhase: FirResolvePhase?,
 ): List<FirFunctionSymbol<*>> {
-    return symbol.overriddenFunctions(containingClass, context)
+    return symbol.overriddenFunctions(containingClass, context, memberRequiredPhase)
 }
 
 fun FirNamedFunctionSymbol.overriddenFunctions(
     containingClass: FirClassSymbol<*>,
-    context: CheckerContext
+    context: CheckerContext,
+    memberRequiredPhase: FirResolvePhase?,
 ): List<FirFunctionSymbol<*>> {
-    return overriddenFunctions(containingClass, context.session, context.scopeSession)
+    return overriddenFunctions(containingClass, context.session, context.scopeSession, memberRequiredPhase)
 }
 
 fun FirClass.collectSupertypesWithDelegates(): Map<FirTypeRef, FirFieldSymbol?> {
@@ -574,7 +587,7 @@ fun FirFunctionSymbol<*>.isFunctionForExpectTypeFromCastFeature(): Boolean {
     return true
 }
 
-fun getActualTargetList(annotated: FirDeclaration): AnnotationTargetList {
+fun getActualTargetList(annotated: FirAnnotationContainer): AnnotationTargetList {
     fun CallableId.isMember(): Boolean {
         return classId != null || isLocal // TODO: Replace with .containingClass (after fixing)
     }
@@ -628,6 +641,7 @@ fun getActualTargetList(annotated: FirDeclaration): AnnotationTargetList {
         is FirBackingField -> TargetLists.T_BACKING_FIELD
         is FirFile -> TargetLists.T_FILE
         is FirTypeParameter -> TargetLists.T_TYPE_PARAMETER
+        is FirReceiverParameter -> TargetLists.T_TYPE_REFERENCE
         is FirAnonymousInitializer -> TargetLists.T_INITIALIZER
         is FirAnonymousObject ->
             if (annotated.source?.kind == KtFakeSourceElementKind.EnumInitializer) {
@@ -664,14 +678,11 @@ internal val KtSourceElement.defaultValueForParameter: KtSourceElement?
     }
 
 private fun findDefaultValue(source: KtLightSourceElement): KtLightSourceElement? {
-    val childrenRef = Ref<Array<LighterASTNode?>>()
-    source.treeStructure.getChildren(source.lighterASTNode, childrenRef)
-
     var defaultValue: LighterASTNode? = null
     var defaultValueOffset = source.startOffset
 
-    for (node in childrenRef.get()) {
-        if (node == null) continue
+    val nodes = source.lighterASTNode.getChildren(source.treeStructure)
+    for (node in nodes) {
         if (node.isExpression()) {
             defaultValue = node
             break
@@ -695,7 +706,12 @@ fun ConeKotlinType.getInlineClassUnderlyingType(session: FirSession): ConeKotlin
 
 fun FirNamedFunctionSymbol.directOverriddenFunctions(session: FirSession, scopeSession: ScopeSession): List<FirNamedFunctionSymbol> {
     val classSymbol = getContainingClassSymbol(session) as? FirClassSymbol ?: return emptyList()
-    val scope = classSymbol.unsubstitutedScope(session, scopeSession, withForcedTypeCalculator = false)
+    val scope = classSymbol.unsubstitutedScope(
+        session,
+        scopeSession,
+        withForcedTypeCalculator = false,
+        memberRequiredPhase = FirResolvePhase.STATUS,
+    )
 
     scope.processFunctionsByName(name) { }
     return scope.getDirectOverriddenFunctions(this, true)
@@ -720,9 +736,13 @@ fun FirBasedSymbol<*>.hasAnnotationOrInsideAnnotatedClass(classId: ClassId, sess
 fun FirDeclaration.hasAnnotationOrInsideAnnotatedClass(classId: ClassId, session: FirSession) =
     symbol.hasAnnotationOrInsideAnnotatedClass(classId, session)
 
-fun FirBasedSymbol<*>.getAnnotationStringParameter(classId: ClassId, session: FirSession): String? {
+fun FirBasedSymbol<*>.getAnnotationFirstArgument(classId: ClassId, session: FirSession): FirExpression? {
     val annotation = getAnnotationByClassId(classId, session) as? FirAnnotationCall
-    val expression = annotation?.argumentMapping?.mapping?.values?.firstOrNull() as? FirConstExpression<*>
+    return annotation?.argumentMapping?.mapping?.values?.firstOrNull()
+}
+
+fun FirBasedSymbol<*>.getAnnotationStringParameter(classId: ClassId, session: FirSession): String? {
+    val expression = getAnnotationFirstArgument(classId, session) as? FirConstExpression<*>
     return expression?.value as? String
 }
 
@@ -730,4 +750,38 @@ fun FirElement.isLhsOfAssignment(context: CheckerContext): Boolean {
     if (this !is FirQualifiedAccessExpression) return false
     val lastQualified = context.qualifiedAccessOrAssignmentsOrAnnotationCalls.lastOrNull { it != this } ?: return false
     return lastQualified is FirVariableAssignment && lastQualified.lValue == this
+}
+
+/**
+ * Collects the upper bounds as [ConeClassLikeType].
+ */
+fun ConeKotlinType?.collectUpperBounds(): Set<ConeClassLikeType> {
+    if (this == null) return emptySet()
+    return when (this) {
+        is ConeErrorType -> emptySet() // Ignore error types
+        is ConeLookupTagBasedType -> when (this) {
+            is ConeClassLikeType -> setOf(this)
+            is ConeTypeVariableType -> {
+                (lookupTag.originalTypeParameter as? ConeTypeParameterLookupTag)?.typeParameterSymbol.collectUpperBounds()
+            }
+            is ConeTypeParameterType -> lookupTag.typeParameterSymbol.collectUpperBounds()
+            else -> throw IllegalStateException("missing branch for ${javaClass.name}")
+        }
+        is ConeDefinitelyNotNullType -> original.collectUpperBounds()
+        is ConeIntersectionType -> intersectedTypes.flatMap { it.collectUpperBounds() }.toSet()
+        is ConeFlexibleType -> upperBound.collectUpperBounds()
+        is ConeCapturedType -> constructor.supertypes?.flatMap { it.collectUpperBounds() }?.toSet().orEmpty()
+        is ConeIntegerConstantOperatorType -> setOf(getApproximatedType())
+        is ConeStubType, is ConeIntegerLiteralConstantType -> throw IllegalStateException("$this should not reach here")
+    }
+}
+
+private fun FirTypeParameterSymbol?.collectUpperBounds(): Set<ConeClassLikeType> {
+    if (this == null) return emptySet()
+    return resolvedBounds.flatMap { it.coneType.collectUpperBounds() }.toSet()
+}
+
+fun ConeKotlinType.leastUpperBound(session: FirSession): ConeKotlinType {
+    val upperBounds = collectUpperBounds().takeIf { it.isNotEmpty() } ?: return session.builtinTypes.nullableAnyType.type
+    return ConeTypeIntersector.intersectTypes(session.typeContext, upperBounds)
 }

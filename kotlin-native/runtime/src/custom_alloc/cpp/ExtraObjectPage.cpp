@@ -32,7 +32,7 @@ ExtraObjectPage::ExtraObjectPage() noexcept {
 }
 
 void ExtraObjectPage::Destroy() noexcept {
-    std_support::free(this);
+    Free(this, EXTRA_OBJECT_PAGE_SIZE);
 }
 
 mm::ExtraObjectData* ExtraObjectPage::TryAllocate() noexcept {
@@ -45,7 +45,7 @@ mm::ExtraObjectData* ExtraObjectPage::TryAllocate() noexcept {
     return freeBlock->Data();
 }
 
-bool ExtraObjectPage::Sweep(AtomicStack<ExtraObjectCell>& finalizerQueue) noexcept {
+bool ExtraObjectPage::Sweep(gc::GCHandle::GCSweepExtraObjectsScope& sweepHandle, AtomicStack<ExtraObjectCell>& finalizerQueue) noexcept {
     CustomAllocInfo("ExtraObjectPage(%p)::Sweep()", this);
     // `end` is after the last legal allocation of a block, but does not
     // necessarily match an actual block starting point.
@@ -58,15 +58,24 @@ bool ExtraObjectPage::Sweep(AtomicStack<ExtraObjectCell>& finalizerQueue) noexce
             nextFree = &cell->next_;
             continue;
         }
-        // If the current cell was marked, it's alive, and the whole page is alive.
-        if (!SweepExtraObject(cell, finalizerQueue)) {
-            alive = true;
-            continue;
+        auto status = SweepExtraObject(cell, finalizerQueue);
+        switch (status) {
+            case ExtraObjectStatus::TO_BE_FINALIZED:
+                sweepHandle.addMarkedObject();
+                // fallthrough
+            case ExtraObjectStatus::KEPT:
+                // If the current cell was marked, it's alive, and the whole page is alive.
+                alive = true;
+                sweepHandle.addKeptObject();
+                break;
+            case ExtraObjectStatus::SWEPT:
+                // Free the current block and insert it into the free list.
+                cell->next_ = *nextFree;
+                *nextFree = cell;
+                nextFree = &cell->next_;
+                sweepHandle.addSweptObject();
+                break;
         }
-        // Free the current block and insert it into the free list.
-        cell->next_ = *nextFree;
-        *nextFree = cell;
-        nextFree = &cell->next_;
     }
     return alive;
 }

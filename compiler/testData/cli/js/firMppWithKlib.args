@@ -1,0 +1,11 @@
+$TESTDATA_DIR$/firMppWithKlib/common.kt
+$TESTDATA_DIR$/firMppWithKlib/platform.kt
+-Xcommon-sources=$TESTDATA_DIR$/firMppWithKlib/common.kt
+-language-version
+2.0
+-ir-output-dir
+$TEMP_DIR$
+-ir-output-name
+firMppWithKlib
+-XXLanguage\:+MultiPlatformProjects
+-Xir-produce-klib-file=true

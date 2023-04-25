@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.ExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirExpressionChecker
 import org.jetbrains.kotlin.fir.analysis.checkersComponent
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.expressions.*
 
 @OptIn(CheckersComponentInternal::class)
@@ -20,6 +21,16 @@ class ExpressionCheckersDiagnosticComponent(
     reporter: DiagnosticReporter,
     private val checkers: ExpressionCheckers = session.checkersComponent.expressionCheckers,
 ) : AbstractDiagnosticCollectorComponent(session, reporter) {
+    override fun visitElement(element: FirElement, data: CheckerContext) {
+        if (element is FirExpression) {
+            error("${element::class.simpleName} should call parent checkers inside ${this::class.simpleName}")
+        }
+    }
+
+    override fun visitExpression(expression: FirExpression, data: CheckerContext) {
+        checkers.allBasicExpressionCheckers.check(expression, data)
+    }
+
     override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: CheckerContext) {
         checkers.allTypeOperatorCallCheckers.check(typeOperatorCall, data)
     }
@@ -36,6 +47,10 @@ class ExpressionCheckersDiagnosticComponent(
         checkers.allAnnotationCallCheckers.check(annotationCall, data)
     }
 
+    override fun visitErrorAnnotationCall(errorAnnotationCall: FirErrorAnnotationCall, data: CheckerContext) {
+        checkers.allAnnotationCallCheckers.check(errorAnnotationCall, data)
+    }
+
     override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression, data: CheckerContext) {
         checkers.allQualifiedAccessExpressionCheckers.check(qualifiedAccessExpression, data)
     }
@@ -46,6 +61,10 @@ class ExpressionCheckersDiagnosticComponent(
 
     override fun visitFunctionCall(functionCall: FirFunctionCall, data: CheckerContext) {
         checkers.allFunctionCallCheckers.check(functionCall, data)
+    }
+
+    override fun visitComponentCall(componentCall: FirComponentCall, data: CheckerContext) {
+        checkers.allFunctionCallCheckers.check(componentCall, data)
     }
 
     override fun visitIntegerLiteralOperatorCall(integerLiteralOperatorCall: FirIntegerLiteralOperatorCall, data: CheckerContext) {
@@ -154,6 +173,71 @@ class ExpressionCheckersDiagnosticComponent(
 
     override fun visitThrowExpression(throwExpression: FirThrowExpression, data: CheckerContext) {
         checkers.allThrowExpressionCheckers.check(throwExpression, data)
+    }
+
+    override fun visitVarargArgumentsExpression(varargArgumentsExpression: FirVarargArgumentsExpression, data: CheckerContext) {
+        checkers.allBasicExpressionCheckers.check(varargArgumentsExpression, data)
+    }
+
+    override fun visitWrappedExpression(wrappedExpression: FirWrappedExpression, data: CheckerContext) {
+        checkers.allBasicExpressionCheckers.check(wrappedExpression, data)
+    }
+
+    override fun visitWrappedArgumentExpression(wrappedArgumentExpression: FirWrappedArgumentExpression, data: CheckerContext) {
+        checkers.allBasicExpressionCheckers.check(wrappedArgumentExpression, data)
+    }
+
+    override fun visitSpreadArgumentExpression(spreadArgumentExpression: FirSpreadArgumentExpression, data: CheckerContext) {
+        checkers.allBasicExpressionCheckers.check(spreadArgumentExpression, data)
+    }
+
+    override fun visitNamedArgumentExpression(namedArgumentExpression: FirNamedArgumentExpression, data: CheckerContext) {
+        checkers.allBasicExpressionCheckers.check(namedArgumentExpression, data)
+    }
+
+    override fun visitLambdaArgumentExpression(lambdaArgumentExpression: FirLambdaArgumentExpression, data: CheckerContext) {
+        checkers.allBasicExpressionCheckers.check(lambdaArgumentExpression, data)
+    }
+
+    override fun visitSmartCastExpression(smartCastExpression: FirSmartCastExpression, data: CheckerContext) {
+        checkers.allBasicExpressionCheckers.check(smartCastExpression, data)
+    }
+
+    override fun visitWhenSubjectExpression(whenSubjectExpression: FirWhenSubjectExpression, data: CheckerContext) {
+        checkers.allBasicExpressionCheckers.check(whenSubjectExpression, data)
+    }
+
+    override fun visitResolvedReifiedParameterReference(
+        resolvedReifiedParameterReference: FirResolvedReifiedParameterReference,
+        data: CheckerContext
+    ) {
+        checkers.allBasicExpressionCheckers.check(resolvedReifiedParameterReference, data)
+    }
+
+    override fun visitComparisonExpression(comparisonExpression: FirComparisonExpression, data: CheckerContext) {
+        checkers.allBasicExpressionCheckers.check(comparisonExpression, data)
+    }
+
+    override fun visitDesugaredAssignmentValueReferenceExpression(
+        desugaredAssignmentValueReferenceExpression: FirDesugaredAssignmentValueReferenceExpression,
+        data: CheckerContext
+    ) {
+        checkers.allBasicExpressionCheckers.check(desugaredAssignmentValueReferenceExpression, data)
+    }
+
+    override fun visitCheckedSafeCallSubject(checkedSafeCallSubject: FirCheckedSafeCallSubject, data: CheckerContext) {
+        checkers.allBasicExpressionCheckers.check(checkedSafeCallSubject, data)
+    }
+
+    override fun visitErrorExpression(errorExpression: FirErrorExpression, data: CheckerContext) {
+        checkers.allBasicExpressionCheckers.check(errorExpression, data)
+    }
+
+    override fun visitQualifiedErrorAccessExpression(
+        qualifiedErrorAccessExpression: FirQualifiedErrorAccessExpression,
+        data: CheckerContext
+    ) {
+        checkers.allBasicExpressionCheckers.check(qualifiedErrorAccessExpression, data)
     }
 
     private fun <E : FirStatement> Collection<FirExpressionChecker<E>>.check(

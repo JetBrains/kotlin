@@ -621,6 +621,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
 
         @Test
+        @TestMetadata("superCallInsideLambda.kt")
+        public void testSuperCallInsideLambda() throws Exception {
+            runTest("js/js.translator/testData/box/closure/superCallInsideLambda.kt");
+        }
+
+        @Test
         @TestMetadata("withManyClosuresInNestedFunctionsAndObjects.kt")
         public void testWithManyClosuresInNestedFunctionsAndObjects() throws Exception {
             runTest("js/js.translator/testData/box/closure/withManyClosuresInNestedFunctionsAndObjects.kt");
@@ -866,6 +872,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("suspendFunctionalInterface.kt")
         public void testSuspendFunctionalInterface() throws Exception {
             runTest("js/js.translator/testData/box/coroutines/suspendFunctionalInterface.kt");
+        }
+
+        @Test
+        @TestMetadata("suspendMethodWithSuperCall.kt")
+        public void testSuspendMethodWithSuperCall() throws Exception {
+            runTest("js/js.translator/testData/box/coroutines/suspendMethodWithSuperCall.kt");
         }
     }
 
@@ -3824,6 +3836,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             public void testSimpleIsInterface() throws Exception {
                 runTest("js/js.translator/testData/box/expression/typeCheck/simpleIsInterface.kt");
             }
+
+            @Test
+            @TestMetadata("simpleIsObject.kt")
+            public void testSimpleIsObject() throws Exception {
+                runTest("js/js.translator/testData/box/expression/typeCheck/simpleIsObject.kt");
+            }
         }
 
         @Nested
@@ -4748,6 +4766,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("extensionWithManyArguments.kt")
         public void testExtensionWithManyArguments() throws Exception {
             runTest("js/js.translator/testData/box/inline/extensionWithManyArguments.kt");
+        }
+
+        @Test
+        @TestMetadata("externalInlineWithSuppress.kt")
+        public void testExternalInlineWithSuppress() throws Exception {
+            runTest("js/js.translator/testData/box/inline/externalInlineWithSuppress.kt");
         }
 
         @Test
@@ -7133,6 +7157,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
 
         @Test
+        @TestMetadata("transitiveDependency.kt")
+        public void testTransitiveDependency() throws Exception {
+            runTest("js/js.translator/testData/box/multiModule/transitiveDependency.kt");
+        }
+
+        @Test
         @TestMetadata("useElementsFromDefaultPackageInAnotherModule.kt")
         public void testUseElementsFromDefaultPackageInAnotherModule() throws Exception {
             runTest("js/js.translator/testData/box/multiModule/useElementsFromDefaultPackageInAnotherModule.kt");
@@ -8923,6 +8953,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         }
 
         @Test
+        @TestMetadata("findAssociatedObjectInSeparatedFile.kt")
+        public void testFindAssociatedObjectInSeparatedFile() throws Exception {
+            runTest("js/js.translator/testData/box/reflection/findAssociatedObjectInSeparatedFile.kt");
+        }
+
+        @Test
         @TestMetadata("findAssociatedObject_oldBE.kt")
         public void testFindAssociatedObject_oldBE() throws Exception {
             runTest("js/js.translator/testData/box/reflection/findAssociatedObject_oldBE.kt");
@@ -9790,6 +9826,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("propertySuperAccess.kt")
         public void testPropertySuperAccess() throws Exception {
             runTest("js/js.translator/testData/box/superCall/propertySuperAccess.kt");
+        }
+
+        @Test
+        @TestMetadata("superCallInPrivateMethod.kt")
+        public void testSuperCallInPrivateMethod() throws Exception {
+            runTest("js/js.translator/testData/box/superCall/superCallInPrivateMethod.kt");
         }
 
         @Test

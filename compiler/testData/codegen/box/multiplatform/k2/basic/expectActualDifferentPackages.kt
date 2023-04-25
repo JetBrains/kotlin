@@ -1,5 +1,6 @@
-// TARGET_BACKEND: JVM_IR
+// IGNORE_BACKEND_K1: JS, JS_IR, JS_IR_ES6, NATIVE
 // !LANGUAGE: +MultiPlatformProjects
+
 // MODULE: common
 // TARGET_PLATFORM: Common
 
@@ -25,8 +26,7 @@ expect class A() {
     fun g(): Int
 }
 
-// MODULE: main()()(common)
-// TARGET_PLATFORM: JVM
+// MODULE: platform()()(common)
 
 // FILE: p11.kt
 

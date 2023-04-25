@@ -628,6 +628,17 @@ public value class Duration internal constructor(private val rawValue: Long) : C
         return this.toDouble(coarserUnit) / other.toDouble(coarserUnit)
     }
 
+    /**
+     * Returns a duration whose value is this duration value truncated to the specified duration [unit].
+     */
+    internal fun truncateTo(unit: DurationUnit): Duration {
+        val storageUnit = storageUnit
+        if (unit <= storageUnit || this.isInfinite()) return this
+        val scale = convertDurationUnit(1, unit, storageUnit)
+        val result = value - value % scale
+        return result.toDuration(storageUnit)
+    }
+
     /** Returns true, if the duration value is less than zero. */
     public fun isNegative(): Boolean = rawValue < 0
 

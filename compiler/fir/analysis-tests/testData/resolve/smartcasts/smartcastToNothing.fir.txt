@@ -34,11 +34,14 @@ FILE: smartcastToNothing.kt
             lval <iterator>: R|kotlin/collections/Iterator<kotlin/Nothing>| = R|<local>/results|.R|SubstitutionOverride<kotlin/collections/List.iterator: R|kotlin/collections/Iterator<kotlin/Nothing>|>|()
             while(R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()) {
                 lval result: R|kotlin/Nothing| = R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.next: R|kotlin/Nothing|>|()
-                R|<local>/s| = R|<local>/result|
-                when () {
-                    R|<local>/result|.<Unresolved name: b># ->  {
-                        break@@@[R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()]
+                 {
+                    R|<local>/s| = R|<local>/result|
+                    when () {
+                        R|<local>/result|.<Unresolved name: b># ->  {
+                            break@@@[R|<local>/<iterator>|.R|SubstitutionOverride<kotlin/collections/Iterator.hasNext: R|kotlin/Boolean|>|()]
+                        }
                     }
+
                 }
 
             }

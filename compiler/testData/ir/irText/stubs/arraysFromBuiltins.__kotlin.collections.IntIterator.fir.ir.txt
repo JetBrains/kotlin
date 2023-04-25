@@ -1,0 +1,26 @@
+CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:IntIterator modality:ABSTRACT visibility:public superTypes:[kotlin.collections.Iterator<kotlin.Int>]
+  $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:kotlin.collections.IntIterator
+  CONSTRUCTOR IR_EXTERNAL_DECLARATION_STUB visibility:public <> () returnType:kotlin.collections.IntIterator [primary]
+  FUN IR_EXTERNAL_DECLARATION_STUB name:next visibility:public modality:FINAL <> ($this:kotlin.collections.IntIterator) returnType:kotlin.Int [operator]
+    overridden:
+      public abstract fun next (): T of kotlin.collections.Iterator [operator] declared in kotlin.collections.Iterator
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.IntIterator
+  FUN IR_EXTERNAL_DECLARATION_STUB name:nextInt visibility:public modality:ABSTRACT <> ($this:kotlin.collections.IntIterator) returnType:kotlin.Int
+    $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.collections.IntIterator
+  FUN FAKE_OVERRIDE name:hasNext visibility:public modality:ABSTRACT <> ($this:kotlin.collections.IntIterator) returnType:kotlin.Boolean [fake_override,operator]
+    overridden:
+      public abstract fun hasNext (): kotlin.Boolean [operator] declared in kotlin.collections.Iterator
+    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.collections.IntIterator
+  FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.collections.IntIterator, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
+    overridden:
+      public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in kotlin.collections.Iterator
+    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.collections.IntIterator
+    VALUE_PARAMETER name:other index:0 type:kotlin.Any?
+  FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN <> ($this:kotlin.collections.IntIterator) returnType:kotlin.Int [fake_override]
+    overridden:
+      public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.collections.Iterator
+    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.collections.IntIterator
+  FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN <> ($this:kotlin.collections.IntIterator) returnType:kotlin.String [fake_override]
+    overridden:
+      public open fun toString (): kotlin.String [fake_override] declared in kotlin.collections.Iterator
+    $this: VALUE_PARAMETER FAKE_OVERRIDE name:<this> type:kotlin.collections.IntIterator

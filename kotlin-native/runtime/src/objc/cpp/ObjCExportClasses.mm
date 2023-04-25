@@ -42,7 +42,11 @@ static void injectToRuntime();
 }
 
 -(KRef)toKotlin:(KRef*)OBJ_RESULT {
-  RETURN_OBJ(refHolder.ref<ErrorPolicy::kTerminate>());
+  if (permanent) {
+    RETURN_OBJ(refHolder.refPermanent());
+  } else {
+    RETURN_OBJ(refHolder.ref<ErrorPolicy::kTerminate>());
+  }
 }
 
 +(void)load {
@@ -88,10 +92,11 @@ static void injectToRuntime();
 
   KotlinBase* candidate = [super allocWithZone:nil];
   // TODO: should we call NSObject.init ?
-  candidate->refHolder.initAndAddRef(obj);
-  candidate->permanent = obj->permanent();
+  bool permanent = obj->permanent();
+  candidate->permanent = permanent;
 
-  if (!obj->permanent()) { // TODO: permanent objects should probably be supported as custom types.
+  if (!permanent) { // TODO: permanent objects should probably be supported as custom types.
+    candidate->refHolder.initAndAddRef(obj);
     if (!isShareable(obj)) {
       SetAssociatedObject(obj, candidate);
     } else {
@@ -100,11 +105,13 @@ static void injectToRuntime();
         {
           kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
           candidate->refHolder.releaseRef();
-          [candidate releaseAsAssociatedObject:ReleaseMode::kDetachAndRelease];
+          [candidate releaseAsAssociatedObject];
         }
         return objc_retain(old);
       }
     }
+  } else {
+    candidate->refHolder.initForPermanentObject(obj);
   }
 
   return candidate;
@@ -135,7 +142,16 @@ static void injectToRuntime();
   }
 }
 
--(void)releaseAsAssociatedObject:(ReleaseMode)mode {
+-(void)releaseAsAssociatedObject {
+  RuntimeAssert(!permanent, "Cannot be called on permanent objects");
+
+  if (CurrentMemoryModel == MemoryModel::kExperimental) {
+    // No need for any special handling. Weak reference handling machinery
+    // has already cleaned up the reference to Kotlin object.
+    [super release];
+    return;
+  }
+
   // This function is called by the GC. It made a decision to reclaim Kotlin object, and runs
   // deallocation hooks at the moment, including deallocation of the "associated object" ([self])
   // using the [super release] call below.
@@ -146,20 +162,25 @@ static void injectToRuntime();
   // Generally retaining and releasing Kotlin object that is being deallocated would lead to
   // use-after-dispose and double-dispose problems (with unpredictable consequences) or to an assertion failure.
   // To workaround this, detach the back ref from the Kotlin object:
-  if (ReleaseModeHasDetach(mode)) {
-    refHolder.detach();
-  } else {
-    // With Mark&Sweep this object should already have been detached earlier.
-    refHolder.assertDetached();
-  }
+  refHolder.detach();
 
   // So retain/release/etc. on [self] won't affect the Kotlin object, and an attempt to get
   // the reference to it (e.g. when calling Kotlin method on [self]) would crash.
   // The latter is generally ok because can be triggered only by user-defined Swift/Obj-C
   // subclasses of Kotlin classes.
-  if (ReleaseModeHasRelease(mode)) {
-    [super release];
+  [super release];
+}
+
+-(void)dealloc {
+  if (CurrentMemoryModel == MemoryModel::kExperimental) {
+    if (!permanent) {
+      refHolder.dealloc();
+    }
+    [super dealloc];
+    return;
   }
+
+  [super dealloc];
 }
 
 - (instancetype)copyWithZone:(NSZone *)zone {
@@ -177,9 +198,7 @@ static void injectToRuntime();
   RETURN_RESULT_OF(Kotlin_ObjCExport_convertUnmappedObjCObject, self);
 }
 
--(void)releaseAsAssociatedObject:(ReleaseMode)mode {
-  if (!ReleaseModeHasRelease(mode))
-    return;
+-(void)releaseAsAssociatedObject {
   objc_release(self);
 }
 @end
@@ -252,7 +271,7 @@ static void injectToRuntimeImpl() {
   Kotlin_ObjCExport_toKotlinSelector = @selector(toKotlin:);
 
   RuntimeCheck(Kotlin_ObjCExport_releaseAsAssociatedObjectSelector == nullptr, errorMessage);
-  Kotlin_ObjCExport_releaseAsAssociatedObjectSelector = @selector(releaseAsAssociatedObject:);
+  Kotlin_ObjCExport_releaseAsAssociatedObjectSelector = @selector(releaseAsAssociatedObject);
 }
 
 static void injectToRuntime() {

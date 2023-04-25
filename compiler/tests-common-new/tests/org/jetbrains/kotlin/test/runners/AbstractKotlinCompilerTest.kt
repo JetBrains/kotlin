@@ -69,15 +69,8 @@ abstract class AbstractKotlinCompilerTest {
     }
 
     @BeforeEach
-    @OptIn(ExperimentalStdlibApi::class)
     fun initTestInfo(testInfo: TestInfo) {
-        initTestInfo(
-            KotlinTestInfo(
-                className = testInfo.testClass.getOrNull()?.name ?: "_undefined_",
-                methodName = testInfo.testMethod.getOrNull()?.name ?: "_testUndefined_",
-                tags = testInfo.tags
-            )
-        )
+        initTestInfo(testInfo.toKotlinTestInfo())
     }
 
     fun initTestInfo(testInfo: KotlinTestInfo) {
@@ -108,4 +101,12 @@ abstract class AbstractKotlinCompilerTest {
             useSourcePreprocessor(::SourceTransformer)
         }.runTest(filePath)
     }
+}
+
+fun TestInfo.toKotlinTestInfo(): KotlinTestInfo {
+    return KotlinTestInfo(
+        className = this.testClass.getOrNull()?.name ?: "_undefined_",
+        methodName = this.testMethod.getOrNull()?.name ?: "_testUndefined_",
+        tags = this.tags
+    )
 }

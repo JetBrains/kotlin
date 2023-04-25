@@ -67,7 +67,7 @@ class GeneratorContext private constructor(
     // TODO: inject a correct StorageManager instance, or store NotFoundClasses inside ModuleDescriptor
     val reflectionTypes = ReflectionTypes(moduleDescriptor, NotFoundClasses(LockBasedStorageManager.NO_LOCKS, moduleDescriptor))
 
-    val additionalDescriptorStorage: DescriptorStorageForContextReceivers = DescriptorStorageForContextReceivers()
+    internal val additionalDescriptorStorage: DescriptorStorageForContextReceivers = DescriptorStorageForContextReceivers()
 
     val samTypeApproximator = SamTypeApproximator(moduleDescriptor.builtIns, languageVersionSettings)
 

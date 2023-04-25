@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.extraProperties
+import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
+import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.sources.android.androidSourceSetInfoOrNull
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
-import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 
 object UnusedSourceSetsChecker {
     const val WARNING_PREFIX_ONE =
@@ -24,7 +24,7 @@ object UnusedSourceSetsChecker {
 
     const val WARNING_BOTTOM_LINE =
         "You can add a source set to a target's compilation by connecting it with the compilation's default source set using 'dependsOn'.\n" +
-                "See https://kotlinlang.org/docs/reference/building-mpp-with-gradle.html#connecting-source-sets"
+                "See https://kotl.in/connecting-source-sets"
 
     private fun reportUnusedSourceSets(project: Project, sourceSets: Set<KotlinSourceSet>) {
         require(sourceSets.isNotEmpty())
@@ -39,7 +39,7 @@ object UnusedSourceSetsChecker {
     }
 
     fun checkSourceSets(project: Project) {
-        project.whenEvaluated {
+        project.launchInStage(KotlinPluginLifecycle.Stage.ReadyForExecution) {
             val unusedSourceSets = project.kotlinExtension.sourceSets
                 // Ignoring Android source sets
                 .filter { it.androidSourceSetInfoOrNull == null }

@@ -89,7 +89,7 @@ class KotlinJavacBasedClassFinderTest : KotlinTestWithEnvironmentManagement() {
         javaSearchScopeField.set(this, GlobalSearchScope.allScope(project))
     }
 
-    private fun createEnvironment(tmpdir: File?, files: List<File> = emptyList()): KotlinCoreEnvironment {
+    private fun createEnvironment(tmpdir: File, files: List<File> = emptyList()): KotlinCoreEnvironment {
         return KotlinCoreEnvironment.createForTests(
             testRootDisposable,
             KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, tmpdir),

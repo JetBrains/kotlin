@@ -56,6 +56,11 @@ public class RawFirBuilderLazyBodiesTestCaseGenerated extends AbstractRawFirBuil
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationsOnParenthesizedTypes.kt");
         }
 
+        @TestMetadata("classWithWrongSuperCall.kt")
+        public void testClassWithWrongSuperCall() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/classWithWrongSuperCall.kt");
+        }
+
         @TestMetadata("complexTypes.kt")
         public void testComplexTypes() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/complexTypes.kt");

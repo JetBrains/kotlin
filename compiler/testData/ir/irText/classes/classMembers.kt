@@ -1,5 +1,7 @@
 // FIR_IDENTICAL
 // WITH_STDLIB
+// IGNORE_BACKEND: JS_IR
+// IGNORE_BACKEND: JS_IR_ES6
 
 class C(x: Int, val y: Int, var z: Int = 1) {
     constructor() : this(0, 0, 0) {}

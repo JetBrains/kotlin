@@ -1123,6 +1123,32 @@ class CollectionTest {
         }
     }
 
+    @Test fun shuffled() {
+        val data = List(100) { it }
+        val list = data.toMutableList()
+        val shuffled = list.shuffled()
+
+        assertEquals(data, list)
+        assertNotEquals(list, shuffled)
+        assertEquals(list.toSet(), shuffled.toSet())
+        assertEquals(list.size, shuffled.distinct().size)
+    }
+
+    @Test fun shuffledPredictably() {
+        val data = List(10) { it }
+        val list = data.toMutableList()
+        val shuffled1 = list.shuffled(Random(1))
+        val shuffled11 = list.shuffled(Random(1))
+
+        assertEquals(data, list)
+
+        assertEquals(shuffled1, shuffled11)
+        assertEquals("[1, 4, 0, 6, 2, 8, 9, 7, 3, 5]", shuffled1.toString())
+
+        val shuffled2 = list.shuffled(Random(42))
+        assertEquals("[5, 0, 4, 9, 2, 8, 1, 7, 6, 3]", shuffled2.toString())
+    }
+
     @Test fun decomposeFirst() {
         val (first) = listOf(1, 2)
         assertEquals(first, 1)

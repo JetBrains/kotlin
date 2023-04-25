@@ -823,7 +823,7 @@ private class ConstantExpressionEvaluatorVisitor(
 
                 val isConvertableConstVal =
                     callableDescriptor.isConst &&
-                            ImplicitIntegerCoercion.isEnabledForConstVal(callableDescriptor) &&
+                            ImplicitIntegerCoercion.isEnabledFor(callableDescriptor, languageVersionSettings) &&
                             callableDescriptor.compileTimeInitializer is IntValue
 
                 return callableDescriptor.compileTimeInitializer?.wrap(

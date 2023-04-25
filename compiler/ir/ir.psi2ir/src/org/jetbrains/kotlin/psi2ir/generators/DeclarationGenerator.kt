@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.util.withScope
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.startOffsetSkippingComments
@@ -207,5 +207,5 @@ abstract class DeclarationGeneratorExtension(val declarationGenerator: Declarati
     fun KotlinType.toIrType() = with(declarationGenerator) { toIrType() }
 }
 
-fun Generator.createBodyGenerator(scopeOwnerSymbol: IrSymbol, parentLoopResolver: LoopResolver? = null) =
+internal fun Generator.createBodyGenerator(scopeOwnerSymbol: IrSymbol, parentLoopResolver: LoopResolver? = null) =
     BodyGenerator(scopeOwnerSymbol, context, parentLoopResolver)

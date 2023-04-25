@@ -44,6 +44,7 @@ public:
         RuntimeAssert(currentThreadDataNode_ != nullptr, "Thread is not attached to the runtime");
         return currentThreadDataNode_;
     }
+    Node* CurrentThreadDataNodeOrNull() const noexcept { return currentThreadDataNode_; }
 
     bool IsCurrentThreadRegistered() const noexcept { return currentThreadDataNode_ != nullptr; }
 

@@ -97,14 +97,7 @@ export default [
             file: 'lib/mocha-kotlin-reporter.js',
             format: 'cjs'
         }
-    },
-    {
-        input: './detect-correct-browser.js',
-        output: {
-            file: 'lib/detect-correct-browser.js',
-            format: 'esm'
-        }
-    },
+    }
 ]
 
 function plugins() {

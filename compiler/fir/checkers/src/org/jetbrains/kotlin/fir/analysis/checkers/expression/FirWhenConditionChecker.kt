@@ -6,16 +6,15 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.checkCondition
 import org.jetbrains.kotlin.fir.analysis.checkers.classKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.coneType
@@ -58,7 +57,8 @@ object FirWhenConditionChecker : FirWhenExpressionChecker() {
                     }
                 }
                 is FirTypeOperatorCall -> {
-                    if (!checkedTypes.add(condition.conversionTypeRef.coneType to condition.operation)) {
+                    val coneType = condition.conversionTypeRef.coneType
+                    if (!checkedTypes.add(coneType to condition.operation)) {
                         reporter.reportOn(condition.conversionTypeRef.source, FirErrors.DUPLICATE_LABEL_IN_WHEN, context)
                     }
                 }

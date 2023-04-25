@@ -12,21 +12,22 @@ import kotlin.js.*
 import org.khronos.webgl.*
 import org.w3c.dom.*
 
-public external abstract class MediaList : ItemArrayLike<String> {
+public external abstract class MediaList : ItemArrayLike<JsString>, JsAny {
     open var mediaText: String
     fun appendMedium(medium: String)
     fun deleteMedium(medium: String)
-    override fun item(index: Int): String?
+    override fun item(index: Int): JsString?
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline operator fun MediaList.get(index: Int): String? = asDynamic().getString(index)
+@Suppress("UNUSED_PARAMETER")
+internal fun getMethodImplForMediaList(obj: MediaList, index: Int): String? { js("return obj[index];") }
+
+public operator fun MediaList.get(index: Int): String? = getMethodImplForMediaList(this, index)
 
 /**
  * Exposes the JavaScript [StyleSheet](https://developer.mozilla.org/en/docs/Web/API/StyleSheet) to Kotlin
  */
-public external abstract class StyleSheet {
+public external abstract class StyleSheet : JsAny {
     open val type: String
     open val href: String?
     open val ownerNode: UnionElementOrProcessingInstruction?
@@ -39,7 +40,7 @@ public external abstract class StyleSheet {
 /**
  * Exposes the JavaScript [CSSStyleSheet](https://developer.mozilla.org/en/docs/Web/API/CSSStyleSheet) to Kotlin
  */
-public external abstract class CSSStyleSheet : StyleSheet {
+public external abstract class CSSStyleSheet : StyleSheet, JsAny {
     open val ownerRule: CSSRule?
     open val cssRules: CSSRuleList
     fun insertRule(rule: String, index: Int): Int
@@ -49,18 +50,19 @@ public external abstract class CSSStyleSheet : StyleSheet {
 /**
  * Exposes the JavaScript [StyleSheetList](https://developer.mozilla.org/en/docs/Web/API/StyleSheetList) to Kotlin
  */
-public external abstract class StyleSheetList : ItemArrayLike<StyleSheet> {
+public external abstract class StyleSheetList : ItemArrayLike<StyleSheet>, JsAny {
     override fun item(index: Int): StyleSheet?
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline operator fun StyleSheetList.get(index: Int): StyleSheet? = asDynamic().getAny(index)
+@Suppress("UNUSED_PARAMETER")
+internal fun getMethodImplForStyleSheetList(obj: StyleSheetList, index: Int): StyleSheet? { js("return obj[index];") }
+
+public operator fun StyleSheetList.get(index: Int): StyleSheet? = getMethodImplForStyleSheetList(this, index)
 
 /**
  * Exposes the JavaScript [LinkStyle](https://developer.mozilla.org/en/docs/Web/API/LinkStyle) to Kotlin
  */
-public external interface LinkStyle {
+public external interface LinkStyle : JsAny {
     val sheet: StyleSheet?
         get() = definedExternally
 }
@@ -68,18 +70,19 @@ public external interface LinkStyle {
 /**
  * Exposes the JavaScript [CSSRuleList](https://developer.mozilla.org/en/docs/Web/API/CSSRuleList) to Kotlin
  */
-public external abstract class CSSRuleList : ItemArrayLike<CSSRule> {
+public external abstract class CSSRuleList : ItemArrayLike<CSSRule>, JsAny {
     override fun item(index: Int): CSSRule?
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline operator fun CSSRuleList.get(index: Int): CSSRule? = asDynamic().getAny(index)
+@Suppress("UNUSED_PARAMETER")
+internal fun getMethodImplForCSSRuleList(obj: CSSRuleList, index: Int): CSSRule? { js("return obj[index];") }
+
+public operator fun CSSRuleList.get(index: Int): CSSRule? = getMethodImplForCSSRuleList(this, index)
 
 /**
  * Exposes the JavaScript [CSSRule](https://developer.mozilla.org/en/docs/Web/API/CSSRule) to Kotlin
  */
-public external abstract class CSSRule {
+public external abstract class CSSRule : JsAny {
     open val type: Short
     open var cssText: String
     open val parentRule: CSSRule?
@@ -100,7 +103,7 @@ public external abstract class CSSRule {
 /**
  * Exposes the JavaScript [CSSStyleRule](https://developer.mozilla.org/en/docs/Web/API/CSSStyleRule) to Kotlin
  */
-public external abstract class CSSStyleRule : CSSRule {
+public external abstract class CSSStyleRule : CSSRule, JsAny {
     open var selectorText: String
     open val style: CSSStyleDeclaration
 
@@ -116,7 +119,7 @@ public external abstract class CSSStyleRule : CSSRule {
     }
 }
 
-public external abstract class CSSImportRule : CSSRule {
+public external abstract class CSSImportRule : CSSRule, JsAny {
     open val href: String
     open val media: MediaList
     open val styleSheet: CSSStyleSheet
@@ -136,7 +139,7 @@ public external abstract class CSSImportRule : CSSRule {
 /**
  * Exposes the JavaScript [CSSGroupingRule](https://developer.mozilla.org/en/docs/Web/API/CSSGroupingRule) to Kotlin
  */
-public external abstract class CSSGroupingRule : CSSRule {
+public external abstract class CSSGroupingRule : CSSRule, JsAny {
     open val cssRules: CSSRuleList
     fun insertRule(rule: String, index: Int): Int
     fun deleteRule(index: Int)
@@ -156,7 +159,7 @@ public external abstract class CSSGroupingRule : CSSRule {
 /**
  * Exposes the JavaScript [CSSMediaRule](https://developer.mozilla.org/en/docs/Web/API/CSSMediaRule) to Kotlin
  */
-public external abstract class CSSMediaRule : CSSGroupingRule {
+public external abstract class CSSMediaRule : CSSGroupingRule, JsAny {
     open val media: MediaList
 
     companion object {
@@ -174,7 +177,7 @@ public external abstract class CSSMediaRule : CSSGroupingRule {
 /**
  * Exposes the JavaScript [CSSPageRule](https://developer.mozilla.org/en/docs/Web/API/CSSPageRule) to Kotlin
  */
-public external abstract class CSSPageRule : CSSGroupingRule {
+public external abstract class CSSPageRule : CSSGroupingRule, JsAny {
     open var selectorText: String
     open val style: CSSStyleDeclaration
 
@@ -190,7 +193,7 @@ public external abstract class CSSPageRule : CSSGroupingRule {
     }
 }
 
-public external abstract class CSSMarginRule : CSSRule {
+public external abstract class CSSMarginRule : CSSRule, JsAny {
     open val name: String
     open val style: CSSStyleDeclaration
 
@@ -209,7 +212,7 @@ public external abstract class CSSMarginRule : CSSRule {
 /**
  * Exposes the JavaScript [CSSNamespaceRule](https://developer.mozilla.org/en/docs/Web/API/CSSNamespaceRule) to Kotlin
  */
-public external abstract class CSSNamespaceRule : CSSRule {
+public external abstract class CSSNamespaceRule : CSSRule, JsAny {
     open val namespaceURI: String
     open val prefix: String
 
@@ -228,7 +231,7 @@ public external abstract class CSSNamespaceRule : CSSRule {
 /**
  * Exposes the JavaScript [CSSStyleDeclaration](https://developer.mozilla.org/en/docs/Web/API/CSSStyleDeclaration) to Kotlin
  */
-public external abstract class CSSStyleDeclaration : ItemArrayLike<String> {
+public external abstract class CSSStyleDeclaration : ItemArrayLike<JsString>, JsAny {
     open var cssText: String
     open val parentRule: CSSRule?
     open var cssFloat: String
@@ -464,21 +467,22 @@ public external abstract class CSSStyleDeclaration : ItemArrayLike<String> {
     fun setPropertyValue(property: String, value: String)
     fun setPropertyPriority(property: String, priority: String)
     fun removeProperty(property: String): String
-    override fun item(index: Int): String
+    override fun item(index: Int): JsString
 }
 
-@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
-@kotlin.internal.InlineOnly
-public inline operator fun CSSStyleDeclaration.get(index: Int): String? = asDynamic().getString(index)
+@Suppress("UNUSED_PARAMETER")
+internal fun getMethodImplForCSSStyleDeclaration(obj: CSSStyleDeclaration, index: Int): String? { js("return obj[index];") }
 
-public external interface ElementCSSInlineStyle {
+public operator fun CSSStyleDeclaration.get(index: Int): String? = getMethodImplForCSSStyleDeclaration(this, index)
+
+public external interface ElementCSSInlineStyle : JsAny {
     val style: CSSStyleDeclaration
 }
 
 /**
  * Exposes the JavaScript [CSS](https://developer.mozilla.org/en/docs/Web/API/CSS) to Kotlin
  */
-public external abstract class CSS {
+public external abstract class CSS : JsAny {
     companion object {
         fun escape(ident: String): String
     }

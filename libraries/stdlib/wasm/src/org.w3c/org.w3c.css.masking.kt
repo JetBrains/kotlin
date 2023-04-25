@@ -15,7 +15,7 @@ import org.w3c.dom.svg.*
 /**
  * Exposes the JavaScript [SVGClipPathElement](https://developer.mozilla.org/en/docs/Web/API/SVGClipPathElement) to Kotlin
  */
-public external abstract class SVGClipPathElement : SVGElement, SVGUnitTypes {
+public external abstract class SVGClipPathElement : SVGElement, SVGUnitTypes, JsAny {
     open val clipPathUnits: SVGAnimatedEnumeration
     open val transform: SVGAnimatedTransformList
 
@@ -47,7 +47,7 @@ public external abstract class SVGClipPathElement : SVGElement, SVGUnitTypes {
 /**
  * Exposes the JavaScript [SVGMaskElement](https://developer.mozilla.org/en/docs/Web/API/SVGMaskElement) to Kotlin
  */
-public external abstract class SVGMaskElement : SVGElement, SVGUnitTypes {
+public external abstract class SVGMaskElement : SVGElement, SVGUnitTypes, JsAny {
     open val maskUnits: SVGAnimatedEnumeration
     open val maskContentUnits: SVGAnimatedEnumeration
     open val x: SVGAnimatedLength

@@ -92,6 +92,8 @@ sealed class CallKind(vararg resolutionSequence: ResolutionStage) {
         CheckCallableReferenceExpectedType,
         CheckLowPriorityInOverloadResolution,
         CheckIncompatibleTypeVariableUpperBounds,
+        ProcessDynamicExtensionAnnotation,
+        LowerPriorityIfDynamic,
     )
 
     object SyntheticIdForCallableReferencesResolution : CallKind(

@@ -6,6 +6,7 @@
 package kotlin
 
 public abstract class Enum<E : Enum<E>>(
+    @kotlin.internal.IntrinsicConstEvaluation
     public val name: String,
     public val ordinal: Int
 ) : Comparable<E> {

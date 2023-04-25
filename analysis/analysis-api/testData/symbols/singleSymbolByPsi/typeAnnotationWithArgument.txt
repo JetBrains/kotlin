@@ -1,0 +1,37 @@
+KtFunctionSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: /foo
+  contextReceivers: []
+  contractEffects: []
+  hasStableParameterNames: true
+  isBuiltinFunctionInvoke: false
+  isExtension: false
+  isExternal: false
+  isInfix: false
+  isInline: false
+  isOperator: false
+  isOverride: false
+  isStatic: false
+  isSuspend: false
+  modality: FINAL
+  name: foo
+  origin: SOURCE
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: [
+      KtUsualClassType:
+        annotationsList: [
+          Anno5(s = "1")
+            psi: KtAnnotationEntry
+        ]
+        ownTypeArguments: []
+        type: @R|Anno5|(s = String(1))  kotlin/Int
+    ]
+    type: kotlin/collections/List<@R|Anno5|(s = String(1))  kotlin/Int>?
+  symbolKind: TOP_LEVEL
+  typeParameters: []
+  valueParameters: []
+  visibility: Public
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null

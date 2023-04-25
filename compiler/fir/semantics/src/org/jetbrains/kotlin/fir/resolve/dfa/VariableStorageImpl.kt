@@ -176,7 +176,9 @@ class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
                 val propertyModuleData = property.originalOrSelf().moduleData
                 val currentModuleData = session.moduleData
                 when (propertyModuleData) {
-                    currentModuleData, in currentModuleData.dependsOnDependencies -> PropertyStability.STABLE_VALUE
+                    currentModuleData,
+                    in currentModuleData.friendDependencies,
+                    in currentModuleData.dependsOnDependencies -> PropertyStability.STABLE_VALUE
                     else -> PropertyStability.ALIEN_PUBLIC_PROPERTY
                 }
             }

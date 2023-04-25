@@ -3,6 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
+@file:OptIn(ObsoleteWorkersApi::class)
 package runtime.workers.worker0
 
 import kotlin.test.*

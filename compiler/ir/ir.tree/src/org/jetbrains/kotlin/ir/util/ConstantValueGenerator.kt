@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.types.TypeConstructorSubstitution
 import org.jetbrains.kotlin.types.error.ErrorClassDescriptor
 import org.jetbrains.kotlin.types.isError
 import org.jetbrains.kotlin.types.typeUtil.builtIns
+import org.jetbrains.kotlin.utils.memoryOptimizedMapNotNull
 
 abstract class ConstantValueGenerator(
     private val moduleDescriptor: ModuleDescriptor,
@@ -95,7 +96,7 @@ abstract class ConstantValueGenerator(
                     startOffset, endOffset,
                     constantType,
                     arrayElementType.toIrType(),
-                    constantValue.value.mapNotNull {
+                    constantValue.value.memoryOptimizedMapNotNull {
                         // For annotation arguments, the type of every subexpression can be inferred from the type of the parameter;
                         // for arbitrary constants, we should always take the type inferred by the frontend.
                         val newExpectedType = arrayElementType.takeIf { expectedType != null }
@@ -156,15 +157,12 @@ abstract class ConstantValueGenerator(
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     fun generateAnnotationConstructorCall(annotationDescriptor: AnnotationDescriptor, realType: KotlinType? = null): IrConstructorCall? {
         val annotationType = realType ?: annotationDescriptor.type
-        val annotationClassDescriptor = annotationType.constructor.declarationDescriptor
-        if (annotationClassDescriptor !is ClassDescriptor) return null
-        if (annotationClassDescriptor is NotFoundClasses.MockClassDescriptor) return null
+        val annotationClassDescriptor = annotationType.constructor.declarationDescriptor as? ClassDescriptor ?: return null
 
-        assert(
-            DescriptorUtils.isAnnotationClass(annotationClassDescriptor) ||
-                    (allowErrorTypeInAnnotations && annotationClassDescriptor is ErrorClassDescriptor)
-        ) {
-            "Annotation class expected: $annotationClassDescriptor"
+        when (annotationClassDescriptor) {
+            is NotFoundClasses.MockClassDescriptor -> return null
+            is ErrorClassDescriptor -> if (!allowErrorTypeInAnnotations) return null
+            else -> if (!DescriptorUtils.isAnnotationClass(annotationClassDescriptor)) return null
         }
 
         val primaryConstructorDescriptor = annotationClassDescriptor.unsubstitutedPrimaryConstructor

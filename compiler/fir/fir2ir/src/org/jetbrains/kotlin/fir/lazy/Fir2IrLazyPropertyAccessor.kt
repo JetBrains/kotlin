@@ -94,6 +94,7 @@ class Fir2IrLazyPropertyAccessor(
                                 typeConverter, conversionTypeContext
                             ),
                             parent = this@Fir2IrLazyPropertyAccessor,
+                            firValueParameter = valueParameter,
                             name = valueParameter?.name,
                             isCrossinline = valueParameter?.isCrossinline == true,
                             isNoinline = valueParameter?.isNoinline == true
@@ -118,5 +119,5 @@ class Fir2IrLazyPropertyAccessor(
     override val containerSource: DeserializedContainerSource?
         get() = firParentProperty.containerSource
 
-    private val conversionTypeContext = if (isSetter) ConversionTypeContext.DEFAULT.inSetter() else ConversionTypeContext.DEFAULT
+    private val conversionTypeContext = if (isSetter) ConversionTypeContext.IN_SETTER else ConversionTypeContext.DEFAULT
 }

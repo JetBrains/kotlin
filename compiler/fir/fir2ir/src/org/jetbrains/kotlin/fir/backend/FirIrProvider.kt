@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -59,7 +59,7 @@ class FirIrProvider(val fir2IrComponents: Fir2IrComponents) : IrProvider {
             val container = (getDeclarationForSignature(signature.container, SymbolKind.CLASS_SYMBOL)
                 ?: getDeclarationForSignature(signature.container, SymbolKind.FUNCTION_SYMBOL)
                 ?: getDeclarationForSignature(signature.container, SymbolKind.PROPERTY_SYMBOL)
-            ) as IrTypeParametersContainer
+                    ) as IrTypeParametersContainer
             val localSignature = signature.inner as IdSignature.LocalSignature
             return container.typeParameters[localSignature.index()]
         }
@@ -92,8 +92,13 @@ class FirIrProvider(val fir2IrComponents: Fir2IrComponents) : IrProvider {
             }
             isTopLevelPrivate = topLevelClass.visibility == Visibilities.Private
             val classId = firClass.classId
-            val scope =
-                firClass.unsubstitutedScope(fir2IrComponents.session, fir2IrComponents.scopeSession, withForcedTypeCalculator = true)
+            val scope = firClass.unsubstitutedScope(
+                fir2IrComponents.session,
+                fir2IrComponents.scopeSession,
+                withForcedTypeCalculator = true,
+                memberRequiredPhase = null,
+            )
+
             when (kind) {
                 SymbolKind.CLASS_SYMBOL -> {
                     firCandidates = listOf(firClass)

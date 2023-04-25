@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,9 +9,13 @@ import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.classId
-import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.createSubstitutionForScope
+import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
+import org.jetbrains.kotlin.fir.resolve.scopeSessionKey
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirTypeScope
@@ -25,7 +29,8 @@ fun wrapScopeWithJvmMapped(
     klass: FirClass,
     declaredMemberScope: FirContainingNamesAwareScope,
     useSiteSession: FirSession,
-    scopeSession: ScopeSession
+    scopeSession: ScopeSession,
+    memberRequiredPhase: FirResolvePhase?,
 ): FirContainingNamesAwareScope {
     val classId = klass.classId
     val kotlinUnsafeFqName = classId.asSingleFqName().toUnsafe()
@@ -36,7 +41,12 @@ fun wrapScopeWithJvmMapped(
         ?: return declaredMemberScope
     val preparedSignatures = JvmMappedScope.prepareSignatures(javaClass, JavaToKotlinClassMap.isMutable(kotlinUnsafeFqName))
     return if (preparedSignatures.isNotEmpty()) {
-        javaClass.unsubstitutedScope(useSiteSession, scopeSession, withForcedTypeCalculator = false).let { javaClassUseSiteScope ->
+        javaClass.unsubstitutedScope(
+            useSiteSession,
+            scopeSession,
+            withForcedTypeCalculator = false,
+            memberRequiredPhase = memberRequiredPhase,
+        ).let { javaClassUseSiteScope ->
             val jvmMappedScope = JvmMappedScope(
                 useSiteSession,
                 klass,
@@ -75,7 +85,7 @@ private fun wrapSubstitutionScopeIfNeed(
         // is called on an external type, like MyMap<String, String>,
         // to determine parameter types properly (e.g. String, String instead of K, V)
         val platformTypeParameters = platformClass.typeParameters
-        val platformSubstitution = createSubstitution(platformTypeParameters, declaration.defaultType(), session)
+        val platformSubstitution = createSubstitutionForScope(platformTypeParameters, declaration.defaultType(), session)
         val substitutor = substitutorByMap(platformSubstitution, session)
         FirClassSubstitutionScope(
             session, useSiteMemberScope, PLATFORM_TYPE_PARAMETERS_SUBSTITUTION_SCOPE_KEY, substitutor,
@@ -87,4 +97,3 @@ private fun wrapSubstitutionScopeIfNeed(
 }
 
 private val PLATFORM_TYPE_PARAMETERS_SUBSTITUTION_SCOPE_KEY = scopeSessionKey<FirClassSymbol<*>, FirTypeScope>()
-

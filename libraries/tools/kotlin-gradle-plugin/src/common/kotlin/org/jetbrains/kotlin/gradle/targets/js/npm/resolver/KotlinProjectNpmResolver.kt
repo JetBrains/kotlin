@@ -14,32 +14,24 @@ import org.jetbrains.kotlin.gradle.dsl.kotlinExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
-import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsTarget
-import org.jetbrains.kotlin.gradle.targets.js.npm.RequiresNpmDependencies
+import org.jetbrains.kotlin.gradle.targets.js.npm.KotlinNpmResolutionManager
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.KotlinProjectNpmResolution
-import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
-import org.jetbrains.kotlin.gradle.utils.unavailableValueError
 import java.io.Serializable
 import kotlin.reflect.KClass
 
 /**
  * See [KotlinNpmResolutionManager] for details about resolution process.
  */
-internal class KotlinProjectNpmResolver(
-    @Transient
-    val project: Project,
-    @Transient
+class KotlinProjectNpmResolver(
+    project: Project,
     var resolver: KotlinRootNpmResolver
 ) : Serializable {
-    override fun toString(): String = "ProjectNpmResolver($project)"
-
-    private val projectPath by lazy { project.path }
+    val projectPath by lazy { project.path }
 
     private val byCompilation = mutableMapOf<String, KotlinCompilationNpmResolver>()
 
     operator fun get(compilation: KotlinJsCompilation): KotlinCompilationNpmResolver {
-        check(compilation.target.project == project)
         return byCompilation[compilation.disambiguatedName] ?: error("$compilation was not registered in $this")
     }
 
@@ -47,38 +39,17 @@ internal class KotlinProjectNpmResolver(
         return byCompilation[compilationName] ?: error("$compilationName was not registered in $this")
     }
 
-    private var closed = false
+    private var resolution: KotlinProjectNpmResolution? = null
 
     val compilationResolvers: Collection<KotlinCompilationNpmResolver>
         get() = byCompilation.values
 
     init {
-        addContainerListeners()
-
-        project.whenEvaluated {
-            val nodeJs = resolver.nodeJs ?: unavailableValueError("resolver.nodeJs")
-            project.tasks.implementing(RequiresNpmDependencies::class)
-                .configureEach { task ->
-                    if (task.enabled) {
-                        task as RequiresNpmDependencies
-                        // KotlinJsTest delegates npm dependencies to testFramework,
-                        // which can be defined after this configure action
-                        val packageJsonTaskHolder = get(task.compilation).packageJsonTaskHolder
-                        if (task !is KotlinJsTest) {
-                            nodeJs.taskRequirements.addTaskRequirements(task)
-                        }
-                        task.dependsOn(packageJsonTaskHolder)
-                        task.dependsOn(
-                            nodeJs.npmInstallTaskProvider,
-                            nodeJs.storeYarnLockTaskProvider,
-                        )
-                    }
-                }
-        }
+        project.addContainerListeners()
     }
 
-    private fun addContainerListeners() {
-        val kotlin = project.kotlinExtensionOrNull
+    private fun Project.addContainerListeners() {
+        val kotlin = kotlinExtensionOrNull
             ?: error("NpmResolverPlugin should be applied after kotlin plugin")
 
         when (kotlin) {
@@ -91,10 +62,11 @@ internal class KotlinProjectNpmResolver(
     }
 
     private fun addTargetListeners(target: KotlinTarget) {
-        check(!closed) { resolver.alreadyResolvedMessage("add target $target") }
+        check(resolution == null) { resolver.alreadyResolvedMessage("add target $target") }
 
         if (target.platformType == KotlinPlatformType.js ||
-            target.platformType == KotlinPlatformType.wasm) {
+            target.platformType == KotlinPlatformType.wasm
+        ) {
             target.compilations.all { compilation ->
                 if (compilation is KotlinJsCompilation) {
                     // compilation may be KotlinWithJavaTarget for old Kotlin2JsPlugin
@@ -115,19 +87,23 @@ internal class KotlinProjectNpmResolver(
 
     @Synchronized
     private fun addCompilation(compilation: KotlinJsCompilation) {
-        check(!closed) { resolver.alreadyResolvedMessage("add compilation $compilation") }
+        check(resolution == null) { resolver.alreadyResolvedMessage("add compilation $compilation") }
 
-        byCompilation[compilation.disambiguatedName] = KotlinCompilationNpmResolver(this, compilation)
+        byCompilation[compilation.disambiguatedName] =
+            KotlinCompilationNpmResolver(
+                this,
+                compilation
+            )
     }
 
     fun close(): KotlinProjectNpmResolution {
-        check(!closed)
-        closed = true
-
-        return KotlinProjectNpmResolution(
-            projectPath,
-            byCompilation.values.mapNotNull { it.close() },
-            resolver.taskRequirements.byTask
+        return resolution ?: KotlinProjectNpmResolution(
+            byCompilation
+                .map { (key, value) ->
+                    value.close()?.let { key to it }
+                }
+                .filterNotNull()
+                .toMap(),
         )
     }
 }

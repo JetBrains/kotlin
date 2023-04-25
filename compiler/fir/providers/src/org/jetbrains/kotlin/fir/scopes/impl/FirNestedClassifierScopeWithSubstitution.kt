@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.name.Name
 
-private class FirNestedClassifierScopeWithSubstitution(
+class FirNestedClassifierScopeWithSubstitution internal constructor(
     private val scope: FirContainingNamesAwareScope,
     private val substitutor: ConeSubstitutor
 ) : FirContainingNamesAwareScope() {

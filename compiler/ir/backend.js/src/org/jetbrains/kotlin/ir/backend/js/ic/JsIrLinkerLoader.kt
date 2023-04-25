@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.ir.backend.js.ic
 
+import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
+import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.serialization.DeserializationStrategy
 import org.jetbrains.kotlin.backend.common.serialization.checkIsFunctionInterface
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
-import org.jetbrains.kotlin.backend.common.serialization.linkerissues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.serialization.signature.IdSignatureDescriptor
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -23,9 +24,11 @@ import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrDescriptorBasedFunctionFactory
+import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.irMessageLogger
+import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
@@ -68,8 +71,9 @@ internal data class LoadedJsIr(
     fun loadUnboundSymbols() {
         signatureProvidersImpl.clear()
         ExternalDependenciesGenerator(linker.symbolTable, listOf(linker)).generateUnboundSymbolsAsDependencies()
-        linker.postProcess()
+        linker.postProcess(inOrAfterLinkageStep = true)
         linker.checkNoUnboundSymbols(linker.symbolTable, "at the end of IR linkage process")
+        linker.clear()
     }
 }
 
@@ -107,14 +111,20 @@ internal class JsIrLinkerLoader(
         val symbolTable = SymbolTable(signaturer, irFactory)
         val moduleDescriptor = loadedModules.keys.last()
         val typeTranslator = TypeTranslatorImpl(symbolTable, compilerConfiguration.languageVersionSettings, moduleDescriptor)
+        val errorPolicy = compilerConfiguration[JSConfigurationKeys.ERROR_TOLERANCE_POLICY] ?: ErrorTolerancePolicy.DEFAULT
         val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
-        val partialLinkageEnabled = compilerConfiguration[JSConfigurationKeys.PARTIAL_LINKAGE] ?: false
+        val messageLogger = compilerConfiguration.irMessageLogger
         val linker = JsIrLinker(
             currentModule = null,
-            messageLogger = compilerConfiguration.irMessageLogger,
+            messageLogger = messageLogger,
             builtIns = irBuiltIns,
             symbolTable = symbolTable,
-            partialLinkageEnabled = partialLinkageEnabled,
+            partialLinkageSupport = createPartialLinkageSupportForLinker(
+                partialLinkageConfig = compilerConfiguration.partialLinkageConfig,
+                allowErrorTypes = errorPolicy.allowErrors,
+                builtIns = irBuiltIns,
+                messageLogger = messageLogger
+            ),
             translationPluginContext = null,
             friendModules = mapOf(mainLibrary.uniqueName to mainModuleFriends.map { it.uniqueName })
         )

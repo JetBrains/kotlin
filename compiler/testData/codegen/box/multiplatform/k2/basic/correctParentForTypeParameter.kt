@@ -1,5 +1,6 @@
-// TARGET_BACKEND: JVM
+// IGNORE_BACKEND_K1: JS, JS_IR, JS_IR_ES6, NATIVE
 // !LANGUAGE: +MultiPlatformProjects
+
 // MODULE: lib
 // FILE: lib.kt
 
@@ -9,9 +10,8 @@ fun transform(x: String, f: (String) -> String): String {
     return f(x) + "K"
 }
 
-// MODULE: lib2()()(lib)
-// TARGET_BACKEND: JVM_IR
-// FILE: main.kt
+// MODULE: platform()()(lib)
+// FILE: platform.kt
 
 package bar
 

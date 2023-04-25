@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 
 /**
  * A non-leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.functionAccessExpression
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.functionAccessExpression]
  */
 abstract class IrFunctionAccessExpression : IrMemberAccessExpression<IrFunctionSymbol>() {
     abstract var contextReceiversCount: Int

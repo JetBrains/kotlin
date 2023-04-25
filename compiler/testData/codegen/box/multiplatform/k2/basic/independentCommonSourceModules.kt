@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM_IR
+// IGNORE_BACKEND_K1: JS, JS_IR, JS_IR_ES6, NATIVE
 // !LANGUAGE: +MultiPlatformProjects
 
 // MODULE: common1
@@ -13,8 +13,7 @@ fun o() = "O"
 
 fun k() = "K"
 
-// MODULE: jvm()()(common1, common2)
-// TARGET_PLATFORM: JVM
-// FILE: main.kt
+// MODULE: platform()()(common1, common2)
+// FILE: platform.kt
 
 fun box() = o() + k()

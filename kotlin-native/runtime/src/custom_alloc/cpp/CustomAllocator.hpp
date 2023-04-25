@@ -34,6 +34,8 @@ public:
 
     void PrepareForGC() noexcept;
 
+    static size_t GetAllocatedHeapSize(ObjHeader* object) noexcept;
+
 private:
     uint8_t* Allocate(uint64_t cellCount) noexcept;
     uint8_t* AllocateInSingleObjectPage(uint64_t cellCount) noexcept;

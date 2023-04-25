@@ -8,19 +8,36 @@ plugins {
     id("org.jetbrains.dokka")
 }
 
-evaluationDependsOnChildren()
+val isTeamcityBuild = project.hasProperty("teamcity.version")
 
-fun pKotlinBig() = project("kotlin_big").ext
+// kotlin/libraries/tools/kotlin-stdlib-docs  ->  kotlin
+val kotlin_root = rootProject.file("../../../").absoluteFile.invariantSeparatorsPath
+val kotlin_libs by extra("$buildDir/libs")
+
+val rootProperties = java.util.Properties().apply {
+    file(kotlin_root).resolve("gradle.properties").inputStream().use { stream -> load(stream) }
+}
+val defaultSnapshotVersion: String by rootProperties
+val kotlinLanguageVersion: String by rootProperties
+
+val githubRevision = if (isTeamcityBuild) project.property("githubRevision") else "master"
+val artifactsVersion by extra(if (isTeamcityBuild) project.property("deployVersion") as String else defaultSnapshotVersion)
+val artifactsRepo by extra(if (isTeamcityBuild) project.property("kotlinLibsRepo") as String else "$kotlin_root/build/repo")
+val dokka_version: String by project
+
+println("# Parameters summary:")
+println("    isTeamcityBuild: $isTeamcityBuild")
+println("    dokka version: $dokka_version")
+println("    githubRevision: $githubRevision")
+println("    language version: $kotlinLanguageVersion")
+println("    artifacts version: $artifactsVersion")
+println("    artifacts repo: $artifactsRepo")
+
 
 val outputDir = file(findProperty("docsBuildDir") as String? ?: "$buildDir/doc")
 val inputDirPrevious = file(findProperty("docsPreviousVersionsDir") as String? ?: "$outputDir/previous")
 val outputDirPartial = outputDir.resolve("partial")
-val kotlin_root: String by pKotlinBig()
-val kotlin_libs: String by pKotlinBig()
 val kotlin_native_root = file("$kotlin_root/kotlin-native").absolutePath
-val github_revision: String by pKotlinBig()
-val localRoot = kotlin_root
-val baseUrl = URL("https://github.com/JetBrains/kotlin/tree/$github_revision")
 val templatesDir = file(findProperty("templatesDir") as String? ?: "$projectDir/templates").invariantSeparatorsPath
 
 val cleanDocs by tasks.registering(Delete::class) {
@@ -34,12 +51,6 @@ tasks.clean {
 val prepare by tasks.registering {
     dependsOn(":kotlin_big:extractLibs")
 }
-
-repositories {
-    mavenCentral()
-    maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/dokka/dev")
-}
-val dokka_version: String by project
 
 dependencies {
     dokkaPlugin(project(":plugins:dokka-samples-transformer-plugin"))
@@ -122,22 +133,18 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                 noJdkLink.set(true)
 
                 displayName.set("JS")
-                if (version != "1.0" && version != "1.1") {
-                    dependsOn("common")
-                }
+                dependsOn("common")
 
-                sourceRoots.from("$kotlin_stdlib_dir/js/src")
-                sourceRoots.from("$kotlin_stdlib_dir/js-v1/src")
+                // list src subdirectories except 'generated' as it should be taken from js-ir/src
+                sourceRoots.from("$kotlin_stdlib_dir/js/src/kotlin")
+                sourceRoots.from("$kotlin_stdlib_dir/js/src/kotlinx")
+                sourceRoots.from("$kotlin_stdlib_dir/js/src/org.w3c")
 
-                // for Kotlin 1.1 hack: Common platform becomes JVM
-                if (version == "1.1") {
-                    sourceRoots.from("$kotlin_root/core/builtins/native")
-                    sourceRoots.from("$kotlin_root/core/builtins/src/")
+                sourceRoots.from("$kotlin_stdlib_dir/js-ir/builtins")
+                sourceRoots.from("$kotlin_stdlib_dir/js-ir/runtime/kotlinHacks.kt")
+                sourceRoots.from("$kotlin_stdlib_dir/js-ir/runtime/long.kt")
+                sourceRoots.from("$kotlin_stdlib_dir/js-ir/src")
 
-                    //sourceRoots.from("$kotlin_stdlib_dir/common/src") // is included  in /js-v1/src folder
-                    sourceRoots.from("$kotlin_stdlib_dir/src")
-                    sourceRoots.from("$kotlin_stdlib_dir/unsigned/src")
-                }
                 perPackageOption("org.w3c") {
                     reportUndocumented.set(false)
                 }
@@ -358,7 +365,7 @@ fun createAllLibsVersionedDocTask(version: String, isLatest: Boolean, vararg lib
         libTasks.forEach { addChildTask(it.name) }
 
         fileLayout.set(DokkaMultiModuleFileLayout { parent, child ->
-            parent.outputDirectory.get().resolve(child.moduleName.get())
+            parent.outputDirectory.dir(child.moduleName)
         })
 
         val moduleDirName = "all-libs"
@@ -382,14 +389,14 @@ fun GradleDokkaSourceSetBuilder.perPackageOption(packageNamePrefix: String, acti
 
 fun GradleDokkaSourceSetBuilder.sourceLinksFromRoot() {
     sourceLink {
-        localDirectory.set(file(localRoot))
-        remoteUrl.set(baseUrl)
+        localDirectory.set(file(kotlin_root))
+        remoteUrl.set(URL("https://github.com/JetBrains/kotlin/tree/$githubRevision"))
         remoteLineSuffix.set("#L")
     }
 }
 
-gradle.projectsEvaluated {
-    val versions = listOf(/*"1.0", "1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "1.7",*/ "1.8")
+run {
+    val versions = listOf(/*"1.0", "1.1", "1.2", "1.3", "1.4", "1.5", "1.6", "1.7",*/ kotlinLanguageVersion)
     val latestVersion = versions.last()
 
     // builds this version/all versions as historical for the next versions builds

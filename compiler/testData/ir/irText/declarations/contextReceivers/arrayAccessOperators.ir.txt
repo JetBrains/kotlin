@@ -96,13 +96,13 @@ FILE fqName:<root> fileName:/arrayAccessOperators.kt
               CONST Boolean type=kotlin.Boolean value=false
         RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.MyContainer'
           CONST Boolean type=kotlin.Boolean value=true
-  FUN name:get visibility:public modality:FINAL <> ($receiver:<root>.MyContainer, _context_receiver_0:kotlin.Int, index:kotlin.Int) returnType:kotlin.String? [operator]
+  FUN name:get visibility:public modality:FINAL <> ($receiver:<root>.MyContainer, $context_receiver_0:kotlin.Int, index:kotlin.Int) returnType:kotlin.String? [operator]
     contextReceiverParametersCount: 1
     $receiver: VALUE_PARAMETER name:<this> type:<root>.MyContainer
-    VALUE_PARAMETER name:_context_receiver_0 index:0 type:kotlin.Int
+    VALUE_PARAMETER name:$context_receiver_0 index:0 type:kotlin.Int
     VALUE_PARAMETER name:index index:1 type:kotlin.Int
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun get (_context_receiver_0: kotlin.Int, index: kotlin.Int): kotlin.String? [operator] declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun get ($context_receiver_0: kotlin.Int, index: kotlin.Int): kotlin.String? [operator] declared in <root>'
         WHEN type=kotlin.String? origin=IF
           BRANCH
             if: WHEN type=kotlin.Boolean origin=ANDAND
@@ -111,7 +111,7 @@ FILE fqName:<root> fileName:/arrayAccessOperators.kt
                   arg0: GET_VAR 'index: kotlin.Int declared in <root>.get' type=kotlin.Int origin=null
                   arg1: CONST Int type=kotlin.Int value=0
                 then: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
-                  arg0: GET_VAR '_context_receiver_0: kotlin.Int declared in <root>.get' type=kotlin.Int origin=null
+                  arg0: GET_VAR '$context_receiver_0: kotlin.Int declared in <root>.get' type=kotlin.Int origin=null
                   arg1: CONST Int type=kotlin.Int value=42
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
@@ -121,10 +121,10 @@ FILE fqName:<root> fileName:/arrayAccessOperators.kt
           BRANCH
             if: CONST Boolean type=kotlin.Boolean value=true
             then: CONST Null type=kotlin.Nothing? value=null
-  FUN name:set visibility:public modality:FINAL <> ($receiver:<root>.MyContainer, _context_receiver_0:kotlin.Int, index:kotlin.Int, value:kotlin.String) returnType:kotlin.Unit [operator]
+  FUN name:set visibility:public modality:FINAL <> ($receiver:<root>.MyContainer, $context_receiver_0:kotlin.Int, index:kotlin.Int, value:kotlin.String) returnType:kotlin.Unit [operator]
     contextReceiverParametersCount: 1
     $receiver: VALUE_PARAMETER name:<this> type:<root>.MyContainer
-    VALUE_PARAMETER name:_context_receiver_0 index:0 type:kotlin.Int
+    VALUE_PARAMETER name:$context_receiver_0 index:0 type:kotlin.Int
     VALUE_PARAMETER name:index index:1 type:kotlin.Int
     VALUE_PARAMETER name:value index:2 type:kotlin.String
     BLOCK_BODY
@@ -141,9 +141,9 @@ FILE fqName:<root> fileName:/arrayAccessOperators.kt
               if: CONST Boolean type=kotlin.Boolean value=true
               then: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
                 $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
-                  arg0: GET_VAR '_context_receiver_0: kotlin.Int declared in <root>.set' type=kotlin.Int origin=null
+                  arg0: GET_VAR '$context_receiver_0: kotlin.Int declared in <root>.set' type=kotlin.Int origin=null
                   arg1: CONST Int type=kotlin.Int value=42
-          then: RETURN type=kotlin.Nothing from='public final fun set (_context_receiver_0: kotlin.Int, index: kotlin.Int, value: kotlin.String): kotlin.Unit [operator] declared in <root>'
+          then: RETURN type=kotlin.Nothing from='public final fun set ($context_receiver_0: kotlin.Int, index: kotlin.Int, value: kotlin.String): kotlin.Unit [operator] declared in <root>'
             GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
       CALL 'public final fun <set-s> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.MyContainer' type=kotlin.Unit origin=EQ
         $this: GET_VAR '<this>: <root>.MyContainer declared in <root>.set' type=<root>.MyContainer origin=null
@@ -162,17 +162,17 @@ FILE fqName:<root> fileName:/arrayAccessOperators.kt
                 VAR name:myContainer type:<root>.MyContainer [val]
                   CONSTRUCTOR_CALL 'public constructor <init> (s: kotlin.String) [primary] declared in <root>.MyContainer' type=<root>.MyContainer origin=null
                     s: CONST String type=kotlin.String value="fail"
-                CALL 'public final fun set (_context_receiver_0: kotlin.Int, index: kotlin.Int, value: kotlin.String): kotlin.Unit [operator] declared in <root>' type=kotlin.Unit origin=EQ
+                CALL 'public final fun set ($context_receiver_0: kotlin.Int, index: kotlin.Int, value: kotlin.String): kotlin.Unit [operator] declared in <root>' type=kotlin.Unit origin=EQ
                   $receiver: GET_VAR 'val myContainer: <root>.MyContainer [val] declared in <root>.box.<anonymous>' type=<root>.MyContainer origin=null
-                  _context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
+                  $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
                   index: CONST Int type=kotlin.Int value=0
                   value: CONST String type=kotlin.String value="OK"
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.box'
                   BLOCK type=kotlin.String origin=ELVIS
                     VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.String? [val]
-                      CALL 'public final fun get (_context_receiver_0: kotlin.Int, index: kotlin.Int): kotlin.String? [operator] declared in <root>' type=kotlin.String? origin=GET_ARRAY_ELEMENT
+                      CALL 'public final fun get ($context_receiver_0: kotlin.Int, index: kotlin.Int): kotlin.String? [operator] declared in <root>' type=kotlin.String? origin=GET_ARRAY_ELEMENT
                         $receiver: GET_VAR 'val myContainer: <root>.MyContainer [val] declared in <root>.box.<anonymous>' type=<root>.MyContainer origin=null
-                        _context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
+                        $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.box.<anonymous>' type=kotlin.Int origin=null
                         index: CONST Int type=kotlin.Int value=0
                     WHEN type=kotlin.String origin=null
                       BRANCH

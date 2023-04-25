@@ -31,19 +31,19 @@ FILE fqName:<root> fileName:/compareTo.kt
           RETURN type=kotlin.Nothing from='public final fun <get-second> (): B of <root>.Pair declared in <root>.Pair'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:second type:B of <root>.Pair visibility:private [final]' type=B of <root>.Pair origin=null
               receiver: GET_VAR '<this>: <root>.Pair<A of <root>.Pair, B of <root>.Pair> declared in <root>.Pair.<get-second>' type=<root>.Pair<A of <root>.Pair, B of <root>.Pair> origin=null
-    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.Pair<A of <root>.Pair, B of <root>.Pair>) returnType:A of <root>.Pair [operator]
+    FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.Pair<A of <root>.Pair, B of <root>.Pair>) returnType:A of <root>.Pair [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.Pair<A of <root>.Pair, B of <root>.Pair>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): A of <root>.Pair [operator] declared in <root>.Pair'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:first type:A of <root>.Pair visibility:private [final]' type=A of <root>.Pair origin=null
             receiver: GET_VAR '<this>: <root>.Pair<A of <root>.Pair, B of <root>.Pair> declared in <root>.Pair.component1' type=<root>.Pair<A of <root>.Pair, B of <root>.Pair> origin=null
-    FUN name:component2 visibility:public modality:FINAL <> ($this:<root>.Pair<A of <root>.Pair, B of <root>.Pair>) returnType:B of <root>.Pair [operator]
+    FUN GENERATED_DATA_CLASS_MEMBER name:component2 visibility:public modality:FINAL <> ($this:<root>.Pair<A of <root>.Pair, B of <root>.Pair>) returnType:B of <root>.Pair [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.Pair<A of <root>.Pair, B of <root>.Pair>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component2 (): B of <root>.Pair [operator] declared in <root>.Pair'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:second type:B of <root>.Pair visibility:private [final]' type=B of <root>.Pair origin=null
             receiver: GET_VAR '<this>: <root>.Pair<A of <root>.Pair, B of <root>.Pair> declared in <root>.Pair.component2' type=<root>.Pair<A of <root>.Pair, B of <root>.Pair> origin=null
-    FUN name:copy visibility:public modality:FINAL <> ($this:<root>.Pair<A of <root>.Pair, B of <root>.Pair>, first:A of <root>.Pair, second:B of <root>.Pair) returnType:<root>.Pair<A of <root>.Pair, B of <root>.Pair>
+    FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:<root>.Pair<A of <root>.Pair, B of <root>.Pair>, first:A of <root>.Pair, second:B of <root>.Pair) returnType:<root>.Pair<A of <root>.Pair, B of <root>.Pair>
       $this: VALUE_PARAMETER name:<this> type:<root>.Pair<A of <root>.Pair, B of <root>.Pair>
       VALUE_PARAMETER name:first index:0 type:A of <root>.Pair
         EXPRESSION_BODY
@@ -148,44 +148,42 @@ FILE fqName:<root> fileName:/compareTo.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.Pair'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="Pair("
-            CONST String type=kotlin.String value="first="
+            CONST String type=kotlin.String value="Pair(first="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:first type:A of <root>.Pair visibility:private [final]' type=A of <root>.Pair origin=null
               receiver: GET_VAR '<this>: <root>.Pair<A of <root>.Pair, B of <root>.Pair> declared in <root>.Pair.toString' type=<root>.Pair<A of <root>.Pair, B of <root>.Pair> origin=null
-            CONST String type=kotlin.String value=", "
-            CONST String type=kotlin.String value="second="
+            CONST String type=kotlin.String value=", second="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:second type:B of <root>.Pair visibility:private [final]' type=B of <root>.Pair origin=null
               receiver: GET_VAR '<this>: <root>.Pair<A of <root>.Pair, B of <root>.Pair> declared in <root>.Pair.toString' type=<root>.Pair<A of <root>.Pair, B of <root>.Pair> origin=null
             CONST String type=kotlin.String value=")"
-  FUN name:compareTo visibility:public modality:FINAL <T> ($receiver:T of <root>.compareTo, _context_receiver_0:java.util.Comparator<T of <root>.compareTo>, other:T of <root>.compareTo) returnType:kotlin.Int [operator,infix]
+  FUN name:compareTo visibility:public modality:FINAL <T> ($receiver:T of <root>.compareTo, $context_receiver_0:java.util.Comparator<T of <root>.compareTo>, other:T of <root>.compareTo) returnType:kotlin.Int [operator,infix]
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     contextReceiverParametersCount: 1
     $receiver: VALUE_PARAMETER name:<this> type:T of <root>.compareTo
-    VALUE_PARAMETER name:_context_receiver_0 index:0 type:java.util.Comparator<T of <root>.compareTo>
+    VALUE_PARAMETER name:$context_receiver_0 index:0 type:java.util.Comparator<T of <root>.compareTo>
     VALUE_PARAMETER name:other index:1 type:T of <root>.compareTo
     BLOCK_BODY
-      RETURN type=kotlin.Nothing from='public final fun compareTo <T> (_context_receiver_0: java.util.Comparator<T of <root>.compareTo>, other: T of <root>.compareTo): kotlin.Int [operator,infix] declared in <root>'
+      RETURN type=kotlin.Nothing from='public final fun compareTo <T> ($context_receiver_0: java.util.Comparator<T of <root>.compareTo>, other: T of <root>.compareTo): kotlin.Int [operator,infix] declared in <root>'
         CALL 'public abstract fun compare (p0: @[FlexibleNullability] T of java.util.Comparator?, p1: @[FlexibleNullability] T of java.util.Comparator?): kotlin.Int declared in java.util.Comparator' type=kotlin.Int origin=null
-          $this: GET_VAR '_context_receiver_0: java.util.Comparator<T of <root>.compareTo> declared in <root>.compareTo' type=java.util.Comparator<T of <root>.compareTo> origin=null
+          $this: GET_VAR '$context_receiver_0: java.util.Comparator<T of <root>.compareTo> declared in <root>.compareTo' type=java.util.Comparator<T of <root>.compareTo> origin=null
           p0: GET_VAR '<this>: T of <root>.compareTo declared in <root>.compareTo' type=T of <root>.compareTo origin=null
           p1: GET_VAR 'other: T of <root>.compareTo declared in <root>.compareTo' type=T of <root>.compareTo origin=null
   PROPERTY name:min visibility:public modality:FINAL [val]
-    FUN name:<get-min> visibility:public modality:FINAL <T> ($receiver:<root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>>, _context_receiver_0:java.util.Comparator<T of <root>.<get-min>>) returnType:T of <root>.<get-min>
+    FUN name:<get-min> visibility:public modality:FINAL <T> ($receiver:<root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>>, $context_receiver_0:java.util.Comparator<T of <root>.<get-min>>) returnType:T of <root>.<get-min>
       correspondingProperty: PROPERTY name:min visibility:public modality:FINAL [val]
       TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
       contextReceiverParametersCount: 1
       $receiver: VALUE_PARAMETER name:<this> type:<root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>>
-      VALUE_PARAMETER name:_context_receiver_0 index:0 type:java.util.Comparator<T of <root>.<get-min>>
+      VALUE_PARAMETER name:$context_receiver_0 index:0 type:java.util.Comparator<T of <root>.<get-min>>
       BLOCK_BODY
-        RETURN type=kotlin.Nothing from='public final fun <get-min> <T> (_context_receiver_0: java.util.Comparator<T of <root>.<get-min>>): T of <root>.<get-min> declared in <root>'
+        RETURN type=kotlin.Nothing from='public final fun <get-min> <T> ($context_receiver_0: java.util.Comparator<T of <root>.<get-min>>): T of <root>.<get-min> declared in <root>'
           WHEN type=T of <root>.<get-min> origin=IF
             BRANCH
               if: CALL 'public final fun less (arg0: kotlin.Int, arg1: kotlin.Int): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=LT
-                arg0: CALL 'public final fun compareTo <T> (_context_receiver_0: java.util.Comparator<T of <root>.compareTo>, other: T of <root>.compareTo): kotlin.Int [operator,infix] declared in <root>' type=kotlin.Int origin=null
+                arg0: CALL 'public final fun compareTo <T> ($context_receiver_0: java.util.Comparator<T of <root>.compareTo>, other: T of <root>.compareTo): kotlin.Int [operator,infix] declared in <root>' type=kotlin.Int origin=null
                   <T>: T of <root>.<get-min>
                   $receiver: CALL 'public final fun <get-first> (): A of <root>.Pair declared in <root>.Pair' type=T of <root>.<get-min> origin=GET_PROPERTY
                     $this: GET_VAR '<this>: <root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>> declared in <root>.<get-min>' type=<root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>> origin=null
-                  _context_receiver_0: GET_VAR '_context_receiver_0: java.util.Comparator<T of <root>.<get-min>> declared in <root>.<get-min>' type=java.util.Comparator<T of <root>.<get-min>> origin=null
+                  $context_receiver_0: GET_VAR '$context_receiver_0: java.util.Comparator<T of <root>.<get-min>> declared in <root>.<get-min>' type=java.util.Comparator<T of <root>.<get-min>> origin=null
                   other: CALL 'public final fun <get-second> (): B of <root>.Pair declared in <root>.Pair' type=T of <root>.<get-min> origin=GET_PROPERTY
                     $this: GET_VAR '<this>: <root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>> declared in <root>.<get-min>' type=<root>.Pair<T of <root>.<get-min>, T of <root>.<get-min>> origin=null
                 arg1: CONST Int type=kotlin.Int value=0
@@ -236,11 +234,11 @@ FILE fqName:<root> fileName:/compareTo.kt
               $receiver: VALUE_PARAMETER name:$this$with type:java.util.Comparator<kotlin.String>
               BLOCK_BODY
                 RETURN type=kotlin.Nothing from='local final fun <anonymous> (): kotlin.String declared in <root>.box'
-                  CALL 'public final fun <get-min> <T> (_context_receiver_0: java.util.Comparator<T of <root>.<get-min>>): T of <root>.<get-min> declared in <root>' type=kotlin.String origin=GET_PROPERTY
+                  CALL 'public final fun <get-min> <T> ($context_receiver_0: java.util.Comparator<T of <root>.<get-min>>): T of <root>.<get-min> declared in <root>' type=kotlin.String origin=GET_PROPERTY
                     <T>: kotlin.String
                     $receiver: CONSTRUCTOR_CALL 'public constructor <init> (first: A of <root>.Pair, second: B of <root>.Pair) [primary] declared in <root>.Pair' type=<root>.Pair<kotlin.String, kotlin.String> origin=null
                       <class: A>: kotlin.String
                       <class: B>: kotlin.String
                       first: CONST String type=kotlin.String value="OK"
                       second: CONST String type=kotlin.String value="fail"
-                    _context_receiver_0: GET_VAR '$this$with: java.util.Comparator<kotlin.String> declared in <root>.box.<anonymous>' type=java.util.Comparator<kotlin.String> origin=null
+                    $context_receiver_0: GET_VAR '$this$with: java.util.Comparator<kotlin.String> declared in <root>.box.<anonymous>' type=java.util.Comparator<kotlin.String> origin=null

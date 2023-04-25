@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.backend.common.lower
-import org.jetbrains.kotlin.backend.konan.InteropBuiltIns
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
@@ -15,7 +14,6 @@ import org.jetbrains.kotlin.backend.konan.driver.utilities.getDefaultIrActions
 import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.lower.ExpectToActualDefaultValueCopier
 import org.jetbrains.kotlin.backend.konan.lower.SpecialBackendChecksTraversal
-import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
 import org.jetbrains.kotlin.backend.konan.makeEntryPoint
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -40,17 +38,16 @@ internal val SpecialBackendChecksPhase = createSimpleNamedCompilerPhase<PsiToIrC
         preactions = getDefaultIrActions(),
         postactions = getDefaultIrActions(),
 ) { context, input ->
-    SpecialBackendChecksTraversal(context, context.interopBuiltIns, input.symbols, input.irModule.irBuiltins).lower(input.irModule)
+    SpecialBackendChecksTraversal(context, input.symbols, input.irModule.irBuiltins).lower(input.irModule)
 }
 
 internal val K2SpecialBackendChecksPhase = createSimpleNamedCompilerPhase<PhaseContext, Fir2IrOutput>(
         "SpecialBackendChecks",
         "Special backend checks",
 ) { context, input ->
-    val moduleFragment = input.fir2irResult.irModuleFragment
+    val moduleFragment = input.irModuleFragment
     SpecialBackendChecksTraversal(
             context,
-            InteropBuiltIns(input.fir2irResult.pluginContext.moduleDescriptor.builtIns as KonanBuiltIns),
             input.symbols,
             moduleFragment.irBuiltins
     ).lower(moduleFragment)

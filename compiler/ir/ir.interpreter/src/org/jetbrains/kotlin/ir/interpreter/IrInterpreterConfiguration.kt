@@ -11,12 +11,14 @@ package org.jetbrains.kotlin.ir.interpreter
  * @param createNonCompileTimeObjects
  *      'true' - interpreter will construct object and initialize its properties despite the fact it is not marked as compile time;
  *      'false' - interpreter will create a representation of empty object, that can be used to get const properties
+ * @param treatFloatInSpecialWay interpret float const as if it was a double and avoid `toFloat` evaluation if possible
  */
 // TODO maybe create some sort of builder
-class IrInterpreterConfiguration(
+data class IrInterpreterConfiguration(
     val maxStack: Int = 10_000,
     val maxCommands: Int = 1_000_000,
     val createNonCompileTimeObjects: Boolean = false,
     val printOnlyExceptionMessage: Boolean = false,
     val collapseStackTraceFromJDK: Boolean = true,
+    val treatFloatInSpecialWay: Boolean = false,
 )

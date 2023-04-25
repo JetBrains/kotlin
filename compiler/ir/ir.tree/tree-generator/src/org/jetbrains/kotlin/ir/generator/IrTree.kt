@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.generator
 
 import com.squareup.kotlinpoet.FunSpec
+import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.MemberName
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -15,9 +16,11 @@ import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
 import org.jetbrains.kotlin.ir.generator.config.AbstractTreeBuilder
 import org.jetbrains.kotlin.ir.generator.config.ElementConfig
 import org.jetbrains.kotlin.ir.generator.config.ElementConfig.Category.*
+import org.jetbrains.kotlin.ir.generator.config.ListFieldConfig.Mutability.Array
 import org.jetbrains.kotlin.ir.generator.config.ListFieldConfig.Mutability.List
 import org.jetbrains.kotlin.ir.generator.config.ListFieldConfig.Mutability.Var
 import org.jetbrains.kotlin.ir.generator.config.SimpleFieldConfig
+import org.jetbrains.kotlin.ir.generator.model.Element.Companion.elementName2typeName
 import org.jetbrains.kotlin.ir.generator.print.toPoet
 import org.jetbrains.kotlin.ir.generator.util.*
 import org.jetbrains.kotlin.name.FqName
@@ -41,8 +44,21 @@ object IrTree : AbstractTreeBuilder() {
         transform = true
         transformByChildren = true
 
-        +field("startOffset", int, mutable = false)
-        +field("endOffset", int, mutable = false)
+        fun offsetField(prefix: String) = field(prefix + "Offset", int, mutable = false) {
+            kdoc = """
+            The $prefix offset of the syntax node from which this IR node was generated,
+            in number of characters from the start of the source file. If there is no source information for this IR node,
+            the [UNDEFINED_OFFSET] constant is used. In order to get the line number and the column number from this offset,
+            [IrFileEntry.getLineNumber] and [IrFileEntry.getColumnNumber] can be used.
+            
+            @see IrFileEntry.getSourceRangeInfo
+            """.trimIndent()
+        }
+
+        +offsetField("start")
+        +offsetField("end")
+
+        kDoc = "The root interface of the IR tree. Each IR node implements this interface."
     }
     val statement: ElementConfig by element(Other)
 
@@ -85,7 +101,25 @@ object IrTree : AbstractTreeBuilder() {
         +symbol(symbolType)
     }
     val metadataSourceOwner: ElementConfig by element(Declaration) {
-        +field("metadata", type(Packages.declarations, "MetadataSource"), nullable = true)
+        val metadataField = +field("metadata", type(Packages.declarations, "MetadataSource"), nullable = true) {
+            kdoc = """
+            The arbitrary metadata associated with this IR node.
+            
+            @see ${elementName2typeName(this@element.name)}
+            """.trimIndent()
+        }
+        kDoc = """
+        An [${elementName2typeName(rootElement.name)}] capable of holding something which backends can use to write
+        as the metadata for the declaration.
+        
+        Technically, it can even be ± an array of bytes, but right now it's usually the frontend representation of the declaration,
+        so a descriptor in case of K1, and [org.jetbrains.kotlin.fir.FirElement] in case of K2,
+        and the backend invokes a metadata serializer on it to obtain metadata and write it, for example, to `@kotlin.Metadata`
+        on JVM.
+        
+        In Kotlin/Native, [${metadataField.name}] is used to store some LLVM-related stuff in an IR declaration,
+        but this is only for performance purposes (before it was done using simple maps).
+        """.trimIndent()
     }
     val overridableMember: ElementConfig by element(Declaration) {
         parent(declaration)
@@ -167,10 +201,29 @@ object IrTree : AbstractTreeBuilder() {
             type<ValueClassRepresentation<*>>().withArgs(type(Packages.types, "IrSimpleType")),
             nullable = true,
         )
-        +listField("sealedSubclasses", classSymbolType, mutability = Var)
+        +listField("sealedSubclasses", classSymbolType, mutability = Var) {
+            kdoc = """
+            If this is a sealed class or interface, this list contains symbols of all its immediate subclasses.
+            Otherwise, this is an empty list.
+            
+            NOTE: If this [${elementName2typeName(this@element.name)}] was deserialized from a klib, this list will always be empty!
+            See [KT-54028](https://youtrack.jetbrains.com/issue/KT-54028).
+            """.trimIndent()
+        }
     }
     val attributeContainer: ElementConfig by element(Declaration) {
+        kDoc = """
+            Represents an IR element that can be copied, but must remember its original element. It is
+            useful, for example, to keep track of generated names for anonymous declarations.
+            @property attributeOwnerId original element before copying. Always satisfies the following
+              invariant: `this.attributeOwnerId == this.attributeOwnerId.attributeOwnerId`.
+            @property originalBeforeInline original element before inlining. Useful only with IR
+              inliner. `null` if the element wasn't inlined. Unlike [attributeOwnerId], doesn't have the
+              idempotence invariant and can contain a chain of declarations.
+        """.trimIndent()
+
         +field("attributeOwnerId", attributeContainer)
+        +field("originalBeforeInline", attributeContainer, nullable = true) // null <=> this element wasn't inlined
     }
     val anonymousInitializer: ElementConfig by element(Declaration) {
         visitorParent = declarationBase
@@ -496,6 +549,9 @@ object IrTree : AbstractTreeBuilder() {
         +field("attributeOwnerId", attributeContainer) {
             baseDefaultValue = code("this")
         }
+        +field("originalBeforeInline", attributeContainer, nullable = true) {
+            baseDefaultValue = code("null")
+        }
         +field("type", irTypeType)
     }
     val statementContainer: ElementConfig by element(Expression) {
@@ -538,7 +594,6 @@ object IrTree : AbstractTreeBuilder() {
         //diff: no accept
     }
     val memberAccessExpression: ElementConfig by element(Expression) {
-        suppressPrint = true //todo: generate this element too
         visitorParent = declarationReference
         visitorName = "memberAccess"
         transformerReturnType = rootElement
@@ -547,15 +602,69 @@ object IrTree : AbstractTreeBuilder() {
         parent(declarationReference)
 
         +field("dispatchReceiver", expression, nullable = true, isChild = true) {
-            baseDefaultValue = code("this")
+            baseDefaultValue = code("null")
         }
         +field("extensionReceiver", expression, nullable = true, isChild = true) {
-            baseDefaultValue = code("this")
+            baseDefaultValue = code("null")
         }
         +symbol(s)
         +field("origin", statementOriginType, nullable = true)
-        +field("typeArgumentsCount", int)
-        +field("typeArgumentsByIndex", type<Array<*>>(irTypeType.copy(nullable = true)))
+        +listField("valueArguments", expression.copy(nullable = true), mutability = Array, isChild = true) {
+            generationCallback = {
+                addModifiers(KModifier.PROTECTED)
+            }
+        }
+        +listField("typeArguments", irTypeType.copy(nullable = true), mutability = Array) {
+            generationCallback = {
+                addModifiers(KModifier.PROTECTED)
+            }
+        }
+
+        val checkArgumentSlotAccess = MemberName("org.jetbrains.kotlin.ir.expressions", "checkArgumentSlotAccess", true)
+        generationCallback = {
+            addFunction(
+                FunSpec.builder("getValueArgument")
+                    .addParameter("index", int.toPoet())
+                    .returns(expression.toPoet().copy(nullable = true))
+                    .addCode("%M(\"value\", index, valueArguments.size)\n", checkArgumentSlotAccess)
+                    .addCode("return valueArguments[index]")
+                    .build()
+            )
+            addFunction(
+                FunSpec.builder("getTypeArgument")
+                    .addParameter("index", int.toPoet())
+                    .returns(irTypeType.toPoet().copy(nullable = true))
+                    .addCode("%M(\"type\", index, typeArguments.size)\n", checkArgumentSlotAccess)
+                    .addCode("return typeArguments[index]")
+                    .build()
+            )
+            addFunction(
+                FunSpec.builder("putValueArgument")
+                    .addParameter("index", int.toPoet())
+                    .addParameter("valueArgument", expression.toPoet().copy(nullable = true))
+                    .addCode("%M(\"value\", index, valueArguments.size)\n", checkArgumentSlotAccess)
+                    .addCode("valueArguments[index] = valueArgument")
+                    .build()
+            )
+            addFunction(
+                FunSpec.builder("putTypeArgument")
+                    .addParameter("index", int.toPoet())
+                    .addParameter("type", irTypeType.toPoet().copy(nullable = true))
+                    .addCode("%M(\"type\", index, typeArguments.size)\n", checkArgumentSlotAccess)
+                    .addCode("typeArguments[index] = type")
+                    .build()
+            )
+            addProperty(
+                PropertySpec.builder("valueArgumentsCount", int.toPoet())
+                    .getter(FunSpec.getterBuilder().addCode("return valueArguments.size").build())
+                    .build()
+            )
+            addProperty(
+                PropertySpec.builder("typeArgumentsCount", int.toPoet())
+                    .getter(FunSpec.getterBuilder().addCode("return typeArguments.size").build())
+                    .build()
+            )
+        }
     }
     val functionAccessExpression: ElementConfig by element(Expression) {
         visitorParent = memberAccessExpression
@@ -641,7 +750,12 @@ object IrTree : AbstractTreeBuilder() {
         parent(returnTarget)
 
         +symbol(returnableBlockSymbolType)
-        +field("inlineFunctionSymbol", functionSymbolType, nullable = true)
+    }
+    val inlinedFunctionBlock: ElementConfig by element(Expression) {
+        parent(block)
+
+        +field("inlineCall", functionAccessExpression)
+        +field("inlinedElement", rootElement)
     }
     val syntheticBody: ElementConfig by element(Expression) {
         visitorParent = body

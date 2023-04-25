@@ -12,9 +12,30 @@ import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.symbols.IrFileSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
 
+/**
+ * Something capable of computing an [IdSignature] for an [IrDeclaration].
+ */
 interface IdSignatureComputer {
+
+    /**
+     * Computes a signature of [declaration].
+     *
+     * @param declaration The declaration to compute the signature for.
+     * @return The signature of the [declaration], or `null` if the declaration cannot have a signature (for example,
+     * because it is not exportable according to [org.jetbrains.kotlin.backend.common.serialization.mangle.KotlinExportChecker]).
+     */
     fun computeSignature(declaration: IrDeclaration): IdSignature?
 
+    /**
+     * Informs the signature computer that all signature computations for top-level private declarations within [block] will use
+     * the [file]'s signature (a signature for a top-level private declaration should always contain a signature of the file this
+     * declaration is declared in).
+     *
+     * @param file A symbol of the file for declarations in which signatures will be computed in [block], or `null` if the declarations
+     * won't have a file associated (like some compiler generated declarations).
+     * @param block A block within which signatures computed for private declarations will include [file]'s signature.
+     * @see [IdSignature.FileSignature]
+     */
     fun inFile(file: IrFileSymbol?, block: () -> Unit)
 }
 

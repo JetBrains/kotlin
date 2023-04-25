@@ -2,29 +2,12 @@ plugins {
     base
 }
 
-val isTeamcityBuild = project.hasProperty("teamcity.version")
-
-// kotlin/libraries/tools/kotlin-stdlib-docs  ->  kotlin
-val kotlinRootDir = rootProject.file("../../../").absoluteFile.invariantSeparatorsPath
-val kotlinLibsDir = "$buildDir/libs"
-
-val githubRevision = if (isTeamcityBuild) project.property("githubRevision") else "master"
-val kotlinVersion = if (isTeamcityBuild) project.property("deployVersion") as String else defaultSnapshotVersion()
-val repo = if (isTeamcityBuild) project.property("kotlinLibsRepo") as String else "$kotlinRootDir/build/repo"
-
-fun defaultSnapshotVersion(): String = file(kotlinRootDir).resolve("gradle.properties").inputStream().use { stream ->
-    java.util.Properties().apply { load(stream) }["defaultSnapshotVersion"] as String
-}
-
-println("# Parameters summary:")
-println("    isTeamcityBuild: $isTeamcityBuild")
-println("    githubRevision: $githubRevision")
-println("    kotlinVersion: $kotlinVersion")
-println("    dokkaVersion: ${property("dokka_version")}")
-println("    repo: $repo")
+val artifactsVersion: String by project
+val artifactsRepo: String by project
+val kotlin_libs: String by project
 
 repositories {
-    maven(url = repo)
+    maven(url = artifactsRepo)
     mavenCentral()
 }
 
@@ -56,19 +39,16 @@ modules.forEach { module ->
     }
 
     dependencies {
-        library(group = "org.jetbrains.kotlin", name = module, version = kotlinVersion)
+        library(group = "org.jetbrains.kotlin", name = module, version = artifactsVersion)
     }
 
     val libsTask = tasks.register<Sync>("extract_lib_$module") {
         dependsOn(library)
 
         from({ library })
-        into("$kotlinLibsDir/$module")
+        into("$kotlin_libs/$module")
     }
 
     extractLibs.configure { dependsOn(libsTask) }
 }
 
-project.ext["github_revision"] = githubRevision
-project.ext["kotlin_root"] = kotlinRootDir
-project.ext["kotlin_libs"] = kotlinLibsDir

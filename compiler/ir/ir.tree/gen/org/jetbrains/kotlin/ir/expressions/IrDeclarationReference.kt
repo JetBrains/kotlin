@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 
 /**
  * A non-leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.declarationReference
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.declarationReference]
  */
 abstract class IrDeclarationReference : IrExpression() {
     abstract val symbol: IrSymbol

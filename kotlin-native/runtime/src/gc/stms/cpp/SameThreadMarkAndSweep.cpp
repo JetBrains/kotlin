@@ -44,6 +44,13 @@ struct FinalizeTraits {
     using ObjectFactory = mm::ObjectFactory<gc::SameThreadMarkAndSweep>;
 };
 
+struct ProcessWeaksTraits {
+    static bool IsMarked(ObjHeader* obj) noexcept {
+        auto& objectData = mm::ObjectFactory<gc::SameThreadMarkAndSweep>::NodeRef::From(obj).ObjectData();
+        return objectData.marked();
+    }
+};
+
 // Global, because it's accessed on a hot path: avoid memory load from `this`.
 std::atomic<gc::SameThreadMarkAndSweep::SafepointFlag> gSafepointFlag = gc::SameThreadMarkAndSweep::SafepointFlag::kNone;
 
@@ -58,6 +65,7 @@ void gc::SameThreadMarkAndSweep::ThreadData::SafePointAllocation(size_t size) no
 }
 
 void gc::SameThreadMarkAndSweep::ThreadData::ScheduleAndWaitFullGC() noexcept {
+    RuntimeLogInfo({kTagGC}, "Scheduling GC manually");
     auto didGC = gc_.PerformFullGC();
 
     if (!didGC) {
@@ -129,7 +137,10 @@ bool gc::SameThreadMarkAndSweep::PerformFullGC() noexcept {
 
         gc::Mark<internal::MarkTraits>(gcHandle, markQueue_);
         auto markStats = gcHandle.getMarked();
-        scheduler.gcData().UpdateAliveSetBytes(markStats.totalObjectsSize);
+        scheduler.gcData().UpdateAliveSetBytes(markStats.markedSizeBytes);
+
+        gc::processWeaks<ProcessWeaksTraits>(gcHandle, mm::SpecialRefRegistry::instance());
+
         gc::SweepExtraObjects<SweepTraits>(gcHandle, extraObjectsDataFactory);
         finalizerQueue = gc::Sweep<SweepTraits>(gcHandle, objectFactory_);
 

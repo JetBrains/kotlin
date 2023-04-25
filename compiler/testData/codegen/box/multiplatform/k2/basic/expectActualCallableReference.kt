@@ -1,4 +1,4 @@
-// TARGET_BACKEND: JVM_IR
+// IGNORE_BACKEND_K1: JS, JS_IR, JS_IR_ES6, NATIVE
 // !LANGUAGE: +MultiPlatformProjects
 
 // MODULE: common
@@ -11,9 +11,8 @@ expect fun ret(): R
 
 fun foo() = ::ret
 
-// MODULE: main()()(common)
-// TARGET_PLATFORM: JVM
-// FILE: main.kt
+// MODULE: platform()()(common)
+// FILE: platform.kt
 
 actual fun ret(): R = "OK"
 

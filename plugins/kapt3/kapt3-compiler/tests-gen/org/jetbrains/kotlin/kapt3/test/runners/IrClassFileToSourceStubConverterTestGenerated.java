@@ -158,6 +158,12 @@ public class IrClassFileToSourceStubConverterTestGenerated extends AbstractIrCla
     }
 
     @Test
+    @TestMetadata("delegationAndCompanionObject.kt")
+    public void testDelegationAndCompanionObject() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/delegationAndCompanionObject.kt");
+    }
+
+    @Test
     @TestMetadata("deprecated.kt")
     public void testDeprecated() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/deprecated.kt");
@@ -608,6 +614,12 @@ public class IrClassFileToSourceStubConverterTestGenerated extends AbstractIrCla
     }
 
     @Test
+    @TestMetadata("superConstructorCall.kt")
+    public void testSuperConstructorCall() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/superConstructorCall.kt");
+    }
+
+    @Test
     @TestMetadata("suspendArgName.kt")
     public void testSuspendArgName() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/suspendArgName.kt");
@@ -629,6 +641,12 @@ public class IrClassFileToSourceStubConverterTestGenerated extends AbstractIrCla
     @TestMetadata("topLevel.kt")
     public void testTopLevel() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/topLevel.kt");
+    }
+
+    @Test
+    @TestMetadata("unresolvedDelegateExpression.kt")
+    public void testUnresolvedDelegateExpression() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/unresolvedDelegateExpression.kt");
     }
 
     @Test

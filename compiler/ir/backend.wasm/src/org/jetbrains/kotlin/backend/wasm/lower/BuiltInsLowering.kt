@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.ir.backend.js.lower.calls.EnumIntrinsicsUtils
 import org.jetbrains.kotlin.ir.backend.js.utils.erasedUpperBound
 import org.jetbrains.kotlin.ir.backend.js.utils.isEqualsInheritedFromAny
 import org.jetbrains.kotlin.ir.builders.*
@@ -149,29 +150,38 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
                 return irCall(call, newSymbol, argumentsAsReceivers = true)
             }
             symbols.reflectionSymbols.getClassData -> {
-                val infoDataCtor = symbols.reflectionSymbols.wasmTypeInfoData.constructors.first()
                 val type = call.getTypeArgument(0)!!
-                val isInterface = type.isInterface()
-                val fqName = type.classFqName!!
-                val fqnShouldBeEmitted =
-                    context.configuration.languageVersionSettings.getFlag(AnalysisFlags.allowFullyQualifiedNameInKClass)
-                val packageName = if (fqnShouldBeEmitted) fqName.parentOrNull()?.asString() ?: "" else ""
-                val typeName = fqName.shortName().asString()
+                val klass = type.classOrNull?.owner ?: error("Invalid type")
 
-                return with(builder) {
-                    val wasmIdGetter = if (type.isInterface()) symbols.wasmInterfaceId else symbols.wasmClassId
-                    val typeId = irCall(wasmIdGetter).also {
-                        it.putTypeArgument(0, type)
-                    }
+                val typeId = builder.irCall(symbols.wasmTypeId).also {
+                    it.putTypeArgument(0, type)
+                }
 
-                    irCallConstructor(infoDataCtor, emptyList()).also {
+                if (!klass.isInterface) {
+                    return builder.irCall(context.wasmSymbols.reflectionSymbols.getTypeInfoTypeDataByPtr).also {
                         it.putValueArgument(0, typeId)
-                        it.putValueArgument(1, isInterface.toIrConst(context.irBuiltIns.booleanType))
-                        it.putValueArgument(2, packageName.toIrConst(context.irBuiltIns.stringType))
-                        it.putValueArgument(3, typeName.toIrConst(context.irBuiltIns.stringType))
+                    }
+                } else {
+                    val infoDataCtor = symbols.reflectionSymbols.wasmTypeInfoData.constructors.first()
+                    val fqName = type.classFqName!!
+                    val fqnShouldBeEmitted =
+                        context.configuration.languageVersionSettings.getFlag(AnalysisFlags.allowFullyQualifiedNameInKClass)
+                    val packageName = if (fqnShouldBeEmitted) fqName.parentOrNull()?.asString() ?: "" else ""
+                    val typeName = fqName.shortName().asString()
+
+                    return with(builder) {
+                        irCallConstructor(infoDataCtor, emptyList()).also {
+                            it.putValueArgument(0, typeId)
+                            it.putValueArgument(1, packageName.toIrConst(context.irBuiltIns.stringType))
+                            it.putValueArgument(2, typeName.toIrConst(context.irBuiltIns.stringType))
+                        }
                     }
                 }
             }
+            symbols.enumValueOfIntrinsic ->
+                return EnumIntrinsicsUtils.transformEnumValueOfIntrinsic(call)
+            symbols.enumValuesIntrinsic ->
+                return EnumIntrinsicsUtils.transformEnumValuesIntrinsic(call)
         }
 
         return call

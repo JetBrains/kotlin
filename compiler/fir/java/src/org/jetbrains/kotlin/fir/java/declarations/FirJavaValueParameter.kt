@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -33,8 +33,7 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
     override val source: KtSourceElement?,
     override val moduleData: FirModuleData,
     override val origin: FirDeclarationOrigin.Java,
-    @Volatile
-    override var resolvePhase: FirResolvePhase,
+    resolvePhase: FirResolvePhase,
     override val attributes: FirDeclarationAttributes,
     override var returnTypeRef: FirTypeRef,
     override val name: Name,
@@ -46,6 +45,9 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
 ) : FirValueParameter() {
     init {
         symbol.bind(this)
+
+        @OptIn(ResolveStateAccess::class)
+        this.resolveState = resolvePhase.asResolveState()
     }
 
     override val isCrossinline: Boolean
@@ -161,10 +163,6 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
 
     override fun <D> transformStatus(transformer: FirTransformer<D>, data: D): FirValueParameter {
         return this
-    }
-
-    override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
-        resolvePhase = newResolvePhase
     }
 
     override fun replaceReturnTypeRef(newReturnTypeRef: FirTypeRef) {

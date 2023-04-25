@@ -180,13 +180,13 @@ fun case_15(x: TypealiasNullableString) {
 fun case_16() {
     val x: TypealiasNullableNothing = null
 
-    if (x == null || false || false || false) {
+    if (<!SENSELESS_COMPARISON!>x == null<!> || false || false || false) {
         <!DEBUG_INFO_EXPRESSION_TYPE("TypealiasNullableNothing")!>x<!>
     }
 }
 
 // TESTCASE NUMBER: 17
-val case_17 = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>if (nullableIntProperty !== null) 0 else {
+val case_17 = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING!>nullableIntProperty !== null<!>) 0 else {
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>nullableIntProperty<!>
 }<!>
 
@@ -296,7 +296,7 @@ fun case_25(b: Boolean) {
 }
 
 // TESTCASE NUMBER: 26
-fun case_26(a: Int?, b: Int? = if (a !== null) 0 else <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>a<!>) {
+fun case_26(a: Int?, b: Int? = if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING!>a !== null<!>) 0 else <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Nothing?")!>a<!>) {
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>a<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>b<!>
 }

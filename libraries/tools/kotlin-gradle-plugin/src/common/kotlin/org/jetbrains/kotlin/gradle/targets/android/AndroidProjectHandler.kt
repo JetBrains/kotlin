@@ -26,7 +26,7 @@ import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.api.tasks.compile.AbstractCompile
 import org.gradle.api.tasks.compile.JavaCompile
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
+import org.jetbrains.kotlin.gradle.internal.*
 import org.jetbrains.kotlin.gradle.internal.checkAndroidAnnotationProcessorDependencyUsage
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.plugin.android.AndroidGradleWrapper
@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.android.KotlinAndroidSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.android.findKotlinSourceSet
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
+import org.jetbrains.kotlin.gradle.tasks.configuration.KaptGenerateStubsConfig
 import org.jetbrains.kotlin.gradle.tasks.configuration.KotlinCompileConfig
 import org.jetbrains.kotlin.gradle.tasks.thisTaskProvider
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
@@ -46,7 +47,6 @@ import java.io.File
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.io.Serializable
-import java.util.concurrent.Callable
 
 internal class AndroidProjectHandler(
     private val kotlinTasksProvider: KotlinTasksProvider
@@ -58,14 +58,6 @@ internal class AndroidProjectHandler(
         val ext = project.extensions.getByName("android") as BaseExtension
 
         applyKotlinAndroidSourceSetLayout(kotlinAndroidTarget)
-
-        val androidExtensionCompilerOptions = project.objects.newInstance<KotlinJvmCompilerOptionsDefault>()
-        androidExtensionCompilerOptions.noJdk.value(true).finalizeValueOnRead()
-        @Suppress("DEPRECATION") val kotlinOptions = object : KotlinJvmOptions {
-            override val options: KotlinJvmCompilerOptions
-                get() = androidExtensionCompilerOptions
-        }
-        ext.addExtension(KOTLIN_OPTIONS_DSL_NAME, kotlinOptions)
 
         val plugin = androidPluginIds
             .asSequence()
@@ -84,11 +76,6 @@ internal class AndroidProjectHandler(
             // handlers might break when fired on a compilation that is not yet properly configured (e.g. KT-29964):
             compilationFactory.create(variantName).let { compilation ->
                 setUpDependencyResolution(variant, compilation)
-                project.wireExtensionOptionsToCompilation(
-                    androidExtensionCompilerOptions,
-                    compilation.compilerOptions.options as KotlinJvmCompilerOptions
-                )
-
                 preprocessVariant(variant, compilation, project, kotlinTasksProvider)
 
                 @Suppress("UNCHECKED_CAST")
@@ -113,38 +100,6 @@ internal class AndroidProjectHandler(
         project.includeKotlinToolingMetadataInApk()
 
         addAndroidUnitTestTasksAsDependenciesToAllTest(project)
-    }
-
-    private fun Project.wireExtensionOptionsToCompilation(
-        extensionCompilerOptions: KotlinJvmCompilerOptions,
-        compilationCompilerOptions: KotlinJvmCompilerOptions
-    ) {
-        // CompilerCommonToolOptions
-        compilationCompilerOptions.allWarningsAsErrors.convention(extensionCompilerOptions.allWarningsAsErrors)
-        compilationCompilerOptions.suppressWarnings.convention(extensionCompilerOptions.suppressWarnings)
-        compilationCompilerOptions.verbose.convention(extensionCompilerOptions.verbose)
-        compilationCompilerOptions.freeCompilerArgs.addAll(extensionCompilerOptions.freeCompilerArgs)
-
-        // CompilerCommonOptions
-        compilationCompilerOptions.apiVersion.convention(extensionCompilerOptions.apiVersion)
-        compilationCompilerOptions.languageVersion.convention(extensionCompilerOptions.languageVersion)
-        compilationCompilerOptions.useK2.convention(extensionCompilerOptions.useK2)
-
-        // CompilerJvmOptions
-        compilationCompilerOptions.javaParameters.convention(extensionCompilerOptions.javaParameters)
-        compilationCompilerOptions.noJdk.value(extensionCompilerOptions.noJdk).finalizeValue()
-
-        // Special handling of jvmTarget to correctly override convention set by DefaultJavaToolchainSetter
-        // plus for 'moduleName' which could be overriden either by compilation or by task itself
-        // TODO: fix it once proper extension DSL will be available
-        afterEvaluate {
-            if (extensionCompilerOptions.jvmTarget.isPresent) {
-                compilationCompilerOptions.jvmTarget.set(extensionCompilerOptions.jvmTarget)
-            }
-            if (extensionCompilerOptions.moduleName.isPresent) {
-                compilationCompilerOptions.moduleName.set(extensionCompilerOptions.moduleName)
-            }
-        }
     }
 
     /**
@@ -231,12 +186,21 @@ internal class AndroidProjectHandler(
             task.destinationDirectory.set(project.layout.buildDirectory.dir("tmp/kotlin-classes/$variantDataName"))
             task.description = "Compiles the $variantDataName kotlin."
         }
-        tasksProvider.registerKotlinJVMTask(
+        val kotlinTask = tasksProvider.registerKotlinJVMTask(
             project,
             compilation.compileKotlinTaskName,
             compilation.compilerOptions.options as KotlinJvmCompilerOptions,
             configAction
         )
+
+        // Need to move it into afterEvaluate, so it will be executed after KaptGenerateStubsConfig config actions
+        // Otherwise build will fail within AbstractKotlinCompileConfig trying to modify value with 'disallowChanges()' state
+        project.afterEvaluate {
+            KaptGenerateStubsConfig.configureUseModuleDetection(
+                project,
+                kotlinTask
+            ) { value(true).disallowChanges() }
+        }
 
         // Register the source only after the task is created, because the task is required for that:
         compilation.source(defaultSourceSet)
@@ -295,10 +259,22 @@ internal class AndroidProjectHandler(
         kotlinTask.configure { kotlinTaskInstance ->
             kotlinTaskInstance.libraries
                 .from(variantData.getCompileClasspath(preJavaClasspathKey))
-                .from(Callable { AndroidGradleWrapper.getRuntimeJars(androidPlugin, androidExt) })
+                .from({ AndroidGradleWrapper.getRuntimeJars(androidPlugin, androidExt) })
 
             kotlinTaskInstance.javaOutputDir.set(javaTask.flatMap { it.destinationDirectory })
         }
+
+        KaptGenerateStubsConfig.configureLibraries(
+            project,
+            kotlinTask,
+            variantData.getCompileClasspath(preJavaClasspathKey),
+            { AndroidGradleWrapper.getRuntimeJars(androidPlugin, androidExt) }
+        )
+        KaptGenerateStubsConfig.wireJavaAndKotlinOutputs(
+            project,
+            javaTask,
+            kotlinTask
+        )
 
         // Find the classpath entries that come from the tested variant and register them as the friend paths, lazily
         val originalArtifactCollection = variantData.getCompileClasspathArtifacts(preJavaClasspathKey)
@@ -351,7 +327,7 @@ internal class AndroidProjectHandler(
             project.addExtendsFromRelation(name, compilation.runtimeDependencyConfigurationName)
         }
 
-        val buildTypeAttrValue = project.objects.named(BuildTypeAttr::class.java, variant.buildType.name)
+        val buildTypeAttrValue = project.objects.named<BuildTypeAttr>(variant.buildType.name)
         listOf(compilation.compileDependencyConfigurationName, compilation.runtimeDependencyConfigurationName).forEach {
             project.configurations.findByName(it)?.attributes?.attribute(Attribute.of(BuildTypeAttr::class.java), buildTypeAttrValue)
         }

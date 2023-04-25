@@ -16,7 +16,7 @@
 
 package org.jetbrains.benchmarksLauncher
 
-import kotlin.native.internal.GC
+import kotlin.native.runtime.GC
 import platform.posix.*
 import kotlinx.cinterop.*
 
@@ -39,6 +39,7 @@ actual inline fun measureNanoTime(block: () -> Unit): Long {
     return kotlin.system.measureNanoTime(block)
 }
 
+@OptIn(kotlin.native.runtime.NativeRuntimeApi::class)
 actual fun cleanup() {
     GC.collect()
 }

@@ -6,73 +6,94 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.isEnumEntry
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
-import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.resolve.dfa.coneType
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
+import org.jetbrains.kotlin.fir.expressions.allReceiverExpressions
+import org.jetbrains.kotlin.fir.expressions.toReference
+import org.jetbrains.kotlin.fir.references.FirThisReference
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.CFGNodeWithSubgraphs
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.ControlFlowGraph
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.FunctionCallNode
+import org.jetbrains.kotlin.fir.resolve.dfa.cfg.QualifiedAccessNode
+import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.types.coneType
-import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
 
-object FirEnumCompanionInEnumConstructorCallChecker : FirEnumEntryChecker() {
-    override fun check(declaration: FirEnumEntry, context: CheckerContext, reporter: DiagnosticReporter) {
-        val enumClass = context.containingDeclarations.lastIsInstanceOrNull<FirRegularClass>() ?: return
-        if (enumClass.classKind != ClassKind.ENUM_CLASS) return
-        val companionOfEnumSymbol = enumClass.companionObjectSymbol ?: return
-        val initializerObject = (declaration.initializer as? FirAnonymousObjectExpression)?.anonymousObject ?: return
-        val delegatingConstructorCall = initializerObject.primaryConstructorIfAny(context.session)?.resolvedDelegatedConstructorCall ?: return
-        val visitor = Visitor(context, reporter, companionOfEnumSymbol)
-        delegatingConstructorCall.argumentList.acceptChildren(visitor)
+object FirEnumCompanionInEnumConstructorCallChecker : FirClassChecker() {
+    override fun check(declaration: FirClass, context: CheckerContext, reporter: DiagnosticReporter) {
+        val enumClass = when (declaration.classKind) {
+            ClassKind.ENUM_CLASS -> declaration as FirRegularClass
+            ClassKind.ENUM_ENTRY -> context.containingDeclarations.lastIsInstanceOrNull()
+            else -> null
+        } ?: return
+        val companionOfEnum = enumClass.companionObjectSymbol ?: return
+        val graph = declaration.controlFlowGraphReference?.controlFlowGraph ?: return
+        analyzeGraph(graph, companionOfEnum, context, reporter)
+        if (declaration.classKind.isEnumEntry) {
+            val constructor = declaration.declarations.firstIsInstanceOrNull<FirPrimaryConstructor>()
+            val constructorGraph = constructor?.controlFlowGraphReference?.controlFlowGraph
+            if (constructorGraph != null) {
+                analyzeGraph(constructorGraph, companionOfEnum, context, reporter)
+            }
+        }
     }
 
-    private class Visitor(
-        val context: CheckerContext,
-        val reporter: DiagnosticReporter,
-        val companionSymbol: FirRegularClassSymbol
-    ) : FirVisitorVoid() {
-        override fun visitElement(element: FirElement) {
-            element.acceptChildren(this)
-        }
-
-        override fun visitFunctionCall(functionCall: FirFunctionCall) {
-            val needVisitReceiver = checkQualifiedAccess(functionCall)
-            functionCall.argumentList.acceptChildren(this)
-            if (needVisitReceiver) {
-                functionCall.explicitReceiver?.accept(this)
+    private fun analyzeGraph(
+        graph: ControlFlowGraph,
+        companionSymbol: FirRegularClassSymbol,
+        context: CheckerContext,
+        reporter: DiagnosticReporter
+    ) {
+        for (node in graph.nodes) {
+            if (node is CFGNodeWithSubgraphs) {
+                for (subGraph in node.subGraphs) {
+                    when (subGraph.kind) {
+                        ControlFlowGraph.Kind.AnonymousFunctionCalledInPlace,
+                        ControlFlowGraph.Kind.PropertyInitializer,
+                        ControlFlowGraph.Kind.ClassInitializer -> analyzeGraph(subGraph, companionSymbol, context, reporter)
+                        ControlFlowGraph.Kind.Class -> {
+                            if (subGraph.declaration is FirAnonymousObject) {
+                                analyzeGraph(subGraph, companionSymbol, context, reporter)
+                            }
+                        }
+                        else -> {}
+                    }
+                }
+            }
+            val qualifiedAccess = when (node) {
+                is QualifiedAccessNode -> node.fir
+                is FunctionCallNode -> node.fir
+                else -> continue
+            }
+            val matchingReceiver = qualifiedAccess.allReceiverExpressions
+                .firstOrNull { it.getClassSymbol(context.session) == companionSymbol }
+            if (matchingReceiver != null) {
+                reporter.reportOn(
+                    matchingReceiver.source ?: qualifiedAccess.source,
+                    FirErrors.UNINITIALIZED_ENUM_COMPANION,
+                    companionSymbol,
+                    context
+                )
             }
         }
+    }
 
-        override fun visitPropertyAccessExpression(propertyAccessExpression: FirPropertyAccessExpression) {
-            val needVisitReceiver = checkQualifiedAccess(propertyAccessExpression)
-            if (needVisitReceiver) {
-                propertyAccessExpression.explicitReceiver?.accept(this)
+    private fun FirExpression.getClassSymbol(session: FirSession): FirRegularClassSymbol? {
+        return when (this) {
+            is FirResolvedQualifier -> {
+                this.typeRef.toRegularClassSymbol(session)
             }
-        }
-
-
-        private fun checkQualifiedAccess(expression: FirQualifiedAccessExpression): Boolean {
-            val companionReceiver = checkReceiver(expression.extensionReceiver)
-                ?: checkReceiver(expression.dispatchReceiver)
-                ?: return true
-
-            val source = companionReceiver.source ?: expression.source
-            reporter.reportOn(source, FirErrors.UNINITIALIZED_ENUM_COMPANION, companionSymbol, context)
-            return false
-        }
-
-        private fun checkReceiver(receiverExpression: FirExpression): FirExpression? {
-            if (receiverExpression !is FirResolvedQualifier && receiverExpression !is FirThisReceiverExpression) return null
-            val receiverSymbol = receiverExpression.typeRef.coneType.toRegularClassSymbol(context.session) ?: return null
-            return receiverExpression.takeIf { receiverSymbol == companionSymbol }
-        }
+            else -> (this.toReference() as? FirThisReference)?.boundSymbol
+        } as? FirRegularClassSymbol
     }
 }

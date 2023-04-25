@@ -7,10 +7,18 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.ir.backend.js.export.TypeScriptFragment
 import org.jetbrains.kotlin.ir.backend.js.export.toTypeScript
+import org.jetbrains.kotlin.js.backend.ast.ESM_EXTENSION
 import org.jetbrains.kotlin.js.backend.ast.JsProgram
+import org.jetbrains.kotlin.js.backend.ast.REGULAR_EXTENSION
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import java.io.File
 import java.nio.file.Files
+
+val ModuleKind.extension: String
+    get() = when (this) {
+        ModuleKind.ES -> ESM_EXTENSION
+        else -> REGULAR_EXTENSION
+    }
 
 abstract class CompilationOutputs {
     var dependencies: Collection<Pair<String, CompilationOutputs>> = emptyList()
@@ -35,10 +43,10 @@ abstract class CompilationOutputs {
         }
 
         dependencies.forEach { (name, content) ->
-            outputDir.resolve("$name.js").writeAsJsFile(content)
+            outputDir.resolve("$name${moduleKind.extension}").writeAsJsFile(content)
         }
 
-        val outputJsFile = outputDir.resolve("$outputName.js")
+        val outputJsFile = outputDir.resolve("$outputName${moduleKind.extension}")
         outputJsFile.writeAsJsFile(this)
 
         if (genDTS) {

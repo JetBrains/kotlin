@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationToRunnableFiles
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetComponent
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsageContext.MavenScope
 import org.jetbrains.kotlin.gradle.utils.getValue
 
@@ -151,6 +152,10 @@ private fun associateDependenciesWithActualModuleDependencies(
                     val dependencyProject = dependency.dependencyProject
                     val dependencyProjectKotlinExtension = dependencyProject.multiplatformExtensionOrNull
                         ?: return@associate noMapping
+
+                    // Non-default publication layouts are not supported for pom rewriting
+                    if (!dependencyProject.kotlinPropertiesProvider.createDefaultMultiplatformPublications)
+                        return@associate noMapping
 
                     val resolved = resolvedDependencies[Triple(dependency.group!!, dependency.name, dependency.version!!)]
                         ?: return@associate noMapping

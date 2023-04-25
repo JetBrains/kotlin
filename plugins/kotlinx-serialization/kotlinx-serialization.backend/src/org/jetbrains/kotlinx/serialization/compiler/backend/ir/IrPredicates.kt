@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.isJs
+import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationPluginContext
 import org.jetbrains.kotlinx.serialization.compiler.fir.SerializationPluginKey
@@ -186,7 +187,7 @@ fun IrClass.findSerializableSyntheticConstructor(): IrConstructorSymbol? {
 }
 
 internal fun IrClass.needSerializerFactory(compilerContext: SerializationPluginContext): Boolean {
-    if (!(compilerContext.platform?.isNative() == true || compilerContext.platform.isJs())) return false
+    if (!(compilerContext.platform?.isNative() == true || compilerContext.platform.isJs() || compilerContext.platform.isWasm())) return false
     val serializableClass = getSerializableClassDescriptorByCompanion(this) ?: return false
     if (serializableClass.isSerializableObject) return true
     if (serializableClass.isSerializableEnum()) return true

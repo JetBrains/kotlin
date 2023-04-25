@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
 import org.jetbrains.kotlin.fir.resolve.*
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirDefaultStarImportingScope
 import org.jetbrains.kotlin.fir.scopes.impl.importedFromObjectOrStaticData
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.HidesMembers
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -73,6 +75,7 @@ class MemberScopeTowerLevel(
     private val bodyResolveComponents: BodyResolveComponents,
     val dispatchReceiverValue: ReceiverValue,
     private val givenExtensionReceiverOptions: List<ReceiverValue>,
+    private val skipSynthetics: Boolean,
 ) : TowerScopeLevel() {
     private val scopeSession: ScopeSession get() = bodyResolveComponents.scopeSession
     private val session: FirSession get() = bodyResolveComponents.session
@@ -116,7 +119,7 @@ class MemberScopeTowerLevel(
             )
         }
 
-        if (givenExtensionReceiverOptions.isEmpty()) {
+        if (givenExtensionReceiverOptions.isEmpty() && !skipSynthetics) {
             val dispatchReceiverType = dispatchReceiverValue.type
 
             val useSiteForSyntheticScope: FirTypeScope
@@ -147,7 +150,9 @@ class MemberScopeTowerLevel(
                 session,
                 typeForSyntheticScope,
                 useSiteForSyntheticScope,
+                bodyResolveComponents.returnTypeCalculator,
             )
+
             withSynthetic?.processScopeMembers { symbol ->
                 empty = false
                 output.consumeCandidate(
@@ -290,7 +295,7 @@ class ContextReceiverGroupMemberScopeTowerLevel(
     givenExtensionReceiverOptions: List<ReceiverValue> = emptyList(),
 ) : TowerScopeLevel() {
     private val memberScopeLevels = contextReceiverGroup.map {
-        MemberScopeTowerLevel(bodyResolveComponents, it, givenExtensionReceiverOptions)
+        MemberScopeTowerLevel(bodyResolveComponents, it, givenExtensionReceiverOptions, false)
     }
 
     override fun processFunctionsByName(info: CallInfo, processor: TowerScopeLevelProcessor<FirFunctionSymbol<*>>): ProcessResult {
@@ -396,12 +401,15 @@ class ScopeTowerLevel(
         callInfo: CallInfo,
         processor: TowerScopeLevelProcessor<T>
     ) {
-        val candidateReceiverTypeRef = candidate.fir.receiverParameter?.typeRef
+        candidate.lazyResolveToPhase(FirResolvePhase.TYPES)
         if (withHideMembersOnly && candidate.getAnnotationByClassId(HidesMembers, session) == null) {
             return
         }
+
         val receiverExpected = withHideMembersOnly || areThereExtensionReceiverOptions()
+        val candidateReceiverTypeRef = candidate.fir.receiverParameter?.typeRef
         if (candidateReceiverTypeRef == null == receiverExpected) return
+
         val dispatchReceiverValue = dispatchReceiverValue(candidate, callInfo)
         if (dispatchReceiverValue == null && shouldSkipCandidateWithInconsistentExtensionReceiver(candidate)) {
             return

@@ -43,3 +43,26 @@ public final external data class E {
     public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
 }
+
+public final external enum class F : kotlin.Enum<F> {
+    enum entry A
+
+    enum entry B
+
+    enum entry C
+
+    private constructor F()
+    @kotlin.internal.IntrinsicConstEvaluation public final override /*1*/ /*fake_override*/ val name: kotlin.String
+    public final override /*1*/ /*fake_override*/ val ordinal: kotlin.Int
+    protected final override /*1*/ /*fake_override*/ fun clone(): kotlin.Any
+    public final override /*1*/ /*fake_override*/ fun compareTo(/*0*/ other: F): kotlin.Int
+    public final override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public final override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+
+    // Static members
+    public final /*synthesized*/ val entries: kotlin.enums.EnumEntries<F>
+    public final /*synthesized*/ fun valueOf(/*0*/ value: kotlin.String): F
+    public final /*synthesized*/ fun values(): kotlin.Array<F>
+}
+

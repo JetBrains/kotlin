@@ -1,0 +1,61 @@
+package events
+
+open external class internal {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  open class EventEmitterP : internal {
+    constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+  }
+
+  open class EventEmitterS : internal {
+    constructor(a: Any) {
+      super/*internal*/()
+      /* <init>() */
+
+    }
+
+  }
+
+  object NestedExternalObject : internal {
+    private constructor() /* primary */ {
+      super/*Any*/()
+      /* <init>() */
+
+    }
+
+  }
+
+  enum class NestedExternalEnum : Enum<NestedExternalEnum> {
+    private constructor() /* primary */ {
+      super/*Enum*/<NestedExternalEnum>()
+      /* <init>() */
+
+    }
+
+    A = NestedExternalEnum()
+
+    B = NestedExternalEnum()
+
+    fun values(): Array<NestedExternalEnum> /* Synthetic body for ENUM_VALUES */
+
+    fun valueOf(value: String): NestedExternalEnum /* Synthetic body for ENUM_VALUEOF */
+
+    val entries: EnumEntries<NestedExternalEnum>
+      get(): EnumEntries<NestedExternalEnum> /* Synthetic body for ENUM_ENTRIES */
+
+  }
+
+  interface NestedExternalInterface {
+
+  }
+
+}

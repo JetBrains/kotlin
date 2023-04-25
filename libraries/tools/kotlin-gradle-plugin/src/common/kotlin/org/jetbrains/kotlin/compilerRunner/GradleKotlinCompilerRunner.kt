@@ -8,16 +8,19 @@ package org.jetbrains.kotlin.compilerRunner
 import org.gradle.api.Project
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logger
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.bundling.AbstractArchiveTask
 import org.gradle.api.tasks.bundling.Zip
 import org.gradle.jvm.tasks.Jar
 import org.gradle.workers.WorkQueue
+import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTime
 import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.compilerRunner.btapi.GradleBuildToolsApiCompilerRunner
 import org.jetbrains.kotlin.daemon.client.CompileServiceSession
 import org.jetbrains.kotlin.daemon.common.CompilerId
 import org.jetbrains.kotlin.daemon.common.configureDaemonJVMOptions
@@ -25,6 +28,7 @@ import org.jetbrains.kotlin.daemon.common.filterExtractProps
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.logging.kotlinInfo
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
@@ -42,6 +46,8 @@ import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import java.io.File
 import java.lang.ref.WeakReference
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+
 
 const val CREATED_CLIENT_FILE_PREFIX = "Created client-is-alive flag file: "
 const val EXISTING_CLIENT_FILE_PREFIX = "Existing client-is-alive flag file: "
@@ -49,6 +55,35 @@ const val CREATED_SESSION_FILE_PREFIX = "Created session-is-alive flag file: "
 const val EXISTING_SESSION_FILE_PREFIX = "Existing session-is-alive flag file: "
 const val DELETED_SESSION_FILE_PREFIX = "Deleted session-is-alive flag file: "
 const val COULD_NOT_CONNECT_TO_DAEMON_MESSAGE = "Could not connect to Kotlin compile daemon"
+
+internal fun createGradleCompilerRunner(
+    taskProvider: GradleCompileTaskProvider,
+    toolsJar: File?,
+    compilerExecutionSettings: CompilerExecutionSettings,
+    buildMetricsReporter: BuildMetricsReporter,
+    workerExecutor: WorkerExecutor,
+    runViaBuildToolsApi: Boolean,
+    cachedClassLoadersService: Property<ClassLoadersCachingBuildService>
+): GradleCompilerRunner {
+    return if (runViaBuildToolsApi) {
+        GradleBuildToolsApiCompilerRunner(
+            taskProvider,
+            toolsJar,
+            compilerExecutionSettings,
+            buildMetricsReporter,
+            workerExecutor,
+            cachedClassLoadersService,
+        )
+    } else {
+        GradleCompilerRunnerWithWorkers(
+            taskProvider,
+            toolsJar,
+            compilerExecutionSettings,
+            buildMetricsReporter,
+            workerExecutor,
+        )
+    }
+}
 
 /*
 Using real taskProvider cause "field 'taskProvider' from type 'org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner':
@@ -77,15 +112,11 @@ internal open class GradleCompilerRunner(
      * @see [GradleKotlinCompilerWork]
      */
     fun runJvmCompilerAsync(
-        sourcesToCompile: List<File>,
-        javaPackagePrefix: String?,
         args: K2JVMCompilerArguments,
         environment: GradleCompilerEnvironment,
         jdkHome: File,
         taskOutputsBackup: TaskOutputsBackup?
     ): WorkQueue? {
-        args.freeArgs += sourcesToCompile.map { it.absolutePath }
-        args.javaPackagePrefix = javaPackagePrefix
         if (args.jdkHome == null && !args.noJdk) args.jdkHome = jdkHome.absolutePath
         loggerProvider.kotlinInfo("Kotlin compilation 'jdkHome' argument: ${args.jdkHome}")
         return runCompilerAsync(KotlinCompilerClass.JVM, args, environment, taskOutputsBackup)
@@ -96,12 +127,10 @@ internal open class GradleCompilerRunner(
      * @see [GradleKotlinCompilerWork]
      */
     fun runJsCompilerAsync(
-        kotlinSources: List<File>,
         args: K2JSCompilerArguments,
         environment: GradleCompilerEnvironment,
         taskOutputsBackup: TaskOutputsBackup?
     ): WorkQueue? {
-        args.freeArgs += kotlinSources.map { it.absolutePath }
         return runCompilerAsync(KotlinCompilerClass.JS, args, environment, taskOutputsBackup)
     }
 
@@ -110,13 +139,9 @@ internal open class GradleCompilerRunner(
      * @see [GradleKotlinCompilerWork]
      */
     fun runMetadataCompilerAsync(
-        kotlinSources: List<File>,
-        kotlinCommonSources: List<File>,
         args: K2MetadataCompilerArguments,
         environment: GradleCompilerEnvironment
     ): WorkQueue? {
-        args.freeArgs += kotlinSources.map { it.absolutePath }
-        args.commonSources = kotlinCommonSources.map { it.absolutePath }.toTypedArray()
         return runCompilerAsync(KotlinCompilerClass.METADATA, args, environment)
     }
 
@@ -204,13 +229,21 @@ internal open class GradleCompilerRunner(
             allWarningsAsErrors = compilerArgs.allWarningsAsErrors,
             compilerExecutionSettings = compilerExecutionSettings,
             errorsFile = errorsFile,
-            kotlinPluginVersion = getKotlinPluginVersion(loggerProvider)
+            kotlinPluginVersion = getKotlinPluginVersion(loggerProvider),
+            //no need to log warnings in MessageCollector hear it will be logged by compiler
+            kotlinLanguageVersion = parseLanguageVersion(compilerArgs.languageVersion, compilerArgs.useK2)
         )
         TaskLoggers.put(pathProvider, loggerProvider)
         return runCompilerAsync(
             workArgs,
             taskOutputsBackup
         )
+    }
+
+    //Copy of CommonCompilerArguments.parseOrConfigureLanguageVersion to avoid direct dependency
+    private fun parseLanguageVersion(languageVersion: String?, useK2: Boolean): KotlinVersion {
+        val explicitVersion = languageVersion?.let { KotlinVersion.fromVersion(languageVersion) } ?: KotlinVersion.DEFAULT
+        return if (useK2 && (explicitVersion < KotlinVersion.KOTLIN_2_0)) KotlinVersion.KOTLIN_2_0 else explicitVersion
     }
 
     protected open fun runCompilerAsync(

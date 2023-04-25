@@ -18,10 +18,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.findDeclaration
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.ir.util.getPropertyGetter
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -64,6 +61,9 @@ class SerializationPluginContext(baseContext: IrPluginContext, val metadataPlugi
     // Kotlin built-in declarations
     internal val arrayValueGetter = irBuiltIns.arrayClass.owner.declarations.filterIsInstance<IrSimpleFunction>()
         .single { it.name.asString() == "get" }
+
+    internal val intArrayOfFunctionSymbol =
+        referenceFunctions(CallableId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("intArrayOf"))).first()
 
     // Kotlin stdlib declarations
     internal val jvmFieldClassSymbol = referenceClass(StandardClassIds.Annotations.JvmField)!!

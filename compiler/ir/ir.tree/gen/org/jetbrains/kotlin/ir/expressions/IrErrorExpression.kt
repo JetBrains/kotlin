@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A non-leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.errorExpression
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.errorExpression]
  */
 abstract class IrErrorExpression : IrExpression() {
     abstract var description: String

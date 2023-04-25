@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.fir.types.toRegularClassSymbol
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlinx.serialization.compiler.fir.*
-import org.jetbrains.kotlinx.serialization.compiler.fir.getSerializableWith
 import org.jetbrains.kotlinx.serialization.compiler.fir.services.dependencySerializationInfoProvider
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerializationAnnotations
@@ -41,7 +40,6 @@ import org.jetbrains.kotlinx.serialization.compiler.resolve.SpecialBuiltins
 // ---------------------- search utils ----------------------
 
 context(CheckerContext)
-@Suppress("IncorrectFormatting") // KTIJ-22227
 internal val FirClassSymbol<*>?.classSerializer: FirClassSymbol<*>?
     get() {
         if (this == null) return null
@@ -61,7 +59,6 @@ internal val FirClassSymbol<*>?.classSerializer: FirClassSymbol<*>?
     }
 
 context(CheckerContext)
-@Suppress("IncorrectFormatting") // KTIJ-22227
 val FirClassSymbol<*>.polymorphicSerializerIfApplicableAutomatically: FirClassSymbol<*>?
     get() {
         val serializerName = when {
@@ -84,27 +81,23 @@ val FirClassSymbol<*>.polymorphicSerializerIfApplicableAutomatically: FirClassSy
 // ---------------------- annotation utils ----------------------
 
 context(CheckerContext)
-@Suppress("IncorrectFormatting") // KTIJ-22227
 internal val FirAnnotation.annotationClassSymbol: FirRegularClassSymbol?
     get() = annotationTypeRef.coneType
         .fullyExpandedType(session)
         .toRegularClassSymbol(session)
 
 context(CheckerContext)
-@Suppress("IncorrectFormatting") // KTIJ-22227
 internal val FirAnnotation.isMetaSerializableAnnotation: Boolean
     get() = annotationClassSymbol?.hasAnnotation(SerializationAnnotations.metaSerializableAnnotationClassId, session) ?: false
 
 
 context(CheckerContext)
-@Suppress("IncorrectFormatting") // KTIJ-22227
 internal fun FirClassSymbol<*>.metaSerializableAnnotation(needArguments: Boolean): FirAnnotation? {
     val annotations = if (needArguments) resolvedAnnotationsWithClassIds else resolvedAnnotationsWithArguments
     return annotations.firstOrNull { it.isMetaSerializableAnnotation }
 }
 
 context(CheckerContext)
-@Suppress("IncorrectFormatting") // KTIJ-22227
 internal val FirClassSymbol<*>.serializableOrMetaAnnotationSource: KtSourceElement?
     get() {
         serializableAnnotation(needArguments = false, session)?.source?.let { return it }
@@ -113,7 +106,6 @@ internal val FirClassSymbol<*>.serializableOrMetaAnnotationSource: KtSourceEleme
     }
 
 context(CheckerContext)
-@Suppress("IncorrectFormatting") // KTIJ-22227
 internal val FirBasedSymbol<*>.hasAnySerialAnnotation: Boolean
     get() = getSerialNameValue(session) != null || resolvedAnnotationsWithClassIds.any {
         with(session) { it.annotationClassSymbol?.isSerialInfoAnnotation == true }
@@ -134,7 +126,6 @@ fun FirClassSymbol<*>.getSuperClassOrAny(session: FirSession): FirRegularClassSy
 }
 
 context(CheckerContext)
-@Suppress("IncorrectFormatting") // KTIJ-22227
 internal val FirClassSymbol<*>.isSerializableEnumWithMissingSerializer: Boolean
     get() {
         if (!isEnumClass) return false
@@ -144,7 +135,6 @@ internal val FirClassSymbol<*>.isSerializableEnumWithMissingSerializer: Boolean
     }
 
 context(FirSession)
-@Suppress("IncorrectFormatting") // KTIJ-22227
 internal val FirClassSymbol<*>.serializableAnnotationIsUseless: Boolean
     get() = !classKind.isEnumClass &&
             hasSerializableOrMetaAnnotationWithoutArgs &&
@@ -155,13 +145,11 @@ internal val FirClassSymbol<*>.serializableAnnotationIsUseless: Boolean
 // ---------------------- type utils ----------------------
 
 context(CheckerContext)
-@Suppress("IncorrectFormatting") // KTIJ-22227
 internal val ConeKotlinType.serializableWith: ConeKotlinType?
     get() = customAnnotations.getSerializableWith(session) ?: toRegularClassSymbol(session)?.getSerializableWith(session)
 
 
 context(CheckerContext)
-@Suppress("IncorrectFormatting") // KTIJ-22227
 internal val ConeKotlinType.overriddenSerializer: ConeKotlinType?
     get() = toRegularClassSymbol(session)?.getSerializableWith(session)
 

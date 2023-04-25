@@ -69,9 +69,11 @@ abstract class AbstractBuilderConfigurator<T : AbstractFirTreeBuilder>(val firTr
 
         inner class DefaultValueContext(private val field: FieldWithDefault) {
             var value: String? = null
+            var notNull: Boolean? = null
 
             fun applyConfiguration() {
                 if (value != null) field.defaultValueInBuilder = value
+                if (notNull != null) field.notNull = notNull!!
             }
         }
     }

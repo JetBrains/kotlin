@@ -18,7 +18,7 @@ class Serializer {
   private fun createMessageCollector(): <no name provided> {
     return { // BLOCK
       local class <no name provided> : Collector {
-        private constructor() /* primary */ {
+        constructor() /* primary */ {
           super/*Collector*/()
           /* <init>() */
 

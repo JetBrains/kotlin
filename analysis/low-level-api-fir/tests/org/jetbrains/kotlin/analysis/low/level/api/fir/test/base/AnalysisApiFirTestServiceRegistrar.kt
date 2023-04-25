@@ -13,13 +13,15 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.api.fir.references.ReadWriteAccessCheckerFirImpl
 import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveSessionService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.FirSealedClassInheritorsProcessorFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirBuiltinsSessionFactory
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirLibrarySessionFactory
-import org.jetbrains.kotlin.analysis.low.level.api.fir.services.KtCompilerPluginsProviderForTests
+import org.jetbrains.kotlin.analysis.low.level.api.fir.services.NoOpKtCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.services.LLFirSealedClassInheritorsProcessorFactoryForTests
 import org.jetbrains.kotlin.analysis.low.level.api.fir.services.PackagePartProviderTestImpl
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionConfigurator
 import org.jetbrains.kotlin.analysis.project.structure.KtCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.providers.PackagePartProviderFactory
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
@@ -39,6 +41,7 @@ object AnalysisApiFirTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
     override fun registerProjectExtensionPoints(project: MockProject, testServices: TestServices) {
         IrGenerationExtension.registerExtensionPoint(project)
         FirExtensionRegistrarAdapter.registerExtensionPoint(project)
+        LLFirSessionConfigurator.registerExtensionPoint(project)
     }
 
     @OptIn(KtAnalysisApiInternals::class)
@@ -47,12 +50,13 @@ object AnalysisApiFirTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
             registerService(KtAnalysisSessionProvider::class.java, KtFirAnalysisSessionProvider(this))
             registerService(FirSealedClassInheritorsProcessorFactory::class.java, LLFirSealedClassInheritorsProcessorFactoryForTests())
             registerService(LLFirResolveSessionService::class.java)
-            registerService(LLFirLibrarySessionFactory::class.java)
+            registerService(LLFirSessionCache::class.java)
+            registerService(LLFirGlobalResolveComponents::class.java)
             registerService(LLFirBuiltinsSessionFactory::class.java)
             registerService(PackagePartProviderFactory::class.java, PackagePartProviderTestImpl(testServices))
 
             registerService(KotlinAsJavaSupport::class.java, SymbolKotlinAsJavaSupport(project))
-            registerService(KtCompilerPluginsProvider::class.java, KtCompilerPluginsProviderForTests(project))
+            registerService(KtCompilerPluginsProvider::class.java, NoOpKtCompilerPluginsProvider)
             registerService(ReadWriteAccessChecker::class.java, ReadWriteAccessCheckerFirImpl())
             registerService(KotlinReferenceProviderContributor::class.java, KotlinFirReferenceContributor::class.java)
         }

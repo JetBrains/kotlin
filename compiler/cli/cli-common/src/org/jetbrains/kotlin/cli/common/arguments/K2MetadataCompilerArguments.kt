@@ -78,4 +78,6 @@ class K2MetadataCompilerArguments : CommonCompilerArguments() {
             checkFrozen()
             field = value
         }
+
+    override fun copyOf(): Freezable = copyK2MetadataCompilerArguments(this, K2MetadataCompilerArguments())
 }

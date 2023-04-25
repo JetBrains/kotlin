@@ -161,6 +161,12 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerTestGenera
     }
 
     @Test
+    @TestMetadata("contextReceiver.kt")
+    public void testContextReceiver() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/contextReceiver.kt");
+    }
+
+    @Test
     @TestMetadata("enumClassCompanionAlreadyImported.kt")
     public void testEnumClassCompanionAlreadyImported() throws Exception {
         runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/enumClassCompanionAlreadyImported.kt");
@@ -176,6 +182,12 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerTestGenera
     @TestMetadata("enumEntryInitUsesCompanion2.kt")
     public void testEnumEntryInitUsesCompanion2() throws Exception {
         runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/enumEntryInitUsesCompanion2.kt");
+    }
+
+    @Test
+    @TestMetadata("multipleImport.kt")
+    public void testMultipleImport() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/multipleImport.kt");
     }
 
     @Test
@@ -284,6 +296,18 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerTestGenera
     @TestMetadata("sameTypeNamesWithinSameScopes.kt")
     public void testSameTypeNamesWithinSameScopes() throws Exception {
         runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/sameTypeNamesWithinSameScopes.kt");
+    }
+
+    @Test
+    @TestMetadata("selfPropertyChain.kt")
+    public void testSelfPropertyChain() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/selfPropertyChain.kt");
+    }
+
+    @Test
+    @TestMetadata("selfPropertyChain1.kt")
+    public void testSelfPropertyChain1() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/selfPropertyChain1.kt");
     }
 
     @Test

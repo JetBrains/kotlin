@@ -18,11 +18,14 @@ enum class JvmTarget(val target: String) {
     JVM_17("17"),
     JVM_18("18"),
     JVM_19("19"),
+    JVM_20("20"),
     ;
 
     companion object {
         fun fromTarget(target: String): JvmTarget =
             JvmTarget.values().firstOrNull { it.target == target }
                 ?: throw IllegalArgumentException("Unknown Kotlin JVM target: $target")
+
+        val DEFAULT = JVM_1_8
     }
 }

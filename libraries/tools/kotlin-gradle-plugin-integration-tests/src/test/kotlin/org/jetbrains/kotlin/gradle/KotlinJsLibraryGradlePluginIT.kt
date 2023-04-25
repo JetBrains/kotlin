@@ -9,9 +9,9 @@ import com.google.gson.Gson
 import com.google.gson.JsonObject
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
+import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution.Companion.DIST
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
-import java.util.zip.ZipFile
 import kotlin.io.path.reader
 import kotlin.test.assertNotNull
 
@@ -31,10 +31,10 @@ abstract class KotlinJsIrLibraryGradlePluginITBase : KGPBaseTest() {
     fun testSimpleJsBinaryLibrary(gradleVersion: GradleVersion) {
         project("simple-js-library", gradleVersion) {
             build("build") {
-                assertFileInProjectExists("build/productionLibrary/js-library.js")
-                assertFileInProjectExists("build/productionLibrary/package.json")
-                assertFileInProjectExists("build/productionLibrary/main.js")
-                projectPath.resolve("build/productionLibrary/package.json").reader()
+                assertFileInProjectExists("build/$DIST/js/productionLibrary/js-library.js")
+                assertFileInProjectExists("build/$DIST/js/productionLibrary/package.json")
+                assertFileInProjectExists("build/$DIST/js/productionLibrary/main.js")
+                projectPath.resolve("build/$DIST/js/productionLibrary/package.json").reader()
                     .use { Gson().fromJson(it, JsonObject::class.java) }
                     .getAsJsonObject("dependencies")
                     ?.entrySet()?.associate { (k, v) -> k to v.asString }
@@ -51,9 +51,9 @@ abstract class KotlinJsIrLibraryGradlePluginITBase : KGPBaseTest() {
     fun testJsBinaryLibraryAndExecutable(gradleVersion: GradleVersion) {
         project("js-library-with-executable", gradleVersion) {
             build("build") {
-                assertFileInProjectExists("build/productionLibrary/js-library.js")
-                assertFileInProjectExists("build/productionLibrary/package.json")
-                assertFileInProjectExists("build/productionLibrary/main.js")
+                assertFileInProjectExists("build/$DIST/js/productionLibrary/js-library.js")
+                assertFileInProjectExists("build/$DIST/js/productionLibrary/package.json")
+                assertFileInProjectExists("build/$DIST/js/productionLibrary/main.js")
             }
         }
     }
@@ -63,11 +63,11 @@ abstract class KotlinJsIrLibraryGradlePluginITBase : KGPBaseTest() {
     fun testJsBinaryLibraryAndExecutableForBrowserAndNodejs(gradleVersion: GradleVersion) {
         project("js-library-with-executable-browser-nodejs", gradleVersion) {
             build("build") {
-                assertFileInProjectExists("build/productionLibrary/js-library.js")
-                assertFileInProjectExists("build/productionLibrary/package.json")
-                assertFileInProjectExists("build/productionLibrary/main.js")
+                assertFileInProjectExists("build/$DIST/js/productionLibrary/js-library.js")
+                assertFileInProjectExists("build/$DIST/js/productionLibrary/package.json")
+                assertFileInProjectExists("build/$DIST/js/productionLibrary/main.js")
 
-                assertFileInProjectExists("build/distributions/js-library.js")
+                assertFileInProjectExists("build/$DIST/js/productionExecutable/js-library.js")
             }
         }
     }
@@ -77,16 +77,12 @@ abstract class KotlinJsIrLibraryGradlePluginITBase : KGPBaseTest() {
 @DisplayName("Kotlin/JS K1 IR library")
 @JsGradlePluginTests
 class KotlinK1JsIrLibraryGradlePluginIT : KotlinJsIrLibraryGradlePluginITBase() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(
-        useFir = false
-    )
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(languageVersion = null)
 }
 
 @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
 @DisplayName("Kotlin/JS K2 IR library")
 @JsGradlePluginTests
 class KotlinK2JsIrLibraryGradlePluginIT : KotlinJsIrLibraryGradlePluginITBase() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(
-        useFir = true
-    )
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(languageVersion = "2.0")
 }

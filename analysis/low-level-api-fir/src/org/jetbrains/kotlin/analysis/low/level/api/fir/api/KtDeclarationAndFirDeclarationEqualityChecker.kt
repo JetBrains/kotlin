@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.api
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.createEmptySession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
+import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.builder.BodyBuildingMode
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.fir.builder.RawFirBuilder
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
@@ -24,14 +26,18 @@ import org.jetbrains.kotlin.fir.types.impl.FirImplicitNullableAnyTypeRef
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtConstructor
+import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFunction
 import org.jetbrains.kotlin.psi.KtTypeReference
+import org.jetbrains.kotlin.psi.psiUtil.hasActualModifier
+import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 // TODO replace with structural type comparison?
 object KtDeclarationAndFirDeclarationEqualityChecker {
     fun representsTheSameDeclaration(psi: KtCallableDeclaration, fir: FirCallableDeclaration): Boolean {
+        if (!modifiersMatch(psi, fir)) return false
         if (!receiverTypeMatch(psi, fir)) return false
         if (!returnTypesMatch(psi, fir)) return false
         if (!typeParametersMatch(psi, fir)) return false
@@ -39,9 +45,21 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
         return true
     }
 
+    private fun modifiersMatch(psi: KtCallableDeclaration, fir: FirCallableDeclaration): Boolean {
+        // According to asymmetric logic in 'RawFirBuilder'
+        if (psi.parentsOfType<KtDeclaration>().any { it.hasExpectModifier() } != fir.symbol.rawStatus.isExpect) return false
+        if (psi.hasActualModifier() != fir.symbol.rawStatus.isActual) return false
+        return true
+    }
+
     private fun receiverTypeMatch(psi: KtCallableDeclaration, fir: FirCallableDeclaration): Boolean {
         if ((fir.receiverParameter != null) != (psi.receiverTypeReference != null)) return false
-        if (fir.receiverParameter != null && !isTheSameTypes(psi.receiverTypeReference!!, fir.receiverParameter!!.typeRef, isVararg = false)) {
+        if (fir.receiverParameter != null && !isTheSameTypes(
+                psi.receiverTypeReference!!,
+                fir.receiverParameter!!.typeRef,
+                isVararg = false,
+            )
+        ) {
             return false
         }
         return true
@@ -237,27 +255,25 @@ object KtDeclarationAndFirDeclarationEqualityChecker {
     }
 
     private object DummyScopeProvider : FirScopeProvider() {
-        override fun getUseSiteMemberScope(klass: FirClass, useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope {
-            shouldNotBeCalled()
-        }
+        override fun getUseSiteMemberScope(
+            klass: FirClass,
+            useSiteSession: FirSession,
+            scopeSession: ScopeSession,
+            memberRequiredPhase: FirResolvePhase?,
+        ): FirTypeScope = shouldNotBeCalled()
 
         override fun getStaticMemberScopeForCallables(
             klass: FirClass,
             useSiteSession: FirSession,
             scopeSession: ScopeSession
-        ): FirContainingNamesAwareScope? {
-            shouldNotBeCalled()
-        }
+        ): FirContainingNamesAwareScope? = shouldNotBeCalled()
 
         override fun getNestedClassifierScope(
             klass: FirClass,
             useSiteSession: FirSession,
             scopeSession: ScopeSession
-        ): FirContainingNamesAwareScope? {
-            shouldNotBeCalled()
-        }
+        ): FirContainingNamesAwareScope? = shouldNotBeCalled()
 
-        private fun shouldNotBeCalled(): Nothing =
-            error("Should not be called in RawFirBuilder while converting KtTypeReference")
+        private fun shouldNotBeCalled(): Nothing = error("Should not be called in RawFirBuilder while converting KtTypeReference")
     }
 }

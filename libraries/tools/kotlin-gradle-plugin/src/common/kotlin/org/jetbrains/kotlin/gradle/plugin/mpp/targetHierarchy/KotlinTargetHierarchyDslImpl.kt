@@ -17,21 +17,27 @@ internal class KotlinTargetHierarchyDslImpl(
     private val targets: DomainObjectCollection<KotlinTarget>,
     private val sourceSets: NamedDomainObjectContainer<KotlinSourceSet>
 ) : KotlinTargetHierarchyDsl {
+
+    private val _appliedDescriptors = mutableListOf<KotlinTargetHierarchyDescriptor>()
+    val appliedDescriptors: List<KotlinTargetHierarchyDescriptor> get() = _appliedDescriptors
+
     override fun apply(
         hierarchyDescriptor: KotlinTargetHierarchyDescriptor,
-        describeExtension: (KotlinTargetHierarchyBuilder.() -> Unit)?
+        describeExtension: (KotlinTargetHierarchyBuilder.Root.() -> Unit)?
     ) {
-        applyKotlinTargetHierarchy(hierarchyDescriptor.extendIfNotNull(describeExtension), targets, sourceSets)
+        val descriptor = hierarchyDescriptor.extendIfNotNull(describeExtension)
+        _appliedDescriptors.add(descriptor)
+        applyKotlinTargetHierarchy(descriptor, targets, sourceSets)
     }
 
-    override fun default(describeExtension: (KotlinTargetHierarchyBuilder.() -> Unit)?) {
-        apply(naturalKotlinTargetHierarchy, describeExtension)
+    override fun default(describeExtension: (KotlinTargetHierarchyBuilder.Root.() -> Unit)?) {
+        apply(defaultKotlinTargetHierarchy, describeExtension)
     }
 
-    override fun custom(describe: KotlinTargetHierarchyBuilder.() -> Unit) {
+    override fun custom(describe: KotlinTargetHierarchyBuilder.Root.() -> Unit) {
         apply(KotlinTargetHierarchyDescriptor(describe))
     }
 }
 
-private fun KotlinTargetHierarchyDescriptor.extendIfNotNull(describe: (KotlinTargetHierarchyBuilder.() -> Unit)?) =
+private fun KotlinTargetHierarchyDescriptor.extendIfNotNull(describe: (KotlinTargetHierarchyBuilder.Root.() -> Unit)?) =
     if (describe == null) this else extend(describe)

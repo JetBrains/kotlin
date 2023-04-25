@@ -1,8 +1,8 @@
 FILE fqName:<root> fileName:/typeParameterAsContextReceiver.kt
-  FUN name:useContext visibility:public modality:FINAL <T> (_context_receiver_0:T of <root>.useContext, block:kotlin.Function1<T of <root>.useContext, kotlin.Unit>) returnType:kotlin.Unit
+  FUN name:useContext visibility:public modality:FINAL <T> ($context_receiver_0:T of <root>.useContext, block:kotlin.Function1<T of <root>.useContext, kotlin.Unit>) returnType:kotlin.Unit
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?] reified:false
     contextReceiverParametersCount: 1
-    VALUE_PARAMETER name:_context_receiver_0 index:0 type:T of <root>.useContext
+    VALUE_PARAMETER name:$context_receiver_0 index:0 type:T of <root>.useContext
     VALUE_PARAMETER name:block index:1 type:kotlin.Function1<T of <root>.useContext, kotlin.Unit>
     BLOCK_BODY
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
@@ -15,9 +15,9 @@ FILE fqName:<root> fileName:/typeParameterAsContextReceiver.kt
           FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> ($receiver:kotlin.Int) returnType:kotlin.Unit
             $receiver: VALUE_PARAMETER name:$this$with type:kotlin.Int
             BLOCK_BODY
-              CALL 'public final fun useContext <T> (_context_receiver_0: T of <root>.useContext, block: kotlin.Function1<T of <root>.useContext, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
+              CALL 'public final fun useContext <T> ($context_receiver_0: T of <root>.useContext, block: kotlin.Function1<T of <root>.useContext, kotlin.Unit>): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
                 <T>: kotlin.Int
-                _context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.test.<anonymous>' type=kotlin.Int origin=null
+                $context_receiver_0: GET_VAR '$this$with: kotlin.Int declared in <root>.test.<anonymous>' type=kotlin.Int origin=null
                 block: FUN_EXPR type=kotlin.Function1<kotlin.Int, kotlin.Unit> origin=LAMBDA
                   FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> (i:kotlin.Int) returnType:kotlin.Unit
                     VALUE_PARAMETER name:i index:0 type:kotlin.Int

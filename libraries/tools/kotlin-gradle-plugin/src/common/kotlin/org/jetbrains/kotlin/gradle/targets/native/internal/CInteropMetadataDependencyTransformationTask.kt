@@ -105,7 +105,7 @@ private fun CInteropMetadataDependencyTransformationTask.configureTaskOrder() {
 }
 
 private fun CInteropMetadataDependencyTransformationTask.onlyIfSourceSetIsSharedNative() {
-    val isSharedCommonizerTarget = getCommonizerTarget(sourceSet) is SharedCommonizerTarget
+    val isSharedCommonizerTarget = sourceSet.internal.commonizerTarget.getOrThrow() is SharedCommonizerTarget
     onlyIf { isSharedCommonizerTarget }
 }
 
@@ -137,7 +137,7 @@ internal open class CInteropMetadataDependencyTransformationTask @Inject constru
     class ChooseVisibleSourceSetProjection(
         @Input val dependencyModuleIdentifiers: List<KpmModuleIdentifier>,
         @Nested val projectStructureMetadata: KotlinProjectStructureMetadata,
-        @Input val visibleSourceSetProvidingCInterops: String?
+        @Optional @Input val visibleSourceSetProvidingCInterops: String?
     ) {
         constructor(chooseVisibleSourceSets: ChooseVisibleSourceSets) : this(
             dependencyModuleIdentifiers = chooseVisibleSourceSets.dependency.toKpmModuleIdentifiers(),

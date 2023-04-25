@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.FirPlatformDiagnosticSuppressor
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.hasModifier
@@ -18,10 +19,10 @@ import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isExternal
 import org.jetbrains.kotlin.lexer.KtTokens
 
-// See old FE's [DeclarationsChecker]
-abstract class FirTopLevelFunctionsChecker : FirSimpleFunctionChecker() {
-    abstract val suppressor: FirPlatformDiagnosticSuppressor
+val FirSession.platformDiagnosticSuppressor: FirPlatformDiagnosticSuppressor? by FirSession.nullableSessionComponentAccessor()
 
+// See old FE's [DeclarationsChecker]
+object FirTopLevelFunctionsChecker : FirSimpleFunctionChecker() {
     override fun check(declaration: FirSimpleFunction, context: CheckerContext, reporter: DiagnosticReporter) {
         // Only report on top level callable declarations
         if (context.containingDeclarations.size > 1) return
@@ -32,7 +33,10 @@ abstract class FirTopLevelFunctionsChecker : FirSimpleFunctionChecker() {
         // So, our source of truth should be the full modifier list retrieved from the source.
         if (declaration.hasModifier(KtTokens.ABSTRACT_KEYWORD)) return
         if (declaration.isExternal) return
-        if (!declaration.hasBody && !declaration.isExpect && suppressor.shouldReportNoBody(declaration, context)) {
+        if (!declaration.hasBody &&
+            !declaration.isExpect &&
+            context.session.platformDiagnosticSuppressor?.shouldReportNoBody(declaration, context) != false
+        ) {
             reporter.reportOn(source, FirErrors.NON_MEMBER_FUNCTION_NO_BODY, declaration.symbol, context)
         }
 

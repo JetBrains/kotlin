@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.konan.blackboxtest.support.compilation
 
+import org.jetbrains.kotlin.container.topologicalSort
 import org.jetbrains.kotlin.konan.blackboxtest.support.PackageName
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCompilerArgs
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestModule
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestModule.Companion.allDependencies
+import org.jetbrains.kotlin.konan.blackboxtest.support.TestModule.Companion.allDependsOn
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestModule.Companion.allFriends
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationArtifact.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationDependencyType.*
@@ -63,10 +65,10 @@ internal class TestCompilationFactory {
 
         companion object {
             fun decideForRegularKlib(settings: Settings): ProduceStaticCache =
-                if (settings.get<CacheMode>().staticCacheRequiredForEveryLibrary) Yes.Regular else No
+                if (settings.get<CacheMode>().useStaticCacheForUserLibraries) Yes.Regular else No
 
             fun decideForIncludedKlib(settings: Settings, expectedExecutableArtifact: Executable, extras: Extras): ProduceStaticCache =
-                if (!settings.get<CacheMode>().staticCacheRequiredForEveryLibrary)
+                if (!settings.get<CacheMode>().useStaticCacheForUserLibraries)
                     No
                 else
                     when (extras) {
@@ -158,7 +160,7 @@ internal class TestCompilationFactory {
                 LibraryCompilation(
                     settings = settings,
                     freeCompilerArgs = freeCompilerArgs,
-                    sourceModules = sourceModules,
+                    sourceModules = sourceModules.flatMapToSet { sortDependsOnTopologically(it) },
                     dependencies = dependencies.forKlib(),
                     expectedArtifact = klibArtifact
                 )
@@ -169,6 +171,7 @@ internal class TestCompilationFactory {
                         settings = settings,
                         freeCompilerArgs = freeCompilerArgs,
                         options = staticCacheOptions,
+                        pipelineType = settings.get(),
                         dependencies = dependencies.forStaticCache(klibCompilation.asKlibDependency(type = /* does not matter in fact*/ Library)),
                         expectedArtifact = staticCacheArtifact
                     )
@@ -201,6 +204,10 @@ internal class TestCompilationFactory {
         sourceModules.allFriends().collectDependencies(FriendLibrary)
 
         return CompilationDependencies(klibDependencies, staticCacheDependencies)
+    }
+
+    private fun sortDependsOnTopologically(module: TestModule): List<TestModule> {
+        return topologicalSort(listOf(module), reverseOrder = true) { it.allDependsOn }
     }
 
     companion object {

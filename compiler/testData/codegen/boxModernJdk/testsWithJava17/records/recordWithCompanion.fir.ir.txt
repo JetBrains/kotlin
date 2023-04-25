@@ -38,13 +38,13 @@ FILE fqName:<root> fileName:/recordWithCompanion.kt
         overridden:
           public open fun toString (): kotlin.String declared in kotlin.Any
         $this: VALUE_PARAMETER name:<this> type:kotlin.Any
-    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.Tag) returnType:kotlin.String [operator]
+    FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.Tag) returnType:kotlin.String [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.Tag
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.String [operator] declared in <root>.Tag'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
             receiver: GET_VAR '<this>: <root>.Tag declared in <root>.Tag.component1' type=<root>.Tag origin=null
-    FUN name:copy visibility:public modality:FINAL <> ($this:<root>.Tag, id:kotlin.String) returnType:<root>.Tag
+    FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:<root>.Tag, id:kotlin.String) returnType:<root>.Tag
       $this: VALUE_PARAMETER name:<this> type:<root>.Tag
       VALUE_PARAMETER name:id index:0 type:kotlin.String
         EXPRESSION_BODY
@@ -104,8 +104,7 @@ FILE fqName:<root> fileName:/recordWithCompanion.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.Tag'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="Tag("
-            CONST String type=kotlin.String value="id="
+            CONST String type=kotlin.String value="Tag(id="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:id type:kotlin.String visibility:private [final]' type=kotlin.String origin=null
               receiver: GET_VAR '<this>: <root>.Tag declared in <root>.Tag.toString' type=<root>.Tag origin=null
             CONST String type=kotlin.String value=")"

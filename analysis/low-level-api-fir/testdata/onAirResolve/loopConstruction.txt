@@ -1,9 +1,9 @@
 while(CMP(<, R|<local>/x|.R|kotlin/Int.compareTo|(Int(2)))) {
      {
-        [BODY_RESOLVE] lval <unary>: R|kotlin/Int| = R|<local>/x|
+        [ResolvedTo(BODY_RESOLVE)] lval <unary>: R|kotlin/Int| = R|<local>/x|
         R|<local>/x| = R|<local>/<unary>|.R|kotlin/Int.dec|()
         R|<local>/<unary>|
     }
 
-    [BODY_RESOLVE] lval z: R|kotlin/Int| = R|<local>/y|
+    [ResolvedTo(BODY_RESOLVE)] lval z: R|kotlin/Int| = R|<local>/y|
 }

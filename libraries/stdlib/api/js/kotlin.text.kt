@@ -689,6 +689,9 @@ public inline fun kotlin.CharSequence.reduceRightOrNull(operation: (kotlin.Char,
 
 public fun kotlin.CharSequence.regionMatches(thisOffset: kotlin.Int, other: kotlin.CharSequence, otherOffset: kotlin.Int, length: kotlin.Int, ignoreCase: kotlin.Boolean = ...): kotlin.Boolean
 
+@kotlin.SinceKotlin(version = "1.9")
+public fun kotlin.String.regionMatches(thisOffset: kotlin.Int, other: kotlin.String, otherOffset: kotlin.Int, length: kotlin.Int, ignoreCase: kotlin.Boolean = ...): kotlin.Boolean
+
 public fun kotlin.CharSequence.removePrefix(prefix: kotlin.CharSequence): kotlin.CharSequence
 
 public fun kotlin.String.removePrefix(prefix: kotlin.CharSequence): kotlin.String
@@ -1502,7 +1505,7 @@ public final class StringBuilder : kotlin.text.Appendable, kotlin.CharSequence {
     public final fun appendRange(value: kotlin.CharSequence, startIndex: kotlin.Int, endIndex: kotlin.Int): kotlin.text.StringBuilder
 
     @kotlin.SinceKotlin(version = "1.3")
-    @kotlin.Deprecated(level = DeprecationLevel.ERROR, message = "Obtaining StringBuilder capacity is not supported in JS and common code.")
+    @kotlin.Deprecated(level = DeprecationLevel.WARNING, message = "Obtaining StringBuilder capacity is not supported in JS and common code.")
     public final fun capacity(): kotlin.Int
 
     @kotlin.SinceKotlin(version = "1.3")

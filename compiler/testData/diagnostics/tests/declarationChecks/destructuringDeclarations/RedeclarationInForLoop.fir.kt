@@ -8,7 +8,7 @@ class C {
 }
 
 fun test() {
-    for ((x, x) in C()) {
+    for ((<!REDECLARATION!>x<!>, <!REDECLARATION!>x<!>) in C()) {
 
     }
 }

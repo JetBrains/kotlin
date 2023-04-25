@@ -56,7 +56,7 @@ abstract class AbstractNativeCInteropKT39120Test : AbstractNativeCInteropBaseTes
         val ktFile = testPathFull.resolve(DEFAULT_FILE_NAME)
         if (ktFile.exists()) {
             // Just compile "main.kt" with klib1 and klib2, without running resulting executable
-            val module = TestModule.Exclusive(DEFAULT_MODULE_NAME, emptySet(), emptySet()).apply {
+            val module = TestModule.Exclusive(DEFAULT_MODULE_NAME, emptySet(), emptySet(), emptySet()).apply {
                 files += TestFile.createCommitted(ktFile, this)
             }
             val compilationResult = compileToExecutable(

@@ -13,6 +13,9 @@ import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.types.*
 
+/**
+ * @return null if and only if expectedType is not function type (or flexible type with function type as bound)
+ */
 fun extractLambdaInfoFromFunctionType(
     expectedType: ConeKotlinType?,
     expectedTypeRef: FirTypeRef?,

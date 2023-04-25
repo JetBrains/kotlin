@@ -70,6 +70,7 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                 irBuiltIns.ororSymbol.toKey()!! to OrOr,
                 irBuiltIns.dataClassArrayMemberHashCodeSymbol.toKey()!! to IrDataClassArrayMemberHashCode,
                 irBuiltIns.dataClassArrayMemberToStringSymbol.toKey()!! to IrDataClassArrayMemberToString,
+                symbols.singleArgumentInlineFunction.toKey()!! to SingleArgumentInlineFunctionIntrinsic,
                 symbols.unsafeCoerceIntrinsic.toKey()!! to UnsafeCoerce,
                 symbols.signatureStringIntrinsic.toKey()!! to SignatureString,
                 symbols.throwNullPointerException.toKey()!! to ThrowException(Type.getObjectType("java/lang/NullPointerException")),
@@ -161,8 +162,11 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
     private fun binaryOp(methodName: String, opcode: Int) = binaryFunForPrimitivesAcrossPrimitives(methodName, BinaryOp(opcode))
 
     private fun numberConversionMethods(): List<Pair<Key, IntrinsicMethod>> =
-        PrimitiveType.NUMBER_TYPES.flatMap { type -> numberConversionMethods(type.symbol) } +
-                numberConversionMethods(irBuiltIns.numberClass)
+        PrimitiveType.NUMBER_TYPES.flatMap { type ->
+            OperatorConventions.NUMBER_CONVERSIONS.map { method ->
+                createKeyMapping(NumberCast, type.symbol, method.asString())
+            }
+        }
 
     private fun arrayMethods(): List<Pair<Key, IntrinsicMethod>> =
         symbols.primitiveArraysToPrimitiveTypes.flatMap { (array, primitiveType) -> arrayMethods(primitiveType.symbol, array) } +
@@ -233,12 +237,5 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
         ): Pair<Key, IntrinsicMethod> =
             Key(klass.owner.fqNameWhenAvailable!!, null, name, args.map { getParameterFqName(it) }) to
                     intrinsic
-
-        private fun numberConversionMethods(numberClass: IrClassSymbol) =
-            OperatorConventions.NUMBER_CONVERSIONS.map { method ->
-                createKeyMapping(NumberCast, numberClass, method.asString())
-            }
-
-
     }
 }

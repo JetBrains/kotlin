@@ -64,10 +64,8 @@ internal class JavaClassDeclaredMembersEnhancementScope(
     }
 
     override fun processDeclaredConstructors(processor: (FirConstructorSymbol) -> Unit) {
-        owner.declarations.filterIsInstance<FirConstructor>().forEach { constructor ->
-            useSiteMemberEnhancementScope.processDeclaredConstructors {
-                processor(constructor.symbol)
-            }
+        useSiteMemberEnhancementScope.processDeclaredConstructors { symbol ->
+            processor(symbol)
         }
     }
 

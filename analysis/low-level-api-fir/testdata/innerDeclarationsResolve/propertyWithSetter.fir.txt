@@ -1,25 +1,26 @@
-FILE: propertyWithSetter.kt
-    public abstract [BODY_RESOLVE] class Foo : R|kotlin/Any| {
-        public [BODY_RESOLVE] constructor(): R|Foo| {
+FILE: [ResolvedTo(IMPORTS)] propertyWithSetter.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public abstract [ResolvedTo(BODY_RESOLVE)] class Foo : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|Foo| {
             super<R|kotlin/Any|>()
         }
 
-        public abstract [BODY_RESOLVE] var id: R|kotlin/Int|
-            public [BODY_RESOLVE] get(): R|kotlin/Int|
-            protected [BODY_RESOLVE] set([BODY_RESOLVE] value: R|kotlin/Int|): R|kotlin/Unit|
+        public abstract [ResolvedTo(BODY_RESOLVE)] var id: R|kotlin/Int|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+            protected [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
 
     }
-    public final [BODY_RESOLVE] class Bar : R|Foo| {
-        public [BODY_RESOLVE] constructor(): R|Bar| {
+    public final [ResolvedTo(BODY_RESOLVE)] class Bar : R|Foo| {
+        public [ResolvedTo(BODY_RESOLVE)] constructor(): R|Bar| {
             super<R|Foo|>()
         }
 
-        public open override [BODY_RESOLVE] var id: R|kotlin/Int| = Int(1)
-            public [BODY_RESOLVE] get(): R|kotlin/Int|
-            public [BODY_RESOLVE] set([BODY_RESOLVE] value: R|kotlin/Int|): R|kotlin/Unit|
+        public open override [ResolvedTo(BODY_RESOLVE)] var id: R|kotlin/Int| = Int(1)
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
+            public [ResolvedTo(BODY_RESOLVE)] set([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
 
     }
-    public final [BODY_RESOLVE] fun test(): R|kotlin/Unit| {
-        [BODY_RESOLVE] lval bar: R|Bar| = R|/Bar.Bar|()
+    public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
+        [ResolvedTo(BODY_RESOLVE)] lval bar: R|Bar| = R|/Bar.Bar|()
         R|<local>/bar|.R|/Bar.id| = Int(1)
     }

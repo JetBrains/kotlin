@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.metadata.ProtoBuf.Type
 import org.jetbrains.kotlin.metadata.ProtoBuf.Type.Argument.Projection
 import org.jetbrains.kotlin.metadata.ProtoBuf.TypeParameter.Variance
 import org.jetbrains.kotlin.metadata.deserialization.*
+import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -21,10 +22,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.impl.*
-import org.jetbrains.kotlin.serialization.deserialization.DYNAMIC_TYPE_DESERIALIZER_ID
-import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
-import org.jetbrains.kotlin.serialization.deserialization.getClassId
-import org.jetbrains.kotlin.serialization.deserialization.getName
+import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.utils.doNothing
 
 // TODO: see DescriptorRendererOptions.excludedTypeAnnotationClasses for decompiler
@@ -70,18 +68,23 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
 
     private fun createTypeParameterStub(parent: KotlinStubBaseImpl<*>, type: Type, name: Name, annotations: List<ClassIdWithTarget>) {
         createTypeAnnotationStubs(parent, type, annotations)
+        val upperBoundType = if (type.hasFlexibleTypeCapabilitiesId()) {
+            createKotlinTypeBean(type.flexibleUpperBound(c.typeTable)!!)
+        } else null
+
+        val typeParameterClassId = ClassId.topLevel(FqName.topLevel(name))
         if (Flags.DEFINITELY_NOT_NULL_TYPE.get(type.flags)) {
-            createDefinitelyNotNullTypeStub(parent, FqName.topLevel(name))
+            createDefinitelyNotNullTypeStub(parent, typeParameterClassId, upperBoundType)
         } else {
             val nullableParentWrapper = nullableTypeParent(parent, type)
-            createStubForTypeName(ClassId.topLevel(FqName.topLevel(name)), nullableParentWrapper)
+            createStubForTypeName(typeParameterClassId, nullableParentWrapper, { upperBoundType })
         }
     }
 
-    private fun createDefinitelyNotNullTypeStub(parent: KotlinStubBaseImpl<*>, name: FqName) {
+    private fun createDefinitelyNotNullTypeStub(parent: KotlinStubBaseImpl<*>, classId: ClassId, upperBoundType: KotlinTypeBean?) {
         val intersectionType = KotlinPlaceHolderStubImpl<KtIntersectionType>(parent, KtStubElementTypes.INTERSECTION_TYPE)
         val leftReference = KotlinPlaceHolderStubImpl<KtTypeReference>(intersectionType, KtStubElementTypes.TYPE_REFERENCE)
-        createStubForTypeName(ClassId.topLevel(name), leftReference)
+        createStubForTypeName(classId, leftReference, { upperBoundType })
         val rightReference = KotlinPlaceHolderStubImpl<KtTypeReference>(intersectionType, KtStubElementTypes.TYPE_REFERENCE)
         val userType = KotlinUserTypeStubImpl(rightReference)
         KotlinNameReferenceExpressionStubImpl(userType, StandardNames.FqNames.any.shortName().ref())
@@ -108,19 +111,29 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                 it.classId.asSingleFqName() == StandardNames.FqNames.extensionFunctionType
             }
 
+            val (contextReceiverAnnotations, otherAnnotations) = notExtensionAnnotations.partition {
+                it.classId.asSingleFqName() == StandardNames.FqNames.contextFunctionTypeParams
+            }
+
             val isExtension = extensionAnnotations.isNotEmpty()
             val isSuspend = Flags.SUSPEND_TYPE.get(type.flags)
 
             val nullableWrapper = if (isSuspend) {
                 val wrapper = nullableTypeParent(parent, type)
-                createTypeAnnotationStubs(wrapper, type, notExtensionAnnotations)
+                createTypeAnnotationStubs(wrapper, type, otherAnnotations)
                 wrapper
             } else {
-                createTypeAnnotationStubs(parent, type, notExtensionAnnotations)
+                createTypeAnnotationStubs(parent, type, otherAnnotations)
                 nullableTypeParent(parent, type)
             }
 
-            createFunctionTypeStub(nullableWrapper, type, isExtension, isSuspend)
+            val numContextReceivers = if (contextReceiverAnnotations.isEmpty()) {
+                0
+            } else {
+                val argument = type.getExtension(JvmProtoBuf.typeAnnotation).find { c.nameResolver.getClassId(it.id).asSingleFqName() == StandardNames.FqNames.contextFunctionTypeParams }!!.getArgument(0)
+                argument.value.intValue.toInt()
+            }
+            createFunctionTypeStub(nullableWrapper, type, isExtension, isSuspend, numContextReceivers)
 
             return
         }
@@ -129,9 +142,51 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
 
         val outerTypeChain = generateSequence(type) { it.outerType(c.typeTable) }.toList()
 
-        createStubForTypeName(classId, nullableTypeParent(parent, type)) { userTypeStub, index ->
+        createStubForTypeName(classId, nullableTypeParent(parent, type), { level ->
+            if (level == 0) createKotlinTypeBean(type.flexibleUpperBound(c.typeTable))
+            else createKotlinTypeBean(outerTypeChain.getOrNull(level)?.flexibleUpperBound(c.typeTable))
+        }) { userTypeStub, index ->
             outerTypeChain.getOrNull(index)?.let { createTypeArgumentListStub(userTypeStub, it.argumentList) }
         }
+    }
+
+    fun createKotlinTypeBean(
+        type: Type?
+    ): KotlinTypeBean? {
+        if (type == null) return null
+        val definitelyNotNull = Flags.DEFINITELY_NOT_NULL_TYPE.get(type.flags)
+        val lowerBound = when {
+            type.hasTypeParameter() -> {
+                val lowerBound = KotlinTypeParameterTypeBean(
+                    c.typeParameters[type.typeParameter].asString(),
+                    type.nullable,
+                    definitelyNotNull
+                )
+                lowerBound
+            }
+            type.hasTypeParameterName() -> {
+                KotlinTypeParameterTypeBean(
+                    c.nameResolver.getString(type.typeParameterName),
+                    type.nullable,
+                    definitelyNotNull
+                )
+            }
+            else -> {
+                val classId = c.nameResolver.getClassId(if (type.hasClassName()) type.className else type.typeAliasName)
+                val arguments = type.argumentList.map { argument ->
+                    val kind = argument.projection.toProjectionKind()
+                    KotlinTypeArgumentBean(
+                        kind,
+                        if (kind == KtProjectionKind.STAR) null else createKotlinTypeBean(argument.type(c.typeTable))
+                    )
+                }
+                KotlinClassTypeBean(classId, arguments, type.nullable)
+            }
+        }
+        val upperBoundBean = createKotlinTypeBean(type.flexibleUpperBound(c.typeTable))
+        return if (upperBoundBean != null) {
+            KotlinFlexibleTypeBean(lowerBound, upperBoundBean)
+        } else lowerBound
     }
 
     private fun createTypeAnnotationStubs(parent: KotlinStubBaseImpl<*>, type: Type, annotations: List<ClassIdWithTarget>) {
@@ -181,20 +236,33 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         parent: StubElement<out PsiElement>,
         type: Type,
         isExtensionFunctionType: Boolean,
-        isSuspend: Boolean
+        isSuspend: Boolean,
+        numContextReceivers: Int,
     ) {
         val typeArgumentList = type.argumentList
         val functionType = KotlinPlaceHolderStubImpl<KtFunctionType>(parent, KtStubElementTypes.FUNCTION_TYPE)
+        var processedTypes = 0
+
+        if (numContextReceivers != 0) {
+            ContextReceiversListStubBuilder(c).createContextReceiverStubs(
+                functionType,
+                typeArgumentList.subList(
+                    processedTypes,
+                    processedTypes + numContextReceivers
+                ).map { it.type(c.typeTable)!! })
+            processedTypes += numContextReceivers
+        }
+
         if (isExtensionFunctionType) {
             val functionTypeReceiverStub =
                 KotlinPlaceHolderStubImpl<KtFunctionTypeReceiver>(functionType, KtStubElementTypes.FUNCTION_TYPE_RECEIVER)
-            val receiverTypeProto = typeArgumentList.first().type(c.typeTable)!!
+            val receiverTypeProto = typeArgumentList[processedTypes].type(c.typeTable)!!
             createTypeReferenceStub(functionTypeReceiverStub, receiverTypeProto)
+            processedTypes++
         }
 
         val parameterList = KotlinPlaceHolderStubImpl<KtParameterList>(functionType, KtStubElementTypes.VALUE_PARAMETER_LIST)
-        val typeArgumentsWithoutReceiverAndReturnType =
-            typeArgumentList.subList(if (isExtensionFunctionType) 1 else 0, typeArgumentList.size - 1)
+        val typeArgumentsWithoutReceiverAndReturnType = typeArgumentList.subList(processedTypes, typeArgumentList.size - 1)
         var suspendParameterType: Type? = null
 
         for ((index, argument) in typeArgumentsWithoutReceiverAndReturnType.withIndex()) {

@@ -14,7 +14,7 @@ import kotlin.wasm.internal.*
  * See [Kotlin language documentation](https://kotlinlang.org/docs/reference/basic-types.html#arrays)
  * for more information on arrays.
  */
-public class Array<T> constructor(size: Int) {
+public class Array<T> @PublishedApi internal constructor(size: Int) {
     internal val storage: WasmAnyArray = WasmAnyArray(size)
 
     @Suppress("TYPE_PARAMETER_AS_REIFIED", "UNUSED_PARAMETER", "CAST_NEVER_SUCCEEDS")
@@ -28,6 +28,7 @@ public class Array<T> constructor(size: Int) {
      * The function [init] is called for each array element sequentially starting from the first one.
      * It should return the value for an array element given its index.
      */
+    // TODO: it have to be inline 
     @Suppress("TYPE_PARAMETER_AS_REIFIED")
     public constructor(size: Int, init: (Int) -> T) : this(size) {
         storage.fill(size, init)

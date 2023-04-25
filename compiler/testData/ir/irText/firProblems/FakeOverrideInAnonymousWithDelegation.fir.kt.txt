@@ -1,0 +1,53 @@
+class Wrapper {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  private val dummy: <no name provided>
+    field = { // BLOCK
+      local class <no name provided> : Bar {
+        constructor() /* primary */ {
+          super/*Any*/()
+          /* <init>() */
+
+        }
+
+      }
+
+      <no name provided>()
+    }
+    private get
+
+  private val bar: <no name provided>
+    field = { // BLOCK
+      local class <no name provided> : Bar {
+        constructor() /* primary */ {
+          super/*Any*/()
+          /* <init>() */
+
+        }
+
+        override val foo: String
+          override get(): String {
+            return <this>.#$$delegate_0.<get-foo>()
+          }
+
+        private /* final field */ val $$delegate_0: <no name provided> = <this>.<get-dummy>()
+
+      }
+
+      <no name provided>()
+    }
+    private get
+
+}
+
+interface Bar {
+  val foo: String
+    get(): String {
+      return ""
+    }
+
+}

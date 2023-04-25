@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.replaceTailExpression
@@ -14,15 +13,9 @@ import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
-import org.jetbrains.kotlin.ir.builders.declarations.buildField
-import org.jetbrains.kotlin.ir.builders.declarations.buildVariable
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrSetFieldImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrSetValueImpl
-import org.jetbrains.kotlin.ir.types.isMarkedNullable
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.dump
@@ -43,18 +36,24 @@ class JvmLateinitLowering(
 ) : FileLoweringPass {
 
     override fun lower(irFile: IrFile) {
-        irFile.transformChildrenVoid(Transformer(context))
+        val transformer = Transformer(context)
+        irFile.transformChildrenVoid(transformer)
+
+        for (variable in transformer.lateinitVariables) {
+            variable.isLateinit = false
+        }
     }
 
     private class Transformer(private val backendContext: JvmBackendContext) : IrElementTransformerVoid() {
-        private val backingVariables = HashMap<IrVariable, IrVariable>()
+        val lateinitVariables = mutableListOf<IrVariable>()
 
         override fun visitField(declaration: IrField): IrStatement {
             if (declaration.isLateinitBackingField()) {
                 assert(declaration.initializer == null) {
                     "lateinit property backing field should not have an initializer:\n${declaration.dump()}"
                 }
-                return getOrBuildLateinitBackingField(declaration)
+
+                declaration.type = declaration.type.makeNullable()
             }
 
             declaration.transformChildrenVoid()
@@ -63,30 +62,23 @@ class JvmLateinitLowering(
 
         override fun visitVariable(declaration: IrVariable): IrStatement {
             declaration.transformChildrenVoid(this)
-            if (!declaration.isLateinit) return declaration
-            return getOrBuildLateinitBackingVar(declaration)
-        }
 
-        private fun getOrBuildLateinitBackingVar(declaration: IrVariable): IrVariable =
-            backingVariables.getOrPut(declaration) {
-                buildVariable(
-                    declaration.parent,
-                    declaration.startOffset,
-                    declaration.endOffset,
-                    declaration.origin,
-                    declaration.name,
-                    declaration.type.makeNullable(),
-                    isVar = true,
-                ).also {
-                    it.initializer =
-                        IrConstImpl.constNull(declaration.startOffset, declaration.endOffset, backendContext.irBuiltIns.nothingNType)
-                }
+            if (declaration.isLateinit) {
+                declaration.type = declaration.type.makeNullable()
+                declaration.isVar = true
+                declaration.initializer =
+                    IrConstImpl.constNull(declaration.startOffset, declaration.endOffset, backendContext.irBuiltIns.nothingNType)
+
+                lateinitVariables += declaration
             }
+
+            return declaration
+        }
 
         override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
             val property = declaration.correspondingPropertySymbol?.owner
             if (property != null && property.isRealLateinit() && declaration == property.getter) {
-                transformGetter(getOrBuildLateinitBackingField(property.backingField!!), declaration)
+                transformGetter(property.backingField!!, declaration)
                 return declaration
             }
 
@@ -99,59 +91,28 @@ class JvmLateinitLowering(
             if (irValue !is IrVariable || !irValue.isLateinit) {
                 return expression
             }
-            val irBackingVar = backingVariables[irValue]
-                ?: throw AssertionError("Lateinit variable reference before use: ${expression.dump()}")
 
             return backendContext.createIrBuilder(
-                (irBackingVar.parent as IrSymbolOwner).symbol,
+                (irValue.parent as IrSymbolOwner).symbol,
                 expression.startOffset,
                 expression.endOffset
             ).run {
                 irIfThenElse(
                     expression.type,
-                    irEqualsNull(irGet(irBackingVar)),
-                    backendContext.throwUninitializedPropertyAccessException(this, irBackingVar.name.asString()),
-                    irGet(irBackingVar)
+                    irEqualsNull(irGet(irValue)),
+                    backendContext.throwUninitializedPropertyAccessException(this, irValue.name.asString()),
+                    irGet(irValue)
                 )
-            }
-        }
-
-        override fun visitSetValue(expression: IrSetValue): IrExpression {
-            expression.transformChildrenVoid(this)
-            val irValue = expression.symbol.owner
-            if (irValue !is IrVariable || !irValue.isLateinit) {
-                return expression
-            }
-
-            val irBackingVar = backingVariables[expression.symbol.owner]
-                ?: throw AssertionError("Lateinit variable reference before use: ${expression.dump()}")
-            return with(expression) {
-                IrSetValueImpl(startOffset, endOffset, type, irBackingVar.symbol, value, origin)
             }
         }
 
         override fun visitGetField(expression: IrGetField): IrExpression {
             expression.transformChildrenVoid(this)
             val irField = expression.symbol.owner
-            if (!irField.isLateinitBackingField()) {
-                return expression
+            if (irField.isLateinitBackingField()) {
+                expression.type = expression.type.makeNullable()
             }
-            val newField = getOrBuildLateinitBackingField(irField)
-            return with(expression) {
-                IrGetFieldImpl(startOffset, endOffset, newField.symbol, newField.type, receiver, origin, superQualifierSymbol)
-            }
-        }
-
-        override fun visitSetField(expression: IrSetField): IrExpression {
-            expression.transformChildrenVoid(this)
-            val irField = expression.symbol.owner
-            if (!irField.isLateinitBackingField()) {
-                return expression
-            }
-            val newField = getOrBuildLateinitBackingField(irField)
-            return with(expression) {
-                IrSetFieldImpl(startOffset, endOffset, newField.symbol, receiver, value, type, origin, superQualifierSymbol)
-            }
+            return expression
         }
 
         private fun IrField.isLateinitBackingField(): Boolean {
@@ -177,10 +138,9 @@ class JvmLateinitLowering(
                 }
                 val backingField = property.backingField
                     ?: throw AssertionError("Lateinit property is supposed to have a backing field")
-                val newField = getOrBuildLateinitBackingField(backingField)
                 backendContext.createIrBuilder(it.symbol, expression.startOffset, expression.endOffset).run {
                     irNotEquals(
-                        irGetField(it.dispatchReceiver, newField),
+                        irGetField(it.dispatchReceiver, backingField),
                         irNull()
                     )
                 }
@@ -198,7 +158,7 @@ class JvmLateinitLowering(
                 val irBuilder = backendContext.createIrBuilder(getter.symbol, startOffset, endOffset)
                 irBuilder.run {
                     val resultVar = scope.createTmpVariable(
-                        irGetField(getter.dispatchReceiverParameter?.let { irGet(it) }, backingField)
+                        irGetField(getter.dispatchReceiverParameter?.let { irGet(it) }, backingField, backingField.type.makeNullable())
                     )
                     resultVar.parent = getter
                     statements.add(resultVar)
@@ -215,22 +175,5 @@ class JvmLateinitLowering(
 
         private fun IrBuilderWithScope.throwUninitializedPropertyAccessException(name: String) =
             backendContext.throwUninitializedPropertyAccessException(this, name)
-
-        private fun getOrBuildLateinitBackingField(originalField: IrField): IrField =
-            if (originalField.type.isMarkedNullable())
-                originalField
-            else
-                backendContext.mapping.lateInitFieldToNullableField.getOrPut(originalField) {
-                    backendContext.irFactory.buildField {
-                        updateFrom(originalField)
-                        type = originalField.type.makeNullable()
-                        name = originalField.name
-                    }.apply {
-                        parent = originalField.parent
-                        correspondingPropertySymbol = originalField.correspondingPropertySymbol
-                        annotations = originalField.annotations
-                    }
-                }
-
     }
 }

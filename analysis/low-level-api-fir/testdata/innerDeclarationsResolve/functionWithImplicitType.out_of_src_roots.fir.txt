@@ -1,6 +1,7 @@
-FILE: functionWithImplicitType.kt
-    public final [BODY_RESOLVE] fun <[BODY_RESOLVE] T> checkSubtype([BODY_RESOLVE] t: R|T|): R|T| {
+FILE: [ResolvedTo(IMPORTS)] functionWithImplicitType.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T> checkSubtype([ResolvedTo(BODY_RESOLVE)] t: R|T|): R|T| {
         ^checkSubtype R|<local>/t|
     }
-    public final [BODY_RESOLVE] val ab: R|kotlin/collections/List<kotlin/Int>?| = R|/checkSubtype<Inapplicable(INAPPLICABLE): /checkSubtype>#|<R|kotlin/collections/List<kotlin/Int>?|>(<Unresolved name: Collections>#.<Unresolved name: emptyList>#<R|kotlin/Int|>())
-        public [BODY_RESOLVE] get(): R|kotlin/collections/List<kotlin/Int>?|
+    public final [ResolvedTo(BODY_RESOLVE)] val ab: R|kotlin/collections/List<kotlin/Int>?| = R|/checkSubtype<Inapplicable(INAPPLICABLE): /checkSubtype>#|<R|kotlin/collections/List<kotlin/Int>?|>(<Unresolved name: Collections>#.<Unresolved name: emptyList>#<R|kotlin/Int|>())
+        public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/collections/List<kotlin/Int>?|

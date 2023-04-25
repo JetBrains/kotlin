@@ -5,7 +5,7 @@ val benchmarks_version = "0.3.1"
 plugins {
     java
     kotlin("jvm")
-    id("org.jetbrains.kotlinx.benchmark") version "0.3.1"
+    id("org.jetbrains.kotlinx.benchmark") version "0.4.6"
 }
 
 dependencies {
@@ -89,7 +89,7 @@ tasks.register<JavaExec>("runBenchmark") {
 
     val benchmarkJarPath = "$buildDir/benchmarks/main/jars/benchmarks.jar"
     args = mutableListOf("-Didea.home.path=$ideaHome", benchmarkJarPath, "-rf", "json", "-rff", resultFilePath) + jmhArgs.split("\\s".toRegex())
-    main = "-jar"
+    mainClass.set("-jar")
 
     doLast {
         if (project.kotlinBuildProperties.isTeamcityBuild) {

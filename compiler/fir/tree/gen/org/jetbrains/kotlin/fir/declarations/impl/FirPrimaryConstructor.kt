@@ -10,6 +10,7 @@ package org.jetbrains.kotlin.fir.declarations.impl
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
+import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.declarations.DeprecationsProvider
 import org.jetbrains.kotlin.fir.declarations.FirConstructor
 import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
@@ -18,8 +19,10 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirResolveState
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
+import org.jetbrains.kotlin.fir.declarations.asResolveState
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
@@ -31,6 +34,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
+import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
 
 /*
  * This file was generated automatically
@@ -39,8 +43,7 @@ import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
 
 class FirPrimaryConstructor @FirImplementationDetail constructor(
     override val source: KtSourceElement?,
-    @Volatile
-    override var resolvePhase: FirResolvePhase,
+    resolvePhase: FirResolvePhase,
     override val moduleData: FirModuleData,
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
@@ -53,6 +56,7 @@ class FirPrimaryConstructor @FirImplementationDetail constructor(
     override val dispatchReceiverType: ConeSimpleKotlinType?,
     override var contextReceivers: MutableOrEmptyList<FirContextReceiver>,
     override val valueParameters: MutableList<FirValueParameter>,
+    override var contractDescription: FirContractDescription,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override val symbol: FirConstructorSymbol,
     override var delegatedConstructor: FirDelegatedConstructorCall?,
@@ -63,6 +67,8 @@ class FirPrimaryConstructor @FirImplementationDetail constructor(
 
     init {
         symbol.bind(this)
+        @OptIn(ResolveStateAccess::class)
+        resolveState = resolvePhase.asResolveState()
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
@@ -73,6 +79,7 @@ class FirPrimaryConstructor @FirImplementationDetail constructor(
         contextReceivers.forEach { it.accept(visitor, data) }
         controlFlowGraphReference?.accept(visitor, data)
         valueParameters.forEach { it.accept(visitor, data) }
+        contractDescription.accept(visitor, data)
         annotations.forEach { it.accept(visitor, data) }
         delegatedConstructor?.accept(visitor, data)
         body?.accept(visitor, data)
@@ -86,6 +93,7 @@ class FirPrimaryConstructor @FirImplementationDetail constructor(
         contextReceivers.transformInplace(transformer, data)
         controlFlowGraphReference = controlFlowGraphReference?.transform(transformer, data)
         transformValueParameters(transformer, data)
+        transformContractDescription(transformer, data)
         transformAnnotations(transformer, data)
         transformDelegatedConstructor(transformer, data)
         transformBody(transformer, data)
@@ -117,6 +125,11 @@ class FirPrimaryConstructor @FirImplementationDetail constructor(
         return this
     }
 
+    override fun <D> transformContractDescription(transformer: FirTransformer<D>, data: D): FirPrimaryConstructor {
+        contractDescription = contractDescription.transform(transformer, data)
+        return this
+    }
+
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirPrimaryConstructor {
         annotations.transformInplace(transformer, data)
         return this
@@ -130,10 +143,6 @@ class FirPrimaryConstructor @FirImplementationDetail constructor(
     override fun <D> transformBody(transformer: FirTransformer<D>, data: D): FirPrimaryConstructor {
         body = body?.transform(transformer, data)
         return this
-    }
-
-    override fun replaceResolvePhase(newResolvePhase: FirResolvePhase) {
-        resolvePhase = newResolvePhase
     }
 
     override fun replaceStatus(newStatus: FirDeclarationStatus) {
@@ -163,6 +172,10 @@ class FirPrimaryConstructor @FirImplementationDetail constructor(
     override fun replaceValueParameters(newValueParameters: List<FirValueParameter>) {
         valueParameters.clear()
         valueParameters.addAll(newValueParameters)
+    }
+
+    override fun replaceContractDescription(newContractDescription: FirContractDescription) {
+        contractDescription = newContractDescription
     }
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {

@@ -525,6 +525,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/firErrorOnLastLineNoEol.args");
         }
 
+        @TestMetadata("firFriendlyErrorIfNoJdkOptionIsSet.args")
+        public void testFirFriendlyErrorIfNoJdkOptionIsSet() throws Exception {
+            runTest("compiler/testData/cli/jvm/firFriendlyErrorIfNoJdkOptionIsSet.args");
+        }
+
         @TestMetadata("firHello.args")
         public void testFirHello() throws Exception {
             runTest("compiler/testData/cli/jvm/firHello.args");
@@ -1323,6 +1328,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/js/firMpp.args");
         }
 
+        @TestMetadata("firMppWithKlib.args")
+        public void testFirMppWithKlib() throws Exception {
+            runTest("compiler/testData/cli/js/firMppWithKlib.args");
+        }
+
         @TestMetadata("inlineCycle.args")
         public void testInlineCycle() throws Exception {
             runTest("compiler/testData/cli/js/inlineCycle.args");
@@ -1338,11 +1348,6 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/js/jsHelp.args");
         }
 
-        @TestMetadata("jsOldBackend_strict.args")
-        public void testJsOldBackend_strict() throws Exception {
-            runTest("compiler/testData/cli/js/jsOldBackend_strict.args");
-        }
-
         @TestMetadata("kotlinHomeWithoutStdlib.args")
         public void testKotlinHomeWithoutStdlib() throws Exception {
             runTest("compiler/testData/cli/js/kotlinHomeWithoutStdlib.args");
@@ -1356,6 +1361,11 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("languageVersion.args")
         public void testLanguageVersion() throws Exception {
             runTest("compiler/testData/cli/js/languageVersion.args");
+        }
+
+        @TestMetadata("legacyCompilerUsageWithoutFlag.args")
+        public void testLegacyCompilerUsageWithoutFlag() throws Exception {
+            runTest("compiler/testData/cli/js/legacyCompilerUsageWithoutFlag.args");
         }
 
         @TestMetadata("libraryDirNotFound.args")
@@ -1589,6 +1599,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/metadata/anonymousObjectTypeWithFir.args");
         }
 
+        @TestMetadata("hmppModules.args")
+        public void testHmppModules() throws Exception {
+            runTest("compiler/testData/cli/metadata/hmppModules.args");
+        }
+
         @TestMetadata("inheritorOfExpectSealedClass.args")
         public void testInheritorOfExpectSealedClass() throws Exception {
             runTest("compiler/testData/cli/metadata/inheritorOfExpectSealedClass.args");
@@ -1629,6 +1644,21 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/metadata/moduleNameWithFir.args");
         }
 
+        @TestMetadata("noVirtualFileHiddenForMemberWithPlatformDependentAnnotation.args")
+        public void testNoVirtualFileHiddenForMemberWithPlatformDependentAnnotation() throws Exception {
+            runTest("compiler/testData/cli/metadata/noVirtualFileHiddenForMemberWithPlatformDependentAnnotation.args");
+        }
+
+        @TestMetadata("optionalAnnotationsFromMetadata.args")
+        public void testOptionalAnnotationsFromMetadata() throws Exception {
+            runTest("compiler/testData/cli/metadata/optionalAnnotationsFromMetadata.args");
+        }
+
+        @TestMetadata("optionalAnnotationsFromMetadataWithFir.args")
+        public void testOptionalAnnotationsFromMetadataWithFir() throws Exception {
+            runTest("compiler/testData/cli/metadata/optionalAnnotationsFromMetadataWithFir.args");
+        }
+
         @TestMetadata("optionalExpectationUsage.args")
         public void testOptionalExpectationUsage() throws Exception {
             runTest("compiler/testData/cli/metadata/optionalExpectationUsage.args");
@@ -1637,11 +1667,6 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("optionalExpectationUsageWithFir.args")
         public void testOptionalExpectationUsageWithFir() throws Exception {
             runTest("compiler/testData/cli/metadata/optionalExpectationUsageWithFir.args");
-        }
-
-        @TestMetadata("successfulHmpp.args")
-        public void testSuccessfulHmpp() throws Exception {
-            runTest("compiler/testData/cli/metadata/successfulHmpp.args");
         }
     }
 }

@@ -87,9 +87,24 @@ interface IrDeclarationOrigin {
 
     object SHARED_VARIABLE_IN_EVALUATOR_FRAGMENT : IrDeclarationOriginImpl("SHARED_VARIABLE_IN_EVALUATOR_FRAGMENT", isSynthetic = true)
 
-    class GeneratedByPlugin(val pluginKey: GeneratedDeclarationKey) : IrDeclarationOrigin {
+    /**
+     * [pluginKey] may be null if declaration with this origin was deserialized from klib
+     */
+    class GeneratedByPlugin private constructor(val pluginId: String, val pluginKey: GeneratedDeclarationKey?) : IrDeclarationOrigin {
+        constructor(pluginKey: GeneratedDeclarationKey) : this(pluginKey::class.qualifiedName!!, pluginKey)
+
+        companion object {
+            fun fromSerializedString(name: String): GeneratedByPlugin? {
+                val pluginId = name.removeSurrounding("GENERATED[", "]").takeIf { it != name } ?: return null
+                return GeneratedByPlugin(pluginId, pluginKey = null)
+            }
+        }
+
+        override val name: String
+            get() = "GENERATED[${pluginId}]"
+
         override fun toString(): String {
-            return "GENERATED[${pluginKey}]"
+            return name
         }
 
         override fun equals(other: Any?): Boolean {
@@ -103,11 +118,12 @@ interface IrDeclarationOrigin {
         }
     }
 
+    val name: String
     val isSynthetic: Boolean get() = false
 }
 
 abstract class IrDeclarationOriginImpl(
-    val name: String,
+    override val name: String,
     override val isSynthetic: Boolean = false
 ) : IrDeclarationOrigin {
     override fun toString(): String = name
@@ -124,5 +140,4 @@ abstract class IrDeclarationOriginImpl(
     override fun hashCode(): Int {
         return name.hashCode()
     }
-
 }

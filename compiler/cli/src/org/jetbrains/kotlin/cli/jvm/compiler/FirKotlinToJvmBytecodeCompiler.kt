@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.*
@@ -44,6 +45,7 @@ import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompil
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.multiplatform.hmppModuleName
@@ -152,17 +154,24 @@ object FirKotlinToJvmBytecodeCompiler {
         performanceManager?.notifyIRTranslationStarted()
 
         val fir2IrExtensions = JvmFir2IrExtensions(moduleConfiguration, JvmIrDeserializerImpl(), JvmIrMangler)
-        val fir2IrResult = firResult.convertToIrAndActualizeForJvm(
+        val fir2IrConfiguration = Fir2IrConfiguration(
+            languageVersionSettings = moduleConfiguration.languageVersionSettings,
+            linkViaSignatures = moduleConfiguration.getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES),
+            evaluatedConstTracker = moduleConfiguration
+                .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
+        )
+        val fir2IrAndIrActualizerResult = firResult.convertToIrAndActualizeForJvm(
             fir2IrExtensions,
+            fir2IrConfiguration,
             irGenerationExtensions,
-            linkViaSignatures = moduleConfiguration.getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES)
+            diagnosticsReporter,
         )
 
         performanceManager?.notifyIRTranslationFinished()
 
         val generationState = runBackend(
             allSources,
-            fir2IrResult,
+            fir2IrAndIrActualizerResult,
             fir2IrExtensions,
             diagnosticsReporter
         )
@@ -200,7 +209,7 @@ object FirKotlinToJvmBytecodeCompiler {
         val rootModuleName = module.getModuleName()
         val libraryList = createLibraryListForJvm(rootModuleName, moduleConfiguration, module.getFriendPaths())
         val sessionsWithSources = prepareJvmSessions(
-            ktFiles, moduleConfiguration, projectEnvironment, rootModuleName,
+            ktFiles, moduleConfiguration, projectEnvironment, Name.identifier(rootModuleName),
             extensionRegistrars, librariesScope, libraryList,
             isCommonSource = { it.isCommonSource == true },
             fileBelongsToModule = { file, moduleName -> file.hmppModuleName == moduleName },
@@ -216,11 +225,11 @@ object FirKotlinToJvmBytecodeCompiler {
 
     private fun CompilationContext.runBackend(
         ktFiles: List<KtFile>,
-        fir2IrResult: Fir2IrResult,
+        fir2IrActualizedResult: Fir2IrActualizedResult,
         extensions: JvmGeneratorExtensions,
         diagnosticsReporter: BaseDiagnosticsCollector
     ): GenerationState {
-        val (moduleFragment, components) = fir2IrResult
+        val (moduleFragment, components, pluginContext, irActualizedResult) = fir2IrActualizedResult
         val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
         val codegenFactory = JvmIrCodegenFactory(
             moduleConfiguration,
@@ -249,7 +258,7 @@ object FirKotlinToJvmBytecodeCompiler {
         generationState.oldBEInitTrace(ktFiles)
         codegenFactory.generateModuleInFrontendIRMode(
             generationState, moduleFragment, components.symbolTable, components.irProviders,
-            extensions, FirJvmBackendExtension(components), fir2IrResult.pluginContext
+            extensions, FirJvmBackendExtension(components, irActualizedResult), pluginContext
         ) {
             performanceManager?.notifyIRLoweringFinished()
             performanceManager?.notifyIRGenerationStarted()

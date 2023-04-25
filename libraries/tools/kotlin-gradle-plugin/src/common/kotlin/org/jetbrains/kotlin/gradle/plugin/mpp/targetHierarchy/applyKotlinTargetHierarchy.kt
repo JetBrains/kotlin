@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy
 import org.gradle.api.DomainObjectCollection
 import org.gradle.api.NamedDomainObjectContainer
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.Companion.upTo
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 
 internal fun applyKotlinTargetHierarchy(
@@ -19,14 +21,18 @@ internal fun applyKotlinTargetHierarchy(
         .matching { target -> target.platformType != KotlinPlatformType.common }
         .all { target ->
             target.compilations.all forCompilation@{ compilation ->
-                val hierarchy = hierarchyDescriptor.buildKotlinTargetHierarchy(compilation) ?: return@forCompilation
-                applyKotlinTargetHierarchy(hierarchy, compilation, sourceSets)
+                target.project.kotlinPluginLifecycle.launch {
+                    withRestrictedStages(upTo(Stage.FinaliseRefinesEdges)) {
+                        val hierarchy = hierarchyDescriptor.buildKotlinTargetHierarchy(compilation) ?: return@withRestrictedStages
+                        applyKotlinTargetHierarchy(hierarchy, compilation, sourceSets)
+                    }
+                }
             }
         }
 }
 
-private fun applyKotlinTargetHierarchy(
-    hierarchy: KotlinTargetHierarchy,
+private suspend fun applyKotlinTargetHierarchy(
+    hierarchy: KotlinTargetHierarchyTree,
     compilation: KotlinCompilation<*>,
     sourceSets: NamedDomainObjectContainer<KotlinSourceSet>
 ): KotlinSourceSet? {
@@ -48,9 +54,9 @@ private fun applyKotlinTargetHierarchy(
     return sharedSourceSet
 }
 
-private fun createSharedSourceSetOrNull(
+private suspend fun createSharedSourceSetOrNull(
     sourceSets: NamedDomainObjectContainer<KotlinSourceSet>,
-    node: KotlinTargetHierarchy.Node,
+    node: KotlinTargetHierarchyTree.Node,
     compilation: KotlinCompilation<*>,
 ): KotlinSourceSet? {
     val sharedSourceSetName = node.sharedSourceSetName(compilation) ?: return null

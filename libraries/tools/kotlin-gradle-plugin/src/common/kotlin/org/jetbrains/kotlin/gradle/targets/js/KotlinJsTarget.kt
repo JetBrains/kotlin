@@ -16,9 +16,14 @@ import org.jetbrains.kotlin.gradle.plugin.AbstractKotlinTargetConfigurator.Compa
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.LEGACY
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
-import org.jetbrains.kotlin.gradle.targets.js.dsl.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.PRIMARY_SINGLE_COMPONENT_NAME
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsNodeDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsSubTargetContainerDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTargetDsl
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsBinaryContainer
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
+import org.jetbrains.kotlin.gradle.targets.js.npm.NpmResolverPlugin
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinBrowserJs
 import org.jetbrains.kotlin.gradle.targets.js.subtargets.KotlinNodeJs
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
@@ -147,8 +152,13 @@ constructor(
 
     private val propertiesProvider = PropertiesProvider(project)
 
+    private val commonLazy by lazy {
+        NpmResolverPlugin.apply(project)
+    }
+
     //Browser
     private val browserLazyDelegate = lazy {
+        commonLazy
         project.objects.newInstance(KotlinBrowserJs::class.java, this).also {
             it.configure()
 
@@ -177,6 +187,7 @@ constructor(
 
     //node.js
     private val nodejsLazyDelegate = lazy {
+        commonLazy
         project.objects.newInstance(KotlinNodeJs::class.java, this).also {
             it.configure()
 

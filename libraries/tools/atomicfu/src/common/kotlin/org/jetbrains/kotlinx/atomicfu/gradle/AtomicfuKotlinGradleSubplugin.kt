@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlinx.atomicfu.gradle
 
-import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.plugin.*
@@ -26,7 +25,7 @@ private const val EXTENSION_NAME = "atomicfuCompilerPlugin"
 class AtomicfuKotlinGradleSubplugin :
     KotlinCompilerPluginSupportPlugin {
     companion object {
-        const val ATOMICFU_ARTIFACT_NAME = "atomicfu"
+        const val ATOMICFU_ARTIFACT_NAME = "kotlin-atomicfu-compiler-plugin-embeddable"
     }
 
     override fun apply(target: Project) {

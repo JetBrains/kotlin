@@ -40,6 +40,12 @@ package {
       returns() implies (p#1 !is kotlin/collections/List<*> && p#2 && p#3 == null)
     }
 
+  // signature: receiverIsNotNull(Ljava/lang/Object;)Z
+  public final fun kotlin/Any?.receiverIsNotNull(): kotlin/Boolean
+    contract {
+      returns(true) implies (p#0 != null)
+    }
+
   // signature: returnsNotNull(Z)V
   public final fun returnsNotNull(condition: kotlin/Boolean): kotlin/Unit
     contract {
@@ -56,12 +62,6 @@ package {
   public final fun returnsTrue(condition: kotlin/Boolean): kotlin/Unit
     contract {
       returns(true) implies (p#1)
-    }
-
-  // signature: receiverIsNotNull(Ljava/lang/Object;)Z
-  public final fun kotlin/Any?.receiverIsNotNull(): kotlin/Boolean
-    contract {
-      returns(true) implies (p#0 != null)
     }
 
   // module name: test-module

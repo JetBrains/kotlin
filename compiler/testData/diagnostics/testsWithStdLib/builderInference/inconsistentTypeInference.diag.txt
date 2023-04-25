@@ -1,0 +1,4 @@
+/inconsistentTypeInference.kt:7:17: error: constraint error in receiver type argument: inferred type is String but Int was expected
+        println(plus(1)[0])
+                ^
+

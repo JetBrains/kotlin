@@ -20,7 +20,7 @@ dependencies {
     testImplementation(projectTests(":generators:test-generator"))
 
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
-    testRuntimeOnly(commonDependency("net.java.dev.jna:jna"))
+    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
 }
 
 val generationRoot = projectDir.resolve("tests-gen")

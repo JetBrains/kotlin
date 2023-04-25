@@ -86,6 +86,30 @@ public class FirPsiSteppingTestGenerated extends AbstractFirPsiSteppingTest {
     }
 
     @Test
+    @TestMetadata("commentBeforeClass.kt")
+    public void testCommentBeforeClass() throws Exception {
+        runTest("compiler/testData/debug/stepping/commentBeforeClass.kt");
+    }
+
+    @Test
+    @TestMetadata("commentBeforeCompanionProperty.kt")
+    public void testCommentBeforeCompanionProperty() throws Exception {
+        runTest("compiler/testData/debug/stepping/commentBeforeCompanionProperty.kt");
+    }
+
+    @Test
+    @TestMetadata("commentBeforeFunctionWithDefault.kt")
+    public void testCommentBeforeFunctionWithDefault() throws Exception {
+        runTest("compiler/testData/debug/stepping/commentBeforeFunctionWithDefault.kt");
+    }
+
+    @Test
+    @TestMetadata("comments.kt")
+    public void testComments() throws Exception {
+        runTest("compiler/testData/debug/stepping/comments.kt");
+    }
+
+    @Test
     @TestMetadata("compileTimeConstant.kt")
     public void testCompileTimeConstant() throws Exception {
         runTest("compiler/testData/debug/stepping/compileTimeConstant.kt");
@@ -368,6 +392,12 @@ public class FirPsiSteppingTestGenerated extends AbstractFirPsiSteppingTest {
     }
 
     @Test
+    @TestMetadata("overridenGetterSetter.kt")
+    public void testOverridenGetterSetter() throws Exception {
+        runTest("compiler/testData/debug/stepping/overridenGetterSetter.kt");
+    }
+
+    @Test
     @TestMetadata("primitiveNullChecks.kt")
     public void testPrimitiveNullChecks() throws Exception {
         runTest("compiler/testData/debug/stepping/primitiveNullChecks.kt");
@@ -533,6 +563,12 @@ public class FirPsiSteppingTestGenerated extends AbstractFirPsiSteppingTest {
     @TestMetadata("whenConstant.kt")
     public void testWhenConstant() throws Exception {
         runTest("compiler/testData/debug/stepping/whenConstant.kt");
+    }
+
+    @Test
+    @TestMetadata("whenExpr.kt")
+    public void testWhenExpr() throws Exception {
+        runTest("compiler/testData/debug/stepping/whenExpr.kt");
     }
 
     @Test

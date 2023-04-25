@@ -36,11 +36,11 @@ fun test() {
     foo(x, <!UNDERSCORE_USAGE_WITHOUT_BACKTICKS, UNRESOLVED_REFERENCE!>_<!>)
     foo(<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS, UNRESOLVED_REFERENCE!>_<!>, y)
 
-    val (`_`, z) = A()
+    val (<!REDECLARATION!>`_`<!>, z) = A()
 
     foo(<!UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>_<!>, z)
 
-    val (_, `_`) = A()
+    val (_, <!REDECLARATION!>`_`<!>) = A()
 
     foo(<!ARGUMENT_TYPE_MISMATCH, UNDERSCORE_USAGE_WITHOUT_BACKTICKS!>_<!>, y)
 

@@ -20,14 +20,14 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.util.companionObject
 import org.jetbrains.kotlin.ir.util.isObject
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.util.collectionUtils.filterIsInstanceAnd
+import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
 class ExportModelToJsStatements(
     private val staticContext: JsStaticContext,
     private val es6mode: Boolean,
     private val declareNewNamespace: (String) -> String,
 ) {
-    private val namespaceToRefMap = mutableMapOf<String, JsNameRef>()
+    private val namespaceToRefMap = hashMapOf<String, JsNameRef>()
 
     fun generateModuleExport(
         module: ExportedModule,
@@ -83,7 +83,7 @@ class ExportModelToJsStatements(
                     namespace != null ->
                         listOf(jsAssignment(jsElementAccess(declaration.name, namespace), JsNameRef(name)).makeStmt())
 
-                    esModules -> listOf(JsExport(name, alias = JsName(declaration.name, false)))
+                    esModules -> listOf(JsExport(name.makeRef(), alias = JsName(declaration.name, false)))
                     else -> emptyList()
                 }
             }
@@ -96,7 +96,7 @@ class ExportModelToJsStatements(
                 when {
                     namespace == null -> {
                         val property = declaration.generateTopLevelGetters()
-                        listOf(JsVars(property), JsExport(property.name, JsName(declaration.name, false)))
+                        listOf(JsVars(property), JsExport(property.name.makeRef(), JsName(declaration.name, false)))
                     }
                     es6mode && declaration.isMember -> {
                         val jsClass = parentClass?.getCorrespondingJsClass() ?: error("Expect to have parentClass at this point")
@@ -168,7 +168,7 @@ class ExportModelToJsStatements(
                 }
                 val klassExport = when {
                     namespace != null -> jsAssignment(newNameSpace, JsNameRef(name)).makeStmt()
-                    esModules -> JsExport(name, alias = JsName(declaration.name, false))
+                    esModules -> JsExport(name.makeRef(), alias = JsName(declaration.name, false))
                     else -> null
                 }
 

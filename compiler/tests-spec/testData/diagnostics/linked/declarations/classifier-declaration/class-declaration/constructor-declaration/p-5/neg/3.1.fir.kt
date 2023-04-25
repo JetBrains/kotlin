@@ -4,8 +4,8 @@
 
 // TESTCASE NUMBER: 1
 class Case1<T>() {
-    class A(var t: T)
-    class B(var x: List<T>)
-    class C(var c: () -> T)
-    class E(var n: Nothing, var t: T)
+    class A(var t: <!UNRESOLVED_REFERENCE!>T<!>)
+    class B(var x: List<<!UNRESOLVED_REFERENCE!>T<!>>)
+    class C(var c: () -> <!UNRESOLVED_REFERENCE!>T<!>)
+    class E(var n: Nothing, var t: <!UNRESOLVED_REFERENCE!>T<!>)
 }

@@ -80,7 +80,7 @@ class JvmBackendDiagnosticsHandler(testServices: TestServices) : JvmBinaryArtifa
             val ktDiagnostics = ktDiagnosticReporter.diagnosticsByFilePath[ktFile.virtualFilePath] ?: continue
             ktDiagnostics.forEach {
                 val metaInfos =
-                    it.toMetaInfos(testFile, globalMetadataInfoHandler, false, false)
+                    it.toMetaInfos(module, testFile, globalMetadataInfoHandler, false, false)
                 globalMetadataInfoHandler.addMetadataInfosForFile(testFile, metaInfos)
             }
         }

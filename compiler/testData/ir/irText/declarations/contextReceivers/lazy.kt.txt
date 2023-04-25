@@ -2,51 +2,51 @@ interface Lazy<T : Any?> {
 
 }
 
-fun test1(_context_receiver_0: Lazy<Int>, _context_receiver_1: Lazy<CharSequence>) {
+fun test1($context_receiver_0: Lazy<Int>, $context_receiver_1: Lazy<CharSequence>) {
 }
 
-fun <T : Any?> Lazy<Int>.test2(_context_receiver_0: Lazy<T>) {
+fun <T : Any?> Lazy<Int>.test2($context_receiver_0: Lazy<T>) {
 }
 
-fun <T : Any?> Lazy<Int>.test3(_context_receiver_0: Lazy<Lazy<T>>) {
+fun <T : Any?> Lazy<Int>.test3($context_receiver_0: Lazy<Lazy<T>>) {
 }
 
 fun <T : Any?> f(lazy1: Lazy<Int>, lazy2: Lazy<CharSequence>, lazyT: Lazy<T>, lazyLazyT: Lazy<Lazy<T>>) {
   with<Lazy<Int>, Unit>(receiver = lazy1, block = local fun Lazy<Int>.<anonymous>() {
     with<Lazy<CharSequence>, Unit>(receiver = lazy2, block = local fun Lazy<CharSequence>.<anonymous>() {
-      test1(_context_receiver_0 = $this$with, _context_receiver_1 = $this$with)
-      $this$with.test2<CharSequence>(_context_receiver_0 = $this$with)
+      test1($context_receiver_0 = $this$with, $context_receiver_1 = $this$with)
+      $this$with.test2<CharSequence>($context_receiver_0 = $this$with)
     }
 )
   }
 )
   with<Lazy<CharSequence>, Unit>(receiver = lazy2, block = local fun Lazy<CharSequence>.<anonymous>() {
     with<Lazy<Int>, Unit>(receiver = lazy1, block = local fun Lazy<Int>.<anonymous>() {
-      test1(_context_receiver_0 = $this$with, _context_receiver_1 = $this$with)
-      $this$with.test2<Int>(_context_receiver_0 = $this$with)
+      test1($context_receiver_0 = $this$with, $context_receiver_1 = $this$with)
+      $this$with.test2<Int>($context_receiver_0 = $this$with)
     }
 )
   }
 )
   with<Lazy<T>, Unit>(receiver = lazyT, block = local fun Lazy<T>.<anonymous>() {
     with<Lazy<Int>, Unit>(receiver = lazy1, block = local fun Lazy<Int>.<anonymous>() {
-      $this$with.test2<Int>(_context_receiver_0 = $this$with)
+      $this$with.test2<Int>($context_receiver_0 = $this$with)
     }
 )
   }
 )
   with<Lazy<Lazy<T>>, Unit>(receiver = lazyLazyT, block = local fun Lazy<Lazy<T>>.<anonymous>() {
     with<Lazy<Int>, Unit>(receiver = lazy1, block = local fun Lazy<Int>.<anonymous>() {
-      $this$with.test2<Int>(_context_receiver_0 = $this$with)
-      $this$with.test3<T>(_context_receiver_0 = $this$with)
+      $this$with.test2<Int>($context_receiver_0 = $this$with)
+      $this$with.test3<T>($context_receiver_0 = $this$with)
     }
 )
   }
 )
   with<Lazy<Int>, Unit>(receiver = lazy1, block = local fun Lazy<Int>.<anonymous>() {
     with<Lazy<Lazy<T>>, Unit>(receiver = lazyLazyT, block = local fun Lazy<Lazy<T>>.<anonymous>() {
-      $this$with.test2<Lazy<T>>(_context_receiver_0 = $this$with)
-      $this$with.test3<T>(_context_receiver_0 = $this$with)
+      $this$with.test2<Lazy<T>>($context_receiver_0 = $this$with)
+      $this$with.test3<T>($context_receiver_0 = $this$with)
     }
 )
   }

@@ -52,26 +52,33 @@ internal external interface Process {
 @SinceKotlin("1.3")
 @ExperimentalTime
 internal class HrTimeSource(private val process: Process) : DefaultTimeSource {
+    @Suppress("NOTHING_TO_INLINE")
+    private class Reading(val components: Array<Double>) {
+        inline operator fun component1(): Double = components.component1()
+        inline operator fun component2(): Double = components.component2()
+        override fun equals(other: Any?): Boolean = other is Reading && this.components contentEquals other.components
+        override fun hashCode(): Int = components.contentHashCode()
+        override fun toString(): String = components.contentToString()
+    }
 
-    override fun markNow(): ValueTimeMark = ValueTimeMark(process.hrtime())
+    override fun markNow(): ValueTimeMark =
+        ValueTimeMark(Reading(process.hrtime()))
+
     override fun elapsedFrom(timeMark: ValueTimeMark): Duration =
-        @Suppress("UNCHECKED_CAST")
-        process.hrtime(timeMark.reading as Array<Double>)
+        process.hrtime((timeMark.reading as Reading).components)
             .let { (seconds, nanos) -> seconds.toDuration(DurationUnit.SECONDS) + nanos.toDuration(DurationUnit.NANOSECONDS) }
 
-    @Suppress("UNCHECKED_CAST")
     override fun differenceBetween(one: ValueTimeMark, another: ValueTimeMark): Duration {
-        val (s1, n1) = one.reading as Array<Double>
-        val (s2, n2) = another.reading as Array<Double>
+        val (s1, n1) = one.reading as Reading
+        val (s2, n2) = another.reading as Reading
         return (if (s1 == s2 && n1 == n2) Duration.ZERO else (s1 - s2).toDuration(DurationUnit.SECONDS)) + (n1 - n2).toDuration(DurationUnit.NANOSECONDS)
     }
 
     override fun adjustReading(timeMark: ValueTimeMark, duration: Duration): ValueTimeMark =
-        @Suppress("UNCHECKED_CAST")
-        (timeMark.reading as Array<Double>).let { (seconds, nanos) ->
+        (timeMark.reading as Reading).let { (seconds, nanos) ->
             duration.toComponents { _, addNanos ->
                 val resultSeconds = sumCheckNaN(seconds + truncate(duration.toDouble(DurationUnit.SECONDS)))
-                arrayOf<Double>(resultSeconds, if (resultSeconds.isFinite()) nanos + addNanos else 0.0)
+                Reading(arrayOf(resultSeconds, if (resultSeconds.isFinite()) nanos + addNanos else 0.0))
             }
         }.let(TimeSource.Monotonic::ValueTimeMark)
 

@@ -39,7 +39,7 @@ data class A {
   }
 
   override fun toString(): String {
-    return "A(" + "runA=" + <this>.#runA + ")"
+    return "A(runA=" + <this>.#runA + ")"
   }
 
 }
@@ -47,7 +47,7 @@ data class A {
 data class B {
   constructor(x: Any = { // BLOCK
     local class <no name provided> {
-      private constructor() /* primary */ {
+      constructor() /* primary */ {
         super/*Any*/()
         /* <init>() */
 
@@ -93,7 +93,7 @@ data class B {
   }
 
   override fun toString(): String {
-    return "B(" + "x=" + <this>.#x + ")"
+    return "B(x=" + <this>.#x + ")"
   }
 
 }

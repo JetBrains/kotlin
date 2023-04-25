@@ -56,47 +56,47 @@ fun foo(
     <!EQUALITY_NOT_APPLICABLE!>"" == 2<!>
 
     <!EQUALITY_NOT_APPLICABLE!>string == int<!>
-    <!EQUALITY_NOT_APPLICABLE_WARNING!>strings == ints<!>
+    strings == ints
 
-    <!EQUALITY_NOT_APPLICABLE_WARNING!>aString == aInt<!>
-    <!EQUALITY_NOT_APPLICABLE_WARNING!>aOutString == aOutInt<!>
+    aString == aInt
+    aOutString == aOutInt
     aInString == aInInt
-    <!EQUALITY_NOT_APPLICABLE_WARNING!>aOutString == aInInt<!>
-    <!EQUALITY_NOT_APPLICABLE_WARNING!>aInString == aOutInt<!>
-    <!EQUALITY_NOT_APPLICABLE_WARNING!>aOutString == aInt<!>
-    <!EQUALITY_NOT_APPLICABLE_WARNING!>aInString == aInt<!>
-    <!EQUALITY_NOT_APPLICABLE_WARNING!>aOutString2 == aOutInt2<!>
+    aOutString == aInInt
+    aInString == aOutInt
+    aOutString == aInt
+    aInString == aInt
+    aOutString2 == aOutInt2
     aInString2 == aInInt2
-    <!EQUALITY_NOT_APPLICABLE_WARNING!>aOutString2 == aInInt2<!>
-    <!EQUALITY_NOT_APPLICABLE_WARNING!>aInString2 == aOutInt2<!>
-    <!EQUALITY_NOT_APPLICABLE_WARNING!>aString == a2<!>
+    aOutString2 == aInInt2
+    aInString2 == aOutInt2
+    aString == a2
 
-    <!EQUALITY_NOT_APPLICABLE_WARNING!>bString == bInt<!>
-    <!EQUALITY_NOT_APPLICABLE_WARNING!>bOutString == bOutInt<!>
+    bString == bInt
+    bOutString == bOutInt
     bInString == bInInt
-    <!EQUALITY_NOT_APPLICABLE_WARNING!>bOutString == bInInt<!>
-    <!EQUALITY_NOT_APPLICABLE_WARNING!>bInString == bOutInt<!>
-    <!EQUALITY_NOT_APPLICABLE_WARNING!>bOutString == bInt<!>
-    <!EQUALITY_NOT_APPLICABLE_WARNING!>bInString == bInt<!>
-    <!EQUALITY_NOT_APPLICABLE_WARNING!>bOutString2 == bOutInt2<!>
+    bOutString == bInInt
+    bInString == bOutInt
+    bOutString == bInt
+    bInString == bInt
+    bOutString2 == bOutInt2
     bInString2 == bInInt2
-    <!EQUALITY_NOT_APPLICABLE_WARNING!>bOutString2 == bInInt2<!>
-    <!EQUALITY_NOT_APPLICABLE_WARNING!>bInString2 == bOutInt2<!>
+    bOutString2 == bInInt2
+    bInString2 == bOutInt2
 
     <!INCOMPATIBLE_ENUM_COMPARISON_ERROR!>e == i<!>
     <!EQUALITY_NOT_APPLICABLE!>"" == i<!>
-    <!EQUALITY_NOT_APPLICABLE_WARNING!>ac == ad<!>
+    ac == ad
 
-    <!EQUALITY_NOT_APPLICABLE_WARNING!>tSub1 == tSub2<!>
+    tSub1 == tSub2
 
-    <!EQUALITY_NOT_APPLICABLE_WARNING!>aString == bString<!>
+    aString == bString
 
-    <!EQUALITY_NOT_APPLICABLE_WARNING!>aListInt == aSetInt<!>
-    <!EQUALITY_NOT_APPLICABLE_WARNING!>aSetInt == aListString<!>
-    <!EQUALITY_NOT_APPLICABLE_WARNING!>aListString == aListInt<!>
+    aListInt == aSetInt
+    aSetInt == aListString
+    aListString == aListInt
 
-    <!EQUALITY_NOT_APPLICABLE_WARNING!>aString == aListString<!>
-    <!EQUALITY_NOT_APPLICABLE_WARNING!>bString == aListString<!>
+    aString == aListString
+    bString == aListString
 
-    <!EQUALITY_NOT_APPLICABLE_WARNING!>mutableListAny == listString<!>
+    mutableListAny == listString
 }

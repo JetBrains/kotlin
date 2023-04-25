@@ -24,7 +24,6 @@ fun updateCompilerXml() {
         "libraries/tools/gradle",
         "libraries/tools/kotlin-allopen",
         "libraries/tools/kotlin-annotation-processing",
-        "libraries/tools/kotlin-annotation-processing-maven",
         "libraries/tools/kotlin-assignment",
         "libraries/tools/kotlin-bom",
         "libraries/tools/kotlin-gradle-build-metrics",
@@ -72,6 +71,14 @@ fun updateCompilerXml() {
         "libraries/tools/kotlin-gradle-plugin-idea-proto",
         "libraries/tools/kotlin-project-model-tests-generator",
         "repo/gradle-settings-conventions",
+        "wasm/wasm.ir/test", // KT-58111
+        "js/js.tests/test", // KT-58111
+        "js/js.tests/tests-gen", // KT-58111
+        "plugins/kotlinx-serialization/tests", // KT-58111
+        "plugins/kotlinx-serialization/tests-gen", // KT-58111
+        "plugins/atomicfu/atomicfu-compiler/test", // KT-58111
+        "generators/tests/org/jetbrains/kotlin/generators/tests", // KT-58111
+        "plugins/pill/generate-all-tests/test/org/jetbrains/kotlin/pill/generateAllTests", // KT-58111
     )
 
     val d = '$'

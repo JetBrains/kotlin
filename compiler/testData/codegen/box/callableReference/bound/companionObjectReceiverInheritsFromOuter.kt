@@ -55,6 +55,17 @@ fun box(): String {
     if (!callContext(A::instanceProp, A.Companion)) return "Fail unbound 7"
     if (!callContext(A::extProp, A.Companion)) return "Fail unbound 8"
 
+    with (A) {
+        if (!call(::instance)) return "Fail implicit bound function 1"
+        if (!call(::companion)) return "Fail implicit bound function 2"
+        if (!call(::ext)) return "Fail implicit bound function 3"
+        if (!call(::companionExt)) return "Fail implicit bound function 4"
+        if (!call(::instanceProp)) return "Fail imlicit bound prop 5"
+        if (!call(::companionProp)) return "Fail imlicit bound prop 6"
+        if (!call(::extProp)) return "Fail imlicit bound prop 7"
+        if (!call(::companionExtProp)) return "Fail imlicit bound prop 8"
+    }
+
     val instance = A::instance
     val ext = A::ext
     val instanceProp = A::instanceProp

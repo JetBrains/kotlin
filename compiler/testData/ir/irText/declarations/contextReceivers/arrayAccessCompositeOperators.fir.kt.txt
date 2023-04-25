@@ -37,7 +37,7 @@ data class MyContainer {
   }
 
   override fun toString(): String {
-    return "MyContainer(" + "i=" + <this>.#i + ")"
+    return "MyContainer(i=" + <this>.#i + ")"
   }
 
 }
@@ -47,32 +47,32 @@ var operationScore: Int
   get
   set
 
-operator fun MyContainer.get(_context_receiver_0: Int, index: Int): Int {
-  <set-operationScore>(<set-?> = <get-operationScore>().plus(other = _context_receiver_0))
+operator fun MyContainer.get($context_receiver_0: Int, index: Int): Int {
+  <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
   return when {
     EQEQ(arg0 = index, arg1 = 0) -> <this>.<get-i>()
     else -> -1
   }
 }
 
-operator fun MyContainer.plusAssign(_context_receiver_0: Int, other: MyContainer) {
-  <set-operationScore>(<set-?> = <get-operationScore>().plus(other = _context_receiver_0))
+operator fun MyContainer.plusAssign($context_receiver_0: Int, other: MyContainer) {
+  <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
   <this>.<set-i>(<set-?> = <this>.<get-i>().plus(other = other.<get-i>()))
 }
 
-operator fun MyContainer.inc(_context_receiver_0: Int): MyContainer {
-  <set-operationScore>(<set-?> = <get-operationScore>().plus(other = _context_receiver_0))
+operator fun MyContainer.inc($context_receiver_0: Int): MyContainer {
+  <set-operationScore>(<set-?> = <get-operationScore>().plus(other = $context_receiver_0))
   return MyContainer(i = <this>.<get-i>().plus(other = 1))
 }
 
 fun box(): String {
   var myContainer: MyContainer = MyContainer(i = 0)
   with<Int, Unit>(receiver = 1, block = local fun Int.<anonymous>() {
-    myContainer.plusAssign(_context_receiver_0 = $this$with, other = MyContainer(i = { // BLOCK
+    myContainer.plusAssign($context_receiver_0 = $this$with, other = MyContainer(i = { // BLOCK
       val <unary>: MyContainer = myContainer
-      myContainer = <unary>.inc(_context_receiver_0 = $this$with)
+      myContainer = <unary>.inc($context_receiver_0 = $this$with)
       <unary>
-    }.get(_context_receiver_0 = $this$with, index = 0)))
+    }.get($context_receiver_0 = $this$with, index = 0)))
   }
 )
   return when {

@@ -15,17 +15,14 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.ModuleFileCa
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FileStructureCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirModuleLazyDeclarationResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirScopeSessionProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 
-@Suppress("CanBeParameter")
 internal class LLFirModuleResolveComponents(
     val module: KtModule,
     val globalResolveComponents: LLFirGlobalResolveComponents,
-    val scopeProvider: FirScopeProvider,
-    val sessionInvalidator: LLFirSessionInvalidator,
+    val scopeProvider: FirScopeProvider
 ) {
     val cache: ModuleFileCache = ModuleFileCacheImpl(this)
     val firFileBuilder: LLFirFileBuilder = LLFirFileBuilder(this)

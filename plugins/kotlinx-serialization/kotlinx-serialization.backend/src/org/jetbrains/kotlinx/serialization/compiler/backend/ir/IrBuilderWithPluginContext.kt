@@ -161,6 +161,30 @@ interface IrBuilderWithPluginContext {
         }
     }
 
+    fun IrClass.addValPropertyWithJvmFieldInitializer(
+        type: IrType,
+        name: Name,
+        visibility: DescriptorVisibility = DescriptorVisibilities.PRIVATE,
+        initializer: IrBuilderWithScope.() -> IrExpression
+    ): IrProperty {
+        return generateSimplePropertyWithBackingField(name, type, this, visibility).apply {
+            val field = backingField!!
+
+            val builder = DeclarationIrBuilder(
+                compilerContext,
+                field.symbol,
+                field.startOffset,
+                field.endOffset
+            )
+            field.initializer = IrExpressionBodyImpl(builder.initializer())
+
+            val annotationCtor = compilerContext.jvmFieldClassSymbol.constructors.single { it.owner.isPrimary }
+            val annotationType = compilerContext.jvmFieldClassSymbol.defaultType
+
+            field.annotations += IrConstructorCallImpl.fromSymbolOwner(startOffset, endOffset, annotationType, annotationCtor)
+        }
+    }
+
     /**
      * Add all statements to the builder, except the last one.
      * The last statement should be an expression, it will return as a result
@@ -214,15 +238,11 @@ interface IrBuilderWithPluginContext {
         }
     }
 
-    fun IrBuilderWithScope.createPrimitiveArrayOfExpression(
-        elementPrimitiveType: IrType,
-        arrayElements: List<IrExpression>
-    ): IrExpression {
-        val arrayType = compilerContext.irBuiltIns.primitiveArrayForType.getValue(elementPrimitiveType).defaultType
-        val arg0 = IrVarargImpl(startOffset, endOffset, arrayType, elementPrimitiveType, arrayElements)
-        val typeArguments = listOf(elementPrimitiveType)
-
-        return irCall(compilerContext.irBuiltIns.arrayOf, arrayType, typeArguments = typeArguments).apply {
+    fun IrBuilderWithScope.createIntArrayOfExpression(arrayElements: List<IrExpression>): IrExpression {
+        val elementType = compilerContext.irBuiltIns.intType
+        val arrayType = compilerContext.intArrayOfFunctionSymbol.owner.returnType
+        val arg0 = IrVarargImpl(startOffset, endOffset, arrayType, elementType, arrayElements)
+        return irCall(compilerContext.intArrayOfFunctionSymbol, arrayType).apply {
             putValueArgument(0, arg0)
         }
     }
@@ -383,8 +403,8 @@ interface IrBuilderWithPluginContext {
 
     fun collectSerialInfoAnnotations(irClass: IrClass): List<IrConstructorCall> {
         if (!(irClass.isInterface || irClass.hasSerializableOrMetaAnnotation())) return emptyList()
-        val annotationByFq: MutableMap<FqName, IrConstructorCall> =
-            irClass.annotations.associateBy { it.symbol.owner.parentAsClass.fqNameWhenAvailable!! }.toMutableMap()
+        val annotationByFq: MutableMap<FqName, List<IrConstructorCall>> =
+            irClass.annotations.groupBy { it.symbol.owner.parentAsClass.fqNameWhenAvailable!! }.toMutableMap()
         for (clazz in irClass.getAllSuperclasses()) {
             val annotations = clazz.annotations
                 .mapNotNull {
@@ -393,13 +413,14 @@ interface IrBuilderWithPluginContext {
                 }
             annotations.forEach { (fqname, call) ->
                 if (fqname !in annotationByFq) {
-                    annotationByFq[fqname] = call
+                    annotationByFq[fqname] = listOf(call)
                 } else {
                     // SerializationPluginDeclarationChecker already reported inconsistency
+                    // InheritableSerialInfo annotations can not be repeatable
                 }
             }
         }
-        return annotationByFq.values.toList()
+        return annotationByFq.values.toList().flatten()
     }
 
     fun IrBuilderWithScope.copyAnnotationsFrom(annotations: List<IrConstructorCall>): List<IrExpression> =

@@ -9,6 +9,7 @@
 #include <atomic>
 
 #include "AtomicStack.hpp"
+#include "GCStatistics.hpp"
 
 namespace kotlin::alloc {
 
@@ -22,14 +23,15 @@ public:
         while ((page = empty_.Pop())) page->Destroy();
     }
 
-    void Sweep() noexcept {
-        while (SweepSingle(unswept_, ready_)) {}
+    void Sweep(gc::GCHandle::GCSweepScope& sweepHandle) noexcept {
+        while (SweepSingle(sweepHandle, unswept_.Pop(), unswept_, ready_)) {
+        }
     }
 
-    void SweepAndFree() noexcept {
+    void SweepAndFree(gc::GCHandle::GCSweepScope& sweepHandle) noexcept {
         T* page;
         while ((page = unswept_.Pop())) {
-            if (page->Sweep()) {
+            if (page->Sweep(sweepHandle)) {
                 ready_.Push(page);
             } else {
                 page->Destroy();
@@ -39,8 +41,12 @@ public:
 
     T* GetPage(uint32_t cellCount) noexcept {
         T* page;
-        if ((page = SweepSingle(unswept_, used_))) {
-            return page;
+        if ((page = unswept_.Pop())) {
+            // If there're unswept_ pages, the GC is in progress.
+            auto sweepHandle = gc::GCHandle::currentEpoch()->sweep();
+            if ((page = SweepSingle(sweepHandle, page, unswept_, used_))) {
+                return page;
+            }
         }
         if ((page = ready_.Pop())) {
             used_.Push(page);
@@ -68,15 +74,17 @@ public:
     }
 
 private:
-    T* SweepSingle(AtomicStack<T>& from, AtomicStack<T>& to) noexcept {
-        T* page;
-        while ((page = from.Pop())) {
-            if (page->Sweep()) {
+    T* SweepSingle(gc::GCHandle::GCSweepScope& sweepHandle, T* page, AtomicStack<T>& from, AtomicStack<T>& to) noexcept {
+        if (!page) {
+            return nullptr;
+        }
+        do {
+            if (page->Sweep(sweepHandle)) {
                 to.Push(page);
                 return page;
             }
             empty_.Push(page);
-        }
+        } while ((page = from.Pop()));
         return nullptr;
     }
 

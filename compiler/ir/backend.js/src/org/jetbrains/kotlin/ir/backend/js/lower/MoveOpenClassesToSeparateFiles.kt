@@ -14,13 +14,14 @@ import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrFileSymbolImpl
+import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 import org.jetbrains.kotlin.ir.util.transformDeclarationsFlat
 import org.jetbrains.kotlin.ir.util.transformFlat
 
 fun moveOpenClassesToSeparateFiles(moduleFragment: IrModuleFragment) {
     fun createFile(file: IrFile, klass: IrClass): IrFile =
         IrFileImpl(fileEntry = file.fileEntry, fqName = file.fqName, symbol = IrFileSymbolImpl(), module = file.module).also {
-            it.annotations += file.annotations
+            it.annotations = it.annotations memoryOptimizedPlus file.annotations
             it.declarations += klass
             klass.parent = it
         }
@@ -55,7 +56,7 @@ fun moveOpenClassesToSeparateFiles(moduleFragment: IrModuleFragment) {
         return@transformFlat if (openClasses.isEmpty())
             null
         else
-            listOf(file) + openClasses.map { createFile(file, it) }
+            openClasses.mapTo(mutableListOf(file)) { createFile(file, it) }
     }
 }
 

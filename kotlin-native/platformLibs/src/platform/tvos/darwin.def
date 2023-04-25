@@ -3,10 +3,10 @@ language = Objective-C
 package = platform.darwin
 headers = AppleTextureEncoder.h AssertMacros.h Availability.h AvailabilityInternal.h \
     AvailabilityMacros.h Block.h ConditionalMacros.h MacTypes.h \
-    TargetConditionals.h __cxxabi_config.h _locale.h _types.h _wctype.h \
+    TargetConditionals.h _locale.h _types.h _wctype.h \
     aio.h asl.h bitstring.h bzlib.h \
     cache.h cache_callbacks.h checkint.h compression.h copyfile.h \
-    cpio.h cxxabi.h db.h \
+    cpio.h db.h \
     dns.h dns_sd.h dns_util.h execinfo.h \
     fmtmsg.h fstab.h \
     gethostuuid.h glob.h ifaddrs.h inttypes.h iso646.h \

@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.backend.generators.CallAndReferenceGenerator
 import org.jetbrains.kotlin.fir.backend.generators.DelegatedMemberGenerator
 import org.jetbrains.kotlin.fir.backend.generators.FakeOverrideGenerator
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrLock
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.linkage.IrProvider
@@ -43,5 +42,5 @@ interface Fir2IrComponents {
     val delegatedMemberGenerator: DelegatedMemberGenerator
 
     val extensions: Fir2IrExtensions
-    val generateSignatures: Boolean
+    val configuration: Fir2IrConfiguration
 }

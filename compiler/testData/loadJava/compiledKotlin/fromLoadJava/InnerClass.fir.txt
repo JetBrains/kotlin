@@ -1,0 +1,10 @@
+public open class InnerClass : R|kotlin/Any| {
+    public constructor(): R|test/InnerClass|
+
+    public open inner class Inner : R|kotlin/Any| {
+        public test/InnerClass.constructor(): R|test/InnerClass.Inner|
+
+    }
+
+}
+

@@ -1,6 +1,3 @@
-// IGNORE_BACKEND_K2: ANY
-// Behavior changed in K2, see KT-42077
-
 class A {
     companion object {
         private var r: Int = 1;

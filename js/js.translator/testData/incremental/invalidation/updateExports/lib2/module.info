@@ -32,6 +32,7 @@ STEP 5:
         U : l2b.5.kt -> l2b.kt
         D : l2a.kt
     modified ir: l2b.kt
+    removed file: l2a.kt
 STEP 6:
     dependencies: lib1
     modifications:
@@ -43,6 +44,7 @@ STEP 7:
         U : l2a.7.kt -> l2a.kt
         D : l2b.kt
     added file: l2a.kt
+    removed file: l2b.kt
 STEP 8:
     dependencies: lib1
     modifications:

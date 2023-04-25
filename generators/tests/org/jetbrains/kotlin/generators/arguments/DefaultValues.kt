@@ -39,6 +39,13 @@ open class DefaultValues(
 
     object EmptyStringListDefault : DefaultValues("emptyList<String>()", typeOf<List<String>>(), typeOf<List<String>>())
 
+    object EmptyStringArrayDefault : DefaultValues(
+        "emptyList<String>()",
+        typeOf<List<String>>(),
+        typeOf<List<String>>(),
+        toArgumentConverter = ".toTypedArray()"
+    )
+
     object LanguageVersions : DefaultValues(
         "null",
         typeOf<KotlinVersionDsl?>(),
@@ -71,16 +78,16 @@ open class DefaultValues(
     )
 
     object JvmTargetVersions : DefaultValues(
-        "null",
-        typeOf<JvmTargetDsl?>(),
+        "org.jetbrains.kotlin.gradle.dsl.JvmTarget.DEFAULT",
+        typeOf<JvmTargetDsl>(),
         typeOf<String?>(),
         possibleValues = JvmTarget.supportedValues().map { "\"${it.description}\"" },
         fromKotlinOptionConverterProp = """
         if (this != null) ${typeOf<JvmTargetDsl>()}.fromTarget(this) else null
         """.trimIndent(),
         toKotlinOptionConverterProp = """
-        this?.target
-        """.trimIndent()
+        this.target
+        """.trimIndent(),
     )
 
     object JsEcmaVersions : DefaultValues(

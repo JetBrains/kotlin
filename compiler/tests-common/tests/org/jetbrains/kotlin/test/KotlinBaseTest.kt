@@ -108,11 +108,13 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
     open class TestModule(
         @JvmField val name: String,
         @JvmField val dependenciesSymbols: List<String>,
-        @JvmField val friendsSymbols: List<String>
+        @JvmField val friendsSymbols: List<String>,
+        @JvmField val dependsOnSymbols: List<String> = listOf(), // mimics the name from ModuleStructureExtractorImpl, thought later converted to `-Xfragment-refines` parameter
     ) : Comparable<TestModule> {
 
         val dependencies: MutableList<TestModule> = arrayListOf()
         val friends: MutableList<TestModule> = arrayListOf()
+        val dependsOn: MutableList<TestModule> = arrayListOf()
 
         override fun compareTo(other: TestModule): Int = name.compareTo(other.name)
 

@@ -28,10 +28,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
@@ -206,10 +203,13 @@ class IrBuiltInsOverFir(
         IrConstructorCallImpl.Companion.fromSymbolOwner(intrinsicConst.defaultType, constructor)
     }
 
+    private val iterator by loadClass(StandardClassIds.Iterator)
+    override val iteratorClass: IrClassSymbol get() = iterator.klass
+
     private val array by createClass(kotlinIrPackage, IdSignatureValues.array) {
         configureSuperTypes()
         val typeParameter = addTypeParameter("T", anyNType)
-        addArrayMembers(typeParameter.defaultType)
+        addArrayMembers(typeParameter.defaultType, iteratorClass.typeWith(typeParameter.defaultType))
         finalizeClassDefinition()
     }
     override val arrayClass: IrClassSymbol get() = array.klass
@@ -234,8 +234,6 @@ class IrBuiltInsOverFir(
 
     private val iterable by loadClass(StandardClassIds.Iterable)
     override val iterableClass: IrClassSymbol get() = iterable.klass
-    private val iterator by loadClass(StandardClassIds.Iterator)
-    override val iteratorClass: IrClassSymbol get() = iterator.klass
     private val listIterator by loadClass(StandardClassIds.ListIterator)
     override val listIteratorClass: IrClassSymbol get() = listIterator.klass
     private val mutableCollection by loadClass(StandardClassIds.MutableCollection)
@@ -323,14 +321,26 @@ class IrBuiltInsOverFir(
             else -> intType
         }
 
-    private val _booleanArray by createPrimitiveArrayClass(kotlinIrPackage, PrimitiveType.BOOLEAN)
-    private val _charArray by createPrimitiveArrayClass(kotlinIrPackage, PrimitiveType.CHAR)
-    private val _byteArray by createPrimitiveArrayClass(kotlinIrPackage, PrimitiveType.BYTE)
-    private val _shortArray by createPrimitiveArrayClass(kotlinIrPackage, PrimitiveType.SHORT)
-    private val _intArray by createPrimitiveArrayClass(kotlinIrPackage, PrimitiveType.INT)
-    private val _longArray by createPrimitiveArrayClass(kotlinIrPackage, PrimitiveType.LONG)
-    private val _floatArray by createPrimitiveArrayClass(kotlinIrPackage, PrimitiveType.FLOAT)
-    private val _doubleArray by createPrimitiveArrayClass(kotlinIrPackage, PrimitiveType.DOUBLE)
+    private fun primitiveIterator(primitiveType: PrimitiveType) =
+        loadClass(ClassId(StandardClassIds.BASE_COLLECTIONS_PACKAGE, Name.identifier("${primitiveType.typeName}Iterator")))
+
+    private val booleanIterator by primitiveIterator(PrimitiveType.BOOLEAN)
+    private val charIterator by primitiveIterator(PrimitiveType.CHAR)
+    private val byteIterator by primitiveIterator(PrimitiveType.BYTE)
+    private val shortIterator by primitiveIterator(PrimitiveType.SHORT)
+    private val intIterator by primitiveIterator(PrimitiveType.INT)
+    private val longIterator by primitiveIterator(PrimitiveType.LONG)
+    private val floatIterator by primitiveIterator(PrimitiveType.FLOAT)
+    private val doubleIterator by primitiveIterator(PrimitiveType.DOUBLE)
+
+    private val _booleanArray by createPrimitiveArrayClass(kotlinIrPackage, PrimitiveType.BOOLEAN, booleanIterator)
+    private val _charArray by createPrimitiveArrayClass(kotlinIrPackage, PrimitiveType.CHAR, charIterator)
+    private val _byteArray by createPrimitiveArrayClass(kotlinIrPackage, PrimitiveType.BYTE, byteIterator)
+    private val _shortArray by createPrimitiveArrayClass(kotlinIrPackage, PrimitiveType.SHORT, shortIterator)
+    private val _intArray by createPrimitiveArrayClass(kotlinIrPackage, PrimitiveType.INT, intIterator)
+    private val _longArray by createPrimitiveArrayClass(kotlinIrPackage, PrimitiveType.LONG, longIterator)
+    private val _floatArray by createPrimitiveArrayClass(kotlinIrPackage, PrimitiveType.FLOAT, floatIterator)
+    private val _doubleArray by createPrimitiveArrayClass(kotlinIrPackage, PrimitiveType.DOUBLE, doubleIterator)
 
     override val booleanArray: IrClassSymbol get() = _booleanArray.klass
     override val charArray: IrClassSymbol get() = _charArray.klass
@@ -467,6 +477,10 @@ class IrBuiltInsOverFir(
         }.toMap()
     }
 
+    override val unsignedArraysElementTypes: Map<IrClassSymbol, IrType?> by lazy {
+        unsignedTypesToUnsignedArrays.map { (k,v) -> v to referenceClassByClassId(k.classId)?.owner?.defaultType }.toMap()
+    }
+
     override fun getKPropertyClass(mutable: Boolean, n: Int): IrClassSymbol = when (n) {
         0 -> if (mutable) kMutableProperty0Class else kProperty0Class
         1 -> if (mutable) kMutableProperty1Class else kProperty1Class
@@ -519,36 +533,11 @@ class IrBuiltInsOverFir(
         }
     }
 
-    private class KotlinPackageFuns(
-        val arrayOf: IrSimpleFunctionSymbol,
-    )
-
-    private val kotlinBuiltinFunctions by lazy {
-        fun IrClassSymbol.addPackageFun(
-            name: String,
-            returnType: IrType,
-            vararg argumentTypes: Pair<String, IrType>,
-            builder: IrSimpleFunction.() -> Unit
-        ) =
-            kotlinIrPackage.createFunction(name, returnType, argumentTypes, postBuild = builder).also {
-                this.owner.declarations.add(it)
-            }.symbol
-
-        val kotlinKt = kotlinIrPackage.createClass(kotlinPackage.child(Name.identifier("KotlinKt")))
-        KotlinPackageFuns(
-            arrayOf = kotlinKt.addPackageFun("arrayOf", arrayClass.defaultType) arrayOf@{
-                addTypeParameter("T", anyNType)
-                addValueParameter {
-                    this.name = Name.identifier("elements")
-                    this.type = arrayClass.defaultType
-                    this.varargElementType = typeParameters[0].defaultType
-                    this.origin = this@arrayOf.origin
-                }
-            }
-        )
+    override val arrayOf: IrSimpleFunctionSymbol by lazy {
+        // distinct() is needed because we can get two Fir symbols for arrayOf function (from builtins and from stdlib)
+        //   with the same IR symbol for them
+        findFunctions(kotlinPackage, Name.identifier("arrayOf")).distinct().single()
     }
-
-    override val arrayOf: IrSimpleFunctionSymbol get() = kotlinBuiltinFunctions.arrayOf
 
     private fun <T : Any> getFunctionsByKey(
         name: Name,
@@ -604,6 +593,9 @@ class IrBuiltInsOverFir(
 
     override fun findFunctions(name: Name, packageFqName: FqName): Iterable<IrSimpleFunctionSymbol> =
         findFunctions(packageFqName, name)
+
+    override fun findProperties(name: Name, packageFqName: FqName): Iterable<IrPropertySymbol> =
+        findProperties(packageFqName, name)
 
     override fun findClass(name: Name, vararg packageNameSegments: String): IrClassSymbol? =
         referenceClassByFqname(FqName.fromSegments(packageNameSegments.asList()), name)
@@ -916,7 +908,7 @@ class IrBuiltInsOverFir(
         return components.symbolTable.declareSimpleFunction(signature, { IrSimpleFunctionPublicSymbolImpl(signature, null) }, ::makeWithSymbol)
     }
 
-    private fun IrClass.addArrayMembers(elementType: IrType) {
+    private fun IrClass.addArrayMembers(elementType: IrType, iteratorType: IrType) {
         addConstructor {
             origin = object : IrDeclarationOriginImpl("BUILTIN_CLASS_CONSTRUCTOR") {}
             returnType = defaultType
@@ -927,6 +919,7 @@ class IrBuiltInsOverFir(
         createMemberFunction(OperatorNameConventions.GET, elementType, "index" to intType, isOperator = true, isIntrinsicConst = false)
         createMemberFunction(OperatorNameConventions.SET, unitType, "index" to intType, "value" to elementType, isOperator = true, isIntrinsicConst = false)
         createProperty("size", intType)
+        createMemberFunction(OperatorNameConventions.ITERATOR, iteratorType, isOperator = true)
     }
 
     private fun IrClass.createProperty(
@@ -1059,7 +1052,7 @@ class IrBuiltInsOverFir(
     private fun createPrimitiveArrayClass(
         parent: IrDeclarationParent,
         primitiveType: PrimitiveType,
-        lazyContents: (IrClass.() -> Unit)? = null
+        primitiveIterator: BuiltInClassValue
     ) =
         createClass(
             parent,
@@ -1067,8 +1060,8 @@ class IrBuiltInsOverFir(
             build = { modality = Modality.FINAL }
         ) {
             configureSuperTypes()
-            addArrayMembers(primitiveTypeToIrType[primitiveType]!!)
-            lazyContents?.invoke(this)
+            primitiveIterator.ensureLazyContentsCreated()
+            addArrayMembers(primitiveTypeToIrType[primitiveType]!!, primitiveIterator.type)
             finalizeClassDefinition()
         }
 
@@ -1145,5 +1138,10 @@ class IrBuiltInsOverFir(
     private fun findFunctions(packageName: FqName, name: Name): List<IrSimpleFunctionSymbol> =
         components.session.symbolProvider.getTopLevelFunctionSymbols(packageName, name).mapNotNull { firOpSymbol ->
             components.declarationStorage.getIrFunctionSymbol(firOpSymbol) as? IrSimpleFunctionSymbol
+        }
+
+    private fun findProperties(packageName: FqName, name: Name): List<IrPropertySymbol> =
+        components.session.symbolProvider.getTopLevelPropertySymbols(packageName, name).mapNotNull { firOpSymbol ->
+            components.declarationStorage.getIrPropertySymbol(firOpSymbol) as? IrPropertySymbol
         }
 }

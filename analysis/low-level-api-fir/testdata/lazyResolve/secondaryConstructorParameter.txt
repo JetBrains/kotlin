@@ -1,0 +1,285 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] secondaryConstructorParameter.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/A.prop] prop: Int = LAZY_EXPRESSION, [ResolvedTo(RAW_FIR)] c: String): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val prop: Int = R|<local>/prop|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] get(): Int
+
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] str: String): R|A| {
+            LAZY_this<R|A|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun String.myToInt(): Int { LAZY_BLOCK }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/A.prop] prop: Int = LAZY_EXPRESSION, [ResolvedTo(RAW_FIR)] c: String): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val prop: Int = R|<local>/prop|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] get(): Int
+
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] str: String): R|A| {
+            LAZY_this<R|A|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun String.myToInt(): Int { LAZY_BLOCK }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/A.prop] prop: Int = LAZY_EXPRESSION, [ResolvedTo(RAW_FIR)] c: String): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val prop: Int = R|<local>/prop|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] get(): Int
+
+        public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=A] constructor([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] str: String): R|A| {
+            LAZY_this<R|A|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun String.myToInt(): Int { LAZY_BLOCK }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/A.prop] prop: Int = LAZY_EXPRESSION, [ResolvedTo(RAW_FIR)] c: String): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val prop: Int = R|<local>/prop|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] get(): Int
+
+        public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=A] constructor([ResolvedTo(COMPANION_GENERATION)] str: String): R|A| {
+            LAZY_this<R|A|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun String.myToInt(): Int { LAZY_BLOCK }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/A.prop] prop: Int = LAZY_EXPRESSION, [ResolvedTo(RAW_FIR)] c: String): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val prop: Int = R|<local>/prop|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] get(): Int
+
+        public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=A] constructor([ResolvedTo(SUPER_TYPES)] str: String): R|A| {
+            LAZY_this<R|A|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun String.myToInt(): Int { LAZY_BLOCK }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(TYPES)] class A : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=A] constructor([ResolvedTo(TYPES)] [CorrespondingProperty=/A.prop] prop: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(TYPES)] c: R|kotlin/String|): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val prop: Int = R|<local>/prop|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] get(): Int
+
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=A] constructor([ResolvedTo(TYPES)] str: R|kotlin/String|): R|A| {
+            LAZY_this<R|A|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun String.myToInt(): Int { LAZY_BLOCK }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/A.prop] prop: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(STATUS)] c: R|kotlin/String|): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|kotlin/Int| = R|<local>/prop|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
+
+        public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] str: R|kotlin/String|): R|A| {
+            LAZY_this<R|A|>
+        }
+
+        public final [ResolvedTo(STATUS)] fun foo(): <implicit> { LAZY_BLOCK }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun String.myToInt(): Int { LAZY_BLOCK }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/A.prop] prop: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(STATUS)] c: R|kotlin/String|): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|kotlin/Int| = R|<local>/prop|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
+
+        public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=A] constructor([ResolvedTo(EXPECT_ACTUAL_MATCHING)] str: R|kotlin/String|): R|A| {
+            LAZY_this<R|A|>
+        }
+
+        public final [ResolvedTo(STATUS)] fun foo(): <implicit> { LAZY_BLOCK }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun String.myToInt(): Int { LAZY_BLOCK }
+
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/A.prop] prop: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(STATUS)] c: R|kotlin/String|): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|kotlin/Int| = R|<local>/prop|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
+
+        public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] [ContainingClassKey=A] constructor([ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] str: R|kotlin/String|): R|A| {
+            LAZY_this<R|A|>
+        }
+
+        public final [ResolvedTo(STATUS)] fun foo(): <implicit> { LAZY_BLOCK }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun String.myToInt(): Int { LAZY_BLOCK }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/A.prop] prop: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(STATUS)] c: R|kotlin/String|): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|kotlin/Int| = R|<local>/prop|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
+
+        public [ResolvedTo(CONTRACTS)] [ContainingClassKey=A] constructor([ResolvedTo(CONTRACTS)] str: R|kotlin/String|): R|A| {
+            this<R|A|>(str#.myToInt#(), str#)
+        }
+
+        public final [ResolvedTo(STATUS)] fun foo(): <implicit> { LAZY_BLOCK }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun String.myToInt(): Int { LAZY_BLOCK }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/A.prop] prop: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(STATUS)] c: R|kotlin/String|): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|kotlin/Int| = R|<local>/prop|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
+
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=A] constructor([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] str: R|kotlin/String|): R|A| {
+            this<R|A|>(str#.myToInt#(), str#)
+        }
+
+        public final [ResolvedTo(STATUS)] fun foo(): <implicit> { LAZY_BLOCK }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun String.myToInt(): Int { LAZY_BLOCK }
+
+ANNOTATIONS_ARGUMENTS_MAPPING:
+FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/A.prop] prop: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(STATUS)] c: R|kotlin/String|): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|kotlin/Int| = R|<local>/prop|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
+
+        public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=A] constructor([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] str: R|kotlin/String|): R|A| {
+            this<R|A|>(str#.myToInt#(), str#)
+        }
+
+        public final [ResolvedTo(STATUS)] fun foo(): <implicit> { LAZY_BLOCK }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun String.myToInt(): Int { LAZY_BLOCK }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/A.prop] prop: R|kotlin/Int| = LAZY_EXPRESSION, [ResolvedTo(STATUS)] c: R|kotlin/String|): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val prop: R|kotlin/Int| = R|<local>/prop|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=A] get(): R|kotlin/Int|
+
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor([ResolvedTo(BODY_RESOLVE)] str: R|kotlin/String|): R|A| {
+            this<R|A|>(R|<local>/str|.R|/myToInt|(), R|<local>/str|)
+        }
+
+        public final [ResolvedTo(STATUS)] fun foo(): <implicit> { LAZY_BLOCK }
+
+    }
+    public final [ResolvedTo(CONTRACTS)] fun R|kotlin/String|.myToInt(): R|kotlin/Int| {
+        ^myToInt IntegerLiteral(42)
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(IMPORTS)] secondaryConstructorParameter.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/A.prop] prop: R|kotlin/Int| = Int(42), [ResolvedTo(BODY_RESOLVE)] c: R|kotlin/String|): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val prop: R|kotlin/Int| = R|<local>/prop|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] get(): R|kotlin/Int|
+
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor([ResolvedTo(BODY_RESOLVE)] str: R|kotlin/String|): R|A| {
+            this<R|A|>(R|<local>/str|.R|/myToInt|(), R|<local>/str|)
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/String| {
+            ^foo String(str)
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun R|kotlin/String|.myToInt(): R|kotlin/Int| {
+        ^myToInt Int(42)
+    }

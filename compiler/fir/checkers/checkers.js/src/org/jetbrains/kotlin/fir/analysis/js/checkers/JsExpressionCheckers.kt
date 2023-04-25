@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.js.checkers
 
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.*
+import org.jetbrains.kotlin.fir.analysis.js.checkers.declaration.*
 import org.jetbrains.kotlin.fir.analysis.js.checkers.expression.*
 
 object JsExpressionCheckers : ExpressionCheckers() {
@@ -16,6 +17,17 @@ object JsExpressionCheckers : ExpressionCheckers() {
 
     override val basicExpressionCheckers: Set<FirBasicExpressionChecker>
         get() = setOf(
-            FirJsDefinedExternallyCallChecker
+            FirJsDefinedExternallyCallChecker,
+            FirJsNativeRttiChecker,
+        )
+
+    override val functionCallCheckers: Set<FirFunctionCallChecker>
+        get() = setOf(
+            FirJsDynamicCallChecker,
+        )
+
+    override val callCheckers: Set<FirCallChecker>
+        get() = setOf(
+            FirJsExternalArgumentCallChecker
         )
 }

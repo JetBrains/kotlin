@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("DEPRECATION") // RetainForTarget
+
 package kotlinx.wasm.jsinterop
 
 import kotlin.native.*

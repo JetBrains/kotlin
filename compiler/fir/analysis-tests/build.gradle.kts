@@ -35,7 +35,10 @@ dependencies {
 
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
     testRuntimeOnly(commonDependency("one.util:streamex"))
-    testRuntimeOnly(commonDependency("net.java.dev.jna:jna"))
+    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
+    testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
+    testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
+    testRuntimeOnly("com.jetbrains.intellij.platform:util-xml-dom:$intellijVersion") { isTransitive = false }
     testRuntimeOnly(toolsJar())
 }
 

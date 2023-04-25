@@ -1,8 +1,7 @@
-// IGNORE_BACKEND_K2: JVM_IR, JS_IR
+// IGNORE_BACKEND_K2: JVM_IR, JS_IR, NATIVE
 // FIR status: expect/actual in the same module (ACTUAL_WITHOUT_EXPECT)
 // !LANGUAGE: +MultiPlatformProjects
 // !OPT_IN: kotlin.ExperimentalMultiplatform
-// IGNORE_BACKEND: NATIVE
 // WITH_STDLIB
 // MODULE: library
 // FILE: expected.kt

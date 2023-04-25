@@ -11,17 +11,21 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.ir.isInCurrentModule
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.declarations.addField
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
+import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.builders.irExprBody
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
-import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
@@ -108,12 +112,19 @@ class EnumExternalEntriesLowering(private val context: JvmBackendContext) : File
         return IrGetFieldImpl(expression.startOffset, expression.endOffset, field.symbol, field.type)
     }
 
-    private fun IrClass.hasEnumEntriesFunction() = functions.any {
-        it.name.toString() == "<get-entries>"
-                && it.dispatchReceiverParameter == null
-                && it.extensionReceiverParameter == null
-                && it.valueParameters.isEmpty()
+    private fun IrClass.hasEnumEntriesFunction(): Boolean {
+        // Enums from other modules are always loaded with a property `entries` which has a getter `<get-entries>`.
+        // Enums from the current module will have a property `entries` if they are unlowered yet (i.e. enum is declared in another file
+        // which will be lowered after the file with the call site), or a function `<get-entries>` if they are already lowered.
+        return functions.any { it.isGetEntries() }
+                || (properties.any { it.getter?.isGetEntries() == true } && isInCurrentModule())
     }
+
+    private fun IrSimpleFunction.isGetEntries(): Boolean =
+        name.toString() == "<get-entries>"
+                && dispatchReceiverParameter == null
+                && extensionReceiverParameter == null
+                && valueParameters.isEmpty()
 
     override fun visitClassNew(declaration: IrClass): IrStatement {
         val oldState = state
@@ -123,9 +134,14 @@ class EnumExternalEntriesLowering(private val context: JvmBackendContext) : File
 
         for ((enum, field) in mappingState.mappings) {
             val enumValues = enum.findEnumValuesFunction(context)
-            val enumArrayType = field.type
-            val builder = context.createIrBuilder(field.symbol)
-            field.initializer = builder.irCreateEnumEntriesIndy(enumValues, enumArrayType, context)
+            field.initializer =
+                context.createIrBuilder(field.symbol).run {
+                    irExprBody(
+                        irCall(this@EnumExternalEntriesLowering.context.ir.symbols.createEnumEntries).apply {
+                            putValueArgument(0, irCall(enumValues))
+                        }
+                    )
+                }
         }
 
         if (mappingState.mappings.isNotEmpty()) {

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !LANGUAGE: +FunctionalInterfaceConversion
 
 fun interface Good {

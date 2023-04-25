@@ -12,6 +12,7 @@ import com.intellij.pom.PomModel
 import com.intellij.pom.core.impl.PomModelImpl
 import com.intellij.pom.tree.TreeAspect
 import com.intellij.psi.impl.source.tree.TreeCopyHandler
+import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -73,7 +74,8 @@ internal class ExtTestCaseGroupProvider : TestCaseGroupProvider, TestDisposable(
                     generatedSources = settings.get(),
                     customKlibs = settings.get(),
                     pipelineType = settings.get(),
-                    timeouts = settings.get()
+                    timeouts = settings.get(),
+                    memoryModel = settings.get(),
                 )
 
                 if (extTestDataFile.isRelevant)
@@ -98,7 +100,8 @@ private class ExtTestDataFile(
     private val generatedSources: GeneratedSources,
     private val customKlibs: CustomKlibs,
     private val pipelineType: PipelineType,
-    private val timeouts: Timeouts
+    private val timeouts: Timeouts,
+    private val memoryModel: MemoryModel
 ) {
     private val structure by lazy {
         val allSourceTransformers: ExternalSourceTransformers = if (customSourceTransformers.isNullOrEmpty())
@@ -137,17 +140,18 @@ private class ExtTestDataFile(
 
     val isRelevant: Boolean =
         isCompatibleTarget(TargetBackend.NATIVE, testDataFile) // Checks TARGET_BACKEND/DONT_TARGET_EXACT_BACKEND directives.
-                && !isIgnoredNativeTarget(pipelineType, testDataFile) // Checks IGNORE_BACKEND directives.
+                && !isIgnoredTarget(pipelineType, testDataFile, TargetBackend.NATIVE) // Checks IGNORE_BACKEND directives.
+                && (memoryModel != MemoryModel.LEGACY || !isIgnoredTarget(pipelineType, testDataFile, TargetBackend.NATIVE_WITH_LEGACY_MM)) // Checks IGNORE_BACKEND directives.
                 && testDataFileSettings.languageSettings.none { it in INCOMPATIBLE_LANGUAGE_SETTINGS }
                 && INCOMPATIBLE_DIRECTIVES.none { it in structure.directives }
                 && structure.directives[API_VERSION_DIRECTIVE] !in INCOMPATIBLE_API_VERSIONS
                 && structure.directives[LANGUAGE_VERSION_DIRECTIVE] !in INCOMPATIBLE_LANGUAGE_VERSIONS
 
-    private fun isIgnoredNativeTarget(pipelineType: PipelineType, testDataFile: File): Boolean {
+    private fun isIgnoredTarget(pipelineType: PipelineType, testDataFile: File, backend: TargetBackend): Boolean {
         return when (pipelineType) {
             PipelineType.K1 ->
                 isIgnoredTarget(
-                    TargetBackend.NATIVE,
+                    backend,
                     testDataFile,
                     /*includeAny = */true,
                     IGNORE_BACKEND_DIRECTIVE_PREFIX,
@@ -155,7 +159,7 @@ private class ExtTestDataFile(
                 )
             PipelineType.K2 ->
                 isIgnoredTarget(
-                    TargetBackend.NATIVE,
+                    backend,
                     testDataFile,
                     /*includeAny = */true,
                     IGNORE_BACKEND_DIRECTIVE_PREFIX,
@@ -657,7 +661,8 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
                     destination = TestModule.Exclusive(
                         name = extTestModule.name,
                         directDependencySymbols = extTestModule.dependencies.mapToSet(::transformDependency),
-                        directFriendSymbols = extTestModule.friends.mapToSet(::transformDependency)
+                        directFriendSymbols = extTestModule.friends.mapToSet(::transformDependency),
+                        directDependsOnSymbols = extTestModule.dependsOn.mapToSet(::transformDependency),
                     ),
                     baseDir = testCaseDir
                 ) { module, file -> module.files += file }
@@ -704,11 +709,15 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
         private fun checkModulesConsistency() {
             filesAndModules.modules.values.forEach { module ->
                 val unknownFriends = (module.friendsSymbols + module.friends.map { it.name }).toSet() - filesAndModules.modules.keys
-                assertTrue(unknownFriends.isEmpty()) { "Module $module has unknown friends: $unknownFriends" }
 
                 val unknownDependencies =
                     (module.dependenciesSymbols + module.dependencies.map { it.name }).toSet() - filesAndModules.modules.keys
-                assertTrue(unknownDependencies.isEmpty()) { "Module $module has unknown dependencies: $unknownDependencies" }
+
+                val unknownDependsOn =
+                    (module.dependsOnSymbols + module.dependsOn.map { it.name }).toSet() - filesAndModules.modules.keys
+
+                val unknownAllDependencies = unknownDependencies + unknownFriends + unknownDependsOn
+                assertTrue(unknownAllDependencies.isEmpty()) { "Module $module has unknown dependencies: $unknownAllDependencies" }
 
                 assertTrue(module.files.isNotEmpty()) { "Module $module has no files" }
             }
@@ -718,8 +727,9 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
     private class ExtTestModule(
         name: String,
         dependencies: List<String>,
-        friends: List<String>
-    ) : KotlinBaseTest.TestModule(name, dependencies, friends) {
+        friends: List<String>,
+        dependsOn: List<String>, // mimics the name from ModuleStructureExtractorImpl, thought later converted to `-Xfragment-refines` parameter
+    ) : KotlinBaseTest.TestModule(name, dependencies, friends, dependsOn) {
         val files = mutableListOf<ExtTestFile>()
 
         val isSupport get() = name == SUPPORT_MODULE_NAME
@@ -746,6 +756,7 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
         override fun hashCode() = name.hashCode() * 31 + module.hashCode()
     }
 
+    @OptIn(ObsoleteTestInfrastructure::class)
     private class ExtTestFileFactory : TestFiles.TestFileFactory<ExtTestModule, ExtTestFile> {
         private val defaultModule by lazy { createModule(DEFAULT_MODULE_NAME, emptyList(), emptyList(), emptyList()) }
         private val supportModule by lazy { createModule(SUPPORT_MODULE_NAME, emptyList(), emptyList(), emptyList()) }
@@ -764,13 +775,14 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
             )
         }
 
-        override fun createModule(name: String, dependencies: List<String>, friends: List<String>, abiVersions: List<Int>): ExtTestModule =
-            ExtTestModule(name, dependencies, friends)
+        override fun createModule(name: String, dependencies: List<String>, friends: List<String>, dependsOn: List<String>): ExtTestModule =
+            ExtTestModule(name, dependencies, friends, dependsOn)
     }
 
     private inner class FilesAndModules(originalTestDataFile: File, sourceTransformers: ExternalSourceTransformers) {
         private val testFileFactory = ExtTestFileFactory()
 
+        @OptIn(ObsoleteTestInfrastructure::class)
         private val generatedFiles = TestFiles.createTestFiles(
             /* testFileName = */ DEFAULT_FILE_NAME,
             /* expectedText = */ originalTestDataFile.readText(),

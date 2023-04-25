@@ -72,6 +72,8 @@ dependencies {
     implementation("io.ktor:ktor-client-auth:$ktorVersion")
     implementation("io.ktor:ktor-client-core:$ktorVersion")
     implementation("io.ktor:ktor-client-cio:$ktorVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
+
 
     // Located in <repo root>/shared and always provided by the composite build.
     //api("org.jetbrains.kotlin:kotlin-native-shared:$konanVersion")

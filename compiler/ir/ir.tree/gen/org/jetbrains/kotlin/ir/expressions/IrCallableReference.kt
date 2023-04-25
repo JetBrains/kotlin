@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 
 /**
  * A non-leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.callableReference
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.callableReference]
  */
 abstract class IrCallableReference<S : IrSymbol> : IrMemberAccessExpression<S>()

@@ -18,13 +18,13 @@ FILE fqName:<root> fileName:/MultiList.kt
           RETURN type=kotlin.Nothing from='public final fun <get-value> (): T of <root>.Some declared in <root>.Some'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.Some visibility:private [final]' type=T of <root>.Some origin=null
               receiver: GET_VAR '<this>: <root>.Some<T of <root>.Some> declared in <root>.Some.<get-value>' type=<root>.Some<T of <root>.Some> origin=null
-    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.Some<T of <root>.Some>) returnType:T of <root>.Some [operator]
+    FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.Some<T of <root>.Some>) returnType:T of <root>.Some [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.Some<T of <root>.Some>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): T of <root>.Some [operator] declared in <root>.Some'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.Some visibility:private [final]' type=T of <root>.Some origin=null
             receiver: GET_VAR '<this>: <root>.Some<T of <root>.Some> declared in <root>.Some.component1' type=<root>.Some<T of <root>.Some> origin=null
-    FUN name:copy visibility:public modality:FINAL <> ($this:<root>.Some<T of <root>.Some>, value:T of <root>.Some) returnType:<root>.Some<T of <root>.Some>
+    FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:<root>.Some<T of <root>.Some>, value:T of <root>.Some) returnType:<root>.Some<T of <root>.Some>
       $this: VALUE_PARAMETER name:<this> type:<root>.Some<T of <root>.Some>
       VALUE_PARAMETER name:value index:0 type:T of <root>.Some
         EXPRESSION_BODY
@@ -94,8 +94,7 @@ FILE fqName:<root> fileName:/MultiList.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.Some'
           STRING_CONCATENATION type=kotlin.String
-            CONST String type=kotlin.String value="Some("
-            CONST String type=kotlin.String value="value="
+            CONST String type=kotlin.String value="Some(value="
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.Some visibility:private [final]' type=T of <root>.Some origin=null
               receiver: GET_VAR '<this>: <root>.Some<T of <root>.Some> declared in <root>.Some.toString' type=<root>.Some<T of <root>.Some> origin=null
             CONST String type=kotlin.String value=")"

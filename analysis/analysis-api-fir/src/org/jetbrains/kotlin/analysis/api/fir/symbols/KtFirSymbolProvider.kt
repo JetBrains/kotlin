@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.components.KtFirAnalysisSessionComponent
 import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbolOfType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
@@ -52,6 +53,10 @@ internal class KtFirSymbolProvider(
 
     override fun getFileSymbol(psi: KtFile): KtFileSymbol {
         return firSymbolBuilder.buildFileSymbol(psi.getOrBuildFirFile(firResolveSession).symbol)
+    }
+
+    override fun getScriptSymbol(psi: KtScript): KtScriptSymbol {
+        return firSymbolBuilder.buildScriptSymbol(psi.resolveToFirSymbolOfType<FirScriptSymbol>(firResolveSession))
     }
 
     override fun getFunctionLikeSymbol(psi: KtNamedFunction): KtFunctionLikeSymbol {

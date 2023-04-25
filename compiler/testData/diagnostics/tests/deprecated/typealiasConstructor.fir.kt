@@ -10,8 +10,8 @@ typealias DeprecatedClassAlias = <!DEPRECATION!>DeprecatedClass<!>
 typealias WithDeprecatedCtorAlias = WithDeprecatedCtor
 typealias ArrayListOfDeprecatedClass = ArrayList<<!DEPRECATION!>DeprecatedClass<!>>
 
-class Test1 : DeprecatedClassAlias()
+class Test1 : <!TYPEALIAS_EXPANSION_DEPRECATION!>DeprecatedClassAlias<!>()
 
-class Test2 : WithDeprecatedCtorAlias()
+class Test2 : <!DEPRECATION!>WithDeprecatedCtorAlias<!>()
 
 val test3 = ArrayListOfDeprecatedClass()

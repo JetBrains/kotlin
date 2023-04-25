@@ -10,7 +10,7 @@ import kotlin.reflect.KProperty
 @Test fun forEachIndexedTest() {
     val array = Array(10) { 0 }
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         array.forEachIndexed { index, _ ->
             array[index + 1] = 1
         }
@@ -22,20 +22,20 @@ import kotlin.reflect.KProperty
     val array1 = Array(3) { 0 }
     var j = 4
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in array.indices) {
             array[j] = 6
             j++
         }
     }
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in array.indices) {
             array[i + 1] = 6
         }
     }
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in array.indices) {
             array1[i] = 6
         }
@@ -47,26 +47,26 @@ import kotlin.reflect.KProperty
     val array1 = Array(3) { 0L }
     var j = 4
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in 0 until array.size) {
             array[j] = 6
             j++
         }
     }
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in 0 until array.size) {
             array[i - 1] = 6
         }
     }
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in 0 until array.size) {
             array1[i] = 6
         }
     }
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in 0 until array.size + 10) {
             array[i] = 6
         }
@@ -78,20 +78,20 @@ import kotlin.reflect.KProperty
     val array1 = Array(3) { 0L }
     var j = 4
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in array.size - 1 downTo 0) {
             array[j] = 6
             j++
         }
     }
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in array.size - 1 downTo 0) {
             array[i *  2] = 6
         }
     }
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in array.size - 1 downTo 0) {
             array1[i] = 6
         }
@@ -101,25 +101,25 @@ import kotlin.reflect.KProperty
     val b = ++a
     val c = b
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in c downTo 0) {
             array[i] = 6
         }
     }
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in array.size + 1 downTo 0) {
             array[i] = 6
         }
     }
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in array.size - 1 downTo -1) {
             array[i] = 6
         }
     }
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in array.size downTo 0) {
             array[i] = 6
         }
@@ -131,7 +131,7 @@ import kotlin.reflect.KProperty
     val array1 = Array(3) { 0L }
     var j = 4
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in 0..array.size - 1) {
             array[j] = 6
             j++
@@ -140,37 +140,37 @@ import kotlin.reflect.KProperty
 
     var length = array.size - 1
     length = 2 * length
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in 0..length) {
             array[i] = 6
         }
     }
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in 0..array.size - 1) {
             array[i + 1] = 6
         }
     }
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in 0..array.size - 1) {
             array1[i] = 6
         }
     }
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in 0..array.size + 1) {
             array[i] = 6
         }
     }
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in -1..array.size - 1) {
             array[i] = 6
         }
     }
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in 0..array.size) {
             array[i] = 6
         }
@@ -182,38 +182,38 @@ import kotlin.reflect.KProperty
     val array1 = Array(3) { 0L }
     var j = 8
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in 0..array.size - 1 step 2) {
             array[j] = 6
             j++
         }
     }
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in 0..array.size - 1 step 2) {
             array[i - 1] = 6
         }
     }
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in 0..array.size - 1 step 2) {
             array1[i] = 6
         }
     }
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in 0..array.size + 1 step 2) {
             array[i] = 6
         }
     }
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in -1..array.size - 1 step 2) {
             array[i] = 6
         }
     }
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in 0..array.size step 2) {
             array[i] = 6
         }
@@ -225,32 +225,32 @@ import kotlin.reflect.KProperty
     val array1 = CharArray(3) { '0' }
     var j = 8
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in 0 until array.size step 2) {
             array[j] = '6'
             j++
         }
     }
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in 0 until array.size step 2) {
             array[i + 3] = '6'
         }
     }
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in 0 until array.size step 2) {
             array1[i] = '6'
         }
     }
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in 0 until (array.size/0.5).toInt() step 2) {
             array[i] = '6'
         }
     }
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in -array.size until array.size step 2) {
             array[i] = '6'
         }
@@ -262,38 +262,38 @@ import kotlin.reflect.KProperty
     val array1 = UIntArray(3) { 0U }
     var j = 8
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in array.size - 1 downTo 0 step 2) {
             array[j] = 6U
             j++
         }
     }
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in array.size - 1 downTo 1 step 2) {
             array[i + 1] = 6U
         }
     }
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in array.size - 1 downTo 1 step 2) {
             array1[i] = 6U
         }
     }
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in (array.size / 0.2).toInt() downTo 1 step 2) {
             array[i] = 6U
         }
     }
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in array.size - 1 downTo -3 step 2) {
             array[i] = 6U
         }
     }
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in array.size downTo 1 step 2) {
             array[i] = 6U
         }
@@ -305,20 +305,20 @@ import kotlin.reflect.KProperty
     val array1 = Array(3) { 0L }
     var j = 8
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in array.indices step 2) {
             array[j] = 6
             j++
         }
     }
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in array.indices step 2) {
             array[i - 1] = 6
         }
     }
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in array.indices step 2) {
             array1[i] = 6
         }
@@ -330,32 +330,32 @@ import kotlin.reflect.KProperty
     val array1 = Array(3) { 0 }
     var j = 8
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for ((index, value) in array.withIndex()) {
             array[j] = 6
             j++
         }
     }
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for ((index, value) in array.withIndex()) {
             array[index + 1] = 6
         }
     }
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for ((index, value) in array.withIndex()) {
             array[value] = 6
         }
     }
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for ((i, v) in (0..array.size + 30 step 2).withIndex()) {
             array[i] = 6
         }
     }
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for ((i, v) in (0..array.size).withIndex()) {
             array[v] = 8
         }
@@ -367,26 +367,26 @@ import kotlin.reflect.KProperty
     val array1 = Array(3) { 0 }
     var j = 8
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in (0..array.size-1).reversed()) {
             array[j] = 6
             j++
         }
     }
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in (0 until array.size).reversed()) {
             array1[i] = 6
         }
     }
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in (0..array.size).reversed()) {
             array[i] = 6
         }
     }
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in (array.size downTo 0).reversed()) {
             array[i] = 6
         }
@@ -511,7 +511,7 @@ class Child : Base() {
 @Test fun withGetter() {
     val obj = WithGetter()
     needSmallArray = false
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in 0..obj.array.size-1) {
             needSmallArray = true
             obj.array[i] = 6
@@ -523,7 +523,7 @@ class Child : Base() {
 @Test fun delegatedProperty() {
     val obj = WithDelegates()
     needSmallArray = false
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in 0..obj.array.size-1) {
             needSmallArray = true
             obj.array[i] = 6
@@ -536,7 +536,7 @@ class Child : Base() {
     val obj = Child()
     val base = Base()
     needSmallArray = false
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in 0..obj.array.size-1) {
             needSmallArray = true
             obj.array[i] = 6
@@ -545,7 +545,7 @@ class Child : Base() {
     }
 
     needSmallArray = false
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in 0..obj.array1.size-1) {
             needSmallArray = true
             obj.array1[i] = 6
@@ -554,7 +554,7 @@ class Child : Base() {
     }
 
     needSmallArray = false
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in 0..obj.array.size-1) {
             needSmallArray = true
             base.array[i] = 6
@@ -569,7 +569,7 @@ val array: Array<Int> = arrayOf(1)
 @Test fun customeGetter() {
     val a = array
     needSmallArray = false
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (index in 0 until array.size) {
             a[index] = 6
         }
@@ -592,7 +592,7 @@ class Third(initArray: Array<Int>) {
     val a = Third(arrayOf(1, 2, 3, 4, 5))
     val b = Third(arrayOf(1, 2))
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (i in 0..a.second.first.array.size-1) {
             b.second.first.array[i] = 6
         }
@@ -614,7 +614,7 @@ class Bar {
 @Test fun differentArrays() {
     val bar = Bar()
 
-    assertFailsWith<ArrayIndexOutOfBoundsException> {
+    assertFailsWith<IndexOutOfBoundsException> {
         for (index in 0 until bar.largeArray.size) {
             bar.smallArray[index] = 6
         }

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.unitTests
 import org.gradle.api.internal.project.ProjectInternal
 import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
 import org.jetbrains.kotlin.gradle.internal.KaptWithoutKotlincTask
-import org.jetbrains.kotlin.gradle.plugin.KotlinBaseApiPlugin
+import org.jetbrains.kotlin.gradle.plugin.KotlinApiPlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinJvmFactory
 import org.jetbrains.kotlin.gradle.tasks.Kapt
 import org.jetbrains.kotlin.gradle.util.buildProject
@@ -34,7 +34,7 @@ class KaptApiTest {
     @Before
     fun setUpProject() {
         project = buildProject {}
-        plugin = project.plugins.apply(KotlinBaseApiPlugin::class.java)
+        plugin = project.plugins.apply(KotlinApiPlugin::class.java)
         project.configurations.create(Kapt3GradleSubplugin.KAPT_WORKER_DEPENDENCIES_CONFIGURATION_NAME)
     }
 

@@ -24,10 +24,12 @@ import org.jetbrains.kotlin.descriptors.runtime.structure.wrapperByPrimitive
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
+import org.jetbrains.kotlin.resolve.isMultiFieldValueClass
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import java.lang.reflect.Constructor
 import java.lang.reflect.Method
 import kotlin.jvm.internal.ClassBasedDeclarationContainer
+import kotlin.reflect.jvm.internal.calls.toJvmDescriptor
 
 internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContainer {
     abstract inner class Data {
@@ -119,9 +121,25 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
     }
 
     fun findFunctionDescriptor(name: String, signature: String): FunctionDescriptor {
-        val members = if (name == "<init>") constructorDescriptors.toList() else getFunctions(Name.identifier(name))
-        val functions = members.filter { descriptor ->
-            RuntimeTypeMapper.mapSignature(descriptor).asString() == signature
+        val members: Collection<FunctionDescriptor>
+        val functions: List<FunctionDescriptor>
+        if (name == "<init>") {
+            members = constructorDescriptors.toList()
+            functions = members.filter { descriptor ->
+                val descriptorSignature = if (descriptor.isPrimary && descriptor.containingDeclaration.isMultiFieldValueClass()) {
+                    val initial = RuntimeTypeMapper.mapSignature(descriptor).asString()
+                    require(initial.startsWith("constructor-impl") && initial.endsWith(")V")) {
+                        "Invalid signature of $descriptor: $initial"
+                    }
+                    initial.removeSuffix("V") + descriptor.containingDeclaration.toJvmDescriptor()
+                } else {
+                    RuntimeTypeMapper.mapSignature(descriptor).asString()
+                }
+                descriptorSignature == signature
+            }
+        } else {
+            members = getFunctions(Name.identifier(name))
+            functions = members.filter { descriptor -> RuntimeTypeMapper.mapSignature(descriptor).asString() == signature }
         }
 
         if (functions.size != 1) {

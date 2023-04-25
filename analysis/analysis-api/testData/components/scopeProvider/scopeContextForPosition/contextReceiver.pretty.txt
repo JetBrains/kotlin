@@ -1,0 +1,38 @@
+element: e
+implicit receivers:
+  type: Context
+  owner symbol: KtFirFunctionSymbol
+
+scopes:
+  LocalScope, index = 0, empty
+
+  SimpleTypeScope, index = 1
+    classifiers: 0
+    callables: 4
+      fun memberInContext()
+      fun equals(other: kotlin.Any?): kotlin.Boolean
+      fun hashCode(): kotlin.Int
+      fun toString(): kotlin.String
+
+  LocalScope, index = 2, empty
+
+  ExplicitSimpleImportingScope, index = 3, empty
+
+  PackageMemberScope, index = 4
+    classifiers: 1
+      class Context
+    callables: 1
+      context(Context)
+      fun test()
+
+  DefaultSimpleImportingScope, index = 5
+
+  DefaultSimpleImportingScope, index = 6
+
+  ExplicitStarImportingScope, index = 7, empty
+
+  DefaultSimpleImportingScope, index = 8
+
+  DefaultStarImportingScope, index = 9
+
+  DefaultStarImportingScope, index = 10

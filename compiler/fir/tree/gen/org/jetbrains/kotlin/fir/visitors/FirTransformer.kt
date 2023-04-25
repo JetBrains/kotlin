@@ -17,8 +17,9 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvedDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirControlFlowGraphOwner
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirLazyExpression
 import org.jetbrains.kotlin.fir.declarations.FirContextReceiver
-import org.jetbrains.kotlin.fir.FirElementWithResolvePhase
+import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirTypeParameterRefsOwner
@@ -61,6 +62,7 @@ import org.jetbrains.kotlin.fir.expressions.FirErrorLoop
 import org.jetbrains.kotlin.fir.expressions.FirDoWhileLoop
 import org.jetbrains.kotlin.fir.expressions.FirWhileLoop
 import org.jetbrains.kotlin.fir.expressions.FirBlock
+import org.jetbrains.kotlin.fir.expressions.FirLazyBlock
 import org.jetbrains.kotlin.fir.expressions.FirBinaryLogicExpression
 import org.jetbrains.kotlin.fir.expressions.FirJump
 import org.jetbrains.kotlin.fir.expressions.FirLoopJump
@@ -129,6 +131,7 @@ import org.jetbrains.kotlin.fir.expressions.FirWrappedDelegateExpression
 import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirNamedReferenceWithCandidateBase
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
+import org.jetbrains.kotlin.fir.references.FirFromMissingDependenciesNamedReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
@@ -145,6 +148,7 @@ import org.jetbrains.kotlin.fir.types.FirDynamicTypeRef
 import org.jetbrains.kotlin.fir.types.FirFunctionTypeRef
 import org.jetbrains.kotlin.fir.types.FirIntersectionTypeRef
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
+import org.jetbrains.kotlin.fir.contracts.FirContractElementDeclaration
 import org.jetbrains.kotlin.fir.contracts.FirEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.FirLegacyRawContractDescription
@@ -204,12 +208,16 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformElement(expression, data)
     }
 
+    open fun transformLazyExpression(lazyExpression: FirLazyExpression, data: D): FirStatement {
+        return transformElement(lazyExpression, data)
+    }
+
     open fun transformContextReceiver(contextReceiver: FirContextReceiver, data: D): FirContextReceiver {
         return transformElement(contextReceiver, data)
     }
 
-    open fun transformElementWithResolvePhase(elementWithResolvePhase: FirElementWithResolvePhase, data: D): FirElementWithResolvePhase {
-        return transformElement(elementWithResolvePhase, data)
+    open fun transformElementWithResolveState(elementWithResolveState: FirElementWithResolveState, data: D): FirElementWithResolveState {
+        return transformElement(elementWithResolveState, data)
     }
 
     open fun transformFileAnnotationsContainer(fileAnnotationsContainer: FirFileAnnotationsContainer, data: D): FirFileAnnotationsContainer {
@@ -378,6 +386,10 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
 
     open fun transformBlock(block: FirBlock, data: D): FirStatement {
         return transformElement(block, data)
+    }
+
+    open fun transformLazyBlock(lazyBlock: FirLazyBlock, data: D): FirStatement {
+        return transformElement(lazyBlock, data)
     }
 
     open fun transformBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: D): FirStatement {
@@ -652,6 +664,10 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformElement(errorNamedReference, data)
     }
 
+    open fun transformFromMissingDependenciesNamedReference(fromMissingDependenciesNamedReference: FirFromMissingDependenciesNamedReference, data: D): FirReference {
+        return transformElement(fromMissingDependenciesNamedReference, data)
+    }
+
     open fun transformSuperReference(superReference: FirSuperReference, data: D): FirReference {
         return transformElement(superReference, data)
     }
@@ -716,7 +732,11 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformElement(implicitTypeRef, data)
     }
 
-    open fun transformEffectDeclaration(effectDeclaration: FirEffectDeclaration, data: D): FirEffectDeclaration {
+    open fun transformContractElementDeclaration(contractElementDeclaration: FirContractElementDeclaration, data: D): FirContractElementDeclaration {
+        return transformElement(contractElementDeclaration, data)
+    }
+
+    open fun transformEffectDeclaration(effectDeclaration: FirEffectDeclaration, data: D): FirContractElementDeclaration {
         return transformElement(effectDeclaration, data)
     }
 
@@ -784,12 +804,16 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformExpression(expression, data)
     }
 
+    final override fun visitLazyExpression(lazyExpression: FirLazyExpression, data: D): FirStatement {
+        return transformLazyExpression(lazyExpression, data)
+    }
+
     final override fun visitContextReceiver(contextReceiver: FirContextReceiver, data: D): FirContextReceiver {
         return transformContextReceiver(contextReceiver, data)
     }
 
-    final override fun visitElementWithResolvePhase(elementWithResolvePhase: FirElementWithResolvePhase, data: D): FirElementWithResolvePhase {
-        return transformElementWithResolvePhase(elementWithResolvePhase, data)
+    final override fun visitElementWithResolveState(elementWithResolveState: FirElementWithResolveState, data: D): FirElementWithResolveState {
+        return transformElementWithResolveState(elementWithResolveState, data)
     }
 
     final override fun visitFileAnnotationsContainer(fileAnnotationsContainer: FirFileAnnotationsContainer, data: D): FirFileAnnotationsContainer {
@@ -958,6 +982,10 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
 
     final override fun visitBlock(block: FirBlock, data: D): FirStatement {
         return transformBlock(block, data)
+    }
+
+    final override fun visitLazyBlock(lazyBlock: FirLazyBlock, data: D): FirStatement {
+        return transformLazyBlock(lazyBlock, data)
     }
 
     final override fun visitBinaryLogicExpression(binaryLogicExpression: FirBinaryLogicExpression, data: D): FirStatement {
@@ -1232,6 +1260,10 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformErrorNamedReference(errorNamedReference, data)
     }
 
+    final override fun visitFromMissingDependenciesNamedReference(fromMissingDependenciesNamedReference: FirFromMissingDependenciesNamedReference, data: D): FirReference {
+        return transformFromMissingDependenciesNamedReference(fromMissingDependenciesNamedReference, data)
+    }
+
     final override fun visitSuperReference(superReference: FirSuperReference, data: D): FirReference {
         return transformSuperReference(superReference, data)
     }
@@ -1296,7 +1328,11 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformImplicitTypeRef(implicitTypeRef, data)
     }
 
-    final override fun visitEffectDeclaration(effectDeclaration: FirEffectDeclaration, data: D): FirEffectDeclaration {
+    final override fun visitContractElementDeclaration(contractElementDeclaration: FirContractElementDeclaration, data: D): FirContractElementDeclaration {
+        return transformContractElementDeclaration(contractElementDeclaration, data)
+    }
+
+    final override fun visitEffectDeclaration(effectDeclaration: FirEffectDeclaration, data: D): FirContractElementDeclaration {
         return transformEffectDeclaration(effectDeclaration, data)
     }
 

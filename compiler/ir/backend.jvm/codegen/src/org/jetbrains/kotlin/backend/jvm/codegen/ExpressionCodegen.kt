@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
+import org.jetbrains.kotlin.backend.common.ir.*
 import org.jetbrains.kotlin.backend.common.lower.BOUND_RECEIVER_PARAMETER
 import org.jetbrains.kotlin.backend.common.lower.LoweredStatementOrigins
 import org.jetbrains.kotlin.backend.jvm.*
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -60,6 +62,8 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import java.util.*
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 
 sealed class ExpressionInfo {
     var blockInfo: BlockInfo? = null
@@ -138,6 +142,7 @@ class ExpressionCodegen(
     val smap: SourceMapper,
     val reifiedTypeParametersUsages: ReifiedTypeParametersUsages,
 ) : IrElementVisitor<PromisedValue, BlockInfo>, BaseExpressionCodegen {
+    private val lineNumberMapper = LineNumberMapper(this)
 
     override fun toString(): String = signature.toString()
 
@@ -151,8 +156,6 @@ class ExpressionCodegen(
     val methodSignatureMapper = classCodegen.methodSignatureMapper
 
     val state = context.state
-
-    private val fileEntry = irFunction.fileParent.fileEntry
 
     override val visitor: InstructionAdapter
         get() = mv
@@ -187,14 +190,13 @@ class ExpressionCodegen(
 
     private fun markNewLinkedLabel() = linkedLabel().apply { mv.visitLabel(this) }
 
-    private fun getLineNumberForOffset(offset: Int): Int = fileEntry.getLineNumber(offset) + 1
-
     private fun IrElement.markLineNumber(startOffset: Boolean) {
         if (noLineNumberScope) return
         val offset = if (startOffset) this.startOffset else endOffset
         if (offset < 0) return
 
-        val lineNumber = getLineNumberForOffset(offset)
+        val lineNumber = lineNumberMapper.getLineNumberForOffset(offset)
+
         assert(lineNumber > 0)
         if (lastLineNumber != lineNumber) {
             lastLineNumber = lineNumber
@@ -203,6 +205,17 @@ class ExpressionCodegen(
     }
 
     fun markLineNumber(element: IrElement) = element.markLineNumber(true)
+
+    @OptIn(ExperimentalContracts::class)
+    private inline fun noLineNumberScopeWithCondition(flag: Boolean, block: () -> Unit) {
+        contract {
+            callsInPlace(block, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+        }
+        val previousState = noLineNumberScope
+        noLineNumberScope = noLineNumberScope || flag
+        block()
+        noLineNumberScope = previousState
+    }
 
     fun noLineNumberScope(block: () -> Unit) {
         val previousState = noLineNumberScope
@@ -239,12 +252,8 @@ class ExpressionCodegen(
             // If this function has an expression body, return the result of that expression.
             // Otherwise, if it does not end in a return statement, it must be void-returning,
             // and an explicit return instruction at the end is still required to pass validation.
+            setExtraLineNumberForVoidReturningFunction(irFunction)
             if (body !is IrStatementContainer || body.statements.lastOrNull() !is IrReturn) {
-                // Allow setting a breakpoint on the closing brace of a void-returning function
-                // without an explicit return, or the `class Something(` line of a primary constructor.
-                if (irFunction.origin != JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER) {
-                    irFunction.markLineNumber(startOffset = irFunction is IrConstructor && irFunction.isPrimary)
-                }
                 val (returnType, returnIrType) = irFunction.returnAsmAndIrTypes()
                 result.materializeAt(returnType, returnIrType)
                 mv.areturn(returnType)
@@ -256,6 +265,18 @@ class ExpressionCodegen(
         val endLabel = markNewLabel()
         writeLocalVariablesInTable(info, endLabel)
         writeParameterInLocalVariableTable(startLabel, endLabel)
+    }
+
+    private fun setExtraLineNumberForVoidReturningFunction(irFunction: IrFunction) {
+        val body = irFunction.body ?: return
+        if (body !is IrStatementContainer || body.statements.lastOrNull() !is IrReturn) {
+            // Allow setting a breakpoint on the closing brace of a void-returning function
+            // without an explicit return, or the `class Something(` line of a primary constructor.
+            if (irFunction.origin != JvmLoweredDeclarationOrigin.CLASS_STATIC_INITIALIZER) {
+                irFunction.markLineNumber(startOffset = irFunction is IrConstructor && irFunction.isPrimary)
+                mv.nop()
+            }
+        }
     }
 
     private fun generateFakeContinuationConstructorIfNeeded() {
@@ -400,6 +421,11 @@ class ExpressionCodegen(
                 writeLocalVariablesInTable(info, markNewLabel())
             }
         }
+
+        if (expression is IrInlinedFunctionBlock && expression.isFunctionInlining()) {
+            markLineNumberAfterInlineIfNeeded(isInsideCondition)
+        }
+
         if (isSynthesizedInitBlock) {
             expression.markLineNumber(startOffset = false)
             mv.nop()
@@ -453,11 +479,121 @@ class ExpressionCodegen(
         }
     }
 
-    private fun visitStatementContainer(container: IrStatementContainer, data: BlockInfo) =
-        container.statements.fold(unitValue) { prev, exp ->
+    private fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: BlockInfo): PromisedValue {
+        val inlineCall = inlinedBlock.inlineCall
+        val callee = inlinedBlock.inlineDeclaration as? IrFunction
+        val callLineNumber = lineNumberMapper.getLineNumberForOffset(inlineCall.startOffset)
+
+        // 1. Evaluate NON DEFAULT arguments from inline function call
+        inlinedBlock.getNonDefaultAdditionalStatementsFromInlinedBlock().forEach { exp ->
+            exp.accept(this, data).discard()
+        }
+
+        if (inlinedBlock.isLambdaInlining()) {
+            lineNumberMapper.setUpAdditionalLineNumbersBeforeLambdaInlining(inlinedBlock)
+        }
+
+        noLineNumberScopeWithCondition(inlinedBlock.inlineDeclaration.isInlineOnly()) {
+            inlineCall.markLineNumber(startOffset = true)
+            mv.nop()
+
+            lineNumberMapper.buildSmapFor(inlinedBlock, inlinedBlock.buildOrGetClassSMAP(data), data)
+
+            if (inlineCall.usesDefaultArguments()) {
+                // $default function has first LN pointing to original callee
+                callee?.markLineNumber(startOffset = true)
+                mv.nop()
+            }
+
+            // 2. Evaluate DEFAULT arguments from inline function call
+            inlinedBlock.getDefaultAdditionalStatementsFromInlinedBlock().forEach { exp ->
+                exp.accept(this, data).discard()
+            }
+
+            if (inlineCall.usesDefaultArguments()) {
+                // we must reset LN because at this point in original inliner we will inline non default call
+                lastLineNumber = -1
+            }
+
+            // 3. Evaluate statements from inline function body
+            val result = inlinedBlock.getOriginalStatementsFromInlinedBlock().fold(unitValue) { prev, exp ->
+                prev.discard()
+                exp.accept(this, data)
+            }
+
+            if (callee != null && (inlinedBlock.inlinedElement !is IrCallableReference<*> || callee.isInline)) {
+                setExtraLineNumberForVoidReturningFunction(callee)
+            }
+
+            // After `ReturnableBlockLowering` last return could transform, but we still need to place new LN there
+            val lastStatement = callee?.body?.statements?.lastOrNull()
+            if (lastStatement is IrReturn) {
+                val returnTarget = lastStatement.returnTargetSymbol.owner
+                val originalReturnTarget = (returnTarget as? IrAttributeContainer)?.attributeOwnerId ?: returnTarget
+                if (originalReturnTarget == inlinedBlock.inlineDeclaration) {
+                    // if return is implicit we must put new LN at the end of expression
+                    inlinedBlock.statements.last().markLineNumber(startOffset = lastStatement.startOffset != lastStatement.endOffset)
+                    mv.nop()
+                }
+            }
+
+            lineNumberMapper.dropCurrentSmap()
+
+            if (inlinedBlock.isLambdaInlining()) {
+                lineNumberMapper.setUpAdditionalLineNumbersAfterLambdaInlining(inlinedBlock)
+            } else {
+                // takeUnless is required to avoid markLineNumberAfterInlineIfNeeded for inline only
+                lastLineNumber = callLineNumber.takeUnless { noLineNumberScope } ?: -1
+            }
+
+            return result
+        }
+    }
+
+    private fun IrDeclaration.getClassWithDeclaredFunction(): IrClass? {
+        val parent = this.parentClassOrNull ?: return null
+        if (!parent.isInterface || (this is IrFunction && this.hasJvmDefault())) return parent
+        return parent.declarations.singleOrNull { it.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS } as IrClass
+    }
+
+    private fun IrInlinedFunctionBlock.buildOrGetClassSMAP(data: BlockInfo): SMAP {
+        if (this.isLambdaInlining()) {
+            return context.typeToCachedSMAP[context.getLocalClassType(this.inlinedElement as IrAttributeContainer)]!!
+        }
+
+        val callee = this.inlineDeclaration
+        val calleeFromActualClass = callee.getClassWithDeclaredFunction()!!.declarations
+            .asSequence()
+            .filterIsInstance<IrSimpleFunction>()
+            .filter { it.attributeOwnerId == callee } // original callee could be transformed after lowerings, so we must get correct one
+            .filter {
+                if (inlineCall.usesDefaultArguments()) it.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER
+                else it.origin != IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER
+            }
+            .filter { it.origin != JvmLoweredDeclarationOrigin.FOR_INLINE_STATE_MACHINE_TEMPLATE } // filter functions with $$forInline postfix
+            .single()
+
+        val nodeAndSmap = calleeFromActualClass.let { actualCallee ->
+            val callToActualCallee = IrCallImpl.fromSymbolOwner(
+                inlineCall.startOffset, inlineCall.endOffset, inlineCall.type, actualCallee.symbol
+            )
+            val callable = methodSignatureMapper.mapToCallableMethod(callToActualCallee, null)
+            val callGenerator = getOrCreateCallGenerator(callToActualCallee, data, callable.signature)
+            (callGenerator as IrInlineCodegen).compileInline()
+        }
+
+        return nodeAndSmap.classSMAP
+    }
+
+    private fun visitStatementContainer(container: IrStatementContainer, data: BlockInfo): PromisedValue {
+        if (container is IrInlinedFunctionBlock) {
+            return visitInlinedFunctionBlock(container, data)
+        }
+        return container.statements.fold(unitValue) { prev, exp ->
             prev.discard()
             exp.accept(this, data)
         }
+    }
 
     override fun visitBlockBody(body: IrBlockBody, data: BlockInfo): PromisedValue {
         visitStatementContainer(body, data).discard()
@@ -861,6 +997,9 @@ class ExpressionCodegen(
             val childCodegen = ClassCodegen.getOrCreate(declaration, context, enclosingFunctionForLocalObjects)
             childCodegen.generate()
             closureReifiedMarkers[declaration] = childCodegen.reifiedTypeParametersUsages
+            if (irFunction.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER || declaration.origin == JvmLoweredDeclarationOrigin.LAMBDA_IMPL) {
+                context.typeToCachedSMAP[childCodegen.type] = SMAP(childCodegen.smap.resultMappings)
+            }
         }
         return unitValue
     }
@@ -1169,6 +1308,10 @@ class ExpressionCodegen(
         mv.nop()
         val endLabel = Label()
         val stackElement = unwindBlockStack(endLabel, data) { it.loop == jump.loop }
+        if ((jump.loop.body as? IrBlock)?.statements?.singleOrNull() is IrInlinedFunctionBlock) {
+            // There must be another line number because this jump is actually return from inlined function
+            jump.markLineNumber(startOffset = true)
+        }
         if (stackElement == null) {
             generateGlobalReturnFlagIfPossible(jump, jump.loop.nonLocalReturnLabel(jump is IrBreak))
             mv.areturn(Type.VOID_TYPE)
@@ -1216,7 +1359,7 @@ class ExpressionCodegen(
             val clauseStart = markNewLabel()
             val parameter = clause.catchParameter
             val descriptorType = parameter.asmType
-            val index = frameMap.enter(clause.catchParameter, descriptorType)
+            val index = frameMap.enter(parameter, descriptorType)
             clause.markLineNumber(true)
             mv.store(index, descriptorType)
             val afterStore = markNewLabel()
@@ -1307,15 +1450,17 @@ class ExpressionCodegen(
     ) {
         val gapStart = markNewLinkedLabel()
         data.localGapScope(tryWithFinallyInfo) {
-            finallyDepth++
-            if (isFinallyMarkerRequired) {
-                generateFinallyMarker(mv, finallyDepth, true)
+            lineNumberMapper.stashSmapForGivenTry(tryWithFinallyInfo) {
+                finallyDepth++
+                if (isFinallyMarkerRequired) {
+                    generateFinallyMarker(mv, finallyDepth, true)
+                }
+                tryWithFinallyInfo.onExit.accept(this, data).discard()
+                if (isFinallyMarkerRequired) {
+                    generateFinallyMarker(mv, finallyDepth, false)
+                }
+                finallyDepth--
             }
-            tryWithFinallyInfo.onExit.accept(this, data).discard()
-            if (isFinallyMarkerRequired) {
-                generateFinallyMarker(mv, finallyDepth, false)
-            }
-            finallyDepth--
             if (tryCatchBlockEnd != null) {
                 tryWithFinallyInfo.onExit.markLineNumber(startOffset = false)
                 mv.goTo(tryCatchBlockEnd)
@@ -1456,7 +1601,7 @@ class ExpressionCodegen(
                 //avoid ambiguity with type constructor type parameters
                 emptyMap()
             } else typeArgumentContainer.typeParameters.associate {
-                it.symbol to element.getTypeArgumentOrDefault(it)
+                it.symbol to (element.getTypeArgument(it.index) ?: it.defaultType)
             }
 
         val mappings = TypeParameterMappings(typeMapper.typeSystem, typeArguments, allReified = false, typeMapper::mapTypeParameter)

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.elements.KtNameReferenceExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtTypeProjectionElementType
+import org.jetbrains.kotlin.util.getChildren
 
 /**
  * Service to answer source-related questions in generic fashion.

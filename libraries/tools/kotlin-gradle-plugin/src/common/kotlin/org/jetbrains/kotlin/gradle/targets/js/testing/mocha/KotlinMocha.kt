@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.internal.parseNodeJsStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
+import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsExtension
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTest
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinJsTestFramework
@@ -25,7 +26,7 @@ class KotlinMocha(@Transient override val compilation: KotlinJsCompilation, priv
     @Transient
     private val project: Project = compilation.target.project
     private val npmProject = compilation.npmProject
-    private val versions = NodeJsRootPlugin.apply(project.rootProject).versions
+    private val versions = project.rootProject.kotlinNodeJsExtension.versions
     private val isTeamCity = project.providers.gradleProperty(TCServiceMessagesTestExecutor.TC_PROJECT_PROPERTY)
 
     override val settingsState: String
@@ -33,10 +34,8 @@ class KotlinMocha(@Transient override val compilation: KotlinJsCompilation, priv
 
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
         get() = setOf(
-            versions.kotlinJsTestRunner,
             versions.mocha,
             versions.sourceMapSupport,
-            versions.formatUtil
         )
 
     override fun getPath() = "$basePath:kotlinMocha"

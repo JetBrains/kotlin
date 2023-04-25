@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 /**
  * A leaf IR tree element.
- * @sample org.jetbrains.kotlin.ir.generator.IrTree.getValue
+ *
+ * Generated from: [org.jetbrains.kotlin.ir.generator.IrTree.getValue]
  */
 abstract class IrGetValue : IrValueAccessExpression() {
     override fun <R, D> accept(visitor: IrElementVisitor<R, D>, data: D): R =

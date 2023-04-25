@@ -6,7 +6,7 @@ public final class PropertiesKt /* PropertiesKt*/ {
   private static final error.NonExistentClass delegatedProp2$delegate;
 
   @org.jetbrains.annotations.NotNull()
-  private static final java.lang.Object arrayConst;
+  private static final java.lang.Object arrayConst = {1, 2} /* initializer type: null */;
 
   @org.jetbrains.annotations.NotNull()
   private static final java.lang.String x = "" /* initializer type: java.lang.String */;
@@ -63,15 +63,20 @@ public final class PropertiesKt /* PropertiesKt*/ {
 
   private static java.lang.String internalVarPrivateSet;
 
-  private static java.lang.String protectedLateinitVar;
+  protected static java.lang.String protectedLateinitVar;
 
   public static Unresolved subject;
+
+  public static java.lang.String lateInit;
 
   @org.jetbrains.annotations.NotNull()
   protected static final java.lang.String getProtectedLateinitVar();//  getProtectedLateinitVar()
 
   @org.jetbrains.annotations.NotNull()
   protected static final java.lang.String getProtectedWithPrivateSet();//  getProtectedWithPrivateSet()
+
+  @org.jetbrains.annotations.NotNull()
+  public static final Unresolved getSubject();//  getSubject()
 
   @org.jetbrains.annotations.NotNull()
   public static final java.lang.Object getArrayConst();//  getArrayConst()
@@ -81,6 +86,9 @@ public final class PropertiesKt /* PropertiesKt*/ {
 
   @org.jetbrains.annotations.NotNull()
   public static final java.lang.String getInternalVarPrivateSet();//  getInternalVarPrivateSet()
+
+  @org.jetbrains.annotations.NotNull()
+  public static final java.lang.String getLateInit();//  getLateInit()
 
   @org.jetbrains.annotations.NotNull()
   public static final java.lang.String getLazyProp();//  getLazyProp()
@@ -125,8 +133,6 @@ public final class PropertiesKt /* PropertiesKt*/ {
 
   protected static final void setProtectedLateinitVar(@org.jetbrains.annotations.NotNull() java.lang.String);//  setProtectedLateinitVar(java.lang.String)
 
-  public static final Unresolved getSubject();//  getSubject()
-
   public static final boolean isEmpty();//  isEmpty()
 
   public static final error.NonExistentClass getDelegatedProp2();//  getDelegatedProp2()
@@ -165,13 +171,15 @@ public final class PropertiesKt /* PropertiesKt*/ {
 
   public static final void setIslowercase(@org.jetbrains.annotations.Nullable() java.lang.Boolean);//  setIslowercase(java.lang.Boolean)
 
+  public static final void setLateInit(@org.jetbrains.annotations.NotNull() java.lang.String);//  setLateInit(java.lang.String)
+
   public static final void setLazyProp(@org.jetbrains.annotations.NotNull() java.lang.String);//  setLazyProp(java.lang.String)
 
   public static final void setName(@org.jetbrains.annotations.NotNull() java.lang.String);//  setName(java.lang.String)
 
   public static final void setStringRepresentation(@org.jetbrains.annotations.NotNull() java.lang.String);//  setStringRepresentation(java.lang.String)
 
-  public static final void setSubject(Unresolved);//  setSubject(Unresolved)
+  public static final void setSubject(@org.jetbrains.annotations.NotNull() Unresolved);//  setSubject(Unresolved)
 
   public static final void setValue(T, @org.jetbrains.annotations.NotNull() kotlin.reflect.KProperty<?>, int);//  setValue(T, kotlin.reflect.KProperty<?>, int)
 }

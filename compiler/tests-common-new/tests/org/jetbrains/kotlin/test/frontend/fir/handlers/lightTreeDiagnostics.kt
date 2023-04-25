@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.test.frontend.fir.handlers
 
 import com.intellij.lang.LighterASTNode
-import com.intellij.openapi.util.Ref
 import com.intellij.psi.TokenType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtLightSourceElement
@@ -15,20 +14,14 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.toKtLightSourceElement
+import org.jetbrains.kotlin.util.getChildren
 
 private typealias Tree = FlyweightCapableTreeStructure<LighterASTNode>
 
 private class LightTreeErrorsCollector(private val tree: Tree) {
-
-    private fun LighterASTNode.getChildrenAsArray(): Array<out LighterASTNode?> {
-        val kidsRef = Ref<Array<LighterASTNode?>>()
-        return if (tree.getChildren(this, kidsRef) > 0) kidsRef.get() else emptyArray()
-    }
-
     private inline fun LighterASTNode.forEachChildren(f: (LighterASTNode) -> Unit) {
-        val kidsArray = this.getChildrenAsArray()
+        val kidsArray = this.getChildren(tree)
         for (kid in kidsArray) {
-            if (kid == null) break
             val tokenType = kid.tokenType
             if (KtTokens.COMMENTS.contains(tokenType) || tokenType == KtTokens.WHITE_SPACE || tokenType == KtTokens.SEMICOLON) continue
             f(kid)

@@ -16,17 +16,17 @@ import org.gradle.api.tasks.options.Option
 import org.gradle.process.ProcessForkOptions
 import org.gradle.process.internal.DefaultProcessForkOptions
 import org.gradle.work.NormalizeLineEndings
-import org.jetbrains.kotlin.compilerRunner.konanVersion
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesTestExecutor.Companion.TC_PROJECT_PROPERTY
+import org.jetbrains.kotlin.gradle.targets.native.internal.NativeAppleSimulatorTCServiceMessagesTestExecutionSpec
 import org.jetbrains.kotlin.gradle.targets.native.internal.parseKotlinNativeStackTraceAsJvm
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 import java.io.File
 import java.util.concurrent.Callable
 import javax.inject.Inject
 
-abstract class KotlinNativeTest: KotlinTest() {
+abstract class KotlinNativeTest : KotlinTest() {
     @get:Inject
     abstract val providerFactory: ProviderFactory
 
@@ -79,8 +79,6 @@ abstract class KotlinNativeTest: KotlinTest() {
 
     private val trackedEnvironmentVariablesKeys = mutableSetOf<String>()
 
-
-    private val konanVersion = project.konanVersion
 
     @Suppress("unused")
     @get:Input
@@ -235,6 +233,9 @@ abstract class KotlinNativeSimulatorTest : KotlinNativeTest() {
     @Internal
     var debugMode = false
 
+    @get:Input
+    abstract val standalone: Property<Boolean> // disabled standalone means that xcode won't handle simulator boot/shutdown automatically
+
     @get:Internal
     override val testCommand: TestCommand = object : TestCommand() {
         override val executable: String
@@ -251,11 +252,23 @@ abstract class KotlinNativeSimulatorTest : KotlinNativeTest() {
                 "simctl",
                 "spawn",
                 "--wait-for-debugger".takeIf { debugMode },
-                "--standalone",
+                "--standalone".takeIf { standalone.get() },
                 device.get(),
                 this@KotlinNativeSimulatorTest.executable.absolutePath,
                 "--"
             ) +
                     testArgs(testLogger, checkExitCode, testGradleFilter, testNegativeGradleFilter, userArgs)
+    }
+
+    override fun createTestExecutionSpec(): TCServiceMessagesTestExecutionSpec {
+        val origin = super.createTestExecutionSpec()
+        return NativeAppleSimulatorTCServiceMessagesTestExecutionSpec(
+            origin.forkOptions,
+            origin.args,
+            origin.checkExitCode,
+            origin.clientSettings,
+            origin.dryRunArgs,
+            standalone,
+        )
     }
 }

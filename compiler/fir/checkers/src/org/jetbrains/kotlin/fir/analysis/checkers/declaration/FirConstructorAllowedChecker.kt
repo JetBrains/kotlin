@@ -39,7 +39,8 @@ object FirConstructorAllowedChecker : FirConstructorChecker() {
             ClassKind.CLASS -> if (containingClass is FirRegularClass && containingClass.modality == Modality.SEALED) {
                 val modifierList = source.getModifierList() ?: return
                 val hasIllegalModifier = modifierList.modifiers.any {
-                    it.token != KtTokens.PROTECTED_KEYWORD && it.token != KtTokens.PRIVATE_KEYWORD
+                    val token = it.token
+                    token in KtTokens.VISIBILITY_MODIFIERS && token != KtTokens.PROTECTED_KEYWORD && token != KtTokens.PRIVATE_KEYWORD
                 }
                 if (hasIllegalModifier) {
                     reporter.reportOn(source, FirErrors.NON_PRIVATE_OR_PROTECTED_CONSTRUCTOR_IN_SEALED, context)

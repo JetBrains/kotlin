@@ -21,10 +21,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.isNullable
 import org.jetbrains.kotlin.ir.types.makeNullable
-import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.defaultType
-import org.jetbrains.kotlin.ir.util.isTopLevel
-import org.jetbrains.kotlin.ir.util.packageFqName
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
@@ -300,7 +297,7 @@ internal object IrTypeInlineClassesSupport : InlineClassesSupport<IrClass, IrTyp
 
     override fun getNativePointedSuperclass(clazz: IrClass): IrClass? {
         var superClass: IrClass? = clazz
-        while (superClass != null && InteropIdSignatures.nativePointed != superClass.symbol.signature)
+        while (superClass != null && InteropFqNames.nativePointed.toSafe() != superClass.fqNameWhenAvailable)
             superClass = superClass.getSuperClassNotAny()
         return superClass
     }

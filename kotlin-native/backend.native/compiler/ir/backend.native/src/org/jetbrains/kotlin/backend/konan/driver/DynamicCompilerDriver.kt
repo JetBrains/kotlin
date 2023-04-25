@@ -5,15 +5,23 @@
 
 package org.jetbrains.kotlin.backend.konan.driver
 
+import kotlinx.cinterop.CPointer
 import kotlinx.cinterop.usingJvmCInteropCallbacks
+import llvm.LLVMContextCreate
+import llvm.LLVMContextDispose
+import llvm.LLVMDisposeModule
+import llvm.LLVMOpaqueModule
+import org.jetbrains.kotlin.backend.konan.*
+import org.jetbrains.kotlin.backend.konan.BitcodePostProcessingContextImpl
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.KonanConfig
 import org.jetbrains.kotlin.backend.konan.driver.phases.*
 import org.jetbrains.kotlin.backend.konan.getIncludedLibraryDescriptors
-import org.jetbrains.kotlin.backend.konan.isCache
+import org.jetbrains.kotlin.backend.konan.llvm.parseBitcodeFile
 import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.util.usingNativeMemoryAllocator
 
@@ -26,7 +34,8 @@ internal class DynamicCompilerDriver : CompilerDriver() {
         usingNativeMemoryAllocator {
             usingJvmCInteropCallbacks {
                 PhaseEngine.startTopLevel(config) { engine ->
-                    when (config.produce) {
+                    if (!config.compileFromBitcode.isNullOrEmpty()) produceBinaryFromBitcode(engine, config, config.compileFromBitcode!!)
+                    else when (config.produce) {
                         CompilerOutputKind.PROGRAM -> produceBinary(engine, config, environment)
                         CompilerOutputKind.DYNAMIC -> produceCLibrary(engine, config, environment)
                         CompilerOutputKind.STATIC -> produceCLibrary(engine, config, environment)
@@ -95,7 +104,7 @@ internal class DynamicCompilerDriver : CompilerDriver() {
         require(frontendOutput is FirOutput.Full)
 
         val fir2IrOutput = engine.runFir2Ir(frontendOutput)
-//        engine.runK2SpecialBackendChecks(fir2IrOutput)  // TODO After fix of KT-56018 try uncommenting this line
+        engine.runK2SpecialBackendChecks(fir2IrOutput)
         return engine.runFirSerializer(fir2IrOutput)
     }
 
@@ -122,6 +131,23 @@ internal class DynamicCompilerDriver : CompilerDriver() {
         require(psiToIrOutput is PsiToIrOutput.ForBackend)
         val backendContext = createBackendContext(config, frontendOutput, psiToIrOutput)
         engine.runBackend(backendContext, psiToIrOutput.irModule)
+    }
+
+    private fun produceBinaryFromBitcode(engine: PhaseEngine<PhaseContext>, config: KonanConfig, bitcodeFilePath: String) {
+        val llvmContext = LLVMContextCreate()!!
+        var llvmModule: CPointer<LLVMOpaqueModule>? = null
+        try {
+            llvmModule = parseBitcodeFile(llvmContext, bitcodeFilePath)
+            val context = BitcodePostProcessingContextImpl(config, llvmModule, llvmContext)
+            val depsPath = config.readSerializedDependencies
+            val dependencies = if (depsPath.isNullOrEmpty()) DependenciesTrackingResult(emptyList(), emptyList(), emptyList()).also {
+                config.configuration.report(CompilerMessageSeverity.WARNING, "No backend dependencies provided.")
+            } else DependenciesTrackingResult.deserialize(depsPath, File(depsPath).readStrings(), config)
+            engine.runBitcodeBackend(context, dependencies)
+        } finally {
+            llvmModule?.let { LLVMDisposeModule(it) }
+            LLVMContextDispose(llvmContext)
+        }
     }
 
     private fun createBackendContext(

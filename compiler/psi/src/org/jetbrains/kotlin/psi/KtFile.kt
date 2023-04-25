@@ -17,7 +17,6 @@
 package org.jetbrains.kotlin.psi
 
 import com.intellij.extapi.psi.PsiFileBase
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.fileTypes.FileType
 import com.intellij.openapi.vfs.VirtualFileWithId
 import com.intellij.psi.*
@@ -206,7 +205,7 @@ open class KtFile(viewProvider: FileViewProvider, val isCompiled: Boolean) :
     }
 
     override fun getClasses(): Array<PsiClass> {
-        val fileClassProvider = ServiceManager.getService(project, KtFileClassProvider::class.java)
+        val fileClassProvider = project.getService(KtFileClassProvider::class.java)
         return fileClassProvider?.getFileClasses(this) ?: PsiClass.EMPTY_ARRAY
     }
 

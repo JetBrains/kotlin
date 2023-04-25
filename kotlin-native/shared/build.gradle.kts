@@ -42,15 +42,22 @@ java {
 kotlin {
     sourceSets {
         main {
-            kotlin.srcDir("src/main/kotlin")
-            kotlin.srcDir("src/library/kotlin")
+            // TODO: All code was moved to utils. Bootstrap should be advanced to make these classes appear
+            //  in the bootstrap version of kotlin-native-utils. Only then this project should be removed, all usages
+            //  of `:kotlin-native-shared` should be replaced with `:native:kotlin-native-utils`
+            kotlin.srcDir("../../native/utils/src")
         }
     }
 }
 
 tasks.withType<KotlinCompile>().configureEach {
-    kotlinOptions.jvmTarget = "1.8"
-    kotlinOptions.freeCompilerArgs += listOf("-Xskip-prerelease-check")
+    kotlinOptions {
+        languageVersion = "1.4"
+        apiVersion = "1.4"
+        allWarningsAsErrors = false
+        jvmTarget = "1.8"
+        freeCompilerArgs += "-Xskip-prerelease-check"
+    }
 }
 
 val isCompositeBootstrap = project.extraProperties.has("kotlin.native.build.composite-bootstrap")
@@ -60,7 +67,7 @@ val isCompositeBootstrap = project.extraProperties.has("kotlin.native.build.comp
  *
  * It to use this project in composite build (build-tools) and as a project itself.
  * Project should depend on a current snapshot builds while build-tools use bootstrap dependencies.
- * TODO: merge this project with kotlin-native-utils to get rid of this hack
+ * TODO: finalize merge of this project with kotlin-native-utils to get rid of this hack
  */
 fun compositeDependency(coordinates: String, subproject: String = ""): Any {
     val parts = coordinates.split(':')
@@ -78,7 +85,6 @@ fun compositeDependency(coordinates: String, subproject: String = ""): Any {
 
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-stdlib:${project.bootstrapKotlinVersion}")
-    api(compositeDependency("org.jetbrains.kotlin:kotlin-native-utils:${project.bootstrapKotlinVersion}", ":native"))
     api(compositeDependency("org.jetbrains.kotlin:kotlin-util-klib:${project.bootstrapKotlinVersion}"))
     api(compositeDependency("org.jetbrains.kotlin:kotlin-util-io:${project.bootstrapKotlinVersion}"))
 
@@ -90,11 +96,5 @@ dependencies {
         val platformVersion = versionProperties["versions.junit-bom"]
         testApi(platform("org.junit:junit-bom:$platformVersion"))
         testApi("org.junit.jupiter:junit-jupiter")
-    }
-}
-
-if (!isCompositeBootstrap) {
-    tasks.withType<Test>().configureEach() {
-        useJUnitPlatform()
     }
 }

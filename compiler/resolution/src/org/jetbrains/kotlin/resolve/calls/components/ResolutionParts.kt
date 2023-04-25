@@ -124,7 +124,7 @@ internal object CreateFreshVariablesSubstitutor : ResolutionPart() {
             if (candidateDescriptor.typeParameters.isEmpty())
                 FreshVariableNewTypeSubstitutor.Empty
             else
-                createToFreshVariableSubstitutorAndAddInitialConstraints(candidateDescriptor, csBuilder)
+                createToFreshVariableSubstitutorAndAddInitialConstraints(candidateDescriptor, resolvedCall.atom, csBuilder)
 
         val knownTypeParametersSubstitutor = knownTypeParametersResultingSubstitutor?.let {
             createKnownParametersFromFreshVariablesSubstitutor(toFreshVariables, it)
@@ -220,6 +220,7 @@ internal object CreateFreshVariablesSubstitutor : ResolutionPart() {
 
     fun createToFreshVariableSubstitutorAndAddInitialConstraints(
         candidateDescriptor: CallableDescriptor,
+        kotlinCall: KotlinCall,
         csBuilder: ConstraintSystemOperation
     ): FreshVariableNewTypeSubstitutor {
         val typeParameters = candidateDescriptor.typeParameters
@@ -242,7 +243,7 @@ internal object CreateFreshVariablesSubstitutor : ResolutionPart() {
         for (index in typeParameters.indices) {
             val typeParameter = typeParameters[index]
             val freshVariable = freshTypeVariables[index]
-            val position = DeclaredUpperBoundConstraintPositionImpl(typeParameter)
+            val position = DeclaredUpperBoundConstraintPositionImpl(typeParameter, kotlinCall)
 
             for (upperBound in typeParameter.upperBounds) {
                 freshVariable.addSubtypeConstraint(upperBound, position)
@@ -263,7 +264,7 @@ internal object CreateFreshVariablesSubstitutor : ResolutionPart() {
                     // there can be null in case we already captured type parameter in outer class (in case of inner classes)
                     // see test innerClassTypeAliasConstructor.kt
                     val originalTypeParameter = originalTypeParameters.getOrNull(originalIndex) ?: continue
-                    val position = DeclaredUpperBoundConstraintPositionImpl(originalTypeParameter)
+                    val position = DeclaredUpperBoundConstraintPositionImpl(originalTypeParameter, kotlinCall)
                     for (upperBound in originalTypeParameter.upperBounds) {
                         freshVariable.addSubtypeConstraint(upperBound, position)
                     }
@@ -532,7 +533,8 @@ private fun ResolutionCandidate.resolveKotlinArgument(
             this,
             receiverInfo,
             convertedArgument?.unknownIntegerType?.unwrap(),
-            inferenceSession
+            inferenceSession,
+            selectorCall = receiverInfo.selectorCall
         )
 
         addResolvedKtPrimitive(resolvedAtom)
@@ -646,7 +648,7 @@ private fun ResolutionCandidate.getReceiverArgumentWithConstraintIfCompatible(
     val expectedTypeUnprepared = argument.getExpectedType(parameter, callComponents.languageVersionSettings)
     val expectedType = prepareExpectedType(expectedTypeUnprepared)
     val argumentType = captureFromTypeParameterUpperBoundIfNeeded(argument.receiver.stableType, expectedType)
-    val position = ReceiverConstraintPositionImpl(argument)
+    val position = ReceiverConstraintPositionImpl(argument, resolvedCall.atom)
     return if (csBuilder.isSubtypeConstraintCompatible(argumentType, expectedType, position))
         ApplicableContextReceiverArgumentWithConstraint(argument, argumentType, expectedType, position)
     else null
@@ -731,7 +733,8 @@ internal object CheckReceivers : ResolutionPart() {
         val receiverInfo = ReceiverInfo(
             isReceiver = true,
             shouldReportUnsafeCall = implicitInvokeState != ImplicitInvokeCheckStatus.UNSAFE_INVOKE_REPORTED,
-            reportUnsafeCallAsUnsafeImplicitInvoke = implicitInvokeState == ImplicitInvokeCheckStatus.INVOKE_ON_NOT_NULL_VARIABLE
+            reportUnsafeCallAsUnsafeImplicitInvoke = implicitInvokeState == ImplicitInvokeCheckStatus.INVOKE_ON_NOT_NULL_VARIABLE,
+            selectorCall = resolvedCall.atom
         )
 
         resolveKotlinArgument(receiverArgument, receiverParameter, receiverInfo)

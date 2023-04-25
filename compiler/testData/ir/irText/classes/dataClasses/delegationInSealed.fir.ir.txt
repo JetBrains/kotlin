@@ -66,13 +66,13 @@ FILE fqName:<root> fileName:/delegationInSealed.kt
             RETURN type=kotlin.Nothing from='public final fun <get-c> (): kotlin.CharSequence declared in <root>.A.B'
               GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:c type:kotlin.CharSequence visibility:private [final]' type=kotlin.CharSequence origin=null
                 receiver: GET_VAR '<this>: <root>.A.B declared in <root>.A.B.<get-c>' type=<root>.A.B origin=null
-      FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.A.B) returnType:kotlin.CharSequence [operator]
+      FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.A.B) returnType:kotlin.CharSequence [operator]
         $this: VALUE_PARAMETER name:<this> type:<root>.A.B
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.CharSequence [operator] declared in <root>.A.B'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:c type:kotlin.CharSequence visibility:private [final]' type=kotlin.CharSequence origin=null
               receiver: GET_VAR '<this>: <root>.A.B declared in <root>.A.B.component1' type=<root>.A.B origin=null
-      FUN name:copy visibility:public modality:FINAL <> ($this:<root>.A.B, c:kotlin.CharSequence) returnType:<root>.A.B
+      FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:<root>.A.B, c:kotlin.CharSequence) returnType:<root>.A.B
         $this: VALUE_PARAMETER name:<this> type:<root>.A.B
         VALUE_PARAMETER name:c index:0 type:kotlin.CharSequence
           EXPRESSION_BODY
@@ -132,8 +132,7 @@ FILE fqName:<root> fileName:/delegationInSealed.kt
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.A.B'
             STRING_CONCATENATION type=kotlin.String
-              CONST String type=kotlin.String value="B("
-              CONST String type=kotlin.String value="c="
+              CONST String type=kotlin.String value="B(c="
               GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:c type:kotlin.CharSequence visibility:private [final]' type=kotlin.CharSequence origin=null
                 receiver: GET_VAR '<this>: <root>.A.B declared in <root>.A.B.toString' type=<root>.A.B origin=null
               CONST String type=kotlin.String value=")"

@@ -1,4 +1,4 @@
-// LANGUAGE: -NativeJsProhibitLateinitIsInitalizedIntrinsicWithoutPrivateAccess
+// LANGUAGE: -NativeJsProhibitLateinitIsInitializedIntrinsicWithoutPrivateAccess
 // WITH_STDLIB
 // On JVM, isInitialized on a property from another file is forbidden because lateinit-ness is not included in the an ABI of a property.
 // IGNORE_BACKEND_K1: JVM, JVM_IR

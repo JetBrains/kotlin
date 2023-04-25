@@ -5,6 +5,9 @@
 
 package kotlin.native.internal.test
 
+import kotlin.experimental.ExperimentalNativeApi
+
+@ExperimentalNativeApi
 internal interface TestListener {
     fun startTesting(runner: TestRunner)
     fun finishTesting(runner: TestRunner, timeMillis: Long)
@@ -22,6 +25,7 @@ internal interface TestListener {
     fun ignore(testCase: TestCase)
 }
 
+@ExperimentalNativeApi
 internal open class BaseTestListener: TestListener {
     override fun startTesting(runner: TestRunner) {}
     override fun finishTesting(runner: TestRunner, timeMillis: Long) {}

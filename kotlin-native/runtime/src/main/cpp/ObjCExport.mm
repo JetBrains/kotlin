@@ -99,9 +99,9 @@ static Class getOrCreateClass(const TypeInfo* typeInfo);
 
 namespace {
 
-ALWAYS_INLINE void send_releaseAsAssociatedObject(void* associatedObject, ReleaseMode mode) {
-  auto msgSend = reinterpret_cast<void (*)(void* self, SEL cmd, ReleaseMode mode)>(&objc_msgSend);
-  msgSend(associatedObject, Kotlin_ObjCExport_releaseAsAssociatedObjectSelector, mode);
+ALWAYS_INLINE void send_releaseAsAssociatedObject(void* associatedObject) {
+  auto msgSend = reinterpret_cast<void (*)(void* self, SEL cmd)>(&objc_msgSend);
+  msgSend(associatedObject, Kotlin_ObjCExport_releaseAsAssociatedObjectSelector);
 }
 
 } // namespace
@@ -109,22 +109,7 @@ ALWAYS_INLINE void send_releaseAsAssociatedObject(void* associatedObject, Releas
 extern "C" ALWAYS_INLINE void Kotlin_ObjCExport_releaseAssociatedObject(void* associatedObject) {
   if (associatedObject != nullptr) {
     kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
-    send_releaseAsAssociatedObject(associatedObject, ReleaseMode::kRelease);
-  }
-}
-
-extern "C" ALWAYS_INLINE void Kotlin_ObjCExport_detachAndReleaseAssociatedObject(void* associatedObject) {
-  if (associatedObject != nullptr) {
-    kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
-    send_releaseAsAssociatedObject(associatedObject, ReleaseMode::kDetachAndRelease);
-  }
-}
-
-extern "C" ALWAYS_INLINE void Kotlin_ObjCExport_detachAssociatedObject(void* associatedObject) {
-  if (associatedObject != nullptr) {
-    // Switching to Native state is not required, because detach is fast and can't call user code.
-    // Also switching is not possible, because this is called from GC.
-    send_releaseAsAssociatedObject(associatedObject, ReleaseMode::kDetach);
+    send_releaseAsAssociatedObject(associatedObject);
   }
 }
 
@@ -300,7 +285,7 @@ static OBJ_GETTER(blockToKotlinImp, id self, SEL cmd);
 static OBJ_GETTER(boxedBooleanToKotlinImp, NSNumber* self, SEL cmd);
 
 static OBJ_GETTER(SwiftObject_toKotlinImp, id self, SEL cmd);
-static void SwiftObject_releaseAsAssociatedObjectImp(id self, SEL cmd, ReleaseMode mode);
+static void SwiftObject_releaseAsAssociatedObjectImp(id self, SEL cmd);
 
 static void initTypeAdaptersFrom(const ObjCTypeAdapter** adapters, int count) {
   for (int index = 0; index < count; ++index) {
@@ -361,7 +346,7 @@ static void Kotlin_ObjCExport_initializeImpl() {
         swiftRootClass, releaseAsAssociatedObjectSelector,
         (IMP)SwiftObject_releaseAsAssociatedObjectImp, releaseAsAssociatedObjectTypeEncoding
       );
-      RuntimeAssert(added, "Unable to add 'releaseAsAssociatedObject:' method to SwiftObject class");
+      RuntimeAssert(added, "Unable to add 'releaseAsAssociatedObject' method to SwiftObject class");
     }
   }
 }
@@ -381,9 +366,7 @@ static OBJ_GETTER(SwiftObject_toKotlinImp, id self, SEL cmd) {
   RETURN_RESULT_OF(Kotlin_ObjCExport_convertUnmappedObjCObject, self);
 }
 
-static void SwiftObject_releaseAsAssociatedObjectImp(id self, SEL cmd, ReleaseMode mode) {
-  if (!ReleaseModeHasRelease(mode))
-    return;
+static void SwiftObject_releaseAsAssociatedObjectImp(id self, SEL cmd) {
   objc_release(self);
 }
 

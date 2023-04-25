@@ -1,9 +1,9 @@
 import kotlin.native.concurrent.*
-import kotlin.native.internal.GC
 import kotlin.test.*
 
+@OptIn(kotlin.native.runtime.NativeRuntimeApi::class)
 fun main() {
-    kotlin.native.internal.GC.cyclicCollectorEnabled = true
+    kotlin.native.runtime.GC.cyclicCollectorEnabled = true
 
     repeat(10000) {
         // Create atomic cyclic garbage:
