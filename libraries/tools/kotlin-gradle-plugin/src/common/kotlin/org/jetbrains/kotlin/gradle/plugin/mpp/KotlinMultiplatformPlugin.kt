@@ -248,6 +248,7 @@ internal fun applyUserDefinedAttributes(target: AbstractKotlinTarget) {
         target.compilations.all { compilation ->
             val compilationAttributes = compilation.attributes
 
+            @Suppress("DEPRECATION")
             compilation.relatedConfigurationNames
                 .mapNotNull { configurationName -> target.project.configurations.findByName(configurationName) }
                 .forEach { configuration -> copyAttributes(compilationAttributes, configuration.attributes) }

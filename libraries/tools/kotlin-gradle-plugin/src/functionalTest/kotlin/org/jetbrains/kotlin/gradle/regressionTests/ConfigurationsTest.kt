@@ -275,6 +275,7 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
 
         project.evaluate()
 
+        @Suppress("DEPRECATION")
         project.kotlinExtension.targets.flatMap { it.compilations }.forEach { compilation ->
             val compilationSourceSets = compilation.allKotlinSourceSets
             val compilationConfigurationNames = compilation.relatedConfigurationNames
