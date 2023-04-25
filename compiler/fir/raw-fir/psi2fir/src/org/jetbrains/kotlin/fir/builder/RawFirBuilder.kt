@@ -65,6 +65,16 @@ open class RawFirBuilder(
     var mode: BodyBuildingMode = bodyBuildingMode
         private set
 
+    private inline fun <T> disabledLazyMode(body: () -> T): T {
+        if (mode != BodyBuildingMode.LAZY_BODIES) return body()
+        return try {
+            mode = BodyBuildingMode.NORMAL
+            body()
+        } finally {
+            mode = BodyBuildingMode.LAZY_BODIES
+        }
+    }
+
     private inline fun <T> runOnStubs(crossinline body: () -> T): T {
         return when (mode) {
             BodyBuildingMode.NORMAL -> body()
@@ -856,8 +866,8 @@ open class RawFirBuilder(
                     }
                     is KtDelegatedSuperTypeEntry -> {
                         val type = superTypeListEntry.typeReference.toFirOrErrorType()
-                        val delegateExpression =
-                            { superTypeListEntry.delegateExpression }.toFirExpression("Should have delegate")
+                        val delegateExpression = { superTypeListEntry.delegateExpression }
+                            .toFirExpression("Should have delegate")
                         container.superTypeRefs += type
                         val delegateSource =
                             superTypeListEntry.delegateExpression?.toFirSourceElement(KtFakeSourceElementKind.ClassDelegationField)
