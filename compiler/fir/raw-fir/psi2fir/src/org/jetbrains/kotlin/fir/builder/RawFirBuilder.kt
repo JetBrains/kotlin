@@ -866,8 +866,8 @@ open class RawFirBuilder(
                     }
                     is KtDelegatedSuperTypeEntry -> {
                         val type = superTypeListEntry.typeReference.toFirOrErrorType()
-                        val delegateExpression = { superTypeListEntry.delegateExpression }
-                            .toFirExpression("Should have delegate")
+                        val delegateExpression = disabledLazyMode { { superTypeListEntry.delegateExpression }
+                            .toFirExpression("Should have delegate") }
                         container.superTypeRefs += type
                         val delegateSource =
                             superTypeListEntry.delegateExpression?.toFirSourceElement(KtFakeSourceElementKind.ClassDelegationField)
