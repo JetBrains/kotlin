@@ -1,14 +1,15 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2023 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 
-package kotlin.native.concurrent
+package kotlin.concurrent
 
 import kotlinx.cinterop.NativePtr
 import kotlin.native.internal.*
 import kotlin.reflect.*
 import kotlin.concurrent.*
+import kotlin.native.concurrent.*
 
 /**
  * An [Int] value that is always updated atomically.
@@ -20,9 +21,8 @@ import kotlin.concurrent.*
  */
 @Frozen
 @OptIn(FreezingIsDeprecated::class, ExperimentalStdlibApi::class)
-@Deprecated("Use kotlin.concurrent.AtomicInt instead.", ReplaceWith("kotlin.concurrent.AtomicInt"))
-@DeprecatedSinceKotlin(warningSince = "1.9")
-public class AtomicInt(public @Volatile var value: Int) {
+@SinceKotlin("1.9")
+public class AtomicInt(@Volatile public var value: Int) {
     /**
      * Atomically sets the value to the given [new value][newValue] and returns the old value.
      */
@@ -42,7 +42,7 @@ public class AtomicInt(public @Volatile var value: Int) {
      *
      * Provides sequential consistent ordering guarantees and cannot fail spuriously.
      */
-    public fun compareAndSwap(expected: Int, newValue: Int): Int = this::value.compareAndExchangeField(expected, newValue)
+    public fun compareAndExchange(expected: Int, newValue: Int): Int = this::value.compareAndExchangeField(expected, newValue)
 
     /**
      * Atomically adds the [given value][delta] to the current value and returns the old value.
@@ -77,7 +77,8 @@ public class AtomicInt(public @Volatile var value: Int) {
     /**
      * Atomically increments the current value by one.
      */
-    @Deprecated("Use incrementAndGet() or getAndIncrement() instead.", ReplaceWith("this.incrementAndGet()"))
+    @Deprecated(level = DeprecationLevel.ERROR, message = "Use incrementAndGet() or getAndIncrement() instead.",
+            replaceWith = ReplaceWith("this.incrementAndGet()"))
     public fun increment(): Unit {
         addAndGet(1)
     }
@@ -85,13 +86,14 @@ public class AtomicInt(public @Volatile var value: Int) {
     /**
      * Atomically decrements the current value by one.
      */
-    @Deprecated("Use decrementAndGet() or getAndDecrement() instead.", ReplaceWith("this.decrementAndGet()"))
+    @Deprecated(level = DeprecationLevel.ERROR, message = "Use decrementAndGet() or getAndDecrement() instead.",
+            replaceWith = ReplaceWith("this.decrementAndGet()"))
     public fun decrement(): Unit {
         addAndGet(-1)
     }
 
     /**
-     * Returns the string representation of this object.
+     * Returns the string representation of the current [value].
      */
     public override fun toString(): String = value.toString()
 }
@@ -106,9 +108,8 @@ public class AtomicInt(public @Volatile var value: Int) {
  */
 @Frozen
 @OptIn(FreezingIsDeprecated::class, ExperimentalStdlibApi::class)
-@Deprecated("Use kotlin.concurrent.AtomicLong instead.", ReplaceWith("kotlin.concurrent.AtomicLong"))
-@DeprecatedSinceKotlin(warningSince = "1.9")
-public class AtomicLong(public @Volatile var value: Long = 0L)  {
+@SinceKotlin("1.9")
+public class AtomicLong(@Volatile public var value: Long)  {
     /**
      * Atomically sets the value to the given [new value][newValue] and returns the old value.
      */
@@ -128,7 +129,7 @@ public class AtomicLong(public @Volatile var value: Long = 0L)  {
      *
      * Provides sequential consistent ordering guarantees and cannot fail spuriously.
      */
-    public fun compareAndSwap(expected: Long, newValue: Long): Long = this::value.compareAndExchangeField(expected, newValue)
+    public fun compareAndExchange(expected: Long, newValue: Long): Long = this::value.compareAndExchangeField(expected, newValue)
 
     /**
      * Atomically adds the [given value][delta] to the current value and returns the old value.
@@ -163,13 +164,14 @@ public class AtomicLong(public @Volatile var value: Long = 0L)  {
     /**
      * Atomically adds the [given value][delta] to the current value and returns the new value.
      */
-    @Deprecated("Use addAndGet(delta: Long) instead.")
+    @Deprecated(level = DeprecationLevel.ERROR, message = "Use addAndGet(delta: Long) instead.")
     public fun addAndGet(delta: Int): Long = addAndGet(delta.toLong())
 
     /**
      * Atomically increments the current value by one.
      */
-    @Deprecated("Use incrementAndGet() or getAndIncrement() instead.", ReplaceWith("this.incrementAndGet()"))
+    @Deprecated(level = DeprecationLevel.ERROR, message = "Use incrementAndGet() or getAndIncrement() instead.",
+            replaceWith = ReplaceWith("this.incrementAndGet()"))
     public fun increment(): Unit {
         addAndGet(1L)
     }
@@ -177,13 +179,14 @@ public class AtomicLong(public @Volatile var value: Long = 0L)  {
     /**
      * Atomically decrements the current value by one.
      */
-    @Deprecated("Use decrementAndGet() or getAndDecrement() instead.", ReplaceWith("this.decrementAndGet()"))
-    fun decrement(): Unit {
+    @Deprecated(level = DeprecationLevel.ERROR, message = "Use decrementAndGet() or getAndDecrement() instead.",
+            replaceWith = ReplaceWith("this.decrementAndGet()"))
+    public fun decrement(): Unit {
         addAndGet(-1L)
     }
 
     /**
-     * Returns the string representation of this object.
+     * Returns the string representation of the current [value].
      */
     public override fun toString(): String = value.toString()
 }
@@ -193,15 +196,14 @@ public class AtomicLong(public @Volatile var value: Long = 0L)  {
  *
  * Legacy MM: An atomic reference to a frozen Kotlin object. Can be used in concurrent scenarious
  * but frequently shall be of nullable type and be zeroed out once no longer needed.
- * Otherwise memory leak could happen. To detect such leaks [kotlin.native.runtime.GC.detectCycles]
+ * Otherwise memory leak could happen. To detect such leaks [kotlin.native.internal.GC.detectCycles]
  * in debug mode could be helpful.
  */
 @FrozenLegacyMM
 @LeakDetectorCandidate
 @NoReorderFields
 @OptIn(FreezingIsDeprecated::class)
-@Deprecated("Use kotlin.concurrent.AtomicReference instead.", ReplaceWith("kotlin.concurrent.AtomicReference"))
-@DeprecatedSinceKotlin(warningSince = "1.9")
+@SinceKotlin("1.9")
 public class AtomicReference<T> {
     private var value_: T
 
@@ -274,10 +276,10 @@ public class AtomicReference<T> {
      * @throws InvalidMutabilityException with legacy MM if the value is not frozen or a permanent object
      */
     @GCUnsafeCall("Kotlin_AtomicReference_compareAndSwap")
-    external public fun compareAndSwap(expected: T, newValue: T): T
+    external public fun compareAndExchange(expected: T, newValue: T): T
 
     /**
-     * Returns the string representation of this object.
+     * Returns the string representation of the current [value].
      */
     public override fun toString(): String =
             "${debugString(this)} -> ${debugString(value)}"
@@ -295,7 +297,7 @@ public class AtomicReference<T> {
  * For additional details about atomicity guarantees for reads and writes see [kotlin.concurrent.Volatile].
  *
  * [kotlinx.cinterop.NativePtr] is a value type, hence it is stored in [AtomicNativePtr] without boxing
- * and [compareAndSet], [compareAndSwap] operations perform comparison by value.
+ * and [compareAndSet], [compareAndExchange] operations perform comparison by value.
  *
  * Legacy MM: Atomic values and freezing: this type is unique with regard to freezing.
  * Namely, it provides mutating operations, while can participate in frozen subgraphs.
@@ -303,9 +305,8 @@ public class AtomicReference<T> {
  */
 @Frozen
 @OptIn(FreezingIsDeprecated::class, ExperimentalStdlibApi::class)
-@Deprecated("Use kotlin.concurrent.AtomicNativePtr instead.", ReplaceWith("kotlin.concurrent.AtomicNativePtr"))
-@DeprecatedSinceKotlin(warningSince = "1.9")
-public class AtomicNativePtr(public @Volatile var value: NativePtr) {
+@SinceKotlin("1.9")
+public class AtomicNativePtr(@Volatile public var value: NativePtr) {
     /**
      * Atomically sets the value to the given [new value][newValue] and returns the old value.
      */
@@ -340,11 +341,11 @@ public class AtomicNativePtr(public @Volatile var value: NativePtr) {
      *
      * Comparison of values is done by value.
      */
-    public fun compareAndSwap(expected: NativePtr, newValue: NativePtr): NativePtr =
+    public fun compareAndExchange(expected: NativePtr, newValue: NativePtr): NativePtr =
             this::value.compareAndExchangeField(expected, newValue)
 
     /**
-     * Returns the string representation of this object.
+     * Returns the string representation of the current [value].
      */
     public override fun toString(): String = value.toString()
 }
@@ -358,116 +359,131 @@ private fun debugString(value: Any?): String {
 }
 
 /**
- * Note: this class is useful only with legacy memory manager. Please use [AtomicReference] instead.
+ * Compares the value of the field referenced by [this] to [expectedValue], and if they are equal,
+ * atomically replaces it with [newValue].
  *
- * An atomic reference to a Kotlin object. Can be used in concurrent scenarious, but must be frozen first,
- * otherwise behaves as regular box for the value. If frozen, shall be zeroed out once no longer needed.
- * Otherwise memory leak could happen. To detect such leaks [kotlin.native.runtime.GC.detectCycles]
- * in debug mode could be helpful.
+ * For now, it can be used only within the same file, where property is defined.
+ * Check https://youtrack.jetbrains.com/issue/KT-55426 for details.
+ *
+ * Comparison is done by reference or value depending on field representation.
+ *
+ * If [this] is not a compile-time known reference to the property with [Volatile] annotation [IllegalArgumentException]
+ * would be thrown.
+ *
+ * If property referenced by [this] has nontrivial setter it will not be called.
+ *
+ * Returns true if the actual field value matched [expectedValue]
+ *
+ * Legacy MM: if [this] is a reference for a non-value represented field, [IllegalArgumentException] would be thrown.
  */
-@NoReorderFields
-@LeakDetectorCandidate
-@ExportTypeInfo("theFreezableAtomicReferenceTypeInfo")
-@FreezingIsDeprecated
-@Deprecated("Use kotlin.concurrent.AtomicReference instead.", ReplaceWith("kotlin.concurrent.AtomicReference"))
-@DeprecatedSinceKotlin(warningSince = "1.9")
-public class FreezableAtomicReference<T>(private var value_: T) {
-    // A spinlock to fix potential ARC race.
-    private var lock: Int = 0
+@PublishedApi
+@TypedIntrinsic(IntrinsicType.COMPARE_AND_SET_FIELD)
+internal external fun <T> KMutableProperty0<T>.compareAndSetField(expectedValue: T, newValue: T): Boolean
 
-    // Optimization for speeding up access.
-    private var cookie: Int = 0
+/**
+ * Compares the value of the field referenced by [this] to [expectedValue], and if they are equal,
+ * atomically replaces it with [newValue].
+ *
+ * For now, it can be used only within the same file, where property is defined.
+ * Check https://youtrack.jetbrains.com/issue/KT-55426 for details.
+ *
+ * Comparison is done by reference or value depending on field representation.
+ *
+ * If [this] is not a compile-time known reference to the property with [Volatile] annotation [IllegalArgumentException]
+ * would be thrown.
+ *
+ * If property referenced by [this] has nontrivial setter it will not be called.
+ *
+ * Returns the field value before operation.
+ *
+ * Legacy MM: if [this] is a reference for a non-value represented field, [IllegalArgumentException] would be thrown.
+ */
+@PublishedApi
+@TypedIntrinsic(IntrinsicType.COMPARE_AND_EXCHANGE_FIELD)
+internal external fun <T> KMutableProperty0<T>.compareAndExchangeField(expectedValue: T, newValue: T): T
 
-    /**
-     * The referenced value.
-     * Gets the value or sets to the given [new value][newValue]. If the [new value][newValue] is not null,
-     * and `this` is frozen - it must be frozen or permanent object.
-     *
-     * @throws InvalidMutabilityException if the value is not frozen or a permanent object
-     */
-    public var value: T
-        get() = @Suppress("UNCHECKED_CAST")(getImpl() as T)
-        set(newValue) {
-            if (this.isShareable())
-                setImpl(newValue)
-            else
-                value_ = newValue
-        }
+/**
+ * Atomically sets value of the field referenced by [this] to [newValue] and returns old field value.
+ *
+ * For now, it can be used only within the same file, where property is defined.
+ * Check https://youtrack.jetbrains.com/issue/KT-55426 for details.
+ *
+ * If [this] is not a compile-time known reference to the property with [Volatile] annotation [IllegalArgumentException]
+ * would be thrown.
+ *
+ * If property referenced by [this] has nontrivial setter it will not be called.
+ *
+ * Legacy MM: if [this] is a reference for a non-value represented field, [IllegalArgumentException] would be thrown.
+ */
+@PublishedApi
+@TypedIntrinsic(IntrinsicType.GET_AND_SET_FIELD)
+internal external fun <T> KMutableProperty0<T>.getAndSetField(newValue: T): T
 
-    /**
-     * Atomically sets the value to the given [new value][newValue] if the current value equals the [expected value][expected]
-     * and returns the old value in any case.
-     *
-     * Legacy MM: If the [new value][newValue] value is not null and object is frozen, it must be frozen or permanent object.
-     *
-     * @param expected the expected value
-     * @param newValue the new value
-     * @throws InvalidMutabilityException with legacy MM if the value is not frozen or a permanent object
-     * @return the old value
-     */
-     public fun compareAndSwap(expected: T, newValue: T): T {
-        return if (this.isShareable()) {
-            @Suppress("UNCHECKED_CAST")(compareAndSwapImpl(expected, newValue) as T)
-        } else {
-            val old = value_
-            if (old === expected) value_ = newValue
-            old
-        }
-    }
 
-    /**
-     * Atomically sets the value to the given [new value][newValue] if the current value equals the [expected value][expected]
-     * and returns true if operation was successful.
-     *
-     * Note that comparison is identity-based, not value-based.
-     *
-     * @param expected the expected value
-     * @param newValue the new value
-     * @return true if successful
-     */
-    public fun compareAndSet(expected: T, newValue: T): Boolean {
-        if (this.isShareable())
-            return compareAndSetImpl(expected, newValue)
-        val old = value_
-        if (old === expected) {
-            value_ = newValue
-            return true
-        } else {
-            return false
-        }
-    }
+/**
+ * Atomically increments value of the field referenced by [this] by [delta] and returns old field value.
+ *
+ * For now, it can be used only within the same file, where property is defined.
+ * Check https://youtrack.jetbrains.com/issue/KT-55426 for details.
+ *
+ * If [this] is not a compile-time known reference to the property with [Volatile] annotation [IllegalArgumentException]
+ * would be thrown.
+ *
+ * If property referenced by [this] has nontrivial setter it will not be called.
+ *
+ * Legacy MM: if [this] is a reference for a non-value represented field, [IllegalArgumentException] would be thrown.
+ */
+@PublishedApi
+@TypedIntrinsic(IntrinsicType.GET_AND_ADD_FIELD)
+internal external fun KMutableProperty0<Short>.getAndAddField(delta: Short): Short
 
-    /**
-     * Returns the string representation of this object.
-     *
-     * @return string representation of this object
-     */
-    public override fun toString(): String =
-            "${debugString(this)} -> ${debugString(value)}"
+/**
+ * Atomically increments value of the field referenced by [this] by [delta] and returns old field value.
+ *
+ * For now, it can be used only within the same file, where property is defined.
+ * Check https://youtrack.jetbrains.com/issue/KT-55426 for details.
+ *
+ * If [this] is not a compile-time known reference to the property with [Volatile] annotation [IllegalArgumentException]
+ * would be thrown.
+ *
+ * If property referenced by [this] has nontrivial setter it will not be called.
+ *
+ * Legacy MM: if [this] is a reference for a non-value represented field, [IllegalArgumentException] would be thrown.
+ */
+@PublishedApi
+@TypedIntrinsic(IntrinsicType.GET_AND_ADD_FIELD)
+internal external fun KMutableProperty0<Int>.getAndAddField(newValue: Int): Int
 
-    // TODO: Consider making this public.
-    internal fun swap(newValue: T): T {
-        while (true) {
-            val old = value
-            if (old === newValue) {
-                return old
-            }
-            if (compareAndSet(old, newValue)) {
-                return old
-            }
-        }
-    }
+/**
+ * Atomically increments value of the field referenced by [this] by [delta] and returns old field value.
+ *
+ * For now, it can be used only within the same file, where property is defined.
+ * Check https://youtrack.jetbrains.com/issue/KT-55426 for details.
+ *
+ * If [this] is not a compile-time known reference to the property with [Volatile] annotation [IllegalArgumentException]
+ * would be thrown.
+ *
+ * If property referenced by [this] has nontrivial setter it will not be called.
+ *
+ * Legacy MM: if [this] is a reference for a non-value represented field, [IllegalArgumentException] would be thrown.
+ */
+@PublishedApi
+@TypedIntrinsic(IntrinsicType.GET_AND_ADD_FIELD)
+internal external fun KMutableProperty0<Long>.getAndAddField(newValue: Long): Long
 
-    // Implementation details.
-    @GCUnsafeCall("Kotlin_AtomicReference_set")
-    private external fun setImpl(newValue: Any?): Unit
-
-    @GCUnsafeCall("Kotlin_AtomicReference_get")
-    private external fun getImpl(): Any?
-
-    @GCUnsafeCall("Kotlin_AtomicReference_compareAndSwap")
-    private external fun compareAndSwapImpl(expected: Any?, newValue: Any?): Any?
-
-    @GCUnsafeCall("Kotlin_AtomicReference_compareAndSet")
-    private external fun compareAndSetImpl(expected: Any?, newValue: Any?): Boolean
-}
+/**
+ * Atomically increments value of the field referenced by [this] by [delta] and returns old field value.
+ *
+ * For now, it can be used only within the same file, where property is defined.
+ * Check https://youtrack.jetbrains.com/issue/KT-55426 for details.
+ *
+ * If [this] is not a compile-time known reference to the property with [Volatile] annotation [IllegalArgumentException]
+ * would be thrown.
+ *
+ * If property referenced by [this] has nontrivial setter it will not be called.
+ *
+ * Legacy MM: if [this] is a reference for a non-value represented field, [IllegalArgumentException] would be thrown.
+ */
+@PublishedApi
+@TypedIntrinsic(IntrinsicType.GET_AND_ADD_FIELD)
+internal external fun KMutableProperty0<Byte>.getAndAddField(newValue: Byte): Byte

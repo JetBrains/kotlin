@@ -25,6 +25,7 @@ internal actual constructor(
     public actual override val context: CoroutineContext
         get() = delegate.context
 
+    @Suppress("DEPRECATION")
     private var resultRef = FreezableAtomicReference<Any?>(initialResult)
 
     public actual override fun resumeWith(result: Result<T>) {

@@ -1,14 +1,17 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 @file:OptIn(FreezingIsDeprecated::class, ObsoleteWorkersApi::class)
-package runtime.workers.atomic0
+package runtime.atomics.atomic0
 
 import kotlin.test.*
 
 import kotlin.native.concurrent.*
+import kotlin.concurrent.AtomicInt
+import kotlin.concurrent.AtomicLong
+import kotlin.concurrent.AtomicReference
 
 fun test1(workers: Array<Worker>) {
     val atomic = AtomicInt(15)
@@ -32,10 +35,10 @@ fun test2(workers: Array<Worker>) {
             // Here we simulate mutex using [place] location to store tag of the current worker.
             // When it is negative - worker executes exclusively.
             val tag = index + 1
-            while (place.compareAndSwap(tag, -tag) != tag) {}
+            while (place.compareAndExchange(tag, -tag) != tag) {}
             val ok1 = result.addAndGet(1) == index + 1
             // Now, let the next worker run.
-            val ok2 = place.compareAndSwap(-tag, tag + 1) == -tag
+            val ok2 = place.compareAndExchange(-tag, tag + 1) == -tag
             ok1 && ok2
         }
     })
@@ -64,7 +67,7 @@ fun test3(workers: Array<Worker>) {
             if (current != null && !seen.contains(current)) {
                 seen += current
                 // Let others publish.
-                assertEquals(common.compareAndSwap(current, null), current)
+                assertEquals(common.compareAndExchange(current, null), current)
                 break
             }
         } while (true)
@@ -80,7 +83,7 @@ fun test4LegacyMM() {
         AtomicReference(Data(1))
     }
     assertFailsWith<InvalidMutabilityException> {
-        AtomicReference<Data?>(null).compareAndSwap(null, Data(2))
+        AtomicReference<Data?>(null).compareAndExchange(null, Data(2))
     }
 }
 
@@ -91,14 +94,14 @@ fun test4() {
     }
     run {
         val ref = AtomicReference<Data?>(null)
-        ref.compareAndSwap(null, Data(2))
+        ref.compareAndExchange(null, Data(2))
         assertEquals(2, ref.value!!.value)
     }
     if (Platform.isFreezingEnabled) {
         run {
             val ref = AtomicReference<Data?>(null).freeze()
             assertFailsWith<InvalidMutabilityException> {
-                ref.compareAndSwap(null, Data(2))
+                ref.compareAndExchange(null, Data(2))
             }
         }
     }
@@ -132,7 +135,7 @@ fun test6() {
     assertEquals(239L, long.value)
 }
 
-
+@Suppress("DEPRECATION_ERROR")
 fun test7() {
     val ref = FreezableAtomicReference(Array(1) { "hey" })
     ref.value[0] = "ho"

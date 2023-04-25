@@ -94,11 +94,11 @@ internal enum class IntrinsicType {
     WORKER_EXECUTE,
     // Atomics
     COMPARE_AND_SET_FIELD,
-    COMPARE_AND_SWAP_FIELD,
+    COMPARE_AND_EXCHANGE_FIELD,
     GET_AND_SET_FIELD,
     GET_AND_ADD_FIELD,
     COMPARE_AND_SET,
-    COMPARE_AND_SWAP,
+    COMPARE_AND_EXCHANGE,
     GET_AND_SET,
     GET_AND_ADD,
 }
@@ -255,7 +255,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
                 IntrinsicType.IS_EXPERIMENTAL_MM -> emitIsExperimentalMM()
                 IntrinsicType.THE_UNIT_INSTANCE -> theUnitInstanceRef.llvm
                 IntrinsicType.COMPARE_AND_SET -> emitCompareAndSet(callSite, args)
-                IntrinsicType.COMPARE_AND_SWAP -> emitCompareAndSwap(callSite, args, resultSlot)
+                IntrinsicType.COMPARE_AND_EXCHANGE -> emitCompareAndSwap(callSite, args, resultSlot)
                 IntrinsicType.GET_AND_SET -> emitGetAndSet(callSite, args, resultSlot)
                 IntrinsicType.GET_AND_ADD -> emitGetAndAdd(callSite, args)
                 IntrinsicType.GET_CONTINUATION,
@@ -271,7 +271,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
                 IntrinsicType.ENUM_VALUE_OF,
                 IntrinsicType.WORKER_EXECUTE,
                 IntrinsicType.COMPARE_AND_SET_FIELD,
-                IntrinsicType.COMPARE_AND_SWAP_FIELD,
+                IntrinsicType.COMPARE_AND_EXCHANGE_FIELD,
                 IntrinsicType.GET_AND_SET_FIELD,
                 IntrinsicType.GET_AND_ADD_FIELD ->
                     reportNonLoweredIntrinsic(intrinsicType)

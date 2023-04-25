@@ -803,7 +803,8 @@ internal object EscapeAnalysis {
                 context.log { "An external call: $callee" }
                 if (callee.name?.startsWith("kfun:kotlin.") == true
                         // TODO: Is it possible to do it in a more fine-grained fashion?
-                        && !callee.name.startsWith("kfun:kotlin.native.concurrent")) {
+                        && !callee.name.startsWith("kfun:kotlin.native.concurrent")
+                        && !callee.name.startsWith("kfun:kotlin.concurrent")) {
                     context.log { "A function from K/N runtime - can use annotations" }
                     FunctionEscapeAnalysisResult.fromBits(
                             callee.escapes ?: 0,

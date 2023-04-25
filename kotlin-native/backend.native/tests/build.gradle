@@ -1165,21 +1165,26 @@ standaloneTest("freeze_disabled") {
     testLogger = KonanTest.Logger.SILENT
 }
 
+task atomicSmokeTest(type: KonanLocalTest) {
+    enabled = isExperimentalMM // do not run the test on the legacy MM
+    source = "runtime/atomics/atomic_smoke.kt"
+}
+
+task atomicStressTest(type: KonanLocalTest) {
+    enabled = isExperimentalMM // do not run the test on the legacy MM
+    source = "runtime/atomics/atomic_stress.kt"
+}
 
 task atomic0(type: KonanLocalTest) {
     enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
     useGoldenData = true
-    source = "runtime/workers/atomic0.kt"
+    source = "runtime/atomics/atomic0.kt"
 }
 
 standaloneTest("atomic1") {
     // Note: This test reproduces a race, so it'll start flaking if problem is reintroduced.
     enabled = false // Needs USE_CYCLIC_GC, which is disabled.
-    source = "runtime/workers/atomic1.kt"
-}
-
-task atomic2(type: KonanLocalTest) {
-    source = "runtime/workers/atomic2.kt"
+    source = "runtime/atomics/atomic1.kt"
 }
 
 task lazy0(type: KonanLocalTest) {

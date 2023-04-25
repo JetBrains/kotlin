@@ -110,8 +110,8 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
     private fun compareAndSetFunction(irField: IrField) = atomicFunction(irField, NativeMapping.AtomicFunctionType.COMPARE_AND_SET) {
         this.buildCasFunction(irField, IntrinsicType.COMPARE_AND_SET, this.context.irBuiltIns.booleanType)
     }
-    private fun compareAndSwapFunction(irField: IrField) = atomicFunction(irField, NativeMapping.AtomicFunctionType.COMPARE_AND_SWAP) {
-        this.buildCasFunction(irField, IntrinsicType.COMPARE_AND_SWAP, irField.type)
+    private fun compareAndExchangeFunction(irField: IrField) = atomicFunction(irField, NativeMapping.AtomicFunctionType.COMPARE_AND_EXCHANGE) {
+        this.buildCasFunction(irField, IntrinsicType.COMPARE_AND_EXCHANGE, irField.type)
     }
     private fun getAndSetFunction(irField: IrField) = atomicFunction(irField, NativeMapping.AtomicFunctionType.GET_AND_SET) {
         this.buildAtomicRWMFunction(irField, IntrinsicType.GET_AND_SET)
@@ -152,7 +152,7 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
                             } else {
                                 listOfNotNull(it,
                                         compareAndSetFunction(field),
-                                        compareAndSwapFunction(field),
+                                        compareAndExchangeFunction(field),
                                         getAndSetFunction(field),
                                         if (field.isInteger()) getAndAddFunction(field) else null
                                 )
@@ -198,7 +198,7 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
 
             private val intrinsicMap = mapOf(
                     IntrinsicType.COMPARE_AND_SET_FIELD to ::compareAndSetFunction,
-                    IntrinsicType.COMPARE_AND_SWAP_FIELD to ::compareAndSwapFunction,
+                    IntrinsicType.COMPARE_AND_EXCHANGE_FIELD to ::compareAndExchangeFunction,
                     IntrinsicType.GET_AND_SET_FIELD to ::getAndSetFunction,
                     IntrinsicType.GET_AND_ADD_FIELD to ::getAndAddFunction,
             )
@@ -221,7 +221,7 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
                 return builder.irCall(function).apply {
                     dispatchReceiver = reference.dispatchReceiver
                     putValueArgument(0, expression.getValueArgument(0))
-                    if (intrinsicType == IntrinsicType.COMPARE_AND_SET_FIELD || intrinsicType == IntrinsicType.COMPARE_AND_SWAP_FIELD) {
+                    if (intrinsicType == IntrinsicType.COMPARE_AND_SET_FIELD || intrinsicType == IntrinsicType.COMPARE_AND_EXCHANGE_FIELD) {
                         putValueArgument(1, expression.getValueArgument(1))
                     }
                 }.let {
@@ -229,7 +229,7 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
                         for (arg in 0 until it.valueArgumentsCount) {
                             it.putValueArgument(arg, builder.irBoolToByte(it.getValueArgument(arg)!!))
                         }
-                        if (intrinsicType == IntrinsicType.COMPARE_AND_SWAP_FIELD || intrinsicType == IntrinsicType.GET_AND_SET_FIELD) {
+                        if (intrinsicType == IntrinsicType.COMPARE_AND_EXCHANGE_FIELD || intrinsicType == IntrinsicType.GET_AND_SET_FIELD) {
                             builder.irByteToBool(it)
                         } else {
                             it
