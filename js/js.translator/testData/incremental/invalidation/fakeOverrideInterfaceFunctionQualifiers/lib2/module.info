@@ -1,25 +1,28 @@
 STEP 0:
     dependencies: lib1
-    added file: l2.kt
+    added file: class2.kt, object2.kt
 STEP 1:
     dependencies: lib1
-    updated exports: l2.kt
+    updated exports: class2.kt, object2.kt
+    updated imports: class2.kt, object2.kt
 STEP 2:
     dependencies: lib1
-    updated imports: l2.kt
+    updated imports: class2.kt, object2.kt
 STEP 3:
     dependencies: lib1
+    updated imports: class2.kt, object2.kt
 STEP 4:
     dependencies: lib1
-    updated exports: l2.kt
+    updated exports: class2.kt, object2.kt
 STEP 5:
     dependencies: lib1
 STEP 6:
     dependencies: lib1
-    updated imports: l2.kt
-    updated exports: l2.kt
+    updated imports: class2.kt, object2.kt
+    updated exports: class2.kt, object2.kt
 STEP 7:
     dependencies: lib1
+    updated imports: class2.kt, object2.kt
 STEP 8:
     dependencies: lib1
-    updated exports: l2.kt
+    updated exports: class2.kt, object2.kt

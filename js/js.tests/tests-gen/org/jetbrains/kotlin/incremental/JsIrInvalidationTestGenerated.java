@@ -275,6 +275,11 @@ public class JsIrInvalidationTestGenerated extends AbstractJsIrInvalidationTest 
         runTest("js/js.translator/testData/incremental/invalidation/localInlineFunction/");
     }
 
+    @TestMetadata("localObjectsLeakThroughInterface")
+    public void testLocalObjectsLeakThroughInterface() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/localObjectsLeakThroughInterface/");
+    }
+
     @TestMetadata("mainModuleInvalidation")
     public void testMainModuleInvalidation() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/mainModuleInvalidation/");
@@ -318,6 +323,11 @@ public class JsIrInvalidationTestGenerated extends AbstractJsIrInvalidationTest 
     @TestMetadata("privateInlineFunction1")
     public void testPrivateInlineFunction1() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/privateInlineFunction1/");
+    }
+
+    @TestMetadata("privateObjectsLeakThroughSealedInterface")
+    public void testPrivateObjectsLeakThroughSealedInterface() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/privateObjectsLeakThroughSealedInterface/");
     }
 
     @TestMetadata("removeFile")
