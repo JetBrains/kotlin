@@ -118,7 +118,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             }
 
             val (contextReceiverAnnotations, otherAnnotations) = notExtensionAnnotations.partition {
-                it.classId.asSingleFqName() == StandardNames.FqNames.contextFunctionTypeParams
+                it.annotationWithArgs.classId.asSingleFqName() == StandardNames.FqNames.contextFunctionTypeParams
             }
 
             val isExtension = extensionAnnotations.isNotEmpty()
