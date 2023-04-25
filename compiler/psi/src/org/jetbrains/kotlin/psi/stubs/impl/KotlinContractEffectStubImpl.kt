@@ -79,6 +79,11 @@ enum class KotlinContractEffectType {
             return KtValueParameterReference(dataStream.readInt(), IGNORE_REFERENCE_PARAMETER_NAME)
         }
     },
+    BOOLEAN_PARAMETER_REFERENCE {
+        override fun deserialize(dataStream: StubInputStream): KtValueParameterReference<KotlinTypeBean, Nothing?> {
+            return KtBooleanValueParameterReference(dataStream.readInt(), IGNORE_REFERENCE_PARAMETER_NAME)
+        }
+    },
     CONSTANT {
         override fun deserialize(dataStream: StubInputStream): KtContractDescriptionElement<KotlinTypeBean, Nothing?> {
             return when (val str = dataStream.readNameString()!!) {
@@ -112,12 +117,12 @@ class KotlinContractSerializationVisitor(val dataStream: StubOutputStream) :
 
     override fun visitReturnsEffectDeclaration(returnsEffect: KtReturnsEffectDeclaration<KotlinTypeBean, Nothing?>, data: Nothing?) {
         dataStream.writeInt(KotlinContractEffectType.RETURNS.ordinal)
-        returnsEffect.value.accept(this, data)
+        dataStream.writeName(returnsEffect.value.name)
     }
 
     override fun visitCallsEffectDeclaration(callsEffect: KtCallsEffectDeclaration<KotlinTypeBean, Nothing?>, data: Nothing?) {
         dataStream.writeInt(KotlinContractEffectType.CALLS.ordinal)
-        callsEffect.valueParameterReference.accept(this, data)
+        dataStream.writeInt(callsEffect.valueParameterReference.parameterIndex)
         dataStream.writeInt(callsEffect.kind.ordinal)
     }
 
@@ -138,14 +143,14 @@ class KotlinContractSerializationVisitor(val dataStream: StubOutputStream) :
 
     override fun visitIsInstancePredicate(isInstancePredicate: KtIsInstancePredicate<KotlinTypeBean, Nothing?>, data: Nothing?) {
         dataStream.writeInt(KotlinContractEffectType.IS_INSTANCE.ordinal)
-        isInstancePredicate.arg.accept(this, data)
+        dataStream.writeInt(isInstancePredicate.arg.parameterIndex)
         serializeType(dataStream, isInstancePredicate.type)
         dataStream.writeBoolean(isInstancePredicate.isNegated)
     }
 
     override fun visitIsNullPredicate(isNullPredicate: KtIsNullPredicate<KotlinTypeBean, Nothing?>, data: Nothing?) {
         dataStream.writeInt(KotlinContractEffectType.IS_NULL.ordinal)
-        isNullPredicate.arg.accept(this, data)
+        dataStream.writeInt(isNullPredicate.arg.parameterIndex)
         dataStream.writeBoolean(isNullPredicate.isNegated)
     }
 
@@ -158,6 +163,14 @@ class KotlinContractSerializationVisitor(val dataStream: StubOutputStream) :
     override fun visitValueParameterReference(valueParameterReference: KtValueParameterReference<KotlinTypeBean, Nothing?>, data: Nothing?) {
         dataStream.writeInt(KotlinContractEffectType.PARAMETER_REFERENCE.ordinal)
         dataStream.writeInt(valueParameterReference.parameterIndex)
+    }
+
+    override fun visitBooleanValueParameterReference(
+        booleanValueParameterReference: KtBooleanValueParameterReference<KotlinTypeBean, Nothing?>,
+        data: Nothing?
+    ) {
+        dataStream.writeInt(KotlinContractEffectType.BOOLEAN_PARAMETER_REFERENCE.ordinal)
+        dataStream.writeInt(booleanValueParameterReference.parameterIndex)
     }
 }
 
