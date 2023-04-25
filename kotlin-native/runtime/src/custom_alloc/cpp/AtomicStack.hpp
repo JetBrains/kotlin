@@ -31,7 +31,7 @@ public:
     // Pop() is not fully thread-safe, in that the returned page must not be
     // immediately freed, if another thread might be simultaneously Popping
     // from the same stack. As of writing this comment, this is handled by only
-    // freeing pages during STW.
+    // freeing pages during STW. // FIXME ???
     T* Pop() noexcept {
         T* elm = stack_.load(std::memory_order_acquire);
         while (elm && !stack_.compare_exchange_weak(elm, elm->next_, std::memory_order_acq_rel)) {}

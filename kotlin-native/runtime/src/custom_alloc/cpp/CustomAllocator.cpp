@@ -26,6 +26,7 @@
 #include "GCImpl.hpp"
 #include "GCApi.hpp"
 #include "TypeInfo.h"
+#include "MarkStack.hpp"
 
 namespace kotlin::alloc {
 

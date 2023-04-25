@@ -204,11 +204,16 @@ test_support::RegularWeakReferenceImpl& InstallWeakReference(mm::ThreadData& thr
     return weakReference;
 }
 
-class ConcurrentMarkAndSweepTest : public testing::TestWithParam<gc::ConcurrentMarkAndSweep::MarkingBehavior> {
+struct ParallelismOptions {
+    bool cooperativeMutators;
+    std::size_t auxGCThreads;
+};
+
+class ConcurrentMarkAndSweepTest : public testing::TestWithParam<ParallelismOptions> {
 public:
 
     ConcurrentMarkAndSweepTest() {
-        mm::GlobalData::Instance().gc().impl().gc().SetMarkingBehaviorForTests(GetParam());
+        mm::GlobalData::Instance().gc().impl().gc().reconfigure(GetParam().cooperativeMutators, GetParam().auxGCThreads);
     }
 
     ~ConcurrentMarkAndSweepTest() {
@@ -1136,60 +1141,19 @@ TEST_P(ConcurrentMarkAndSweepTest, FreeObjectWithFreeWeakReversedOrder) {
     f1.wait();
 }
 
-TEST_P(ConcurrentMarkAndSweepTest, MutatorsCanMarkOwnLocals) {
-    std_support::vector<Mutator> mutators(kDefaultThreadCount);
-    std_support::vector<ObjHeader*> globals(kDefaultThreadCount);
-    std_support::vector<ObjHeader*> locals(kDefaultThreadCount);
-    std_support::vector<ObjHeader*> reachablesLocals(kDefaultThreadCount);
-    std_support::vector<ObjHeader*> reachablesGlobals(kDefaultThreadCount);
-
-    auto expandRootSet = [&globals, &locals, &reachablesLocals, &reachablesGlobals](mm::ThreadData& threadData, Mutator& mutator, int i) {
-        auto& global = mutator.AddGlobalRoot();
-        auto& local = mutator.AddStackRoot();
-        auto& reachableLocal = AllocateObject(threadData);
-        auto& reachableGlobal = AllocateObject(threadData);
-        local->field1 = reachableLocal.header();
-        global->field1 = reachableGlobal.header();
-        globals[i] = global.header();
-        locals[i] = local.header();
-        reachablesLocals[i] = reachableLocal.header();
-        reachablesGlobals[i] = reachableGlobal.header();
-    };
-
-    for (int i = 0; i < kDefaultThreadCount; ++i) {
-        mutators[i]
-                .Execute([i, expandRootSet](mm::ThreadData& threadData, Mutator& mutator) { expandRootSet(threadData, mutator, i); })
-                .wait();
-    }
-
-    std_support::vector<std::future<void>> gcFutures(kDefaultThreadCount);
-
-    mm::GlobalData::Instance().gc().impl().gc().SetMarkingRequested(0);
-
-    for (int i = 0; i < kDefaultThreadCount; ++i) {
-        gcFutures[i] = mutators[i]
-            .Execute([](mm::ThreadData& threadData, Mutator& mutator) { threadData.gc().impl().gc().OnSuspendForGC(); });
-    }
-
-    if (GetParam() == gc::ConcurrentMarkAndSweep::kMarkOwnStack) {
-        mm::GlobalData::Instance().gc().impl().gc().WaitForThreadsReadyToMark();
-        mm::GlobalData::Instance().gc().impl().gc().CollectRootSetAndStartMarking(gc::GCHandle::createFakeForTests());
-    }
-
-    for (int i = 0; i < kDefaultThreadCount; ++i) {
-        gcFutures[i].wait();
-        // Verify that threads marked their own locals (but not their globals) according to the configured marking behavior:
-        ASSERT_THAT(IsMarked(reachablesLocals[i]), GetParam() == kotlin::gc::ConcurrentMarkAndSweep::kMarkOwnStack);
-        ASSERT_THAT(IsMarked(reachablesGlobals[i]), false);
-    }
-
-    for (auto& future : gcFutures) {
-        future.wait();
-    }
-}
-
 INSTANTIATE_TEST_SUITE_P(,
-                         ConcurrentMarkAndSweepTest,
-                         testing::Values(gc::ConcurrentMarkAndSweep::MarkingBehavior::kDoNotMark, gc::ConcurrentMarkAndSweep::MarkingBehavior::kMarkOwnStack),
-                         [] (const testing::TestParamInfo<gc::ConcurrentMarkAndSweep::MarkingBehavior>& behavior) { return (behavior.param == gc::ConcurrentMarkAndSweep::MarkingBehavior::kDoNotMark) ? "SingleThreadedMarking" : "MutatorsMarkOwnStack"; });
+    ConcurrentMarkAndSweepTest,
+    testing::Values(
+            ParallelismOptions{false, 0},
+            ParallelismOptions{true, 0},
+            ParallelismOptions{false, kDefaultThreadCount},
+            ParallelismOptions{true, kDefaultThreadCount}
+    ),
+    [] (const testing::TestParamInfo<ParallelismOptions>& paramInfo) {
+        using namespace std::string_literals;
+        auto base = "Mark"s;
+        auto withMutators = paramInfo.param.cooperativeMutators ? "WithMutators" : "";
+        auto withAux = paramInfo.param.auxGCThreads > 0 ? "WithGCThreads" : "";
+        return base + withMutators + withAux;
+    });
 
