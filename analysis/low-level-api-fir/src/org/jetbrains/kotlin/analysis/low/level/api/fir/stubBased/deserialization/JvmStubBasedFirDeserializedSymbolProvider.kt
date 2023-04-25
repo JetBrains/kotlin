@@ -126,9 +126,12 @@ class JvmStubBasedFirDeserializedSymbolProvider(
     }
 
     private fun loadFunctionsByCallableId(callableId: CallableId): List<FirNamedFunctionSymbol> {
-        return declarationProvider.getTopLevelFunctions(callableId)
+        val topLevelFunctions = declarationProvider.getTopLevelFunctions(callableId)
+        val origins = if (topLevelFunctions.size > 1) mutableSetOf<KtNamedFunction>() else null
+        return topLevelFunctions
             .mapNotNull { function ->
                 val original = function.originalElement as? KtNamedFunction ?: return@mapNotNull null
+                if (origins != null && !origins.add(original)) return@mapNotNull null
                 val file = original.containingKtFile
                 val virtualFile = file.virtualFile
                 if (virtualFile.extension == MetadataPackageFragment.METADATA_FILE_EXTENSION) return@mapNotNull null
@@ -143,9 +146,12 @@ class JvmStubBasedFirDeserializedSymbolProvider(
     }
 
     private fun loadPropertiesByCallableId(callableId: CallableId): List<FirPropertySymbol> {
-        return declarationProvider.getTopLevelProperties(callableId)
+        val topLevelProperties = declarationProvider.getTopLevelProperties(callableId)
+        val origins = if (topLevelProperties.size > 1) mutableSetOf<KtProperty>() else null
+        return topLevelProperties
             .mapNotNull { property ->
                 val original = property.originalElement as? KtProperty ?: return@mapNotNull null
+                if (origins != null && !origins.add(original)) return@mapNotNull null
                 val symbol = FirPropertySymbol(callableId)
                 val rootContext =
                     StubBasedFirDeserializationContext.createRootContext(session, moduleData, callableId, original, symbol)
