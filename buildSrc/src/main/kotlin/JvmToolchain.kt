@@ -1,4 +1,5 @@
 @file:JvmName("JvmToolchain")
+
 import org.gradle.api.Project
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.api.provider.Provider
@@ -192,6 +193,12 @@ fun Project.getToolchainLauncherFor(
     val jdkVersionWithOverride = project.getJdkVersionWithOverride(jdkVersion)
     return service.launcherFor {
         this.languageVersion.set(JavaLanguageVersion.of(jdkVersionWithOverride.majorVersion))
+    }
+}
+
+fun Project.getToolchainJdkHomeFor(jdkVersion: JdkMajorVersion): Provider<String> {
+    return getToolchainLauncherFor(jdkVersion).map {
+        it.metadata.installationPath.asFile.absolutePath
     }
 }
 

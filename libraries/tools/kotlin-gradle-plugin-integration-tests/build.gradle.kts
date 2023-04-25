@@ -347,12 +347,12 @@ tasks.withType<Test> {
         systemProperty("installCocoapods", installCocoapods)
     }
 
-    val jdk8Provider = project.getToolchainLauncherFor(JdkMajorVersion.JDK_1_8).map { it.metadata.installationPath.asFile.absolutePath }
-    val jdk9Provider = project.getToolchainLauncherFor(JdkMajorVersion.JDK_9_0).map { it.metadata.installationPath.asFile.absolutePath }
-    val jdk10Provider = project.getToolchainLauncherFor(JdkMajorVersion.JDK_10_0).map { it.metadata.installationPath.asFile.absolutePath }
-    val jdk11Provider = project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0).map { it.metadata.installationPath.asFile.absolutePath }
-    val jdk16Provider = project.getToolchainLauncherFor(JdkMajorVersion.JDK_16_0).map { it.metadata.installationPath.asFile.absolutePath }
-    val jdk17Provider = project.getToolchainLauncherFor(JdkMajorVersion.JDK_17_0).map { it.metadata.installationPath.asFile.absolutePath }
+    val jdk8Provider = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8)
+    val jdk9Provider = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_9_0)
+    val jdk10Provider = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_10_0)
+    val jdk11Provider = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_11_0)
+    val jdk16Provider = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_16_0)
+    val jdk17Provider = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_17_0)
     val mavenLocalRepo = project.providers.systemProperty("maven.repo.local").forUseAtConfigurationTime().orNull
 
     // Query required JDKs paths only on execution phase to avoid triggering auto-download on project configuration phase

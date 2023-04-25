@@ -258,8 +258,8 @@ fun Project.projectTest(
         }
 
         defineJDKEnvVariables.forEach { version ->
-            val javaLauncher = project.getToolchainLauncherFor(version).orNull ?: error("Can't find toolchain for $version")
-            environment(version.envName, javaLauncher.metadata.installationPath.asFile.absolutePath)
+            val jdkHome = project.getToolchainJdkHomeFor(version).orNull ?: error("Can't find toolchain for $version")
+            environment(version.envName, jdkHome)
         }
     }.apply { configure(body) }
 }
