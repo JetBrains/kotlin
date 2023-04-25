@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import java.io.File
 
 internal fun IrDeclaration.fqNameForDceDump(): String {
+    // TODO: sanitize names
     val fqn = (this as? IrDeclarationWithName)?.fqNameWhenAvailable?.asString() ?: "<unknown>"
     val signature = when (this is IrFunction) {
         true -> this.valueParameters.joinToString(prefix = "(", postfix = ")") { it.type.dumpKotlinLike() }
