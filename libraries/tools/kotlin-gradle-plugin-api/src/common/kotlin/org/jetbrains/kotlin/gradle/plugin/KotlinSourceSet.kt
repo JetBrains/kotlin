@@ -43,10 +43,12 @@ interface KotlinSourceSet : Named, HasProject, HasMutableExtras, HasKotlinDepend
         const val COMMON_TEST_SOURCE_SET_NAME = "commonTest"
     }
 
-    val customSourceFilesExtensions: Iterable<String> // lazy iterable expected
-
+    @Deprecated("Scheduled for removal with Kotlin 2.0")
     val requiresVisibilityOf: Set<KotlinSourceSet>
+
+    @Deprecated("Scheduled for removal with Kotlin 2.0")
     fun requiresVisibilityOf(other: KotlinSourceSet)
 
+    val customSourceFilesExtensions: Iterable<String> // lazy iterable expected
     fun addCustomSourceFilesExtensions(extensions: List<String>) {}
 }
