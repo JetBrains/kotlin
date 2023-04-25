@@ -246,15 +246,7 @@ internal class KtFirScopeProvider(
     }
 
     private fun createPackageScope(fqName: FqName): KtFirPackageScope {
-        return KtFirPackageScope(
-            fqName,
-            project,
-            builder,
-            analysisSession.useSiteAnalysisScope,
-            analysisSession.useSiteScopeDeclarationProvider,
-            analysisSession.useSitePackageProvider,
-            analysisSession.targetPlatform
-        )
+        return KtFirPackageScope(fqName, analysisSession)
     }
 
     private fun convertToKtTypeScope(firScope: FirScope): KtTypeScope {
