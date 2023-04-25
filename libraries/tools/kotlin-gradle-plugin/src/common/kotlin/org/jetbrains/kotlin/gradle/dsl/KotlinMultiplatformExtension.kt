@@ -219,3 +219,19 @@ internal fun <T : KotlinTarget> KotlinTargetsContainerWithPresets.configureOrCre
         }
     }
 }
+
+internal fun KotlinTargetsContainerWithPresets.configureOrCreateAndroidTargetAndReportDeprecation(
+    targetName: String,
+    configure: KotlinAndroidTarget.() -> Unit
+): KotlinAndroidTarget {
+    val targetPreset = presets.getByName("android") as KotlinAndroidTargetPreset
+    val result = configureOrCreate(targetName, targetPreset, configure)
+
+    result.project.logger.warn(
+        """
+            w: Please use `androidTarget` function instead of `android` to configure android target inside `kotlin { }` block.
+            See the details here: https://kotl.in/android-target-dsl
+        """.trimIndent()
+    )
+    return result
+}
