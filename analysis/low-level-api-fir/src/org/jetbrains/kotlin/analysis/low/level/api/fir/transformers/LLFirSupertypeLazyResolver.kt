@@ -75,7 +75,7 @@ internal class LLFirSuperTypeTargetResolver(
     lockProvider: LLFirLockProvider,
     private val session: FirSession,
     private val scopeSession: ScopeSession,
-) : LLFirTargetResolver(target, lockProvider, FirResolvePhase.SUPER_TYPES) {
+) : LLFirTargetResolver(target, lockProvider, FirResolvePhase.SUPER_TYPES, isJumpingPhase = true) {
 
     private val supertypeComputationSession = SupertypeComputationSession()
 

@@ -83,7 +83,9 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
         phase: FirResolvePhase,
         action: () -> Unit
     ) {
-        target.withCriticalSection(phase, action)
+        checker.lazyResolveToPhaseInside(phase, isJumpingPhase = true) {
+            target.withCriticalSection(phase, action)
+        }
     }
 
     /**

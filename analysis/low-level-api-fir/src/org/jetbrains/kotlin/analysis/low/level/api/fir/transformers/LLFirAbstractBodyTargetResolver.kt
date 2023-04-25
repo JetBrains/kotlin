@@ -25,8 +25,9 @@ internal abstract class LLFirAbstractBodyTargetResolver(
     lockProvider: LLFirLockProvider,
     private val scopeSession: ScopeSession,
     resolvePhase: FirResolvePhase,
-    protected val implicitBodyResolveComputationSession: ImplicitBodyResolveComputationSession = ImplicitBodyResolveComputationSession()
-) : LLFirTargetResolver(resolveTarget, lockProvider, resolvePhase) {
+    protected val implicitBodyResolveComputationSession: ImplicitBodyResolveComputationSession = ImplicitBodyResolveComputationSession(),
+    isJumpingPhase: Boolean = false
+) : LLFirTargetResolver(resolveTarget, lockProvider, resolvePhase, isJumpingPhase) {
 
     protected fun createReturnTypeCalculator(): ReturnTypeCalculator = createReturnTypeCalculatorForIDE(
         scopeSession,

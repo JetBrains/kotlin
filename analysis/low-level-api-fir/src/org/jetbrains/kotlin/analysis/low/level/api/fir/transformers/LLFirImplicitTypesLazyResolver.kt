@@ -62,6 +62,7 @@ private class LLFirImplicitBodyTargetResolver(
     lockProvider,
     scopeSession,
     FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
+    isJumpingPhase = true,
 ) {
     override val transformer = object : FirImplicitAwareBodyResolveTransformer(
         session,
