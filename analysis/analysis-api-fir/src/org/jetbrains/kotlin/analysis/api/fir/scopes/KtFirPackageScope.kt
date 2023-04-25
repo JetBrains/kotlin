@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
-import org.jetbrains.kotlin.analysis.providers.createPackageProvider
+import org.jetbrains.kotlin.analysis.providers.KotlinPackageProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionService
 import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
@@ -33,11 +33,10 @@ internal class KtFirPackageScope(
     private val builder: KtSymbolByFirBuilder,
     private val searchScope: GlobalSearchScope,
     private val declarationProvider: KotlinDeclarationProvider,
+    private val packageProvider: KotlinPackageProvider,
     private val targetPlatform: TargetPlatform,
 ) : KtScope {
     override val token: KtLifetimeToken get() = builder.token
-
-    private val packageProvider = project.createPackageProvider(searchScope)
 
     private val firScope: FirPackageMemberScope by lazy(LazyThreadSafetyMode.PUBLICATION) {
         FirPackageMemberScope(fqName, builder.rootSession)

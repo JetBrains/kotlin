@@ -252,6 +252,7 @@ internal class KtFirScopeProvider(
             builder,
             analysisSession.useSiteAnalysisScope,
             analysisSession.useSiteScopeDeclarationProvider,
+            analysisSession.useSitePackageProvider,
             analysisSession.targetPlatform
         )
     }

@@ -34,14 +34,14 @@ import java.util.concurrent.ConcurrentHashMap
  *
  * Caches generated [KtResolveExtensionFile]s, creates [KotlinDeclarationProvider], [KotlinPackageProvider], [LLFirSymbolProviderNameCache] needed for the [org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider].
  */
-internal abstract class LLFirResolveExtensionTool : FirSessionComponent {
+abstract class LLFirResolveExtensionTool : FirSessionComponent {
     abstract val modificationTrackers: List<ModificationTracker>
     abstract val declarationProvider: KotlinDeclarationProvider
     abstract val packageProvider: KotlinPackageProvider
-    abstract val symbolNameCache: LLFirSymbolProviderNameCache
+    internal abstract val symbolNameCache: LLFirSymbolProviderNameCache
 }
 
-internal val FirSession.llResolveExtensionTool: LLFirResolveExtensionTool? by FirSession.nullableSessionComponentAccessor()
+val FirSession.llResolveExtensionTool: LLFirResolveExtensionTool? by FirSession.nullableSessionComponentAccessor()
 
 internal class LLFirNonEmptyResolveExtensionTool(
     session: LLFirSession,
