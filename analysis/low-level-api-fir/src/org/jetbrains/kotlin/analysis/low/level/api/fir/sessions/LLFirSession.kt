@@ -9,7 +9,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.psi.PsiFile
 import com.intellij.psi.SmartPointerManager
-import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.llResolveExtensionTool
 import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.analysis.providers.KotlinModificationTrackerFactory
 import org.jetbrains.kotlin.analysis.providers.KtModuleStateTracker
@@ -58,7 +57,6 @@ abstract class LLFirSession(
                 add(ModuleStateModificationTracker(ktModule, validityTracker))
                 addIfNotNull(outOfBlockTracker)
                 add(dependencyTracker)
-                llResolveExtensionTool?.modificationTrackers?.let(::addAll)
             }
         )
 
