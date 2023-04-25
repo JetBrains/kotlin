@@ -195,7 +195,6 @@ open class KtFile(viewProvider: FileViewProvider, val isCompiled: Boolean) :
     }
 
     override fun getStub(): KotlinFileStub? {
-        if (virtualFile !is VirtualFileWithId) return null
         val stub = super.getStub()
         if (stub is KotlinFileStub?) {
             return stub
