@@ -161,10 +161,8 @@ internal class BodyGenerator(
 
         generateDelegatingConstructorCall(irBlockBody, ktConstructor)
 
-        if (context.configuration.generateBodies) {
-            ktConstructor.bodyExpression?.let { ktBody ->
-                createStatementGenerator().generateStatements(ktBody.statements, irBlockBody)
-            }
+        ktConstructor.bodyExpression?.let { ktBody ->
+            createStatementGenerator().generateStatements(ktBody.statements, irBlockBody)
         }
 
         return irBlockBody

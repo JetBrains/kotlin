@@ -1,0 +1,14 @@
+@kotlin.Metadata()
+public enum Foo {
+    /*public static final*/ BLA /* = new Foo() */;
+    @org.jetbrains.annotations.NotNull()
+    private final java.lang.String bla = null;
+
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getBla() {
+        return null;
+    }
+
+    Foo(java.lang.String bla) {
+    }
+}
