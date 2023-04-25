@@ -44,9 +44,11 @@ abstract class AbstractKotlinTarget(
     override val defaultConfigurationName: String
         get() = disambiguateName("default")
 
+    @Deprecated("Scheduled for removal with Kotlin 2.2")
     override var useDisambiguationClassifierAsSourceSetNamePrefix: Boolean = true
         internal set
 
+    @Deprecated("Scheduled for removal with Kotlin 2.2")
     override var overrideDisambiguationClassifierOnIdeImport: String? = null
         internal set
 
