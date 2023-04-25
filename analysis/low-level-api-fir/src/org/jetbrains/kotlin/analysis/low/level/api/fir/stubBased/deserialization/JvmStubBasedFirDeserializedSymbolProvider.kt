@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirKotlinSymbolProviderNameCache
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
@@ -50,15 +51,7 @@ class JvmStubBasedFirDeserializedSymbolProvider(
         declarationProvider.computePackageSetWithTopLevelCallableDeclarations()
     }
 
-    private val classLikeNamesByPackage =
-        session.firCachesFactory.createCache { fqName: FqName ->
-            declarationProvider.getTopLevelKotlinClassLikeDeclarationNamesInPackage(fqName)
-        }
-
-    private val allCallableNamesByPackage =
-        session.firCachesFactory.createCache { fqName: FqName ->
-            declarationProvider.getTopLevelCallableNamesInPackage(fqName)
-        }
+    private val namesByPackageCache = LLFirKotlinSymbolProviderNameCache(session, declarationProvider)
 
     private val typeAliasCache: FirCache<ClassId, FirTypeAliasSymbol?, StubBasedFirDeserializationContext?> =
         session.firCachesFactory.createCacheWithPostCompute(
@@ -81,11 +74,11 @@ class JvmStubBasedFirDeserializedSymbolProvider(
         return packageSetWithTopLevelCallableDeclarations
     }
 
-    override fun computeCallableNamesInPackage(packageFqName: FqName): Set<Name> =
-        declarationProvider.getTopLevelCallableNamesInPackage(packageFqName)
+    override fun computeCallableNamesInPackage(packageFqName: FqName): Set<Name>? =
+        namesByPackageCache.getTopLevelCallableNamesInPackage(packageFqName)
 
-    override fun knownTopLevelClassifiersInPackage(packageFqName: FqName): Set<String> {
-        return classLikeNamesByPackage.getValue(packageFqName).map { it.asString() }.toSet()
+    override fun knownTopLevelClassifiersInPackage(packageFqName: FqName): Set<String>? {
+        return namesByPackageCache.getTopLevelClassifierNamesInPackage(packageFqName)
     }
 
     private fun findAndDeserializeTypeAlias(classId: ClassId): Pair<FirTypeAliasSymbol?, DeserializedTypeAliasPostProcessor?> {
@@ -181,7 +174,7 @@ class JvmStubBasedFirDeserializedSymbolProvider(
 
     private fun <C : FirCallableSymbol<*>> FirCache<CallableId, List<C>, Nothing?>.getCallables(id: CallableId): List<C> {
         if (id.packageName.asString() !in packageSetWithTopLevelCallableDeclarations) return emptyList()
-        if (id.callableName !in allCallableNamesByPackage.getValue(id.packageName)) return emptyList()
+        if (!namesByPackageCache.mayHaveTopLevelCallable(id.packageName, id.callableName)) return emptyList()
         return getValue(id)
     }
 
@@ -196,16 +189,15 @@ class JvmStubBasedFirDeserializedSymbolProvider(
     }
 
     override fun getPackage(fqName: FqName): FqName? {
-        return if (classLikeNamesByPackage.getValue(fqName)
-                .isNotEmpty() || packageSetWithTopLevelCallableDeclarations.contains(fqName.asString())
+        return if (!namesByPackageCache.getTopLevelClassifierNamesInPackage(fqName)
+                .isNullOrEmpty() || packageSetWithTopLevelCallableDeclarations.contains(fqName.asString())
         ) {
             fqName
         } else null
     }
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
-        val topClassName = classId.outermostClassId.shortClassName
-        if (!classLikeNamesByPackage.getValue(classId.packageFqName).contains(topClassName)) return null
+        if (!namesByPackageCache.mayHaveTopLevelClassifier(classId, mayHaveFunctionClass = false)) return null
         return getClass(classId) ?: getTypeAlias(classId)
     }
 }
