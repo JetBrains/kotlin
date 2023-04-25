@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 
 object FirNativeObjCRefinementAnnotationChecker : FirRegularClassChecker() {
 
-    private val supportedTargets = arrayOf(KotlinTarget.FUNCTION, KotlinTarget.PROPERTY)
+    private val supportedTargets = arrayOf(KotlinTarget.FUNCTION, KotlinTarget.PROPERTY, KotlinTarget.CLASS)
 
     override fun check(declaration: FirRegularClass, context: CheckerContext, reporter: DiagnosticReporter) {
         if (declaration.classKind != ClassKind.ANNOTATION_CLASS) return

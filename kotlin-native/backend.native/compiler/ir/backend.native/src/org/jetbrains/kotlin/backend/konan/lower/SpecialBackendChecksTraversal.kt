@@ -596,8 +596,35 @@ private class BackendChecker(
         if (declaration.isKotlinObjCClass()) {
             checkKotlinObjCClass(declaration)
         }
+        checkHiddenFromObjCRestrictions(declaration)
         super.visitClass(declaration)
 
+    }
+
+    private fun IrClass.isHiddenFromObjC(): Boolean {
+        return annotations.any { annotationCall ->
+            val annotationClass = annotationCall.symbol.owner.parentAsClass
+            annotationClass.annotations.hasAnnotation(KonanFqNames.hidesFromObjC)
+        }
+    }
+
+    private fun checkHiddenFromObjCRestrictions(declaration: IrClass) {
+        // If declaration itself. is marked as hidden, we don't need to do anything
+        if (declaration.isHiddenFromObjC()) return
+        // Enum entries inherit from their classes, so if enum class is marked as hidden, there is no need to
+        // produce additional errors.
+        if (declaration.kind == ClassKind.ENUM_ENTRY) return
+        // Private and local classes does not leak to Objective-C API surface, so it is OK for them
+        // to inherit from hidden types.
+        if (DescriptorVisibilities.isPrivate(declaration.visibility) || declaration.isLocal) return
+        if (declaration.superClass?.isHiddenFromObjC() == true) {
+            reportError(declaration, "Only @HiddenFromObjC declaration can inherit from class annotated with @HiddenFromObjC")
+        }
+        declaration.getSuperInterfaces().forEach {
+            if (it.isHiddenFromObjC()) {
+                reportError(declaration, "Only @HiddenFromObjC declaration can implement interface annotated with @HiddenFromObjC")
+            }
+        }
     }
 }
 

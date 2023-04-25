@@ -61,7 +61,7 @@ object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             INVALID_OBJC_REFINEMENT_TARGETS,
-            "Refines annotations are only applicable to annotations with targets FUNCTION and/or PROPERTY"
+            "Refines annotations are only applicable to annotations with targets CLASS, FUNCTION and/or PROPERTY"
         )
         map.put(INAPPLICABLE_OBJC_NAME, "@ObjCName is not applicable on overrides")
         map.put(INVALID_OBJC_NAME, "@ObjCName should have a name and/or swiftName")

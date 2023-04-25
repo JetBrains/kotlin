@@ -88,7 +88,7 @@ public interface InterfaceB {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-@kotlin.native.HidesFromObjC @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.PROPERTY, AnnotationTarget.CLASS}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) public final annotation class MyRefinedAnnotationB : kotlin.Annotation {
+@kotlin.native.HidesFromObjC @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.PROPERTY, AnnotationTarget.FILE}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) public final annotation class MyRefinedAnnotationB : kotlin.Annotation {
     public constructor MyRefinedAnnotationB()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
@@ -146,7 +146,7 @@ package kotlin {
 
 package plugin {
 
-    @kotlin.native.HidesFromObjC @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) public final annotation class PluginHiddenFromObjC : kotlin.Annotation {
+    @kotlin.native.HidesFromObjC @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.CLASS}) @kotlin.annotation.Retention(value = AnnotationRetention.BINARY) public final annotation class PluginHiddenFromObjC : kotlin.Annotation {
         public constructor PluginHiddenFromObjC()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

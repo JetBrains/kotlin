@@ -69,12 +69,12 @@ expect annotation class FreezingIsDeprecated
 public expect annotation class ObjCName(val name: String = "", val swiftName: String = "", val exact: Boolean = false)
 
 /**
- * Meta-annotation that instructs the Kotlin compiler to remove the annotated function or property from the public Objective-C API.
+ * Meta-annotation that instructs the Kotlin compiler to remove the annotated class, function or property from the public Objective-C API.
  *
  * Annotation processors that refine the public Objective-C API can annotate their annotations with this meta-annotation
  * to have the original declarations automatically removed from the public API.
  *
- * Note: only annotations with [AnnotationTarget.FUNCTION] and/or [AnnotationTarget.PROPERTY] are supported.
+ * Note: only annotations with [AnnotationTarget.CLASS], [AnnotationTarget.FUNCTION] and/or [AnnotationTarget.PROPERTY] are supported.
  */
 @Target(AnnotationTarget.ANNOTATION_CLASS)
 @Retention(AnnotationRetention.BINARY)
@@ -85,10 +85,10 @@ public expect annotation class ObjCName(val name: String = "", val swiftName: St
 public expect annotation class HidesFromObjC()
 
 /**
- * Instructs the Kotlin compiler to remove this function or property from the public Objective-C API.
+ * Instructs the Kotlin compiler to remove this class, function or property from the public Objective-C API.
  */
 @HidesFromObjC
-@Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION)
+@Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
 @MustBeDocumented
 @OptionalExpectation

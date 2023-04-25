@@ -64,7 +64,7 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
         )
         put(
             ErrorsNative.INVALID_OBJC_REFINEMENT_TARGETS,
-            "Refines annotations are only applicable to annotations with targets FUNCTION and/or PROPERTY"
+            "Refines annotations are only applicable to annotations with targets CLASS, FUNCTION and/or PROPERTY"
         )
     }
 }
