@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.io.TempDir
+import java.nio.file.Path
 
 @DisplayName("Configuration cache")
 class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
@@ -126,14 +128,23 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
         maxVersion = TestVersions.Gradle.G_8_1
     )
     @GradleTest
-    fun testCommonizer(gradleVersion: GradleVersion) {
+    fun testCommonizer(gradleVersion: GradleVersion, @TempDir konanHome: Path) {
         project("native-configuration-cache", gradleVersion) {
-            // results of :commonizeNativeDistribution is not cleanable so just check if it works with configuration cache on first run
             build(
                 ":commonizeNativeDistribution",
             ) {
                 assertOutputContains("0 problems were found storing the configuration cache.")
             }
+
+            // Override kotlin native home location to be able to run clean native distribution commonization task
+            // since by default it is global location on host
+            val buildOptions = defaultBuildOptions.copy(
+                freeArgs = listOf("-Porg.jetbrains.kotlin.native.home=$konanHome")
+            )
+            build(":cleanNativeDistributionCommonization", buildOptions = buildOptions) {
+                assertOutputContains("0 problems were found storing the configuration cache.")
+            }
+
             testConfigurationCacheOf(":lib:commonizeCInterop")
         }
     }
