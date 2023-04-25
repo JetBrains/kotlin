@@ -1,5 +1,3 @@
-@file:Suppress("FunctionName")
-
 package org.jetbrains.dokka
 
 import org.jetbrains.dokka.utilities.cast
@@ -108,11 +106,13 @@ data class GlobalDokkaConfiguration(
 
 fun DokkaConfiguration.apply(globals: GlobalDokkaConfiguration): DokkaConfiguration = this.apply {
     sourceSets.forEach {
-        it.perPackageOptions.cast<MutableList<DokkaConfiguration.PackageOptions>>().addAll(globals.perPackageOptions ?: emptyList())
+        it.perPackageOptions.cast<MutableList<DokkaConfiguration.PackageOptions>>()
+            .addAll(globals.perPackageOptions ?: emptyList())
     }
 
     sourceSets.forEach {
-        it.externalDocumentationLinks.cast<MutableSet<DokkaConfiguration.ExternalDocumentationLink>>().addAll(globals.externalDocumentationLinks ?: emptyList())
+        it.externalDocumentationLinks.cast<MutableSet<DokkaConfiguration.ExternalDocumentationLink>>()
+            .addAll(globals.externalDocumentationLinks ?: emptyList())
     }
 
     sourceSets.forEach {
@@ -173,6 +173,7 @@ interface DokkaConfiguration : Serializable {
         val dependentSourceSets: Set<DokkaSourceSetID>
         val samples: Set<File>
         val includes: Set<File>
+
         @Deprecated(message = "Use [documentedVisibilities] property for a more flexible control over documented visibilities")
         val includeNonPublic: Boolean
         val reportUndocumented: Boolean
@@ -237,6 +238,7 @@ interface DokkaConfiguration : Serializable {
 
     interface PackageOptions : Serializable {
         val matchingRegex: String
+
         @Deprecated("Use [documentedVisibilities] property for a more flexible control over documented visibilities")
         val includeNonPublic: Boolean
         val reportUndocumented: Boolean?
@@ -253,6 +255,7 @@ interface DokkaConfiguration : Serializable {
     }
 }
 
+@Suppress("FunctionName")
 fun ExternalDocumentationLink(
     url: URL? = null,
     packageListUrl: URL? = null
@@ -265,10 +268,8 @@ fun ExternalDocumentationLink(
         throw IllegalArgumentException("url or url && packageListUrl must not be null for external documentation link")
 }
 
-
+@Suppress("FunctionName")
 fun ExternalDocumentationLink(
     url: String, packageListUrl: String? = null
 ): ExternalDocumentationLinkImpl =
     ExternalDocumentationLink(url.let(::URL), packageListUrl?.let(::URL))
-
-
