@@ -16942,6 +16942,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 }
 
                 @Test
+                @TestMetadata("returnAsLastStatementInLambda.kt")
+                public void testReturnAsLastStatementInLambda() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/inference/nothingType/returnAsLastStatementInLambda.kt");
+                }
+
+                @Test
                 @TestMetadata("selectWithNull.kt")
                 public void testSelectWithNull() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/inference/nothingType/selectWithNull.kt");
