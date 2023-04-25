@@ -160,7 +160,7 @@ actual class ArrayList<E> private constructor(
     }
 
     override fun toString(): String {
-        return backingArray.subarrayContentToStringImpl(offset, length)
+        return backingArray.subarrayContentToString(offset, length)
     }
 
     @Suppress("UNCHECKED_CAST")
