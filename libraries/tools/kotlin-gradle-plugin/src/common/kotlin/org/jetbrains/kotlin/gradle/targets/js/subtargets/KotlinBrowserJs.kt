@@ -300,6 +300,8 @@ abstract class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
             }
         )
 
+        this.esModules.set(false)
+
         resolveFromModulesFirst = true
 
         mainOutputFileName.convention(defaultArchivesName.orElse("main").map { "$it.js" }).finalizeValueOnRead()

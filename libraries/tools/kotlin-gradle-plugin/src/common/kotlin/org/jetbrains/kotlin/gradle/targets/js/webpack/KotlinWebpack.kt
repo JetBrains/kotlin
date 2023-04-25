@@ -111,10 +111,13 @@ constructor(
                 }
             }
 
+    @get:Input
+    abstract val esModules: Property<Boolean>
+
     @get:Internal
     val entry: Provider<RegularFile>
         get() = inputFilesDirectory.map {
-            it.file(entryModuleName.get() + if (platformType == KotlinPlatformType.wasm) ".mjs" else ".js")
+            it.file(entryModuleName.get() + if (esModules.get()) ".mjs" else ".js")
         }
 
     init {
