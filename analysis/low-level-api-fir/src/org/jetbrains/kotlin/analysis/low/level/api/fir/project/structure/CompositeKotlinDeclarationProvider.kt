@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
-internal class CompositeKotlinDeclarationProvider
+class CompositeKotlinDeclarationProvider
 private constructor(
     private val providers: List<KotlinDeclarationProvider>
 ) : KotlinDeclarationProvider() {

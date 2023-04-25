@@ -18,9 +18,15 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeForResolveOnAir
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.CompositeKotlinDeclarationProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.CompositeKotlinPackageProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.llResolveExtensionTool
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
+import org.jetbrains.kotlin.analysis.project.structure.allDirectDependencies
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
+import org.jetbrains.kotlin.analysis.providers.KotlinPackageProvider
 import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
+import org.jetbrains.kotlin.analysis.providers.createPackageProvider
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -29,6 +35,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 @OptIn(KtAnalysisApiInternals::class)
 @Suppress("AnalysisApiMissingLifetimeCheck")
@@ -142,7 +149,32 @@ private constructor(
     internal val targetPlatform: TargetPlatform get() = useSiteSession.moduleData.platform
 
     val useSiteAnalysisScope: GlobalSearchScope = analysisScopeProviderImpl.getAnalysisScope()
-    val useSiteScopeDeclarationProvider: KotlinDeclarationProvider = project.createDeclarationProvider(useSiteAnalysisScope)
+
+    val useSiteScopeDeclarationProvider: KotlinDeclarationProvider
+    val useSitePackageProvider: KotlinPackageProvider
+
+    init {
+        val extensionTools = buildList {
+            addIfNotNull(useSiteSession.llResolveExtensionTool)
+            useSiteModule.allDirectDependencies().mapNotNullTo(this) { dependency ->
+                firResolveSession.getSessionFor(dependency).llResolveExtensionTool
+            }
+        }
+        useSiteScopeDeclarationProvider = CompositeKotlinDeclarationProvider.create(
+            buildList {
+                add(project.createDeclarationProvider(useSiteAnalysisScope))
+                extensionTools.mapTo(this) { it.declarationProvider }
+            }
+        )
+
+        useSitePackageProvider = CompositeKotlinPackageProvider.create(
+            buildList {
+                add(project.createPackageProvider(useSiteAnalysisScope))
+                extensionTools.mapTo(this) { it.packageProvider }
+            }
+        )
+    }
+
 
     fun getScopeSessionFor(session: FirSession): ScopeSession = withValidityAssertion { firResolveSession.getScopeSessionFor(session) }
 

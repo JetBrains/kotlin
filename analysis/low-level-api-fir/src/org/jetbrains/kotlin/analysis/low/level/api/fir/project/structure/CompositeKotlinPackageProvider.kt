@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 
-internal class CompositeKotlinPackageProvider
+class CompositeKotlinPackageProvider
 private constructor(
     private val providers: List<KotlinPackageProvider>
 ) : KotlinPackageProvider() {
