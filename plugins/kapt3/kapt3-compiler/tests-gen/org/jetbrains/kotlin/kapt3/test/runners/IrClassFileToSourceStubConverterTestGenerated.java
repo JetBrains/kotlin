@@ -182,6 +182,12 @@ public class IrClassFileToSourceStubConverterTestGenerated extends AbstractIrCla
     }
 
     @Test
+    @TestMetadata("enumSecondaryConstructor.kt")
+    public void testEnumSecondaryConstructor() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/enumSecondaryConstructor.kt");
+    }
+
+    @Test
     @TestMetadata("enums.kt")
     public void testEnums() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/enums.kt");
