@@ -43,6 +43,7 @@
 
 import kotlin.native.concurrent.*
 import kotlin.random.Random
+import platform.posix.*
 
 // A splay tree is a self-balancing binary search tree with the additional
 // property that recently accessed elements are quick to access again.
@@ -317,5 +318,47 @@ class SplayBenchmarkUsingWorkers {
         val futures = Array(numberOfWorkers) {i -> workers[i].execute(TransferMode.SAFE, { splayTrees[i] }, {it.splayTearDown()})};
         futures.forEach{it.consume {}};
         workers.forEach { it.requestTermination().result }
+    }
+}
+
+class SplayBenchmarkWithMarkHelpers {
+    val numberOfMarkHelpers = 5;
+    val markHelpers = Array(numberOfMarkHelpers, { _ -> Worker.start() })
+
+    var done = false
+    val markHelperJobs = markHelpers.map {
+        it.execute(TransferMode.SAFE, { this }) {
+            // run some thread-local work in a loop without allocations or external calls
+            fun fib(n: Int): Int {
+                if (n == 0) return 0
+                var prev = 0
+                var cur = 1
+                for (i in 2..n) {
+                    val next = cur + prev
+                    prev = cur
+                    cur = next
+                }
+                return cur
+            }
+
+            var sum = 0
+            while (!it.done) {
+                sum += fib(100)
+            }
+            return@execute sum
+        }
+    }
+
+    val splay = SplayBenchmark()
+
+    fun runSplayWithMarkHelpers() {
+        splay.runSplay()
+    }
+
+    fun splayTearDownMarkHelpers() {
+        done = true
+        splay.splayTearDown()
+        markHelperJobs.forEach { it.result }
+        markHelpers.forEach { it.requestTermination().result }
     }
 }
