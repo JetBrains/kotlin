@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions
 
 import com.intellij.openapi.util.Key
-import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.api.KtAnalysisAllowanceManager
@@ -37,7 +36,6 @@ import java.util.concurrent.ConcurrentHashMap
  * for the [org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider].
  */
 abstract class LLFirResolveExtensionTool : FirSessionComponent {
-    abstract val modificationTrackers: List<ModificationTracker>
     abstract val declarationProvider: LLFirResolveExtensionToolDeclarationProvider
     abstract val packageProvider: KotlinPackageProvider
     abstract val packageFilter: LLFirResolveExtensionToolPackageFilter
@@ -58,8 +56,6 @@ internal class LLFirNonEmptyResolveExtensionTool(
     private val fileProvider = LLFirResolveExtensionsFileProvider(extensions)
 
     override val packageFilter = LLFirResolveExtensionToolPackageFilter(extensions)
-
-    override val modificationTrackers by lazy { forbidAnalysis { extensions.map { it.getModificationTracker() } } }
 
     override val declarationProvider: LLFirResolveExtensionToolDeclarationProvider =
         LLFirResolveExtensionToolDeclarationProvider(fileProvider, session.ktModule)
