@@ -98,16 +98,6 @@ abstract class KotlinCompile @Inject constructor(
     @get:Internal // To support compile avoidance (ClasspathSnapshotProperties.classpathSnapshot will be used as input instead)
     abstract override val libraries: ConfigurableFileCollection
 
-    @Deprecated(
-        "Replaced with 'libraries' input",
-        replaceWith = ReplaceWith("libraries"),
-        level = DeprecationLevel.ERROR
-    )
-    @get:Internal
-    var classpath: FileCollection
-        set(value) = libraries.setFrom(value)
-        get() = libraries
-
     @get:Deprecated(
         message = "Please migrate to compilerOptions.moduleName",
         replaceWith = ReplaceWith("compilerOptions.moduleName")
