@@ -203,9 +203,11 @@ internal class AndroidProjectHandler(
         }
 
         // Register the source only after the task is created, because the task is required for that:
+        @Suppress("DEPRECATION")
         compilation.source(defaultSourceSet)
 
         compilation.androidVariant.forEachKotlinSourceSet(project) { kotlinSourceSet ->
+            @Suppress("DEPRECATION")
             compilation.source(kotlinSourceSet)
         }
     }

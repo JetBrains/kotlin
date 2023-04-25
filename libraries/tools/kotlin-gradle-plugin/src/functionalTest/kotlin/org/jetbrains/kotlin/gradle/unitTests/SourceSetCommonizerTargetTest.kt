@@ -217,6 +217,7 @@ class SourceSetCommonizerTargetTest {
         val nativeMain = kotlin.sourceSets.create("nativeMain")
 
         listOf(linux1, linux2).forEach { target ->
+            @Suppress("DEPRECATION")
             target.compilations.getByName("main").source(nativeMain)
         }
 
