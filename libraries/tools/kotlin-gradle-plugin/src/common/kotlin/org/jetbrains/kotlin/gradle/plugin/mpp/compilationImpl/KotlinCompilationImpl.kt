@@ -145,16 +145,6 @@ internal class KotlinCompilationImpl constructor(
 
     //endregion
 
-
-    //region Compiler Module Management
-
-    @Suppress("OVERRIDE_DEPRECATION")
-    override val moduleName: String
-        get() = moduleNameForCompilation(target.project.baseModuleName()).get()
-
-    //endregion
-
-
     //region Compile Tasks
 
     override val compileKotlinTaskName: String

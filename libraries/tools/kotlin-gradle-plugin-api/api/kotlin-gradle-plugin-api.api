@@ -739,7 +739,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/KotlinCompila
 	public abstract fun getDisambiguatedName ()Ljava/lang/String;
 	public abstract fun getKotlinOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonOptions;
 	public abstract fun getKotlinSourceSets ()Ljava/util/Set;
-	public abstract fun getModuleName ()Ljava/lang/String;
 	public abstract fun getName ()Ljava/lang/String;
 	public abstract fun getOutput ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilationOutput;
 	public abstract fun getPlatformType ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinPlatformType;

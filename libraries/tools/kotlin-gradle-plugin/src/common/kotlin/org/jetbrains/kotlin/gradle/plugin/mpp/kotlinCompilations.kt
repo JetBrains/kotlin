@@ -87,7 +87,7 @@ private val invalidModuleNameCharactersRegex = """[\\/\r\n\t]""".toRegex()
 internal fun Project.baseModuleName(): Provider<String> = archivesName.orElse(project.name)
 
 internal fun KotlinCompilation<*>.moduleNameForCompilation(
-    baseName: Provider<String>
+    baseName: Provider<String> = project.baseModuleName()
 ): Provider<String> = baseName.map {
     val suffix = if (compilationName == KotlinCompilation.MAIN_COMPILATION_NAME) {
         ""

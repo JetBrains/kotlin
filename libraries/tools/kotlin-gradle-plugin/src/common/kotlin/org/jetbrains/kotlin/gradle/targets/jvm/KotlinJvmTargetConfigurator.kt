@@ -9,6 +9,7 @@ import org.gradle.api.Task
 import org.gradle.api.plugins.JavaBasePlugin
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.moduleNameForCompilation
 import org.jetbrains.kotlin.gradle.targets.jvm.tasks.KotlinJvmTest
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
@@ -46,10 +47,7 @@ open class KotlinJvmTargetConfigurator :
 
         target.compilations.configureEach {
             it.compilerOptions.options.moduleName.convention(
-                target.project.providers.provider {
-                    @Suppress("DEPRECATION")
-                    it.moduleName
-                }
+                it.moduleNameForCompilation()
             )
         }
     }
