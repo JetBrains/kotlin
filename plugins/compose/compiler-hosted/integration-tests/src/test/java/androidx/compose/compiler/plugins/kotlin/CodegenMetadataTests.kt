@@ -17,6 +17,7 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class CodegenMetadataTests : AbstractLoweringTests() {
@@ -40,5 +41,55 @@ class CodegenMetadataTests : AbstractLoweringTests() {
         )
         val main = loader.loadClass("Main").methods.single { it.name == "main" }
         main.invoke(null)
+    }
+
+    @Test
+    fun testDelegatedProperties() {
+        val className = "Test_${uniqueNumber++}"
+        val fileName = "$className.kt"
+        val loader = classLoader(
+            """
+            import androidx.compose.runtime.Composable
+            import kotlin.reflect.KProperty
+            import kotlinx.metadata.jvm.KotlinClassMetadata
+            import kotlinx.metadata.jvm.localDelegatedProperties
+
+            inline operator fun String.getValue(thisRef: Any?, property: KProperty<*>) = 0
+
+            @Composable
+            inline operator fun Int.getValue(thisRef: Any?, property: KProperty<*>) = 0
+
+            object Main {
+                @JvmStatic
+                fun main(): List<String> {
+                    val metadataAnnotation = Main::class.java
+                        .annotations
+                        .filter { it.annotationClass.qualifiedName == "kotlin.Metadata" }
+                        .single() as Metadata
+
+                    val cls = (
+                        KotlinClassMetadata.read(metadataAnnotation) as KotlinClassMetadata.Class
+                    ).toKmClass()
+                    return cls.localDelegatedProperties.map { it.name }
+                }
+
+                fun test() {
+                    val foo by ""
+                    println(foo)
+                }
+
+                @Composable fun ComposableTest(value: Int) {
+                    val fooComposable by value
+                    ComposableTest(fooComposable)
+                }
+            }
+            """,
+            fileName,
+            false
+        )
+        val main = loader.loadClass("Main").methods.single { it.name == "main" }
+        val delegates = main.invoke(null)
+
+        assertEquals(delegates, listOf("foo", "fooComposable"))
     }
 }
