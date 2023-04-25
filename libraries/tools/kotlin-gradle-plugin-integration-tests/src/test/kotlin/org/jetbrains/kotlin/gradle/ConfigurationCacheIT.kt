@@ -108,7 +108,13 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
                 ":lib:compileTestKotlinIosX64",
                 ":lib:linkDebugTestIosX64",
                 ":lib:transformCommonMainDependenciesMetadata",
-                ":lib:transformCommonMainCInteropDependenciesMetadata"
+                ":lib:transformCommonMainCInteropDependenciesMetadata",
+                ":lib:linkDebugFrameworkIosArm64",
+                ":lib:linkDebugFrameworkIosX64",
+                ":lib:linkDebugFrameworkIosFat",
+                ":lib:linkReleaseFrameworkIosArm64",
+                ":lib:linkReleaseFrameworkIosX64",
+                ":lib:linkReleaseFrameworkIosFat",
             )
         }
 
