@@ -104,8 +104,8 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
                     .let { it!!.version }
 
             build("build") {
-                val appAsyncVersion = moduleVersion("build/js/node_modules/js-composite-build", "async", "..")
-                assertEquals("3.2.0", appAsyncVersion)
+                val appAsyncVersion = moduleVersion("build/js/node_modules/js-composite-build", "node-fetch", "..")
+                assertEquals("3.2.8", appAsyncVersion)
 
                 val libAsyncVersion = moduleVersion("build/js/node_modules/lib2", "async", "..")
                 assertEquals("2.6.2", libAsyncVersion)
