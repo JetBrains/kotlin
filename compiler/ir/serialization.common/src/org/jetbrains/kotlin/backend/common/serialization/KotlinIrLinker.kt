@@ -38,14 +38,14 @@ abstract class KotlinIrLinker(
     val internationService = IrInterningService()
 
     // Kotlin-MPP related data. Consider some refactoring
-    val expectIdSignatureToActualIdSignature = mutableMapOf<IdSignature, IdSignature>()
+    val expectIdSignatureToActualIdSignature = linkedMapOf<IdSignature, IdSignature>()
     val topLevelActualIdSignatureToModuleDeserializer = hashMapOf<IdSignature, IrModuleDeserializer>()
     internal val expectSymbols = hashMapOf<IdSignature, IrSymbol>()
     internal val actualSymbols = hashMapOf<IdSignature, IrSymbol>()
 
-    val modulesWithReachableTopLevels = hashSetOf<IrModuleDeserializer>()
+    val modulesWithReachableTopLevels = linkedSetOf<IrModuleDeserializer>()
 
-    protected val deserializersForModules = hashMapOf<String, IrModuleDeserializer>()
+    protected val deserializersForModules = linkedMapOf<String, IrModuleDeserializer>()
 
     abstract val fakeOverrideBuilder: FakeOverrideBuilder
 
