@@ -45,6 +45,11 @@ void yield() noexcept {
 
 } // namespace
 
+bool kotlin::mm::isSuspendedOrNative(kotlin::mm::ThreadData& thread) noexcept {
+    auto& suspensionData = thread.suspensionData();
+    return suspensionData.suspended() || suspensionData.state() == kotlin::ThreadState::kNative;
+}
+
 std::atomic<bool> kotlin::mm::internal::gSuspensionRequested = false;
 
 kotlin::ThreadState kotlin::mm::ThreadSuspensionData::setState(kotlin::ThreadState newState) noexcept {
@@ -58,10 +63,10 @@ kotlin::ThreadState kotlin::mm::ThreadSuspensionData::setState(kotlin::ThreadSta
 
 NO_EXTERNAL_CALLS_CHECK void kotlin::mm::ThreadSuspensionData::suspendIfRequested() noexcept {
     if (IsThreadSuspensionRequested()) {
+        auto suspendStartMs = konan::getTimeMicros();
         threadData_.gc().OnSuspendForGC();
         std::unique_lock lock(gSuspensionMutex);
         auto threadId = konan::currentThreadId();
-        auto suspendStartMs = konan::getTimeMicros();
         RuntimeLogDebug({kTagGC, kTagMM}, "Suspending thread %d", threadId);
         AutoReset scopedAssignSuspended(&suspended_, true);
         gSuspensionCondVar.wait(lock, []() { return !IsThreadSuspensionRequested(); });

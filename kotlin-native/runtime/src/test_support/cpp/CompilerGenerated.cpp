@@ -75,6 +75,7 @@ extern const int32_t Kotlin_disableMmap = 0;
 #endif
 extern const char* const Kotlin_runtimeLogs = nullptr;
 extern const int32_t Kotlin_concurrentWeakSweep = 1;
+extern const int32_t Kotlin_gcMarkSingleThreaded = 0;
 extern const int32_t Kotlin_freezingChecksEnabled = 1;
 extern const int32_t Kotlin_freezingEnabled = 1;
 

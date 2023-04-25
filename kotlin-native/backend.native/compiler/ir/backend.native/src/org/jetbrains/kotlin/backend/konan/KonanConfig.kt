@@ -148,6 +148,32 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     val concurrentWeakSweep: Boolean
         get() = configuration.get(BinaryOptions.concurrentWeakSweep) ?: false
 
+    val gcMutatorsCooperate: Boolean by lazy {
+        val mutatorsCooperate = configuration.get(BinaryOptions.gcMutatorsCooperate)
+        if (gcMarkSingleThreaded) {
+            if (mutatorsCooperate == true) {
+                configuration.report(CompilerMessageSeverity.STRONG_WARNING,
+                        "Mutators cooperation is not supported during single threaded mark")
+            }
+            false
+        } else {
+            mutatorsCooperate ?: true
+        }
+    }
+
+    val auxGCThreads: Int by lazy {
+        val auxGCThreads = configuration.get(BinaryOptions.auxGCThreads)
+        if (gcMarkSingleThreaded) {
+            if (auxGCThreads != 0) {
+                configuration.report(CompilerMessageSeverity.STRONG_WARNING,
+                        "Auxiliary GC workers are not supported during single threaded mark")
+            }
+            0
+        } else {
+            auxGCThreads ?: 1 // TODO is it a good default?
+        }
+    }
+
     val irVerificationMode: IrVerificationMode
         get() = configuration.getNotNull(KonanConfigKeys.VERIFY_IR)
 
