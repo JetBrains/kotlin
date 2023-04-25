@@ -93,7 +93,8 @@ internal class LLFirSessionCache(private val project: Project) {
             targetPlatform.all { it is JvmPlatform } -> LLFirJvmSessionFactory(project)
             targetPlatform.all { it is JsPlatform } -> LLFirJsSessionFactory(project)
             targetPlatform.all { it is NativePlatform } -> LLFirNativeSessionFactory(project)
-            else -> LLFirCommonSessionFactory(project)
+            // TODO(kirpichenkov): falling back to JVM. Common session factory hasn't been implemented correctly yet and breaks tests
+            else -> LLFirJvmSessionFactory(project)
         }
     }
 }
