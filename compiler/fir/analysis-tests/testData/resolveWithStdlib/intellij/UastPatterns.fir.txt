@@ -15,7 +15,7 @@ FILE: UastPatterns.kt
         ^uExpression R|/expressionCapture|<R|UExpression|>(<getClass>(Q|UExpression|).R|kotlin/jvm/java|<R|UExpression|>)
     }
     public final fun <T : R|UExpression|> expressionCapture(clazz: R|java/lang/Class<T>|): R|UExpressionPattern.Capture<T>| {
-        ^expressionCapture Q|UExpressionPattern|.R|SubstitutionOverride</UExpressionPattern.Capture.Capture>|<R|T|>(R|<local>/clazz|)
+        ^expressionCapture Q|UExpressionPattern|.R|/UExpressionPattern.Capture.Capture|<R|T|>(R|<local>/clazz|)
     }
     public open class UElementPattern<T : R|UElement|, Self : R|UElementPattern<T, Self>|> : R|ObjectPattern<T, Self>| {
         public constructor<T : R|UElement|, Self : R|UElementPattern<T, Self>|>(clazz: R|java/lang/Class<T>|): R|UElementPattern<T, Self>| {

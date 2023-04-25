@@ -4,7 +4,7 @@ public final inner [ResolvedTo(BODY_RESOLVE)] class ONAIR<[ResolvedTo(STATUS)] T
     }
 
     public final [ResolvedTo(BODY_RESOLVE)] fun x(): R|X.Y<T>| {
-        ^x R|SubstitutionOverride</X.Y.Y>|<R|T|>()
+        ^x R|/X.Y.Y|<R|T|>()
     }
 
 }
