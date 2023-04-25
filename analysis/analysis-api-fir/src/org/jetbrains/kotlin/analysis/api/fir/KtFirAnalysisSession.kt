@@ -69,7 +69,7 @@ private constructor(
 
     override val samResolverImpl = KtFirSamResolver(this, token)
 
-    override val scopeProviderImpl = KtFirScopeProvider(this, firSymbolBuilder, project, firResolveSession)
+    override val scopeProviderImpl = KtFirScopeProvider(this, firSymbolBuilder, firResolveSession)
 
     override val symbolProviderImpl =
         KtFirSymbolProvider(this, firResolveSession.useSiteFirSession.symbolProvider)
