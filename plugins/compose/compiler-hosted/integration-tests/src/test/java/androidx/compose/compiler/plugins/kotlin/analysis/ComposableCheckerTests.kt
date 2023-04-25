@@ -1363,7 +1363,10 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
             }
 
             class Bar {
-                val foo by Foo()
+                val <!COMPOSABLE_EXPECTED!>foo<!> by Foo()
+
+                @get:Composable
+                val foo2 by Foo()
             }
             """
         )

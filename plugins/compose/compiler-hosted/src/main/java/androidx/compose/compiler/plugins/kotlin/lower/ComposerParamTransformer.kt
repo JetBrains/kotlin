@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrLocalDelegatedProperty
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.declarations.copyAttributes
@@ -172,18 +171,6 @@ class ComposerParamTransformer(
         }
 
         return super.visitLocalDelegatedProperty(declaration)
-    }
-
-    override fun visitProperty(declaration: IrProperty): IrStatement {
-        if (declaration.getter?.isComposableDelegatedAccessor() == true) {
-            declaration.getter!!.annotations += createComposableAnnotation()
-        }
-
-        if (declaration.setter?.isComposableDelegatedAccessor() == true) {
-            declaration.setter!!.annotations += createComposableAnnotation()
-        }
-
-        return super.visitProperty(declaration)
     }
 
     private fun createComposableAnnotation() =

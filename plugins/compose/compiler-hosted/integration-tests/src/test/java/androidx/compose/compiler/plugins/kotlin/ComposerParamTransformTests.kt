@@ -697,6 +697,7 @@ class ComposerParamTransformTests : AbstractIrTransformTest() {
                 }
 
                 class Bar {
+                    @get:Composable
                     val foo by Foo()
                 }
 
