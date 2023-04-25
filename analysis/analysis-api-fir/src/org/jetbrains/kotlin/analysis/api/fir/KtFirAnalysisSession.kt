@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LowLevelFirApiFacadeForResolveOnAir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.CompositeKotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.CompositeKotlinPackageProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.LLFirResolveExtensionTool
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.llResolveExtensionTool
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.project.structure.allDirectDependencies
@@ -123,6 +124,8 @@ private constructor(
 
     override val symbolProviderByJavaPsiImpl = KtFirSymbolProviderByJavaPsi(this)
 
+    override val resolveExtensionProviderImpl: KtSymbolFromResolveExtensionProvider = KtFirSymbolFromResolveExtensionProvider(this)
+
     @Suppress("AnalysisApiMissingLifetimeCheck")
     override fun createContextDependentCopy(originalKtFile: KtFile, elementToReanalyze: KtElement): KtAnalysisSession {
         check(mode == AnalysisSessionMode.REGULAR) {
@@ -150,11 +153,13 @@ private constructor(
 
     val useSiteAnalysisScope: GlobalSearchScope = analysisScopeProviderImpl.getAnalysisScope()
 
+    val extensionTools: List<LLFirResolveExtensionTool>
     val useSiteScopeDeclarationProvider: KotlinDeclarationProvider
     val useSitePackageProvider: KotlinPackageProvider
 
+
     init {
-        val extensionTools = buildList {
+        extensionTools = buildList {
             addIfNotNull(useSiteSession.llResolveExtensionTool)
             useSiteModule.allDirectDependencies().mapNotNullTo(this) { dependency ->
                 firResolveSession.getSessionFor(dependency).llResolveExtensionTool
