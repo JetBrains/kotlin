@@ -161,7 +161,7 @@ class NativePrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(w
 
     override fun MethodBuilder.modifyGeneratedEquals(thisKind: PrimitiveType) {
         val additionalCheck = if (thisKind in PrimitiveType.floatingPoint) {
-            "this.equals(other)"
+            "toBits() == other.toBits()"
         } else {
             "kotlin.native.internal.areEqualByValue(this, $parameterName)"
         }
@@ -212,6 +212,7 @@ class NativePrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(w
 
     private fun ClassBuilder.generateCustomEquals(thisKind: PrimitiveType) {
         method {
+            annotations += "Deprecated(\"Provided for binary compatibility\", level = DeprecationLevel.HIDDEN)"
             annotations += "kotlin.internal.IntrinsicConstEvaluation"
             signature {
                 methodName = "equals"

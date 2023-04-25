@@ -37,12 +37,13 @@ public final class Vector128 private constructor() {
     public override fun toString() =
             "(0x${getUIntAt(0).toString(16)}, 0x${getUIntAt(1).toString(16)}, 0x${getUIntAt(2).toString(16)}, 0x${getUIntAt(3).toString(16)})"
 
-    // Not as good for floating types
+    @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
     public fun equals(other: Vector128): Boolean =
             getLongAt(0) == other.getLongAt(0) && getLongAt(1) == other.getLongAt(1)
 
+    // Not as good for floating types
     public override fun equals(other: Any?): Boolean =
-            other is Vector128 && this.equals(other)
+            other is Vector128 && getLongAt(0) == other.getLongAt(0) && getLongAt(1) == other.getLongAt(1)
 
     override fun hashCode(): Int {
         val x0 = getLongAt(0)

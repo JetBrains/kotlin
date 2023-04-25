@@ -204,12 +204,13 @@ public class Char private constructor() : Comparable<Char> {
         public const val MAX_RADIX: Int = 36
     }
 
+    @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
     @kotlin.internal.IntrinsicConstEvaluation
     public fun equals(other: Char): Boolean = this == other
 
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun equals(other: Any?): Boolean =
-            other is Char && this.equals(other)
+            other is Char && this.code == other.code
 
     @GCUnsafeCall("Kotlin_Char_toString")
     @kotlin.internal.IntrinsicConstEvaluation

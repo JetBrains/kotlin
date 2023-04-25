@@ -435,6 +435,7 @@ public final class Byte private constructor() : Number(), Comparable<Byte> {
     public override fun equals(other: Any?): Boolean =
         other is Byte && kotlin.native.internal.areEqualByValue(this, other)
 
+    @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
     @kotlin.internal.IntrinsicConstEvaluation
     public fun equals(other: Byte): Boolean = kotlin.native.internal.areEqualByValue(this, other)
 
@@ -863,6 +864,7 @@ public final class Short private constructor() : Number(), Comparable<Short> {
     public override fun equals(other: Any?): Boolean =
         other is Short && kotlin.native.internal.areEqualByValue(this, other)
 
+    @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
     @kotlin.internal.IntrinsicConstEvaluation
     public fun equals(other: Short): Boolean = kotlin.native.internal.areEqualByValue(this, other)
 
@@ -1344,6 +1346,7 @@ public final class Int private constructor() : Number(), Comparable<Int> {
     public override fun equals(other: Any?): Boolean =
         other is Int && kotlin.native.internal.areEqualByValue(this, other)
 
+    @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
     @kotlin.internal.IntrinsicConstEvaluation
     public fun equals(other: Int): Boolean = kotlin.native.internal.areEqualByValue(this, other)
 
@@ -1828,6 +1831,7 @@ public final class Long private constructor() : Number(), Comparable<Long> {
     public override fun equals(other: Any?): Boolean =
         other is Long && kotlin.native.internal.areEqualByValue(this, other)
 
+    @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
     @kotlin.internal.IntrinsicConstEvaluation
     public fun equals(other: Long): Boolean = kotlin.native.internal.areEqualByValue(this, other)
 
@@ -2226,8 +2230,9 @@ public final class Float private constructor() : Number(), Comparable<Float> {
 
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun equals(other: Any?): Boolean =
-        other is Float && this.equals(other)
+        other is Float && toBits() == other.toBits()
 
+    @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
     @kotlin.internal.IntrinsicConstEvaluation
     public fun equals(other: Float): Boolean = toBits() == other.toBits()
 
@@ -2632,8 +2637,9 @@ public final class Double private constructor() : Number(), Comparable<Double> {
 
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun equals(other: Any?): Boolean =
-        other is Double && this.equals(other)
+        other is Double && toBits() == other.toBits()
 
+    @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
     @kotlin.internal.IntrinsicConstEvaluation
     public fun equals(other: Double): Boolean = toBits() == other.toBits()
 
