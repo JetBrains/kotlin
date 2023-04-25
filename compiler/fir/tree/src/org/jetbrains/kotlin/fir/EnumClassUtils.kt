@@ -160,7 +160,7 @@ fun FirRegularClassBuilder.generateEntriesGetter(
         getter = FirDefaultPropertyGetter(
             sourceElement?.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration),
             moduleData, origin, returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.EnumGeneratedDeclaration),
-            Visibilities.Public, symbol
+            Visibilities.Public, symbol, resolvePhase = this@generateEntriesGetter.resolvePhase
         ).apply {
             this.status = createStatus(this@generateEntriesGetter.status).apply {
                 isStatic = true
