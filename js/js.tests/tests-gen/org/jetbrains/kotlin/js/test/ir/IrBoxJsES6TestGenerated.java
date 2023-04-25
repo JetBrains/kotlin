@@ -2296,6 +2296,12 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
             }
 
             @Test
+            @TestMetadata("exportClassWithInitBlock.kt")
+            public void testExportClassWithInitBlock() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/export/exportClassWithInitBlock.kt");
+            }
+
+            @Test
             @TestMetadata("exportEnumClass.kt")
             public void testExportEnumClass() throws Exception {
                 runTest("js/js.translator/testData/box/esModules/export/exportEnumClass.kt");
@@ -2828,6 +2834,12 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
         @TestMetadata("exportClassPropertiesInDifferentCombinations.kt")
         public void testExportClassPropertiesInDifferentCombinations() throws Exception {
             runTest("js/js.translator/testData/box/export/exportClassPropertiesInDifferentCombinations.kt");
+        }
+
+        @Test
+        @TestMetadata("exportClassWithInitBlock.kt")
+        public void testExportClassWithInitBlock() throws Exception {
+            runTest("js/js.translator/testData/box/export/exportClassWithInitBlock.kt");
         }
 
         @Test

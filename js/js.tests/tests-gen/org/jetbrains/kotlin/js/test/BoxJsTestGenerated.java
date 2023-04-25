@@ -1848,6 +1848,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
             public void testAllFilesPresentInExport() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/esModules/export"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS, true);
             }
+
+            @Test
+            @TestMetadata("exportClassWithInitBlock.kt")
+            public void testExportClassWithInitBlock() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/export/exportClassWithInitBlock.kt");
+            }
         }
 
         @Nested
@@ -2094,6 +2100,12 @@ public class BoxJsTestGenerated extends AbstractBoxJsTest {
         @TestMetadata("exportClassPropertiesInDifferentCombinations.kt")
         public void testExportClassPropertiesInDifferentCombinations() throws Exception {
             runTest("js/js.translator/testData/box/export/exportClassPropertiesInDifferentCombinations.kt");
+        }
+
+        @Test
+        @TestMetadata("exportClassWithInitBlock.kt")
+        public void testExportClassWithInitBlock() throws Exception {
+            runTest("js/js.translator/testData/box/export/exportClassWithInitBlock.kt");
         }
 
         @Test

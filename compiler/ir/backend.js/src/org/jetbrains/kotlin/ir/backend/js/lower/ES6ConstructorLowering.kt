@@ -67,12 +67,14 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
         return runIf(isExported(context) && isPrimary) {
             apply {
                 valueParameters = valueParameters.memoryOptimizedFilterNot { it.isBoxParameter }
-                (body as? IrBlockBody)?.let {
-                    val selfReplacedConstructorCall = JsIrBuilder.buildCall(factoryFunction.symbol).apply {
-                        valueParameters.forEachIndexed { i, it -> putValueArgument(i, JsIrBuilder.buildGetValue(it.symbol)) }
-                        dispatchReceiver = JsIrBuilder.buildCall(context.intrinsics.jsNewTarget)
+                body = (body as? IrBlockBody)?.let {
+                    context.irFactory.createBlockBody(it.startOffset, it.endOffset) {
+                        val selfReplacedConstructorCall = JsIrBuilder.buildCall(factoryFunction.symbol).apply {
+                            valueParameters.forEachIndexed { i, it -> putValueArgument(i, JsIrBuilder.buildGetValue(it.symbol)) }
+                            dispatchReceiver = JsIrBuilder.buildCall(context.intrinsics.jsNewTarget)
+                        }
+                        statements.add(JsIrBuilder.buildReturn(symbol, selfReplacedConstructorCall, returnType))
                     }
-                    it.statements.add(JsIrBuilder.buildReturn(symbol, selfReplacedConstructorCall, returnType))
                 }
             }
         }
