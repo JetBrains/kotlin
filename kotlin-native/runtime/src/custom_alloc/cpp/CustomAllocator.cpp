@@ -23,10 +23,11 @@
 #include "FixedBlockPage.hpp"
 #include "GCImpl.hpp"
 #include "TypeInfo.h"
+#include "MarkStack.hpp"
 
 namespace kotlin::alloc {
 
-using ObjectData = gc::ConcurrentMarkAndSweep::ObjectData;
+using ObjectData = gc::mark::ObjectData;
 
 struct HeapObjHeader {
     ObjectData gcData;

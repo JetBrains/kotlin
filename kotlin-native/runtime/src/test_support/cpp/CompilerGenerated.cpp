@@ -70,6 +70,7 @@ extern const int32_t Kotlin_needDebugInfo = 1;
 extern const int32_t Kotlin_runtimeAssertsMode = static_cast<int32_t>(kotlin::compiler::RuntimeAssertsMode::kPanic);
 extern const char* const Kotlin_runtimeLogs = nullptr;
 extern const int32_t Kotlin_gcSchedulerType = static_cast<int32_t>(kotlin::compiler::GCSchedulerType::kDisabled);
+extern const int32_t Kotlin_gcMarkSingleThreaded = 0;
 extern const int32_t Kotlin_freezingChecksEnabled = 1;
 extern const int32_t Kotlin_freezingEnabled = 1;
 

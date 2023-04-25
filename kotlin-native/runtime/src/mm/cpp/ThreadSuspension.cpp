@@ -15,11 +15,6 @@
 
 namespace {
 
-bool isSuspendedOrNative(kotlin::mm::ThreadData& thread) noexcept {
-    auto& suspensionData = thread.suspensionData();
-    return suspensionData.suspended() || suspensionData.state() == kotlin::ThreadState::kNative;
-}
-
 template<typename F>
 bool allThreads(F predicate) noexcept {
     auto& threadRegistry = kotlin::mm::ThreadRegistry::Instance();
@@ -48,14 +43,19 @@ THREAD_LOCAL_VARIABLE bool gSuspensionRequestedByCurrentThread = false;
 
 } // namespace
 
+bool kotlin::mm::isSuspendedOrNative(kotlin::mm::ThreadData& thread) noexcept {
+    auto& suspensionData = thread.suspensionData();
+    return suspensionData.suspended() || suspensionData.state() == kotlin::ThreadState::kNative;
+}
+
 std::atomic<bool> kotlin::mm::internal::gSuspensionRequested = false;
 
 NO_EXTERNAL_CALLS_CHECK void kotlin::mm::ThreadSuspensionData::suspendIfRequestedSlowPath() noexcept {
     if (IsThreadSuspensionRequested()) {
+        auto suspendStartMs = konan::getTimeMicros();
         threadData_.gc().OnSuspendForGC();
         std::unique_lock lock(gSuspensionMutex);
         auto threadId = konan::currentThreadId();
-        auto suspendStartMs = konan::getTimeMicros();
         RuntimeLogDebug({kTagGC, kTagMM}, "Suspending thread %d", threadId);
         AutoReset scopedAssignSuspended(&suspended_, true);
         gSuspensionCondVar.wait(lock, []() { return !IsThreadSuspensionRequested(); });
