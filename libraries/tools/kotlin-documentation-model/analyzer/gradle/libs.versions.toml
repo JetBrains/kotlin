@@ -1,115 +1,111 @@
 [versions]
 
-kotlin = "1.8.10"
-kotlin-plugin = "213-1.8.10-release-430-IJ6777.52"
+gradlePlugin-kotlin = "1.8.10"
+gradlePlugin-android = "4.0.1"
+gradlePlugin-dokka = "1.7.10"
+
 kotlinx-coroutines = "1.6.3"
-kotlinx-html = "0.7.5"
-kotlinx-cli = "0.3.4"
+kotlinx-bcv = "0.12.1"
 
-idea = "213.6777.52"
-jetbrainsMarkdown = "0.3.1"
+## Analysis
+kotlin-compiler = "1.8.10"
+kotlin-ide-plugin = "213-1.8.10-release-430-IJ6777.52"
+intellij = "213.6777.52"
 
+## HTML
 jsoup = "1.15.3"
+freemarker = "2.3.31"
+soywiz-korte = "2.7.0"
+kotlinx-html = "0.7.5"
 
+## Markdown
+jetbrains-markdown = "0.3.1"
+
+## JSON
 jackson = "2.12.7" # jackson 2.13.X does not support kotlin language version 1.4, check before updating
 jacksonDatabind = "2.12.7.1" # fixes CVE-2022-42003
 
-freemarker = "2.3.31"
+## Maven
+apacheMaven-core = "3.5.0"
+apacheMaven-artifact = "3.8.5"
+apacheMaven-archiver = "2.5"
+apacheMaven-pluginTools = "3.5.2"
 
-soywiz-korte = "2.7.0"
+## CLI
+kotlinx-cli = "0.3.4"
 
-apache-maven = "3.5.0"
-apache-mavenArtifact = "3.8.5"
-apache-mavenArchiver = "2.5"
-apache-mavenPluginTools = "3.5.2"
-
-eclipse-jgit = "5.12.0.202106070339-r"
-
-## test dependency versions ##
-junit = "5.9.2"
-assertk = "0.25"
-
-## Gradle plugins ##
-gradlePlugin-shadow = "7.1.2"
-gradlePlugin-binaryCompatibilityValidator = "0.12.1"
-gradlePlugin-nexusPublish = "1.1.0"
-gradlePlugin-dokka = "1.7.10"
-gradlePlugin-gradlePluginPublish = "0.20.0"
-gradlePlugin-gradle = "4.0.1"
-
-## NPM ##
+## NPM | Frontend
 node = "16.13.0"
 
+## Publishing
+gradlePlugin-shadow = "7.1.2"
+gradlePlugin-nexusPublish = "1.1.0"
+gradlePlugin-gradlePluginPublish = "0.20.0"
+
+## Test
+junit = "5.9.2"
+assertk = "0.25"
+eclipse-jgit = "5.12.0.202106070339-r"
 
 [libraries]
 
-eclipse-jgit = { module = "org.eclipse.jgit:org.eclipse.jgit", version.ref = "eclipse-jgit" }
-freemarker = { module = "org.freemarker:freemarker", version.ref = "freemarker" }
-jetbrainsIntelliJ-core = { module = "com.jetbrains.intellij.idea:intellij-core", version.ref = "idea" }
-jetbrainsIntelliJ-jpsStandalone = { module = "com.jetbrains.intellij.idea:jps-standalone", version.ref = "idea" }
-jetbrainsMarkdown = { module = "org.jetbrains:markdown", version.ref = "jetbrainsMarkdown" }
-jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
-soywiz-korte = { module = "com.soywiz.korlibs.korte:korte-jvm", version.ref = "soywiz-korte" }
-
-## Kotlin libs ##
-kotlin-bom = { module = "org.jetbrains.kotlin:kotlin-bom", version.ref = "kotlin" }
-
-kotlin-compiler = { module = "org.jetbrains.kotlin:kotlin-compiler", version.ref = "kotlin" }
-kotlin-idea = { module = "org.jetbrains.kotlin:idea", version.ref = "kotlin" }
-kotlin-common = { module = "org.jetbrains.kotlin:common", version.ref = "kotlin" }
-kotlin-core = { module = "org.jetbrains.kotlin:core", version.ref = "kotlin" }
-kotlin-native = { module = "org.jetbrains.kotlin:native", version.ref = "kotlin" }
-
-kotlinx-cli = { module = "org.jetbrains.kotlinx:kotlinx-cli-jvm", version.ref = "kotlinx-cli" }
-kotlinx-html = { module = "org.jetbrains.kotlinx:kotlinx-html-jvm", version.ref = "kotlinx-html" }
-
-kotlinx-coroutines-bom = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-bom", version.ref = "kotlinx-coroutines" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinx-coroutines" }
 
-## Kotlin Plugins ##
-kotlinPlugin-common = { module = "org.jetbrains.kotlin:common", version.ref = "kotlin.plugin" }
-kotlinPlugin-idea = { module = "org.jetbrains.kotlin:idea", version.ref = "kotlin.plugin" }
-kotlinPlugin-core = { module = "org.jetbrains.kotlin:core", version.ref = "kotlin.plugin" }
-kotlinPlugin-native = { module = "org.jetbrains.kotlin:native", version.ref = "kotlin.plugin" }
+#### Gradle plugins ####
+# The Maven coordinates of Gradle plugins that are either used in convention plugins, or in Dokka subprojects
+gradlePlugin-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "gradlePlugin-kotlin" }
+gradlePlugin-android = { module = "com.android.tools.build:gradle", version.ref = "gradlePlugin-android" }
+gradlePlugin-dokka = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "gradlePlugin-dokka" }
+gradlePlugin-shadow = { module = "gradle.plugin.com.github.johnrengelman:shadow", version.ref = "gradlePlugin-shadow" }
 
-## Jackson ##
-jackson-bom = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson" }
+#### Kotlin analysis ####
+kotlin-compiler = { module = "org.jetbrains.kotlin:kotlin-compiler", version.ref = "kotlin-compiler" }
+kotlin-idePlugin-common = { module = "org.jetbrains.kotlin:common", version.ref = "kotlin-ide-plugin" }
+kotlin-idePlugin-idea = { module = "org.jetbrains.kotlin:idea", version.ref = "kotlin-ide-plugin" }
+kotlin-idePlugin-core = { module = "org.jetbrains.kotlin:core", version.ref = "kotlin-ide-plugin" }
+kotlin-idePlugin-native = { module = "org.jetbrains.kotlin:native", version.ref = "kotlin-ide-plugin" }
+
+#### Java analysis ####
+jetbrains-intellij-core = { module = "com.jetbrains.intellij.idea:intellij-core", version.ref = "intellij" }
+jetbrains-intellij-jpsStandalone = { module = "com.jetbrains.intellij.idea:jps-standalone", version.ref = "intellij" }
+
+#### HTML ####
+jsoup = { module = "org.jsoup:jsoup", version.ref = "jsoup" }
+freemarker = { module = "org.freemarker:freemarker", version.ref = "freemarker" }
+kotlinx-html = { module = "org.jetbrains.kotlinx:kotlinx-html-jvm", version.ref = "kotlinx-html" }
+soywiz-korte = { module = "com.soywiz.korlibs.korte:korte-jvm", version.ref = "soywiz-korte" }
+
+#### Markdown ####
+jetbrains-markdown = { module = "org.jetbrains:markdown", version.ref = "jetbrains-markdown" }
+
+#### Jackson ####
 jackson-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson" }
 jackson-xml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-xml", version.ref = "jackson" }
 jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jacksonDatabind" }
 
-## Apache Maven ##
-apache-mavenArchiver = { module = "org.apache.maven:maven-archiver", version.ref = "apache-mavenArchiver" }
-apache-mavenCore = { module = "org.apache.maven:maven-core", version.ref = "apache-maven" }
-apache-mavenPluginAnnotations = { module = "org.apache.maven.plugin-tools:maven-plugin-annotations", version.ref = "apache-mavenPluginTools" }
-apache-mavenPluginApi = { module = "org.apache.maven:maven-plugin-api", version.ref = "apache-maven" }
-apache-mavenArtifact = { module = "org.apache.maven:maven-artifact", version.ref = "apache-mavenArtifact" }
+#### Apache Maven ####
+apacheMaven-archiver = { module = "org.apache.maven:maven-archiver", version.ref = "apacheMaven-archiver" }
+apacheMaven-core = { module = "org.apache.maven:maven-core", version.ref = "apacheMaven-core" }
+apacheMaven-pluginAnnotations = { module = "org.apache.maven.plugin-tools:maven-plugin-annotations", version.ref = "apacheMaven-pluginTools" }
+apacheMaven-pluginApi = { module = "org.apache.maven:maven-plugin-api", version.ref = "apacheMaven-core" }
+apacheMaven-artifact = { module = "org.apache.maven:maven-artifact", version.ref = "apacheMaven-artifact" }
 
+#### CLI #####
+kotlinx-cli = { module = "org.jetbrains.kotlinx:kotlinx-cli-jvm", version.ref = "kotlinx-cli" }
 
-#### test dependencies  ####
-
+#### Test dependencies  ####
 assertk = { module = "com.willowtreeapps.assertk:assertk", version.ref = "assertk" }
+eclipse-jgit = { module = "org.eclipse.jgit:org.eclipse.jgit", version.ref = "eclipse-jgit" }
 
-## junit ##
 junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }
-
-
-#### Gradle plugins dependencies  ####
-# The Maven coordinates of Gradle plugins that are either used in convention plugins, or in Dokka subprojects
-
-gradlePlugin-dokka = { module = "org.jetbrains.dokka:dokka-gradle-plugin", version.ref = "gradlePlugin-dokka" }
-gradlePlugin-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
-gradlePlugin-shadow = { module = "gradle.plugin.com.github.johnrengelman:shadow", version.ref = "gradlePlugin-shadow" }
-gradlePlugin-android = { module = "com.android.tools.build:gradle", version.ref = "gradlePlugin-gradle" }
-
 
 [plugins]
 # Gradle Plugins that are applied directly to subprojects
 # (Before defining plugins here, first consider creating convention plugins instead,
 # and define the Maven coordinates above to be used in build-logic/build.gradle.kts)
 
-kotlinx-binaryCompatibilityValidator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "gradlePlugin-binaryCompatibilityValidator" }
+kotlinx-binaryCompatibilityValidator = { id = "org.jetbrains.kotlinx.binary-compatibility-validator", version.ref = "kotlinx-bcv" }
 shadow = { id = "com.github.johnrengelman.shadow", version.ref = "gradlePlugin-shadow" }
-gradle-pluginPublish = { id = "com.gradle.plugin-publish", version.ref = "gradlePlugin-gradlePluginPublish" }
+gradlePublish = { id = "com.gradle.plugin-publish", version.ref = "gradlePlugin-gradlePluginPublish" }
 nexusPublish = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "gradlePlugin-nexusPublish" }
