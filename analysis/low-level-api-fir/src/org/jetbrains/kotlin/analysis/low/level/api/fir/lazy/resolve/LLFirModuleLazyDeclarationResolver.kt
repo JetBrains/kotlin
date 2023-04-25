@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveT
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirSingleResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.InvalidSessionException
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyResolverRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.withOnAirDesignation
@@ -29,6 +30,7 @@ import org.jetbrains.kotlin.fir.declarations.resolvePhase
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
+import org.jetbrains.kotlin.utils.addToStdlib.enumSetOf
 
 internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirModuleResolveComponents) {
     /**
@@ -203,13 +205,15 @@ private fun handleExceptionFromResolve(
     exception: Exception,
     firDeclarationToResolve: FirElementWithResolveState,
     fromPhase: FirResolvePhase,
-    toPhase: FirResolvePhase?
+    toPhase: FirResolvePhase
 ): Nothing {
     if (exception is InvalidSessionException) {
         throw exception
     }
 
-    firDeclarationToResolve.llFirSession.invalidate()
+    val session = firDeclarationToResolve.llFirSession
+    invalidateIfNeeded(session, toPhase)
+
     rethrowExceptionWithDetails(
         buildString {
             val moduleData = firDeclarationToResolve.llFirModuleData
@@ -217,7 +221,7 @@ private fun handleExceptionFromResolve(
             appendLine("from $fromPhase to $toPhase")
             appendLine("current declaration phase ${firDeclarationToResolve.resolvePhase}")
             appendLine("origin: ${(firDeclarationToResolve as? FirDeclaration)?.origin}")
-            appendLine("session: ${firDeclarationToResolve.llFirSession::class}")
+            appendLine("session: ${session::class}")
             appendLine("module data: ${moduleData::class}")
             appendLine("KtModule: ${moduleData.ktModule::class}")
             appendLine("platform: ${moduleData.ktModule.platform}")
@@ -225,7 +229,7 @@ private fun handleExceptionFromResolve(
         exception = exception,
     ) {
         withEntry("KtModule", firDeclarationToResolve.llFirModuleData.ktModule) { it.moduleDescription }
-        withEntry("session", firDeclarationToResolve.llFirSession) { it.toString() }
+        withEntry("session", session) { it.toString() }
         withEntry("moduleData", firDeclarationToResolve.moduleData) { it.toString() }
         withFirEntry("firDeclarationToResolve", firDeclarationToResolve)
     }
@@ -234,15 +238,16 @@ private fun handleExceptionFromResolve(
 private fun handleExceptionFromResolve(
     exception: Exception,
     designation: LLFirResolveTarget,
-    toPhase: FirResolvePhase?
+    toPhase: FirResolvePhase
 ): Nothing {
     if (exception is InvalidSessionException) {
         throw exception
     }
 
-    val llFirSession = designation.firFile.llFirSession
-    llFirSession.invalidate()
-    val moduleData = llFirSession.llFirModuleData
+    val session = designation.firFile.llFirSession
+    invalidateIfNeeded(session, toPhase)
+
+    val moduleData = session.llFirModuleData
     rethrowExceptionWithDetails(
         buildString {
             appendLine("Error while resolving ${designation::class.java.name} ")
@@ -254,8 +259,19 @@ private fun handleExceptionFromResolve(
         exception = exception,
     ) {
         withEntry("KtModule", moduleData.ktModule) { it.moduleDescription }
-        withEntry("session", designation.firFile.llFirSession) { it.toString() }
+        withEntry("session", session) { it.toString() }
         withEntry("moduleData", moduleData) { it.toString() }
         withEntry("firDesignationToResolve", designation) { it.toString() }
+    }
+}
+
+private val CANCELLATION_SAFE_PHASES: Set<FirResolvePhase> = enumSetOf(
+    FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
+    FirResolvePhase.BODY_RESOLVE,
+)
+
+private fun invalidateIfNeeded(session: LLFirSession, phase: FirResolvePhase) {
+    if (phase !in CANCELLATION_SAFE_PHASES) {
+        session.invalidate()
     }
 }
