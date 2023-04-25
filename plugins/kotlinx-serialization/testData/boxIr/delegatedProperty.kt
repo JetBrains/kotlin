@@ -15,7 +15,7 @@ data class SimpleDTO(
 ) {
     @Transient
     private val additionalProperties: Map<String, Int> = mapOf("delegatedProp" to 123)
-    @Transient
+
     val delegatedProp: Int? by additionalProperties
 }
 
@@ -34,7 +34,7 @@ data class DelegatedByObjectProperty(
 }
 
 // A final val property with a backing field and a default getter in the same module:
-val impl: ReadOnlyProperty<Any?, String> = object : ReadOnlyProperty<Any?, String> {
+var impl: ReadOnlyProperty<Any?, String> = object : ReadOnlyProperty<Any?, String> {
     override operator fun getValue(thisRef: Any?, property: KProperty<*>): String = "test-string"
 }
 
