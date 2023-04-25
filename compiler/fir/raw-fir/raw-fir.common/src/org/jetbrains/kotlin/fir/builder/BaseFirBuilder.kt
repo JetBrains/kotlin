@@ -1056,6 +1056,7 @@ fun <T> FirRegularClassBuilder.createDataClassCopyFunction(
         status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
         symbol = FirNamedFunctionSymbol(CallableId(classId.packageFqName, classId.relativeClassName, StandardNames.DATA_CLASS_COPY))
         dispatchReceiverType = dispatchReceiver
+        resolvePhase = this@createDataClassCopyFunction.resolvePhase
         for ((ktParameter, firProperty) in zippedParameters) {
             val propertyName = firProperty.name
             val parameterSource = toFirSource(ktParameter, KtFakeSourceElementKind.DataClassGeneratedMembers)
