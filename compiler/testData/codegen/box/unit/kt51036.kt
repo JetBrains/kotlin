@@ -12,5 +12,6 @@ fun box(): String {
 class A {
     companion object;
     operator fun String.invoke() = Unit
+    @Suppress("DEPRECATION_ERROR")
     fun close() = synchronized(this) { "abc" }()
 }

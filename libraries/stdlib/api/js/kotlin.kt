@@ -120,7 +120,7 @@ public inline fun <R> runCatching(block: () -> R): kotlin.Result<R>
 @kotlin.SinceKotlin(version = "1.2")
 public inline fun <R> suspend(noinline block: suspend () -> R): suspend () -> R
 
-@kotlin.DeprecatedSinceKotlin(warningSince = "1.6")
+@kotlin.DeprecatedSinceKotlin(errorSince = "1.9", warningSince = "1.6")
 @kotlin.Deprecated(message = "Synchronization on any object is not supported in Kotlin/JS", replaceWith = kotlin.ReplaceWith(expression = "run(block)", imports = {}))
 @kotlin.internal.InlineOnly
 public inline fun <R> synchronized(lock: kotlin.Any, block: () -> R): R
