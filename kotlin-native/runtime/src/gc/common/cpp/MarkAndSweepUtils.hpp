@@ -35,25 +35,20 @@ void processFieldInMark(void* state, ObjHeader* field) noexcept {
 
 template <typename Traits>
 void processObjectInMark(void* state, ObjHeader* object) noexcept {
-    auto* typeInfo = object->type_info();
-    RuntimeAssert(typeInfo != theArrayTypeInfo, "Must not be an array of objects");
-    for (int i = 0; i < typeInfo->objOffsetsCount_; ++i) {
-        auto* field = *reinterpret_cast<ObjHeader**>(reinterpret_cast<uintptr_t>(object) + typeInfo->objOffsets_[i]);
-        if (!field) continue;
-        processFieldInMark<Traits>(state, field);
-    }
+    traverseClassObjectFields(object, [state] (ObjHeader** fieldLocation) {
+        if (auto field = *fieldLocation) {
+            processFieldInMark<Traits>(state, field);
+        }
+    });
 }
 
 template <typename Traits>
 void processArrayInMark(void* state, ArrayHeader* array) noexcept {
-    RuntimeAssert(array->type_info() == theArrayTypeInfo, "Must be an array of objects");
-    auto* begin = ArrayAddressOfElementAt(array, 0);
-    auto* end = ArrayAddressOfElementAt(array, array->count_);
-    for (auto* it = begin; it != end; ++it) {
-        auto* field = *it;
-        if (!field) continue;
-        processFieldInMark<Traits>(state, field);
-    }
+    traverseArrayOfObjectsElements(array, [state] (ObjHeader** elemLocation) {
+        if (auto elem = *elemLocation) {
+            processFieldInMark<Traits>(state, elem);
+        }
+    });
 }
 
 template <typename Traits>

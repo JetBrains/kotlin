@@ -16,7 +16,6 @@
 #include "ThreadData.hpp"
 #include "ThreadRegistry.hpp"
 #include "ThreadSuspension.hpp"
-#include "GCState.hpp"
 #include "FinalizerProcessor.hpp"
 #include "GCStatistics.hpp"
 
@@ -28,10 +27,8 @@
 using namespace kotlin;
 
 namespace {
-    [[clang::no_destroy]] std::mutex markingMutex;
-    [[clang::no_destroy]] std::condition_variable markingCondVar;
-    [[clang::no_destroy]] std::atomic<bool> markingRequested = false;
-    [[clang::no_destroy]] std::atomic<uint64_t> markingEpoch = 0;
+
+[[clang::no_destroy]] std::mutex gcMutex;
 
 struct SweepTraits {
     using ObjectFactory = mm::ObjectFactory<gc::ConcurrentMarkAndSweep>;
@@ -56,6 +53,33 @@ struct ProcessWeaksTraits {
         return objectData.marked();
     }
 };
+
+template<typename Body>
+ScopedThread createGCThread(const char* name, Body&& body) {
+    return ScopedThread(ScopedThread::attributes().name(name), [name, body] {
+        RuntimeLogDebug({kTagGC}, "%s %d starts execution", name, konan::currentThreadId());
+        body();
+        RuntimeLogDebug({kTagGC}, "%s %d finishes execution", name, konan::currentThreadId());
+    });
+}
+
+// TODO move to common
+[[maybe_unused]] inline void checkMarkCorrectness(mm::ObjectFactory<gc::ConcurrentMarkAndSweep>::Iterable& heap) {
+    if (compiler::runtimeAssertsMode() == compiler::RuntimeAssertsMode::kIgnore) return;
+    for (auto objRef: heap) {
+        auto obj = objRef.GetObjHeader();
+        auto& objData = objRef.ObjectData();
+        if (objData.marked()) {
+            traverseReferredObjects(obj, [obj](ObjHeader* field) {
+                if (field->heap()) {
+                    auto& fieldObjData =
+                            mm::ObjectFactory<gc::ConcurrentMarkAndSweep>::NodeRef::From(field).ObjectData();
+                    RuntimeAssert(fieldObjData.marked(), "Field %p of an alive obj %p must be alive", field, obj);
+                }
+            });
+        }
+    }
+}
 
 } // namespace
 
@@ -89,52 +113,79 @@ void gc::ConcurrentMarkAndSweep::ThreadData::OnOOM(size_t size) noexcept {
     ScheduleAndWaitFullGC();
 }
 
-NO_EXTERNAL_CALLS_CHECK void gc::ConcurrentMarkAndSweep::ThreadData::OnSuspendForGC() noexcept {
-    std::unique_lock lock(markingMutex);
-    if (!markingRequested.load()) return;
-    AutoReset scopedAssignMarking(&marking_, true);
+void gc::ConcurrentMarkAndSweep::ThreadData::OnSuspendForGC() noexcept {
+    mark::MarkDispatcher::MarkJob markJob(gc_.markDispatcher_);
+    markJob.runOnMutator(commonThreadData());
+}
+
+bool gc::ConcurrentMarkAndSweep::ThreadData::tryLockRootSet() {
+    bool expected = false;
+    bool locked = rootSetLocked_.compare_exchange_strong(expected, true, std::memory_order_acq_rel);
+    if (locked) {
+        RuntimeLogDebug({kTagGC}, "Thread %d have exclusively acquired thread %d's root set", konan::currentThreadId(), threadData_.threadId());
+    }
+    return locked;
+}
+
+bool gc::ConcurrentMarkAndSweep::ThreadData::rootSetLocked() const {
+    return rootSetLocked_.load(std::memory_order_acquire);
+}
+
+void gc::ConcurrentMarkAndSweep::ThreadData::beginCooperation() {
+    cooperative_.store(true, std::memory_order_release);
+}
+
+bool gc::ConcurrentMarkAndSweep::ThreadData::cooperative() const {
+    return cooperative_.load(std::memory_order_relaxed);
+}
+
+void gc::ConcurrentMarkAndSweep::ThreadData::publish() {
     threadData_.Publish();
-    markingCondVar.wait(lock, []() { return !markingRequested.load(); });
-    // // Unlock while marking to allow mutliple threads to mark in parallel.
-    lock.unlock();
-    uint64_t epoch = markingEpoch.load();
-    GCLogDebug(epoch, "Parallel marking in thread %d", konan::currentThreadId());
-    MarkQueue markQueue;
-    auto handle = GCHandle::getByEpoch(epoch);
-    gc::collectRootSetForThread<internal::MarkTraits>(handle, markQueue, threadData_);
-    gc::Mark<internal::MarkTraits>(handle, markQueue);
+    published_.store(true, std::memory_order_release);
+}
+
+bool gc::ConcurrentMarkAndSweep::ThreadData::published() const {
+    return published_.load(std::memory_order_acquire);
+}
+
+void gc::ConcurrentMarkAndSweep::ThreadData::clearMarkFlags() {
+    published_.store(false, std::memory_order_relaxed);
+    cooperative_.store(false, std::memory_order_relaxed);
+    rootSetLocked_.store(false, std::memory_order_release);
+}
+
+mm::ThreadData& gc::ConcurrentMarkAndSweep::ThreadData::commonThreadData() const {
+    return threadData_;
 }
 
 #ifndef CUSTOM_ALLOCATOR
 gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep(
-        mm::ObjectFactory<ConcurrentMarkAndSweep>& objectFactory, GCScheduler& gcScheduler) noexcept :
+        mm::ObjectFactory<ConcurrentMarkAndSweep>& objectFactory, GCScheduler& gcScheduler,
+        bool mutatorsCooperate, std::size_t auxGCThreads) noexcept :
     objectFactory_(objectFactory),
     gcScheduler_(gcScheduler),
     finalizerProcessor_(std_support::make_unique<FinalizerProcessor>([this](int64_t epoch) {
 #else
-gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep(GCScheduler& gcScheduler) noexcept :
-    gcScheduler_(gcScheduler), finalizerProcessor_(std_support::make_unique<alloc::CustomFinalizerProcessor>([this](int64_t epoch) {
+gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep(GCScheduler& gcScheduler,
+                                                   bool mutatorsCooperate, std::size_t auxGCThreads) noexcept :
+    gcScheduler_(gcScheduler),
+    finalizerProcessor_(std_support::make_unique<alloc::CustomFinalizerProcessor>([this](int64_t epoch) {
 #endif
         GCHandle::getByEpoch(epoch).finalizersDone();
         state_.finalized(epoch);
-    })) {
+    })),
+    markDispatcher_(1 + auxGCThreads, mutatorsCooperate),
+    mainThread_(createGCThread("Main GC thread", [this] { mainGCThreadBody(); }))
+{
     gcScheduler_.SetScheduleGC([this]() NO_INLINE {
         // This call acquires a lock, so we need to ensure that we're in the safe state.
         NativeOrUnregisteredThreadGuard guard(/* reentrant = */ true);
         state_.schedule();
     });
-    gcThread_ = ScopedThread(ScopedThread::attributes().name("GC thread"), [this] {
-        while (true) {
-            auto epoch = state_.waitScheduled();
-            if (epoch.has_value()) {
-                PerformFullGC(*epoch);
-            } else {
-                break;
-            }
-        }
-    });
-    markingBehavior_ = kotlin::compiler::gcMarkSingleThreaded() ? MarkingBehavior::kDoNotMark : MarkingBehavior::kMarkOwnStack;
-    RuntimeLogDebug({kTagGC}, "Concurrent Mark & Sweep GC initialized");
+    for (std::size_t i = 0; i < auxGCThreads; ++i) {
+        auxThreads_.emplace_back(createGCThread("Auxiliary GC thread", [this] { auxiliaryGCThreadBody(); }));
+    }
+    RuntimeLogInfo({kTagGC}, "Stop The World Mark & Concurrent Sweep GC initialized");
 }
 
 gc::ConcurrentMarkAndSweep::~ConcurrentMarkAndSweep() {
@@ -156,36 +207,54 @@ bool gc::ConcurrentMarkAndSweep::FinalizersThreadIsRunning() noexcept {
     return finalizerProcessor_->IsRunning();
 }
 
-void gc::ConcurrentMarkAndSweep::SetMarkingBehaviorForTests(MarkingBehavior markingBehavior) noexcept {
-    markingBehavior_ = markingBehavior;
+void gc::ConcurrentMarkAndSweep::mainGCThreadBody() {
+    gc::mark::MarkDispatcher::MarkJob markJob(markDispatcher_);
+    while (true) {
+        auto epoch = state_.waitScheduled();
+        if (epoch.has_value()) {
+            PerformFullGC(*epoch, markJob);
+        } else {
+            break;
+        }
+    }
+    markDispatcher_.requestShutdown();
 }
 
-bool gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
+void gc::ConcurrentMarkAndSweep::auxiliaryGCThreadBody() {
+    mark::MarkDispatcher::MarkJob markJob(markDispatcher_);
+    while (!markDispatcher_.shutdownRequested()) {
+        markJob.runAuxiliary();
+    }
+}
+
+bool gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch, mark::MarkDispatcher::MarkJob& markContext) noexcept {
+    std::unique_lock mainGCLock(gcMutex);
     auto gcHandle = GCHandle::create(epoch);
-    SetMarkingRequested(epoch);
+
+    auto& scheduler = gcScheduler_;
+    scheduler.gcData().OnPerformFullGC();
+
+    state_.start(epoch);
+    markDispatcher_.beginMarkingEpoch(gcHandle);
+    GCLogDebug(epoch, "Main GC requested marking in mutators");
+
+    // Request STW
     bool didSuspend = mm::RequestThreadsSuspension();
     RuntimeAssert(didSuspend, "Only GC thread can request suspension");
     gcHandle.suspensionRequested();
 
     RuntimeAssert(!kotlin::mm::IsCurrentThreadRegistered(), "Concurrent GC must run on unregistered thread");
-    WaitForThreadsReadyToMark();
+
+    markDispatcher_.waitForThreadsPauseMutation();
+    GCLogDebug(epoch, "All threads have paused mutation");
     gcHandle.threadsAreSuspended();
 
 #ifdef CUSTOM_ALLOCATOR
     heap_.PrepareForGC();
 #endif
 
-    auto& scheduler = gcScheduler_;
-    scheduler.gcData().OnPerformFullGC();
+    markContext.runMainInSTW();
 
-    state_.start(epoch);
-
-    CollectRootSetAndStartMarking(gcHandle);
-
-    // Can be unsafe, because we've stopped the world.
-    gc::Mark<internal::MarkTraits>(gcHandle, markQueue_);
-
-    mm::WaitForThreadsSuspension();
     auto markStats = gcHandle.getMarked();
     scheduler.gcData().UpdateAliveSetBytes(markStats.markedSizeBytes);
 
@@ -196,12 +265,15 @@ bool gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     // would not publish into the global state at an unexpected time.
     auto extraObjectFactoryIterable = mm::GlobalData::Instance().extraObjectDataFactory().LockForIter();
     auto objectFactoryIterable = objectFactory_.LockForIter();
+    checkMarkCorrectness(objectFactoryIterable);
+
     mm::ResumeThreads();
     gcHandle.threadsAreResumed();
 
     gc::SweepExtraObjects<SweepTraits>(gcHandle, extraObjectFactoryIterable);
     auto finalizerQueue = gc::Sweep<SweepTraits>(gcHandle, objectFactoryIterable);
     kotlin::compactObjectPoolInMainThread();
+
 #else
     auto finalizerQueue = heap_.SweepExtraObjects(gcHandle);
 
@@ -216,53 +288,10 @@ bool gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     return true;
 }
 
-namespace {
-    bool isSuspendedOrNative(kotlin::mm::ThreadData& thread) noexcept {
-        auto& suspensionData = thread.suspensionData();
-        return suspensionData.suspended() || suspensionData.state() == kotlin::ThreadState::kNative;
+void gc::ConcurrentMarkAndSweep::reconfigure(bool mutatorsCooperate, std::size_t auxGCThreads) {
+    std::unique_lock mainGCLock(gcMutex);
+    markDispatcher_.reset(mutatorsCooperate, 1 + auxGCThreads, [this] { auxThreads_.clear(); });
+    for (std::size_t i = 0; i < auxGCThreads; ++i) {
+        auxThreads_.emplace_back(createGCThread("Auxiliary GC thread", [this] { auxiliaryGCThreadBody(); }));
     }
-
-    template <typename F>
-    bool allThreads(F predicate) noexcept {
-        auto& threadRegistry = kotlin::mm::ThreadRegistry::Instance();
-        auto* currentThread = (threadRegistry.IsCurrentThreadRegistered()) ? threadRegistry.CurrentThreadData() : nullptr;
-        kotlin::mm::ThreadRegistry::Iterable threads = kotlin::mm::ThreadRegistry::Instance().LockForIter();
-        for (auto& thread : threads) {
-            // Handle if suspension was initiated by the mutator thread.
-            if (&thread == currentThread) continue;
-            if (!predicate(thread)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    void yield() noexcept {
-        std::this_thread::yield();
-    }
-} // namespace
-
-void gc::ConcurrentMarkAndSweep::SetMarkingRequested(uint64_t epoch) noexcept {
-    markingRequested = markingBehavior_ == MarkingBehavior::kMarkOwnStack;
-    markingEpoch = epoch;
-}
-
-void gc::ConcurrentMarkAndSweep::WaitForThreadsReadyToMark() noexcept {
-    while(!allThreads([](kotlin::mm::ThreadData& thread) { return isSuspendedOrNative(thread) || thread.gc().impl().gc().marking_.load(); })) {
-        yield();
-    }
-}
-
-NO_EXTERNAL_CALLS_CHECK void gc::ConcurrentMarkAndSweep::CollectRootSetAndStartMarking(GCHandle gcHandle) noexcept {
-        std::unique_lock lock(markingMutex);
-        markingRequested = false;
-        gc::collectRootSet<internal::MarkTraits>(
-                gcHandle,
-                markQueue_,
-                [](mm::ThreadData& thread) {
-                    return !thread.gc().impl().gc().marking_.load();
-                }
-            );
-        RuntimeLogDebug({kTagGC}, "Requesting marking in threads");
-        markingCondVar.notify_all();
 }

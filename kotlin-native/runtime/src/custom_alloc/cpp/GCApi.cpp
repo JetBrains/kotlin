@@ -23,8 +23,8 @@ std::atomic<size_t> allocatedBytesCounter;
 namespace kotlin::alloc {
 
 bool TryResetMark(void* ptr) noexcept {
-    using Node = typename kotlin::mm::ObjectFactory<kotlin::gc::ConcurrentMarkAndSweep>::Storage::Node;
-    using NodeRef = typename kotlin::mm::ObjectFactory<kotlin::gc::ConcurrentMarkAndSweep>::NodeRef;
+    using Node = typename kotlin::mm::ObjectFactory<gc::ConcurrentMarkAndSweep>::Storage::Node;
+    using NodeRef = typename kotlin::mm::ObjectFactory<gc::ConcurrentMarkAndSweep>::NodeRef;
     Node& node = Node::FromData(ptr);
     NodeRef ref = NodeRef(node);
     auto& objectData = ref.ObjectData();

@@ -112,7 +112,7 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     val gc: GC by lazy {
         val configGc = configuration.get(KonanConfigKeys.GARBAGE_COLLECTOR)
         val (gcFallbackReason, realGc) = when {
-            configGc == GC.CONCURRENT_MARK_AND_SWEEP && !target.supportsThreads() ->
+            (configGc == GC.CONCURRENT_MARK_AND_SWEEP) && !target.supportsThreads() ->
                 "Concurrent mark and sweep gc is not supported for this target. Fallback to Same thread mark and sweep is done" to GC.SAME_THREAD_MARK_AND_SWEEP
             configGc == null -> null to defaultGC
             else -> null to configGc
@@ -171,7 +171,10 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     }
 
     val gcMarkSingleThreaded: Boolean
-        get() = configuration.get(BinaryOptions.gcMarkSingleThreaded) == true
+        get() = configuration.get(BinaryOptions.gcMarkSingleThreaded) ?: false
+
+    val auxGCThreads: Int
+        get() = configuration.get(BinaryOptions.auxGCThreads) ?: 1
 
     val irVerificationMode: IrVerificationMode
         get() = configuration.getNotNull(KonanConfigKeys.VERIFY_IR)
@@ -299,7 +302,12 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
                 add("common_gc.bc")
                 if (allocationMode == AllocationMode.CUSTOM) {
                     add("experimental_memory_manager_custom.bc")
-                    add("concurrent_ms_gc_custom.bc")
+                    when (gc) {
+                        GC.CONCURRENT_MARK_AND_SWEEP -> {
+                            add("concurrent_ms_gc_custom.bc")
+                        }
+                        else -> throw AssertionError("Should not reach here: $gc")
+                    }
                 } else {
                     add("experimental_memory_manager.bc")
                     when (gc) {

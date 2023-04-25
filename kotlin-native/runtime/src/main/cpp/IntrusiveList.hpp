@@ -339,21 +339,25 @@ public:
         }
     }
 
-    // TODO: Implement splice_after.
-
-    // Moves the elements in the range `(firstExcl, lastIncl]` after the element pointed by `insertAfter`.
+    // Moves at most `maxCount` first elements from the range `(firstExcl, lastExcl)` after the element pointed by `insertAfter`.
     // No elements are copied or moved, only the internal pointers of the list nodes are re-pointed.
-    // The behavior is undefined if `insertAfter` is an iterator in the range `(++firstExcl, lastIncl]`.
-    // Complexity: O(1)
-    void splice_after_excl_incl(iterator insertAfter, iterator firstExcl, iterator lastIncl) {
-        auto firstIncl = firstExcl;
-        ++firstIncl;
-        auto lastExcl = lastIncl;
-        ++lastExcl;
-        if (firstIncl == insertAfter || firstIncl == lastExcl) return;
+    // The behavior is undefined if `insertAfter` is an iterator in the range `[firstExcl, lastExcl)`.
+    // Complexity: O(min(maxCount, std::distance(first, last)))
+    size_type splice_after(iterator insertAfter, iterator firstExcl, iterator lastExcl, size_type maxCount) {
+        auto firstIncl = std::next(firstExcl);
+        if (firstIncl == lastExcl) return 0;
+        auto lastIncl = firstExcl;
+        size_type count = 0;
+        while (std::next(lastIncl) != lastExcl && count < maxCount) {
+            RuntimeAssert(lastIncl != insertAfter, "Position to splice after must not be in the spliced range");
+            ++lastIncl;
+            ++count;
+        }
+        lastExcl = std::next(lastIncl);
         setNext(firstExcl.node_, lastExcl.node_);
         setNext(lastIncl.node_, next(insertAfter.node_));
         setNext(insertAfter.node_, firstIncl.node_);
+        return count;
     }
 
 private:

@@ -12,7 +12,7 @@
 #include "ThreadData.hpp"
 #include "std_support/Optional.hpp"
 #include <cinttypes>
-#include <mutex>
+#include <limits>
 
 using namespace kotlin;
 
@@ -160,8 +160,10 @@ GCHandle GCHandle::create(uint64_t epoch) {
     current.memoryUsageBefore.heap = currentHeapUsage();
     return getByEpoch(epoch);
 }
-GCHandle GCHandle::createFakeForTests() { return getByEpoch(std::numeric_limits<uint64_t>::max()); }
+GCHandle GCHandle::createFakeForTests() { return getByEpoch(invalid().getEpoch() - 1); }
 GCHandle GCHandle::getByEpoch(uint64_t epoch) {
+    GCHandle handle{epoch};
+    RuntimeAssert(handle.isValid(), "Must be valid");
     return GCHandle{epoch};
 }
 
@@ -174,10 +176,16 @@ std::optional<gc::GCHandle> gc::GCHandle::currentEpoch() noexcept {
     return std::nullopt;
 }
 
+GCHandle GCHandle::invalid() {
+    return GCHandle{std::numeric_limits<uint64_t>::max()};
+}
 void GCHandle::ClearForTests() {
     std::lock_guard guard(lock);
     current = {};
     last = {};
+}
+bool GCHandle::isValid() const {
+    return epoch_ != GCHandle::invalid().epoch_;
 }
 void GCHandle::finished() {
     std::lock_guard guard(lock);

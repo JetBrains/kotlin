@@ -709,64 +709,50 @@ typename List::iterator before_end(List& list) {
     return cur;
 }
 
-template<typename List>
-typename List::iterator idxIter(List& list, std::size_t idx) {
-    auto cur = list.begin();
-    for (std::size_t i = 0; i < idx; ++i) {
-        ++cur;
-    }
-    return cur;
-}
-
-TEST(IntrusiveForwardListTest, SpliceAfterEIBeforeBeginAll) {
+TEST(IntrusiveForwardListTest, SpliceAfterBeforeBeginAll) {
     using List = intrusive_forward_list<Node>;
     auto values1 = create<List>({1, 2, 3, 4});
     auto values2 = create<List>({11, 12, 13, 14});
     List l1(values1.begin(), values1.end());
     List l2(values2.begin(), values2.end());
 
-    l1.splice_after_excl_incl(l1.before_begin(), l2.before_begin(), before_end(l2));
+    auto spliced = l1.splice_after(l1.before_begin(), l2.before_begin(), l2.end(), values2.size());
+    EXPECT_THAT(spliced, values2.size());
     EXPECT_ELEMENTS_ARE(l1, 11, 12, 13, 14, 1, 2, 3, 4);
     EXPECT_ELEMENTS_ARE(l2);
 }
 
-TEST(IntrusiveForwardListTest, SpliceAfterEIBeforeEndAll) {
+TEST(IntrusiveForwardListTest, SpliceAfterBeforeEndAll) {
     using List = intrusive_forward_list<Node>;
     auto values1 = create<List>({1, 2, 3, 4});
     auto values2 = create<List>({11, 12, 13, 14});
     List l1(values1.begin(), values1.end());
     List l2(values2.begin(), values2.end());
 
-    l1.splice_after_excl_incl(before_end(l1), l2.before_begin(), before_end(l2));
+    auto spliced = l1.splice_after(before_end(l1), l2.before_begin(), l2.end(), values2.size());
+    EXPECT_THAT(spliced, values2.size());
     EXPECT_ELEMENTS_ARE(l1, 1, 2, 3, 4, 11, 12, 13, 14);
     EXPECT_ELEMENTS_ARE(l2);
 }
 
-TEST(IntrusiveForwardListTest, SpliceAfterEIMidMidHalf) {
+TEST(IntrusiveForwardListTest, SpliceAfterMidMidHalf) {
     using List = intrusive_forward_list<Node>;
     auto values1 = create<List>({1, 2, 3, 4});
     auto values2 = create<List>({11, 12, 13, 14});
     List l1(values1.begin(), values1.end());
     List l2(values2.begin(), values2.end());
 
-    l1.splice_after_excl_incl(idxIter(l1, 1), l2.begin(), idxIter(l2, 2));
+    auto spliced = l1.splice_after(std::next(l1.begin()), l2.begin(), l2.end(), 2);
+    EXPECT_THAT(spliced, 2);
     EXPECT_ELEMENTS_ARE(l1, 1, 2, 12, 13, 3, 4);
     EXPECT_ELEMENTS_ARE(l2, 11, 14);
 }
 
-TEST(IntrusiveForwardListTest, SpliceAfterEIBeginSame) {
+TEST(IntrusiveForwardListTest, SpliceAfterBeforeBeginOwnTail) {
     using List = intrusive_forward_list<Node>;
     auto values = create<List>({1, 2, 3, 4});
     List list(values.begin(), values.end());
-
-    list.splice_after_excl_incl(list.begin(), list.before_begin(), idxIter(list, 2));
-    EXPECT_ELEMENTS_ARE(list, 1, 2, 3, 4);
-}
-
-TEST(IntrusiveForwardListTest, SpliceAfterEIBeforeBeginOwnTail) {
-    using List = intrusive_forward_list<Node>;
-    auto values = create<List>({1, 2, 3, 4});
-    List list(values.begin(), values.end());
-    list.splice_after_excl_incl(list.before_begin(), idxIter(list, 1), before_end(list));
+    auto spliced = list.splice_after(list.before_begin(), std::next(list.begin()), list.end(), 2);
+    EXPECT_THAT(spliced, 2);
     EXPECT_ELEMENTS_ARE(list, 3, 4, 1, 2);
 }
