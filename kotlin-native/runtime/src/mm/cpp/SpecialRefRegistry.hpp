@@ -7,6 +7,7 @@
 
 #include <atomic>
 
+#include "GC.hpp"
 #include "Memory.h"
 #include "RawPtr.hpp"
 #include "ThreadRegistry.hpp"
@@ -101,7 +102,7 @@ class SpecialRefRegistry : private Pinned {
         OBJ_GETTER0(tryRef) noexcept {
             AssertThreadState(ThreadState::kRunnable);
             // TODO: Weak read barrier with CMS.
-            RETURN_OBJ(obj_);
+            RETURN_RESULT_OF(kotlin::gc::tryRef, obj_);
         }
 
         void retainRef() noexcept {

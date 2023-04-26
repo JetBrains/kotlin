@@ -14,7 +14,6 @@
 #include "MarkAndSweepUtils.hpp"
 #include "Memory.h"
 #include "ThreadData.hpp"
-#include "ThreadRegistry.hpp"
 #include "ThreadSuspension.hpp"
 #include "FinalizerProcessor.hpp"
 #include "GCStatistics.hpp"
@@ -262,8 +261,6 @@ bool gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch, mark::MarkDispatch
     auto markStats = gcHandle.getMarked();
     scheduler.gcData().UpdateAliveSetBytes(markStats.markedSizeBytes);
 
-    gc::processWeaks<ProcessWeaksTraits>(gcHandle, mm::SpecialRefRegistry::instance());
-
 #ifndef CUSTOM_ALLOCATOR
     // Taking the locks before the pause is completed. So that any destroying thread
     // would not publish into the global state at an unexpected time.
@@ -271,8 +268,22 @@ bool gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch, mark::MarkDispatch
     auto objectFactoryIterable = objectFactory_.LockForIter();
     checkMarkCorrectness(objectFactoryIterable);
 
-    mm::ResumeThreads();
-    gcHandle.threadsAreResumed();
+    if (compiler::concurrentWeakSweep()) {
+        // Expected to happen inside STW.
+        gc::EnableWeakRefBarriers(true);
+
+        mm::ResumeThreads();
+        gcHandle.threadsAreResumed();
+    }
+
+    gc::processWeaks<ProcessWeaksTraits>(gcHandle, mm::SpecialRefRegistry::instance());
+
+    if (compiler::concurrentWeakSweep()) {
+        gc::DisableWeakRefBarriers(false);
+    } else {
+        mm::ResumeThreads();
+        gcHandle.threadsAreResumed();
+    }
 
     gc::SweepExtraObjects<SweepTraits>(gcHandle, extraObjectFactoryIterable);
     auto finalizerQueue = gc::Sweep<SweepTraits>(gcHandle, objectFactoryIterable);

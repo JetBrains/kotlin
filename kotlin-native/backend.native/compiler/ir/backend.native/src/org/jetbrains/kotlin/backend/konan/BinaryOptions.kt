@@ -37,6 +37,8 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     val gcMarkSingleThreaded by booleanOption()
 
+    val concurrentWeakSweep by booleanOption()
+
     val auxGCThreads by intOption()
 
     val linkRuntime by option<RuntimeLinkageStrategyBinaryOption>()

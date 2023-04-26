@@ -84,12 +84,12 @@ OBJ_GETTER(Konan_RegularWeakReferenceImpl_get, ObjHeader* counter) {
 
 // Materialize a weak reference to either null or the real reference.
 OBJ_GETTER(Konan_WeakReferenceCounterLegacyMM_get, ObjHeader* counter) {
-  ObjHeader** referredAddress = &asWeakReferenceCounter(counter)->referred;
+    ObjHeader** referredAddress = &asWeakReferenceCounter(counter)->referred;
 #if KONAN_NO_THREADS
-  RETURN_OBJ(*referredAddress);
+    RETURN_OBJ(*referredAddress);
 #else
-  auto* weakCounter = asWeakReferenceCounter(counter);
-  RETURN_RESULT_OF(ReadHeapRefLocked, referredAddress,  &weakCounter->lock,  &weakCounter->cookie);
+    auto* weakCounter = asWeakReferenceCounter(counter);
+    RETURN_RESULT_OF(ReadHeapRefLocked, referredAddress,  &weakCounter->lock,  &weakCounter->cookie);
 #endif
 }
 

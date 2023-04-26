@@ -77,6 +77,9 @@ private:
     std_support::unique_ptr<Impl> impl_;
 };
 
+bool isMarked(ObjHeader* object) noexcept;
+OBJ_GETTER(tryRef, ObjHeader* object) noexcept;
+
 inline constexpr bool kSupportsMultipleMutators = true;
 
 } // namespace gc

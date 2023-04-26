@@ -173,6 +173,9 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     val gcMarkSingleThreaded: Boolean
         get() = configuration.get(BinaryOptions.gcMarkSingleThreaded) ?: false
 
+    val concurrentWeakSweep: Boolean
+        get() = configuration.get(BinaryOptions.concurrentWeakSweep) == true
+
     val auxGCThreads: Int
         get() = configuration.get(BinaryOptions.auxGCThreads) ?: 1
 

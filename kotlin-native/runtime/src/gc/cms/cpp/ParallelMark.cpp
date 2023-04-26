@@ -338,7 +338,7 @@ void gc::mark::MarkDispatcher::beginMarkingEpoch(gc::GCHandle gcHandle) {
 void gc::mark::MarkDispatcher::waitForThreadsPauseMutation() noexcept {
     RuntimeAssert(!kotlin::mm::IsCurrentThreadRegistered(), "Dispatcher thread must not be registered");
     waitFast([this] {
-        return allMutators([](mm::ThreadData& mut){ return mm::isSuspendedOrNative(mut) || mut.gc().impl().gc().cooperative(); });
+        return allMutators([](mm::ThreadData& mut){ return mut.suspensionData().suspendedOrNative() || mut.gc().impl().gc().cooperative(); });
     });
 }
 

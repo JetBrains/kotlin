@@ -9,6 +9,7 @@
 #include "std_support/Memory.hpp"
 #include "GlobalData.hpp"
 #include "GCStatistics.hpp"
+#include "ObjectOps.hpp"
 
 using namespace kotlin;
 
@@ -96,3 +97,12 @@ ALWAYS_INLINE void gc::GC::processArrayInMark(void* state, ArrayHeader* array) n
 
 // static
 ALWAYS_INLINE void gc::GC::processFieldInMark(void* state, ObjHeader* field) noexcept {}
+
+bool gc::isMarked(ObjHeader* object) noexcept {
+    RuntimeAssert(false, "Should not reach here");
+    return true;
+}
+
+ALWAYS_INLINE OBJ_GETTER(gc::tryRef, ObjHeader* object) noexcept {
+    RETURN_OBJ(object);
+}

@@ -22,6 +22,7 @@
 #include "GCStatistics.hpp"
 #include "MarkStack.hpp"
 #include "ParallelMark.hpp"
+#include "Barriers.hpp"
 
 #ifdef CUSTOM_ALLOCATOR
 #include "CustomAllocator.hpp"
@@ -76,6 +77,7 @@ public:
         void clearMarkFlags();
 
         mm::ThreadData& commonThreadData() const;
+        BarriersThreadData& barriers() { return barriersThreadData_; };
 
     private:
         friend ConcurrentMarkAndSweep;
@@ -86,6 +88,8 @@ public:
         std::atomic<bool> rootSetLocked_ = false;
         std::atomic<bool> published_ = false;
         std::atomic<bool> cooperative_ = false;
+
+        BarriersThreadData barriersThreadData_;
     };
 
     using ObjectData = ThreadData::ObjectData;
