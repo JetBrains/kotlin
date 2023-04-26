@@ -142,7 +142,7 @@ fun createStubForTypeName(
 
     val segments = fqName.pathSegments().asReversed()
     assert(segments.isNotEmpty())
-    val packageLength = if (substituteWithAny) 1 else typeClassId.packageFqName.pathSegments().size
+    val classesNestedLevel = segments.size - if (substituteWithAny) 1 else typeClassId.packageFqName.pathSegments().size
 
     fun recCreateStubForType(current: StubElement<out PsiElement>, level: Int): KotlinUserTypeStub {
         val lastSegment = segments[level]
@@ -150,7 +150,7 @@ fun createStubForTypeName(
         if (level + 1 < segments.size) {
             recCreateStubForType(userTypeStub, level + 1)
         }
-        KotlinNameReferenceExpressionStubImpl(userTypeStub, lastSegment.ref(), level < segments.size - packageLength)
+        KotlinNameReferenceExpressionStubImpl(userTypeStub, lastSegment.ref(), level < classesNestedLevel)
         if (!substituteWithAny) {
             bindTypeArguments(userTypeStub, level)
         }
