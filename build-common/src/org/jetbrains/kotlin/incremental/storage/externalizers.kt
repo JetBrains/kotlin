@@ -274,8 +274,7 @@ class DelegateDataExternalizer<T>(
 
     override fun read(input: DataInput): T {
         val typeIndex = input.readByte().toInt()
-        @Suppress("UNCHECKED_CAST")
-        return typesExternalizers[typeIndex].read(input) as T
+        return typesExternalizers[typeIndex].read(input)
     }
 }
 
