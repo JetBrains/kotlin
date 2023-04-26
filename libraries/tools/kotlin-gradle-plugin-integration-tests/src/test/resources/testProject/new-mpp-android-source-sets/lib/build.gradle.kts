@@ -76,7 +76,7 @@ kotlin {
             implementation(kotlin("stdlib-jdk8"))
         }
 
-        getByName("androidAndroidTest").dependencies {
+        getByName("androidInstrumentedTest").dependencies {
             implementation(kotlin("test-junit"))
             implementation("com.android.support.test:runner:1.0.2")
         }

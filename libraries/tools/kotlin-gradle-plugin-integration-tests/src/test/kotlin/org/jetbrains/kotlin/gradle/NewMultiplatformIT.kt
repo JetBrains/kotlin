@@ -1626,32 +1626,6 @@ open class NewMultiplatformIT : BaseGradleIT() {
         }
     }
 
-    // https://youtrack.jetbrains.com/issue/KT-48436
-    @Test
-    fun testUnusedSourceSetsReportAndroid() = with(Project("new-mpp-android", gradleVersion)) {
-        setupWorkingDir()
-
-        val currentGradleVersion = chooseWrapperVersionOrFinishTest()
-        build(
-            "assembleDebug",
-            // https://issuetracker.google.com/issues/152187160
-            options = defaultBuildOptions().copy(
-                androidGradlePluginVersion = AGPVersion.v4_2_0,
-            ).suppressDeprecationWarningsOn(
-                "AGP uses deprecated IncrementalTaskInputs (Gradle 7.5); relies on FileTrees for ignoring empty directories when using @SkipWhenEmpty (Gradle 7.4)"
-            ) { options ->
-                GradleVersion.version(currentGradleVersion) >= GradleVersion.version(TestVersions.Gradle.G_7_5) && options.safeAndroidGradlePluginVersion < AGPVersion.v7_3_0
-            }
-        ) {
-            assertSuccessful()
-            assertNotContains(
-                UnusedSourceSetsChecker.WARNING_PREFIX_ONE,
-                UnusedSourceSetsChecker.WARNING_PREFIX_MANY,
-                UnusedSourceSetsChecker.WARNING_INTRO
-            )
-        }
-    }
-
     @Test
     fun testIncrementalCompilation() = with(Project("new-mpp-jvm-js-ic", gradleVersion)) {
         setupWorkingDir()

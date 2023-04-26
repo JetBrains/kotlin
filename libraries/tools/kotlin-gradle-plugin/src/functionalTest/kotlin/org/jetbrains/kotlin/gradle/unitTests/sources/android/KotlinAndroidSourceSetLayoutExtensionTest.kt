@@ -39,8 +39,8 @@ class KotlinAndroidSourceSetLayoutExtensionTest {
         val project = buildProjectWithMPP { }
 
         assertEquals(
-            multiplatformAndroidSourceSetLayoutV1, project.kotlinAndroidSourceSetLayout,
-            "Expected v1 being set as default"
+            multiplatformAndroidSourceSetLayoutV2, project.kotlinAndroidSourceSetLayout,
+            "Expected v2 being set as default"
         )
 
         project.setMultiplatformAndroidSourceSetLayoutVersion(2)
