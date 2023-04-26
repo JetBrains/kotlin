@@ -174,7 +174,7 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
 
                 assertEquals(
                     setOf(
-                        projectPath.resolve("build/js/packages/kotlin-js-browser-app/kotlin/kotlin-js-browser-base-js-ir.js").toFile(),
+                        projectPath.resolve("build/js/packages/kotlin-js-browser-app/kotlin/kotlin-js-browser-base-js-ir.mjs").toFile(),
                         projectPath.resolve("build/js/packages/kotlin-js-browser-app/kotlin/foo/foo.txt").toFile(),
                     ),
                     modified.toSet()
@@ -483,6 +483,42 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
                 assertTasksExecuted(":lib:otherKlib")
                 assertTasksExecuted(":lib:compileOtherKotlinJs")
                 assertTasksExecuted(":app:compileProductionExecutableKotlinJs")
+            }
+        }
+    }
+
+    @DisplayName("Webpack works with ES modules")
+    @GradleTest
+    fun testWebpackWorksWithEsModules(gradleVersion: GradleVersion) {
+        project("kotlin-js-browser-project", gradleVersion) {
+            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
+
+            subProject("app").buildGradleKts.modify { originalScript ->
+                buildString {
+                    append(originalScript)
+                    append(
+                        """
+                        |
+                        |tasks.named<org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink>("compileDevelopmentExecutableKotlinJs") {
+                        |   kotlinOptions {
+                        |       moduleKind = "es"
+                        |   }
+                        |}
+                        |
+                        |tasks.named<org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrLink>("compileProductionExecutableKotlinJs") {
+                        |   kotlinOptions {
+                        |       moduleKind = "es"
+                        |   }
+                        |}
+                        |
+                        """.trimMargin()
+                    )
+                }
+            }
+
+            build("browserProductionWebpack") {
+                assertTasksExecuted(":app:browserProductionWebpack")
+                assertFileExists(subProject("app").projectPath.resolve("build/${Distribution.DIST}/js/productionExecutable/app.js"))
             }
         }
     }
