@@ -1005,11 +1005,6 @@ public fun kotlin.Char.titlecase(): kotlin.String
 @kotlin.SinceKotlin(version = "1.5")
 public fun kotlin.Char.titlecaseChar(): kotlin.Char
 
-@kotlin.Deprecated(message = "Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@kotlin.DeprecatedSinceKotlin(hiddenSince = "1.4")
-@kotlin.internal.InlineOnly
-public inline fun kotlin.String.toBoolean(): kotlin.Boolean
-
 @kotlin.SinceKotlin(version = "1.4")
 public fun kotlin.String?.toBoolean(): kotlin.Boolean
 
