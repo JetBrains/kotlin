@@ -6,6 +6,7 @@
 #include "ConcurrentMarkAndSweep.hpp"
 
 #include <cinttypes>
+#include <optional>
 
 #include "CompilerConstants.hpp"
 #include "GlobalData.hpp"
@@ -194,13 +195,15 @@ bool gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
 #ifndef CUSTOM_ALLOCATOR
     // Taking the locks before the pause is completed. So that any destroying thread
     // would not publish into the global state at an unexpected time.
-    auto extraObjectFactoryIterable = mm::GlobalData::Instance().extraObjectDataFactory().LockForIter();
-    auto objectFactoryIterable = objectFactory_.LockForIter();
+    std::optional extraObjectFactoryIterable = mm::GlobalData::Instance().extraObjectDataFactory().LockForIter();
+    std::optional objectFactoryIterable = objectFactory_.LockForIter();
     mm::ResumeThreads();
     gcHandle.threadsAreResumed();
 
-    gc::SweepExtraObjects<SweepTraits>(gcHandle, extraObjectFactoryIterable);
-    auto finalizerQueue = gc::Sweep<SweepTraits>(gcHandle, objectFactoryIterable);
+    gc::SweepExtraObjects<SweepTraits>(gcHandle, *extraObjectFactoryIterable);
+    extraObjectFactoryIterable = std::nullopt;
+    auto finalizerQueue = gc::Sweep<SweepTraits>(gcHandle, *objectFactoryIterable);
+    objectFactoryIterable = std::nullopt;
     kotlin::compactObjectPoolInMainThread();
 #else
     auto finalizerQueue = heap_.SweepExtraObjects(gcHandle);
@@ -212,6 +215,9 @@ bool gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     state_.finish(epoch);
     gcHandle.finalizersScheduled(finalizerQueue.size());
     gcHandle.finished();
+    // This may start a new thread. On some pthreads implementations, this may block waiting for concurrent thread
+    // destructors running. So, it must ensured that no locks are held by this point.
+    // TODO: Consider having an always on sleeping finalizer thread.
     finalizerProcessor_->ScheduleTasks(std::move(finalizerQueue), epoch);
     return true;
 }
