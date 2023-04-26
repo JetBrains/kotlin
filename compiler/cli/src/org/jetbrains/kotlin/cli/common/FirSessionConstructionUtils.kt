@@ -159,13 +159,14 @@ fun <F> prepareNativeSessions(
     resolvedLibraries: List<KotlinResolvedLibrary>,
     libraryList: DependencyListForCliModule,
     extensionRegistrars: List<FirExtensionRegistrar>,
+    metadataCompilationMode: Boolean,
     isCommonSource: (F) -> Boolean,
     fileBelongsToModule: (F, String) -> Boolean,
     registerExtraComponents: ((FirSession) -> Unit) = {},
 ): List<SessionWithSources<F>> {
     return prepareSessions(
         files, configuration, rootModuleName, NativePlatforms.unspecifiedNativePlatform, NativePlatformAnalyzerServices,
-        metadataCompilationMode = false, libraryList, isCommonSource, fileBelongsToModule, createLibrarySession = { sessionProvider ->
+        metadataCompilationMode, libraryList, isCommonSource, fileBelongsToModule, createLibrarySession = { sessionProvider ->
             FirNativeSessionFactory.createLibrarySession(
                 rootModuleName,
                 resolvedLibraries,

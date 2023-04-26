@@ -49,13 +49,21 @@ internal fun PhaseContext.firFrontend(input: KotlinCoreEnvironment): FirOutput {
             dependencies(interopModuleData, interopLibs.map { it.libraryFile.absolutePath })
         }
         friendDependencies(config.friendModuleFiles.map { it.absolutePath })
+        dependsOnDependencies(config.refinesModuleFiles.map { it.absolutePath })
         // TODO: !!! dependencies module data?
     }
     val resolvedLibraries: List<KotlinResolvedLibrary> = config.resolvedLibraries.getFullResolvedList()
 
     val sessionsWithSources = prepareNativeSessions(
-            ktFiles, configuration, mainModuleName, resolvedLibraries, dependencyList,
-            extensionRegistrars, isCommonSourceForPsi, fileBelongsToModuleForPsi,
+            ktFiles,
+            configuration,
+            mainModuleName,
+            resolvedLibraries,
+            dependencyList,
+            extensionRegistrars,
+            metadataCompilationMode = configuration.get(KonanConfigKeys.METADATA_KLIB) ?: false,
+            isCommonSourceForPsi,
+            fileBelongsToModuleForPsi,
             registerExtraComponents = {
                 it.register(FirOverrideChecker::class, FirNativeOverrideChecker(it))
             },
