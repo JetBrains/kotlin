@@ -14889,6 +14889,18 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("receiverTypeMismatch_withProper.kt")
+            public void testReceiverTypeMismatch_withProper() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/receiverTypeMismatch_withProper.kt");
+            }
+
+            @Test
+            @TestMetadata("receiverTypeMismatch_withoutProper.kt")
+            public void testReceiverTypeMismatch_withoutProper() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/inference/receiverTypeMismatch_withoutProper.kt");
+            }
+
+            @Test
             @TestMetadata("reportAboutUnresolvedReferenceAsUnresolved.kt")
             public void testReportAboutUnresolvedReferenceAsUnresolved() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/inference/reportAboutUnresolvedReferenceAsUnresolved.kt");
