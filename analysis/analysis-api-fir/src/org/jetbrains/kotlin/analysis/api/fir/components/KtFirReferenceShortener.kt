@@ -75,7 +75,7 @@ internal class KtFirReferenceShortener(
         callableShortenOption: (KtCallableSymbol) -> ShortenOption
     ): ShortenCommand {
         val declarationToVisit = file.findSmallestDeclarationContainingSelection(selection)
-            ?: file.withDeclarationsResolvedToBodyResolve()
+            ?: file
 
         val firDeclaration = declarationToVisit.getOrBuildFir(firResolveSession) as? FirDeclaration ?: return ShortenCommandImpl(
             file.createSmartPointer(),
@@ -107,14 +107,6 @@ internal class KtFirReferenceShortener(
             collector.typesToShorten.map { it.element }.distinct().map { it.createSmartPointer() },
             collector.qualifiersToShorten.map { it.element }.distinct().map { it.createSmartPointer() }
         )
-    }
-
-    private fun KtFile.withDeclarationsResolvedToBodyResolve(): KtFile {
-        for (declaration in declarations) {
-            declaration.getOrBuildFir(firResolveSession) // temporary hack, resolves declaration to BODY_RESOLVE stage
-        }
-
-        return this
     }
 }
 
