@@ -246,6 +246,22 @@ object ClasspathChangesComputer {
         //     classes, and symbols in removed classes.
         incrementalJvmCache.clearCacheForRemovedClasses(changesCollector)
 
+        // IncrementalJvmCache currently doesn't use the `KotlinClassInfo.extraInfo.classSnapshotExcludingMembers` info when comparing
+        // classes, so we need to do it here.
+        // TODO(KT-58289): Ensure IncrementalJvmCache uses that info when comparing classes.
+        val currentClassSnapshotsExcludingMembers = currentClassSnapshots
+            .associate { it.classId to it.classMemberLevelSnapshot!!.extraInfo.classSnapshotExcludingMembers }
+            .filter { it.value != null }
+        val previousClassSnapshotsExcludingMembers = previousClassSnapshots
+            .associate { it.classId to it.classMemberLevelSnapshot!!.extraInfo.classSnapshotExcludingMembers }
+            .filter { it.value != null }
+        previousClassSnapshotsExcludingMembers.keys.intersect(currentClassSnapshotsExcludingMembers.keys).forEach {
+            if (previousClassSnapshotsExcludingMembers[it]!! != currentClassSnapshotsExcludingMembers[it]!!) {
+                // `areSubclassesAffected = false` as we don't need to compute impacted symbols at this step
+                changesCollector.collectSignature(fqName = it.asSingleFqName(), areSubclassesAffected = false)
+            }
+        }
+
         // Get the changes and clean up
         val dirtyData = changesCollector.getChangedSymbols(DoNothingICReporter)
         workingDir.deleteRecursively()

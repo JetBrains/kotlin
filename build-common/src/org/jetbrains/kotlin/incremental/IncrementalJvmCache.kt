@@ -441,7 +441,7 @@ open class IncrementalJvmCache(
         storageFile: File,
         icContext: IncrementalCompilationContext,
     ) :
-        BasicStringMap<Map<String, Any>>(storageFile, MapExternalizer(StringExternalizer, ConstantValueExternalizer), icContext) {
+        BasicStringMap<Map<String, Long>>(storageFile, MapExternalizer(StringExternalizer, LongExternalizer), icContext) {
 
         operator fun contains(className: JvmClassName): Boolean =
             className.internalName in storage
@@ -451,7 +451,7 @@ open class IncrementalJvmCache(
             val key = kotlinClassInfo.className.internalName
             val oldMap = storage[key] ?: emptyMap()
 
-            val newMap = kotlinClassInfo.constantsMap
+            val newMap = kotlinClassInfo.extraInfo.constantSnapshots
             if (newMap.isNotEmpty()) {
                 storage[key] = newMap
             } else {
@@ -489,8 +489,8 @@ open class IncrementalJvmCache(
             storage.remove(className.internalName)
         }
 
-        override fun dumpValue(value: Map<String, Any>): String =
-            value.dumpMap(Any::toString)
+        override fun dumpValue(value: Map<String, Long>): String =
+            value.dumpMap(Long::toString)
     }
 
     private inner class PackagePartMap(
@@ -592,7 +592,7 @@ open class IncrementalJvmCache(
             val key = kotlinClassInfo.className.internalName
             val oldMap = storage[key] ?: emptyMap()
 
-            val newMap = kotlinClassInfo.inlineFunctionsAndAccessorsMap
+            val newMap = kotlinClassInfo.extraInfo.inlineFunctionOrAccessorSnapshots
             if (newMap.isNotEmpty()) {
                 storage[key] = newMap
             } else {

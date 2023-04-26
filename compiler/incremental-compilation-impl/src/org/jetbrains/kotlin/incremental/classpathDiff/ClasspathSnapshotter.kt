@@ -9,15 +9,23 @@ import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildTime
 import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.measure
+import org.jetbrains.kotlin.incremental.ClassNodeSnapshotter.snapshotClass
+import org.jetbrains.kotlin.incremental.ClassNodeSnapshotter.snapshotClassExcludingMembers
+import org.jetbrains.kotlin.incremental.ClassNodeSnapshotter.snapshotField
+import org.jetbrains.kotlin.incremental.ClassNodeSnapshotter.snapshotMethod
+import org.jetbrains.kotlin.incremental.ClassNodeSnapshotter.sortClassMembers
 import org.jetbrains.kotlin.incremental.DifferenceCalculatorForPackageFacade.Companion.getNonPrivateMembers
 import org.jetbrains.kotlin.incremental.KotlinClassInfo
 import org.jetbrains.kotlin.incremental.PackagePartProtoData
 import org.jetbrains.kotlin.incremental.classpathDiff.ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
-import org.jetbrains.kotlin.incremental.md5
+import org.jetbrains.kotlin.incremental.hashToLong
 import org.jetbrains.kotlin.incremental.storage.toByteArray
 import org.jetbrains.kotlin.konan.file.use
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader.Kind.*
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
+import org.jetbrains.org.objectweb.asm.ClassReader
+import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import java.io.Closeable
 import java.io.File
 import java.util.zip.ZipEntry
@@ -94,7 +102,7 @@ object ClassSnapshotter {
                         snapshotKotlinClass(clazz, granularity)
                     }
                     else -> metrics.measure(BuildTime.SNAPSHOT_JAVA_CLASSES) {
-                        JavaClassSnapshotter.snapshot(clazz, granularity)
+                        snapshotJavaClass(clazz, granularity)
                     }
                 }
             }
@@ -120,11 +128,7 @@ object ClassSnapshotter {
         }
     }
 
-    /**
-     * Computes a [KotlinClassSnapshot] of the given Kotlin class.
-     *
-     * (The caller must ensure that the given class is a Kotlin class.)
-     */
+    /** Computes a [KotlinClassSnapshot] of the given Kotlin class. */
     private fun snapshotKotlinClass(classFile: ClassFileWithContents, granularity: ClassSnapshotGranularity): KotlinClassSnapshot {
         val kotlinClassInfo =
             KotlinClassInfo.createFrom(classFile.classInfo.classId, classFile.classInfo.kotlinClassHeader!!, classFile.contents)
@@ -145,11 +149,58 @@ object ClassSnapshotter {
             )
             MULTIFILE_CLASS -> MultifileClassKotlinClassSnapshot(
                 classId, classAbiHash, classMemberLevelSnapshot,
-                constantNames = kotlinClassInfo.constantsMap.keys
+                constantNames = kotlinClassInfo.extraInfo.constantSnapshots.keys
             )
             SYNTHETIC_CLASS -> error("Unexpected class $classId with class kind ${SYNTHETIC_CLASS.name} (synthetic classes should have been removed earlier)")
             UNKNOWN -> error("Can't handle class $classId with class kind ${UNKNOWN.name}")
         }
+    }
+
+    /** Computes a [JavaClassSnapshot] of the given Java class. */
+    private fun snapshotJavaClass(classFile: ClassFileWithContents, granularity: ClassSnapshotGranularity): JavaClassSnapshot {
+        // For incremental compilation, we only care about the ABI info of a class. There are 2 approaches:
+        //   1. Collect ABI info directly
+        //   2. Remove non-ABI info from the full class
+        // Note that for incremental compilation to be correct, all ABI info must be collected exhaustively (now and in the future when
+        // there are updates to Java/ASM), whereas it is acceptable if non-ABI info is not removed completely.
+        // In the following, we will use the second approach as it is safer and easier.
+
+        val classNode = ClassNode()
+        val classReader = ClassReader(classFile.contents)
+
+        // Note the `parsingOptions` passed to `classReader`:
+        //   - Pass SKIP_CODE as method bodies are not important
+        //   - Do not pass SKIP_DEBUG as debug info (e.g., method parameter names) may be important
+        classReader.accept(classNode, ClassReader.SKIP_CODE)
+        sortClassMembers(classNode)
+
+        // Remove private fields and methods
+        fun Int.isPrivate() = (this and Opcodes.ACC_PRIVATE) != 0
+        classNode.fields.removeIf { it.access.isPrivate() }
+        classNode.methods.removeIf { it.access.isPrivate() }
+
+        // Snapshot the class
+        val classMemberLevelSnapshot = if (granularity == CLASS_MEMBER_LEVEL) {
+            JavaClassMemberLevelSnapshot(
+                classAbiExcludingMembers = JavaElementSnapshot(classNode.name, snapshotClassExcludingMembers(classNode)),
+                fieldsAbi = classNode.fields.map { JavaElementSnapshot(it.name, snapshotField(it)) },
+                methodsAbi = classNode.methods.map { JavaElementSnapshot(it.name, snapshotMethod(it, classNode.version)) }
+            )
+        } else {
+            null
+        }
+        val classAbiHash = if (granularity == CLASS_MEMBER_LEVEL) {
+            JavaClassMemberLevelSnapshotExternalizer.toByteArray(classMemberLevelSnapshot!!).hashToLong()
+        } else {
+            snapshotClass(classNode)
+        }
+
+        return JavaClassSnapshot(
+            classId = classFile.classInfo.classId,
+            classAbiHash = classAbiHash,
+            classMemberLevelSnapshot = classMemberLevelSnapshot,
+            supertypes = classFile.classInfo.supertypes
+        )
     }
 
 }
@@ -226,10 +277,4 @@ private class JarReader(jar: File) : DirectoryOrJarReader {
     override fun close() {
         zipFile.close()
     }
-}
-
-internal fun ByteArray.hashToLong(): Long {
-    // Note: The returned type `Long` is 64-bit, but we currently don't have a good 64-bit hash function.
-    // The method below uses `md5` which is 128-bit and converts it to `Long`.
-    return md5()
 }
