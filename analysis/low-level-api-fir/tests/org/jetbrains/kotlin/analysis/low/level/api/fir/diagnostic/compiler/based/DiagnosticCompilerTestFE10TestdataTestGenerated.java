@@ -5771,6 +5771,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
             }
 
             @Test
+            @TestMetadata("parametersVsPropertiesFromPrimaryConstructor.kt")
+            public void testParametersVsPropertiesFromPrimaryConstructor() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/constructorConsistency/parametersVsPropertiesFromPrimaryConstructor.kt");
+            }
+
+            @Test
             @TestMetadata("property.kt")
             public void testProperty() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/constructorConsistency/property.kt");

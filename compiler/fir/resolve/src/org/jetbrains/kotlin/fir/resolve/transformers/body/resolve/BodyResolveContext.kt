@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
-import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.PrivateForInline
+import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
@@ -464,7 +464,7 @@ class BodyResolveContext(
         val constructor = (owner as? FirRegularClass)?.declarations?.firstOrNull { it is FirConstructor } as? FirConstructor
         val (primaryConstructorPureParametersScope, primaryConstructorAllParametersScope) =
             if (constructor?.isPrimary == true) {
-                constructor.scopesWithPrimaryConstructorParameters(owner, holder.session)
+                constructor.scopesWithPrimaryConstructorParameters(holder.session)
             } else {
                 null to null
             }
@@ -551,17 +551,12 @@ class BodyResolveContext(
         }
     }
 
-    private fun FirConstructor.scopesWithPrimaryConstructorParameters(
-        ownerClass: FirClass,
-        session: FirSession
-    ): Pair<FirLocalScope, FirLocalScope> {
+    private fun FirConstructor.scopesWithPrimaryConstructorParameters(session: FirSession): Pair<FirLocalScope, FirLocalScope> {
         var parameterScope = FirLocalScope(session)
         var allScope = FirLocalScope(session)
-        val properties = ownerClass.declarations.filterIsInstance<FirProperty>().associateBy { it.name }
         for (parameter in valueParameters) {
             allScope = allScope.storeVariable(parameter, session)
-            val property = properties[parameter.name]
-            if (property?.source?.kind != KtFakeSourceElementKind.PropertyFromParameter) {
+            if (parameter.correspondingProperty == null) {
                 parameterScope = parameterScope.storeVariable(parameter, session)
             }
         }
