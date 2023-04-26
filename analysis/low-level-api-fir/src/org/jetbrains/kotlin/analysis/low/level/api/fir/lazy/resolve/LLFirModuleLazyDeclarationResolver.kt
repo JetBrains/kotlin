@@ -21,11 +21,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
 import org.jetbrains.kotlin.analysis.utils.errors.rethrowExceptionWithDetails
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.resolvePhase
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
@@ -104,14 +100,15 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
      */
     fun lazyResolveTarget(
         target: LLFirResolveTarget,
-        toPhase: FirResolvePhase
+        toPhase: FirResolvePhase,
+        towerDataContextCollector: FirTowerDataContextCollector?,
     ) {
         try {
             lazyResolveTargets(
                 targets = listOf(target),
                 moduleComponents.scopeSessionProvider.getScopeSession(),
                 toPhase,
-                towerDataContextCollector = null,
+                towerDataContextCollector,
             )
         } catch (e: Exception) {
             handleExceptionFromResolve(e, target, toPhase)

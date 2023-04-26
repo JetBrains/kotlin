@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignationWithFile
-import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirClassWithSpecificMembersResolveTarget
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.psi.*
 
@@ -90,7 +90,11 @@ internal object FileElementFactory {
             classMembersToResolve,
         )
 
-        moduleComponents.firModuleLazyDeclarationResolver.lazyResolveTarget(designationWithMembers, FirResolvePhase.BODY_RESOLVE)
+        moduleComponents.firModuleLazyDeclarationResolver.lazyResolveTarget(
+            designationWithMembers,
+            FirResolvePhase.BODY_RESOLVE,
+            towerDataContextCollector = null
+        )
     }
 }
 
