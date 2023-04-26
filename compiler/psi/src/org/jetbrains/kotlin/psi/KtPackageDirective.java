@@ -47,7 +47,11 @@ public class KtPackageDirective extends KtModifierListOwnerStub<KotlinPlaceHolde
     // This should be either JetSimpleNameExpression, or JetDotQualifiedExpression
     @Nullable
     public KtExpression getPackageNameExpression() {
-        return findChildByType(KtTokenSets.INSIDE_DIRECTIVE_EXPRESSIONS);
+        KtExpression result = KtStubbedPsiUtil.getStubOrPsiChild(this, KtTokenSets.INSIDE_DIRECTIVE_EXPRESSIONS, KtExpression.ARRAY_FACTORY);
+        if (result == null) {
+            result = findChildByType(KtTokenSets.INSIDE_DIRECTIVE_EXPRESSIONS);
+        }
+        return result;
     }
 
     @NotNull
