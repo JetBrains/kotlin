@@ -9,6 +9,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.low.level.api.fir.DeclarationCopyBuilder.withBodyFrom
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirResolveSessionDepended
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirWholeFileResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FileTowerProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerDataContextAllElementsCollector
@@ -116,7 +117,13 @@ object LowLevelFirApiFacadeForResolveOnAir {
         require(firResolveSession is LLFirResolvableResolveSession)
 
         return if (place is KtFile) {
-            FileTowerProvider(place, onAirGetTowerContextForFile(firResolveSession, place))
+            FirTowerDataContextAllElementsCollector().also { collector ->
+                val session = firResolveSession.getSessionFor(place.getKtModule(firResolveSession.project)) as LLFirResolvableModuleSession
+                val moduleComponents = session.moduleComponents
+                val onAirFirFile = RawFirNonLocalDeclarationBuilder.buildNewFile(session, session.kotlinScopeProvider, place)
+                val target = LLFirWholeFileResolveTarget(onAirFirFile)
+                moduleComponents.firModuleLazyDeclarationResolver.lazyResolveTarget(target, FirResolvePhase.BODY_RESOLVE, collector)
+            }
         } else {
             val validPlace = PsiTreeUtil.findFirstParent(place, false) {
                 RawFirReplacement.isApplicableForReplacement(it as KtElement)

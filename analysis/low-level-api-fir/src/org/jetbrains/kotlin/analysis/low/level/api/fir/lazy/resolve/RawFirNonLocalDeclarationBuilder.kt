@@ -61,6 +61,15 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
     }
 
     companion object {
+        fun buildNewFile(
+            session: FirSession,
+            scopeProvider: FirScopeProvider,
+            file: KtFile,
+        ): FirFile {
+            val builder = RawFirBuilder(session,scopeProvider, bodyBuildingMode = BodyBuildingMode.LAZY_BODIES)
+            return builder.buildFirFile(file)
+        }
+
         fun buildNewSimpleFunction(
             session: FirSession,
             scopeProvider: FirScopeProvider,
