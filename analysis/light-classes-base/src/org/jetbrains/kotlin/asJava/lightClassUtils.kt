@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.asJava
 import com.intellij.lang.jvm.JvmModifier
 import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.project.structure.KtSourceModule
 import org.jetbrains.kotlin.asJava.classes.KtFakeLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.elements.*
@@ -194,7 +195,8 @@ fun demangleInternalName(name: String): String? {
     return if (indexOfDollar >= 0) name.substring(0, indexOfDollar) else null
 }
 
-fun mangleInternalName(name: String, moduleName: String): String {
+fun mangleInternalName(name: String, module: KtSourceModule): String {
+    val moduleName = (module.stableModuleName ?: module.moduleName).removeSurrounding("<", ">")
     return name + "$" + NameUtils.sanitizeAsJavaIdentifier(moduleName)
 }
 

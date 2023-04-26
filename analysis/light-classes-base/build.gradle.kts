@@ -10,6 +10,7 @@ dependencies {
     api(project(":compiler:frontend.common.jvm"))
     api(project(":compiler:resolution.common.jvm"))
     api(project(":core:compiler.common.jvm"))
+    implementation(project(":analysis:project-structure"))
     compileOnly(intellijCore())
     compileOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
 }
