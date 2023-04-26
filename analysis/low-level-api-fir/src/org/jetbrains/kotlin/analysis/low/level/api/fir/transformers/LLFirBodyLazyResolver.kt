@@ -74,7 +74,7 @@ private class LLFirBodyTargetResolver(
         phase = resolverPhase,
         implicitTypeOnly = false,
         scopeSession = scopeSession,
-        returnTypeCalculator = createReturnTypeCalculator(),
+        returnTypeCalculator = createReturnTypeCalculator(towerDataContextCollector = towerDataContextCollector),
         firTowerDataContextCollector = towerDataContextCollector,
     ) {
         override val preserveCFGForClasses: Boolean get() = false

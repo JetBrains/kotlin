@@ -235,7 +235,7 @@ FILE: [ResolvedTo(IMPORTS)] functionWithGenericExpectedTypeInside.kt
         }
 
     }
-    public final [ResolvedTo(CONTRACTS)] fun bar(): R|Bar| {
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun bar(): R|Bar| {
         ^bar R|/Bar.Bar|()
     }
     public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {

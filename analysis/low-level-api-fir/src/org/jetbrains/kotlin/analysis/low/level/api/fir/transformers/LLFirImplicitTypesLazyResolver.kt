@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirImplicitAwareBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyResolveComputationSession
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 
 internal object LLFirImplicitTypesLazyResolver : LLFirLazyResolver(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
@@ -51,27 +52,29 @@ internal object LLFirImplicitTypesLazyResolver : LLFirLazyResolver(FirResolvePha
     }
 }
 
-private class LLFirImplicitBodyTargetResolver(
+internal class LLFirImplicitBodyTargetResolver(
     target: LLFirResolveTarget,
     lockProvider: LLFirLockProvider,
     session: FirSession,
     scopeSession: ScopeSession,
     towerDataContextCollector: FirTowerDataContextCollector?,
+    implicitBodyResolveComputationSession: ImplicitBodyResolveComputationSession? = null,
 ) : LLFirAbstractBodyTargetResolver(
     target,
     lockProvider,
     scopeSession,
     FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
+    implicitBodyResolveComputationSession = implicitBodyResolveComputationSession ?: ImplicitBodyResolveComputationSession(),
     isJumpingPhase = true,
 ) {
     override val transformer = object : FirImplicitAwareBodyResolveTransformer(
         session,
-        implicitBodyResolveComputationSession = implicitBodyResolveComputationSession,
+        implicitBodyResolveComputationSession = this.implicitBodyResolveComputationSession,
         phase = resolverPhase,
         implicitTypeOnly = true,
         scopeSession = scopeSession,
         firTowerDataContextCollector = towerDataContextCollector,
-        returnTypeCalculator = createReturnTypeCalculator(),
+        returnTypeCalculator = createReturnTypeCalculator(towerDataContextCollector = towerDataContextCollector),
     ) {
         override val preserveCFGForClasses: Boolean get() = false
     }

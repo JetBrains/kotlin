@@ -78,7 +78,7 @@ private class LLFirAnnotationArgumentsTargetResolver(
         session,
         scopeSession,
         resolverPhase,
-        returnTypeCalculator = createReturnTypeCalculator()
+        returnTypeCalculator = createReturnTypeCalculator(towerDataContextCollector = null)
     )
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {

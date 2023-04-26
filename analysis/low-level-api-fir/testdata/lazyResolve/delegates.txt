@@ -384,7 +384,7 @@ FILE: [ResolvedTo(IMPORTS)] delegates.kt
     }
     public final [ResolvedTo(CONTRACTS)] fun receive([ResolvedTo(CONTRACTS)] value: R|kotlin/Int|): R|kotlin/Unit| {
     }
-    public final [ResolvedTo(CONTRACTS)] val delegate: R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>| = object : R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>| {
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val delegate: R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>| = object : R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
             super<R|kotlin/Any|>()
         }
@@ -398,13 +398,13 @@ FILE: [ResolvedTo(IMPORTS)] delegates.kt
 
     }
 
-        public [ResolvedTo(CONTRACTS)] get(): R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>|
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/properties/ReadWriteProperty<kotlin/Any?, kotlin/Int>|
     public final [ResolvedTo(CONTRACTS)] val valueWithExplicitType: R|kotlin/Int|by delegate#
         public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int| {
             ^ D|/valueWithExplicitType|.getValue#(Null(null), ::R|/valueWithExplicitType|)
         }
-    public final [ResolvedTo(CONTRACTS)] val valueWithImplicitType: R|kotlin/Int|by R|/delegate|
-        public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int| {
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val valueWithImplicitType: R|kotlin/Int|by R|/delegate|
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int| {
             ^ D|/valueWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|kotlin/Int|>|(Null(null), ::R|/valueWithImplicitType|)
         }
     public final [ResolvedTo(CONTRACTS)] var variableWithExplicitType: R|kotlin/Int|by delegate#
@@ -414,11 +414,11 @@ FILE: [ResolvedTo(IMPORTS)] delegates.kt
         public [ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] <set-?>: R|kotlin/Int|): R|kotlin/Unit| {
             D|/variableWithExplicitType|.setValue#(Null(null), ::R|/variableWithExplicitType|, R|<local>/variableWithExplicitType|)
         }
-    public final [ResolvedTo(CONTRACTS)] var variableWithImplicitType: R|kotlin/Int|by R|/delegate|
-        public [ResolvedTo(CONTRACTS)] get(): R|kotlin/Int| {
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var variableWithImplicitType: R|kotlin/Int|by R|/delegate|
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int| {
             ^ D|/variableWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.getValue: R|kotlin/Int|>|(Null(null), ::R|/variableWithImplicitType|)
         }
-        public [ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] <set-?>: R|kotlin/Int|): R|kotlin/Unit| {
+        public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] <set-?>: R|kotlin/Int|): R|kotlin/Unit| {
             D|/variableWithImplicitType|.R|SubstitutionOverride<kotlin/properties/ReadWriteProperty.setValue: R|kotlin/Unit|>|(Null(null), ::R|/variableWithImplicitType|, R|<local>/variableWithImplicitType|)
         }
 

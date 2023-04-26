@@ -96,7 +96,7 @@ FILE: [ResolvedTo(IMPORTS)] topLevelFunctionsWithImplicitType.kt
     }
     public final [ResolvedTo(CONTRACTS)] fun receive([ResolvedTo(CONTRACTS)] value: R|kotlin/String|): R|kotlin/Unit| {
     }
-    public final [ResolvedTo(CONTRACTS)] fun functionWithLazyBody(): R|kotlin/String| {
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun functionWithLazyBody(): R|kotlin/String| {
         ^functionWithLazyBody String(42)
     }
 

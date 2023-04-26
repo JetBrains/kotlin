@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
-import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.LLFirDesignatedImpliciteTypesBodyResolveTransformerForReturnTypeCalculator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.LLFirReturnTypeCalculatorWithJump
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.ImplicitBodyResolveComputationSession
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.createReturnTypeCalculatorForIDE
 
 internal abstract class LLFirAbstractBodyTargetResolver(
     resolveTarget: LLFirResolveTarget,
@@ -28,11 +28,13 @@ internal abstract class LLFirAbstractBodyTargetResolver(
     protected val implicitBodyResolveComputationSession: ImplicitBodyResolveComputationSession = ImplicitBodyResolveComputationSession(),
     isJumpingPhase: Boolean = false
 ) : LLFirTargetResolver(resolveTarget, lockProvider, resolvePhase, isJumpingPhase) {
-
-    protected fun createReturnTypeCalculator(): ReturnTypeCalculator = createReturnTypeCalculatorForIDE(
+    protected fun createReturnTypeCalculator(
+        towerDataContextCollector: FirTowerDataContextCollector?,
+    ): ReturnTypeCalculator = LLFirReturnTypeCalculatorWithJump(
         scopeSession,
         implicitBodyResolveComputationSession,
-        ::LLFirDesignatedImpliciteTypesBodyResolveTransformerForReturnTypeCalculator
+        lockProvider,
+        towerDataContextCollector,
     )
 
     abstract val transformer: FirAbstractBodyResolveTransformerDispatcher

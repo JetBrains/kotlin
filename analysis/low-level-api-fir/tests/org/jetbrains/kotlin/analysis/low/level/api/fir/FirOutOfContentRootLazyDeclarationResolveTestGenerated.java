@@ -79,6 +79,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("fakeOverride.kt")
+    public void testFakeOverride() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/fakeOverride.kt");
+    }
+
+    @Test
     @TestMetadata("functionWithParameter.kt")
     public void testFunctionWithParameter() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/lazyResolve/functionWithParameter.kt");
