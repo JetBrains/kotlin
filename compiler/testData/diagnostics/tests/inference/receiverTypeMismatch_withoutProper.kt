@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // LANGUAGE: -ProperTypeInferenceConstraintsProcessing
 
 // FILE: Configuration.java
@@ -11,6 +12,6 @@ public class State<C extends Configuration<? extends State<C>>> {}
 // FILE: Main.kt
 fun setup(configuration: Configuration<*>) {
     configuration.apply {
-        <!RECEIVER_TYPE_MISMATCH!>directoryPath<!>
+        directoryPath
     }
 }
