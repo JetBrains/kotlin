@@ -18,6 +18,10 @@ import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRe
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.dsl.kotlinJvmExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.CreateCompilerArgumentsContext
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.ArgumentType.PluginClasspath
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.ArgumentType.Primitive
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.lenient
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.util.assertNotNull
@@ -43,7 +47,12 @@ class KotlinCompileArgumentsTest {
 
         val mainCompilation = kotlin.target.compilations.getByName("main")
         val mainCompilationTask = mainCompilation.compileTaskProvider.get() as KotlinCompile
-        val argumentsFromKotlinCompilerArgumentsAware = mainCompilationTask.createCompilerArguments(lenient)
+        val argumentsFromKotlinCompilerArgumentsAware = mainCompilationTask.createCompilerArguments(
+            CreateCompilerArgumentsContext(
+                includeArgumentTypes = setOf(Primitive, PluginClasspath),
+                isLenient = true
+            )
+        )
 
         @Suppress("DEPRECATION_ERROR")
         assertEquals(
