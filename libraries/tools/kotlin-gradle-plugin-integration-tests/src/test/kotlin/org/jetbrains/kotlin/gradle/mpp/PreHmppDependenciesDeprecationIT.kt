@@ -1,7 +1,7 @@
 package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.plugin.mpp.internal.DEPRECATED_PRE_HMPP_LIBRARIES_DETECTED_MESSAGE
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.io.TempDir
@@ -90,13 +90,11 @@ class PreHmppDependenciesDeprecationIT : KGPBaseTest() {
             preBuildAction()
             build(taskToCall) {
                 if (expectReportForDependency != null) {
-                    assertOutputContainsExactlyTimes(
-                        DEPRECATED_PRE_HMPP_LIBRARIES_DETECTED_MESSAGE.replace("{0}", ".*$expectReportForDependency.*").toRegex()
+                    output.assertHasDiagnostic(
+                        KotlinToolingDiagnostics.PreHmppDependenciesUsedInBuild
                     )
                 } else {
-                    assertOutputDoesNotContain(
-                        DEPRECATED_PRE_HMPP_LIBRARIES_DETECTED_MESSAGE.replace("{0}", ".*").toRegex()
-                    )
+                    output.assertNoDiagnostic(KotlinToolingDiagnostics.PreHmppDependenciesUsedInBuild)
                 }
             }
         }

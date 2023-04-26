@@ -312,4 +312,13 @@ object KotlinToolingDiagnostics {
             """.trimMargin()
         )
     }
+
+    object PreHmppDependenciesUsedInBuild : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke(dependencyName: String) = build(
+            """
+                The dependency '$dependencyName' was published in the legacy mode. Support for such dependencies will be removed in the future.
+                See https://kotl.in/0b5kn8 for details.
+            """.trimIndent()
+        )
+    }
 }
