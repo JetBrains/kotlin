@@ -16,4 +16,26 @@ object DelegateTest2 {
         result += <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM_ERROR!>f<!>
         "hello"
     }
+
+    var intResult = 0
+    val i1 by lazy {
+        intResult <!OVERLOAD_RESOLUTION_AMBIGUITY!>+=<!> <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM_ERROR!>i1<!>
+        0
+    }
+    val i2 by lazy {
+        intResult <!OVERLOAD_RESOLUTION_AMBIGUITY!>-=<!> <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM_ERROR!>i2<!>
+        0
+    }
+    val i3 by lazy {
+        intResult <!OVERLOAD_RESOLUTION_AMBIGUITY!>*=<!> <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM_ERROR!>i3<!>
+        0
+    }
+    val i4 by lazy {
+        intResult <!OVERLOAD_RESOLUTION_AMBIGUITY!>/=<!> <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM_ERROR!>i4<!>
+        0
+    }
+    val i5 by lazy {
+        intResult <!OVERLOAD_RESOLUTION_AMBIGUITY!>%=<!> <!TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM_ERROR!>i5<!>
+        0
+    }
 }
