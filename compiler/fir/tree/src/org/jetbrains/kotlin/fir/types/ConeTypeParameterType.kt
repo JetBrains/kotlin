@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 
-abstract class ConeTypeParameterType : ConeLookupTagBasedType() {
+abstract class ConeTypeParameterType(
+    typeArguments: Array<out ConeTypeProjection>,
+    attributes: ConeAttributes
+) : ConeLookupTagBasedType(typeArguments, attributes) {
     abstract override val lookupTag: ConeTypeParameterLookupTag
 }

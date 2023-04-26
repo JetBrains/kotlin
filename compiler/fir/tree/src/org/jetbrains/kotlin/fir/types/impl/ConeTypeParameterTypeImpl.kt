@@ -14,11 +14,8 @@ import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
 class ConeTypeParameterTypeImpl(
     override val lookupTag: ConeTypeParameterLookupTag,
     isNullable: Boolean,
-    override val attributes: ConeAttributes = ConeAttributes.Empty
-) : ConeTypeParameterType() {
-    override val typeArguments: Array<out ConeTypeProjection>
-        get() = EMPTY_ARRAY
-
+    attributes: ConeAttributes = ConeAttributes.Empty
+) : ConeTypeParameterType(EMPTY_ARRAY, attributes) {
     override val nullability: ConeNullability = ConeNullability.create(isNullable)
 
 

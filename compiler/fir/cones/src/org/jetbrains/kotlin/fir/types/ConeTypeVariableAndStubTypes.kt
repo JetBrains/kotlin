@@ -14,9 +14,8 @@ import org.jetbrains.kotlin.types.model.*
 class ConeTypeVariableType(
     override val nullability: ConeNullability,
     override val lookupTag: ConeTypeVariableTypeConstructor,
-    override val attributes: ConeAttributes = ConeAttributes.Empty,
-) : ConeLookupTagBasedType() {
-    override val typeArguments: Array<out ConeTypeProjection> get() = emptyArray()
+    attributes: ConeAttributes = ConeAttributes.Empty,
+) : ConeLookupTagBasedType(emptyArray(), attributes) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is ConeTypeVariableType) return false
@@ -58,13 +57,7 @@ data class ConeStubTypeConstructor(
 ) : TypeConstructorMarker
 
 sealed class ConeStubType(val constructor: ConeStubTypeConstructor, override val nullability: ConeNullability) : StubTypeMarker,
-    ConeSimpleKotlinType() {
-
-    override val typeArguments: Array<out ConeTypeProjection>
-        get() = emptyArray()
-
-    override val attributes: ConeAttributes
-        get() = ConeAttributes.Empty
+    ConeSimpleKotlinType(emptyArray(), ConeAttributes.Empty) {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
