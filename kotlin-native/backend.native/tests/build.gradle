@@ -4442,6 +4442,10 @@ if (PlatformInfo.isAppleTarget(project)) {
     createInterop("frameworkForwardDeclarations") {
         it.defFile 'framework/forwardDeclarations/clib.def'
     }
+    createInterop("objc_kt56402") {
+        it.defFile 'interop/objc/kt56402/objclib.def'
+        it.headers "$projectDir/interop/objc/kt56402/objclib.h"
+    }
 }
 
 createInterop("withSpaces") {
@@ -5283,6 +5287,27 @@ if (PlatformInfo.isAppleTarget(project)) {
         source = "interop/objc/kt40426/main.kt"
         useGoldenData = true
         UtilsKt.dependsOnPlatformLibs(it)
+    }
+
+    interopTest("interop_objc_kt56402") {
+        // Test depends on macOS-specific AppKit
+        enabled = (project.testTarget == 'macos_x64' || project.testTarget == 'macos_arm64' || project.testTarget == null) && isExperimentalMM
+        source = 'interop/objc/kt56402/main.kt'
+        interop = "objc_kt56402"
+        flags = ["-tr", "-e", "runAllTests"] // Generate test suites, but use custom entrypoint.
+
+        doBeforeBuild {
+            mkdir(buildDir)
+            project.extensions.execClang.execClangForCompilerTests(project.target) {
+                args "$projectDir/interop/objc/kt56402/objclib.m"
+                args "-lobjc", '-fobjc-arc'
+                args '-fPIC', '-shared', '-o', "$buildDir/libobjc_kt56402.dylib"
+                args '-framework', 'AppKit'
+            }
+            if (UtilsKt.isSimulatorTarget(project, project.target)) {
+                UtilsKt.codesign(project, "$buildDir/libobjc_kt56402.dylib")
+            }
+        }
     }
 }
 
