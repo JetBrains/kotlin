@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.cli.js.klib.serializeFirKlib
 import org.jetbrains.kotlin.cli.js.klib.transformFirToIr
 import org.jetbrains.kotlin.codegen.ProjectInfo
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
@@ -28,10 +27,18 @@ abstract class FirAbstractInvalidationTest(
     targetBackend: TargetBackend,
     workingDirPath: String
 ) : AbstractInvalidationTest(targetBackend, workingDirPath) {
-    private val mutedTests = setOf("constVals", "enum", "jsCodeWithConstString")
+    private fun getFirInfoFile(defaultInfoFile: File): File {
+        val firInfoFileName = "${defaultInfoFile.nameWithoutExtension}.fir.${defaultInfoFile.extension}"
+        val firInfoFile = defaultInfoFile.parentFile.resolve(firInfoFileName)
+        return firInfoFile.takeIf { it.exists() } ?: defaultInfoFile
+    }
 
-    override fun isIgnoredTest(projectInfo: ProjectInfo): Boolean {
-        return super.isIgnoredTest(projectInfo) || projectInfo.name in mutedTests
+    override fun getModuleInfoFile(directory: File): File {
+        return getFirInfoFile(super.getModuleInfoFile(directory))
+    }
+
+    override fun getProjectInfoFile(directory: File): File {
+        return getFirInfoFile(super.getProjectInfoFile(directory))
     }
 
     override fun buildKlib(

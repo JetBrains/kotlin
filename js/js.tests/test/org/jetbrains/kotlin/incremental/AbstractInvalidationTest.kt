@@ -62,6 +62,14 @@ abstract class AbstractInvalidationTest(private val targetBackend: TargetBackend
         private const val SOURCE_MAPPING_URL_PREFIX = "//# sourceMappingURL="
     }
 
+    open fun getModuleInfoFile(directory: File): File {
+        return directory.resolve(MODULE_INFO_FILE)
+    }
+
+    open fun getProjectInfoFile(directory: File): File {
+        return directory.resolve(PROJECT_INFO_FILE)
+    }
+
     private val zipAccessor = ZipFileSystemCacheableAccessor(2)
     protected val environment =
         KotlinCoreEnvironment.createForParallelTests(TestDisposable(), CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
@@ -85,7 +93,7 @@ abstract class AbstractInvalidationTest(private val targetBackend: TargetBackend
     protected fun runTest(@TestDataFile testPath: String) {
         val testDirectory = File(testPath)
         val testName = testDirectory.name
-        val projectInfoFile = File(testDirectory, PROJECT_INFO_FILE)
+        val projectInfoFile = getProjectInfoFile(testDirectory)
         val projectInfo = parseProjectInfo(testName, projectInfoFile)
 
         if (isIgnoredTest(projectInfo)) {
@@ -95,7 +103,7 @@ abstract class AbstractInvalidationTest(private val targetBackend: TargetBackend
         val modulesInfos = mutableMapOf<String, ModuleInfo>()
         for (module in projectInfo.modules) {
             val moduleDirectory = File(testDirectory, module)
-            val moduleInfo = File(moduleDirectory, MODULE_INFO_FILE)
+            val moduleInfo = getModuleInfoFile(moduleDirectory)
             modulesInfos[module] = parseModuleInfo(module, moduleInfo)
         }
 

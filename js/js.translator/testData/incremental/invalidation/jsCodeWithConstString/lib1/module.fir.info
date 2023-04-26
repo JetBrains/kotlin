@@ -1,0 +1,34 @@
+STEP 0:
+    modifications:
+        U : l1.0.kt -> l1.kt
+        U : js.0.kt -> js.kt
+        U : test.0.kt -> test.kt
+    added file: l1.kt, js.kt, test.kt
+STEP 1:
+    modifications:
+        U : js.1.kt -> js.kt
+    modified ir: js.kt
+STEP 2:
+    modifications:
+        U : js.2.kt -> js.kt
+    modified ir: js.kt
+STEP 3:
+    modifications:
+        U : l1.3.kt -> l1.kt
+    modified ir: l1.kt, js.kt
+STEP 4:
+    modifications:
+        U : test.4.kt -> test.kt
+    modified ir: test.kt
+STEP 5:
+    modifications:
+        U : l1.5.kt -> l1.kt
+    modified ir: l1.kt, js.kt
+STEP 6:
+    modifications:
+        U : js.6.kt -> js.kt
+    modified ir: js.kt
+STEP 7:
+    modifications:
+        U : l1.7.kt -> l1.kt
+    modified ir: l1.kt, js.kt
