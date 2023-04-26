@@ -104,7 +104,8 @@ internal interface KotlinGradleProjectChecker {
             NoKotlinTargetsDeclaredChecker,
             DisabledCinteropCommonizationInHmppProjectChecker,
             DisabledNativeTargetsChecker,
-            JsEnvironmentChecker
+            JsEnvironmentChecker,
+            PreHmppDependenciesUsageChecker
         )
     }
 }

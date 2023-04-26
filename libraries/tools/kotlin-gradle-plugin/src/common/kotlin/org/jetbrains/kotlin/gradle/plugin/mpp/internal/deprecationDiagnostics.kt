@@ -20,10 +20,7 @@ import org.jetbrains.kotlin.tooling.core.UnsafeApi
 internal fun runDeprecationDiagnostics(project: Project) {
     checkAndReportDeprecatedMppProperties(project)
     handleHierarchicalStructureFlagsMigration(project)
-    project.runProjectConfigurationHealthCheckWhenEvaluated {
-        checkAndReportPreHmppDependenciesUsage(project)
-    }
-}
+ }
 
 /**
  * Declared properties have to be captured during plugin application phase before the HMPP migration util sets them.
