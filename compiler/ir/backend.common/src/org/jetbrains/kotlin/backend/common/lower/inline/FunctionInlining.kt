@@ -105,6 +105,9 @@ class FunctionInlining(
 
     fun inline(irModule: IrModuleFragment) = irModule.accept(this, data = null)
 
+    private val seenInlineFunctions = mutableSetOf<IrFunctionSymbol>()
+    private val handledInlineFunctions = mutableSetOf<IrFunctionSymbol>()
+
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
         expression.transformChildrenVoid(this)
         val callee = when (expression) {
@@ -124,9 +127,14 @@ class FunctionInlining(
             return expression
         }
 
+        if (actualCallee.symbol in seenInlineFunctions && actualCallee.symbol !in handledInlineFunctions)
+            error("Recursion in inline calls")
+        seenInlineFunctions.add(actualCallee.symbol)
+
         withinScope(actualCallee) {
             actualCallee.body?.transformChildrenVoid()
         }
+        handledInlineFunctions.add(actualCallee.symbol)
 
         val parent = allScopes.map { it.irElement }.filterIsInstance<IrDeclarationParent>().lastOrNull()
             ?: allScopes.map { it.irElement }.filterIsInstance<IrDeclaration>().lastOrNull()?.parent
@@ -134,7 +142,10 @@ class FunctionInlining(
             ?: (containerScope?.irElement as? IrDeclaration)?.parent
 
         val inliner = Inliner(expression, actualCallee, currentScope ?: containerScope!!, parent, context)
-        return inliner.inline().markAsRegenerated()
+        return inliner.inline().markAsRegenerated().also {
+            seenInlineFunctions.clear()
+            handledInlineFunctions.clear()
+        }
     }
 
     private fun IrReturnableBlock.markAsRegenerated(): IrReturnableBlock {
@@ -191,6 +202,10 @@ class FunctionInlining(
             originalInlinedElement: IrElement,
             performRecursiveInline: Boolean
         ): IrReturnableBlock {
+            if (callee.symbol in seenInlineFunctions && callee.symbol !in handledInlineFunctions)
+                error("Recursion in inline calls")
+            seenInlineFunctions.add(callee.symbol)
+
             val copiedCallee = callee.copy().apply {
                 parent = callee.parent
                 if (performRecursiveInline) {
@@ -203,6 +218,8 @@ class FunctionInlining(
                     }
                 }
             }
+
+            handledInlineFunctions.add(callee.symbol)
 
             val evaluationStatements = evaluateArguments(callSite, copiedCallee)
             val statements = (copiedCallee.body as? IrBlockBody)?.statements
