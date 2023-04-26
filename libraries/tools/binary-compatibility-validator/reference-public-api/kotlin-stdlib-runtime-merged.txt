@@ -5456,6 +5456,94 @@ public final class kotlin/text/Charsets {
 	public final fun UTF32_LE ()Ljava/nio/charset/Charset;
 }
 
+public final class kotlin/text/HexExtensionsKt {
+	public static final fun hexToByte (Ljava/lang/String;Lkotlin/text/HexFormat;)B
+	public static synthetic fun hexToByte$default (Ljava/lang/String;Lkotlin/text/HexFormat;ILjava/lang/Object;)B
+	public static final fun hexToByteArray (Ljava/lang/String;Lkotlin/text/HexFormat;)[B
+	public static synthetic fun hexToByteArray$default (Ljava/lang/String;Lkotlin/text/HexFormat;ILjava/lang/Object;)[B
+	public static final fun hexToInt (Ljava/lang/String;Lkotlin/text/HexFormat;)I
+	public static synthetic fun hexToInt$default (Ljava/lang/String;Lkotlin/text/HexFormat;ILjava/lang/Object;)I
+	public static final fun hexToLong (Ljava/lang/String;Lkotlin/text/HexFormat;)J
+	public static synthetic fun hexToLong$default (Ljava/lang/String;Lkotlin/text/HexFormat;ILjava/lang/Object;)J
+	public static final fun hexToShort (Ljava/lang/String;Lkotlin/text/HexFormat;)S
+	public static synthetic fun hexToShort$default (Ljava/lang/String;Lkotlin/text/HexFormat;ILjava/lang/Object;)S
+	public static final fun toHexString (BLkotlin/text/HexFormat;)Ljava/lang/String;
+	public static final fun toHexString (ILkotlin/text/HexFormat;)Ljava/lang/String;
+	public static final fun toHexString (JLkotlin/text/HexFormat;)Ljava/lang/String;
+	public static final fun toHexString (SLkotlin/text/HexFormat;)Ljava/lang/String;
+	public static final fun toHexString ([BIILkotlin/text/HexFormat;)Ljava/lang/String;
+	public static final fun toHexString ([BLkotlin/text/HexFormat;)Ljava/lang/String;
+	public static synthetic fun toHexString$default (BLkotlin/text/HexFormat;ILjava/lang/Object;)Ljava/lang/String;
+	public static synthetic fun toHexString$default (ILkotlin/text/HexFormat;ILjava/lang/Object;)Ljava/lang/String;
+	public static synthetic fun toHexString$default (JLkotlin/text/HexFormat;ILjava/lang/Object;)Ljava/lang/String;
+	public static synthetic fun toHexString$default (SLkotlin/text/HexFormat;ILjava/lang/Object;)Ljava/lang/String;
+	public static synthetic fun toHexString$default ([BIILkotlin/text/HexFormat;ILjava/lang/Object;)Ljava/lang/String;
+	public static synthetic fun toHexString$default ([BLkotlin/text/HexFormat;ILjava/lang/Object;)Ljava/lang/String;
+}
+
+public final class kotlin/text/HexFormat {
+	public static final field Companion Lkotlin/text/HexFormat$Companion;
+	public final fun getBytes ()Lkotlin/text/HexFormat$BytesHexFormat;
+	public final fun getNumber ()Lkotlin/text/HexFormat$NumberHexFormat;
+	public final fun getUpperCase ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlin/text/HexFormat$Builder {
+	public fun <init> ()V
+	public final fun build ()Lkotlin/text/HexFormat;
+	public final fun getBytes ()Lkotlin/text/HexFormat$BytesHexFormat$Builder;
+	public final fun getNumber ()Lkotlin/text/HexFormat$NumberHexFormat$Builder;
+	public final fun getUpperCase ()Z
+	public final fun setUpperCase (Z)V
+}
+
+public final class kotlin/text/HexFormat$BytesHexFormat {
+	public final fun getBytePrefix ()Ljava/lang/String;
+	public final fun getByteSeparator ()Ljava/lang/String;
+	public final fun getByteSuffix ()Ljava/lang/String;
+	public final fun getBytesPerGroup ()I
+	public final fun getBytesPerLine ()I
+	public final fun getGroupSeparator ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlin/text/HexFormat$BytesHexFormat$Builder {
+	public final fun getBytePrefix ()Ljava/lang/String;
+	public final fun getByteSeparator ()Ljava/lang/String;
+	public final fun getByteSuffix ()Ljava/lang/String;
+	public final fun getBytesPerGroup ()I
+	public final fun getBytesPerLine ()I
+	public final fun getGroupSeparator ()Ljava/lang/String;
+	public final fun setBytePrefix (Ljava/lang/String;)V
+	public final fun setByteSeparator (Ljava/lang/String;)V
+	public final fun setByteSuffix (Ljava/lang/String;)V
+	public final fun setBytesPerGroup (I)V
+	public final fun setBytesPerLine (I)V
+	public final fun setGroupSeparator (Ljava/lang/String;)V
+}
+
+public final class kotlin/text/HexFormat$Companion {
+	public final fun getDefault ()Lkotlin/text/HexFormat;
+	public final fun getUpperCase ()Lkotlin/text/HexFormat;
+}
+
+public final class kotlin/text/HexFormat$NumberHexFormat {
+	public final fun getPrefix ()Ljava/lang/String;
+	public final fun getRemoveLeadingZeros ()Z
+	public final fun getSuffix ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlin/text/HexFormat$NumberHexFormat$Builder {
+	public final fun getPrefix ()Ljava/lang/String;
+	public final fun getRemoveLeadingZeros ()Z
+	public final fun getSuffix ()Ljava/lang/String;
+	public final fun setPrefix (Ljava/lang/String;)V
+	public final fun setRemoveLeadingZeros (Z)V
+	public final fun setSuffix (Ljava/lang/String;)V
+}
+
 public final class kotlin/text/MatchGroup {
 	public fun <init> (Ljava/lang/String;Lkotlin/ranges/IntRange;)V
 	public final fun component1 ()Ljava/lang/String;
