@@ -12,7 +12,7 @@
     },
     "local": false
   },
-  "classAbiHash": -6515999856905133685,
+  "classAbiHash": -6381547343043280587,
   "classMemberLevelSnapshot": {
     "classAbiExcludingMembers": {
       "name": "com/example/SimpleClass",
@@ -27,11 +27,11 @@
     "methodsAbi": [
       {
         "name": "\u003cinit\u003e",
-        "abiHash": 2413123887428571534
+        "abiHash": 9200648777950343158
       },
       {
         "name": "publicMethod",
-        "abiHash": 7574889098198027162
+        "abiHash": -2847179652577921235
       }
     ]
   },

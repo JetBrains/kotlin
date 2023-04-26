@@ -34,17 +34,13 @@ class ClassFileWithContentsProvider(
     val classFile: ClassFile,
     val contentsProvider: () -> ByteArray
 ) {
-
-    fun loadContents(): ClassFileWithContents {
-        val classContents = contentsProvider.invoke()
-        val classInfo = BasicClassInfo.compute(classContents)
-        return ClassFileWithContents(classFile, classContents, classInfo)
-    }
+    fun loadContents() = ClassFileWithContents(classFile, contentsProvider.invoke())
 }
 
 /** Information about the location of a .class file ([ClassFile]) and its contents. */
 class ClassFileWithContents(
     @Suppress("unused") val classFile: ClassFile,
-    val contents: ByteArray,
-    val classInfo: BasicClassInfo
-)
+    val contents: ByteArray
+) {
+    val classInfo: BasicClassInfo = BasicClassInfo.compute(contents)
+}
