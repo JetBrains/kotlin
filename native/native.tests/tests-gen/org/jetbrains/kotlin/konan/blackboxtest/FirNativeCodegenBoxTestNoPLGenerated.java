@@ -27278,6 +27278,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
                 }
 
+                @Test
+                @TestMetadata("anonymousObjectAndSpecificImplementationInDeserializedIr.kt")
+                public void testAnonymousObjectAndSpecificImplementationInDeserializedIr() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/anonymousObjectAndSpecificImplementationInDeserializedIr.kt");
+                }
+
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/annotations")
                 @TestDataPath("$PROJECT_ROOT")
