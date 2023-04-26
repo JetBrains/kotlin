@@ -9,6 +9,10 @@ package org.jetbrains.kotlin.gradle.unitTests.compilerArgumetns
 
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.CreateCompilerArgumentsContext
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.ArgumentType.PluginClasspath
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.ArgumentType.Primitive
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.default
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.lenient
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
@@ -31,7 +35,12 @@ class Kotlin2JsCompileArgumentsTest {
         project.evaluate()
 
         val jsMainCompileTask = jsMainCompilation.compileTaskProvider.get()
-        val argumentsFromCompilerArgumentsProducer = jsMainCompileTask.createCompilerArguments(lenient)
+        val argumentsFromCompilerArgumentsProducer = jsMainCompileTask.createCompilerArguments(
+            CreateCompilerArgumentsContext(
+                includeArgumentTypes = setOf(Primitive, PluginClasspath),
+                isLenient = true
+            )
+        )
 
         @Suppress("DEPRECATION_ERROR")
         assertEquals(
