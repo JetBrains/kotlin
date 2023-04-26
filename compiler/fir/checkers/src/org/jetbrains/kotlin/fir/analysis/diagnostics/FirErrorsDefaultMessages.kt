@@ -1843,7 +1843,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             WRONG_INVOCATION_KIND,
-            "{2} wrong invocation kind: given {3} case, but {4} case is possible",
+            "{0} has wrong invocation kind: given {1} case, but {2} case is possible",
             SYMBOL,
             TO_STRING,
             TO_STRING

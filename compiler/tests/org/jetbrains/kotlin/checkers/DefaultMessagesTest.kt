@@ -15,16 +15,16 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrorsDefaultMessages
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrors
 import org.jetbrains.kotlin.fir.builder.FirSyntaxErrorsDefaultMessages
-import org.jetbrains.kotlin.test.utils.checkMissingMessages
+import org.jetbrains.kotlin.test.utils.verifyMessages
 import org.junit.Test
 
 class DefaultMessagesTest {
     @Test
     fun ensureAllMessagesPresent() {
-        FirErrorsDefaultMessages.MAP.checkMissingMessages(FirErrors)
-        FirJvmErrorsDefaultMessages.MAP.checkMissingMessages(FirJvmErrors)
-        FirJsErrorsDefaultMessages.MAP.checkMissingMessages(FirJsErrors)
-        FirNativeErrorsDefaultMessages.MAP.checkMissingMessages(FirNativeErrors)
-        FirSyntaxErrorsDefaultMessages.MAP.checkMissingMessages(FirSyntaxErrors)
+        FirErrorsDefaultMessages.MAP.verifyMessages(FirErrors)
+        FirJvmErrorsDefaultMessages.MAP.verifyMessages(FirJvmErrors)
+        FirJsErrorsDefaultMessages.MAP.verifyMessages(FirJsErrors)
+        FirNativeErrorsDefaultMessages.MAP.verifyMessages(FirNativeErrors)
+        FirSyntaxErrorsDefaultMessages.MAP.verifyMessages(FirSyntaxErrors)
     }
 }
