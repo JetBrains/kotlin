@@ -67,7 +67,7 @@ mm::SpecialRefRegistry::Node* mm::SpecialRefRegistry::nextRoot(Node* current) no
         auto [candidatePrev, candidateNext] = eraseFromRoots(current, candidate);
         // We removed candidate. But should we have?
         if (candidate->rc_.load(std::memory_order_relaxed) > 0) {
-            RuntimeAssert(candidate->obj_ != nullptr, "candidate cannot have a null obj_");
+            RuntimeAssert(candidate->obj_.load(std::memory_order_relaxed) != nullptr, "candidate cannot have a null obj_");
             // Ooops. Let's put it back. Okay to put into the head.
             insertIntoRootsHead(*candidate);
         }

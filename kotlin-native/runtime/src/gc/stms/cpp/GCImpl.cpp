@@ -10,6 +10,7 @@
 #include "std_support/Memory.hpp"
 #include "GlobalData.hpp"
 #include "GCStatistics.hpp"
+#include "ObjectOps.hpp"
 
 using namespace kotlin;
 
@@ -47,6 +48,8 @@ ALWAYS_INLINE ArrayHeader* gc::GC::ThreadData::CreateArray(const TypeInfo* typeI
 }
 
 void gc::GC::ThreadData::OnSuspendForGC() noexcept { }
+
+void gc::GC::ThreadData::safePoint() noexcept {}
 
 gc::GC::GC(gcScheduler::GCScheduler& gcScheduler) noexcept : impl_(std_support::make_unique<Impl>(gcScheduler)) {}
 
@@ -94,6 +97,19 @@ ALWAYS_INLINE void gc::GC::processFieldInMark(void* state, ObjHeader* field) noe
     gc::internal::processFieldInMark<gc::internal::MarkTraits>(state, field);
 }
 
-void gc::GC::Schedule() noexcept {
-    impl_->gc().Schedule();
+int64_t gc::GC::Schedule() noexcept {
+    return impl_->gc().Schedule();
+}
+
+void gc::GC::WaitFinalizers(int64_t epoch) noexcept {
+    impl_->gc().WaitFinalized(epoch);
+}
+
+bool gc::isMarked(ObjHeader* object) noexcept {
+    auto& objectData = mm::ObjectFactory<gc::SameThreadMarkAndSweep>::NodeRef::From(object).ObjectData();
+    return objectData.marked();
+}
+
+ALWAYS_INLINE OBJ_GETTER(gc::tryRef, std::atomic<ObjHeader*>& object) noexcept {
+    RETURN_OBJ(object.load(std::memory_order_relaxed));
 }

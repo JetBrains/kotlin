@@ -143,7 +143,10 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     }
 
     val gcMarkSingleThreaded: Boolean
-        get() = configuration.get(BinaryOptions.gcMarkSingleThreaded) == true
+        get() = configuration.get(BinaryOptions.gcMarkSingleThreaded) ?: false
+
+    val concurrentWeakSweep: Boolean
+        get() = configuration.get(BinaryOptions.concurrentWeakSweep) ?: false
 
     val irVerificationMode: IrVerificationMode
         get() = configuration.getNotNull(KonanConfigKeys.VERIFY_IR)

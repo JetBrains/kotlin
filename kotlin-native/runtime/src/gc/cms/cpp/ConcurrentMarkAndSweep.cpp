@@ -184,25 +184,38 @@ void gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     auto markStats = gcHandle.getMarked();
     scheduler.gcData().UpdateAliveSetBytes(markStats.markedSizeBytes);
 
-    gc::processWeaks<ProcessWeaksTraits>(gcHandle, mm::SpecialRefRegistry::instance());
-
 #ifndef CUSTOM_ALLOCATOR
     // Taking the locks before the pause is completed. So that any destroying thread
     // would not publish into the global state at an unexpected time.
     std::optional extraObjectFactoryIterable = mm::GlobalData::Instance().extraObjectDataFactory().LockForIter();
     std::optional objectFactoryIterable = objectFactory_.LockForIter();
-    mm::ResumeThreads();
-    gcHandle.threadsAreResumed();
+#endif
 
+    if (compiler::concurrentWeakSweep()) {
+        // Expected to happen inside STW.
+        gc::EnableWeakRefBarriers();
+
+        mm::ResumeThreads();
+        gcHandle.threadsAreResumed();
+    }
+
+    gc::processWeaks<ProcessWeaksTraits>(gcHandle, mm::SpecialRefRegistry::instance());
+
+    if (compiler::concurrentWeakSweep()) {
+        // Expected to happen outside STW.
+        gc::DisableWeakRefBarriers();
+    } else {
+        mm::ResumeThreads();
+        gcHandle.threadsAreResumed();
+    }
+
+#ifndef CUSTOM_ALLOCATOR
     gc::SweepExtraObjects<SweepTraits>(gcHandle, *extraObjectFactoryIterable);
     extraObjectFactoryIterable = std::nullopt;
     auto finalizerQueue = gc::Sweep<SweepTraits>(gcHandle, *objectFactoryIterable);
     objectFactoryIterable = std::nullopt;
     kotlin::compactObjectPoolInMainThread();
 #else
-    mm::ResumeThreads();
-    gcHandle.threadsAreResumed();
-
     // also sweeps extraObjects
     auto finalizerQueue = heap_.Sweep(gcHandle);
 #endif

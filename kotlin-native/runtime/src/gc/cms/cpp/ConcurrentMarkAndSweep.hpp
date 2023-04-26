@@ -9,6 +9,7 @@
 #include <cstddef>
 
 #include "Allocator.hpp"
+#include "Barriers.hpp"
 #include "FinalizerProcessor.hpp"
 #include "GCScheduler.hpp"
 #include "GCState.hpp"
@@ -91,7 +92,11 @@ public:
 
         void OnSuspendForGC() noexcept;
 
+        void safePoint() noexcept { barriers_.onCheckpoint(); }
+
         Allocator CreateAllocator() noexcept { return Allocator(gc::Allocator(), *this); }
+
+        BarriersThreadData& barriers() noexcept { return barriers_; }
 
     private:
         friend ConcurrentMarkAndSweep;
@@ -99,6 +104,7 @@ public:
         mm::ThreadData& threadData_;
         gcScheduler::GCSchedulerThreadData& gcScheduler_;
         std::atomic<bool> marking_;
+        BarriersThreadData barriers_;
     };
 
     using Allocator = ThreadData::Allocator;
@@ -130,7 +136,8 @@ public:
     alloc::Heap& heap() noexcept { return heap_; }
 #endif
 
-    void Schedule() noexcept { state_.schedule(); }
+    int64_t Schedule() noexcept { return state_.schedule(); }
+    void WaitFinalized(int64_t epoch) noexcept { state_.waitEpochFinalized(epoch); }
 
 private:
     void PerformFullGC(int64_t epoch) noexcept;

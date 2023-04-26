@@ -9,6 +9,7 @@
 #include "std_support/Memory.hpp"
 #include "GlobalData.hpp"
 #include "GCStatistics.hpp"
+#include "ObjectOps.hpp"
 
 using namespace kotlin;
 
@@ -47,6 +48,8 @@ ALWAYS_INLINE ArrayHeader* gc::GC::ThreadData::CreateArray(const TypeInfo* typeI
 
 void gc::GC::ThreadData::OnSuspendForGC() noexcept { }
 
+void gc::GC::ThreadData::safePoint() noexcept {}
+
 gc::GC::GC(gcScheduler::GCScheduler&) noexcept : impl_(std_support::make_unique<Impl>()) {}
 
 gc::GC::~GC() = default;
@@ -82,4 +85,16 @@ ALWAYS_INLINE void gc::GC::processArrayInMark(void* state, ArrayHeader* array) n
 // static
 ALWAYS_INLINE void gc::GC::processFieldInMark(void* state, ObjHeader* field) noexcept {}
 
-void gc::GC::Schedule() noexcept {}
+int64_t gc::GC::Schedule() noexcept {
+    return 0;
+}
+void gc::GC::WaitFinalizers(int64_t epoch) noexcept {}
+
+bool gc::isMarked(ObjHeader* object) noexcept {
+    RuntimeAssert(false, "Should not reach here");
+    return true;
+}
+
+ALWAYS_INLINE OBJ_GETTER(gc::tryRef, std::atomic<ObjHeader*>& object) noexcept {
+    RETURN_OBJ(object.load(std::memory_order_relaxed));
+}

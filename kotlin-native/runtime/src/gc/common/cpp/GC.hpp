@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include <atomic>
+
 #include "GCScheduler.hpp"
 #include "Memory.h"
 #include "Types.h"
@@ -44,6 +46,8 @@ public:
 
         void OnSuspendForGC() noexcept;
 
+        void safePoint() noexcept;
+
     private:
         std_support::unique_ptr<Impl> impl_;
     };
@@ -67,12 +71,17 @@ public:
     static void processArrayInMark(void* state, ArrayHeader* array) noexcept;
     static void processFieldInMark(void* state, ObjHeader* field) noexcept;
 
-    // TODO: This should be moved into the scheduler.
-    void Schedule() noexcept;
+    // TODO: These should be moved into the scheduler.
+    int64_t Schedule() noexcept;
+    void WaitFinalizers(int64_t epoch) noexcept;
+    void ScheduleAndWaitFullGCWithFinalizers() noexcept { WaitFinalizers(Schedule()); }
 
 private:
     std_support::unique_ptr<Impl> impl_;
 };
+
+bool isMarked(ObjHeader* object) noexcept;
+OBJ_GETTER(tryRef, std::atomic<ObjHeader*>& object) noexcept;
 
 inline constexpr bool kSupportsMultipleMutators = true;
 

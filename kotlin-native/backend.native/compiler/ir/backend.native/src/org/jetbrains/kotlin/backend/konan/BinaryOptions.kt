@@ -39,6 +39,8 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     val gcMarkSingleThreaded by booleanOption()
 
+    val concurrentWeakSweep by booleanOption()
+
     val linkRuntime by option<RuntimeLinkageStrategyBinaryOption>()
 
     val bundleId by stringOption()
