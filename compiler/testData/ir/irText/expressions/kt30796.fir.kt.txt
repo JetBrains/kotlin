@@ -7,7 +7,7 @@ fun <T : Any?> test(value: T, value2: T) {
     val <elvis>: T = value
     when {
       EQEQ(arg0 = <elvis>, arg1 = null) -> 42
-      else -> <elvis>
+      true -> <elvis>
     }
   }
   val x2: Any = { // BLOCK
@@ -17,10 +17,10 @@ fun <T : Any?> test(value: T, value2: T) {
         val <elvis>: T = value2
         when {
           EQEQ(arg0 = <elvis>, arg1 = null) -> 42
-          else -> <elvis>
+          true -> <elvis>
         }
       }
-      else -> <elvis>
+      true -> <elvis>
     }
   }
   val x3: Any = { // BLOCK
@@ -28,12 +28,12 @@ fun <T : Any?> test(value: T, value2: T) {
       val <elvis>: T = value
       when {
         EQEQ(arg0 = <elvis>, arg1 = null) -> value2
-        else -> <elvis>
+        true -> <elvis>
       }
     }
     when {
       EQEQ(arg0 = <elvis>, arg1 = null) -> 42
-      else -> <elvis>
+      true -> <elvis>
     }
   }
   val x4: Any = { // BLOCK
@@ -41,19 +41,19 @@ fun <T : Any?> test(value: T, value2: T) {
       val <elvis>: T = value
       when {
         EQEQ(arg0 = <elvis>, arg1 = null) -> value2
-        else -> <elvis>
+        true -> <elvis>
       }
     }
     when {
       EQEQ(arg0 = <elvis>, arg1 = null) -> 42
-      else -> <elvis>
+      true -> <elvis>
     }
   }
   val x5: Any = { // BLOCK
     val <elvis>: Any? = magic<Any?>()
     when {
       EQEQ(arg0 = <elvis>, arg1 = null) -> 42
-      else -> <elvis>
+      true -> <elvis>
     }
   }
   val x6: Any = { // BLOCK
@@ -61,12 +61,12 @@ fun <T : Any?> test(value: T, value2: T) {
       val <elvis>: T = value
       when {
         EQEQ(arg0 = <elvis>, arg1 = null) -> magic<Any?>()
-        else -> <elvis>
+        true -> <elvis>
       }
     }
     when {
       EQEQ(arg0 = <elvis>, arg1 = null) -> 42
-      else -> <elvis>
+      true -> <elvis>
     }
   }
   val x7: Any = { // BLOCK
@@ -74,12 +74,12 @@ fun <T : Any?> test(value: T, value2: T) {
       val <elvis>: Any? = magic<Any?>()
       when {
         EQEQ(arg0 = <elvis>, arg1 = null) -> value
-        else -> <elvis>
+        true -> <elvis>
       }
     }
     when {
       EQEQ(arg0 = <elvis>, arg1 = null) -> 42
-      else -> <elvis>
+      true -> <elvis>
     }
   }
 }

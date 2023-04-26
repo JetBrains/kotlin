@@ -46,9 +46,9 @@ operator fun MyContainer.get($context_receiver_0: Int, index: Int): String? {
   return when {
     when {
       EQEQ(arg0 = index, arg1 = 0) -> EQEQ(arg0 = $context_receiver_0, arg1 = 42)
-      else -> false
+      true -> false
     } -> <this>.<get-s>()
-    else -> null
+    true -> null
   }
 }
 
@@ -56,7 +56,7 @@ operator fun MyContainer.set($context_receiver_0: Int, index: Int, value: String
   when {
     when {
       EQEQ(arg0 = index, arg1 = 0).not() -> true
-      else -> EQEQ(arg0 = $context_receiver_0, arg1 = 42).not()
+      true -> EQEQ(arg0 = $context_receiver_0, arg1 = 42).not()
     } -> return Unit
   }
   <this>.<set-s>(<set-?> = value)
@@ -70,7 +70,7 @@ fun box(): String {
       val tmp0_elvis_lhs: String? = myContainer.get($context_receiver_0 = $this$with, index = 0)
       when {
         EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> "fail"
-        else -> tmp0_elvis_lhs
+        true -> tmp0_elvis_lhs
       }
     }
   }

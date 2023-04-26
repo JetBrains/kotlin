@@ -3,7 +3,7 @@ fun foo(s: String?): String {
     val tmp0_safe_receiver: String? = s
     when {
       EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      else -> tmp0_safe_receiver.let<String, Nothing>(block = local fun <anonymous>(it: String): Nothing {
+      true -> tmp0_safe_receiver.let<String, Nothing>(block = local fun <anonymous>(it: String): Nothing {
         return it
       }
 )
@@ -17,12 +17,12 @@ fun bar(s: String?, t: String?): String {
     val tmp1_safe_receiver: String? = s
     when {
       EQEQ(arg0 = tmp1_safe_receiver, arg1 = null) -> null
-      else -> tmp1_safe_receiver.let<String, Nothing?>(block = local fun <anonymous>(it: String): Nothing? {
+      true -> tmp1_safe_receiver.let<String, Nothing?>(block = local fun <anonymous>(it: String): Nothing? {
         return { // BLOCK
           val tmp2_safe_receiver: String? = t
           when {
             EQEQ(arg0 = tmp2_safe_receiver, arg1 = null) -> null
-            else -> tmp2_safe_receiver.let<String, Nothing>(block = local fun <anonymous>(it: String): Nothing {
+            true -> tmp2_safe_receiver.let<String, Nothing>(block = local fun <anonymous>(it: String): Nothing {
               return it
             }
 )
@@ -41,7 +41,7 @@ val String?.baz: String
       val tmp3_safe_receiver: String? = <this>
       when {
         EQEQ(arg0 = tmp3_safe_receiver, arg1 = null) -> null
-        else -> tmp3_safe_receiver.let<String, Nothing>(block = local fun <anonymous>(it: String): Nothing {
+        true -> tmp3_safe_receiver.let<String, Nothing>(block = local fun <anonymous>(it: String): Nothing {
           return it
         }
 )

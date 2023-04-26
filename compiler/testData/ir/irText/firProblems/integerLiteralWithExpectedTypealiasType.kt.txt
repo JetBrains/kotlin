@@ -2,7 +2,7 @@ typealias MyLong = Long
 fun foo(l: Long): String {
   return when {
     EQEQ(arg0 = l, arg1 = 0L) -> "OK"
-    else -> "fail"
+    true -> "fail"
   }
 }
 

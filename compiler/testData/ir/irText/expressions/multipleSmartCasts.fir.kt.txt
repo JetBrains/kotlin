@@ -12,7 +12,7 @@ fun test(x: Any) {
   when {
     when {
       x is IC1 -> x /*as IC1 */ is IC2
-      else -> false
+      true -> false
     } -> { // BLOCK
       val <destruct>: Any = x /*as IC1 */
       val x1: Int = <destruct> /*as IC1 */.component1()

@@ -3,7 +3,7 @@ fun test_1(value: Any?): String? {
     val tmp0_safe_receiver: Any? = value
     when {
       EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-      else -> tmp0_safe_receiver.let<Any, Nothing>(block = local fun <anonymous>(it: Any): Nothing {
+      true -> tmp0_safe_receiver.let<Any, Nothing>(block = local fun <anonymous>(it: Any): Nothing {
         return "O"
       }
 )
@@ -17,7 +17,7 @@ fun test_2(value: Any?): String? {
       val tmp0_safe_receiver: Any? = value
       when {
         EQEQ(arg0 = tmp0_safe_receiver, arg1 = null) -> null
-        else -> tmp0_safe_receiver.let<Any, Nothing>(block = local fun <anonymous>(it: Any): Nothing {
+        true -> tmp0_safe_receiver.let<Any, Nothing>(block = local fun <anonymous>(it: Any): Nothing {
           return "K"
         }
 )
@@ -33,14 +33,14 @@ fun box(): String {
     val tmp0_elvis_lhs: String? = test_1(value = 1)
     when {
       EQEQ(arg0 = tmp0_elvis_lhs, arg1 = null) -> return "fail 1"
-      else -> tmp0_elvis_lhs
+      true -> tmp0_elvis_lhs
     }
   })
   result = result.plus(other = { // BLOCK
     val tmp1_elvis_lhs: String? = test_2(value = 1)
     when {
       EQEQ(arg0 = tmp1_elvis_lhs, arg1 = null) -> return "fail 2"
-      else -> tmp1_elvis_lhs
+      true -> tmp1_elvis_lhs
     }
   })
   return result

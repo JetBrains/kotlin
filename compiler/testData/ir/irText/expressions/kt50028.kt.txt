@@ -1,6 +1,6 @@
 fun test_1(): String {
   return when {
-    else -> { // BLOCK
+    true -> { // BLOCK
       return ""
     }
   }
@@ -11,7 +11,7 @@ fun test_2(b: Boolean): Boolean {
     b -> { // BLOCK
       true
     }
-    else -> { // BLOCK
+    true -> { // BLOCK
       throw NotImplementedError()
     }
   }

@@ -1,7 +1,7 @@
 fun test(b: Boolean) {
   val x: Int = when {
     b -> 3
-    else -> { // BLOCK
+    true -> { // BLOCK
       throw Exception()
       0
     }

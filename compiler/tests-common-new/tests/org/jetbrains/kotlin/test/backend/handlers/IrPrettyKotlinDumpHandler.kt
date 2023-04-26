@@ -51,6 +51,7 @@ class IrPrettyKotlinDumpHandler(
             KotlinLikeDumpOptions(
                 printFilePath = false,
                 printFakeOverridesStrategy = FakeOverridesStrategy.NONE,
+                printElseAsTrue = true,
             ),
         )
     }

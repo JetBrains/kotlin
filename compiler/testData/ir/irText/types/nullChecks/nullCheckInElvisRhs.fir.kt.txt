@@ -11,7 +11,7 @@ fun test(): String {
     val <elvis>: String? = baz()
     when {
       EQEQ(arg0 = <elvis>, arg1 = null) -> foo() /*!! String */
-      else -> <elvis>
+      true -> <elvis>
     }
   }
 }

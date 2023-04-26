@@ -138,6 +138,6 @@ fun box(): String {
 )
   return when {
     EQEQ(arg0 = result, arg1 = 45) -> "OK"
-    else -> "fail"
+    true -> "fail"
   }
 }

@@ -1,14 +1,14 @@
 fun test1(a: Boolean, b: Boolean): Boolean {
   return when {
     a -> b
-    else -> false
+    true -> false
   }
 }
 
 fun test2(a: Boolean, b: Boolean): Boolean {
   return when {
     a -> true
-    else -> b
+    true -> b
   }
 }
 

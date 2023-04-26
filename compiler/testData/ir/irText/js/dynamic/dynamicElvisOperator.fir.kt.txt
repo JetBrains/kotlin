@@ -3,7 +3,7 @@ fun test(d: dynamic): dynamic {
     val <elvis>: dynamic = d
     when {
       EQEQ(arg0 = <elvis>, arg1 = null) -> "other"
-      else -> <elvis>
+      true -> <elvis>
     }
   }
 }

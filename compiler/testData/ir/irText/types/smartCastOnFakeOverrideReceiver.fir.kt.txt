@@ -16,14 +16,14 @@ open class A {
   fun testA1(x: Any): Int? {
     return when {
       x is B -> x /*as B */.f()
-      else -> null
+      true -> null
     }
   }
 
   fun testA2(x: Any): Int? {
     return when {
       x is B -> x /*as B */.<get-aVal>()
-      else -> null
+      true -> null
     }
   }
 
@@ -39,14 +39,14 @@ class B : A {
   fun testB1(x: Any): Int? {
     return when {
       x is B -> x /*as B */.f()
-      else -> null
+      true -> null
     }
   }
 
   fun testB2(x: Any): Int? {
     return when {
       x is B -> x /*as B */.<get-aVal>()
-      else -> null
+      true -> null
     }
   }
 
