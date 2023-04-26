@@ -31,16 +31,13 @@ FILE fqName:<root> fileName:/kt51036.kt
         RETURN type=kotlin.Nothing from='public final fun invoke (): kotlin.Unit [operator] declared in <root>.A'
           GET_OBJECT 'CLASS IR_EXTERNAL_DECLARATION_STUB OBJECT name:Unit modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.Unit
     FUN name:close visibility:public modality:FINAL <> ($this:<root>.A) returnType:kotlin.Unit
-      annotations:
-        Suppress(names = ['DEPRECATION_ERROR'])
       $this: VALUE_PARAMETER name:<this> type:<root>.A
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun close (): kotlin.Unit declared in <root>.A'
-          CALL 'public final fun invoke (): kotlin.Unit [operator] declared in <root>.A' type=kotlin.Unit origin=INVOKE
+          CALL 'public final fun invoke (): kotlin.Unit [operator] declared in <root>.A' type=kotlin.Unit origin=null
             $this: GET_VAR '<this>: <root>.A declared in <root>.A.close' type=<root>.A origin=null
-            $receiver: CALL 'public final fun synchronized <R> (lock: kotlin.Any, block: kotlin.Function0<R of kotlin.StandardKt.synchronized>): R of kotlin.StandardKt.synchronized [inline] declared in kotlin.StandardKt' type=kotlin.String origin=null
+            $receiver: CALL 'public final fun run <R> (block: kotlin.Function0<R of kotlin.StandardKt.run>): R of kotlin.StandardKt.run [inline] declared in kotlin.StandardKt' type=kotlin.String origin=null
               <R>: kotlin.String
-              lock: GET_VAR '<this>: <root>.A declared in <root>.A.close' type=<root>.A origin=null
               block: FUN_EXPR type=kotlin.Function0<kotlin.String> origin=LAMBDA
                 FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL <> () returnType:kotlin.String
                   BLOCK_BODY

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // WITH_STDLIB
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
@@ -6,6 +7,5 @@
 class A {
     companion object;
     operator fun String.invoke() = Unit
-    @Suppress("DEPRECATION_ERROR")
-    fun close() = synchronized(this) { "Abc" }()
+    fun close() = kotlin.run { "Abc" }()
 }
