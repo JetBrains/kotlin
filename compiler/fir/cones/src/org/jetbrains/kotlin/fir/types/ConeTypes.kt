@@ -17,15 +17,14 @@ import org.jetbrains.kotlin.utils.addToStdlib.foldMap
 // (more exactly, invariant type projection contains type)
 sealed class ConeKotlinType(
     val typeArguments: Array<out ConeTypeProjection>,
-    val attributes: ConeAttributes
+    val attributes: ConeAttributes,
+    val nullability: ConeNullability
 ) : ConeKotlinTypeProjection(), KotlinTypeMarker, TypeArgumentListMarker {
     final override val kind: ProjectionKind
         get() = ProjectionKind.INVARIANT
 
     final override val type: ConeKotlinType
         get() = this
-
-    abstract val nullability: ConeNullability
 
     final override fun toString(): String {
         return renderForDebugging()
@@ -35,8 +34,12 @@ sealed class ConeKotlinType(
     abstract override fun hashCode(): Int
 }
 
-sealed class ConeSimpleKotlinType(typeArguments: Array<out ConeTypeProjection>, attributes: ConeAttributes) :
-    ConeKotlinType(typeArguments, attributes), SimpleTypeMarker
+sealed class ConeSimpleKotlinType(
+    typeArguments: Array<out ConeTypeProjection>,
+    attributes: ConeAttributes,
+    nullability: ConeNullability
+) :
+    ConeKotlinType(typeArguments, attributes, nullability), SimpleTypeMarker
 
 class ConeClassLikeErrorLookupTag(override val classId: ClassId) : ConeClassLikeLookupTag()
 
@@ -45,12 +48,9 @@ class ConeErrorType(
     val isUninferredParameter: Boolean = false,
     typeArguments: Array<out ConeTypeProjection> = EMPTY_ARRAY,
     attributes: ConeAttributes = ConeAttributes.Empty
-) : ConeClassLikeType(typeArguments, attributes) {
+) : ConeClassLikeType(typeArguments, attributes, ConeNullability.UNKNOWN) {
     override val lookupTag: ConeClassLikeLookupTag
         get() = ConeClassLikeErrorLookupTag(ClassId.fromString("<error>"))
-
-    override val nullability: ConeNullability
-        get() = ConeNullability.UNKNOWN
 
     override fun equals(other: Any?) = this === other
     override fun hashCode(): Int = System.identityHashCode(this)
@@ -58,15 +58,17 @@ class ConeErrorType(
 
 abstract class ConeLookupTagBasedType(
     typeArguments: Array<out ConeTypeProjection>,
-    attributes: ConeAttributes
-) : ConeSimpleKotlinType(typeArguments, attributes) {
+    attributes: ConeAttributes,
+    nullability: ConeNullability
+) : ConeSimpleKotlinType(typeArguments, attributes, nullability) {
     abstract val lookupTag: ConeClassifierLookupTag
 }
 
 abstract class ConeClassLikeType(
     typeArguments: Array<out ConeTypeProjection>,
-    attributes: ConeAttributes
-) : ConeLookupTagBasedType(typeArguments, attributes) {
+    attributes: ConeAttributes,
+    nullability: ConeNullability
+) : ConeLookupTagBasedType(typeArguments, attributes, nullability) {
     abstract override val lookupTag: ConeClassLikeLookupTag
 }
 
@@ -74,10 +76,9 @@ open class ConeFlexibleType(
     val lowerBound: ConeSimpleKotlinType,
     val upperBound: ConeSimpleKotlinType,
     typeArguments: Array<out ConeTypeProjection> = lowerBound.typeArguments,
-    attributes: ConeAttributes = lowerBound.attributes
-) : ConeKotlinType(typeArguments, attributes), FlexibleTypeMarker {
-    final override val nullability: ConeNullability
-        get() = lowerBound.nullability.takeIf { it == upperBound.nullability } ?: ConeNullability.UNKNOWN
+    attributes: ConeAttributes = lowerBound.attributes,
+    nullability: ConeNullability = lowerBound.nullability.takeIf { it == upperBound.nullability } ?: ConeNullability.UNKNOWN
+) : ConeKotlinType(typeArguments, attributes, nullability), FlexibleTypeMarker {
 
     final override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -124,11 +125,11 @@ class ConeCapturedTypeConstructor(
 data class ConeCapturedType(
     val captureStatus: CaptureStatus,
     val lowerType: ConeKotlinType?,
-    override val nullability: ConeNullability = ConeNullability.NOT_NULL,
+    val _nullability: ConeNullability = ConeNullability.NOT_NULL,
     val constructor: ConeCapturedTypeConstructor,
     val attrs: ConeAttributes = ConeAttributes.Empty,
     val isProjectionNotNull: Boolean = false
-) : ConeSimpleKotlinType(emptyArray(), attrs), CapturedTypeMarker {
+) : ConeSimpleKotlinType(emptyArray(), attrs, _nullability), CapturedTypeMarker {
     constructor(
         captureStatus: CaptureStatus, lowerType: ConeKotlinType?, projection: ConeTypeProjection,
         typeParameterMarker: TypeParameterMarker
@@ -167,10 +168,7 @@ data class ConeCapturedType(
 
 
 data class ConeDefinitelyNotNullType(val original: ConeSimpleKotlinType) :
-    ConeSimpleKotlinType(original.typeArguments, original.attributes), DefinitelyNotNullTypeMarker {
-
-    override val nullability: ConeNullability
-        get() = ConeNullability.NOT_NULL
+    ConeSimpleKotlinType(original.typeArguments, original.attributes, ConeNullability.NOT_NULL), DefinitelyNotNullTypeMarker {
 
     companion object
 }
@@ -209,9 +207,7 @@ class ConeRawType private constructor(
 class ConeIntersectionType(
     val intersectedTypes: Collection<ConeKotlinType>,
     val alternativeType: ConeKotlinType? = null,
-) : ConeSimpleKotlinType(emptyArray(), getAttributes(intersectedTypes)), IntersectionTypeConstructorMarker {
-    override val nullability: ConeNullability
-        get() = ConeNullability.NOT_NULL
+) : ConeSimpleKotlinType(emptyArray(), getAttributes(intersectedTypes), ConeNullability.NOT_NULL), IntersectionTypeConstructorMarker {
 
     private var hashCode = 0
 

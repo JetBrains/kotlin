@@ -15,10 +15,7 @@ class ConeTypeParameterTypeImpl(
     override val lookupTag: ConeTypeParameterLookupTag,
     isNullable: Boolean,
     attributes: ConeAttributes = ConeAttributes.Empty
-) : ConeTypeParameterType(EMPTY_ARRAY, attributes) {
-    override val nullability: ConeNullability = ConeNullability.create(isNullable)
-
-
+) : ConeTypeParameterType(EMPTY_ARRAY, attributes, ConeNullability.create(isNullable)) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

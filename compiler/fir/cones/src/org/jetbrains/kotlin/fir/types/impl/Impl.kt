@@ -17,9 +17,7 @@ class ConeClassLikeTypeImpl(
     typeArguments: Array<out ConeTypeProjection>,
     isNullable: Boolean,
     attributes: ConeAttributes = ConeAttributes.Empty
-) : ConeClassLikeType(typeArguments, attributes) {
-    override val nullability: ConeNullability = ConeNullability.create(isNullable)
-
+) : ConeClassLikeType(typeArguments, attributes, ConeNullability.create(isNullable)) {
     // Cached expanded type and the relevant session
     var cachedExpandedType: WeakPair<*, ConeClassLikeType>? = null
 
