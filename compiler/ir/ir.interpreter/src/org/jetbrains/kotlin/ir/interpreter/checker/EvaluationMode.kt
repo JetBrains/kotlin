@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.interpreter.*
 import org.jetbrains.kotlin.ir.interpreter.hasAnnotation
-import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.isString
 import org.jetbrains.kotlin.ir.types.isUnsignedType
@@ -19,14 +18,23 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-enum class EvaluationMode(protected val mustCheckBody: Boolean) {
-    FULL(mustCheckBody = true) {
+enum class EvaluationMode {
+    FULL {
         override fun canEvaluateFunction(function: IrFunction, context: IrCall?): Boolean = true
         override fun canEvaluateEnumValue(enumEntry: IrGetEnumValue, context: IrCall?): Boolean = true
-        override fun canEvaluateReference(reference: IrCallableReference<*>, context: IrCall?): Boolean = true
+        override fun canEvaluateFunctionExpression(expression: IrFunctionExpression, context: IrCall?): Boolean = true
+        override fun canEvaluateCallableReference(reference: IrCallableReference<*>, context: IrCall?): Boolean = true
+        override fun canEvaluateClassReference(reference: IrDeclarationReference): Boolean = true
+
+        override fun canEvaluateBlock(block: IrBlock): Boolean = true
+        override fun canEvaluateComposite(composite: IrComposite): Boolean = true
+
+        override fun canEvaluateExpression(expression: IrExpression): Boolean = true
+
+        override fun mustCheckBodyOf(function: IrFunction): Boolean = true
     },
 
-    ONLY_BUILTINS(mustCheckBody = false) {
+    ONLY_BUILTINS {
         private val allowedMethodsOnPrimitives = setOf(
             "not", "unaryMinus", "unaryPlus", "inv",
             "toString", "toChar", "toByte", "toShort", "toInt", "toLong", "toFloat", "toDouble",
@@ -59,20 +67,21 @@ enum class EvaluationMode(protected val mustCheckBody: Boolean) {
                 parentType == null -> fqName in allowedExtensionFunctions || fqName in allowedBuiltinExtensionFunctions
                 parentType.isPrimitiveType() -> function.name.asString() in allowedMethodsOnPrimitives
                 parentType.isString() -> function.name.asString() in allowedMethodsOnStrings
-                parentType.isAny() -> function.name.asString() == "toString" && context?.dispatchReceiver !is IrGetObjectValue
                 parent.isObject -> parent.parentClassOrNull?.defaultType?.let { it.isPrimitiveType() || it.isUnsigned() } == true
                 parentType.isUnsignedType() && function is IrConstructor -> true
                 else -> fqName in allowedExtensionFunctions || fqName in allowedBuiltinExtensionFunctions
             }
         }
 
-        override fun canEvaluateEnumValue(enumEntry: IrGetEnumValue, context: IrCall?): Boolean = false
-        override fun canEvaluateReference(reference: IrCallableReference<*>, context: IrCall?): Boolean = false
+        override fun canEvaluateBlock(block: IrBlock): Boolean = block.statements.size == 1
+        override fun canEvaluateExpression(expression: IrExpression): Boolean = expression is IrCall
     },
 
-    ONLY_INTRINSIC_CONST(mustCheckBody = false) {
+    ONLY_INTRINSIC_CONST {
         override fun canEvaluateFunction(function: IrFunction, context: IrCall?): Boolean {
-            return function.isCompileTimePropertyAccessor() || function.isMarkedAsIntrinsicConstEvaluation() || context.isIntrinsicConstEvaluationNameProperty()
+            return function.isCompileTimePropertyAccessor() ||
+                    function.isMarkedAsIntrinsicConstEvaluation() ||
+                    context.isIntrinsicConstEvaluationNameProperty()
         }
 
         private fun IrFunction?.isCompileTimePropertyAccessor(): Boolean {
@@ -84,9 +93,12 @@ enum class EvaluationMode(protected val mustCheckBody: Boolean) {
             return context.isIntrinsicConstEvaluationNameProperty()
         }
 
-        override fun canEvaluateReference(reference: IrCallableReference<*>, context: IrCall?): Boolean {
+        override fun canEvaluateCallableReference(reference: IrCallableReference<*>, context: IrCall?): Boolean {
             return context.isIntrinsicConstEvaluationNameProperty()
         }
+
+        override fun canEvaluateBlock(block: IrBlock): Boolean = block.origin == IrStatementOrigin.WHEN || block.statements.size == 1
+        override fun canEvaluateExpression(expression: IrExpression): Boolean = expression is IrCall || expression is IrWhen
 
         private fun IrCall?.isIntrinsicConstEvaluationNameProperty(): Boolean {
             if (this == null) return false
@@ -96,24 +108,22 @@ enum class EvaluationMode(protected val mustCheckBody: Boolean) {
         }
     };
 
-    abstract fun canEvaluateFunction(function: IrFunction, context: IrCall? = null): Boolean
-    abstract fun canEvaluateEnumValue(enumEntry: IrGetEnumValue, context: IrCall? = null): Boolean
-    abstract fun canEvaluateReference(reference: IrCallableReference<*>, context: IrCall? = null): Boolean
+    open fun canEvaluateFunction(function: IrFunction, context: IrCall? = null): Boolean = false
+    open fun canEvaluateEnumValue(enumEntry: IrGetEnumValue, context: IrCall? = null): Boolean = false
+    open fun canEvaluateFunctionExpression(expression: IrFunctionExpression, context: IrCall? = null): Boolean = false
+    open fun canEvaluateCallableReference(reference: IrCallableReference<*>, context: IrCall? = null): Boolean = false
+    open fun canEvaluateClassReference(reference: IrDeclarationReference): Boolean = false
 
-    fun mustCheckBodyOf(function: IrFunction): Boolean {
-        if (function.property != null) return true
-        return (mustCheckBody || function.isLocal) && !function.isContract() && !function.isMarkedAsEvaluateIntrinsic()
+    open fun canEvaluateBlock(block: IrBlock): Boolean = false
+    open fun canEvaluateComposite(composite: IrComposite): Boolean {
+        return composite.origin == IrStatementOrigin.DESTRUCTURING_DECLARATION || composite.origin == null
     }
 
-    protected val compileTimeTypeAliases = setOf(
-        "java.lang.StringBuilder", "java.lang.IllegalArgumentException", "java.util.NoSuchElementException"
-    )
+    open fun canEvaluateExpression(expression: IrExpression): Boolean = false
 
-    fun IrDeclaration.isMarkedAsCompileTime() = isMarkedWith(compileTimeAnnotation)
+    open fun mustCheckBodyOf(function: IrFunction): Boolean = false
+
     protected fun IrDeclaration.isMarkedAsIntrinsicConstEvaluation() = isMarkedWith(intrinsicConstEvaluationAnnotation)
-    private fun IrDeclaration.isContract() = isMarkedWith(contractsDslAnnotation)
-    private fun IrDeclaration.isMarkedAsEvaluateIntrinsic() = isMarkedWith(evaluateIntrinsicAnnotation)
-    protected fun IrDeclaration.isCompileTimeTypeAlias() = this.parentClassOrNull?.fqName in compileTimeTypeAliases
 
     protected fun IrDeclaration.isMarkedWith(annotation: FqName): Boolean {
         if (this is IrClass && this.isCompanion) return false
