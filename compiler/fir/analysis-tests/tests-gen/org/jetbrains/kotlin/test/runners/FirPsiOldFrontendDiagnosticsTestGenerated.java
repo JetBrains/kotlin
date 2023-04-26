@@ -36773,6 +36773,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("inconsistentTypeInference_noReporting.kt")
+            public void testInconsistentTypeInference_noReporting() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/inconsistentTypeInference_noReporting.kt");
+            }
+
+            @Test
             @TestMetadata("incorrectCalls.kt")
             public void testIncorrectCalls() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/incorrectCalls.kt");
@@ -36842,6 +36848,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             @TestMetadata("upperBoundViolation.kt")
             public void testUpperBoundViolation() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/upperBoundViolation.kt");
+            }
+
+            @Test
+            @TestMetadata("upperBoundViolation_noReporting.kt")
+            public void testUpperBoundViolation_noReporting() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/upperBoundViolation_noReporting.kt");
             }
 
             @Test

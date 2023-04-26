@@ -185,7 +185,7 @@ class DiagnosticReporterByTrackingStrategy(
     private fun unknownError(diagnostic: KotlinCallDiagnostic, onTarget: String) {
         if (AbstractTypeChecker.RUN_SLOW_ASSERTIONS) {
             throw AssertionError("$onTarget should not be called with ${diagnostic::class.java}")
-        } else {
+        } else if (reportAdditionalErrors) {
             trace.report(
                 NEW_INFERENCE_UNKNOWN_ERROR.on(
                     psiKotlinCall.psiCall.callElement,
@@ -567,15 +567,17 @@ class DiagnosticReporterByTrackingStrategy(
                 val originalCall = (position as DeclaredUpperBoundConstraintPositionImpl).kotlinCall
                 val typeParameterDescriptor = position.typeParameter
                 val ownerDescriptor = typeParameterDescriptor.containingDeclaration
-                trace.reportDiagnosticOnce(
-                    UPPER_BOUND_VIOLATION_IN_CONSTRAINT.on(
-                        (originalCall as PSIKotlinCall).psiCall.callElement,
-                        typeParameterDescriptor.name,
-                        ownerDescriptor.name,
-                        error.upperKotlinType,
-                        error.lowerKotlinType
+                if (reportAdditionalErrors) {
+                    trace.reportDiagnosticOnce(
+                        UPPER_BOUND_VIOLATION_IN_CONSTRAINT.on(
+                            (originalCall as PSIKotlinCall).psiCall.callElement,
+                            typeParameterDescriptor.name,
+                            ownerDescriptor.name,
+                            error.upperKotlinType,
+                            error.lowerKotlinType
+                        )
                     )
-                )
+                }
             }
             is DelegatedPropertyConstraintPosition<*> -> {
                 // DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE, reported later
@@ -590,7 +592,7 @@ class DiagnosticReporterByTrackingStrategy(
             SimpleConstraintSystemConstraintPosition -> {
                 if (AbstractTypeChecker.RUN_SLOW_ASSERTIONS) {
                     throw AssertionError("Constraint error in unexpected position: $position")
-                } else {
+                } else if (reportAdditionalErrors) {
                     report(
                         TYPE_MISMATCH_IN_CONSTRAINT.on(
                             psiKotlinCall.psiCall.callElement,
@@ -629,7 +631,11 @@ class DiagnosticReporterByTrackingStrategy(
 
         val expression = argument.psiExpression ?: run {
             val psiCall = (selectorCall as? PSIKotlinCall)?.psiCall ?: psiKotlinCall.psiCall
-            if (context.languageVersionSettings.supportsFeature(LanguageFeature.ProperTypeInferenceConstraintsProcessing)) {
+            // Note: we don't report RECEIVER_TYPE_MISMATCH w/out ProperTypeInferenceConstraintsProcessing
+            // See KT-57854. This is needed for intellij.go.tests (recursive generics case) compilation with K1
+            if (context.languageVersionSettings.supportsFeature(LanguageFeature.ProperTypeInferenceConstraintsProcessing) &&
+                reportAdditionalErrors
+            ) {
                 report(
                     RECEIVER_TYPE_MISMATCH.on(
                         psiCall.calleeExpression ?: psiCall.callElement, error.upperKotlinType, error.lowerKotlinType
@@ -656,6 +662,17 @@ class DiagnosticReporterByTrackingStrategy(
         }
         report(typeMismatchDiagnostic.on(deparenthesized, error.upperKotlinType, error.lowerKotlinType))
     }
+
+    /**
+     * Should we report additional errors appeared in Kotlin compiler 1.9.0 or not
+     *
+     * This property appeared in Kotlin compiler 1.9.0, after we discovered some "swallowed" diagnostics in this class.
+     * We added a set of diagnostics (see property usages) to have additional protection before migrating to K2.
+     * For details see KT-55055, KT-55056, KT-55079.
+     * This property is normally true, but can be disabled with a feature NoAdditionalErrorsInK1DiagnosticReporter
+     */
+    private val reportAdditionalErrors: Boolean
+        get() = !context.languageVersionSettings.supportsFeature(LanguageFeature.NoAdditionalErrorsInK1DiagnosticReporter)
 
     override fun constraintError(error: ConstraintSystemError) {
         when (error) {
