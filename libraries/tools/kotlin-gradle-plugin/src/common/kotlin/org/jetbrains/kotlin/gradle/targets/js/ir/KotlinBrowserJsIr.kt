@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Action
+import org.gradle.api.DomainObjectCollection
+import org.gradle.api.DomainObjectSet
 import org.gradle.api.Task
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -42,8 +44,10 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
     private val nodeJs = project.rootProject.kotlinNodeJsExtension
 
-    private val webpackTaskConfigurations: MutableList<Action<KotlinWebpack>> = mutableListOf()
-    private val runTaskConfigurations: MutableList<Action<KotlinWebpack>> = mutableListOf()
+    private val webpackTaskConfigurations: DomainObjectSet<Action<KotlinWebpack>> = project.objects.domainObjectSet(Action::class.java)
+            as DomainObjectSet<Action<KotlinWebpack>>
+    private val runTaskConfigurations: DomainObjectSet<Action<KotlinWebpack>> = project.objects.domainObjectSet(Action::class.java)
+            as DomainObjectSet<Action<KotlinWebpack>>
 
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside browser using karma and webpack"
@@ -267,7 +271,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         mode: KotlinJsBinaryMode,
         inputFilesDirectory: Provider<File>,
         entryModuleName: Provider<String>,
-        configurationActions: List<Action<KotlinWebpack>>,
+        configurationActions: DomainObjectSet<Action<KotlinWebpack>>,
         nodeJs: NodeJsRootExtension,
         defaultArchivesName: Property<String>,
     ) {
@@ -285,7 +289,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
         mainOutputFileName.convention(defaultArchivesName.orElse("main").map { "$it.js" }).finalizeValueOnRead()
 
-        configurationActions.forEach { configure ->
+        configurationActions.all { configure ->
             configure.execute(this)
         }
     }

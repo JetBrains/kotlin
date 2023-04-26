@@ -498,6 +498,51 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
             }
         }
     }
+
+    @DisplayName("Webpack config block works after task configured")
+    @GradleTest
+    fun testWebpackConfigWorksAfterTaskConfigured(gradleVersion: GradleVersion) {
+        project("js-library-with-executable", gradleVersion) {
+            buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
+
+            buildGradleKts.modify { originalScript ->
+                buildString {
+                    append(originalScript)
+                    append(
+                        """
+                        |
+                        |kotlin {
+                        |   js {
+                        |       browser {
+                        |       }
+                        |   }
+                        |}
+                        |
+                        |tasks.all {
+		                |       // do nothing
+	                    |}
+                        |
+                        |kotlin {
+                        |   js {
+                        |       browser {
+                        |          commonWebpackConfig {
+                        |               outputFileName = "CORRECT_NAME.js"
+	                    |           }
+                        |       }
+                        |   }
+                        |}
+                        |
+                        """.trimMargin()
+                    )
+                }
+            }
+
+            build("browserProductionWebpack") {
+                assertTasksExecuted(":browserProductionWebpack")
+                assertFileExists(projectPath.resolve("build/${Distribution.DIST}/js/productionExecutable/CORRECT_NAME.js"))
+            }
+        }
+    }
 }
 
 @JsGradlePluginTests
