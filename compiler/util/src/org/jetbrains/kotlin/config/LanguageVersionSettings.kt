@@ -313,6 +313,13 @@ enum class LanguageFeature(
     // equality & identity operators in cases where K1 would report warnings or would not report anything.
     ReportErrorsForComparisonOperators(sinceVersion = null, kind = BUG_FIX),
 
+    // Disabled for indefinite time.
+    // Disables reporting of new errors (see KT-55055, KT-55056, KT-55079) in DiagnosticReporterByTrackingStrategy.
+    // All these errors are "lost" errors which existed always, but wasn't reported before 1.9.0.
+    // When this feature is disabled, all these "lost" errors are reported properly.
+    // When this feature is enabled, no such errors are reported.
+    NoAdditionalErrorsInK1DiagnosticReporter(sinceVersion = null, kind = OTHER),
+
     // Experimental features
 
     BreakContinueInInlineLambdas(null), // KT-1436
