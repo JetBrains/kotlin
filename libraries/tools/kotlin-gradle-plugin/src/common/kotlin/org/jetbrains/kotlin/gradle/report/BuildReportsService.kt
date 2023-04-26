@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.build.report.statistics.BuildFinishStatisticsData
 import org.jetbrains.kotlin.build.report.statistics.CompileStatisticsData
 import org.jetbrains.kotlin.build.report.statistics.BuildStartParameters
 import org.jetbrains.kotlin.build.report.statistics.StatTag
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionData
 import org.jetbrains.kotlin.gradle.report.data.BuildOperationRecord
 import org.jetbrains.kotlin.utils.addToStdlib.measureTimeMillisWithResult
@@ -90,6 +91,10 @@ class BuildReportsService {
 
         reportingSettings.singleOutputFile?.also { singleOutputFile ->
             MetricsWriter(singleOutputFile.absoluteFile).process(buildData, log)
+        }
+
+        if (reportingSettings.experimentalTryK2ConsoleOutput) {
+            reportTryK2ToConsole(buildData)
         }
 
         //It's expected that bad internet connection can cause a significant delay for big project
@@ -225,6 +230,32 @@ class BuildReportsService {
     ) {
         buildScan.buildScan.value(data.taskName, customValue)
         customValues++
+    }
+
+    private fun reportTryK2ToConsole(
+        data: BuildExecutionData
+    ) {
+        val tasksData = data.buildOperationRecord
+            .filterIsInstance<TaskRecord>()
+            .filter {
+                // Filtering by only KGP tasks and by those that actually do compilation
+                it.isFromKotlinPlugin && it.kotlinLanguageVersion != null
+            }
+        log.warn("##### 'kotlin.experimental.tryK2' results (Kotlin/Native not checked) #####")
+        if (tasksData.isEmpty()) {
+            log.warn("No Kotlin compilation tasks have run")
+            log.warn("#####")
+        } else {
+            val tasksCountWithKotlin2 = tasksData.count {
+                it.kotlinLanguageVersion != null && it.kotlinLanguageVersion >= KotlinVersion.KOTLIN_2_0
+            }
+            val taskWithK2Percent = (tasksCountWithKotlin2 * 100) / tasksData.count()
+            val statsData = tasksData.map { it.path to it.kotlinLanguageVersion?.version }
+            statsData.forEach { record ->
+                log.warn("${record.first}: ${record.second} language version")
+            }
+            log.warn("##### $taskWithK2Percent% ($tasksCountWithKotlin2/${tasksData.count()}) tasks have compiled with Kotlin 2 #####")
+        }
     }
 
     private fun readableString(data: CompileStatisticsData): List<String> {

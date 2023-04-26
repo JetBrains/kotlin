@@ -20,10 +20,15 @@ private val availableMetrics = BuildTime.values().map { it.name } + BuildPerform
 
 internal fun reportingSettings(project: Project): ReportingSettings {
     val properties = PropertiesProvider(project)
-    val buildReportOutputTypes = properties.buildReportOutputs.map {
-        BuildReportType.values().firstOrNull { brt -> brt.name == it.trim().toUpperCaseAsciiOnly() }
-            ?: throw IllegalStateException("Unknown output type: $it")
-    }.toMutableList() //temporary solution. support old property
+    val experimentalTryK2Enabled = properties.kotlinExperimentalTryK2.get()
+    val buildReportOutputTypes = properties.buildReportOutputs
+        .map {
+            BuildReportType.values().firstOrNull { brt -> brt.name == it.trim().toUpperCaseAsciiOnly() }
+                ?: throw IllegalStateException("Unknown output type: $it")
+        }
+        .plus(if (experimentalTryK2Enabled) listOf(BuildReportType.TRY_K2_CONSOLE) else emptyList())
+        .toMutableList() //temporary solution. support old property
+
     val buildReportMode =
         when {
             buildReportOutputTypes.isEmpty() -> BuildReportMode.NONE
@@ -82,6 +87,7 @@ internal fun reportingSettings(project: Project): ReportingSettings {
         buildReportOutputs = buildReportOutputTypes,
         singleOutputFile = singleOutputFile ?: oldSingleBuildMetric,
         includeCompilerArguments = properties.buildReportIncludeCompilerArguments,
+        experimentalTryK2ConsoleOutput = experimentalTryK2Enabled
     )
 }
 

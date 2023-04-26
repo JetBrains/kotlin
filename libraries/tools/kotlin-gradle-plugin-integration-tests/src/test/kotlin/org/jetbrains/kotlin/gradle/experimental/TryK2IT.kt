@@ -30,6 +30,7 @@ class TryK2IT : KGPBaseTest() {
 
             build("--dry-run") {
                 assertOutputContainsExactTimes(EXPERIMENTAL_TRY_K2_WARNING_MESSAGE, 1)
+                assertOutputContains("No Kotlin compilation tasks have run")
             }
         }
     }
@@ -49,6 +50,78 @@ class TryK2IT : KGPBaseTest() {
                 assertTasksExecuted(":compileKotlin")
 
                 assertCompilerArgument(":compileKotlin", "-language-version 2.0")
+            }
+        }
+    }
+
+    @DisplayName("JVM: build report is not printed")
+    @JvmGradlePluginTests
+    @GradleTest
+    fun buildReportNotPrinted(gradleVersion: GradleVersion) {
+        project(
+            "incrementalMultiproject",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.WARN)
+        ) {
+            build("build") {
+                assertOutputDoesNotContain(
+                    "##### 'kotlin.experimental.tryK2' results (Kotlin/Native not checked) #####"
+                )
+            }
+        }
+    }
+
+    @DisplayName("JVM: report is printed at the end of the build")
+    @JvmGradlePluginTests
+    @GradleTest
+    fun buildReport(gradleVersion: GradleVersion) {
+        project(
+            "incrementalMultiproject",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.WARN)
+        ) {
+            enableTryK2()
+
+            build("build") {
+                assertOutputContains(
+                    """
+                    |##### 'kotlin.experimental.tryK2' results (Kotlin/Native not checked) #####
+                    |:lib:compileKotlin: 2.0 language version
+                    |:app:compileKotlin: 2.0 language version
+                    |##### 100% (2/2) tasks have compiled with Kotlin 2 #####
+                    """.trimMargin().normalizeLineEndings()
+                )
+            }
+        }
+    }
+
+    @DisplayName("JVM: report is printed at the end of the build in case of compilation error")
+    @JvmGradlePluginTests
+    @GradleTest
+    fun buildReportOnCompilationError(gradleVersion: GradleVersion) {
+        project(
+            "incrementalMultiproject",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.WARN)
+        ) {
+            enableTryK2()
+
+            subProject("app").kotlinSourcesDir().resolve("foo/AA.kt").appendText(
+                """
+                |
+                |ZZZZ
+                """.trimMargin()
+            )
+
+            buildAndFail("build", forceOutput = true) {
+                assertOutputContains(
+                    """
+                    |##### 'kotlin.experimental.tryK2' results (Kotlin/Native not checked) #####
+                    |:lib:compileKotlin: 2.0 language version
+                    |:app:compileKotlin: 2.0 language version
+                    |##### 100% (2/2) tasks have compiled with Kotlin 2 #####
+                    """.trimMargin().normalizeLineEndings()
+                )
             }
         }
     }
