@@ -1315,6 +1315,45 @@ __attribute__((swift_name("CKt57373")))
 @property (readonly) int32_t bar __attribute__((swift_name("bar")));
 @end
 
+__attribute__((swift_name("Ckt57791")))
+@interface KtCkt57791 : KtBase
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+- (int32_t)baz __attribute__((swift_name("baz()")));
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("Okt57791")))
+@interface KtOkt57791 : KtCkt57791
++ (instancetype)alloc __attribute__((unavailable));
++ (instancetype)allocWithZone:(struct _NSZone *)zone __attribute__((unavailable));
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer)) __attribute__((unavailable));
++ (instancetype)new __attribute__((unavailable));
++ (instancetype)okt57791 __attribute__((swift_name("init()")));
+@property (class, readonly, getter=shared) KtOkt57791 *shared __attribute__((swift_name("shared")));
+- (int32_t)baz __attribute__((swift_name("baz()")));
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("Ckt57791Final")))
+@interface KtCkt57791Final : KtCkt57791
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+- (int32_t)baz __attribute__((swift_name("baz()")));
+@end
+
+__attribute__((swift_name("Foo")))
+@protocol KtFoo
+@required
+- (KtCkt57791Final *)getCkt57791 __attribute__((swift_name("getCkt57791()")));
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("Kt57791Kt")))
+@interface KtKt57791Kt : KtBase
++ (BOOL)foobarF:(BOOL)f foo:(id<KtFoo>)foo __attribute__((swift_name("foobar(f:foo:)")));
+@end
+
 __attribute__((objc_subclassing_restricted))
 __attribute__((swift_name("LibraryKt")))
 @interface KtLibraryKt : KtBase

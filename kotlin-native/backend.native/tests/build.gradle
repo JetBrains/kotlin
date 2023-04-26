@@ -6036,6 +6036,13 @@ if (isAppleTarget(project)) {
         swiftSources = ['framework/kt56233']
     }
 
+    frameworkTest("testKt57791Framework") {
+        framework("Kt57791") {
+            sources = ['framework/kt57791']
+        }
+        swiftSources = ['framework/kt57791']
+    }
+
     frameworkTest("testPermanentObjectsFramework") {
         enabled = isExperimentalMM && !isNoopGC // Requires gc to actually happen.
         framework("PermanentObjects") {
