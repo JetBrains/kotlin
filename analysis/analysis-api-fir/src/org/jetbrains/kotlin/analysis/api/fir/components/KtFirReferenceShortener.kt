@@ -85,9 +85,14 @@ internal class KtFirReferenceShortener(
             qualifiersToShorten = emptyList(),
         )
 
-        val towerContext =
-            LowLevelFirApiFacadeForResolveOnAir.onAirGetTowerContextProvider(firResolveSession, declarationToVisit)
-
+        val towerContext = when (declarationToVisit) {
+            is KtFile -> {
+                LowLevelFirApiFacadeForResolveOnAir.getOnAirTowerDataContextProviderForTheWholeFile(firResolveSession, declarationToVisit)
+            }
+            else -> {
+                LowLevelFirApiFacadeForResolveOnAir.onAirGetTowerContextProvider(firResolveSession, declarationToVisit)
+            }
+        }
         //TODO: collect all usages of available symbols in the file and prevent importing symbols that could introduce name clashes, which
         // may alter the meaning of existing code.
         val collector = ElementsToShortenCollector(

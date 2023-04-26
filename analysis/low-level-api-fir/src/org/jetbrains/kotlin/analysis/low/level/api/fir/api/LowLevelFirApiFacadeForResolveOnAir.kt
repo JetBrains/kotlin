@@ -110,6 +110,21 @@ object LowLevelFirApiFacadeForResolveOnAir {
         }
     }
 
+    fun getOnAirTowerDataContextProviderForTheWholeFile(
+        firResolveSession: LLFirResolveSession,
+        ktFile: KtFile,
+    ): FirTowerContextProvider {
+        val ktModule = ktFile.getKtModule(firResolveSession.project)
+        val session = firResolveSession.getSessionFor(ktModule) as LLFirResolvableModuleSession
+        val moduleComponents = session.moduleComponents
+
+        val onAirFirFile = RawFirNonLocalDeclarationBuilder.buildNewFile(session, session.kotlinScopeProvider, ktFile)
+        val target = LLFirWholeFileResolveTarget(onAirFirFile)
+        val collector = FirTowerDataContextAllElementsCollector()
+        moduleComponents.firModuleLazyDeclarationResolver.lazyResolveTarget(target, FirResolvePhase.BODY_RESOLVE, collector)
+        return collector
+    }
+
     fun onAirGetTowerContextProvider(
         firResolveSession: LLFirResolveSession,
         place: KtElement,
@@ -117,13 +132,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
         require(firResolveSession is LLFirResolvableResolveSession)
 
         return if (place is KtFile) {
-            FirTowerDataContextAllElementsCollector().also { collector ->
-                val session = firResolveSession.getSessionFor(place.getKtModule(firResolveSession.project)) as LLFirResolvableModuleSession
-                val moduleComponents = session.moduleComponents
-                val onAirFirFile = RawFirNonLocalDeclarationBuilder.buildNewFile(session, session.kotlinScopeProvider, place)
-                val target = LLFirWholeFileResolveTarget(onAirFirFile)
-                moduleComponents.firModuleLazyDeclarationResolver.lazyResolveTarget(target, FirResolvePhase.BODY_RESOLVE, collector)
-            }
+            FileTowerProvider(place, onAirGetTowerContextForFile(firResolveSession, place))
         } else {
             val validPlace = PsiTreeUtil.findFirstParent(place, false) {
                 RawFirReplacement.isApplicableForReplacement(it as KtElement)
