@@ -18,6 +18,7 @@ dependencies {
     api(project(":compiler:backend.jvm.entrypoint"))
     api(project(":kotlin-build-common"))
     api(project(":daemon-common"))
+    api(project(":compiler:build-tools:kotlin-build-statistics"))
     compileOnly(intellijCore())
 
     testApi(commonDependency("junit:junit"))
@@ -42,10 +43,12 @@ sourceSets {
 projectTest(parallel = true) {
     workingDir = rootDir
     dependsOn(":kotlin-stdlib-js-ir:packFullRuntimeKLib")
+    useJsIrBoxTests(version = version, buildDir = "$buildDir/")
 }
 
 projectTest("testJvmICWithJdk11", parallel = true) {
     workingDir = rootDir
+    useJsIrBoxTests(version = version, buildDir = "$buildDir/")
     filter {
         includeTestsMatching("org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunnerTestGenerated*")
     }

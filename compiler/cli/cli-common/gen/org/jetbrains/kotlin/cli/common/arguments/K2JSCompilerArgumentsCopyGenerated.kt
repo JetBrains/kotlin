@@ -24,6 +24,8 @@ fun copyK2JSCompilerArguments(from: K2JSCompilerArguments, to: K2JSCompilerArgum
     to.irBaseClassInMetadata = from.irBaseClassInMetadata
     to.irBuildCache = from.irBuildCache
     to.irDce = from.irDce
+    to.irDceDumpDeclarationIrSizesToFile = from.irDceDumpDeclarationIrSizesToFile
+    to.irDceDumpReachabilityInfoToFile = from.irDceDumpReachabilityInfoToFile
     to.irDcePrintReachabilityInfo = from.irDcePrintReachabilityInfo
     to.irDceRuntimeDiagnostic = from.irDceRuntimeDiagnostic
     to.irGenerateInlineAnonymousFunctions = from.irGenerateInlineAnonymousFunctions

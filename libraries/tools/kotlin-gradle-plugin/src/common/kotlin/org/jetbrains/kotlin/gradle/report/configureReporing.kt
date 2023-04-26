@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.gradle.report
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.build.report.FileReportSettings
+import org.jetbrains.kotlin.build.report.HttpReportSettings
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTime
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
@@ -13,7 +15,6 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_BUILD_REPORT_HTTP_URL
 import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationEnabled
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
-
 
 private val availableMetrics = BuildTime.values().map { it.name } + BuildPerformanceMetric.values().map { it.name }
 

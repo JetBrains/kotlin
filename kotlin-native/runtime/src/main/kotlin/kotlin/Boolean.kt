@@ -51,6 +51,7 @@ public class Boolean private constructor() : Comparable<Boolean> {
     @kotlin.internal.IntrinsicConstEvaluation
     external public override fun compareTo(other: Boolean): Int
 
+    @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
     @kotlin.internal.IntrinsicConstEvaluation
     public fun equals(other: Boolean): Boolean = kotlin.native.internal.areEqualByValue(this, other)
 

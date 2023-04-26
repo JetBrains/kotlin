@@ -777,56 +777,31 @@ public class IrWriteFlagsTestGenerated extends AbstractIrWriteFlagsTest {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/jvm8/defaults"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
-            @TestMetadata("defaultMethod.kt")
-            public void testDefaultMethod() throws Exception {
-                runTest("compiler/testData/writeFlags/jvm8/defaults/defaultMethod.kt");
-            }
-
-            @TestMetadata("defaultProperty.kt")
-            public void testDefaultProperty() throws Exception {
-                runTest("compiler/testData/writeFlags/jvm8/defaults/defaultProperty.kt");
-            }
-
-            @TestMetadata("onlyJvmDefaultsOnInterface.kt")
-            public void testOnlyJvmDefaultsOnInterface() throws Exception {
-                runTest("compiler/testData/writeFlags/jvm8/defaults/onlyJvmDefaultsOnInterface.kt");
-            }
-
-            @TestMetadata("privateAccessorNaming.kt")
-            public void testPrivateAccessorNaming() throws Exception {
-                runTest("compiler/testData/writeFlags/jvm8/defaults/privateAccessorNaming.kt");
-            }
-
-            @TestMetadata("propertyAnnotation.kt")
-            public void testPropertyAnnotation() throws Exception {
-                runTest("compiler/testData/writeFlags/jvm8/defaults/propertyAnnotation.kt");
-            }
-
-            @TestMetadata("compiler/testData/writeFlags/jvm8/defaults/compatibility")
+            @TestMetadata("compiler/testData/writeFlags/jvm8/defaults/all-compatibility")
             @TestDataPath("$PROJECT_ROOT")
             @RunWith(JUnit3RunnerWithInners.class)
-            public static class Compatibility extends AbstractIrWriteFlagsTest {
+            public static class All_compatibility extends AbstractIrWriteFlagsTest {
                 private void runTest(String testDataFilePath) throws Exception {
                     KotlinTestUtils.runTest(this::doTest, TargetBackend.JVM_IR, testDataFilePath);
                 }
 
-                public void testAllFilesPresentInCompatibility() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/jvm8/defaults/compatibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+                public void testAllFilesPresentInAll_compatibility() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/writeFlags/jvm8/defaults/all-compatibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
                 }
 
                 @TestMetadata("defaultImplementations.kt")
                 public void testDefaultImplementations() throws Exception {
-                    runTest("compiler/testData/writeFlags/jvm8/defaults/compatibility/defaultImplementations.kt");
+                    runTest("compiler/testData/writeFlags/jvm8/defaults/all-compatibility/defaultImplementations.kt");
                 }
 
                 @TestMetadata("propertyAccessors.kt")
                 public void testPropertyAccessors() throws Exception {
-                    runTest("compiler/testData/writeFlags/jvm8/defaults/compatibility/propertyAccessors.kt");
+                    runTest("compiler/testData/writeFlags/jvm8/defaults/all-compatibility/propertyAccessors.kt");
                 }
 
                 @TestMetadata("propertyAnnotation.kt")
                 public void testPropertyAnnotation() throws Exception {
-                    runTest("compiler/testData/writeFlags/jvm8/defaults/compatibility/propertyAnnotation.kt");
+                    runTest("compiler/testData/writeFlags/jvm8/defaults/all-compatibility/propertyAnnotation.kt");
                 }
             }
         }

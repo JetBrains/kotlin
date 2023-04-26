@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.fir
 
 import com.intellij.openapi.project.Project
-import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.analysis.api.KtStarTypeProjection
 import org.jetbrains.kotlin.analysis.api.KtTypeArgumentWithVariance
@@ -25,7 +24,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecific
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withConeTypeEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirSymbolEntry
-import org.jetbrains.kotlin.analysis.providers.createPackageProvider
+import org.jetbrains.kotlin.analysis.providers.KotlinPackageProvider
 import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
@@ -106,7 +105,7 @@ internal class KtSymbolByFirBuilder constructor(
 
     fun buildScriptSymbol(firSymbol: FirScriptSymbol) = KtFirScriptSymbol(firSymbol, analysisSession)
 
-    private val packageProvider = project.createPackageProvider(GlobalSearchScope.allScope(project))//todo scope
+    private val packageProvider: KotlinPackageProvider get() = analysisSession.useSitePackageProvider
 
     fun createPackageSymbolIfOneExists(packageFqName: FqName): KtFirPackageSymbol? {
         val exists = packageProvider.doesPackageExist(packageFqName, analysisSession.targetPlatform)
@@ -399,6 +398,12 @@ internal class KtSymbolByFirBuilder constructor(
             checkRequirementForBuildingSymbol<KtFirPropertySetterSymbol>(firSymbol, firSymbol.isSetter)
             return symbolsCache.cache(firSymbol) {
                 KtFirPropertySetterSymbol(firSymbol, analysisSession)
+            }
+        }
+
+        fun buildBackingFieldSymbol(firSymbol: FirBackingFieldSymbol): KtFirBackingFieldSymbol {
+            return symbolsCache.cache(firSymbol) {
+                KtFirBackingFieldSymbol(firSymbol, analysisSession)
             }
         }
 

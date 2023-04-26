@@ -269,6 +269,7 @@ class Framework(
     compilation: KotlinNativeCompilation
 ) : AbstractNativeLibrary(name, baseName, buildType, compilation), HasAttributes {
 
+    @Transient // Is required configuration cache support for KotlinNative tasks that capture whole binary object as task state
     private val attributeContainer = HierarchyAttributeContainer(parent = compilation.attributes)
 
     override fun getAttributes() = attributeContainer

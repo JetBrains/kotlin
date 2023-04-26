@@ -16,11 +16,13 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
+import java.io.File
 import java.util.*
 
 abstract class UsefulDeclarationProcessor(
     private val printReachabilityInfo: Boolean,
-    protected val removeUnusedAssociatedObjects: Boolean
+    protected val removeUnusedAssociatedObjects: Boolean,
+    private val dumpReachabilityInfoToFile: String? = null
 ) {
     abstract val context: JsCommonBackendContext
 
@@ -82,20 +84,15 @@ abstract class UsefulDeclarationProcessor(
     private fun addReachabilityInfoIfNeeded(
         from: IrDeclaration,
         to: IrDeclaration,
-        description: String?,
+        description: String,
         isContagiousOverridableDeclaration: Boolean,
     ) {
-        if (!printReachabilityInfo) return
-        val fromFqn = (from as? IrDeclarationWithName)?.fqNameWhenAvailable?.asString() ?: "<unknown>"
-        val toFqn = (to as? IrDeclarationWithName)?.fqNameWhenAvailable?.asString() ?: "<unknown>"
-        val comment = (description ?: "") + (if (isContagiousOverridableDeclaration) "[CONTAGIOUS!]" else "")
-        val info = "\"$fromFqn\" -> \"$toFqn\"" + (if (comment.isBlank()) "" else " // $comment")
-        reachabilityInfo.add(info)
+        reachabilityInfos?.add(ReachabilityInfo(from, to, description, isContagiousOverridableDeclaration))
     }
 
     protected fun IrDeclaration.enqueue(
         from: IrDeclaration,
-        description: String?,
+        description: String,
         isContagious: Boolean = true,
     ) {
         // Ignore non-external IrProperty because we don't want to generate code for them and codegen doesn't support it.
@@ -133,11 +130,12 @@ abstract class UsefulDeclarationProcessor(
     //
     // The collection must be a subset of [result] set.
     private val contagiousReachableDeclarations = hashSetOf<IrOverridableDeclaration<*>>()
-    protected val constructedClasses = hashSetOf<IrClass>()
-    private val reachabilityInfo: MutableSet<String> = if (printReachabilityInfo) linkedSetOf() else Collections.emptySet()
+    protected val constructedClasses = linkedSetOf<IrClass>()
+    private val reachabilityInfos =
+        if (printReachabilityInfo || dumpReachabilityInfoToFile != null) mutableListOf<ReachabilityInfo>() else null
     private val queue = ArrayDeque<IrDeclaration>()
     protected val result = hashSetOf<IrDeclaration>()
-    protected val classesWithObjectAssociations = hashSetOf<IrClass>()
+    protected val classesWithObjectAssociations = linkedSetOf<IrClass>()
 
     val usefulPolyfilledDeclarations = hashSetOf<IrDeclaration>()
 
@@ -268,10 +266,68 @@ abstract class UsefulDeclarationProcessor(
             }
         }
 
-        if (printReachabilityInfo) {
-            reachabilityInfo.forEach(::println)
+        if (reachabilityInfos != null) {
+            if (printReachabilityInfo) {
+                println(transformToDotLikeString(reachabilityInfos))
+            }
+
+            if (dumpReachabilityInfoToFile != null) {
+                val out = File(dumpReachabilityInfoToFile)
+                val stringify = when (out.extension) {
+                    "json" -> ::transformToJsonString
+                    "js" -> ::transformToJsConstDeclaration
+                    else -> ::transformToDotLikeString
+                }
+
+                out.writeText(stringify(reachabilityInfos))
+            }
         }
 
         return result
     }
+}
+
+private data class ReachabilityInfo(
+    val source: IrDeclaration,
+    val target: IrDeclaration,
+    val description: String,
+    val isTargetContagious: Boolean
+)
+
+private fun transformToStringBy(
+    reachabilityInfos: List<ReachabilityInfo>,
+    separator: String,
+    transformer: (sourceFqn: String, targetFqn: String, description: String, isTargetContagious: Boolean) -> String
+): String {
+    return reachabilityInfos
+        .map {
+            transformer(it.source.fqNameForDceDump(), it.target.fqNameForDceDump(), it.description, it.isTargetContagious)
+        }
+        .distinct()
+        .joinToString(separator)
+}
+
+private fun transformToDotLikeString(reachabilityInfos: List<ReachabilityInfo>): String {
+    return transformToStringBy(reachabilityInfos, "\n") { sourceFqn, targetFqn, description, isTargetContagious ->
+        val comment = description + (if (isTargetContagious) "[CONTAGIOUS!]" else "")
+        val info = "\"$sourceFqn\" -> \"$targetFqn\"" + (if (comment.isBlank()) "" else " // $comment")
+
+        info
+    }
+}
+
+private fun transformToJsonString(reachabilityInfos: List<ReachabilityInfo>): String {
+    return "[\n" + transformToStringBy(reachabilityInfos, ",\n") { sourceFqn, targetFqn, description, isTargetContagious ->
+        """
+        |    {
+        |        "source" : "$sourceFqn",
+        |        "target" : "$targetFqn",
+        |        "description" : "$description",
+        |        "isTargetContagious" : $isTargetContagious
+        |    }""".trimMargin()
+    } + "\n]"
+}
+
+private fun transformToJsConstDeclaration(reachabilityInfos: List<ReachabilityInfo>): String {
+    return "const kotlinReachabilityInfos = " + transformToJsonString(reachabilityInfos) + ";"
 }

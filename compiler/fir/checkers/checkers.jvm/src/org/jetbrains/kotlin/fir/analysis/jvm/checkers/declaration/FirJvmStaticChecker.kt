@@ -199,10 +199,8 @@ object FirJvmStaticChecker : FirBasicDeclarationChecker() {
         reporter: DiagnosticReporter,
         targetSource: KtSourceElement?,
     ) {
-        if (
-            declaration is FirProperty && declaration.isConst ||
-            declaration.hasAnnotationNamedAs(StandardClassIds.Annotations.JvmField)
-        ) {
+        if (declaration !is FirProperty) return
+        if (declaration.isConst || declaration.backingField?.hasAnnotationNamedAs(StandardClassIds.Annotations.JvmField) == true) {
             reporter.reportOn(targetSource, FirJvmErrors.JVM_STATIC_ON_CONST_OR_JVM_FIELD, context)
         }
     }

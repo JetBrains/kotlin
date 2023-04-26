@@ -70,10 +70,12 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
             }
         }
 
-        private val METADATA_CACHE = (JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST).flatMap { path ->
-            KotlinJavascriptMetadataUtils.loadMetadata(path).map { metadata ->
-                val parts = KotlinJavascriptSerializationUtil.readModuleAsProto(metadata.body, metadata.version)
-                JsModuleDescriptor(metadata.moduleName, parts.kind, parts.importedModules, parts)
+        private val METADATA_CACHE by lazy {
+            (JsConfig.JS_STDLIB + JsConfig.JS_KOTLIN_TEST).flatMap { path ->
+                KotlinJavascriptMetadataUtils.loadMetadata(path).map { metadata ->
+                    val parts = KotlinJavascriptSerializationUtil.readModuleAsProto(metadata.body, metadata.version)
+                    JsModuleDescriptor(metadata.moduleName, parts.kind, parts.importedModules, parts)
+                }
             }
         }
 

@@ -269,12 +269,13 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
                 @Suppress("DEPRECATION")
                 js(BOTH)
                 linuxX64("linux")
-                android()
+                androidTarget()
             }
         }
 
         project.evaluate()
 
+        @Suppress("DEPRECATION")
         project.kotlinExtension.targets.flatMap { it.compilations }.forEach { compilation ->
             val compilationSourceSets = compilation.allKotlinSourceSets
             val compilationConfigurationNames = compilation.relatedConfigurationNames

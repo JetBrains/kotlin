@@ -10,7 +10,6 @@ package org.jetbrains.kotlin.gradle.unitTests.sources.android
 import com.android.build.gradle.LibraryPlugin
 import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
-import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.sources.android.checker.MultiplatformLayoutV2AndroidStyleSourceDirUsageChecker.AndroidStyleSourceDirUsageDiagnostic
@@ -33,7 +32,7 @@ class MultiplatformAndroidSourceSetLayoutV2DiagnosticsTest {
             compileSdk = 31
         }
         kotlin {
-            android()
+            androidTarget()
         }
     }
 
@@ -45,7 +44,7 @@ class MultiplatformAndroidSourceSetLayoutV2DiagnosticsTest {
             val androidSourceSet = project.findAndroidSourceSet(kotlinSourceSet) ?: return@forEach
             multiplatformAndroidSourceSetLayoutV2.checker.checkCreatedSourceSet(
                 diagnosticReporter = diagnosticsReporter,
-                target = project.multiplatformExtension.android(),
+                target = project.multiplatformExtension.androidTarget(),
                 layout = multiplatformAndroidSourceSetLayoutV2,
                 kotlinSourceSet = kotlinSourceSet,
                 androidSourceSet = androidSourceSet

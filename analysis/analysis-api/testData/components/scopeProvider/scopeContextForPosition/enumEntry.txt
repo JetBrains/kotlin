@@ -45,6 +45,21 @@ scopes:
     callables: 9
       KtKotlinPropertySymbol:
         annotationsList: []
+        backingFieldSymbol: KtBackingFieldSymbol:
+          annotationsList: []
+          callableIdIfNonLocal: null
+          contextReceivers: []
+          isExtension: false
+          name: field
+          origin: PROPERTY_BACKING_FIELD
+          owningProperty: KtKotlinPropertySymbol(<local>/x)
+          receiverParameter: null
+          returnType: KtUsualClassType:
+            annotationsList: []
+            ownTypeArguments: []
+            type: kotlin/String
+          symbolKind: LOCAL
+          typeParameters: []
         callableIdIfNonLocal: null
         contextReceivers: []
         getter: KtPropertyGetterSymbol:
@@ -301,6 +316,21 @@ scopes:
           kotlin/internal/IntrinsicConstEvaluation()
             psi: null
         ]
+        backingFieldSymbol: KtBackingFieldSymbol:
+          annotationsList: []
+          callableIdIfNonLocal: null
+          contextReceivers: []
+          isExtension: false
+          name: field
+          origin: PROPERTY_BACKING_FIELD
+          owningProperty: KtKotlinPropertySymbol(kotlin/Enum.name)
+          receiverParameter: null
+          returnType: KtUsualClassType:
+            annotationsList: []
+            ownTypeArguments: []
+            type: kotlin/String
+          symbolKind: LOCAL
+          typeParameters: []
         callableIdIfNonLocal: kotlin/Enum.name
         contextReceivers: []
         getter: KtPropertyGetterSymbol:
@@ -350,6 +380,21 @@ scopes:
         visibility: Public
       KtKotlinPropertySymbol:
         annotationsList: []
+        backingFieldSymbol: KtBackingFieldSymbol:
+          annotationsList: []
+          callableIdIfNonLocal: null
+          contextReceivers: []
+          isExtension: false
+          name: field
+          origin: PROPERTY_BACKING_FIELD
+          owningProperty: KtKotlinPropertySymbol(kotlin/Enum.ordinal)
+          receiverParameter: null
+          returnType: KtUsualClassType:
+            annotationsList: []
+            ownTypeArguments: []
+            type: kotlin/Int
+          symbolKind: LOCAL
+          typeParameters: []
         callableIdIfNonLocal: kotlin/Enum.ordinal
         contextReceivers: []
         getter: KtPropertyGetterSymbol:
@@ -498,6 +543,7 @@ scopes:
         visibility: Public
       KtKotlinPropertySymbol:
         annotationsList: []
+        backingFieldSymbol: null
         callableIdIfNonLocal: /E.entries
         contextReceivers: []
         getter: KtPropertyGetterSymbol:

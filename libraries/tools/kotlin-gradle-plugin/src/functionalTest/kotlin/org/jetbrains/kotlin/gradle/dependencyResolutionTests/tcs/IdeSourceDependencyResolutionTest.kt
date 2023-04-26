@@ -146,7 +146,7 @@ class IdeSourceDependencyResolutionTest {
                 linuxX64()
                 linuxArm64()
                 jvm()
-                android()
+                androidTarget()
 
                 sourceSets.getByName("commonMain").let { commonMain ->
                     sourceSets.create("jvmAndAndroidMain").let { jvmAndAndroidMain ->

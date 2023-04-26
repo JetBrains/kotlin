@@ -24,10 +24,7 @@ import org.jetbrains.kotlin.analysis.providers.KotlinPackageProvider
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
-import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.psi.*
 import java.util.concurrent.ConcurrentHashMap
@@ -37,14 +34,15 @@ import java.util.concurrent.ConcurrentHashMap
  *
  * Caches generated [KtResolveExtensionFile]s, creates [KotlinDeclarationProvider], [KotlinPackageProvider], [LLFirSymbolProviderNameCache] needed for the [org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider].
  */
-internal abstract class LLFirResolveExtensionTool : FirSessionComponent {
+abstract class LLFirResolveExtensionTool : FirSessionComponent {
     abstract val modificationTrackers: List<ModificationTracker>
-    abstract val declarationProvider: KotlinDeclarationProvider
+    abstract val declarationProvider: LLFirResolveExtensionToolDeclarationProvider
     abstract val packageProvider: KotlinPackageProvider
-    abstract val symbolNameCache: LLFirSymbolProviderNameCache
+    abstract val packageFilter: LLFirResolveExtensionToolPackageFilter
+    internal abstract val symbolNameCache: LLFirSymbolProviderNameCache
 }
 
-internal val FirSession.llResolveExtensionTool: LLFirResolveExtensionTool? by FirSession.nullableSessionComponentAccessor()
+val FirSession.llResolveExtensionTool: LLFirResolveExtensionTool? by FirSession.nullableSessionComponentAccessor()
 
 internal class LLFirNonEmptyResolveExtensionTool(
     session: LLFirSession,
@@ -56,11 +54,11 @@ internal class LLFirNonEmptyResolveExtensionTool(
 
     private val fileProvider = LLFirResolveExtensionsFileProvider(extensions)
 
-    private val packageFilter = LLFirResolveExtensionToolPackageFilter(extensions)
+    override val packageFilter = LLFirResolveExtensionToolPackageFilter(extensions)
 
     override val modificationTrackers by lazy { extensions.map { it.getModificationTracker() } }
 
-    override val declarationProvider: KotlinDeclarationProvider =
+    override val declarationProvider: LLFirResolveExtensionToolDeclarationProvider =
         LLFirResolveExtensionToolDeclarationProvider(fileProvider, session.ktModule)
 
     override val packageProvider: KotlinPackageProvider = LLFirResolveExtensionToolPackageProvider(packageFilter)
@@ -100,27 +98,77 @@ private class LLFirResolveExtensionToolNameCache(
     }
 }
 
-private class LLFirResolveExtensionToolPackageFilter(
+class LLFirResolveExtensionToolPackageFilter(
     private val extensions: List<KtResolveExtension>
 ) {
-    val allPackages: Set<FqName> by lazy {
-        forbidAnalysis {
+    private val packageSubPackages: Map<FqName, Set<Name>> by lazy {
+        val packagesFromExtensions = forbidAnalysis {
             extensions.flatMapTo(mutableSetOf()) { it.getContainedPackages() }
         }
+        createSubPackagesMapping(packagesFromExtensions)
+    }
+
+    fun getAllPackages(): Set<FqName> {
+        return packageSubPackages.keys
+    }
+
+    fun getAllSubPackages(packageFqName: FqName): Set<Name> {
+        return packageSubPackages[packageFqName].orEmpty()
     }
 
     fun packageExists(packageFqName: FqName): Boolean {
-        return packageFqName in allPackages
+        return packageFqName in packageSubPackages
+    }
+
+    private fun createSubPackagesMapping(packages: Set<FqName>): Map<FqName, Set<Name>> {
+        return buildMap<FqName, MutableSet<Name>> {
+            for (packageName in packages) {
+                collectAllSubPackages(packageName)
+            }
+        }
+    }
+
+    private fun MutableMap<FqName, MutableSet<Name>>.collectAllSubPackages(packageName: FqName) {
+        var currentPackage = FqName.ROOT
+        for (packagePart in packageName.pathSegments()) {
+            getOrPut(currentPackage) { mutableSetOf<Name>() }.add(packagePart)
+            currentPackage = currentPackage.child(packagePart)
+        }
+        putIfAbsent(currentPackage, mutableSetOf())
     }
 }
 
-private class LLFirResolveExtensionToolDeclarationProvider(
+class LLFirResolveExtensionToolDeclarationProvider internal constructor(
     private val extensionProvider: LLFirResolveExtensionsFileProvider,
     private val ktModule: KtModule,
 ) : KotlinDeclarationProvider() {
 
     private val extensionFileToDeclarationProvider: ConcurrentHashMap<KtResolveExtensionFile, FileBasedKotlinDeclarationProvider> =
         ConcurrentHashMap()
+
+    fun getTopLevelCallables(): Sequence<KtCallableDeclaration> = sequence {
+        forEachDeclarationOfType<KtCallableDeclaration> { callable ->
+            yield(callable)
+        }
+    }
+
+    fun getTopLevelClassifiers(): Sequence<KtClassLikeDeclaration> = sequence {
+        forEachDeclarationOfType<KtClass> { classLike ->
+            yield(classLike)
+        }
+    }
+
+    fun getTopLevelCallableNames(): Sequence<Name> = sequence {
+        forEachDeclarationOfType<KtCallableDeclaration> { callable ->
+            callable.nameAsName?.let { yield(it) }
+        }
+    }
+
+    fun getTopLevelClassifierNames(): Sequence<Name> = sequence {
+        forEachDeclarationOfType<KtClassLikeDeclaration> { classLike ->
+            classLike.nameAsName?.let { yield(it) }
+        }
+    }
 
     override fun getClassLikeDeclarationByClassId(classId: ClassId): KtClassLikeDeclaration? = forbidAnalysis {
         return getDeclarationProvidersByPackage(classId.packageFqName) { it.mayHaveTopLevelClassifier(classId.getTopLevelShortClassName()) }
@@ -158,7 +206,7 @@ private class LLFirResolveExtensionToolDeclarationProvider(
     }
 
     override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> = forbidAnalysis {
-        return extensionProvider.getFilesByPackage(packageFqName).flatMapTo(mutableSetOf()) { it.getTopLevelClassifierNames() }
+        return extensionProvider.getFilesByPackage(packageFqName).flatMapTo(mutableSetOf()) { it.getTopLevelCallableNames() }
     }
 
     override fun findFilesForFacadeByPackage(packageFqName: FqName): Collection<KtFile> = forbidAnalysis {
@@ -179,6 +227,15 @@ private class LLFirResolveExtensionToolDeclarationProvider(
     override fun findInternalFilesForFacade(facadeFqName: FqName): Collection<KtFile> = forbidAnalysis {
         // no decompiled files here (see the `org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider.findInternalFilesForFacade` KDoc)
         return emptyList()
+    }
+
+    override fun findFilesForScript(scriptFqName: FqName): Collection<KtScript> = forbidAnalysis {
+        if (scriptFqName.isRoot) return emptyList()
+        val packageFqName = scriptFqName.parent()
+        return getDeclarationProvidersByPackage(packageFqName) { file ->
+            scriptFqName.shortName() == NameUtils.getScriptNameForFile(file.getFileName())
+        }
+            .mapNotNullTo(mutableListOf()) { it.kotlinFile.script }
     }
 
     private inline fun getDeclarationProvidersByPackage(
@@ -218,9 +275,22 @@ private class LLFirResolveExtensionToolDeclarationProvider(
         virtualFile.psiTargetsProvider = psiTargetsProvider
         return ktFile
     }
+
+
+    private inline fun <reified D : KtDeclaration> forEachDeclarationOfType(action: (D) -> Unit) {
+        for (file in extensionProvider.getAllFiles()) {
+            val provider = createDeclarationProviderByFile(file)
+            val ktFile = provider.kotlinFile
+            for (declaration in ktFile.declarations) {
+                if (declaration is D) {
+                    action(declaration)
+                }
+            }
+        }
+    }
 }
 
-private class LLFirResolveExtensionsFileProvider(
+internal class LLFirResolveExtensionsFileProvider(
     val extensions: List<KtResolveExtension>,
 ) {
     fun getFilesByPackage(packageFqName: FqName): Sequence<KtResolveExtensionFile> = forbidAnalysis {
@@ -230,16 +300,17 @@ private class LLFirResolveExtensionsFileProvider(
             .flatMap { it.getKtFiles() }
             .filter { it.getFilePackageName() == packageFqName }
     }
+
+    fun getAllFiles(): Sequence<KtResolveExtensionFile> {
+        return extensions
+            .asSequence()
+            .flatMap { it.getKtFiles() }
+    }
 }
 
 private class LLFirResolveExtensionToolPackageProvider(
     private val packageFilter: LLFirResolveExtensionToolPackageFilter,
 ) : KotlinPackageProvider() {
-
-    private val packageSubPackages: Map<FqName, Set<Name>> by lazy {
-        createSubPackagesMapping(packageFilter.allPackages)
-    }
-
     override fun doesPackageExist(packageFqName: FqName, platform: TargetPlatform): Boolean =
         doesKotlinOnlyPackageExist(packageFqName)
 
@@ -255,25 +326,9 @@ private class LLFirResolveExtensionToolPackageProvider(
         packageFilter.packageExists(packageFqName)
 
     override fun getKotlinOnlySubPackagesFqNames(packageFqName: FqName, nameFilter: (Name) -> Boolean): Set<Name> {
-        val subPackageNames = packageSubPackages[packageFqName] ?: return emptySet()
+        val subPackageNames = packageFilter.getAllSubPackages(packageFqName)
         if (subPackageNames.isEmpty()) return emptySet()
         return subPackageNames.filterTo(mutableSetOf()) { nameFilter(it) }
-    }
-
-    private fun createSubPackagesMapping(packages: Set<FqName>): Map<FqName, Set<Name>> {
-        return buildMap<FqName, MutableSet<Name>> {
-            for (packageName in packages) {
-                collectAllSubPackages(packageName)
-            }
-        }
-    }
-
-    private fun MutableMap<FqName, MutableSet<Name>>.collectAllSubPackages(packageName: FqName) {
-        var currentPackage = FqName.ROOT
-        for (packagePart in packageName.pathSegments()) {
-            getOrPut(currentPackage) { mutableSetOf<Name>() }.add(packagePart)
-            currentPackage = currentPackage.child(packagePart)
-        }
     }
 }
 

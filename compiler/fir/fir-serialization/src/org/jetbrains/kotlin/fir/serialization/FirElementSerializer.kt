@@ -331,7 +331,7 @@ class FirElementSerializer private constructor(
         var hasSetter = false
 
         val hasAnnotations = property.nonSourceAnnotations(session).isNotEmpty()
-        // TODO: hasAnnotations(descriptor) || hasAnnotations(descriptor.backingField) || hasAnnotations(descriptor.delegateField)
+                || property.backingField?.nonSourceAnnotations(session)?.isNotEmpty() == true
 
         val modality = property.modality!!
         val defaultAccessorFlags = Flags.getAccessorFlags(

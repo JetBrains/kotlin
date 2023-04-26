@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirExtensionSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.scopes.FirPlatformClassMapper
@@ -95,10 +95,7 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
         createProviders = { session, builtinsModuleData, kotlinScopeProvider ->
             listOfNotNull(
                 KlibBasedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, resolvedLibraries),
-                // (Most) builtins should be taken from the dependencies in JS compilation, therefore builtins provider is the last one
-                // TODO: consider using "poisoning" provider for builtins to ensure that proper ones are taken from dependencies
-                // NOTE: it requires precise filtering for true builtins, like Function*
-                FirBuiltinSymbolProvider(session, builtinsModuleData, kotlinScopeProvider),
+                FirBuiltinSyntheticFunctionInterfaceProvider(session, builtinsModuleData, kotlinScopeProvider),
                 FirExtensionSyntheticFunctionInterfaceProvider.createIfNeeded(session, builtinsModuleData, kotlinScopeProvider),
             )
         }

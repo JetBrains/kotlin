@@ -22,6 +22,8 @@ internal constructor(compilation: KotlinCompilationImpl) : AbstractKotlinCompila
     final override var runtimeDependencyFiles: FileCollection =
         compilation.runtimeDependencyFiles ?: error("$compilation: Missing 'runtimeDependencyFiles'")
 
+    @Deprecated("Scheduled for removal with Kotlin 2.0")
+    @Suppress("DEPRECATION")
     override val relatedConfigurationNames: List<String>
         get() = compilation.relatedConfigurationNames
 }

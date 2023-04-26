@@ -346,7 +346,7 @@ internal class ModuleDFGBuilder(val context: Context, val irModule: IrModuleFrag
                     expressions += jobInvocation to currentLoop
                 }
                 val intrinsicType = tryGetIntrinsicType(expression)
-                if (intrinsicType == IntrinsicType.COMPARE_AND_SET || intrinsicType == IntrinsicType.COMPARE_AND_SWAP) {
+                if (intrinsicType == IntrinsicType.COMPARE_AND_SET || intrinsicType == IntrinsicType.COMPARE_AND_EXCHANGE) {
                     expressions += IrSetFieldImpl(
                             expression.startOffset, expression.endOffset,
                             context.mapping.functionToVolatileField[expression.symbol.owner]!!.symbol,

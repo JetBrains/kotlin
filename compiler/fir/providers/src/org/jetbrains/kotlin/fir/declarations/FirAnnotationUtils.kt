@@ -70,7 +70,8 @@ fun FirAnnotationContainer.nonSourceAnnotations(session: FirSession): List<FirAn
     annotations.nonSourceAnnotations(session)
 
 @Suppress("NOTHING_TO_INLINE")
-inline fun FirProperty.hasJvmFieldAnnotation(session: FirSession): Boolean = annotations.any { it.isJvmFieldAnnotation(session) }
+inline fun FirProperty.hasJvmFieldAnnotation(session: FirSession): Boolean =
+    backingField?.annotations?.any { it.isJvmFieldAnnotation(session) } == true
 
 fun FirAnnotation.isJvmFieldAnnotation(session: FirSession): Boolean =
     toAnnotationClassId(session) == StandardClassIds.Annotations.JvmField

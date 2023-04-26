@@ -164,7 +164,8 @@ class TimeMarkTest {
         assertTrue(elapsed > longDuration)
         assertTrue(elapsed >= longDuration + waitDuration, "$elapsed, $longDuration, $waitDuration")
         assertTrue(elapsedDiff >= longDuration + waitDuration)
-        assertEquals(elapsed, elapsedDiff)
+        // 'elapsed' was measured later than time marks from 'elapsedDiff'
+        assertTrue(elapsed >= elapsedDiff)
     }
 
     @Test

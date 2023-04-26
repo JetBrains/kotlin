@@ -7,6 +7,16 @@ package org.jetbrains.kotlin.gradle.idea.serialize
 
 import org.jetbrains.kotlin.tooling.core.Extras
 
+/**
+ * Extension point used to transport [Extras] from the Gradle process into the IDE during Gradle sync.
+ * Entities inside the Kotlin Tooling might allow for adding extras. If those entities
+ * are also semantically present in the import process of IntelliJ, then extras added on the origin instances
+ * can be retained by registering this extension on the Kotlin Gradle Plugin as well as in IntelliJ.
+ *
+ * Extras that cannot find a serializer will not be imported into the IDE.
+ * Evolving the attached extras and the resulting compatibility requirements have to be handled
+ * inside the implementation of the given [IdeaKotlinExtrasSerializer]
+ */
 interface IdeaKotlinExtrasSerializationExtension {
     fun <T : Any> serializer(key: Extras.Key<T>): IdeaKotlinExtrasSerializer<T>?
 

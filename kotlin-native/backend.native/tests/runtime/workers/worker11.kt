@@ -9,6 +9,8 @@ package runtime.workers.worker11
 import kotlin.test.*
 
 import kotlin.native.concurrent.*
+import kotlin.concurrent.*
+import kotlin.concurrent.AtomicInt
 import kotlinx.cinterop.convert
 
 data class Job(val index: Int, var input: Int, var counter: Int)
@@ -79,7 +81,7 @@ val counters = Array(COUNT) { AtomicInt(0) }
           workerIndex
       }) { index ->
           assertEquals(0, counters[index].value)
-          counters[index].increment()
+          counters[index].incrementAndGet()
       }
   }
   futures2.forEach { it.result }

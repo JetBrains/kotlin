@@ -332,18 +332,6 @@ public class ClassFileToSourceStubConverterTestGenerated extends AbstractClassFi
     }
 
     @Test
-    @TestMetadata("jvmDefaultDisable.kt")
-    public void testJvmDefaultDisable() throws Exception {
-        runTest("plugins/kapt3/kapt3-compiler/testData/converter/jvmDefaultDisable.kt");
-    }
-
-    @Test
-    @TestMetadata("jvmDefaultEnable.kt")
-    public void testJvmDefaultEnable() throws Exception {
-        runTest("plugins/kapt3/kapt3-compiler/testData/converter/jvmDefaultEnable.kt");
-    }
-
-    @Test
     @TestMetadata("jvmOverloads.kt")
     public void testJvmOverloads() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/jvmOverloads.kt");

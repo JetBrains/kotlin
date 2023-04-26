@@ -37,7 +37,7 @@ import java.util.concurrent.ConcurrentHashMap
 internal class NativeMapping : DefaultMapping() {
     data class BridgeKey(val target: IrSimpleFunction, val bridgeDirections: BridgeDirections)
     enum class AtomicFunctionType {
-        COMPARE_AND_SWAP, COMPARE_AND_SET, GET_AND_SET, GET_AND_ADD;
+        COMPARE_AND_EXCHANGE, COMPARE_AND_SET, GET_AND_SET, GET_AND_ADD;
     }
     data class AtomicFunctionKey(val field: IrField, val type: AtomicFunctionType)
 

@@ -66,6 +66,7 @@ projectTest(
     dependsOn(":dist")
     workingDir = rootDir
     useJUnitPlatform()
+    useJsIrBoxTests(version = version, buildDir = "$buildDir/")
 }
 
 testsJar()

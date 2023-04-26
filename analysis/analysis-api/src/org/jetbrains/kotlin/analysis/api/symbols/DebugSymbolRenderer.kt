@@ -173,7 +173,10 @@ public class DebugSymbolRenderer(
             }
         }
 
-        if (renderSymbolsFully || symbol is KtPropertyGetterSymbol || symbol is KtPropertySetterSymbol || symbol is KtValueParameterSymbol || symbol is KtReceiverParameterSymbol) {
+        if (renderSymbolsFully || symbol is KtBackingFieldSymbol ||
+            symbol is KtPropertyGetterSymbol || symbol is KtPropertySetterSymbol ||
+            symbol is KtValueParameterSymbol || symbol is KtReceiverParameterSymbol
+        ) {
             renderSymbol(symbol)
             return
         }

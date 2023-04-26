@@ -395,9 +395,9 @@ public class FirPsiBlackBoxModernJdkCodegenTestGenerated extends AbstractFirPsiB
             }
 
             @Test
-            @TestMetadata("propertiesOverridesEnableJvmDefault.kt")
-            public void testPropertiesOverridesEnableJvmDefault() throws Exception {
-                runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/records/propertiesOverridesEnableJvmDefault.kt");
+            @TestMetadata("propertiesOverridesAllJvmDefault.kt")
+            public void testPropertiesOverridesAllJvmDefault() throws Exception {
+                runTest("compiler/testData/codegen/boxModernJdk/testsWithJava17/records/propertiesOverridesAllJvmDefault.kt");
             }
 
             @Test

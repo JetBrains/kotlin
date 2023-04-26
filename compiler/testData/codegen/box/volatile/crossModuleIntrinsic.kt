@@ -22,5 +22,5 @@ import kotlin.concurrent.*
 fun box() : String {
     val o = "O"
     val x = Box(o)
-    return x::value.compareAndSwapField(o, "K") + x.value
+    return x::value.compareAndExchangeField(o, "K") + x.value
 }

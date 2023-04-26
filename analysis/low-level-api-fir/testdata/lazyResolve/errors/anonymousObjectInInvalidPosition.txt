@@ -110,38 +110,38 @@ FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
     [ResolvedTo(RAW_FIR)] annotations container
-    private final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val resolveMe: <ERROR TYPE REF: Wrong number of type arguments> = ERROR_EXPR(Should have initializer)Null(null) = object : A<Int> {
+    private final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val resolveMe: <ERROR TYPE REF: Wrong number of type arguments> = ERROR_EXPR(Should have initializer)Null(null) = object : R|A<kotlin/Int>| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
-            super<<implicit>>()
+            super<R|kotlin/Any|>()
         }
 
-        public? open? override [ResolvedTo(RAW_FIR)] fun x(): R|kotlin/Unit| {
+        public open override [ResolvedTo(RAW_FIR)] fun x(): R|kotlin/Unit| {
         }
 
     }
 
         private [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Wrong number of type arguments>
-    public? final? [ResolvedTo(RAW_FIR)] interface A<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
-        public? final? [ResolvedTo(RAW_FIR)] fun x(): R|kotlin/Unit|
+    public abstract [ResolvedTo(TYPES)] interface A<[ResolvedTo(TYPES)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(TYPES)] fun x(): R|kotlin/Unit|
 
     }
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
     [ResolvedTo(RAW_FIR)] annotations container
-    private final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val resolveMe: <ERROR TYPE REF: Wrong number of type arguments> = ERROR_EXPR(Should have initializer)Null(null) = object : A<Int> {
+    private final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val resolveMe: <ERROR TYPE REF: Wrong number of type arguments> = ERROR_EXPR(Should have initializer)Null(null) = object : R|A<kotlin/Int>| {
         private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
-            super<<implicit>>()
+            super<R|kotlin/Any|>()
         }
 
-        public? open? override [ResolvedTo(RAW_FIR)] fun x(): R|kotlin/Unit| {
+        public open override [ResolvedTo(RAW_FIR)] fun x(): R|kotlin/Unit| {
         }
 
     }
 
         private [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] get(): <ERROR TYPE REF: Wrong number of type arguments>
-    public? final? [ResolvedTo(RAW_FIR)] interface A<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
-        public? final? [ResolvedTo(RAW_FIR)] fun x(): R|kotlin/Unit|
+    public abstract [ResolvedTo(TYPES)] interface A<[ResolvedTo(TYPES)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(TYPES)] fun x(): R|kotlin/Unit|
 
     }
 

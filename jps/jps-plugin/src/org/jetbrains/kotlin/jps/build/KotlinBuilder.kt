@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.jps.KotlinJpsBundle
 import org.jetbrains.kotlin.jps.incremental.JpsIncrementalCache
 import org.jetbrains.kotlin.jps.incremental.JpsLookupStorageManager
 import org.jetbrains.kotlin.jps.model.kotlinKind
+import org.jetbrains.kotlin.jps.statistic.JpsStatisticsReportService
 import org.jetbrains.kotlin.jps.targets.KotlinJvmModuleBuildTarget
 import org.jetbrains.kotlin.jps.targets.KotlinModuleBuildTarget
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -67,6 +68,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
             System.getProperty("kotlin.jps.classesToLoadByParent")?.split(',')?.map { it.trim() } ?: emptyList()
         private val classPrefixesToLoadByParentFromRegistry =
             System.getProperty("kotlin.jps.classPrefixesToLoadByParent")?.split(',')?.map { it.trim() } ?: emptyList()
+        private val reportService = JpsStatisticsReportService()
 
         val classesToLoadByParent: ClassCondition
             get() = ClassCondition { className ->
@@ -100,6 +102,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
     override fun buildStarted(context: CompileContext) {
         logSettings(context)
+        reportService.buildStarted(context)
     }
 
     private fun logSettings(context: CompileContext) {
@@ -160,6 +163,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
 
     override fun buildFinished(context: CompileContext) {
         ensureKotlinContextDisposed(context)
+        reportService.buildFinished(context)
     }
 
     private fun ensureKotlinContextDisposed(context: CompileContext) {

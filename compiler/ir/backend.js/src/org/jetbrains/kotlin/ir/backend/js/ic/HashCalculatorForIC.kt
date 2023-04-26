@@ -10,15 +10,14 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CrossModuleReferences
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageConfig
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.DumpIrTreeVisitor
+import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.library.impl.buffer
 import org.jetbrains.kotlin.protobuf.CodedInputStream
@@ -74,6 +73,48 @@ private class HashCalculatorForIC {
         updateForEach(annotationContainer.annotations, ::update)
     }
 
+    fun updateSymbol(symbol: IrSymbol) {
+        update(symbol.toString())
+
+        (symbol.owner as? IrClass)?.takeIf { it.isInterface }?.let { irInterface ->
+            // Adding or removing a method or property with a default implementation to an interface
+            // should invalidate all children: we must regenerate JS code for them
+            val openDeclarationSymbols = buildList {
+                for (decl in irInterface.declarations) {
+                    if (decl is IrOverridableMember && decl.modality == Modality.OPEN) {
+                        add(decl.symbol)
+                    }
+                    if (decl is IrProperty) {
+                        decl.getter?.takeIf { it.modality == Modality.OPEN }?.symbol?.let(::add)
+                        decl.setter?.takeIf { it.modality == Modality.OPEN }?.symbol?.let(::add)
+                    }
+                }
+            }
+            updateForEach(openDeclarationSymbols, ::updateSymbol)
+        }
+
+        // symbol rendering prints very little information about type parameters
+        // TODO may be it make sense to update rendering?
+        (symbol.owner as? IrTypeParametersContainer)?.let { typeParameters ->
+            updateForEach(typeParameters.typeParameters) { typeParameter ->
+                update(typeParameter.symbol.toString())
+            }
+        }
+        (symbol.owner as? IrFunction)?.let { irFunction ->
+            updateForEach(irFunction.valueParameters) { functionParam ->
+                // symbol rendering doesn't print default params information
+                // it is important to understand if default params were added or removed
+                update(functionParam.defaultValue?.let { 1 } ?: 0)
+            }
+        }
+        (symbol.owner as? IrAnnotationContainer)?.let(::updateAnnotationContainer)
+        (symbol.owner as? IrProperty)?.let { irProperty ->
+            if (irProperty.isConst) {
+                irProperty.backingField?.initializer?.let(::update)
+            }
+        }
+    }
+
     inline fun <T> updateForEach(collection: Collection<T>, f: (T) -> Unit) {
         update(collection.size)
         collection.forEach { f(it) }
@@ -92,7 +133,7 @@ private class HashCalculatorForIC {
         }
     }
 
-    fun finalize(): ICHash {
+    fun finalizeAndGetHash(): ICHash {
         val hashBytes = md5Digest.digest()
         md5Digest.reset()
         return hashBytes.buffer.asLongBuffer().let { longBuffer ->
@@ -142,42 +183,22 @@ internal class ICHasher {
         }
 
         hashCalculator.update(config.languageVersionSettings.toString())
-        return hashCalculator.finalize()
+        return hashCalculator.finalizeAndGetHash()
     }
 
     fun calculateIrFunctionHash(function: IrFunction): ICHash {
         hashCalculator.update(function)
-        return hashCalculator.finalize()
+        return hashCalculator.finalizeAndGetHash()
     }
 
     fun calculateIrAnnotationContainerHash(container: IrAnnotationContainer): ICHash {
         hashCalculator.updateAnnotationContainer(container)
-        return hashCalculator.finalize()
+        return hashCalculator.finalizeAndGetHash()
     }
 
     fun calculateIrSymbolHash(symbol: IrSymbol): ICHash {
-        hashCalculator.update(symbol.toString())
-        // symbol rendering prints very little information about type parameters
-        // TODO may be it make sense to update rendering?
-        (symbol.owner as? IrTypeParametersContainer)?.let { typeParameters ->
-            hashCalculator.updateForEach(typeParameters.typeParameters) { typeParameter ->
-                hashCalculator.update(typeParameter.symbol.toString())
-            }
-        }
-        (symbol.owner as? IrFunction)?.let { irFunction ->
-            hashCalculator.updateForEach(irFunction.valueParameters) { functionParam ->
-                // symbol rendering doesn't print default params information
-                // it is important to understand if default params were added or removed
-                hashCalculator.update(functionParam.defaultValue?.let { 1 } ?: 0)
-            }
-        }
-        (symbol.owner as? IrAnnotationContainer)?.let(hashCalculator::updateAnnotationContainer)
-        (symbol.owner as? IrProperty)?.let { irProperty ->
-            if (irProperty.isConst) {
-                irProperty.backingField?.initializer?.let(hashCalculator::update)
-            }
-        }
-        return hashCalculator.finalize()
+        hashCalculator.updateSymbol(symbol)
+        return hashCalculator.finalizeAndGetHash()
     }
 }
 
@@ -213,4 +234,4 @@ internal fun CrossModuleReferences.crossModuleReferencesHashForIC() = HashCalcul
             update(import.moduleExporter.internalName.toString())
         }
     }
-}.finalize()
+}.finalizeAndGetHash()

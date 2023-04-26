@@ -13,9 +13,11 @@ import org.gradle.api.Project
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.attributes.HasAttributes
 import org.gradle.api.file.FileCollection
+import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptionsDeprecated
 import org.jetbrains.kotlin.gradle.dsl.KotlinCompileDeprecated
+import org.jetbrains.kotlin.gradle.dsl.KotlinTargetHierarchyDsl
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 
@@ -93,6 +95,45 @@ interface KotlinCompilation<out T : KotlinCommonOptionsDeprecated> : Named,
         const val TEST_COMPILATION_NAME = "test"
     }
 
+    /**
+     * Will add a [KotlinSourceSet] directly into this compilation.
+     * This method is deprecated and targets Kotlin 2.0 for its removal.
+     * After Kotlin 2.0 there will be exactly one SourceSet associated with a given Kotlin Compilation.
+     *
+     * In order to include other sources into the compilation, please build a hierarchy of Source Sets instead.
+     * See: [KotlinSourceSet.dependsOn] or [KotlinTargetHierarchyDsl].
+     * This approach is most applicable if
+     * - The sources can be shared for multiple compilations
+     * - The sources shall be analyzed in a different context than [defaultSourceSet]
+     * - The project uses multiplatform and sources shall provide expects
+     *
+     *
+     * Alternatively, when just including source files from another directory,
+     * the [SourceDirectorySet] from the [defaultSourceSet] can be used.
+     * This approach is most applicable if
+     *  - sources are not intended to be shared across multiple compilations
+     *  - sources shall be analyzed in the same context as other sources in the [defaultSourceSet]
+     *
+     * #### Example 1: Create a new 'utils' source set and make it available to the 'main' compilation:
+     * ```kotlin
+     * kotlin {
+     *     val compilation = target.compilations.getByName("main")
+     *     val utilsSourceSet = sourceSets.create("utils")
+     *     compilation.defaultSourceSet.dependsOn(utilsSourceSet)
+     * }
+     * ```
+     *
+     * #### Example 2: Add 'src/utils/kotlin' to the main SourceSet
+     * ```kotlin
+     * kotlin {
+     *     val compilation = target.compilations.getByName("main")
+     *     compilation.defaultSourceSet.kotlin.srcDir("src/utils/kotlin")
+     * }
+     * ```
+     * Further details:
+     * https://kotl.in/compilation-source-deprecation
+     */
+    @Deprecated("scheduled for removal with Kotlin 2.0")
     fun source(sourceSet: KotlinSourceSet)
 
     fun associateWith(other: KotlinCompilation<*>)
@@ -101,32 +142,33 @@ interface KotlinCompilation<out T : KotlinCommonOptionsDeprecated> : Named,
 
     override fun getName(): String = compilationName
 
+    @Deprecated("Scheduled for removal with Kotlin 2.0")
+    @Suppress("DEPRECATION")
     override val relatedConfigurationNames: List<String>
         get() = super.relatedConfigurationNames + compileDependencyConfigurationName
-
-    @Deprecated("Scheduled for removal with Kotlin 1.9. Use compilerOptions instead")
-    val moduleName: String
 
     val disambiguatedName
         get() = target.disambiguationClassifier + name
 }
 
-@Deprecated("Scheduled for removal with Kotlin 1.9")
+@Deprecated("Scheduled for removal with Kotlin 2.0")
 interface KotlinCompilationToRunnableFiles<T : KotlinCommonOptionsDeprecated> : KotlinCompilation<T> {
     override val runtimeDependencyConfigurationName: String
 
     override var runtimeDependencyFiles: FileCollection
 
+    @Suppress("DEPRECATION")
+    @Deprecated("Scheduled for removal with Kotlin 2.0")
     override val relatedConfigurationNames: List<String>
         get() = super.relatedConfigurationNames + runtimeDependencyConfigurationName
 }
 
-@Deprecated("Scheduled for removal with Kotlin 1.9")
+@Deprecated("Scheduled for removal with Kotlin 2.0")
 @Suppress("EXTENSION_SHADOWED_BY_MEMBER", "deprecation") // kept for compatibility
 val <T : KotlinCommonOptionsDeprecated> KotlinCompilation<T>.runtimeDependencyConfigurationName: String?
     get() = (this as? KotlinCompilationToRunnableFiles<T>)?.runtimeDependencyConfigurationName
 
-@Deprecated("Scheduled for removal with Kotlin 1.9")
+@Deprecated("Scheduled for removal with Kotlin 2.0")
 interface KotlinCompilationWithResources<T : KotlinCommonOptionsDeprecated> : KotlinCompilation<T> {
     val processResourcesTaskName: String
 }

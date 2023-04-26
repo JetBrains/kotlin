@@ -1,0 +1,40 @@
+FILE: annotationOnProperty.kt
+    public? final? annotation class Ann : R|kotlin/Annotation| {
+        public? [ContainingClassKey=Ann] constructor(): R|Ann| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    field:@FIELD:Ann() public? final? val x: Int = IntegerLiteral(1)
+        public? get(): Int
+    @PROPERTY:Ann() public? final? val y: Int = IntegerLiteral(2)
+        public? get(): Int
+    @Ann() public? final? val z: Int = IntegerLiteral(3)
+        public? get(): Int
+    public? final? class Some : R|kotlin/Any| {
+        public? [ContainingClassKey=Some] constructor([CorrespondingProperty=/Some.x] x: Int, [CorrespondingProperty=/Some.y] y: Int, [CorrespondingProperty=/Some.z] @CONSTRUCTOR_PARAMETER:Ann() z: Int, [CorrespondingProperty=/Some.w] w: Int): R|Some| {
+            super<R|kotlin/Any|>()
+        }
+
+        field:@FIELD:Ann() public? final? [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+            public? [ContainingClassKey=Some] get(): Int
+
+        @PROPERTY:Ann() public? final? [IsFromPrimaryConstructor=true] val y: Int = R|<local>/y|
+            public? [ContainingClassKey=Some] get(): Int
+
+        public? final? [IsFromPrimaryConstructor=true] val z: Int = R|<local>/z|
+            public? [ContainingClassKey=Some] get(): Int
+
+        public? final? [IsFromPrimaryConstructor=true] val w: Int = R|<local>/w|
+            public? [ContainingClassKey=Some] get(): Int
+
+        field:@FIELD:Ann() public? final? val a: Int = IntegerLiteral(1)
+            public? [ContainingClassKey=Some] get(): Int
+
+        @PROPERTY:Ann() public? final? val b: Int = IntegerLiteral(2)
+            public? [ContainingClassKey=Some] get(): Int
+
+        @Ann() public? final? val c: Int = IntegerLiteral(3)
+            public? [ContainingClassKey=Some] get(): Int
+
+    }

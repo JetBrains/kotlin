@@ -16,22 +16,22 @@ FILE: referenceToExtension.kt
                 super<R|kotlin/Any|>()
             }
 
-            public final val memberVal: R|GenericTest.A<T>| = R|SubstitutionOverride</GenericTest.A.A>|<R|T|>()
+            public final val memberVal: R|GenericTest.A<T>| = R|/GenericTest.A.A|<R|T|>()
                 public get(): R|GenericTest.A<T>|
 
             public final fun memberFun(): R|GenericTest.A<T>| {
-                ^memberFun R|SubstitutionOverride</GenericTest.A.A>|<R|T|>()
+                ^memberFun R|/GenericTest.A.A|<R|T|>()
             }
 
         }
 
         public final val <T> R|GenericTest.B<T>|.extensionVal: R|GenericTest.A<T>|
             public get(): R|GenericTest.A<T>| {
-                ^ R|SubstitutionOverride</GenericTest.A.A>|<R|T|>()
+                ^ R|/GenericTest.A.A|<R|T|>()
             }
 
         public final fun <T> R|GenericTest.B<T>|.extensionFun(): R|GenericTest.A<T>| {
-            ^extensionFun R|SubstitutionOverride</GenericTest.A.A>|<R|T|>()
+            ^extensionFun R|/GenericTest.A.A|<R|T|>()
         }
 
         public final fun test_1(): R|kotlin/Unit| {

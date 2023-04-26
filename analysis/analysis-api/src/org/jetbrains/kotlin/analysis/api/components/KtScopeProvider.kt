@@ -173,6 +173,7 @@ public sealed class KtScopeKind {
      * Represents [KtTypeScope], which doesn't include synthetic Java properties of corresponding type.
      */
     public class SimpleTypeScope(override val indexInTower: Int) : TypeScope()
+
     public class SyntheticJavaPropertiesScope(override val indexInTower: Int) : TypeScope()
 
     public sealed class NonLocalScope : KtScopeKind()
@@ -216,6 +217,11 @@ public sealed class KtScopeKind {
      * Represents [KtScope] containing static members of a classifier.
      */
     public class StaticMemberScope(override val indexInTower: Int) : NonLocalScope()
+
+    /**
+     * Represents [KtScope] containing members of a script.
+     */
+    public class ScriptMemberScope(override val indexInTower: Int) : NonLocalScope()
 }
 
 public data class KtScopeWithKind(

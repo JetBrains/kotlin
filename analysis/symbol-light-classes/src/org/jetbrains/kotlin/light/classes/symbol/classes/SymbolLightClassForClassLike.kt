@@ -28,8 +28,8 @@ import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.hasDeprecatedAnnotation
 import org.jetbrains.kotlin.light.classes.symbol.parameters.SymbolLightTypeParameterList
 import org.jetbrains.kotlin.load.java.structure.LightClassOriginKind
-import org.jetbrains.kotlin.psi.KtClassBody
 import org.jetbrains.kotlin.psi.KtClassOrObject
+import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.psi.debugText.getDebugText
 import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
@@ -159,10 +159,12 @@ abstract class SymbolLightClassForClassLike<SType : KtClassOrObjectSymbol> prote
     override fun getSuperTypes(): Array<PsiClassType> = PsiClassImplUtil.getSuperTypes(this)
 
     override fun getContainingClass(): PsiClass? {
-        val containingBody = classOrObjectDeclaration?.parent as? KtClassBody
-        val containingClass = containingBody?.parent as? KtClassOrObject
-        containingClass?.let { return it.toLightClass() }
-        return null
+        val containingBody = classOrObjectDeclaration?.parent
+        return when (val parent = containingBody?.parent) {
+            is KtClassOrObject -> parent.toLightClass()
+            is KtScript -> parent.toLightClass()
+            else -> null
+        }
     }
 
     abstract override fun getParent(): PsiElement?

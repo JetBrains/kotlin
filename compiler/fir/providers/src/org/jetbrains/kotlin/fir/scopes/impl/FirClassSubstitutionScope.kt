@@ -281,12 +281,15 @@ class FirClassSubstitutionScope(
     )
 
     private fun createSubstitutedData(member: FirCallableDeclaration, symbolForOverride: FirBasedSymbol<*>): SubstitutedData {
+        val memberOwnerClassLookupTag =
+            if (member is FirConstructor) (member.returnTypeRef.coneType as ConeClassLikeType).lookupTag
+            else member.dispatchReceiverClassLookupTagOrNull()
         val (newTypeParameters, substitutor) = FirFakeOverrideGenerator.createNewTypeParametersAndSubstitutor(
             session,
             member as FirTypeParameterRefsOwner,
             symbolForOverride,
             substitutor,
-            forceTypeParametersRecreation = dispatchReceiverTypeForSubstitutedMembers.lookupTag != member.dispatchReceiverClassLookupTagOrNull()
+            forceTypeParametersRecreation = dispatchReceiverTypeForSubstitutedMembers.lookupTag != memberOwnerClassLookupTag
         )
 
         val receiverType = member.receiverParameter?.typeRef?.coneType

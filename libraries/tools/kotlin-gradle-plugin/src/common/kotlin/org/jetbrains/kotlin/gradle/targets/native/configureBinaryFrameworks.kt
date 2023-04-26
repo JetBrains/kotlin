@@ -12,10 +12,13 @@ import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinNativeTargetConfigurator
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.internal.artifactTypeAttribute
+import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
+import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
 import org.jetbrains.kotlin.gradle.tasks.FatFrameworkTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.gradle.utils.getOrCreate
@@ -48,6 +51,9 @@ internal fun Project.createFrameworkArtifact(binaryFramework: Framework, linkTas
         it.markConsumable()
         it.applyBinaryFrameworkGroupAttributes(project, binaryFramework.frameworkGroupDescription, listOf(binaryFramework.target))
         it.attributes.attribute(KotlinNativeTarget.kotlinNativeFrameworkNameAttribute, binaryFramework.baseName)
+        project.launchInStage(KotlinPluginLifecycle.Stage.FinaliseDsl) {
+            copyAttributes(binaryFramework.attributes, it.attributes)
+        }
     })
 
     addFrameworkArtifact(frameworkConfiguration, linkTask.flatMap { it.outputFile })

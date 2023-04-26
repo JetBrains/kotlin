@@ -498,9 +498,14 @@ internal fun getKaptTaskName(
     kotlinCompileName: String,
     prefix: String
 ): String {
-    // Replace compile*Kotlin to kapt*Kotlin
-    assert(kotlinCompileName.startsWith("compile"))
-    return kotlinCompileName.replaceFirst("compile", prefix)
+    return if (kotlinCompileName.startsWith("compile")) {
+        // Replace compile*Kotlin to kapt*Kotlin
+        kotlinCompileName.replaceFirst("compile", prefix)
+    } else {
+        // Task was created via exposed apis (KotlinJvmFactory or MPP) with random name
+        // in such case adding 'kapt' prefix to name
+        "$prefix${kotlinCompileName.capitalizeAsciiOnly()}"
+    }
 }
 
 internal fun buildKaptSubpluginOptions(

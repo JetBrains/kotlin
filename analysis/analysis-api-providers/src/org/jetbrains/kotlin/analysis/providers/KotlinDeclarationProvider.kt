@@ -33,12 +33,15 @@ public abstract class KotlinDeclarationProvider {
     public abstract fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name>
 
     public abstract fun findFilesForFacadeByPackage(packageFqName: FqName): Collection<KtFile>
+
     public abstract fun findFilesForFacade(facadeFqName: FqName): Collection<KtFile>
 
     /**
      * Currently we want only classes from libraries ([org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile])
      */
     public abstract fun findInternalFilesForFacade(facadeFqName: FqName): Collection<KtFile>
+
+    public abstract fun findFilesForScript(scriptFqName: FqName): Collection<KtScript>
 }
 
 public abstract class KotlinDeclarationProviderFactory {

@@ -10,6 +10,23 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.test.fail
 
+public enum class TestPlatform {
+    Jvm,
+    Js,
+    Native,
+    Wasm;
+    companion object
+}
+
+public expect val TestPlatform.Companion.current: TestPlatform
+
+public fun testOn(platformPredicate: (TestPlatform) -> Boolean, action: () -> Unit) {
+    if (platformPredicate(TestPlatform.current)) action()
+}
+public fun testOnlyOn(platform: TestPlatform, action: () -> Unit) = testOn({ it == platform }, action)
+public fun testExceptOn(platform: TestPlatform, action: () -> Unit) = testOn({ it != platform}, action)
+
+
 // just a static type check
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 fun <T> assertStaticTypeIs(@Suppress("UNUSED_PARAMETER") value: @kotlin.internal.NoInfer T) {}

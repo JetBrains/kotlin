@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
+import org.jetbrains.kotlin.ir.backend.js.dce.dumpDeclarationIrSizesIfNeed
 import org.jetbrains.kotlin.ir.backend.js.ic.*
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputsBuilt
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
@@ -354,6 +355,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     eliminateDeadDeclarations(allModules, backendContext)
                 }
 
+                dumpDeclarationIrSizesIfNeed(arguments.irDceDumpDeclarationIrSizesToFile, allModules)
+
                 val generateSourceMaps = configuration.getBoolean(JSConfigurationKeys.SOURCE_MAP)
 
                 val res = compileWasm(
@@ -373,6 +376,13 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 )
 
                 return OK
+            } else {
+                if (arguments.irDceDumpReachabilityInfoToFile != null) {
+                    messageCollector.report(STRONG_WARNING, "Dumping the reachability info to file is supported only for Kotlin/Wasm.")
+                }
+                if (arguments.irDceDumpDeclarationIrSizesToFile != null) {
+                    messageCollector.report(STRONG_WARNING, "Dumping the size of declarations to file is supported only for Kotlin/Wasm.")
+                }
             }
 
             val start = System.currentTimeMillis()
@@ -723,6 +733,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
         configuration.put(JSConfigurationKeys.PRINT_REACHABILITY_INFO, arguments.irDcePrintReachabilityInfo)
         configuration.put(JSConfigurationKeys.FAKE_OVERRIDE_VALIDATOR, arguments.fakeOverrideValidator)
+        configuration.putIfNotNull(JSConfigurationKeys.DUMP_REACHABILITY_INFO_TO_FILE, arguments.irDceDumpReachabilityInfoToFile)
 
         configuration.setupPartialLinkageConfig(
             mode = arguments.partialLinkageMode,

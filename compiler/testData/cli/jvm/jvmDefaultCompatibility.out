@@ -1,2 +1,0 @@
-warning: '-Xjvm-default=compatibility' is deprecated, please use '-Xjvm-default=all|all-compatibility'
-OK

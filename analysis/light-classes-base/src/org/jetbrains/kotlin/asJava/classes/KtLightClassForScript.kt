@@ -20,7 +20,11 @@ import org.jetbrains.kotlin.psi.KtScript
 import javax.swing.Icon
 
 abstract class KtLightClassForScript(val script: KtScript) : KtLightClassBase(script.manager) {
-    private val modifierList: PsiModifierList = LightModifierList(manager, KotlinLanguage.INSTANCE, PsiModifier.PUBLIC)
+    private val modifierList: PsiModifierList = LightModifierList(
+        manager,
+        KotlinLanguage.INSTANCE,
+        PsiModifier.PUBLIC, PsiModifier.FINAL
+    )
 
     private val scriptImplementsList: LightEmptyImplementsList = LightEmptyImplementsList(manager)
 

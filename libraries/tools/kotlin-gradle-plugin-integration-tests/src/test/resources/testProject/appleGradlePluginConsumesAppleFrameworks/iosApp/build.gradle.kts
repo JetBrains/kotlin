@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
-    id("org.jetbrains.gradle.apple.applePlugin") version "222.4550-0.21-dev-0"
+    id("org.jetbrains.gradle.apple.applePlugin") version "222.4550-0.21"
 }
 
 apple {

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.name.ClassId
 
 internal class KtFirAnnotationListForDeclaration private constructor(
@@ -53,10 +54,13 @@ internal class KtFirAnnotationListForDeclaration private constructor(
             useSiteSession: FirSession,
             token: KtLifetimeToken,
         ): KtAnnotationsList {
-            return if (firSymbol.annotations.isEmpty()) {
-                KtEmptyAnnotationsList(token)
-            } else {
-                KtFirAnnotationListForDeclaration(firSymbol, useSiteSession, token)
+            return when {
+                firSymbol is FirBackingFieldSymbol && firSymbol.propertySymbol.annotations.any { it.useSiteTarget == null } ->
+                    KtFirAnnotationListForDeclaration(firSymbol, useSiteSession, token)
+                firSymbol.annotations.isEmpty() ->
+                    KtEmptyAnnotationsList(token)
+                else ->
+                    KtFirAnnotationListForDeclaration(firSymbol, useSiteSession, token)
             }
         }
     }

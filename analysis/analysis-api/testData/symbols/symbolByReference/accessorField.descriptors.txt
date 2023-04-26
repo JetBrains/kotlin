@@ -1,0 +1,17 @@
+KtBackingFieldSymbol:
+  annotationsList: []
+  callableIdIfNonLocal: null
+  contextReceivers: []
+  isExtension: false
+  name: field
+  origin: PROPERTY_BACKING_FIELD
+  owningProperty: KtKotlinPropertySymbol(/x)
+  receiverParameter: null
+  returnType: KtUsualClassType:
+    annotationsList: []
+    ownTypeArguments: []
+    type: kotlin/Int
+  symbolKind: LOCAL
+  typeParameters: []
+  getContainingModule: KtSourceModule "Sources of main"
+  deprecationStatus: null

@@ -11,10 +11,7 @@ import org.gradle.tooling.events.task.TaskFinishEvent
 import org.gradle.tooling.events.task.TaskOperationDescriptor
 import org.gradle.tooling.events.task.TaskOperationResult
 import org.jetbrains.kotlin.build.report.metrics.*
-import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
-import org.jetbrains.kotlin.gradle.plugin.stat.StatTag
-import org.jetbrains.kotlin.gradle.report.TaskExecutionInfo
-import org.jetbrains.kotlin.gradle.report.TaskExecutionResult
+import org.jetbrains.kotlin.build.report.statistics.StatTag
 import org.jetbrains.kotlin.gradle.report.TaskRecord
 import org.jetbrains.kotlin.gradle.report.prepareData
 import org.junit.Ignore
@@ -32,11 +29,6 @@ class ReportDataTest {
     @Test
     @Suppress("DEPRECATION")
     fun testTags() {
-        TaskExecutionResults[kotlinTaskPath] = TaskExecutionResult(
-            buildMetrics = BuildMetrics(buildAttributes = BuildAttributes()),
-            taskInfo = TaskExecutionInfo(kotlinLanguageVersion = KotlinVersion.KOTLIN_1_4),
-            icLogLines = emptyList(),
-        )
         val buildOperationRecord =
             taskRecord(BuildMetrics(buildAttributes = BuildAttributes().also { it.add(BuildAttribute.CLASSPATH_SNAPSHOT_NOT_FOUND) }))
         val statisticData = prepareData(
@@ -45,8 +37,9 @@ class ReportDataTest {
             uuid = "uuid",
             label = "label",
             kotlinVersion = "version",
-            buildOperationRecords = listOf(buildOperationRecord),
-            additionalTags = listOf(StatTag.KOTLIN_DEBUG)
+            onlyKotlinTask = true,
+            buildOperationRecord = buildOperationRecord,
+            additionalTags = setOf(StatTag.KOTLIN_DEBUG)
         )
 
         assertNotNull(statisticData)
@@ -57,41 +50,34 @@ class ReportDataTest {
 
     private fun taskRecord(buildMetrics: BuildMetrics) = TaskRecord(
         path = kotlinTaskPath,
-        classFqName = "class name",
+        classFqName = "org.jetbrains.kotlin.TestTask",
         startTimeMs = 10,
         totalTimeMs = 20,
         buildMetrics = buildMetrics,
         didWork = true,
         skipMessage = null,
         icLogLines = emptyList(),
-        kotlinLanguageVersion = KotlinVersion.KOTLIN_1_8
+        kotlinLanguageVersion = KotlinVersion.KOTLIN_1_8,
+        changedFiles = null,
+        compilerArguments = emptyArray(),
+        statTags = emptySet()
     )
 
     @Test
     fun testMetricFilter() {
-        TaskExecutionResults["testKotlin"] = TaskExecutionResult(
-            buildMetrics = BuildMetrics(
-                buildPerformanceMetrics = BuildPerformanceMetrics().also {
-                    it.add(BuildPerformanceMetric.BUNDLE_SIZE)
-                    it.add(BuildPerformanceMetric.CACHE_DIRECTORY_SIZE)
-                },
-                buildTimes = BuildTimes().also {
-                    it.addTimeMs(BuildTime.RESTORE_OUTPUT_FROM_BACKUP, 10)
-                    it.addTimeMs(BuildTime.IC_ANALYZE_JAR_FILES, 10)
-                }
-            ),
-            taskInfo = TaskExecutionInfo(),
-            icLogLines = emptyList()
-        )
         val buildOperationRecord = taskRecord(
             BuildMetrics(
                 buildPerformanceMetrics = BuildPerformanceMetrics().also {
                     it.add(BuildPerformanceMetric.COMPILE_ITERATION)
                     it.add(BuildPerformanceMetric.CLASSPATH_ENTRY_COUNT)
+                    it.add(BuildPerformanceMetric.BUNDLE_SIZE)
+                    it.add(BuildPerformanceMetric.CACHE_DIRECTORY_SIZE)
                 },
                 buildTimes = BuildTimes().also {
                     it.addTimeMs(BuildTime.STORE_BUILD_INFO, 20)
                     it.addTimeMs(BuildTime.GRADLE_TASK_ACTION, 100)
+                    it.addTimeMs(BuildTime.RESTORE_OUTPUT_FROM_BACKUP, 10)
+                    it.addTimeMs(BuildTime.IC_ANALYZE_JAR_FILES, 10)
                 }
             )
         )
@@ -102,8 +88,9 @@ class ReportDataTest {
             uuid = "uuid",
             label = "label",
             kotlinVersion = "version",
-            buildOperationRecords = listOf(buildOperationRecord),
-            additionalTags = listOf(StatTag.KOTLIN_DEBUG),
+            buildOperationRecord = buildOperationRecord,
+            onlyKotlinTask = true,
+            additionalTags = setOf(StatTag.KOTLIN_DEBUG),
             metricsToShow = setOf(
                 BuildPerformanceMetric.BUNDLE_SIZE.name,// from TaskExecutionResult
                 BuildTime.GRADLE_TASK_ACTION.name,// from buildOperationRecord
@@ -132,19 +119,11 @@ class ReportDataTest {
         val startWorker = 110L
         val finishGradleTask = System.nanoTime()
 
-        TaskExecutionResults["testKotlin"] = TaskExecutionResult(
-            buildMetrics = BuildMetrics(
-                buildPerformanceMetrics = BuildPerformanceMetrics().also {
-                    it.add(BuildPerformanceMetric.FINISH_KOTLIN_DAEMON_EXECUTION, System.currentTimeMillis())
-                    it.add(BuildPerformanceMetric.START_WORKER_EXECUTION, TimeUnit.MILLISECONDS.toNanos(startWorker))
-                }
-            ),
-            taskInfo = TaskExecutionInfo(),
-            icLogLines = emptyList()
-        )
         val buildOperationRecord = taskRecord(
             BuildMetrics(
                 buildPerformanceMetrics = BuildPerformanceMetrics().also {
+                    it.add(BuildPerformanceMetric.FINISH_KOTLIN_DAEMON_EXECUTION, System.currentTimeMillis())
+                    it.add(BuildPerformanceMetric.START_WORKER_EXECUTION, TimeUnit.MILLISECONDS.toNanos(startWorker))
                     it.add(BuildPerformanceMetric.START_TASK_ACTION_EXECUTION, startTaskAction)
                     it.add(BuildPerformanceMetric.CALL_WORKER, TimeUnit.MILLISECONDS.toNanos(callWorker))
                 }
@@ -157,8 +136,9 @@ class ReportDataTest {
             uuid = "uuid",
             label = "label",
             kotlinVersion = "version",
-            buildOperationRecords = listOf(buildOperationRecord),
-            additionalTags = listOf(StatTag.KOTLIN_DEBUG),
+            buildOperationRecord = buildOperationRecord,
+            onlyKotlinTask = true,
+            additionalTags = setOf(StatTag.KOTLIN_DEBUG),
         )
         assertNotNull(statisticData)
         assertEquals(startTaskAction - startGradleTask, statisticData.buildTimesMetrics[BuildTime.GRADLE_TASK_PREPARATION])

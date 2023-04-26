@@ -1,5 +1,8 @@
 KtBackingFieldSymbol:
-  annotationsList: []
+  annotationsList: [
+    FieldAnnotation()
+      psi: KtAnnotationEntry
+  ]
   callableIdIfNonLocal: null
   contextReceivers: []
   isExtension: false

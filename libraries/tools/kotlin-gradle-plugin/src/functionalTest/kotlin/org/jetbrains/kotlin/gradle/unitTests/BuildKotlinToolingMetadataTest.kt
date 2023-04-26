@@ -81,7 +81,7 @@ class BuildKotlinToolingMetadataTest {
         val kotlin = multiplatformExtension
 
         android.compileSdkVersion(28)
-        kotlin.android()
+        kotlin.androidTarget()
         kotlin.jvm()
         kotlin.js {
             nodejs()
@@ -125,7 +125,7 @@ class BuildKotlinToolingMetadataTest {
         val android = project.extensions.getByType(BaseExtension::class.java)
         val kotlin = multiplatformExtension
         android.compileSdkVersion(28)
-        kotlin.android()
+        kotlin.androidTarget()
         android.compileOptions.setSourceCompatibility(JavaVersion.VERSION_1_6)
         android.compileOptions.setTargetCompatibility(JavaVersion.VERSION_1_8)
         project.evaluate()

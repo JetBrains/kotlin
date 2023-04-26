@@ -16,11 +16,16 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.KotlinTargetHierarchyDslImpl
 import javax.inject.Inject
 
+interface KotlinTargetContainerWithPresetFunctions :
+    KotlinTargetContainerWithJvmPresetFunctions,
+    KotlinTargetContainerWithAndroidPresetFunctions,
+    KotlinTargetContainerWithNativePresetFunctions,
+    KotlinTargetContainerWithJsPresetFunctions,
+    KotlinTargetContainerWithWasmPresetFunctions
+
 abstract class KotlinMultiplatformExtension(project: Project) :
     KotlinProjectExtension(project),
     KotlinTargetContainerWithPresetFunctions,
-    KotlinTargetContainerWithJsPresetFunctions,
-    KotlinTargetContainerWithWasmPresetFunctions,
     KotlinTargetContainerWithNativeShortcuts {
     override val presets: NamedDomainObjectCollection<KotlinTargetPreset<*>> = project.container(KotlinTargetPreset::class.java)
 
@@ -58,7 +63,9 @@ abstract class KotlinMultiplatformExtension(project: Project) :
         configure(presetExtension)
     }
 
-    internal val internalKotlinTargetHierarchy by lazy { KotlinTargetHierarchyDslImpl(targets, sourceSets) }
+    internal val internalKotlinTargetHierarchy by lazy {
+        KotlinTargetHierarchyDslImpl(project.kotlinPluginLifecycle, targets, sourceSets)
+    }
 
     @ExperimentalKotlinGradlePluginApi
     val targetHierarchy: KotlinTargetHierarchyDsl get() = internalKotlinTargetHierarchy
@@ -211,4 +218,20 @@ internal fun <T : KotlinTarget> KotlinTargetsContainerWithPresets.configureOrCre
             )
         }
     }
+}
+
+internal fun KotlinTargetsContainerWithPresets.configureOrCreateAndroidTargetAndReportDeprecation(
+    targetName: String,
+    configure: KotlinAndroidTarget.() -> Unit
+): KotlinAndroidTarget {
+    val targetPreset = presets.getByName("android") as KotlinAndroidTargetPreset
+    val result = configureOrCreate(targetName, targetPreset, configure)
+
+    result.project.logger.warn(
+        """
+            w: Please use `androidTarget` function instead of `android` to configure android target inside `kotlin { }` block.
+            See the details here: https://kotl.in/android-target-dsl
+        """.trimIndent()
+    )
+    return result
 }

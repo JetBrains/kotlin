@@ -31,7 +31,7 @@ class KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheckTest {
     val project by lazy {
         buildProjectWithMPP {
             plugins.apply(LibraryPlugin::class.java)
-            kotlin { android() }
+            kotlin { androidTarget() }
         }
     }
 

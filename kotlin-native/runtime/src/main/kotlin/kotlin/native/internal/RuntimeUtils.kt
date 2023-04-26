@@ -3,13 +3,14 @@
  * that can be found in the LICENSE file.
  */
 
+@file:Suppress("DEPRECATION", "DEPRECATION_ERROR") // Char.toInt()
 package kotlin.native.internal
 
 import kotlin.experimental.ExperimentalNativeApi
 import kotlin.internal.getProgressionLastElement
 import kotlin.reflect.KClass
-import kotlin.native.concurrent.FreezableAtomicReference
 import kotlin.native.concurrent.freeze
+import kotlin.native.concurrent.FreezableAtomicReference
 
 @ExportForCppRuntime
 @PublishedApi

@@ -42,43 +42,43 @@ class MultiplatformAndroidSourceSetLayoutV2Test {
 
     @Test
     fun `test - main SourceSet - is called 'androidMain'`() {
-        kotlin.android()
+        kotlin.androidTarget()
         assertEquals("androidMain", project.getKotlinSourceSetOrFail(android.sourceSets.main).name)
     }
 
     @Test
     fun `test - main SourceSet name - with custom targetName`() {
-        kotlin.android("foo")
+        kotlin.androidTarget("foo")
         assertEquals("fooMain", project.getKotlinSourceSetOrFail(android.sourceSets.main).name)
     }
 
     @Test
     fun `test - unitTest SourceSet - is called 'androidUnitTest'`() {
-        kotlin.android()
+        kotlin.androidTarget()
         assertEquals("androidUnitTest", project.getKotlinSourceSetOrFail(android.sourceSets.test).name)
     }
 
     @Test
     fun `test - unitTest SourceSet name - with custom targetName`() {
-        kotlin.android("foo")
+        kotlin.androidTarget("foo")
         assertEquals("fooUnitTest", project.getKotlinSourceSetOrFail(android.sourceSets.test).name)
     }
 
     @Test
     fun `test - instrumentedTest SourceSet - is called 'androidInstrumentedTest'`() {
-        kotlin.android()
+        kotlin.androidTarget()
         assertEquals("androidInstrumentedTest", project.getKotlinSourceSetOrFail(android.sourceSets.androidTest).name)
     }
 
     @Test
     fun `test instrumentedTest SourceSet - with custom targetName`() {
-        kotlin.android("foo")
+        kotlin.androidTarget("foo")
         assertEquals("fooInstrumentedTest", project.getKotlinSourceSetOrFail(android.sourceSets.androidTest).name)
     }
 
     @Test
     fun `test SourceSet names - with two flavorDimensions`() {
-        kotlin.android()
+        kotlin.androidTarget()
         android.flavorDimensions.add("market")
         android.flavorDimensions.add("price")
         android.productFlavors.create("german").dimension = "market"
@@ -114,7 +114,7 @@ class MultiplatformAndroidSourceSetLayoutV2Test {
 
     @Test
     fun `test - all source directories - are disjoint in source sets`() {
-        kotlin.android()
+        kotlin.androidTarget()
         android.flavorDimensions.add("market")
         android.flavorDimensions.add("price")
         android.productFlavors.create("german").dimension = "market"
@@ -147,7 +147,7 @@ class MultiplatformAndroidSourceSetLayoutV2Test {
 
     @Test
     fun `test - default dependsOn edges`() {
-        kotlin.android()
+        kotlin.androidTarget()
         project.evaluate()
 
         android.libraryVariants.all { libraryVariant ->
@@ -183,7 +183,7 @@ class MultiplatformAndroidSourceSetLayoutV2Test {
 
     @Test
     fun `test - kotlin source directories - are in sync between KotlinSourceSet and AndroidSourceSet`() {
-        kotlin.android()
+        kotlin.androidTarget()
 
         project.forAllAndroidVariants { variant ->
             variant.sourceSets.forEach { androidSourceSet ->
@@ -211,7 +211,7 @@ class MultiplatformAndroidSourceSetLayoutV2Test {
 
     @Test
     fun `test - kotlin source directories - supports AGP default location`() {
-        kotlin.android()
+        kotlin.androidTarget()
 
         project.forAllAndroidVariants { variant ->
             variant.sourceSets.forEach { androidSourceSet ->
@@ -228,7 +228,7 @@ class MultiplatformAndroidSourceSetLayoutV2Test {
 
     @Test
     fun `test - main - default AndroidManifest location`() {
-        kotlin.android()
+        kotlin.androidTarget()
 
         assertEquals(
             project.file("src/androidMain/AndroidManifest.xml"),
@@ -250,7 +250,7 @@ class MultiplatformAndroidSourceSetLayoutV2Test {
         android.sourceSets.main.manifest.srcFile(customManifestFile)
 
         /* Then: Setup Kotlin/Android target */
-        kotlin.android()
+        kotlin.androidTarget()
 
         assertEquals(
             customManifestFile, android.sourceSets.main.manifest.srcFile,
@@ -260,7 +260,7 @@ class MultiplatformAndroidSourceSetLayoutV2Test {
 
     @Test
     fun `test - defaultKotlinSourceSetName - is determined for all compilations`() {
-        kotlin.android()
+        kotlin.androidTarget()
         android.flavorDimensions.add("market")
         android.flavorDimensions.add("price")
         android.productFlavors.create("german").dimension = "market"
@@ -269,9 +269,9 @@ class MultiplatformAndroidSourceSetLayoutV2Test {
         android.productFlavors.create("free").dimension = "price"
         project.evaluate()
 
-        kotlin.android().compilations.all { compilation ->
+        kotlin.androidTarget().compilations.all { compilation ->
             val defaultKotlinSourceSetName = multiplatformAndroidSourceSetLayoutV2.naming
-                .defaultKotlinSourceSetName(kotlin.android(), compilation.androidVariant)
+                .defaultKotlinSourceSetName(kotlin.androidTarget(), compilation.androidVariant)
 
             assertNotNull(
                 defaultKotlinSourceSetName,
@@ -289,7 +289,7 @@ class MultiplatformAndroidSourceSetLayoutV2Test {
 
     @Test
     fun `test - defaultKotlinSourceSetName`() {
-        kotlin.android()
+        kotlin.androidTarget()
         android.flavorDimensions.add("market")
         android.flavorDimensions.add("price")
         android.productFlavors.create("german").dimension = "market"
@@ -300,32 +300,32 @@ class MultiplatformAndroidSourceSetLayoutV2Test {
 
         assertEquals(
             "androidGermanFreeDebug",
-            kotlin.android().compilations.getByName("germanFreeDebug").defaultSourceSet.name
+            kotlin.androidTarget().compilations.getByName("germanFreeDebug").defaultSourceSet.name
         )
 
         assertEquals(
             "androidUsaFreeDebug",
-            kotlin.android().compilations.getByName("usaFreeDebug").defaultSourceSet.name
+            kotlin.androidTarget().compilations.getByName("usaFreeDebug").defaultSourceSet.name
         )
 
         assertEquals(
             "androidGermanPaidRelease",
-            kotlin.android().compilations.getByName("germanPaidRelease").defaultSourceSet.name
+            kotlin.androidTarget().compilations.getByName("germanPaidRelease").defaultSourceSet.name
         )
 
         assertEquals(
             "androidUsaPaidRelease",
-            kotlin.android().compilations.getByName("usaPaidRelease").defaultSourceSet.name
+            kotlin.androidTarget().compilations.getByName("usaPaidRelease").defaultSourceSet.name
         )
 
         assertEquals(
             "androidUnitTestGermanFreeDebug",
-            kotlin.android().compilations.getByName("germanFreeDebugUnitTest").defaultSourceSet.name
+            kotlin.androidTarget().compilations.getByName("germanFreeDebugUnitTest").defaultSourceSet.name
         )
 
         assertEquals(
             "androidInstrumentedTestGermanFreeDebug",
-            kotlin.android().compilations.getByName("germanFreeDebugAndroidTest").defaultSourceSet.name
+            kotlin.androidTarget().compilations.getByName("germanFreeDebugAndroidTest").defaultSourceSet.name
         )
     }
 }

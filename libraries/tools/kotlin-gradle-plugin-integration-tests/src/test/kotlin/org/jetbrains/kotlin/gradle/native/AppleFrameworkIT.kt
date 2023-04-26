@@ -400,25 +400,30 @@ class AppleFrameworkIT : BaseGradleIT() {
             fun dependencyInsight(configuration: String) = arrayOf(
                 ":iosApp:dependencyInsight", "--configuration", configuration, "--dependency", "iosLib"
             )
+
+            fun CompiledProject.assertContainsVariant(variantName: String) {
+                assertContains("Variant $variantName")
+            }
+
             build(*dependencyInsight("iosAppIosX64DebugImplementation")) {
                 assertSuccessful()
-                assertContains("variant \"mainDynamicDebugFrameworkIos\"")
+                assertContainsVariant("mainDynamicDebugFrameworkIos")
             }
 
             build(*dependencyInsight("iosAppIosX64ReleaseImplementation")) {
                 assertSuccessful()
-                assertContains("variant \"mainDynamicReleaseFrameworkIos\"")
+                assertContainsVariant("mainDynamicReleaseFrameworkIos")
             }
 
             // NB: '0' is required at the end since dependency is added with custom attribute and it creates new configuration
             build(*dependencyInsight("iosAppIosX64DebugImplementation0"), "-PmultipleFrameworks") {
                 assertSuccessful()
-                assertContains("variant \"mainStaticDebugFrameworkIos\"")
+                assertContainsVariant("mainStaticDebugFrameworkIos")
             }
 
             build(*dependencyInsight("iosAppIosX64ReleaseImplementation0"), "-PmultipleFrameworks") {
                 assertSuccessful()
-                assertContains("variant \"mainStaticReleaseFrameworkIos\"")
+                assertContainsVariant("mainStaticReleaseFrameworkIos")
             }
         }
     }

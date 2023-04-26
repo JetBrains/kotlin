@@ -1220,7 +1220,12 @@ class DeclarationsConverter(
 
             typeParameterList?.let { firTypeParameters += convertTypeParameters(it, typeConstraints, symbol) }
 
-            backingField = fieldDeclaration.convertBackingField(symbol, modifiers, returnType, isVar)
+            backingField = fieldDeclaration.convertBackingField(
+                symbol, modifiers, returnType, isVar,
+                if (isLocal) emptyList() else modifiers.annotations.filter {
+                    it.useSiteTarget == FIELD || it.useSiteTarget == PROPERTY_DELEGATE_FIELD
+                }
+            )
 
             if (isLocal) {
                 this.isLocal = true
@@ -1318,7 +1323,7 @@ class DeclarationsConverter(
                 }
             }
             annotations += if (isLocal) modifiers.annotations else modifiers.annotations.filter {
-                it.useSiteTarget != PROPERTY_GETTER &&
+                it.useSiteTarget != FIELD && it.useSiteTarget != PROPERTY_DELEGATE_FIELD && it.useSiteTarget != PROPERTY_GETTER &&
                         (!isVar || it.useSiteTarget != SETTER_PARAMETER && it.useSiteTarget != PROPERTY_SETTER)
             }
 
@@ -1503,6 +1508,7 @@ class DeclarationsConverter(
         propertyModifiers: Modifier,
         propertyReturnType: FirTypeRef,
         isVar: Boolean,
+        annotationsFromProperty: List<FirAnnotationCall>,
     ): FirBackingField {
         var modifiers = Modifier()
         var returnType: FirTypeRef = implicitType
@@ -1532,6 +1538,7 @@ class DeclarationsConverter(
                 symbol = FirBackingFieldSymbol(CallableId(name))
                 this.status = status
                 annotations += modifiers.annotations
+                annotations += annotationsFromProperty
                 this.propertySymbol = propertySymbol
                 this.initializer = backingFieldInitializer
                 this.isVar = isVar
@@ -1540,7 +1547,7 @@ class DeclarationsConverter(
         } else {
             FirDefaultPropertyBackingField(
                 moduleData = baseModuleData,
-                annotations = mutableListOf(),
+                annotations = annotationsFromProperty.toMutableList(),
                 returnTypeRef = propertyReturnType.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
                 isVar = isVar,
                 propertySymbol = propertySymbol,

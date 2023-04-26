@@ -40,7 +40,7 @@ FILE: targetOnPrimaryCtorParameter.kt
             super<R|kotlin/Any|>()
         }
 
-        @R|PropertyOnly|() @R|PropertyOnly2|() @R|FieldOnly|() public final var param: R|kotlin/Int| = R|<local>/param|
+        @R|PropertyOnly|() @R|PropertyOnly2|() field:@R|FieldOnly|() public final var param: R|kotlin/Int| = R|<local>/param|
             public get(): R|kotlin/Int|
             public set(value: R|kotlin/Int|): R|kotlin/Unit|
 

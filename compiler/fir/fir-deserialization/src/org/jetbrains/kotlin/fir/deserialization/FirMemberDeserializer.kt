@@ -11,10 +11,12 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
 import org.jetbrains.kotlin.fir.resolve.defaultType
@@ -402,14 +404,23 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             typeParameters += local.typeDeserializer.ownTypeParameters.map { it.fir }
             annotations +=
                 c.annotationDeserializer.loadPropertyAnnotations(c.containerSource, proto, classProto, local.nameResolver, local.typeTable)
-            annotations +=
+            val backingFieldAnnotations = mutableListOf<FirAnnotation>()
+            backingFieldAnnotations +=
                 c.annotationDeserializer.loadPropertyBackingFieldAnnotations(
                     c.containerSource, proto, local.nameResolver, local.typeTable
                 )
-            annotations +=
+            backingFieldAnnotations +=
                 c.annotationDeserializer.loadPropertyDelegatedFieldAnnotations(
                     c.containerSource, proto, local.nameResolver, local.typeTable
                 )
+            backingField = FirDefaultPropertyBackingField(
+                c.moduleData,
+                backingFieldAnnotations,
+                returnTypeRef,
+                isVar,
+                symbol,
+                status
+            )
             if (hasGetter) {
                 this.getter = loadPropertyGetter(
                     proto,

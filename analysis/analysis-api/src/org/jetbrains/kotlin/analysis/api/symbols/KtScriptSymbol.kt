@@ -8,9 +8,10 @@ package org.jetbrains.kotlin.analysis.api.symbols
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtAnnotatedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtNamedSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KtSymbolPointer
 
-public abstract class KtScriptSymbol : KtDeclarationSymbol, KtAnnotatedSymbol, KtNamedSymbol {
+public abstract class KtScriptSymbol : KtDeclarationSymbol, KtAnnotatedSymbol, KtNamedSymbol, KtSymbolWithMembers {
     context(KtAnalysisSession)
     abstract override fun createPointer(): KtSymbolPointer<KtScriptSymbol>
 }

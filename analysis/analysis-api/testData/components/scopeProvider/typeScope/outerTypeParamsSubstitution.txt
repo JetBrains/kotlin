@@ -132,6 +132,29 @@ KtFunctionSymbol:
   visibility: Public
 KtKotlinPropertySymbol:
   annotationsList: []
+  backingFieldSymbol: KtBackingFieldSymbol:
+    annotationsList: []
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    isExtension: false
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KtKotlinPropertySymbol(/A.map)
+    receiverParameter: null
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: [
+        KtTypeParameterType:
+          annotationsList: []
+          type: X
+        KtUsualClassType:
+          annotationsList: []
+          ownTypeArguments: []
+          type: kotlin/String
+      ]
+      type: kotlin/collections/Map<X, kotlin/String>
+    symbolKind: LOCAL
+    typeParameters: []
   callableIdIfNonLocal: /A.map
   contextReceivers: []
   getter: KtPropertyGetterSymbol:

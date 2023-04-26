@@ -151,6 +151,7 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "setenv",
         "unsetenv",
 
+        "dispatch_async_f",
         "dispatch_once",
         "pthread_equal",
         "pthread_main_np",

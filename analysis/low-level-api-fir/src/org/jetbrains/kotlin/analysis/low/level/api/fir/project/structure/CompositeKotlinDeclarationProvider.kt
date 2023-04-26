@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
-internal class CompositeKotlinDeclarationProvider
+class CompositeKotlinDeclarationProvider
 private constructor(
     private val providers: List<KotlinDeclarationProvider>
 ) : KotlinDeclarationProvider() {
@@ -59,6 +59,10 @@ private constructor(
 
     override fun findInternalFilesForFacade(facadeFqName: FqName): Collection<KtFile> {
         return providers.flatMapTo(mutableListOf()) { it.findInternalFilesForFacade(facadeFqName) }
+    }
+
+    override fun findFilesForScript(scriptFqName: FqName): Collection<KtScript> {
+        return providers.flatMapTo(mutableListOf()) { it.findFilesForScript(scriptFqName) }
     }
 
     companion object {

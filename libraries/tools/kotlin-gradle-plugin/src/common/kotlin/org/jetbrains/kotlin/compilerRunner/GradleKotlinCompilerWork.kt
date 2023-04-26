@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.logging.*
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
+import org.jetbrains.kotlin.build.report.statistics.StatTag
 import org.jetbrains.kotlin.gradle.report.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.tasks.cleanOutputsAndLocalState
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.incremental.IncrementalModuleInfo
 import org.jetbrains.kotlin.incremental.util.ExceptionLocation
 import org.jetbrains.kotlin.incremental.util.reportException
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
+import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.slf4j.LoggerFactory
 import java.io.*
 import java.net.URLClassLoader
@@ -34,6 +36,7 @@ import java.util.*
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 import javax.inject.Inject
+import kotlin.collections.HashSet
 
 internal class ProjectFilesForCompilation(
     val projectRootFile: File,
@@ -41,10 +44,9 @@ internal class ProjectFilesForCompilation(
     val sessionFlagFile: File,
     val buildDir: File
 ) : Serializable {
-    //TODO
-    constructor(logger: Logger, projectDir:File, buildDir: File, prjectName: String, projectCacheDirProvider: File, sessionDir: File) : this(
+    constructor(logger: Logger, projectDir:File, buildDir: File, projectName: String, projectCacheDirProvider: File, sessionDir: File) : this(
         projectRootFile = projectDir,
-        clientIsAliveFlagFile = GradleCompilerRunner.getOrCreateClientFlagFile(logger, prjectName),
+        clientIsAliveFlagFile = GradleCompilerRunner.getOrCreateClientFlagFile(logger, projectName),
         sessionFlagFile = GradleCompilerRunner.getOrCreateSessionFlagFile(logger, sessionDir, projectCacheDirProvider),
         buildDir = buildDir
     )
@@ -114,7 +116,7 @@ internal class GradleKotlinCompilerWork @Inject constructor(
         TaskLoggers.get(taskPath)?.let { GradleKotlinLogger(it).apply { debug("Using '$taskPath' logger") } }
             ?: run {
                 val logger = LoggerFactory.getLogger("GradleKotlinCompilerWork")
-                val kotlinLogger = if (logger is org.gradle.api.logging.Logger) {
+                val kotlinLogger = if (logger is Logger) {
                     GradleKotlinLogger(logger)
                 } else SL4JKotlinLogger(logger)
 
@@ -144,13 +146,21 @@ internal class GradleKotlinCompilerWork @Inject constructor(
                 kotlinLanguageVersion = kotlinLanguageVersion,
                 changedFiles = incrementalCompilationEnvironment?.changedFiles,
                 compilerArguments = if (reportingSettings.includeCompilerArguments) compilerArgs else emptyArray(),
-                withAbiSnapshot = incrementalCompilationEnvironment?.withAbiSnapshot,
-                withArtifactTransform = incrementalCompilationEnvironment?.classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled
+                tags = collectStatTags(),
             )
             metrics.endMeasure(BuildTime.RUN_COMPILATION_IN_WORKER)
             val result = TaskExecutionResult(buildMetrics = metrics.getMetrics(), icLogLines = icLogLines, taskInfo = taskInfo)
             TaskExecutionResults[taskPath] = result
         }
+    }
+
+    private fun collectStatTags(): Set<StatTag> {
+        val statTags = HashSet<StatTag>()
+        incrementalCompilationEnvironment?.withAbiSnapshot?.ifTrue { statTags.add(StatTag.ABI_SNAPSHOT) }
+        if (incrementalCompilationEnvironment?.classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled) {
+            statTags.add(StatTag.ARTIFACT_TRANSFORM)
+        }
+        return statTags
     }
 
     private fun compileWithDaemonOrFallbackImpl(messageCollector: MessageCollector): Pair<ExitCode, KotlinCompilerExecutionStrategy> {

@@ -59,20 +59,18 @@ abstract class FirSerializerExtensionBase(
         versionRequirementTable: MutableVersionRequirementTable?,
         childSerializer: FirElementSerializer
     ) {
-        val regularPropertyAnnotations = mutableListOf<FirAnnotation>()
         val fieldPropertyAnnotations = mutableListOf<FirAnnotation>()
         val delegatePropertyAnnotations = mutableListOf<FirAnnotation>()
 
-        for (annotation in property.nonSourceAnnotations(session)) {
+        for (annotation in property.backingField?.nonSourceAnnotations(session).orEmpty()) {
             val destination = when (annotation.useSiteTarget) {
-                AnnotationUseSiteTarget.FIELD -> fieldPropertyAnnotations
                 AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD -> delegatePropertyAnnotations
-                else -> regularPropertyAnnotations
+                else -> fieldPropertyAnnotations
             }
             destination += annotation
         }
 
-        regularPropertyAnnotations.serializeAnnotations(proto, protocol.propertyAnnotation)
+        property.nonSourceAnnotations(session).serializeAnnotations(proto, protocol.propertyAnnotation)
         fieldPropertyAnnotations.serializeAnnotations(proto, protocol.propertyBackingFieldAnnotation)
         delegatePropertyAnnotations.serializeAnnotations(proto, protocol.propertyDelegatedFieldAnnotation)
 

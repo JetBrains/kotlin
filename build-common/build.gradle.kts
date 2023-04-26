@@ -19,12 +19,14 @@ dependencies {
     compileOnly(intellijCore())
     compileOnly(commonDependency("org.jetbrains.intellij.deps:asm-all"))
     compileOnly(commonDependency("org.jetbrains.intellij.deps:trove4j"))
+    compileOnly(project(":compiler:build-tools:kotlin-build-statistics"))
 
     testCompileOnly(project(":compiler:cli-common"))
     testApi(projectTests(":compiler:tests-common"))
     testApi(commonDependency("junit:junit"))
     testApi(protobufFull())
     testApi(kotlinStdlib())
+    testImplementation(project(":compiler:build-tools:kotlin-build-statistics"))
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testImplementation("org.reflections:reflections:0.10.2")
 }

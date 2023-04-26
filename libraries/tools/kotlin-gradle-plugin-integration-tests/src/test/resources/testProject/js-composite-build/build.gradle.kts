@@ -41,6 +41,6 @@ rootProject.tasks
 dependencies {
     implementation(kotlin("stdlib-js"))
     implementation("com.example:lib2")
-    implementation(npm("async", "3.2.0"))
+    implementation(npm("node-fetch", "3.2.8"))
     testImplementation(kotlin("test-js"))
 }

@@ -56,6 +56,7 @@ projectTest(
     defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0)
 ) {
     dependsOn(":dist")
+    useJsIrBoxTests(version = version, buildDir = "$buildDir/")
 
     workingDir = rootDir
     systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))

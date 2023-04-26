@@ -12,13 +12,13 @@ enum class JvmDefaultMode(val description: String) {
     ALL_COMPATIBILITY("all-compatibility"),
     ALL_INCOMPATIBLE("all");
 
-    val isEnabled
+    val isEnabled: Boolean
         get() = this != DISABLE
 
-    val isCompatibility
+    val isCompatibility: Boolean
         get() = this == ENABLE_WITH_DEFAULT_IMPLS || this == ALL_COMPATIBILITY
 
-    val forAllMethodsWithBody
+    val forAllMethodsWithBody: Boolean
         get() = this == ALL_COMPATIBILITY || this == ALL_INCOMPATIBLE
 
     companion object {
@@ -26,6 +26,11 @@ enum class JvmDefaultMode(val description: String) {
         val DEFAULT = DISABLE
 
         @JvmStatic
-        fun fromStringOrNull(string: String?) = values().find { it.description == string }
+        fun fromStringOrNull(string: String?): JvmDefaultMode? = when (string) {
+            DISABLE.description -> DISABLE
+            ALL_COMPATIBILITY.description -> ALL_COMPATIBILITY
+            ALL_INCOMPATIBLE.description -> ALL_INCOMPATIBLE
+            else -> null
+        }
     }
 }

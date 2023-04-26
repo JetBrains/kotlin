@@ -154,6 +154,9 @@ class Fir2IrLazyProperty(
             }
         }?.apply {
             this.parent = this@Fir2IrLazyProperty.parent
+            this.annotations = fir.backingField?.annotations?.mapNotNull {
+                callGenerator.convertToIrConstructorCall(it) as? IrConstructorCall
+            }.orEmpty()
         }
     }
 

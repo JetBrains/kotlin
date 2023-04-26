@@ -46,7 +46,7 @@ internal class KtFe10DescSyntheticFieldSymbol(
         get() = withValidityAssertion { descriptor.propertyDescriptor.type.toKtType(analysisContext) }
 
     context(KtAnalysisSession)
-    override fun createPointer(): KtSymbolPointer<KtVariableLikeSymbol> = withValidityAssertion {
+    override fun createPointer(): KtSymbolPointer<KtBackingFieldSymbol> = withValidityAssertion {
         val accessorPsi = descriptor.containingDeclaration.toSourceElement.getPsi()
         if (accessorPsi is KtPropertyAccessor) {
             val accessorPointer = KtPsiBasedSymbolPointer.createForSymbolFromPsi<KtPropertyAccessorSymbol>(accessorPsi)

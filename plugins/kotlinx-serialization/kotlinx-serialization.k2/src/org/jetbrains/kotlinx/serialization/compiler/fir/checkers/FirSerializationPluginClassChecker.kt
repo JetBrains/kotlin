@@ -231,7 +231,8 @@ object FirSerializationPluginClassChecker : FirClassChecker() {
         if (classSymbol.resolvedSuperTypes.any { it.classId == JAVA_SERIALIZABLE_ID }) return // do not check
         for (property in properties) {
             if (property.transient) continue
-            val incorrectTransient = property.propertySymbol.annotations.getAnnotationByClassId(TRANSIENT_ANNOTATION_CLASS_ID, session)
+            val incorrectTransient =
+                property.propertySymbol.backingFieldSymbol?.annotations?.getAnnotationByClassId(TRANSIENT_ANNOTATION_CLASS_ID, session)
             if (incorrectTransient != null) {
                 reporter.reportOn(
                     source = incorrectTransient.source ?: property.propertySymbol.source,

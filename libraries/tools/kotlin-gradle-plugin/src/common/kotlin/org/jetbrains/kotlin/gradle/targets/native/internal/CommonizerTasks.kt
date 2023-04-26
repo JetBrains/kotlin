@@ -8,6 +8,10 @@ package org.jetbrains.kotlin.gradle.targets.native.internal
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.Task
+import org.gradle.api.file.FileSystemOperations
+import org.gradle.api.provider.Property
+import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.compilerRunner.maybeCreateCommonizerClasspathConfiguration
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
@@ -18,6 +22,8 @@ import org.jetbrains.kotlin.gradle.plugin.ide.ideaImportDependsOn
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
+import java.io.File
+import javax.inject.Inject
 
 internal val Project.isCInteropCommonizationEnabled: Boolean get() = PropertiesProvider(this).enableCInteropCommonization
 
@@ -140,7 +146,7 @@ internal val Project.commonizeNativeDistributionTask: TaskProvider<NativeDistrib
         )
     }
 
-internal val Project.cleanNativeDistributionCommonizerTask: TaskProvider<DefaultTask>?
+internal val Project.cleanNativeDistributionCommonizerTask: TaskProvider<CleanNativeDistributionCommonizerTask>?
     get() {
         val commonizeNativeDistributionTask = commonizeNativeDistributionTask ?: return null
         return rootProject.locateOrRegisterTask(
@@ -149,15 +155,25 @@ internal val Project.cleanNativeDistributionCommonizerTask: TaskProvider<Default
                 group = "interop"
                 description = "Deletes all previously commonized klib's from the Kotlin/Native distribution"
 
-                val commonizerDirectory = commonizeNativeDistributionTask.map { it.rootOutputDirectory }
-                outputs.dir(commonizerDirectory)
-
-                doFirst {
-                    NativeDistributionCommonizerLock(commonizerDirectory.get()).withLock { lockFile ->
-                        val files = commonizerDirectory.get().listFiles().orEmpty().toSet() - lockFile
-                        delete(*files.toTypedArray())
-                    }
-                }
+                commonizerDirectory.set(commonizeNativeDistributionTask.map { it.rootOutputDirectory })
             }
         )
     }
+
+internal abstract class CleanNativeDistributionCommonizerTask : DefaultTask() {
+    @get:Inject
+    abstract val fileSystemOperations: FileSystemOperations
+
+    @get:OutputDirectory
+    abstract val commonizerDirectory: Property<File>
+
+    @TaskAction
+    fun action() {
+        NativeDistributionCommonizerLock(commonizerDirectory.get()).withLock { lockFile ->
+            val files = commonizerDirectory.get().listFiles().orEmpty().toSet() - lockFile
+            fileSystemOperations.delete {
+                it.delete(files)
+            }
+        }
+    }
+}

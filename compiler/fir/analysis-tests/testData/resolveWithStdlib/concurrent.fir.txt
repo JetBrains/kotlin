@@ -1,5 +1,5 @@
 FILE: concurrent.kt
-    @R|kotlin/jvm/Volatile|() public final var xx: R|kotlin/Int| = Int(2)
+    field:@R|kotlin/jvm/Volatile|() public final var xx: R|kotlin/Int| = Int(2)
         public get(): R|kotlin/Int|
         public set(value: R|kotlin/Int|): R|kotlin/Unit|
     @R|kotlin/jvm/Synchronized|() public final fun foo(): R|kotlin/Unit| {

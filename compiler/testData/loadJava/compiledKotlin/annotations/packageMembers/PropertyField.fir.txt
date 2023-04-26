@@ -1,4 +1,4 @@
-@FIELD:R|test/Anno|() public final var property: R|kotlin/Int|
+field:@FIELD:R|test/Anno|() public final var property: R|kotlin/Int|
     public get(): R|kotlin/Int|
     public set(value: R|kotlin/Int|): R|kotlin/Unit|
 

@@ -66,12 +66,9 @@ public class KotlinStaticDeclarationProvider internal constructor(
             .mapNotNullTo(mutableSetOf()) { it.nameAsName }
     }
 
-    override fun findFilesForFacadeByPackage(packageFqName: FqName): Collection<KtFile> =
-        index.facadeFileMap[packageFqName]
-            ?.filter { ktFile ->
-                ktFile.virtualFile in scope
-            }
-            ?: emptyList()
+    override fun findFilesForFacadeByPackage(packageFqName: FqName): Collection<KtFile> {
+        return index.facadeFileMap[packageFqName].orEmpty().filter { it.virtualFile in scope }
+    }
 
     override fun findFilesForFacade(facadeFqName: FqName): Collection<KtFile> {
         if (facadeFqName.shortNameOrSpecial().isSpecial) return emptyList()
@@ -81,6 +78,10 @@ public class KotlinStaticDeclarationProvider internal constructor(
 
     override fun findInternalFilesForFacade(facadeFqName: FqName): Collection<KtFile> {
         return index.multiFileClassPartMap[facadeFqName].orEmpty().filter { it.virtualFile in scope }
+    }
+
+    override fun findFilesForScript(scriptFqName: FqName): Collection<KtScript> {
+        return index.scriptMap[scriptFqName].orEmpty().filter { it.containingKtFile.virtualFile in scope }
     }
 
     override fun getTopLevelProperties(callableId: CallableId): Collection<KtProperty> =
@@ -165,6 +166,7 @@ public class KotlinStaticDeclarationProviderFactory(
 
         override fun visitKtFile(file: KtFile) {
             addToFacadeFileMap(file)
+            file.script?.let { addToScriptMap(it) }
             super.visitKtFile(file)
         }
 
@@ -194,6 +196,12 @@ public class KotlinStaticDeclarationProviderFactory(
         index.facadeFileMap.computeIfAbsent(file.packageFqName) {
             mutableSetOf()
         }.add(file)
+    }
+
+    private fun addToScriptMap(script: KtScript) {
+        index.scriptMap.computeIfAbsent(script.fqName) {
+            mutableSetOf()
+        }.add(script)
     }
 
     private fun addToClassMap(classOrObject: KtClassOrObject) {

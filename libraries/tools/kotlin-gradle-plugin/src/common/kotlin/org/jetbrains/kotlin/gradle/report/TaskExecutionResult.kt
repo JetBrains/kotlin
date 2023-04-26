@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.report
 
 import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.build.report.statistics.StatTag
 import org.jetbrains.kotlin.incremental.ChangedFiles
 
 internal class TaskExecutionResult(
@@ -19,6 +20,5 @@ internal class TaskExecutionInfo(
     val kotlinLanguageVersion: KotlinVersion? = null,
     val changedFiles: ChangedFiles? = null,
     val compilerArguments: Array<String> = emptyArray(),
-    val withArtifactTransform: Boolean? = false,
-    val withAbiSnapshot: Boolean? = false
+    val tags: Set<StatTag> = emptySet(),
 )

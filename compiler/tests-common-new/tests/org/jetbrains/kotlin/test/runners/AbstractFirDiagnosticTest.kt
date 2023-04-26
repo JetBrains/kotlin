@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsS
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.services.JsLibraryProvider
 
 abstract class AbstractFirDiagnosticTestBase(val parser: FirParser) : AbstractKotlinCompilerTest() {
     override fun TestConfigurationBuilder.configuration() {
@@ -71,6 +72,8 @@ abstract class AbstractFirWithActualizerDiagnosticsTest(val parser: FirParser) :
                 ::IrDiagnosticsHandler
             )
         }
+
+        useAdditionalService(::JsLibraryProvider)
     }
 }
 

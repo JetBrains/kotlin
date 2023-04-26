@@ -587,10 +587,14 @@ fun FirFunctionSymbol<*>.isFunctionForExpectTypeFromCastFeature(): Boolean {
     return true
 }
 
-fun getActualTargetList(annotated: FirAnnotationContainer): AnnotationTargetList {
+fun getActualTargetList(container: FirAnnotationContainer): AnnotationTargetList {
     fun CallableId.isMember(): Boolean {
         return classId != null || isLocal // TODO: Replace with .containingClass (after fixing)
     }
+
+    val annotated =
+        if (container is FirBackingField && !container.propertySymbol.hasBackingField) container.propertyIfBackingField
+        else container
 
     return when (annotated) {
         is FirRegularClass -> {

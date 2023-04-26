@@ -1,0 +1,341 @@
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/ide/IdeAdditionalArtifactResolver {
+	public abstract fun resolve (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;Ljava/util/Set;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeAdditionalArtifactResolver$Empty : org/jetbrains/kotlin/gradle/plugin/ide/IdeAdditionalArtifactResolver {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeAdditionalArtifactResolver$Empty;
+	public fun resolve (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;Ljava/util/Set;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyEffect {
+	public abstract fun invoke (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;Ljava/util/Set;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyEffectKt {
+	public static final fun withEffect (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyEffect;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver$Companion;
+	public static final field DOCUMENTATION_BINARY_TYPE Ljava/lang/String;
+	public static final field SOURCES_BINARY_TYPE Ljava/lang/String;
+	public abstract fun resolve (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;)Ljava/util/Set;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver$Companion {
+	public static final field DOCUMENTATION_BINARY_TYPE Ljava/lang/String;
+	public static final field SOURCES_BINARY_TYPE Ljava/lang/String;
+	public final fun getGradleArtifact (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinDependency;)Lorg/gradle/api/artifacts/result/ResolvedArtifactResult;
+	public final fun getResolvedBy (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinDependency;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;
+	public final fun setGradleArtifact (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinDependency;Lorg/gradle/api/artifacts/result/ResolvedArtifactResult;)V
+	public final fun setResolvedBy (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinDependency;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver$Empty : org/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver {
+	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver$Empty;
+	public fun resolve (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;)Ljava/util/Set;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver$WithBuildDependencies {
+	public abstract fun dependencies (Lorg/gradle/api/Project;)Ljava/lang/Iterable;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolverKt {
+	public static final fun IdeDependencyResolver (Ljava/lang/Iterable;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;
+	public static final fun IdeDependencyResolver ([Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;
+	public static final fun plus (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyTransformer {
+	public abstract fun transform (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;Ljava/util/Set;)Ljava/util/Set;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyTransformerKt {
+	public static final fun IdeDependencyTransformer (Ljava/util/List;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyTransformer;
+	public static final fun IdeDependencyTransformer ([Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyTransformer;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyTransformer;
+	public static final fun plus (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyTransformer;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyTransformer;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyTransformer;
+	public static final fun withTransformer (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyTransformer;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$Companion;
+	public static fun instance (Lorg/gradle/api/Project;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport;
+	public abstract fun registerAdditionalArtifactResolver (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeAdditionalArtifactResolver;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$AdditionalArtifactResolutionPhase;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$AdditionalArtifactResolutionLevel;)V
+	public abstract fun registerDependencyEffect (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyEffect;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;)V
+	public abstract fun registerDependencyResolver (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyResolutionPhase;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyResolutionLevel;)V
+	public abstract fun registerDependencyTransformer (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyTransformer;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyTransformationPhase;)V
+	public abstract fun registerExtrasSerializationExtension (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinExtrasSerializationExtension;)V
+	public abstract fun resolveDependencies (Ljava/lang/String;)Ljava/util/Set;
+	public abstract fun resolveDependencies (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;)Ljava/util/Set;
+	public abstract fun resolveDependenciesSerialized (Ljava/lang/String;)Ljava/util/List;
+	public abstract fun resolveExtrasSerialized (Ljava/lang/Object;)[B
+	public abstract fun serialize (Ljava/lang/Iterable;)Ljava/util/List;
+	public abstract fun serialize (Lorg/jetbrains/kotlin/tooling/core/Extras$Key;Ljava/lang/Object;)[B
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$AdditionalArtifactResolutionLevel : java/lang/Enum {
+	public static final field Default Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$AdditionalArtifactResolutionLevel;
+	public static final field Overwrite Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$AdditionalArtifactResolutionLevel;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$AdditionalArtifactResolutionLevel;
+	public static fun values ()[Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$AdditionalArtifactResolutionLevel;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$AdditionalArtifactResolutionPhase : java/lang/Enum {
+	public static final field PostAdditionalArtifactResolution Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$AdditionalArtifactResolutionPhase;
+	public static final field PreAdditionalArtifactResolution Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$AdditionalArtifactResolutionPhase;
+	public static final field SourcesAndDocumentationResolution Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$AdditionalArtifactResolutionPhase;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$AdditionalArtifactResolutionPhase;
+	public static fun values ()[Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$AdditionalArtifactResolutionPhase;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$Companion {
+	public final fun instance (Lorg/gradle/api/Project;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyResolutionLevel : java/lang/Enum {
+	public static final field Default Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyResolutionLevel;
+	public static final field Overwrite Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyResolutionLevel;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyResolutionLevel;
+	public static fun values ()[Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyResolutionLevel;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyResolutionPhase : java/lang/Enum {
+	public static final field BinaryDependencyResolution Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyResolutionPhase;
+	public static final field PostDependencyResolution Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyResolutionPhase;
+	public static final field PreDependencyResolution Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyResolutionPhase;
+	public static final field SourceDependencyResolution Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyResolutionPhase;
+	public static final field SourcesAndDocumentationResolution Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyResolutionPhase;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyResolutionPhase;
+	public static fun values ()[Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyResolutionPhase;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyTransformationPhase : java/lang/Enum {
+	public static final field DependencyFilteringPhase Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyTransformationPhase;
+	public static final field FreeDependencyTransformationPhase Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyTransformationPhase;
+	public static final field PostDependencyTransformationPhase Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyTransformationPhase;
+	public static final field PreDependencyTransformationPhase Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyTransformationPhase;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyTransformationPhase;
+	public static fun values ()[Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyTransformationPhase;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint$Companion;
+	public abstract fun invoke (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;)Z
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint$Companion {
+	public final fun getUnconstrained ()Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;
+	public final fun isAndroid ()Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;
+	public final fun isJvmAndAndroid ()Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;
+	public final fun isLeaf ()Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;
+	public final fun isNative ()Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;
+	public final fun isSharedNative ()Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;
+	public final fun isSingleKotlinTarget ()Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;
+	public final fun isSinglePlatformType ()Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImportKt {
+	public static final fun and (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;
+	public static final fun not (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;
+	public static final fun or (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;
+	public static final fun registerExtrasSerializationExtension (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport;Lkotlin/jvm/functions/Function1;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/ide/dependencyResolvers/IdeBinaryDependencyResolver : org/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver {
+	public fun <init> ()V
+	public fun <init> (Ljava/lang/String;)V
+	public fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/ide/dependencyResolvers/IdeBinaryDependencyResolver$ArtifactResolutionStrategy;)V
+	public synthetic fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/ide/dependencyResolvers/IdeBinaryDependencyResolver$ArtifactResolutionStrategy;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun resolve (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;)Ljava/util/Set;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/plugin/ide/dependencyResolvers/IdeBinaryDependencyResolver$ArtifactResolutionStrategy {
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/ide/dependencyResolvers/IdeBinaryDependencyResolver$ArtifactResolutionStrategy$Compilation : org/jetbrains/kotlin/gradle/plugin/ide/dependencyResolvers/IdeBinaryDependencyResolver$ArtifactResolutionStrategy {
+	public fun <init> ()V
+	public fun <init> (Lkotlin/jvm/functions/Function1;)V
+	public fun <init> (Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;)V
+	public fun <init> (Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;)V
+	public synthetic fun <init> (Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/ide/dependencyResolvers/IdeBinaryDependencyResolver$ArtifactResolutionStrategy$PlatformLikeSourceSet : org/jetbrains/kotlin/gradle/plugin/ide/dependencyResolvers/IdeBinaryDependencyResolver$ArtifactResolutionStrategy {
+	public fun <init> (Lkotlin/jvm/functions/Function2;)V
+	public fun <init> (Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;)V
+	public fun <init> (Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;)V
+	public fun <init> (Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;)V
+	public synthetic fun <init> (Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/ide/dependencyResolvers/IdeBinaryDependencyResolver$ArtifactResolutionStrategy$ResolvableConfiguration : org/jetbrains/kotlin/gradle/plugin/ide/dependencyResolvers/IdeBinaryDependencyResolver$ArtifactResolutionStrategy {
+	public fun <init> (Lkotlin/jvm/functions/Function1;)V
+	public fun <init> (Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;)V
+	public fun <init> (Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;)V
+	public synthetic fun <init> (Lkotlin/jvm/functions/Function1;Lkotlin/jvm/functions/Function2;Lkotlin/jvm/functions/Function1;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/CreateExternalKotlinCompilationKt {
+	public static final fun createCompilation (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinTarget;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinCompilation;
+	public static final fun createCompilation (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinTarget;Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinCompilation;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/CreateExternalKotlinTargetKt {
+	public static final fun createExternalKotlinTarget (Lorg/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformExtension;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinTarget;
+	public static final fun createExternalKotlinTarget (Lorg/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformExtension;Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetDescriptor;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinTarget;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinCompilation : org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalDecoratedKotlinCompilation {
+	public fun <init> (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinCompilation$Delegate;)V
+}
+
+public class org/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinTarget : org/jetbrains/kotlin/gradle/plugin/mpp/InternalKotlinTarget {
+	public fun <init> (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinTarget$Delegate;)V
+	public fun attributes (Lkotlin/jvm/functions/Function1;)V
+	public fun attributes (Lorg/gradle/api/Action;)V
+	public final fun getApiElementsConfiguration ()Lorg/gradle/api/artifacts/Configuration;
+	public fun getApiElementsConfigurationName ()Ljava/lang/String;
+	public final fun getApiElementsPublishedConfiguration ()Lorg/gradle/api/artifacts/Configuration;
+	public fun getArtifactsTaskName ()Ljava/lang/String;
+	public fun getAttributes ()Lorg/gradle/api/attributes/AttributeContainer;
+	public fun getCompilations ()Lorg/gradle/api/NamedDomainObjectContainer;
+	public fun getComponents ()Ljava/util/Set;
+	public fun getDefaultConfigurationName ()Ljava/lang/String;
+	public fun getDisambiguationClassifier ()Ljava/lang/String;
+	public synthetic fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/Extras;
+	public fun getExtras ()Lorg/jetbrains/kotlin/tooling/core/MutableExtras;
+	public fun getKotlinComponents ()Ljava/util/Set;
+	public fun getName ()Ljava/lang/String;
+	public fun getOverrideDisambiguationClassifierOnIdeImport ()Ljava/lang/String;
+	public fun getPlatformType ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinPlatformType;
+	public fun getPreset ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTargetPreset;
+	public fun getProject ()Lorg/gradle/api/Project;
+	public fun getPublishable ()Z
+	public final fun getRuntimeElementsConfiguration ()Lorg/gradle/api/artifacts/Configuration;
+	public fun getRuntimeElementsConfigurationName ()Ljava/lang/String;
+	public final fun getRuntimeElementsPublishedConfiguration ()Lorg/gradle/api/artifacts/Configuration;
+	public fun getSourcesElementsConfigurationName ()Ljava/lang/String;
+	public fun getTargetName ()Ljava/lang/String;
+	public fun getUseDisambiguationClassifierAsSourceSetNamePrefix ()Z
+	public fun isSourcesPublishable ()Z
+	public fun mavenPublication (Lkotlin/jvm/functions/Function1;)V
+	public fun mavenPublication (Lorg/gradle/api/Action;)V
+	public fun onPublicationCreated (Lorg/gradle/api/publish/maven/MavenPublication;)V
+	public fun setSourcesPublishable (Z)V
+	public fun withSourcesJar (Z)V
+}
+
+public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalDecoratedKotlinCompilation : org/jetbrains/kotlin/gradle/plugin/mpp/DecoratedKotlinCompilation {
+	public fun <init> (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalDecoratedKotlinCompilation$Delegate;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor {
+	public abstract fun getCompilationAssociator ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$CompilationAssociator;
+	public abstract fun getCompilationFactory ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$CompilationFactory;
+	public abstract fun getCompilationName ()Ljava/lang/String;
+	public abstract fun getCompileAllTaskName ()Ljava/lang/String;
+	public abstract fun getCompileTaskName ()Ljava/lang/String;
+	public abstract fun getConfigure ()Lkotlin/jvm/functions/Function1;
+	public abstract fun getDecoratedKotlinCompilationFactory ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$DecoratedKotlinCompilationFactory;
+	public abstract fun getDefaultSourceSet ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;
+	public abstract fun getFriendArtifactResolver ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$FriendArtifactResolver;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$CompilationAssociator {
+	public abstract fun associate (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinCompilation;Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinCompilation;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$CompilationFactory {
+	public abstract fun create (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinCompilation$Delegate;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/DecoratedKotlinCompilation;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$DecoratedKotlinCompilationFactory : org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$CompilationFactory {
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$FriendArtifactResolver {
+	public abstract fun resolveFriendPaths (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinCompilation;)Lorg/gradle/api/file/FileCollection;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptorBuilder {
+	public final fun configure (Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptorBuilder;
+	public final fun getCompilationAssociator ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$CompilationAssociator;
+	public final fun getCompilationFactory ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$CompilationFactory;
+	public final fun getCompilationName ()Ljava/lang/String;
+	public final fun getCompileAllTaskName ()Ljava/lang/String;
+	public final fun getCompileTaskName ()Ljava/lang/String;
+	public final fun getConfigure ()Lkotlin/jvm/functions/Function1;
+	public final fun getDecoratedKotlinCompilationFactory ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$DecoratedKotlinCompilationFactory;
+	public final fun getDefaultSourceSet ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;
+	public final fun getFriendArtifactResolver ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$FriendArtifactResolver;
+	public final fun setCompilationAssociator (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$CompilationAssociator;)V
+	public final fun setCompilationFactory (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$CompilationFactory;)V
+	public final fun setCompilationName (Ljava/lang/String;)V
+	public final fun setCompileAllTaskName (Ljava/lang/String;)V
+	public final fun setCompileTaskName (Ljava/lang/String;)V
+	public final fun setConfigure (Lkotlin/jvm/functions/Function1;)V
+	public final fun setDecoratedKotlinCompilationFactory (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$DecoratedKotlinCompilationFactory;)V
+	public final fun setDefaultSourceSet (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;)V
+	public final fun setFriendArtifactResolver (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$FriendArtifactResolver;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptorKt {
+	public static final fun ExternalKotlinCompilationDescriptor (Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetConfigurationDescriptor {
+	public abstract fun getConfigure ()Lkotlin/jvm/functions/Function2;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetConfigurationDescriptorBuilder {
+	public final fun configure (Lkotlin/jvm/functions/Function2;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetConfigurationDescriptorBuilder;
+	public final fun getConfigure ()Lkotlin/jvm/functions/Function2;
+	public final fun setConfigure (Lkotlin/jvm/functions/Function2;)V
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetDescriptor {
+	public abstract fun getApiElements ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetConfigurationDescriptor;
+	public abstract fun getApiElementsPublished ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetConfigurationDescriptor;
+	public abstract fun getConfigure ()Lkotlin/jvm/functions/Function1;
+	public abstract fun getConfigureIdeImport ()Lkotlin/jvm/functions/Function1;
+	public abstract fun getPlatformType ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinPlatformType;
+	public abstract fun getRuntimeElements ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetConfigurationDescriptor;
+	public abstract fun getRuntimeElementsPublished ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetConfigurationDescriptor;
+	public abstract fun getSourcesElements ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetConfigurationDescriptor;
+	public abstract fun getTargetFactory ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetDescriptor$TargetFactory;
+	public abstract fun getTargetName ()Ljava/lang/String;
+}
+
+public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetDescriptor$TargetFactory {
+	public abstract fun create (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinTarget$Delegate;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinTarget;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetDescriptorBuilder {
+	public final fun configure (Lkotlin/jvm/functions/Function1;)V
+	public final fun configureIdeImport (Lkotlin/jvm/functions/Function1;)V
+	public final fun getApiElements ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetConfigurationDescriptorBuilder;
+	public final fun getApiElementsPublished ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetConfigurationDescriptorBuilder;
+	public final fun getConfigure ()Lkotlin/jvm/functions/Function1;
+	public final fun getConfigureIdeImport ()Lkotlin/jvm/functions/Function1;
+	public final fun getPlatformType ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinPlatformType;
+	public final fun getRuntimeElements ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetConfigurationDescriptorBuilder;
+	public final fun getRuntimeElementsPublished ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetConfigurationDescriptorBuilder;
+	public final fun getSourcesElements ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetConfigurationDescriptorBuilder;
+	public final fun getTargetFactory ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetDescriptor$TargetFactory;
+	public final fun getTargetName ()Ljava/lang/String;
+	public final fun setConfigure (Lkotlin/jvm/functions/Function1;)V
+	public final fun setConfigureIdeImport (Lkotlin/jvm/functions/Function1;)V
+	public final fun setPlatformType (Lorg/jetbrains/kotlin/gradle/plugin/KotlinPlatformType;)V
+	public final fun setTargetFactory (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetDescriptor$TargetFactory;)V
+	public final fun setTargetName (Ljava/lang/String;)V
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetDescriptorKt {
+	public static final fun ExternalKotlinTargetDescriptor (Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetDescriptor;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalTargetApiExtensionsKt {
+	public static final fun getExtras (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilation;)Lorg/jetbrains/kotlin/tooling/core/MutableExtras;
+	public static final fun getExtras (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;)Lorg/jetbrains/kotlin/tooling/core/MutableExtras;
+	public static final fun getExtras (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;)Lorg/jetbrains/kotlin/tooling/core/MutableExtras;
+}
+

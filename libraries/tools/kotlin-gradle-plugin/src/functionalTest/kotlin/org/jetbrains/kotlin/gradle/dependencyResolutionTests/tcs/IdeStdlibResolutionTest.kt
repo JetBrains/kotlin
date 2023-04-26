@@ -198,7 +198,7 @@ class IdeStdlibResolutionTest {
         val project = createProjectWithAndroidAndDefaultStdlibEnabled()
 
         val kotlin = project.multiplatformExtension
-        kotlin.android()
+        kotlin.androidTarget()
         kotlin.jvm()
 
         project.evaluate()

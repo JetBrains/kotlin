@@ -4,7 +4,7 @@ public final annotation class Anno : R|kotlin/Annotation| {
 }
 
 public final class Class : R|kotlin/Any| {
-    @FIELD:R|test/Anno|() public final var property: R|kotlin/Int|
+    field:@FIELD:R|test/Anno|() public final var property: R|kotlin/Int|
         public get(): R|kotlin/Int|
         public set(value: R|kotlin/Int|): R|kotlin/Unit|
 

@@ -952,4 +952,39 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             }
         }
     }
+
+    @GradleAndroidTest
+    fun mppAndroidRenameDiagnosticReportedOnKts(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk,
+    ) = testAndroidRenameReported(gradleVersion, agpVersion, jdkVersion, "mppAndroidRenameKts")
+
+    @GradleAndroidTest
+    fun mppAndroidRenameDiagnosticReportedOnGroovy(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk,
+    ) = testAndroidRenameReported(gradleVersion, agpVersion, jdkVersion, "mppAndroidRenameGroovy")
+
+    private fun testAndroidRenameReported(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk,
+        projectName: String
+    ) {
+        project(
+            projectName,
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildJdk = jdkVersion.location
+        ) {
+            build("tasks") {
+                val warnings = output.lines().filter { it.startsWith("w:") }.toSet()
+                assert(
+                    warnings.any { warning -> warning.contains("androidTarget") }
+                )
+            }
+        }
+    }
 }

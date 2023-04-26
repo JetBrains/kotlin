@@ -108,7 +108,8 @@ ALWAYS_INLINE void send_releaseAsAssociatedObject(void* associatedObject) {
 
 extern "C" ALWAYS_INLINE void Kotlin_ObjCExport_releaseAssociatedObject(void* associatedObject) {
   if (associatedObject != nullptr) {
-    kotlin::ThreadStateGuard guard(kotlin::ThreadState::kNative);
+    // May already be in the native state if was scheduled on the main queue.
+    NativeOrUnregisteredThreadGuard guard(/*reentrant=*/ true);
     send_releaseAsAssociatedObject(associatedObject);
   }
 }

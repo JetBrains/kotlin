@@ -3,10 +3,12 @@
  * that can be found in the LICENSE file.
  */
 
+@file:Suppress("DEPRECATION")
 package kotlin.native.concurrent
 
 import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.internal.Frozen
+import kotlin.concurrent.AtomicReference
 
 @FreezingIsDeprecated
 internal class FreezeAwareLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
@@ -94,7 +96,7 @@ internal class AtomicLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
 
     override val value: T
         get() {
-            if (value_.compareAndSwap(UNINITIALIZED, INITIALIZING) === UNINITIALIZED) {
+            if (value_.compareAndExchange(UNINITIALIZED, INITIALIZING) === UNINITIALIZED) {
                 // We execute exclusively here.
                 val ctor = initializer_.value
                 if (ctor != null && initializer_.compareAndSet(ctor, null)) {

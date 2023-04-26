@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.asJava.classes.KtLightClass
 import org.jetbrains.kotlin.asJava.classes.KtLightClassForFacade
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolBasedFakeLightClass
 import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForFacade
+import org.jetbrains.kotlin.light.classes.symbol.classes.SymbolLightClassForScript
 import org.jetbrains.kotlin.light.classes.symbol.classes.createSymbolLightClassNoCache
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -52,6 +53,10 @@ class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupportBase<KtMo
 
     override fun findFilesForFacadeByPackage(packageFqName: FqName, searchScope: GlobalSearchScope): Collection<KtFile> {
         return project.createDeclarationProvider(searchScope).findFilesForFacadeByPackage(packageFqName)
+    }
+
+    override fun findFilesForScript(scriptFqName: FqName, searchScope: GlobalSearchScope): Collection<KtScript> {
+        return project.createDeclarationProvider(searchScope).findFilesForScript(scriptFqName)
     }
 
     private fun FqName.toClassIdSequence(): Sequence<ClassId> {
@@ -86,7 +91,9 @@ class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupportBase<KtMo
             .getKotlinOnlySubPackagesFqNames(fqn, nameFilter = { true })
             .map { fqn.child(it) }
 
-    override fun createInstanceOfLightScript(script: KtScript): KtLightClass? = error("Should not be called")
+    override fun createInstanceOfLightScript(script: KtScript): KtLightClass {
+        return SymbolLightClassForScript(script, script.getKtModule(project))
+    }
 
     override fun KtFile.findModule(): KtModule = getKtModule(project)
 
@@ -129,8 +136,6 @@ class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupportBase<KtMo
     override val KtModule.contentSearchScope: GlobalSearchScope get() = this.contentScope
 
     override fun facadeIsApplicable(module: KtModule, file: KtFile): Boolean = module.isFromSourceOrLibraryBinary()
-
-    override fun getScriptClasses(scriptFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> = error("Should not be called")
 
     override fun getKotlinInternalClasses(fqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
         val facadeKtFiles = project.createDeclarationProvider(scope).findInternalFilesForFacade(fqName)

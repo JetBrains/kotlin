@@ -7,6 +7,7 @@ package kotlin.native.concurrent
 
 import kotlinx.cinterop.*
 import kotlin.native.internal.Frozen
+import kotlin.concurrent.AtomicNativePtr
 
 /**
  * Note: modern Kotlin/Native memory manager allows to share objects between threads without additional ceremonies,

@@ -78,10 +78,9 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
                  *    create a bridge from DefaultImpls of derived to DefaultImpls of base, unless
                  *    - the implementation is private, or belongs to java.lang.Object,
                  *      or is a stub for function with default parameters ($default)
-                 *    - we're in -Xjvm-default=compatibility|all-compatibility mode, in which case we go via
+                 *    - we're in -Xjvm-default=all-compatibility mode, in which case we go via
                  *      accessors on the parent class rather than the DefaultImpls if inherited method is compiled to JVM default
-                 *    - we're in -Xjvm-default=enable|all mode, and we have that default implementation,
-                 *      in which case we simply leave it.
+                 *    - we're in -Xjvm-default=all mode, and we have that default implementation, in which case we simply leave it.
                  *
                  *    ```
                  *    interface A { fun foo() = 0 }

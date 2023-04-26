@@ -320,6 +320,12 @@ public class JsIrES6InvalidationTestGenerated extends AbstractJsIrES6Invalidatio
     }
 
     @Test
+    @TestMetadata("localObjectsLeakThroughInterface")
+    public void testLocalObjectsLeakThroughInterface() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/localObjectsLeakThroughInterface/");
+    }
+
+    @Test
     @TestMetadata("mainModuleInvalidation")
     public void testMainModuleInvalidation() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/mainModuleInvalidation/");
@@ -371,6 +377,12 @@ public class JsIrES6InvalidationTestGenerated extends AbstractJsIrES6Invalidatio
     @TestMetadata("privateInlineFunction1")
     public void testPrivateInlineFunction1() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/privateInlineFunction1/");
+    }
+
+    @Test
+    @TestMetadata("privateObjectsLeakThroughSealedInterface")
+    public void testPrivateObjectsLeakThroughSealedInterface() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/privateObjectsLeakThroughSealedInterface/");
     }
 
     @Test
