@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 // TODO replace with structural type comparison?
 object KtDeclarationAndFirDeclarationEqualityChecker {
     fun representsTheSameDeclaration(psi: KtCallableDeclaration, fir: FirCallableDeclaration): Boolean {
+        if (fir.realPsi == psi) return true
         if (!modifiersMatch(psi, fir)) return false
         if (!receiverTypeMatch(psi, fir)) return false
         if (!returnTypesMatch(psi, fir)) return false
