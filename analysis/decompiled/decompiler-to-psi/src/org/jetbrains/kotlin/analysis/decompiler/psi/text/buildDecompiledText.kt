@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.analysis.decompiler.psi.text
 
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.contracts.description.ContractProviderKey
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
@@ -18,6 +20,7 @@ import org.jetbrains.kotlin.resolve.DataClassDescriptorResolver
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.kotlin.resolve.descriptorUtil.secondaryConstructors
 import org.jetbrains.kotlin.types.isFlexible
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 private const val DECOMPILED_CODE_COMMENT = "/* compiled code */"
 private const val DECOMPILED_COMMENT_FOR_PARAMETER = "/* = compiled code */"
@@ -106,6 +109,40 @@ fun buildDecompiledText(
                     builder.append(" ").append(DECOMPILED_CODE_COMMENT)
                 }
                 endOffset = builder.length
+            }
+            if (descriptor is PropertyDescriptor) {
+                for (accessor in descriptor.accessors) {
+                    if (accessor.isDefault) continue
+                    builder.append("\n$indent    ")
+                    builder.append(accessor.visibility.internalDisplayName).append(" ")
+                    builder.append(accessor.modality.name.toLowerCaseAsciiOnly()).append(" ")
+                    if (accessor.isExternal) {
+                        builder.append("external ")
+                    }
+                    for (annotation in accessor.annotations) {
+                        builder.append(descriptorRenderer.renderAnnotation(annotation))
+                        builder.append(" ")
+                    }
+                    if (accessor is PropertyGetterDescriptor) {
+                        builder.append("get")
+                    } else if (accessor is PropertySetterDescriptor) {
+                        builder.append("set(")
+                        val parameterDescriptor = accessor.valueParameters[0]
+                        for (annotation in parameterDescriptor.annotations) {
+                            builder.append(descriptorRenderer.renderAnnotation(annotation))
+                            builder.append(" ")
+                        }
+                        val paramName = when (val name = parameterDescriptor.name) {
+                            SpecialNames.IMPLICIT_SET_PARAMETER -> StandardNames.DEFAULT_VALUE_PARAMETER
+                            else -> name
+                        }
+                        builder.append(paramName.asString()).append(": ")
+                            .append(descriptorRenderer.renderType(parameterDescriptor.type))
+                        builder.append(")")
+                        builder.append(" {").append(DECOMPILED_CODE_COMMENT).append(" }")
+                    }
+                    endOffset = builder.length
+                }
             }
         } else if (descriptor is ClassDescriptor && !isEnumEntry(descriptor)) {
             builder.append(" {\n")

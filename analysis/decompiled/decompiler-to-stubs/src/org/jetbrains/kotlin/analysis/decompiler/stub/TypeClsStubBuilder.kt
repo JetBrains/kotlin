@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.protobuf.MessageLite
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub
@@ -302,14 +303,18 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         parent: StubElement<out PsiElement>,
         callableProto: MessageLite,
         parameters: List<ProtoBuf.ValueParameter>,
-        container: ProtoContainer
+        container: ProtoContainer,
+        callableKind: AnnotatedCallableKind = callableProto.annotatedCallableKind
     ) {
         val parameterListStub = KotlinPlaceHolderStubImpl<KtParameterList>(parent, KtStubElementTypes.VALUE_PARAMETER_LIST)
         for ((index, valueParameterProto) in parameters.withIndex()) {
-            val name = c.nameResolver.getName(valueParameterProto.name)
+            val paramName = when (val name = c.nameResolver.getName(valueParameterProto.name)) {
+                SpecialNames.IMPLICIT_SET_PARAMETER -> StandardNames.DEFAULT_VALUE_PARAMETER
+                else -> name
+            }
             val parameterStub = KotlinParameterStubImpl(
                 parameterListStub,
-                name = name.ref(),
+                name = paramName.ref(),
                 fqName = null,
                 hasDefaultValue = false,
                 hasValOrVar = false,
@@ -333,7 +338,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
 
             if (Flags.HAS_ANNOTATIONS.get(valueParameterProto.flags)) {
                 val parameterAnnotations = c.components.annotationLoader.loadValueParameterAnnotations(
-                    container, callableProto, callableProto.annotatedCallableKind, index, valueParameterProto
+                    container, callableProto, callableKind, index, valueParameterProto
                 )
                 if (parameterAnnotations.isNotEmpty()) {
                     createAnnotationStubs(parameterAnnotations, modifierList ?: createEmptyModifierListStub(parameterStub))
