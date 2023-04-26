@@ -353,8 +353,6 @@ if (!buildProperties.inJpsBuildIdeaSync) {
             ":prepare:ide-plugin-dependencies:sam-with-receiver-compiler-plugin-for-ide",
             ":prepare:ide-plugin-dependencies:assignment-compiler-plugin-for-ide",
             ":prepare:ide-plugin-dependencies:parcelize-compiler-plugin-for-ide",
-            ":prepare:ide-plugin-dependencies:parcelize-compiler-plugin-fe10-for-ide",
-            ":prepare:ide-plugin-dependencies:parcelize-compiler-plugin-fir-for-ide",
             ":prepare:ide-plugin-dependencies:lombok-compiler-plugin-for-ide",
             ":prepare:ide-plugin-dependencies:kotlin-backend-native-for-ide",
             ":prepare:ide-plugin-dependencies:tests-common-tests-for-ide",
