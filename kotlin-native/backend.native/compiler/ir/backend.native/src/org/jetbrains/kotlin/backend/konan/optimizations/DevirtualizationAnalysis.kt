@@ -173,6 +173,8 @@ internal object DevirtualizationAnalysis {
 
         class Function(val symbol: DataFlowIR.FunctionSymbol, val parameters: Array<Node>, val returns: Node, val throws: Node)
 
+        class ExternalVirtualCall(val receiverNode: Node, val returnsNode: Node, val returnType: DataFlowIR.Type.Declared)
+
         inner class ConstraintGraph {
 
             private var nodesCount = 0
@@ -186,6 +188,7 @@ internal object DevirtualizationAnalysis {
             val externalFunctions = mutableMapOf<Pair<DataFlowIR.FunctionSymbol, DataFlowIR.Type>, Node>()
             val fields = mutableMapOf<DataFlowIR.Field, Node>() // Do not distinguish receivers.
             val virtualCallSiteReceivers = mutableMapOf<DataFlowIR.Node.VirtualCall, Node>()
+            val externalVirtualCalls = mutableListOf<ExternalVirtualCall>()
 
             private fun nextId(): Int = nodesCount++
 
@@ -597,6 +600,9 @@ internal object DevirtualizationAnalysis {
                 }
             }
 
+            if (entryPoint == null)
+                propagateFinalTypesFromExternalVirtualCalls(directEdges)
+
             context.logMultiple {
                 topologicalOrder.forEachIndexed { index, multiNode ->
                     +"Types of multi-node #$index"
@@ -623,6 +629,7 @@ internal object DevirtualizationAnalysis {
                     if (receiverNode.types[VIRTUAL_TYPE_ID]) {
                         context.logMultiple {
                             +"Unable to devirtualize callsite ${virtualCall.debugString()}"
+                            +"from ${function.symbol}"
                             +"    receiver is Virtual"
                             logPathToType(reversedEdges, receiverNode, VIRTUAL_TYPE_ID)
                             +""
@@ -630,7 +637,10 @@ internal object DevirtualizationAnalysis {
                         return@forEachNonScopeNode
                     }
 
-                    context.log { "Devirtualized callsite ${virtualCall.debugString()}" }
+                    context.logMultiple {
+                        +"Devirtualized callsite ${virtualCall.debugString()}"
+                        +"from ${function.symbol}"
+                    }
                     val receiverType = virtualCall.receiverType.resolved()
                     val possibleReceivers = mutableListOf<DataFlowIR.Type.Declared>()
                     forEachBitInBoth(receiverNode.types, typeHierarchy.inheritorsOf(receiverType)) {
@@ -686,6 +696,50 @@ internal object DevirtualizationAnalysis {
             }
 
             return AnalysisResult(result.asSequence().associateBy({ it.key }, { it.value.first }), typeHierarchy)
+        }
+
+        /*
+         * If a virtual function is called on a receiver coming from external world and
+         * the return type of the function is a final class, then we conservatively assume
+         * that instance of this class could have been created by the call.
+         */
+        private fun propagateFinalTypesFromExternalVirtualCalls(directEdges: IntArray) {
+            val nodesCount = constraintGraph.nodes.size
+            constraintGraph.externalVirtualCalls
+                    .groupBy { it.returnType }
+                    .forEach { (type, list) ->
+                        val visited = BitSet(nodesCount)
+                        val stack = mutableListOf<Node>()
+                        list.forEach { call ->
+                            val returnsNode = call.returnsNode
+                            if (call.receiverNode.types[VIRTUAL_TYPE_ID] // Called from external world.
+                                    && !returnsNode.types[type.index] && !visited[returnsNode.id]
+                            ) {
+                                returnsNode.types.set(type.index)
+                                stack.push(returnsNode)
+                                visited.set(returnsNode.id)
+                            }
+                        }
+                        while (stack.isNotEmpty()) {
+                            val node = stack.pop()
+                            directEdges.forEachEdge(node.id) { distNodeId ->
+                                val distNode = constraintGraph.nodes[distNodeId]
+                                if (!distNode.types[type.index] && !visited[distNode.id]) {
+                                    distNode.types.set(type.index)
+                                    visited.set(distNode.id)
+                                    stack.push(distNode)
+                                }
+                            }
+                            node.directCastEdges?.forEach { edge ->
+                                val distNode = edge.node
+                                if (!distNode.types[type.index] && !visited[distNode.id] && edge.suitableTypes[type.index]) {
+                                    distNode.types.set(type.index)
+                                    visited.set(distNode.id)
+                                    stack.push(distNode)
+                                }
+                            }
+                        }
+                    }
         }
 
         // Both [directEdges] and [reversedEdges] are the array representation of a graph:
@@ -939,22 +993,6 @@ internal object DevirtualizationAnalysis {
                     it?.and(instantiatingClasses)
                     it?.set(VIRTUAL_TYPE_ID)
                 }
-
-                if (entryPoint == null) {
-                    for (list in typesVirtualCallSites)
-                        for (virtualCall in list) {
-                            val returnType = virtualCall.virtualCall.returnType.resolved()
-                            val totalIncomingEdgesToReturnsNode =
-                                    if (virtualCall.returnsNode.id >= reversedEdgesCount.size)
-                                        0
-                                    else reversedEdgesCount[virtualCall.returnsNode.id]
-                            if (returnType.isFinal && totalIncomingEdgesToReturnsNode == 0) {
-                                // If we are in a library and facing final return type with no possible callees -
-                                // this type still can be returned by some user of this library, so propagate it explicitly.
-                                addEdge(concreteClass(returnType), virtualCall.returnsNode)
-                            }
-                        }
-                }
             }
 
             private fun createFunctionConstraintGraph(symbol: DataFlowIR.FunctionSymbol, isRoot: Boolean): Function? {
@@ -1202,12 +1240,16 @@ internal object DevirtualizationAnalysis {
                                 val actualCallee = allTypes[it].calleeAt(node)
                                 addEdge(doCall(actualCallee, arguments, actualCallee.returnParameter.type.resolved()), returnsNode)
                             }
-                            // Add cast to [Virtual] edge from receiver to returns, if return type is not final.
-                            // With this we're reflecting the fact that unknown function can return anything.
-                            if (!returnType.isFinal && entryPoint == null) {
-                                receiverNode.addCastEdge(Node.CastEdge(returnsNode, virtualTypeFilter))
+                            if (entryPoint == null) {
+                                // Add cast to [Virtual] edge from receiver to returns, if return type is not final.
+                                // With this we're reflecting the fact that unknown function can return anything.
+                                if (!returnType.isFinal) {
+                                    receiverNode.addCastEdge(Node.CastEdge(returnsNode, virtualTypeFilter))
+                                } else {
+                                    constraintGraph.externalVirtualCalls.add(ExternalVirtualCall(receiverNode, returnsNode, returnType))
+                                }
                             }
-                            // And throw anything.
+                            // An external function can throw anything.
                             receiverNode.addCastEdge(Node.CastEdge(function.throws, virtualTypeFilter))
 
                             constraintGraph.virtualCallSiteReceivers[node] = receiverNode
@@ -1437,6 +1479,9 @@ internal object DevirtualizationAnalysis {
             }
         }
 
+        var callSitesCount = 0
+        var devirtualizedCallSitesCount = 0
+        var actuallyDevirtualizedCallSitesCount = 0
         irModule.transformChildren(object : IrElementTransformer<IrDeclarationParent?> {
             override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclarationParent?) =
                     super.visitDeclaration(declaration, declaration as? IrDeclarationParent ?: data)
@@ -1444,6 +1489,8 @@ internal object DevirtualizationAnalysis {
             override fun visitCall(expression: IrCall, data: IrDeclarationParent?): IrExpression {
                 expression.transformChildren(this, data)
 
+                if (expression.superQualifierSymbol == null && expression.symbol.owner.isOverridable)
+                    ++callSitesCount
                 val devirtualizedCallSite = devirtualizedCallSites[expression]
                 val possibleCallees = devirtualizedCallSite?.possibleCallees
                 if (possibleCallees == null
@@ -1458,10 +1505,12 @@ internal object DevirtualizationAnalysis {
                 val classMaxUnfoldFactor = 3
                 val interfaceMaxUnfoldFactor = 3
                 val maxUnfoldFactor = if (owner.isInterface) interfaceMaxUnfoldFactor else classMaxUnfoldFactor
+                ++devirtualizedCallSitesCount
                 if (possibleCallees.size > maxUnfoldFactor) {
                     // Callsite too complicated to devirtualize.
                     return expression
                 }
+                ++actuallyDevirtualizedCallSitesCount
 
                 val startOffset = expression.startOffset
                 val endOffset = expression.endOffset
@@ -1556,5 +1605,9 @@ internal object DevirtualizationAnalysis {
                 }
             }
         }, null)
+        context.logMultiple {
+            +"Devirtualized: ${devirtualizedCallSitesCount * 100.0 / callSitesCount}%"
+            +"Actually devirtualized: ${actuallyDevirtualizedCallSitesCount * 100.0 / callSitesCount}%"
+        }
     }
 }
