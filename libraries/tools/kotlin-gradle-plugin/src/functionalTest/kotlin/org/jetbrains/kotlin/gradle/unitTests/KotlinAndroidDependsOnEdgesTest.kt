@@ -40,8 +40,8 @@ class KotlinAndroidDependsOnEdgesTest {
         val commonMain = kotlin.sourceSets.getByName("commonMain")
         val commonTest = kotlin.sourceSets.getByName("commonTest")
         val androidMain = kotlin.sourceSets.getByName("androidMain")
-        val androidTest = kotlin.sourceSets.getByName("androidTest")
-        val androidAndroidTest = kotlin.sourceSets.getByName("androidAndroidTest")
+        val androidUnitTest = kotlin.sourceSets.getByName("androidUnitTest")
+        val androidInstrumentedTest = kotlin.sourceSets.getByName("androidInstrumentedTest")
 
         assertEquals(
             setOf(commonMain), androidMain.dependsOn,
@@ -49,13 +49,13 @@ class KotlinAndroidDependsOnEdgesTest {
         )
 
         assertEquals(
-            setOf(commonTest), androidTest.dependsOn,
-            "Expected androidTest to dependOn commonTest"
+            setOf(commonTest), androidUnitTest.dependsOn,
+            "Expected androidUnitTest to dependOn commonTest"
         )
 
         assertEquals(
-            setOf(commonTest), androidAndroidTest.dependsOn,
-            "Expected androidAndroidTest to dependOn commonTest"
+            setOf(), androidInstrumentedTest.dependsOn,
+            "Expected androidInstrumentedTest to dependOn no default SourceSet"
         )
     }
 
@@ -89,8 +89,8 @@ class KotlinAndroidDependsOnEdgesTest {
         val commonTest = kotlin.sourceSets.getByName("commonTest")
         val jvmMain = kotlin.sourceSets.getByName("jvmMain")
         val androidMain = kotlin.sourceSets.getByName("androidMain")
-        val androidTest = kotlin.sourceSets.getByName("androidTest")
-        val androidAndroidTest = kotlin.sourceSets.getByName("androidAndroidTest")
+        val androidUnitTest = kotlin.sourceSets.getByName("androidUnitTest")
+        val androidInstrumentedTest = kotlin.sourceSets.getByName("androidInstrumentedTest")
 
         assertEquals(
             setOf(commonMain, jvmMain).sorted(), androidMain.dependsOn.sorted(),
@@ -98,13 +98,13 @@ class KotlinAndroidDependsOnEdgesTest {
         )
 
         assertEquals(
-            setOf(commonTest), androidTest.dependsOn,
-            "Expected androidTest to only depend on commonTest"
+            setOf(commonTest), androidUnitTest.dependsOn,
+            "Expected androidUnitTest to only depend on commonTest"
         )
 
         assertEquals(
-            setOf(commonTest), androidAndroidTest.dependsOn,
-            "Expected androidAndroidTest to only depend on commonTest"
+            setOf(), androidInstrumentedTest.dependsOn,
+            "Expected androidInstrumentedTest to *not* depend on commonTest"
         )
     }
 

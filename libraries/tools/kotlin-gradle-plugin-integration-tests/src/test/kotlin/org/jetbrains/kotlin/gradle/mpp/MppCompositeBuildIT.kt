@@ -317,6 +317,8 @@ class MppCompositeBuildIT : KGPBaseTest() {
         }
     }
 
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_1)
+    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_70)
     @GradleAndroidTest
     fun `test - sample6-KT-56712-umbrella-composite`(
         gradleVersion: GradleVersion, agpVersion: String, jdkVersion: JdkVersions.ProvidedJdk,
