@@ -120,6 +120,7 @@ internal class KtFe10CallResolver(
             Errors.RESOLUTION_TO_PRIVATE_CONSTRUCTOR_OF_SEALED_CLASS,
             Errors.UNRESOLVED_REFERENCE,
             *Errors.TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM.factories,
+            *Errors.TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM_IN_AUGMENTED_ASSIGNMENT.factories,
         )
 
         private val syntaxErrors = setOf(
