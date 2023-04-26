@@ -15,7 +15,6 @@ data class SimpleDTO(
 ) {
     @Transient
     private val additionalProperties: Map<String, Int> = mapOf("delegatedProp" to 123)
-    @Transient
     val delegatedProp: Int? by additionalProperties
 }
 
@@ -43,6 +42,23 @@ class DelegatedByFinalVal(
     val realProp: Int
 ) {
     val delegatedProp: String by impl
+}
+
+// A var property with a backing field and a default getter in the same module:
+var implvar: ReadWriteProperty<Any?, String> = object : ReadWriteProperty<Any?, String> {
+    private var value = "test-string"
+    override operator fun getValue(thisRef: Any?, property: KProperty<*>): String = value
+    override operator fun setValue(
+        thisRef: Any?,
+        property: KProperty<*>,
+        value: String) { this.value = value }
+}
+
+@Serializable
+class DelegatedByVar(
+    val realProp: Int
+) {
+    var delegatedProp: String by implvar
 }
 
 // delegated by this
@@ -74,6 +90,13 @@ fun box(): String {
     if (byFinalJsonStr != """{"realProp":123}""") return simpleDTOJsonStr
     if (byFinalDecoded.delegatedProp != byFinal.delegatedProp) return "DelegatedByFinalVal Delegate is incorrect!"
     if (byFinalDecoded.realProp !== 123) return "DelegatedByFinalVal Deserialization failed"
+
+    val byVar = DelegatedByVar(123)
+    val byVarJsonStr = Json.encodeToString(byVar)
+    val byVarDecoded = Json.decodeFromString<DelegatedByObjectProperty>(byVarJsonStr)
+    if (byVarJsonStr != """{"realProp":123}""") return simpleDTOJsonStr
+    if (byVarDecoded.delegatedProp != byVar.delegatedProp) return "DelegatedByVar Delegate is incorrect!"
+    if (byVarDecoded.realProp !== 123) return "DelegatedByVar Deserialization failed"
 
     val byThisExp = DelegatedByThis(123)
     val byThisJsonStr = Json.encodeToString(byThisExp)
