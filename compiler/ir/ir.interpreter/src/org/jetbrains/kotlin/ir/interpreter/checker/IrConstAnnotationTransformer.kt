@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
@@ -34,10 +35,14 @@ internal abstract class IrConstAnnotationTransformer(
     private fun transformAnnotation(annotation: IrConstructorCall) {
         for (i in 0 until annotation.valueArgumentsCount) {
             val arg = annotation.getValueArgument(i) ?: continue
-            when (arg) {
-                is IrVararg -> annotation.putValueArgument(i, arg.transformVarArg())
-                else -> annotation.putValueArgument(i, arg.transformSingleArg(annotation.symbol.owner.valueParameters[i].type))
-            }
+            annotation.putValueArgument(i, transformAnnotationArgument(arg, annotation.symbol.owner.valueParameters[i]))
+        }
+    }
+
+    protected fun transformAnnotationArgument(argument: IrExpression, valueParameter: IrValueParameter): IrExpression {
+        return when (argument) {
+            is IrVararg -> argument.transformVarArg()
+            else -> argument.transformSingleArg(valueParameter.type)
         }
     }
 
