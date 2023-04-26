@@ -16,18 +16,70 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
 import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
 import org.jetbrains.kotlin.analysis.utils.errors.checkWithAttachmentBuilder
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.resolve.ResolutionMode
+import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
+import org.jetbrains.kotlin.fir.expressions.FirLazyExpression
+import org.jetbrains.kotlin.fir.expressions.FirWrappedDelegateExpression
+import org.jetbrains.kotlin.fir.expressions.builder.buildLazyBlock
+import org.jetbrains.kotlin.fir.expressions.builder.buildLazyDelegatedConstructorCall
+import org.jetbrains.kotlin.fir.expressions.builder.buildLazyExpression
+import org.jetbrains.kotlin.fir.references.FirSuperReference
+import org.jetbrains.kotlin.fir.references.FirThisReference
+import org.jetbrains.kotlin.fir.references.builder.buildExplicitSuperReference
+import org.jetbrains.kotlin.fir.references.builder.buildExplicitThisReference
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.dfa.FirControlFlowGraphReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.fir.visitors.transformSingle
 
+internal object BodyStateKeepers {
+    val ANONYMOUS_INITIALIZER: StateKeeper<FirAnonymousInitializer> = stateKeeper {
+        add(FirAnonymousInitializer::body, FirAnonymousInitializer::replaceBody) { buildLazyBlock() }
+    }
+
+    val FUNCTION: StateKeeper<FirFunction> = stateKeeper {
+        add(FirFunction::body, FirFunction::replaceBody) { buildLazyBlock() }
+        add(FirFunction::returnTypeRef, FirFunction::replaceReturnTypeRef)
+        add(FirFunction::controlFlowGraphReference, FirFunction::replaceControlFlowGraphReference)
+        addList(FirFunction::valueParameters, FirValueParameter::defaultValue, FirValueParameter::replaceDefaultValue) { fir ->
+            buildLazyExpression(fir)
+        }
+    }
+
+    val CONSTRUCTOR: StateKeeper<FirConstructor> = stateKeeper(FUNCTION) {
+        add(FirConstructor::delegatedConstructor, FirConstructor::replaceDelegatedConstructor) { makeLazyDelegatedConstructorCall(it) }
+    }
+
+    val PROPERTY: StateKeeper<FirProperty> = stateKeeper {
+        // Property initializer is supposed to be either lazy (so it's safe to roll back to it) or fully resolved.
+        add(FirProperty::initializer, FirProperty::replaceInitializer)
+        add(FirProperty::returnTypeRef, FirProperty::replaceReturnTypeRef)
+        addNested(FirProperty::getter, FirPropertyAccessor::body, FirPropertyAccessor::replaceBody) { buildLazyBlock() }
+        addNested(FirProperty::setter, FirPropertyAccessor::body, FirPropertyAccessor::replaceBody) { buildLazyBlock() }
+        addNested(FirProperty::backingField, FirBackingField::initializer, FirBackingField::replaceInitializer) {
+            buildLazyExpression(it)
+        }
+        addNested(
+            { it.delegate as? FirWrappedDelegateExpression },
+            FirWrappedDelegateExpression::delegateProvider,
+            FirWrappedDelegateExpression::replaceDelegateProvider
+        )
+        addNested(
+            { it.delegate as? FirWrappedDelegateExpression },
+            FirWrappedDelegateExpression::expression,
+            FirWrappedDelegateExpression::replaceExpression
+        )
+    }
+
+    val ENUM_ENTRY: StateKeeper<FirEnumEntry> = stateKeeper {
+        add(FirEnumEntry::initializer, FirEnumEntry::replaceInitializer) { buildLazyExpression(it) }
+    }
+}
 
 internal object LLFirBodyLazyResolver : LLFirLazyResolver(FirResolvePhase.BODY_RESOLVE) {
     override fun resolve(
@@ -90,9 +142,9 @@ private class LLFirBodyTargetResolver(
                 }
 
                 // resolve class CFG graph here, to do this we need to have property & init blocks resoled
-                resolveMemberProperties(target)
+                resolveMemberPropertiesForControlFlowGraph(target)
                 performCustomResolveUnderLock(target) {
-                    calculateCFG(target)
+                    calculateControlFlowGraph(target)
                 }
 
                 return true
@@ -102,10 +154,10 @@ private class LLFirBodyTargetResolver(
         return false
     }
 
-    private fun calculateCFG(target: FirRegularClass) {
+    private fun calculateControlFlowGraph(target: FirRegularClass) {
         checkWithAttachmentBuilder(
             target.controlFlowGraphReference == null,
-            { "controlFlowGraphReference should be null if class phase < $resolverPhase)" },
+            { "'controlFlowGraphReference' should be 'null' if the class phase < $resolverPhase)" },
         ) {
             withFirEntry("firClass", target)
         }
@@ -113,22 +165,25 @@ private class LLFirBodyTargetResolver(
         val dataFlowAnalyzer = transformer.declarationsTransformer.dataFlowAnalyzer
         dataFlowAnalyzer.enterClass(target, buildGraph = true)
         val controlFlowGraph = dataFlowAnalyzer.exitClass()
-            ?: buildErrorWithAttachment("CFG should not be null as buildGraph is specified") {
+            ?: buildErrorWithAttachment("CFG should not be 'null' as 'buildGraph' is specified") {
                 withFirEntry("firClass", target)
             }
 
         target.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(controlFlowGraph))
     }
 
-    private fun resolveMemberProperties(target: FirRegularClass) {
+    private fun resolveMemberPropertiesForControlFlowGraph(target: FirRegularClass) {
         withRegularClass(target) {
             for (member in target.declarations) {
                 if (member is FirCallableDeclaration || member is FirAnonymousInitializer) {
-                    /* TODO we should resolve only properties and init blocks here but due to the recent changes in the compiler, we also have to do this for all callable members
-                    we should avoid doing it as it leads to additional work and also can might to problems with incremental analysis
-                    */
+                    // TODO: Ideally, only properties and init blocks should be resolved here.
+                    // However, dues to changes in the compiler resolution, we temporarily have to resolve all callable members.
+                    // Such additional work might affect incremental analysis performance.
                     member.lazyResolveToPhase(resolverPhase.previous)
-                    performResolve(member)
+
+                    performCustomResolveUnderLock(member) {
+                        performResolve(member)
+                    }
                 }
             }
         }
@@ -148,17 +203,43 @@ private class LLFirBodyTargetResolver(
         }
 
         when (target) {
-            is FirRegularClass -> {
-                error("should be resolved in ${::doResolveWithoutLock.name}")
+            is FirRegularClass -> error("Should have been resolved in ${::doResolveWithoutLock.name}")
+            is FirDanglingModifierList,
+            is FirFileAnnotationsContainer,
+            is FirTypeAlias -> {
+                // No bodies here
             }
-            is FirDanglingModifierList, is FirFileAnnotationsContainer, is FirTypeAlias -> {
-                // no bodies here
-            }
-            is FirCallableDeclaration, is FirAnonymousInitializer, is FirScript -> {
-                calculateLazyBodies(target)
-                target.transformSingle(transformer, ResolutionMode.ContextIndependent)
-            }
+            is FirCallableDeclaration -> resolveBody(target)
+            is FirAnonymousInitializer -> resolveBody(target)
             else -> throwUnexpectedFirElementError(target)
+        }
+    }
+}
+
+private fun buildLazyExpression(fir: FirElement): FirLazyExpression {
+    return buildLazyExpression {
+        source = fir.source
+    }
+}
+
+private fun makeLazyDelegatedConstructorCall(fir: FirConstructor): FirDelegatedConstructorCall {
+    val originalConstructor = fir.delegatedConstructor ?: error("Delegated constructor is missing")
+    return buildLazyDelegatedConstructorCall {
+        constructedTypeRef = originalConstructor.constructedTypeRef
+        when (val originalCalleeReference = originalConstructor.calleeReference) {
+            is FirThisReference -> {
+                isThis = true
+                calleeReference = buildExplicitThisReference {
+                    source = null
+                }
+            }
+            is FirSuperReference -> {
+                isThis = false
+                calleeReference = buildExplicitSuperReference {
+                    source = null
+                    superTypeRef = originalCalleeReference.superTypeRef
+                }
+            }
         }
     }
 }

@@ -15,11 +15,9 @@ import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirImplicitAwareBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
-import org.jetbrains.kotlin.fir.visitors.transformSingle
 
 internal object LLFirImplicitTypesLazyResolver : LLFirLazyResolver(FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
     override fun resolve(
@@ -77,13 +75,15 @@ private class LLFirImplicitBodyTargetResolver(
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
         when (target) {
-            is FirRegularClass, is FirDanglingModifierList, is FirAnonymousInitializer, is FirFileAnnotationsContainer, is FirTypeAlias, is FirScript -> {
-                // no implicit bodies here
+            is FirRegularClass,
+            is FirDanglingModifierList,
+            is FirAnonymousInitializer,
+            is FirFileAnnotationsContainer,
+            is FirTypeAlias,
+            is FirScript -> {
+                // No implicit bodies here
             }
-            is FirCallableDeclaration -> {
-                calculateLazyBodies(target)
-                target.transformSingle(transformer, ResolutionMode.ContextIndependent)
-            }
+            is FirCallableDeclaration -> resolveBody(target)
             else -> throwUnexpectedFirElementError(target)
         }
     }

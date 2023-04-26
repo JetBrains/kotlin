@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignation
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.BodyStateKeepers
+import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.resolve
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
@@ -78,22 +80,27 @@ private class LLFirDesignatedBodyResolveTransformerForReturnTypeCalculatorImpl(
         simpleFunction: FirSimpleFunction,
         data: ResolutionMode
     ): FirSimpleFunction {
-        if (FirLazyBodiesCalculator.needCalculatingLazyBodyForFunction(simpleFunction)) {
-            simpleFunction.processCallable {
-                FirLazyBodiesCalculator.calculateLazyBodiesForFunction(it)
+        return resolve(simpleFunction, BodyStateKeepers.FUNCTION) {
+            if (FirLazyBodiesCalculator.needCalculatingLazyBodyForFunction(simpleFunction)) {
+                simpleFunction.processCallable {
+                    FirLazyBodiesCalculator.calculateLazyBodiesForFunction(it)
+                }
             }
-        }
 
-        return super.transformSimpleFunction(simpleFunction, data)
+            super.transformSimpleFunction(simpleFunction, data)
+        }
     }
 
     override fun transformProperty(
         property: FirProperty,
         data: ResolutionMode
     ): FirProperty {
-        property.processCallable {
-            FirLazyBodiesCalculator.calculateLazyBodyForProperty(it)
+        return resolve(property, BodyStateKeepers.PROPERTY) {
+            property.processCallable {
+                FirLazyBodiesCalculator.calculateLazyBodyForProperty(it)
+            }
+
+            super.transformProperty(property, data)
         }
-        return super.transformProperty(property, data)
     }
 }
