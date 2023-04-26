@@ -227,7 +227,9 @@ public class DefaultErrorMessages {
         MAP.put(REDUNDANT_MODIFIER_IN_GETTER, "Visibility modifiers are redundant in getter");
         MAP.put(TYPE_PARAMETERS_IN_ENUM, "Enum class cannot have type parameters");
         MAP.put(TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM,
-                "Type checking has run into a recursive problem. Easiest workaround: specify types of your declarations explicitly"); // TODO: message
+                "Type checking has run into a recursive problem. Easiest workaround: specify types of your declarations explicitly");
+        MAP.put(TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM_IN_AUGMENTED_ASSIGNMENT,
+                "Type checking has run into a recursive problem. Easiest workaround: specify types of your declarations explicitly");
         MAP.put(RETURN_NOT_ALLOWED, "'return' is not allowed here");
         MAP.put(PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE, "Projections are not allowed for immediate arguments of a supertype");
         MAP.put(LABEL_NAME_CLASH, "There is more than one label with such a name in this scope");

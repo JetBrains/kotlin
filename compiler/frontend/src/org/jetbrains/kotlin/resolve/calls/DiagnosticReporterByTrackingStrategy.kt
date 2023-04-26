@@ -16,10 +16,12 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticFactory2
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.diagnostics.Errors.BadNamedArgumentsTarget.*
 import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isNull
 import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
+import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.inference.BuilderInferenceExpectedTypeConstraintPosition
@@ -78,9 +80,18 @@ class DiagnosticReporterByTrackingStrategy(
             is VisibilityError -> tracingStrategy.invisibleMember(trace, diagnostic.invisibleMember)
             is NoValueForParameter -> tracingStrategy.noValueForParameter(trace, diagnostic.parameterDescriptor)
             is TypeCheckerHasRanIntoRecursion -> {
-                val shouldReportErrorsOnRecursiveTypeInsidePlusAssignment =
-                    context.languageVersionSettings.supportsFeature(LanguageFeature.ReportErrorsOnRecursiveTypeInsidePlusAssignment)
-                tracingStrategy.recursiveType(trace, shouldReportErrorsOnRecursiveTypeInsidePlusAssignment)
+                // Note: we have two similar diagnostics here
+                // - TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM (error starting from 1.7)
+                // - TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM_IN_AUGMENTED_ASSIGNMENT (error starting from 1.9)
+                // however they have different deprecation cycle, and thus it's better to distinguish them.
+                // This 'insideAugmentedAssignment' is just a heuristics (approximate) to do it.
+                // It cannot turn red code to green or green to red; the worst thing we can get here
+                // is replacing red code with yellow, if e.g. LV is set to 1.8 explicitly,
+                // and we have chosen the second diagnostics instead of the first one.
+                val insideAugmentedAssignment = call.callElement.parents.any {
+                    it is KtBinaryExpression && it.operationToken in KtTokens.AUGMENTED_ASSIGNMENTS
+                }
+                tracingStrategy.recursiveType(trace, context.languageVersionSettings, insideAugmentedAssignment)
             }
             is InstantiationOfAbstractClass -> tracingStrategy.instantiationOfAbstractClass(trace)
             is AbstractSuperCall -> {
