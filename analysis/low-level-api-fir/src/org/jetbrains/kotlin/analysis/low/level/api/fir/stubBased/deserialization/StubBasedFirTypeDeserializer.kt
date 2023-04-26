@@ -290,6 +290,14 @@ internal fun KtUserType.classId(): ClassId {
         }
     }
     collectFragments(this)
+    if (classFragments.isEmpty()) {
+        //stub is re-built from decompiled text and additional information is already missed
+        return ClassId(
+            FqName.fromSegments(packageFragments).parent(),
+            FqName(packageFragments.last()),
+            false
+        )
+    }
     return ClassId(
         FqName.fromSegments(packageFragments),
         FqName.fromSegments(classFragments),
