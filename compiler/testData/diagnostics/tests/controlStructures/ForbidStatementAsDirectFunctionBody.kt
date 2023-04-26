@@ -1,3 +1,5 @@
+// TODO: should report ITERATOR_MISSING, revert once KT-58284 is fixed
+
 fun foo1() = <!EXPRESSION_EXPECTED!>while (b()) {}<!>
 
 fun foo2() = <!EXPRESSION_EXPECTED!>for (i in <!ITERATOR_MISSING!>10<!>) {}<!>

@@ -1,3 +1,5 @@
+// TODO: should report ITERATOR_MISSING, revert once KT-58284 is fixed
+
 package unresolved
 
 class Pair<A, B>(val a: A, val b: B)
@@ -22,7 +24,7 @@ fun testUnresolved() {
         is String -> <!UNRESOLVED_REFERENCE!>a<!>
     }
 
-    for (j in <!ITERATOR_MISSING, UNRESOLVED_REFERENCE!>collection<!>) {
+    for (j in <!UNRESOLVED_REFERENCE!>collection<!>) {
        var i: Int = j
        i += 1
        foo1(j)

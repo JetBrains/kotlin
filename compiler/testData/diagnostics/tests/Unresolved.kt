@@ -1,3 +1,5 @@
+// TODO: should report ITERATOR_MISSING, revert once KT-58284 is fixed
+
 package unresolved
 
 class Pair<A, B>(val a: A, val b: B)

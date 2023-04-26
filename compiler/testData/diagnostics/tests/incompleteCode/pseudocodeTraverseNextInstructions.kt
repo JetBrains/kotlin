@@ -1,3 +1,6 @@
+// FIR_IDENTICAL
+// TODO: should report ITERATOR_MISSING, revert once KT-58284 is fixed
+
 package b
 
 fun foo() {
