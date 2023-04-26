@@ -629,11 +629,13 @@ class DiagnosticReporterByTrackingStrategy(
 
         val expression = argument.psiExpression ?: run {
             val psiCall = (selectorCall as? PSIKotlinCall)?.psiCall ?: psiKotlinCall.psiCall
-            report(
-                RECEIVER_TYPE_MISMATCH.on(
-                    psiCall.calleeExpression ?: psiCall.callElement, error.upperKotlinType, error.lowerKotlinType
+            if (context.languageVersionSettings.supportsFeature(LanguageFeature.ProperTypeInferenceConstraintsProcessing)) {
+                report(
+                    RECEIVER_TYPE_MISMATCH.on(
+                        psiCall.calleeExpression ?: psiCall.callElement, error.upperKotlinType, error.lowerKotlinType
+                    )
                 )
-            )
+            }
             return
         }
 
