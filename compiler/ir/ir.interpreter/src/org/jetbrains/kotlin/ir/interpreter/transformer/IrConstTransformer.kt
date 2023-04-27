@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
 import org.jetbrains.kotlin.ir.interpreter.checker.IrCompileTimeChecker
+import org.jetbrains.kotlin.ir.interpreter.checker.IrCompileTimeNameChecker
 import org.jetbrains.kotlin.ir.interpreter.toConstantValue
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
@@ -80,7 +81,8 @@ internal abstract class IrConstTransformer(
         configuration: IrInterpreterConfiguration = interpreter.environment.configuration
     ): Boolean {
         return try {
-            this.accept(IrCompileTimeChecker(containingDeclaration, mode, configuration), null)
+            this.accept(IrCompileTimeChecker(containingDeclaration, mode, configuration), null) ||
+                    this.accept(IrCompileTimeNameChecker(mode), null)
         } catch (e: Throwable) {
             if (suppressExceptions) {
                 return false

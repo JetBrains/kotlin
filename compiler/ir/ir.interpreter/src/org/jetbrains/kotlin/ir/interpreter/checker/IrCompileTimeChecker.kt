@@ -24,7 +24,6 @@ class IrCompileTimeChecker(
     private val mode: EvaluationMode,
     private val interpreterConfiguration: IrInterpreterConfiguration,
 ) : IrElementVisitor<Boolean, Nothing?> {
-    private var contextExpression: IrCall? = null
     private val visitedStack = mutableListOf<IrElement>().apply { if (containingDeclaration != null) add(containingDeclaration) }
 
     private inline fun IrElement.asVisited(crossinline block: () -> Boolean): Boolean {
@@ -32,12 +31,6 @@ class IrCompileTimeChecker(
         val result = block()
         visitedStack.removeAt(visitedStack.lastIndex)
         return result
-    }
-
-    private inline fun <R> IrCall.saveContext(crossinline block: () -> R): R {
-        val oldContext = contextExpression
-        contextExpression = this
-        return block().apply { contextExpression = oldContext }
     }
 
     override fun visitElement(element: IrElement, data: Nothing?) = false
@@ -53,7 +46,7 @@ class IrCompileTimeChecker(
     private fun visitConstructor(expression: IrFunctionAccessExpression): Boolean {
         val constructor = expression.symbol.owner
 
-        if (!mode.canEvaluateFunction(constructor, contextExpression)) return false
+        if (!mode.canEvaluateFunction(constructor)) return false
         if (!visitValueArguments(expression, null)) return false
         return constructor.visitBodyIfNeeded() &&
                 constructor.parentAsClass.declarations.filterIsInstance<IrAnonymousInitializer>().all { it.accept(this, null) }
@@ -72,7 +65,7 @@ class IrCompileTimeChecker(
         if (!mode.canEvaluateExpression(expression)) return false
 
         val owner = expression.symbol.owner
-        if (!mode.canEvaluateFunction(owner, expression)) return false
+        if (!mode.canEvaluateFunction(owner)) return false
 
         // We disable `toFloat` folding on K/JS till `toFloat` is fixed (KT-35422)
         // This check must be placed here instead of CallInterceptor because we still
@@ -81,17 +74,15 @@ class IrCompileTimeChecker(
             return super.visitCall(expression, data)
         }
 
-        return expression.saveContext {
-            if (expression.dispatchReceiver.isAccessToNotNullableObject()) {
-                return@saveContext expression.isGetterToConstVal()
-            }
-
-            val dispatchReceiverComputable = expression.dispatchReceiver?.accept(this, null) ?: true
-            val extensionReceiverComputable = expression.extensionReceiver?.accept(this, null) ?: true
-            if (!visitValueArguments(expression, null)) return@saveContext false
-            val bodyComputable = owner.visitBodyIfNeeded()
-            return@saveContext dispatchReceiverComputable && extensionReceiverComputable && bodyComputable
+        if (expression.dispatchReceiver.isAccessToNotNullableObject()) {
+            return expression.isGetterToConstVal()
         }
+
+        val dispatchReceiverComputable = expression.dispatchReceiver?.accept(this, null) ?: true
+        val extensionReceiverComputable = expression.extensionReceiver?.accept(this, null) ?: true
+        if (!visitValueArguments(expression, null)) return false
+        val bodyComputable = owner.visitBodyIfNeeded()
+        return dispatchReceiverComputable && extensionReceiverComputable && bodyComputable
     }
 
     override fun visitVariable(declaration: IrVariable, data: Nothing?): Boolean {
@@ -173,7 +164,7 @@ class IrCompileTimeChecker(
     }
 
     override fun visitGetEnumValue(expression: IrGetEnumValue, data: Nothing?): Boolean {
-        if (!mode.canEvaluateEnumValue(expression, contextExpression)) return false
+        if (!mode.canEvaluateEnumValue(expression)) return false
 
         // we want to avoid recursion in cases like "enum class E(val srt: String) { OK(OK.name) }"
         if (visitedStack.contains(expression)) return true
@@ -253,13 +244,13 @@ class IrCompileTimeChecker(
     }
 
     override fun visitFunctionReference(expression: IrFunctionReference, data: Nothing?): Boolean {
-        if (!mode.canEvaluateCallableReference(expression, contextExpression)) return false
+        if (!mode.canEvaluateCallableReference(expression)) return false
 
         val owner = expression.symbol.owner
         val dispatchReceiverComputable = expression.dispatchReceiver?.accept(this, null) ?: true
         val extensionReceiverComputable = expression.extensionReceiver?.accept(this, null) ?: true
 
-        if (!mode.canEvaluateFunction(owner, contextExpression)) return false
+        if (!mode.canEvaluateFunction(owner)) return false
 
         val bodyComputable = owner.visitBodyIfNeeded()
         return dispatchReceiverComputable && extensionReceiverComputable && bodyComputable
@@ -331,12 +322,12 @@ class IrCompileTimeChecker(
     }
 
     override fun visitPropertyReference(expression: IrPropertyReference, data: Nothing?): Boolean {
-        if (!mode.canEvaluateCallableReference(expression, contextExpression)) return false
+        if (!mode.canEvaluateCallableReference(expression)) return false
 
         val dispatchReceiverComputable = expression.dispatchReceiver?.accept(this, null) ?: true
         val extensionReceiverComputable = expression.extensionReceiver?.accept(this, null) ?: true
 
-        val getterIsComputable = expression.getter?.let { mode.canEvaluateFunction(it.owner, contextExpression) } ?: true
+        val getterIsComputable = expression.getter?.let { mode.canEvaluateFunction(it.owner) } ?: true
         return dispatchReceiverComputable && extensionReceiverComputable && getterIsComputable
     }
 

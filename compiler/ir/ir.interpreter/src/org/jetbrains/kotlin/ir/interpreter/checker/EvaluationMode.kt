@@ -20,10 +20,10 @@ import org.jetbrains.kotlin.name.Name
 
 enum class EvaluationMode {
     FULL {
-        override fun canEvaluateFunction(function: IrFunction, context: IrCall?): Boolean = true
-        override fun canEvaluateEnumValue(enumEntry: IrGetEnumValue, context: IrCall?): Boolean = true
-        override fun canEvaluateFunctionExpression(expression: IrFunctionExpression, context: IrCall?): Boolean = true
-        override fun canEvaluateCallableReference(reference: IrCallableReference<*>, context: IrCall?): Boolean = true
+        override fun canEvaluateFunction(function: IrFunction): Boolean = true
+        override fun canEvaluateEnumValue(enumEntry: IrGetEnumValue): Boolean = true
+        override fun canEvaluateFunctionExpression(expression: IrFunctionExpression): Boolean = true
+        override fun canEvaluateCallableReference(reference: IrCallableReference<*>): Boolean = true
         override fun canEvaluateClassReference(reference: IrDeclarationReference): Boolean = true
 
         override fun canEvaluateBlock(block: IrBlock): Boolean = true
@@ -54,7 +54,7 @@ enum class EvaluationMode {
             BuiltInOperatorNames.ANDAND, BuiltInOperatorNames.OROR
         ).map { IrBuiltIns.KOTLIN_INTERNAL_IR_FQN.child(Name.identifier(it)).asString() }.toSet()
 
-        override fun canEvaluateFunction(function: IrFunction, context: IrCall?): Boolean {
+        override fun canEvaluateFunction(function: IrFunction): Boolean {
             if (function.property?.isConst == true) return true
 
             val returnType = function.returnType
@@ -78,10 +78,8 @@ enum class EvaluationMode {
     },
 
     ONLY_INTRINSIC_CONST {
-        override fun canEvaluateFunction(function: IrFunction, context: IrCall?): Boolean {
-            return function.isCompileTimePropertyAccessor() ||
-                    function.isMarkedAsIntrinsicConstEvaluation() ||
-                    context.isIntrinsicConstEvaluationNameProperty()
+        override fun canEvaluateFunction(function: IrFunction): Boolean {
+            return function.isCompileTimePropertyAccessor() || function.isMarkedAsIntrinsicConstEvaluation()
         }
 
         private fun IrFunction?.isCompileTimePropertyAccessor(): Boolean {
@@ -89,29 +87,14 @@ enum class EvaluationMode {
             return property.isConst || (property.resolveFakeOverride() ?: property).isMarkedAsIntrinsicConstEvaluation()
         }
 
-        override fun canEvaluateEnumValue(enumEntry: IrGetEnumValue, context: IrCall?): Boolean {
-            return context.isIntrinsicConstEvaluationNameProperty()
-        }
-
-        override fun canEvaluateCallableReference(reference: IrCallableReference<*>, context: IrCall?): Boolean {
-            return context.isIntrinsicConstEvaluationNameProperty()
-        }
-
         override fun canEvaluateBlock(block: IrBlock): Boolean = block.origin == IrStatementOrigin.WHEN || block.statements.size == 1
         override fun canEvaluateExpression(expression: IrExpression): Boolean = expression is IrCall || expression is IrWhen
-
-        private fun IrCall?.isIntrinsicConstEvaluationNameProperty(): Boolean {
-            if (this == null) return false
-            val owner = this.symbol.owner
-            val property = owner.property ?: return false
-            return owner.isCompileTimePropertyAccessor() && property.name.asString() == "name"
-        }
     };
 
-    open fun canEvaluateFunction(function: IrFunction, context: IrCall? = null): Boolean = false
-    open fun canEvaluateEnumValue(enumEntry: IrGetEnumValue, context: IrCall? = null): Boolean = false
-    open fun canEvaluateFunctionExpression(expression: IrFunctionExpression, context: IrCall? = null): Boolean = false
-    open fun canEvaluateCallableReference(reference: IrCallableReference<*>, context: IrCall? = null): Boolean = false
+    open fun canEvaluateFunction(function: IrFunction): Boolean = false
+    open fun canEvaluateEnumValue(enumEntry: IrGetEnumValue): Boolean = false
+    open fun canEvaluateFunctionExpression(expression: IrFunctionExpression): Boolean = false
+    open fun canEvaluateCallableReference(reference: IrCallableReference<*>): Boolean = false
     open fun canEvaluateClassReference(reference: IrDeclarationReference): Boolean = false
 
     open fun canEvaluateBlock(block: IrBlock): Boolean = false
@@ -121,7 +104,9 @@ enum class EvaluationMode {
 
     open fun canEvaluateExpression(expression: IrExpression): Boolean = false
 
-    open fun mustCheckBodyOf(function: IrFunction): Boolean = false
+    open fun mustCheckBodyOf(function: IrFunction): Boolean {
+        return function.property != null
+    }
 
     protected fun IrDeclaration.isMarkedAsIntrinsicConstEvaluation() = isMarkedWith(intrinsicConstEvaluationAnnotation)
 

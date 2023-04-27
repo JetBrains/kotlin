@@ -28511,6 +28511,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
             }
 
             @Test
+            @TestMetadata("kCallableNameWithSideEffect.kt")
+            public void testKCallableNameWithSideEffect() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/kCallableNameWithSideEffect.kt");
+            }
+
+            @Test
             @TestMetadata("kt53272.kt")
             public void testKt53272() throws Exception {
                 runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/kt53272.kt");
