@@ -173,6 +173,12 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerTestGenera
     }
 
     @Test
+    @TestMetadata("constructorParameter.kt")
+    public void testConstructorParameter() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/constructorParameter.kt");
+    }
+
+    @Test
     @TestMetadata("contextReceiver.kt")
     public void testContextReceiver() throws Exception {
         runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/contextReceiver.kt");
@@ -374,6 +380,12 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerTestGenera
     @TestMetadata("superEntry.kt")
     public void testSuperEntry() throws Exception {
         runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/superEntry.kt");
+    }
+
+    @Test
+    @TestMetadata("typeArgument.kt")
+    public void testTypeArgument() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/typeArgument.kt");
     }
 
     @Test
