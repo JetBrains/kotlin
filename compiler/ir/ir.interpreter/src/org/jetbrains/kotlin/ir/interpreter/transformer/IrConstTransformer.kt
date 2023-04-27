@@ -77,11 +77,10 @@ internal abstract class IrConstTransformer(
     }
 
     protected fun IrExpression.canBeInterpreted(
-        containingDeclaration: IrElement? = null,
         configuration: IrInterpreterConfiguration = interpreter.environment.configuration
     ): Boolean {
         return try {
-            this.accept(IrCompileTimeChecker(containingDeclaration, mode, configuration), null) ||
+            this.accept(IrCompileTimeChecker(mode, configuration), null) ||
                     this.accept(IrCompileTimeNameChecker(mode), null)
         } catch (e: Throwable) {
             if (suppressExceptions) {

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrStringConcatenationImpl
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
+import org.jetbrains.kotlin.ir.interpreter.createGetField
 import kotlin.math.max
 import kotlin.math.min
 
@@ -40,7 +41,8 @@ internal class IrConstExpressionTransformer(
         val isConst = declaration.correspondingPropertySymbol?.owner?.isConst == true
         if (!isConst) return super.visitField(declaration, data)
 
-        if (expression.canBeInterpreted(declaration, interpreter.environment.configuration.copy(treatFloatInSpecialWay = false))) {
+        val getField = declaration.createGetField()
+        if (getField.canBeInterpreted(interpreter.environment.configuration.copy(treatFloatInSpecialWay = false))) {
             initializer.expression = expression.interpret(failAsError = true)
         }
 

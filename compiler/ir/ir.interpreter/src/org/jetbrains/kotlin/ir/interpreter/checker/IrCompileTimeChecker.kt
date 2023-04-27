@@ -20,11 +20,10 @@ import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
 class IrCompileTimeChecker(
-    containingDeclaration: IrElement? = null,
     private val mode: EvaluationMode,
     private val interpreterConfiguration: IrInterpreterConfiguration,
 ) : IrElementVisitor<Boolean, Nothing?> {
-    private val visitedStack = mutableListOf<IrElement>().apply { if (containingDeclaration != null) add(containingDeclaration) }
+    private val visitedStack = mutableListOf<IrElement>()
 
     private inline fun IrElement.asVisited(crossinline block: () -> Boolean): Boolean {
         visitedStack += this
@@ -189,22 +188,24 @@ class IrCompileTimeChecker(
             return owner.origin == IrDeclarationOrigin.IR_EXTERNAL_JAVA_DECLARATION_STUB && owner.isStatic && owner.isFinal &&
                     (owner.type.isPrimitiveType() || owner.type.isStringClassType())
         }
-        return when {
-            // TODO fix later; used it here because java boolean resolves very strange,
-            //  its type is flexible (so its not primitive) and there is no initializer at backing field
-            fqName == "java.lang.Boolean.FALSE" || fqName == "java.lang.Boolean.TRUE" -> true
-            isJavaStaticWithPrimitiveOrString() -> owner.initializer?.accept(this, data) == true
-            expression.receiver == null -> property?.isConst == true && owner.initializer?.accept(this, null) == true
-            owner.origin == IrDeclarationOrigin.PROPERTY_BACKING_FIELD && property?.isConst == true -> {
-                val receiverComputable = (expression.receiver?.accept(this, null) ?: true)
-                        || expression.isAccessToNotNullableObject()
-                val initializerComputable = owner.initializer?.accept(this, null) ?: false
-                receiverComputable && initializerComputable
-            }
-            else -> {
-                val declarations = owner.parent.getInnerDeclarations()
-                val getter = declarations.filterIsInstance<IrProperty>().singleOrNull { it == property }?.getter ?: return false
-                visitedStack.contains(getter)
+        return owner.asVisited {
+            when {
+                // TODO fix later; used it here because java boolean resolves very strange,
+                //  its type is flexible (so its not primitive) and there is no initializer at backing field
+                fqName == "java.lang.Boolean.FALSE" || fqName == "java.lang.Boolean.TRUE" -> true
+                isJavaStaticWithPrimitiveOrString() -> owner.initializer?.accept(this, data) == true
+                expression.receiver == null -> property?.isConst == true && owner.initializer?.accept(this, null) == true
+                owner.origin == IrDeclarationOrigin.PROPERTY_BACKING_FIELD && property?.isConst == true -> {
+                    val receiverComputable = (expression.receiver?.accept(this, null) ?: true)
+                            || expression.isAccessToNotNullableObject()
+                    val initializerComputable = owner.initializer?.accept(this, null) ?: false
+                    receiverComputable && initializerComputable
+                }
+                else -> {
+                    val declarations = owner.parent.getInnerDeclarations()
+                    val getter = declarations.filterIsInstance<IrProperty>().singleOrNull { it == property }?.getter ?: return@asVisited false
+                    visitedStack.contains(getter)
+                }
             }
         }
     }
