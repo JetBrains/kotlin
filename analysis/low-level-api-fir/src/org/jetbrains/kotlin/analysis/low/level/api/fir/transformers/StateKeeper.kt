@@ -7,124 +7,99 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import java.util.concurrent.atomic.AtomicBoolean
 
-@DslMarker
-internal annotation class StateKeeperDsl
+internal interface StateKeeperBuilder<Owner> {
+    fun <Value> add(provider: (Owner) -> Value, mutator: (Owner, Value) -> Unit, arranger: ((Owner) -> Value)? = null)
+}
+
+internal fun <Item : Any, Value> StateKeeperBuilder<*>.addItem(
+    item: Item?,
+    provider: (Item) -> Value,
+    mutator: (Item, Value) -> Unit,
+    arranger: ((Item) -> Value)? = null
+) {
+    if (item != null) {
+        add(
+            provider = { provider(item) },
+            mutator = { _, value -> mutator(item, value) },
+            arranger = if (arranger != null) { _ -> arranger(item) } else null
+        )
+    }
+}
+
+internal fun <Item : Any, Value> StateKeeperBuilder<*>.addList(
+    items: List<Item?>?,
+    provider: (Item) -> Value,
+    mutator: (Item, Value) -> Unit,
+    arranger: ((Item) -> Value)? = null
+) {
+    if (items != null) {
+        for (item in items) {
+            addItem(item, provider, mutator, arranger)
+        }
+    }
+}
+
+internal fun <Item : Any> StateKeeperBuilder<*>.stateItem(item: Item?, block: StateKeeperBuilder<Item>.(Item) -> Unit) {
+    if (item != null) {
+        CustomStateKeeperBuilder(this, item).block(item)
+    }
+}
+
+internal fun <Item : Any> StateKeeperBuilder<*>.stateList(list: List<Item>?, block: StateKeeperBuilder<Item>.(Item) -> Unit) {
+    if (list != null) {
+        for (item in list) {
+            CustomStateKeeperBuilder(this, item).block(item)
+        }
+    }
+}
+
+private class CustomStateKeeperBuilder<Item>(private val parent: StateKeeperBuilder<*>, private val item: Item) : StateKeeperBuilder<Item> {
+    override fun <Value> add(provider: (Item) -> Value, mutator: (Item, Value) -> Unit, arranger: ((Item) -> Value)?) {
+        parent.addItem(item, provider, mutator, arranger)
+    }
+}
+
+internal fun <Owner : Any> stateKeeper(block: StateKeeperBuilder<Owner>.(Owner) -> Unit): StateKeeper<Owner> {
+    return stateKeeper(null, block)
+}
 
 internal fun <Delegate : Any, Owner : Delegate> stateKeeper(
-    delegate: StateKeeper<Delegate>,
-    block: StateKeeperBuilder<Delegate, Owner>.() -> Unit
+    delegate: StateKeeper<Delegate>?,
+    block: StateKeeperBuilder<Owner>.(Owner) -> Unit
 ): StateKeeper<Owner> {
-    val builder = StateKeeperBuilder<Delegate, Owner>(delegate)
-    block(builder)
-    return builder.build()
-}
+    return StateKeeper { owner ->
+        val state = mutableListOf<PreservedState>()
 
-internal fun <Owner : Any> stateKeeper(block: StateKeeperBuilder<Owner, Owner>.() -> Unit): StateKeeper<Owner> {
-    val builder = StateKeeperBuilder<Owner, Owner>(null)
-    block(builder)
-    return builder.build()
-}
-
-@StateKeeperDsl
-internal fun interface StateItemBuilder<Owner : Any> {
-    fun add(item: PreservedStateItem<Owner, *, *>)
-}
-
-internal fun <Owner : Any, Value> StateItemBuilder<Owner>.add(
-    provider: (Owner) -> Value,
-    mutator: (Owner, Value) -> Unit,
-    arranger: ((Owner) -> Value)? = null
-) {
-    addCustom({ it }, provider, mutator, arranger)
-}
-
-internal fun <Owner : Any, Node : Any, Value> StateItemBuilder<Owner>.addCustom(
-    mapper: (Owner) -> Node?,
-    provider: (Node) -> Value,
-    mutator: (Node, Value) -> Unit,
-    arranger: ((Node) -> Value)? = null
-) {
-    add(PreservedStateItem(mapper, provider, mutator, arranger))
-}
-
-internal class PreservedStateItem<in Owner : Any, Node : Any, Value>(
-    private val mapper: (Owner) -> Node?,
-    private val provider: (Node) -> Value,
-    private val mutator: (Node, Value) -> Unit,
-    private val arranger: ((Node) -> Value)?
-) {
-    fun prepare(owner: Owner): PreservedState {
-        val node = mapper(owner) ?: return PreservedState.Empty
-        val storedValue = provider(node)
-
-        if (storedValue != null && arranger != null) {
-            mutator(node, arranger.invoke(node))
-        }
-
-        return object : PreservedState {
-            override fun restore() {
-                mutator(node, storedValue)
-            }
-        }
-    }
-}
-
-internal class StateKeeperBuilder<Delegate : Any, Owner : Delegate>(delegate: StateKeeper<Delegate>?) : StateItemBuilder<Owner> {
-    private val providers = mutableListOf<PreservedStateItemProvider<Owner>>()
-
-    init {
         if (delegate != null) {
-            providers.addAll(delegate.providers)
+            state += delegate.prepare(owner)
         }
-    }
 
-    override fun add(item: PreservedStateItem<Owner, *, *>) {
-        providers += PreservedStateItemProvider { listOf(item) }
-    }
+        val builder = object : StateKeeperBuilder<Owner> {
+            override fun <Value> add(provider: (Owner) -> Value, mutator: (Owner, Value) -> Unit, arranger: ((Owner) -> Value)?) {
+                val storedValue = provider(owner)
+                if (storedValue != null && arranger != null) {
+                    mutator(owner, arranger.invoke(owner))
+                }
 
-    fun addDynamic(provider: StateItemBuilder<Owner>.(Owner) -> Unit) {
-        val items = mutableListOf<PreservedStateItem<Owner, *, *>>()
-        val nestedBuilder = StateItemBuilder { items += it }
-        providers += PreservedStateItemProvider { owner ->
-            nestedBuilder.provider(owner)
-            return@PreservedStateItemProvider items
-        }
-    }
-
-    fun build(): StateKeeper<Owner> {
-        return StateKeeper(providers)
-    }
-}
-
-internal fun <Delegate : Any, Owner : Delegate, Node : Any, Value> StateKeeperBuilder<Delegate, Owner>.addDynamicList(
-    mapper: (Owner) -> List<Node>,
-    provider: (Node) -> Value,
-    mutator: (Node, Value) -> Unit,
-    arranger: ((Node) -> Value)? = null
-) {
-    addDynamic { owner ->
-        for (node in mapper(owner)) {
-            if (provider(node) != null) {
-                addCustom({ node }, provider, mutator, arranger)
+                state += PreservedState { mutator(owner, storedValue) }
             }
         }
+
+        builder.block(owner)
+        return@StateKeeper state
     }
 }
 
-internal fun interface PreservedStateItemProvider<in Owner : Any> {
-    fun get(owner: Owner): List<PreservedStateItem<Owner, *, *>>
-}
-
-internal class StateKeeper<in Owner : Any>(val providers: List<PreservedStateItemProvider<Owner>>) {
-    fun arrange(owner: Owner): PreservedState {
-        val stamps = providers.flatMap { it.get(owner) }.map { it.prepare(owner) }
+internal class StateKeeper<in Owner : Any>(val provider: (Owner) -> List<PreservedState>) {
+    fun prepare(owner: Owner): PreservedState {
+        val states = provider(owner)
 
         return object : PreservedState {
             private val isRestored = AtomicBoolean(false)
 
             override fun restore() {
                 if (!isRestored.compareAndSet(false, true)) return
-                stamps.forEach { it.restore() }
+                states.forEach { it.restore() }
             }
         }
     }
@@ -135,7 +110,7 @@ internal fun <Target : Any, Result> resolve(target: Target, keeper: StateKeeper<
 
     var isSuccessful = false
     try {
-        preservedState = keeper.arrange(target)
+        preservedState = keeper.prepare(target)
         val result = block()
         isSuccessful = true
         return result
@@ -146,7 +121,7 @@ internal fun <Target : Any, Result> resolve(target: Target, keeper: StateKeeper<
     }
 }
 
-internal interface PreservedState {
+internal fun interface PreservedState {
     companion object Empty : PreservedState {
         override fun restore() {}
     }
