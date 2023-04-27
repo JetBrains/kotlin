@@ -34,6 +34,7 @@ const val SHORT_MODULE_NAME = "Xshort-module-name"
 const val FOREIGN_EXCEPTION_MODE = "Xforeign-exception-mode"
 const val DUMP_BRIDGES = "Xdump-bridges"
 const val DISABLE_EXCEPTION_PRETTIFIER = "Xdisable-exception-prettifier"
+const val USER_SETUP_HINT = "Xuser-setup-hint"
 
 // TODO: unify camel and snake cases.
 // Possible solution is to accept both cases
@@ -138,6 +139,9 @@ open class CInteropArguments(argParser: ArgParser =
 
     val disableExceptionPrettifier by argParser.option(ArgType.Boolean, DISABLE_EXCEPTION_PRETTIFIER,
             description = "Don't hide exceptions with user-friendly ones").default(false)
+
+    val userSetupHint by argParser.option(ArgType.String, USER_SETUP_HINT,
+            description = "A suggestion that is displayed to the user if produced lib fails to link")
 }
 
 class JSInteropArguments(argParser: ArgParser = ArgParser("jsinterop",

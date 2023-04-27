@@ -135,6 +135,10 @@ class DefFile(val file:File?, val config:DefFileConfig, val manifestAddendProper
         val objcClassesIncludingCategories by lazy {
             properties.getSpaceSeparated("objcClassesIncludingCategories")
         }
+
+        val userSetupHint by lazy {
+            properties.getProperty("userSetupHint")
+        }
     }
 }
 
