@@ -1,5 +1,6 @@
 import java.io.*;
 import javax.script.*;
+import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 
 File file = new File(basedir, "target/js/test-js-moduleKind.js");
 if (!file.exists() || !file.isFile()) {
@@ -7,7 +8,7 @@ if (!file.exists() || !file.isFile()) {
 }
 
 String basePath = basedir.getPath();
-ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
+ScriptEngine engine = new NashornScriptEngineFactory().getScriptEngine();
 
 engine.eval(new FileReader(basePath + "/amd.js"));
 engine.eval(new FileReader(basePath + "/target/js/kotlin.js"));
