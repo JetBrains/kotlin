@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImportDirective
 
-public abstract class KtImportOptimizer : KtLifetimeOwner {
+public abstract class KtImportOptimizer : KtAnalysisSessionComponent() {
     public abstract fun analyseImports(file: KtFile): KtImportOptimizerResult
 }
 

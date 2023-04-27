@@ -21,7 +21,7 @@ internal class KtFe10ImportOptimizer(
     override val token: KtLifetimeToken
         get() = analysisSession.token
 
-    override fun analyseImports(file: KtFile): KtImportOptimizerResult = withValidityAssertion {
+    override fun analyseImports(file: KtFile): KtImportOptimizerResult {
         val (allUnderImports, otherImports) = file.importDirectives.partition { it.isAllUnder }
 
         val unusedImports = LinkedHashSet<KtImportDirective>()

@@ -155,6 +155,88 @@ public class FirIdeNormalAnalysisSourceModuleAnalysisApiImportOptimizerTestGener
     }
 
     @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/importOptimizer/analyseImports/kdocs")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Kdocs {
+        @Test
+        public void testAllFilesPresentInKdocs() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/importOptimizer/analyseImports/kdocs"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("callables.kt")
+        public void testCallables() throws Exception {
+            runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/kdocs/callables.kt");
+        }
+
+        @Test
+        @TestMetadata("callables_alias.kt")
+        public void testCallables_alias() throws Exception {
+            runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/kdocs/callables_alias.kt");
+        }
+
+        @Test
+        @TestMetadata("callables_member.kt")
+        public void testCallables_member() throws Exception {
+            runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/kdocs/callables_member.kt");
+        }
+
+        @Test
+        @TestMetadata("callables_overloads.kt")
+        public void testCallables_overloads() throws Exception {
+            runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/kdocs/callables_overloads.kt");
+        }
+
+        @Test
+        @TestMetadata("callables_overloadsFromDifferentPlaces.kt")
+        public void testCallables_overloadsFromDifferentPlaces() throws Exception {
+            runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/kdocs/callables_overloadsFromDifferentPlaces.kt");
+        }
+
+        @Test
+        @TestMetadata("callables_unused.kt")
+        public void testCallables_unused() throws Exception {
+            runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/kdocs/callables_unused.kt");
+        }
+
+        @Test
+        @TestMetadata("classifier_alias.kt")
+        public void testClassifier_alias() throws Exception {
+            runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/kdocs/classifier_alias.kt");
+        }
+
+        @Test
+        @TestMetadata("classifier_nested_1.kt")
+        public void testClassifier_nested_1() throws Exception {
+            runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/kdocs/classifier_nested_1.kt");
+        }
+
+        @Test
+        @TestMetadata("classifier_nested_2.kt")
+        public void testClassifier_nested_2() throws Exception {
+            runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/kdocs/classifier_nested_2.kt");
+        }
+
+        @Test
+        @TestMetadata("classifier_typealias.kt")
+        public void testClassifier_typealias() throws Exception {
+            runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/kdocs/classifier_typealias.kt");
+        }
+
+        @Test
+        @TestMetadata("classifier_typealias_member.kt")
+        public void testClassifier_typealias_member() throws Exception {
+            runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/kdocs/classifier_typealias_member.kt");
+        }
+
+        @Test
+        @TestMetadata("classifier_typealias_unused.kt")
+        public void testClassifier_typealias_unused() throws Exception {
+            runTest("analysis/analysis-api/testData/components/importOptimizer/analyseImports/kdocs/classifier_typealias_unused.kt");
+        }
+    }
+
+    @Nested
     @TestMetadata("analysis/analysis-api/testData/components/importOptimizer/analyseImports/referencesWithErrors")
     @TestDataPath("$PROJECT_ROOT")
     public class ReferencesWithErrors {

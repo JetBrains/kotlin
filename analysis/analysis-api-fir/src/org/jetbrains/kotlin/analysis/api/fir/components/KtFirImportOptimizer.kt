@@ -6,12 +6,15 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import org.jetbrains.kotlin.KtRealSourceElementKind
+import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.components.KtImportOptimizer
 import org.jetbrains.kotlin.analysis.api.components.KtImportOptimizerResult
 import org.jetbrains.kotlin.analysis.api.fir.getCandidateSymbols
 import org.jetbrains.kotlin.analysis.api.fir.utils.FirBodyReanalyzingVisitorVoid
 import org.jetbrains.kotlin.analysis.api.fir.utils.computeImportableName
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.fir.FirElement
@@ -33,19 +36,20 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.idea.references.KDocReference
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.parentOrNull
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.getCallNameExpression
-import org.jetbrains.kotlin.psi.psiUtil.getPossiblyQualifiedCallExpression
-import org.jetbrains.kotlin.psi.psiUtil.unwrapNullability
+import org.jetbrains.kotlin.psi.psiUtil.*
 import org.jetbrains.kotlin.resolve.ImportPath
 import org.jetbrains.kotlin.resolve.calls.util.getCalleeExpressionIfAny
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 internal class KtFirImportOptimizer(
+    override val analysisSession: KtAnalysisSession,
     override val token: KtLifetimeToken,
     private val firResolveSession: LLFirResolveSession
 ) : KtImportOptimizer() {
@@ -65,7 +69,7 @@ internal class KtFirImportOptimizer(
             .map { it.fqName }
             .toSet()
 
-        val (usedImports, unresolvedNames) = collectReferencedEntities(firFile)
+        val (usedImports, unresolvedNames) = collectReferencedEntities(firFile, file)
 
         val referencesEntities = usedImports
             .filterNot { (fqName, referencedByNames) ->
@@ -107,9 +111,44 @@ internal class KtFirImportOptimizer(
         val unresolvedNames: Set<Name>,
     )
 
-    private fun collectReferencedEntities(firFile: FirFile): ReferencedEntitiesResult {
+    private fun KDocName.getReferencedNames(): List<Pair<FqName, Name>> {
+        val kDocReferences = references.filterIsInstance<KDocReference>()
+        val kDocName = getQualifiedNameAsFqName()
+
+        return kDocReferences
+            .flatMap { reference ->
+                with(analysisSession) {
+                    val symbols = reference.resolveToSymbols()
+                    symbols.mapNotNull { symbol ->
+                        when (symbol) {
+                            is KtClassLikeSymbol -> symbol.classIdIfNonLocal?.asSingleFqName()?.takeIf { kDocName.parentOrNull()?.isRoot == true }
+                            is KtCallableSymbol -> symbol.callableIdIfNonLocal?.asSingleFqName()
+                            else -> null
+                        }
+                    }
+                }
+            }
+            .filterNot { it == kDocName }
+            .map { it to kDocName.shortName() }
+    }
+
+    private fun collectKDocReferences(ktFile: KtFile): List<Pair<FqName, Name>> {
+        val kDocNames = ktFile.collectDescendantsOfType<KDocName>()
+
+        return kDocNames.flatMap { it.getReferencedNames() }.distinct()
+    }
+
+    private fun collectReferencedEntities(firFile: FirFile, ktFile: KtFile): ReferencedEntitiesResult {
         val usedImports = mutableMapOf<FqName, MutableSet<Name>>()
         val unresolvedNames = mutableSetOf<Name>()
+
+        fun saveReferencedItem(importableName: FqName, referencedByName: Name) {
+            usedImports.getOrPut(importableName) { hashSetOf() } += referencedByName
+        }
+
+        collectKDocReferences(ktFile).forEach { (importableName, referencedByName) ->
+            saveReferencedItem(importableName, referencedByName)
+        }
 
         firFile.accept(object : FirBodyReanalyzingVisitorVoid(firResolveSession) {
             override fun visitElement(element: FirElement) {
@@ -241,10 +280,6 @@ internal class KtFirImportOptimizer(
                 val importableName = resolvedSymbol.computeImportableName(firSession) ?: return
 
                 saveReferencedItem(importableName, referencedByName)
-            }
-
-            private fun saveReferencedItem(importableName: FqName, referencedByName: Name) {
-                usedImports.getOrPut(importableName) { hashSetOf() } += referencedByName
             }
         })
 
