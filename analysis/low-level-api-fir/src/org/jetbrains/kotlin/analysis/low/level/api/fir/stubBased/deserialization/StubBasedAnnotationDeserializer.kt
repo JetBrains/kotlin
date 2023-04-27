@@ -37,11 +37,10 @@ class StubBasedAnnotationDeserializer(
 
     fun loadAnnotations(
         ktAnnotated: KtAnnotated,
-        useSiteTarget: AnnotationUseSiteTarget? = null
     ): List<FirAnnotation> {
         val annotations = ktAnnotated.annotationEntries
         if (annotations.isEmpty()) return emptyList()
-        return annotations.map { deserializeAnnotation(it, useSiteTarget) }
+        return annotations.map { deserializeAnnotation(it) }
     }
 
     private val constantCache = mutableMapOf<CallableId, FirExpression>()
@@ -55,8 +54,7 @@ class StubBasedAnnotationDeserializer(
     }
 
     private fun deserializeAnnotation(
-        ktAnnotation: KtAnnotationEntry,
-        useSiteTarget: AnnotationUseSiteTarget? = null
+        ktAnnotation: KtAnnotationEntry
     ): FirAnnotation {
         val userType =
             ktAnnotation.getStubOrPsiChild(KtStubElementTypes.CONSTRUCTOR_CALLEE)?.getStubOrPsiChild(KtStubElementTypes.TYPE_REFERENCE)
@@ -65,7 +63,7 @@ class StubBasedAnnotationDeserializer(
             ktAnnotation,
             userType.classId(),
             (ktAnnotation.stub as? KotlinAnnotationEntryStubImpl)?.valueArguments,
-            useSiteTarget
+            ktAnnotation.useSiteTarget?.getAnnotationUseSiteTarget()
         )
     }
 

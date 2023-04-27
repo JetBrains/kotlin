@@ -17,8 +17,10 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -198,9 +200,7 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
             this.propertySymbol = propertySymbol
         }.apply {
             replaceAnnotations(
-                c.annotationDeserializer.loadAnnotations(
-                    getter, AnnotationUseSiteTarget.PROPERTY_GETTER
-                )
+                c.annotationDeserializer.loadAnnotations(getter)
             )
             containingClassForStaticMemberAttr = c.dispatchReceiver?.lookupTag
         }
@@ -235,9 +235,7 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
             this.propertySymbol = propertySymbol
         }.apply {
             replaceAnnotations(
-                c.annotationDeserializer.loadAnnotations(
-                    setter, AnnotationUseSiteTarget.PROPERTY_SETTER
-                )
+                c.annotationDeserializer.loadAnnotations(setter)
             )
             containingClassForStaticMemberAttr = c.dispatchReceiver?.lookupTag
         }
@@ -258,7 +256,7 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
         val getter = property.getter
         val receiverTypeReference = property.receiverTypeReference
         val receiverAnnotations = if (getter != null && receiverTypeReference != null) {
-            c.annotationDeserializer.loadAnnotations(receiverTypeReference, AnnotationUseSiteTarget.PROPERTY_GETTER)
+            c.annotationDeserializer.loadAnnotations(receiverTypeReference)
         } else {
             emptyList()
         }
@@ -295,8 +293,18 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
 
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             typeParameters += local.typeDeserializer.ownTypeParameters.map { it.fir }
-            annotations +=
-                c.annotationDeserializer.loadAnnotations(property, AnnotationUseSiteTarget.PROPERTY)
+            val allAnnotations = c.annotationDeserializer.loadAnnotations(property)
+            annotations += allAnnotations.filter { it.useSiteTarget == null }
+            val backingFieldAnnotations =
+                allAnnotations.filter { it.useSiteTarget == AnnotationUseSiteTarget.FIELD || it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD }
+            backingField = FirDefaultPropertyBackingField(
+                c.moduleData,
+                backingFieldAnnotations.toMutableList(),
+                returnTypeRef,
+                isVar,
+                symbol,
+                status
+            )
             if (getter != null) {
                 this.getter = loadPropertyGetter(
                     getter,
