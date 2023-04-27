@@ -27340,6 +27340,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
                 }
 
                 @Test
+                @TestMetadata("extensionVsMember.kt")
+                public void testExtensionVsMember() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/resolve/priority/extensionVsMember.kt");
+                }
+
+                @Test
                 @TestMetadata("invokeExtensionVsOther.kt")
                 public void testInvokeExtensionVsOther() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/resolve/priority/invokeExtensionVsOther.kt");
