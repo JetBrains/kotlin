@@ -17,9 +17,9 @@ class Nested {
     val innerThisProp = this<!UNRESOLVED_LABEL!>@NestedInnerClass<!>.property
 
     inner class InnerInner {
-        fun f() = <!UNRESOLVED_REFERENCE!>innerFun<!>()
-        fun g() = <!UNRESOLVED_REFERENCE!>innerProp<!>
-        fun h() = this@Inner.<!UNRESOLVED_REFERENCE!>innerFun<!>()
-        fun i() = this@Inner.<!UNRESOLVED_REFERENCE!>innerProp<!>
+        fun f() = innerFun()
+        fun g() = innerProp
+        fun h() = this@Inner.innerFun()
+        fun i() = this@Inner.innerProp
     }
 }

@@ -184,6 +184,7 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
         override fun visitScript(script: FirScript, data: FirRecorderData) {
             val symbol = script.symbol
             data.state.scriptContainerMap[symbol] = data.file
+            script.acceptChildren(this, data)
         }
     }
 

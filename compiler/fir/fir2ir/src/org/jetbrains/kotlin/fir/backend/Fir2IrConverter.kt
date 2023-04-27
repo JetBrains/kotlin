@@ -217,7 +217,8 @@ class Fir2IrConverter(
 
     internal fun processRegularClassMembers(
         regularClass: FirRegularClass,
-        irClass: IrClass = classifierStorage.getCachedIrClass(regularClass)!!
+        irClass: IrClass =
+            classifierStorage.getCachedIrClass(regularClass) ?: error("Expecting existing IrClass for class ${regularClass.name}")
     ): IrClass {
         val allDeclarations = mutableListOf<FirDeclaration>().apply {
             addAll(regularClass.declarations)
@@ -361,6 +362,16 @@ class Fir2IrConverter(
                 assert(parent is IrFile)
                 declarationStorage.getOrCreateIrScript(declaration).also { irScript ->
                     declarationStorage.enterScope(irScript)
+                    irScript.parent = parent
+                    for (scriptStatement in declaration.statements) {
+                        if (scriptStatement is FirDeclaration) {
+                            if (scriptStatement is FirRegularClass) {
+                                registerClassAndNestedClasses(scriptStatement, irScript)
+                                processClassAndNestedClassHeaders(scriptStatement)
+                            }
+
+                        }
+                    }
                     for (scriptStatement in declaration.statements) {
                         if (scriptStatement is FirDeclaration) {
                             processMemberDeclaration(scriptStatement, null, irScript)
