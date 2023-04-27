@@ -8,6 +8,7 @@ package kotlin.script.experimental.jvm
 import java.lang.reflect.InvocationTargetException
 import kotlin.reflect.KClass
 import kotlin.script.experimental.api.*
+import kotlin.script.experimental.impl._languageVersion
 
 open class BasicJvmScriptEvaluator : ScriptEvaluator {
 
@@ -71,6 +72,13 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
         refinedEvalConfiguration: ScriptEvaluationConfiguration,
         importedScriptsEvalResults: List<EvaluationResult>
     ): Any {
+        val isCompiledWithK2 =
+            refinedEvalConfiguration[ScriptEvaluationConfiguration.compilationConfiguration]
+                ?.get(ScriptCompilationConfiguration._languageVersion)
+                ?.let {
+                    it.substringBefore('.').toIntOrNull()?.let { it >= 2 }
+                } == true
+
         val args = ArrayList<Any?>()
 
         refinedEvalConfiguration[ScriptEvaluationConfiguration.previousSnippets]?.let {
@@ -81,6 +89,12 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
             args.addAll(it)
         }
 
+        if (isCompiledWithK2) {
+            refinedEvalConfiguration[ScriptEvaluationConfiguration.providedProperties]?.forEach {
+                args.add(it.value)
+            }
+        }
+
         importedScriptsEvalResults.forEach {
             args.add(it.returnValue.scriptInstance)
         }
@@ -88,8 +102,11 @@ open class BasicJvmScriptEvaluator : ScriptEvaluator {
         refinedEvalConfiguration[ScriptEvaluationConfiguration.implicitReceivers]?.let {
             args.addAll(it)
         }
-        refinedEvalConfiguration[ScriptEvaluationConfiguration.providedProperties]?.forEach {
-            args.add(it.value)
+
+        if (!isCompiledWithK2) {
+            refinedEvalConfiguration[ScriptEvaluationConfiguration.providedProperties]?.forEach {
+                args.add(it.value)
+            }
         }
 
         val ctor = java.constructors.single()

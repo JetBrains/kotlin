@@ -66,7 +66,7 @@ class MainKtsIT {
 
     @OptIn(ExperimentalPathApi::class)
     @Test
-    fun testCache() = expectTestToFailOnK2 {
+    fun testCache() {
         val script = File("$TEST_DATA_ROOT/import-test.main.kts").absolutePath
         val cache = createTempDirectory("main.kts.test")
 
@@ -93,7 +93,7 @@ class MainKtsIT {
 
     @OptIn(ExperimentalPathApi::class)
     @Test
-    fun testCacheInProcess() = expectTestToFailOnK2 {
+    fun testCacheInProcess() {
         val script = File("$TEST_DATA_ROOT/import-test.main.kts").absolutePath
         val cache = createTempDirectory("main.kts.test")
 

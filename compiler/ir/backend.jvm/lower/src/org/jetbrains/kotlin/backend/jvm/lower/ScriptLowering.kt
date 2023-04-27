@@ -305,6 +305,10 @@ private class ScriptsToClassesLowering(val context: JvmBackendContext, val inner
                 } else {
                     +irDelegatingConstructorCall(baseClassCtor).also {
                         explicitParameters.forEachIndexed { idx, valueParameter ->
+                            // Since in K2 we're not distinguishing between base class ctor args and other script args, we need this check.
+                            // The logic is fragile, but since we plan to deprecate baseClass support (see KT-60449), and this delegating
+                            // call will go away, let's leave it as is for now
+                            if (idx >= it.valueArgumentsCount) return@forEachIndexed
                             it.putValueArgument(
                                 idx,
                                 IrGetValueImpl(

@@ -239,6 +239,7 @@ class Fir2IrVisitor(
                     }
                 if (isSelf) {
                     irScript.thisReceiver = irReceiver
+                    irScript.baseClass = irReceiver.type
                     null
                 } else irReceiver
             }

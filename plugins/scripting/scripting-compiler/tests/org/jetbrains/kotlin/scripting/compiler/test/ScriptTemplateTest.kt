@@ -72,7 +72,7 @@ class ScriptTemplateTest : TestCase() {
         assertEqualsTrimmed(NUM_4_LINE + FIB_SCRIPT_OUTPUT_TAIL, out)
     }
 
-    fun testScriptWithBaseClassWithParam() = expectTestToFailOnK2 {
+    fun testScriptWithBaseClassWithParam() {
         val messageCollector = TestMessageCollector()
         val aClass =
             compileScript("fib_dsl.kts", ScriptWithBaseClass::class, null, runIsolated = false, messageCollector = messageCollector)

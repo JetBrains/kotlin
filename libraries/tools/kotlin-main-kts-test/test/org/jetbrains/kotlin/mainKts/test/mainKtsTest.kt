@@ -126,7 +126,7 @@ class MainKtsTest {
     }
 
     @Test
-    fun testImport() = expectTestToFailOnK2 {
+    fun testImport() {
 
         val out = captureOut {
             val res = evalFile(File("$TEST_DATA_ROOT/import-test.main.kts"))
