@@ -27586,6 +27586,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/objects"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM, true);
         }
 
+        @TestMetadata("anonymousObjectAndContrvariantProjection.kt")
+        public void testAnonymousObjectAndContrvariantProjection() throws Exception {
+            runTest("compiler/testData/codegen/box/objects/anonymousObjectAndContrvariantProjection.kt");
+        }
+
         @TestMetadata("anonymousObjectPropertyInitialization.kt")
         public void testAnonymousObjectPropertyInitialization() throws Exception {
             runTest("compiler/testData/codegen/box/objects/anonymousObjectPropertyInitialization.kt");

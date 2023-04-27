@@ -168,7 +168,12 @@ abstract class AbstractTypeApproximator(
         }
     }
 
-    private fun approximateLocalTypes(type: SimpleTypeMarker, conf: TypeApproximatorConfiguration, toSuper: Boolean): SimpleTypeMarker? {
+    private fun approximateLocalTypes(
+        type: SimpleTypeMarker,
+        conf: TypeApproximatorConfiguration,
+        toSuper: Boolean,
+        depth: Int
+    ): SimpleTypeMarker? {
         if (!toSuper) return null
         if (!conf.localTypes && !conf.anonymous) return null
         val constructor = type.typeConstructor()
@@ -179,8 +184,28 @@ abstract class AbstractTypeApproximator(
             errorTypesEqualToAnything = false,
             stubTypesEqualToAnything = false
         )
-        return AbstractTypeChecker.findCorrespondingSupertypes(typeCheckerContext, type, superConstructor).firstOrNull()
+        val result = AbstractTypeChecker.findCorrespondingSupertypes(typeCheckerContext, type, superConstructor)
+            .firstOrNull()
             ?.withNullability(type.isMarkedNullable())
+            ?: return null
+        /*
+         * AbstractTypeChecker captures any projections in the super type by default, which may lead to the situation, when some local
+         *   type with projection is approximated to some public type with captured (from subtyping) type argument (which is obviously
+         *   incorrect)
+         *
+         * interface Invariant<A>
+         * private fun <B> Invariant<B>.privateFunc() = object : Invariant<B> {}
+         *
+         * fun Invariant<in Number>.publicFunc() = privateFunc()
+         *
+         * Here type of `privateFunc()` is _anonymous_<in Number>, and `findCorrespondingSupertypes` for it and `Invariant` as type
+         *   constructor returns `Invariant<Captured(in Number)>`
+         */
+        return if (ctx.isK2) {
+            (approximateTo(result, TypeApproximatorConfiguration.SubtypeCapturedTypesApproximation, toSuper, depth) ?: result) as SimpleTypeMarker?
+        } else {
+            result
+        }
     }
 
     private fun isIntersectionTypeEffectivelyNothing(constructor: IntersectionTypeConstructorMarker): Boolean {
@@ -365,7 +390,7 @@ abstract class AbstractTypeApproximator(
             }
         }
 
-        return approximateLocalTypes(type, conf, toSuper) // simple classifier type
+        return approximateLocalTypes(type, conf, toSuper, depth) // simple classifier type
     }
 
     private fun approximateDefinitelyNotNullType(
@@ -572,11 +597,11 @@ abstract class AbstractTypeApproximator(
             }
         }
 
-        if (newArguments.all { it == null }) return approximateLocalTypes(type, conf, toSuper)
+        if (newArguments.all { it == null }) return approximateLocalTypes(type, conf, toSuper, depth)
 
         val newArgumentsList = List(type.argumentsCount()) { index -> newArguments[index] ?: type.getArgument(index) }
         val approximatedType = type.replaceArguments(newArgumentsList)
-        return approximateLocalTypes(approximatedType, conf, toSuper) ?: approximatedType
+        return approximateLocalTypes(approximatedType, conf, toSuper, depth) ?: approximatedType
     }
 
     private fun shouldUseSubTypeForCapturedArgument(

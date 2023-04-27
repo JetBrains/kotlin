@@ -21164,6 +21164,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/objects"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
         }
 
+        @TestMetadata("anonymousObjectAndContrvariantProjection.kt")
+        public void testAnonymousObjectAndContrvariantProjection() throws Exception {
+            runTest("compiler/testData/codegen/box/objects/anonymousObjectAndContrvariantProjection.kt");
+        }
+
         @TestMetadata("anonymousObjectPropertyInitialization.kt")
         public void testAnonymousObjectPropertyInitialization() throws Exception {
             runTest("compiler/testData/codegen/box/objects/anonymousObjectPropertyInitialization.kt");

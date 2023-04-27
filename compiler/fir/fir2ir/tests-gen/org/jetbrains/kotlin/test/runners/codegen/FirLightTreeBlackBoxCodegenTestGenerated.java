@@ -33812,6 +33812,12 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
         }
 
         @Test
+        @TestMetadata("anonymousObjectAndContrvariantProjection.kt")
+        public void testAnonymousObjectAndContrvariantProjection() throws Exception {
+            runTest("compiler/testData/codegen/box/objects/anonymousObjectAndContrvariantProjection.kt");
+        }
+
+        @Test
         @TestMetadata("anonymousObjectPropertyInitialization.kt")
         public void testAnonymousObjectPropertyInitialization() throws Exception {
             runTest("compiler/testData/codegen/box/objects/anonymousObjectPropertyInitialization.kt");
