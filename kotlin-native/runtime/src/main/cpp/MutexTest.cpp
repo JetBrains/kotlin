@@ -97,7 +97,8 @@ TEST(RWSpinLockTest, LockSharedWhileLocked) {
         EXPECT_TRUE(done);
         mutex.unlock_shared();
     });
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    // Wait to give the second thread a chance to try to acquire the lock.
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
     done = true;
     mutex.unlock();
 }
@@ -118,7 +119,8 @@ TEST(RWSpinLockTest, LockWhileLockShared) {
         EXPECT_TRUE(done);
         mutex.unlock();
     });
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    // Wait to give the second thread a chance to try to acquire the lock.
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
     // Shared lock is not where one does mutability. But it's okay here.
     done = true;
     mutex.unlock_shared();
@@ -142,32 +144,25 @@ TEST(RWSpinLockTest, LockSharedWhileLockSharedWithPendingLock) {
         mutex.unlock();
     });
     // Wait for thread_lock to say that it wants to lock the mutex.
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    bool failed_to_lock = false;
+    for (int i = 0; i < 50; ++i) { // 5s total waiting time.
+        std::shared_lock guard(mutex, std::try_to_lock);
+        if (!guard) {
+            failed_to_lock = true;
+            break;
+        }
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    }
+    EXPECT_TRUE(failed_to_lock);
     ScopedThread thread_lock_shared([&] {
         mutex.lock_shared();
         EXPECT_THAT(state, 2);
         mutex.unlock_shared();
     });
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    // Wait to give thread_lock_shared a chance to try to acquire the lock.
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
     // Shared lock is not where one does mutability. But it's okay here.
     state = 1;
-    mutex.unlock_shared();
-}
-
-TEST(RWSpinLockTest, TryLockSharedWhileLockSharedWithPendingLock) {
-    RWSpinLock<MutexThreadStateHandling::kIgnore> mutex;
-    bool done = false;
-    mutex.lock_shared();
-    ScopedThread thread_lock([&] {
-        mutex.lock();
-        EXPECT_TRUE(done);
-        mutex.unlock();
-    });
-    // Wait for thread_lock to say that it wants to lock the mutex.
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    EXPECT_FALSE(mutex.try_lock_shared());
-    // Shared lock is not where one does mutability. But it's okay here.
-    done = true;
     mutex.unlock_shared();
 }
 
