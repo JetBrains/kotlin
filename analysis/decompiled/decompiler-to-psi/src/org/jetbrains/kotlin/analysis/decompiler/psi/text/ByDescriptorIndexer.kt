@@ -28,11 +28,7 @@ import org.jetbrains.kotlin.types.typeUtil.isNullableAny
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 
-object ByDescriptorIndexer : DecompiledTextIndexer<String> {
-    override fun indexDescriptor(descriptor: DeclarationDescriptor): Collection<String> {
-        return listOf(descriptor.toStringKey())
-    }
-
+object ByDescriptorIndexer {
     fun getDeclarationForDescriptor(descriptor: DeclarationDescriptor, file: KtDecompiledFile): KtDeclaration? {
         val original = descriptor.original
 
