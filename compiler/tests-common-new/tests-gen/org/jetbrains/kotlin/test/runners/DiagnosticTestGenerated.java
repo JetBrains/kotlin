@@ -27263,6 +27263,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("companionPropertyAndTypeParameter.kt")
+            public void testCompanionPropertyAndTypeParameter() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/resolve/companionPropertyAndTypeParameter.kt");
+            }
+
+            @Test
             @TestMetadata("constructorVsCompanion.kt")
             public void testConstructorVsCompanion() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/resolve/constructorVsCompanion.kt");

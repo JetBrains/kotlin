@@ -424,36 +424,45 @@ class BodyResolveContext(
         val towerElementsForClass = holder.collectTowerDataElementsForClass(owner, type)
 
         val base = towerDataContext.addNonLocalTowerDataElements(towerElementsForClass.superClassesStaticsAndCompanionReceivers)
-        val statics = base
-            .addNonLocalScopeIfNotNull(towerElementsForClass.companionStaticScope)
-            .addNonLocalScopeIfNotNull(towerElementsForClass.staticScope)
 
-        val companionReceiver = towerElementsForClass.companionReceiver
-        val staticsAndCompanion = if (companionReceiver == null) statics else base
-            .addReceiver(null, companionReceiver)
-            .addNonLocalScopeIfNotNull(towerElementsForClass.companionStaticScope)
-            .addNonLocalScopeIfNotNull(towerElementsForClass.staticScope)
+        val statics = base
+            .addNonLocalScopesIfNotNull(towerElementsForClass.companionStaticScope, towerElementsForClass.staticScope)
+
+        val staticsAndCompanion = when (val companionReceiver = towerElementsForClass.companionReceiver) {
+            null -> statics
+            else -> base
+                .addReceiver(null, companionReceiver)
+                .addNonLocalScopesIfNotNull(towerElementsForClass.companionStaticScope, towerElementsForClass.staticScope)
+        }
 
         val typeParameterScope = (owner as? FirRegularClass)?.typeParameterScope()
 
-        val forMembersResolution =
+        // Type parameters must be inserted before all of staticsAndCompanion.
+        // Optimization: Only rebuild all of staticsAndCompanion that's below type parameters if there are any type parameters.
+        // Otherwise, reuse staticsAndCompanion.
+        val forConstructorHeader = if (typeParameterScope != null) {
+            towerDataContext
+                .addNonLocalScope(typeParameterScope)
+                .addNonLocalTowerDataElements(towerElementsForClass.superClassesStaticsAndCompanionReceivers)
+                .run { towerElementsForClass.companionReceiver?.let { addReceiver(null, it) } ?: this }
+                .addNonLocalScopesIfNotNull(towerElementsForClass.companionStaticScope, towerElementsForClass.staticScope)
+        } else {
             staticsAndCompanion
-                .addReceiver(labelName, towerElementsForClass.thisReceiver)
-                .addContextReceiverGroup(towerElementsForClass.contextReceivers)
-                .addNonLocalScopeIfNotNull(typeParameterScope)
+        }
 
-        val scopeForConstructorHeader =
-            staticsAndCompanion.addNonLocalScopeIfNotNull(typeParameterScope)
+        val forMembersResolution = forConstructorHeader
+            .addReceiver(labelName, towerElementsForClass.thisReceiver)
+            .addContextReceiverGroup(towerElementsForClass.contextReceivers)
 
         /*
          * Scope for enum entries is equal to initial scope for constructor header
          *
-         * The only difference that we add value parameters to local scope for constructors
+         * The only difference is that we add value parameters to local scope for constructors
          *   and should not do this for enum entries
          */
 
         @Suppress("UnnecessaryVariable")
-        val scopeForEnumEntries = scopeForConstructorHeader
+        val scopeForEnumEntries = forConstructorHeader
 
         val newTowerDataContextForStaticNestedClasses =
             if ((owner as? FirRegularClass)?.classKind?.isSingleton == true)
@@ -470,14 +479,14 @@ class BodyResolveContext(
             }
 
         val newContexts = FirRegularTowerDataContexts(
-            forMembersResolution,
+            regular = forMembersResolution,
             forClassHeaderAnnotations = base,
-            newTowerDataContextForStaticNestedClasses,
-            statics,
-            scopeForConstructorHeader,
-            scopeForEnumEntries,
-            primaryConstructorPureParametersScope,
-            primaryConstructorAllParametersScope
+            forNestedClasses = newTowerDataContextForStaticNestedClasses,
+            forCompanionObject = statics,
+            forConstructorHeaders = forConstructorHeader,
+            forEnumEntries = scopeForEnumEntries,
+            primaryConstructorPureParametersScope = primaryConstructorPureParametersScope,
+            primaryConstructorAllParametersScope = primaryConstructorAllParametersScope
         )
 
         return withTowerDataContexts(newContexts) {
