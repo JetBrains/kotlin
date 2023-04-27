@@ -254,7 +254,8 @@ extra["kotlinJpsPluginEmbeddedDependencies"] = listOf(
     ":compiler:config.jvm",
     ":js:js.config",
     ":core:util.runtime",
-    ":compiler:compiler.version"
+    ":compiler:compiler.version",
+    ":compiler:build-tools:kotlin-build-statistics",
 )
 
 extra["kotlinJpsPluginMavenDependencies"] = listOf(
@@ -264,7 +265,6 @@ extra["kotlinJpsPluginMavenDependencies"] = listOf(
     ":kotlin-util-klib",
     ":kotlin-util-klib-metadata",
     ":native:kotlin-native-utils",
-    ":compiler:build-tools:kotlin-build-statistics",
 )
 
 extra["kotlinJpsPluginMavenDependenciesNonTransitiveLibs"] = listOf(
