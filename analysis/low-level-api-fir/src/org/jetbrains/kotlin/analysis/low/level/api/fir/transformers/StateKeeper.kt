@@ -19,12 +19,15 @@ internal interface StateKeeperBuilder {
 @StateKeeperDsl
 internal value class StateKeeperScope<Owner : Any>(private val owner: Owner) {
     context(StateKeeperBuilder)
-    inline fun <Value> add(provider: (Owner) -> Value, crossinline mutator: (Owner, Value) -> Unit, arranger: (Owner) -> Value) {
+    inline fun <Value> add(provider: (Owner) -> Value, crossinline mutator: (Owner, Value) -> Unit, arranger: (Value & Any) -> Value) {
         val owner = this@StateKeeperScope.owner
 
         val storedValue = provider(owner)
         if (storedValue != null) {
-            mutator(owner, arranger(owner))
+            val arrangedValue = arranger(storedValue)
+            if (arrangedValue !== storedValue) {
+                mutator(owner, arrangedValue)
+            }
         }
 
         register { mutator(owner, storedValue) }
