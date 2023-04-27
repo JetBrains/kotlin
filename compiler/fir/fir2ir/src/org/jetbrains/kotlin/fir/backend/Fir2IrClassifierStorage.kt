@@ -624,17 +624,14 @@ class Fir2IrClassifierStorage(
         val parentClass = parentId?.let { getIrClassSymbolForNotFoundClass(it.toLookupTag()) }
         val irParent = parentClass?.owner ?: declarationStorage.getIrExternalPackageFragment(classId.packageFqName)
 
-        val symbol = Fir2IrClassSymbol(signature)
-        symbolTable.declareClass(signature, { symbol }) {
+        return symbolTable.referenceClass(signature, { Fir2IrClassSymbol(signature) }) {
             irFactory.createClass(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB, symbol, classId.shortClassName,
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB, it, classId.shortClassName,
                 ClassKind.CLASS, DescriptorVisibilities.DEFAULT_VISIBILITY, Modality.FINAL,
             ).apply {
                 parent = irParent
             }
         }
-
-        return symbol
     }
 
     fun getIrTypeParameterSymbol(
