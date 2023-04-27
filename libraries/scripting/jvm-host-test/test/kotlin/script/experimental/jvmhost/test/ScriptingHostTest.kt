@@ -197,7 +197,7 @@ class ScriptingHostTest : TestCase() {
             makeSimpleConfigurationWithTestImport()
         }
         val output = captureOut {
-            BasicJvmScriptingHost().eval(script.toScriptSource(), compilationConfiguration, null).throwOnFailure()
+            BasicJvmScriptingHost().eval(script.toScriptSource(), compilationConfiguration, null).throwOnFailure().throwOnExceptionResult()
         }.lines()
         Assert.assertEquals(greeting, output)
     }
@@ -354,7 +354,7 @@ class ScriptingHostTest : TestCase() {
             }
         }
         val output = captureOut {
-            BasicJvmScriptingHost().eval(mainScript, compilationConfiguration, evaluationConfiguration).throwOnFailure()
+            BasicJvmScriptingHost().eval(mainScript, compilationConfiguration, evaluationConfiguration).throwOnFailure().throwOnExceptionResult()
         }.lines()
         return output
     }
@@ -568,6 +568,17 @@ fun <T> ResultWithDiagnostics<T>.throwOnFailure(): ResultWithDiagnostics<T> = ap
         throw Exception(
             "Compilation/evaluation failed:\n  ${reports.joinToString("\n  ") { it.exception?.toString() ?: it.message }}",
             firstExceptionFromReports
+        )
+    }
+}
+
+fun <T> ResultWithDiagnostics<T>.throwOnExceptionResult(): ResultWithDiagnostics<T> = apply {
+    if (this is ResultWithDiagnostics.Success) {
+        val result = (this.value as? EvaluationResult)
+        val error = (result?.returnValue as? ResultValue.Error)?.error
+        if (error != null) throw Exception(
+            "Evaluation failed:\n  ${reports.joinToString("\n  ") { it.exception?.toString() ?: it.message }}",
+            error
         )
     }
 }
