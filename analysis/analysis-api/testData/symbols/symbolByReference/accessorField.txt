@@ -2,6 +2,8 @@ KtBackingFieldSymbol:
   annotationsList: [
     FieldAnnotation()
       psi: KtAnnotationEntry
+    java/lang/Deprecated()
+      psi: KtAnnotationEntry
   ]
   callableIdIfNonLocal: null
   contextReceivers: []
@@ -17,4 +19,4 @@ KtBackingFieldSymbol:
   symbolKind: LOCAL
   typeParameters: []
   getContainingModule: KtSourceModule "Sources of main"
-  deprecationStatus: null
+  deprecationStatus: DeprecationInfo(deprecationLevel=WARNING, propagatesToOverrides=false, message=null)

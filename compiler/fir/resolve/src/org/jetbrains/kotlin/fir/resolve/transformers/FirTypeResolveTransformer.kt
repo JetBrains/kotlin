@@ -239,6 +239,12 @@ open class FirTypeResolveTransformer(
         }
     }
 
+    override fun transformBackingField(backingField: FirBackingField, data: Any?): FirStatement = whileAnalysing(session, backingField) {
+        backingField.transformAnnotations(this, data)
+        calculateDeprecations(backingField)
+        super.transformBackingField(backingField, data)
+    }
+
     override fun transformSimpleFunction(
         simpleFunction: FirSimpleFunction,
         data: Any?,

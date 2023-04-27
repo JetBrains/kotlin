@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
@@ -45,6 +46,9 @@ internal class KtFirSymbolInfoProvider(
             is FirPropertySymbol -> {
                 firSymbol.getDeprecationForCallSite(apiVersion, AnnotationUseSiteTarget.PROPERTY)
                     ?: firSymbol.backingFieldSymbol?.getDeprecationForCallSite(apiVersion, AnnotationUseSiteTarget.FIELD)
+            }
+            is FirBackingFieldSymbol -> {
+                firSymbol.getDeprecationForCallSite(apiVersion, AnnotationUseSiteTarget.FIELD)
             }
             else -> {
                 firSymbol.getDeprecationForCallSite(apiVersion)
