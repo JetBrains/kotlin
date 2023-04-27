@@ -5,13 +5,17 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization
 
+import com.intellij.openapi.project.Project
+import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirKotlinSymbolProviderNameCache
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
+import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.java.deserialization.KotlinBuiltins
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -40,18 +44,26 @@ typealias DeserializedTypeAliasPostProcessor = (FirTypeAliasSymbol) -> Unit
  *
  * Same as [JvmClassFileBasedSymbolProvider], resulting fir elements are already resolved.
  */
-class JvmStubBasedFirDeserializedSymbolProvider(
+internal open class JvmStubBasedFirDeserializedSymbolProvider(
     session: FirSession,
     moduleDataProvider: SingleModuleDataProvider,
     private val kotlinScopeProvider: FirKotlinScopeProvider,
-    private val declarationProvider: KotlinDeclarationProvider
+    project: Project,
+    scope: GlobalSearchScope,
+    private val initialOrigin: FirDeclarationOrigin
 ) : FirSymbolProvider(session) {
+    private val declarationProvider by lazy(LazyThreadSafetyMode.PUBLICATION) { project.createDeclarationProvider(scope) }
     private val moduleData = moduleDataProvider.getModuleData(null)
     private val packageSetWithTopLevelCallableDeclarations: Set<String> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         declarationProvider.computePackageSetWithTopLevelCallableDeclarations()
     }
 
-    private val namesByPackageCache = LLFirKotlinSymbolProviderNameCache(session, declarationProvider)
+    private val namesByPackageCache by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        LLFirKotlinSymbolProviderNameCache(
+            session,
+            declarationProvider
+        )
+    }
 
     private val typeAliasCache: FirCache<ClassId, FirTypeAliasSymbol?, StubBasedFirDeserializationContext?> =
         session.firCachesFactory.createCacheWithPostCompute(
@@ -92,7 +104,7 @@ class JvmStubBasedFirDeserializedSymbolProvider(
                     classId.packageFqName,
                     classId.relativeClassName,
                     classLikeDeclaration,
-                    null, null, symbol
+                    null, null, symbol, initialOrigin
                 )
                 rootContext.memberDeserializer.loadTypeAlias(classLikeDeclaration, symbol)
             }
@@ -117,8 +129,13 @@ class JvmStubBasedFirDeserializedSymbolProvider(
                 StubBasedAnnotationDeserializer(session),
                 kotlinScopeProvider,
                 parentContext,
-                JvmFromStubDecompilerSource(JvmClassName.byClassId(classId)),
+                containerSource = if (initialOrigin == FirDeclarationOrigin.BuiltIns) null else JvmFromStubDecompilerSource(
+                    JvmClassName.byClassId(
+                        classId
+                    )
+                ),
                 deserializeNestedClass = this::getClass,
+                initialOrigin
             )
             return symbol
         }
@@ -135,12 +152,12 @@ class JvmStubBasedFirDeserializedSymbolProvider(
                 val file = original.containingKtFile
                 val virtualFile = file.virtualFile
                 if (virtualFile.extension == MetadataPackageFragment.METADATA_FILE_EXTENSION) return@mapNotNull null
-                if (file.packageFqName.asString()
+                if (initialOrigin != FirDeclarationOrigin.BuiltIns && file.packageFqName.asString()
                         .replace(".", "/") + "/" + virtualFile.nameWithoutExtension in KotlinBuiltins
                 ) return@mapNotNull null
                 val symbol = FirNamedFunctionSymbol(callableId)
                 val rootContext =
-                    StubBasedFirDeserializationContext.createRootContext(session, moduleData, callableId, original, symbol)
+                    StubBasedFirDeserializationContext.createRootContext(session, moduleData, callableId, original, symbol, initialOrigin)
                 rootContext.memberDeserializer.loadFunction(original, null, session, symbol).symbol
             }
     }
@@ -154,7 +171,7 @@ class JvmStubBasedFirDeserializedSymbolProvider(
                 if (origins != null && !origins.add(original)) return@mapNotNull null
                 val symbol = FirPropertySymbol(callableId)
                 val rootContext =
-                    StubBasedFirDeserializationContext.createRootContext(session, moduleData, callableId, original, symbol)
+                    StubBasedFirDeserializationContext.createRootContext(session, moduleData, callableId, original, symbol, initialOrigin)
                 rootContext.memberDeserializer.loadProperty(original, null, symbol).symbol
             }
     }

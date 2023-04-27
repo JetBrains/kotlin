@@ -5,19 +5,21 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization
 
-import org.jetbrains.kotlin.constant.*
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.KtRealPsiSourceElement
+import org.jetbrains.kotlin.constant.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.collectEnumEntries
-import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
+import org.jetbrains.kotlin.fir.expressions.FirConstExpression
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.buildUnaryArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.references.builder.buildFromMissingDependenciesNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.symbols.lazyDeclarationResolver
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -25,23 +27,24 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.KtAnnotated
+import org.jetbrains.kotlin.psi.KtAnnotationEntry
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
-import org.jetbrains.kotlin.psi.stubs.impl.*
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinAnnotationEntryStubImpl
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinClassTypeBean
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyStubImpl
 import org.jetbrains.kotlin.types.ConstantValueKind
 
 class StubBasedAnnotationDeserializer(
     private val session: FirSession,
 ) {
-    //fun inheritAnnotationInfo(parent: StubBasedAnnotationDeserializer) {}
-
     fun loadAnnotations(
         ktAnnotated: KtAnnotated,
-        useSiteTarget: AnnotationUseSiteTarget? = null
     ): List<FirAnnotation> {
         val annotations = ktAnnotated.annotationEntries
         if (annotations.isEmpty()) return emptyList()
-        return annotations.map { deserializeAnnotation(it, useSiteTarget) }
+        return annotations.map { deserializeAnnotation(it) }
     }
 
     private val constantCache = mutableMapOf<CallableId, FirExpression>()
@@ -55,8 +58,7 @@ class StubBasedAnnotationDeserializer(
     }
 
     private fun deserializeAnnotation(
-        ktAnnotation: KtAnnotationEntry,
-        useSiteTarget: AnnotationUseSiteTarget? = null
+        ktAnnotation: KtAnnotationEntry
     ): FirAnnotation {
         val userType =
             ktAnnotation.getStubOrPsiChild(KtStubElementTypes.CONSTRUCTOR_CALLEE)?.getStubOrPsiChild(KtStubElementTypes.TYPE_REFERENCE)
@@ -65,7 +67,7 @@ class StubBasedAnnotationDeserializer(
             ktAnnotation,
             userType.classId(),
             (ktAnnotation.stub as? KotlinAnnotationEntryStubImpl)?.valueArguments,
-            useSiteTarget
+            ktAnnotation.useSiteTarget?.getAnnotationUseSiteTarget()
         )
     }
 
@@ -78,13 +80,11 @@ class StubBasedAnnotationDeserializer(
         return buildAnnotation {
             source = KtRealPsiSourceElement(ktAnnotation)
             annotationTypeRef = buildResolvedTypeRef {
-                type = classId.toLookupTag().constructClassType(emptyArray(), isNullable = false)
+                type = classId.toLookupTag().constructClassType(ConeTypeProjection.EMPTY_ARRAY, isNullable = false)
             }
-            session.lazyDeclarationResolver.disableLazyResolveContractChecksInside {
-                this.argumentMapping = buildAnnotationArgumentMapping {
-                    valueArguments?.forEach { (name, constantValue) ->
-                        mapping[name] = resolveValue(ktAnnotation, constantValue)
-                    }
+            this.argumentMapping = buildAnnotationArgumentMapping {
+                valueArguments?.forEach { (name, constantValue) ->
+                    mapping[name] = resolveValue(ktAnnotation, constantValue)
                 }
             }
             useSiteTarget?.let {
@@ -102,7 +102,7 @@ class StubBasedAnnotationDeserializer(
             is KClassValue -> buildGetClassCall {
                 source = KtRealPsiSourceElement(sourceElement)
                 val lookupTag = (value.value as KClassValue.Value.NormalClass).classId.toLookupTag()
-                val referencedType = lookupTag.constructType(emptyArray(), isNullable = false)
+                val referencedType = lookupTag.constructType(ConeTypeProjection.EMPTY_ARRAY, isNullable = false)
                 val resolvedTypeRef = buildResolvedTypeRef {
                     type = StandardClassIds.KClass.constructClassLikeType(arrayOf(referencedType), false)
                 }
@@ -118,9 +118,6 @@ class StubBasedAnnotationDeserializer(
                 argumentList = buildArgumentList {
                     value.value.mapTo(arguments) { resolveValue(sourceElement, it) }
                 }
-//                typeRef = buildResolvedTypeRef {
-//                    type = expectedArrayElementType.createArrayType() //todo
-//                }
             }
             is AnnotationValue -> {
                 deserializeAnnotation(
@@ -147,7 +144,12 @@ class StubBasedAnnotationDeserializer(
         }
     }
 
-    private fun <T> const(kind: ConstantValueKind<T>, value: T, typeRef: FirResolvedTypeRef, sourceElement: PsiElement): FirConstExpression<T> {
+    private fun <T> const(
+        kind: ConstantValueKind<T>,
+        value: T,
+        typeRef: FirResolvedTypeRef,
+        sourceElement: PsiElement
+    ): FirConstExpression<T> {
         return buildConstExpression(
             KtRealPsiSourceElement(sourceElement),
             kind,

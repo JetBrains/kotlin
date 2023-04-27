@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.utils.sourceElement
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
@@ -35,7 +36,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
-class StubBasedFirDeserializationContext(
+internal class StubBasedFirDeserializationContext(
     val moduleData: FirModuleData,
     val packageFqName: FqName,
     val relativeClassName: FqName?,
@@ -43,7 +44,8 @@ class StubBasedFirDeserializationContext(
     val annotationDeserializer: StubBasedAnnotationDeserializer,
     val containerSource: DeserializedContainerSource?,
     val outerClassSymbol: FirRegularClassSymbol?,
-    val outerTypeParameters: List<FirTypeParameterSymbol>
+    val outerTypeParameters: List<FirTypeParameterSymbol>,
+    private val initialOrigin: FirDeclarationOrigin
 ) {
     val session: FirSession = moduleData.session
 
@@ -67,16 +69,18 @@ class StubBasedFirDeserializationContext(
             annotationDeserializer,
             typeDeserializer,
             containingDeclarationSymbol,
-            owner
+            owner,
+            initialOrigin
         ),
         annotationDeserializer,
         containerSource,
         outerClassSymbol,
-        if (capturesTypeParameters) allTypeParameters else emptyList()
+        if (capturesTypeParameters) allTypeParameters else emptyList(),
+        initialOrigin
     )
 
-    val memberDeserializer: StubBasedFirMemberDeserializer = StubBasedFirMemberDeserializer(this)
-    val dispatchReceiver = relativeClassName?.let { ClassId(packageFqName, it, false).defaultType(allTypeParameters) }
+    val memberDeserializer: StubBasedFirMemberDeserializer = StubBasedFirMemberDeserializer(this, initialOrigin)
+    val dispatchReceiver = relativeClassName?.let { ClassId(packageFqName, it, /* local = */ false).defaultType(allTypeParameters) }
 
     companion object {
 
@@ -86,7 +90,8 @@ class StubBasedFirDeserializationContext(
             moduleData: FirModuleData,
             annotationDeserializer: StubBasedAnnotationDeserializer,
             containerSource: DeserializedContainerSource?,
-            outerClassSymbol: FirRegularClassSymbol
+            outerClassSymbol: FirRegularClassSymbol,
+            initialOrigin: FirDeclarationOrigin
         ): StubBasedFirDeserializationContext = createRootContext(
             moduleData,
             annotationDeserializer,
@@ -95,7 +100,8 @@ class StubBasedFirDeserializationContext(
             classOrObject,
             containerSource,
             outerClassSymbol,
-            outerClassSymbol
+            outerClassSymbol,
+            initialOrigin
         )
 
         fun createRootContext(
@@ -106,7 +112,8 @@ class StubBasedFirDeserializationContext(
             owner: KtTypeParameterListOwner,
             containerSource: DeserializedContainerSource?,
             outerClassSymbol: FirRegularClassSymbol?,
-            containingDeclarationSymbol: FirBasedSymbol<*>?
+            containingDeclarationSymbol: FirBasedSymbol<*>?,
+            initialOrigin: FirDeclarationOrigin
         ): StubBasedFirDeserializationContext = StubBasedFirDeserializationContext(
             moduleData,
             packageFqName,
@@ -114,14 +121,16 @@ class StubBasedFirDeserializationContext(
             StubBasedFirTypeDeserializer(
                 moduleData,
                 annotationDeserializer,
-                null,
+                parent = null,
                 containingDeclarationSymbol,
-                owner
+                owner,
+                initialOrigin
             ),
             annotationDeserializer,
             containerSource,
             outerClassSymbol,
-            emptyList()
+            outerTypeParameters = emptyList(),
+            initialOrigin
         )
 
         fun createRootContext(
@@ -129,21 +138,27 @@ class StubBasedFirDeserializationContext(
             moduleData: FirModuleData,
             callableId: CallableId,
             parameterListOwner: KtTypeParameterListOwner,
-            symbol: FirBasedSymbol<*>
+            symbol: FirBasedSymbol<*>,
+            initialOrigin: FirDeclarationOrigin
         ): StubBasedFirDeserializationContext = createRootContext(
             moduleData,
             StubBasedAnnotationDeserializer(session),
             callableId.packageName,
             callableId.className,
             parameterListOwner,
-            JvmFromStubDecompilerSource(callableId.packageName),
-            null,
-            symbol
+            containerSource = if (initialOrigin == FirDeclarationOrigin.BuiltIns || callableId.packageName.isRoot)
+                null else JvmFromStubDecompilerSource(callableId.packageName),
+            outerClassSymbol = null,
+            symbol,
+            initialOrigin
         )
     }
 }
 
-class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationContext) {
+internal class StubBasedFirMemberDeserializer(
+    private val c: StubBasedFirDeserializationContext,
+    private val initialOrigin: FirDeclarationOrigin
+) {
 
     fun loadTypeAlias(typeAlias: KtTypeAlias, aliasSymbol: FirTypeAliasSymbol): FirTypeAlias {
         val name = typeAlias.nameAsSafeName
@@ -151,7 +166,7 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
         return buildTypeAlias {
             source = KtRealPsiSourceElement(typeAlias)
             moduleData = c.moduleData
-            origin = FirDeclarationOrigin.Library
+            origin = initialOrigin
             this.name = name
             val visibility = typeAlias.visibility
             status = FirResolvedDeclarationStatusImpl(
@@ -185,7 +200,7 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
         return buildPropertyAccessor {
             source = KtRealPsiSourceElement(getter)
             moduleData = c.moduleData
-            origin = FirDeclarationOrigin.Library
+            origin = initialOrigin
             this.returnTypeRef = returnTypeRef
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             isGetter = true
@@ -198,9 +213,7 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
             this.propertySymbol = propertySymbol
         }.apply {
             replaceAnnotations(
-                c.annotationDeserializer.loadAnnotations(
-                    getter, AnnotationUseSiteTarget.PROPERTY_GETTER
-                )
+                c.annotationDeserializer.loadAnnotations(getter)
             )
             containingClassForStaticMemberAttr = c.dispatchReceiver?.lookupTag
         }
@@ -218,7 +231,7 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
         return buildPropertyAccessor {
             source = KtRealPsiSourceElement(setter)
             moduleData = c.moduleData
-            origin = FirDeclarationOrigin.Library
+            origin = initialOrigin
             this.returnTypeRef = FirImplicitUnitTypeRef(source)
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             isGetter = false
@@ -235,9 +248,7 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
             this.propertySymbol = propertySymbol
         }.apply {
             replaceAnnotations(
-                c.annotationDeserializer.loadAnnotations(
-                    setter, AnnotationUseSiteTarget.PROPERTY_SETTER
-                )
+                c.annotationDeserializer.loadAnnotations(setter)
             )
             containingClassForStaticMemberAttr = c.dispatchReceiver?.lookupTag
         }
@@ -258,7 +269,7 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
         val getter = property.getter
         val receiverTypeReference = property.receiverTypeReference
         val receiverAnnotations = if (getter != null && receiverTypeReference != null) {
-            c.annotationDeserializer.loadAnnotations(receiverTypeReference, AnnotationUseSiteTarget.PROPERTY_GETTER)
+            c.annotationDeserializer.loadAnnotations(receiverTypeReference)
         } else {
             emptyList()
         }
@@ -269,7 +280,7 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
         return buildProperty {
             source = KtRealPsiSourceElement(property)
             moduleData = c.moduleData
-            origin = FirDeclarationOrigin.Library
+            origin = initialOrigin
             this.returnTypeRef = returnTypeRef
             receiverParameter = receiverTypeReference?.toTypeRef(local)?.let { receiverType ->
                 buildReceiverParameter {
@@ -295,8 +306,18 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
 
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
             typeParameters += local.typeDeserializer.ownTypeParameters.map { it.fir }
-            annotations +=
-                c.annotationDeserializer.loadAnnotations(property, AnnotationUseSiteTarget.PROPERTY)
+            val allAnnotations = c.annotationDeserializer.loadAnnotations(property)
+            annotations += allAnnotations.filter { it.useSiteTarget == null }
+            val backingFieldAnnotations =
+                allAnnotations.filter { it.useSiteTarget == AnnotationUseSiteTarget.FIELD || it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD }
+            backingField = FirDefaultPropertyBackingField(
+                c.moduleData,
+                backingFieldAnnotations.toMutableList(),
+                returnTypeRef,
+                isVar,
+                symbol,
+                status
+            )
             if (getter != null) {
                 this.getter = loadPropertyGetter(
                     getter,
@@ -356,7 +377,7 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
 
         val simpleFunction = buildSimpleFunction {
             moduleData = c.moduleData
-            origin = FirDeclarationOrigin.Library
+            origin = initialOrigin
             source = KtRealPsiSourceElement(function)
             returnTypeRef = function.typeReference?.toTypeRef(local) ?: session.builtinTypes.unitType
             receiverParameter = function.receiverTypeReference?.toTypeRef(local)?.let { receiverType ->
@@ -436,7 +457,7 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
         }.apply {
             moduleData = c.moduleData
             source = KtRealPsiSourceElement(constructor)
-            origin = FirDeclarationOrigin.Library
+            origin = initialOrigin
             returnTypeRef = delegatedSelfType
             val visibility = constructor.visibility
             val isInner = classBuilder.status.isInner
@@ -487,7 +508,7 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
                 source = KtRealPsiSourceElement(ktParameter)
                 moduleData = c.moduleData
                 this.containingFunctionSymbol = functionSymbol
-                origin = FirDeclarationOrigin.Library
+                origin = initialOrigin
                 returnTypeRef =
                     ktParameter.typeReference?.toTypeRef(c) ?: error("KtParameter $ktParameter doesn't have type, $functionSymbol")
                 isVararg = ktParameter.isVarArg
@@ -498,12 +519,9 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
                 symbol = FirValueParameterSymbol(name)
                 resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
 
-                defaultValue = if (ktParameter.hasDefaultValue()) {
+                defaultValue = if (ktParameter.hasDefaultValue() || addDefaultValue) {
                     buildExpressionStub()
                 } else null
-                if (addDefaultValue) {
-                    defaultValue = buildExpressionStub()
-                }
                 isCrossinline = ktParameter.hasModifier(KtTokens.CROSSINLINE_KEYWORD)
                 isNoinline = ktParameter.hasModifier(KtTokens.NOINLINE_KEYWORD)
                 annotations += c.annotationDeserializer.loadAnnotations(
@@ -527,7 +545,7 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
         val enumEntry = buildEnumEntry {
             source = KtRealPsiSourceElement(declaration)
             this.moduleData = c.moduleData
-            this.origin = FirDeclarationOrigin.Library
+            this.origin = initialOrigin
             returnTypeRef = buildResolvedTypeRef { type = enumType }
             name = Name.identifier(enumEntryName)
             this.symbol = FirEnumEntrySymbol(CallableId(classId, name))

@@ -7,9 +7,12 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
-import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirBuiltinSymbolProvider
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.psi.search.DelegatingGlobalSearchScope
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirBuiltinsAndCloneableSessionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirBuiltinsAndCloneableSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.JvmStubBasedFirDeserializedSymbolProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtBuiltinsModule
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
@@ -17,8 +20,11 @@ import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
 import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmTypeMapper
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCloneableSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirExtensionSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.resolve.scopes.wrapScopeWithJvmMapped
@@ -29,12 +35,15 @@ import org.jetbrains.kotlin.fir.session.registerCommonComponentsAfterExtensionsA
 import org.jetbrains.kotlin.fir.session.registerCommonJavaComponents
 import org.jetbrains.kotlin.fir.session.registerModuleData
 import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.isCommon
 import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
+import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 import java.util.concurrent.ConcurrentHashMap
 
 @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
@@ -44,6 +53,11 @@ class LLFirBuiltinsSessionFactory(private val project: Project) {
 
     fun getBuiltinsSession(platform: TargetPlatform): LLFirBuiltinsAndCloneableSession {
         return builtinsAndCloneableSession.getOrPut(platform) { createBuiltinsAndCloneableSession(platform) }
+    }
+
+    @TestOnly
+    fun clearForTheNextTest() {
+        builtinsAndCloneableSession.clear()
     }
 
     private fun createBuiltinsAndCloneableSession(platform: TargetPlatform): LLFirBuiltinsAndCloneableSession {
@@ -64,7 +78,28 @@ class LLFirBuiltinsSessionFactory(private val project: Project) {
             register(FirKotlinScopeProvider::class, kotlinScopeProvider)
 
             val symbolProvider = createCompositeSymbolProvider(this) {
-                add(LLFirBuiltinSymbolProvider(session, moduleData, kotlinScopeProvider))
+                val moduleDataProvider = SingleModuleDataProvider(moduleData)
+                add(
+                    object : JvmStubBasedFirDeserializedSymbolProvider(
+                        session,
+                        moduleDataProvider,
+                        kotlinScopeProvider,
+                        project,
+                        BuiltinsGlobalSearchScope(project),
+                        FirDeclarationOrigin.BuiltIns
+                    ) {
+                        private val syntheticFunctionInterfaceProvider = FirBuiltinSyntheticFunctionInterfaceProvider(
+                            session,
+                            moduleData,
+                            kotlinScopeProvider
+                        )
+
+                        override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
+                            return super.getClassLikeSymbolByClassId(classId)
+                                ?: syntheticFunctionInterfaceProvider.getClassLikeSymbolByClassId(classId)
+                        }
+                    }
+                )
                 add(FirExtensionSyntheticFunctionInterfaceProvider(session, moduleData, kotlinScopeProvider))
                 add(FirCloneableSymbolProvider(session, moduleData, kotlinScopeProvider))
             }
@@ -78,6 +113,15 @@ class LLFirBuiltinsSessionFactory(private val project: Project) {
     companion object {
         fun getInstance(project: Project): LLFirBuiltinsSessionFactory =
             project.getService(LLFirBuiltinsSessionFactory::class.java)
+    }
+}
+
+internal class BuiltinsGlobalSearchScope(project: Project) : DelegatingGlobalSearchScope(project, allScope(project)) {
+    override fun contains(file: VirtualFile): Boolean {
+        if (file.extension != BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION) {
+            return false
+        }
+        return super.contains(file)
     }
 }
 

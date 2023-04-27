@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.stubs.impl.*
 
-class StubBasedFirContractDeserializer(
+internal class StubBasedFirContractDeserializer(
     private val simpleFunction: FirSimpleFunction,
     private val typeDeserializer: StubBasedFirTypeDeserializer
 ) {
@@ -123,8 +123,10 @@ class StubBasedFirContractDeserializer(
             booleanValueParameterReference: KtBooleanValueParameterReference<KotlinTypeBean, Nothing?>,
             data: Nothing?
         ): ConeContractDescriptionElement {
-            return ConeBooleanValueParameterReference(booleanValueParameterReference.parameterIndex,
-                getParameterName(booleanValueParameterReference.parameterIndex))
+            return ConeBooleanValueParameterReference(
+                booleanValueParameterReference.parameterIndex,
+                getParameterName(booleanValueParameterReference.parameterIndex)
+            )
         }
 
         private fun getParameterName(parameterIndex: Int): String {

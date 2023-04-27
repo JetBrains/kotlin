@@ -12,8 +12,8 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.JvmFirDeserializedSymbolProviderFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.createJavaSymbolProvider
-import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 
-class JvmStubBasedDeserializedSymbolProviderFactory : JvmFirDeserializedSymbolProviderFactory() {
+internal class JvmStubBasedDeserializedSymbolProviderFactory : JvmFirDeserializedSymbolProviderFactory() {
     override fun createJvmFirDeserializedSymbolProviders(
         project: Project,
         session: FirSession,
@@ -42,12 +42,16 @@ class JvmStubBasedDeserializedSymbolProviderFactory : JvmFirDeserializedSymbolPr
                     session,
                     moduleDataProvider,
                     kotlinScopeProvider,
-                    project.createDeclarationProvider(object : DelegatingGlobalSearchScope(project, scope) {
+                    project,
+                    object : DelegatingGlobalSearchScope(project, scope) {
                         override fun contains(file: VirtualFile): Boolean {
-                            if (file.extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION) return false
+                            if (file.extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION) {
+                                return false
+                            }
                             return super.contains(file)
                         }
-                    })
+                    },
+                    FirDeclarationOrigin.Library
                 )
             )
             add(createJavaSymbolProvider(session, moduleData, project, scope))

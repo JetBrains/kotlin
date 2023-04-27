@@ -45,7 +45,7 @@ internal val KtDeclaration.modality: Modality
         }
     }
 
-fun deserializeClassToSymbol(
+internal fun deserializeClassToSymbol(
     classId: ClassId,
     classOrObject: KtClassOrObject,
     symbol: FirRegularClassSymbol,
@@ -55,7 +55,8 @@ fun deserializeClassToSymbol(
     scopeProvider: FirScopeProvider,
     parentContext: StubBasedFirDeserializationContext? = null,
     containerSource: DeserializedContainerSource? = null,
-    deserializeNestedClass: (ClassId, StubBasedFirDeserializationContext) -> FirRegularClassSymbol?
+    deserializeNestedClass: (ClassId, StubBasedFirDeserializationContext) -> FirRegularClassSymbol?,
+    initialOrigin: FirDeclarationOrigin
 ) {
     val kind = when (classOrObject) {
         is KtObjectDeclaration -> ClassKind.OBJECT
@@ -98,17 +99,13 @@ fun deserializeClassToSymbol(
             moduleData,
             annotationDeserializer,
             containerSource,
-            symbol
+            symbol,
+            initialOrigin
         )
-//    if (status.isCompanion) {
-//        parentContext?.let {
-//            context.annotationDeserializer.inheritAnnotationInfo(it.annotationDeserializer)
-//        }
-//    }
     buildRegularClass {
         source = KtRealPsiSourceElement(classOrObject)
         this.moduleData = moduleData
-        this.origin = FirDeclarationOrigin.Library
+        this.origin = initialOrigin
         name = classId.shortClassName
         this.status = status
         classKind = kind
@@ -131,7 +128,7 @@ fun deserializeClassToSymbol(
                     it.typeReference ?: error("Super entry doesn't have type reference $it")
                 )
             })
-        } else if (StandardClassIds.Any != classId) {
+        } else if (StandardClassIds.Any != classId && StandardClassIds.Nothing != classId) {
             superTypeRefs.add(session.builtinTypes.anyType)
         }
 
@@ -159,17 +156,21 @@ fun deserializeClassToSymbol(
                 moduleData,
                 classId.packageFqName,
                 classId.relativeClassName,
-                origin = FirDeclarationOrigin.Library
+                origin = initialOrigin
             )
-            generateValueOfFunction(moduleData, classId.packageFqName, classId.relativeClassName, origin = FirDeclarationOrigin.Library)
-            generateEntriesGetter(moduleData, classId.packageFqName, classId.relativeClassName, origin = FirDeclarationOrigin.Library)
+            generateValueOfFunction(moduleData, classId.packageFqName, classId.relativeClassName, origin = initialOrigin)
+            generateEntriesGetter(moduleData, classId.packageFqName, classId.relativeClassName, origin = initialOrigin)
         }
 
         if (classOrObject.isData() && firPrimaryConstructor != null) {
             val zippedParameters =
                 classOrObject.primaryConstructorParameters.filter { it.hasValOrVar() } zip declarations.filterIsInstance<FirProperty>()
             addDeclaration(createDataClassCopyFunction(classId, classOrObject, context.dispatchReceiver, zippedParameters,
-                                                       createClassTypeRefWithSourceKind = { firPrimaryConstructor.returnTypeRef.copyWithNewSourceKind(it) },
+                                                       createClassTypeRefWithSourceKind = {
+                                                           firPrimaryConstructor.returnTypeRef.copyWithNewSourceKind(
+                                                               it
+                                                           )
+                                                       },
                                                        createParameterTypeRefWithSourceKind = { property, newKind ->
                                                            property.returnTypeRef.copyWithNewSourceKind(newKind)
                                                        }) { src, kind ->
@@ -196,14 +197,6 @@ fun deserializeClassToSymbol(
 
         contextReceivers.addAll(memberDeserializer.createContextReceiversForClass(classOrObject))
     }.apply {
-        //todo sealed inheritors
-        //if (modality == Modality.SEALED) {
-//            val inheritors = classOrObject.sealedSubclassFqNameList.map { nameIndex ->
-//                ClassId.fromString(nameResolver.getQualifiedClassName(nameIndex))
-//            }
-//            setSealedClassInheritors(inheritors)
-        //}
-
         valueClassRepresentation = computeValueClassRepresentation(this, session)
 
         replaceAnnotations(

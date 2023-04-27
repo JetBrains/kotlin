@@ -11,8 +11,10 @@ import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.canBePartOfParentDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.retryOnInvalidSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FirElementsRecorder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache
@@ -99,9 +101,6 @@ internal abstract class LLFirResolvableResolveSession(
         ktDeclaration: KtDeclaration,
         phase: FirResolvePhase
     ): FirBasedSymbol<*> {
-        if (ktDeclaration.containingKtFile.isCompiled) {
-            return findFirCompiledSymbol(ktDeclaration)
-        }
         val module = ktDeclaration.getKtModule()
         retryOnInvalidSession {
             return when (getModuleKind(module)) {
