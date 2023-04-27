@@ -183,7 +183,7 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
 
     protected fun setupAttributeMatchingStrategy(
         project: Project,
-        isKotlinGranularMetadata: Boolean = project.isKotlinGranularMetadataEnabled
+        isKotlinGranularMetadata: Boolean = project.isKotlinGranularMetadataEnabled,
     ) = with(project.dependencies.attributesSchema) {
         KotlinPlatformType.setupAttributesMatchingStrategy(this)
         KotlinUsages.setupAttributesMatchingStrategy(this, isKotlinGranularMetadata)
@@ -238,6 +238,8 @@ abstract class KotlinBasePluginWrapper : DefaultKotlinBasePlugin() {
 
         setupAttributeMatchingStrategy(project)
 
+        project.startKotlinPluginLifecycle()
+
         plugin.apply(project)
 
         project.addNpmDependencyExtension()
@@ -245,9 +247,6 @@ abstract class KotlinBasePluginWrapper : DefaultKotlinBasePlugin() {
         project.registerBuildKotlinToolingMetadataTask()
 
         project.scheduleDiagnosticChecksAndReporting()
-
-        project.startKotlinPluginLifecycle()
-
     }
 
     internal open fun createTestRegistry(project: Project) = KotlinTestsRegistry(project)
@@ -278,7 +277,7 @@ abstract class KotlinBasePluginWrapper : DefaultKotlinBasePlugin() {
 }
 
 abstract class AbstractKotlinPluginWrapper(
-    protected val registry: ToolingModelBuilderRegistry
+    protected val registry: ToolingModelBuilderRegistry,
 ) : KotlinBasePluginWrapper() {
     override fun getPlugin(project: Project): Plugin<Project> =
         KotlinJvmPlugin(registry)
@@ -288,7 +287,7 @@ abstract class AbstractKotlinPluginWrapper(
 }
 
 abstract class AbstractKotlinCommonPluginWrapper(
-    protected val registry: ToolingModelBuilderRegistry
+    protected val registry: ToolingModelBuilderRegistry,
 ) : KotlinBasePluginWrapper() {
     override fun getPlugin(project: Project): Plugin<Project> =
         KotlinCommonPlugin(registry)
@@ -298,7 +297,7 @@ abstract class AbstractKotlinCommonPluginWrapper(
 }
 
 abstract class AbstractKotlinAndroidPluginWrapper(
-    protected val registry: ToolingModelBuilderRegistry
+    protected val registry: ToolingModelBuilderRegistry,
 ) : KotlinBasePluginWrapper() {
     override fun getPlugin(project: Project): Plugin<Project> =
         KotlinAndroidPlugin(registry)
@@ -312,7 +311,7 @@ abstract class AbstractKotlinAndroidPluginWrapper(
     level = DeprecationLevel.ERROR
 )
 abstract class AbstractKotlin2JsPluginWrapper(
-    protected val registry: ToolingModelBuilderRegistry
+    protected val registry: ToolingModelBuilderRegistry,
 ) : KotlinBasePluginWrapper() {
 
     @Suppress("DEPRECATION_ERROR")
@@ -374,7 +373,7 @@ abstract class AbstractKotlinMultiplatformPluginWrapper : KotlinBasePluginWrappe
 }
 
 abstract class AbstractKotlinPm20PluginWrapper(
-    private val objectFactory: ObjectFactory
+    private val objectFactory: ObjectFactory,
 ) : KotlinBasePluginWrapper() {
     override fun apply(project: Project) {
         super.apply(project)
