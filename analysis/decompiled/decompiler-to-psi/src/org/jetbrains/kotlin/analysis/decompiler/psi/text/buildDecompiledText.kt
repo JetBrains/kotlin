@@ -61,7 +61,6 @@ fun buildDecompiledText(
     packageFqName: FqName,
     descriptors: List<DeclarationDescriptor>,
     descriptorRenderer: DescriptorRenderer,
-    indexers: Collection<DecompiledTextIndexer<*>> = listOf(ByDescriptorIndexer),
 ): DecompiledText {
     val builder = StringBuilder()
 
@@ -73,14 +72,7 @@ fun buildDecompiledText(
         }
     }
 
-    val textIndex = DecompiledTextIndex(indexers)
-
-    fun indexDescriptor(descriptor: DeclarationDescriptor, startOffset: Int, endOffset: Int) {
-        textIndex.addToIndex(descriptor, TextRange(startOffset, endOffset))
-    }
-
     fun appendDescriptor(descriptor: DeclarationDescriptor, indent: String, lastEnumEntry: Boolean? = null) {
-        val startOffset = builder.length
         if (isEnumEntry(descriptor)) {
             for (annotation in descriptor.annotations) {
                 builder.append(descriptorRenderer.renderAnnotation(annotation))
@@ -91,7 +83,6 @@ fun buildDecompiledText(
         } else {
             builder.append(descriptorRenderer.render(descriptor).replace("= ...", DECOMPILED_COMMENT_FOR_PARAMETER))
         }
-        var endOffset = builder.length
 
         if (descriptor is CallableDescriptor) {
             //NOTE: assuming that only return types can be flexible
@@ -114,7 +105,6 @@ fun buildDecompiledText(
                     // descriptor instanceof PropertyDescriptor
                     builder.append(" ").append(DECOMPILED_CODE_COMMENT)
                 }
-                endOffset = builder.length
             }
             if (descriptor is PropertyDescriptor) {
                 for (accessor in descriptor.accessors) {
@@ -147,7 +137,6 @@ fun buildDecompiledText(
                         builder.append(")")
                         builder.append(" {").append(DECOMPILED_CODE_COMMENT).append(" }")
                     }
-                    endOffset = builder.length
                 }
             }
         } else if (descriptor is ClassDescriptor && !isEnumEntry(descriptor)) {
@@ -196,18 +185,9 @@ fun buildDecompiledText(
             }
 
             builder.append(indent).append("}")
-            endOffset = builder.length
         }
 
         builder.append("\n")
-        indexDescriptor(descriptor, startOffset, endOffset)
-
-        if (descriptor is ClassDescriptor) {
-            val primaryConstructor = descriptor.unsubstitutedPrimaryConstructor
-            if (primaryConstructor != null) {
-                indexDescriptor(primaryConstructor, startOffset, endOffset)
-            }
-        }
     }
 
     appendDecompiledTextAndPackageName()
@@ -216,5 +196,5 @@ fun buildDecompiledText(
         builder.append("\n")
     }
 
-    return DecompiledText(builder.toString(), textIndex)
+    return DecompiledText(builder.toString())
 }
