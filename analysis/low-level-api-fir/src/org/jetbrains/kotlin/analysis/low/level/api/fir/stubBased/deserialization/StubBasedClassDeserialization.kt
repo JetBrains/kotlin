@@ -55,7 +55,8 @@ fun deserializeClassToSymbol(
     scopeProvider: FirScopeProvider,
     parentContext: StubBasedFirDeserializationContext? = null,
     containerSource: DeserializedContainerSource? = null,
-    deserializeNestedClass: (ClassId, StubBasedFirDeserializationContext) -> FirRegularClassSymbol?
+    deserializeNestedClass: (ClassId, StubBasedFirDeserializationContext) -> FirRegularClassSymbol?,
+    initialOrigin: FirDeclarationOrigin
 ) {
     val kind = when (classOrObject) {
         is KtObjectDeclaration -> ClassKind.OBJECT
@@ -98,17 +99,13 @@ fun deserializeClassToSymbol(
             moduleData,
             annotationDeserializer,
             containerSource,
-            symbol
+            symbol,
+            initialOrigin
         )
-//    if (status.isCompanion) {
-//        parentContext?.let {
-//            context.annotationDeserializer.inheritAnnotationInfo(it.annotationDeserializer)
-//        }
-//    }
     buildRegularClass {
         source = KtRealPsiSourceElement(classOrObject)
         this.moduleData = moduleData
-        this.origin = FirDeclarationOrigin.Library
+        this.origin = initialOrigin
         name = classId.shortClassName
         this.status = status
         classKind = kind
@@ -159,10 +156,10 @@ fun deserializeClassToSymbol(
                 moduleData,
                 classId.packageFqName,
                 classId.relativeClassName,
-                origin = FirDeclarationOrigin.Library
+                origin = initialOrigin
             )
-            generateValueOfFunction(moduleData, classId.packageFqName, classId.relativeClassName, origin = FirDeclarationOrigin.Library)
-            generateEntriesGetter(moduleData, classId.packageFqName, classId.relativeClassName, origin = FirDeclarationOrigin.Library)
+            generateValueOfFunction(moduleData, classId.packageFqName, classId.relativeClassName, origin = initialOrigin)
+            generateEntriesGetter(moduleData, classId.packageFqName, classId.relativeClassName, origin = initialOrigin)
         }
 
         if (classOrObject.isData() && firPrimaryConstructor != null) {

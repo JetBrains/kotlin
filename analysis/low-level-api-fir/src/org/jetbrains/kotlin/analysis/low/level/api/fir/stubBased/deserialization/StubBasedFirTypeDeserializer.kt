@@ -43,7 +43,8 @@ class StubBasedFirTypeDeserializer(
     private val annotationDeserializer: StubBasedAnnotationDeserializer,
     private val parent: StubBasedFirTypeDeserializer?,
     private val containingSymbol: FirBasedSymbol<*>?,
-    owner: KtTypeParameterListOwner
+    owner: KtTypeParameterListOwner,
+    initialOrigin: FirDeclarationOrigin
 ) {
     private val typeParametersByName: Map<String, FirTypeParameterSymbol>
 
@@ -64,7 +65,7 @@ class StubBasedFirTypeDeserializer(
                     source = KtRealPsiSourceElement(typeParameter)
                     moduleData = this@StubBasedFirTypeDeserializer.moduleData
                     resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
-                    origin = FirDeclarationOrigin.Library
+                    origin = initialOrigin
                     this.name = name
                     this.symbol = symbol
                     this.containingDeclarationSymbol = containingSymbol ?: error("Top-level type parameter ???")

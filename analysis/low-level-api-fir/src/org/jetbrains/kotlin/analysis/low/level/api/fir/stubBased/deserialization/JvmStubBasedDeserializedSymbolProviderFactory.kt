@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirMo
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.createJavaSymbolProvider
 import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -47,7 +48,8 @@ class JvmStubBasedDeserializedSymbolProviderFactory : JvmFirDeserializedSymbolPr
                             if (file.extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION) return false
                             return super.contains(file)
                         }
-                    })
+                    }),
+                    initialOrigin = FirDeclarationOrigin.Library
                 )
             )
             add(createJavaSymbolProvider(session, moduleData, project, scope))

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.java.deserialization.KotlinBuiltins
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -44,7 +45,8 @@ class JvmStubBasedFirDeserializedSymbolProvider(
     session: FirSession,
     moduleDataProvider: SingleModuleDataProvider,
     private val kotlinScopeProvider: FirKotlinScopeProvider,
-    private val declarationProvider: KotlinDeclarationProvider
+    private val declarationProvider: KotlinDeclarationProvider,
+    private val initialOrigin: FirDeclarationOrigin
 ) : FirSymbolProvider(session) {
     private val moduleData = moduleDataProvider.getModuleData(null)
     private val packageSetWithTopLevelCallableDeclarations: Set<String> by lazy(LazyThreadSafetyMode.PUBLICATION) {
@@ -92,7 +94,7 @@ class JvmStubBasedFirDeserializedSymbolProvider(
                     classId.packageFqName,
                     classId.relativeClassName,
                     classLikeDeclaration,
-                    null, null, symbol
+                    null, null, symbol, initialOrigin
                 )
                 rootContext.memberDeserializer.loadTypeAlias(classLikeDeclaration, symbol)
             }
@@ -119,6 +121,7 @@ class JvmStubBasedFirDeserializedSymbolProvider(
                 parentContext,
                 JvmFromStubDecompilerSource(JvmClassName.byClassId(classId)),
                 deserializeNestedClass = this::getClass,
+                initialOrigin
             )
             return symbol
         }
@@ -140,7 +143,7 @@ class JvmStubBasedFirDeserializedSymbolProvider(
                 ) return@mapNotNull null
                 val symbol = FirNamedFunctionSymbol(callableId)
                 val rootContext =
-                    StubBasedFirDeserializationContext.createRootContext(session, moduleData, callableId, original, symbol)
+                    StubBasedFirDeserializationContext.createRootContext(session, moduleData, callableId, original, symbol, initialOrigin)
                 rootContext.memberDeserializer.loadFunction(original, null, session, symbol).symbol
             }
     }
@@ -154,7 +157,7 @@ class JvmStubBasedFirDeserializedSymbolProvider(
                 if (origins != null && !origins.add(original)) return@mapNotNull null
                 val symbol = FirPropertySymbol(callableId)
                 val rootContext =
-                    StubBasedFirDeserializationContext.createRootContext(session, moduleData, callableId, original, symbol)
+                    StubBasedFirDeserializationContext.createRootContext(session, moduleData, callableId, original, symbol, initialOrigin)
                 rootContext.memberDeserializer.loadProperty(original, null, symbol).symbol
             }
     }
