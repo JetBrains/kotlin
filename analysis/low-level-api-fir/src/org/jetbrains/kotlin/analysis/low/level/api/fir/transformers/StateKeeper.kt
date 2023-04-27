@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import java.util.concurrent.atomic.AtomicBoolean
 
+@DslMarker
+internal annotation class StateKeeperDsl
+
 internal fun <Delegate : Any, Owner : Delegate> stateKeeper(
     delegate: StateKeeper<Delegate>,
     block: StateKeeperBuilder<Delegate, Owner>.() -> Unit
@@ -22,6 +25,7 @@ internal fun <Owner : Any> stateKeeper(block: StateKeeperBuilder<Owner, Owner>.(
     return builder.build()
 }
 
+@StateKeeperDsl
 internal fun interface StateItemBuilder<Owner : Any> {
     fun add(item: PreservedStateItem<Owner, *, *>)
 }
@@ -31,10 +35,10 @@ internal fun <Owner : Any, Value> StateItemBuilder<Owner>.add(
     mutator: (Owner, Value) -> Unit,
     arranger: ((Owner) -> Value)? = null
 ) {
-    addNested({ it }, provider, mutator, arranger)
+    addCustom({ it }, provider, mutator, arranger)
 }
 
-internal fun <Owner : Any, Node : Any, Value> StateItemBuilder<Owner>.addNested(
+internal fun <Owner : Any, Node : Any, Value> StateItemBuilder<Owner>.addCustom(
     mapper: (Owner) -> Node?,
     provider: (Node) -> Value,
     mutator: (Node, Value) -> Unit,
@@ -78,7 +82,7 @@ internal class StateKeeperBuilder<Delegate : Any, Owner : Delegate>(delegate: St
         providers += PreservedStateItemProvider { listOf(item) }
     }
 
-    fun <Value> addDynamic(provider: StateItemBuilder<Owner>.(Owner) -> Unit) {
+    fun addDynamic(provider: StateItemBuilder<Owner>.(Owner) -> Unit) {
         val items = mutableListOf<PreservedStateItem<Owner, *, *>>()
         val nestedBuilder = StateItemBuilder { items += it }
         providers += PreservedStateItemProvider { owner ->
@@ -92,16 +96,16 @@ internal class StateKeeperBuilder<Delegate : Any, Owner : Delegate>(delegate: St
     }
 }
 
-internal fun <Delegate : Any, Owner : Delegate, Node : Any, Value> StateKeeperBuilder<Delegate, Owner>.addList(
+internal fun <Delegate : Any, Owner : Delegate, Node : Any, Value> StateKeeperBuilder<Delegate, Owner>.addDynamicList(
     mapper: (Owner) -> List<Node>,
     provider: (Node) -> Value,
     mutator: (Node, Value) -> Unit,
     arranger: ((Node) -> Value)? = null
 ) {
-    addDynamic<Value> { owner ->
+    addDynamic { owner ->
         for (node in mapper(owner)) {
             if (provider(node) != null) {
-                addNested({ node }, provider, mutator, arranger)
+                addCustom({ node }, provider, mutator, arranger)
             }
         }
     }

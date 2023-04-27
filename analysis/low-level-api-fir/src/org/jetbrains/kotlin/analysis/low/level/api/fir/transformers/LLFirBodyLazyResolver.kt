@@ -9,11 +9,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveT
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkBodyIsResolved
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkDefaultValueIsResolved
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkInitializerIsResolved
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
 import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
 import org.jetbrains.kotlin.analysis.utils.errors.checkWithAttachmentBuilder
 import org.jetbrains.kotlin.fir.FirElement
@@ -21,22 +17,18 @@ import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirLazyExpression
 import org.jetbrains.kotlin.fir.expressions.FirWrappedDelegateExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildLazyBlock
-import org.jetbrains.kotlin.fir.expressions.builder.buildLazyDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildLazyExpression
-import org.jetbrains.kotlin.fir.references.FirSuperReference
-import org.jetbrains.kotlin.fir.references.FirThisReference
-import org.jetbrains.kotlin.fir.references.builder.buildExplicitSuperReference
-import org.jetbrains.kotlin.fir.references.builder.buildExplicitThisReference
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.dfa.FirControlFlowGraphReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 
+@Suppress("IncorrectFormatting")
 internal object BodyStateKeepers {
     val ANONYMOUS_INITIALIZER: StateKeeper<FirAnonymousInitializer> = stateKeeper {
         add(FirAnonymousInitializer::body, FirAnonymousInitializer::replaceBody) { buildLazyBlock() }
@@ -44,42 +36,74 @@ internal object BodyStateKeepers {
 
     val FUNCTION: StateKeeper<FirFunction> = stateKeeper {
         add(FirFunction::body, FirFunction::replaceBody) { buildLazyBlock() }
-        add(FirFunction::returnTypeRef, FirFunction::replaceReturnTypeRef)
         add(FirFunction::controlFlowGraphReference, FirFunction::replaceControlFlowGraphReference)
-        addList(FirFunction::valueParameters, FirValueParameter::defaultValue, FirValueParameter::replaceDefaultValue) { fir ->
-            buildLazyExpression(fir)
-        }
+        addDynamicList(FirFunction::valueParameters, FirValueParameter::defaultValue, FirValueParameter::replaceDefaultValue)
     }
 
     val CONSTRUCTOR: StateKeeper<FirConstructor> = stateKeeper(FUNCTION) {
-        add(FirConstructor::delegatedConstructor, FirConstructor::replaceDelegatedConstructor) { makeLazyDelegatedConstructorCall(it) }
+        add(FirConstructor::delegatedConstructor, FirConstructor::replaceDelegatedConstructor)
     }
 
     val PROPERTY: StateKeeper<FirProperty> = stateKeeper {
-        // Property initializer is supposed to be either lazy (so it's safe to roll back to it) or fully resolved.
-        add(FirProperty::initializer, FirProperty::replaceInitializer)
-        add(FirProperty::returnTypeRef, FirProperty::replaceReturnTypeRef)
-        addNested(FirProperty::getter, FirPropertyAccessor::body, FirPropertyAccessor::replaceBody) { buildLazyBlock() }
-        addNested(FirProperty::setter, FirPropertyAccessor::body, FirPropertyAccessor::replaceBody) { buildLazyBlock() }
-        addNested(FirProperty::backingField, FirBackingField::initializer, FirBackingField::replaceInitializer) {
-            buildLazyExpression(it)
+        add(FirProperty::initializeIfUnresolved, FirProperty::replaceInitializer) { buildLazyExpression(it) }
+        addDynamic { property ->
+            val getter = property.getterIfUnresolved
+            if (getter != null) {
+                addCustom({ getter }, FirPropertyAccessor::body, FirPropertyAccessor::replaceBody) { buildLazyBlock() }
+                addCustom({ getter }, FirPropertyAccessor::returnTypeRef, FirPropertyAccessor::replaceReturnTypeRef)
+            }
+
+            val setter = property.setterIfUnresolved
+            if (setter != null) {
+                addCustom({ setter }, FirPropertyAccessor::body, FirPropertyAccessor::replaceBody) { buildLazyBlock() }
+                addCustom({ setter }, FirPropertyAccessor::returnTypeRef, FirPropertyAccessor::replaceReturnTypeRef)
+                for (valueParameter in setter.valueParameters) {
+                    addCustom({ valueParameter }, FirValueParameter::returnTypeRef, FirValueParameter::replaceReturnTypeRef)
+                }
+            }
+
+            val backingField = property.backingField
+            if (backingField != null) {
+                addCustom({ backingField }, FirBackingField::initializer, FirBackingField::replaceInitializer) { buildLazyExpression(it) }
+                addCustom({ backingField}, FirBackingField::returnTypeRef, FirBackingField::replaceReturnTypeRef)
+            }
+
+            val delegate = property.delegateIfUnresolved
+            if (delegate != null) {
+                addCustom({ delegate }, FirWrappedDelegateExpression::delegateProvider, FirWrappedDelegateExpression::replaceDelegateProvider)
+                addCustom({ delegate }, FirWrappedDelegateExpression::expression, FirWrappedDelegateExpression::replaceExpression)
+            }
         }
-        addNested(
-            { it.delegate as? FirWrappedDelegateExpression },
-            FirWrappedDelegateExpression::delegateProvider,
-            FirWrappedDelegateExpression::replaceDelegateProvider
-        )
-        addNested(
-            { it.delegate as? FirWrappedDelegateExpression },
-            FirWrappedDelegateExpression::expression,
-            FirWrappedDelegateExpression::replaceExpression
-        )
     }
 
     val ENUM_ENTRY: StateKeeper<FirEnumEntry> = stateKeeper {
         add(FirEnumEntry::initializer, FirEnumEntry::replaceInitializer) { buildLazyExpression(it) }
     }
 }
+
+internal object ImplicitTypeBodyStateKeepers {
+    val FUNCTION: StateKeeper<FirFunction> = stateKeeper(BodyStateKeepers.FUNCTION) {
+        add(FirFunction::returnTypeRef, FirFunction::replaceReturnTypeRef)
+    }
+
+    val PROPERTY: StateKeeper<FirProperty> = stateKeeper(BodyStateKeepers.PROPERTY) {
+        add(FirProperty::returnTypeRef, FirProperty::replaceReturnTypeRef)
+        addCustom(FirProperty::getter, FirPropertyAccessor::returnTypeRef, FirPropertyAccessor::replaceReturnTypeRef)
+        addCustom(FirProperty::setter, FirPropertyAccessor::returnTypeRef, FirPropertyAccessor::replaceReturnTypeRef)
+    }
+}
+
+private val FirProperty.initializeIfUnresolved: FirExpression?
+    get() = if (bodyResolveState < FirPropertyBodyResolveState.INITIALIZER_RESOLVED) initializer else null
+
+private val FirProperty.getterIfUnresolved: FirPropertyAccessor?
+    get() = if (bodyResolveState < FirPropertyBodyResolveState.INITIALIZER_AND_GETTER_RESOLVED) getter else null
+
+private val FirProperty.setterIfUnresolved: FirPropertyAccessor?
+    get() = if (bodyResolveState < FirPropertyBodyResolveState.EVERYTHING_RESOLVED) setter else null
+
+private val FirProperty.delegateIfUnresolved: FirWrappedDelegateExpression?
+    get() = if (bodyResolveState < FirPropertyBodyResolveState.EVERYTHING_RESOLVED) delegate as? FirWrappedDelegateExpression else null
 
 internal object LLFirBodyLazyResolver : LLFirLazyResolver(FirResolvePhase.BODY_RESOLVE) {
     override fun resolve(
@@ -142,7 +166,7 @@ private class LLFirBodyTargetResolver(
                 }
 
                 // resolve class CFG graph here, to do this we need to have property & init blocks resoled
-                resolveMemberPropertiesForControlFlowGraph(target)
+                resolveMembersForControlFlowGraph(target)
                 performCustomResolveUnderLock(target) {
                     calculateControlFlowGraph(target)
                 }
@@ -172,7 +196,7 @@ private class LLFirBodyTargetResolver(
         target.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(controlFlowGraph))
     }
 
-    private fun resolveMemberPropertiesForControlFlowGraph(target: FirRegularClass) {
+    private fun resolveMembersForControlFlowGraph(target: FirRegularClass) {
         withRegularClass(target) {
             for (member in target.declarations) {
                 if (member is FirCallableDeclaration || member is FirAnonymousInitializer) {
@@ -221,26 +245,3 @@ private fun buildLazyExpression(fir: FirElement): FirLazyExpression {
         source = fir.source
     }
 }
-
-private fun makeLazyDelegatedConstructorCall(fir: FirConstructor): FirDelegatedConstructorCall {
-    val originalConstructor = fir.delegatedConstructor ?: error("Delegated constructor is missing")
-    return buildLazyDelegatedConstructorCall {
-        constructedTypeRef = originalConstructor.constructedTypeRef
-        when (val originalCalleeReference = originalConstructor.calleeReference) {
-            is FirThisReference -> {
-                isThis = true
-                calleeReference = buildExplicitThisReference {
-                    source = null
-                }
-            }
-            is FirSuperReference -> {
-                isThis = false
-                calleeReference = buildExplicitSuperReference {
-                    source = null
-                    superTypeRef = originalCalleeReference.superTypeRef
-                }
-            }
-        }
-    }
-}
-
