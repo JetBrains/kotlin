@@ -38,7 +38,7 @@ internal object BodyStateKeepers {
         add(FirFunction::body, FirFunction::replaceBody) { buildLazyBlock() }
         add(FirFunction::controlFlowGraphReference, FirFunction::replaceControlFlowGraphReference)
 
-        stateList(function.valueParameters) {
+        entityList(function.valueParameters) {
             add(FirValueParameter::defaultValue, FirValueParameter::replaceDefaultValue)
         }
     }
@@ -50,23 +50,26 @@ internal object BodyStateKeepers {
     val PROPERTY: StateKeeper<FirProperty> = stateKeeper { property ->
         add(FirProperty::initializeIfUnresolved, FirProperty::replaceInitializer) { buildLazyExpression(it) }
 
-        stateItem(property.getterIfUnresolved) {
+        entity(property.getterIfUnresolved) {
             add(FirPropertyAccessor::body, FirPropertyAccessor::replaceBody) { buildLazyBlock() }
             add(FirPropertyAccessor::returnTypeRef, FirPropertyAccessor::replaceReturnTypeRef)
         }
 
-        stateItem(property.setterIfUnresolved) { setter ->
+        entity(property.setterIfUnresolved) { setter ->
             add(FirPropertyAccessor::body, FirPropertyAccessor::replaceBody) { buildLazyBlock() }
             add(FirPropertyAccessor::returnTypeRef, FirPropertyAccessor::replaceReturnTypeRef)
-            addList(setter.valueParameters, FirValueParameter::returnTypeRef, FirValueParameter::replaceReturnTypeRef)
+
+            entityList(setter.valueParameters) {
+                add(FirValueParameter::returnTypeRef, FirValueParameter::replaceReturnTypeRef)
+            }
         }
 
-        stateItem(property.backingField) {
+        entity(property.backingField) {
             add(FirBackingField::initializer, FirBackingField::replaceInitializer) { buildLazyExpression(it) }
             add(FirBackingField::returnTypeRef, FirBackingField::replaceReturnTypeRef)
         }
 
-        stateItem(property.delegateIfUnresolved) {
+        entity(property.delegateIfUnresolved) {
             add(FirWrappedDelegateExpression::delegateProvider, FirWrappedDelegateExpression::replaceDelegateProvider)
             add(FirWrappedDelegateExpression::expression, FirWrappedDelegateExpression::replaceExpression)
         }
@@ -84,8 +87,14 @@ internal object ImplicitTypeBodyStateKeepers {
 
     val PROPERTY: StateKeeper<FirProperty> = stateKeeper(BodyStateKeepers.PROPERTY) { property ->
         add(FirProperty::returnTypeRef, FirProperty::replaceReturnTypeRef)
-        addItem(property.getter, FirPropertyAccessor::returnTypeRef, FirPropertyAccessor::replaceReturnTypeRef)
-        addItem(property.setter, FirPropertyAccessor::returnTypeRef, FirPropertyAccessor::replaceReturnTypeRef)
+
+        entity(property.getter) {
+            add(FirPropertyAccessor::returnTypeRef, FirPropertyAccessor::replaceReturnTypeRef)
+        }
+
+        entity(property.setter) {
+            add(FirPropertyAccessor::returnTypeRef, FirPropertyAccessor::replaceReturnTypeRef)
+        }
     }
 }
 

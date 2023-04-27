@@ -7,65 +7,64 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import java.util.concurrent.atomic.AtomicBoolean
 
-internal interface StateKeeperBuilder<Owner> {
-    fun <Value> add(provider: (Owner) -> Value, mutator: (Owner, Value) -> Unit, arranger: ((Owner) -> Value)? = null)
+@DslMarker
+internal annotation class StateKeeperDsl
+
+@StateKeeperDsl
+internal interface StateKeeperBuilder {
+    fun register(restorer: () -> Unit)
 }
 
-internal fun <Item : Any, Value> StateKeeperBuilder<*>.addItem(
-    item: Item?,
-    provider: (Item) -> Value,
-    mutator: (Item, Value) -> Unit,
-    arranger: ((Item) -> Value)? = null
-) {
-    if (item != null) {
-        add(
-            provider = { provider(item) },
-            mutator = { _, value -> mutator(item, value) },
-            arranger = if (arranger != null) { _ -> arranger(item) } else null
-        )
-    }
-}
+@JvmInline
+@StateKeeperDsl
+internal value class StateKeeperScope<Owner : Any>(private val owner: Owner) {
+    context(StateKeeperBuilder)
+    inline fun <Value> add(provider: (Owner) -> Value, crossinline mutator: (Owner, Value) -> Unit, arranger: (Owner) -> Value) {
+        val owner = this@StateKeeperScope.owner
 
-internal fun <Item : Any, Value> StateKeeperBuilder<*>.addList(
-    items: List<Item?>?,
-    provider: (Item) -> Value,
-    mutator: (Item, Value) -> Unit,
-    arranger: ((Item) -> Value)? = null
-) {
-    if (items != null) {
-        for (item in items) {
-            addItem(item, provider, mutator, arranger)
+        val storedValue = provider(owner)
+        if (storedValue != null) {
+            mutator(owner, arranger(owner))
         }
+
+        register { mutator(owner, storedValue) }
+    }
+
+    context(StateKeeperBuilder)
+    inline fun <Value> add(provider: (Owner) -> Value, crossinline mutator: (Owner, Value) -> Unit) {
+        val owner = this@StateKeeperScope.owner
+        val storedValue = provider(owner)
+        register { mutator(owner, storedValue) }
     }
 }
 
-internal fun <Item : Any> StateKeeperBuilder<*>.stateItem(item: Item?, block: StateKeeperBuilder<Item>.(Item) -> Unit) {
-    if (item != null) {
-        CustomStateKeeperBuilder(this, item).block(item)
+context(StateKeeperBuilder)
+internal inline fun <Entity : Any> entity(entity: Entity?, block: StateKeeperScope<Entity>.(Entity) -> Unit) {
+    if (entity != null) {
+        StateKeeperScope(entity).block(entity)
     }
 }
 
-internal fun <Item : Any> StateKeeperBuilder<*>.stateList(list: List<Item>?, block: StateKeeperBuilder<Item>.(Item) -> Unit) {
+context(StateKeeperBuilder)
+internal inline fun <Entity : Any> entityList(list: List<Entity?>?, block: StateKeeperScope<Entity>.(Entity) -> Unit) {
     if (list != null) {
-        for (item in list) {
-            CustomStateKeeperBuilder(this, item).block(item)
+        for (entity in list) {
+            if (entity != null) {
+                StateKeeperScope(entity).block(entity)
+            }
         }
     }
 }
 
-private class CustomStateKeeperBuilder<Item>(private val parent: StateKeeperBuilder<*>, private val item: Item) : StateKeeperBuilder<Item> {
-    override fun <Value> add(provider: (Item) -> Value, mutator: (Item, Value) -> Unit, arranger: ((Item) -> Value)?) {
-        parent.addItem(item, provider, mutator, arranger)
-    }
-}
-
-internal fun <Owner : Any> stateKeeper(block: StateKeeperBuilder<Owner>.(Owner) -> Unit): StateKeeper<Owner> {
+internal inline fun <Owner : Any> stateKeeper(
+    crossinline block: context(StateKeeperBuilder) StateKeeperScope<Owner>.(Owner) -> Unit
+): StateKeeper<Owner> {
     return stateKeeper(null, block)
 }
 
-internal fun <Delegate : Any, Owner : Delegate> stateKeeper(
+internal inline fun <Delegate : Any, Owner : Delegate> stateKeeper(
     delegate: StateKeeper<Delegate>?,
-    block: StateKeeperBuilder<Owner>.(Owner) -> Unit
+    crossinline block: context(StateKeeperBuilder) StateKeeperScope<Owner>.(Owner) -> Unit
 ): StateKeeper<Owner> {
     return StateKeeper { owner ->
         val state = mutableListOf<PreservedState>()
@@ -74,18 +73,15 @@ internal fun <Delegate : Any, Owner : Delegate> stateKeeper(
             state += delegate.prepare(owner)
         }
 
-        val builder = object : StateKeeperBuilder<Owner> {
-            override fun <Value> add(provider: (Owner) -> Value, mutator: (Owner, Value) -> Unit, arranger: ((Owner) -> Value)?) {
-                val storedValue = provider(owner)
-                if (storedValue != null && arranger != null) {
-                    mutator(owner, arranger.invoke(owner))
-                }
-
-                state += PreservedState { mutator(owner, storedValue) }
+        val builder = object : StateKeeperBuilder {
+            override fun register(restorer: () -> Unit) {
+                state += PreservedState(restorer)
             }
         }
 
-        builder.block(owner)
+        val scope = StateKeeperScope(owner)
+        block(builder, scope, owner)
+
         return@StateKeeper state
     }
 }
