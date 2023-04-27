@@ -1,4 +1,3 @@
-// IGNORE_BACKEND_K2: JS_IR, NATIVE
 // WITH_STDLIB
 import kotlin.test.assertEquals
 

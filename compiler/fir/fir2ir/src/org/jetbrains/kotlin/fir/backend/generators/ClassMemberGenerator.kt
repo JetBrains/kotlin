@@ -347,7 +347,18 @@ internal class ClassMemberGenerator(
             val irConstructorSymbol = declarationStorage.getIrFunctionSymbol(constructorSymbol) as IrConstructorSymbol
             val typeArguments = constructedTypeRef.coneType.fullyExpandedType(session).typeArguments
             val constructor = constructorSymbol.fir
-            if (constructor.isFromEnumClass || constructor.returnTypeRef.isEnum) {
+            /*
+             * We should generate enum constructor call only if it is used to create new enum entry (so it's super constructor call)
+             * If it is this constructor call that we are facing secondary constructor of enum, and should generate
+             *   regular delegating constructor call
+             *
+             * enum class Some(val x: Int) {
+             *   A(); // <---- super call, IrEnumConstructorCall
+             *
+             *   constructor() : this(10) // <---- this call, IrDelegatingConstructorCall
+             * }
+             */
+            if ((constructor.isFromEnumClass || constructor.returnTypeRef.isEnum) && this.isSuper) {
                 IrEnumConstructorCallImpl(
                     startOffset, endOffset,
                     constructedIrType,

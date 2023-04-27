@@ -23,7 +23,7 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
         ENUM_CONSTRUCTOR_CALL 'private constructor <init> () declared in <root>.Test0'
     CONSTRUCTOR visibility:private <> () returnType:<root>.Test0
       BLOCK_BODY
-        ENUM_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.Test0'
+        DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.Test0'
           x: CONST Int type=kotlin.Int value=0
     FUN ENUM_CLASS_SPECIAL_MEMBER name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.Test0>
       SYNTHETIC_BODY kind=ENUM_VALUES
@@ -102,7 +102,7 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
           x: CONST Int type=kotlin.Int value=1
     CONSTRUCTOR visibility:private <> () returnType:<root>.Test1
       BLOCK_BODY
-        ENUM_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.Test1'
+        DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.Test1'
           x: CONST Int type=kotlin.Int value=0
     FUN ENUM_CLASS_SPECIAL_MEMBER name:values visibility:public modality:FINAL <> () returnType:kotlin.Array<<root>.Test1>
       SYNTHETIC_BODY kind=ENUM_VALUES
@@ -303,7 +303,7 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
             $this: VALUE_PARAMETER name:<this> type:kotlin.Enum<E of kotlin.Enum>
     CONSTRUCTOR visibility:private <> () returnType:<root>.Test2
       BLOCK_BODY
-        ENUM_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.Test2'
+        DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> (x: kotlin.Int) [primary] declared in <root>.Test2'
           x: CONST Int type=kotlin.Int value=0
     FUN name:foo visibility:public modality:ABSTRACT <> ($this:<root>.Test2) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.Test2

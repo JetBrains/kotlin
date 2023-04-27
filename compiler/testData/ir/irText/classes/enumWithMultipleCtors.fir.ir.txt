@@ -160,7 +160,7 @@ FILE fqName:<root> fileName:/enumWithMultipleCtors.kt
     CONSTRUCTOR visibility:private <> (x:kotlin.Int) returnType:<root>.A
       VALUE_PARAMETER name:x index:0 type:kotlin.Int
       BLOCK_BODY
-        ENUM_CONSTRUCTOR_CALL 'private constructor <init> (arg: kotlin.String) declared in <root>.A'
+        DELEGATING_CONSTRUCTOR_CALL 'private constructor <init> (arg: kotlin.String) declared in <root>.A'
           arg: CALL 'public final fun toString (): kotlin.String declared in kotlin.Int' type=kotlin.String origin=null
             $this: GET_VAR 'x: kotlin.Int declared in <root>.A.<init>' type=kotlin.Int origin=null
         CALL 'public final fun <set-prop3> (<set-?>: kotlin.String): kotlin.Unit declared in <root>.A' type=kotlin.Unit origin=EQ
