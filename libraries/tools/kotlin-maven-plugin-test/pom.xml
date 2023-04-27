@@ -162,6 +162,18 @@
                                 </goals>
                             </execution>
                             <execution>
+                                <id>integration-test-java8</id>
+                                <configuration>
+                                    <projectsDirectory>src/it/java8</projectsDirectory>
+                                    <cloneProjectsTo>${project.build.directory}/it/java8</cloneProjectsTo>
+                                    <javaHome>${jdk_1_8}</javaHome>
+                                </configuration>
+                                <goals>
+                                    <goal>install</goal>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                            <execution>
                                 <id>integration-test-java9</id>
                                 <configuration>
                                     <projectsDirectory>src/it/java9</projectsDirectory>
