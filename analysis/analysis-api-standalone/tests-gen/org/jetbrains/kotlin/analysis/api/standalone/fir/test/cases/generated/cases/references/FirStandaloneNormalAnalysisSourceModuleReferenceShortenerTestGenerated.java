@@ -47,6 +47,12 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerTestGenera
     }
 
     @Test
+    @TestMetadata("annotaiton.kt")
+    public void testAnnotaiton() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/annotaiton.kt");
+    }
+
+    @Test
     @TestMetadata("classScopes.kt")
     public void testClassScopes() throws Exception {
         runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/classScopes.kt");
@@ -74,6 +80,12 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerTestGenera
     @TestMetadata("classType2.kt")
     public void testClassType2() throws Exception {
         runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/classType2.kt");
+    }
+
+    @Test
+    @TestMetadata("classWithWrongNumberOfTypeArguments.kt")
+    public void testClassWithWrongNumberOfTypeArguments() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/classWithWrongNumberOfTypeArguments.kt");
     }
 
     @Test
@@ -251,6 +263,12 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerTestGenera
     }
 
     @Test
+    @TestMetadata("qualifierOfUnresolvedReference.kt")
+    public void testQualifierOfUnresolvedReference() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/qualifierOfUnresolvedReference.kt");
+    }
+
+    @Test
     @TestMetadata("receiver.kt")
     public void testReceiver() throws Exception {
         runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/receiver.kt");
@@ -350,6 +368,12 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerTestGenera
     @TestMetadata("superClass.kt")
     public void testSuperClass() throws Exception {
         runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/superClass.kt");
+    }
+
+    @Test
+    @TestMetadata("superEntry.kt")
+    public void testSuperEntry() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/superEntry.kt");
     }
 
     @Test
