@@ -319,6 +319,16 @@ class FirRenderer(
             propertyAccessorRenderer?.render(property)
         }
 
+        override fun visitErrorProperty(errorProperty: FirErrorProperty) {
+            print("<ERROR PROPERTY: ${errorProperty.diagnostic.reason}>")
+            printer.newLine()
+        }
+
+        override fun visitErrorFunction(errorFunction: FirErrorFunction) {
+            print("<ERROR FUNCTION: ${errorFunction.diagnostic.reason}>")
+            printer.newLine()
+        }
+
         override fun visitBackingField(backingField: FirBackingField) {
             modifierRenderer?.renderModifiers(backingField)
             print("<explicit backing field>: ")
