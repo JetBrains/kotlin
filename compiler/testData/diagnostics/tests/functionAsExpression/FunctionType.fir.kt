@@ -27,5 +27,5 @@ fun testReceiverType() {
 
     val bas: String.() -> Unit = fun String.() {}
 
-    val bag: Int.() -> Unit = fun String.() {}
+    val bag: Int.() -> Unit = <!INITIALIZER_TYPE_MISMATCH!>fun String.() {}<!>
 }
