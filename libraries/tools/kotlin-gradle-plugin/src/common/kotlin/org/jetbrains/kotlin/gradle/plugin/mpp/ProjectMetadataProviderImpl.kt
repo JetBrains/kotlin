@@ -25,7 +25,7 @@ internal fun ProjectMetadataProvider(
 }
 
 internal class SourceSetMetadataOutputs(
-    val metadata: FileCollection,
+    val metadata: FileCollection?,
     val cinterop: CInterop?
 ) {
     class CInterop(
@@ -38,8 +38,11 @@ private class ProjectMetadataProviderImpl(
     private val sourceSetMetadataOutputs: Map<SourceSetName, SourceSetMetadataOutputs>
 ) : ProjectMetadataProvider() {
 
-    override fun getSourceSetCompiledMetadata(sourceSetName: String): FileCollection =
-        sourceSetMetadataOutputs[sourceSetName]?.metadata ?: error("Unexpected source set '$sourceSetName'")
+    override fun getSourceSetCompiledMetadata(sourceSetName: String): FileCollection? {
+        val metadataOutputs = sourceSetMetadataOutputs[sourceSetName] ?: error("Unexpected source set '$sourceSetName'")
+        return metadataOutputs.metadata
+    }
+
 
     override fun getSourceSetCInteropMetadata(sourceSetName: String, consumer: MetadataConsumer): FileCollection? {
         val metadataOutputs = sourceSetMetadataOutputs[sourceSetName] ?: error("Unexpected source set '$sourceSetName'")
@@ -66,18 +69,17 @@ internal suspend fun Project.collectSourceSetMetadataOutputs(): Map<SourceSetNam
     }.mapKeys { it.key.name }
 }
 
-private suspend fun KotlinMultiplatformExtension.sourceSetsMetadataOutputs(): Map<KotlinSourceSet, FileCollection> {
+private suspend fun KotlinMultiplatformExtension.sourceSetsMetadataOutputs(): Map<KotlinSourceSet, FileCollection?> {
     KotlinPluginLifecycle.Stage.AfterFinaliseDsl.await()
 
-    return sourceSets.mapNotNull { sourceSet ->
-        val destination = when (val compilation = project.findMetadataCompilation(sourceSet) ?: return@mapNotNull null) {
+    return sourceSets.associateWith { sourceSet ->
+        when (val compilation = project.findMetadataCompilation(sourceSet)) {
+            null -> null
             is KotlinCommonCompilation -> compilation.output.classesDirs
             is KotlinSharedNativeCompilation -> compilation.output.classesDirs
             else -> error("Unexpected compilation type: $compilation")
         }
-
-        Pair(sourceSet, destination)
-    }.toMap()
+    }
 }
 
 private suspend fun KotlinMultiplatformExtension.cInteropMetadataOfSourceSets(
