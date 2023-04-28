@@ -72,6 +72,17 @@ internal inline fun <Entity : Any> entityList(list: List<Entity?>?, block: State
     }
 }
 
+context(StateKeeperBuilder)
+internal fun <Entity: Any> entityList(list: List<Entity?>?, keeper: StateKeeper<Entity>) {
+    if (list != null) {
+        for (entity in list) {
+            if (entity != null) {
+                StateKeeperScope(entity).add(keeper)
+            }
+        }
+    }
+}
+
 internal fun <Owner : Any> stateKeeper(block: context(StateKeeperBuilder) StateKeeperScope<Owner>.(Owner) -> Unit): StateKeeper<Owner> {
     return StateKeeper { owner ->
         val states = mutableListOf<PreservedState>()

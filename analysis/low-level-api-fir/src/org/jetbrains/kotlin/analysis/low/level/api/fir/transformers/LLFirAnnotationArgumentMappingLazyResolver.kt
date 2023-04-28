@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -82,6 +83,22 @@ private class LLFirAnnotationArgumentsMappingTargetResolver(
                 target.transformSingle(transformer, ResolutionMode.ContextIndependent)
             }
             else -> throwUnexpectedFirElementError(target)
+        }
+    }
+}
+
+private object AnnotationArgumentMappingStateKeepers {
+    val ANNOTATION: StateKeeper<FirAnnotation> = stateKeeper {
+        add(FirAnnotation::typeRef, FirAnnotation::replaceTypeRef)
+        add(FirAnnotation::annotationTypeRef, FirAnnotation::replaceAnnotationTypeRef)
+        add(FirAnnotation::argumentMapping, FirAnnotation::replaceArgumentMapping)
+    }
+
+    val FUNCTION: StateKeeper<FirFunction> = stateKeeper { function ->
+        entityList(function.annotations, ANNOTATION)
+
+        for (valueParameter in function.valueParameters) {
+            entityList(valueParameter.annotations, ANNOTATION)
         }
     }
 }
