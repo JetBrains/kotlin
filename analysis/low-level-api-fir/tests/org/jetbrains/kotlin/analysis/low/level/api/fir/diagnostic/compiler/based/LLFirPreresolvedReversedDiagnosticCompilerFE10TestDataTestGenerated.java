@@ -20214,6 +20214,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
                 }
 
                 @Test
+                @TestMetadata("unitVsVoid.kt")
+                public void testUnitVsVoid() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/j+k/properties/unitVsVoid.kt");
+                }
+
+                @Test
                 @TestMetadata("val.kt")
                 public void testVal() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/j+k/properties/val.kt");
