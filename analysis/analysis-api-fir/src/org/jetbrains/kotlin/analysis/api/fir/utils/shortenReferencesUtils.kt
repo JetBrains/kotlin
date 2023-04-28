@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.utils
 
 import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiWhiteSpace
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
@@ -59,11 +60,26 @@ fun addImportToFile(
     val newDirective = psiFactory.createImportDirective(importPath)
     val imports = importList.imports
     if (imports.isEmpty()) {
-        file.packageDirective?.takeIf { it.packageKeyword != null }?.let {
+        val packageDirective = file.packageDirective?.takeIf { it.packageKeyword != null }
+        packageDirective?.let {
             file.addAfter(psiFactory.createNewLine(2), it)
         }
 
         importList.add(newDirective)
+        if (packageDirective == null) {
+            val whiteSpace = importList.nextSibling
+            if (whiteSpace is PsiWhiteSpace) {
+                val newLineBreak = if (whiteSpace.textContains('\n')) {
+                    psiFactory.createWhiteSpace("\n" + whiteSpace.text)
+                } else {
+                    psiFactory.createWhiteSpace("\n\n" + whiteSpace.text)
+                }
+
+                whiteSpace.replace(newLineBreak)
+            } else {
+                file.addAfter(psiFactory.createNewLine(2), importList)
+            }
+        }
     } else {
         val insertAfter = imports.lastOrNull {
             val directivePath = it.importPath
