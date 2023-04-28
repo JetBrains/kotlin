@@ -93,19 +93,18 @@ fun printTransformer(generationPath: File, model: Model): GeneratedFile {
         }
 
         for (element in model.elements) {
+            val returnType = element.getTransformExplicitType()
             if (element.transformByChildren) {
                 addFunction(buildVisitFun(element).apply {
                     addStatement("${element.visitorParam}.transformChildren(this, data)")
                     addStatement("return ${element.visitorParam}")
-                    returns((element.transformerReturnType ?: element).toPoetStarParameterized())
+                    returns(returnType.toPoetStarParameterized())
                 }.build())
             } else {
                 element.visitorParent?.let { parent ->
                     addFunction(buildVisitFun(element).apply {
                         addStatement("return ${parent.element.visitFunName}(${element.visitorParam}, data)")
-                        element.transformerReturnType?.let {
-                            returns(it.toPoetStarParameterized())
-                        }
+                        returns(returnType.toPoetStarParameterized())
                     }.build())
                 }
             }
@@ -179,10 +178,10 @@ fun printTypeVisitor(generationPath: File, model: Model): GeneratedFile {
             val irTypeFields = element.getFieldsWithIrTypeType()
             if (irTypeFields.isEmpty()) continue
 
+            val returnType = element.getTransformExplicitType()
             element.visitorParent?.let { _ ->
                 addFunction(buildVisitFun(element).apply {
-                    // Note: using `run` here to infer return type automatically
-                    beginControlFlow("return run")
+                    returns(returnType.toPoetStarParameterized())
 
                     val visitorParam = element.visitorParam
                     when (element.name) {
@@ -201,12 +200,21 @@ fun printTypeVisitor(generationPath: File, model: Model): GeneratedFile {
                         }
                         else -> irTypeFields.forEach { addVisitTypeStatement(element, it) }
                     }
-                    addStatement("return@run super.${element.visitFunName}($visitorParam, data)")
-                    endControlFlow()
+                    addStatement("return super.${element.visitFunName}($visitorParam, data)")
                 }.build())
             }
         }
     }.build()
 
     return printTypeCommon(generationPath, typeTransformerVoidTypeName.packageName, visitorType)
+}
+
+private fun Element.getTransformExplicitType(): Element {
+    return generateSequence(this) { it.visitorParent?.element }
+        .firstNotNullOfOrNull {
+            when {
+                it.transformByChildren -> it.transformerReturnType ?: it
+                else -> it.transformerReturnType
+            }
+        } ?: this
 }
