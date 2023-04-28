@@ -8896,6 +8896,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                 }
 
                 @Test
+                @TestMetadata("elvisInDelegated.kt")
+                public void testElvisInDelegated() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/elvisInDelegated.kt");
+                }
+
+                @Test
                 @TestMetadata("extensionGet.kt")
                 public void testExtensionGet() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/extensionGet.kt");
@@ -8917,6 +8923,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                 @TestMetadata("genericMethods.kt")
                 public void testGenericMethods() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/genericMethods.kt");
+                }
+
+                @Test
+                @TestMetadata("ifInDelegated.kt")
+                public void testIfInDelegated() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/ifInDelegated.kt");
                 }
 
                 @Test
@@ -8962,9 +8974,21 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                 }
 
                 @Test
+                @TestMetadata("notNullAssertionInLocalDelegated.kt")
+                public void testNotNullAssertionInLocalDelegated() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/notNullAssertionInLocalDelegated.kt");
+                }
+
+                @Test
                 @TestMetadata("resultTypeOfLambdaForConventionMethods.kt")
                 public void testResultTypeOfLambdaForConventionMethods() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/resultTypeOfLambdaForConventionMethods.kt");
+                }
+
+                @Test
+                @TestMetadata("tryInGenerated.kt")
+                public void testTryInGenerated() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/delegatedProperty/inference/tryInGenerated.kt");
                 }
 
                 @Test
@@ -9059,6 +9083,18 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                 @TestMetadata("noOperatorModifierOnProvideDelegate.kt")
                 public void testNoOperatorModifierOnProvideDelegate() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/delegatedProperty/provideDelegate/noOperatorModifierOnProvideDelegate.kt");
+                }
+
+                @Test
+                @TestMetadata("notNullAssertionInLocalDelegated.kt")
+                public void testNotNullAssertionInLocalDelegated() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/delegatedProperty/provideDelegate/notNullAssertionInLocalDelegated.kt");
+                }
+
+                @Test
+                @TestMetadata("onObject.kt")
+                public void testOnObject() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/delegatedProperty/provideDelegate/onObject.kt");
                 }
 
                 @Test
