@@ -337,39 +337,9 @@ KtKotlinPropertySymbol:
     deprecationStatus: null
   callableIdIfNonLocal: kotlin/Enum.name
   contextReceivers: []
-  getter: KtPropertyGetterSymbol:
-    annotationsList: []
-    callableIdIfNonLocal: null
-    contextReceivers: []
-    hasBody: false
-    hasStableParameterNames: true
-    isDefault: true
-    isExtension: false
-    isInline: false
-    isOverride: false
-    modality: FINAL
-    origin: LIBRARY
-    receiverParameter: null
-    returnType: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
-      type: kotlin/String
-    symbolKind: ACCESSOR
-    typeParameters: []
-    valueParameters: []
-    visibility: Public
-    getDispatchReceiver(): KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: [
-        KtTypeParameterType:
-          annotationsList: []
-          type: E
-      ]
-      type: kotlin/Enum<E>
-    getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
-    deprecationStatus: null
+  getter: null
   hasBackingField: true
-  hasGetter: true
+  hasGetter: false
   hasSetter: false
   initializer: null
   isConst: false
@@ -428,39 +398,9 @@ KtKotlinPropertySymbol:
     deprecationStatus: null
   callableIdIfNonLocal: kotlin/Enum.ordinal
   contextReceivers: []
-  getter: KtPropertyGetterSymbol:
-    annotationsList: []
-    callableIdIfNonLocal: null
-    contextReceivers: []
-    hasBody: false
-    hasStableParameterNames: true
-    isDefault: true
-    isExtension: false
-    isInline: false
-    isOverride: false
-    modality: FINAL
-    origin: LIBRARY
-    receiverParameter: null
-    returnType: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
-      type: kotlin/Int
-    symbolKind: ACCESSOR
-    typeParameters: []
-    valueParameters: []
-    visibility: Public
-    getDispatchReceiver(): KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: [
-        KtTypeParameterType:
-          annotationsList: []
-          type: E
-      ]
-      type: kotlin/Enum<E>
-    getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
-    deprecationStatus: null
+  getter: null
   hasBackingField: true
-  hasGetter: true
+  hasGetter: false
   hasSetter: false
   initializer: null
   isConst: false

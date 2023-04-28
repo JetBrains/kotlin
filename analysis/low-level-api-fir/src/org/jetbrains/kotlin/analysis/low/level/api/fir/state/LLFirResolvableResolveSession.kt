@@ -11,8 +11,10 @@ import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.canBePartOfParentDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.retryOnInvalidSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FirElementsRecorder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache
@@ -63,8 +65,7 @@ internal abstract class LLFirResolvableResolveSession(
             return useSiteFirSession
         }
 
-        val cache = LLFirSessionCache.getInstance(module.project)
-        return cache.getSession(module, preferBinary = true)
+        return LLFirSessionCache.getInstance(module.project).getSession(module)
     }
 
     protected open fun getResolvableSessionFor(module: KtModule): LLFirResolvableModuleSession {
@@ -77,6 +78,14 @@ internal abstract class LLFirResolvableResolveSession(
     }
 
     override fun getOrBuildFirFor(element: KtElement): FirElement? {
+        if (element.containingKtFile.isCompiled) {
+            val container = element.getNonLocalContainingOrThisDeclaration {
+                !it.canBePartOfParentDeclaration
+            } ?: return null
+            val fir = findFirCompiledSymbol(container).fir
+            if (container == element) return fir
+            return FirElementsRecorder.recordElementsFrom(fir, FirElementsRecorder())[element]
+        }
         retryOnInvalidSession {
             val moduleComponents = getModuleComponentsForElement(element)
             return moduleComponents.elementsBuilder.getOrBuildFirFor(element, this)

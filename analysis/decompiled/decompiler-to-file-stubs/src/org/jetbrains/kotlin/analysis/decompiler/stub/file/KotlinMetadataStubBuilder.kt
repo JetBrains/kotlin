@@ -83,7 +83,7 @@ open class KotlinMetadataStubBuilder(
             open val classesToDecompile: List<ProtoBuf.Class> =
                 proto.class_List.filter { proto ->
                     val classId = nameResolver.getClassId(proto.fqName)
-                    !classId.isNestedClass && classId !in ClassDeserializer.BLACK_LIST
+                    !classId.isNestedClass && classId !in ClassDeserializer.BLACK_LIST //todo
                 }
         }
     }

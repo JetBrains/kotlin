@@ -128,7 +128,7 @@ fun deserializeClassToSymbol(
                     it.typeReference ?: error("Super entry doesn't have type reference $it")
                 )
             })
-        } else if (StandardClassIds.Any != classId) {
+        } else if (StandardClassIds.Any != classId && StandardClassIds.Nothing != classId) {
             superTypeRefs.add(session.builtinTypes.anyType)
         }
 

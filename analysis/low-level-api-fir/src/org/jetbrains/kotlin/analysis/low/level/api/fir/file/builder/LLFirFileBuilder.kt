@@ -31,6 +31,7 @@ internal class LLFirFileBuilder(
                 it.toString()
             }
         }
+        require(!ktFile.isCompiled)
         val bodyBuildingMode = when {
             ktFile.isScript() -> {
                 // As 'FirScript' content is never transformed, lazy bodies are not replaced with calculated ones even on BODY_RESOLVE.

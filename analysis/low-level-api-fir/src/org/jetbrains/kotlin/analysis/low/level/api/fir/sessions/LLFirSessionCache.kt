@@ -70,8 +70,8 @@ internal class LLFirSessionCache(private val project: Project) {
      * Returns the existing session if found, or creates a new session and caches it.
      * Analyzable session will be returned for a library module.
      */
-    fun getSession(module: KtModule, preferBinary: Boolean = false): LLFirSession {
-        if (module is KtBinaryModule && (preferBinary || module is KtSdkModule)) {
+    fun getSession(module: KtModule): LLFirSession {
+        if (module is KtBinaryModule) {
             return getCachedSession(module, binaryCache, ::createBinaryLibrarySession)
         }
 
@@ -470,7 +470,7 @@ internal class LLFirSessionCache(private val project: Project) {
     private fun collectSourceModuleDependencies(module: KtModule): List<LLFirSession> {
         fun getOrCreateSessionForDependency(dependency: KtModule): LLFirSession? = when (dependency) {
             is KtBuiltinsModule -> null // Built-ins are already added
-            is KtBinaryModule -> getSession(dependency, preferBinary = true)
+            is KtBinaryModule -> getSession(dependency)
             is KtSourceModule -> getSession(dependency)
 
             is KtScriptModule,

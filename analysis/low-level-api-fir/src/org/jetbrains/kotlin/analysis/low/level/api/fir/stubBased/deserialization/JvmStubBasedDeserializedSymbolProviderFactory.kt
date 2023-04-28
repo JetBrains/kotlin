@@ -43,13 +43,16 @@ class JvmStubBasedDeserializedSymbolProviderFactory : JvmFirDeserializedSymbolPr
                     session,
                     moduleDataProvider,
                     kotlinScopeProvider,
-                    project.createDeclarationProvider(object : DelegatingGlobalSearchScope(project, scope) {
+                    project,
+                    object : DelegatingGlobalSearchScope(project, scope) {
                         override fun contains(file: VirtualFile): Boolean {
-                            if (file.extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION) return false
+                            if (file.extension == BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION) {
+                                return false
+                            }
                             return super.contains(file)
                         }
-                    }),
-                    initialOrigin = FirDeclarationOrigin.Library
+                    },
+                    FirDeclarationOrigin.Library
                 )
             )
             add(createJavaSymbolProvider(session, moduleData, project, scope))

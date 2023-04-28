@@ -1261,39 +1261,9 @@ KtKotlinPropertySymbol:
     deprecationStatus: null
   callableIdIfNonLocal: kotlin/collections/List.size
   contextReceivers: []
-  getter: KtPropertyGetterSymbol:
-    annotationsList: []
-    callableIdIfNonLocal: null
-    contextReceivers: []
-    hasBody: false
-    hasStableParameterNames: true
-    isDefault: true
-    isExtension: false
-    isInline: false
-    isOverride: false
-    modality: ABSTRACT
-    origin: LIBRARY
-    receiverParameter: null
-    returnType: KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: []
-      type: kotlin/Int
-    symbolKind: ACCESSOR
-    typeParameters: []
-    valueParameters: []
-    visibility: Public
-    getDispatchReceiver(): KtUsualClassType:
-      annotationsList: []
-      ownTypeArguments: [
-        KtTypeParameterType:
-          annotationsList: []
-          type: E
-      ]
-      type: kotlin/collections/List<E>
-    getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
-    deprecationStatus: null
+  getter: null
   hasBackingField: false
-  hasGetter: true
+  hasGetter: false
   hasSetter: false
   initializer: null
   isConst: false

@@ -74,8 +74,10 @@ internal class LLFirProviderHelper(
             val files = context ?: declarationProvider.getTopLevelCallableFiles(callableId).ifEmpty { return@createCache emptyList() }
             buildList {
                 files.forEach { ktFile ->
-                    val firFile = firFileBuilder.buildRawFirFileWithCaching(ktFile)
-                    firFile.collectCallableDeclarationsTo(this, callableId.callableName)
+                    if (!ktFile.isCompiled) {
+                        val firFile = firFileBuilder.buildRawFirFileWithCaching(ktFile)
+                        firFile.collectCallableDeclarationsTo(this, callableId.callableName)
+                    }
                 }
             }
         }

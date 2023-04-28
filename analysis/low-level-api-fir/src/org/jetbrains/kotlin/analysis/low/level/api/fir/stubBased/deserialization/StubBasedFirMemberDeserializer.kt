@@ -146,7 +146,7 @@ class StubBasedFirDeserializationContext(
             callableId.packageName,
             callableId.className,
             parameterListOwner,
-            JvmFromStubDecompilerSource(callableId.packageName),
+            if (initialOrigin == FirDeclarationOrigin.BuiltIns) null else JvmFromStubDecompilerSource(callableId.packageName),
             null,
             symbol,
             initialOrigin
