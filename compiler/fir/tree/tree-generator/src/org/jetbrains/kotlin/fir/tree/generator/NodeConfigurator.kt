@@ -493,6 +493,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +symbol("FirScriptSymbol")
             +FieldList("parameters", variable, withReplace = false)
             +fieldList(contextReceiver, useMutableOrEmpty = true)
+            +field("resultPropertyName", nameType, nullable = true)
         }
 
         codeFragment.configure {

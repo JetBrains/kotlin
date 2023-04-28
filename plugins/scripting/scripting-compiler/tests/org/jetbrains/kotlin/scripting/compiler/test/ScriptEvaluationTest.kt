@@ -1,6 +1,5 @@
 import junit.framework.TestCase
 import kotlinx.coroutines.runBlocking
-import org.jetbrains.kotlin.scripting.compiler.plugin.expectTestToFailOnK2
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerIsolated
 import org.jetbrains.kotlin.scripting.compiler.test.assertEqualsTrimmed
 import java.io.ByteArrayOutputStream
@@ -19,7 +18,7 @@ import kotlin.script.experimental.jvm.util.renderError
 
 class ScriptEvaluationTest : TestCase() {
 
-    fun testExceptionWithCause() = expectTestToFailOnK2 {
+    fun testExceptionWithCause() {
         checkEvaluateAsError(
             """
                 try {
@@ -38,7 +37,7 @@ class ScriptEvaluationTest : TestCase() {
     }
 
     // KT-19423
-    fun testClassCapturingScriptInstance() = expectTestToFailOnK2 {
+    fun testClassCapturingScriptInstance() {
         val res = checkEvaluate(
             """
                 val used = "abc"

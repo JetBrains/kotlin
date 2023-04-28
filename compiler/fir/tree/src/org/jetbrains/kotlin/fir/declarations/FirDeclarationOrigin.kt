@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.GeneratedDeclarationKey
+import org.jetbrains.kotlin.fir.declarations.utils.FirScriptCustomizationKind
 
 sealed class FirDeclarationOrigin(
     private val displayName: String? = null,
@@ -36,7 +37,10 @@ sealed class FirDeclarationOrigin(
     object Delegated : FirDeclarationOrigin()
     object RenamedForOverride : FirDeclarationOrigin()
     object WrappedIntegerOperator : FirDeclarationOrigin()
-    object ScriptCustomization : FirDeclarationOrigin()
+    sealed class ScriptCustomization(val kind: FirScriptCustomizationKind) : FirDeclarationOrigin() {
+        object Default : ScriptCustomization(FirScriptCustomizationKind.DEFAULT)
+        object ResultProperty : ScriptCustomization(FirScriptCustomizationKind.RESULT_PROPERTY)
+    }
     class Plugin(val key: GeneratedDeclarationKey) : FirDeclarationOrigin(displayName = "Plugin[$key]", generated = true)
 
     override fun toString(): String {

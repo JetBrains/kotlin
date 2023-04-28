@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
@@ -22,6 +23,7 @@ object FirImplicitNothingReturnTypeChecker : FirCallableDeclarationChecker() {
         if (declaration is FirProperty && declaration.isLocal) return
         if (declaration.isOverride) return
         if (declaration.symbol.hasExplicitReturnType) return
+        if (declaration.origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty) return
         if (declaration.returnTypeRef.coneType.isNothing) {
             val factory = when (declaration) {
                 is FirSimpleFunction -> FirErrors.IMPLICIT_NOTHING_RETURN_TYPE

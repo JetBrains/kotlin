@@ -208,6 +208,7 @@ class Fir2IrVisitor(
         return irClass
     }
 
+    @OptIn(UnexpandedTypeCheck::class)
     override fun visitScript(script: FirScript, data: Any?): IrElement {
         return declarationStorage.getCachedIrScript(script)!!.also { irScript ->
             irScript.parent = conversionScope.parentFromStack()
@@ -246,6 +247,17 @@ class Fir2IrVisitor(
                 for (statement in script.statements) {
                     val irStatement = if (statement is FirDeclaration) {
                         when {
+                            statement is FirProperty && statement.origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty -> {
+                                // Generating the result property only for expressions with a meaningful result type
+                                // otherwise skip the property and convert the expression into the statement
+                                if (statement.returnTypeRef.let { (it.isUnit || it.isNothing || it.isNullableNothing) } == true) {
+                                    statement.initializer!!.toIrStatement()
+                                } else {
+                                    (statement.accept(this@Fir2IrVisitor, null) as? IrDeclaration)?.also {
+                                        irScript.resultProperty = (it as? IrProperty)?.symbol
+                                    }
+                                }
+                            }
                             statement is FirVariable && statement.isDestructuringDeclarationContainerVariable == true -> {
                                 statement.convertWithOffsets { startOffset, endOffset ->
                                     IrCompositeImpl(

@@ -65,13 +65,14 @@ class ScriptingHostTest : TestCase() {
     }
 
     @Test
-    fun testValueResult() = expectTestToFailOnK2 {
+    fun testValueResult() {
         val evalScriptWithResult = evalScriptWithResult("42")
         val resVal = evalScriptWithResult as ResultValue.Value
         Assert.assertEquals(42, resVal.value)
         Assert.assertEquals("\$\$result", resVal.name)
         Assert.assertEquals("kotlin.Int", resVal.type)
         val resField = resVal.scriptInstance!!::class.java.getDeclaredField("\$\$result")
+        resField.setAccessible(true)
         Assert.assertEquals(42, resField.get(resVal.scriptInstance!!))
     }
 
@@ -91,7 +92,7 @@ class ScriptingHostTest : TestCase() {
     }
 
     @Test
-    fun testCustomResultField() = expectTestToFailOnK2 {
+    fun testCustomResultField() {
         val resVal = evalScriptWithResult("42") {
             resultField("outcome")
         } as ResultValue.Value
@@ -245,7 +246,7 @@ class ScriptingHostTest : TestCase() {
     }
 
     @Test
-    fun testProvidedPropertiesNullability() = expectTestToFailOnK2 {
+    fun testProvidedPropertiesNullability() {
         val stringType = KotlinType(String::class)
         val definition = createJvmScriptDefinitionFromTemplate<SimpleScriptTemplate>(
             compilation = {

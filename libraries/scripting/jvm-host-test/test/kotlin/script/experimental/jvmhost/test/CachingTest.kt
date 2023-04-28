@@ -20,7 +20,6 @@ import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.host.with
 import kotlin.script.experimental.jvm.*
 import kotlin.script.experimental.jvm.impl.KJvmCompiledScript
-import kotlin.script.experimental.jvm.loadDependencies
 import kotlin.script.experimental.jvm.util.KotlinJars
 import kotlin.script.experimental.jvm.util.classpathFromClass
 import kotlin.script.experimental.jvmhost.BasicJvmScriptingHost
@@ -181,7 +180,7 @@ class CachingTest : TestCase() {
     }
 
     @Test
-    fun testLocalDependencyWithExternalLoadAndCache() = expectTestToFailOnK2 {
+    fun testLocalDependencyWithExternalLoadAndCache() {
         withTempDir("scriptingTestDepDir") { depDir ->
             val standardJars = KotlinJars.kotlinScriptStandardJars
             val outJar = makeDependenciesJar(depDir, standardJars)

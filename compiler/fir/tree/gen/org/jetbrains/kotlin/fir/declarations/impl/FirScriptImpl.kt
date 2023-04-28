@@ -43,6 +43,7 @@ internal class FirScriptImpl(
     override val symbol: FirScriptSymbol,
     override val parameters: MutableList<FirVariable>,
     override var contextReceivers: MutableOrEmptyList<FirContextReceiver>,
+    override val resultPropertyName: Name?,
 ) : FirScript() {
     init {
         symbol.bind(this)

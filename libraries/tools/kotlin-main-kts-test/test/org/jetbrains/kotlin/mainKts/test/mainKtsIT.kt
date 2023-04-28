@@ -120,7 +120,7 @@ class MainKtsIT {
 
     @OptIn(ExperimentalPathApi::class)
     @Test
-    fun testCacheWithFileLocation() = expectTestToFailOnK2 {
+    fun testCacheWithFileLocation() {
         val scriptPath = File("$TEST_DATA_ROOT/script-file-location-default.main.kts").absolutePath
         val cache = createTempDirectory("main.kts.test")
         val expectedTestOutput = listOf(Regex.escape(scriptPath))

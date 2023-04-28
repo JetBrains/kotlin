@@ -859,6 +859,7 @@ class Fir2IrDeclarationStorage(
             isLateInit -> setter?.visibility ?: status.visibility
             isConst -> status.visibility
             hasJvmFieldAnnotation(session) -> status.visibility
+            origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty -> status.visibility
             else -> Visibilities.Private
         }
 

@@ -78,7 +78,7 @@ class MainKtsTest {
     }
 
     @Test
-    fun testResolveRuntimeDeps() = expectTestToFailOnK2 {
+    fun testResolveRuntimeDeps() {
         val resOk = evalFile(File("$TEST_DATA_ROOT/resolve-with-runtime.main.kts"))
         assertSucceeded(resOk)
 
@@ -179,7 +179,7 @@ class MainKtsTest {
     }
 
     @Test
-    fun testScriptFileLocationDefaultVariable() = expectTestToFailOnK2 {
+    fun testScriptFileLocationDefaultVariable() {
         val resOk = evalFile(File("$TEST_DATA_ROOT/script-file-location-default.main.kts"))
         assertSucceeded(resOk)
         val resultValue = resOk.valueOrThrow().returnValue
@@ -192,7 +192,7 @@ class MainKtsTest {
     }
 
     @Test
-    fun testScriptFileLocationCustomizedVariable() = expectTestToFailOnK2 {
+    fun testScriptFileLocationCustomizedVariable() {
         val resOk = evalFile(File("$TEST_DATA_ROOT/script-file-location-customized.main.kts"))
         assertSucceeded(resOk)
         val resultValue = resOk.valueOrThrow().returnValue

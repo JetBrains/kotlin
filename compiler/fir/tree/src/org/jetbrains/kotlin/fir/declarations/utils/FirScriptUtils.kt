@@ -7,3 +7,8 @@ package org.jetbrains.kotlin.fir.declarations.utils
 
 const val SCRIPT_SPECIAL_NAME_STRING = "<script>"
 const val SCRIPT_RECEIVER_NAME_PREFIX = "\$script_receiver"
+
+enum class FirScriptCustomizationKind {
+    DEFAULT,
+    RESULT_PROPERTY
+}

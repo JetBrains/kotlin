@@ -49,7 +49,7 @@ class ResolveDependenciesTest : TestCase() {
     }
 
     @Test
-    fun testResolveClassFromClasspath() = expectTestToFailOnK2 {
+    fun testResolveClassFromClasspath() {
         runScriptAndCheckResult(classAccessScript, configurationWithDependenciesFromClasspath, null, 42)
         runScriptAndCheckResult(classImportScript, configurationWithDependenciesFromClasspath, null, 42)
     }
@@ -76,7 +76,7 @@ class ResolveDependenciesTest : TestCase() {
     }
 
     @Test
-    fun testResolveFunAndValFromClasspath() = expectTestToFailOnK2 {
+    fun testResolveFunAndValFromClasspath() {
         runScriptAndCheckResult(funAndValAccessScript, configurationWithDependenciesFromClasspath, null, 42)
         runScriptAndCheckResult(funAndValImportScript, configurationWithDependenciesFromClasspath, null, 42)
     }
