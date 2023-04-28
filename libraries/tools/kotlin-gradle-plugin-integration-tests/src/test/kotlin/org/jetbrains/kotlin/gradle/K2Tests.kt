@@ -73,4 +73,16 @@ class CustomK2Tests : KGPBaseTest() {
             }
         }
     }
+
+    @Disabled("disable until kotlin/native dependency is updated to include KT-58145")
+    @GradleTest
+    @DisplayName("Compiling shared native source with FirFakeOverrideGenerator referencing a common entity. KT-58145")
+    fun kt581450MppNativeSharedCrash(gradleVersion: GradleVersion) {
+        with(project("kt-581450-mpp-native-shared-crash", gradleVersion, buildOptions = defaultBuildOptions.copy(languageVersion = "2.0"))) {
+            val taskToExecute = ":compileNativeMainKotlinMetadata"
+            build(taskToExecute) {
+                assertTasksExecuted(taskToExecute)
+            }
+        }
+    }
 }
