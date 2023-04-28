@@ -141,12 +141,11 @@ fun isCastErased(supertype: ConeKotlinType, subtype: ConeKotlinType, context: Ch
 
     // downcasting to a non-reified type parameter is always erased
     if (isNonReifiedTypeParameter) return true
+    // downcasting to a reified type parameter is never erased
+    else if (subtype is ConeTypeParameterType) return false
 
-    // Check that we are actually casting to a generic type
-    // NOTE: this does not account for 'as Array<List<T>>'
-    if (subtype.allParameterReified()) return false
-
-    val staticallyKnownSubtype = findStaticallyKnownSubtype(supertype, subtype, context)
+    val regularClassSymbol = subtype.toRegularClassSymbol(context.session) ?: return true
+    val staticallyKnownSubtype = findStaticallyKnownSubtype(supertype, regularClassSymbol, context)
 
     // If the substitution failed, it means that the result is an impossible type, e.g. something like Out<in Foo>
     // In this case, we can't guarantee anything, so the cast is considered to be erased
@@ -154,10 +153,6 @@ fun isCastErased(supertype: ConeKotlinType, subtype: ConeKotlinType, context: Ch
     // If the type we calculated is a subtype of the cast target, it's OK to use the cast target instead.
     // If not, it's wrong to use it
     return !AbstractTypeChecker.isSubtypeOf(context.session.typeContext, staticallyKnownSubtype, subtype, stubTypesEqualToAnything = false)
-}
-
-private fun ConeKotlinType.allParameterReified(): Boolean {
-    return typeArguments.all { (it.type as? ConeTypeParameterType)?.lookupTag?.typeParameterSymbol?.isReified == true }
 }
 
 /**
@@ -178,7 +173,7 @@ private fun ConeKotlinType.allParameterReified(): Boolean {
  */
 fun findStaticallyKnownSubtype(
     supertype: ConeKotlinType,
-    subtype: ConeKotlinType,
+    subTypeClassSymbol: FirRegularClassSymbol,
     context: CheckerContext
 ): ConeKotlinType {
     assert(!supertype.isMarkedNullable) { "This method only makes sense for non-nullable types" }
@@ -188,8 +183,7 @@ fun findStaticallyKnownSubtype(
 
     // Assume we are casting an expression of type Collection<Foo> to List<Bar>
     // First, let's make List<T>, where T is a type variable
-    val subtypeWithVariables = subtype.toRegularClassSymbol(session)!!
-    val subtypeWithVariablesType = subtypeWithVariables.defaultType()
+    val subtypeWithVariablesType = subTypeClassSymbol.defaultType()
 
     // Now, let's find a supertype of List<T> that is a Collection of something,
     // in this case it will be Collection<T>
@@ -214,7 +208,7 @@ fun findStaticallyKnownSubtype(
                 normalizedType.typeConstructor(typeContext)
             ).firstOrNull()
 
-        val variables: List<FirTypeParameterSymbol> = subtypeWithVariables.typeParameterSymbols
+        val variables: List<FirTypeParameterSymbol> = subTypeClassSymbol.typeParameterSymbols
 
         val substitution = if (supertypeWithVariables != null) {
             // Now, let's try to unify Collection<T> and Collection<Foo> solution is a map from T to Foo

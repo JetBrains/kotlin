@@ -15,10 +15,25 @@ fun <T, S : T> test(x: T?, y: S, z: T) {
     null <!UNCHECKED_CAST!>as S<!>
 }
 
-inline fun <reified T> test(x: T?) {
+class Box<T>
+
+inline fun <reified T> test(x: T?, a: Any) {
     x is T
     null as T
     null as T?
+
+    a is T
+    a as T
+
+    a is <!CANNOT_CHECK_FOR_ERASED!>Box<T><!>
+    a is <!CANNOT_CHECK_FOR_ERASED!>Array<T><!>
+    a <!UNCHECKED_CAST!>as Box<T><!>
+    a <!UNCHECKED_CAST!>as Array<T><!>
+
+    a is <!CANNOT_CHECK_FOR_ERASED!>Box<List<T>><!>
+    a is <!CANNOT_CHECK_FOR_ERASED!>Array<List<T>><!>
+    a <!UNCHECKED_CAST!>as Box<List<T>><!>
+    a <!UNCHECKED_CAST!>as Array<List<T>><!>
 }
 
 fun <T> foo(x: List<T>, y: List<T>?) {
