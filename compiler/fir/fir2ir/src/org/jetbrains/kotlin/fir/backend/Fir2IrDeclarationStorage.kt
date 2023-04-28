@@ -868,8 +868,14 @@ class Fir2IrDeclarationStorage(
             symbol = FirPropertySymbol(field.symbol.callableId)
             isLocal = false
             status = field.status
+        }.apply {
+            isStubPropertyForPureField = true
         }
     }
+
+    private object IsStubPropertyForPureFieldKey : FirDeclarationDataKey()
+
+    private var FirProperty.isStubPropertyForPureField: Boolean? by FirDeclarationDataRegistry.data(IsStubPropertyForPureFieldKey)
 
     fun createIrProperty(
         property: FirProperty,
@@ -1467,17 +1473,30 @@ class Fir2IrDeclarationStorage(
     ): IrProperty {
         val symbol = Fir2IrPropertySymbol(signature)
         val firPropertySymbol = fir.symbol
+
+        fun create(startOffset: Int, endOffset: Int): Fir2IrLazyProperty {
+            val isFakeOverride =
+                fir.isSubstitutionOrIntersectionOverride &&
+                        firPropertySymbol.dispatchReceiverClassLookupTagOrNull() !=
+                        firPropertySymbol.originalForSubstitutionOverride?.dispatchReceiverClassLookupTagOrNull()
+            return Fir2IrLazyProperty(
+                components, startOffset, endOffset, declarationOrigin,
+                fir, (lazyParent as? Fir2IrLazyClass)?.fir, symbol, isFakeOverride
+            ).apply {
+                this.parent = lazyParent
+            }
+        }
+
         val irProperty = fir.convertWithOffsets { startOffset, endOffset ->
-            symbolTable.declareProperty(signature, { symbol }) {
-                val isFakeOverride =
-                    fir.isSubstitutionOrIntersectionOverride &&
-                            firPropertySymbol.dispatchReceiverClassLookupTagOrNull() !=
-                            firPropertySymbol.originalForSubstitutionOverride?.dispatchReceiverClassLookupTagOrNull()
-                Fir2IrLazyProperty(
-                    components, startOffset, endOffset, declarationOrigin,
-                    fir, (lazyParent as? Fir2IrLazyClass)?.fir, symbol, isFakeOverride
-                ).apply {
-                    this.parent = lazyParent
+            if (fir.isStubPropertyForPureField == true) {
+                // Very special case when two similar properties can exist so conflicts in SymbolTable are possible.
+                // See javaCloseFieldAndKotlinProperty.kt in BB tests
+                symbolTable.declarePropertyWithSignature(signature, symbol)
+                create(startOffset, endOffset)
+                symbol.owner
+            } else {
+                symbolTable.declareProperty(signature, { symbol }) {
+                    create(startOffset, endOffset)
                 }
             }
         }
