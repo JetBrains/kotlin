@@ -111,7 +111,9 @@ internal class ClassMemberGenerator(
                 val irParameters = valueParameters.drop(firFunction.contextReceivers.size)
                 val annotationMode = containingClass?.classKind == ClassKind.ANNOTATION_CLASS && irFunction is IrConstructor
                 for ((valueParameter, firValueParameter) in irParameters.zip(firFunction.valueParameters)) {
-                    valueParameter.setDefaultValue(firValueParameter, annotationMode)
+                    visitor.withAnnotationMode(enableAnnotationMode = annotationMode) {
+                        valueParameter.setDefaultValue(firValueParameter)
+                    }
                 }
                 annotationGenerator.generate(irFunction, firFunction)
             }
@@ -389,7 +391,7 @@ internal class ClassMemberGenerator(
                 }
                 with(callGenerator) {
                     declarationStorage.enterScope(irConstructorSymbol.owner)
-                    val result = it.applyCallArguments(this@toIrDelegatingConstructorCall, annotationMode = false)
+                    val result = it.applyCallArguments(this@toIrDelegatingConstructorCall)
                     declarationStorage.leaveScope(irConstructorSymbol.owner)
                     result
                 }
@@ -397,10 +399,10 @@ internal class ClassMemberGenerator(
         }
     }
 
-    private fun IrValueParameter.setDefaultValue(firValueParameter: FirValueParameter, annotationMode: Boolean) {
+    private fun IrValueParameter.setDefaultValue(firValueParameter: FirValueParameter) {
         val firDefaultValue = firValueParameter.defaultValue
         if (firDefaultValue != null) {
-            this.defaultValue = factory.createExpressionBody(visitor.convertToIrExpression(firDefaultValue, annotationMode))
+            this.defaultValue = factory.createExpressionBody(visitor.convertToIrExpression(firDefaultValue))
         }
     }
 }

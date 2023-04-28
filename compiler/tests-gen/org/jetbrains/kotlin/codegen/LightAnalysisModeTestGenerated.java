@@ -22962,6 +22962,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/involvesIrInterpreter/kt57028.kt");
         }
 
+        @TestMetadata("kt58005.kt")
+        public void testKt58005() throws Exception {
+            runTest("compiler/testData/codegen/box/involvesIrInterpreter/kt58005.kt");
+        }
+
         @TestMetadata("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)

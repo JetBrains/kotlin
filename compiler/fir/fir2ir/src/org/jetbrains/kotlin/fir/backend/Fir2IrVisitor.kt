@@ -69,9 +69,23 @@ class Fir2IrVisitor(
 
     private val operatorGenerator = OperatorExpressionGenerator(components, this, conversionScope)
 
+    private var _annotationMode: Boolean = false
+    public val annotationMode: Boolean
+        get() = _annotationMode
+
     private fun FirTypeRef.toIrType(): IrType = with(typeConverter) { toIrType() }
 
     private fun <T : IrDeclaration> applyParentFromStackTo(declaration: T): T = conversionScope.applyParentFromStackTo(declaration)
+
+    internal inline fun <T> withAnnotationMode(enableAnnotationMode: Boolean = true, block: () -> T): T {
+        val oldAnnotationMode = _annotationMode
+        _annotationMode = enableAnnotationMode
+        try {
+            return block()
+        } finally {
+            _annotationMode = oldAnnotationMode
+        }
+    }
 
     override fun visitElement(element: FirElement, data: Any?): IrElement {
         TODO("Should not be here: ${element::class} ${element.render()}")
@@ -412,33 +426,32 @@ class Fir2IrVisitor(
                 endOffset,
                 varargArgumentsExpression.typeRef.toIrType(),
                 varargArgumentsExpression.varargElementType.toIrType(),
-                varargArgumentsExpression.arguments.map { it.convertToIrVarargElement(annotationMode = false) }
+                varargArgumentsExpression.arguments.map { it.convertToIrVarargElement() }
             )
         }
     }
 
-    private fun FirExpression.convertToIrVarargElement(annotationMode: Boolean): IrVarargElement =
+    private fun FirExpression.convertToIrVarargElement(): IrVarargElement =
         if (this is FirSpreadArgumentExpression || this is FirNamedArgumentExpression && this.isSpread) {
             IrSpreadElementImpl(
                 source?.startOffset ?: UNDEFINED_OFFSET,
                 source?.endOffset ?: UNDEFINED_OFFSET,
-                convertToIrExpression(this, annotationMode)
+                convertToIrExpression(this)
             )
-        } else convertToIrExpression(this, annotationMode)
+        } else convertToIrExpression(this)
 
-    private fun convertToIrCall(functionCall: FirFunctionCall, annotationMode: Boolean): IrExpression {
+    private fun convertToIrCall(functionCall: FirFunctionCall): IrExpression {
         if (functionCall.isCalleeDynamic &&
             functionCall.calleeReference.name == OperatorNameConventions.SET &&
             functionCall.calleeReference.source?.kind == KtFakeSourceElementKind.ArrayAccessNameReference
         ) {
-            return convertToIrArrayAccessDynamicCall(functionCall, annotationMode)
+            return convertToIrArrayAccessDynamicCall(functionCall)
         }
-        return convertToIrCall(functionCall, annotationMode, dynamicOperator = null)
+        return convertToIrCall(functionCall, dynamicOperator = null)
     }
 
     private fun convertToIrCall(
         functionCall: FirFunctionCall,
-        annotationMode: Boolean,
         dynamicOperator: IrDynamicOperator?
     ): IrExpression {
         val explicitReceiverExpression = convertToIrReceiverExpression(functionCall.explicitReceiver, functionCall.calleeReference)
@@ -446,21 +459,19 @@ class Fir2IrVisitor(
             functionCall,
             functionCall.typeRef,
             explicitReceiverExpression,
-            annotationMode,
             dynamicOperator
         )
     }
 
-    private fun convertToIrArrayAccessDynamicCall(functionCall: FirFunctionCall, annotationMode: Boolean): IrExpression {
+    private fun convertToIrArrayAccessDynamicCall(functionCall: FirFunctionCall): IrExpression {
         val explicitReceiverExpression = convertToIrCall(
-            functionCall, annotationMode, dynamicOperator = IrDynamicOperator.ARRAY_ACCESS
+            functionCall, dynamicOperator = IrDynamicOperator.ARRAY_ACCESS
         )
         if (explicitReceiverExpression is IrDynamicOperatorExpression) {
             explicitReceiverExpression.arguments.removeLast()
         }
         val result = callGenerator.convertToIrCall(
             functionCall, functionCall.typeRef, explicitReceiverExpression,
-            annotationMode = annotationMode,
             dynamicOperator = IrDynamicOperator.EQ
         )
         if (result is IrDynamicOperatorExpression) {
@@ -474,7 +485,7 @@ class Fir2IrVisitor(
     }
 
     override fun visitFunctionCall(functionCall: FirFunctionCall, data: Any?): IrExpression = whileAnalysing(session, functionCall) {
-        return convertToIrCall(functionCall = functionCall, annotationMode = false)
+        return convertToIrCall(functionCall = functionCall)
     }
 
     override fun visitSafeCallExpression(
@@ -521,13 +532,12 @@ class Fir2IrVisitor(
 
     private fun convertQualifiedAccessExpression(
         qualifiedAccessExpression: FirQualifiedAccessExpression,
-        annotationMode: Boolean = false
     ): IrExpression = whileAnalysing(session, qualifiedAccessExpression) {
         val explicitReceiverExpression = convertToIrReceiverExpression(
             qualifiedAccessExpression.explicitReceiver, qualifiedAccessExpression.calleeReference
         )
         return callGenerator.convertToIrCall(
-            qualifiedAccessExpression, qualifiedAccessExpression.typeRef, explicitReceiverExpression, annotationMode = annotationMode
+            qualifiedAccessExpression, qualifiedAccessExpression.typeRef, explicitReceiverExpression
         )
     }
 
@@ -678,7 +688,6 @@ class Fir2IrVisitor(
 
     internal fun convertToIrExpression(
         expression: FirExpression,
-        annotationMode: Boolean = false,
         isDelegate: Boolean = false
     ): IrExpression {
         return when (expression) {
@@ -691,20 +700,9 @@ class Fir2IrVisitor(
                 )
             }
             else -> {
-                val unwrappedExpression = expression.unwrapArgument()
-                if (annotationMode) {
-                    when (unwrappedExpression) {
-                        is FirFunctionCall -> convertToIrCall(unwrappedExpression, true)
-                        is FirArrayOfCall -> convertToArrayOfCall(unwrappedExpression, true)
-                        is FirCallableReferenceAccess -> convertCallableReferenceAccess(unwrappedExpression, isDelegate)
-                        is FirQualifiedAccessExpression -> convertQualifiedAccessExpression(unwrappedExpression, true)
-                        else -> expression.accept(this, null) as IrExpression
-                    }
-                } else {
-                    when (unwrappedExpression) {
-                        is FirCallableReferenceAccess -> convertCallableReferenceAccess(unwrappedExpression, isDelegate)
-                        else -> expression.accept(this, null) as IrExpression
-                    }
+                when (val unwrappedExpression = expression.unwrapArgument()) {
+                    is FirCallableReferenceAccess -> convertCallableReferenceAccess(unwrappedExpression, isDelegate)
+                    else -> expression.accept(this, null) as IrExpression
                 }
             }
         }.let {
@@ -881,11 +879,10 @@ class Fir2IrVisitor(
                 qualifiedAccess,
                 qualifiedAccess.typeRef,
                 convertToIrReceiverExpression(receiverExpression, qualifiedAccess.calleeReference),
-                annotationMode = false
             )
         }
         return callGenerator.convertToIrCall(
-            operationCall, operationCall.typeRef, explicitReceiverExpression, annotationMode = false
+            operationCall, operationCall.typeRef, explicitReceiverExpression
         )
     }
 
@@ -1364,7 +1361,7 @@ class Fir2IrVisitor(
             classifierStorage.getIrClassSymbol(it)
         }
 
-    private fun convertToArrayOfCall(arrayOfCall: FirArrayOfCall, annotationMode: Boolean): IrVararg {
+    private fun convertToArrayOfCall(arrayOfCall: FirArrayOfCall): IrVararg {
         return arrayOfCall.convertWithOffsets { startOffset, endOffset ->
             val arrayType = arrayOfCall.typeRef.toIrType()
             val elementType = if (arrayOfCall.typeRef is FirResolvedTypeRef) {
@@ -1376,13 +1373,13 @@ class Fir2IrVisitor(
                 startOffset, endOffset,
                 type = arrayType,
                 varargElementType = elementType,
-                elements = arrayOfCall.arguments.map { it.convertToIrVarargElement(annotationMode) }
+                elements = arrayOfCall.arguments.map { it.convertToIrVarargElement() }
             )
         }
     }
 
     override fun visitArrayOfCall(arrayOfCall: FirArrayOfCall, data: Any?): IrElement = whileAnalysing(session, arrayOfCall) {
-        return convertToArrayOfCall(arrayOfCall, annotationMode = false)
+        return convertToArrayOfCall(arrayOfCall)
     }
 
     override fun visitAugmentedArraySetCall(

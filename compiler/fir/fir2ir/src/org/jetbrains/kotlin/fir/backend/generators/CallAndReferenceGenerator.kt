@@ -294,7 +294,6 @@ class CallAndReferenceGenerator(
         type: IrType,
         calleeReference: FirReference,
         symbol: FirBasedSymbol<*>,
-        annotationMode: Boolean = false,
         dynamicOperator: IrDynamicOperator? = null,
         noArguments: Boolean = false,
     ): IrExpression {
@@ -332,14 +331,13 @@ class CallAndReferenceGenerator(
             }
         }
             .applyTypeArguments(qualifiedAccess)
-            .applyCallArguments((qualifiedAccess as? FirCall)?.takeIf { !noArguments }, annotationMode)
+            .applyCallArguments((qualifiedAccess as? FirCall)?.takeIf { !noArguments })
     }
 
     fun convertToIrCall(
         qualifiedAccess: FirQualifiedAccessExpression,
         typeRef: FirTypeRef,
         explicitReceiverExpression: IrExpression?,
-        annotationMode: Boolean = false,
         dynamicOperator: IrDynamicOperator? = null,
         variableAsFunctionMode: Boolean = false,
         noArguments: Boolean = false
@@ -362,7 +360,6 @@ class CallAndReferenceGenerator(
                     type,
                     calleeReference,
                     firSymbol ?: error("Must have had a symbol"),
-                    annotationMode,
                     dynamicOperator,
                     noArguments,
                 )
@@ -445,7 +442,7 @@ class CallAndReferenceGenerator(
                         }
                     }
 
-                    is IrFieldSymbol -> if (annotationMode) {
+                    is IrFieldSymbol -> if (visitor.annotationMode) {
                         val resolvedSymbol = calleeReference.toResolvedCallableSymbol() ?: error("should have resolvedSymbol")
                         val returnType = resolvedSymbol.resolvedReturnTypeRef.toIrType()
                         val firConstExpression = (resolvedSymbol.fir as FirVariable).initializer as? FirConstExpression<*>
@@ -474,7 +471,7 @@ class CallAndReferenceGenerator(
                     else -> generateErrorCallExpression(startOffset, endOffset, calleeReference, type)
                 }
             }.applyTypeArguments(qualifiedAccess).applyReceivers(qualifiedAccess, convertedExplicitReceiver)
-                .applyCallArguments(qualifiedAccess, annotationMode)
+                .applyCallArguments(qualifiedAccess)
         } catch (e: Throwable) {
             throw IllegalStateException(
                 "Error while translating ${qualifiedAccess.render()} " +
@@ -647,7 +644,7 @@ class CallAndReferenceGenerator(
             ?.fullyExpandedType(session) as? ConeLookupTagBasedType
         val type = coneType?.toIrType()
         val symbol = type?.classifierOrNull
-        return annotation.convertWithOffsets { startOffset, endOffset ->
+        val irConstructorCall = annotation.convertWithOffsets { startOffset, endOffset ->
             when (symbol) {
                 is IrClassSymbol -> {
                     val irClass = symbol.owner
@@ -694,7 +691,10 @@ class CallAndReferenceGenerator(
                     )
                 }
             }
-        }.applyCallArguments(annotation.toAnnotationCall(), annotationMode = true)
+        }
+        return visitor.withAnnotationMode {
+            irConstructorCall.applyCallArguments(annotation.toAnnotationCall())
+        }
     }
 
     private fun FirAnnotation.toAnnotationCall(): FirAnnotationCall? {
@@ -779,7 +779,6 @@ class CallAndReferenceGenerator(
 
     internal fun IrExpression.applyCallArguments(
         statement: FirStatement?,
-        annotationMode: Boolean
     ): IrExpression {
         val call = statement as? FirCall
         return when (this) {
@@ -790,11 +789,10 @@ class CallAndReferenceGenerator(
                 if (argumentsCount <= valueArgumentsCount) {
                     apply {
                         val (valueParameters, argumentMapping, substitutor) = extractArgumentsMapping(call)
-                        if (argumentMapping != null && (annotationMode || argumentMapping.isNotEmpty())) {
+                        if (argumentMapping != null && (visitor.annotationMode || argumentMapping.isNotEmpty())) {
                             if (valueParameters != null) {
                                 return applyArgumentsWithReorderingIfNeeded(
-                                    argumentMapping, valueParameters, substitutor, annotationMode,
-                                    contextReceiverCount,
+                                    argumentMapping, valueParameters, substitutor, contextReceiverCount,
                                 )
                             }
                         }
@@ -828,12 +826,12 @@ class CallAndReferenceGenerator(
             is IrDynamicOperatorExpression -> apply {
                 if (call == null) return@apply
                 val (valueParameters, argumentMapping, substitutor) = extractArgumentsMapping(call)
-                if (argumentMapping != null && (annotationMode || argumentMapping.isNotEmpty())) {
+                if (argumentMapping != null && (visitor.annotationMode || argumentMapping.isNotEmpty())) {
                     if (valueParameters != null) {
                         val dynamicCallVarargArgument = argumentMapping.keys.firstOrNull() as? FirVarargArgumentsExpression
                             ?: error("Dynamic call must have a single vararg argument")
                         for (argument in dynamicCallVarargArgument.arguments) {
-                            val irArgument = convertArgument(argument, null, substitutor, annotationMode)
+                            val irArgument = convertArgument(argument, null, substitutor)
                             arguments.add(irArgument)
                         }
                     }
@@ -870,15 +868,14 @@ class CallAndReferenceGenerator(
         argumentMapping: Map<FirExpression, FirValueParameter>,
         valueParameters: List<FirValueParameter>,
         substitutor: ConeSubstitutor,
-        annotationMode: Boolean,
         contextReceiverCount: Int,
     ): IrExpression {
         val converted = argumentMapping.entries.map { (argument, parameter) ->
-            parameter to convertArgument(argument, parameter, substitutor, annotationMode)
+            parameter to convertArgument(argument, parameter, substitutor)
         }
         // If none of the parameters have side effects, the evaluation order doesn't matter anyway.
         // For annotations, this is always true, since arguments have to be compile-time constants.
-        if (!annotationMode && !converted.all { (_, irArgument) -> irArgument.hasNoSideEffects() } &&
+        if (!visitor.annotationMode && !converted.all { (_, irArgument) -> irArgument.hasNoSideEffects() } &&
             needArgumentReordering(argumentMapping.values, valueParameters)
         ) {
             return IrBlockImpl(startOffset, endOffset, type, IrStatementOrigin.ARGUMENTS_REORDERING_FOR_CALL).apply {
@@ -903,12 +900,12 @@ class CallAndReferenceGenerator(
             for ((parameter, irArgument) in converted) {
                 putValueArgument(valueParameters.indexOf(parameter) + contextReceiverCount, irArgument)
             }
-            if (annotationMode) {
+            if (visitor.annotationMode) {
                 for ((index, parameter) in valueParameters.withIndex()) {
                     if (parameter.isVararg && !argumentMapping.containsValue(parameter)) {
                         val defaultValue = parameter.defaultValue
                         val value = if (defaultValue != null) {
-                            convertArgument(defaultValue, parameter, ConeSubstitutor.Empty, annotationMode = true)
+                            convertArgument(defaultValue, parameter, ConeSubstitutor.Empty)
                         } else {
                             val elementType = parameter.returnTypeRef.toIrType()
                             IrVarargImpl(
@@ -945,9 +942,8 @@ class CallAndReferenceGenerator(
         argument: FirExpression,
         parameter: FirValueParameter?,
         substitutor: ConeSubstitutor,
-        annotationMode: Boolean = false
     ): IrExpression {
-        var irArgument = visitor.convertToIrExpression(argument, annotationMode)
+        var irArgument = visitor.convertToIrExpression(argument)
         if (parameter != null) {
             with(visitor.implicitCastInserter) {
                 irArgument = irArgument.cast(argument, argument.typeRef, parameter.returnTypeRef)

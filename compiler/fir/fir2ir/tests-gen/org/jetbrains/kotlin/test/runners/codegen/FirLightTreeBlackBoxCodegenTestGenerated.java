@@ -28352,6 +28352,12 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
         }
 
         @Test
+        @TestMetadata("kt58005.kt")
+        public void testKt58005() throws Exception {
+            runTest("compiler/testData/codegen/box/involvesIrInterpreter/kt58005.kt");
+        }
+
+        @Test
         @TestMetadata("longOperations.kt")
         public void testLongOperations() throws Exception {
             runTest("compiler/testData/codegen/box/involvesIrInterpreter/longOperations.kt");
