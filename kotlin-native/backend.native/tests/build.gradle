@@ -5681,12 +5681,14 @@ Task objcExportTest(
         Boolean isStaticFramework,
         Boolean needLazyHeaderCheck
 ) {
+    needLazyHeaderCheck = needLazyHeaderCheck && !isK2(project)  // generating lazy headers is NYI in K2
     final String name = "testObjCExport$suffix"
     final String frameworkName = "Kt$suffix"
     final String expectedLazyHeaderName = "expectedLazy${suffix}.h"
     final Task task = frameworkTest(name) {
         final String dir = "$testOutputFramework/$name"
         final File lazyHeader = file("$dir/$target-lazy.h")
+        lazyHeader.delete()  // Clean up after previous runs
 
         doLast {
             // Check lazy header.
@@ -5749,7 +5751,6 @@ Task objcExportTest(
         }
         codesign = !isStaticFramework
         framework(frameworkName) {
-            enabled = !isK2(project) // KT-56182
             sources = ['objcexport']
             libraries = [libraryName, noEnumEntriesLibraryName]
             artifact = 'Kt'
