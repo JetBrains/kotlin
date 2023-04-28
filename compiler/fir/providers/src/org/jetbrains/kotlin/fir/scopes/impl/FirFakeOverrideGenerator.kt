@@ -155,7 +155,7 @@ object FirFakeOverrideGenerator {
         // As second alternative, we can invent some light-weight kind of FirRegularClass
         return buildConstructor {
             annotations += baseConstructor.annotations
-            moduleData = session.moduleData
+            moduleData = session.nullableModuleData ?: baseConstructor.moduleData
             this.origin = origin
             receiverParameter = baseConstructor.receiverParameter?.let { receiverParameter ->
                 buildReceiverParameterCopy(receiverParameter) {
@@ -358,7 +358,7 @@ object FirFakeOverrideGenerator {
 
         return buildProperty {
             source = baseProperty.source
-            moduleData = session.moduleData
+            moduleData = session.nullableModuleData ?: baseProperty.moduleData
             this.origin = origin
             name = baseProperty.name
             isVar = baseProperty.isVar
@@ -381,7 +381,7 @@ object FirFakeOverrideGenerator {
             deprecationsProvider = baseProperty.deprecationsProvider
 
             getter = baseProperty.getter?.buildCopyIfNeeded(
-                moduleData = session.moduleData,
+                moduleData = session.nullableModuleData ?: baseProperty.moduleData,
                 origin = origin,
                 propertyReturnTypeRef = this@buildProperty.returnTypeRef,
                 propertySymbol = newSymbol,
@@ -391,7 +391,7 @@ object FirFakeOverrideGenerator {
             )
 
             setter = baseProperty.setter?.buildCopyIfNeeded(
-                moduleData = session.moduleData,
+                moduleData = session.nullableModuleData ?: baseProperty.moduleData,
                 origin = origin,
                 propertyReturnTypeRef = this@buildProperty.returnTypeRef,
                 propertySymbol = newSymbol,
@@ -507,7 +507,7 @@ object FirFakeOverrideGenerator {
     ): FirField {
         return buildField {
             source = baseField.source
-            moduleData = session.moduleData
+            moduleData = session.nullableModuleData ?: baseField.moduleData
             this.origin = origin
             name = baseField.name
             isVar = baseField.isVar
@@ -646,7 +646,7 @@ object FirFakeOverrideGenerator {
     ): FirFieldSymbol {
         val symbol = FirFieldSymbol(CallableId(derivedClassLookupTag.classId, baseField.name))
         buildField {
-            moduleData = session.moduleData
+            moduleData = session.nullableModuleData ?: baseField.moduleData
             this.symbol = symbol
             origin = FirDeclarationOrigin.SubstitutionOverride
             returnTypeRef = baseField.returnTypeRef.withReplacedConeType(newReturnType)
