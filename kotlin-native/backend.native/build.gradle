@@ -140,6 +140,8 @@ dependencies {
         compilerApi(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil")) { setTransitive(false) }
         compilerApi(commonDependency("org.jetbrains.intellij.deps:log4j")) { setTransitive(false) }
         compilerApi(commonDependency("org.jetbrains.intellij.deps:jdom"))
+        compilerApi(commonDependency("com.fasterxml:aalto-xml")) { setTransitive(false) }
+        compilerApi(commonDependency("org.codehaus.woodstox:stax2-api")) { setTransitive(false) }
     }
     kotlin_script_runtime_jar project(":kotlin-script-runtime")
 
