@@ -14,6 +14,14 @@ class Controller1 {
         x.resume(block())
         COROUTINE_SUSPENDED
     }
+    suspend fun getDef() = "DEF2"
+    suspend fun suspendHere2(block : suspend () -> String = { getDef() }): String {
+        val result = block()
+        return suspendCoroutineUninterceptedOrReturn { x ->
+            x.resume(result)
+            COROUTINE_SUSPENDED
+        }
+    }
 }
 
 fun builder1(c: suspend Controller1.() -> Unit) {
@@ -34,6 +42,10 @@ fun box(): String {
             result = "FAIL"
             return@builder1
         }
+        if (suspendHere2() != "DEF2") {
+            result = "FAIL"
+            return@builder1
+        }
         result = suspendHere { "OK" }
     }
     if (result != "OK") return result
@@ -41,6 +53,10 @@ fun box(): String {
 
     builder2 {
         if (suspendHere() != "DEF") {
+            result = "FAIL"
+            return@builder2
+        }
+        if (suspendHere2() != "DEF2") {
             result = "FAIL"
             return@builder2
         }
@@ -61,6 +77,14 @@ class Controller2 {
     suspend fun suspendHere(block : () -> String = { "DEF" }): String = suspendCoroutineUninterceptedOrReturn { x ->
         x.resume(block())
         COROUTINE_SUSPENDED
+    }
+    suspend fun getDef() = "DEF2"
+    suspend fun suspendHere2(block : suspend () -> String = { getDef() }): String {
+        val result = block()
+        return suspendCoroutineUninterceptedOrReturn { x ->
+            x.resume(result)
+            COROUTINE_SUSPENDED
+        }
     }
 }
 

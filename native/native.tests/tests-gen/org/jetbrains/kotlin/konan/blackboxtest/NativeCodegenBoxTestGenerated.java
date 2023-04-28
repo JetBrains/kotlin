@@ -7971,15 +7971,15 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
-            @TestMetadata("defaultParametersInSuspend.kt")
-            public void testDefaultParametersInSuspend() throws Exception {
-                runTest("compiler/testData/codegen/box/coroutines/defaultParametersInSuspend.kt");
+            @TestMetadata("defaultParameterLambdaInSuspend.kt")
+            public void testDefaultParameterLambdaInSuspend() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/defaultParameterLambdaInSuspend.kt");
             }
 
             @Test
-            @TestMetadata("defaultParamterLambdaInSuspend.kt")
-            public void testDefaultParamterLambdaInSuspend() throws Exception {
-                runTest("compiler/testData/codegen/box/coroutines/defaultParamterLambdaInSuspend.kt");
+            @TestMetadata("defaultParametersInSuspend.kt")
+            public void testDefaultParametersInSuspend() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/defaultParametersInSuspend.kt");
             }
 
             @Test
