@@ -50,10 +50,14 @@ enum class EvaluationMode(protected val mustCheckBody: Boolean) {
     },
 
     ONLY_BUILTINS(mustCheckBody = false) {
-        private val forbiddenMethodsOnPrimitives = setOf("inc", "dec", "rangeTo", "rangeUntil", "hashCode")
-        private val forbiddenMethodsOnStrings = setOf(
-            "subSequence", "hashCode", "<init>",
-            "chars", "codePoints" // from java.lang.CharSequence; they are represented as member declarations from "kotlin.String"
+        private val allowedMethodsOnPrimitives = setOf(
+            "not", "unaryMinus", "unaryPlus", "inv",
+            "toString", "toChar", "toByte", "toShort", "toInt", "toLong", "toFloat", "toDouble",
+            "equals", "compareTo", "plus", "minus", "times", "div", "rem", "and", "or", "xor", "shl", "shr", "ushr",
+            "less", "lessOrEqual", "greater", "greaterOrEqual"
+        )
+        private val allowedMethodsOnStrings = setOf(
+            "<get-length>", "plus", "get", "compareTo", "equals", "toString"
         )
         private val allowedExtensionFunctions = setOf(
             "kotlin.floorDiv", "kotlin.mod", "kotlin.NumbersKt.floorDiv", "kotlin.NumbersKt.mod", "kotlin.<get-code>"
@@ -76,8 +80,8 @@ enum class EvaluationMode(protected val mustCheckBody: Boolean) {
             val parentType = parent?.defaultType
             return when {
                 parentType == null -> fqName in allowedExtensionFunctions || fqName in allowedBuiltinExtensionFunctions
-                parentType.isPrimitiveType() -> function.name.asString() !in forbiddenMethodsOnPrimitives
-                parentType.isString() -> function.name.asString() !in forbiddenMethodsOnStrings
+                parentType.isPrimitiveType() -> function.name.asString() in allowedMethodsOnPrimitives
+                parentType.isString() -> function.name.asString() in allowedMethodsOnStrings
                 parentType.isAny() -> function.name.asString() == "toString" && context?.dispatchReceiver !is IrGetObjectValue
                 parent.isObject -> parent.parentClassOrNull?.defaultType?.let { it.isPrimitiveType() || it.isUnsigned() } == true
                 parentType.isUnsignedType() && function is IrConstructor -> true
