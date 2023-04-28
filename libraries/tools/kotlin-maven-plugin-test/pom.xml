@@ -154,6 +154,7 @@
                                 <configuration>
                                     <projectsDirectory>src/it</projectsDirectory>
                                     <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+                                    <javaHome>${jdk_1_8}</javaHome>
                                 </configuration>
                                 <!--<phase>package</phase>-->
                                 <goals>
@@ -162,7 +163,7 @@
                                 </goals>
                             </execution>
                             <execution>
-                                <id>integration-test-java8</id>
+                                <id>integration-test-java8-only</id>
                                 <configuration>
                                     <projectsDirectory>src/it/java8</projectsDirectory>
                                     <cloneProjectsTo>${project.build.directory}/it/java8</cloneProjectsTo>
@@ -174,7 +175,7 @@
                                 </goals>
                             </execution>
                             <execution>
-                                <id>integration-test-java9</id>
+                                <id>integration-test-java9-only</id>
                                 <configuration>
                                     <projectsDirectory>src/it/java9</projectsDirectory>
                                     <cloneProjectsTo>${project.build.directory}/it/java9</cloneProjectsTo>
@@ -186,7 +187,7 @@
                                 </goals>
                             </execution>
                             <execution>
-                                <id>integration-test-java17</id>
+                                <id>integration-test-java17-only</id>
                                 <configuration>
                                     <projectsDirectory>src/it/java17</projectsDirectory>
                                     <cloneProjectsTo>${project.build.directory}/it/java17</cloneProjectsTo>
@@ -202,6 +203,7 @@
                                 <configuration>
                                     <projectsDirectory>src/it</projectsDirectory>
                                     <cloneProjectsTo>${project.build.directory}/it-k2</cloneProjectsTo>
+                                    <javaHome>${jdk_1_8}</javaHome>
                                     <pomExcludes>
                                         <!-- exclude kapt -->
                                         <pomExclude>test-dagger-maven-example/pom.xml</pomExclude>
