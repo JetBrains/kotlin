@@ -16,9 +16,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
-import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
-import org.jetbrains.kotlin.ir.interpreter.checker.IrCompileTimeChecker
-import org.jetbrains.kotlin.ir.interpreter.checker.IrCompileTimeNameChecker
+import org.jetbrains.kotlin.ir.interpreter.checker.*
 import org.jetbrains.kotlin.ir.interpreter.toConstantValue
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
@@ -56,6 +54,11 @@ internal abstract class IrConstTransformer(
     private val onError: (IrFile, IrElement, IrErrorExpression) -> Unit,
     private val suppressExceptions: Boolean,
 ) : IrElementTransformer<Nothing?> {
+    private val checkers = setOf(
+        IrInterpreterCommonChecker(mode),
+        IrInterpreterNameChecker(mode)
+    )
+
     private fun IrExpression.warningIfError(original: IrExpression): IrExpression {
         if (this is IrErrorExpression) {
             onWarning(irFile, original, this)
@@ -80,8 +83,7 @@ internal abstract class IrConstTransformer(
         configuration: IrInterpreterConfiguration = interpreter.environment.configuration
     ): Boolean {
         return try {
-            this.accept(IrCompileTimeChecker(mode, configuration), null) ||
-                    this.accept(IrCompileTimeNameChecker(mode), null)
+            checkers.any { this.accept(it, IrInterpreterCheckerData(configuration)) }
         } catch (e: Throwable) {
             if (suppressExceptions) {
                 return false
