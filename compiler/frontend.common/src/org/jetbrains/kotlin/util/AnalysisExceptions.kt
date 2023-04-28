@@ -56,6 +56,7 @@ fun Throwable.wrapIntoFileAnalysisExceptionIfNeeded(
         else -> FileAnalysisException(filePath, cause, linesMapping(source.startOffset))
     }
     this is IndexNotReadyException -> this
+    this is FileAnalysisException -> this
     this is ControlFlowException -> this
     this is VirtualMachineError -> this
     else -> FileAnalysisException(filePath, this)
