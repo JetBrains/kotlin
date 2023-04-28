@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
+import org.jetbrains.kotlin.KtFakeSourceElement
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
@@ -16,7 +18,10 @@ import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
+import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
+import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirWrappedDelegateExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildLazyDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.references.FirSuperReference
@@ -155,6 +160,7 @@ private class LLFirBodyTargetResolver(
             is FirPropertyAccessor -> resolve(target.propertySymbol.fir, BodyStateKeepers.PROPERTY)
             is FirEnumEntry -> resolve(target, BodyStateKeepers.ENUM_ENTRY)
             is FirAnonymousInitializer -> resolve(target, BodyStateKeepers.ANONYMOUS_INITIALIZER)
+            is FirScript -> resolve(target, BodyStateKeepers.SCRIPT)
             is FirDanglingModifierList,
             is FirFileAnnotationsContainer,
             is FirTypeAlias,
@@ -167,28 +173,36 @@ private class LLFirBodyTargetResolver(
 }
 
 internal object BodyStateKeepers {
+    val SCRIPT: StateKeeper<FirScript> = stateKeeper {}
+
     val ANONYMOUS_INITIALIZER: StateKeeper<FirAnonymousInitializer> = stateKeeper {
-        add(FirAnonymousInitializer::body, FirAnonymousInitializer::replaceBody, ::guardBlock)
+        add(FirAnonymousInitializer::body, FirAnonymousInitializer::replaceBody, ::blockGuard)
     }
 
     val FUNCTION: StateKeeper<FirFunction> = stateKeeper { function ->
-        add(FirFunction::body, FirFunction::replaceBody, ::guardBlock)
-        add(FirFunction::controlFlowGraphReference, FirFunction::replaceControlFlowGraphReference)
+        if (!isCallableWithSpecialBody(function)) {
+            add(FirFunction::body, FirFunction::replaceBody, ::blockGuard)
 
-        entityList(function.valueParameters) { valueParameter ->
-            if (valueParameter.defaultValue != null) {
-                add(FirValueParameter::defaultValue, FirValueParameter::replaceDefaultValue, ::guardExpression)
+            entityList(function.valueParameters) { valueParameter ->
+                if (valueParameter.defaultValue != null) {
+                    add(FirValueParameter::defaultValue, FirValueParameter::replaceDefaultValue, ::expressionGuard)
+                }
             }
         }
+
+        add(FirFunction::controlFlowGraphReference, FirFunction::replaceControlFlowGraphReference)
     }
 
     val CONSTRUCTOR: StateKeeper<FirConstructor> = stateKeeper {
         add(FUNCTION)
-        add(FirConstructor::delegatedConstructor, FirConstructor::replaceDelegatedConstructor, ::guardDelegatedConstructorCall)
+        add(FirConstructor::delegatedConstructor, FirConstructor::replaceDelegatedConstructor, ::delegatedConstructorCallGuard)
     }
 
     private val PROPERTY_ACCESSOR: StateKeeper<FirPropertyAccessor> = stateKeeper { accessor ->
-        add(FirPropertyAccessor::body, FirPropertyAccessor::replaceBody, ::guardBlock)
+        if (!isCallableWithSpecialBody(accessor)) {
+            add(FirPropertyAccessor::body, FirPropertyAccessor::replaceBody, ::blockGuard)
+        }
+
         add(FirPropertyAccessor::returnTypeRef, FirPropertyAccessor::replaceReturnTypeRef)
 
         entityList(accessor.valueParameters) {
@@ -197,13 +211,18 @@ internal object BodyStateKeepers {
     }
 
     val PROPERTY: StateKeeper<FirProperty> = stateKeeper { property ->
-        add(FirProperty::initializeIfUnresolved, FirProperty::replaceInitializer, ::guardExpression)
+        if (!isCallableWithSpecialBody(property)) {
+            add(FirProperty::initializerIfUnresolved, FirProperty::replaceInitializer, ::expressionGuard)
+        }
 
         entity(property.getterIfUnresolved, PROPERTY_ACCESSOR)
         entity(property.setterIfUnresolved, PROPERTY_ACCESSOR)
 
-        entity(property.backingField) {
-            add(FirBackingField::initializer, FirBackingField::replaceInitializer, ::guardExpression)
+        entity(property.backingField) { field ->
+            if (field !is FirDefaultPropertyBackingField) {
+                add(FirBackingField::initializer, FirBackingField::replaceInitializer, ::expressionGuard)
+            }
+
             add(FirBackingField::returnTypeRef, FirBackingField::replaceReturnTypeRef)
         }
 
@@ -214,11 +233,11 @@ internal object BodyStateKeepers {
     }
 
     val ENUM_ENTRY: StateKeeper<FirEnumEntry> = stateKeeper {
-        add(FirEnumEntry::initializer, FirEnumEntry::replaceInitializer, ::guardExpression)
+        add(FirEnumEntry::initializer, FirEnumEntry::replaceInitializer, ::expressionGuard)
     }
 }
 
-private val FirProperty.initializeIfUnresolved: FirExpression?
+private val FirProperty.initializerIfUnresolved: FirExpression?
     get() = if (bodyResolveState < FirPropertyBodyResolveState.INITIALIZER_RESOLVED) initializer else null
 
 private val FirProperty.getterIfUnresolved: FirPropertyAccessor?
@@ -230,7 +249,7 @@ private val FirProperty.setterIfUnresolved: FirPropertyAccessor?
 private val FirProperty.delegateIfUnresolved: FirWrappedDelegateExpression?
     get() = if (bodyResolveState < FirPropertyBodyResolveState.EVERYTHING_RESOLVED) delegate as? FirWrappedDelegateExpression else null
 
-private fun guardDelegatedConstructorCall(fir: FirDelegatedConstructorCall): FirDelegatedConstructorCall {
+private fun delegatedConstructorCallGuard(fir: FirDelegatedConstructorCall): FirDelegatedConstructorCall {
     if (fir is FirLazyDelegatedConstructorCall) {
         return fir
     }

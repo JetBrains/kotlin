@@ -10,7 +10,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirEle
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.guardBlock
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.blockGuard
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.isCallableWithSpecialBody
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.FirSession
@@ -82,19 +83,25 @@ private object ContractStateKeepers {
         add(FirContractDescriptionOwner::contractDescription, FirContractDescriptionOwner::replaceContractDescription)
     }
 
+    private val BODY_OWNER: StateKeeper<FirFunction> = stateKeeper { declaration ->
+        if (!isCallableWithSpecialBody(declaration)) {
+            add(FirFunction::body, FirFunction::replaceBody, ::blockGuard)
+        }
+    }
+
     val SIMPLE_FUNCTION: StateKeeper<FirSimpleFunction> = stateKeeper {
         add(CONTRACT_DESCRIPTION_OWNER)
-        add(FirFunction::body, FirFunction::replaceBody, ::guardBlock)
+        add(BODY_OWNER)
     }
 
     val CONSTRUCTOR: StateKeeper<FirConstructor> = stateKeeper {
         add(CONTRACT_DESCRIPTION_OWNER)
-        add(FirConstructor::body, FirConstructor::replaceBody, ::guardBlock)
+        add(BODY_OWNER)
     }
 
     val PROPERTY_ACCESSOR: StateKeeper<FirPropertyAccessor> = stateKeeper {
         add(CONTRACT_DESCRIPTION_OWNER)
-        add(FirFunction::body, FirFunction::replaceBody, ::guardBlock)
+        add(BODY_OWNER)
     }
 
     val PROPERTY: StateKeeper<FirProperty> = stateKeeper { property ->
