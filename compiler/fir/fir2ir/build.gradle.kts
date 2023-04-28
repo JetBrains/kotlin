@@ -80,7 +80,10 @@ fun Test.configure(configureJUnit: JUnitPlatformOptions.() -> Unit = {}) {
     }
 }
 
-projectTest(jUnitMode = JUnitMode.JUnit5) {
+projectTest(
+    jUnitMode = JUnitMode.JUnit5,
+    defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0)
+) {
     configure()
 }
 
