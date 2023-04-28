@@ -96,22 +96,23 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
                 buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
             }
 
-            fun moduleVersion(rootModulePath: String, moduleName: String, pathToPackageJson: String): String =
-                NpmProjectModules(projectPath.resolve(rootModulePath).toFile())
-                    .require(moduleName)
-                    .let { Paths.get(it).parent.resolve(pathToPackageJson).resolve(NpmProject.PACKAGE_JSON) }
-                    .let { fromSrcPackageJson(it.toFile()) }
-                    .let { it!!.version }
+            fun moduleVersion(rootModulePath: String, moduleName: String): String =
+                projectPath.resolve(rootModulePath).toFile()
+                    .resolve(NpmProject.PACKAGE_JSON)
+                    .let { fromSrcPackageJson(it) }
+                    .let { it?.dependencies }
+                    ?.getValue(moduleName)
+                    ?: error("Not found package $moduleName in $rootModulePath")
 
             build("build") {
-                val appAsyncVersion = moduleVersion("build/js/node_modules/js-composite-build", "node-fetch", "..")
-                assertEquals("3.2.8", appAsyncVersion)
+                val libDecamelizeVersion = moduleVersion("build/js/node_modules/lib2", "decamelize")
+                assertEquals("1.1.1", libDecamelizeVersion)
 
-                val libAsyncVersion = moduleVersion("build/js/node_modules/lib2", "async", "..")
+                val libAsyncVersion = moduleVersion("build/js/node_modules/lib2", "async")
                 assertEquals("2.6.2", libAsyncVersion)
 
-                val appDecamelizeVersion = moduleVersion("build/js/node_modules/base2", "decamelize", ".")
-                assertEquals("1.1.1", appDecamelizeVersion)
+                val appNodeFetchVersion = moduleVersion("build/js/node_modules/js-composite-build", "node-fetch")
+                assertEquals("3.2.8", appNodeFetchVersion)
             }
         }
     }
