@@ -324,7 +324,7 @@ open class FirDeclarationsResolveTransformer(
             .transformSingle(components.integerLiteralAndOperatorApproximationTransformer, null)
 
         // Second, replace result type of delegate expression with stub type if delegate not yet resolved
-        if (delegateExpression is FirQualifiedAccessExpression) {
+        if (delegateExpression is FirResolvable) {
             val calleeReference = delegateExpression.calleeReference
             if (calleeReference is FirNamedReferenceWithCandidate) {
                 val system = calleeReference.candidate.system
@@ -343,11 +343,14 @@ open class FirDeclarationsResolveTransformer(
         }
 
         val provideDelegateCall = wrappedDelegateExpression.delegateProvider as FirFunctionCall
+        provideDelegateCall.replaceExplicitReceiver(delegateExpression)
 
         // Resolve call for provideDelegate, without completion
         // TODO: this generates some nodes in the control flow graph which we don't want if we
         //  end up not selecting this option.
-        provideDelegateCall.transformSingle(this, ResolutionMode.ContextIndependent)
+        transformer.expressionsTransformer.transformFunctionCallInternal(
+            provideDelegateCall, ResolutionMode.ContextIndependent, provideDelegate = true
+        )
 
         // If we got successful candidate for provideDelegate, let's select it
         val provideDelegateCandidate = provideDelegateCall.candidate()
