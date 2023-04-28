@@ -61,7 +61,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 import org.jetbrains.kotlin.utils.threadLocal
@@ -493,13 +492,12 @@ class Fir2IrDeclarationStorage(
 
     internal fun declareIrSimpleFunction(
         signature: IdSignature?,
-        containerSource: DeserializedContainerSource?,
         factory: (IrSimpleFunctionSymbol) -> IrSimpleFunction
     ): IrSimpleFunction =
         if (signature == null) {
             factory(IrSimpleFunctionSymbolImpl())
         } else {
-            symbolTable.declareSimpleFunction(signature, { Fir2IrSimpleFunctionSymbol(signature, containerSource) }, factory)
+            symbolTable.declareSimpleFunction(signature, { Fir2IrSimpleFunctionSymbol(signature) }, factory)
         }
 
     fun getOrCreateIrFunction(
@@ -568,7 +566,7 @@ class Fir2IrDeclarationStorage(
             if (isLambda) ((function as FirAnonymousFunction).typeRef as? FirResolvedTypeRef)?.type?.isSuspendOrKSuspendFunctionType(session) == true
             else simpleFunction?.isSuspend == true
         val created = function.convertWithOffsets { startOffset, endOffset ->
-            val result = declareIrSimpleFunction(signature, simpleFunction?.containerSource) { symbol ->
+            val result = declareIrSimpleFunction(signature) { symbol ->
                 classifierStorage.preCacheTypeParameters(function, symbol)
                 irFactory.createFunction(
                     startOffset, endOffset, updatedOrigin, symbol,
@@ -694,13 +692,12 @@ class Fir2IrDeclarationStorage(
 
     private fun declareIrAccessor(
         signature: IdSignature?,
-        containerSource: DeserializedContainerSource?,
         factory: (IrSimpleFunctionSymbol) -> IrSimpleFunction
     ): IrSimpleFunction =
         if (signature == null)
             factory(IrSimpleFunctionSymbolImpl())
         else
-            symbolTable.declareSimpleFunction(signature, { Fir2IrSimpleFunctionSymbol(signature, containerSource) }, factory)
+            symbolTable.declareSimpleFunction(signature, { Fir2IrSimpleFunctionSymbol(signature) }, factory)
 
     private fun createIrPropertyAccessor(
         propertyAccessor: FirPropertyAccessor?,
@@ -725,8 +722,7 @@ class Fir2IrDeclarationStorage(
             }
         val containerSource = (correspondingProperty as? IrProperty)?.containerSource
         return declareIrAccessor(
-            signature,
-            containerSource
+            signature
         ) { symbol ->
             val accessorReturnType = if (isSetter) irBuiltIns.unitType else propertyType
             val visibility = propertyAccessor?.visibility?.let {
@@ -824,13 +820,12 @@ class Fir2IrDeclarationStorage(
 
     private fun declareIrProperty(
         signature: IdSignature?,
-        containerSource: DeserializedContainerSource?,
         factory: (IrPropertySymbol) -> IrProperty
     ): IrProperty =
         if (signature == null)
             factory(IrPropertySymbolImpl())
         else
-            symbolTable.declareProperty(signature, { Fir2IrPropertySymbol(signature, containerSource) }, factory)
+            symbolTable.declareProperty(signature, { Fir2IrPropertySymbol(signature) }, factory)
 
     private fun declareIrField(factory: (IrFieldSymbol) -> IrField): IrField =
         factory(IrFieldSymbolImpl())
@@ -903,7 +898,7 @@ class Fir2IrDeclarationStorage(
             return createIrLazyProperty(property, signature, irParent, origin)
         }
         return property.convertWithOffsets { startOffset, endOffset ->
-            val result = declareIrProperty(signature, property.containerSource) { symbol ->
+            val result = declareIrProperty(signature) { symbol ->
                 classifierStorage.preCacheTypeParameters(property, symbol)
                 irFactory.createProperty(
                     startOffset, endOffset, origin, symbol,
@@ -1446,10 +1441,7 @@ class Fir2IrDeclarationStorage(
         fun IrProperty.isIllegalFakeOverride(): Boolean {
             if (!isFakeOverride) return false
             val overriddenSymbols = overriddenSymbols
-            if (overriddenSymbols.isEmpty() || overriddenSymbols.any { it.owner.isIllegalFakeOverride() }) {
-                return true
-            }
-            return false
+            return overriddenSymbols.isEmpty() || overriddenSymbols.any { it.owner.isIllegalFakeOverride() }
         }
 
         if (fakeOverrideOwnerLookupTag != null &&
@@ -1473,7 +1465,7 @@ class Fir2IrDeclarationStorage(
         lazyParent: IrDeclarationParent,
         declarationOrigin: IrDeclarationOrigin
     ): IrProperty {
-        val symbol = Fir2IrPropertySymbol(signature, fir.containerSource)
+        val symbol = Fir2IrPropertySymbol(signature)
         val firPropertySymbol = fir.symbol
         val irProperty = fir.convertWithOffsets { startOffset, endOffset ->
             symbolTable.declareProperty(signature, { symbol }) {

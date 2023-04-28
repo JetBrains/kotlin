@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 
 abstract class Fir2IrBindableSymbol<out D : DeclarationDescriptor, B : IrDeclaration>(
     override val signature: IdSignature,
-    private val containerSource: DeserializedContainerSource? = null
 ) : IrBindableSymbol<D, B> {
 
     private var _owner: B? = null
@@ -48,10 +47,5 @@ abstract class Fir2IrBindableSymbol<out D : DeclarationDescriptor, B : IrDeclara
     override fun toString(): String {
         if (isBound) return owner.render()
         return "Unbound public symbol for $signature"
-    }
-
-    companion object {
-        private const val GETTER_PREFIX = "<get"
-        private const val SETTER_PREFIX = "<set"
     }
 }

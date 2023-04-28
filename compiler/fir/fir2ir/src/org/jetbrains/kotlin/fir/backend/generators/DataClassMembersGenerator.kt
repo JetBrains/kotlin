@@ -306,7 +306,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
                 )
             }
             val signature = if (lookupTag.classId.isLocal) null else components.signatureComposer.composeSignature(firFunction)
-            return components.declarationStorage.declareIrSimpleFunction(signature, null) { symbol ->
+            return components.declarationStorage.declareIrSimpleFunction(signature) { symbol ->
                 components.irFactory.createFunction(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, symbol, name, DescriptorVisibilities.PUBLIC, Modality.OPEN, returnType,
                     isInline = false, isExternal = false, isTailrec = false, isSuspend = false, isOperator = false,
