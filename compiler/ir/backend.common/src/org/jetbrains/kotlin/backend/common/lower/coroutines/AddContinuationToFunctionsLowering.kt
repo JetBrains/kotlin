@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.getOrPut
 import org.jetbrains.kotlin.backend.common.ir.*
+import org.jetbrains.kotlin.backend.common.lower.VariableRemapper
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrStatement
@@ -71,8 +72,11 @@ class AddContinuationToLocalSuspendFunctionsLowering(val context: CommonBackendC
 private fun transformSuspendFunction(context: CommonBackendContext, function: IrSimpleFunction): IrSimpleFunction {
     val newFunctionWithContinuation = function.getOrCreateFunctionWithContinuationStub(context)
     // Using custom mapping because number of parameters doesn't match
-    val parameterMapping = function.explicitParameters.zip(newFunctionWithContinuation.explicitParameters).toMap()
+    val parameterMapping : Map<IrValueParameter, IrValueParameter> = function.explicitParameters.zip(newFunctionWithContinuation.explicitParameters).toMap()
     val newBody = function.moveBodyTo(newFunctionWithContinuation, parameterMapping)
+    for ((old, new) in parameterMapping.entries) {
+        new.defaultValue = old.defaultValue?.transform(VariableRemapper(parameterMapping), null)
+    }
 
     // Since we are changing return type to Any, function can no longer return unit implicitly.
     if (
@@ -128,11 +132,6 @@ private fun IrSimpleFunction.createSuspendFunctionStub(context: CommonBackendCon
             }
         }
         function.valueParameters = valueParameters.memoryOptimizedMap { it.copyTo(function) }
-
-        val mapping = mutableMapOf<IrValueSymbol, IrValueSymbol>()
-        valueParameters.forEach { mapping[it.symbol] = function.valueParameters[it.index].symbol }
-        val remapper = ValueRemapper(mapping)
-        function.valueParameters.forEach { it.defaultValue = it.defaultValue?.transform(remapper, null) }
 
         function.addValueParameter {
             startOffset = function.startOffset
