@@ -449,15 +449,6 @@ fun checkTypeMismatch(
     val typeContext = context.session.typeContext
 
     if (!isSubtypeForTypeMismatch(typeContext, subtype = rValueType, supertype = lValueType)) {
-        if (rValueType is ConeClassLikeType &&
-            rValueType.lookupTag.classId == StandardClassIds.Int &&
-            lValueType.fullyExpandedType(context.session).isIntegerTypeOrNullableIntegerTypeOfAnySize &&
-            rValueType.nullability == ConeNullability.NOT_NULL
-        ) {
-            // val p: Byte = 42 or similar situation
-            // TODO: remove after fix of KT-46047
-            return
-        }
         if (lValueType.isExtensionFunctionType || rValueType.isExtensionFunctionType) {
             // TODO: remove after fix of KT-45989
             return
