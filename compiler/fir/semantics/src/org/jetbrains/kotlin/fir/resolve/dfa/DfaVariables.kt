@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.types.SmartcastStability
 
 data class Identifier(
@@ -34,6 +33,9 @@ enum class PropertyStability(val impliedSmartcastStability: SmartcastStability?)
     // Smartcast is definitely safe regardless of usage.
     STABLE_VALUE(SmartcastStability.STABLE_VALUE),
 
+    // Smartcast may or may not be safe, depending on whether there are concurrent writes to this local variable.
+    LOCAL_VAR(null),
+
     // Open or custom getter.
     // Smartcast is always unsafe regardless of usage.
     PROPERTY_WITH_GETTER(SmartcastStability.PROPERTY_WITH_GETTER),
@@ -42,16 +44,24 @@ enum class PropertyStability(val impliedSmartcastStability: SmartcastStability?)
     // Smartcast is always unsafe regardless of usage.
     ALIEN_PUBLIC_PROPERTY(SmartcastStability.ALIEN_PUBLIC_PROPERTY),
 
-    // Smartcast may or may not be safe, depending on whether there are concurrent writes to this local variable.
-    LOCAL_VAR(null),
-
     // Mutable member property of a class or object.
     // Smartcast is always unsafe regardless of usage.
     MUTABLE_PROPERTY(SmartcastStability.MUTABLE_PROPERTY),
 
     // Delegated property of a class or object.
     // Smartcast is always unsafe regardless of usage.
-    DELEGATED_PROPERTY(SmartcastStability.DELEGATED_PROPERTY),
+    DELEGATED_PROPERTY(SmartcastStability.DELEGATED_PROPERTY);
+
+    fun combineWithReceiverStability(receiverStability: PropertyStability?): PropertyStability {
+        if (receiverStability == null) return this
+        if (this == LOCAL_VAR) {
+            require(receiverStability == STABLE_VALUE || receiverStability == LOCAL_VAR) {
+                "LOCAL_VAR can have only stable or local receiver, but got $receiverStability"
+            }
+            return this
+        }
+        return maxOf(this, receiverStability)
+    }
 }
 
 class RealVariable(
@@ -59,9 +69,11 @@ class RealVariable(
     val isThisReference: Boolean,
     val explicitReceiverVariable: DataFlowVariable?,
     variableIndexForDebug: Int,
-    val stability: PropertyStability,
+    stability: PropertyStability,
 ) : DataFlowVariable(variableIndexForDebug) {
     val dependentVariables = mutableSetOf<RealVariable>()
+
+    val stability: PropertyStability = stability.combineWithReceiverStability((explicitReceiverVariable as? RealVariable)?.stability)
 
     override fun equals(other: Any?): Boolean {
         return this === other

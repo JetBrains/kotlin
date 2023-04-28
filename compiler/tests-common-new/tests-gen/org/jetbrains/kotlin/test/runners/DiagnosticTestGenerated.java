@@ -31753,6 +31753,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             @TestDataPath("$PROJECT_ROOT")
             public class PublicVals {
                 @Test
+                @TestMetadata("accessThrowOtherModule.kt")
+                public void testAccessThrowOtherModule() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/publicVals/accessThrowOtherModule.kt");
+                }
+
+                @Test
                 public void testAllFilesPresentInPublicVals() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/smartCasts/publicVals"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
                 }
@@ -32183,6 +32189,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
                 @TestMetadata("reassignedDependency.kt")
                 public void testReassignedDependency() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/smartCasts/variables/reassignedDependency.kt");
+                }
+
+                @Test
+                @TestMetadata("reassignedDependency_unstable.kt")
+                public void testReassignedDependency_unstable() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/variables/reassignedDependency_unstable.kt");
                 }
 
                 @Test
