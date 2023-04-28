@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.metadata
 
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.api.attributes.Category
@@ -505,8 +506,9 @@ private val KotlinMetadataTarget.metadataCompilationsCreated: CompletableFuture<
     CompletableFuture()
 }
 
-internal suspend fun KotlinMetadataTarget.awaitMetadataCompilationsCreated() {
+internal suspend fun KotlinMetadataTarget.awaitMetadataCompilationsCreated(): NamedDomainObjectContainer<KotlinCompilation<*>> {
     metadataCompilationsCreated.await()
+    return compilations
 }
 
 internal suspend fun Project.findMetadataCompilation(sourceSet: KotlinSourceSet): KotlinMetadataCompilation<*>? {
