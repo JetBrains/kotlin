@@ -5291,7 +5291,9 @@ if (PlatformInfo.isAppleTarget(project)) {
 
     interopTest("interop_objc_kt56402") {
         // Test depends on macOS-specific AppKit
-        enabled = (project.testTarget == 'macos_x64' || project.testTarget == 'macos_arm64' || project.testTarget == null) && isExperimentalMM
+        enabled = (project.testTarget == 'macos_x64' || project.testTarget == 'macos_arm64' || project.testTarget == null)
+            && isExperimentalMM
+            && !isNoopGC // requires some GC
         source = 'interop/objc/kt56402/main.kt'
         interop = "objc_kt56402"
         flags = ["-tr", "-e", "runAllTests"] // Generate test suites, but use custom entrypoint.

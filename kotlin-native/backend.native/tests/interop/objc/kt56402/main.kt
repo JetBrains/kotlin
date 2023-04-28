@@ -53,7 +53,12 @@ fun alloc(ctor: ((ULong) -> Unit) -> ULong): ULong = autoreleasepool {
 
 fun waitDestruction(id: ULong) {
     assertTrue(isMainThread())
-    kotlin.native.internal.GC.collect()
+    // Make sure the finalizers are not run on the main thread even for STMS.
+    withWorker {
+        execute(TransferMode.SAFE, {}) {
+            kotlin.native.internal.GC.collect()
+        }.result
+    }
     while (true) {
         spin()
         if (!(id in aliveObjectIds)) {
