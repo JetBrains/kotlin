@@ -335,6 +335,7 @@ include ":kotlinx-serialization-compiler-plugin",
 if (!buildProperties.inJpsBuildIdeaSync) {
     include ":prepare:ide-plugin-dependencies:android-extensions-compiler-plugin-for-ide",
             ":prepare:ide-plugin-dependencies:allopen-compiler-plugin-for-ide",
+            ":prepare:ide-plugin-dependencies:scripting-compiler-plugin-for-ide",
             ":prepare:ide-plugin-dependencies:allopen-compiler-plugin-tests-for-ide",
             ":prepare:ide-plugin-dependencies:incremental-compilation-impl-tests-for-ide",
             ":prepare:ide-plugin-dependencies:js-ir-runtime-for-ide",
@@ -803,6 +804,8 @@ project(':kotlin-scripting-ide-services-unshaded').projectDir = "$rootDir/plugin
 project(':kotlin-scripting-ide-services-test').projectDir = "$rootDir/plugins/scripting/scripting-ide-services-test" as File
 project(':kotlin-scripting-ide-services').projectDir = "$rootDir/plugins/scripting/scripting-ide-services-embeddable" as File
 project(':kotlin-scripting-ide-common').projectDir = "$rootDir/plugins/scripting/scripting-ide-common" as File
+project(':kotlin-scripting-compiler').projectDir = "$rootDir/plugins/scripting/scripting-compiler" as File
+project(':kotlin-scripting-compiler-impl').projectDir = "$rootDir/plugins/scripting/scripting-compiler-impl" as File
 
 // Uncomment to use locally built protobuf-relocated
 // includeBuild("dependencies/protobuf")
