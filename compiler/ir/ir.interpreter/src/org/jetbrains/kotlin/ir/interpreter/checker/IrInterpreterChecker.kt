@@ -9,11 +9,10 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 
-interface IrInterpreterChecker : IrElementVisitor<Boolean, IrInterpreterCheckerData> {
-    val mode: EvaluationMode
-}
+interface IrInterpreterChecker : IrElementVisitor<Boolean, IrInterpreterCheckerData>
 
 class IrInterpreterCheckerData(
+    val mode: EvaluationMode,
     val irBuiltIns: IrBuiltIns,
-    val interpreterConfiguration: IrInterpreterConfiguration
+    val interpreterConfiguration: IrInterpreterConfiguration,
 )

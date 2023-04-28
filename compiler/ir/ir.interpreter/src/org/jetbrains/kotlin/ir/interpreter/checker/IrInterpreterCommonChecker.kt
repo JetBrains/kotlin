@@ -17,9 +17,7 @@ import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.statements
 
-class IrInterpreterCommonChecker(
-    override val mode: EvaluationMode
-) : IrInterpreterChecker {
+class IrInterpreterCommonChecker : IrInterpreterChecker {
     private val visitedStack = mutableListOf<IrElement>()
 
     private inline fun IrElement.asVisited(crossinline block: () -> Boolean): Boolean {
@@ -42,14 +40,14 @@ class IrInterpreterCommonChecker(
     private fun visitConstructor(expression: IrFunctionAccessExpression, data: IrInterpreterCheckerData): Boolean {
         val constructor = expression.symbol.owner
 
-        if (!mode.canEvaluateFunction(constructor)) return false
+        if (!data.mode.canEvaluateFunction(constructor)) return false
         if (!visitValueArguments(expression, data)) return false
         return visitBodyIfNeeded(constructor, data) &&
                 constructor.parentAsClass.declarations.filterIsInstance<IrAnonymousInitializer>().all { it.accept(this, data) }
     }
 
     private fun visitBodyIfNeeded(irFunction: IrFunction, data: IrInterpreterCheckerData): Boolean {
-        if (!mode.mustCheckBodyOf(irFunction)) return true
+        if (!data.mode.mustCheckBodyOf(irFunction)) return true
         return irFunction.asVisited { irFunction.body?.accept(this@IrInterpreterCommonChecker, data) ?: true }
     }
 
@@ -58,10 +56,10 @@ class IrInterpreterCommonChecker(
     }
 
     override fun visitCall(expression: IrCall, data: IrInterpreterCheckerData): Boolean {
-        if (!mode.canEvaluateExpression(expression)) return false
+        if (!data.mode.canEvaluateExpression(expression)) return false
 
         val owner = expression.symbol.owner
-        if (!mode.canEvaluateFunction(owner)) return false
+        if (!data.mode.canEvaluateFunction(owner)) return false
 
         // We disable `toFloat` folding on K/JS till `toFloat` is fixed (KT-35422)
         // This check must be placed here instead of CallInterceptor because we still
@@ -101,7 +99,7 @@ class IrInterpreterCommonChecker(
     }
 
     override fun visitBlock(expression: IrBlock, data: IrInterpreterCheckerData): Boolean {
-        if (!mode.canEvaluateBlock(expression)) return false
+        if (!data.mode.canEvaluateBlock(expression)) return false
 
         // `IrReturnableBlock` will be created from IrCall after inline. We should do basically the same check as for IrCall.
         if (expression is IrReturnableBlock) {
@@ -113,7 +111,7 @@ class IrInterpreterCommonChecker(
     }
 
     override fun visitComposite(expression: IrComposite, data: IrInterpreterCheckerData): Boolean {
-        if (!mode.canEvaluateComposite(expression)) return false
+        if (!data.mode.canEvaluateComposite(expression)) return false
 
         return visitStatements(expression.statements, data)
     }
@@ -125,7 +123,7 @@ class IrInterpreterCommonChecker(
     override fun visitConst(expression: IrConst<*>, data: IrInterpreterCheckerData): Boolean {
         if (expression.type.getUnsignedType() != null) {
             val constructor = expression.type.classOrNull?.owner?.constructors?.singleOrNull() ?: return false
-            return mode.canEvaluateFunction(constructor)
+            return data.mode.canEvaluateFunction(constructor)
         }
         return true
     }
@@ -146,7 +144,7 @@ class IrInterpreterCommonChecker(
                         .filterIsInstance<IrSimpleFunction>()
                         .single { it.name.asString() == "toString" && it.valueParameters.isEmpty() && it.extensionReceiverParameter == null }
 
-                    mode.canEvaluateFunction(toString) && visitBodyIfNeeded(toString, data)
+                    data.mode.canEvaluateFunction(toString) && visitBodyIfNeeded(toString, data)
                 }
 
                 else -> arg.accept(this, data)
@@ -160,7 +158,7 @@ class IrInterpreterCommonChecker(
     }
 
     override fun visitGetEnumValue(expression: IrGetEnumValue, data: IrInterpreterCheckerData): Boolean {
-        if (!mode.canEvaluateEnumValue(expression)) return false
+        if (!data.mode.canEvaluateEnumValue(expression)) return false
 
         // we want to avoid recursion in cases like "enum class E(val srt: String) { OK(OK.name) }"
         if (visitedStack.contains(expression)) return true
@@ -242,20 +240,20 @@ class IrInterpreterCommonChecker(
     }
 
     override fun visitFunctionReference(expression: IrFunctionReference, data: IrInterpreterCheckerData): Boolean {
-        if (!mode.canEvaluateCallableReference(expression)) return false
+        if (!data.mode.canEvaluateCallableReference(expression)) return false
 
         val owner = expression.symbol.owner
         val dispatchReceiverComputable = expression.dispatchReceiver?.accept(this, data) ?: true
         val extensionReceiverComputable = expression.extensionReceiver?.accept(this, data) ?: true
 
-        if (!mode.canEvaluateFunction(owner)) return false
+        if (!data.mode.canEvaluateFunction(owner)) return false
 
         val bodyComputable = visitBodyIfNeeded(owner, data)
         return dispatchReceiverComputable && extensionReceiverComputable && bodyComputable
     }
 
     override fun visitFunctionExpression(expression: IrFunctionExpression, data: IrInterpreterCheckerData): Boolean {
-        if (!mode.canEvaluateFunctionExpression(expression)) return false
+        if (!data.mode.canEvaluateFunctionExpression(expression)) return false
 
         val body = expression.function.body ?: return false
         return expression.function.asVisited { body.accept(this, data) }
@@ -275,7 +273,7 @@ class IrInterpreterCommonChecker(
     }
 
     override fun visitWhen(expression: IrWhen, data: IrInterpreterCheckerData): Boolean {
-        if (!mode.canEvaluateExpression(expression)) return false
+        if (!data.mode.canEvaluateExpression(expression)) return false
 
         return expression.branches.all { it.accept(this, data) }
     }
@@ -297,7 +295,7 @@ class IrInterpreterCommonChecker(
     }
 
     override fun visitTry(aTry: IrTry, data: IrInterpreterCheckerData): Boolean {
-        if (!mode.canEvaluateExpression(aTry)) return false
+        if (!data.mode.canEvaluateExpression(aTry)) return false
 
         if (!aTry.tryResult.accept(this, data)) return false
         if (aTry.finallyExpression != null && aTry.finallyExpression?.accept(this, data) == false) return false
@@ -314,22 +312,22 @@ class IrInterpreterCommonChecker(
     }
 
     override fun visitThrow(expression: IrThrow, data: IrInterpreterCheckerData): Boolean {
-        if (!mode.canEvaluateExpression(expression)) return false
+        if (!data.mode.canEvaluateExpression(expression)) return false
 
         return expression.value.accept(this, data)
     }
 
     override fun visitPropertyReference(expression: IrPropertyReference, data: IrInterpreterCheckerData): Boolean {
-        if (!mode.canEvaluateCallableReference(expression)) return false
+        if (!data.mode.canEvaluateCallableReference(expression)) return false
 
         val dispatchReceiverComputable = expression.dispatchReceiver?.accept(this, data) ?: true
         val extensionReceiverComputable = expression.extensionReceiver?.accept(this, data) ?: true
 
-        val getterIsComputable = expression.getter?.let { mode.canEvaluateFunction(it.owner) } ?: true
+        val getterIsComputable = expression.getter?.let { data.mode.canEvaluateFunction(it.owner) } ?: true
         return dispatchReceiverComputable && extensionReceiverComputable && getterIsComputable
     }
 
     override fun visitClassReference(expression: IrClassReference, data: IrInterpreterCheckerData): Boolean {
-        return mode.canEvaluateClassReference(expression)
+        return data.mode.canEvaluateClassReference(expression)
     }
 }

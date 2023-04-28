@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.ir.interpreter.preprocessor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrCallableReference
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.interpreter.checker.IrInterpreterNameChecker.Companion.isKCallableNameCall
+import org.jetbrains.kotlin.name.SpecialNames
 
 // Note: this class still will not allow us to evaluate things like `A()::a.name + `A()::b.name`.
 // This code will be optimized but not completely turned into "ab" result.
@@ -22,8 +24,10 @@ class IrInterpreterKCallableNamePreprocessor : IrInterpreterPreprocessor {
 
         // receiver is needed for bound callable reference
         val receiver = callableReference.dispatchReceiver ?: callableReference.extensionReceiver ?: return expression
+
         callableReference.dispatchReceiver = null
         callableReference.extensionReceiver = null
+        if (receiver is IrGetValue && receiver.symbol.owner.name == SpecialNames.THIS) return expression
 
         return IrCompositeImpl(
             expression.startOffset, expression.endOffset, expression.type, origin = null, statements = listOf(receiver, expression)

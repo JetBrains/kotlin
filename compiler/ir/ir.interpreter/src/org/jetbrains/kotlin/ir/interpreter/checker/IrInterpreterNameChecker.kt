@@ -16,14 +16,12 @@ import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
 import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
 import org.jetbrains.kotlin.ir.util.isSubclassOf
 
-class IrInterpreterNameChecker(
-    override val mode: EvaluationMode,
-) : IrInterpreterChecker {
+class IrInterpreterNameChecker : IrInterpreterChecker {
     override fun visitElement(element: IrElement, data: IrInterpreterCheckerData) = false
 
     override fun visitCall(expression: IrCall, data: IrInterpreterCheckerData): Boolean {
         val owner = expression.symbol.owner
-        if (!mode.canEvaluateFunction(owner)) return false
+        if (!data.mode.canEvaluateFunction(owner)) return false
 
         return expression.isKCallableNameCall(data.irBuiltIns) || expression.isEnumName()
     }

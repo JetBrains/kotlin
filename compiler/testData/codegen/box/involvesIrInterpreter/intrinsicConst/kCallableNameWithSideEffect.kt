@@ -24,9 +24,12 @@ class A {
 
         val temp = A()
         val g = temp::b.<!EVALUATED("b")!>name<!>
+        val insideStringConcat = "${temp::b.<!EVALUATED("b")!>name<!>}"
 
         val complexExpression1 = A()::a.<!EVALUATED("a")!>name<!> + A()::b.<!EVALUATED("b")!>name<!>
         val complexExpression2 = A::a.<!EVALUATED("a")!>name<!> <!EVALUATED("ab")!>+ A::b.<!EVALUATED("b")!>name<!><!>
+
+        var recursive = ::test.<!EVALUATED("test")!>name<!>
     }
 
     fun getA(): A = A()
