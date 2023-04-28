@@ -266,8 +266,13 @@ private fun handleExceptionFromResolve(
 }
 
 private val CANCELLATION_SAFE_PHASES: Set<FirResolvePhase> = enumSetOf(
+    FirResolvePhase.IMPORTS,
+    FirResolvePhase.COMPANION_GENERATION,
+    FirResolvePhase.SEALED_CLASS_INHERITORS,
+    FirResolvePhase.EXPECT_ACTUAL_MATCHING,
+    FirResolvePhase.CONTRACTS,
     FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE,
-    FirResolvePhase.BODY_RESOLVE,
+    FirResolvePhase.BODY_RESOLVE
 )
 
 private fun invalidateIfNeeded(session: LLFirSession, phase: FirResolvePhase) {

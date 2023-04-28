@@ -12,7 +12,7 @@ internal annotation class StateKeeperDsl
 
 @StateKeeperDsl
 internal interface StateKeeperBuilder {
-    fun register(restorer: () -> Unit)
+    fun register(state: PreservedState)
 }
 
 @JvmInline
@@ -39,6 +39,19 @@ internal value class StateKeeperScope<Owner : Any>(private val owner: Owner) {
         val storedValue = provider(owner)
         register { mutator(owner, storedValue) }
     }
+
+    context(StateKeeperBuilder)
+    fun add(keeper: StateKeeper<Owner>) {
+        val owner = this@StateKeeperScope.owner
+        register { keeper.prepare(owner) }
+    }
+}
+
+context(StateKeeperBuilder)
+internal fun <Entity : Any> entity(entity: Entity?, keeper: StateKeeper<Entity>) {
+    if (entity != null) {
+        StateKeeperScope(entity).add(keeper)
+    }
 }
 
 context(StateKeeperBuilder)
@@ -59,33 +72,20 @@ internal inline fun <Entity : Any> entityList(list: List<Entity?>?, block: State
     }
 }
 
-internal inline fun <Owner : Any> stateKeeper(
-    crossinline block: context(StateKeeperBuilder) StateKeeperScope<Owner>.(Owner) -> Unit
-): StateKeeper<Owner> {
-    return stateKeeper(null, block)
-}
-
-internal inline fun <Delegate : Any, Owner : Delegate> stateKeeper(
-    delegate: StateKeeper<Delegate>?,
-    crossinline block: context(StateKeeperBuilder) StateKeeperScope<Owner>.(Owner) -> Unit
-): StateKeeper<Owner> {
+internal fun <Owner : Any> stateKeeper(block: context(StateKeeperBuilder) StateKeeperScope<Owner>.(Owner) -> Unit): StateKeeper<Owner> {
     return StateKeeper { owner ->
-        val state = mutableListOf<PreservedState>()
-
-        if (delegate != null) {
-            state += delegate.prepare(owner)
-        }
+        val states = mutableListOf<PreservedState>()
 
         val builder = object : StateKeeperBuilder {
-            override fun register(restorer: () -> Unit) {
-                state += PreservedState(restorer)
+            override fun register(state: PreservedState) {
+                states += state
             }
         }
 
         val scope = StateKeeperScope(owner)
         block(builder, scope, owner)
 
-        return@StateKeeper state
+        return@StateKeeper states
     }
 }
 
@@ -104,7 +104,7 @@ internal class StateKeeper<in Owner : Any>(val provider: (Owner) -> List<Preserv
     }
 }
 
-internal fun <Target : Any, Result> resolve(target: Target, keeper: StateKeeper<Target>, block: () -> Result): Result {
+internal fun <Target : Any, Result> resolveWithKeeper(target: Target, keeper: StateKeeper<Target>, block: () -> Result): Result {
     var preservedState: PreservedState? = null
 
     var isSuccessful = false

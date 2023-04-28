@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.FirDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.LLFirDesignatedImpliciteTypesBodyResolveTransformerForReturnTypeCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
@@ -64,20 +63,8 @@ internal abstract class LLFirAbstractBodyTargetResolver(
         FirLazyBodiesCalculator.calculateLazyBodiesInside(firDesignation)
     }
 
-    protected fun <T : FirDeclaration> resolveBody(target: T) {
-        when (target) {
-            is FirSimpleFunction -> resolve(target, BodyStateKeepers.FUNCTION)
-            is FirConstructor -> resolve(target, BodyStateKeepers.CONSTRUCTOR)
-            is FirProperty -> resolve(target, BodyStateKeepers.PROPERTY)
-            is FirPropertyAccessor -> resolve(target.propertySymbol.fir, BodyStateKeepers.PROPERTY)
-            is FirEnumEntry -> resolve(target, BodyStateKeepers.ENUM_ENTRY)
-            is FirAnonymousInitializer -> resolve(target, BodyStateKeepers.ANONYMOUS_INITIALIZER)
-            else -> throwUnexpectedFirElementError(target)
-        }
-    }
-
-    private fun <T : FirElementWithResolveState> resolve(target: T, prescript: StateKeeper<T>) {
-        resolve(target, prescript) {
+    protected fun <T : FirElementWithResolveState> resolve(target: T, keeper: StateKeeper<T>) {
+        resolveWithKeeper(target, keeper) {
             calculateLazyBodies(target)
             target.transformSingle(transformer, ResolutionMode.ContextIndependent)
         }

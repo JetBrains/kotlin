@@ -75,17 +75,33 @@ private class LLFirImplicitBodyTargetResolver(
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
         when (target) {
+            is FirSimpleFunction -> resolve(target, ImplicitTypeBodyStateKeepers.FUNCTION)
+            is FirProperty -> resolve(target, ImplicitTypeBodyStateKeepers.PROPERTY)
+            is FirPropertyAccessor -> resolve(target.propertySymbol.fir, ImplicitTypeBodyStateKeepers.PROPERTY)
             is FirRegularClass,
             is FirDanglingModifierList,
             is FirAnonymousInitializer,
             is FirFileAnnotationsContainer,
             is FirTypeAlias,
-            is FirScript -> {
+            is FirConstructor,
+            is FirEnumEntry,
+            is FirScript,
+            is FirCallableDeclaration -> {
                 // No implicit bodies here
             }
-            is FirCallableDeclaration -> resolveBody(target)
             else -> throwUnexpectedFirElementError(target)
         }
     }
 }
 
+internal object ImplicitTypeBodyStateKeepers {
+    val FUNCTION: StateKeeper<FirFunction> = stateKeeper {
+        add(BodyStateKeepers.FUNCTION)
+        add(FirFunction::returnTypeRef, FirFunction::replaceReturnTypeRef)
+    }
+
+    val PROPERTY: StateKeeper<FirProperty> = stateKeeper {
+        add(BodyStateKeepers.PROPERTY)
+        add(FirProperty::returnTypeRef, FirProperty::replaceReturnTypeRef)
+    }
+}

@@ -17,9 +17,7 @@ import org.jetbrains.kotlin.fir.FirFileAnnotationsContainer
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.*
-import org.jetbrains.kotlin.fir.expressions.builder.buildLazyBlock
 import org.jetbrains.kotlin.fir.expressions.builder.buildLazyDelegatedConstructorCall
-import org.jetbrains.kotlin.fir.expressions.builder.buildLazyExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirLazyDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
@@ -30,90 +28,6 @@ import org.jetbrains.kotlin.fir.resolve.dfa.FirControlFlowGraphReferenceImpl
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-
-@Suppress("IncorrectFormatting")
-internal object BodyStateKeepers {
-    val ANONYMOUS_INITIALIZER: StateKeeper<FirAnonymousInitializer> = stateKeeper {
-        add(FirAnonymousInitializer::body, FirAnonymousInitializer::replaceBody, ::guardBlock)
-    }
-
-    val FUNCTION: StateKeeper<FirFunction> = stateKeeper { function ->
-        add(FirFunction::body, FirFunction::replaceBody, ::guardBlock)
-        add(FirFunction::controlFlowGraphReference, FirFunction::replaceControlFlowGraphReference)
-
-        entityList(function.valueParameters) { valueParameter ->
-            if (valueParameter.defaultValue != null) {
-                add(FirValueParameter::defaultValue, FirValueParameter::replaceDefaultValue, ::guardExpression)
-            }
-        }
-    }
-
-    val CONSTRUCTOR: StateKeeper<FirConstructor> = stateKeeper(FUNCTION) {
-        add(FirConstructor::delegatedConstructor, FirConstructor::replaceDelegatedConstructor, ::guardDelegatedConstructorCall)
-    }
-
-    val PROPERTY: StateKeeper<FirProperty> = stateKeeper { property ->
-        add(FirProperty::initializeIfUnresolved, FirProperty::replaceInitializer, ::guardExpression)
-
-        entity(property.getterIfUnresolved) {
-            add(FirPropertyAccessor::body, FirPropertyAccessor::replaceBody, ::guardBlock)
-            add(FirPropertyAccessor::returnTypeRef, FirPropertyAccessor::replaceReturnTypeRef)
-        }
-
-        entity(property.setterIfUnresolved) { setter ->
-            add(FirPropertyAccessor::body, FirPropertyAccessor::replaceBody, ::guardBlock)
-            add(FirPropertyAccessor::returnTypeRef, FirPropertyAccessor::replaceReturnTypeRef)
-
-            entityList(setter.valueParameters) {
-                add(FirValueParameter::returnTypeRef, FirValueParameter::replaceReturnTypeRef)
-            }
-        }
-
-        entity(property.backingField) {
-            add(FirBackingField::initializer, FirBackingField::replaceInitializer, ::guardExpression)
-            add(FirBackingField::returnTypeRef, FirBackingField::replaceReturnTypeRef)
-        }
-
-        entity(property.delegateIfUnresolved) {
-            add(FirWrappedDelegateExpression::delegateProvider, FirWrappedDelegateExpression::replaceDelegateProvider)
-            add(FirWrappedDelegateExpression::expression, FirWrappedDelegateExpression::replaceExpression)
-        }
-    }
-
-    val ENUM_ENTRY: StateKeeper<FirEnumEntry> = stateKeeper {
-        add(FirEnumEntry::initializer, FirEnumEntry::replaceInitializer, ::guardExpression)
-    }
-}
-
-internal object ImplicitTypeBodyStateKeepers {
-    val FUNCTION: StateKeeper<FirFunction> = stateKeeper(BodyStateKeepers.FUNCTION) {
-        add(FirFunction::returnTypeRef, FirFunction::replaceReturnTypeRef)
-    }
-
-    val PROPERTY: StateKeeper<FirProperty> = stateKeeper(BodyStateKeepers.PROPERTY) { property ->
-        add(FirProperty::returnTypeRef, FirProperty::replaceReturnTypeRef)
-
-        entity(property.getter) {
-            add(FirPropertyAccessor::returnTypeRef, FirPropertyAccessor::replaceReturnTypeRef)
-        }
-
-        entity(property.setter) {
-            add(FirPropertyAccessor::returnTypeRef, FirPropertyAccessor::replaceReturnTypeRef)
-        }
-    }
-}
-
-private val FirProperty.initializeIfUnresolved: FirExpression?
-    get() = if (bodyResolveState < FirPropertyBodyResolveState.INITIALIZER_RESOLVED) initializer else null
-
-private val FirProperty.getterIfUnresolved: FirPropertyAccessor?
-    get() = if (bodyResolveState < FirPropertyBodyResolveState.INITIALIZER_AND_GETTER_RESOLVED) getter else null
-
-private val FirProperty.setterIfUnresolved: FirPropertyAccessor?
-    get() = if (bodyResolveState < FirPropertyBodyResolveState.EVERYTHING_RESOLVED) setter else null
-
-private val FirProperty.delegateIfUnresolved: FirWrappedDelegateExpression?
-    get() = if (bodyResolveState < FirPropertyBodyResolveState.EVERYTHING_RESOLVED) delegate as? FirWrappedDelegateExpression else null
 
 internal object LLFirBodyLazyResolver : LLFirLazyResolver(FirResolvePhase.BODY_RESOLVE) {
     override fun resolve(
@@ -214,10 +128,7 @@ private class LLFirBodyTargetResolver(
                     // However, dues to changes in the compiler resolution, we temporarily have to resolve all callable members.
                     // Such additional work might affect incremental analysis performance.
                     member.lazyResolveToPhase(resolverPhase.previous)
-
-                    performCustomResolveUnderLock(member) {
-                        performResolve(member)
-                    }
+                    performResolve(member)
                 }
             }
         }
@@ -238,31 +149,86 @@ private class LLFirBodyTargetResolver(
 
         when (target) {
             is FirRegularClass -> error("Should have been resolved in ${::doResolveWithoutLock.name}")
+            is FirSimpleFunction -> resolve(target, BodyStateKeepers.FUNCTION)
+            is FirConstructor -> resolve(target, BodyStateKeepers.CONSTRUCTOR)
+            is FirProperty -> resolve(target, BodyStateKeepers.PROPERTY)
+            is FirPropertyAccessor -> resolve(target.propertySymbol.fir, BodyStateKeepers.PROPERTY)
+            is FirEnumEntry -> resolve(target, BodyStateKeepers.ENUM_ENTRY)
+            is FirAnonymousInitializer -> resolve(target, BodyStateKeepers.ANONYMOUS_INITIALIZER)
             is FirDanglingModifierList,
             is FirFileAnnotationsContainer,
-            is FirTypeAlias -> {
+            is FirTypeAlias,
+            is FirCallableDeclaration -> {
                 // No bodies here
             }
-            is FirCallableDeclaration -> resolveBody(target)
-            is FirAnonymousInitializer -> resolveBody(target)
             else -> throwUnexpectedFirElementError(target)
         }
     }
 }
 
-private fun guardBlock(fir: FirBlock): FirBlock {
-    return when (fir) {
-        is FirLazyBlock -> fir
-        else -> buildLazyBlock()
+internal object BodyStateKeepers {
+    val ANONYMOUS_INITIALIZER: StateKeeper<FirAnonymousInitializer> = stateKeeper {
+        add(FirAnonymousInitializer::body, FirAnonymousInitializer::replaceBody, ::guardBlock)
+    }
+
+    val FUNCTION: StateKeeper<FirFunction> = stateKeeper { function ->
+        add(FirFunction::body, FirFunction::replaceBody, ::guardBlock)
+        add(FirFunction::controlFlowGraphReference, FirFunction::replaceControlFlowGraphReference)
+
+        entityList(function.valueParameters) { valueParameter ->
+            if (valueParameter.defaultValue != null) {
+                add(FirValueParameter::defaultValue, FirValueParameter::replaceDefaultValue, ::guardExpression)
+            }
+        }
+    }
+
+    val CONSTRUCTOR: StateKeeper<FirConstructor> = stateKeeper {
+        add(FUNCTION)
+        add(FirConstructor::delegatedConstructor, FirConstructor::replaceDelegatedConstructor, ::guardDelegatedConstructorCall)
+    }
+
+    private val PROPERTY_ACCESSOR: StateKeeper<FirPropertyAccessor> = stateKeeper { accessor ->
+        add(FirPropertyAccessor::body, FirPropertyAccessor::replaceBody, ::guardBlock)
+        add(FirPropertyAccessor::returnTypeRef, FirPropertyAccessor::replaceReturnTypeRef)
+
+        entityList(accessor.valueParameters) {
+            add(FirValueParameter::returnTypeRef, FirValueParameter::replaceReturnTypeRef)
+        }
+    }
+
+    val PROPERTY: StateKeeper<FirProperty> = stateKeeper { property ->
+        add(FirProperty::initializeIfUnresolved, FirProperty::replaceInitializer, ::guardExpression)
+
+        entity(property.getterIfUnresolved, PROPERTY_ACCESSOR)
+        entity(property.setterIfUnresolved, PROPERTY_ACCESSOR)
+
+        entity(property.backingField) {
+            add(FirBackingField::initializer, FirBackingField::replaceInitializer, ::guardExpression)
+            add(FirBackingField::returnTypeRef, FirBackingField::replaceReturnTypeRef)
+        }
+
+        entity(property.delegateIfUnresolved) {
+            add(FirWrappedDelegateExpression::delegateProvider, FirWrappedDelegateExpression::replaceDelegateProvider)
+            add(FirWrappedDelegateExpression::expression, FirWrappedDelegateExpression::replaceExpression)
+        }
+    }
+
+    val ENUM_ENTRY: StateKeeper<FirEnumEntry> = stateKeeper {
+        add(FirEnumEntry::initializer, FirEnumEntry::replaceInitializer, ::guardExpression)
     }
 }
 
-private fun guardExpression(fir: FirExpression): FirExpression {
-    return when (fir) {
-        is FirLazyExpression -> fir
-        else -> buildLazyExpression { source = fir.source }
-    }
-}
+private val FirProperty.initializeIfUnresolved: FirExpression?
+    get() = if (bodyResolveState < FirPropertyBodyResolveState.INITIALIZER_RESOLVED) initializer else null
+
+private val FirProperty.getterIfUnresolved: FirPropertyAccessor?
+    get() = if (bodyResolveState < FirPropertyBodyResolveState.INITIALIZER_AND_GETTER_RESOLVED) getter else null
+
+private val FirProperty.setterIfUnresolved: FirPropertyAccessor?
+    get() = if (bodyResolveState < FirPropertyBodyResolveState.EVERYTHING_RESOLVED) setter else null
+
+private val FirProperty.delegateIfUnresolved: FirWrappedDelegateExpression?
+    get() = if (bodyResolveState < FirPropertyBodyResolveState.EVERYTHING_RESOLVED) delegate as? FirWrappedDelegateExpression else null
 
 private fun guardDelegatedConstructorCall(fir: FirDelegatedConstructorCall): FirDelegatedConstructorCall {
     if (fir is FirLazyDelegatedConstructorCall) {
