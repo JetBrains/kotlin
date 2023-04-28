@@ -28,6 +28,7 @@ plugins {
 dependencies {
     implementation(libs.kotlinStdlib)
     testImplementation(libs.junit)
+    testImplementation(libs.kotlinMetadataJvm)
     testImplementation(libs.robolectric)
 
     testCompileOnly(libs.kotlinCompiler)
