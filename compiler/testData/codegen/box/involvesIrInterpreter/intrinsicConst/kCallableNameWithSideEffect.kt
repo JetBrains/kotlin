@@ -17,13 +17,16 @@ class A {
         val b = A::b.<!EVALUATED("b")!>name<!>
 
         val c = ::A.<!EVALUATED("<init>")!>name<!>
-        val d = this::a.name
+        val d = this::a.<!EVALUATED("a")!>name<!>
 
-        val e = A()::b.name
-        val f = getA()::b.name
+        val e = A()::b.<!EVALUATED("b")!>name<!>
+        val f = getA()::b.<!EVALUATED("b")!>name<!>
 
         val temp = A()
-        val g = temp::b.name
+        val g = temp::b.<!EVALUATED("b")!>name<!>
+
+        val complexExpression1 = A()::a.<!EVALUATED("a")!>name<!> + A()::b.<!EVALUATED("b")!>name<!>
+        val complexExpression2 = A::a.<!EVALUATED("a")!>name<!> <!EVALUATED("ab")!>+ A::b.<!EVALUATED("b")!>name<!><!>
     }
 
     fun getA(): A = A()

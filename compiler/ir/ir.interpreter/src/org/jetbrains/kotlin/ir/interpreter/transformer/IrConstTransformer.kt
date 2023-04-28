@@ -16,10 +16,17 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
-import org.jetbrains.kotlin.ir.interpreter.checker.*
+import org.jetbrains.kotlin.ir.interpreter.checker.EvaluationMode
+import org.jetbrains.kotlin.ir.interpreter.checker.IrInterpreterCheckerData
+import org.jetbrains.kotlin.ir.interpreter.checker.IrInterpreterCommonChecker
+import org.jetbrains.kotlin.ir.interpreter.checker.IrInterpreterNameChecker
+import org.jetbrains.kotlin.ir.interpreter.preprocessor.IrInterpreterKCallableNamePreprocessor
+import org.jetbrains.kotlin.ir.interpreter.preprocessor.IrInterpreterPreprocessorData
 import org.jetbrains.kotlin.ir.interpreter.toConstantValue
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
+
+private val preprocessors = setOf(IrInterpreterKCallableNamePreprocessor())
 
 fun IrFile.transformConst(
     interpreter: IrInterpreter,
@@ -29,18 +36,22 @@ fun IrFile.transformConst(
     onError: (IrFile, IrElement, IrErrorExpression) -> Unit = { _, _, _ -> },
     suppressExceptions: Boolean = false,
 ) {
+    val preprocessedFile = preprocessors.fold(this) { acc, preprocessor ->
+        preprocessor.preprocess(acc, IrInterpreterPreprocessorData(mode, interpreter.irBuiltIns))
+    }
+
     val irConstExpressionTransformer = IrConstExpressionTransformer(
-        interpreter, this, mode, evaluatedConstTracker, onWarning, onError, suppressExceptions
+        interpreter, preprocessedFile, mode, evaluatedConstTracker, onWarning, onError, suppressExceptions
     )
     val irConstDeclarationAnnotationTransformer = IrConstDeclarationAnnotationTransformer(
-        interpreter, this, mode, evaluatedConstTracker, onWarning, onError, suppressExceptions
+        interpreter, preprocessedFile, mode, evaluatedConstTracker, onWarning, onError, suppressExceptions
     )
     val irConstTypeAnnotationTransformer = IrConstTypeAnnotationTransformer(
-        interpreter, this, mode, evaluatedConstTracker, onWarning, onError, suppressExceptions
+        interpreter, preprocessedFile, mode, evaluatedConstTracker, onWarning, onError, suppressExceptions
     )
-    this.transform(irConstExpressionTransformer, null)
-    this.transform(irConstDeclarationAnnotationTransformer, null)
-    this.transform(irConstTypeAnnotationTransformer, null)
+    preprocessedFile.transform(irConstExpressionTransformer, null)
+    preprocessedFile.transform(irConstDeclarationAnnotationTransformer, null)
+    preprocessedFile.transform(irConstTypeAnnotationTransformer, null)
 }
 
 // Note: We are using `IrElementTransformer` here instead of `IrElementTransformerVoid` to avoid conflicts with `IrTypeVisitorVoid`
@@ -83,7 +94,7 @@ internal abstract class IrConstTransformer(
         configuration: IrInterpreterConfiguration = interpreter.environment.configuration
     ): Boolean {
         return try {
-            checkers.any { this.accept(it, IrInterpreterCheckerData(configuration)) }
+            checkers.any { this.accept(it, IrInterpreterCheckerData(interpreter.irBuiltIns, configuration)) }
         } catch (e: Throwable) {
             if (suppressExceptions) {
                 return false

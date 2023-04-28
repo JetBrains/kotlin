@@ -125,7 +125,6 @@ private fun unfoldValueParameters(expression: IrFunctionAccessExpression, enviro
         callStack.pushState(enumEntry.toState(environment.irBuiltIns))
         return
     }
-    // TODO do the same thing but for "KCallable.name" with "this" as receiver
 
     val hasDefaults = (0 until expression.valueArgumentsCount).any { expression.getValueArgument(it) == null }
     if (hasDefaults) {
