@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.gradle.util.assertNotNull
 import org.jetbrains.kotlin.gradle.util.buildProjectWithJvm
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.main
-import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.jvm.javaField
 import kotlin.test.*
 
 
@@ -78,7 +78,7 @@ class KotlinCompileArgumentsTest {
         val arguments = mainCompilationTask.createCompilerArguments(lenient)
 
         val argumentsString = ArgumentUtils.convertArgumentsToStringList(arguments)
-        val jvmTargetArgument = K2JVMCompilerArguments::jvmTarget.findAnnotation<Argument>()!!.value
+        val jvmTargetArgument = K2JVMCompilerArguments::jvmTarget.javaField!!.getAnnotation(Argument::class.java)!!.value
         if (jvmTargetArgument !in argumentsString) fail("Missing '$jvmTargetArgument' in argument list")
         val indexOfJvmTargetArgument = argumentsString.indexOf(jvmTargetArgument)
         val jvmTargetTargetArgumentValue = argumentsString.getOrNull(indexOfJvmTargetArgument + 1)

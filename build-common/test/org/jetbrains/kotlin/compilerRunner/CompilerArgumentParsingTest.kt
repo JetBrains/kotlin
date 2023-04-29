@@ -14,10 +14,10 @@ import org.junit.jupiter.params.provider.MethodSource
 import java.util.Base64.getEncoder
 import kotlin.random.Random
 import kotlin.reflect.*
-import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.withNullability
+import kotlin.reflect.jvm.javaField
 import kotlin.test.assertContentEquals
 import kotlin.test.fail
 
@@ -72,7 +72,7 @@ class CompilerArgumentParsingTest {
 private fun assertEqualArguments(expected: CommonToolArguments, actual: CommonToolArguments) {
     if (expected::class != actual::class) fail("Expected class '${expected::class}', found: '${actual::class}'")
     expected::class.memberProperties
-        .filter { it.findAnnotation<Argument>() != null }
+        .filter { it.javaField?.getAnnotation(Argument::class.java) != null }
         .ifEmpty { fail("No members with ${Argument::class} annotation") }
         .map { property ->
             @Suppress("UNCHECKED_CAST")

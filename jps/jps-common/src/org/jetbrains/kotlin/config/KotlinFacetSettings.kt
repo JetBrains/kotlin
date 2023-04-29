@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.utils.DescriptionAware
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import kotlin.reflect.KProperty1
-import kotlin.reflect.full.findAnnotation
+import kotlin.reflect.jvm.javaField
 
 @Deprecated("Use IdePlatformKind instead.", level = DeprecationLevel.ERROR)
 sealed class TargetPlatformKind<out Version : TargetPlatformVersion>(
@@ -206,7 +206,7 @@ class KotlinFacetSettings {
         val isEnabledByCompilerArgument = compilerArguments?.safeAs<A>()?.let(settingReference::get)
         if (isEnabledByCompilerArgument == true) return true
         val isEnabledByAdditionalSettings = run {
-            val stringArgumentName = settingReference.findAnnotation<Argument>()?.value ?: return@run null
+            val stringArgumentName = settingReference.javaField?.getAnnotation(Argument::class.java)?.value ?: return@run null
             compilerSettings?.additionalArguments?.contains(stringArgumentName, ignoreCase = true)
         }
         return isEnabledByAdditionalSettings ?: false
