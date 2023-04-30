@@ -1,0 +1,31 @@
+KtSuccessCallInfo:
+  call = KtSimpleFunctionCall:
+    isImplicitInvoke = false
+    partiallyAppliedSymbol = KtPartiallyAppliedSymbol:
+      dispatchReceiver = KtExplicitReceiverValue:
+        expression = context
+        isSafeNavigation = false
+        type = test.pkg.Context
+      extensionReceiver = null
+      signature = KtFunctionLikeSignature:
+        receiverType = null
+        returnType = kotlin.String!
+        symbol = test/pkg/Context.getString(<dispatch receiver>: test.pkg.Context, id: kotlin.Int): kotlin.String!
+        valueParameters = [
+          KtVariableLikeSignature:
+            name = id
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = id: kotlin.Int
+            callableIdIfNonLocal = null
+        ]
+        callableIdIfNonLocal = test/pkg/Context.getString
+    typeArgumentsMapping = {}
+    argumentMapping = {
+      if (testInt == 0) R.string.test_string_1 else R.string.test_string_2 -> (KtVariableLikeSignature:
+        name = id
+        receiverType = null
+        returnType = kotlin.Int
+        symbol = id: kotlin.Int
+        callableIdIfNonLocal = null)
+    }
