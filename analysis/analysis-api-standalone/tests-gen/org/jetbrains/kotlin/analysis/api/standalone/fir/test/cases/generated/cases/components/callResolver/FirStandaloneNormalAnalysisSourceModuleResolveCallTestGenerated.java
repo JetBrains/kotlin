@@ -347,6 +347,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCallTestGenerated ext
     }
 
     @Test
+    @TestMetadata("defaultValueThatCallsPreviousParameter.kt")
+    public void testDefaultValueThatCallsPreviousParameter() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/defaultValueThatCallsPreviousParameter.kt");
+    }
+
+    @Test
     @TestMetadata("delegatedConstructorCall_super.kt")
     public void testDelegatedConstructorCall_super() throws Exception {
         runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/delegatedConstructorCall_super.kt");
