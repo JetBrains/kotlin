@@ -5,16 +5,18 @@
 
 package org.jetbrains.kotlin.generators.tests
 
+import org.jetbrains.kotlin.generators.TestGroup
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
+import org.jetbrains.kotlin.generators.model.AnnotationModel
 import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.konan.blackboxtest.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.blackboxtest.support.EnforcedHostTarget
 import org.jetbrains.kotlin.konan.blackboxtest.support.EnforcedProperty
+import org.jetbrains.kotlin.konan.blackboxtest.support.group.*
+import org.jetbrains.kotlin.konan.blackboxtest.support.group.DisabledTestsIfProperty
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.FirPipeline
-import org.jetbrains.kotlin.konan.blackboxtest.support.group.UseExtTestCaseGroupProvider
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.UsePartialLinkage
-import org.jetbrains.kotlin.konan.blackboxtest.support.group.UseStandardTestCaseGroupProvider
 import org.jetbrains.kotlin.test.TargetBackend
 import org.junit.jupiter.api.Tag
 
@@ -29,7 +31,12 @@ fun main() {
                 annotations = listOf(
                     codegen(),
                     k1Codegen(),
-                    provider<UseExtTestCaseGroupProvider>()
+                    provider<UseExtTestCaseGroupProvider>(),
+                    disabledInOneStageMode(
+                        "codegen/box/coroutines/featureIntersection/defaultExpect.kt",
+                        "codegen/box/multiplatform/defaultArguments/*.kt",
+                        "codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt"
+                    )
                 )
             ) {
                 model("codegen/box", targetBackend = TargetBackend.NATIVE)
@@ -210,6 +217,20 @@ private fun noPartialLinkage() = annotation(
 // This is a special tag to mark codegen box tests with disabled partial linkage that may be skipped in slow TC configurations.
 private fun noPartialLinkageMayBeSkipped() = annotation(Tag::class.java, "no-partial-linkage-may-be-skipped")
 
+// The concrete tests disabled in one-stage mode.
+@Suppress("SameParameterValue")
+private fun TestGroup.disabledInOneStageMode(vararg unexpandedPaths: String): AnnotationModel {
+    require(unexpandedPaths.isNotEmpty()) { "No unexpanded paths specified" }
+
+    return annotation(
+        DisabledTestsIfProperty::class.java,
+        "sourceLocations" to unexpandedPaths.map { unexpandedPath -> "$testDataRoot/$unexpandedPath" }.toTypedArray(),
+        "property" to ClassLevelProperty.TEST_MODE,
+        "propertyValue" to "ONE_STAGE_MULTI_MODULE"
+    )
+}
+
+// Marker tags. TODO: Reconsider and reduce amount of marker tags.
 private fun codegen() = annotation(Tag::class.java, "codegen")
 private fun k1Codegen() = annotation(Tag::class.java, "k1Codegen")
 private fun codegenK2() = annotation(Tag::class.java, "codegenK2")
