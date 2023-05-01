@@ -84,10 +84,15 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractLowLevelApiSingle
     }
 
     private fun chooseMemberDeclarationIfNeeded(symbol: FirBasedSymbol<*>, moduleStructure: TestModuleStructure): FirBasedSymbol<*> {
-        val memberClassFilter = moduleStructure.allDirectives.singleOrZeroValue(Directives.MEMBER_CLASS_FILTER) ?: return symbol
+        val directives = moduleStructure.allDirectives
+        val memberClassFilters = listOfNotNull(
+            directives.singleOrZeroValue(Directives.MEMBER_CLASS_FILTER),
+            directives.singleOrZeroValue(Directives.MEMBER_NAME_FILTER),
+        ).ifEmpty { return symbol }
+
         val classSymbol = symbol as FirClassSymbol
         val declarations = classSymbol.declarationSymbols
-        val filteredSymbols = declarations.filter { memberClassFilter.isInstance(it) }
+        val filteredSymbols = declarations.filter { declaration -> memberClassFilters.all { it.invoke(declaration) } }
         return when (filteredSymbols.size) {
             0 -> error("Empty result for:${declarations.joinToString("\n")}")
             1 -> filteredSymbols.single()
@@ -107,8 +112,17 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractLowLevelApiSingle
     }
 
     private object Directives : SimpleDirectivesContainer() {
-        val MEMBER_CLASS_FILTER: ValueDirective<Class<*>> by valueDirective("Choose member declaration by a declaration class") {
-            Class.forName(it)
+        val MEMBER_CLASS_FILTER: ValueDirective<(FirBasedSymbol<*>) -> Boolean> by valueDirective("Choose member declaration by a declaration class") { value ->
+            val clazz = Class.forName(value)
+            ({ symbol: FirBasedSymbol<*> ->
+                clazz.isInstance(symbol)
+            })
+        }
+
+        val MEMBER_NAME_FILTER: ValueDirective<(FirBasedSymbol<*>) -> Boolean> by valueDirective("Choose member declaration by a declaration name") { value ->
+            { symbol: FirBasedSymbol<*> ->
+                symbol.name() == value
+            }
         }
     }
 }

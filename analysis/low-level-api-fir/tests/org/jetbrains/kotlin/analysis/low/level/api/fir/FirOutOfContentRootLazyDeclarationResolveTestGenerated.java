@@ -85,15 +85,51 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("dataClassCopy.kt")
+    public void testDataClassCopy() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/dataClassCopy.kt");
+    }
+
+    @Test
+    @TestMetadata("dataComponent2.kt")
+    public void testDataComponent2() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/dataComponent2.kt");
+    }
+
+    @Test
+    @TestMetadata("delegatedField.kt")
+    public void testDelegatedField() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/delegatedField.kt");
+    }
+
+    @Test
     @TestMetadata("delegates.kt")
     public void testDelegates() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/lazyResolve/delegates.kt");
     }
 
     @Test
+    @TestMetadata("enumEntries.kt")
+    public void testEnumEntries() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/enumEntries.kt");
+    }
+
+    @Test
     @TestMetadata("enumEntry.kt")
     public void testEnumEntry() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/lazyResolve/enumEntry.kt");
+    }
+
+    @Test
+    @TestMetadata("enumValueOf.kt")
+    public void testEnumValueOf() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/enumValueOf.kt");
+    }
+
+    @Test
+    @TestMetadata("enumValues.kt")
+    public void testEnumValues() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/enumValues.kt");
     }
 
     @Test
@@ -118,6 +154,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     @TestMetadata("lambdaAsSAMInterface.kt")
     public void testLambdaAsSAMInterface() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/lazyResolve/lambdaAsSAMInterface.kt");
+    }
+
+    @Test
+    @TestMetadata("lazyProperty.kt")
+    public void testLazyProperty() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/lazyProperty.kt");
     }
 
     @Test
