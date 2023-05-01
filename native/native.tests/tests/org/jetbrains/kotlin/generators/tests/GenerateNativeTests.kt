@@ -48,8 +48,7 @@ fun main() {
                     codegen(),
                     k1Codegen(),
                     provider<UseExtTestCaseGroupProvider>(),
-                    noPartialLinkage(),
-                    noPartialLinkageMayBeSkipped()
+                    *noPartialLinkage()
                 )
             ) {
                 model("codegen/box", targetBackend = TargetBackend.NATIVE)
@@ -74,8 +73,7 @@ fun main() {
                     firCodegen(),
                     provider<UseExtTestCaseGroupProvider>(),
                     provider<FirPipeline>(),
-                    noPartialLinkage(),
-                    noPartialLinkageMayBeSkipped()
+                    *noPartialLinkage()
                 )
             ) {
                 model("codegen/box", targetBackend = TargetBackend.NATIVE)
@@ -209,13 +207,11 @@ private fun forceDebugMode() = annotation(
 
 private fun forceHostTarget() = annotation(EnforcedHostTarget::class.java)
 
-private fun noPartialLinkage() = annotation(
-    UsePartialLinkage::class.java,
-    "mode" to UsePartialLinkage.Mode.DISABLED
+private fun noPartialLinkage() = arrayOf(
+    annotation(UsePartialLinkage::class.java, "mode" to UsePartialLinkage.Mode.DISABLED),
+    // This is a special tag to mark codegen box tests with disabled partial linkage that may be skipped in slow TC configurations:
+    annotation(Tag::class.java, "no-partial-linkage-may-be-skipped")
 )
-
-// This is a special tag to mark codegen box tests with disabled partial linkage that may be skipped in slow TC configurations.
-private fun noPartialLinkageMayBeSkipped() = annotation(Tag::class.java, "no-partial-linkage-may-be-skipped")
 
 // The concrete tests disabled in one-stage mode.
 @Suppress("SameParameterValue")
