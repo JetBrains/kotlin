@@ -300,7 +300,7 @@ abstract class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
             }
         )
 
-        this.esModules.set(false)
+        this.esModules.convention(false).finalizeValueOnRead()
 
         resolveFromModulesFirst = true
 

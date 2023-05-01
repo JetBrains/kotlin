@@ -290,11 +290,11 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
         val moduleKind = binary.linkTask.flatMap { it.compilerOptions.moduleKind }
 
         this.entryModuleName.set(entryModuleName)
-        this.esModules.set(
+        this.esModules.convention(
             project.provider {
                 platformType == KotlinPlatformType.wasm || moduleKind.get() == JsModuleKind.MODULE_ES
             }
-        )
+        ).finalizeValueOnRead()
 
         mainOutputFileName.convention(defaultArchivesName.orElse("main").map { "$it.js" }).finalizeValueOnRead()
 
