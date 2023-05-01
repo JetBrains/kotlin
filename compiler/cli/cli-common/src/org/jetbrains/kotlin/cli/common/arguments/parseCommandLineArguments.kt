@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.cli.common.arguments
 
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.konan.file.File
+import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.utils.SmartList
 import java.lang.reflect.Method
 import kotlin.reflect.KClass
@@ -129,9 +130,8 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
     val properties = superClasses.flatMap {
         it.declaredFields.mapNotNull { field ->
             field.getAnnotation(Argument::class.java)?.let { argument ->
-                val name = field.name.replaceFirst(field.name[0], field.name[0].uppercaseChar())
-                val getter = result::class.java.getMethod("get$name")
-                val setter = result::class.java.getMethod("set$name", field.type)
+                val getter = result::class.java.getMethod(JvmAbi.getterName(field.name))
+                val setter = result::class.java.getMethod(JvmAbi.setterName(field.name), field.type)
                 ArgumentField(getter, setter, argument)
             }
         }
