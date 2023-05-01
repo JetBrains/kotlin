@@ -399,6 +399,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
             test(AbstractScopeContextForPositionTest::class) {
                 model("scopeContextForPosition")
             }
+
+            test(AbstractFileImportingScopeContextTest::class) {
+                model("importingScopeContext")
+            }
         }
 
         group(filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {

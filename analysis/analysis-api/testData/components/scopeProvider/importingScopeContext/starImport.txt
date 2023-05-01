@@ -1,0 +1,70 @@
+implicit receivers:
+scopes:
+  DefaultStarImportingScope, index = 0
+
+  DefaultStarImportingScope, index = 1
+
+  DefaultSimpleImportingScope, index = 2
+
+  ExplicitStarImportingScope, index = 3
+    classifiers: 1
+      KtNamedClassOrObjectSymbol:
+        annotationsList: []
+        classIdIfNonLocal: other/A
+        classKind: CLASS
+        companionObject: null
+        contextReceivers: []
+        isData: false
+        isExternal: false
+        isFun: false
+        isInline: false
+        isInner: false
+        modality: FINAL
+        name: A
+        origin: SOURCE
+        superTypes: [
+          KtUsualClassType:
+            annotationsList: []
+            ownTypeArguments: []
+            type: kotlin/Any
+        ]
+        symbolKind: TOP_LEVEL
+        typeParameters: []
+        visibility: Public
+    callables: 1
+      KtFunctionSymbol:
+        annotationsList: []
+        callableIdIfNonLocal: other/b
+        contextReceivers: []
+        contractEffects: []
+        hasStableParameterNames: true
+        isBuiltinFunctionInvoke: false
+        isExtension: false
+        isExternal: false
+        isInfix: false
+        isInline: false
+        isOperator: false
+        isOverride: false
+        isStatic: false
+        isSuspend: false
+        modality: FINAL
+        name: b
+        origin: SOURCE
+        receiverParameter: null
+        returnType: KtUsualClassType:
+          annotationsList: []
+          ownTypeArguments: []
+          type: kotlin/Unit
+        symbolKind: TOP_LEVEL
+        typeParameters: []
+        valueParameters: []
+        visibility: Public
+
+  DefaultSimpleImportingScope, index = 4
+
+  DefaultSimpleImportingScope, index = 5
+
+  PackageMemberScope, index = 6
+
+  ExplicitSimpleImportingScope, index = 7, empty
+
