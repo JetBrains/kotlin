@@ -840,6 +840,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/jvmDefaultAll.args");
         }
 
+        @TestMetadata("jvmDefaultIncorrectValue.args")
+        public void testJvmDefaultIncorrectValue() throws Exception {
+            runTest("compiler/testData/cli/jvm/jvmDefaultIncorrectValue.args");
+        }
+
         @TestMetadata("jvmIrByDefault1_4.args")
         public void testJvmIrByDefault1_4() throws Exception {
             runTest("compiler/testData/cli/jvm/jvmIrByDefault1_4.args");
