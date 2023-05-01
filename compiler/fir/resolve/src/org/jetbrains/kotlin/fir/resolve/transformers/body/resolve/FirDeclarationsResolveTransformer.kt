@@ -866,6 +866,7 @@ open class FirDeclarationsResolveTransformer(
             lambda.valueParameters.isEmpty() && singleParameterType != null -> {
                 val name = Name.identifier("it")
                 val itParam = buildValueParameter {
+                    resolvePhase = FirResolvePhase.BODY_RESOLVE
                     source = lambda.source?.fakeElement(KtFakeSourceElementKind.ItLambdaParameter)
                     containingFunctionSymbol = resolvedLambdaAtom.atom.symbol
                     moduleData = session.moduleData
