@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.util.IdSignatureComposer
 import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 
-open class IdSignatureDescriptor(private val mangler: KotlinMangler.DescriptorMangler) : IdSignatureComposer {
+open class IdSignatureDescriptor(override val mangler: KotlinMangler.DescriptorMangler) : IdSignatureComposer {
 
     protected open fun createSignatureBuilder(type: SpecialDeclarationType): DescriptorBasedSignatureBuilder = DescriptorBasedSignatureBuilder(type)
 

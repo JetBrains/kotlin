@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
-import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.GroupingMessageCollector
@@ -39,8 +38,8 @@ import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
+import org.jetbrains.kotlin.fir.pipeline.signatureComposerForJvmFir2Ir
 import org.jetbrains.kotlin.ir.backend.jvm.jvmResolveLibraries
-import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.psi.KtFile
@@ -125,7 +124,7 @@ object GenerationUtils {
             session,
             Fir2IrConfiguration(
                 languageVersionSettings = configuration.languageVersionSettings,
-                linkViaSignatures = false,
+                linkViaSignatures = configuration.getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES),
                 evaluatedConstTracker = configuration
                     .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
             ),
@@ -137,9 +136,8 @@ object GenerationUtils {
         val fir2IrExtensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl(), JvmIrMangler)
 
         val commonMemberStorage = Fir2IrCommonMemberStorage(
-            generateSignatures = firAnalyzerFacade.fir2IrConfiguration.linkViaSignatures,
-            signatureComposerCreator = { JvmIdSignatureDescriptor(JvmDescriptorMangler(null)) },
-            manglerCreator = { FirJvmKotlinMangler() }
+            signatureComposerForJvmFir2Ir(firAnalyzerFacade.fir2IrConfiguration.linkViaSignatures),
+            FirJvmKotlinMangler(),
         )
 
         val (moduleFragment, components, pluginContext) = firAnalyzerFacade.convertToIr(

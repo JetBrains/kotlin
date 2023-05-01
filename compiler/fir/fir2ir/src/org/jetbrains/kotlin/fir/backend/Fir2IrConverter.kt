@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.backend.generators.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -462,7 +461,7 @@ class Fir2IrConverter(
                 scopeSession,
                 commonMemberStorage.symbolTable,
                 irFactory,
-                commonMemberStorage.signatureComposer,
+                commonMemberStorage.firSignatureComposer,
                 fir2IrExtensions,
                 fir2IrConfiguration,
             )

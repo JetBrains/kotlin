@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.test.frontend.fir
 
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.JvmIrDeserializerImpl
-import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.compiler.NoScopeRecordCliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
@@ -22,8 +21,8 @@ import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
+import org.jetbrains.kotlin.fir.pipeline.signatureComposerForJvmFir2Ir
 import org.jetbrains.kotlin.fir.psi
-import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
@@ -66,7 +65,8 @@ class Fir2IrJvmResultsConverter(
         val compilerConfigurationProvider = testServices.compilerConfigurationProvider
         val configuration = compilerConfigurationProvider.getCompilerConfiguration(module)
 
-        val fir2IrExtensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl(), JvmIrMangler)
+        val irMangler = JvmIrMangler
+        val fir2IrExtensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl(), irMangler)
 
         // Create and initialize the module and its dependencies
         val project = compilerConfigurationProvider.getProject(module)
@@ -89,11 +89,7 @@ class Fir2IrJvmResultsConverter(
         val firAnalyzerFacade = inputArtifact.partsForDependsOnModules.last().firAnalyzerFacade as? FirAnalyzerFacade
         val generateSignatures = firAnalyzerFacade?.fir2IrConfiguration?.linkViaSignatures == true
 
-        val commonMemberStorage = Fir2IrCommonMemberStorage(
-            generateSignatures = generateSignatures,
-            signatureComposerCreator = { JvmIdSignatureDescriptor(JvmDescriptorMangler(null)) },
-            manglerCreator = { FirJvmKotlinMangler() }
-        )
+        val commonMemberStorage = Fir2IrCommonMemberStorage(signatureComposerForJvmFir2Ir(generateSignatures), FirJvmKotlinMangler())
         var irBuiltIns: IrBuiltInsOverFir? = null
 
         for ((index, firOutputPart) in inputArtifact.partsForDependsOnModules.withIndex()) {
@@ -136,7 +132,10 @@ class Fir2IrJvmResultsConverter(
             codegenFactory,
             dependentIrParts,
             mainIrPart,
-            sourceFiles
+            sourceFiles,
+            descriptorMangler = commonMemberStorage.symbolTable.signaturer.mangler,
+            irMangler = irMangler,
+            firMangler = commonMemberStorage.firSignatureComposer.mangler,
         )
     }
 }

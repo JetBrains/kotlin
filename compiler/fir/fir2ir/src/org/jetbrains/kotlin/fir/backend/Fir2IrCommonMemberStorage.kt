@@ -10,31 +10,20 @@ import org.jetbrains.kotlin.fir.signaturer.FirBasedSignatureComposer
 import org.jetbrains.kotlin.fir.signaturer.FirMangler
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
-import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.IdSignatureComposer
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import java.util.concurrent.ConcurrentHashMap
 
 class Fir2IrCommonMemberStorage(
-    generateSignatures: Boolean,
-    signatureComposerCreator: (() -> IdSignatureComposer)?,
-    manglerCreator: () -> FirMangler
+    signatureComposer: IdSignatureComposer,
+    firMangler: FirMangler
 ) {
-    val signatureComposer: FirBasedSignatureComposer
+    val firSignatureComposer = FirBasedSignatureComposer(firMangler)
 
-    val symbolTable: SymbolTable
-
-    init {
-        val signaturer = if (generateSignatures && signatureComposerCreator != null)
-            signatureComposerCreator()
-        else
-            DescriptorSignatureComposerStub()
-        signatureComposer = FirBasedSignatureComposer(manglerCreator())
-        symbolTable = SymbolTable(
-            signaturer = WrappedDescriptorSignatureComposer(signaturer, signatureComposer),
-            irFactory = IrFactoryImpl
-        )
-    }
+    val symbolTable = SymbolTable(
+        signaturer = WrappedDescriptorSignatureComposer(signatureComposer, firSignatureComposer),
+        irFactory = IrFactoryImpl
+    )
 
     val classCache: MutableMap<FirRegularClass, IrClass> = mutableMapOf()
 
