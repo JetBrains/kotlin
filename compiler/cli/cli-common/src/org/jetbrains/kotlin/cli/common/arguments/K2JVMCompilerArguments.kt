@@ -866,7 +866,11 @@ Also sets `-jvm-target` value equal to the selected JDK version"""
             result[JvmAnalysisFlags.jvmDefaultMode] = it
         } ?: collector.report(
             CompilerMessageSeverity.ERROR,
-            "Unknown -Xjvm-default mode: $jvmDefault, supported modes: ${JvmDefaultMode.values().map { it.description }}"
+            "Unknown -Xjvm-default mode: $jvmDefault, supported modes: ${
+                JvmDefaultMode.values().mapNotNull { mode ->
+                    mode.description.takeIf { JvmDefaultMode.fromStringOrNull(it) != null }
+                }
+            }"
         )
         result[JvmAnalysisFlags.inheritMultifileParts] = inheritMultifileParts
         result[JvmAnalysisFlags.sanitizeParentheses] = sanitizeParentheses
