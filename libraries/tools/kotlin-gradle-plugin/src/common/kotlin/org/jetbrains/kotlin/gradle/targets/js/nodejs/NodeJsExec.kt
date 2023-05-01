@@ -23,11 +23,15 @@ open class NodeJsExec
 @Inject
 constructor(
     @Internal
-    override val compilation: KotlinJsCompilation
+    @Transient
+    override val compilation: KotlinJsCompilation,
 ) : AbstractExecTask<NodeJsExec>(NodeJsExec::class.java), RequiresNpmDependencies {
     @Transient
     @get:Internal
     lateinit var nodeJs: NodeJsRootExtension
+
+    @Internal
+    val npmProject = compilation.npmProject
 
     init {
         onlyIf {
@@ -70,7 +74,7 @@ constructor(
         if (sourceMapStackTraces) {
             val sourceMapSupportArgs = mutableListOf(
                 "--require",
-                compilation.npmProject.require("source-map-support/register.js")
+                npmProject.require("source-map-support/register.js")
             )
 
             args?.let { sourceMapSupportArgs.addAll(it) }

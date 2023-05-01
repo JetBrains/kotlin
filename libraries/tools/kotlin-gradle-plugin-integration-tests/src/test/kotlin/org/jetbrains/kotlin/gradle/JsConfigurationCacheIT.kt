@@ -127,6 +127,29 @@ abstract class AbstractJsConfigurationCacheIT(protected val irBackend: Boolean) 
             )
         }
     }
+
+    @DisplayName("Node.js run correctly works with configuration cache")
+    @GradleTest
+    fun testNodeJsRun(gradleVersion: GradleVersion) {
+        project("kotlin-js-nodejs-project", gradleVersion) {
+            build("nodeRun", buildOptions = buildOptions) {
+                assertTasksExecuted(":nodeRun")
+                assertOutputContains(
+                    "Calculating task graph as no configuration cache is available for tasks: nodeRun"
+                )
+
+                assertConfigurationCacheStored()
+            }
+
+            build("clean", buildOptions = buildOptions)
+
+            // Then run a build where tasks states are deserialized to check that they work correctly in this mode
+            build("nodeRun", buildOptions = buildOptions) {
+                assertTasksExecuted(":nodeRun")
+                assertConfigurationCacheReused()
+            }
+        }
+    }
 }
 
 @JsGradlePluginTests
