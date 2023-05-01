@@ -1,3 +1,4 @@
+// !LANGUAGE: -ProhibitOpenValDeferredInitialization
 abstract class A {
     val b = B("O")
 
