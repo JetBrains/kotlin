@@ -1,0 +1,17 @@
+plugins {
+    id "java"
+    id "org.jetbrains.kotlin.jvm"
+    id "org.jetbrains.kotlin.kapt"
+}
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    implementation(project(":processor"))
+    kapt(project(":processor"))
+}
+
+compileKotlin.kotlinOptions.allWarningsAsErrors = true

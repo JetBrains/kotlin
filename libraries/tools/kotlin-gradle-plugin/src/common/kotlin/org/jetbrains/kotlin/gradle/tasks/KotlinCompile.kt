@@ -230,7 +230,7 @@ abstract class KotlinCompile @Inject constructor(
 
             args.javaPackagePrefix = javaPackagePrefix
 
-            if (compilerOptions.usesK2.get()) {
+            if (compilerOptions.usesK2.get() && multiPlatformEnabled.get()) {
                 args.fragments = multiplatformStructure.fragmentsCompilerArgs
                 args.fragmentRefines = multiplatformStructure.fragmentRefinesCompilerArgs
             }
