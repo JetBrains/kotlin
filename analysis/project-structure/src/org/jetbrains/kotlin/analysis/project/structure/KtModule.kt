@@ -161,7 +161,7 @@ public interface KtLibrarySourceModule : KtModule {
     public val binaryLibrary: KtLibraryModule
 
     override val moduleDescription: String
-        get() = "Library sourced of $libraryName"
+        get() = "Library sources of $libraryName"
 }
 
 /**
