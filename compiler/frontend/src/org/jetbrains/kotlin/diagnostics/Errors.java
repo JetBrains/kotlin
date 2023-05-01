@@ -674,8 +674,11 @@ public interface Errors {
 
     DiagnosticFactory0<KtProperty> MUST_BE_INITIALIZED = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
     DiagnosticFactory0<KtProperty> MUST_BE_INITIALIZED_OR_BE_FINAL = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
+    DiagnosticFactory0<KtProperty> MUST_BE_INITIALIZED_OR_BE_FINAL_WARNING = DiagnosticFactory0.create(WARNING, DECLARATION_SIGNATURE);
     DiagnosticFactory0<KtProperty> MUST_BE_INITIALIZED_OR_BE_ABSTRACT = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
     DiagnosticFactory0<KtProperty> MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
+    DiagnosticFactory0<KtProperty> MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT_WARNING = DiagnosticFactory0.create(WARNING, DECLARATION_SIGNATURE);
+
     DiagnosticFactory0<KtProperty> EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT =
             DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
     DiagnosticFactory0<KtProperty> UNNECESSARY_LATEINIT = DiagnosticFactory0.create(WARNING, LATEINIT_MODIFIER);

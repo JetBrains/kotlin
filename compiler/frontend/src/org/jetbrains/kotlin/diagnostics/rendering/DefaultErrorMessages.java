@@ -305,10 +305,14 @@ public class DefaultErrorMessages {
         MAP.put(PRIVATE_SETTER_FOR_ABSTRACT_PROPERTY, "Private setters are not allowed for abstract properties");
         MAP.put(PRIVATE_SETTER_FOR_OPEN_PROPERTY, "Private setters are not allowed for open properties");
         MAP.put(BACKING_FIELD_IN_INTERFACE, "Property in an interface cannot have a backing field");
+
         MAP.put(MUST_BE_INITIALIZED, "Property must be initialized");
         MAP.put(MUST_BE_INITIALIZED_OR_BE_FINAL, "Property must be initialized or be final");
+        MAP.put(MUST_BE_INITIALIZED_OR_BE_FINAL_WARNING, "Property must be initialized or be final. This warning will become an error in future releases.");
         MAP.put(MUST_BE_INITIALIZED_OR_BE_ABSTRACT, "Property must be initialized or be abstract");
         MAP.put(MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT, "Property must be initialized, be final, or be abstract");
+        MAP.put(MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT_WARNING, "Property must be initialized, be final, or be abstract. This warning will become an error in future releases.");
+
         MAP.put(EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT, "Extension property must have accessors or be abstract");
         MAP.put(UNNECESSARY_LATEINIT, "Lateinit is unnecessary: definitely initialized in constructors");
         MAP.put(PROPERTY_INITIALIZER_IN_INTERFACE, "Property initializers are not allowed in interfaces");

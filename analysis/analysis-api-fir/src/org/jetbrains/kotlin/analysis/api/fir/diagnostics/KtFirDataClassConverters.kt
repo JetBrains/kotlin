@@ -2857,6 +2857,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.MUST_BE_INITIALIZED_OR_BE_FINAL_WARNING) { firDiagnostic ->
+        MustBeInitializedOrBeFinalWarningImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.MUST_BE_INITIALIZED_OR_BE_ABSTRACT) { firDiagnostic ->
         MustBeInitializedOrBeAbstractImpl(
             firDiagnostic as KtPsiDiagnostic,
@@ -2865,6 +2871,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KtDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT) { firDiagnostic ->
         MustBeInitializedOrFinalOrAbstractImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT_WARNING) { firDiagnostic ->
+        MustBeInitializedOrFinalOrAbstractWarningImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

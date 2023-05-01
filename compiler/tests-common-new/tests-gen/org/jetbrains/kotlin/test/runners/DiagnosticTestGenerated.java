@@ -2991,6 +2991,24 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("OpenValPartialDeferredInitErrorAnyway.kt")
+            public void testOpenValPartialDeferredInitErrorAnyway() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/backingField/OpenValPartialDeferredInitErrorAnyway.kt");
+            }
+
+            @Test
+            @TestMetadata("OpenValPartialDeferredInitSecondaryConstructorErrorAnyway.kt")
+            public void testOpenValPartialDeferredInitSecondaryConstructorErrorAnyway() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/backingField/OpenValPartialDeferredInitSecondaryConstructorErrorAnyway.kt");
+            }
+
+            @Test
+            @TestMetadata("OpenValPartialDeferredInitTwoSecondaryConstructorsErrorAnyway.kt")
+            public void testOpenValPartialDeferredInitTwoSecondaryConstructorsErrorAnyway() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/backingField/OpenValPartialDeferredInitTwoSecondaryConstructorsErrorAnyway.kt");
+            }
+
+            @Test
             @TestMetadata("SetterWithExplicitType.kt")
             public void testSetterWithExplicitType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/backingField/SetterWithExplicitType.kt");
@@ -3003,9 +3021,15 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
-            @TestMetadata("ValDeferredInitInOpenClass.kt")
-            public void testValDeferredInitInOpenClass() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/backingField/ValDeferredInitInOpenClass.kt");
+            @TestMetadata("ValDeferredInitInOpenClassOpenValError.kt")
+            public void testValDeferredInitInOpenClassOpenValError() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/backingField/ValDeferredInitInOpenClassOpenValError.kt");
+            }
+
+            @Test
+            @TestMetadata("ValDeferredInitInOpenClassOpenValWarning.kt")
+            public void testValDeferredInitInOpenClassOpenValWarning() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/backingField/ValDeferredInitInOpenClassOpenValWarning.kt");
             }
 
             @Test
