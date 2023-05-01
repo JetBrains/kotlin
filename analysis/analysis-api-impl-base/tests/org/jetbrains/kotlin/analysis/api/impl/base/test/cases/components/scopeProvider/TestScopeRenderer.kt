@@ -25,7 +25,8 @@ internal object TestScopeRenderer {
     context (KtAnalysisSession)
     fun PrettyPrinter.renderForTests(
         scopeContext: KtScopeContext,
-        printPretty: Boolean = false
+        printPretty: Boolean = false,
+        fullyPrintScope: (KtScopeKind) -> Boolean,
     ) {
         appendLine("implicit receivers:")
 
@@ -39,7 +40,7 @@ internal object TestScopeRenderer {
         }
         appendLine("scopes:")
         withIndent {
-            renderScopeContext(scopeContext, printPretty)
+            renderScopeContext(scopeContext, printPretty, fullyPrintScope)
         }
     }
 
@@ -58,18 +59,24 @@ internal object TestScopeRenderer {
     context(KtAnalysisSession)
     private fun PrettyPrinter.renderScopeContext(
         scopeContext: KtScopeContext,
-        printPretty: Boolean
+        printPretty: Boolean,
+        fullyPrintScope: (KtScopeKind) -> Boolean,
     ) {
         for (scopeWithKind in scopeContext.scopes) {
-            appendLine(renderForTests(scopeWithKind.scope, scopeWithKind.kind, printPretty))
+            appendLine(renderForTests(scopeWithKind.scope, scopeWithKind.kind, printPretty, fullyPrintScope))
         }
     }
 
     context (KtAnalysisSession)
-    private fun renderForTests(scope: KtScope, scopeKind: KtScopeKind, printPretty: Boolean): String = prettyPrint {
+    private fun renderForTests(
+        scope: KtScope,
+        scopeKind: KtScopeKind,
+        printPretty: Boolean,
+        fullyPrintScope: (KtScopeKind) -> Boolean,
+    ): String = prettyPrint {
         append("${scopeKind::class.simpleName}, index = ${scopeKind.indexInTower}")
 
-        if (scopeKind is KtScopeKind.DefaultSimpleImportingScope || scopeKind is KtScopeKind.DefaultStarImportingScope) {
+        if (!fullyPrintScope(scopeKind)) {
             appendLine()
             return@prettyPrint
         }

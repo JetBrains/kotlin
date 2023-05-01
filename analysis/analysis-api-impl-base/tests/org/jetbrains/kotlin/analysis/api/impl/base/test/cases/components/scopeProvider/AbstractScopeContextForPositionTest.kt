@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.scopeP
 
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.components.KtScopeContext
+import org.jetbrains.kotlin.analysis.api.components.KtScopeKind
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.scopeProvider.TestScopeRenderer.renderForTests
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedSingleModuleTest
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -39,6 +40,8 @@ abstract class AbstractScopeContextForPositionTest : AbstractAnalysisApiBasedSin
         printPretty: Boolean = false
     ): String = prettyPrint {
         appendLine("element: ${element.text}")
-        renderForTests(scopeContext, printPretty)
+        renderForTests(scopeContext, printPretty) { scopeKind ->
+            scopeKind !is KtScopeKind.DefaultSimpleImportingScope && scopeKind !is KtScopeKind.DefaultStarImportingScope
+        }
     }
 }
