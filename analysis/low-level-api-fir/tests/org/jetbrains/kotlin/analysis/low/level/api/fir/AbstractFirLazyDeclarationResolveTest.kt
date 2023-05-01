@@ -10,26 +10,26 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLeve
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
-import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.renderer.FirDeclarationRendererWithAttributes
 import org.jetbrains.kotlin.fir.renderer.FirErrorExpressionExtendedRenderer
 import org.jetbrains.kotlin.fir.renderer.FirFileAnnotationsContainerRenderer
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.renderer.FirResolvePhaseRenderer
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
+import org.jetbrains.kotlin.test.directives.model.ValueDirective
+import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.decapitalizeAsciiOnly
 import org.junit.jupiter.api.parallel.Execution
 import org.junit.jupiter.api.parallel.ExecutionMode
 
@@ -51,7 +51,8 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractLowLevelApiSingle
         resolveWithClearCaches(ktFile) { firResolveSession ->
             check(firResolveSession.isSourceSession)
             val ktDeclaration = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtDeclaration>(ktFile)
-            val declarationToResolve = ktDeclaration.resolveToFirSymbol(firResolveSession)
+            val declarationSymbol = ktDeclaration.resolveToFirSymbol(firResolveSession)
+            val declarationToResolve = chooseMemberDeclarationIfNeeded(declarationSymbol, moduleStructure)
 
             for (currentPhase in FirResolvePhase.values()) {
                 if (currentPhase == FirResolvePhase.SEALED_CLASS_INHERITORS) continue
@@ -82,12 +83,32 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractLowLevelApiSingle
         testServices.assertions.assertEqualsToTestDataFileSibling(resultBuilder.toString())
     }
 
+    private fun chooseMemberDeclarationIfNeeded(symbol: FirBasedSymbol<*>, moduleStructure: TestModuleStructure): FirBasedSymbol<*> {
+        val memberClassFilter = moduleStructure.allDirectives.singleOrZeroValue(Directives.MEMBER_CLASS_FILTER) ?: return symbol
+        val classSymbol = symbol as FirClassSymbol
+        val declarations = classSymbol.declarationSymbols
+        val filteredSymbols = declarations.filter { memberClassFilter.isInstance(it) }
+        return when (filteredSymbols.size) {
+            0 -> error("Empty result for:${declarations.joinToString("\n")}")
+            1 -> filteredSymbols.single()
+            else -> error("Result ambiguity:\n${filteredSymbols.joinToString("\n")}")
+        }
+    }
+
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
         with(builder) {
             defaultDirectives {
                 +ConfigurationDirectives.WITH_STDLIB
             }
+
+            useDirectives(Directives)
+        }
+    }
+
+    private object Directives : SimpleDirectivesContainer() {
+        val MEMBER_CLASS_FILTER: ValueDirective<Class<*>> by valueDirective("Choose member declaration by a declaration class") {
+            Class.forName(it)
         }
     }
 }

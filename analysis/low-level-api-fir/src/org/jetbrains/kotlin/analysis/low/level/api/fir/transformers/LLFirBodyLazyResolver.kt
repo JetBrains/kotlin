@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveT
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkDelegatedConstructorIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkBodyIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkDefaultValueIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkInitializerIsResolved
@@ -50,6 +51,10 @@ internal object LLFirBodyLazyResolver : LLFirLazyResolver(FirResolvePhase.BODY_R
         when (target) {
             is FirValueParameter -> checkDefaultValueIsResolved(target)
             is FirVariable -> checkInitializerIsResolved(target)
+            is FirConstructor -> {
+                checkDelegatedConstructorIsResolved(target)
+                checkBodyIsResolved(target)
+            }
             is FirFunction -> checkBodyIsResolved(target)
         }
 

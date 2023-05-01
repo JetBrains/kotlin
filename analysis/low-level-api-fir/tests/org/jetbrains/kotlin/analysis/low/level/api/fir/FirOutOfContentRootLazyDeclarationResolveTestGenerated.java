@@ -103,6 +103,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("fakePrimaryConstructor.kt")
+    public void testFakePrimaryConstructor() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/fakePrimaryConstructor.kt");
+    }
+
+    @Test
     @TestMetadata("functionWithParameter.kt")
     public void testFunctionWithParameter() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/lazyResolve/functionWithParameter.kt");
@@ -124,6 +130,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     @TestMetadata("parameterOfTopSetter.kt")
     public void testParameterOfTopSetter() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/lazyResolve/parameterOfTopSetter.kt");
+    }
+
+    @Test
+    @TestMetadata("primaryConstructor.kt")
+    public void testPrimaryConstructor() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/primaryConstructor.kt");
     }
 
     @Test

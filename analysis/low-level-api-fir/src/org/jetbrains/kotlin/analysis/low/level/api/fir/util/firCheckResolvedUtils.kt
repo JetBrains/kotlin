@@ -13,9 +13,9 @@ import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.FirBlock
-import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
+import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.types.FirImplicitTypeRef
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
@@ -49,6 +49,33 @@ internal fun checkBodyIsResolved(function: FirFunction) {
     val block = function.body ?: return
     checkTypeRefIsResolved(block.typeRef, "block type", function) {
         withFirEntry("block", block)
+    }
+}
+
+internal fun checkDelegatedConstructorIsResolved(constructor: FirConstructor) {
+    val delegatedConstructorCall = constructor.delegatedConstructor ?: return
+    val calleeReference = delegatedConstructorCall.calleeReference
+    checkReferenceIsResolved(reference = calleeReference, owner = delegatedConstructorCall) {
+        withFirEntry("constructor", constructor)
+    }
+}
+
+internal fun checkReferenceIsResolved(
+    reference: FirReference,
+    owner: FirResolvable,
+    extraAttachment: ExceptionAttachmentBuilder.() -> Unit = {},
+) {
+    checkWithAttachmentBuilder(
+        condition = reference is FirResolvedNamedReference || reference is FirErrorNamedReference || reference is FirFromMissingDependenciesNamedReference,
+        message = {
+            "Expected ${FirNamedReference::class.simpleName}, " +
+                    "${FirErrorNamedReference::class.simpleName} " +
+                    "or ${FirFromMissingDependenciesNamedReference::class.simpleName}, " +
+                    "but ${reference::class.simpleName} found"
+        }
+    ) {
+        withFirEntry("referenceOwner", owner)
+        extraAttachment()
     }
 }
 
