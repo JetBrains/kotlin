@@ -2989,6 +2989,30 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
             public void testSetterWithExplicitType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/backingField/SetterWithExplicitType.kt");
             }
+
+            @Test
+            @TestMetadata("ValDeferredInitInFinalClass.kt")
+            public void testValDeferredInitInFinalClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/backingField/ValDeferredInitInFinalClass.kt");
+            }
+
+            @Test
+            @TestMetadata("ValDeferredInitInOpenClass.kt")
+            public void testValDeferredInitInOpenClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/backingField/ValDeferredInitInOpenClass.kt");
+            }
+
+            @Test
+            @TestMetadata("VarDeferredInitInFinalClass.kt")
+            public void testVarDeferredInitInFinalClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/backingField/VarDeferredInitInFinalClass.kt");
+            }
+
+            @Test
+            @TestMetadata("VarDeferredInitInOpenClass.kt")
+            public void testVarDeferredInitInOpenClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/backingField/VarDeferredInitInOpenClass.kt");
+            }
         }
 
         @Nested
