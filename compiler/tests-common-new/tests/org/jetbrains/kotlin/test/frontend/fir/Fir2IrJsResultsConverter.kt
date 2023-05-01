@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.model.BackendKinds
 import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
 import org.jetbrains.kotlin.test.model.FrontendKinds
@@ -55,7 +56,19 @@ class Fir2IrJsResultsConverter(
     FrontendKinds.FIR,
     BackendKinds.IrBackend
 ) {
-    override fun transform(
+
+    override fun transform(module: TestModule, inputArtifact: FirOutputArtifact): IrBackendInput? =
+        try {
+            transformInternal(module, inputArtifact)
+        } catch (e: Throwable) {
+            if (CodegenTestDirectives.IGNORE_FIR2IR_EXCEPTIONS_IF_FIR_CONTAINS_ERRORS in module.directives && inputArtifact.hasErrors) {
+                null
+            } else {
+                throw e
+            }
+        }
+
+    private fun transformInternal(
         module: TestModule,
         inputArtifact: FirOutputArtifact
     ): IrBackendInput {
