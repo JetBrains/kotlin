@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.konan.blackboxtest;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.junit.jupiter.api.Tag;
-import org.jetbrains.kotlin.konan.blackboxtest.support.group.UseStandardTestCaseGroupProvider;
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.FirPipeline;
+import org.jetbrains.kotlin.konan.blackboxtest.support.group.UseStandardTestCaseGroupProvider;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -25,8 +25,9 @@ public class FirInfrastructureTestGenerated extends AbstractNativeBlackBoxTest {
     @TestDataPath("$PROJECT_ROOT")
     @Tag("infrastructure")
     @Tag("firInfrastructure")
-    @UseStandardTestCaseGroupProvider()
+    @Tag("frontend-fir")
     @FirPipeline()
+    @UseStandardTestCaseGroupProvider()
     public class Samples {
         @Test
         public void testAllFilesPresentInSamples() throws Exception {
@@ -248,8 +249,9 @@ public class FirInfrastructureTestGenerated extends AbstractNativeBlackBoxTest {
         @TestDataPath("$PROJECT_ROOT")
         @Tag("infrastructure")
         @Tag("firInfrastructure")
-        @UseStandardTestCaseGroupProvider()
+        @Tag("frontend-fir")
         @FirPipeline()
+        @UseStandardTestCaseGroupProvider()
         public class Inner {
             @Test
             public void testAllFilesPresentInInner() throws Exception {
@@ -269,8 +271,9 @@ public class FirInfrastructureTestGenerated extends AbstractNativeBlackBoxTest {
     @TestDataPath("$PROJECT_ROOT")
     @Tag("infrastructure")
     @Tag("firInfrastructure")
-    @UseStandardTestCaseGroupProvider()
+    @Tag("frontend-fir")
     @FirPipeline()
+    @UseStandardTestCaseGroupProvider()
     public class Samples2 {
         @Test
         public void testAllFilesPresentInSamples2() throws Exception {

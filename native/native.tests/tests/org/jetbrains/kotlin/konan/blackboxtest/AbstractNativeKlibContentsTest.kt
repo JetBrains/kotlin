@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.group.UsePartialLinkage
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
-import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEquals
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
 import org.junit.jupiter.api.Tag
 import java.io.File

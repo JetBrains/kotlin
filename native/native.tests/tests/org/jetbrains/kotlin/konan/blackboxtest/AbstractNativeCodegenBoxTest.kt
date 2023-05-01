@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.util.ExternalSourceTransf
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.ExternalSourceTransformers
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.ThreadSafeCache
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.getAbsoluteFile
+import org.junit.jupiter.api.Tag
 import java.io.File
 
 // Disable codegen/box/properties/lateinit/isInitializedAndDeinitialize tests with ONE_STAGE_MULTI_MODULE
@@ -22,6 +23,7 @@ import java.io.File
     property = ClassLevelProperty.TEST_MODE,
     propertyValue = "ONE_STAGE_MULTI_MODULE"
 )
+@Tag("codegen")
 abstract class AbstractNativeCodegenBoxTest : ExternalSourceTransformersProvider, AbstractNativeBlackBoxTest() {
     private val registeredSourceTransformers: ThreadSafeCache<File, MutableList<ExternalSourceTransformer>> = ThreadSafeCache()
 

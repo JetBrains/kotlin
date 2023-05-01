@@ -15,7 +15,6 @@ import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.TestFactory
 
 @Tag("kotlin-test")
-@Tag("k1Kotlin-test")
 @PredefinedTestCases(
     TC(
         name = "default",
@@ -31,7 +30,7 @@ import org.junit.jupiter.api.TestFactory
     )
 )
 @UsePartialLinkage(UsePartialLinkage.Mode.DISABLED)
-class K1KotlinTestLibraryTest : AbstractNativeBlackBoxTest() {
+class KotlinTestLibraryTest : AbstractNativeBlackBoxTest() {
     @TestFactory
     fun default() = dynamicTestCase(TestCaseId.Named("default"))
 
@@ -39,8 +38,9 @@ class K1KotlinTestLibraryTest : AbstractNativeBlackBoxTest() {
     fun worker() = dynamicTestCase(TestCaseId.Named("worker"))
 }
 
-@Tag("kotlin-testK2")
-@Tag("firKotlin-test")
+@Tag("kotlin-test")
+@Tag("kotlin-testK2") // TODO: To be removed.
+@Tag("frontend-fir")
 @PredefinedTestCases(
     TC(
         name = "default",

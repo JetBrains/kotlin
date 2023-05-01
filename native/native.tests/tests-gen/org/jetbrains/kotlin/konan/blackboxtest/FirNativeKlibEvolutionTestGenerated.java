@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.konan.blackboxtest;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
+import org.junit.jupiter.api.Tag;
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.FirPipeline;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
@@ -19,6 +20,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/binaryCompatibility/klibEvolution")
 @TestDataPath("$PROJECT_ROOT")
+@Tag("frontend-fir")
 @FirPipeline()
 public class FirNativeKlibEvolutionTestGenerated extends AbstractNativeKlibEvolutionTest {
     @Test
