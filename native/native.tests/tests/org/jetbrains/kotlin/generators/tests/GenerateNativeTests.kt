@@ -190,7 +190,7 @@ fun main() {
                     debugger(),
                     provider<UseStandardTestCaseGroupProvider>(),
                     forceDebugMode(),
-                    hostOnly()
+                    forceHostTarget()
                 )
             ) {
                 model("lldb")
@@ -207,7 +207,7 @@ private fun forceDebugMode() = annotation(
     "propertyValue" to "DEBUG"
 )
 
-private fun hostOnly() = provider<EnforcedHostTarget>()
+private fun forceHostTarget() = annotation(EnforcedHostTarget::class.java)
 
 private fun noPartialLinkage() = annotation(
     UsePartialLinkage::class.java,
