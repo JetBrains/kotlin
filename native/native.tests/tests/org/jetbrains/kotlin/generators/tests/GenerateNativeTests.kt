@@ -189,7 +189,7 @@ fun main() {
                 annotations = listOf(
                     debugger(),
                     provider<UseStandardTestCaseGroupProvider>(),
-                    debugOnly(),
+                    forceDebugMode(),
                     hostOnly()
                 )
             ) {
@@ -201,7 +201,7 @@ fun main() {
 
 private inline fun <reified T : Annotation> provider() = annotation(T::class.java)
 
-private fun debugOnly() = annotation(
+private fun forceDebugMode() = annotation(
     EnforcedProperty::class.java,
     "property" to ClassLevelProperty.OPTIMIZATION_MODE,
     "propertyValue" to "DEBUG"
