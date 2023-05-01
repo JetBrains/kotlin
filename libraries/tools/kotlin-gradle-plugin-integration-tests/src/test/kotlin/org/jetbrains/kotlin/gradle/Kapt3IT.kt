@@ -1180,4 +1180,44 @@ open class Kapt3IT : Kapt3BaseIT() {
             }
         }
     }
+
+    @DisplayName("Kapt-generated Kotlin sources can be used in Kotlin")
+    @GradleTest
+    internal fun useGeneratedKotlinSource(gradleVersion: GradleVersion) {
+        project("useGeneratedKotlinSource".withPrefix, gradleVersion) {
+            build("build") {
+                assertKaptSuccessful()
+                assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin")
+            }
+        }
+    }
+
+    @DisplayName("Kapt-generated Kotlin sources can be used in Kotlin with languageVersion = 2.0")
+    @GradleTest
+    internal fun useGeneratedKotlinSourceK2(gradleVersion: GradleVersion) {
+        project("useGeneratedKotlinSource".withPrefix, gradleVersion) {
+            buildGradle.appendText(
+                """
+                |tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+                |    compilerOptions {
+                |        freeCompilerArgs.addAll([
+                |            "-Xuse-fir-ic",
+                |            "-Xuse-fir-lt"
+                |        ])
+                |    }
+                |    kotlinOptions {
+                |      languageVersion = "2.0"
+                |    }
+                |}
+                |
+                |compileKotlin.kotlinOptions.allWarningsAsErrors = false
+                """.trimMargin()
+            )
+            build("build") {
+                assertKaptSuccessful()
+                assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin")
+                assertOutputContains("Falling back to 1.9.")
+            }
+        }
+    }
 }
