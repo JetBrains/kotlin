@@ -40,6 +40,8 @@ public abstract class KtScopeProvider : KtAnalysisSessionComponent() {
 
     public abstract fun getSyntheticJavaPropertiesScope(type: KtType): KtTypeScope?
 
+    public abstract fun getImportingScopeContext(file: KtFile): KtScopeContext
+
     public abstract fun getScopeContextForPosition(
         originalFile: KtFile,
         positionInFakeFile: KtElement
@@ -112,8 +114,13 @@ public interface KtScopeProviderMixIn : KtAnalysisSessionMixIn {
     public fun KtFile.getScopeContextForPosition(positionInFakeFile: KtElement): KtScopeContext =
         withValidityAssertion { analysisSession.scopeProvider.getScopeContextForPosition(this, positionInFakeFile) }
 
-    public fun KtFile.getScopeContextForFile(): KtScopeContext =
-        withValidityAssertion { analysisSession.scopeProvider.getScopeContextForPosition(this, this) }
+    /**
+     * Returns a [KtScopeContext] formed by all imports in the [KtFile].
+     *
+     * By default, this will also include default importing scopes, which can be filtered by [KtScopeKind]
+     */
+    public fun KtFile.getImportingScopeContext(): KtScopeContext =
+        withValidityAssertion { analysisSession.scopeProvider.getImportingScopeContext(this) }
 
     /**
      * Returns single scope, containing declarations from all scopes that satisfy [filter]. The order of declarations corresponds to the
