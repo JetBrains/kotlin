@@ -66,6 +66,7 @@ abstract enum class TestEnum3 : Enum<TestEnum3> {
   }
 
   abstract fun foo()
+
   fun values(): Array<TestEnum3> /* Synthetic body for ENUM_VALUES */
 
   fun valueOf(value: String): TestEnum3 /* Synthetic body for ENUM_VALUEOF */
@@ -122,6 +123,7 @@ abstract enum class TestEnum4 : Enum<TestEnum4> {
   }
 
   abstract fun foo()
+
   fun values(): Array<TestEnum4> /* Synthetic body for ENUM_VALUES */
 
   fun valueOf(value: String): TestEnum4 /* Synthetic body for ENUM_VALUEOF */

@@ -1,5 +1,6 @@
 interface I<T : Any?> {
   abstract fun input(t: T)
+
   abstract fun output(): T
 
 }

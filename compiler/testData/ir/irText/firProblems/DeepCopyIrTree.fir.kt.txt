@@ -4,7 +4,9 @@ interface IrType {
 
 interface TypeRemapper {
   abstract fun enterScope(irTypeParametersContainer: IrTypeParametersContainer)
+
   abstract fun remapType(type: IrType): IrType
+
   abstract fun leaveScope()
 
 }

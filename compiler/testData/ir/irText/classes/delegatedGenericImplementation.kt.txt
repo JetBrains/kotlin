@@ -1,5 +1,6 @@
 interface IBase<A : Any?> {
   abstract fun <B : Any?> foo(a: A, b: B)
+
   abstract val <C : Any?> C.id: Map<A, C>?
     abstract get
 
