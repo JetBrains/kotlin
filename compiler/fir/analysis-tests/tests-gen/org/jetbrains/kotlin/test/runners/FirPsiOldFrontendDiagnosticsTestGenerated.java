@@ -2949,15 +2949,27 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
-            @TestMetadata("ValDeferredInitInFinalClass.kt")
-            public void testValDeferredInitInFinalClass() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/backingField/ValDeferredInitInFinalClass.kt");
+            @TestMetadata("ValDeferredInitInFinalClassOpenValError.kt")
+            public void testValDeferredInitInFinalClassOpenValError() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/backingField/ValDeferredInitInFinalClassOpenValError.kt");
             }
 
             @Test
-            @TestMetadata("ValDeferredInitInOpenClass.kt")
-            public void testValDeferredInitInOpenClass() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/backingField/ValDeferredInitInOpenClass.kt");
+            @TestMetadata("ValDeferredInitInFinalClassOpenValWarning.kt")
+            public void testValDeferredInitInFinalClassOpenValWarning() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/backingField/ValDeferredInitInFinalClassOpenValWarning.kt");
+            }
+
+            @Test
+            @TestMetadata("ValDeferredInitInOpenClassOpenValError.kt")
+            public void testValDeferredInitInOpenClassOpenValError() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/backingField/ValDeferredInitInOpenClassOpenValError.kt");
+            }
+
+            @Test
+            @TestMetadata("ValDeferredInitInOpenClassOpenValWarning.kt")
+            public void testValDeferredInitInOpenClassOpenValWarning() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/backingField/ValDeferredInitInOpenClassOpenValWarning.kt");
             }
 
             @Test

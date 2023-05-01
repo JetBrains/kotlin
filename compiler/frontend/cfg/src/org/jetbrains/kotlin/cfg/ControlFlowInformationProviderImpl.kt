@@ -619,14 +619,11 @@ class ControlFlowInformationProviderImpl private constructor(
         if (variableDescriptor !is PropertyDescriptor
             || ctxt.enterInitState?.mayBeInitialized() == true
             || ctxt.exitInitState?.mayBeInitialized() != true
-            || !variableDescriptor.isVar
             || trace.get(BACKING_FIELD_REQUIRED, variableDescriptor) != true
         ) {
             return false
         }
-        if (ctxt.enterInitState?.mayBeInitialized() != true && ctxt.exitInitState.mayBeInitialized()) {
-            trace.record(IS_DEFERRED_INITIALIZED, variableDescriptor)
-        }
+        trace.record(IS_DEFERRED_INITIALIZED, variableDescriptor)
 
         val property = DescriptorToSourceUtils.descriptorToDeclaration(variableDescriptor) as? KtProperty
             ?: throw AssertionError("$variableDescriptor is not related to KtProperty")

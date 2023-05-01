@@ -775,7 +775,14 @@ class DeclarationsChecker(
                 if (propertyDescriptor.extensionReceiverParameter != null && !hasAnyAccessorImplementation) {
                     trace.report(EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT.on(property))
                 } else if (diagnosticSuppressor.shouldReportNoBody(propertyDescriptor)) {
-                    reportMustBeInitialized(propertyDescriptor, containingDeclaration, hasAnyAccessorImplementation, property, trace)
+                    reportMustBeInitialized(
+                        propertyDescriptor,
+                        containingDeclaration,
+                        hasAnyAccessorImplementation,
+                        property,
+                        languageVersionSettings,
+                        trace
+                    )
                 }
             } else if (property.typeReference == null && !languageVersionSettings.supportsFeature(LanguageFeature.ShortSyntaxForPropertyGetters)) {
                 trace.report(
@@ -804,6 +811,7 @@ class DeclarationsChecker(
         containingDeclaration: DeclarationDescriptor,
         hasAnyAccessorImplementation: Boolean,
         property: KtProperty,
+        languageVersionSettings: LanguageVersionSettings,
         trace: BindingTrace,
     ) {
         check(propertyDescriptor.modality != Modality.ABSTRACT) { "${::reportMustBeInitialized.name} isn't called for abstract properties" }
@@ -812,13 +820,31 @@ class DeclarationsChecker(
                 propertyDescriptor.modality != Modality.FINAL &&
                 trace.bindingContext.get(IS_DEFERRED_INITIALIZED, propertyDescriptor) == true
         val suggestMakingItAbstract = containingDeclaration is ClassDescriptor && !hasAnyAccessorImplementation
+        val isOpenValDeferredInitDeprecationWarning =
+            !languageVersionSettings.supportsFeature(LanguageFeature.ProhibitOpenValDeferredInitialization) &&
+                    propertyDescriptor.modality == Modality.OPEN &&
+                    !propertyDescriptor.isVar &&
+                    trace.bindingContext.get(IS_DEFERRED_INITIALIZED, propertyDescriptor) == true
 
-        when {
-            suggestMakingItFinal && suggestMakingItAbstract -> trace.report(MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT.on(property))
-            suggestMakingItFinal -> trace.report(MUST_BE_INITIALIZED_OR_BE_FINAL.on(property))
-            suggestMakingItAbstract -> trace.report(MUST_BE_INITIALIZED_OR_BE_ABSTRACT.on(property))
-            else -> trace.report(MUST_BE_INITIALIZED.on(property))
+        val factory = when {
+            suggestMakingItFinal && suggestMakingItAbstract -> when (isOpenValDeferredInitDeprecationWarning) {
+                true -> MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT_WARNING
+                false -> MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT
+            }
+            suggestMakingItFinal -> when (isOpenValDeferredInitDeprecationWarning) {
+                true -> MUST_BE_INITIALIZED_OR_BE_FINAL_WARNING
+                false -> MUST_BE_INITIALIZED_OR_BE_FINAL
+            }
+            suggestMakingItAbstract -> when (isOpenValDeferredInitDeprecationWarning) {
+                true -> error("Not reachable case. Every \"open val + deferred init\" case that could be made `abstract`, also could be made `final`")
+                false -> MUST_BE_INITIALIZED_OR_BE_ABSTRACT
+            }
+            else -> when (isOpenValDeferredInitDeprecationWarning) {
+                true -> error("Not reachable case. We can always suggest making `open val` property `final`")
+                false -> MUST_BE_INITIALIZED
+            }
         }
+        trace.report(factory.on(property))
     }
 
     private fun noExplicitTypeOrGetterType(property: KtProperty) =

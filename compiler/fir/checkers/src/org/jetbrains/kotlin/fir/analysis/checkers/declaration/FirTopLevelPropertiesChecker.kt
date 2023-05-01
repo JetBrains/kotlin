@@ -182,12 +182,28 @@ private fun reportMustBeInitialized(
             !property.isFinal &&
             isDeferredInitialized
     val suggestMakingItAbstract = containingClass != null && !property.hasAnyAccessorImplementation
+    val isOpenValDeferredInitDeprecationWarning =
+        !context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitOpenValDeferredInitialization) &&
+                property.isOpen && property.isVal &&
+                isDeferredInitialized
 
     val factory = when {
-        suggestMakingItFinal && suggestMakingItAbstract -> FirErrors.MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT
-        suggestMakingItFinal -> FirErrors.MUST_BE_INITIALIZED_OR_BE_FINAL
-        suggestMakingItAbstract -> FirErrors.MUST_BE_INITIALIZED_OR_BE_ABSTRACT
-        else -> FirErrors.MUST_BE_INITIALIZED
+        suggestMakingItFinal && suggestMakingItAbstract -> when (isOpenValDeferredInitDeprecationWarning) {
+            true -> FirErrors.MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT_WARNING
+            false -> FirErrors.MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT
+        }
+        suggestMakingItFinal -> when (isOpenValDeferredInitDeprecationWarning) {
+            true -> FirErrors.MUST_BE_INITIALIZED_OR_BE_FINAL_WARNING
+            false -> FirErrors.MUST_BE_INITIALIZED_OR_BE_FINAL
+        }
+        suggestMakingItAbstract -> when (isOpenValDeferredInitDeprecationWarning) {
+            true -> error("Not reachable case. Every \"open val + deferred init\" case that could be made `abstract`, also could be made `final`")
+            false -> FirErrors.MUST_BE_INITIALIZED_OR_BE_ABSTRACT
+        }
+        else -> when (isOpenValDeferredInitDeprecationWarning) {
+            true -> error("Not reachable case. We can always suggest making `open val` property `final`")
+            false -> FirErrors.MUST_BE_INITIALIZED
+        }
     }
     reporter.reportOn(propertySource, factory, context)
 }
