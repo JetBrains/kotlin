@@ -2943,15 +2943,9 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
             }
 
             @Test
-            @TestMetadata("ValDeferredInitInFinalClassOpenValError.kt")
-            public void testValDeferredInitInFinalClassOpenValError() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/backingField/ValDeferredInitInFinalClassOpenValError.kt");
-            }
-
-            @Test
-            @TestMetadata("ValDeferredInitInFinalClassOpenValWarning.kt")
-            public void testValDeferredInitInFinalClassOpenValWarning() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/backingField/ValDeferredInitInFinalClassOpenValWarning.kt");
+            @TestMetadata("ValDeferredInitInFinalClass.kt")
+            public void testValDeferredInitInFinalClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/backingField/ValDeferredInitInFinalClass.kt");
             }
 
             @Test

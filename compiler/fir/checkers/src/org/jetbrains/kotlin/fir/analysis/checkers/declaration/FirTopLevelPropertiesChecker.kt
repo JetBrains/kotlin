@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -137,7 +138,8 @@ internal fun checkPropertyInitializer(
             val propertySource = property.source ?: return
             val isExternal = property.isEffectivelyExternal(containingClass, context)
             val isCorrectlyInitialized =
-                property.initializer != null || isDeferredInitialized && !property.hasSetterAccessorImplementation && !property.isOpen
+                property.initializer != null || isDeferredInitialized && !property.hasSetterAccessorImplementation &&
+                        property.getEffectiveModality(containingClass) != Modality.OPEN
             if (
                 backingFieldRequired &&
                 !inInterface &&
@@ -179,12 +181,12 @@ private fun reportMustBeInitialized(
     check(!property.isAbstract) { "${::reportMustBeInitialized.name} isn't called for abstract properties" }
     val suggestMakingItFinal = containingClass != null &&
             !property.hasSetterAccessorImplementation &&
-            !property.isFinal &&
+            property.getEffectiveModality(containingClass) != Modality.FINAL &&
             isDeferredInitialized
     val suggestMakingItAbstract = containingClass != null && !property.hasAnyAccessorImplementation
     val isOpenValDeferredInitDeprecationWarning =
         !context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitOpenValDeferredInitialization) &&
-                property.isOpen && property.isVal &&
+                property.getEffectiveModality(containingClass) == Modality.OPEN && property.isVal &&
                 isDeferredInitialized
 
     val factory = when {
@@ -213,3 +215,8 @@ private val FirProperty.hasSetterAccessorImplementation: Boolean
 private val FirProperty.hasAnyAccessorImplementation: Boolean
     get() = (getter !is FirDefaultPropertyAccessor && getter?.hasBody == true) || hasSetterAccessorImplementation
 
+private fun FirProperty.getEffectiveModality(containingClass: FirClass?): Modality? =
+    when (status.modality == Modality.OPEN && containingClass?.status?.modality == Modality.FINAL) {
+        true -> Modality.FINAL
+        false -> status.modality
+    }

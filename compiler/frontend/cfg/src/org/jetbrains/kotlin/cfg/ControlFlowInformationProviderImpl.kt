@@ -628,7 +628,7 @@ class ControlFlowInformationProviderImpl private constructor(
         val property = DescriptorToSourceUtils.descriptorToDeclaration(variableDescriptor) as? KtProperty
             ?: throw AssertionError("$variableDescriptor is not related to KtProperty")
         val setter = property.setter
-        if (variableDescriptor.modality == Modality.FINAL && (setter == null || !setter.hasBody())) {
+        if (variableDescriptor.effectiveModality == Modality.FINAL && (setter == null || !setter.hasBody())) {
             return false
         }
 

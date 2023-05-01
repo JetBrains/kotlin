@@ -814,15 +814,15 @@ class DeclarationsChecker(
         languageVersionSettings: LanguageVersionSettings,
         trace: BindingTrace,
     ) {
-        check(propertyDescriptor.modality != Modality.ABSTRACT) { "${::reportMustBeInitialized.name} isn't called for abstract properties" }
+        check(propertyDescriptor.effectiveModality != Modality.ABSTRACT) { "${::reportMustBeInitialized.name} isn't called for abstract properties" }
         val suggestMakingItFinal = containingDeclaration is ClassDescriptor &&
                 !propertyDescriptor.hasSetterAccessorImplementation() &&
-                propertyDescriptor.modality != Modality.FINAL &&
+                propertyDescriptor.effectiveModality != Modality.FINAL &&
                 trace.bindingContext.get(IS_DEFERRED_INITIALIZED, propertyDescriptor) == true
         val suggestMakingItAbstract = containingDeclaration is ClassDescriptor && !hasAnyAccessorImplementation
         val isOpenValDeferredInitDeprecationWarning =
             !languageVersionSettings.supportsFeature(LanguageFeature.ProhibitOpenValDeferredInitialization) &&
-                    propertyDescriptor.modality == Modality.OPEN &&
+                    propertyDescriptor.effectiveModality == Modality.OPEN &&
                     !propertyDescriptor.isVar &&
                     trace.bindingContext.get(IS_DEFERRED_INITIALIZED, propertyDescriptor) == true
 
@@ -1115,3 +1115,9 @@ class DeclarationsChecker(
         fun PropertyDescriptor.hasAnyAccessorImplementation(): Boolean = hasSetterAccessorImplementation() || getter?.hasBody() == true
     }
 }
+
+val PropertyDescriptor.effectiveModality: Modality
+    get() = when (modality == Modality.OPEN && (containingDeclaration as? ClassDescriptor)?.modality == Modality.FINAL) {
+        true -> Modality.FINAL
+        false -> modality
+    }
