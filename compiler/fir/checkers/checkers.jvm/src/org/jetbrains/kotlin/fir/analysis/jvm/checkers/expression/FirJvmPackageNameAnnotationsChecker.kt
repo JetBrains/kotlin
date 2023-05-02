@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirAnnotationChecker
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -17,19 +18,17 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.isValidJavaFqName
 
 object FirJvmPackageNameAnnotationsChecker : FirAnnotationChecker() {
 
     private val jvmPackageNameClassId = ClassId.topLevel(FqName("kotlin.jvm.JvmPackageName"))
-    private val stringParameterName = Name.identifier("name")
 
     override fun check(expression: FirAnnotation, context: CheckerContext, reporter: DiagnosticReporter) {
         val lookupTag = expression.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.lookupTag ?: return
         if (lookupTag.classId != jvmPackageNameClassId) return
 
-        val nameValue = expression.getStringArgument(stringParameterName) ?: return
+        val nameValue = expression.getStringArgument(StandardNames.NAME) ?: return
         if (nameValue.isEmpty()) {
             reporter.reportOn(expression.source, FirJvmErrors.JVM_PACKAGE_NAME_CANNOT_BE_EMPTY, context)
         } else if (!isValidJavaFqName(nameValue)) {

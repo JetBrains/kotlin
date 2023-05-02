@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.declarations
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirSession
@@ -246,7 +247,7 @@ fun FirGetClassCall.getTargetType(): ConeKotlinType? {
 fun FirAnnotationContainer.getJvmNameFromAnnotation(session: FirSession, target: AnnotationUseSiteTarget? = null): String? {
     val annotationCalls = getAnnotationsByClassId(StandardClassIds.Annotations.JvmName, session)
     return annotationCalls.firstNotNullOfOrNull { call ->
-        call.getStringArgument(StandardClassIds.Annotations.ParameterNames.jvmNameName)
+        call.getStringArgument(StandardNames.NAME)
             ?.takeIf { target == null || call.useSiteTarget == target }
     }
 }
