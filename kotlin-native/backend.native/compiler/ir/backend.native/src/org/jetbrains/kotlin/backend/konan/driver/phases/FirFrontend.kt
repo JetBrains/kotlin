@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
-import org.jetbrains.kotlin.backend.konan.firFrontend
+import org.jetbrains.kotlin.backend.konan.firFrontendWithPsi
+import org.jetbrains.kotlin.backend.konan.firFrontendWithLightTree
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.fir.pipeline.FirResult
 
 sealed class FirOutput {
@@ -21,7 +23,11 @@ internal val FIRPhase = createSimpleNamedCompilerPhase(
         "FirFrontend", "Compiler Fir Frontend",
         outputIfNotEnabled = { _, _, _, _ -> FirOutput.ShouldNotGenerateCode }
 ) { context: PhaseContext, input: KotlinCoreEnvironment ->
-    context.firFrontend(input)
+    if (input.configuration.getBoolean(CommonConfigurationKeys.USE_LIGHT_TREE)) {
+        context.firFrontendWithLightTree(input)
+    } else {
+        context.firFrontendWithPsi(input)
+    }
 }
 
 internal fun <T : PhaseContext> PhaseEngine<T>.runFirFrontend(environment: KotlinCoreEnvironment): FirOutput {
