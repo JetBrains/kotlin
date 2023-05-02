@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
-import org.jetbrains.kotlin.cli.js.klib.compileModuleToAnalyzedFir
+import org.jetbrains.kotlin.cli.js.klib.compileModuleToAnalyzedFirWithPsi
 import org.jetbrains.kotlin.cli.js.klib.generateIrForKlibSerialization
 import org.jetbrains.kotlin.cli.js.klib.serializeFirKlib
 import org.jetbrains.kotlin.cli.js.klib.transformFirToIr
@@ -205,7 +205,7 @@ abstract class AbstractJsPartialLinkageTestCase(val compilerType: CompilerType) 
         val outputStream = ByteArrayOutputStream()
         val messageCollector = PrintingMessageCollector(PrintStream(outputStream), MessageRenderer.PLAIN_FULL_PATHS, true)
 
-        val outputs = compileModuleToAnalyzedFir(
+        val outputs = compileModuleToAnalyzedFirWithPsi(
             moduleStructure = moduleStructure,
             ktFiles = ktFiles,
             libraries = regularDependencies,

@@ -9,13 +9,10 @@ import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.fileBelongsToModuleForPsi
+import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
-import org.jetbrains.kotlin.cli.common.isCommonSourceForPsi
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.prepareJsSessions
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.languageVersionSettings
@@ -54,15 +51,19 @@ import org.jetbrains.kotlin.utils.metadataVersion
 import java.io.File
 import java.nio.file.Paths
 
-fun compileModuleToAnalyzedFir(
+inline fun <F> compileModuleToAnalyzedFir(
     moduleStructure: ModulesStructure,
-    ktFiles: List<KtFile>,
+    files: List<F>,
     libraries: List<String>,
     friendLibraries: List<String>,
     messageCollector: MessageCollector,
     diagnosticsReporter: BaseDiagnosticsCollector,
     incrementalDataProvider: IncrementalDataProvider?,
     lookupTracker: LookupTracker?,
+    fileHasSyntaxErrors: (F) -> Boolean,
+    noinline isCommonSource: (F) -> Boolean,
+    noinline fileBelongsToModule: (F, String) -> Boolean,
+    buildResolveAndCheckFir: (FirSession, List<F>) -> ModuleCompilerAnalyzedOutput,
 ): List<ModuleCompilerAnalyzedOutput>? {
     val renderDiagnosticNames = moduleStructure.compilerConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
 
@@ -72,8 +73,8 @@ fun compileModuleToAnalyzedFir(
     val mainModuleName = moduleStructure.compilerConfiguration.get(CommonConfigurationKeys.MODULE_NAME)!!
     val escapedMainModuleName = Name.special("<$mainModuleName>")
 
-    val syntaxErrors = ktFiles.fold(false) { errorsFound, ktFile ->
-        AnalyzerWithCompilerReport.reportSyntaxErrors(ktFile, messageCollector).isHasErrors or errorsFound
+    val syntaxErrors = files.fold(false) { errorsFound, file ->
+        fileHasSyntaxErrors(file) or errorsFound
     }
 
     val binaryModuleData = BinaryModuleData.initialize(escapedMainModuleName, JsPlatforms.defaultJsPlatform, JsPlatformAnalyzerServices)
@@ -84,15 +85,17 @@ fun compileModuleToAnalyzedFir(
     }
 
     val resolvedLibraries = moduleStructure.allDependencies
-
     val sessionsWithSources = prepareJsSessions(
-        ktFiles, moduleStructure.compilerConfiguration, escapedMainModuleName,
-        resolvedLibraries, dependencyList, extensionRegistrars, isCommonSourceForPsi, fileBelongsToModuleForPsi,
-        lookupTracker, icData = incrementalDataProvider?.let { KlibIcData(it) }
+        files, moduleStructure.compilerConfiguration, escapedMainModuleName,
+        resolvedLibraries, dependencyList, extensionRegistrars,
+        isCommonSource = isCommonSource,
+        fileBelongsToModule = fileBelongsToModule,
+        lookupTracker,
+        icData = incrementalDataProvider?.let(::KlibIcData),
     )
 
     val outputs = sessionsWithSources.map {
-        buildResolveAndCheckFir(it.session, it.files, diagnosticsReporter)
+        buildResolveAndCheckFir(it.session, it.files)
     }
 
     if (syntaxErrors || diagnosticsReporter.hasErrors) {
@@ -101,6 +104,63 @@ fun compileModuleToAnalyzedFir(
     }
 
     return outputs
+}
+
+fun compileModuleToAnalyzedFirWithPsi(
+    moduleStructure: ModulesStructure,
+    ktFiles: List<KtFile>,
+    libraries: List<String>,
+    friendLibraries: List<String>,
+    messageCollector: MessageCollector,
+    diagnosticsReporter: BaseDiagnosticsCollector,
+    incrementalDataProvider: IncrementalDataProvider?,
+    lookupTracker: LookupTracker?,
+): List<ModuleCompilerAnalyzedOutput>? {
+    return compileModuleToAnalyzedFir(
+        moduleStructure,
+        ktFiles,
+        libraries,
+        friendLibraries,
+        messageCollector,
+        diagnosticsReporter,
+        incrementalDataProvider,
+        lookupTracker,
+        fileHasSyntaxErrors = { AnalyzerWithCompilerReport.reportSyntaxErrors(it, messageCollector).isHasErrors },
+        isCommonSource = isCommonSourceForPsi,
+        fileBelongsToModule = fileBelongsToModuleForPsi,
+        buildResolveAndCheckFir = { session, files ->
+            buildResolveAndCheckFir(session, files, diagnosticsReporter)
+        },
+    )
+}
+
+fun compileModulesToAnalyzedFirWithLightTree(
+    moduleStructure: ModulesStructure,
+    groupedSources: GroupedKtSources,
+    ktSourceFiles: List<KtSourceFile>,
+    libraries: List<String>,
+    friendLibraries: List<String>,
+    messageCollector: MessageCollector,
+    diagnosticsReporter: BaseDiagnosticsCollector,
+    incrementalDataProvider: IncrementalDataProvider?,
+    lookupTracker: LookupTracker?,
+): List<ModuleCompilerAnalyzedOutput>? {
+    return compileModuleToAnalyzedFir(
+        moduleStructure,
+        ktSourceFiles,
+        libraries,
+        friendLibraries,
+        messageCollector,
+        diagnosticsReporter,
+        incrementalDataProvider,
+        lookupTracker,
+        fileHasSyntaxErrors = { false },
+        isCommonSource = { groupedSources.isCommonSourceForLt(it) },
+        fileBelongsToModule = { file, it -> groupedSources.fileBelongsToModuleForLt(file, it) },
+        buildResolveAndCheckFir = { session, files ->
+            buildResolveAndCheckFir(session, files, diagnosticsReporter, null)
+        },
+    )
 }
 
 fun transformFirToIr(

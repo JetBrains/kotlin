@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.session.sourcesToPathsMapper
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.readSourceFileWithMapping
+import kotlin.reflect.KFunction2
 
 fun FirSession.buildFirViaLightTree(
     files: Collection<KtSourceFile>,
@@ -70,4 +71,14 @@ fun resolveAndCheckFir(
     val (scopeSession, fir) = session.runResolution(firFiles)
     session.runCheckers(scopeSession, fir, diagnosticsReporter)
     return ModuleCompilerAnalyzedOutput(session, scopeSession, fir)
+}
+
+fun buildResolveAndCheckFir(
+    session: FirSession,
+    ktFiles: Collection<KtSourceFile>,
+    diagnosticsReporter: DiagnosticReporter,
+    countFilesAndLines: KFunction2<Int, Int, Unit>?
+): ModuleCompilerAnalyzedOutput {
+    val firFiles = session.buildFirViaLightTree(ktFiles, diagnosticsReporter, countFilesAndLines)
+    return resolveAndCheckFir(session, firFiles, diagnosticsReporter)
 }

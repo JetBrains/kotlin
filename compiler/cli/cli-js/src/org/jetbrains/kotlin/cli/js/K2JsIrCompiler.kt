@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.cli.js
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.backend.common.CompilationException
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.wasm.compileToLoweredIr
@@ -31,10 +32,7 @@ import org.jetbrains.kotlin.cli.js.klib.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.Services
-import org.jetbrains.kotlin.config.getModuleNameForSource
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
@@ -494,16 +492,37 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
         val lookupTracker = configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER) ?: LookupTracker.DO_NOTHING
 
-        val outputs = compileModuleToAnalyzedFir(
-            moduleStructure = moduleStructure,
-            ktFiles = environmentForJS.getSourceFiles(),
-            libraries = libraries,
-            friendLibraries = friendLibraries,
-            messageCollector = messageCollector,
-            diagnosticsReporter = diagnosticsReporter,
-            incrementalDataProvider = configuration[JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER],
-            lookupTracker = lookupTracker,
-        ) ?: return null
+        val outputs = if (
+            configuration.getBoolean(CommonConfigurationKeys.USE_FIR) && configuration.getBoolean(CommonConfigurationKeys.USE_LIGHT_TREE)
+        ) {
+            val groupedSources = collectSources(configuration, environmentForJS.project, messageCollector)
+
+            compileModulesToAnalyzedFirWithLightTree(
+                moduleStructure = moduleStructure,
+                groupedSources = groupedSources,
+                // TODO: Only pass groupedSources, because
+                //  we will need to have them separated again
+                //  in createSessionsForLegacyMppProject anyway
+                ktSourceFiles = groupedSources.commonSources + groupedSources.platformSources,
+                libraries = libraries,
+                friendLibraries = friendLibraries,
+                messageCollector = messageCollector,
+                diagnosticsReporter = diagnosticsReporter,
+                incrementalDataProvider = configuration[JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER],
+                lookupTracker = lookupTracker,
+            ) ?: return null
+        } else {
+            compileModuleToAnalyzedFirWithPsi(
+                moduleStructure = moduleStructure,
+                ktFiles = environmentForJS.getSourceFiles(),
+                libraries = libraries,
+                friendLibraries = friendLibraries,
+                messageCollector = messageCollector,
+                diagnosticsReporter = diagnosticsReporter,
+                incrementalDataProvider = configuration[JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER],
+                lookupTracker = lookupTracker,
+            ) ?: return null
+        }
 
         // FIR2IR
         val fir2IrActualizedResult = transformFirToIr(moduleStructure, outputs, diagnosticsReporter)

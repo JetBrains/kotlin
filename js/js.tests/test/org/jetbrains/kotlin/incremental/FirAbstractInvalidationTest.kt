@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
-import org.jetbrains.kotlin.cli.js.klib.compileModuleToAnalyzedFir
+import org.jetbrains.kotlin.cli.js.klib.compileModuleToAnalyzedFirWithPsi
 import org.jetbrains.kotlin.cli.js.klib.serializeFirKlib
 import org.jetbrains.kotlin.cli.js.klib.transformFirToIr
 import org.jetbrains.kotlin.codegen.ProjectInfo
@@ -64,7 +64,7 @@ abstract class FirAbstractInvalidationTest(
             friendDependenciesPaths = friendLibraries
         )
 
-        val outputs = compileModuleToAnalyzedFir(
+        val outputs = compileModuleToAnalyzedFirWithPsi(
             moduleStructure = moduleStructure,
             ktFiles = sourceFiles,
             libraries = libraries,

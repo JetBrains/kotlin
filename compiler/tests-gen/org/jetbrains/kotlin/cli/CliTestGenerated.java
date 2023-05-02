@@ -1323,6 +1323,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/js/fir.args");
         }
 
+        @TestMetadata("firLightTreeOn.args")
+        public void testFirLightTreeOn() throws Exception {
+            runTest("compiler/testData/cli/js/firLightTreeOn.args");
+        }
+
         @TestMetadata("firMpp.args")
         public void testFirMpp() throws Exception {
             runTest("compiler/testData/cli/js/firMpp.args");
