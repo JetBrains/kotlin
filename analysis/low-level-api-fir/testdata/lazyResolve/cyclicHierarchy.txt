@@ -1,0 +1,223 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] cyclicHierarchy.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] interface B : A, ResolveMe {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface C : B {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface D : B {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface ResolveMe : F {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface F : D, C {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface NonLoopedInterface : C {
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] interface B : A, ResolveMe {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface C : B {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface D : B {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface ResolveMe : F {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface F : D, C {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface NonLoopedInterface : C {
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] interface B : A, ResolveMe {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface C : B {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface D : B {
+    }
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] interface ResolveMe : F {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface F : D, C {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface NonLoopedInterface : C {
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] interface B : A, ResolveMe {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface C : B {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface D : B {
+    }
+    public? final? [ResolvedTo(COMPANION_GENERATION)] interface ResolveMe : F {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface F : D, C {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface NonLoopedInterface : C {
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(SUPER_TYPES)] interface B : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /B -> /ResolveMe> {
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface C : <ERROR TYPE REF: Loop in supertype: /C -> /B> {
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface D : <ERROR TYPE REF: Loop in supertype: /D -> /B> {
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface ResolveMe : <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /F> {
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface F : <ERROR TYPE REF: Loop in supertype: /F -> /D>, <ERROR TYPE REF: Loop in supertype: /F -> /C> {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface NonLoopedInterface : C {
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(SUPER_TYPES)] interface B : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /B -> /ResolveMe> {
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface C : <ERROR TYPE REF: Loop in supertype: /C -> /B> {
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface D : <ERROR TYPE REF: Loop in supertype: /D -> /B> {
+    }
+    public? final? [ResolvedTo(TYPES)] interface ResolveMe : <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /F> {
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface F : <ERROR TYPE REF: Loop in supertype: /F -> /D>, <ERROR TYPE REF: Loop in supertype: /F -> /C> {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface NonLoopedInterface : C {
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(SUPER_TYPES)] interface B : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /B -> /ResolveMe> {
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface C : <ERROR TYPE REF: Loop in supertype: /C -> /B> {
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface D : <ERROR TYPE REF: Loop in supertype: /D -> /B> {
+    }
+    public abstract [ResolvedTo(STATUS)] interface ResolveMe : <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /F> {
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface F : <ERROR TYPE REF: Loop in supertype: /F -> /D>, <ERROR TYPE REF: Loop in supertype: /F -> /C> {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface NonLoopedInterface : C {
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(SUPER_TYPES)] interface B : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /B -> /ResolveMe> {
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface C : <ERROR TYPE REF: Loop in supertype: /C -> /B> {
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface D : <ERROR TYPE REF: Loop in supertype: /D -> /B> {
+    }
+    public abstract [ResolvedTo(EXPECT_ACTUAL_MATCHING)] interface ResolveMe : <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /F> {
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface F : <ERROR TYPE REF: Loop in supertype: /F -> /D>, <ERROR TYPE REF: Loop in supertype: /F -> /C> {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface NonLoopedInterface : C {
+    }
+
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(SUPER_TYPES)] interface B : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /B -> /ResolveMe> {
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface C : <ERROR TYPE REF: Loop in supertype: /C -> /B> {
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface D : <ERROR TYPE REF: Loop in supertype: /D -> /B> {
+    }
+    public abstract [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] interface ResolveMe : <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /F> {
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface F : <ERROR TYPE REF: Loop in supertype: /F -> /D>, <ERROR TYPE REF: Loop in supertype: /F -> /C> {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface NonLoopedInterface : C {
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(SUPER_TYPES)] interface B : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /B -> /ResolveMe> {
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface C : <ERROR TYPE REF: Loop in supertype: /C -> /B> {
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface D : <ERROR TYPE REF: Loop in supertype: /D -> /B> {
+    }
+    public abstract [ResolvedTo(CONTRACTS)] interface ResolveMe : <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /F> {
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface F : <ERROR TYPE REF: Loop in supertype: /F -> /D>, <ERROR TYPE REF: Loop in supertype: /F -> /C> {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface NonLoopedInterface : C {
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(SUPER_TYPES)] interface B : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /B -> /ResolveMe> {
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface C : <ERROR TYPE REF: Loop in supertype: /C -> /B> {
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface D : <ERROR TYPE REF: Loop in supertype: /D -> /B> {
+    }
+    public abstract [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] interface ResolveMe : <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /F> {
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface F : <ERROR TYPE REF: Loop in supertype: /F -> /D>, <ERROR TYPE REF: Loop in supertype: /F -> /C> {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface NonLoopedInterface : C {
+    }
+
+ANNOTATIONS_ARGUMENTS_MAPPING:
+FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(SUPER_TYPES)] interface B : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /B -> /ResolveMe> {
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface C : <ERROR TYPE REF: Loop in supertype: /C -> /B> {
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface D : <ERROR TYPE REF: Loop in supertype: /D -> /B> {
+    }
+    public abstract [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] interface ResolveMe : <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /F> {
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface F : <ERROR TYPE REF: Loop in supertype: /F -> /D>, <ERROR TYPE REF: Loop in supertype: /F -> /C> {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface NonLoopedInterface : C {
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(SUPER_TYPES)] interface B : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /B -> /ResolveMe> {
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface C : <ERROR TYPE REF: Loop in supertype: /C -> /B> {
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface D : <ERROR TYPE REF: Loop in supertype: /D -> /B> {
+    }
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface ResolveMe : <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /F> {
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface F : <ERROR TYPE REF: Loop in supertype: /F -> /D>, <ERROR TYPE REF: Loop in supertype: /F -> /C> {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface NonLoopedInterface : C {
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(IMPORTS)] cyclicHierarchy.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface B : <ERROR TYPE REF: Symbol not found for A>, <ERROR TYPE REF: Loop in supertype: /B -> /ResolveMe> {
+    }
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface C : <ERROR TYPE REF: Loop in supertype: /C -> /B> {
+    }
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface D : <ERROR TYPE REF: Loop in supertype: /D -> /B> {
+    }
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface ResolveMe : <ERROR TYPE REF: Loop in supertype: /ResolveMe -> /F> {
+    }
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface F : <ERROR TYPE REF: Loop in supertype: /F -> /D>, <ERROR TYPE REF: Loop in supertype: /F -> /C> {
+    }
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface NonLoopedInterface : R|C| {
+    }

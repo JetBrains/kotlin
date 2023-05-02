@@ -85,6 +85,36 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("cyclicHierarchy.kt")
+    public void testCyclicHierarchy() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/cyclicHierarchy.kt");
+    }
+
+    @Test
+    @TestMetadata("cyclicHierarchy2.kt")
+    public void testCyclicHierarchy2() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/cyclicHierarchy2.kt");
+    }
+
+    @Test
+    @TestMetadata("cyclicHierarchy3.kt")
+    public void testCyclicHierarchy3() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/cyclicHierarchy3.kt");
+    }
+
+    @Test
+    @TestMetadata("cyclicNestedHierarchy.kt")
+    public void testCyclicNestedHierarchy() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/cyclicNestedHierarchy.kt");
+    }
+
+    @Test
+    @TestMetadata("cyclicNestedHierarchy2.kt")
+    public void testCyclicNestedHierarchy2() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/cyclicNestedHierarchy2.kt");
+    }
+
+    @Test
     @TestMetadata("dataClassCopy.kt")
     public void testDataClassCopy() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/lazyResolve/dataClassCopy.kt");

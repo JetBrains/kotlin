@@ -53,7 +53,7 @@ internal sealed class KtFirNamedClassOrObjectSymbolBase : KtNamedClassOrObjectSy
     // Shared Operations
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     override val superTypes: List<KtType> by cached {
-        firSymbol.superTypesAndAnnotationsListForRegularClass(builder)
+        firSymbol.superTypesList(builder)
     }
 
     context(KtAnalysisSession)
