@@ -261,8 +261,6 @@
 /libraries/examples/annotation-processor-example/ "Kotlin Compiler Core"
 /libraries/examples/kotlin-gradle-subplugin-example/ "Kotlin Compiler Core"
 /libraries/examples/kotlin-java-example/ "Kotlin JVM"
-/libraries/examples/kotlin-jsr223-daemon-local-eval-example/ "Kotlin Compiler Core"
-/libraries/examples/kotlin-jsr223-local-example/ "Kotlin Compiler Core"
 /libraries/examples/scripting/ "Kotlin Compiler Core"
 /libraries/kotlin.test/ A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov
 /libraries/kotlinx-metadata/ Alexander.Udalov A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov

@@ -693,7 +693,6 @@ tasks {
 
     register("scriptingJvmTest") {
         dependsOn("dist")
-        dependsOn(":kotlin-script-util:test")
         dependsOn(":kotlin-scripting-compiler:test")
         dependsOn(":kotlin-scripting-compiler:testWithIr")
         dependsOn(":kotlin-scripting-common:test")
@@ -706,7 +705,6 @@ tasks {
         // see comments on the task in kotlin-scripting-jvm-host-test
 //        dependsOn(":kotlin-scripting-jvm-host-test:embeddableTest")
         dependsOn(":kotlin-scripting-jsr223-test:embeddableTest")
-        dependsOn(":kotlin-main-kts-test:test")
         dependsOn(":kotlin-scripting-ide-services-test:test")
         dependsOn(":kotlin-scripting-ide-services-test:embeddableTest")
     }

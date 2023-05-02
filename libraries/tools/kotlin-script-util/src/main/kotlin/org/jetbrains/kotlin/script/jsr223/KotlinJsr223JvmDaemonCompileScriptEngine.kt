@@ -35,6 +35,7 @@ import kotlin.reflect.KClass
 
 // TODO: need to manage resources here, i.e. call replCompiler.dispose when engine is collected
 
+@Deprecated("Use kotlin-scripting-jsr223 instead")
 class KotlinJsr223JvmDaemonCompileScriptEngine(
         factory: ScriptEngineFactory,
         compilerClasspath: List<File>,

@@ -226,8 +226,6 @@ include ":kotlin-imports-dumper-compiler-plugin",
         ":kotlin-annotation-processing-runtime",
         ":kotlin-annotation-processing-embeddable",
         ":kotlin-daemon-embeddable",
-        ":examples:kotlin-jsr223-local-example",
-        ":examples:kotlin-jsr223-daemon-local-eval-example",
         ":kotlin-annotations-jvm",
         ":kotlin-scripting-common",
         ":kotlin-scripting-jvm",
@@ -751,8 +749,6 @@ project(':kotlin-annotation-processing').projectDir = "$rootDir/plugins/kapt3/ka
 project(':kotlin-annotation-processing-cli').projectDir = "$rootDir/plugins/kapt3/kapt3-cli" as File
 project(':kotlin-annotation-processing-base').projectDir = "$rootDir/plugins/kapt3/kapt3-base" as File
 project(':kotlin-annotation-processing-runtime').projectDir = "$rootDir/plugins/kapt3/kapt3-runtime" as File
-project(':examples:kotlin-jsr223-local-example').projectDir = "$rootDir/libraries/examples/kotlin-jsr223-local-example" as File
-project(':examples:kotlin-jsr223-daemon-local-eval-example').projectDir = "$rootDir/libraries/examples/kotlin-jsr223-daemon-local-eval-example" as File
 project(':kotlin-annotations-jvm').projectDir = "$rootDir/libraries/tools/kotlin-annotations-jvm" as File
 project(':kotlin-scripting-common').projectDir = "$rootDir/libraries/scripting/common" as File
 project(':kotlin-scripting-jvm').projectDir = "$rootDir/libraries/scripting/jvm" as File
