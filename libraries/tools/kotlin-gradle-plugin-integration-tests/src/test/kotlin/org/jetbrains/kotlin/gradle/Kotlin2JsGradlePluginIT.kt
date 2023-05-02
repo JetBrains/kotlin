@@ -120,6 +120,10 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
                                         ?.forEach {
                                             println(it.absolutePath)
                                         }
+                                    it.resolve(".visited-gradle").let {
+                                        println("visited-gradle content")
+                                        println(it.readText())
+                                    }
                                 }
                                 .resolve("lib2")
                                 .resolve("0.0.0-unspecified")
