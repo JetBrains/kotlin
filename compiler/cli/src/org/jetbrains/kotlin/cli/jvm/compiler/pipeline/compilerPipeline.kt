@@ -45,7 +45,6 @@ import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
-import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
@@ -56,7 +55,6 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.session.IncrementalCompilationContext
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
-import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
@@ -73,10 +71,6 @@ import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStat
 import org.jetbrains.kotlin.resolve.ModuleAnnotationsResolver
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import java.io.File
-import kotlin.reflect.KFunction2
-
-private const val kotlinFileExtensionWithDot = ".${KotlinFileType.EXTENSION}"
-private const val javaFileExtensionWithDot = ".${JavaFileType.DEFAULT_EXTENSION}"
 
 fun compileModulesUsingFrontendIrAndLightTree(
     projectEnvironment: AbstractProjectEnvironment,
@@ -164,59 +158,6 @@ fun compileModulesUsingFrontendIrAndLightTree(
         outputs,
         mainClassFqName
     )
-}
-
-data class GroupedKtSources(
-    val platformSources: Collection<KtSourceFile>,
-    val commonSources: Collection<KtSourceFile>,
-    val sourcesByModuleName: Map<String, Set<KtSourceFile>>,
-)
-
-fun collectSources(
-    compilerConfiguration: CompilerConfiguration,
-    projectEnvironment: VfsBasedProjectEnvironment,
-    messageCollector: MessageCollector
-): GroupedKtSources {
-    val platformSources = linkedSetOf<KtSourceFile>()
-    val commonSources = linkedSetOf<KtSourceFile>()
-    val sourcesByModuleName = mutableMapOf<String, MutableSet<KtSourceFile>>()
-
-    // TODO: the scripts checking should be part of the scripting plugin functionality, as it is implemented now in ScriptingProcessSourcesBeforeCompilingExtension
-    // TODO: implement in the next round of K2 scripting support (https://youtrack.jetbrains.com/issue/KT-55728)
-    val skipScriptsInLtMode = compilerConfiguration.getBoolean(CommonConfigurationKeys.USE_FIR) &&
-            compilerConfiguration.getBoolean(CommonConfigurationKeys.USE_LIGHT_TREE)
-    var skipScriptsInLtModeWarning = false
-
-    compilerConfiguration.kotlinSourceRoots.forAllFiles(
-        compilerConfiguration,
-        projectEnvironment.project
-    ) { virtualFile, isCommon, moduleName ->
-        val file = KtVirtualFileSourceFile(virtualFile)
-        when {
-            file.path.endsWith(javaFileExtensionWithDot) -> {}
-            file.path.endsWith(kotlinFileExtensionWithDot) || !skipScriptsInLtMode -> {
-                if (isCommon) commonSources.add(file)
-                else platformSources.add(file)
-
-                if (moduleName != null) {
-                    sourcesByModuleName.getOrPut(moduleName) { mutableSetOf() }.add(file)
-                }
-            }
-            else -> {
-                // temporarily assume it is a script, see the TODO above
-                skipScriptsInLtModeWarning = true
-            }
-        }
-    }
-
-    if (skipScriptsInLtModeWarning) {
-        // TODO: remove then Scripts are supported in LT (probably different K2 extension should be written for handling the case properly)
-        messageCollector.report(
-            CompilerMessageSeverity.STRONG_WARNING,
-            "Scripts are not yet supported with K2 in LightTree mode, consider using K1 or disable LightTree mode with -Xuse-fir-lt=false"
-        )
-    }
-    return GroupedKtSources(platformSources, commonSources, sourcesByModuleName)
 }
 
 fun convertAnalyzedFirToIr(
@@ -359,16 +300,6 @@ fun compileModuleToAnalyzedFir(
     }
 
     return FirResult(outputs)
-}
-
-private fun buildResolveAndCheckFir(
-    session: FirSession,
-    ktFiles: Collection<KtSourceFile>,
-    diagnosticsReporter: DiagnosticReporter,
-    countFilesAndLines: KFunction2<Int, Int, Unit>?
-): ModuleCompilerAnalyzedOutput {
-    val firFiles = session.buildFirViaLightTree(ktFiles, diagnosticsReporter, countFilesAndLines)
-    return resolveAndCheckFir(session, firFiles, diagnosticsReporter)
 }
 
 fun writeOutputs(
