@@ -38,6 +38,7 @@ import javax.script.ScriptContext
 import javax.script.ScriptEngineFactory
 import kotlin.reflect.KClass
 
+@Deprecated("Use kotlin-scripting-jsr223 instead")
 class KotlinJsr223JvmLocalScriptEngine(
         factory: ScriptEngineFactory,
         val templateClasspath: List<File>,
