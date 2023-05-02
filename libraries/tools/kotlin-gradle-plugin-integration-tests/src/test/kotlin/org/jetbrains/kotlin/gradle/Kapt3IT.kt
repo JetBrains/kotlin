@@ -66,6 +66,15 @@ abstract class Kapt3BaseIT : KGPBaseTest() {
     protected val String.withPrefix get() = "kapt2/$this"
 }
 
+/**
+ * Note that some tests are disabled because kapt class loader cache holds a file descriptor open, which leads to problems on Windows.
+ * If you get a failed test on the build server with the message:
+ *
+ *     java.io.IOException: Failed to delete temp directory Z:\BuildAgent\temp\buildTmp\[...].
+ *     The following paths could not be deleted (see suppressed exceptions for details): [...]
+ *
+ * then override and disable the test here via `@Disabled`.
+ */
 @DisplayName("Kapt with classloaders cache")
 class Kapt3ClassLoadersCacheIT : Kapt3IT() {
     override fun kaptOptions(): BuildOptions.KaptOptions = super.kaptOptions().copy(
@@ -99,6 +108,14 @@ class Kapt3ClassLoadersCacheIT : Kapt3IT() {
 
     @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
     override fun testRepeatableAnnotationsWithOldJvmBackend(gradleVersion: GradleVersion) {
+    }
+
+    @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
+    override fun useGeneratedKotlinSource(gradleVersion: GradleVersion) {
+    }
+
+    @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
+    override fun useGeneratedKotlinSourceK2(gradleVersion: GradleVersion) {
     }
 
     override fun testAnnotationProcessorAsFqName(gradleVersion: GradleVersion) {
@@ -1183,7 +1200,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @DisplayName("Kapt-generated Kotlin sources can be used in Kotlin")
     @GradleTest
-    internal fun useGeneratedKotlinSource(gradleVersion: GradleVersion) {
+    open fun useGeneratedKotlinSource(gradleVersion: GradleVersion) {
         project("useGeneratedKotlinSource".withPrefix, gradleVersion) {
             build("build") {
                 assertKaptSuccessful()
@@ -1194,7 +1211,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @DisplayName("Kapt-generated Kotlin sources can be used in Kotlin with languageVersion = 2.0")
     @GradleTest
-    internal fun useGeneratedKotlinSourceK2(gradleVersion: GradleVersion) {
+    open fun useGeneratedKotlinSourceK2(gradleVersion: GradleVersion) {
         project("useGeneratedKotlinSource".withPrefix, gradleVersion) {
             buildGradle.appendText(
                 """
