@@ -811,7 +811,6 @@ if (buildProperties.isKotlinNativeEnabled) {
     }
     include ':kotlin-native:dependencies'
     include ':kotlin-native:endorsedLibraries:kotlinx.cli'
-    include ':kotlin-native:endorsedLibraries'
     include ':kotlin-native:Interop:StubGenerator'
     include ':kotlin-native:backend.native'
     include ':kotlin-native:Interop:Runtime'

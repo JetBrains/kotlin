@@ -210,14 +210,9 @@ task distNativeSources(type: Zip) {
     }
 }
 
-task distEndorsedSources {
-    dependsOn(':kotlin-native:endorsedLibraries:endorsedLibsSources')
-}
-
 task distSources {
     dependsOn(distCommonSources)
     dependsOn(distNativeSources)
-    dependsOn(distEndorsedSources)
 }
 
 task shadowJar(type: ShadowJar) {
@@ -346,33 +341,17 @@ task distRuntime(type: Copy) {
     dependsOn "${hostName}CrossDistRuntime"
 }
 
-task distEndorsedLibraries {
-    dependsOn "${hostName}CrossDistEndorsedLibraries"
-}
-
 task distStdlibCache {
     if (hostName in cacheableTargetNames) {
         dependsOn("${hostName}StdlibCache")
     }
 }
 
-task distEndorsedCache {
-    if (hostName in cacheableTargetNames) {
-        dependsOn("${hostName}EndorsedCache")
-    }
-}
-
 def stdlib = 'klib/common/stdlib'
 def stdlibDefaultComponent = "$stdlib/default"
-def endorsedLibs = 'klib/common/endorsedLibraries'
-def endorsedLibsBase = 'klib/common'
 
 task crossDistRuntime {
     dependsOn.addAll(targetList.collect { "${it}CrossDistRuntime" })
-}
-
-task crossDistEndorsedLibraries {
-    dependsOn.addAll(targetList.collect { "${it}CrossDistEndorsedLibraries" })
 }
 
 task crossDistPlatformLibs {
@@ -385,19 +364,6 @@ task crossDistStdlib {
 
 task crossDistStdlibCache {
     dependsOn.addAll(targetList.findAll { it in cacheableTargetNames }.collect { "${it}StdlibCache" })
-}
-
-task crossDistEndorsedCache {
-    dependsOn.addAll(targetList.findAll { it in cacheableTargetNames }.collect { "${it}EndorsedCache" })
-}
-
-def endorsedLibsCopyTask = task("crossDistEndorsedLibrariesCopy", type: Copy) {
-    destinationDir project.file("$distDir/$endorsedLibsBase")
-
-    from(project(':kotlin-native:endorsedLibraries').file("build")) {
-        include('**')
-        exclude('cache')
-    }
 }
 
 targetList.each { target ->
@@ -419,7 +385,7 @@ targetList.each { target ->
                 include('**')
             } else {
                 // We don't want to rewrite stdlib parts as they are the same and may be already used
-                // by the other build phases like caching or endorsed libraries.
+                // by the other build phases like caching.
                 include('*/targets/**')
                 include('*/manifest')
             }
@@ -486,35 +452,13 @@ targetList.each { target ->
                 include('**')
             }
         }
-
-        task ("${target}EndorsedCache", type: Copy) {
-            dependsOn "${target}CrossDistStdlib"
-            dependsOn ":kotlin-native:endorsedLibraries:${target}Cache"
-
-            destinationDir project.file("$distDir/klib/cache")
-
-            from("${project(':kotlin-native:endorsedLibraries').buildDir}/cache/$target") {
-                include('**')
-            }
-        }
     }
 
     task("${target}CrossDist") {
         dependsOn "${target}CrossDistRuntime", "distCompiler"
-        dependsOn "${target}CrossDistEndorsedLibraries"
         if (target in cacheableTargetNames) {
-            dependsOn "${target}StdlibCache", "${target}EndorsedCache"
+            dependsOn "${target}StdlibCache"
         }
-    }
-
-    task("${target}CrossDistEndorsedLibraries") {
-        def endorsedLibsBuildTask = ":kotlin-native:endorsedLibraries:${target}EndorsedLibraries"
-        dependsOn endorsedLibsBuildTask
-        dependsOn endorsedLibsCopyTask
-        // There is only one copy task for endorsed libs, because they are already copied into a single dir,
-        // while having target-tasks will make Gradle issue warnings on incorrect inputs and outputs usage.
-        // So this copy task should run after the all build tasks.
-        endorsedLibsCopyTask.mustRunAfter(endorsedLibsBuildTask)
     }
 }
 
@@ -526,20 +470,16 @@ task distPlatformLibs {
 task dist {
     dependsOn "distCompiler",
             "distRuntime",
-            "distEndorsedLibraries",
             "distDef",
-            "distStdlibCache",
-            "distEndorsedCache"
+            "distStdlibCache"
 }
 
 task crossDist {
     dependsOn "distCompiler",
             "crossDistRuntime",
-            "crossDistEndorsedLibraries",
             "distDef",
             "crossDistStdlib",
-            "crossDistStdlibCache",
-            "crossDistEndorsedCache"
+            "crossDistStdlibCache"
 }
 
 task bundle {
@@ -556,7 +496,7 @@ task bundleRegular(type: (isWindows()) ? Zip : Tar) {
         exclude 'klib/testLibrary'
         // Don't include platform libraries into the bundle (generate them at the user side instead).
         exclude 'klib/platform'
-        // Exclude platform libraries caches too. Keep caches for stdlib and endorsed libs.
+        // Exclude platform libraries caches too. Keep caches for stdlib.
         exclude 'klib/cache/*/org.jetbrains.kotlin.native.platform.*/**'
         into "${archiveBaseName.get()}-${archiveVersion.get()}"
     }
@@ -598,7 +538,6 @@ configurePackingLicensesToBundle(bundlePrebuilt, /* containsPlatformLibraries = 
 configure([bundleRegular, bundlePrebuilt]) {
     dependsOn("crossDist")
     dependsOn("crossDistStdlibCache")
-    dependsOn("crossDistEndorsedCache")
     dependsOn("distSources")
     dependsOn("distDef")
     from(project.projectDir) {
