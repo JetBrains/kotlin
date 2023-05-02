@@ -14,10 +14,9 @@ repositories {
 }
 
 kotlin {
-    metadata()
     jvm()
-    macosX64()
-    macosArm64()
+    linuxX64()
+    linuxArm64()
     sourceSets {
         val commonMain by getting
         val jvmMain by getting {
@@ -26,18 +25,11 @@ kotlin {
         val nativeMain by creating {
             dependsOn(commonMain)
         }
-        val macosX64Main by getting {
+        val linuxX64Main by getting {
             dependsOn(nativeMain)
         }
-        val macosArm64Main by getting {
+        val linuxArm64Main by getting {
             dependsOn(nativeMain)
-        }
-    }
-    targets.all {
-        compilations.all {
-            compilerOptions.configure {
-                languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0)
-            }
         }
     }
 }
