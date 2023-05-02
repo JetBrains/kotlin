@@ -241,6 +241,7 @@ class FirBuilderInferenceSession(
         val stubTypeSubstitutor = FirStubTypeTransformer(substitutor)
         lambda.transformSingle(stubTypeSubstitutor, null)
 
+        // TODO: Builder inference should not modify implicit receivers. KT-54708
         for (receiver in lambdaImplicitReceivers) {
             @Suppress("DEPRECATION_ERROR")
             receiver.updateTypeInBuilderInference(substitutor.substituteOrSelf(receiver.type))
