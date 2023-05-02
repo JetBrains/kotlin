@@ -118,6 +118,7 @@ import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.util.primaryConstructor
+import org.jetbrains.kotlin.ir.util.properties
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.load.kotlin.computeJvmDescriptor
@@ -264,8 +265,15 @@ abstract class AbstractComposeLowering(
                 ).unboxValueIfInline()
             } else {
                 val primaryValueParameter = klass.primaryConstructor?.valueParameters?.get(0)
-                    ?: error("Expected a value parameter")
-                val fieldGetter = klass.getPropertyGetter(primaryValueParameter.name.identifier)
+                val cantUnbox = primaryValueParameter == null || klass.properties.none {
+                    it.name == primaryValueParameter.name && it.getter != null
+                }
+                if (cantUnbox) {
+                    // LazyIr (external module) doesn't show a getter of a private property.
+                    // So we can't unbox the value
+                    return this
+                }
+                val fieldGetter = klass.getPropertyGetter(primaryValueParameter!!.name.identifier)
                     ?: error("Expected a getter")
                 return irCall(
                     symbol = fieldGetter,
