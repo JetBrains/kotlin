@@ -10,14 +10,22 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity
 
 internal fun renderReportedDiagnostics(diagnostics: Collection<ToolingDiagnostic>, logger: Logger, isVerbose: Boolean) {
     for (diagnostic in diagnostics) {
-        when (diagnostic.severity) {
-            WARNING -> logger.warn("w: ${diagnostic.render(isVerbose)}\n")
+        renderReportedDiagnostic(diagnostic, logger, isVerbose)
+    }
+}
 
-            ERROR -> logger.error("e: ${diagnostic.render(isVerbose)}\n")
+internal fun renderReportedDiagnostic(
+    diagnostic: ToolingDiagnostic,
+    logger: Logger,
+    isVerbose: Boolean
+) {
+    when (diagnostic.severity) {
+        WARNING -> logger.warn("w: ${diagnostic.render(isVerbose)}\n")
 
-            FATAL ->
-                error("Internal error: FATAL diagnostics throw an exception immediately in KotlinToolingDiagnosticsCollector")
-        }
+        ERROR -> logger.error("e: ${diagnostic.render(isVerbose)}\n")
+
+        FATAL ->
+            error("Internal error: FATAL diagnostics throw an exception immediately in KotlinToolingDiagnosticsCollector")
     }
 }
 
