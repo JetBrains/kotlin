@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.compilerRunner
 
 import com.intellij.openapi.diagnostic.Logger
+import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 
 internal class JpsKotlinLogger(private val log: Logger) : KotlinLogger {
     override fun error(msg: String, throwable: Throwable?) {

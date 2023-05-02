@@ -3,6 +3,7 @@ package org.jetbrains.kotlin.compilerRunner
 import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporterImpl
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
+import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.daemon.common.*
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.utils.pathsAsStringRelativeTo

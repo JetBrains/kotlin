@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildTime
 import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.cli.common.ExitCode
-import org.jetbrains.kotlin.compilerRunner.KotlinLogger
+import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.gradle.internal.tasks.TaskWithLocalState
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
 import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
