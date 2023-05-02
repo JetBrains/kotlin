@@ -54,7 +54,6 @@ fun updateCompilerXml() {
         "libraries/tools/kotlin-prepush-hook",
         "libraries/tools/kotlin-project-model",
         "libraries/tools/kotlin-sam-with-receiver",
-        "libraries/tools/kotlin-script-util",
         "libraries/tools/kotlin-serialization",
         "libraries/tools/kotlin-serialization-unshaded",
         "libraries/tools/kotlin-stdlib-docs",

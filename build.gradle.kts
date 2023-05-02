@@ -313,7 +313,6 @@ extra["compilerArtifactsForIde"] = listOfNotNull(
     ":prepare:ide-plugin-dependencies:kotlin-compiler-fir-for-ide",
     ":prepare:kotlin-jps-plugin",
     ":kotlin-script-runtime",
-    ":kotlin-script-util",
     ":kotlin-scripting-common",
     ":kotlin-scripting-jvm",
     ":kotlin-scripting-compiler",

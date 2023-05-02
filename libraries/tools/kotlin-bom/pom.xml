@@ -141,11 +141,6 @@
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>kotlin-script-util</artifactId>
-                <version>${kotlin.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>${project.groupId}</groupId>
                 <artifactId>kotlin-scripting-common</artifactId>
                 <version>${kotlin.version}</version>
             </dependency>
