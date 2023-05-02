@@ -78,6 +78,23 @@ class JvmMappedScope(
 
     private val isMutable = JavaToKotlinClassMap.isMutable(firKotlinClass.classId)
 
+    private val myCallableNames by lazy {
+        if (firKotlinClass.isFinal) {
+
+            val signaturePrefix = firJavaClass.symbol.classId.toString()
+            val names = (JvmBuiltInsSignatures.VISIBLE_METHOD_SIGNATURES).filter { signature ->
+                signature in JvmBuiltInsSignatures.MUTABLE_METHOD_SIGNATURES == isMutable &&
+                        signature.startsWith(signaturePrefix)
+            }.map { signature ->
+                // +1 to delete dot before function name
+                Name.identifier(signature.substring(signaturePrefix.length + 1, signature.indexOf("(")))
+            }
+
+            declaredMemberScope.getCallableNames() + names
+        } else
+            declaredMemberScope.getCallableNames() + javaMappedClassUseSiteScopeWithCustomSupertype.getCallableNames()
+    }
+
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         val declared = mutableListOf<FirNamedFunctionSymbol>()
         declaredMemberScope.processFunctionsByName(name) { symbol ->
@@ -283,7 +300,7 @@ class JvmMappedScope(
 
     override fun getCallableNames(): Set<Name> {
         // It's ok to return a super set of actually available member names
-        return declaredMemberScope.getCallableNames() + javaMappedClassUseSiteScopeWithCustomSupertype.getCallableNames()
+        return myCallableNames
     }
 
     override fun getClassifierNames(): Set<Name> {
