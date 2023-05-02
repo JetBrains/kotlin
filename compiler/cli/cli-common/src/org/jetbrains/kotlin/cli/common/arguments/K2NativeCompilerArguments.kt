@@ -83,7 +83,11 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-no-default-libs", deprecatedName = "-nodefaultlibs", description = "Don't link the libraries from dist/klib automatically")
     var nodefaultlibs: Boolean = false
 
-    @Argument(value = "-no-endorsed-libs", description = "Don't link the endorsed libraries from dist automatically")
+    @Argument(
+        value = "-no-endorsed-libs",
+        description = "Don't link the endorsed libraries from dist automatically. " +
+                "Deprecated option: the dist has no endorsed libraries anymore."
+    )
     var noendorsedlibs: Boolean = false
 
     @Argument(value = "-nomain", description = "Assume 'main' entry point to be provided by external libraries")
