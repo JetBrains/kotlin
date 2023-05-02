@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtDeclarationSymbol
 
 public abstract class KtMultiplatformInfoProvider : KtAnalysisSessionComponent() {
     public abstract fun getExpectForActual(actual: KtDeclarationSymbol): KtDeclarationSymbol?
+    public abstract fun isActual(symbol: KtDeclarationSymbol): Boolean
+    public abstract fun isExpect(symbol: KtDeclarationSymbol): Boolean
 }
 
 public interface KtMultiplatformInfoProviderMixin : KtAnalysisSessionMixIn {
@@ -20,4 +22,7 @@ public interface KtMultiplatformInfoProviderMixin : KtAnalysisSessionMixIn {
     public fun KtDeclarationSymbol.getExpectForActual(): KtDeclarationSymbol? =
         withValidityAssertion { analysisSession.multiplatformInfoProvider.getExpectForActual(this) }
 
+    public fun KtDeclarationSymbol.isActual(): Boolean = withValidityAssertion { analysisSession.multiplatformInfoProvider.isActual(this) }
+
+    public fun KtDeclarationSymbol.isExpect(): Boolean = withValidityAssertion { analysisSession.multiplatformInfoProvider.isExpect(this) }
 }
