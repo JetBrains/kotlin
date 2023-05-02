@@ -32,11 +32,9 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
 import org.jetbrains.kotlin.fir.backend.Fir2IrVisibilityConverter
 import org.jetbrains.kotlin.fir.backend.extractFirDeclarations
 import org.jetbrains.kotlin.fir.backend.js.FirJsKotlinMangler
-import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.serialization.FirKLibSerializerExtension
 import org.jetbrains.kotlin.fir.serialization.serializeSingleFirFile
 import org.jetbrains.kotlin.fir.session.KlibIcData
@@ -49,6 +47,7 @@ import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.unresolvedDependencies
+import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 import org.jetbrains.kotlin.psi.KtFile
@@ -62,22 +61,15 @@ fun compileModuleToAnalyzedFir(
     ktFiles: List<KtFile>,
     libraries: List<String>,
     friendLibraries: List<String>,
-    messageCollector: MessageCollector,
     diagnosticsReporter: BaseDiagnosticsCollector,
     incrementalDataProvider: IncrementalDataProvider?,
     lookupTracker: LookupTracker?,
-): List<ModuleCompilerAnalyzedOutput>? {
-    val renderDiagnosticNames = moduleStructure.compilerConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
-
+): AnalyzedFirWithPsiOutput {
     // FIR
     val extensionRegistrars = FirExtensionRegistrar.getInstances(moduleStructure.project)
 
     val mainModuleName = moduleStructure.compilerConfiguration.get(CommonConfigurationKeys.MODULE_NAME)!!
     val escapedMainModuleName = Name.special("<$mainModuleName>")
-
-    val syntaxErrors = ktFiles.fold(false) { errorsFound, ktFile ->
-        AnalyzerWithCompilerReport.reportSyntaxErrors(ktFile, messageCollector).isHasErrors or errorsFound
-    }
 
     val binaryModuleData = BinaryModuleData.initialize(escapedMainModuleName, JsPlatforms.defaultJsPlatform, JsPlatformAnalyzerServices)
     val dependencyList = DependencyListForCliModule.build(binaryModuleData) {
@@ -98,12 +90,36 @@ fun compileModuleToAnalyzedFir(
         buildResolveAndCheckFir(it.session, it.files, diagnosticsReporter)
     }
 
-    if (syntaxErrors || diagnosticsReporter.hasErrors) {
-        FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderDiagnosticNames)
-        return null
-    }
+    return AnalyzedFirWithPsiOutput(outputs, ktFiles)
+}
 
-    return outputs
+open class AnalyzedFirOutput(val output: List<ModuleCompilerAnalyzedOutput>) {
+    protected open fun checkSyntaxErrors(messageCollector: MessageCollector) = false
+
+    fun reportCompilationErrors(
+        moduleStructure: ModulesStructure,
+        diagnosticsReporter: BaseDiagnosticsCollector,
+        messageCollector: MessageCollector,
+    ): Boolean {
+        if (checkSyntaxErrors(messageCollector) || diagnosticsReporter.hasErrors) {
+            val renderName = moduleStructure.compilerConfiguration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
+            FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderName)
+            return true
+        }
+
+        return false
+    }
+}
+
+class AnalyzedFirWithPsiOutput(
+    output: List<ModuleCompilerAnalyzedOutput>,
+    private val compiledFiles: List<KtFile>
+) : AnalyzedFirOutput(output) {
+    override fun checkSyntaxErrors(messageCollector: MessageCollector): Boolean {
+        return compiledFiles.fold(false) { errorsFound, file ->
+            AnalyzerWithCompilerReport.reportSyntaxErrors(file, messageCollector).isHasErrors or errorsFound
+        }
+    }
 }
 
 fun transformFirToIr(
@@ -158,6 +174,48 @@ fun transformFirToIr(
     )
 }
 
+private class Fir2KlibSerializer(
+    moduleStructure: ModulesStructure,
+    private val firOutputs: List<ModuleCompilerAnalyzedOutput>,
+    private val fir2IrActualizedResult: Fir2IrActualizedResult
+) {
+    private val firFilesAndSessionsBySourceFile = buildMap {
+        for (output in firOutputs) {
+            output.fir.forEach {
+                put(it.sourceFile!!, Triple(it, output.session, output.scopeSession))
+            }
+        }
+    }
+
+    private val actualizedExpectDeclarations by lazy {
+        fir2IrActualizedResult.irActualizedResult.extractFirDeclarations()
+    }
+
+    private val metadataVersion = moduleStructure.compilerConfiguration.metadataVersion()
+
+    private val languageVersionSettings = moduleStructure.compilerConfiguration.languageVersionSettings
+
+    val sourceFiles: List<KtSourceFile> = firFilesAndSessionsBySourceFile.keys.toList()
+
+    fun serializeSingleFirFile(file: KtSourceFile): ProtoBuf.PackageFragment {
+        val (firFile, session, scopeSession) = firFilesAndSessionsBySourceFile[file]
+            ?: error("cannot find FIR file by source file ${file.name} (${file.path})")
+
+        return serializeSingleFirFile(
+            firFile,
+            session,
+            scopeSession,
+            actualizedExpectDeclarations,
+            FirKLibSerializerExtension(
+                session, metadataVersion,
+                ConstValueProviderImpl(fir2IrActualizedResult.components),
+                allowErrorTypes = false, exportKDoc = false
+            ),
+            languageVersionSettings,
+        )
+    }
+}
+
 fun serializeFirKlib(
     moduleStructure: ModulesStructure,
     firOutputs: List<ModuleCompilerAnalyzedOutput>,
@@ -167,94 +225,39 @@ fun serializeFirKlib(
     diagnosticsReporter: BaseDiagnosticsCollector,
     jsOutputName: String?
 ) {
-    val sourceFiles = mutableListOf<KtSourceFile>()
-    val firFilesAndSessionsBySourceFile = mutableMapOf<KtSourceFile, Triple<FirFile, FirSession, ScopeSession>>()
-
-    for (output in firOutputs) {
-        output.fir.forEach {
-            sourceFiles.add(it.sourceFile!!)
-            firFilesAndSessionsBySourceFile[it.sourceFile!!] = Triple(it, output.session, output.scopeSession)
-        }
-    }
-
-    val icData = moduleStructure.compilerConfiguration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList()
-
-    val metadataVersion = moduleStructure.compilerConfiguration.metadataVersion()
-
-    val actualizedExpectDeclarations = fir2IrActualizedResult.irActualizedResult.extractFirDeclarations()
+    val fir2KlibSerializer = Fir2KlibSerializer(moduleStructure, firOutputs, fir2IrActualizedResult)
+    val icData = moduleStructure.compilerConfiguration.incrementalDataProvider?.getSerializedData(fir2KlibSerializer.sourceFiles)
 
     serializeModuleIntoKlib(
         moduleStructure.compilerConfiguration[CommonConfigurationKeys.MODULE_NAME]!!,
         moduleStructure.compilerConfiguration,
         moduleStructure.compilerConfiguration.get(IrMessageLogger.IR_MESSAGE_LOGGER) ?: IrMessageLogger.None,
-        sourceFiles,
+        fir2KlibSerializer.sourceFiles,
         klibPath = outputKlibPath,
         moduleStructure.allDependencies,
         fir2IrActualizedResult.irModuleFragment,
         expectDescriptorToSymbol = mutableMapOf(),
-        cleanFiles = icData,
+        cleanFiles = icData ?: emptyList(),
         nopack = true,
         perFile = false,
         containsErrorCode = messageCollector.hasErrors() || diagnosticsReporter.hasErrors,
         abiVersion = KotlinAbiVersion.CURRENT, // TODO get from test file data
-        jsOutputName = jsOutputName
-    ) { file ->
-        val (firFile, session, scopeSession) = firFilesAndSessionsBySourceFile[file]
-            ?: error("cannot find FIR file by source file ${file.name} (${file.path})")
-        serializeSingleFirFile(
-            firFile,
-            session,
-            scopeSession,
-            actualizedExpectDeclarations,
-            FirKLibSerializerExtension(
-                session, metadataVersion,
-                ConstValueProviderImpl(fir2IrActualizedResult.components),
-                allowErrorTypes = false, exportKDoc = false
-            ),
-            moduleStructure.compilerConfiguration.languageVersionSettings,
-        )
-    }
+        jsOutputName = jsOutputName,
+        serializeSingleFile = fir2KlibSerializer::serializeSingleFirFile
+    )
 }
 
 fun shouldGoToNextIcRound(
     moduleStructure: ModulesStructure,
     firOutputs: List<ModuleCompilerAnalyzedOutput>,
-    fir2IrActualizedResult: Fir2IrActualizedResult,
-    config: CompilerConfiguration,
+    fir2IrActualizedResult: Fir2IrActualizedResult
 ): Boolean {
-    val sourceFiles = mutableListOf<KtSourceFile>()
-    val firFilesAndSessionsBySourceFile = mutableMapOf<KtSourceFile, Triple<FirFile, FirSession, ScopeSession>>()
+    val nextRoundChecker = moduleStructure.compilerConfiguration.get(JSConfigurationKeys.INCREMENTAL_NEXT_ROUND_CHECKER) ?: return false
 
-    for (output in firOutputs) {
-        output.fir.forEach {
-            sourceFiles.add(it.sourceFile!!)
-            firFilesAndSessionsBySourceFile[it.sourceFile!!] = Triple(it, output.session, output.scopeSession)
-        }
-    }
+    val fir2KlibSerializer = Fir2KlibSerializer(moduleStructure, firOutputs, fir2IrActualizedResult)
 
-    val metadataVersion = moduleStructure.compilerConfiguration.metadataVersion()
-
-    val actualizedExpectDeclarations = fir2IrActualizedResult.irActualizedResult.extractFirDeclarations()
-
-    val nextRoundChecker = config.get(JSConfigurationKeys.INCREMENTAL_NEXT_ROUND_CHECKER) ?: return false
-
-    for (ktFile in sourceFiles) {
-
-        val (firFile, session, scopeSession) = firFilesAndSessionsBySourceFile[ktFile]
-            ?: error("cannot find FIR file by source file ${ktFile.name} (${ktFile.path})")
-
-        val packageFragment = serializeSingleFirFile(
-            firFile,
-            session,
-            scopeSession,
-            actualizedExpectDeclarations,
-            FirKLibSerializerExtension(
-                session, metadataVersion,
-                ConstValueProviderImpl(fir2IrActualizedResult.components),
-                allowErrorTypes = false, exportKDoc = false
-            ),
-            moduleStructure.compilerConfiguration.languageVersionSettings,
-        )
+    for (ktFile in fir2KlibSerializer.sourceFiles) {
+        val packageFragment = fir2KlibSerializer.serializeSingleFirFile(ktFile)
 
         // to minimize a number of IC rounds, we should inspect all proto for changes first,
         // then go to a next round if needed, with all new dirty files

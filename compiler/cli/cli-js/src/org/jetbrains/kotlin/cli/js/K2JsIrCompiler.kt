@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.cli.js
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.backend.common.CompilationException
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.wasm.compileToLoweredIr
@@ -484,7 +485,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         friendLibraries: List<String>,
         arguments: K2JSCompilerArguments,
         outputKlibPath: String
-    ): ModulesStructure? {
+    ): ModulesStructure {
         val configuration = environmentForJS.configuration
         val messageCollector = configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         val diagnosticsReporter = DiagnosticReporterFactory.createPendingReporter()
@@ -494,31 +495,40 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
         val lookupTracker = configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER) ?: LookupTracker.DO_NOTHING
 
-        val outputs = compileModuleToAnalyzedFir(
+        val analyzedOutput = compileModuleToAnalyzedFir(
             moduleStructure = moduleStructure,
             ktFiles = environmentForJS.getSourceFiles(),
             libraries = libraries,
             friendLibraries = friendLibraries,
-            messageCollector = messageCollector,
             diagnosticsReporter = diagnosticsReporter,
             incrementalDataProvider = configuration[JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER],
             lookupTracker = lookupTracker,
-        ) ?: return null
+        )
 
         // FIR2IR
-        val fir2IrActualizedResult = transformFirToIr(moduleStructure, outputs, diagnosticsReporter)
+        val fir2IrActualizedResult = transformFirToIr(moduleStructure, analyzedOutput.output, diagnosticsReporter)
 
         if (configuration.getBoolean(CommonConfigurationKeys.INCREMENTAL_COMPILATION)) {
-            if (shouldGoToNextIcRound(moduleStructure, outputs, fir2IrActualizedResult, configuration)) {
+            // TODO: During checking the next round, fir serializer may throw an exception, e.g.
+            //      during annotation serialization when it cannot find the removed constant
+            //      (see ConstantValueUtils.kt:convertToConstantValues())
+            //  This happens because we check the next round before compilation errors.
+            //  Test reproducer:  testFileWithConstantRemoved
+            //  Issue: https://youtrack.jetbrains.com/issue/KT-58824/
+            if (shouldGoToNextIcRound(moduleStructure, analyzedOutput.output, fir2IrActualizedResult)) {
                 throw IncrementalNextRoundException()
             }
+        }
+
+        if (analyzedOutput.reportCompilationErrors(moduleStructure, diagnosticsReporter, messageCollector)) {
+            throw CompilationErrorException()
         }
 
         // Serialize klib
         if (arguments.irProduceKlibDir || arguments.irProduceKlibFile) {
             serializeFirKlib(
                 moduleStructure = moduleStructure,
-                firOutputs = outputs,
+                firOutputs = analyzedOutput.output,
                 fir2IrActualizedResult = fir2IrActualizedResult,
                 outputKlibPath = outputKlibPath,
                 messageCollector = messageCollector,
