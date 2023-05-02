@@ -36755,6 +36755,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
             }
 
             @Test
+            @TestMetadata("k2StubTypeLeak.kt")
+            public void testK2StubTypeLeak() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/k2StubTypeLeak.kt");
+            }
+
+            @Test
             @TestMetadata("resolveUsualCallWithBuilderInference.kt")
             public void testResolveUsualCallWithBuilderInference() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithStdLib/builderInference/resolveUsualCallWithBuilderInference.kt");
