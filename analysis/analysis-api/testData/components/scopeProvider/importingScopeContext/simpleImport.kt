@@ -1,7 +1,7 @@
 // FILE: main.kt
 import other.A
 
-val a = 5 // some KtElement to analyze in the air against
+val a<caret_onAirContext> = 5
 
 // FILE: other/other.kt
 package other

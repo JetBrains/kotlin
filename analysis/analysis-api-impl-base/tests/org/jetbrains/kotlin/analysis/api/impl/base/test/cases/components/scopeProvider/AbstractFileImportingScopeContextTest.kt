@@ -16,14 +16,13 @@ import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
 
 abstract class AbstractFileImportingScopeContextTest : AbstractAnalysisApiBasedSingleModuleTest() {
     override fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
         val ktFile = ktFiles.first()
         val renderDefaultImportingScope = Directives.RENDER_DEFAULT_IMPORTING_SCOPE in module.directives
 
-        analyseForTest(ktFile.children.firstIsInstance()) {
+        analyseForTest(ktFile) {
             val ktScopeContext = ktFile.getImportingScopeContext()
 
             val scopeContextStringRepresentation = render(ktScopeContext, renderDefaultImportingScope)

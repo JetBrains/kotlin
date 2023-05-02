@@ -18,7 +18,7 @@ abstract class AbstractReferenceShortenerForWholeFileTest : AbstractAnalysisApiB
         val file = ktFiles.first()
 
         val shortening = executeOnPooledThreadInReadAction {
-            analyseForTest(file.declarations.first()) {
+            analyseForTest(file) {
                 collectPossibleReferenceShortenings(file)
             }
         }

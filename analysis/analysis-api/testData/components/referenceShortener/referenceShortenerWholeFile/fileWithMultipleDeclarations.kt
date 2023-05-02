@@ -1,4 +1,4 @@
-class A {
+class A<caret_onAirContext> {
     abstract class B {
         abstract val b: A.B
     }
