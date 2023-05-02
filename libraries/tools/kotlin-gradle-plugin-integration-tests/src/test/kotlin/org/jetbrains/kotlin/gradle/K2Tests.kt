@@ -63,7 +63,6 @@ class CustomK2Tests : KGPBaseTest() {
         }
     }
 
-    @Disabled("disable until kotlin/native dependency is updated to include KT-58219")
     @GradleTest
     @DisplayName("Native metadata of intermediate with reference to internal in common. KT-58219")
     fun nativeMetadataOfIntermediateWithReferenceToInternalInCommon(gradleVersion: GradleVersion) {
