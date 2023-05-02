@@ -20,7 +20,6 @@
 
 -keep class org.jetbrains.kotlin.mainKts.** { *; }
 -keep class kotlin.script.experimental.** { *; }
--keep class org.jetbrains.kotlin.script.util.impl.PathUtilKt { *; }
 -keep class org.apache.ivy.plugins.** { *; }
 
 -keep class org.eclipse.sisu.** { *; }
@@ -28,8 +27,6 @@
 
 -keep class com.google.inject.** { *; }
 -keep class org.jetbrains.kotlin.com.google.inject.** { *; }
-
--keep class org.jetbrains.kotlin.script.util.impl.PathUtilKt { *; }
 
 -keep class com.google.common.** { *; }
 -keep class org.jetbrains.kotlin.com.google.common.** { *; }

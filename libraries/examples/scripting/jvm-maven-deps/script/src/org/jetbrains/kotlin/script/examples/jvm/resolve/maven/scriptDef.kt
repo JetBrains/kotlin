@@ -26,7 +26,7 @@ object ScriptWithMavenDepsConfiguration : ScriptCompilationConfiguration(
         jvm {
             dependenciesFromCurrentContext(
                 "scripting-jvm-maven-deps", // script library jar name
-                "kotlin-scripting-dependencies" // DependsOn annotation is taken from script-util
+                "kotlin-scripting-dependencies" // DependsOn annotation is taken from it
             )
         }
         refineConfiguration {
