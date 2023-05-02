@@ -45,7 +45,7 @@ internal val KtDeclaration.modality: Modality
         }
     }
 
-fun deserializeClassToSymbol(
+internal fun deserializeClassToSymbol(
     classId: ClassId,
     classOrObject: KtClassOrObject,
     symbol: FirRegularClassSymbol,
@@ -166,7 +166,11 @@ fun deserializeClassToSymbol(
             val zippedParameters =
                 classOrObject.primaryConstructorParameters.filter { it.hasValOrVar() } zip declarations.filterIsInstance<FirProperty>()
             addDeclaration(createDataClassCopyFunction(classId, classOrObject, context.dispatchReceiver, zippedParameters,
-                                                       createClassTypeRefWithSourceKind = { firPrimaryConstructor.returnTypeRef.copyWithNewSourceKind(it) },
+                                                       createClassTypeRefWithSourceKind = {
+                                                           firPrimaryConstructor.returnTypeRef.copyWithNewSourceKind(
+                                                               it
+                                                           )
+                                                       },
                                                        createParameterTypeRefWithSourceKind = { property, newKind ->
                                                            property.returnTypeRef.copyWithNewSourceKind(newKind)
                                                        }) { src, kind ->
@@ -193,14 +197,6 @@ fun deserializeClassToSymbol(
 
         contextReceivers.addAll(memberDeserializer.createContextReceiversForClass(classOrObject))
     }.apply {
-        //todo sealed inheritors
-        //if (modality == Modality.SEALED) {
-//            val inheritors = classOrObject.sealedSubclassFqNameList.map { nameIndex ->
-//                ClassId.fromString(nameResolver.getQualifiedClassName(nameIndex))
-//            }
-//            setSealedClassInheritors(inheritors)
-        //}
-
         valueClassRepresentation = computeValueClassRepresentation(this, session)
 
         replaceAnnotations(

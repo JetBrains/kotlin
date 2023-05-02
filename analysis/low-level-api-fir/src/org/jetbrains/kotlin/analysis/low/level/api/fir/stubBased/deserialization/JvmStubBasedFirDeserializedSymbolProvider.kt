@@ -44,7 +44,7 @@ typealias DeserializedTypeAliasPostProcessor = (FirTypeAliasSymbol) -> Unit
  *
  * Same as [JvmClassFileBasedSymbolProvider], resulting fir elements are already resolved.
  */
-open class JvmStubBasedFirDeserializedSymbolProvider(
+internal open class JvmStubBasedFirDeserializedSymbolProvider(
     session: FirSession,
     moduleDataProvider: SingleModuleDataProvider,
     private val kotlinScopeProvider: FirKotlinScopeProvider,

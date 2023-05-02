@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 
-class StubBasedFirDeserializationContext(
+internal class StubBasedFirDeserializationContext(
     val moduleData: FirModuleData,
     val packageFqName: FqName,
     val relativeClassName: FqName?,
@@ -45,7 +45,7 @@ class StubBasedFirDeserializationContext(
     val containerSource: DeserializedContainerSource?,
     val outerClassSymbol: FirRegularClassSymbol?,
     val outerTypeParameters: List<FirTypeParameterSymbol>,
-    val initialOrigin: FirDeclarationOrigin
+    private val initialOrigin: FirDeclarationOrigin
 ) {
     val session: FirSession = moduleData.session
 
@@ -80,7 +80,7 @@ class StubBasedFirDeserializationContext(
     )
 
     val memberDeserializer: StubBasedFirMemberDeserializer = StubBasedFirMemberDeserializer(this, initialOrigin)
-    val dispatchReceiver = relativeClassName?.let { ClassId(packageFqName, it, false).defaultType(allTypeParameters) }
+    val dispatchReceiver = relativeClassName?.let { ClassId(packageFqName, it, /* local = */ false).defaultType(allTypeParameters) }
 
     companion object {
 
@@ -154,7 +154,10 @@ class StubBasedFirDeserializationContext(
     }
 }
 
-class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationContext, val initialOrigin: FirDeclarationOrigin) {
+internal class StubBasedFirMemberDeserializer(
+    private val c: StubBasedFirDeserializationContext,
+    private val initialOrigin: FirDeclarationOrigin
+) {
 
     fun loadTypeAlias(typeAlias: KtTypeAlias, aliasSymbol: FirTypeAliasSymbol): FirTypeAlias {
         val name = typeAlias.nameAsSafeName
@@ -515,12 +518,9 @@ class StubBasedFirMemberDeserializer(private val c: StubBasedFirDeserializationC
                 symbol = FirValueParameterSymbol(name)
                 resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
 
-                defaultValue = if (ktParameter.hasDefaultValue()) {
+                defaultValue = if (ktParameter.hasDefaultValue() || addDefaultValue) {
                     buildExpressionStub()
                 } else null
-                if (addDefaultValue) {
-                    defaultValue = buildExpressionStub()
-                }
                 isCrossinline = ktParameter.hasModifier(KtTokens.CROSSINLINE_KEYWORD)
                 isNoinline = ktParameter.hasModifier(KtTokens.NOINLINE_KEYWORD)
                 annotations += c.annotationDeserializer.loadAnnotations(

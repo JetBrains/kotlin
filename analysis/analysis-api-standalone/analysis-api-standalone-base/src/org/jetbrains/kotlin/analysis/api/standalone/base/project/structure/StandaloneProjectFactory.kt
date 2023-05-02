@@ -226,7 +226,7 @@ object StandaloneProjectFactory {
                     VirtualFileManager.getInstance().findFileByNioPath(path)
                 }
             }
-        }
+        }.distinct()
     }
 
     private fun withAllTransitiveDependencies(ktModules: List<KtModule>): List<KtModule> {

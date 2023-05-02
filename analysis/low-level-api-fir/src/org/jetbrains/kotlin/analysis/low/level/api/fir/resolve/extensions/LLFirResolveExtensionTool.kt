@@ -239,7 +239,7 @@ class LLFirResolveExtensionToolDeclarationProvider internal constructor(
     }
 
     override fun computePackageSetWithTopLevelCallableDeclarations(): Set<String> {
-        return emptySet() //todo
+        return emptySet()
     }
 
     private inline fun getDeclarationProvidersByPackage(

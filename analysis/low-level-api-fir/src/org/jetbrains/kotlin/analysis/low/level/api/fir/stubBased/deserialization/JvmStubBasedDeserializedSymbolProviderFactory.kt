@@ -12,7 +12,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.JvmFirDeserializedSymbolProviderFactory
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.LLFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.createJavaSymbolProvider
-import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
@@ -22,7 +21,7 @@ import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
 
-class JvmStubBasedDeserializedSymbolProviderFactory : JvmFirDeserializedSymbolProviderFactory() {
+internal class JvmStubBasedDeserializedSymbolProviderFactory : JvmFirDeserializedSymbolProviderFactory() {
     override fun createJvmFirDeserializedSymbolProviders(
         project: Project,
         session: FirSession,

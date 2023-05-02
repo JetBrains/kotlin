@@ -51,7 +51,7 @@ object AnalysisApiBaseTestServiceRegistrar: AnalysisApiTestServiceRegistrar()  {
         val roots = StandaloneProjectFactory.getVirtualFilesForLibraryRoots(
             moduleStructure.binaryModules.flatMap { binary -> binary.getBinaryRoots() },
             testServices.environmentManager.getProjectEnvironment()
-        ).distinct()
+        )
         if (moduleStructure.binaryModules.none { it is KtBuiltinsModule }) {
             BuiltInDefinitionFile.FILTER_OUT_CLASSES_EXISTING_AS_JVM_CLASS_FILES = false
         }

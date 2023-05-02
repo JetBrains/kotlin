@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasSuspendModifier
 import org.jetbrains.kotlin.psi.psiUtil.unwrapNullability
@@ -38,7 +37,7 @@ import org.jetbrains.kotlin.psi.stubs.impl.*
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
 
-class StubBasedFirTypeDeserializer(
+internal class StubBasedFirTypeDeserializer(
     private val moduleData: FirModuleData,
     private val annotationDeserializer: StubBasedAnnotationDeserializer,
     private val parent: StubBasedFirTypeDeserializer?,
@@ -110,7 +109,7 @@ class StubBasedFirTypeDeserializer(
                 annotations += buildAnnotation {
                     annotationTypeRef = buildResolvedTypeRef {
                         type = StandardNames.FqNames.parameterNameClassId.toLookupTag()
-                            .constructClassType(emptyArray(), isNullable = false)
+                            .constructClassType(ConeTypeProjection.EMPTY_ARRAY, isNullable = false)
                     }
                     this.argumentMapping = buildAnnotationArgumentMapping {
                         mapping[StandardNames.NAME] =
@@ -296,12 +295,12 @@ internal fun KtUserType.classId(): ClassId {
         return ClassId(
             FqName.fromSegments(packageFragments).parent(),
             FqName(packageFragments.last()),
-            false
+            /* local = */ false
         )
     }
     return ClassId(
         FqName.fromSegments(packageFragments),
         FqName.fromSegments(classFragments),
-        false
+        /* local = */ false
     )
 }
