@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // Reproduces exception in TypeResolver.kt: EA-66870
 
 import java.util.ArrayList
