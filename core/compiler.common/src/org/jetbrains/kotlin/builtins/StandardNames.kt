@@ -34,6 +34,8 @@ object StandardNames {
 
     @JvmField val CHAR_CODE = Name.identifier("code")
 
+    @JvmField val NAME = Name.identifier("name")
+
     @JvmField val NEXT_CHAR = Name.identifier("nextChar")
 
     @JvmField val CONTEXT_FUNCTION_TYPE_PARAMETER_COUNT_NAME = Name.identifier("count")

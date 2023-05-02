@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.js.translate.expression
 
 import org.jetbrains.kotlin.backend.common.CodegenUtil
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.cfg.WhenChecker
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
@@ -150,7 +151,7 @@ private constructor(private val whenExpression: KtWhenExpression, context: Trans
         val (entriesForSwitch, nextIndex) = if (enumClass != null) {
             subjectSupplier = {
                 val enumBaseClass = enumClass.getSuperClassOrAny()
-                val nameProperty = DescriptorUtils.getPropertyByName(enumBaseClass.unsubstitutedMemberScope, Name.identifier("name"))
+                val nameProperty = DescriptorUtils.getPropertyByName(enumBaseClass.unsubstitutedMemberScope, StandardNames.NAME)
                 JsNameRef(context().getNameForDescriptor(nameProperty), subject)
             }
             collectEnumEntries(fromIndex, whenExpression.entries, enumClass.defaultType)

@@ -112,7 +112,7 @@ internal class StubBasedFirTypeDeserializer(
                             .constructClassType(ConeTypeProjection.EMPTY_ARRAY, isNullable = false)
                     }
                     this.argumentMapping = buildAnnotationArgumentMapping {
-                        mapping[Name.identifier("name")] =
+                        mapping[StandardNames.NAME] =
                             buildConstExpression(null, ConstantValueKind.String, paramName, setType = true)
                     }
                 }

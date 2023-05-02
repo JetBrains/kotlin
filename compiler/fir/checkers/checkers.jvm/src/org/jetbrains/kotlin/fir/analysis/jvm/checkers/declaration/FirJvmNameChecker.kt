@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -24,11 +25,10 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirJvmNameChecker : FirBasicDeclarationChecker() {
-    private val NAME = Name.identifier("name")
 
     override fun check(declaration: FirDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         val jvmName = declaration.findJvmNameAnnotation() ?: return
-        val name = jvmName.findArgumentByName(NAME) ?: return
+        val name = jvmName.findArgumentByName(StandardNames.NAME) ?: return
 
         if (name.typeRef.coneType != context.session.builtinTypes.stringType.type) {
             return

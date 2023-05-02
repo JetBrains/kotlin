@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.name.Name
 
 object BuiltinSpecialProperties {
     val PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP: Map<FqName, Name> = mapOf(
-        StandardNames.FqNames._enum.childSafe("name") to Name.identifier("name"),
+        StandardNames.FqNames._enum.childSafe("name") to StandardNames.NAME,
         StandardNames.FqNames._enum.childSafe("ordinal") to Name.identifier("ordinal"),
         StandardNames.FqNames.collection.child("size") to Name.identifier("size"),
         StandardNames.FqNames.map.child("size") to Name.identifier("size"),

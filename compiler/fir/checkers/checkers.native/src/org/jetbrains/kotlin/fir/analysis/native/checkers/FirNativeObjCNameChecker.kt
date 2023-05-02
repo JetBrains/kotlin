@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.native.checkers
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -35,7 +36,6 @@ import org.jetbrains.kotlin.name.Name
 object FirNativeObjCNameChecker : FirBasicDeclarationChecker() {
 
     private val objCNameClassId = ClassId.topLevel(FqName("kotlin.native.ObjCName"))
-    private val nameName = Name.identifier("name")
     private val swiftNameName = Name.identifier("swiftName")
     private val exactName = Name.identifier("exact")
 
@@ -101,7 +101,7 @@ object FirNativeObjCNameChecker : FirBasicDeclarationChecker() {
     class ObjCName(
         val annotation: FirAnnotation
     ) {
-        val name: String? = annotation.getStringArgument(nameName)
+        val name: String? = annotation.getStringArgument(StandardNames.NAME)
         val swiftName: String? = annotation.getStringArgument(swiftNameName)
         val exact: Boolean = annotation.getBooleanArgument(exactName) ?: false
 

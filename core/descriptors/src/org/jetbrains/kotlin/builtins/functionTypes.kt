@@ -225,7 +225,7 @@ fun getFunctionTypeArgumentProjections(
             val parameterNameAnnotation = BuiltInAnnotationDescriptor(
                 builtIns,
                 StandardNames.FqNames.parameterName,
-                mapOf(Name.identifier("name") to StringValue(name.asString()))
+                mapOf(StandardNames.NAME to StringValue(name.asString()))
             )
             type.replaceAnnotations(Annotations.create(type.annotations + parameterNameAnnotation))
         }
