@@ -264,10 +264,12 @@ internal abstract class AbstractKotlinBuildStatsService(
         false
     }
 
-    private val customSessionLoggerRootPath =
-        gradle.rootProject.properties[CUSTOM_LOGGER_ROOT_PATH]?.also {
-            logger.warn("$CUSTOM_LOGGER_ROOT_PATH property for test purpose only")
-        } as String?
+    private val customSessionLoggerRootPath: String? = if (gradle.rootProject.hasProperty(CUSTOM_LOGGER_ROOT_PATH)) {
+        logger.warn("$CUSTOM_LOGGER_ROOT_PATH property for test purpose only")
+        gradle.rootProject.property(CUSTOM_LOGGER_ROOT_PATH) as String
+    } else {
+        null
+    }
 
 
     private val sessionLoggerRootPath =
