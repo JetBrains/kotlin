@@ -78,6 +78,25 @@ class JvmMappedScope(
         }
     }
 
+    // It's ok to have a super set of actually available member names
+    private val myCallableNames by lazy {
+        if (firKotlinClass.isFinal) {
+            // For final classes we don't need to load HIDDEN members at all because they might not be overridden
+            val signaturePrefix = firJavaClass.symbol.classId.toString()
+            val names = (JvmBuiltInsSignatures.VISIBLE_METHOD_SIGNATURES).filter { signature ->
+                signature in JvmBuiltInsSignatures.MUTABLE_METHOD_SIGNATURES == isMutableContainer &&
+                        signature.startsWith(signaturePrefix)
+            }.map { signature ->
+                // +1 to delete dot before function name
+                Name.identifier(signature.substring(signaturePrefix.length + 1, signature.indexOf("(")))
+            }
+
+            declaredMemberScope.getCallableNames() + names
+        } else {
+            declaredMemberScope.getCallableNames() + javaMappedClassUseSiteScope.getCallableNames()
+        }
+    }
+
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         val declared = mutableListOf<FirNamedFunctionSymbol>()
         declaredMemberScope.processFunctionsByName(name) { symbol ->
@@ -297,10 +316,7 @@ class JvmMappedScope(
         declaredMemberScope.processClassifiersByNameWithSubstitution(name, processor)
     }
 
-    override fun getCallableNames(): Set<Name> {
-        // It's ok to return a super set of actually available member names
-        return declaredMemberScope.getCallableNames() + javaMappedClassUseSiteScope.getCallableNames()
-    }
+    override fun getCallableNames(): Set<Name> = myCallableNames
 
     override fun getClassifierNames(): Set<Name> {
         return declaredMemberScope.getClassifierNames()
