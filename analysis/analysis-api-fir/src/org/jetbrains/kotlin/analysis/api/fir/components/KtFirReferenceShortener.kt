@@ -90,7 +90,7 @@ internal class KtFirReferenceShortener(
                 LowLevelFirApiFacadeForResolveOnAir.getOnAirTowerDataContextProviderForTheWholeFile(firResolveSession, declarationToVisit)
             }
             else -> {
-                LowLevelFirApiFacadeForResolveOnAir.onAirGetTowerContextProvider(firResolveSession, declarationToVisit)
+                LowLevelFirApiFacadeForResolveOnAir.getOnAirGetTowerContextProvider(firResolveSession, declarationToVisit)
             }
         }
         //TODO: collect all usages of available symbols in the file and prevent importing symbols that could introduce name clashes, which

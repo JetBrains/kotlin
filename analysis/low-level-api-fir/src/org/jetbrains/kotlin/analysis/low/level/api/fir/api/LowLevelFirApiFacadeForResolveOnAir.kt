@@ -125,7 +125,7 @@ object LowLevelFirApiFacadeForResolveOnAir {
         return collector
     }
 
-    fun onAirGetTowerContextProvider(
+    fun getOnAirGetTowerContextProvider(
         firResolveSession: LLFirResolveSession,
         place: KtElement,
     ): FirTowerContextProvider {

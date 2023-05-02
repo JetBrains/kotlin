@@ -20,11 +20,11 @@ internal class TowerProviderForElementForState(private val firResolveSession: LL
                 ?.let { return it }
 
             return LowLevelFirApiFacadeForResolveOnAir
-                .onAirGetTowerContextProvider(firResolveSession.originalFirResolveSession, ktElement)
+                .getOnAirGetTowerContextProvider(firResolveSession.originalFirResolveSession, ktElement)
                 .getClosestAvailableParentContext(ktElement)
         }
         return LowLevelFirApiFacadeForResolveOnAir
-            .onAirGetTowerContextProvider(firResolveSession, ktElement)
+            .getOnAirGetTowerContextProvider(firResolveSession, ktElement)
             .getClosestAvailableParentContext(ktElement)
     }
 }
