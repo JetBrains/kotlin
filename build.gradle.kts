@@ -256,6 +256,7 @@ extra["kotlinJpsPluginEmbeddedDependencies"] = listOf(
     ":js:js.config",
     ":core:util.runtime",
     ":compiler:compiler.version",
+    ":compiler:build-tools:kotlin-build-tools-api",
     ":compiler:build-tools:kotlin-build-statistics",
 )
 
