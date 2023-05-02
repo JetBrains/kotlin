@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.api.KtDeclarationAndFirDeclarationEqualityChecker
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirBuiltinsAndCloneableSession
@@ -13,6 +12,7 @@ import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.analysis.utils.errors.ExceptionAttachmentBuilder
 import org.jetbrains.kotlin.analysis.utils.errors.withClassEntry
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.providers.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -110,7 +110,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
         val candidates = symbolProvider.findFunctionCandidates(declaration)
         val functionCandidate =
             candidates
-                .firstOrNull { KtDeclarationAndFirDeclarationEqualityChecker.representsTheSameDeclaration(declaration, it.fir) }
+                .firstOrNull { it.fir.realPsi === declaration }
                 ?: errorWithFirSpecificEntries("We should be able to find a symbol for function", psi = declaration) {
                     withCandidates(candidates)
                 }
@@ -124,7 +124,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
 
         val candidates = symbolProvider.findPropertyCandidates(declaration)
         val propertyCandidate =
-            candidates.firstOrNull { KtDeclarationAndFirDeclarationEqualityChecker.representsTheSameDeclaration(declaration, it.fir) }
+            candidates.firstOrNull { it.fir.realPsi === declaration }
                 ?: errorWithFirSpecificEntries("We should be able to find a symbol for property", psi = declaration) {
                     withCandidates(candidates)
                 }
@@ -181,7 +181,7 @@ private fun representSameConstructor(psiConstructor: KtConstructor<*>, firConstr
         return false
     }
 
-    return KtDeclarationAndFirDeclarationEqualityChecker.representsTheSameDeclaration(psiConstructor, firConstructor)
+    return firConstructor.realPsi === psiConstructor
 }
 
 private fun ExceptionAttachmentBuilder.withCandidates(candidates: List<FirBasedSymbol<*>>) {

@@ -10,7 +10,6 @@ import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.DelegatingGlobalSearchScope
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirBuiltinSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirBuiltinsAndCloneableSessionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirBuiltinsAndCloneableSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.JvmStubBasedFirDeserializedSymbolProvider
@@ -74,7 +73,6 @@ class LLFirBuiltinsSessionFactory(private val project: Project) {
             register(FirKotlinScopeProvider::class, kotlinScopeProvider)
 
             val symbolProvider = createCompositeSymbolProvider(this) {
-                //add(LLFirBuiltinSymbolProvider(session, moduleData, kotlinScopeProvider))
                 val moduleDataProvider = SingleModuleDataProvider(moduleData)
                 val scope = object : DelegatingGlobalSearchScope(project, GlobalSearchScope.allScope(project)) {
                     override fun contains(file: VirtualFile): Boolean {
