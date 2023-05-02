@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.gradle.logging
 
 import org.gradle.api.logging.Logger
-import org.jetbrains.kotlin.compilerRunner.KotlinLogger
+import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 
 internal fun Logger.kotlinInfo(message: String) {
     this.info("[KOTLIN] $message")

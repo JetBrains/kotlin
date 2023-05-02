@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.statistics.*
 import org.jetbrains.kotlin.build.report.statistics.asString
 import org.jetbrains.kotlin.build.report.statistics.formatTime
-import org.jetbrains.kotlin.compilerRunner.KotlinLogger
+import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import java.io.File
 import java.io.Serializable
 import java.text.SimpleDateFormat

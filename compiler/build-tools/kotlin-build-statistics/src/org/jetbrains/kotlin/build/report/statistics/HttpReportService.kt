@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.build.report.statistics
 
 import com.google.gson.Gson
-import org.jetbrains.kotlin.compilerRunner.KotlinLogger
+import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import java.io.IOException
 import java.io.Serializable
 import java.net.HttpURLConnection

@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.gradle.report
 
 import org.gradle.api.logging.Logger
-import org.jetbrains.kotlin.compilerRunner.KotlinLogger
+import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 
 class GradleLoggerAdapter(private val log: Logger) : KotlinLogger {
 
