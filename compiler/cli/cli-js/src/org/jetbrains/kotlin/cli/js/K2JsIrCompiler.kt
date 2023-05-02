@@ -528,7 +528,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         val fir2IrActualizedResult = transformFirToIr(moduleStructure, outputs, diagnosticsReporter)
 
         if (configuration.getBoolean(CommonConfigurationKeys.INCREMENTAL_COMPILATION)) {
-            if (shouldGoToNextIcRound(moduleStructure, outputs, fir2IrActualizedResult, configuration)) {
+            if (shouldGoToNextIcRound(moduleStructure, outputs, fir2IrActualizedResult)) {
                 throw IncrementalNextRoundException()
             }
         }
