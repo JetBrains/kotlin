@@ -1077,14 +1077,14 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Intersection types are only supported for definitely non-nullable types: right part should be non-nullable Any"
         )
 
-        map.put(TYPE_MISMATCH, "Type mismatch: inferred type is {1} but {0} was expected", TO_STRING, TO_STRING, NOT_RENDERED)
+        map.put(TYPE_MISMATCH, "Type mismatch: inferred type is {1} but {0} was expected", RENDER_TYPE, RENDER_TYPE, NOT_RENDERED)
         map.put(
             TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR,
             "Type inference failed. The value of the type parameter {0} should be mentioned in input types (argument types, receiver type or expected type). Try to specify it explicitly.",
             SYMBOL
         )
-        map.put(THROWABLE_TYPE_MISMATCH, "Throwable type mismatch: actual type is {0}", TO_STRING, NOT_RENDERED)
-        map.put(CONDITION_TYPE_MISMATCH, "Condition type mismatch: inferred type is {0} but Boolean was expected", TO_STRING, NOT_RENDERED)
+        map.put(THROWABLE_TYPE_MISMATCH, "Throwable type mismatch: actual type is {0}", RENDER_TYPE, NOT_RENDERED)
+        map.put(CONDITION_TYPE_MISMATCH, "Condition type mismatch: inferred type is {0} but Boolean was expected", RENDER_TYPE, NOT_RENDERED)
         map.put(
             ARGUMENT_TYPE_MISMATCH,
             "Argument type mismatch: actual type is {1} but {0} was expected",

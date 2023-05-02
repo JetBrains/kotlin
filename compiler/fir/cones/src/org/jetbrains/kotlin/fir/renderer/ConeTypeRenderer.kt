@@ -126,12 +126,8 @@ open class ConeTypeRenderer {
                 builder.append("Stub (subtyping): ${type.constructor.variable}")
             }
 
-            is ConeIntegerLiteralConstantType -> {
-                builder.append("ILT: ${type.value}")
-            }
-
-            is ConeIntegerConstantOperatorType -> {
-                builder.append("IOT")
+            is ConeIntegerLiteralType -> {
+                render(type)
             }
         }
         if (type !is ConeFlexibleType && type !is ConeErrorType) {
@@ -207,6 +203,18 @@ open class ConeTypeRenderer {
 
             is ConeKotlinType -> {
                 render(this)
+            }
+        }
+    }
+
+    protected open fun render(type: ConeIntegerLiteralType) {
+        when (type) {
+            is ConeIntegerLiteralConstantType -> {
+                builder.append("ILT: ${type.value}")
+            }
+
+            is ConeIntegerConstantOperatorType -> {
+                builder.append("IOT")
             }
         }
     }

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.renderer
 
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
+import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralType
 import org.jetbrains.kotlin.renderer.replacePrefixesInTypeRepresentations
 import org.jetbrains.kotlin.renderer.typeStringsDifferOnlyInNullability
 
@@ -72,5 +73,9 @@ class ConeTypeRendererWithJavaFlexibleTypes : ConeTypeRenderer {
         if (array != null) return array
 
         return "ft<$lowerRendered, $upperRendered>"
+    }
+
+    override fun render(type: ConeIntegerLiteralType) {
+        render(type.getApproximatedType())
     }
 }
