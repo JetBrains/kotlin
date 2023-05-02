@@ -257,7 +257,7 @@ abstract class KotlinBasePluginWrapper : DefaultKotlinBasePlugin() {
 
         project.registerBuildKotlinToolingMetadataTask()
 
-        project.launchDiagnosticChecksAndReporting()
+        project.setupDiagnosticsChecksAndReporting()
     }
 
     internal open fun createTestRegistry(project: Project) = KotlinTestsRegistry(project)
@@ -267,8 +267,19 @@ abstract class KotlinBasePluginWrapper : DefaultKotlinBasePlugin() {
     ): Plugin<Project>
 }
 
-private fun Project.launchDiagnosticChecksAndReporting() {
+private fun Project.setupDiagnosticsChecksAndReporting() {
+    // Setup reporting from tasks
+    tasks.withType(UsesKotlinToolingDiagnostics::class.java).configureEach {
+        it.usesService(kotlinToolingDiagnosticsCollectorProvider)
+        it.toolingDiagnosticsCollector.value(kotlinToolingDiagnosticsCollectorProvider)
+        it.diagnosticRenderingOptions.set(ToolingDiagnosticRenderingOptions.forProject(this))
+    }
+
+    // Launch checkers. Note that they are invoked eagerly to give them a fine-grained
+    // control over the lifecycle
     project.launchKotlinGradleProjectCheckers()
+
+    // Schedule diagnostics rendering
     project.launch {
         project.configurationResult.await()
         renderReportedDiagnostics(
@@ -276,6 +287,13 @@ private fun Project.launchDiagnosticChecksAndReporting() {
             project.logger,
             project.kotlinPropertiesProvider.internalVerboseDiagnostics
         )
+    }
+
+    // Schedule switching of Collector to transparent mode, so that any diagnostics reported
+    // after projects are evaluated will be transparently rendered right away instead of being
+    // silently swallowed
+    gradle.projectsEvaluated {
+        kotlinToolingDiagnosticsCollector.switchToTransparentMode()
     }
 }
 
