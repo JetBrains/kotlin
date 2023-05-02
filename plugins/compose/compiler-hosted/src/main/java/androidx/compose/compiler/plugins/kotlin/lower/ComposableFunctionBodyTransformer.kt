@@ -2137,8 +2137,8 @@ class ComposableFunctionBodyTransformer(
         // boxed, then we don't want to unnecessarily _unbox_ it. Note that if Kotlin allows for
         // an overridden equals method of inline classes in the future, we may have to avoid the
         // boxing in a different way.
-        val type = value.type.unboxInlineClass()
         val expr = value.unboxValueIfInline()
+        val type = expr.type
         val descriptor = type
             .toPrimitiveType()
             .let { changedPrimitiveFunctions[it] }
