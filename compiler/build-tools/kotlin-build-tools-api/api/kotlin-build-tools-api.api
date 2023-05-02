@@ -8,6 +8,16 @@ public final class org/jetbrains/kotlin/buildtools/api/CompilationService$Compan
 	public final fun loadImplementation (Ljava/lang/ClassLoader;)Lorg/jetbrains/kotlin/buildtools/api/CompilationService;
 }
 
+public abstract interface class org/jetbrains/kotlin/buildtools/api/KotlinLogger {
+	public abstract fun debug (Ljava/lang/String;)V
+	public abstract fun error (Ljava/lang/String;Ljava/lang/Throwable;)V
+	public static synthetic fun error$default (Lorg/jetbrains/kotlin/buildtools/api/KotlinLogger;Ljava/lang/String;Ljava/lang/Throwable;ILjava/lang/Object;)V
+	public abstract fun info (Ljava/lang/String;)V
+	public abstract fun isDebugEnabled ()Z
+	public abstract fun lifecycle (Ljava/lang/String;)V
+	public abstract fun warn (Ljava/lang/String;)V
+}
+
 public final class org/jetbrains/kotlin/buildtools/api/SharedApiClassesClassLoader {
 	public static final fun newInstance ()Ljava/lang/ClassLoader;
 }
