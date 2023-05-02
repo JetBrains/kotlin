@@ -3,7 +3,7 @@ package
 public fun </*0*/ T> f(/*0*/ expression: T): G<out T>
 public fun foo(): G<Point>
 public fun fooout(): Out<Point>
-public fun </*0*/ T> fout(/*0*/ expression: T): Out<out T>
+public fun </*0*/ T> fout(/*0*/ expression: T): Out<T>
 
 public final class G</*0*/ T> {
     public constructor G</*0*/ T>()
@@ -25,3 +25,4 @@ public final class Point {
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+
