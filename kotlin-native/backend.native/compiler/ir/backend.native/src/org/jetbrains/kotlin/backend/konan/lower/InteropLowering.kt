@@ -342,7 +342,9 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
         val newFunction =
             IrFunctionImpl(
                     function.startOffset, function.endOffset,
-                    IrDeclarationOrigin.DEFINED,
+                    // The generated function is called by ObjC and contains Kotlin code, so
+                    // it must switch thread state and potentially initialize runtime on this thread.
+                    CBridgeOrigin.C_TO_KOTLIN_BRIDGE,
                     IrSimpleFunctionSymbolImpl(),
                     ("imp:$selector").synthesizedName,
                     DescriptorVisibilities.PRIVATE,
