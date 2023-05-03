@@ -58,10 +58,8 @@ class ExpressionsConverter(
     session: FirSession,
     tree: FlyweightCapableTreeStructure<LighterASTNode>,
     private val declarationsConverter: DeclarationsConverter,
-    context: Context<LighterASTNode> = Context()
+    context: Context<LighterASTNode> = Context(),
 ) : BaseConverter(session, tree, context) {
-    override val offset: Int
-        get() = declarationsConverter.offset
 
     inline fun <reified R : FirElement> getAsFirExpression(expression: LighterASTNode?, errorReason: String = ""): R {
         val converted = expression?.let { convertExpression(it, errorReason) }
@@ -76,17 +74,7 @@ class ExpressionsConverter(
     /*****    EXPRESSIONS    *****/
     fun convertExpression(expression: LighterASTNode, errorReason: String): FirElement {
         return when (expression.tokenType) {
-            LAMBDA_EXPRESSION -> {
-                val lambdaTree = LightTree2Fir.buildLightTreeLambdaExpression(expression.asText)
-                // Pass on label user to the lambda root
-                context.forwardLabelUsagePermission(expression, lambdaTree.root)
-                val lambdaDeclarationsConverter = DeclarationsConverter(
-                    baseSession, declarationsConverter.baseScopeProvider, lambdaTree,
-                    offset = offset + expression.startOffset, context
-                )
-                ExpressionsConverter(baseSession, lambdaTree, lambdaDeclarationsConverter, context)
-                    .convertLambdaExpression(lambdaTree.root)
-            }
+            LAMBDA_EXPRESSION -> convertLambdaExpression(expression)
             BINARY_EXPRESSION -> convertBinaryExpression(expression)
             BINARY_WITH_TYPE -> convertBinaryWithTypeRHSExpression(expression) {
                 this.getOperationSymbol().toFirOperation()
@@ -200,29 +188,27 @@ class ExpressionsConverter(
             }
 
             body = if (block != null) {
-                declarationsConverter.withOffset(expressionSource.startOffset) {
-                    declarationsConverter.convertBlockExpressionWithoutBuilding(block!!).apply {
-                        statements.firstOrNull()?.let {
-                            if (it.isContractBlockFirCheck()) {
-                                this@buildAnonymousFunction.contractDescription = it.toLegacyRawContractDescription()
-                                statements[0] = FirContractCallBlock(it)
-                            }
+                declarationsConverter.convertBlockExpressionWithoutBuilding(block!!).apply {
+                    statements.firstOrNull()?.let {
+                        if (it.isContractBlockFirCheck()) {
+                            this@buildAnonymousFunction.contractDescription = it.toLegacyRawContractDescription()
+                            statements[0] = FirContractCallBlock(it)
                         }
+                    }
 
-                        if (statements.isEmpty()) {
-                            statements.add(
-                                buildReturnExpression {
-                                    source = expressionSource.fakeElement(KtFakeSourceElementKind.ImplicitReturn.FromExpressionBody)
-                                    this.target = target
-                                    result = buildUnitExpression {
-                                        source = expressionSource.fakeElement(KtFakeSourceElementKind.ImplicitUnit)
-                                    }
+                    if (statements.isEmpty()) {
+                        statements.add(
+                            buildReturnExpression {
+                                source = expressionSource.fakeElement(KtFakeSourceElementKind.ImplicitReturn.FromExpressionBody)
+                                this.target = target
+                                result = buildUnitExpression {
+                                    source = expressionSource.fakeElement(KtFakeSourceElementKind.ImplicitUnit)
                                 }
-                            )
-                        }
-                        statements.addAll(0, destructuringStatements)
-                    }.build()
-                }
+                            }
+                        )
+                    }
+                    statements.addAll(0, destructuringStatements)
+                }.build()
             } else {
                 buildSingleExpressionBlock(buildErrorExpression(null, ConeSimpleDiagnostic("Lambda has no body", DiagnosticKind.Syntax)))
             }

@@ -27,15 +27,13 @@ abstract class BaseConverter(
     val tree: FlyweightCapableTreeStructure<LighterASTNode>,
     context: Context<LighterASTNode> = Context()
 ) : BaseFirBuilder<LighterASTNode>(baseSession, context) {
-    abstract val offset: Int
-
     protected val implicitType = FirImplicitTypeRefImplWithoutSource
 
     protected open fun reportSyntaxError(node: LighterASTNode) {}
 
     override fun LighterASTNode.toFirSourceElement(kind: KtFakeSourceElementKind?): KtLightSourceElement {
-        val startOffset = offset + tree.getStartOffset(this)
-        val endOffset = offset + tree.getEndOffset(this)
+        val startOffset = tree.getStartOffset(this)
+        val endOffset = tree.getEndOffset(this)
         return toKtLightSourceElement(tree, kind ?: context.forcedElementSourceKind ?: KtRealSourceElementKind, startOffset, endOffset)
     }
 

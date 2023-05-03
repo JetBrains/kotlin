@@ -280,7 +280,11 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
     private final KotlinParsing myKotlinParsing;
 
     public KotlinExpressionParsing(SemanticWhitespaceAwarePsiBuilder builder, KotlinParsing kotlinParsing) {
-        super(builder);
+        this(builder, kotlinParsing, true);
+    }
+
+    public KotlinExpressionParsing(SemanticWhitespaceAwarePsiBuilder builder, KotlinParsing kotlinParsing, boolean isLazy) {
+        super(builder, isLazy);
         myKotlinParsing = kotlinParsing;
     }
 
@@ -1191,7 +1195,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             return;
         }
 
-        if (collapse) {
+        if (collapse && isLazy) {
             myKotlinParsing.advanceBalancedBlock();
             literal.done(FUNCTION_LITERAL);
             literalExpression.collapse(LAMBDA_EXPRESSION);

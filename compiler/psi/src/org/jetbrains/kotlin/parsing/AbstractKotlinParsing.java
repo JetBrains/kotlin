@@ -51,9 +51,15 @@ import static org.jetbrains.kotlin.lexer.KtTokens.*;
     }
 
     protected final SemanticWhitespaceAwarePsiBuilder myBuilder;
+    protected final boolean isLazy;
 
     public AbstractKotlinParsing(SemanticWhitespaceAwarePsiBuilder builder) {
+        this(builder, true);
+    }
+
+    public AbstractKotlinParsing(SemanticWhitespaceAwarePsiBuilder builder, boolean isLazy) {
         this.myBuilder = builder;
+        this.isLazy = isLazy;
     }
 
     protected IElementType getLastToken() {

@@ -69,22 +69,10 @@ class DeclarationsConverter(
     session: FirSession,
     internal val baseScopeProvider: FirScopeProvider,
     tree: FlyweightCapableTreeStructure<LighterASTNode>,
-    @set:PrivateForInline override var offset: Int = 0,
     context: Context<LighterASTNode> = Context(),
     private val diagnosticsReporter: DiagnosticReporter? = null,
-    private val diagnosticContext: DiagnosticContext? = null
+    private val diagnosticContext: DiagnosticContext? = null,
 ) : BaseConverter(session, tree, context) {
-
-    @OptIn(PrivateForInline::class)
-    inline fun <R> withOffset(newOffset: Int, block: () -> R): R {
-        val oldOffset = offset
-        offset = newOffset
-        return try {
-            block()
-        } finally {
-            offset = oldOffset
-        }
-    }
 
     private val expressionConverter = ExpressionsConverter(session, tree, this, context)
 
@@ -1809,11 +1797,7 @@ class DeclarationsConverter(
             )
         }
 
-        val blockTree = LightTree2Fir.buildLightTreeBlockExpression(block.asText)
-        return DeclarationsConverter(
-            baseSession, baseScopeProvider, blockTree, offset = offset + tree.getStartOffset(block), context,
-            diagnosticsReporter, diagnosticContext
-        ).convertBlockExpression(blockTree.root)
+        return convertBlockExpression(block)
     }
 
     /**
