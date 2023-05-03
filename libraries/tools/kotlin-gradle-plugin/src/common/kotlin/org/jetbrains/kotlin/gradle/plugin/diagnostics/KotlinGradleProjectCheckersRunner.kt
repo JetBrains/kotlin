@@ -29,6 +29,7 @@ internal fun Project.launchKotlinGradleProjectCheckers() {
 internal val Project.kotlinGradleProjectCheckersOverride: Collection<KotlinGradleProjectChecker>?
     get() {
         return if (extraProperties.has(KOTLIN_GRADLE_PROJECT_CHECKERS_OVERRIDE))
+            @Suppress("unchecked_cast")
             extraProperties.get(KOTLIN_GRADLE_PROJECT_CHECKERS_OVERRIDE) as Collection<KotlinGradleProjectChecker>?
         else
             null
