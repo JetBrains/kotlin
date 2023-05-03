@@ -200,7 +200,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
         }
     }
 
-    @AndroidTestVersions(minVersion = AGP_71)
+    @AndroidTestVersions(minVersion = AGP_70)
     @GradleTestVersions(minVersion = G_7_2)
     @DisplayName("android mpp lib flavors publication can be configured")
     @GradleAndroidTest
@@ -334,7 +334,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
                 listOf("fooBar", "fooBaz").forEach { flavorName ->
                     val flavor = flavorName.lowercase()
 
-                    val flavorAttributes = if (AGPVersion.fromString(agpVersion) >= AGPVersion.v7_0_0) {
+                    val flavorAttributes = if (AGPVersion.fromString(agpVersion) > AGPVersion.v7_0_0) {
                         arrayOf(
                             "foo" to flavorName,
                             "com.android.build.api.attributes.ProductFlavor:foo" to flavorName
@@ -386,7 +386,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
                 listOf("fooBar", "fooBaz").forEach { flavorName ->
                     val flavor = flavorName.lowercase()
 
-                    val flavorAttributes = if (AGPVersion.fromString(agpVersion) >= AGPVersion.v7_0_0) {
+                    val flavorAttributes = if (AGPVersion.fromString(agpVersion) > AGPVersion.v7_0_0) {
                         arrayOf(
                             "foo" to flavorName,
                             "com.android.build.api.attributes.ProductFlavor:foo" to flavorName
