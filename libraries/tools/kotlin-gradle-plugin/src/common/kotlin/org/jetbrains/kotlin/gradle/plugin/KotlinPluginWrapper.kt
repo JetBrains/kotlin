@@ -42,7 +42,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSetFactory
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.report.BuildMetricsService
-import org.jetbrains.kotlin.gradle.report.BuildReportsService
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.addNpmDependencyExtension
@@ -246,7 +245,7 @@ abstract class KotlinBasePluginWrapper : DefaultKotlinBasePlugin() {
 
         project.registerBuildKotlinToolingMetadataTask()
 
-        project.scheduleDiagnosticChecksAndReporting()
+        project.launchDiagnosticChecksAndReporting()
     }
 
     internal open fun createTestRegistry(project: Project) = KotlinTestsRegistry(project)
@@ -254,27 +253,17 @@ abstract class KotlinBasePluginWrapper : DefaultKotlinBasePlugin() {
     internal abstract fun getPlugin(
         project: Project,
     ): Plugin<Project>
+}
 
-    private fun Project.scheduleDiagnosticChecksAndReporting() {
-
-
-        launchInStage(KotlinPluginLifecycle.Stage.ReadyForExecution) {
-            // Do not run checkers on projects which configuration finished with failure,
-            // as the internal state can not be trusted at this point (e.g. not entire of the
-            // user's buildscript could've been executed) and might produce bogus warnings
-            runProjectConfigurationHealthCheck {
-                project.runKotlinGradleProjectCheckers()
-            }
-
-            // TODO: this should run even if the application of KGP has finished with errors,
-            // because some diagnostics might indicate specifically the root cause of an
-            // exception.
-            renderReportedDiagnostics(
-                project.kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(project),
-                project.logger,
-                project.kotlinPropertiesProvider.internalVerboseDiagnostics
-            )
-        }
+private fun Project.launchDiagnosticChecksAndReporting() {
+    project.launchKotlinGradleProjectCheckers()
+    project.launch {
+        project.configured.await()
+        renderReportedDiagnostics(
+            project.kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(project),
+            project.logger,
+            project.kotlinPropertiesProvider.internalVerboseDiagnostics
+        )
     }
 }
 

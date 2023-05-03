@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.UnusedSourceSetsC
  * threw an exception). If your check aims to prevent some exception, then code that check as soon as possible in the `apply`-block
  * of the [org.jetbrains.kotlin.gradle.plugin.KotlinBasePluginWrapper] or appropriate inheritor
  */
-internal fun interface KotlinGradleProjectChecker {
-    fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector)
+internal interface KotlinGradleProjectChecker {
+    suspend fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector)
 
     companion object {
         val ALL_CHECKERS: List<KotlinGradleProjectChecker> = listOf(

@@ -152,7 +152,7 @@ class DiagnosticsReportingFunctionalTest {
 private fun buildProjectWithMockedCheckers(
     name: String? = null,
     parent: ProjectInternal? = null,
-    block: ProjectInternal.() -> Unit = { }
+    block: ProjectInternal.() -> Unit = { },
 ): ProjectInternal {
     val project = buildProject(
         {
@@ -203,19 +203,19 @@ private fun Project.reportOnePerBuildTestDiagnostic(severity: Severity = WARNING
 }
 
 internal object MockChecker : KotlinGradleProjectChecker {
-    override fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {
+    override suspend fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {
         project.reportTestDiagnostic()
     }
 }
 
 internal object MockPerProjectChecker : KotlinGradleProjectChecker {
-    override fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {
+    override suspend fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {
         project.reportOnePerProjectTestDiagnostic()
     }
 }
 
 internal object MockPerBuildChecker : KotlinGradleProjectChecker {
-    override fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {
+    override suspend fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {
         project.reportOnePerBuildTestDiagnostic()
     }
 }

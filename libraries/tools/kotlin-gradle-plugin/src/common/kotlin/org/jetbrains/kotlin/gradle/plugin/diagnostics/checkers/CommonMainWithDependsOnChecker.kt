@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinGradleProjectChecker
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 
 internal object CommonMainWithDependsOnChecker : KotlinGradleProjectChecker {
-    override fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {
+    override suspend fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {
         multiplatformExtension?.sourceSets?.all {
             if (it.name == KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME) {
                 it.internal.dependsOn.forAll {

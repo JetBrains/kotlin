@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.konan.target.KonanTarget
 
 internal object DeprecatedKotlinNativeTargetsChecker : KotlinGradleProjectChecker {
-    override fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {
-        val targets = multiplatformExtension?.targets ?: return
+    override suspend fun KotlinGradleProjectCheckerContext.runChecks(collector: KotlinToolingDiagnosticsCollector) {
+        val targets = multiplatformExtension?.awaitTargets() ?: return
         val usedDeprecatedTargets = targets
             .filter { it is KotlinNativeTarget && it.konanTarget in KonanTarget.deprecatedTargets }
             .map { it.name }
