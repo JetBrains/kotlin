@@ -698,3 +698,14 @@ internal object ConstraintSystemForks : ResolutionStage() {
         }
     }
 }
+
+internal object InaccessibleReceiverResolutionStage : ResolutionStage() {
+    override suspend fun check(candidate: Candidate, callInfo: CallInfo, sink: CheckerSink, context: ResolutionContext) {
+        if (
+            candidate.dispatchReceiverValue is InaccessibleImplicitReceiverValue ||
+            candidate.givenExtensionReceiverOptions.any { it is InaccessibleImplicitReceiverValue }
+        ) {
+            sink.yieldDiagnostic(InaccessibleReceiver)
+        }
+    }
+}

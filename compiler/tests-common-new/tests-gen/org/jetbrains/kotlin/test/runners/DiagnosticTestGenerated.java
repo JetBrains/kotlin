@@ -850,6 +850,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("receiverResolutionInDelegatedConstructor.kt")
+        public void testReceiverResolutionInDelegatedConstructor() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/receiverResolutionInDelegatedConstructor.kt");
+        }
+
+        @Test
         @TestMetadata("RecursiveResolve.kt")
         public void testRecursiveResolve() throws Exception {
             runTest("compiler/testData/diagnostics/tests/RecursiveResolve.kt");
