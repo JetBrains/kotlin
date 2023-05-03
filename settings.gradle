@@ -262,7 +262,8 @@ include ":kotlin-imports-dumper-compiler-plugin",
         ":wasm:wasm.tests",
         ":wasm:wasm.frontend",
         ":wasm:wasm.config",
-        ":repo:codebase-tests"
+        ":repo:codebase-tests",
+        ":repo:artifacts-tests"
 
 include ":kotlin-atomicfu-compiler-plugin",
         ":kotlin-atomicfu-compiler-plugin-embeddable",
