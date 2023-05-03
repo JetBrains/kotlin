@@ -4447,6 +4447,10 @@ if (PlatformInfo.isAppleTarget(project)) {
         it.defFile 'interop/objc/kt56402/objclib.def'
         it.headers "$projectDir/interop/objc/kt56402/objclib.h"
     }
+    createInterop("objCAction") {
+        it.defFile 'interop/objc/objCAction/objclib.def'
+        it.headers "$projectDir/interop/objc/objCAction/objclib.h"
+    }
 }
 
 createInterop("withSpaces") {
@@ -5315,6 +5319,24 @@ if (PlatformInfo.isAppleTarget(project)) {
                 UtilsKt.codesign(project, "$buildDir/libobjc_kt56402.dylib")
             }
         }
+    }
+
+    interopTest("interop_objCAction") {
+        source = 'interop/objc/objCAction/main.kt'
+        interop = "objCAction"
+        flags = ["-tr"]
+        doBeforeBuild {
+            mkdir(buildDir)
+            project.extensions.execClang.execClangForCompilerTests(project.target) {
+                args "$projectDir/interop/objc/objCAction/objclib.m"
+                args "-lobjc", '-fobjc-arc'
+                args '-fPIC', '-shared', '-o', "$buildDir/libobjCAction.dylib"
+            }
+            if (UtilsKt.isSimulatorTarget(project, project.target)) {
+                UtilsKt.codesign(project, "$buildDir/libobjCAction.dylib")
+            }
+        }
+        UtilsKt.dependsOnPlatformLibs(it)
     }
 }
 
