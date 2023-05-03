@@ -18,7 +18,7 @@ package androidx.compose.compiler.plugins.kotlin
 
 import org.junit.Test
 
-class ComposeModuleMetricsTests : AbstractMetricsTransformTest() {
+class ComposeModuleMetricsTests(useFir: Boolean) : AbstractMetricsTransformTest(useFir) {
     @Test
     fun testStableAndUnstableClassesTxt() = assertClasses(
         """

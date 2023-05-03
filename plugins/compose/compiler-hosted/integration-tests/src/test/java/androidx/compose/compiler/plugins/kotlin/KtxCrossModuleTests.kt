@@ -37,7 +37,7 @@ import org.robolectric.annotation.Config
     minSdk = 23,
     maxSdk = 23
 )
-class KtxCrossModuleTests : AbstractCodegenTest() {
+class KtxCrossModuleTests : AbstractCodegenTest(useFir = false) {
     @Test
     fun testInlineFunctionDefaultArgument() {
         compile(
