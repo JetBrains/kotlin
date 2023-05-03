@@ -17,9 +17,7 @@
 package androidx.compose.compiler.plugins.kotlin.facade
 
 import androidx.compose.compiler.plugins.kotlin.TestsCompilerError
-import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
-import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.compiler.CliBindingTrace
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
@@ -36,7 +34,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 class K1AnalysisResult(
     override val files: List<KtFile>,
     val moduleDescriptor: ModuleDescriptor,
-    override val bindingContext: BindingContext
+    val bindingContext: BindingContext
 ) : AnalysisResult {
     override val diagnostics: List<AnalysisResult.Diagnostic>
         get() = bindingContext.diagnostics.all().map {
@@ -44,7 +42,7 @@ class K1AnalysisResult(
         }
 }
 
-class K1FrontendResult(
+private class K1FrontendResult(
     val state: GenerationState,
     val backendInput: JvmIrCodegenFactory.JvmIrBackendInput,
     val codegenFactory: JvmIrCodegenFactory
@@ -84,7 +82,6 @@ class K1CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
         val codegenFactory = JvmIrCodegenFactory(
             environment.configuration,
             environment.configuration.get(CLIConfigurationKeys.PHASE_CONFIG)
-                ?: PhaseConfig(jvmPhases)
         )
 
         val state = GenerationState.Builder(

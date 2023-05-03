@@ -16,6 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
+import androidx.compose.compiler.plugins.kotlin.facade.K1AnalysisResult
 import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
 import androidx.compose.compiler.plugins.kotlin.k1.isComposableInvocation
 import com.intellij.psi.PsiElement
@@ -26,8 +27,12 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.JUnit4
 
-class ComposeCallResolverTests : AbstractCodegenTest() {
+// TODO(b/282189431): run this test with K2
+@RunWith(JUnit4::class)
+class ComposeCallResolverTests : AbstractCodegenTest(useFir = false) {
     @Test
     fun testProperties() = assertInterceptions(
         """
@@ -221,8 +226,8 @@ class ComposeCallResolverTests : AbstractCodegenTest() {
     private fun assertInterceptions(srcText: String) {
         val (text, carets) = extractCarets(srcText)
 
-        val analysisResult = analyze(listOf(SourceFile("test.kt", text)))
-        val bindingContext = analysisResult.bindingContext!!
+        val analysisResult = analyze(listOf(SourceFile("test.kt", text))) as K1AnalysisResult
+        val bindingContext = analysisResult.bindingContext
         val ktFile = analysisResult.files.single()
 
         carets.forEachIndexed { index, (offset, calltype) ->

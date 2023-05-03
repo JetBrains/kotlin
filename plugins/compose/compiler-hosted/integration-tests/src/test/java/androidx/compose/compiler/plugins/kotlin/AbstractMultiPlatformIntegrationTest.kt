@@ -31,6 +31,8 @@ import org.jetbrains.org.objectweb.asm.util.TraceClassVisitor
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
+import org.junit.runner.RunWith
+import org.junit.runners.JUnit4
 
 // AbstractCliTest
 private fun executeCompilerGrabOutput(
@@ -77,7 +79,8 @@ fun String.trimTrailingWhitespacesAndAddNewlineAtEOF(): String =
         if (result.endsWith("\n")) result else result + "\n"
     }
 
-abstract class AbstractMultiPlatformIntegrationTest : AbstractCompilerTest() {
+@RunWith(JUnit4::class)
+abstract class AbstractMultiPlatformIntegrationTest : AbstractCompilerTest(useFir = false) {
     @JvmField
     @Rule
     val sourceDirectory = TemporaryFolder()
