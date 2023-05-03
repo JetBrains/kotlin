@@ -114,10 +114,8 @@ class KotlinDaemonIT : KGPDaemonsBaseTest() {
             )
 
             buildAndFail("assemble") {
-                // 'assertOutputContains' is not suitable here as test produces OOM which TC will false-positively treat as
-                // whole configuration error. So we should not output test logs into build logs.
-                assert(output.contains("Not enough memory to run compilation. Try to increase it via 'gradle.properties':"))
-                assert(output.contains("kotlin.daemon.jvmargs=-Xmx<size>"))
+                assertOutputContains("Not enough memory to run compilation. Try to increase it via 'gradle.properties':")
+                assertOutputContains("kotlin.daemon.jvmargs=-Xmx<size>")
             }
         }
     }
