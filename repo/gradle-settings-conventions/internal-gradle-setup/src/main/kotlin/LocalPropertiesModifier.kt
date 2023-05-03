@@ -20,11 +20,13 @@ internal val SYNCED_PROPERTIES_START_LINES = """
 internal const val SYNCED_PROPERTIES_END_LINE = "# the end of automatically configured properties"
 
 internal class LocalPropertiesModifier(private val localProperties: File) {
-    private val manuallyConfiguredPropertiesContent by lazy {
-        if (!localProperties.exists()) return@lazy ""
+    private val initialUserConfiguredPropertiesContent = getUserConfiguredPropertiesContent()
+
+    private fun getUserConfiguredPropertiesContent(): String {
+        if (!localProperties.exists()) return ""
         var insideAutomaticallyConfiguredSection = false
         // filter out the automatically configured lines
-        localProperties.readLines().filter { line ->
+        return localProperties.readLines().filter { line ->
             if (line == SYNCED_PROPERTIES_START_LINE) {
                 insideAutomaticallyConfiguredSection = true
             }
@@ -45,15 +47,16 @@ internal class LocalPropertiesModifier(private val localProperties: File) {
         if (localProperties.exists() && !localProperties.isFile) {
             error("$localProperties is not a file!")
         }
+        val content = getUserConfiguredPropertiesContent()
         val manuallyConfiguredProperties = Properties().apply {
-            StringReader(manuallyConfiguredPropertiesContent).use {
+            StringReader(content).use {
                 load(it)
             }
         }
         val propertiesToSetup = setupFile.properties.mapValues { PropertyValue(it.value, manuallyConfiguredProperties.containsKey(it.key)) }
         localProperties.writeText(
             """
-            |${manuallyConfiguredPropertiesContent.addSuffix("\n")}
+            |${content.addSuffix("\n")}
             |$SYNCED_PROPERTIES_START_LINES
             |${propertiesToSetup.asPropertiesLines}
             |$SYNCED_PROPERTIES_END_LINE
@@ -61,6 +64,10 @@ internal class LocalPropertiesModifier(private val localProperties: File) {
             """.trimMargin()
         )
     }
+
+    fun initiallyContains(line: String) = initialUserConfiguredPropertiesContent.contains(line)
+
+    fun putLine(line: String) = localProperties.appendText("\n$line")
 }
 
 private fun String.addSuffix(suffix: String): String {

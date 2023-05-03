@@ -205,21 +205,8 @@ class LocalPropertiesModifierTest {
     }
 
     private fun assertContainsMarkersOnce(content: String) {
-        assertContainsOnce(content, SYNCED_PROPERTIES_START_LINES)
-        assertContainsOnce(content, SYNCED_PROPERTIES_END_LINE)
-    }
-
-    private fun assertContainsOnce(content: String, substring: String) {
-        var currentOffset = 0
-        var count = 0
-        var nextIndex = content.indexOf(substring, currentOffset)
-
-        while (nextIndex != -1 && count < 2) {
-            count++
-            currentOffset = nextIndex + substring.length
-            nextIndex = content.indexOf(substring, currentOffset)
-        }
-        assertEquals(1, count)
+        assertContainsExactTimes(content, SYNCED_PROPERTIES_START_LINES, 1)
+        assertContainsExactTimes(content, SYNCED_PROPERTIES_END_LINE, 1)
     }
 
     private fun fillInitialLocalPropertiesFile(content: Map<String, PropertyValue>) {
