@@ -574,6 +574,15 @@ class ConfigurationsTest : MultiplatformExtensionTest() {
                     binaries.framework("main", listOf(NativeBuildType.DEBUG))
                 }
 
+                iosX64 {
+                    binaries.framework("foo", listOf(NativeBuildType.DEBUG)) { baseName = "foo" }
+                    binaries.framework("bar", listOf(NativeBuildType.DEBUG)) { baseName = "bar" }
+                }
+                iosArm64 {
+                    binaries.framework("foo", listOf(NativeBuildType.DEBUG)) { baseName = "foo" }
+                    binaries.framework("bar", listOf(NativeBuildType.DEBUG)) { baseName = "bar" }
+                }
+
                 linuxX64("linuxA") { attributes { attribute(distinguishingAttribute, "linuxA") } }
                 linuxX64("linuxB") { attributes { attribute(distinguishingAttribute, "linuxB") } }
 
