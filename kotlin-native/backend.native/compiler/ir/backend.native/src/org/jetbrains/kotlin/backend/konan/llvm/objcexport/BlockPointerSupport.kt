@@ -165,47 +165,51 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
             codegen.runtime.kRefSharedHolderType
     )
 
-    val disposeHelper = generateFunction(
-            codegen,
-            functionType(llvm.voidType, false, llvm.int8PtrType),
-            "blockDisposeHelper",
-            switchToRunnable = true
-    ) {
-        val blockPtr = bitcast(pointerType(blockLiteralType), param(0))
-        val refHolder = structGep(blockPtr, 1)
-        call(llvm.kRefSharedHolderDispose, listOf(refHolder))
+    private val disposeHelper by lazy {
+        generateFunction(
+                codegen,
+                functionType(llvm.voidType, false, llvm.int8PtrType),
+                "blockDisposeHelper",
+                switchToRunnable = true
+        ) {
+            val blockPtr = bitcast(pointerType(blockLiteralType), param(0))
+            val refHolder = structGep(blockPtr, 1)
+            call(llvm.kRefSharedHolderDispose, listOf(refHolder))
 
-        ret(null)
-    }.also {
-        LLVMSetLinkage(it, LLVMLinkage.LLVMInternalLinkage)
+            ret(null)
+        }.also {
+            LLVMSetLinkage(it, LLVMLinkage.LLVMInternalLinkage)
+        }
     }
 
-    val copyHelper = generateFunction(
-            codegen,
-            functionType(llvm.voidType, false, llvm.int8PtrType, llvm.int8PtrType),
-            "blockCopyHelper"
-    ) {
-        val dstBlockPtr = bitcast(pointerType(blockLiteralType), param(0))
-        val dstRefHolder = structGep(dstBlockPtr, 1)
+    private val copyHelper by lazy {
+        generateFunction(
+                codegen,
+                functionType(llvm.voidType, false, llvm.int8PtrType, llvm.int8PtrType),
+                "blockCopyHelper"
+        ) {
+            val dstBlockPtr = bitcast(pointerType(blockLiteralType), param(0))
+            val dstRefHolder = structGep(dstBlockPtr, 1)
 
-        val srcBlockPtr = bitcast(pointerType(blockLiteralType), param(1))
-        val srcRefHolder = structGep(srcBlockPtr, 1)
+            val srcBlockPtr = bitcast(pointerType(blockLiteralType), param(1))
+            val srcRefHolder = structGep(srcBlockPtr, 1)
 
-        // Note: in current implementation copy helper is invoked only for stack-allocated blocks from the same thread,
-        // so it is technically not necessary to check owner.
-        // However this is not guaranteed by Objective-C runtime, so keep it suboptimal but reliable:
-        val ref = call(
-                llvm.kRefSharedHolderRef,
-                listOf(srcRefHolder),
-                exceptionHandler = ExceptionHandler.Caller,
-                verbatim = true
-        )
+            // Note: in current implementation copy helper is invoked only for stack-allocated blocks from the same thread,
+            // so it is technically not necessary to check owner.
+            // However this is not guaranteed by Objective-C runtime, so keep it suboptimal but reliable:
+            val ref = call(
+                    llvm.kRefSharedHolderRef,
+                    listOf(srcRefHolder),
+                    exceptionHandler = ExceptionHandler.Caller,
+                    verbatim = true
+            )
 
-        call(llvm.kRefSharedHolderInit, listOf(dstRefHolder, ref))
+            call(llvm.kRefSharedHolderInit, listOf(dstRefHolder, ref))
 
-        ret(null)
-    }.also {
-        LLVMSetLinkage(it, LLVMLinkage.LLVMInternalLinkage)
+            ret(null)
+        }.also {
+            LLVMSetLinkage(it, LLVMLinkage.LLVMInternalLinkage)
+        }
     }
 
     fun CodeGenerator.LongInt(value: Long) =

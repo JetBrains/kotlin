@@ -2759,34 +2759,6 @@ internal class CodeGeneratorVisitor(
         overrideRuntimeGlobal("Kotlin_mimallocUseCompaction", llvm.constInt32(if (context.config.mimallocUseCompaction) 1 else 0))
     }
 
-    //-------------------------------------------------------------------------//
-    // Create type { i32, void ()*, i8* }
-
-    val kCtorType = llvm.structType(llvm.int32Type, pointerType(kVoidFuncType), llvm.int8PtrType)
-
-    //-------------------------------------------------------------------------//
-    // Create object { i32, void ()*, i8* } { i32 1, void ()* @ctorFunction, i8* null }
-
-    fun createGlobalCtor(ctorFunction: LLVMValueRef): ConstPointer {
-        val priority = if (context.config.target.family == Family.MINGW) {
-            // Workaround MinGW bug. Using this value makes the compiler generate
-            // '.ctors' section instead of '.ctors.XXXXX', which can't be recognized by ld
-            // when string table is too long.
-            // More details: https://youtrack.jetbrains.com/issue/KT-39548
-            llvm.int32(65535)
-            // Note: this difference in priorities doesn't actually make initializers
-            // platform-dependent, because handling priorities for initializers
-            // from different object files is platform-dependent anyway.
-        } else {
-            llvm.kImmInt32One
-        }
-        val data = llvm.kNullInt8Ptr
-        val argList = cValuesOf(priority, ctorFunction, data)
-        val ctorItem = LLVMConstNamedStruct(kCtorType, argList, 3)!!
-        return constPointer(ctorItem)
-    }
-
-    //-------------------------------------------------------------------------//
     fun appendStaticInitializers() {
         // Note: the list of libraries is topologically sorted (in order for initializers to be called correctly).
         val dependencies = (generationState.dependenciesTracker.allBitcodeDependencies + listOf(null)/* Null for "current" non-library module */)
@@ -2901,8 +2873,8 @@ internal class CodeGeneratorVisitor(
             LLVMSetLinkage(globalCtorFunction, LLVMLinkage.LLVMPrivateLinkage)
 
             // Append initializers of global variables in "llvm.global_ctors" array.
-            val globalCtors = llvm.staticData.placeGlobalArray("llvm.global_ctors", kCtorType,
-                    listOf(createGlobalCtor(globalCtorFunction)))
+            val globalCtors = llvm.staticData.placeGlobalArray("llvm.global_ctors", llvm.kCtorType,
+                    listOf(createGlobalCtor(codegen, globalCtorFunction)))
             LLVMSetLinkage(globalCtors.llvmGlobal, LLVMLinkage.LLVMAppendingLinkage)
             if (context.config.produce == CompilerOutputKind.PROGRAM) {
                 // Provide an optional handle for calling .ctors, if standard constructors mechanism

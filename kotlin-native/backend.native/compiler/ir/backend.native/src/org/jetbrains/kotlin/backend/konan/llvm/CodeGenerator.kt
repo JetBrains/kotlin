@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.konan.ForeignExceptionMode
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
+import org.jetbrains.kotlin.konan.target.Family
 
 
 internal class CodeGenerator(override val generationState: NativeGenerationState) : ContextUtils {
@@ -229,6 +230,26 @@ private inline fun <T : FunctionGenerationContext> generateFunctionBody(
         functionGenerationContext.unreachable()
     functionGenerationContext.epilogue()
     functionGenerationContext.resetDebugLocation()
+}
+
+// Create object { i32, void ()*, i8* } { i32 1, void ()* @ctorFunction, i8* null }
+internal fun createGlobalCtor(codegen: CodeGenerator, ctorFunction: LLVMValueRef): ConstPointer = with(codegen) {
+    val priority = if (context.config.target.family == Family.MINGW) {
+        // Workaround MinGW bug. Using this value makes the compiler generate
+        // '.ctors' section instead of '.ctors.XXXXX', which can't be recognized by ld
+        // when string table is too long.
+        // More details: https://youtrack.jetbrains.com/issue/KT-39548
+        llvm.int32(65535)
+        // Note: this difference in priorities doesn't actually make initializers
+        // platform-dependent, because handling priorities for initializers
+        // from different object files is platform-dependent anyway.
+    } else {
+        llvm.kImmInt32One
+    }
+    val data = llvm.kNullInt8Ptr
+    val argList = cValuesOf(priority, ctorFunction, data)
+    val ctorItem = LLVMConstNamedStruct(llvm.kCtorType, argList, 3)!!
+    return constPointer(ctorItem)
 }
 
 /**

@@ -445,6 +445,8 @@ internal class Llvm(private val generationState: NativeGenerationState, val modu
     val Kotlin_ObjCExport_createContinuationArgument by lazyRtFunction
     val Kotlin_ObjCExport_createUnitContinuationArgument by lazyRtFunction
     val Kotlin_ObjCExport_resumeContinuation by lazyRtFunction
+    val Kotlin_ObjCExport_addClassAdapters by lazyRtFunction
+    val Kotlin_ObjCExport_addProtocolAdapters by lazyRtFunction
 
     private val Kotlin_ObjCExport_NSIntegerTypeProvider by lazyRtFunction
     private val Kotlin_longTypeProvider by lazyRtFunction
@@ -479,6 +481,7 @@ internal class Llvm(private val generationState: NativeGenerationState, val modu
     val globalSharedObjects = mutableSetOf<LLVMValueRef>()
     val initializersGenerationState = InitializersGenerationState()
     val boxCacheGlobals = mutableMapOf<BoxCache, StaticData.Global>()
+    val globalCtors = mutableListOf<LLVMValueRef>()
 
     val runtimeAnnotationMap by lazy {
         staticData.getGlobal("llvm.global.annotations")
@@ -559,6 +562,10 @@ internal class Llvm(private val generationState: NativeGenerationState, val modu
             functionType(int32Type, false, int8PtrType),
             "nounwind", "readnone"
     )
+
+    val kVoidFuncType = functionType(voidType)
+
+    val kCtorType = structType(int32Type, pointerType(kVoidFuncType), int8PtrType)
 
     var tlsCount = 0
 

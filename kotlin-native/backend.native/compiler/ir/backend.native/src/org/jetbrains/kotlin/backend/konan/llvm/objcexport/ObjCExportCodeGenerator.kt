@@ -297,6 +297,7 @@ internal class ObjCExportCodeGenerator(
         val namer: ObjCExportNamer,
         val mapper: ObjCExportMapper,
         val stdlibNamer: ObjCExportStdlibNamer,
+        val topLevelPrefix: String,
 ) : ObjCExportCodeGeneratorBase(codegen) {
 
     inline fun <reified T: IrFunction> T.getLowered(): T = when (this) {
@@ -413,7 +414,7 @@ internal class ObjCExportCodeGenerator(
     }
 
     private fun generateTypeAdaptersForKotlinTypes(spec: ObjCExportCodeSpec?): List<ObjCTypeAdapter> {
-        val types = spec?.types.orEmpty() + objCClassForAny
+        val types = spec?.types.orEmpty() + if (spec?.containsStandardLibrary == true) listOf(objCClassForAny) else emptyList()
 
         val allReverseAdapters = createReverseAdapters(types)
 
@@ -453,22 +454,26 @@ internal class ObjCExportCodeGenerator(
     }
 
     internal fun generate(spec: ObjCExportCodeSpec?) {
+
+        val compilingStdlib = spec?.containsStandardLibrary ?: false
+
         generateTypeAdapters(spec)
 
-        NSNumberKind.values().mapNotNull { it.mappedKotlinClassId }.forEach {
-            dataGenerator.exportClass(stdlibNamer.numberBoxName(it).binaryName)
+        if (compilingStdlib) {
+            NSNumberKind.values().mapNotNull { it.mappedKotlinClassId }.forEach {
+                dataGenerator.exportClass(stdlibNamer.numberBoxName(it).binaryName)
+            }
+            dataGenerator.exportClass(stdlibNamer.mutableSetName.binaryName)
+            dataGenerator.exportClass(stdlibNamer.mutableMapName.binaryName)
+            dataGenerator.exportClass(stdlibNamer.kotlinAnyName.binaryName)
+            emitSpecialClassesConvertions()
+            // Replace runtime global with weak linkage:
+            codegen.replaceExternalWeakOrCommonGlobalFromNativeRuntime(
+                    "Kotlin_ObjCInterop_uniquePrefix",
+                    codegen.staticData.cStringLiteral(stdlibNamer.stdlibTopLevelPrefix)
+            )
         }
-        dataGenerator.exportClass(stdlibNamer.mutableSetName.binaryName)
-        dataGenerator.exportClass(stdlibNamer.mutableMapName.binaryName)
-        dataGenerator.exportClass(stdlibNamer.kotlinAnyName.binaryName)
 
-        emitSpecialClassesConvertions()
-
-        // Replace runtime global with weak linkage:
-        codegen.replaceExternalWeakOrCommonGlobalFromNativeRuntime(
-                "Kotlin_ObjCInterop_uniquePrefix",
-                codegen.staticData.cStringLiteral(stdlibNamer.stdlibTopLevelPrefix)
-        )
 
         emitSelectorsHolder()
 
@@ -501,7 +506,7 @@ internal class ObjCExportCodeGenerator(
             }
         }
 
-        fun emitSortedAdapters(nameToAdapter: Map<String, ConstPointer>, prefix: String) {
+        fun emitSortedAdapters(nameToAdapter: Map<String, ConstPointer>, adapterKind: TypeAdapter) {
             val sortedAdapters = nameToAdapter.toList().sortedBy { it.first }.map {
                 it.second
             }
@@ -509,15 +514,22 @@ internal class ObjCExportCodeGenerator(
             if (sortedAdapters.isNotEmpty()) {
                 val type = sortedAdapters.first().llvmType
                 val sortedAdaptersPointer = staticData.placeGlobalConstArray("", type, sortedAdapters)
-
-                // Note: this globals replace runtime globals with weak linkage:
-                codegen.replaceExternalWeakOrCommonGlobalFromNativeRuntime(prefix, sortedAdaptersPointer)
-                codegen.replaceExternalWeakOrCommonGlobalFromNativeRuntime("${prefix}Num", llvm.constInt32(sortedAdapters.size))
+                // Create a static constructor function that adds type adapters to a global list.
+                val typeAdaptersConstructor = generateFunctionNoRuntime(codegen, llvm.kVoidFuncType, "_${topLevelPrefix}_constructor_for_${adapterKind.name.lowercase()}") {
+                    val callee = when (adapterKind) {
+                        TypeAdapter.CLASS -> llvm.Kotlin_ObjCExport_addClassAdapters
+                        TypeAdapter.PROTOCOL -> llvm.Kotlin_ObjCExport_addProtocolAdapters
+                    }
+                    call(callee, listOf(sortedAdaptersPointer.llvm, llvm.constInt32(sortedAdapters.size).llvm),
+                            exceptionHandler = ExceptionHandler.Caller, verbatim = true)
+                    ret(null)
+                }
+                llvm.globalCtors += typeAdaptersConstructor
             }
         }
 
-        emitSortedAdapters(placedClassAdapters, "Kotlin_ObjCExport_sortedClassAdapters")
-        emitSortedAdapters(placedInterfaceAdapters, "Kotlin_ObjCExport_sortedProtocolAdapters")
+        emitSortedAdapters(placedClassAdapters, TypeAdapter.CLASS)
+        emitSortedAdapters(placedInterfaceAdapters, TypeAdapter.PROTOCOL)
 
         if (generationState.llvmModuleSpecification.importsKotlinDeclarationsFromOtherSharedLibraries()) {
             codegen.replaceExternalWeakOrCommonGlobalFromNativeRuntime(
@@ -525,6 +537,10 @@ internal class ObjCExportCodeGenerator(
                     llvm.constInt1(true)
             )
         }
+    }
+
+    private enum class TypeAdapter {
+        CLASS, PROTOCOL,
     }
 
     private fun emitKt42254Hint() {
@@ -577,7 +593,7 @@ internal class ObjCExportCodeGenerator(
         }
 
         dataGenerator.emitClass(
-                "${stdlibNamer.stdlibTopLevelPrefix}KotlinSelectorsHolder",
+                "${topLevelPrefix}KotlinSelectorsHolder",
                 superName = "NSObject",
                 instanceMethods = methods
         )

@@ -71,6 +71,7 @@ internal class ObjCExportLlvmModuleSpecification() : LlvmModuleSpecification {
     override fun importsKotlinDeclarationsFromOtherObjectFiles(): Boolean =
             true
 
+    // Is it correct for static frameworks?
     override fun importsKotlinDeclarationsFromOtherSharedLibraries(): Boolean =
             true
 

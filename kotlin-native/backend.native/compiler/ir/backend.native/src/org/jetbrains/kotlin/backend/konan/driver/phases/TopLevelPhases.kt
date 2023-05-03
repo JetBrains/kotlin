@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.konan.driver.PhaseEngine
 import org.jetbrains.kotlin.backend.konan.driver.utilities.*
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.llvm.CodeGenerator
+import org.jetbrains.kotlin.backend.konan.llvm.createGlobalCtors
 import org.jetbrains.kotlin.backend.konan.llvm.objcexport.ObjCExportCodeGenerator
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportCodeSpec
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportedInterface
@@ -71,10 +72,17 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runObjCExportCodegen(
             cacheFileName = "should_not_reach_here",
     )
     val codegen = CodeGenerator(generationState)
-    val objCCodeGenerator = ObjCExportCodeGenerator(codegen, objCExportedInterface.namer, objCExportedInterface.mapper, objCExportedInterface.stdlibNamer)
+    val objCCodeGenerator = ObjCExportCodeGenerator(
+            codegen,
+            objCExportedInterface.namer,
+            objCExportedInterface.mapper,
+            objCExportedInterface.stdlibNamer,
+            objCExportedInterface.frameworkName,
+    )
     objCExportedInterface.generateWorkaroundForSwiftSR10177(generationState)
     objCCodeGenerator.generate(objCExportCodeSpec)
     codegen.objCDataGenerator?.finishModule()
+    codegen.createGlobalCtors()
     objCCodeGenerator.dispose()
 
     runPhase(WriteBitcodeFilePhase, WriteBitcodeFileInput(

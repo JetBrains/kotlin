@@ -189,26 +189,47 @@ static const ObjCTypeAdapter* findAdapterByName(
   return nullptr;
 }
 
-__attribute__((weak)) const ObjCTypeAdapter** Kotlin_ObjCExport_sortedClassAdapters = nullptr;
-__attribute__((weak)) int Kotlin_ObjCExport_sortedClassAdaptersNum = 0;
+namespace {
+    std::vector<std::pair<const ObjCTypeAdapter **, int>> Kotlin_ObjCExport_sortedClassAdaptersVector;
+    std::vector<std::pair<const ObjCTypeAdapter **, int>> Kotlin_ObjCExport_sortedProtocolAdaptersVector;
+}
 
-__attribute__((weak)) const ObjCTypeAdapter** Kotlin_ObjCExport_sortedProtocolAdapters = nullptr;
-__attribute__((weak)) int Kotlin_ObjCExport_sortedProtocolAdaptersNum = 0;
+extern "C" void Kotlin_ObjCExport_addClassAdapters(const ObjCTypeAdapter **adapters, int numberOfAdapters) {
+    printf("Adding a bit more (%d) class adapters...\n", numberOfAdapters);
+    Kotlin_ObjCExport_sortedClassAdaptersVector.emplace_back(adapters, numberOfAdapters);
+}
+
+extern "C" void Kotlin_ObjCExport_addProtocolAdapters(const ObjCTypeAdapter **adapters, int numberOfAdapters) {
+    printf("Adding a bit more (%d) protocol adapters...\n", numberOfAdapters);
+    Kotlin_ObjCExport_sortedProtocolAdaptersVector.emplace_back(adapters, numberOfAdapters);
+}
 
 __attribute__((weak)) bool Kotlin_ObjCExport_initTypeAdapters = false;
 
 static const ObjCTypeAdapter* findClassAdapter(Class clazz) {
-  return findAdapterByName(class_getName(clazz),
-        Kotlin_ObjCExport_sortedClassAdapters,
-        Kotlin_ObjCExport_sortedClassAdaptersNum
-  );
+    for (auto x : Kotlin_ObjCExport_sortedProtocolAdaptersVector) {
+        const ObjCTypeAdapter *pAdapter = findAdapterByName(class_getName(clazz),
+                                                            x.first,
+                                                            x.second
+        );
+        if (pAdapter != nullptr) {
+            return pAdapter;
+        }
+    }
+    return nullptr;
 }
 
 static const ObjCTypeAdapter* findProtocolAdapter(Protocol* prot) {
-  return findAdapterByName(protocol_getName(prot),
-        Kotlin_ObjCExport_sortedProtocolAdapters,
-        Kotlin_ObjCExport_sortedProtocolAdaptersNum
-  );
+    for (auto x : Kotlin_ObjCExport_sortedClassAdaptersVector) {
+        const ObjCTypeAdapter *pAdapter = findAdapterByName(protocol_getName(prot),
+                                                            x.first,
+                                                            x.second
+        );
+        if (pAdapter != nullptr) {
+            return pAdapter;
+        }
+    }
+    return nullptr;
 }
 
 static const ObjCTypeAdapter* getTypeAdapter(const TypeInfo* typeInfo) {
@@ -313,10 +334,14 @@ static void initTypeAdaptersFrom(const ObjCTypeAdapter** adapters, int count) {
 }
 
 static void initTypeAdapters() {
-  if (!Kotlin_ObjCExport_initTypeAdapters) return;
-
-  initTypeAdaptersFrom(Kotlin_ObjCExport_sortedClassAdapters, Kotlin_ObjCExport_sortedClassAdaptersNum);
-  initTypeAdaptersFrom(Kotlin_ObjCExport_sortedProtocolAdapters, Kotlin_ObjCExport_sortedProtocolAdaptersNum);
+//    if (!Kotlin_ObjCExport_initTypeAdapters) return;
+    printf("initTypeAdapters\n");
+    for (auto x: Kotlin_ObjCExport_sortedClassAdaptersVector) {
+        initTypeAdaptersFrom(x.first, x.second);
+    }
+    for (auto x: Kotlin_ObjCExport_sortedProtocolAdaptersVector) {
+        initTypeAdaptersFrom(x.first, x.second);
+    }
 }
 
 static void Kotlin_ObjCExport_initializeImpl() {

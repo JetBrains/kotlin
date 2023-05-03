@@ -226,6 +226,15 @@ internal fun CodeGenerator.replaceExternalWeakOrCommonGlobalFromNativeRuntime(
         value: ConstValue
 ) = replaceExternalWeakOrCommonGlobal(name, value).also { generationState.dependenciesTracker.addNativeRuntime() }
 
+
+internal fun CodeGenerator.createGlobalCtors() {
+    val kCtorType = llvm.structType(llvm.int32Type, pointerType(llvm.kVoidFuncType), llvm.int8PtrType)
+
+    val globalCtors = llvm.staticData.placeGlobalArray("llvm.global_ctors", kCtorType,
+            llvm.globalCtors.map { createGlobalCtor(this, it) })
+    LLVMSetLinkage(globalCtors.llvmGlobal, LLVMLinkage.LLVMAppendingLinkage)
+}
+
 internal abstract class AddressAccess {
     abstract fun getAddress(generationContext: FunctionGenerationContext?): LLVMValueRef
 }

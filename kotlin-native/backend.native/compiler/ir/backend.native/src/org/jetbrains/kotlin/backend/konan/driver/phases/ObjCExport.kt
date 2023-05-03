@@ -104,7 +104,7 @@ internal val CreateObjCFrameworkPhase = createSimpleNamedCompilerPhase<PhaseCont
 internal val CreateObjCExportCodeSpecPhase = createSimpleNamedCompilerPhase<PsiToIrContext, ObjCExportedInterface, ObjCExportCodeSpec>(
         "ObjCExportCodeCodeSpec",
         "Objective-C IR symbols",
-        outputIfNotEnabled = { _, _, _, _, -> ObjCExportCodeSpec(emptyList(), emptyList()) }
+        outputIfNotEnabled = { _, _, _, _, -> ObjCExportCodeSpec(emptyList(), emptyList(), containsStandardLibrary = false) }
 ) { context, input ->
     input.createCodeSpec(context.symbolTable!!)
 }

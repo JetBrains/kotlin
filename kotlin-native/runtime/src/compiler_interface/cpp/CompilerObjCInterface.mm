@@ -54,6 +54,8 @@ touchFunction(Kotlin_ObjCExport_createContinuationArgument)
 touchFunction(Kotlin_ObjCExport_createUnitContinuationArgument)
 touchFunction(Kotlin_ObjCExport_resumeContinuation)
 touchFunction(Kotlin_ObjCExport_NSIntegerTypeProvider)
+touchFunction(Kotlin_ObjCExport_addClassAdapters)
+touchFunction(Kotlin_ObjCExport_addProtocolAdapters)
 touchFunction(Kotlin_longTypeProvider)
 
 }

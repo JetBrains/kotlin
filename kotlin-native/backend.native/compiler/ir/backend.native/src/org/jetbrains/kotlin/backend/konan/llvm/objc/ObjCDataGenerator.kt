@@ -160,13 +160,13 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
             val roValue = Struct(classRoType, fields)
 
             val roLabel = if (isMetaclass) {
-                "\u0001l_OBJC_METACLASS_RO_\$_"
+                "_OBJC_METACLASS_RO_\$_"
             } else {
-                "\u0001l_OBJC_CLASS_RO_\$_"
+                "_OBJC_CLASS_RO_\$_"
             } + name
 
             val roGlobal = llvm.staticData.placeGlobal(roLabel, roValue).also {
-                it.setLinkage(LLVMLinkage.LLVMPrivateLinkage)
+                it.setLinkage(LLVMLinkage.LLVMInternalLinkage)
                 it.setAlignment(runtime.pointerAlignment)
                 it.setSection("__DATA, __objc_const")
             }

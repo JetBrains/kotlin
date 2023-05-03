@@ -236,7 +236,7 @@ NO_EXTERNAL_CALLS_CHECK static Class allocateClass(const KotlinObjCClassInfo* in
 
   int classId = anonymousClassNextId++;
   className += std::to_string(classId);
-
+    printf("Creating class %s\n", className.c_str());
   Class result = objc_allocateClassPair(superclass, className.c_str(), 0);
   RuntimeCheck(result != nullptr, "Failed to allocate Objective-C class");
   return result;

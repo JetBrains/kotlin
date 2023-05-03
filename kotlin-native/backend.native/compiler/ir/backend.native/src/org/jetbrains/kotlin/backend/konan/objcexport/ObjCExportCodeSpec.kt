@@ -110,7 +110,8 @@ internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): Obj
 
     val types = generatedClasses.map { getType(it) }
 
-    return ObjCExportCodeSpec(files, types)
+
+    return ObjCExportCodeSpec(files, types, containsStandardLibrary = this.frameworkName == "Kotlin")
 }
 
 internal fun <S : IrFunctionSymbol> createObjCMethodSpecBaseMethod(
@@ -129,7 +130,8 @@ internal fun <S : IrFunctionSymbol> createObjCMethodSpecBaseMethod(
 
 internal class ObjCExportCodeSpec(
         val files: List<ObjCClassForKotlinFile>,
-        val types: List<ObjCTypeForKotlinType>
+        val types: List<ObjCTypeForKotlinType>,
+        val containsStandardLibrary: Boolean
 )
 
 internal sealed class ObjCMethodSpec {
