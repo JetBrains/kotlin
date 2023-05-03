@@ -23,6 +23,8 @@ abstract class AbstractSymbolLightClassesParentingTestByFqName(
         val ktFile = ktFiles.first()
         val lightClass = findLightClass(fqName, ktFile.project) ?: return
 
-        lightClass.accept(createLightElementsVisitor(module.directives, testServices.assertions))
+        ignoreExceptionIfIgnoreDirectivePresent(module) {
+            lightClass.accept(createLightElementsVisitor(module.directives, testServices.assertions))
+        }
     }
 }

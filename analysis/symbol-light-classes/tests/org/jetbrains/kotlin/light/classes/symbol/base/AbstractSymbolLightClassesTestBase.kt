@@ -96,7 +96,7 @@ abstract class AbstractSymbolLightClassesTestBase(
         project: Project
     ): String
 
-    private inline fun ignoreExceptionIfIgnoreDirectivePresent(module: TestModule, action: () -> Unit) {
+    protected fun ignoreExceptionIfIgnoreDirectivePresent(module: TestModule, action: () -> Unit) {
         try {
             action()
         } catch (e: Throwable) {

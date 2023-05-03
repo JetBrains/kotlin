@@ -165,6 +165,30 @@ open class AbstractSymbolLightClassesParentingTestBase(
                 }
             }
 
+            override fun visitNameValuePair(pair: PsiNameValuePair) {
+                checkParentAndVisitChildren(pair) {
+                    value?.let(::checkAnnotationMemberValue)
+                }
+            }
+
+            override fun visitAnnotationParameterList(list: PsiAnnotationParameterList) {
+                checkParentAndVisitChildren(list) { visitor ->
+                    attributes.forEach { it.accept(visitor) }
+                }
+            }
+
+            private fun checkAnnotationMemberValue(memberValue: PsiAnnotationMemberValue) {
+                checkParentAndVisitChildren(memberValue) {
+                    if (this is PsiClassObjectAccessExpression) {
+                        checkDeclarationParent(this.operand)
+                    }
+
+                    if (this is PsiArrayInitializerMemberValue) {
+                        this.initializers.forEach(::checkAnnotationMemberValue)
+                    }
+                }
+            }
+
             private fun checkDeclarationParent(declaration: PsiElement) {
                 val expectedParent = declarationStack.lastOrNull() ?: return
                 val parent = declaration.parent
@@ -216,6 +240,10 @@ open class AbstractSymbolLightClassesParentingTestBase(
 
                 assertions.assertTrue(modifierList.annotations.any { it == annotation }) {
                     "$annotation is not found in ${modifierList.annotations}"
+                }
+
+                checkParentAndVisitChildren(annotation, notCheckItself = true) { visitor ->
+                    parameterList.accept(visitor)
                 }
             }
         }
