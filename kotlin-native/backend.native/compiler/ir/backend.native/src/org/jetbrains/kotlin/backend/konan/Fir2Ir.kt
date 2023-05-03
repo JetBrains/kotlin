@@ -6,7 +6,8 @@ import org.jetbrains.kotlin.backend.common.serialization.metadata.DynamicTypeDes
 import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.phases.Fir2IrOutput
 import org.jetbrains.kotlin.backend.konan.driver.phases.FirOutput
-import org.jetbrains.kotlin.backend.konan.ir.KonanSymbolsOverFir
+import org.jetbrains.kotlin.backend.konan.ir.SymbolOverIrLookupUtils
+import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
 import org.jetbrains.kotlin.backend.konan.serialization.KonanIdSignaturer
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerDesc
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
@@ -28,10 +29,8 @@ import org.jetbrains.kotlin.fir.descriptors.FirModuleDescriptor
 import org.jetbrains.kotlin.fir.pipeline.convertToIrAndActualize
 import org.jetbrains.kotlin.fir.signaturer.Ir2FirManglerAdapter
 import org.jetbrains.kotlin.incremental.components.LookupTracker
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
-import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
@@ -118,7 +117,7 @@ internal fun PhaseContext.fir2Ir(
     }.map { it.second }.toSet()
 
 
-    val symbols = createKonanSymbols(irModuleFragment, components, pluginContext)
+    val symbols = createKonanSymbols(components, pluginContext)
 
     val renderDiagnosticNames = configuration.getBoolean(CLIConfigurationKeys.RENDER_DIAGNOSTIC_INTERNAL_NAME)
     FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, messageCollector, renderDiagnosticNames)
@@ -131,13 +130,10 @@ internal fun PhaseContext.fir2Ir(
 }
 
 private fun PhaseContext.createKonanSymbols(
-        irModuleFragment: IrModuleFragment,
         components: Fir2IrComponents,
         pluginContext: Fir2IrPluginContext,
-): KonanSymbolsOverFir {
-    val moduleDescriptor = irModuleFragment.descriptor
+): KonanSymbols {
     val symbolTable = SymbolTable(KonanIdSignaturer(KonanManglerDesc), pluginContext.irFactory)
-    val descriptorsLookup = DescriptorsLookup(moduleDescriptor.builtIns as KonanBuiltIns)
 
-    return KonanSymbolsOverFir(this, descriptorsLookup, components.irBuiltIns, symbolTable, symbolTable.lazyWrapper)
+    return KonanSymbols(this, SymbolOverIrLookupUtils(), components.irBuiltIns, symbolTable.lazyWrapper)
 }

@@ -61,10 +61,10 @@ open class BuiltinSymbolsBase(val irBuiltIns: IrBuiltIns, private val symbolTabl
     // The "...OrNull" variants are used for the classes below because the minimal stdlib used in tests do not include those classes.
     // It was not feasible to add them to the JS reduced runtime because all its transitive dependencies also need to be
     // added, which would include a lot of the full stdlib.
-    open val uByte = irBuiltIns.findClass(Name.identifier("UByte"), "kotlin")
-    open val uShort = irBuiltIns.findClass(Name.identifier("UShort"), "kotlin")
-    open val uInt = irBuiltIns.findClass(Name.identifier("UInt"), "kotlin")
-    open val uLong = irBuiltIns.findClass(Name.identifier("ULong"), "kotlin")
+    val uByte = irBuiltIns.findClass(Name.identifier("UByte"), "kotlin")
+    val uShort = irBuiltIns.findClass(Name.identifier("UShort"), "kotlin")
+    val uInt = irBuiltIns.findClass(Name.identifier("UInt"), "kotlin")
+    val uLong = irBuiltIns.findClass(Name.identifier("ULong"), "kotlin")
     val uIntProgression = progressionOrNull("UIntProgression")
     val uLongProgression = progressionOrNull("ULongProgression")
     val uIntRange = progressionOrNull("UIntRange")

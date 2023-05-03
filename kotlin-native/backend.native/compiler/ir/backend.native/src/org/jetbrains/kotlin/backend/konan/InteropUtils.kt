@@ -32,7 +32,7 @@ object InteropFqNames {
     const val cStructVarName = "CStructVar"
     const val cEnumVarName = "CEnumVar"
     const val cPrimitiveVarName = "CPrimitiveVar"
-    private const val cPointedName = "CPointed"
+    const val cPointedName = "CPointed"
 
     const val interopStubsName = "InteropStubs"
     const val managedTypeName = "ManagedType"
