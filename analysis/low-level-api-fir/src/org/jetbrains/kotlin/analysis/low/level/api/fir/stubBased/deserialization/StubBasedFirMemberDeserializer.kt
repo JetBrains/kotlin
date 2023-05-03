@@ -146,8 +146,9 @@ internal class StubBasedFirDeserializationContext(
             callableId.packageName,
             callableId.className,
             parameterListOwner,
-            if (initialOrigin == FirDeclarationOrigin.BuiltIns) null else JvmFromStubDecompilerSource(callableId.packageName),
-            null,
+            containerSource = if (initialOrigin == FirDeclarationOrigin.BuiltIns || callableId.packageName.isRoot)
+                null else JvmFromStubDecompilerSource(callableId.packageName),
+            outerClassSymbol = null,
             symbol,
             initialOrigin
         )
