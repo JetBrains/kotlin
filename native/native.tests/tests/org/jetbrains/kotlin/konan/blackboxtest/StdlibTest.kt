@@ -56,7 +56,6 @@ class StdlibTest : AbstractNativeBlackBoxTest() {
 }
 
 @Tag("stdlib")
-@Tag("stdlibK2") // TODO: To be removed.
 @Tag("frontend-fir")
 @PredefinedTestCases(
     TC(

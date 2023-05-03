@@ -39,7 +39,6 @@ class KotlinTestLibraryTest : AbstractNativeBlackBoxTest() {
 }
 
 @Tag("kotlin-test")
-@Tag("kotlin-testK2") // TODO: To be removed.
 @Tag("frontend-fir")
 @PredefinedTestCases(
     TC(

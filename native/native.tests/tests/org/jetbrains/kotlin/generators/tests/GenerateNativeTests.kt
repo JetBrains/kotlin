@@ -53,7 +53,6 @@ fun main() {
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "FirNativeCodegenBoxTestGenerated",
                 annotations = listOf(
-                    deprecated_codegenK2(),
                     *frontendFir(),
                     provider<UseExtTestCaseGroupProvider>()
                 )
@@ -64,7 +63,6 @@ fun main() {
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "FirNativeCodegenBoxTestNoPLGenerated",
                 annotations = listOf(
-                    deprecated_codegenK2(),
                     *frontendFir(),
                     provider<UseExtTestCaseGroupProvider>(),
                     *noPartialLinkage()
@@ -94,7 +92,6 @@ fun main() {
                 suiteTestClassName = "FirInfrastructureTestGenerated",
                 annotations = listOf(
                     infrastructure(),
-                    deprecated_firInfrastructure(),
                     *frontendFir(),
                     provider<UseStandardTestCaseGroupProvider>()
                 )
@@ -180,7 +177,6 @@ fun main() {
             testClass<AbstractNativeKlibContentsTest>(
                 suiteTestClassName = "FirNativeKLibContentsTestGenerated",
                 annotations = listOf(
-                    deprecated_k2libContents(),
                     *frontendFir()
                 )
             ) {
@@ -241,8 +237,3 @@ private fun frontendFir() = arrayOf(
 
 private fun debugger() = annotation(Tag::class.java, "debugger")
 private fun infrastructure() = annotation(Tag::class.java, "infrastructure")
-
-// TODO: To be removed.
-private fun deprecated_codegenK2() = annotation(Tag::class.java, "codegenK2")
-private fun deprecated_k2libContents() = annotation(Tag::class.java, "k2libContents")
-private fun deprecated_firInfrastructure() = annotation(Tag::class.java, "firInfrastructure")

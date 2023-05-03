@@ -20,7 +20,6 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("native/native.tests/testData/klibContents")
 @TestDataPath("$PROJECT_ROOT")
-@Tag("k2libContents")
 @Tag("frontend-fir")
 @FirPipeline()
 public class FirNativeKLibContentsTestGenerated extends AbstractNativeKlibContentsTest {
@@ -68,7 +67,6 @@ public class FirNativeKLibContentsTestGenerated extends AbstractNativeKlibConten
     @Nested
     @TestMetadata("native/native.tests/testData/klibContents/builtinsSerializer")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("k2libContents")
     @Tag("frontend-fir")
     @FirPipeline()
     public class BuiltinsSerializer {
@@ -140,7 +138,6 @@ public class FirNativeKLibContentsTestGenerated extends AbstractNativeKlibConten
         @Nested
         @TestMetadata("native/native.tests/testData/klibContents/builtinsSerializer/annotationArguments")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("k2libContents")
         @Tag("frontend-fir")
         @FirPipeline()
         public class AnnotationArguments {
@@ -190,7 +187,6 @@ public class FirNativeKLibContentsTestGenerated extends AbstractNativeKlibConten
     @Nested
     @TestMetadata("native/native.tests/testData/klibContents/klib")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("k2libContents")
     @Tag("frontend-fir")
     @FirPipeline()
     public class Klib {
