@@ -21,7 +21,7 @@ class KlibIcCacheBasedSymbolProvider(
     moduleDataProvider: SingleModuleDataProvider,
     kotlinScopeProvider: FirKotlinScopeProvider,
     private val icData: KlibIcData,
-    defaultDeserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library
+    defaultDeserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Precompiled
 ) : MetadataLibraryBasedSymbolProvider<KlibIcData>(
     session,
     moduleDataProvider,
