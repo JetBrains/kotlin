@@ -159,7 +159,7 @@ internal abstract class FirBaseTowerResolveTask(
 
             val receiver = lexical.implicitReceiver
 
-            if (receiver != null && receiver !is InaccessibleImplicitReceiverValue) {
+            if (receiver != null) {
                 onImplicitReceiver(receiver, parentGroup.Implicit(depth))
             }
         }

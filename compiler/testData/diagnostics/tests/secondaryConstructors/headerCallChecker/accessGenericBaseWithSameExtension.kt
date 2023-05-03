@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 open class Base<T>(p: Any?) {
     fun foo1(t: T) {}
