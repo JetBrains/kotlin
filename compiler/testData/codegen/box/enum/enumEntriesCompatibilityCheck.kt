@@ -5,7 +5,13 @@
 // FULL_JDK
 // WITH_STDLIB
 
+package pckg
+
 import kotlin.test.assertEquals
+
+enum class EBasic {
+    A0;
+}
 
 enum class E0 {;
     companion object {
@@ -65,6 +71,8 @@ enum class E05 : I05 {
 
 @OptIn(ExperimentalStdlibApi::class)
 fun box(): String {
+    assertEquals(EBasic.entries.first().toString(), "A0") // make sure the feature is working
+
     assertEquals(E0.entries, "OK")
     assertEquals(Shadowing.E0.E.test(), "OK")
     assertEquals(E01.entries.toString(), "OK")
