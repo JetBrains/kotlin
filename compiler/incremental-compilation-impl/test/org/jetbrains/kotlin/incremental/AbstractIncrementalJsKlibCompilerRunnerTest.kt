@@ -32,4 +32,7 @@ abstract class AbstractIncrementalJsFirKlibCompilerWithScopeExpansionRunnerTest 
             languageVersion = "2.0"
         }
     }
+
+    override val buildLogFinder: BuildLogFinder
+        get() = super.buildLogFinder.copy(isFirEnabled = true)
 }
