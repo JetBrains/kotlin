@@ -18,7 +18,7 @@ class MppDiagnosticsIt : KGPBaseTest() {
     @GradleTest
     fun testDiagnosticsRenderingSmoke(gradleVersion: GradleVersion) {
         project("diagnosticsRenderingSmoke", gradleVersion) {
-            val expectedOutputFile = projectName.testProjectPath.resolve("expectedOutput.txt").toFile()
+            val expectedOutputFile = projectPath.resolve("expectedOutput.txt").toFile()
             build {
                 assertEqualsToFile(expectedOutputFile, extractProjectsAndTheirVerboseDiagnostics())
             }
