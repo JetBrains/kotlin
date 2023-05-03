@@ -17,9 +17,10 @@ import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
 import org.jetbrains.kotlin.build.report.statistics.StatTag
 import org.jetbrains.kotlin.gradle.report.*
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
+import org.jetbrains.kotlin.gradle.tasks.*
+import org.jetbrains.kotlin.gradle.tasks.OOMErrorException
 import org.jetbrains.kotlin.gradle.tasks.cleanOutputsAndLocalState
-import org.jetbrains.kotlin.gradle.tasks.throwExceptionIfCompilationFailed
+import org.jetbrains.kotlin.gradle.tasks.kotlinDaemonOOMHelperMessage
 import org.jetbrains.kotlin.gradle.utils.stackTraceAsString
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.incremental.ClasspathChanges
@@ -246,7 +247,11 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             exitCodeFromProcessExitCode(log, res.get())
         } catch (e: Throwable) {
             bufferingMessageCollector.flush(messageCollector)
-            throw e
+            if (e is OutOfMemoryError || e.hasOOMCause()) {
+                throw OOMErrorException(kotlinDaemonOOMHelperMessage)
+            } else {
+                throw e
+            }
         } finally {
             val memoryUsageAfterBuild = daemon.getUsedMemory(withGC = false).takeIf { it.isGood }?.get()
 
