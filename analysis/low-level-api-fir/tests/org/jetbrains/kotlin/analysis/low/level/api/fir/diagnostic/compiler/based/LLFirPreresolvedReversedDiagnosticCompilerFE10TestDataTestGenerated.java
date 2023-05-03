@@ -19321,6 +19321,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
             }
 
             @Test
+            @TestMetadata("sortedBy.kt")
+            public void testSortedBy() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/integerLiterals/sortedBy.kt");
+            }
+
+            @Test
             @TestMetadata("typealiasOnLong.kt")
             public void testTypealiasOnLong() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/integerLiterals/typealiasOnLong.kt");
