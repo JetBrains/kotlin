@@ -110,7 +110,7 @@ class CachingTest : TestCase() {
     }
 
     @Test
-    fun testImplicitReceiversWithJarCache() = expectTestToFailOnK2 {
+    fun testImplicitReceiversWithJarCache() {
         withTempDir("scriptingTestJarCache") { cacheDir ->
             val cache = TestCompiledScriptJarsCache(cacheDir)
             Assert.assertTrue(cache.baseDir.listFiles()!!.isEmpty())

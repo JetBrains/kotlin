@@ -224,6 +224,27 @@ class ScriptingHostTest : TestCase() {
     }
 
     @Test
+    fun testSimpleScriptWithImplicitReceiver() {
+        val greeting = listOf("3")
+        val script = "println(length)"
+        val definition = createJvmScriptDefinitionFromTemplate<SimpleScriptTemplate>(
+            compilation = {
+                implicitReceivers(String::class)
+            },
+            evaluation = {
+                implicitReceivers("abc")
+            }
+        )
+        val output = captureOut {
+            val retVal = BasicJvmScriptingHost().eval(
+                script.toScriptSource(), definition.compilationConfiguration, definition.evaluationConfiguration
+            ).valueOrThrow().returnValue
+            if (retVal is ResultValue.Error) throw retVal.error
+        }.lines()
+        Assert.assertEquals(greeting, output)
+    }
+
+    @Test
     fun testProvidedPropertiesNullability() = expectTestToFailOnK2 {
         val stringType = KotlinType(String::class)
         val definition = createJvmScriptDefinitionFromTemplate<SimpleScriptTemplate>(

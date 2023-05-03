@@ -24,7 +24,7 @@ class ConstructorArgumentsOrderTest {
     }
 
     @Test
-    fun testScriptWithImplicitReceiver() = expectTestToFailOnK2 {
+    fun testScriptWithImplicitReceiver() {
         val res = evalString<ScriptWithImplicitReceiver>("""println(receiverString)""") {
             implicitReceivers(ImplicitReceiverClass("Hello Receiver!"))
         }

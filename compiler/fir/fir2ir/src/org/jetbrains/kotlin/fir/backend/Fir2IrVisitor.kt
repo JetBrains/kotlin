@@ -217,18 +217,28 @@ class Fir2IrVisitor(
                 declarationStorage.createIrVariable(parameter, irScript, givenOrigin = IrDeclarationOrigin.SCRIPT_CALL_PARAMETER)
             }
 
-            irScript.thisReceiver = script.contextReceivers.find { it.customLabelName?.asString() == SCRIPT_SPECIAL_NAME_STRING }?.let { receiver ->
-                receiver.convertWithOffsets { startOffset, endOffset ->
-                    irFactory.createValueParameter(
-                        startOffset, endOffset, IrDeclarationOrigin.INSTANCE_RECEIVER, SpecialNames.THIS, receiver.typeRef.toIrType(),
-                        isAssignable = false, IrValueParameterSymbolImpl(), UNDEFINED_PARAMETER_INDEX,
-                        varargElementType = null,
-                        isCrossinline = false, isNoinline = false,
-                        isHidden = false,
-                    ).also {
-                        it.parent = irScript
+            // NOTE: index should correspond to one generated in the collectTowerDataElementsForScript
+            irScript.implicitReceiversParameters = script.contextReceivers.mapIndexedNotNull { index, receiver ->
+                val isSelf = receiver.customLabelName?.asString() == SCRIPT_SPECIAL_NAME_STRING
+                val name =
+                    if (isSelf) SpecialNames.THIS
+                    else Name.identifier("${receiver.labelName?.asStringStripSpecialMarkers() ?: SCRIPT_RECEIVER_NAME_PREFIX}_$index")
+                val origin = if (isSelf) IrDeclarationOrigin.INSTANCE_RECEIVER else IrDeclarationOrigin.SCRIPT_IMPLICIT_RECEIVER
+                val irReceiver =
+                    receiver.convertWithOffsets { startOffset, endOffset ->
+                        irFactory.createValueParameter(
+                            startOffset, endOffset, origin, name, receiver.typeRef.toIrType(), isAssignable = false,
+                            IrValueParameterSymbolImpl(),
+                            if (isSelf) UNDEFINED_PARAMETER_INDEX else index,
+                            varargElementType = null, isCrossinline = false, isNoinline = false, isHidden = false
+                        ).also {
+                            it.parent = irScript
+                        }
                     }
-                }
+                if (isSelf) {
+                    irScript.thisReceiver = irReceiver
+                    null
+                } else irReceiver
             }
 
             conversionScope.withParent(irScript) {
