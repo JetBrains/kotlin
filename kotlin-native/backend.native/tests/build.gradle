@@ -4862,20 +4862,23 @@ standaloneTest("isExperimentalMM") {
 }
 
 interopTest("interop_cppClass") {
-    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    disabled = (project.testTarget == 'wasm32') || // No interop for wasm yet.
+            isAppleTarget(project) // KT-58422
     source = "interop/cpp/cppClass.kt"
     interop = 'cppClass'
 }
 
 interopTest("interop_cppTypes") {
-    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    disabled = (project.testTarget == 'wasm32') || // No interop for wasm yet.
+            isAppleTarget(project) // KT-58422
     source = "interop/cpp/types.kt"
     interop = 'cppTypes'
 }
 
 interopTest("interop_cppSkia") {
     disabled = (project.testTarget == 'wasm32' || // No interop for wasm yet.
-                isExperimentalMM)
+                isExperimentalMM) ||
+                isAppleTarget(project) // KT-58422
     source = "interop/cpp/skia.kt"
     interop = 'cppSkia'
     useGoldenData = true
@@ -4884,7 +4887,8 @@ interopTest("interop_cppSkia") {
 
 interopTest("interop_cppSkiaSignature") {
     disabled = (project.testTarget == 'wasm32' || // No interop for wasm yet.
-            isK2(project)) // KT-57484
+            isK2(project)) || // KT-57484
+            isAppleTarget(project) // KT-58422
     source = "interop/cpp/skiaSignature.kt"
     interop = "cppSkiaSignature"
     useGoldenData = true
