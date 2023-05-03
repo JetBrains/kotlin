@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.references.FirFromMissingDependenciesNamedReference
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -76,7 +77,14 @@ fun FirClassLikeSymbol<*>.getAllowedAnnotationTargets(session: FirSession): Set<
 
     return arguments.mapNotNullTo(mutableSetOf()) { argument ->
         val targetExpression = argument as? FirQualifiedAccessExpression
-        val targetName = targetExpression?.calleeReference?.resolved?.name?.asString() ?: return@mapNotNullTo null
+        val calleeReference = targetExpression?.calleeReference
+        val targetName =
+            calleeReference?.resolved?.name?.asString()
+            //for java annotations mappings: if java annotation is found in sdk and no kotlin dependency there is provided
+            //works fine with `FirBuiltinSymbolProvider`, because it also returns classes from stdlib even if library is not accessible
+            //but `JvmStubBasedFirDeserializedSymbolProvider` which works in IDE over stubs, misses classes   
+                ?: (calleeReference as? FirFromMissingDependenciesNamedReference)?.name?.asString()
+                ?: return@mapNotNullTo null
         KotlinTarget.values().firstOrNull { target -> target.name == targetName }
     }
 }
