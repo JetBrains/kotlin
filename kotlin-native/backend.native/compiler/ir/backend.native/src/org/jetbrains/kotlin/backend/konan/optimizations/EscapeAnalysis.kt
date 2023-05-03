@@ -1670,7 +1670,7 @@ internal object EscapeAnalysis {
                 escapeOrigins.forEach { propagateEscapeOrigin(it) }
 
                 // TODO: To a setting?
-                val allowedToAlloc = 65536
+                val allowedToAlloc = 0//65536
                 val stackArrayCandidates = mutableListOf<ArrayStaticAllocation>()
                 for ((node, ptgNode) in nodes) {
                     if (node.ir == null) continue
