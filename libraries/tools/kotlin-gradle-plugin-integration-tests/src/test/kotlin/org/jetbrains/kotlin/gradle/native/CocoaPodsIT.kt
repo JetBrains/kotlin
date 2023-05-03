@@ -1228,6 +1228,63 @@ class CocoaPodsIT : BaseGradleIT() {
         }
     }
 
+    @Test
+    fun `test configuration cache works in a complex scenario`() {
+        project.gradleBuildScript().appendToCocoapodsBlock("""pod("Base64", version = "1.1.2")""")
+
+        val tasks = arrayOf(
+            ":podspec",
+            ":podImport",
+            ":podPublishDebugXCFramework",
+            ":podPublishReleaseXCFramework",
+            ":syncFramework",
+        )
+
+        val executableTasks = listOf(
+            ":podspec",
+            ":podPublishDebugXCFramework",
+            ":podPublishReleaseXCFramework",
+            ":linkPodDebugFrameworkIOS",
+        )
+
+        fun build(vararg tasks: String, check: CompiledProject.() -> Unit) {
+            project.build(
+                *tasks,
+                "-Pkotlin.native.cocoapods.generate.wrapper=true",
+                "-Pkotlin.native.cocoapods.platform=iphonesimulator",
+                "-Pkotlin.native.cocoapods.archs=x86_64",
+                "-Pkotlin.native.cocoapods.configuration=Debug",
+                options = defaultBuildOptions().copy(configurationCache = true),
+                check = check,
+            )
+        }
+
+        build(*tasks) {
+            assertSuccessful()
+            assertTasksExecuted(executableTasks)
+
+            assertContains("Calculating task graph as no configuration cache is available for tasks")
+
+            assertContains("Configuration cache entry stored.")
+        }
+
+        build("clean") {
+            assertSuccessful()
+        }
+
+        build(*tasks) {
+            assertSuccessful()
+
+            assertContains("Reusing configuration cache.")
+        }
+
+        build(*tasks) {
+            assertSuccessful()
+
+            assertTasksUpToDate(executableTasks)
+        }
+    }
+
     // test configuration phase
 
     private class CustomHooks {

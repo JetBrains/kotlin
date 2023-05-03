@@ -135,7 +135,7 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
     /**
      * Configure output directory for pod publishing
      */
-    var publishDir: File = CocoapodsBuildDirs(project).publish
+    var publishDir: File = CocoapodsBuildDirs(project.layout).publish.get().asFile
 
     internal val specRepos = SpecRepos()
 
@@ -179,8 +179,8 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
                 val newContent = lineContent.replace(path.name, "")
                 """
                 |Deprecated DSL found on ${buildScript.absolutePath}${File.pathSeparator}${lineNumber + 1}:
-                |Found: "${lineContent}"
-                |Expected: "${newContent}"
+                |Found: "$lineContent"
+                |Expected: "$newContent"
                 |Please, change the path to avoid this warning.
                 |
             """.trimMargin()

@@ -7,6 +7,7 @@
 package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.file.ProjectLayout
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Nested
@@ -16,11 +17,12 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.Cocoapods
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.cocoapodsBuildDirs
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import java.io.File
+import javax.inject.Inject
 
 /**
  * Generates a def-file for the given CocoaPods dependency.
  */
-abstract class DefFileTask : DefaultTask() {
+abstract class DefFileTask @Inject constructor(private val projectLayout: ProjectLayout) : DefaultTask() {
 
     @get:Nested
     abstract val pod: Property<CocoapodsDependency>
@@ -30,7 +32,7 @@ abstract class DefFileTask : DefaultTask() {
 
     @get:OutputFile
     val outputFile: File
-        get() = project.cocoapodsBuildDirs.defs.resolve("${pod.get().moduleName}.def")
+        get() = projectLayout.cocoapodsBuildDirs.defs.get().file("${pod.get().moduleName}.def").asFile
 
     @TaskAction
     fun generate() {

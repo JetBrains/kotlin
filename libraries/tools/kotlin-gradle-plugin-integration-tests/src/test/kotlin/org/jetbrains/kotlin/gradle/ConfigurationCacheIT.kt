@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 
@@ -152,6 +153,30 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
             }
 
             testConfigurationCacheOf(":lib:commonizeCInterop")
+        }
+    }
+
+    @OptIn(EnvironmentalVariablesOverride::class)
+    @NativeGradlePluginTests
+    @DisplayName("works with apple framework embedding and signing")
+    @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
+    @GradleTest
+    fun testAppleFrameworkTasks(gradleVersion: GradleVersion) {
+        project(
+            projectName = "sharedAppleFramework",
+            gradleVersion = gradleVersion,
+            environmentVariables = EnvironmentalVariables(
+                "CONFIGURATION" to "Debug",
+                "SDK_NAME" to "iphoneos",
+                "ARCHS" to "arm64",
+                "EXPANDED_CODE_SIGN_IDENTITY" to "-",
+                "TARGET_BUILD_DIR" to "testBuildDir",
+                "FRAMEWORKS_FOLDER_PATH" to "testFrameworksDir"
+            ),
+        ) {
+
+            testConfigurationCacheOf(":shared:embedAndSignAppleFrameworkForXcode")
         }
     }
 

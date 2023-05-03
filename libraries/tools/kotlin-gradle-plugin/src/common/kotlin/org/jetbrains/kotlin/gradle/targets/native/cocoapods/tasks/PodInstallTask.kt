@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.native.tasks
 
+import org.gradle.api.file.ProjectLayout
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -17,8 +18,9 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.cocoapodsBuildDirs
 import org.jetbrains.kotlin.gradle.targets.native.cocoapods.MissingCocoapodsMessage
 import org.jetbrains.kotlin.gradle.targets.native.cocoapods.MissingSpecReposMessage
 import java.io.File
+import javax.inject.Inject
 
-abstract class PodInstallTask : AbstractPodInstallTask() {
+abstract class PodInstallTask @Inject constructor(projectLayout: ProjectLayout) : AbstractPodInstallTask() {
 
     @get:Optional
     @get:InputFile
@@ -36,7 +38,7 @@ abstract class PodInstallTask : AbstractPodInstallTask() {
     @get:InputDirectory
     abstract val dummyFramework: Property<File>
 
-    private val framework = project.provider { project.cocoapodsBuildDirs.framework.resolve("${frameworkName.get()}.framework") }
+    private val framework = projectLayout.cocoapodsBuildDirs.framework.map { it.file("${frameworkName.get()}.framework").asFile }
     private val tmpFramework = dummyFramework.map { dummy -> dummy.parentFile.resolve("tmp.framework").also { it.deleteOnExit() } }
 
     override fun doPodInstall() {

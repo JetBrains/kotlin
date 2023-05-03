@@ -19,6 +19,7 @@ import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.SkipWhenEmpty
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskProvider
+import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.File
+import javax.inject.Inject
 
 internal object AppleXcodeTasks {
     const val embedAndSignTaskPrefix = "embedAndSign"
@@ -133,10 +135,11 @@ private fun Project.registerAssembleAppleFrameworkTask(framework: Framework): Ta
             it.configure { task -> task.from(framework) }
         }
         else -> registerTask<FrameworkCopy>(frameworkTaskName) { task ->
+            val frameworkFile = framework.outputFile
             task.description = "Packs $frameworkBuildType ${frameworkTarget.name} framework for Xcode"
             task.isEnabled = frameworkBuildType == envBuildType
             task.dependsOn(framework.linkTaskName)
-            task.files = files({ framework.outputDirectory.listFiles() })
+            task.files = files(frameworkFile)
             task.destDir = appleFrameworkDir(envFrameworkSearchDir)
         }
     }
@@ -193,16 +196,17 @@ internal fun Project.registerEmbedAndSignAppleFrameworkTask(framework: Framework
     if (framework.buildType != envBuildType || !envTargets.contains(framework.konanTarget)) return
 
     embedAndSignTask.configure { task ->
+        val frameworkFile = framework.outputFile
         task.dependsOn(assembleTask)
-        task.files = files(File(appleFrameworkDir(envFrameworkSearchDir), framework.outputFile.name))
+        task.files = files(File(appleFrameworkDir(envFrameworkSearchDir), frameworkFile.name))
         task.destDir = envEmbeddedFrameworksDir
         if (envSign != null) {
             task.doLast {
                 val binary = envEmbeddedFrameworksDir
-                    .resolve(framework.outputFile.name)
-                    .resolve(framework.outputFile.nameWithoutExtension)
-                exec {
-                    it.commandLine("codesign", "--force", "--sign", envSign, "--", binary)
+                    .resolve(frameworkFile.name)
+                    .resolve(frameworkFile.nameWithoutExtension)
+                task.execOperations.exec {
+                    it.commandLine("codesign", "--force", "--sign", envSign, "--", binary.absolutePath)
                 }
             }
         }
@@ -226,6 +230,9 @@ private fun Project.appleFrameworkDir(frameworkSearchDir: File) =
  */
 internal abstract class FrameworkCopy : DefaultTask() {
 
+    @get:Inject
+    abstract val execOperations: ExecOperations
+
     @get:InputFiles
     @get:SkipWhenEmpty
     @get:IgnoreEmptyDirectories
@@ -241,9 +248,9 @@ internal abstract class FrameworkCopy : DefaultTask() {
         files.forEach { file ->
             File(destDir, file.name).let destFile@{ destFile ->
                 if (!destFile.exists()) return@destFile
-                project.exec { it.commandLine("rm", "-r", destFile.absolutePath) }
+                execOperations.exec { it.commandLine("rm", "-r", destFile.absolutePath) }
             }
-            project.exec { it.commandLine("cp", "-R", file.absolutePath, destDir.absolutePath) }
+            execOperations.exec { it.commandLine("cp", "-R", file.absolutePath, destDir.absolutePath) }
         }
     }
 }

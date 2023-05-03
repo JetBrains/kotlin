@@ -7,6 +7,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.native.tasks
 
+import org.gradle.api.file.ProjectLayout
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -17,11 +18,12 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.platformLiteral
 import org.jetbrains.kotlin.gradle.utils.XcodeVersion
 import org.jetbrains.kotlin.konan.target.Family
 import java.io.File
+import javax.inject.Inject
 
 /**
  * The task generates a synthetic project with all cocoapods dependencies
  */
-abstract class PodGenTask : CocoapodsTask() {
+abstract class PodGenTask @Inject constructor(projectLayout: ProjectLayout) : CocoapodsTask() {
 
     init {
         onlyIf {
@@ -54,7 +56,7 @@ abstract class PodGenTask : CocoapodsTask() {
     internal abstract val xcodeVersion: Property<XcodeVersion>
 
     @get:OutputFile
-    val podfile: Provider<File> = family.map { project.cocoapodsBuildDirs.synthetic(it).resolve("Podfile") }
+    val podfile: Provider<File> = projectLayout.cocoapodsBuildDirs.synthetic(family).map { it.file("Podfile").asFile }
 
     @TaskAction
     fun generate() {

@@ -312,7 +312,9 @@ open class GradleProject(
 }
 
 @JvmInline
-value class EnvironmentalVariables @EnvironmentalVariablesOverride constructor(val environmentalVariables: Map<String, String> = emptyMap())
+value class EnvironmentalVariables @EnvironmentalVariablesOverride constructor(val environmentalVariables: Map<String, String> = emptyMap()) {
+    @EnvironmentalVariablesOverride constructor(vararg environmentVariables: Pair<String, String>) : this(mapOf(*environmentVariables))
+}
 
 @RequiresOptIn("Environmental variables override may lead to interference of parallel builds and breaks Gradle tests debugging")
 annotation class EnvironmentalVariablesOverride
