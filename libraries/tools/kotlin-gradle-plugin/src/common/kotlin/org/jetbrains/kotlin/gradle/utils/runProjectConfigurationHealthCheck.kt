@@ -6,14 +6,9 @@
 package org.jetbrains.kotlin.gradle.utils
 
 import org.gradle.api.Project
-import org.gradle.api.internal.project.ProjectInternal
-import org.gradle.api.provider.Provider
-import org.gradle.tooling.model.kotlin.dsl.KotlinDslModelsParameters
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
-import org.jetbrains.kotlin.gradle.plugin.internal.configurationTimePropertiesAccessor
-import org.jetbrains.kotlin.gradle.plugin.internal.usedAtConfigurationTime
-import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
+import org.jetbrains.kotlin.gradle.plugin.launchInStage
 
 /**
  * Function used to wrap any checks/assertions done on the current project configuration / project model.
@@ -62,32 +57,13 @@ import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
  */
 internal inline fun Project.runProjectConfigurationHealthCheck(check: Project.() -> Unit) {
     /* Running configuration checks on a failed project will only lead to false positive error messages */
-    if (state.failure != null || (inLenientMode() && syncExceptionsAreNotEmpty())) {
+    if (failures.isNotEmpty()) {
         return
     }
 
     check()
 }
 
-// ClassPathModeExceptionCollector is available only via 'gradleKotlinDsl()' dependency which brings in full Gradle jar
-private fun Project.syncExceptionsAreNotEmpty(): Boolean {
-    val classPathModeExceptionCollectionClass = Class.forName("org.gradle.kotlin.dsl.provider.ClassPathModeExceptionCollector")
-    val exceptionCollector = (this as ProjectInternal).services.get(classPathModeExceptionCollectionClass)
-    @Suppress("UNCHECKED_CAST")
-    val exceptionsList = classPathModeExceptionCollectionClass.methods
-        .first { it.name == "getExceptions" }
-        .invoke(exceptionCollector) as List<Exception>
-
-    return exceptionsList.isNotEmpty()
-}
-
-private val Project.providerModeSystemPropertyValue: Provider<String>
-    get() = providers
-        .systemProperty(KotlinDslModelsParameters.PROVIDER_MODE_SYSTEM_PROPERTY_NAME)
-        .usedAtConfigurationTime(configurationTimePropertiesAccessor)
-
-private fun Project.inLenientMode() =
-    providerModeSystemPropertyValue.orNull == KotlinDslModelsParameters.CLASSPATH_MODE_SYSTEM_PROPERTY_VALUE
 
 /**
  * Convenience function for

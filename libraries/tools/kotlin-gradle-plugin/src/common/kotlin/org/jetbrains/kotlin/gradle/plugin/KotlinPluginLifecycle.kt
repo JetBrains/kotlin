@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.*
+import org.jetbrains.kotlin.gradle.utils.failures
 import org.jetbrains.kotlin.gradle.utils.getOrPut
 import java.lang.ref.WeakReference
 import java.util.*
@@ -137,12 +138,11 @@ internal suspend fun Stage.await() {
     currentKotlinPluginLifecycle().await(this)
 }
 
-
 /**
  * See [newProperty]
  */
 internal inline fun <reified T : Any> Project.newKotlinPluginLifecycleAwareProperty(
-    finaliseIn: Stage = Stage.FinaliseDsl, initialValue: T? = null
+    finaliseIn: Stage = Stage.FinaliseDsl, initialValue: T? = null,
 ): LifecycleAwareProperty<T> {
     return kotlinPluginLifecycle.newProperty(T::class.java, finaliseIn, initialValue)
 }
@@ -163,7 +163,7 @@ internal inline fun <reified T : Any> Project.newKotlinPluginLifecycleAwarePrope
  * ```
  */
 internal inline fun <reified T : Any> KotlinPluginLifecycle.newProperty(
-    finaliseIn: Stage = Stage.FinaliseDsl, initialValue: T? = null
+    finaliseIn: Stage = Stage.FinaliseDsl, initialValue: T? = null,
 ): LifecycleAwareProperty<T> {
     return newProperty(T::class.java, finaliseIn, initialValue)
 }
@@ -334,7 +334,7 @@ internal interface KotlinPluginLifecycle {
     suspend fun await(stage: Stage)
 
     fun <T : Any> newProperty(
-        type: Class<T>, finaliseIn: Stage, initialValue: T?
+        type: Class<T>, finaliseIn: Stage, initialValue: T?,
     ): LifecycleAwareProperty<T>
 
     class IllegalLifecycleException(message: String) : IllegalStateException(message)
@@ -371,8 +371,10 @@ private class KotlinPluginLifecycleImpl(override val project: Project) : KotlinP
 
     private val loopRunning = AtomicBoolean(false)
     private val isStarted = AtomicBoolean(false)
-    private val isFinished = AtomicBoolean(false)
+    private val isFinishedSuccessfully = AtomicBoolean(false)
+    private val isFinishedWithExceptions = AtomicBoolean(false)
 
+    override var stage: Stage = Stage.values.first()
     private val properties = WeakHashMap<Property<*>, WeakReference<LifecycleAwareProperty<*>>>()
 
     fun start() {
@@ -400,10 +402,21 @@ private class KotlinPluginLifecycleImpl(override val project: Project) : KotlinP
             }
         }
 
-        loopIfNecessary()
+        val failures = project.failures
+        if (failures.isNotEmpty()) {
+            finishWithFailures(failures)
+            return
+        }
+
+        try {
+            loopIfNecessary()
+        } catch (t: Throwable) {
+            finishWithFailures(listOf(t))
+            throw t
+        }
 
         stage = stage.nextOrNull ?: run {
-            isFinished.set(true)
+            finishSuccessfully()
             return
         }
 
@@ -425,7 +438,16 @@ private class KotlinPluginLifecycleImpl(override val project: Project) : KotlinP
         }
     }
 
-    override var stage: Stage = Stage.values.first()
+    private fun finishWithFailures(failures: List<Throwable>) {
+        assert(failures.isNotEmpty())
+        assert(isStarted.get())
+        assert(!isFinishedWithExceptions.getAndSet(true))
+    }
+
+    private fun finishSuccessfully() {
+        assert(isStarted.get())
+        assert(!isFinishedSuccessfully.getAndSet(true))
+    }
 
     override fun enqueue(stage: Stage, action: KotlinPluginLifecycle.() -> Unit) {
         if (stage < this.stage) {
@@ -437,9 +459,13 @@ private class KotlinPluginLifecycleImpl(override val project: Project) : KotlinP
         This is desirable, so that .enqueue (and .launch) functions that are scheduled in execution phase
         will be executed right away (no suspend necessary or wanted)
         */
-        if (isFinished.get()) {
+        if (isFinishedSuccessfully.get()) {
             action()
             return
+        }
+
+        if (isFinishedWithExceptions.get()) {
+            throw IllegalLifecycleException("Cannot enqueue Action: Lifecycle already finished with Exceptions")
         }
 
         enqueuedActions.getValue(stage).addLast(action)
@@ -490,7 +516,7 @@ private class KotlinPluginLifecycleImpl(override val project: Project) : KotlinP
 
     private class LifecycleAwarePropertyImpl<T : Any>(
         override val finaliseIn: Stage,
-        override val property: Property<T>
+        override val property: Property<T>,
     ) : LifecycleAwareProperty<T> {
 
         override suspend fun awaitFinalValue(): T? {
@@ -501,7 +527,7 @@ private class KotlinPluginLifecycleImpl(override val project: Project) : KotlinP
 }
 
 private class KotlinPluginLifecycleCoroutineContextElement(
-    val lifecycle: KotlinPluginLifecycle
+    val lifecycle: KotlinPluginLifecycle,
 ) : CoroutineContext.Element {
     companion object Key : CoroutineContext.Key<KotlinPluginLifecycleCoroutineContextElement>
 
