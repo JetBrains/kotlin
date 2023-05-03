@@ -15,10 +15,7 @@ import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
-import org.jetbrains.kotlin.cli.js.klib.compileModuleToAnalyzedFirWithPsi
-import org.jetbrains.kotlin.cli.js.klib.generateIrForKlibSerialization
-import org.jetbrains.kotlin.cli.js.klib.serializeFirKlib
-import org.jetbrains.kotlin.cli.js.klib.transformFirToIr
+import org.jetbrains.kotlin.cli.js.klib.*
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -205,36 +202,37 @@ abstract class AbstractJsPartialLinkageTestCase(val compilerType: CompilerType) 
         val outputStream = ByteArrayOutputStream()
         val messageCollector = PrintingMessageCollector(PrintStream(outputStream), MessageRenderer.PLAIN_FULL_PATHS, true)
 
-        val outputs = compileModuleToAnalyzedFirWithPsi(
+        val analyzedOutput = compileModuleToAnalyzedFirWithPsi(
             moduleStructure = moduleStructure,
             ktFiles = ktFiles,
             libraries = regularDependencies,
             friendLibraries = friendDependencies,
-            messageCollector = messageCollector,
             diagnosticsReporter = diagnosticsReporter,
             incrementalDataProvider = null,
             lookupTracker = null
         )
 
-        if (outputs != null) {
-            val fir2IrActualizedResult = transformFirToIr(moduleStructure, outputs, diagnosticsReporter)
+        val fir2IrActualizedResult = transformFirToIr(moduleStructure, analyzedOutput.output, diagnosticsReporter)
 
-            serializeFirKlib(
-                moduleStructure = moduleStructure,
-                firOutputs = outputs,
-                fir2IrActualizedResult = fir2IrActualizedResult,
-                outputKlibPath = klibFile.absolutePath,
-                messageCollector = messageCollector,
-                diagnosticsReporter = diagnosticsReporter,
-                jsOutputName = moduleName
-            )
-        }
-
-        if (messageCollector.hasErrors()) {
+        if (analyzedOutput.reportCompilationErrors(moduleStructure, diagnosticsReporter, messageCollector)) {
             val messages = outputStream.toByteArray().toString(Charset.forName("UTF-8"))
             throw AssertionError("The following errors occurred compiling test:\n$messages")
         }
 
+        serializeFirKlib(
+            moduleStructure = moduleStructure,
+            firOutputs = analyzedOutput.output,
+            fir2IrActualizedResult = fir2IrActualizedResult,
+            outputKlibPath = klibFile.absolutePath,
+            messageCollector = messageCollector,
+            diagnosticsReporter = diagnosticsReporter,
+            jsOutputName = moduleName
+        )
+
+        if (messageCollector.hasErrors()) {
+            val messages = outputStream.toByteArray().toString(Charset.forName("UTF-8"))
+            throw AssertionError("The following errors occurred serializing test klib:\n$messages")
+        }
     }
 
     private fun buildBinaryAndRun(mainModuleKlibFile: File, allDependencies: Dependencies) {
