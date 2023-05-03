@@ -96,8 +96,6 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         }
 
         BuildMetricsService.registerIfAbsent(project)
-
-        project.warnExperimentalTryK2IsEnabled()
     }
 
     private fun addKotlinCompilerConfiguration(project: Project) {

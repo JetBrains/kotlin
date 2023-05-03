@@ -26,15 +26,3 @@ internal fun <T : KotlinCommonCompilerOptions> T.configureExperimentalTryK2(
         }
     )
 }
-
-internal fun Project.warnExperimentalTryK2IsEnabled() {
-    if (project.kotlinPropertiesProvider.kotlinExperimentalTryK2.get()) {
-        SingleWarningPerBuild.show(this, EXPERIMENTAL_TRY_K2_WARNING_MESSAGE)
-    }
-}
-
-val EXPERIMENTAL_TRY_K2_WARNING_MESSAGE =
-    """
-    ATTENTION: 'kotlin.experimental.tryK2' is an experimental option enabled in the project for trying out the new Kotlin K2 compiler only.
-    Please refrain from using it in production code and provide feedback to the Kotlin team for any issues encountered via https://kotl.in/issue
-    """.trimIndent()
