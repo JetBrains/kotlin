@@ -95,6 +95,18 @@ public class FirStandaloneNormalAnalysisSourceModuleReferenceShortenerTestGenera
     }
 
     @Test
+    @TestMetadata("classesWithSameName10.kt")
+    public void testClassesWithSameName10() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/classesWithSameName10.kt");
+    }
+
+    @Test
+    @TestMetadata("classesWithSameName11.kt")
+    public void testClassesWithSameName11() throws Exception {
+        runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/classesWithSameName11.kt");
+    }
+
+    @Test
     @TestMetadata("classesWithSameName2.kt")
     public void testClassesWithSameName2() throws Exception {
         runTest("analysis/analysis-api/testData/components/referenceShortener/referenceShortener/classesWithSameName2.kt");
