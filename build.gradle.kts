@@ -95,6 +95,7 @@ rootProject.apply {
     from(rootProject.file("gradle/retryPublishing.gradle.kts"))
     from(rootProject.file("gradle/modularizedTestConfigurations.gradle.kts"))
     from(rootProject.file("gradle/ideaRtHack.gradle.kts"))
+    from(rootProject.file("gradle/resolveDependencies.gradle.kts"))
 }
 
 IdeVersionConfigurator.setCurrentIde(project)
@@ -168,11 +169,11 @@ val firCompilerCoreModules = arrayOf(
 ).also { extra["firCompilerCoreModules"] = it }
 
 val firAllCompilerModules = firCompilerCoreModules +
-    arrayOf(
-        ":compiler:fir:raw-fir:light-tree2fir",
-        ":compiler:fir:analysis-tests",
-        ":compiler:fir:analysis-tests:legacy-fir-tests"
-    )
+        arrayOf(
+            ":compiler:fir:raw-fir:light-tree2fir",
+            ":compiler:fir:analysis-tests",
+            ":compiler:fir:analysis-tests:legacy-fir-tests"
+        )
 
 val fe10CompilerModules = arrayOf(
     ":compiler",
