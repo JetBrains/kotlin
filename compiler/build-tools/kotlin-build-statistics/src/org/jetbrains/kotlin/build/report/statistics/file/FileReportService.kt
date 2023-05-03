@@ -78,7 +78,7 @@ class FileReportService(
         // a bit unfamiliar.
         // TODO: If it is confusing, consider renaming "tasks" to "build operations" in this class.
         printBuildInfo(startParameters, failureMessages)
-        if (printMetrics) {
+        if (printMetrics && statisticsData.isNotEmpty()) {
             printMetrics(
                 statisticsData.map { it.buildTimesMetrics }.reduce { agg, value ->
                     (agg.keys + value.keys).associateWith { (agg[it] ?: 0) + (value[it] ?: 0) }

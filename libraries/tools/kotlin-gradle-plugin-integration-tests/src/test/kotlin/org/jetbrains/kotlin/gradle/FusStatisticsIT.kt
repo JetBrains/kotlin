@@ -10,10 +10,7 @@ import org.jetbrains.kotlin.gradle.testbase.GradleTest
 import org.junit.jupiter.api.DisplayName
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
-import org.jetbrains.kotlin.test.KtAssert.fail
-import java.nio.file.Files
 import java.nio.file.Path
-import kotlin.streams.asSequence
 
 @DisplayName("FUS statistic")
 class FusStatisticsIT : KGPBaseTest() {
@@ -62,13 +59,7 @@ class FusStatisticsIT : KGPBaseTest() {
     }
 
     private val GradleProject.fusStatisticsPath: Path
-        get() {
-            val statisticsDir = projectPath.resolve("kotlin-profile")
-            return Files.list(statisticsDir).use {
-                val files = it.asSequence().toList()
-                files.singleOrNull() ?: fail("The directory must contain a single statistics file, but got: $files")
-            }
-        }
+        get() = projectPath.getSingleFileInDir("kotlin-profile")
 
     @DisplayName("general fields")
     @GradleTest

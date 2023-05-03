@@ -11,6 +11,7 @@ import java.nio.file.attribute.BasicFileAttributes
 import kotlin.io.path.*
 import kotlin.streams.asSequence
 import kotlin.streams.toList
+import kotlin.test.fail
 
 /**
  * Find the file with given [name] in current [Path].
@@ -128,3 +129,15 @@ fun TestProject.sourceFilesRelativeToProject(
             it.relativeTo(projectPath)
         }
 }
+
+/**
+ * Returns a single file located in the [relativePath] subdirectory. If no file or more than one file is found an assertion error will be thrown.
+ */
+fun Path.getSingleFileInDir(relativePath: String): Path {
+    val path = resolve(relativePath)
+    return Files.list(path).use {
+        val files = it.asSequence().toList()
+        files.singleOrNull() ?: fail("The directory must contain a single file, but got: $files")
+    }
+}
+
