@@ -6,7 +6,7 @@ class Case1<T : Number> {
     inline fun <reified T : CharSequence>case_1(x: Any?) {
         if (x is T) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T")!>x<!>
-            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T")!>x<!>.<!NO_VALUE_FOR_PARAMETER!>toByte()<!>
+            <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & T")!>x<!>.<!NONE_APPLICABLE!>toByte<!>()
         }
     }
 }

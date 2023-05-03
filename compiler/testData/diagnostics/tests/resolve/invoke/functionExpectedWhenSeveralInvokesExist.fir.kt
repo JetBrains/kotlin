@@ -7,7 +7,7 @@ class SomeClass
 
 fun test(identifier: SomeClass, fn: String.() -> Unit) {
     <!NONE_APPLICABLE!>identifier<!>()
-    identifier(<!NO_VALUE_FOR_PARAMETER!>123)<!>
+    <!NONE_APPLICABLE!>identifier<!>(123)
     identifier(1, <!TOO_MANY_ARGUMENTS!>2<!>)
     <!ARGUMENT_TYPE_MISMATCH!>1<!>.fn()
 }

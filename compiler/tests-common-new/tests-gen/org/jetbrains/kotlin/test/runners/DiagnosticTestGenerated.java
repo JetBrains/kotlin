@@ -27377,6 +27377,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("errorPriority.kt")
+            public void testErrorPriority() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/resolve/errorPriority.kt");
+            }
+
+            @Test
             @TestMetadata("HiddenDeclarations.kt")
             public void testHiddenDeclarations() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/resolve/HiddenDeclarations.kt");

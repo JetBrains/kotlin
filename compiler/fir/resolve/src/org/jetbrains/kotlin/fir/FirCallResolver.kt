@@ -164,52 +164,46 @@ class FirCallResolver(
         )
         towerResolver.reset()
         val result = towerResolver.runResolver(info, resolutionContext, collector)
-        val bestCandidates = result.bestCandidates()
 
-        var reducedCandidates = reduceCandidates(bestCandidates, explicitReceiver, resolutionContext, result.currentApplicability.isSuccess)
-        reducedCandidates = overloadByLambdaReturnTypeResolver.reduceCandidates(qualifiedAccess, bestCandidates, reducedCandidates)
+        var (reducedCandidates, newApplicability) = reduceCandidates(result, explicitReceiver, resolutionContext)
+        reducedCandidates = overloadByLambdaReturnTypeResolver.reduceCandidates(qualifiedAccess, reducedCandidates, reducedCandidates)
 
-        return ResolutionResult(info, result.currentApplicability, reducedCandidates)
+        return ResolutionResult(info, newApplicability ?: result.currentApplicability, reducedCandidates)
     }
 
+    /**
+     * Returns a [Pair] consisting of the reduced candidates and the new applicability if it has changed and `null` otherwise.
+     */
     private fun reduceCandidates(
-        candidates: List<Candidate>,
-        explicitReceiver: FirExpression?,
-        resolutionContext: ResolutionContext,
-        isSuccess: Boolean,
-    ): Set<Candidate> {
+        collector: CandidateCollector,
+        explicitReceiver: FirExpression? = null,
+        resolutionContext: ResolutionContext = transformer.resolutionContext,
+    ): Pair<Set<Candidate>, CandidateApplicability?> {
         fun chooseMostSpecific(list: List<Candidate>): Set<Candidate> {
             val onSuperReference = (explicitReceiver as? FirQualifiedAccessExpression)?.calleeReference is FirSuperReference
             return conflictResolver.chooseMaximallySpecificCandidates(list, discriminateAbstracts = onSuperReference)
         }
 
-        if (isSuccess) {
-            return chooseMostSpecific(candidates)
+        val candidates = collector.bestCandidates()
+
+        if (collector.currentApplicability.isSuccess) {
+            return chooseMostSpecific(candidates) to null
         }
 
-        val singleApplicability = candidates.mapTo(mutableSetOf()) { it.currentApplicability }.singleOrNull()
-
-        if (singleApplicability == null || singleApplicability <= CandidateApplicability.INAPPLICABLE) {
-            return candidates.toSet()
-        }
-
-        // If all candidates have the same kind on inapplicability - try to choose the most specific one
         if (candidates.size > 1) {
-            // We have multiple candidates with the same inapplicability. We want to select the "least bad" candidates.
-
             // First, fully process all of them and group them by their worst applicability.
             val groupedByDiagnosticCount = candidates.groupBy {
                 components.resolutionStageRunner.fullyProcessCandidate(it, resolutionContext)
                 it.diagnostics.minOf(ResolutionDiagnostic::applicability)
             }
 
-            // Then, select the group with the best worst applicability.
+            // Then, select the group with the least bad applicability.
             groupedByDiagnosticCount.maxBy { it.key }.let {
-                return chooseMostSpecific(it.value)
+                return chooseMostSpecific(it.value) to it.key
             }
         }
 
-        return chooseMostSpecific(candidates)
+        return candidates.toSet() to null
     }
 
     fun resolveVariableAccessAndSelectCandidate(
@@ -384,23 +378,18 @@ class FirCallResolver(
                 manager = TowerResolveManager(localCollector),
             )
         }
-        val bestCandidates = result.bestCandidates()
-        val applicability = result.currentApplicability
-        val noSuccessfulCandidates = !applicability.isSuccess
-        val reducedCandidates = if (noSuccessfulCandidates) {
-            bestCandidates.toSet()
-        } else {
-            conflictResolver.chooseMaximallySpecificCandidates(bestCandidates)
-        }
+        val isSuccess = result.currentApplicability.isSuccess
+        val (reducedCandidates, newApplicability) = reduceCandidates(result, callableReferenceAccess.explicitReceiver)
+        val applicability = newApplicability ?: result.currentApplicability
 
         (callableReferenceAccess.explicitReceiver as? FirResolvedQualifier)?.replaceResolvedToCompanionObject(
-            bestCandidates.isNotEmpty() && bestCandidates.all { it.isFromCompanionObjectTypeScope }
+            reducedCandidates.isNotEmpty() && reducedCandidates.all { it.isFromCompanionObjectTypeScope }
         )
 
         resolvedCallableReferenceAtom.hasBeenResolvedOnce = true
 
         when {
-            noSuccessfulCandidates -> {
+            !isSuccess -> {
                 val errorReference = buildReferenceWithErrorCandidate(
                     info,
                     if (applicability == CandidateApplicability.K2_UNSUPPORTED) {
@@ -496,7 +485,7 @@ class FirCallResolver(
             transformer.resolutionContext
         )
 
-        return components.callResolver.selectDelegatingConstructorCall(delegatedConstructorCall, name, result, callInfo)
+        return selectDelegatingConstructorCall(delegatedConstructorCall, name, result, callInfo)
     }
 
     private fun ConeTypeProjection.toFirTypeProjection(): FirTypeProjection = when (this) {
@@ -594,19 +583,14 @@ class FirCallResolver(
     private fun selectDelegatingConstructorCall(
         call: FirDelegatedConstructorCall, name: Name, result: CandidateCollector, callInfo: CallInfo
     ): FirDelegatedConstructorCall {
-        val bestCandidates = result.bestCandidates()
-        val reducedCandidates = if (!result.currentApplicability.isSuccess) {
-            bestCandidates.toSet()
-        } else {
-            conflictResolver.chooseMaximallySpecificCandidates(bestCandidates)
-        }
+        val (reducedCandidates, newApplicability) = reduceCandidates(result)
 
         val nameReference = createResolvedNamedReference(
             call.calleeReference,
             name,
             callInfo,
             reducedCandidates,
-            result.currentApplicability,
+            newApplicability ?: result.currentApplicability,
         )
 
         return call.apply {

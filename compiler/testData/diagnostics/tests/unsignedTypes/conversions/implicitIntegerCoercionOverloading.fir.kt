@@ -18,7 +18,7 @@ fun testLong(@ImplicitIntegerCoercion x: ULong) = x
 
 fun box(): String = when {
     test(5) != 5.toUInt() -> "Fail: test(5)"
-    <!NONE_APPLICABLE!>test<!>(5L) != 5L.toULong() -> "Fail: test(5L)"
+    <!EQUALITY_NOT_APPLICABLE!>test(<!ARGUMENT_TYPE_MISMATCH!>5L<!>) != 5L.toULong()<!> -> "Fail: test(5L)"
     testLong(5) != 5L.toULong() -> "Fail: test(5L)"
     testLong(<!ARGUMENT_TYPE_MISMATCH!>5L<!>) != 5L.toULong() -> "Fail: test(5L)"
     else -> "OK"

@@ -26593,6 +26593,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
             }
 
             @Test
+            @TestMetadata("errorPriority.kt")
+            public void testErrorPriority() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/resolve/errorPriority.kt");
+            }
+
+            @Test
             @TestMetadata("HiddenDeclarations.kt")
             public void testHiddenDeclarations() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/resolve/HiddenDeclarations.kt");

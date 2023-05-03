@@ -25,7 +25,12 @@ class ConeEquivalentCallConflictResolver(
     specificityComparator: TypeSpecificityComparator,
     inferenceComponents: InferenceComponents,
     transformerComponents: BodyResolveComponents
-) : AbstractConeCallConflictResolver(specificityComparator, inferenceComponents, transformerComponents) {
+) : AbstractConeCallConflictResolver(
+    specificityComparator,
+    inferenceComponents,
+    transformerComponents,
+    considerMissingArgumentsInSignatures = true,
+) {
     override fun chooseMaximallySpecificCandidates(
         candidates: Set<Candidate>,
         discriminateAbstracts: Boolean

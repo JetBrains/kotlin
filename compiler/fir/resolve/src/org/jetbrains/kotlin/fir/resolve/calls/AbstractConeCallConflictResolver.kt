@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
@@ -32,7 +33,8 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 abstract class AbstractConeCallConflictResolver(
     private val specificityComparator: TypeSpecificityComparator,
     protected val inferenceComponents: InferenceComponents,
-    private val transformerComponents: BodyResolveComponents
+    private val transformerComponents: BodyResolveComponents,
+    private val considerMissingArgumentsInSignatures: Boolean,
 ) : ConeCallConflictResolver() {
 
     private val samResolver: FirSamResolver get() = transformerComponents.samResolver
@@ -188,16 +190,33 @@ abstract class AbstractConeCallConflictResolver(
             } else {
                 called.contextReceivers.mapTo(this) { TypeWithConversion(it.typeRef.coneType.fullyExpandedType(session)) }
                 call.argumentMapping?.mapTo(this) { (_, parameter) ->
-                    val argumentType = parameter.argumentType().fullyExpandedType(session)
-                    if (!call.usesSAM) {
-                        TypeWithConversion(argumentType)
-                    } else {
-                        val functionType = samResolver.getFunctionTypeForPossibleSamType(argumentType)
-                        if (functionType == null) TypeWithConversion(argumentType)
-                        else TypeWithConversion(functionType, argumentType)
+                    parameter.toTypeWithConversion(session, call)
+                }
+
+                if (considerMissingArgumentsInSignatures) {
+                    // When we create signatures for unsuccessful candidates, some parameters might be missing an argument.
+                    // When necessary, we consider those too.
+                    // fun foo(a: String, b: Int)
+                    // fun foo(a: String, c: Boolean)
+                    // foo(a)
+                    // Here, no argument is passed for the parameters b and c, but the signatures will be different.
+                    call.diagnostics.mapNotNullTo(this) {
+                        if (it !is NoValueForParameter) return@mapNotNullTo null
+                        it.valueParameter.toTypeWithConversion(session, call)
                     }
                 }
             }
+        }
+    }
+
+    private fun FirValueParameter.toTypeWithConversion(session: FirSession, call: Candidate): TypeWithConversion {
+        val argumentType = argumentType().fullyExpandedType(session)
+        return if (!call.usesSAM) {
+            TypeWithConversion(argumentType)
+        } else {
+            val functionType = samResolver.getFunctionTypeForPossibleSamType(argumentType)
+            if (functionType == null) TypeWithConversion(argumentType)
+            else TypeWithConversion(functionType, argumentType)
         }
     }
 

@@ -12,8 +12,8 @@ fun foo() {
     <!NEW_INFERENCE_ERROR!>select(1, 1u)<!> checkType { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><Comparable<*>>() }
     takeUByte(<!ARGUMENT_TYPE_MISMATCH!>id(1)<!>)
 
-    1 <!NONE_APPLICABLE!>+<!> 1u
-    (1u <!NONE_APPLICABLE!>+<!> 1) <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { _<UInt>() }
+    1 + <!ARGUMENT_TYPE_MISMATCH!>1u<!>
+    (1u + <!ARGUMENT_TYPE_MISMATCH!>1<!>) checkType { _<UInt>() }
 
     id<UInt>(<!ARGUMENT_TYPE_MISMATCH!>1<!>)
 }

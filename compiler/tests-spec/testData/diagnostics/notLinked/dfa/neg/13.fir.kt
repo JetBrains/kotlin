@@ -13,7 +13,7 @@ fun case_1(x: Class?) {
 fun case_2() {
     var x: Class? = <!INITIALIZER_TYPE_MISMATCH!>10<!>
     x!!
-    <!UNSAFE_IMPLICIT_INVOKE_CALL!>x<!>(if (true) {x=null;0} else 0, <!DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!>)
+    x(if (true) {x=null;0} else 0, <!ARGUMENT_TYPE_MISMATCH, DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!>)
     <!DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("Class?")!>x<!><!UNSAFE_CALL!>.<!>fun_1()
 }

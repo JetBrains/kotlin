@@ -274,8 +274,8 @@ fun poll76() {
 }
 
 fun poll8() {
-    val inv = ::<!UNRESOLVED_REFERENCE!>bar<!> <!NONE_APPLICABLE!>in<!> <!NONE_APPLICABLE!>setOf<!>(::<!UNRESOLVED_REFERENCE!>foo<!>)
-    <!NO_VALUE_FOR_PARAMETER!>inv()<!>
+    val inv = ::<!UNRESOLVED_REFERENCE!>bar<!> <!INAPPLICABLE_CANDIDATE!>in<!> <!INAPPLICABLE_CANDIDATE!>setOf<!>(::<!UNRESOLVED_REFERENCE!>foo<!>)
+    <!UNRESOLVED_REFERENCE!>inv<!>()
 }
 
 fun poll81() {
@@ -284,8 +284,8 @@ fun poll81() {
 }
 
 fun poll82() {
-    val inv = ::<!UNRESOLVED_REFERENCE!>bar3<!> <!NONE_APPLICABLE!>in<!> <!NONE_APPLICABLE!>setOf<!>(::<!UNRESOLVED_REFERENCE!>foo3<!>)
-    <!NO_VALUE_FOR_PARAMETER!>inv()<!>
+    val inv = ::<!UNRESOLVED_REFERENCE!>bar3<!> <!INAPPLICABLE_CANDIDATE!>in<!> <!INAPPLICABLE_CANDIDATE!>setOf<!>(::<!UNRESOLVED_REFERENCE!>foo3<!>)
+    <!UNRESOLVED_REFERENCE!>inv<!>()
 }
 
 fun poll83() {
@@ -294,7 +294,7 @@ fun poll83() {
 }
 
 fun poll84() {
-    val inv = ::<!UNRESOLVED_REFERENCE!>bar5<!> <!NONE_APPLICABLE!>in<!> <!NONE_APPLICABLE!>setOf<!>(::<!UNRESOLVED_REFERENCE!>foo5<!>)
+    val inv = ::<!UNRESOLVED_REFERENCE!>bar5<!> <!INAPPLICABLE_CANDIDATE!>in<!> <!INAPPLICABLE_CANDIDATE!>setOf<!>(::<!UNRESOLVED_REFERENCE!>foo5<!>)
     inv
 }
 

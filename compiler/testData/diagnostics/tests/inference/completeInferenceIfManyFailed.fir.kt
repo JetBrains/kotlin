@@ -13,6 +13,6 @@ fun <T: Any> joinT(x: Comparable<*>, y: T): T? {
 }
 
 fun test() {
-    val x2 = <!NONE_APPLICABLE!>joinT<!>(Unit, "2")
+    val x2 = joinT(<!ARGUMENT_TYPE_MISMATCH!>Unit<!>, "2")
     checkSubtype<String?>(x2)
 }

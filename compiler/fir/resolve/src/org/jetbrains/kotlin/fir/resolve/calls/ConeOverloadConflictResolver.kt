@@ -31,12 +31,17 @@ typealias CandidateSignature = FlatSignature<Candidate>
 class ConeOverloadConflictResolver(
     specificityComparator: TypeSpecificityComparator,
     inferenceComponents: InferenceComponents,
-    transformerComponents: BodyResolveComponents
-) : AbstractConeCallConflictResolver(specificityComparator, inferenceComponents, transformerComponents) {
+    transformerComponents: BodyResolveComponents,
+) : AbstractConeCallConflictResolver(
+    specificityComparator,
+    inferenceComponents,
+    transformerComponents,
+    considerMissingArgumentsInSignatures = false,
+) {
 
     override fun chooseMaximallySpecificCandidates(
         candidates: Set<Candidate>,
-        discriminateAbstracts: Boolean
+        discriminateAbstracts: Boolean,
     ): Set<Candidate> = chooseMaximallySpecificCandidates(candidates, discriminateAbstracts, discriminateGenerics = true)
 
     private fun chooseMaximallySpecificCandidates(

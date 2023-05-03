@@ -94,7 +94,7 @@ fun test() {
         emit(null)
         val x = get()
         if (x == null) {
-            x<!UNSAFE_CALL!>.<!>toString("")
+            x.<!NONE_APPLICABLE!>toString<!>("")
         }
 
         ""
@@ -134,7 +134,7 @@ fun test() {
         emit(null)
         val x = get()
         if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING!>x === null<!>) {
-            x<!UNSAFE_CALL!>.<!>toString("")
+            x.<!NONE_APPLICABLE!>toString<!>("")
         }
 
         ""

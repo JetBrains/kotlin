@@ -1,5 +1,5 @@
 object A1<!CONSTRUCTOR_IN_OBJECT!>()<!> {
-    <!CONSTRUCTOR_IN_OBJECT!>constructor(x: Int = "", y: Int)<!> : <!NONE_APPLICABLE!>this<!>() {
+    <!CONSTRUCTOR_IN_OBJECT!>constructor(x: Int = "", y: Int)<!> : <!UNRESOLVED_REFERENCE!>this<!>() {
         x + y
     }
 }

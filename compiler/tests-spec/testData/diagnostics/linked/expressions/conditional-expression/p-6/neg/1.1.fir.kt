@@ -26,7 +26,7 @@ import checkSubtype
 fun case1() {
     val a: Any = true
     if (<!CONDITION_TYPE_MISMATCH!>a<!>) { "true" } else "false"
-    <!NONE_APPLICABLE!>checkSubtype<!><Boolean>(a)
+    checkSubtype<Boolean>(<!ARGUMENT_TYPE_MISMATCH!>a<!>)
 }
 
 /*
@@ -37,7 +37,7 @@ fun case1() {
 fun case2() {
     val a = JavaContainer.aO
     if (<!CONDITION_TYPE_MISMATCH!>a<!>) { "true" } else "false"
-    <!NONE_APPLICABLE!>checkSubtype<!><Boolean>(a)
+    checkSubtype<Boolean>(<!ARGUMENT_TYPE_MISMATCH!>a<!>)
 }
 
 // TESTCASE NUMBER: 3

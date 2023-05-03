@@ -50156,6 +50156,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         public void testSuppressInvisible() throws Exception {
             runTest("compiler/testData/codegen/box/suppressions/suppressInvisible.kt");
         }
+
+        @Test
+        @TestMetadata("suppressInvisibleCtor.kt")
+        public void testSuppressInvisibleCtor() throws Exception {
+            runTest("compiler/testData/codegen/box/suppressions/suppressInvisibleCtor.kt");
+        }
     }
 
     @Nested
