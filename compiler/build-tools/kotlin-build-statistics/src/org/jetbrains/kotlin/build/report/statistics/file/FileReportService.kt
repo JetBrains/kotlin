@@ -278,6 +278,12 @@ class FileReportService(
             p.println("Task '${statisticsData.taskName}' finished in ${formatTime(statisticsData.durationMs)}")
         }
 
+        statisticsData.kotlinLanguageVersion?.also {
+            p.withIndent("Task info:") {
+                p.println("Kotlin language version: $it")
+            }
+        }
+
         if (statisticsData.icLogLines.isNotEmpty()) {
             p.withIndent("Compilation log for task '${statisticsData.taskName}':") {
                 statisticsData.icLogLines.forEach { p.println(it) }
