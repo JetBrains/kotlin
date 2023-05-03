@@ -11,8 +11,6 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.ERROR
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.WARNING
 import org.jetbrains.kotlin.gradle.utils.registerClassLoaderScopedBuildService
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -33,14 +31,8 @@ internal abstract class KotlinToolingDiagnosticsCollector : BuildService<BuildSe
 
     fun getDiagnosticsForProject(project: Project): Collection<ToolingDiagnostic> {
         val rawDiagnostics = rawDiagnosticsFromProject[project.path] ?: return emptyList()
-
-        val suppressedWarnings = project.kotlinPropertiesProvider.suppressedGradlePluginWarnings.toSet()
-        val suppressedErrors = project.kotlinPropertiesProvider.suppressedGradlePluginErrors.toSet()
-
-        fun ToolingDiagnostic.isSuppressed(): Boolean =
-            severity == WARNING && id in suppressedWarnings || severity == ERROR && id in suppressedErrors
-
-        return rawDiagnostics.filter { !it.isSuppressed() }
+        val options = ToolingDiagnosticRenderingOptions.forProject(project)
+        return rawDiagnostics.withoutSuppressed(options)
     }
 
     fun report(project: Project, diagnostic: ToolingDiagnostic) {
@@ -48,7 +40,10 @@ internal abstract class KotlinToolingDiagnosticsCollector : BuildService<BuildSe
     }
 
     fun report(task: UsesKotlinToolingDiagnostics, diagnostic: ToolingDiagnostic) {
-        renderReportedDiagnostic(diagnostic, task.logger, isVerbose = false) // TODO: wire suppression/verbosity
+        val options = task.diagnosticRenderingOptions.get()
+        if (!diagnostic.isSuppressed(options)) {
+            renderReportedDiagnostic(diagnostic, task.logger, options.isVerbose)
+        }
     }
 
     fun reportOncePerGradleProject(fromProject: Project, diagnostic: ToolingDiagnostic, key: ToolingDiagnosticId = diagnostic.id) {

@@ -321,4 +321,13 @@ object KotlinToolingDiagnostics {
             """.trimIndent()
         )
     }
+
+    object ExperimentalK2Warning : ToolingDiagnosticFactory(WARNING) {
+        operator fun invoke() = build(
+            """
+            ATTENTION: 'kotlin.experimental.tryK2' is an experimental option enabled in the project for trying out the new Kotlin K2 compiler only.
+            Please refrain from using it in production code and provide feedback to the Kotlin team for any issues encountered via https://kotl.in/issue
+            """.trimIndent()
+        )
+    }
 }
