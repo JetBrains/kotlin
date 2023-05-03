@@ -262,7 +262,7 @@
 # Temporary for klint https://github.com/pinterest/ktlint/blob/c5a81e0d4198fa5cb2cac69967080e01e365b837/ktlint-rule-engine/src/main/kotlin/com/pinterest/ktlint/rule/engine/internal/KotlinPsiFileFactory.kt#L121
 # Should be removed after after 26.04.2024
 -keepclassmembers class com.intellij.openapi.extensions.ExtensionsArea {
-    public void registerExtensionPoint(java.lang.String, java.lang.String, com.intellij.openapi.extensions.ExtensionPoint.Kind);
+    public void registerExtensionPoint(java.lang.String, java.lang.String, com.intellij.openapi.extensions.ExtensionPoint$Kind);
 }
 
 # Serialization plugin
