@@ -954,19 +954,10 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             .transformAnnotations(transformer, ResolutionMode.ContextIndependent)
             .replaceArgumentList(checkNotNullCall.argumentList.transform(transformer, ResolutionMode.ContextDependent))
 
-        var callCompleted = false
-        val result = components.syntheticCallGenerator.generateCalleeForCheckNotNullCall(checkNotNullCall, resolutionContext)?.let {
-            val completionResult = callCompleter.completeCall(it, data)
-            callCompleted = completionResult.callCompleted
-            completionResult.result
-        } ?: run {
-            checkNotNullCall.resultType =
-                buildErrorTypeRef {
-                    diagnostic = ConeSimpleDiagnostic("Can't resolve !! operator call", DiagnosticKind.InferenceError)
-                }
-            callCompleted = true
-            checkNotNullCall
-        }
+        val (result, callCompleted) = callCompleter.completeCall(
+            components.syntheticCallGenerator.generateCalleeForCheckNotNullCall(checkNotNullCall, resolutionContext), data
+        )
+
         dataFlowAnalyzer.exitCheckNotNullCall(result, callCompleted)
         return result
     }
