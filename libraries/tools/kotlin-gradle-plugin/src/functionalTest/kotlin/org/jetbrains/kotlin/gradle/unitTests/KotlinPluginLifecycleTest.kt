@@ -3,21 +3,26 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("FunctionName")
+@file:Suppress("FunctionName", "ThrowableNotThrown")
 
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.ProjectConfigurationException
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.IllegalLifecycleException
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.ProjectConfigurationResult.Failure
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.*
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
+import org.jetbrains.kotlin.gradle.utils.future
+import org.jetbrains.kotlin.tooling.core.withClosure
 import org.jetbrains.kotlin.tooling.core.withLinearClosure
+import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.junit.Test
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicReference
 import kotlin.test.*
 
 class KotlinPluginLifecycleTest {
@@ -184,6 +189,119 @@ class KotlinPluginLifecycleTest {
 
         project.evaluate()
         assertTrue(executed.get())
+    }
+
+    @Test
+    fun `test - throwing an exception during buildscript evaluation - shall not execute afterEvaluate based stages`() {
+        val executed = AtomicReference<Throwable>()
+        lifecycle.enqueue(AfterEvaluateBuildscript) {
+            assertNull(executed.getAndSet(Throwable()))
+        }
+
+        val thrownException = Exception()
+
+        /* Provoking an exception during project.evaluate() */
+        val exceptionWasProvoked = AtomicBoolean()
+        project.tasks.whenObjectAdded {
+            assertFalse(exceptionWasProvoked.getAndSet(true))
+            throw thrownException
+        }
+        runCatching { project.evaluate() }
+        assertTrue(exceptionWasProvoked.get(), "Exception during '.evaluate()' was not provoked")
+
+        /* Assert: The 'AfterEvaluate' based stage should not have been executed */
+        executed.get()?.let { throwable ->
+            fail("AfterEvaluate based stage is not expected to be launched because of exception during .evaluate()", throwable)
+        }
+
+        val exceptions = project.configured.getOrThrow().cast<Failure>().failures.withClosure<Throwable> { listOfNotNull(it.cause) }
+        if (thrownException !in exceptions) fail("Expected 'thrownException' in lifecycle.finished")
+    }
+
+    @Test
+    fun `test - throwing an exception during buildscript evaluation - will execute coroutine waiting for finished`() {
+        val thrownException = Exception()
+
+        val executedAfterLifecycleFinished = AtomicBoolean(false)
+        project.launch {
+            val exceptions = project.configured.await().cast<Failure>().failures.withClosure<Throwable> { listOfNotNull(it.cause) }
+            assertFalse(executedAfterLifecycleFinished.getAndSet(true))
+            if (thrownException !in exceptions) fail("Expected 'thrownException' in lifecycle.finished")
+        }
+
+
+        /* Provoking an exception during project.evaluate() */
+        val exceptionWasProvoked = AtomicBoolean()
+        project.tasks.whenObjectAdded {
+            assertFalse(exceptionWasProvoked.getAndSet(true))
+            throw thrownException
+        }
+        runCatching { project.evaluate() }
+        assertTrue(exceptionWasProvoked.get(), "Exception during '.evaluate()' was not provoked")
+        assertTrue(executedAfterLifecycleFinished.get(), "Expected coroutine waiting for '.finished' to be executed")
+    }
+
+    @Test
+    fun `test - throwing an exception in afterEvaluate based stage - allows getOrThrow on future`() {
+        val exception = IllegalStateException()
+        val future = project.future { AfterEvaluateBuildscript.await(); 42 }
+        val secondActionExecuted = AtomicBoolean(false)
+
+        project.launchInStage(AfterEvaluateBuildscript) {
+            throw exception
+        }
+
+        project.launch secondAction@{
+            project.configured.await()
+            assertEquals(AfterEvaluateBuildscript, stage)
+            assertEquals(42, future.getOrThrow())
+            assertEquals(420, project.future { AfterEvaluateBuildscript.await(); 420 }.getOrThrow())
+            assertFalse(secondActionExecuted.getAndSet(true))
+        }
+
+        assertTrue(exception in assertFails { project.evaluate() }.withLinearClosure { it.cause })
+        assertTrue(secondActionExecuted.get())
+    }
+
+    @Test
+    fun `test - throwing an exception in afterEvaluate based stage - will not execute coroutines in later stages`() {
+        val exception = IllegalStateException()
+
+        val secondActionExecuted = AtomicBoolean(false)
+        val thirdActionExecuted = AtomicBoolean(false)
+        val fourthActionExecuted = AtomicBoolean(false)
+
+        project.launchInStage(AfterEvaluateBuildscript) {
+            throw exception
+        }
+
+        project.launchInStage(AfterEvaluateBuildscript.nextOrThrow) secondAction@{
+            assertFalse(secondActionExecuted.getAndSet(true))
+        }
+
+        project.launch {
+            project.configured.await()
+            project.launchInStage(AfterEvaluateBuildscript.nextOrThrow) thirdAction@{
+                assertFalse(thirdActionExecuted.getAndSet(true))
+            }
+        }
+
+        project.launch fourthAction@{
+            project.configured.await()
+            AfterEvaluateBuildscript.nextOrThrow.await()
+            assertFalse(fourthActionExecuted.getAndSet(true))
+        }
+
+        val failure = assertFails { project.evaluate() }
+
+        assertTrue(
+            exception in failure.withLinearClosure { it.cause },
+            "Could not find 'exception' in failure cause\n${failure.stackTraceToString()}",
+        )
+
+        assertFalse(secondActionExecuted.get())
+        assertFalse(thirdActionExecuted.get())
+        assertFalse(fourthActionExecuted.get())
     }
 
     @Test

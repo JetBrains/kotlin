@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Project
 import org.gradle.api.provider.Property
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.*
+import org.jetbrains.kotlin.gradle.utils.CompletableFuture
+import org.jetbrains.kotlin.gradle.utils.Future
 import org.jetbrains.kotlin.gradle.utils.failures
 import org.jetbrains.kotlin.gradle.utils.getOrPut
 import java.lang.ref.WeakReference
@@ -113,6 +115,56 @@ internal val Project.kotlinPluginLifecycle: KotlinPluginLifecycle
     get() = extraProperties.getOrPut(KotlinPluginLifecycle::class.java.name) {
         KotlinPluginLifecycleImpl(project)
     }
+
+/**
+ * Future that will be completed once the project is considered 'Configured'
+ * ### Happy Path
+ * If the project configuration is successful (no exceptions thrown), then this Future will complete
+ * **after** [KotlinPluginLifecycle.Stage.ReadyForExecution] was fully executed. All coroutines within the regular lifecycle .
+ * In this case the value of this future will be [ProjectConfigurationResult.Success]
+ *
+ * ### Unhappy Path (Project configuration failed via exception)
+ * If the project configuration is unsuccessful (exception thrown) then this future will complete with
+ * [ProjectConfigurationResult.Failure], carrying the thrown exceptions.
+ *
+ * E.g. the following code:
+ * ```kotlin
+ * project.launchInStage(Stage.FinaliseCompilations) {
+ *     throw Exception("My Error")
+ * }
+ * ```
+ *
+ * will lead to:
+ * ```kotlin
+ * project.launch {
+ *     val result = project.configured.await()
+ *     val result as Failure
+ *     val exception = result.failures.first()
+ *     println(exception.message) // 'My Error'
+ *     println(stage) // 'Stage.FinaliseCompilations'
+ * }
+ * ```
+ *
+ * #### Failure case | Launching coroutines | Future.getOrThrow
+ * Even in case of failure it is still okay to further launch a new coroutine
+ * ```kotlin
+ * project.launch {
+ *    val result = project.configured.await() as Failure
+ *    val anotherJob = project.launch { ... } // <- executed right away
+ *    val someFutureEvaluation = project.someFuture.getOrThrow() // <- will return value if all 'requirements' have been met.
+ * }
+ * ```
+ *
+ * Note: [Future.getOrThrow] will throw if e.g. the lifecycle fails in a very early stage, but the Future requires
+ * some later data to be available. In this case, the Future still will only return 'sane' data.
+ */
+internal val Project.configured: Future<ProjectConfigurationResult>
+    get() = configuredImpl
+
+
+private val Project.configuredImpl: CompletableFuture<ProjectConfigurationResult>
+    get() = extraProperties.getOrPut("org.jetbrains.kotlin.gradle.plugin.configured") { CompletableFuture() }
+
 
 /**
  * Will start the lifecycle, this shall be called before the [kotlinPluginLifecycle] is effectively used
@@ -299,11 +351,16 @@ internal interface KotlinPluginLifecycle {
         ReadyForExecution;
 
         val previousOrFirst: Stage get() = previousOrNull ?: values.first()
+
         val previousOrNull: Stage? get() = values.getOrNull(ordinal - 1)
+
         val previousOrThrow: Stage
             get() = previousOrNull ?: throw IllegalArgumentException("'$this' does not have a next ${Stage::class.simpleName}")
+
         val nextOrNull: Stage? get() = values.getOrNull(ordinal + 1)
+
         val nextOrLast: Stage get() = nextOrNull ?: values.last()
+
         val nextOrThrow: Stage
             get() = nextOrNull ?: throw IllegalArgumentException("'$this' does not have a next ${Stage::class.simpleName}")
 
@@ -321,6 +378,11 @@ internal interface KotlinPluginLifecycle {
                 return upTo(stage.previousOrNull ?: return emptySet())
             }
         }
+    }
+
+    sealed class ProjectConfigurationResult {
+        object Success : ProjectConfigurationResult()
+        data class Failure(val failures: List<Throwable>) : ProjectConfigurationResult()
     }
 
     val project: Project
@@ -372,7 +434,7 @@ private class KotlinPluginLifecycleImpl(override val project: Project) : KotlinP
     private val loopRunning = AtomicBoolean(false)
     private val isStarted = AtomicBoolean(false)
     private val isFinishedSuccessfully = AtomicBoolean(false)
-    private val isFinishedWithExceptions = AtomicBoolean(false)
+    private val isFinishedWithFailures = AtomicBoolean(false)
 
     override var stage: Stage = Stage.values.first()
     private val properties = WeakHashMap<Property<*>, WeakReference<LifecycleAwareProperty<*>>>()
@@ -430,6 +492,7 @@ private class KotlinPluginLifecycleImpl(override val project: Project) : KotlinP
         try {
             val queue = enqueuedActions.getValue(stage)
             do {
+                project.state.rethrowFailure()
                 val action = queue.removeFirstOrNull()
                 action?.invoke(this)
             } while (action != null)
@@ -441,17 +504,19 @@ private class KotlinPluginLifecycleImpl(override val project: Project) : KotlinP
     private fun finishWithFailures(failures: List<Throwable>) {
         assert(failures.isNotEmpty())
         assert(isStarted.get())
-        assert(!isFinishedWithExceptions.getAndSet(true))
+        assert(!isFinishedWithFailures.getAndSet(true))
+        project.configuredImpl.complete(ProjectConfigurationResult.Failure(failures))
     }
 
     private fun finishSuccessfully() {
         assert(isStarted.get())
         assert(!isFinishedSuccessfully.getAndSet(true))
+        project.configuredImpl.complete(ProjectConfigurationResult.Success)
     }
 
     override fun enqueue(stage: Stage, action: KotlinPluginLifecycle.() -> Unit) {
         if (stage < this.stage) {
-            throw IllegalLifecycleException("Cannot enqueue Action for stage '${stage}' in current stage '${this.stage}'")
+            throw IllegalLifecycleException("Cannot enqueue Action for stage '$stage' in current stage '${this.stage}'")
         }
 
         /*
@@ -460,12 +525,17 @@ private class KotlinPluginLifecycleImpl(override val project: Project) : KotlinP
         will be executed right away (no suspend necessary or wanted)
         */
         if (isFinishedSuccessfully.get()) {
-            action()
-            return
+            return action()
         }
 
-        if (isFinishedWithExceptions.get()) {
-            throw IllegalLifecycleException("Cannot enqueue Action: Lifecycle already finished with Exceptions")
+        /*
+        Lifecycle finished, but some exceptions have been thrown.
+        In this case, an enqueue for future Stages is not allowed, since those will not be executed anymore.
+        Any enqueue in the current stage will be executed right away (no suspend necessary or wanted).
+         */
+        if (isFinishedWithFailures.get()) {
+            return if (stage == this.stage) action()
+            else Unit
         }
 
         enqueuedActions.getValue(stage).addLast(action)

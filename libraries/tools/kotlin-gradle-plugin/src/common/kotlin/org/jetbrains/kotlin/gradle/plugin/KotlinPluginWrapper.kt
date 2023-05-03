@@ -256,6 +256,8 @@ abstract class KotlinBasePluginWrapper : DefaultKotlinBasePlugin() {
     ): Plugin<Project>
 
     private fun Project.scheduleDiagnosticChecksAndReporting() {
+
+
         launchInStage(KotlinPluginLifecycle.Stage.ReadyForExecution) {
             // Do not run checkers on projects which configuration finished with failure,
             // as the internal state can not be trusted at this point (e.g. not entire of the
