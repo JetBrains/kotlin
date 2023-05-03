@@ -9,7 +9,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.DelegatingGlobalSearchScope
-import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirBuiltinsAndCloneableSessionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirBuiltinsAndCloneableSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.JvmStubBasedFirDeserializedSymbolProvider
@@ -74,21 +73,13 @@ class LLFirBuiltinsSessionFactory(private val project: Project) {
 
             val symbolProvider = createCompositeSymbolProvider(this) {
                 val moduleDataProvider = SingleModuleDataProvider(moduleData)
-                val scope = object : DelegatingGlobalSearchScope(project, GlobalSearchScope.allScope(project)) {
-                    override fun contains(file: VirtualFile): Boolean {
-                        if (file.extension != BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION) {
-                            return false
-                        }
-                        return super.contains(file)
-                    }
-                }
                 add(
                     object : JvmStubBasedFirDeserializedSymbolProvider(
                         session,
                         moduleDataProvider,
                         kotlinScopeProvider,
                         project,
-                        scope,
+                        BuiltinsGlobalSearchScope(project),
                         FirDeclarationOrigin.BuiltIns
                     ) {
                         private val syntheticFunctionInterfaceProvider = FirBuiltinSyntheticFunctionInterfaceProvider(
@@ -116,6 +107,15 @@ class LLFirBuiltinsSessionFactory(private val project: Project) {
     companion object {
         fun getInstance(project: Project): LLFirBuiltinsSessionFactory =
             project.getService(LLFirBuiltinsSessionFactory::class.java)
+    }
+}
+
+class BuiltinsGlobalSearchScope(project: Project) : DelegatingGlobalSearchScope(project, allScope(project)) {
+    override fun contains(file: VirtualFile): Boolean {
+        if (file.extension != BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION) {
+            return false
+        }
+        return super.contains(file)
     }
 }
 

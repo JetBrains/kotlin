@@ -129,7 +129,11 @@ internal open class JvmStubBasedFirDeserializedSymbolProvider(
                 StubBasedAnnotationDeserializer(session),
                 kotlinScopeProvider,
                 parentContext,
-                if (initialOrigin == FirDeclarationOrigin.BuiltIns) null else JvmFromStubDecompilerSource(JvmClassName.byClassId(classId)),
+                containerSource = if (initialOrigin == FirDeclarationOrigin.BuiltIns) null else JvmFromStubDecompilerSource(
+                    JvmClassName.byClassId(
+                        classId
+                    )
+                ),
                 deserializeNestedClass = this::getClass,
                 initialOrigin
             )

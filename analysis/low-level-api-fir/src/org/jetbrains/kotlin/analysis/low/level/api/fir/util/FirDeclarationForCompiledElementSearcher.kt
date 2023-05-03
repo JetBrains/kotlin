@@ -98,7 +98,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
 
         val constructorCandidate =
             symbolProvider.getClassDeclaredConstructors(classId)
-                .singleOrNull { representSameConstructor(declaration, it.fir) }
+                .singleOrNull { it.fir.realPsi === declaration }
                 ?: errorWithFirSpecificEntries("We should be able to find a constructor", psi = declaration)
 
         return constructorCandidate.fir
@@ -174,14 +174,6 @@ private fun FirSymbolProvider.findCallableCandidates(
 
     return getClassDeclaredFunctionSymbols(containerClassId, shortName) +
             getClassDeclaredPropertySymbols(containerClassId, shortName)
-}
-
-private fun representSameConstructor(psiConstructor: KtConstructor<*>, firConstructor: FirConstructor): Boolean {
-    if ((firConstructor.isPrimary) != (psiConstructor is KtPrimaryConstructor)) {
-        return false
-    }
-
-    return firConstructor.realPsi === psiConstructor
 }
 
 private fun ExceptionAttachmentBuilder.withCandidates(candidates: List<FirBasedSymbol<*>>) {
