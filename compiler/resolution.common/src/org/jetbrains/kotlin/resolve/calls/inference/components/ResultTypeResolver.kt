@@ -94,12 +94,13 @@ class ResultTypeResolver(
         // and the second one from UPPER/LOWER constraints (subType/superType based)
         // The logic of choice here is:
         // - if one type is null, we return another one
-        // - we return type from UPPER/LOWER constraints if it's more precise
+        // - we return type from UPPER/LOWER constraints if it's more precise (in fact, only Int/Short/Byte/Long is allowed here)
         // - otherwise we return ILT-based type
         return when {
             resultTypeFromEqualConstraint == null -> resultTypeFromDirection
             resultTypeFromDirection == null -> resultTypeFromEqualConstraint
-            AbstractTypeChecker.isSubtypeOf(c, resultTypeFromDirection, resultTypeFromEqualConstraint) -> resultTypeFromDirection
+            with(c) { !resultTypeFromDirection.typeConstructor().isNothingConstructor() } &&
+                    AbstractTypeChecker.isSubtypeOf(c, resultTypeFromDirection, resultTypeFromEqualConstraint) -> resultTypeFromDirection
             else -> resultTypeFromEqualConstraint
         }
     }
