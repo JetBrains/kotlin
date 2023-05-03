@@ -16,6 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin.lower.decoys
 
+import androidx.compose.compiler.plugins.kotlin.lower.DeepCopyPreservingMetadata
 import androidx.compose.compiler.plugins.kotlin.lower.hasAnnotationSafe
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
@@ -24,16 +25,9 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrLocalDelegatedProperty
-import org.jetbrains.kotlin.ir.declarations.IrProperty
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrVararg
@@ -47,10 +41,8 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeArgument
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
-import org.jetbrains.kotlin.ir.util.DeepCopyIrTreeWithSymbols
 import org.jetbrains.kotlin.ir.util.DeepCopyTypeRemapper
 import org.jetbrains.kotlin.ir.util.IdSignature
-import org.jetbrains.kotlin.ir.util.SymbolRemapper
 import org.jetbrains.kotlin.ir.util.SymbolRenamer
 import org.jetbrains.kotlin.ir.util.TypeRemapper
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
@@ -217,7 +209,7 @@ internal inline fun <reified T : IrElement> T.copyWithNewTypeParams(
                 return typeRemapper.remapType(type.remapTypeParameters(source, target))
             }
         }
-        val deepCopy = DeepCopySavingMetadata(
+        val deepCopy = DeepCopyPreservingMetadata(
             symbolRemapper,
             typeParamRemapper,
             SymbolRenamer.DEFAULT
@@ -225,47 +217,4 @@ internal inline fun <reified T : IrElement> T.copyWithNewTypeParams(
         (typeRemapper as? DeepCopyTypeRemapper)?.deepCopy = deepCopy
         deepCopy
     }
-}
-
-internal class DeepCopySavingMetadata(
-    symbolRemapper: SymbolRemapper,
-    typeRemapper: TypeRemapper,
-    symbolRenamer: SymbolRenamer
-) : DeepCopyIrTreeWithSymbols(symbolRemapper, typeRemapper, symbolRenamer) {
-    override fun visitFile(declaration: IrFile): IrFile =
-        super.visitFile(declaration).apply {
-            metadata = declaration.metadata
-        }
-
-    override fun visitClass(declaration: IrClass): IrClass =
-        super.visitClass(declaration).apply {
-            metadata = declaration.metadata
-        }
-
-    override fun visitConstructor(declaration: IrConstructor): IrConstructor =
-        super.visitConstructor(declaration).apply {
-            metadata = declaration.metadata
-        }
-
-    override fun visitSimpleFunction(declaration: IrSimpleFunction): IrSimpleFunction =
-        super.visitSimpleFunction(declaration).apply {
-            metadata = declaration.metadata
-        }
-
-    override fun visitProperty(declaration: IrProperty): IrProperty =
-        super.visitProperty(declaration).apply {
-            metadata = declaration.metadata
-        }
-
-    override fun visitField(declaration: IrField): IrField =
-        super.visitField(declaration).apply {
-            metadata = declaration.metadata
-        }
-
-    override fun visitLocalDelegatedProperty(
-        declaration: IrLocalDelegatedProperty
-    ): IrLocalDelegatedProperty =
-        super.visitLocalDelegatedProperty(declaration).apply {
-            metadata = declaration.metadata
-        }
 }

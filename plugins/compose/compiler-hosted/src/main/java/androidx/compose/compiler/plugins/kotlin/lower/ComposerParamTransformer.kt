@@ -120,7 +120,7 @@ class ComposerParamTransformer(
         // for each declaration, we create a deepCopy transformer It is important here that we
         // use the "preserving metadata" variant since we are using this copy to *replace* the
         // originals, or else the module we would produce wouldn't have any metadata in it.
-        val transformer = DeepCopyIrTreeWithSymbolsPreservingMetadata(
+        val transformer = DeepCopyIrTreeWithRemappedComposableTypes(
             context,
             symbolRemapper,
             typeRemapper
