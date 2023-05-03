@@ -55,6 +55,7 @@ dependencies {
         }
     }
 
+    testImplementation(project(":kotlin-gradle-compiler-types"))
     testImplementation(project(":kotlin-gradle-plugin-idea"))
     testImplementation(testFixtures(project(":kotlin-gradle-plugin-idea")))
     testImplementation(project(":kotlin-gradle-plugin-idea-proto"))
