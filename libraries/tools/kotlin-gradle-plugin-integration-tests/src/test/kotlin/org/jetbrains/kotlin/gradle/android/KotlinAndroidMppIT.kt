@@ -654,7 +654,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
         }
     }
 
-    @AndroidTestVersions(minVersion = AGP_71)
+    @AndroidTestVersions(minVersion = AGP_70)
     @GradleTestVersions(minVersion = G_7_2)
     @DisplayName("KT-27714: custom attributes are copied to android compilation configurations")
     @GradleAndroidTest
