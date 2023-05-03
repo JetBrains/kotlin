@@ -21,10 +21,7 @@ import org.jetbrains.kotlin.fir.backend.generators.OperatorExpressionGenerator
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
-import org.jetbrains.kotlin.fir.declarations.utils.isSealed
-import org.jetbrains.kotlin.fir.declarations.utils.isSynthetic
-import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.deserialization.toQualifiedPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
@@ -41,10 +38,12 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.declarations.UNDEFINED_PARAMETER_INDEX
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrErrorTypeImpl
 import org.jetbrains.kotlin.ir.util.constructors
@@ -208,9 +207,25 @@ class Fir2IrVisitor(
         return declarationStorage.getCachedIrScript(script)!!.also { irScript ->
             irScript.parent = conversionScope.parentFromStack()
             declarationStorage.enterScope(irScript)
+
             irScript.explicitCallParameters = script.parameters.map { parameter ->
-                declarationStorage.createIrVariable(parameter, irScript)
+                declarationStorage.createIrVariable(parameter, irScript, givenOrigin = IrDeclarationOrigin.SCRIPT_CALL_PARAMETER)
             }
+
+            irScript.thisReceiver = script.contextReceivers.find { it.customLabelName?.asString() == SCRIPT_SPECIAL_NAME_STRING }?.let { receiver ->
+                receiver.convertWithOffsets { startOffset, endOffset ->
+                    irFactory.createValueParameter(
+                        startOffset, endOffset, IrDeclarationOrigin.INSTANCE_RECEIVER, SpecialNames.THIS, receiver.typeRef.toIrType(),
+                        isAssignable = false, IrValueParameterSymbolImpl(), UNDEFINED_PARAMETER_INDEX,
+                        varargElementType = null,
+                        isCrossinline = false, isNoinline = false,
+                        isHidden = false,
+                    ).also {
+                        it.parent = irScript
+                    }
+                }
+            }
+
             conversionScope.withParent(irScript) {
                 for (statement in script.statements) {
                     val irStatement = if (statement is FirDeclaration) {

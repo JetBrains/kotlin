@@ -445,9 +445,9 @@ private class ScriptsToClassesLowering(val context: JvmBackendContext, val inner
                 if (initializer != null) {
                     field.initializer = initializer
                 }
-
-                property.addDefaultGetter(this, context.irBuiltIns)
             }
+
+            property.addDefaultGetter(this, context.irBuiltIns)
         }
     }
 }
@@ -488,11 +488,14 @@ private class ScriptToClassTransformer(
         }
     }
 
+    val scriptThisType = IrSimpleTypeImpl(irScriptClass.symbol, false, emptyList(), emptyList())
     val scriptClassReceiver =
-        irScript.thisReceiver?.transform(this, ScriptToClassTransformerContext(null, null, null, false)) ?: run {
+        irScript.thisReceiver?.let {
+            it.type = scriptThisType
+            it.transform(this, ScriptToClassTransformerContext(null, null, null, false))
+        } ?: run {
             context.symbolTable.enterScope(irScriptClass)
-            val thisType = IrSimpleTypeImpl(irScriptClass.symbol, false, emptyList(), emptyList())
-            val newReceiver = irScriptClass.createThisReceiverParameter(IrDeclarationOrigin.INSTANCE_RECEIVER, thisType)
+            val newReceiver = irScriptClass.createThisReceiverParameter(IrDeclarationOrigin.INSTANCE_RECEIVER, scriptThisType)
             context.symbolTable.leaveScope(irScriptClass)
             newReceiver
         }
@@ -689,14 +692,14 @@ private class ScriptToClassTransformer(
         return super.visitMemberAccess(expression, data) as IrExpression
     }
 
-    override fun visitGetField(expression: IrGetField, data: ScriptToClassTransformerContext): IrExpression {
-        if (expression.receiver == null && expression.symbol.owner.needsScriptReceiver()) {
+    override fun visitFieldAccess(expression: IrFieldAccessExpression, data: ScriptToClassTransformerContext): IrExpression {
+        if (expression.receiver == null && expression.symbol.owner.parent.let { it == irScript || it == irScriptClass }) {
             expression.receiver =
                 getAccessCallForScriptInstance(
                     data, expression.startOffset, expression.endOffset, expression.origin, originalReceiverParameter = null
                 )
         }
-        return super.visitGetField(expression, data)
+        return super.visitFieldAccess(expression, data)
     }
 
     override fun visitConstructorCall(expression: IrConstructorCall, data: ScriptToClassTransformerContext): IrExpression {
