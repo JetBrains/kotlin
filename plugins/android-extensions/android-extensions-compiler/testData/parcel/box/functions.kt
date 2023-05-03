@@ -1,4 +1,5 @@
 // WITH_STDLIB
+// LAMBDAS: CLASS
 
 @file:JvmName("TestKt")
 package test

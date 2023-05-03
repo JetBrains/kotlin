@@ -3,6 +3,7 @@
 // IGNORE_BACKEND: ANDROID
 // JVM_TARGET: 1.8
 // WITH_STDLIB
+// LAMBDAS: CLASS
 
 interface Z {
     private fun privateFun() = { "OK" }

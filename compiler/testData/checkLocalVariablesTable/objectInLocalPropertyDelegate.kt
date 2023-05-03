@@ -1,3 +1,5 @@
+// LAMBDAS: CLASS
+
 operator fun (() -> String).getValue(thisRef: Any?, property: Any?) = this()
 
 fun foo() {

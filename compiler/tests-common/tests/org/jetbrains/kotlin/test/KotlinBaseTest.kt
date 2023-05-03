@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.checkers.ENABLE_JVM_PREVIEW
 import org.jetbrains.kotlin.checkers.parseLanguageVersionSettings
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.config.JvmTarget.Companion.fromString
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
@@ -147,7 +146,7 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
                 }
                 val targetString = directives["JVM_TARGET"]
                 if (targetString != null) {
-                    val jvmTarget = fromString(targetString)
+                    val jvmTarget = JvmTarget.fromString(targetString)
                         ?: error("Unknown target: $targetString")
                     configuration.put(JVMConfigurationKeys.JVM_TARGET, jvmTarget)
                 }
@@ -172,6 +171,13 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase() 
                 if (fileLanguageVersionSettings != null) {
                     assert(explicitLanguageVersionSettings == null) { "Should not specify !LANGUAGE directive twice" }
                     explicitLanguageVersionSettings = fileLanguageVersionSettings
+                }
+
+                val lambdasString = directives["LAMBDAS"]
+                if (lambdasString != null) {
+                    val lambdas = JvmClosureGenerationScheme.fromString(lambdasString)
+                        ?: error("Unknown lambdas mode: $lambdasString")
+                    configuration.put(JVMConfigurationKeys.LAMBDAS, lambdas)
                 }
             }
             if (explicitLanguageVersionSettings != null) {

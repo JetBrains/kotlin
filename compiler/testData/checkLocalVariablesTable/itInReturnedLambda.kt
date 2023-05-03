@@ -1,3 +1,5 @@
+// LAMBDAS: CLASS
+
 fun foo() {
     fun bar() : (Int) -> Unit {
         return {
