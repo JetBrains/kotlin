@@ -50,7 +50,6 @@ internal fun Project.createFrameworkArtifact(binaryFramework: Framework, linkTas
     val frameworkConfiguration = configurations.getOrCreate(binaryFramework.binaryFrameworkConfigurationName, invokeWhenCreated = {
         it.markConsumable()
         it.applyBinaryFrameworkGroupAttributes(project, binaryFramework.frameworkGroupDescription, listOf(binaryFramework.target))
-        it.attributes.attribute(KotlinNativeTarget.kotlinNativeFrameworkNameAttribute, binaryFramework.baseName)
         project.launchInStage(KotlinPluginLifecycle.Stage.FinaliseDsl) {
             copyAttributes(binaryFramework.attributes, it.attributes)
         }
@@ -85,6 +84,7 @@ private fun Configuration.applyBinaryFrameworkGroupAttributes(
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
         attribute(project.artifactTypeAttribute, KotlinNativeTargetConfigurator.NativeArtifactFormat.FRAMEWORK)
         attribute(KotlinNativeTarget.kotlinNativeBuildTypeAttribute, frameworkDescription.buildType.name)
+        attribute(KotlinNativeTarget.kotlinNativeFrameworkNameAttribute, frameworkDescription.baseName)
         attribute(Framework.frameworkTargets, targets.map { it.konanTarget.name }.toSet())
     }
 }
