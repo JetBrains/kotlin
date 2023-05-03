@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import org.jetbrains.kotlin.fir.FirTargetElement
-import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
@@ -18,7 +16,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.FirSyntheticCallGenerator
 import org.jetbrains.kotlin.fir.resolve.transformers.FirWhenExhaustivenessTransformer
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 
 class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyResolveTransformerDispatcher) :
@@ -85,15 +82,7 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
                             resolutionModeForBranches,
                         )
 
-                        whenExpression = syntheticCallGenerator.generateCalleeForWhenExpression(whenExpression, resolutionContext) ?: run {
-                            whenExpression = whenExpression.transformSingle(whenExhaustivenessTransformer, null)
-                            dataFlowAnalyzer.exitWhenExpression(whenExpression, callCompleted = false)
-                            whenExpression.resultType = buildErrorTypeRef {
-                                diagnostic = ConeSimpleDiagnostic("Can't resolve when expression", DiagnosticKind.InferenceError)
-                            }
-                            return@withWhenSubjectType whenExpression
-                        }
-
+                        whenExpression = syntheticCallGenerator.generateCalleeForWhenExpression(whenExpression, resolutionContext)
                         completionNeeded = true
                     }
                 }
@@ -268,16 +257,9 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
         )
         elvisExpression.transformRhs(transformer, resolutionModeForRhs)
 
-        var callCompleted = false
-        val result = syntheticCallGenerator.generateCalleeForElvisExpression(elvisExpression, resolutionContext)?.let {
-            val completed = callCompleter.completeCall(it, data)
-            callCompleted = completed.callCompleted
-            completed.result
-        } ?: elvisExpression.also {
-            it.resultType = buildErrorTypeRef {
-                diagnostic = ConeSimpleDiagnostic("Can't resolve ?: operator call", DiagnosticKind.InferenceError)
-            }
-        }
+        val (result, callCompleted) = callCompleter.completeCall(
+            syntheticCallGenerator.generateCalleeForElvisExpression(elvisExpression, resolutionContext), data
+        )
 
         var isLhsNotNull = false
         if (result.rhs.typeRef.coneTypeSafe<ConeKotlinType>()?.isNothing == true) {

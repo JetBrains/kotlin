@@ -57,11 +57,16 @@ class FirSyntheticCallGenerator(
     private val checkNotNullFunction: FirSimpleFunction = generateSyntheticCheckNotNullFunction()
     private val elvisFunction: FirSimpleFunction = generateSyntheticElvisFunction()
 
-    fun generateCalleeForWhenExpression(whenExpression: FirWhenExpression, context: ResolutionContext): FirWhenExpression? {
-        val stubReference = whenExpression.calleeReference
-        // TODO: Investigate: assertion failed in ModularizedTest
-        // assert(stubReference is FirStubReference)
-        if (stubReference !is FirStubReference) return null
+    private fun assertSyntheticResolvableReferenceIsNotResolved(resolvable: FirResolvable) {
+        // All synthetic calls (FirWhenExpression, FirTryExpression, FirElvisExpression, FirCheckNotNullCall)
+        // contains FirStubReference on creation.
+        // generateCallee... functions below replace these references with resolved references.
+        // This check ensures that we don't enter their resolve twice.
+        assert(resolvable.calleeReference is FirStubReference)
+    }
+
+    fun generateCalleeForWhenExpression(whenExpression: FirWhenExpression, context: ResolutionContext): FirWhenExpression {
+        assertSyntheticResolvableReferenceIsNotResolved(whenExpression)
 
         val argumentList = buildArgumentList {
             arguments += whenExpression.branches.map { it.result }
@@ -78,8 +83,7 @@ class FirSyntheticCallGenerator(
     }
 
     fun generateCalleeForTryExpression(tryExpression: FirTryExpression, context: ResolutionContext): FirTryExpression {
-        val stubReference = tryExpression.calleeReference
-        assert(stubReference is FirStubReference)
+        assertSyntheticResolvableReferenceIsNotResolved(tryExpression)
 
         val argumentList = buildArgumentList {
             with(tryExpression) {
@@ -101,9 +105,8 @@ class FirSyntheticCallGenerator(
         return tryExpression.transformCalleeReference(UpdateReference, reference)
     }
 
-    fun generateCalleeForCheckNotNullCall(checkNotNullCall: FirCheckNotNullCall, context: ResolutionContext): FirCheckNotNullCall? {
-        val stubReference = checkNotNullCall.calleeReference
-        if (stubReference !is FirStubReference) return null
+    fun generateCalleeForCheckNotNullCall(checkNotNullCall: FirCheckNotNullCall, context: ResolutionContext): FirCheckNotNullCall {
+        assertSyntheticResolvableReferenceIsNotResolved(checkNotNullCall)
 
         val reference = generateCalleeReferenceWithCandidate(
             checkNotNullCall,
@@ -116,8 +119,8 @@ class FirSyntheticCallGenerator(
         return checkNotNullCall.transformCalleeReference(UpdateReference, reference)
     }
 
-    fun generateCalleeForElvisExpression(elvisExpression: FirElvisExpression, context: ResolutionContext): FirElvisExpression? {
-        if (elvisExpression.calleeReference !is FirStubReference) return null
+    fun generateCalleeForElvisExpression(elvisExpression: FirElvisExpression, context: ResolutionContext): FirElvisExpression {
+        assertSyntheticResolvableReferenceIsNotResolved(elvisExpression)
 
         val argumentList = buildArgumentList {
             arguments += elvisExpression.lhs
