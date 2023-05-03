@@ -1,5 +1,5 @@
 // !LANGUAGE: +EnumEntries
-// IGNORE_BACKEND: JS, JVM
+// IGNORE_BACKEND: JS, JVM, JS_IR
 // IGNORE_BACKEND_K2: JVM_IR, JS_IR, NATIVE
 // IGNORE_LIGHT_ANALYSIS
 // FULL_JDK
@@ -58,6 +58,7 @@ enum class E04 {
     fun test() = entries
 }
 
+// This case doesn't work in KJS/IR: KT-58396
 interface I05 {
     val entries: String
         get() = "OK"
