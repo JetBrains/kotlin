@@ -43,7 +43,7 @@ class CachingTest : TestCase() {
     }
 
     @Test
-    fun testSimpleImportWithMemoryCache() {
+    fun testSimpleImportWithMemoryCache() = expectTestToFailOnK2 {
         val cache = SimpleMemoryScriptsCache()
         checkWithCache(
             cache, scriptWithImport, scriptWithImportExpectedOutput,
@@ -63,7 +63,7 @@ class CachingTest : TestCase() {
     }
 
     @Test
-    fun testSimpleImportWithFileCache() {
+    fun testSimpleImportWithFileCache() = expectTestToFailOnK2 {
         withTempDir("scriptingTestCache") { cacheDir ->
             val cache = FileBasedScriptCache(cacheDir)
             Assert.assertEquals(true, cache.baseDir.listFiles()?.isEmpty())
@@ -90,7 +90,7 @@ class CachingTest : TestCase() {
     }
 
     @Test
-    fun testSimpleImportWithJarCache() {
+    fun testSimpleImportWithJarCache() = expectTestToFailOnK2 {
         withTempDir("scriptingTestJarCache") { cacheDir ->
             val cache = TestCompiledScriptJarsCache(cacheDir)
             Assert.assertTrue(cache.baseDir.listFiles()!!.isEmpty())
@@ -110,7 +110,7 @@ class CachingTest : TestCase() {
     }
 
     @Test
-    fun testImplicitReceiversWithJarCache() {
+    fun testImplicitReceiversWithJarCache() = expectTestToFailOnK2 {
         withTempDir("scriptingTestJarCache") { cacheDir ->
             val cache = TestCompiledScriptJarsCache(cacheDir)
             Assert.assertTrue(cache.baseDir.listFiles()!!.isEmpty())
@@ -181,7 +181,7 @@ class CachingTest : TestCase() {
     }
 
     @Test
-    fun testLocalDependencyWithExternalLoadAndCache() {
+    fun testLocalDependencyWithExternalLoadAndCache() = expectTestToFailOnK2 {
         withTempDir("scriptingTestDepDir") { depDir ->
             val standardJars = KotlinJars.kotlinScriptStandardJars
             val outJar = makeDependenciesJar(depDir, standardJars)

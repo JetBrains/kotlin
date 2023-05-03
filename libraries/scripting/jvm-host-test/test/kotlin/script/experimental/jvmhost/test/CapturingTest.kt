@@ -13,7 +13,7 @@ import kotlin.test.assertTrue
 class CapturingTest {
 
     @Test
-    fun testScriptWithImplicitReceiverAndSimpleCapturing() {
+    fun testScriptWithImplicitReceiverAndSimpleCapturing() = expectTestToFailOnK2 {
         // Reproducing (a bit extended) scenario from KT-53947: without the fix, in the presence of the implicit receiver
         // of the same type as the receiver in the `apply` function body, the lowering was incorrectly substituting
         // the correct receiver with the accessor to the implicit one
@@ -36,7 +36,7 @@ class CapturingTest {
     }
 
     @Test
-    fun testScriptWithImplicitReceiverAndNoCapturing() {
+    fun testScriptWithImplicitReceiverAndNoCapturing() = expectTestToFailOnK2 {
         // Reproducing (a bit extended) scenario from KT-53947: without the fix, in the presence of the implicit receiver
         // of the same type as the receiver in the `C2.apply` function body, the lowering was incorrectly substituting
         // the correct receiver with the accessor to the implicit one

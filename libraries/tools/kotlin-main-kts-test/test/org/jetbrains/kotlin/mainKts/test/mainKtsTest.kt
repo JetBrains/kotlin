@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.mainKts.MainKtsScript
 import org.jetbrains.kotlin.mainKts.SCRIPT_FILE_LOCATION_DEFAULT_VARIABLE_NAME
 import org.jetbrains.kotlin.mainKts.impl.Directories
 import org.jetbrains.kotlin.scripting.compiler.plugin.assertTrue
+import org.jetbrains.kotlin.scripting.compiler.plugin.expectTestToFailOnK2
 import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Ignore
@@ -77,7 +78,7 @@ class MainKtsTest {
     }
 
     @Test
-    fun testResolveRuntimeDeps() {
+    fun testResolveRuntimeDeps() = expectTestToFailOnK2 {
         val resOk = evalFile(File("$TEST_DATA_ROOT/resolve-with-runtime.main.kts"))
         assertSucceeded(resOk)
 
@@ -125,7 +126,7 @@ class MainKtsTest {
     }
 
     @Test
-    fun testImport() {
+    fun testImport() = expectTestToFailOnK2 {
 
         val out = captureOut {
             val res = evalFile(File("$TEST_DATA_ROOT/import-test.main.kts"))
@@ -136,7 +137,7 @@ class MainKtsTest {
     }
 
     @Test
-    fun testImportWithCapture() {
+    fun testImportWithCapture() = expectTestToFailOnK2 {
 
         val out = captureOut {
             val res = evalFile(File("$TEST_DATA_ROOT/import-with-capture-test.main.kts"))
@@ -178,7 +179,7 @@ class MainKtsTest {
     }
 
     @Test
-    fun testScriptFileLocationDefaultVariable() {
+    fun testScriptFileLocationDefaultVariable() = expectTestToFailOnK2 {
         val resOk = evalFile(File("$TEST_DATA_ROOT/script-file-location-default.main.kts"))
         assertSucceeded(resOk)
         val resultValue = resOk.valueOrThrow().returnValue
@@ -191,7 +192,7 @@ class MainKtsTest {
     }
 
     @Test
-    fun testScriptFileLocationCustomizedVariable() {
+    fun testScriptFileLocationCustomizedVariable() = expectTestToFailOnK2 {
         val resOk = evalFile(File("$TEST_DATA_ROOT/script-file-location-customized.main.kts"))
         assertSucceeded(resOk)
         val resultValue = resOk.valueOrThrow().returnValue
@@ -204,7 +205,7 @@ class MainKtsTest {
     }
 
     @Test
-    fun testScriptFileLocationWithImportedScript() {
+    fun testScriptFileLocationWithImportedScript() = expectTestToFailOnK2 {
         val resOk = evalFile(File("$TEST_DATA_ROOT/script-file-location-with-imported-file.main.kts"))
         assertSucceeded(resOk)
         val resultValue = resOk.valueOrThrow().returnValue

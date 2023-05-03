@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.script.loadScriptingPlugin
 import org.jetbrains.kotlin.scripting.compiler.plugin.TestDisposable
+import org.jetbrains.kotlin.scripting.compiler.plugin.expectTestToFailOnK2
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerFromEnvironment
 import org.jetbrains.kotlin.scripting.compiler.plugin.updateWithBaseCompilerArguments
 import org.jetbrains.kotlin.scripting.configuration.ScriptingConfigurationKeys
@@ -37,7 +38,7 @@ private const val testDataPath = "plugins/scripting/scripting-compiler/testData/
 class CompileTimeFibonacciTest : TestCase() {
     private val testRootDisposable: Disposable = TestDisposable()
 
-    fun testFibonacciWithSupportedNumbersImplementsTheCorrectConstants() {
+    fun testFibonacciWithSupportedNumbersImplementsTheCorrectConstants() = expectTestToFailOnK2 {
         val outputLines = runScript("supported.fib.kts")
             .valueOr { failure ->
                 val message = failure.reports.joinToString("\n") { it.message }

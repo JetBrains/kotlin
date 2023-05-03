@@ -26,12 +26,12 @@ class ScriptingWithCliCompilerTest {
     }
 
     @Test
-    fun testResultValue() {
+    fun testResultValue() = expectTestToFailOnK2 {
         runWithK2JVMCompiler("$TEST_DATA_DIR/integration/intResult.kts", listOf("10"))
     }
 
     @Test
-    fun testResultValueViaKotlinc() {
+    fun testResultValueViaKotlinc() = expectTestToFailOnK2 {
         runWithKotlinc("$TEST_DATA_DIR/integration/intResult.kts", listOf("10"))
     }
 
@@ -76,7 +76,7 @@ class ScriptingWithCliCompilerTest {
             expectedExitCode = 1,
             expectedSomeErrPatterns = listOf(
                 "unresolved reference: CompilerOptions"
-            )
+            ),
         )
         runWithK2JVMCompiler(
             arrayOf(
@@ -132,13 +132,14 @@ class ScriptingWithCliCompilerTest {
     }
 
     @Test
-    fun testExpressionWithComma() {
+    fun testExpressionWithComma() = expectTestToFailOnK2 {
         runWithK2JVMCompiler(
             arrayOf(
                 "-expression",
                 "listOf(1,2)"
             ),
-            listOf("\\[1, 2\\]")
+            listOf("\\[1, 2\\]"),
+            expectErrorOnK2 = true
         )
     }
 

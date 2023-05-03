@@ -22,7 +22,7 @@ import kotlin.script.experimental.jvmhost.createJvmEvaluationConfigurationFromTe
 class ConfigurationDslTest : TestCase() {
 
     @Test
-    fun testComposableRefinementHandlers() {
+    fun testComposableRefinementHandlers() = expectTestToFailOnK2 {
         val baseConfig = createJvmCompilationConfigurationFromTemplate<SimpleScript> {
             updateClasspath(classpathFromClass<SimpleScript>())
             defaultImports(MyTestAnnotation1::class, MyTestAnnotation2::class)

@@ -65,7 +65,7 @@ class ScriptingHostTest : TestCase() {
     }
 
     @Test
-    fun testValueResult() {
+    fun testValueResult() = expectTestToFailOnK2 {
         val evalScriptWithResult = evalScriptWithResult("42")
         val resVal = evalScriptWithResult as ResultValue.Value
         Assert.assertEquals(42, resVal.value)
@@ -91,7 +91,7 @@ class ScriptingHostTest : TestCase() {
     }
 
     @Test
-    fun testCustomResultField() {
+    fun testCustomResultField() = expectTestToFailOnK2 {
         val resVal = evalScriptWithResult("42") {
             resultField("outcome")
         } as ResultValue.Value
@@ -190,7 +190,7 @@ class ScriptingHostTest : TestCase() {
     }
 
     @Test
-    fun testSimpleImport() {
+    fun testSimpleImport() = expectTestToFailOnK2 {
         val greeting = listOf("Hello from helloWithVal script!", "Hello from imported helloWithVal script!")
         val script = "println(\"Hello from imported \$helloScriptName script!\")"
         val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate> {
@@ -203,7 +203,7 @@ class ScriptingHostTest : TestCase() {
     }
 
     @Test
-    fun testSimpleImportWithImplicitReceiver() {
+    fun testSimpleImportWithImplicitReceiver() = expectTestToFailOnK2 {
         val greeting = listOf("Hello from helloWithVal script!", "Hello from imported helloWithVal script!")
         val script = "println(\"Hello from imported \$helloScriptName script!\")"
         val definition = createJvmScriptDefinitionFromTemplate<SimpleScriptTemplate>(
@@ -224,7 +224,7 @@ class ScriptingHostTest : TestCase() {
     }
 
     @Test
-    fun testProvidedPropertiesNullability() {
+    fun testProvidedPropertiesNullability() = expectTestToFailOnK2 {
         val stringType = KotlinType(String::class)
         val definition = createJvmScriptDefinitionFromTemplate<SimpleScriptTemplate>(
             compilation = {
@@ -273,14 +273,14 @@ class ScriptingHostTest : TestCase() {
     }
 
     @Test
-    fun testDiamondImportWithoutSharing() {
+    fun testDiamondImportWithoutSharing() = expectTestToFailOnK2 {
         val greeting = listOf("Hi from common", "Hi from middle", "Hi from common", "sharedVar == 3")
         val output = doDiamondImportTest()
         Assert.assertEquals(greeting, output)
     }
 
     @Test
-    fun testDiamondImportWithSharing() {
+    fun testDiamondImportWithSharing() = expectTestToFailOnK2 {
         val greeting = listOf("Hi from common", "Hi from middle", "sharedVar == 5")
         val output = doDiamondImportTest(
             ScriptEvaluationConfiguration {
