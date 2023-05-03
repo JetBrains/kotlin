@@ -9,6 +9,8 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.psi.PsiManager
 import org.jetbrains.kotlin.KtInMemoryTextSourceFile
+import org.jetbrains.kotlin.KtSourceFile
+import org.jetbrains.kotlin.fir.lightTree.LightTreeParsingErrorListener
 import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.sourceFiles.LightTreeFile
@@ -110,20 +112,26 @@ fun SourceFileProvider.getKtFilesForSourceFiles(testFiles: Collection<TestFile>,
     }.toMap()
 }
 
-fun SourceFileProvider.getLightTreeKtFileForSourceFile(testFile: TestFile): LightTreeFile {
+fun SourceFileProvider.getLightTreeKtFileForSourceFile(
+    testFile: TestFile,
+    errorListener: (KtSourceFile) -> LightTreeParsingErrorListener?
+): LightTreeFile {
     val shortName = testFile.toLightTreeShortName()
     val sourceFile = KtInMemoryTextSourceFile(shortName, "/$shortName", getContentOfSourceFile(testFile))
     val linesMapping = sourceFile.text.toSourceLinesMapping()
-    val lightTree = LightTree2Fir.buildLightTree(sourceFile.text)
+    val lightTree = LightTree2Fir.buildLightTree(sourceFile.text, errorListener(sourceFile))
     return LightTreeFile(lightTree, sourceFile, linesMapping)
 }
 
 fun TestFile.toLightTreeShortName() = name.substringAfterLast('/').substringAfterLast('\\')
 
-fun SourceFileProvider.getLightTreeFilesForSourceFiles(testFiles: Collection<TestFile>): Map<TestFile, LightTreeFile> {
+fun SourceFileProvider.getLightTreeFilesForSourceFiles(
+    testFiles: Collection<TestFile>,
+    errorListener: (KtSourceFile) -> LightTreeParsingErrorListener?
+): Map<TestFile, LightTreeFile> {
     return testFiles.mapNotNull {
         if (!it.isKtFile) return@mapNotNull null
-        it to getLightTreeKtFileForSourceFile(it)
+        it to getLightTreeKtFileForSourceFile(it, errorListener)
     }.toMap()
 }
 

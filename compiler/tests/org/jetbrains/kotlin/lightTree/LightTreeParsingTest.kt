@@ -33,7 +33,7 @@ class LightTreeParsingTest {
             val (code, mapping) = ByteArrayInputStream(toByteArray()).reader().readSourceFileWithMapping()
             val positionFinder = SequentialPositionFinder(ByteArrayInputStream(toByteArray()).reader())
             val linePositions =
-                LightTree2Fir.buildLightTree(code).getChildrenAsArray()
+                LightTree2Fir.buildLightTree(code, null).getChildrenAsArray()
                     .mapNotNull { it?.startOffset }
                     .map {
                         val nextPos = positionFinder.findNextPosition(it)

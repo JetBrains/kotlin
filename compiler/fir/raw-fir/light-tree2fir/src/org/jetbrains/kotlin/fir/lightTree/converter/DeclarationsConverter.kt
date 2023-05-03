@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.lightTree.converter
 
 import com.intellij.lang.LighterASTNode
-import com.intellij.lang.impl.PsiBuilderImpl
 import com.intellij.psi.TokenType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.*
@@ -19,9 +18,6 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
-import org.jetbrains.kotlin.diagnostics.DiagnosticContext
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.*
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
@@ -40,7 +36,6 @@ import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
-import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
 import org.jetbrains.kotlin.fir.lightTree.fir.*
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.Modifier
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.TypeModifier
@@ -70,21 +65,9 @@ class DeclarationsConverter(
     internal val baseScopeProvider: FirScopeProvider,
     tree: FlyweightCapableTreeStructure<LighterASTNode>,
     context: Context<LighterASTNode> = Context(),
-    private val diagnosticsReporter: DiagnosticReporter? = null,
-    private val diagnosticContext: DiagnosticContext? = null,
 ) : BaseConverter(session, tree, context) {
 
     private val expressionConverter = ExpressionsConverter(session, tree, this, context)
-
-    override fun reportSyntaxError(node: LighterASTNode) {
-        val message = PsiBuilderImpl.getErrorMessage(node)
-        diagnosticsReporter?.reportOn(
-            node.toFirSourceElement(),
-            FirSyntaxErrors.SYNTAX,
-            message ?: "Unspecified",
-            diagnosticContext!!,
-        )
-    }
 
     /**
      * [org.jetbrains.kotlin.parsing.KotlinParsing.parseFile]

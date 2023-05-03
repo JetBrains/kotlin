@@ -7,14 +7,14 @@ package org.jetbrains.kotlin.fir.lightTree
 
 import com.intellij.lang.LighterASTNode
 import com.intellij.lang.PsiBuilderFactory
+import com.intellij.lang.impl.PsiBuilderImpl
+import com.intellij.openapi.util.Ref
+import com.intellij.psi.TokenType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtIoFileSourceFile
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.KtSourceFileLinesMapping
-import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.diagnostics.DiagnosticContext
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.languageVersionSettings
@@ -30,16 +30,44 @@ import java.nio.file.Path
 class LightTree2Fir(
     val session: FirSession,
     private val scopeProvider: FirScopeProvider,
-    private val diagnosticsReporter: DiagnosticReporter? = null
+    private val diagnosticsReporter: DiagnosticReporter? = null,
 ) {
     companion object {
         private val parserDefinition = KotlinParserDefinition()
         private fun makeLexer() = KotlinLexer()
 
-        fun buildLightTree(code: CharSequence): FlyweightCapableTreeStructure<LighterASTNode> {
+        fun buildLightTree(
+            code: CharSequence,
+            errorListener: LightTreeParsingErrorListener?,
+        ): FlyweightCapableTreeStructure<LighterASTNode> {
             val builder = PsiBuilderFactory.getInstance().createBuilder(parserDefinition, makeLexer(), code)
-            return KotlinLightParser.parse(builder)
+            return KotlinLightParser.parse(builder).also {
+                if (errorListener != null) reportErrors(it.root, it, errorListener)
+            }
         }
+
+        private fun reportErrors(
+            node: LighterASTNode,
+            tree: FlyweightCapableTreeStructure<LighterASTNode>,
+            errorListener: LightTreeParsingErrorListener,
+            ref: Ref<Array<LighterASTNode?>> = Ref<Array<LighterASTNode?>>(),
+        ) {
+            tree.getChildren(node, ref)
+            val kidsArray = ref.get() ?: return
+
+            for (kid in kidsArray) {
+                if (kid == null) break
+                val tokenType = kid.tokenType
+                if (tokenType == TokenType.ERROR_ELEMENT) {
+                    val message = PsiBuilderImpl.getErrorMessage(kid)
+                    errorListener.onError(kid.startOffset, kid.endOffset, message)
+                }
+
+                ref.set(null)
+                reportErrors(kid, tree, errorListener, ref)
+            }
+        }
+
     }
 
     fun buildFirFile(path: Path): FirFile {
@@ -57,21 +85,20 @@ class LightTree2Fir(
     fun buildFirFile(
         lightTree: FlyweightCapableTreeStructure<LighterASTNode>,
         sourceFile: KtSourceFile,
-        linesMapping: KtSourceFileLinesMapping
-    ): FirFile =
-        DeclarationsConverter(
-            session, scopeProvider, lightTree, diagnosticsReporter = diagnosticsReporter,
-            diagnosticContext = makeDiagnosticContext(sourceFile.path)
-        ).convertFile(lightTree.root, sourceFile, linesMapping)
+        linesMapping: KtSourceFileLinesMapping,
+    ): FirFile {
+        return DeclarationsConverter(session, scopeProvider, lightTree)
+            .convertFile(lightTree.root, sourceFile, linesMapping)
+    }
 
-    fun buildFirFile(code: CharSequence, sourceFile: KtSourceFile, linesMapping: KtSourceFileLinesMapping): FirFile =
-        buildFirFile(buildLightTree(code), sourceFile, linesMapping)
+    fun buildFirFile(code: CharSequence, sourceFile: KtSourceFile, linesMapping: KtSourceFileLinesMapping): FirFile {
+        val errorListener = makeErrorListener(sourceFile)
+        val lightTree = buildLightTree(code, errorListener)
+        return buildFirFile(lightTree, sourceFile, linesMapping)
+    }
 
-    private fun makeDiagnosticContext(path: String?) =
-        if (diagnosticsReporter == null) null else object : DiagnosticContext {
-            override val containingFilePath = path
-            override val languageVersionSettings: LanguageVersionSettings get() = session.languageVersionSettings
-            override fun isDiagnosticSuppressed(diagnostic: KtDiagnostic): Boolean = false
-        }
+    private fun makeErrorListener(sourceFile: KtSourceFile): LightTreeParsingErrorListener? {
+        val diagnosticsReporter = diagnosticsReporter ?: return null
+        return diagnosticsReporter.toKotlinParsingErrorListener(sourceFile, session.languageVersionSettings)
+    }
 }
-

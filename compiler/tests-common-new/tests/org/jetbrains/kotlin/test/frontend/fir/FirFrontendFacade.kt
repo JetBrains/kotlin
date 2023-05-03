@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.checkers.registerExtendedCommonCheckers
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
+import org.jetbrains.kotlin.fir.lightTree.toKotlinParsingErrorListener
 import org.jetbrains.kotlin.fir.session.FirCommonSessionFactory
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
 import org.jetbrains.kotlin.fir.session.FirNativeSessionFactory
@@ -283,7 +284,14 @@ open class FirFrontendFacade(
         val parser = module.directives.singleValue(FirDiagnosticsDirectives.FIR_PARSER)
 
         val (ktFiles, lightTreeFiles) = when (parser) {
-            FirParser.LightTree -> emptyList<KtFile>() to testServices.sourceFileProvider.getLightTreeFilesForSourceFiles(module.files).values
+            FirParser.LightTree -> {
+                emptyList<KtFile>() to testServices.sourceFileProvider.getLightTreeFilesForSourceFiles(module.files) {
+                    testServices.lightTreeSyntaxDiagnosticsReporterHolder?.reporter?.toKotlinParsingErrorListener(
+                        it,
+                        module.languageVersionSettings
+                    )
+                }.values
+            }
             FirParser.Psi -> testServices.sourceFileProvider.getKtFilesForSourceFiles(module.files, project).values to emptyList()
         }
 
