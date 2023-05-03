@@ -15,6 +15,7 @@ import java.io.ObjectInputStream
 import java.nio.file.Path
 import kotlin.io.path.*
 import kotlin.test.assertTrue
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 @DisplayName("Build reports")
 @JvmGradlePluginTests
@@ -54,28 +55,67 @@ class BuildReportsIT : KGPBaseTest() {
     @DisplayName("Build metrics produces valid report")
     @GradleTest
     fun testBuildMetricsSmokeTest(gradleVersion: GradleVersion) {
-        project("simpleProject", gradleVersion) {
-            build("assemble") {
+        testBuildReportInFile("simpleProject", "assemble", gradleVersion)
+    }
+
+    @DisplayName("Build metrics produces valid report for mpp-jvm")
+    @GradleTest
+    fun testBuildMetricsForMppJvm(gradleVersion: GradleVersion) {
+        testBuildReportInFile("mppJvmWithJava", "assemble", gradleVersion)
+    }
+
+    @DisplayName("Build metrics produces valid report for mpp-js")
+    @GradleTest
+    fun testBuildMetricsForMppJs(gradleVersion: GradleVersion) {
+        testBuildReportInFile("kotlin-js-package-module-name", "assemble", gradleVersion)
+    }
+
+    @DisplayName("Build metrics produces valid report for JS project")
+    @GradleTest
+    fun testBuildMetricsForJsProject(gradleVersion: GradleVersion) {
+        testBuildReportInFile("kotlin-js-plugin-project", "compileKotlinJs", gradleVersion,
+                              languageVersion = KotlinVersion.KOTLIN_1_7.version)
+    }
+
+    private fun testBuildReportInFile(project: String, task: String, gradleVersion: GradleVersion,
+                                      languageVersion: String = KotlinVersion.KOTLIN_2_0.version) {
+        project(project, gradleVersion) {
+            build(task) {
                 assertBuildReportPathIsPrinted()
             }
             //Should contains build metrics for all compile kotlin tasks
-            assertFileContains(
-                reportFile,
-                "Time metrics:",
-                "Run compilation:",
-                "Incremental compilation in daemon:",
-                "Size metrics:",
-                "Total size of the cache directory:",
-                "Total compiler iteration:",
-                "ABI snapshot size:",
-                //for non-incremental builds
-                "Build attributes:",
-                "REBUILD_REASON:",
-                //gc metrics
-                "GC count:",
-                "GC time:",
-            )
+            validateBuildReportFile(KotlinVersion.DEFAULT.version)
         }
+
+        project(project, gradleVersion, buildOptions = defaultBuildOptions.copy(languageVersion = languageVersion)) {
+            build(task, buildOptions = buildOptions.copy(languageVersion = languageVersion)) {
+                assertBuildReportPathIsPrinted()
+            }
+            //Should contains build metrics for all compile kotlin tasks
+            validateBuildReportFile(languageVersion)
+        }
+    }
+
+    private fun TestProject.validateBuildReportFile(kotlinLanguageVersion: String) {
+        assertFileContains(
+            reportFile,
+            "Time metrics:",
+            "Run compilation:",
+            "Incremental compilation in daemon:",
+            "Size metrics:",
+            "Total size of the cache directory:",
+            "Total compiler iteration:",
+            "ABI snapshot size:",
+            //for non-incremental builds
+            "Build attributes:",
+            "REBUILD_REASON:",
+            //gc metrics
+            "GC count:",
+            "GC time:",
+            //task info
+            "Task info:",
+            "Kotlin language version: $kotlinLanguageVersion",
+        )
     }
 
     @DisplayName("Compiler build metrics report is produced")
