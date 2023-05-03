@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.diagnostics
 
+import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.*
 
@@ -24,8 +25,7 @@ internal fun renderReportedDiagnostic(
 
         ERROR -> logger.error("e: ${diagnostic.render(isVerbose)}\n")
 
-        FATAL ->
-            error("Internal error: FATAL diagnostics throw an exception immediately in KotlinToolingDiagnosticsCollector")
+        FATAL -> throw InvalidUserCodeException(diagnostic.render(isVerbose))
     }
 }
 
