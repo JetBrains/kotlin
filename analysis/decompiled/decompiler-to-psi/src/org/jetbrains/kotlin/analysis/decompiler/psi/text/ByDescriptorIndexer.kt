@@ -6,21 +6,18 @@
 package org.jetbrains.kotlin.analysis.decompiler.psi.text
 
 import com.intellij.openapi.diagnostic.Logger
-import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtDecompiledFile
 import org.jetbrains.kotlin.analysis.decompiler.stub.COMPILED_DEFAULT_INITIALIZER
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
-import org.jetbrains.kotlin.lexer.KtTokens
-import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasSuspendModifier
 import org.jetbrains.kotlin.psi.psiUtil.unwrapNullability
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.DescriptorUtils
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.AbbreviatedType
 import org.jetbrains.kotlin.types.KotlinType
@@ -101,7 +98,11 @@ object ByDescriptorIndexer {
 
     private fun returnTypesMatch(declaration: KtCallableDeclaration, descriptor: CallableDescriptor): Boolean {
         if (declaration is KtConstructor<*>) return true
-        return areTypesTheSame(descriptor.returnType!!, declaration.typeReference!!)
+        //typeReference can be null when used in IDE in source -> class file navigation 
+        //for functions without explicit return type specified.
+        //In that case return types are not compared
+        val typeReference = declaration.typeReference ?: return true
+        return areTypesTheSame(descriptor.returnType!!, typeReference)
     }
 
     private fun typeParametersMatch(declaration: KtCallableDeclaration, descriptor: CallableDescriptor): Boolean {
@@ -171,19 +172,6 @@ object ByDescriptorIndexer {
             return declarationDescriptor.name.asString() == qualifiedName
         }
         return declarationDescriptor.fqNameSafe.asString() == qualifiedName
-    }
-
-    private fun DeclarationDescriptor.toStringKey(): String {
-        return descriptorRendererForKeys.render(this)
-    }
-
-    private val descriptorRendererForKeys = DescriptorRenderer.withOptions {
-        defaultDecompilerRendererOptions()
-        withDefinedIn = true
-        renderUnabbreviatedType = false
-        defaultParameterValueRenderer = null
-        includePropertyConstant = true
-        propertyConstantRenderer = { _ -> COMPILED_DEFAULT_INITIALIZER }
     }
 
     private val LOG = Logger.getInstance(this::class.java)
