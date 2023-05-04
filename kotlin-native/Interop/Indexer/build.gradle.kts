@@ -148,7 +148,7 @@ sourceSets {
 }
 
 dependencies {
-    api(project(":kotlin-stdlib"))
+    api("org.jetbrains.kotlin:kotlin-stdlib:${project.bootstrapKotlinVersion}")
     api(project(":kotlin-native:Interop:Runtime"))
     api(project(":kotlin-native:utilities:basic-utils"))
 

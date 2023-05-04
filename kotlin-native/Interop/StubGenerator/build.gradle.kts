@@ -28,11 +28,12 @@ application {
 }
 
 dependencies {
+    api("org.jetbrains.kotlin:kotlin-stdlib:${project.bootstrapKotlinVersion}")
+
     implementation(project(":kotlin-native:Interop:Indexer"))
     implementation(project(":kotlin-native:utilities:basic-utils"))
     implementation(project(path = ":kotlin-native:endorsedLibraries:kotlinx.cli", configuration = "jvmRuntimeElements"))
 
-    api(project(":kotlin-stdlib"))
     implementation(project(":kotlinx-metadata-klib"))
     implementation(project(":native:kotlin-native-utils"))
     implementation(project(":compiler:util"))

@@ -20,6 +20,6 @@ tasks.named<KotlinCompile>("compileKotlin") {
 }
 
 dependencies {
-    api(project(":kotlin-stdlib"))
+    api("org.jetbrains.kotlin:kotlin-stdlib:${project.bootstrapKotlinVersion}")
     implementation(project(":compiler:util"))
 }
