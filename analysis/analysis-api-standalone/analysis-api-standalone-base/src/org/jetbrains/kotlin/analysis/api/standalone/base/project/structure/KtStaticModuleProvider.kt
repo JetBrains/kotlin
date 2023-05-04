@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.standalone.base.project.structure
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiFileSystemItem
 import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.psi.psiUtil.contains
 import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerializerProtocol
@@ -14,10 +15,7 @@ import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 class KtStaticModuleProvider(
     private val builtinsModule: KtBuiltinsModule,
     private val projectStructure: KtModuleProjectStructure,
-) : ProjectStructureProvider() {
-    val allModules: List<KtModule>
-        get() = projectStructure.allKtModules()
-
+) : KtStaticProjectStructureProvider() {
     @OptIn(KtModuleStructureInternals::class)
     override fun getModule(element: PsiElement, contextualModule: KtModule?): KtModule {
         val containingFileAsPsiFile = element.containingFile
@@ -38,7 +36,11 @@ class KtStaticModuleProvider(
             ?: throw KotlinExceptionWithAttachments("Cannot find KtModule; see the attachment for more details.")
                 .withAttachment(
                     containingFileAsVirtualFile.path,
-                    allModules.joinToString(separator = System.lineSeparator()) { it.asDebugString() }
+                    allKtModules.joinToString(separator = System.lineSeparator()) { it.asDebugString() }
                 )
     }
+
+    override val allKtModules: List<KtModule> = projectStructure.allKtModules()
+
+    override val allSourceFiles: List<PsiFileSystemItem> = projectStructure.allSourceFiles()
 }

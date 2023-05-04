@@ -16,7 +16,6 @@ import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
 import com.intellij.util.io.URLUtil
 import org.jetbrains.kotlin.analysis.api.impl.base.util.LibraryUtils
-import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analysis.project.structure.builder.*
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.cli.jvm.compiler.TopDownAnalyzerFacadeForJVM
@@ -44,6 +43,7 @@ import org.jetbrains.kotlin.resolve.konan.platform.NativePlatformAnalyzerService
 import java.io.IOException
 import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
+import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtStaticProjectStructureProvider
 
 internal fun TargetPlatform.getAnalyzerServices(): PlatformDependentAnalyzerServices {
     return when {
@@ -154,7 +154,7 @@ internal fun buildKtModuleProviderByCompilerConfiguration(
     compilerConfig: CompilerConfiguration,
     project: Project,
     ktFiles: List<KtFile>,
-): ProjectStructureProvider = buildProjectStructureProvider {
+): KtStaticProjectStructureProvider = buildProjectStructureProvider {
     val (scriptFiles, ordinaryFiles) = ktFiles.partition { it.isScript() }
     val platform = JvmPlatforms.defaultJvmPlatform
 

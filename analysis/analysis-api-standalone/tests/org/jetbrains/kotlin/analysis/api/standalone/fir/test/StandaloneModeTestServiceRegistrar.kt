@@ -13,9 +13,7 @@ import org.jetbrains.kotlin.analysis.decompiled.light.classes.ClsJavaStubByVirtu
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.JvmFirDeserializedSymbolProviderFactory
 import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
-import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProviderFactory
 import org.jetbrains.kotlin.analysis.providers.KotlinPsiDeclarationProviderFactory
-import org.jetbrains.kotlin.analysis.providers.impl.KotlinStaticDeclarationProviderFactory
 import org.jetbrains.kotlin.analysis.providers.impl.KotlinStaticPsiDeclarationProviderFactory
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
@@ -29,9 +27,9 @@ public object StandaloneModeTestServiceRegistrar : AnalysisApiTestServiceRegistr
     }
 
     override fun registerProjectModelServices(project: MockProject, testServices: TestServices) {
-        val projectStructureProvider = project.getService(ProjectStructureProvider::class.java)
+        val projectStructureProvider = ProjectStructureProvider.getInstance(project)
         val binaryModules =
-            (projectStructureProvider as? KtStaticModuleProvider)?.allModules?.filterIsInstance<KtBinaryModule>()
+            (projectStructureProvider as? KtStaticModuleProvider)?.allKtModules?.filterIsInstance<KtBinaryModule>()
                 ?: emptyList()
         val projectEnvironment = testServices.environmentManager.getProjectEnvironment()
         project.apply {

@@ -7,12 +7,12 @@ package org.jetbrains.kotlin.analysis.project.structure.builder
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
-import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
 import org.jetbrains.kotlin.analysis.project.structure.impl.KtModuleProviderImpl
 import org.jetbrains.kotlin.platform.TargetPlatform
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
+import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtStaticProjectStructureProvider
 
 @KtModuleBuilderDsl
 public class KtModuleProviderBuilder {
@@ -25,7 +25,7 @@ public class KtModuleProviderBuilder {
     public lateinit var platform: TargetPlatform
     public lateinit var project: Project
 
-    public fun build(): ProjectStructureProvider {
+    public fun build(): KtStaticProjectStructureProvider {
         return KtModuleProviderImpl(
             platform,
             project,
@@ -35,7 +35,7 @@ public class KtModuleProviderBuilder {
 }
 
 @OptIn(ExperimentalContracts::class)
-public inline fun buildProjectStructureProvider(init: KtModuleProviderBuilder.() -> Unit): ProjectStructureProvider {
+public inline fun buildProjectStructureProvider(init: KtModuleProviderBuilder.() -> Unit): KtStaticProjectStructureProvider {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
