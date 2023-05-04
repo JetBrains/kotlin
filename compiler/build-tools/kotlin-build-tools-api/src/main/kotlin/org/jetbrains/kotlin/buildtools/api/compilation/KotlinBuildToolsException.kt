@@ -7,5 +7,8 @@ package org.jetbrains.kotlin.buildtools.api.compilation
 
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 
+/**
+ * An exception class that represents an error that occurred while using the Kotlin build tools API.
+ */
 @ExperimentalBuildToolsApi
 open class KotlinBuildToolsException(message: String) : Exception(message)

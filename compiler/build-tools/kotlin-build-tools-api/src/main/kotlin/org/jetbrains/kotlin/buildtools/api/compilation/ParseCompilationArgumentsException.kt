@@ -7,5 +7,8 @@ package org.jetbrains.kotlin.buildtools.api.compilation
 
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 
+/**
+ * An exception that indicates an error occurred while parsing compilation arguments.
+ */
 @ExperimentalBuildToolsApi
 class ParseCompilationArgumentsException(message: String) : KotlinBuildToolsException(message)
