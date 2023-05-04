@@ -14,8 +14,10 @@ import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSessionProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.references.HLApiReferenceProviderService
 import org.jetbrains.kotlin.analysis.api.session.KtAnalysisSessionProvider
+import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.KtStaticModuleDependentsProvider
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.ClsJavaStubByVirtualFileCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.FirSealedClassInheritorsProcessorFactory
+import org.jetbrains.kotlin.analysis.project.structure.KotlinModuleDependentsProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModuleScopeProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModuleScopeProviderImpl
 import org.jetbrains.kotlin.analysis.project.structure.ProjectStructureProvider
@@ -77,6 +79,7 @@ public fun configureApplicationEnvironment(app: MockApplication) {
  *   * [FirSealedClassInheritorsProcessorFactory]
  *   * [KtModuleScopeProvider]
  *   * [ProjectStructureProvider]
+ *   * [KotlinModuleDependentsProvider]
  *   * [KotlinDeclarationProviderFactory]
  *   * [KotlinPackageProviderFactory]
  *   * [PackagePartProviderFactory]
@@ -158,14 +161,16 @@ internal fun configureProjectEnvironment(
         KtModuleScopeProviderImpl()
     )
 
+    val projectStructureProvider = buildKtModuleProviderByCompilerConfiguration(compilerConfig, project, ktFiles)
     project.registerService(
         ProjectStructureProvider::class.java,
-        buildKtModuleProviderByCompilerConfiguration(
-            compilerConfig,
-            project,
-            ktFiles,
-        )
+        projectStructureProvider,
     )
+    project.registerService(
+        KotlinModuleDependentsProvider::class.java,
+        KtStaticModuleDependentsProvider(projectStructureProvider.allKtModules),
+    )
+
     project.registerService(
         KotlinDeclarationProviderFactory::class.java,
         KotlinStaticDeclarationProviderFactory(project, ktFiles)
