@@ -233,6 +233,12 @@ public class FirIdeNormalAnalysisSourceModuleHLExpressionTypeTestGenerated exten
     }
 
     @Test
+    @TestMetadata("underscoreTypeArgument.kt")
+    public void testUnderscoreTypeArgument() throws Exception {
+        runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/underscoreTypeArgument.kt");
+    }
+
+    @Test
     @TestMetadata("unresolvedSuper_multipleSuperTypes.kt")
     public void testUnresolvedSuper_multipleSuperTypes() throws Exception {
         runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/unresolvedSuper_multipleSuperTypes.kt");
