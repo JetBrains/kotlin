@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.JvmStubBasedFirDeserializedSymbolProvider
 import org.jetbrains.kotlin.analysis.utils.collections.buildSmartList
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -14,12 +15,14 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
-import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.utils.SmartSet
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 internal class LLFirModuleWithDependenciesSymbolProvider(
     session: FirSession,
@@ -33,20 +36,29 @@ internal class LLFirModuleWithDependenciesSymbolProvider(
     fun getClassLikeSymbolByFqNameWithoutDependencies(classId: ClassId): FirClassLikeSymbol<*>? =
         providers.firstNotNullOfOrNull { it.getClassLikeSymbolByClassId(classId) }
 
+    fun getClassLikeSymbolByFqNameWithoutDependencies(
+        classLikeDeclaration: KtClassLikeDeclaration,
+        classId: ClassId
+    ): FirClassLikeSymbol<*>? {
+        return providers.filterIsInstance(JvmStubBasedFirDeserializedSymbolProvider::class.java)
+            .firstNotNullOfOrNull { it.getClassLikeSymbolByClassId(classLikeDeclaration, classId) }
+    }
+
     @FirSymbolProviderInternals
     override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
-        getTopLevelCallableSymbolsToWithoutDependencies(destination, packageFqName, name)
+        providers.forEach { it.getTopLevelCallableSymbolsTo(destination, packageFqName, name) }
         dependencyProvider.getTopLevelCallableSymbolsTo(destination, packageFqName, name)
     }
 
     @FirSymbolProviderInternals
-    fun getTopLevelCallableSymbolsWithoutDependencies(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> {
-        return buildList { getTopLevelCallableSymbolsToWithoutDependencies(this, packageFqName, name) }
-    }
-
-    @FirSymbolProviderInternals
-    fun getTopLevelCallableSymbolsToWithoutDependencies(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
-        providers.forEach { it.getTopLevelCallableSymbolsTo(destination, packageFqName, name) }
+    fun getTopLevelDeserializedCallableSymbolsToWithoutDependencies(
+        destination: MutableList<FirCallableSymbol<*>>,
+        callableDeclaration: KtCallableDeclaration,
+        packageFqName: FqName,
+        shortName: Name
+    ) {
+        providers.filterIsInstance(JvmStubBasedFirDeserializedSymbolProvider::class.java)
+            .forEach { destination.addIfNotNull(it.getTopLevelCallableSymbol(callableDeclaration, packageFqName, shortName)) }
     }
 
     @FirSymbolProviderInternals

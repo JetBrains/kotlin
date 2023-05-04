@@ -45,7 +45,8 @@ internal class StubBasedFirDeserializationContext(
     val containerSource: DeserializedContainerSource?,
     val outerClassSymbol: FirRegularClassSymbol?,
     val outerTypeParameters: List<FirTypeParameterSymbol>,
-    private val initialOrigin: FirDeclarationOrigin
+    private val initialOrigin: FirDeclarationOrigin,
+    val classLikeDeclaration: KtClassLikeDeclaration? = null
 ) {
     val session: FirSession = moduleData.session
 
