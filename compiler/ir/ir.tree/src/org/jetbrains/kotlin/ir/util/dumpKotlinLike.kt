@@ -66,6 +66,7 @@ class KotlinLikeDumpOptions(
     val printFakeOverridesStrategy: FakeOverridesStrategy = FakeOverridesStrategy.ALL,
     val bodyPrintingStrategy: BodyPrintingStrategy = BodyPrintingStrategy.PRINT_BODIES,
     val printElseAsTrue: Boolean = false,
+    val stableOrder: Boolean = false,
     /*
     TODO add more options:
      always print visibility?
@@ -166,6 +167,22 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         typeArg.printTypeArgumentWithNoIndent()
     }
 
+    @JvmName("orderedDeclarations") // Prevent JVM signature clash
+    private fun List<IrDeclaration>.ordered() = if (options.stableOrder) stableOrdered() else this
+
+    @JvmName("orderedTypes") // Prevent JVM signature clash
+    private fun List<IrType>.ordered(): List<IrType> {
+        if (!options.stableOrder) return this
+
+        fun isNonInterfaceType(type: IrType) = type.classifierOrNull?.let {
+            it !is IrClassSymbol || !it.owner.isInterface
+        } ?: true
+
+        val (classTypes, interfaceTypes) = partition(::isNonInterfaceType)
+
+        return classTypes.sortedBy(IrType::render) + interfaceTypes.sortedBy(IrType::render)
+    }
+
     override fun visitElement(element: IrElement, data: IrDeclaration?) {
         val e = "/* ERROR: unsupported element type: " + element.javaClass.simpleName + " */"
         if (element is IrExpression) {
@@ -195,7 +212,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         }
         if (!p.isEmpty) p.printlnWithNoIndent()
 
-        declaration.declarations.forEach { it.accept(this, null) }
+        declaration.declarations.ordered().forEach { it.accept(this, null) }
 
         if (options.printRegionsPerFile) p.println("//endregion")
     }
@@ -240,7 +257,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         // TODO no test
         if (declaration.superTypes.isNotEmpty()) {
             var first = true
-            for (type in declaration.superTypes) {
+            for (type in declaration.superTypes.ordered()) {
                 if (type.isAny()) continue
 
                 if (!first) {
@@ -260,7 +277,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
         p.printlnWithNoIndent(" {")
         p.pushIndent()
 
-        declaration.declarations.forEach { it.accept(this, declaration) }
+        declaration.declarations.ordered().forEach { it.accept(this, declaration) }
 
         p.popIndent()
         p.println("}")
@@ -431,7 +448,7 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
 
     private fun IrTypeParameter.printWhereClauseTypesWithNoIndent(first: Boolean): Boolean {
         var myFirst = first
-        superTypes.forEach { type ->
+        superTypes.ordered().forEach { type ->
             if (!myFirst) {
                 p.printWithNoIndent(", ")
             } else {
