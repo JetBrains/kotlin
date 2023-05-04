@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.asJava.elements.KtLightMethod
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
@@ -34,8 +33,6 @@ import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightSimpleMethod
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.GranularModifiersBox
 import org.jetbrains.kotlin.light.classes.symbol.modifierLists.SymbolLightClassModifierList
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.DataClassResolver
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOriginKind
@@ -175,16 +172,6 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
             )
         }
 
-        fun actuallyComesFromAny(functionSymbol: KtFunctionSymbol): Boolean {
-            require(functionSymbol.name.isFromAny) {
-                "This function's name should one of three Any's function names, but it was ${functionSymbol.name}"
-            }
-
-            if (functionSymbol.callableIdIfNonLocal?.classId == StandardClassIds.Any) return true
-
-            return functionSymbol.getAllOverriddenSymbols().any { it.callableIdIfNonLocal?.classId == StandardClassIds.Any }
-        }
-
         // NB: componentN and copy are added during RAW FIR, but synthetic members from `Any` are not.
         // That's why we use declared scope for 'component*' and 'copy', and member scope for 'equals/hashCode/toString'
         val componentAndCopyFunctions = classOrObjectSymbol.getDeclaredMemberScope()
@@ -196,23 +183,18 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
 
         // Compiler will generate 'equals/hashCode/toString' for data class if they are not final.
         // We want to mimic that.
-        val nonFinalFunctionsFromAny = classOrObjectSymbol.getMemberScope()
+        val generatedFunctionsFromAny = classOrObjectSymbol.getMemberScope()
             .getCallableSymbols(EQUALS, HASHCODE_NAME, TO_STRING)
             .filterIsInstance<KtFunctionSymbol>()
-            .filterNot {
-                it.modality == Modality.FINAL || (it.getContainingSymbol() as? KtNamedClassOrObjectSymbol)?.modality == Modality.FINAL
-            }.filter { actuallyComesFromAny(it) }
+            .filter { it.origin == KtSymbolOrigin.SOURCE_MEMBER_GENERATED }
 
-        val functionsFromAnyByName = nonFinalFunctionsFromAny.associateBy { it.name }
+        val functionsFromAnyByName = generatedFunctionsFromAny.associateBy { it.name }
 
         // NB: functions from `Any` are not in an alphabetic order.
         functionsFromAnyByName[TO_STRING]?.let { createMethodFromAny(it) }
         functionsFromAnyByName[HASHCODE_NAME]?.let { createMethodFromAny(it) }
         functionsFromAnyByName[EQUALS]?.let { createMethodFromAny(it) }
     }
-
-    private val Name.isFromAny: Boolean
-        get() = this == EQUALS || this == HASHCODE_NAME || this == TO_STRING
 
     context(KtAnalysisSession)
     private fun addDelegatesToInterfaceMethods(result: MutableList<KtLightMethod>, classOrObjectSymbol: KtNamedClassOrObjectSymbol) {

@@ -20,10 +20,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecific
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
 import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
 import org.jetbrains.kotlin.fir.containingClassForLocalAttr
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
@@ -53,7 +50,7 @@ internal tailrec fun FirDeclaration.ktSymbolOrigin(): KtSymbolOrigin = when (ori
     FirDeclarationOrigin.Source -> {
         when (source?.kind) {
             KtFakeSourceElementKind.ImplicitConstructor,
-            KtFakeSourceElementKind.DataClassGeneratedMembers,
+            KtFakeSourceElementKind.DataClassGeneratedMembers, /* Valid for copy() / componentX(), should we change it? */
             KtFakeSourceElementKind.EnumGeneratedDeclaration,
             KtFakeSourceElementKind.ItLambdaParameter -> KtSymbolOrigin.SOURCE_MEMBER_GENERATED
 
@@ -69,9 +66,10 @@ internal tailrec fun FirDeclaration.ktSymbolOrigin(): KtSymbolOrigin = when (ori
     FirDeclarationOrigin.IntersectionOverride -> KtSymbolOrigin.INTERSECTION_OVERRIDE
     FirDeclarationOrigin.Delegated -> KtSymbolOrigin.DELEGATED
     FirDeclarationOrigin.Synthetic -> {
-        when (this) {
-            is FirSyntheticProperty,
-            is FirSyntheticPropertyAccessor -> KtSymbolOrigin.JAVA_SYNTHETIC_PROPERTY
+        when {
+            source?.kind == KtFakeSourceElementKind.DataClassGeneratedMembers -> KtSymbolOrigin.SOURCE_MEMBER_GENERATED
+            this is FirValueParameter && this.containingFunctionSymbol.origin == FirDeclarationOrigin.Synthetic -> KtSymbolOrigin.SOURCE_MEMBER_GENERATED
+            this is FirSyntheticProperty || this is FirSyntheticPropertyAccessor -> KtSymbolOrigin.JAVA_SYNTHETIC_PROPERTY
 
             else -> buildErrorWithAttachment("Invalid FirDeclarationOrigin ${origin::class.simpleName}") {
                 withFirEntry("firToGetOrigin", this@ktSymbolOrigin)

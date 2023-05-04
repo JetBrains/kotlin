@@ -583,7 +583,7 @@ KtFunctionSymbol:
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/Any.equals
+  callableIdIfNonLocal: /Abc.equals
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -598,7 +598,7 @@ KtFunctionSymbol:
   isSuspend: false
   modality: OPEN
   name: equals
-  origin: LIBRARY
+  origin: SOURCE_MEMBER_GENERATED
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
@@ -619,7 +619,7 @@ KtFunctionSymbol:
       isNoinline: false
       isVararg: false
       name: other
-      origin: LIBRARY
+      origin: SOURCE_MEMBER_GENERATED
       receiverParameter: null
       returnType: KtUsualClassType:
         annotationsList: []
@@ -627,20 +627,20 @@ KtFunctionSymbol:
         type: kotlin/Any?
       symbolKind: LOCAL
       typeParameters: []
-      getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+      getContainingModule: KtSourceModule "Sources of main"
       deprecationStatus: null
   ]
   visibility: Public
   getDispatchReceiver(): KtUsualClassType:
     annotationsList: []
     ownTypeArguments: []
-    type: kotlin/Any
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+    type: Abc
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/Any.hashCode
+  callableIdIfNonLocal: /Abc.hashCode
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -655,7 +655,7 @@ KtFunctionSymbol:
   isSuspend: false
   modality: OPEN
   name: hashCode
-  origin: LIBRARY
+  origin: SOURCE_MEMBER_GENERATED
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
@@ -668,13 +668,13 @@ KtFunctionSymbol:
   getDispatchReceiver(): KtUsualClassType:
     annotationsList: []
     ownTypeArguments: []
-    type: kotlin/Any
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+    type: Abc
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
 KtFunctionSymbol:
   annotationsList: []
-  callableIdIfNonLocal: kotlin/Any.toString
+  callableIdIfNonLocal: /Abc.toString
   contextReceivers: []
   contractEffects: []
   hasStableParameterNames: true
@@ -689,7 +689,7 @@ KtFunctionSymbol:
   isSuspend: false
   modality: OPEN
   name: toString
-  origin: LIBRARY
+  origin: SOURCE_MEMBER_GENERATED
   receiverParameter: null
   returnType: KtUsualClassType:
     annotationsList: []
@@ -702,8 +702,8 @@ KtFunctionSymbol:
   getDispatchReceiver(): KtUsualClassType:
     annotationsList: []
     ownTypeArguments: []
-    type: kotlin/Any
-  getContainingModule: KtBinaryModule "Builtins for JVM (1.8)"
+    type: Abc
+  getContainingModule: KtSourceModule "Sources of main"
   deprecationStatus: null
 
 KtConstructorSymbol:

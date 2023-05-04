@@ -10,7 +10,7 @@ KtSuccessCallInfo:
       signature = KtFunctionLikeSignature:
         receiverType = null
         returnType = kotlin.Boolean
-        symbol = kotlin/Any.equals(<dispatch receiver>: kotlin.Any, other: kotlin.Any?): kotlin.Boolean
+        symbol = /D.equals(<dispatch receiver>: D, other: kotlin.Any?): kotlin.Boolean
         valueParameters = [
           KtVariableLikeSignature:
             name = other
@@ -19,7 +19,7 @@ KtSuccessCallInfo:
             symbol = other: kotlin.Any?
             callableIdIfNonLocal = null
         ]
-        callableIdIfNonLocal = kotlin/Any.equals
+        callableIdIfNonLocal = /D.equals
     typeArgumentsMapping = {}
     argumentMapping = {
       d2 -> (KtVariableLikeSignature:
