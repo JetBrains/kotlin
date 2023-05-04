@@ -36,7 +36,6 @@ class AppleFrameworkIT : BaseGradleIT() {
     @Test
     fun `assemble AppleFrameworkForXcode tasks for IosArm64`() {
         with(Project("sharedAppleFramework")) {
-            val currentGradleVersion = chooseWrapperVersionOrFinishTest()
             val options: BuildOptions = defaultBuildOptions().copy(
                 customEnvironmentVariables = mapOf(
                     "CONFIGURATION" to "debug",
@@ -45,10 +44,6 @@ class AppleFrameworkIT : BaseGradleIT() {
                     "TARGET_BUILD_DIR" to "no use",
                     "FRAMEWORKS_FOLDER_PATH" to "no use"
                 ),
-            ).suppressDeprecationWarningsSinceGradleVersion(
-                TestVersions.Gradle.G_7_4,
-                currentGradleVersion,
-                "Workaround for KT-57483"
             )
             build("assembleDebugAppleFrameworkForXcodeIosArm64", options = options) {
                 assertSuccessful()
@@ -69,7 +64,6 @@ class AppleFrameworkIT : BaseGradleIT() {
     @Test
     fun `assemble fat AppleFrameworkForXcode tasks for Arm64 and X64 simulators`() {
         with(Project("sharedAppleFramework")) {
-            val currentGradleVersion = chooseWrapperVersionOrFinishTest()
             val options: BuildOptions = defaultBuildOptions().copy(
                 customEnvironmentVariables = mapOf(
                     "CONFIGURATION" to "Release",
@@ -78,10 +72,6 @@ class AppleFrameworkIT : BaseGradleIT() {
                     "TARGET_BUILD_DIR" to "no use",
                     "FRAMEWORKS_FOLDER_PATH" to "no use"
                 ),
-            ).suppressDeprecationWarningsSinceGradleVersion(
-                TestVersions.Gradle.G_7_4,
-                currentGradleVersion,
-                "Workaround for KT-57483"
             )
             build("assembleReleaseAppleFrameworkForXcode", options = options) {
                 assertSuccessful()
@@ -97,7 +87,6 @@ class AppleFrameworkIT : BaseGradleIT() {
     @Test
     fun `check that macOS framework has symlinks`() {
         with(Project("sharedAppleFramework")) {
-            val currentGradleVersion = chooseWrapperVersionOrFinishTest()
             val options: BuildOptions = defaultBuildOptions().copy(
                 customEnvironmentVariables = mapOf(
                     "CONFIGURATION" to "debug",
@@ -107,10 +96,6 @@ class AppleFrameworkIT : BaseGradleIT() {
                     "TARGET_BUILD_DIR" to workingDir.absolutePath,
                     "FRAMEWORKS_FOLDER_PATH" to "${projectName}/build/xcode-derived"
                 )
-            ).suppressDeprecationWarningsSinceGradleVersion(
-                TestVersions.Gradle.G_7_4,
-                currentGradleVersion,
-                "Workaround for KT-57483"
             )
             build(":shared:embedAndSignAppleFrameworkForXcode", options = options) {
                 assertSuccessful()
@@ -211,7 +196,6 @@ class AppleFrameworkIT : BaseGradleIT() {
     @Test
     fun `check that static framework for Arm64 is built but is not embedded`() {
         with(Project("sharedAppleFramework")) {
-            val currentGradleVersion = chooseWrapperVersionOrFinishTest()
             val options: BuildOptions = defaultBuildOptions().copy(
                 customEnvironmentVariables = mapOf(
                     "CONFIGURATION" to "debug",
@@ -220,10 +204,6 @@ class AppleFrameworkIT : BaseGradleIT() {
                     "TARGET_BUILD_DIR" to "no use",
                     "FRAMEWORKS_FOLDER_PATH" to "no use"
                 ),
-            ).suppressDeprecationWarningsSinceGradleVersion(
-                TestVersions.Gradle.G_7_4,
-                currentGradleVersion,
-                "Workaround for KT-57483"
             )
             setupWorkingDir()
             projectDir.resolve("shared/build.gradle.kts").modify {
