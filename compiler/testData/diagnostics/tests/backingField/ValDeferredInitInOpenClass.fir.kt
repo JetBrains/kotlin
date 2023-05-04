@@ -11,7 +11,7 @@ open class Foo {
                                                      val a0: Int
                <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val e0: Int<!>
                                                      val c0: Int = 1
-                                                open val b0: Int
+                                                <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>open val b0: Int<!>
           <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>open val f0: Int<!>
                                                 open val d0: Int = 1
 
@@ -19,7 +19,7 @@ open class Foo {
                                             val a1: Int; get() = field
                      <!MUST_BE_INITIALIZED!>val e1: Int<!>; get() = field
                                             val c1: Int = 1; get() = field
-                                       open val b1: Int; get() = field
+                                       <!MUST_BE_INITIALIZED!>open val b1: Int<!>; get() = field
                 <!MUST_BE_INITIALIZED!>open val f1: Int<!>; get() = field
                                        open val d1: Int = 1; get() = field
 
@@ -27,7 +27,7 @@ open class Foo {
                                                      val a2: Int; get
                <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val e2: Int<!>; get
                                                      val c2: Int = 1; get
-                                                open val b2: Int; get
+                                                <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>open val b2: Int<!>; get
           <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>open val f2: Int<!>; get
                                                 open val d2: Int = 1; get
 
