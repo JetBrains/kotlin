@@ -165,6 +165,8 @@ abstract class Kotlin2JsCompile @Inject constructor(
                 args.fragmentRefines = multiplatformStructure.fragmentRefinesCompilerArgs
             }
 
+            explicitApiMode.orNull?.run { args.explicitApi = toCompilerValue() }
+
             // Overriding freeArgs from compilerOptions with enhanced one + additional one set on execution phase
             // containing additional arguments based on the js compilation configuration
             args.freeArgs = executionTimeFreeCompilerArgs ?: enhancedFreeCompilerArgs.get().toList()

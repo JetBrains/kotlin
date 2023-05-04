@@ -156,6 +156,18 @@ abstract class KotlinTopLevelExtension(internal val project: Project) : KotlinTo
     }
 }
 
+internal fun ExplicitApiMode.toCompilerValue() = when (this) {
+    ExplicitApiMode.Strict -> "strict"
+    ExplicitApiMode.Warning -> "warning"
+    ExplicitApiMode.Disabled -> "disable"
+}
+
+internal fun KotlinTopLevelExtension.explicitApiModeAsCompilerArg(): String? {
+    val cliOption = explicitApi?.toCompilerValue()
+
+    return cliOption?.let { "-Xexplicit-api=$it" }
+}
+
 open class KotlinProjectExtension @Inject constructor(project: Project) : KotlinTopLevelExtension(project), KotlinSourceSetContainer {
     override var sourceSets: NamedDomainObjectContainer<KotlinSourceSet>
         @Suppress("UNCHECKED_CAST")

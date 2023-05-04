@@ -140,6 +140,6 @@ class KotlinCompileApiTest {
     fun testTopLevelExtension() {
         plugin.kotlinExtension.explicitApi = ExplicitApiMode.Strict
         project.evaluate()
-        assertTrue(ExplicitApiMode.Strict.toCompilerArg() in taskImpl.compilerOptions.freeCompilerArgs.get())
+        assertEquals(ExplicitApiMode.Strict, taskImpl.explicitApiMode.orNull)
     }
 }

@@ -29,9 +29,8 @@ import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.IncrementalCompilationEnvironment
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.config.JvmTarget
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmCompilerOptionsHelper
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import org.jetbrains.kotlin.gradle.dsl.jvm.JvmTargetValidationMode
 import org.jetbrains.kotlin.gradle.dsl.usesK2
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
@@ -248,6 +247,8 @@ abstract class KotlinCompile @Inject constructor(
             if (localExecutionTimeFreeCompilerArgs != null) {
                 args.freeArgs = localExecutionTimeFreeCompilerArgs
             }
+
+            explicitApiMode.orNull?.run { args.explicitApi = toCompilerValue() }
         }
 
         pluginClasspath { args ->
