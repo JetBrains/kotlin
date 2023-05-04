@@ -1,3 +1,5 @@
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+
 import carrayPointers.*
 import kotlin.test.*
 import kotlinx.cinterop.*

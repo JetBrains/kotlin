@@ -2,7 +2,8 @@
  * Copyright 2010-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
-@file:OptIn(ExperimentalStdlibApi::class, FreezingIsDeprecated::class, kotlin.native.runtime.NativeRuntimeApi::class)
+@file:OptIn(ExperimentalStdlibApi::class, FreezingIsDeprecated::class,
+        kotlin.native.runtime.NativeRuntimeApi::class, kotlinx.cinterop.ExperimentalForeignApi::class)
 
 package runtime.basic.cleaner_basic
 

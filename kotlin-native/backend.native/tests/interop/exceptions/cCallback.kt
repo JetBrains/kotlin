@@ -1,3 +1,5 @@
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+
 import kotlinx.cinterop.staticCFunction
 import cCallback.runAndCatch
 

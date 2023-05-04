@@ -1,3 +1,4 @@
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 @file:Suppress("OPT_IN_USAGE_ERROR")
 
 import kotlinx.cinterop.*

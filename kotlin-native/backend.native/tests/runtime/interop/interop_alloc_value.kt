@@ -1,3 +1,5 @@
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+
 package runtime.interop.interop_alloc_value
 
 import kotlinx.cinterop.*

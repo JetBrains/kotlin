@@ -1,30 +1,27 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 @file:Suppress("NOTHING_TO_INLINE")
+@file:OptIn(ExperimentalForeignApi::class, BetaInteropApi::class)
 
 package kotlinx.cinterop
+
 import kotlin.native.*
 import kotlin.native.internal.*
+import kotlin.native.internal.InternalForKotlinNative
 
+@BetaInteropApi
 interface ObjCObject
+@BetaInteropApi
 interface ObjCClass : ObjCObject
+@BetaInteropApi
 interface ObjCClassOf<T : ObjCObject> : ObjCClass // TODO: T should be added to ObjCClass and all meta-classes instead.
+@BetaInteropApi
 typealias ObjCObjectMeta = ObjCClass
 
+@BetaInteropApi
 interface ObjCProtocol : ObjCObject
 
 @ExportTypeInfo("theForeignObjCObjectTypeInfo")
@@ -32,13 +29,17 @@ interface ObjCProtocol : ObjCObject
 @kotlin.native.internal.Frozen
 internal open class ForeignObjCObject : kotlin.native.internal.ObjCObjectWrapper
 
+@BetaInteropApi
 abstract class ObjCObjectBase protected constructor() : ObjCObject {
     @Target(AnnotationTarget.CONSTRUCTOR)
     @Retention(AnnotationRetention.SOURCE)
     annotation class OverrideInit
 }
+
+@BetaInteropApi
 abstract class ObjCObjectBaseMeta protected constructor() : ObjCObjectBase(), ObjCObjectMeta {}
 
+@BetaInteropApi
 fun optional(): Nothing = throw RuntimeException("Do not call me!!!")
 
 @Deprecated(
@@ -48,6 +49,7 @@ fun optional(): Nothing = throw RuntimeException("Do not call me!!!")
 @TypedIntrinsic(IntrinsicType.OBJC_INIT_BY)
 external fun <T : ObjCObjectBase> T.initBy(constructorCall: T): T
 
+@BetaInteropApi
 @kotlin.native.internal.ExportForCompiler
 private fun ObjCObjectBase.superInitCheck(superInitCallResult: ObjCObject?) {
     if (superInitCallResult == null)
@@ -60,20 +62,25 @@ private fun ObjCObjectBase.superInitCheck(superInitCallResult: ObjCObject?) {
 internal fun <T : Any?> Any?.uncheckedCast(): T = @Suppress("UNCHECKED_CAST") (this as T)
 
 // Note: if this is called for non-frozen object on a wrong worker, the program will terminate.
+@ExperimentalForeignApi
 @GCUnsafeCall("Kotlin_Interop_refFromObjC")
 external fun <T> interpretObjCPointerOrNull(objcPtr: NativePtr): T?
 
 @ExportForCppRuntime
+@ExperimentalForeignApi
 inline fun <T : Any> interpretObjCPointer(objcPtr: NativePtr): T = interpretObjCPointerOrNull<T>(objcPtr)!!
 
 @GCUnsafeCall("Kotlin_Interop_refToObjC")
-external fun Any?.objcPtr(): NativePtr
+@ExperimentalForeignApi
+public external fun Any?.objcPtr(): NativePtr
 
 @GCUnsafeCall("Kotlin_Interop_createKotlinObjectHolder")
-external fun createKotlinObjectHolder(any: Any?): NativePtr
+@ExperimentalForeignApi
+public external fun createKotlinObjectHolder(any: Any?): NativePtr
 
 // Note: if this is called for non-frozen underlying ref on a wrong worker, the program will terminate.
-inline fun <reified T : Any> unwrapKotlinObjectHolder(holder: Any?): T {
+@BetaInteropApi
+public inline fun <reified T : Any> unwrapKotlinObjectHolder(holder: Any?): T {
     return unwrapKotlinObjectHolderImpl(holder!!.objcPtr()) as T
 }
 
@@ -81,23 +88,28 @@ inline fun <reified T : Any> unwrapKotlinObjectHolder(holder: Any?): T {
 @GCUnsafeCall("Kotlin_Interop_unwrapKotlinObjectHolder")
 external internal fun unwrapKotlinObjectHolderImpl(ptr: NativePtr): Any
 
+@ExperimentalForeignApi
 class ObjCObjectVar<T>(rawPtr: NativePtr) : CVariable(rawPtr) {
     @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
     @Suppress("DEPRECATION")
     companion object : CVariable.Type(pointerSize.toLong(), pointerSize)
 }
 
+@ExperimentalForeignApi
 class ObjCNotImplementedVar<T : Any?>(rawPtr: NativePtr) : CVariable(rawPtr) {
     @Deprecated("Use sizeOf<T>() or alignOf<T>() instead.")
     @Suppress("DEPRECATION")
     companion object : CVariable.Type(pointerSize.toLong(), pointerSize)
 }
 
+@ExperimentalForeignApi
 var <T : Any?> ObjCNotImplementedVar<T>.value: T
     get() = TODO()
     set(_) = TODO()
 
+@ExperimentalForeignApi
 typealias ObjCStringVarOf<T> = ObjCNotImplementedVar<T>
+@ExperimentalForeignApi
 typealias ObjCBlockVar<T> = ObjCNotImplementedVar<T>
 
 @TypedIntrinsic(IntrinsicType.OBJC_CREATE_SUPER_STRUCT)
@@ -106,27 +118,33 @@ internal external fun createObjCSuperStruct(receiver: NativePtr, superClass: Nat
 
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
-annotation class ExternalObjCClass(val protocolGetter: String = "", val binaryName: String = "")
+@InternalForKotlinNative
+public annotation class ExternalObjCClass(val protocolGetter: String = "", val binaryName: String = "")
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 @Retention(AnnotationRetention.BINARY)
-annotation class ObjCMethod(val selector: String, val encoding: String, val isStret: Boolean = false)
+@InternalForKotlinNative
+public annotation class ObjCMethod(val selector: String, val encoding: String, val isStret: Boolean = false)
 
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
-annotation class ObjCDirect(val symbol: String)
+@InternalForKotlinNative
+public annotation class ObjCDirect(val symbol: String)
 
 @Target(AnnotationTarget.CONSTRUCTOR)
 @Retention(AnnotationRetention.BINARY)
-annotation class ObjCConstructor(val initSelector: String, val designated: Boolean)
+@InternalForKotlinNative
+public annotation class ObjCConstructor(val initSelector: String, val designated: Boolean)
 
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
-annotation class ObjCFactory(val selector: String, val encoding: String, val isStret: Boolean = false)
+@InternalForKotlinNative
+public annotation class ObjCFactory(val selector: String, val encoding: String, val isStret: Boolean = false)
 
 @Target(AnnotationTarget.FILE)
 @Retention(AnnotationRetention.BINARY)
-annotation class InteropStubs()
+@InternalForKotlinNative
+public annotation class InteropStubs()
 
 @PublishedApi
 @Target(AnnotationTarget.FUNCTION)
@@ -193,20 +211,25 @@ internal external fun createObjCObjectHolder(ptr: NativePtr): Any?
 // Objective-C runtime:
 
 @GCUnsafeCall("objc_retainAutoreleaseReturnValue")
-external fun objc_retainAutoreleaseReturnValue(ptr: NativePtr): NativePtr
+@ExperimentalForeignApi
+public external fun objc_retainAutoreleaseReturnValue(ptr: NativePtr): NativePtr
 
 @GCUnsafeCall("Kotlin_objc_autoreleasePoolPush")
-external fun objc_autoreleasePoolPush(): NativePtr
+@ExperimentalForeignApi
+public external fun objc_autoreleasePoolPush(): NativePtr
 
 @GCUnsafeCall("Kotlin_objc_autoreleasePoolPop")
-external fun objc_autoreleasePoolPop(ptr: NativePtr)
+@ExperimentalForeignApi
+public external fun objc_autoreleasePoolPop(ptr: NativePtr)
 
 @GCUnsafeCall("Kotlin_objc_allocWithZone")
 @FilterExceptions
 private external fun objc_allocWithZone(clazz: NativePtr): NativePtr
 
 @GCUnsafeCall("Kotlin_objc_retain")
-external fun objc_retain(ptr: NativePtr): NativePtr
+@ExperimentalForeignApi
+public external fun objc_retain(ptr: NativePtr): NativePtr
 
 @GCUnsafeCall("Kotlin_objc_release")
-external fun objc_release(ptr: NativePtr)
+@ExperimentalForeignApi
+public external fun objc_release(ptr: NativePtr)

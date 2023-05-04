@@ -1,3 +1,5 @@
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+
 import ctoKString.*
 import kotlinx.cinterop.*
 import kotlin.native.*
