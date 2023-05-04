@@ -622,7 +622,11 @@ public class BasicExpressionTypingVisitor extends ExpressionTypingVisitor {
                 }
             }
             if (result != null) {
-                context.trace.record(REFERENCE_TARGET, expression.getInstanceReference(), result.getContainingDeclaration());
+                DeclarationDescriptor containingDeclaration = result.getContainingDeclaration();
+                // containingDeclaration could be non-finally initialized PropertyDescriptorImpl
+                containingDeclaration.addInitFinalizationAction(
+                        () -> context.trace.record(REFERENCE_TARGET, expression.getInstanceReference(), containingDeclaration)
+                );
                 recordThisOrSuperCallInTraceAndCallExtension(context, result, expression);
             }
             return LabelResolver.LabeledReceiverResolutionResult.Companion.labelResolutionSuccess(result);
