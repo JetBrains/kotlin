@@ -116,6 +116,7 @@ if (!isExperimentalMM) {
 
 tasks.withType(KonanCompileNativeBinary).configureEach {
     extraOpts "-XXLanguage:+ImplicitSignedToUnsignedIntegerConversion"
+    extraOpts "-opt-in=kotlinx.cinterop.ExperimentalForeignApi"
 }
 
 allprojects {

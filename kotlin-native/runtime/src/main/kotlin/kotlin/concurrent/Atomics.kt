@@ -6,6 +6,7 @@
 package kotlin.concurrent
 
 import kotlinx.cinterop.NativePtr
+import kotlinx.cinterop.ExperimentalForeignApi
 import kotlin.native.internal.*
 import kotlin.reflect.*
 import kotlin.concurrent.*
@@ -306,6 +307,7 @@ public class AtomicReference<T> {
 @Frozen
 @OptIn(FreezingIsDeprecated::class, ExperimentalStdlibApi::class)
 @SinceKotlin("1.9")
+@ExperimentalForeignApi
 public class AtomicNativePtr(@Volatile public var value: NativePtr) {
     /**
      * Atomically sets the value to the given [new value][newValue] and returns the old value.

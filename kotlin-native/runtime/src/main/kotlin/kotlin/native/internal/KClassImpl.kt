@@ -1,11 +1,13 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2023 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
+@file:OptIn(ExperimentalForeignApi::class)
 
 package kotlin.native.internal
 
 import kotlin.reflect.KClass
+import kotlinx.cinterop.*
 
 @ExportForCompiler
 internal class KClassImpl<T : Any>(private val typeInfo: NativePtr) : KClass<T> {

@@ -1,7 +1,8 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2023 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
+@file:OptIn(ExperimentalForeignApi::class)
 
 package kotlin
 
@@ -12,6 +13,7 @@ import kotlin.native.internal.ExportForCppRuntime
 import kotlin.native.internal.ExportTypeInfo
 import kotlin.native.internal.GCUnsafeCall
 import kotlin.native.internal.NativePtrArray
+import kotlinx.cinterop.ExperimentalForeignApi
 
 /**
  * The base class for all errors and exceptions. Only instances of this class can be thrown or caught.
