@@ -303,7 +303,7 @@ class CocoaPodsIT : BaseGradleIT() {
     @Test
     fun testSyntheticProjectPodfilePostprocessing() {
         project.gradleBuildScript().apply {
-            appendToCocoapodsBlock("""pod("AWSMobileClient", version = "2.30.0")""")
+            appendToCocoapodsBlock("""pod("ChatSDK", version = "5.2.1")""")
 
             appendText("""
                 
@@ -1839,8 +1839,13 @@ class CocoaPodsIT : BaseGradleIT() {
             }
 
             if (shouldInstallLocalCocoapods) {
+                val installDir = cocoapodsInstallationRoot.absolutePath
                 println("Installing CocoaPods...")
-                gem("install", "--install-dir", cocoapodsInstallationRoot.absolutePath, "cocoapods", "-v", localCocoapodsVersion)
+
+                //https://github.com/ffi/ffi/issues/864#issuecomment-875242776
+                gem("install", "--install-dir", installDir, "ffi", "-v", "1.15.5", "--", "--enable-libffi-alloc")
+
+                gem("install", "--install-dir", installDir, "cocoapods", "-v", localCocoapodsVersion)
             } else if (!isCocoapodsInstalled()) {
                 fail(
                     """
@@ -1894,8 +1899,6 @@ class CocoaPodsIT : BaseGradleIT() {
         }
 
         private fun gem(vararg args: String): String {
-            // On ARM MacOS, run gem using arch -x86_64 to workaround problems with libffi.
-            // https://stackoverflow.com/questions/64901180/running-cocoapods-on-apple-silicon-m1
             val command = listOf("gem", *args)
             println("Run command: ${command.joinToString(separator = " ")}")
             val result = runProcess(command, File("."), options = BuildOptions(forceOutputToStdout = true))
