@@ -83,6 +83,9 @@ internal class KtFirExpressionTypeProvider(
             // `false` does not have a corresponding elements on the FIR side and hence the containing `FirWhenBranch` is returned. In this
             // case, we simply report null since FIR does not know about it.
             is FirWhenBranch -> null
+
+            // `listOf<_>(1)` where `expression` is `_`
+            is FirPlaceholderProjection -> null
             else -> error("Unexpected ${fir?.let { it::class }} for ${expression::class} with text `${expression.text}`")
         }
     }
