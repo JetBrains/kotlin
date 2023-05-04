@@ -25,7 +25,9 @@ import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrDescriptorBasedFunctionFactory
 import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.irMessageLogger
 import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
@@ -75,13 +77,18 @@ internal data class LoadedJsIr(
         linker.checkNoUnboundSymbols(linker.symbolTable, "at the end of IR linkage process")
         linker.clear()
     }
+
+    fun collectSymbolsReplacedWithStubs(): Set<IrSymbol> {
+        return linker.partialLinkageSupport.collectAllStubbedSymbols()
+    }
 }
 
 internal class JsIrLinkerLoader(
     private val compilerConfiguration: CompilerConfiguration,
     private val dependencyGraph: Map<KotlinLibrary, List<KotlinLibrary>>,
     private val mainModuleFriends: Collection<KotlinLibrary>,
-    private val irFactory: IrFactory
+    private val irFactory: IrFactory,
+    private val stubbedSignatures: Set<IdSignature>
 ) {
     private val mainLibrary = dependencyGraph.keys.lastOrNull() ?: notFoundIcError("main library")
 
@@ -209,6 +216,12 @@ internal class JsIrLinkerLoader(
                         } else if (loadingSignature in moduleDeserializer) {
                             moduleDeserializer.addModuleReachableTopLevel(loadingSignature)
                         }
+                    }
+                }
+
+                for (stubbedSignature in stubbedSignatures) {
+                    if (stubbedSignature in moduleDeserializer) {
+                        moduleDeserializer.addModuleReachableTopLevel(stubbedSignature)
                     }
                 }
             }

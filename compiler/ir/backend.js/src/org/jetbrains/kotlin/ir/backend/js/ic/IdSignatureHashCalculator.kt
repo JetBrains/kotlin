@@ -126,4 +126,8 @@ internal class IdSignatureHashCalculator(private val icHasher: ICHasher) {
         idSignatureHashes[signature] = signatureHash
         return signatureHash
     }
+
+    operator fun contains(signature: IdSignature): Boolean {
+        return signature in idSignatureSources
+    }
 }

@@ -84,6 +84,14 @@ fun <T> KotlinSourceFileMap<T>.toMutable(): KotlinSourceFileMutableMap<T> {
     return KotlinSourceFileMutableMap(entries.associateTo(HashMap(entries.size)) { it.key to HashMap(it.value) })
 }
 
+fun <T> KotlinSourceFileMap<T>.combineWith(other: KotlinSourceFileMap<T>): KotlinSourceFileMap<T> {
+    return when {
+        isEmpty() -> other
+        other.isEmpty() -> this
+        else -> toMutable().also { it.copyFilesFrom(other) }
+    }
+}
+
 fun KotlinSourceFileMap<Set<IdSignature>>.flatSignatures(): Set<IdSignature> {
     val allSignatures = hashSetOf<IdSignature>()
     forEachFile { _, _, signatures -> allSignatures += signatures }

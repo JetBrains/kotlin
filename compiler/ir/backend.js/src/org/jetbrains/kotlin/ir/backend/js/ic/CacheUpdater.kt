@@ -264,6 +264,17 @@ class CacheUpdater(
             return exportedSymbols
         }
 
+        fun collectStubbedSignatures(): Set<IdSignature> {
+            val stubbedSignatures = hashSetOf<IdSignature>()
+            for (cache in incrementalCaches.values) {
+                val fileStubbedSignatures = cache.collectFilesWithStubbedSignatures()
+                for (signatures in fileStubbedSignatures.values) {
+                    stubbedSignatures += signatures
+                }
+            }
+            return stubbedSignatures
+        }
+
         private fun KotlinSourceFileMutableMap<DirtyFileMetadata>.getExportedSignaturesAndAddMetadata(
             symbolProviders: List<FileSignatureProvider>,
             libFile: KotlinLibraryFile,
@@ -508,6 +519,26 @@ class CacheUpdater(
             return libFilesToRebuild
         }
 
+        fun collectFilesWithUpdatedStubbedSymbols(dirtyFiles: KotlinSourceFileMap<*>): KotlinSourceFileMap<KotlinSourceFileExports> {
+            val libFiles = KotlinSourceFileMutableMap<KotlinSourceFileExports>()
+
+            for ((libFile, cache) in incrementalCaches.entries) {
+                val filesToRebuild by lazy(LazyThreadSafetyMode.NONE) { libFiles.getOrPutFiles(libFile) }
+                val fileStats by lazy(LazyThreadSafetyMode.NONE) { dirtyFileStats.getOrPutFiles(libFile) }
+                val alreadyDirtyFiles = dirtyFiles[libFile]?.keys ?: emptySet()
+                val filesWithStubbedSignatures = cache.collectFilesWithStubbedSignatures()
+
+                for ((srcFile, stubbedSignatures) in filesWithStubbedSignatures.entries) {
+                    if (srcFile !in alreadyDirtyFiles && stubbedSignatures.any { it in signatureHashCalculator }) {
+                        filesToRebuild[srcFile] = cache.fetchSourceFileFullMetadata(srcFile)
+                        fileStats.addDirtFileStat(srcFile, DirtyFileState.UPDATED_IMPORTS)
+                    }
+                }
+            }
+
+            return libFiles
+        }
+
         fun updateStdlibIntrinsicDependencies(
             loadedIr: LoadedJsIr,
             mainModule: IrModuleFragment,
@@ -574,13 +605,15 @@ class CacheUpdater(
                     icError("can not delete cache directory ${it.cacheDir.absolutePath}")
                 }
             }
+
+            val stubbedSignatures = loadedIr.collectSymbolsReplacedWithStubs().mapNotNullTo(hashSetOf()) { it.signature }
             return libraryDependencies.keys.associate { library ->
                 val libFile = KotlinLibraryFile(library)
                 val incrementalCache = getLibIncrementalCache(libFile)
                 val providers = loadedIr.getSignatureProvidersForLib(libFile)
                 val signatureToIndexMapping = providers.associate { KotlinSourceFile(it.irFile) to it.getSignatureToIndexMapping() }
 
-                val cacheArtifact = incrementalCache.buildIncrementalCacheArtifact(signatureToIndexMapping)
+                val cacheArtifact = incrementalCache.buildAndCommitCacheArtifact(signatureToIndexMapping, stubbedSignatures)
 
                 val libFragment = loadedIr.loadedFragments[libFile] ?: notFoundIcError("loaded fragment", libFile)
                 val sourceFilesFromCache = cacheArtifact.getSourceFiles()
@@ -650,13 +683,15 @@ class CacheUpdater(
 
         stopwatch.startNext("Modified files - collecting exported signatures")
         val dirtyFileExports = updater.collectExportedSymbolsForDirtyFiles(modifiedFiles)
+        val stubbedSignatures = updater.collectStubbedSignatures()
 
         stopwatch.startNext("Modified files - loading and linking IR")
         val jsIrLinkerLoader = JsIrLinkerLoader(
             compilerConfiguration = compilerConfiguration,
             dependencyGraph = updater.libraryDependencies,
             mainModuleFriends = updater.mainModuleFriendLibraries,
-            irFactory = irFactory()
+            irFactory = irFactory(),
+            stubbedSignatures = stubbedSignatures
         )
         var loadedIr = jsIrLinkerLoader.loadIr(dirtyFileExports)
 
@@ -672,16 +707,20 @@ class CacheUpdater(
 
             stopwatch.startNext("Dependencies ($iterations) - collecting exported signatures for files with updated exports and imports")
             val filesToRebuild = updater.collectFilesToRebuildSignatures(filesWithModifiedExportsOrImports)
+            dirtyFileExports.copyFilesFrom(filesToRebuild)
 
-            if (filesToRebuild.isEmpty()) {
+            stopwatch.startNext("Dependencies ($iterations) - collecting files that contain updated stubbed symbols")
+            val filesWithUpdatedStubbedSymbolsToRebuild = updater.collectFilesWithUpdatedStubbedSymbols(dirtyFileExports)
+            dirtyFileExports.copyFilesFrom(filesWithUpdatedStubbedSymbolsToRebuild)
+
+            lastDirtyFiles = filesToRebuild.combineWith(filesWithUpdatedStubbedSymbolsToRebuild)
+
+            if (lastDirtyFiles.isEmpty()) {
                 break
             }
 
-            lastDirtyFiles = filesToRebuild
-            dirtyFileExports.copyFilesFrom(filesToRebuild)
-
             stopwatch.startNext("Dependencies ($iterations) - loading and linking IR for files with modified exports and imports")
-            loadedIr = jsIrLinkerLoader.loadIr(filesToRebuild)
+            loadedIr = jsIrLinkerLoader.loadIr(lastDirtyFiles)
             iterations++
         }
 
@@ -771,7 +810,7 @@ fun rebuildCacheForDirtyFiles(
 
     val modifiedFiles = mapOf(libFile to dirtySrcFiles.associateWith { emptyMetadata })
 
-    val jsIrLoader = JsIrLinkerLoader(configuration, dependencyGraph, emptyList(), irFactory)
+    val jsIrLoader = JsIrLinkerLoader(configuration, dependencyGraph, emptyList(), irFactory, emptySet())
     val loadedIr = jsIrLoader.loadIr(KotlinSourceFileMap<KotlinSourceFileExports>(modifiedFiles), true)
 
     val currentIrModule = loadedIr.loadedFragments[libFile] ?: notFoundIcError("loaded fragment", libFile)
