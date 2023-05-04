@@ -34,8 +34,9 @@ class StaticInitializersLowering(override val context: JvmBackendContext) : Init
                     JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE -> 1
                     IrDeclarationOrigin.FIELD_FOR_ENUM_ENTRY -> 2
                     IrDeclarationOrigin.FIELD_FOR_ENUM_VALUES -> 3
-                    IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE -> 4
-                    else -> 5
+                    IrDeclarationOrigin.FIELD_FOR_ENUM_ENTRIES -> 4
+                    IrDeclarationOrigin.FIELD_FOR_OBJECT_INSTANCE -> 5
+                    else -> 6
                 }
             }
             irClass.addFunction {

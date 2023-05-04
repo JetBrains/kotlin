@@ -16650,6 +16650,12 @@ public class IrBlackBoxCodegenWithIrInlinerTestGenerated extends AbstractIrBlack
         }
 
         @Test
+        @TestMetadata("enumEntriesInCompanion.kt")
+        public void testEnumEntriesInCompanion() throws Exception {
+            runTest("compiler/testData/codegen/box/enum/enumEntriesInCompanion.kt");
+        }
+
+        @Test
         @TestMetadata("enumEntriesMultimodule.kt")
         public void testEnumEntriesMultimodule() throws Exception {
             runTest("compiler/testData/codegen/box/enum/enumEntriesMultimodule.kt");
