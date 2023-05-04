@@ -35,8 +35,8 @@ object FirMemberPropertiesChecker : FirClassChecker() {
         for (innerDeclaration in declaration.declarations) {
             if (innerDeclaration is FirProperty) {
                 val symbol = innerDeclaration.symbol
-                val isInitialized = innerDeclaration.initializer != null || info?.get(symbol)?.isDefinitelyVisited() == true
-                checkProperty(declaration, innerDeclaration, isInitialized, context, reporter, !reachedDeadEnd)
+                val isDefinitelyAssignedInConstructor = info?.get(symbol)?.isDefinitelyVisited() == true
+                checkProperty(declaration, innerDeclaration, isDefinitelyAssignedInConstructor, context, reporter, !reachedDeadEnd)
             }
             // Can't just look at each property's graph's enterNode because they may have no graph if there is no initializer.
             reachedDeadEnd = reachedDeadEnd ||
@@ -59,7 +59,7 @@ object FirMemberPropertiesChecker : FirClassChecker() {
     private fun checkProperty(
         containingDeclaration: FirClass,
         property: FirProperty,
-        isInitialized: Boolean,
+        isDefinitelyAssignedInConstructor: Boolean,
         context: CheckerContext,
         reporter: DiagnosticReporter,
         reachable: Boolean
@@ -74,7 +74,7 @@ object FirMemberPropertiesChecker : FirClassChecker() {
             containingDeclaration,
             property,
             modifierList,
-            isInitialized,
+            isDefinitelyAssignedInConstructor,
             reporter,
             context,
             reachable

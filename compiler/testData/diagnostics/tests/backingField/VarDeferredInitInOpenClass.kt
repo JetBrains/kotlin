@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // !DIAGNOSTICS: -DEBUG_INFO_LEAKING_THIS
 // a = final + not initialized in place + deferred init
 // e = final + not initialized in place
