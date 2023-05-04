@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
-import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
@@ -19,23 +18,15 @@ import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.renderer.FirResolvePhaseRenderer
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
-import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractGetOrBuildFirTest : AbstractLowLevelApiSingleFileTest() {
-    override fun configureTest(builder: TestConfigurationBuilder) {
-        super.configureTest(builder)
-        with(builder) {
-            useDirectives(Directives)
-        }
-    }
 
     override fun doTestByFileStructure(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices) {
-        val selectedElement = getElementOfType(ktFile, moduleStructure, testServices) as KtElement
+        val module = moduleStructure.modules.single()
+        val selectedElement = testServices.expressionMarkerProvider.getSelectedElementOfTypeByDirective(ktFile, module) as KtElement
 
         val actual = resolveWithClearCaches(ktFile) { state ->
             val fir = selectedElement.getOrBuildFir(state)
@@ -49,17 +40,6 @@ abstract class AbstractGetOrBuildFirTest : AbstractLowLevelApiSingleFileTest() {
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)
     }
 
-    private fun getElementOfType(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices): PsiElement {
-        val selectedElement = testServices.expressionMarkerProvider.getSelectedElement(ktFile)
-        val expectedType = moduleStructure.allDirectives[Directives.LOOK_UP_FOR_ELEMENT_OF_TYPE].firstOrNull() ?: return selectedElement
-        @Suppress("UNCHECKED_CAST") val expectedClass = Class.forName(expectedType) as Class<PsiElement>
-        if (expectedClass.isInstance(selectedElement)) return selectedElement
-
-        return selectedElement.collectDescendantsOfType<PsiElement> {
-            expectedClass.isInstance(it)
-        }.single { it.textRange == selectedElement.textRange }
-    }
-
     private fun render(firElement: FirElement?): String = when (firElement) {
         null -> "null"
         is FirImport -> "import ${firElement.importedFqName}"
@@ -68,10 +48,6 @@ abstract class AbstractGetOrBuildFirTest : AbstractLowLevelApiSingleFileTest() {
             packageDirectiveRenderer = FirPackageDirectiveRenderer(),
             resolvePhaseRenderer = FirResolvePhaseRenderer(),
         ).renderElementAsString(firElement)
-    }
-
-    private object Directives : SimpleDirectivesContainer() {
-        val LOOK_UP_FOR_ELEMENT_OF_TYPE by stringDirective("LOOK_UP_FOR_ELEMENT_OF_TYPE")
     }
 }
 
