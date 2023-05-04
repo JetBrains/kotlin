@@ -9,6 +9,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.search.DelegatingGlobalSearchScope
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirBuiltinsAndCloneableSessionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirBuiltinsAndCloneableSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.JvmStubBasedFirDeserializedSymbolProvider
@@ -52,6 +53,11 @@ class LLFirBuiltinsSessionFactory(private val project: Project) {
 
     fun getBuiltinsSession(platform: TargetPlatform): LLFirBuiltinsAndCloneableSession {
         return builtinsAndCloneableSession.getOrPut(platform) { createBuiltinsAndCloneableSession(platform) }
+    }
+
+    @TestOnly
+    fun clearForTheNextTest() {
+        builtinsAndCloneableSession.clear()
     }
 
     private fun createBuiltinsAndCloneableSession(platform: TargetPlatform): LLFirBuiltinsAndCloneableSession {
