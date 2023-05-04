@@ -11,3 +11,9 @@ val delegate = object: ReadWriteProperty<Any?, Int> {
 val value by delegate
 
 var variable by delegate
+
+interface Base {
+}
+
+class Derived(b: Base) : Base by b {
+}
