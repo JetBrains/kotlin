@@ -28,7 +28,7 @@ import kotlin.test.*
 class KotlinPluginLifecycleTest {
 
     private val project = buildProjectWithMPP()
-    private val lifecycle = project.kotlinPluginLifecycle
+    private val lifecycle = project.kotlinPluginLifecycle as KotlinPluginLifecycleImpl
 
     @Test
     fun `test - configure phase is executed right away`() {

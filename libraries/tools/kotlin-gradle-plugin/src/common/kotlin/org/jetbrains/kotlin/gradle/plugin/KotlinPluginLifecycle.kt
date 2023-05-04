@@ -333,8 +333,6 @@ internal interface KotlinPluginLifecycle {
 
     val stage: Stage
 
-    fun enqueue(stage: Stage, action: KotlinPluginLifecycle.() -> Unit)
-
     fun launch(block: suspend KotlinPluginLifecycle.() -> Unit)
 
     suspend fun await(stage: Stage)
@@ -347,7 +345,7 @@ internal interface KotlinPluginLifecycle {
 Implementation
  */
 
-private class KotlinPluginLifecycleImpl(override val project: Project) : KotlinPluginLifecycle {
+internal class KotlinPluginLifecycleImpl(override val project: Project) : KotlinPluginLifecycle {
     private val enqueuedActions: Map<Stage, ArrayDeque<KotlinPluginLifecycle.() -> Unit>> =
         Stage.values().associateWith { ArrayDeque() }
 
@@ -441,7 +439,7 @@ private class KotlinPluginLifecycleImpl(override val project: Project) : KotlinP
         project.configurationResultImpl.complete(ProjectConfigurationResult.Success)
     }
 
-    override fun enqueue(stage: Stage, action: KotlinPluginLifecycle.() -> Unit) {
+    fun enqueue(stage: Stage, action: KotlinPluginLifecycle.() -> Unit) {
         if (stage < this.stage) {
             throw IllegalLifecycleException("Cannot enqueue Action for stage '$stage' in current stage '${this.stage}'")
         }
