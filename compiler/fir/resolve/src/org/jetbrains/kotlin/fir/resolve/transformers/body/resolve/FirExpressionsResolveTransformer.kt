@@ -22,7 +22,9 @@ import org.jetbrains.kotlin.fir.extensions.assignAltererExtensions
 import org.jetbrains.kotlin.fir.extensions.expressionResolutionExtensions
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.references.*
-import org.jetbrains.kotlin.fir.references.builder.*
+import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
+import org.jetbrains.kotlin.fir.references.builder.buildExplicitSuperReference
+import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
@@ -89,7 +91,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         transformQualifiedAccessExpression(qualifiedAccessExpression, data, isUsedAsReceiver = false)
     }
 
-    fun transformQualifiedAccessExpression(
+    private fun transformQualifiedAccessExpression(
         qualifiedAccessExpression: FirQualifiedAccessExpression,
         data: ResolutionMode,
         isUsedAsReceiver: Boolean,

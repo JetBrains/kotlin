@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.load.java
 
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
@@ -29,6 +30,10 @@ object BuiltinSpecialProperties {
             .mapValues {
                 it.value.distinct()
             }
+
+    val GETTER_FQ_NAMES: Set<FqName> = PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP.mapTo(mutableSetOf()) {
+        JavaToKotlinClassMap.mapKotlinToJava(it.key.parent().toUnsafe())!!.asSingleFqName().child(it.value)
+    }
 
     val SPECIAL_FQ_NAMES: Set<FqName> = PROPERTY_FQ_NAME_TO_JVM_GETTER_NAME_MAP.keys
     val SPECIAL_SHORT_NAMES: Set<Name> = SPECIAL_FQ_NAMES.map(FqName::shortName).toSet()

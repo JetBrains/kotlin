@@ -20,16 +20,18 @@ import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.java.JavaScopeProvider
 import org.jetbrains.kotlin.fir.java.createConstantOrError
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
-import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.lookupSuperTypes
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutorByMap
 import org.jetbrains.kotlin.fir.scopes.*
-import org.jetbrains.kotlin.fir.scopes.impl.FirClassSubstitutionScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirFakeOverrideGenerator
 import org.jetbrains.kotlin.fir.scopes.impl.FirStandardOverrideChecker
 import org.jetbrains.kotlin.fir.scopes.impl.buildSubstitutorForOverridesCheck
-import org.jetbrains.kotlin.fir.symbols.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
@@ -39,6 +41,9 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
 import org.jetbrains.kotlin.fir.types.toLookupTag
+import org.jetbrains.kotlin.load.java.BuiltinSpecialProperties
+import org.jetbrains.kotlin.load.java.SpecialGenericSignatures
+import org.jetbrains.kotlin.load.java.getPropertyNamesCandidatesByAccessorName
 import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
@@ -60,6 +65,12 @@ class JvmMappedScope(
     private val substitutor = createMappingSubstitutor(firJavaClass, firKotlinClass, session)
     private val kotlinDispatchReceiverType = firKotlinClass.defaultType()
 
+    private val declaredScopeOfMutableVersion = JavaToKotlinClassMap.readOnlyToMutable(firKotlinClass.classId)?.let {
+        session.symbolProvider.getClassLikeSymbolByClassId(it) as? FirClassSymbol
+    }?.let {
+        session.declaredMemberScope(it)
+    }
+
     // This scope looks just as regular java.util.Collection, but we pretend like the class inherits kotlin.collections.MutableCollection.
     // We do it because we have a logic in JavaClassUseSiteMemberScope that once sees that a Java class inherits some built-in collection-like class,
     // that "renames" and "change" signature for all the Java methods that are effective overrides of built-in's members.
@@ -73,7 +84,7 @@ class JvmMappedScope(
             // We explicitly use fresh ScopeSession, to make sure we do not leak irregular scope to the common session
             scopeSession,
             memberRequiredPhase = null,
-            additionalSupertypeScope = buildUseSiteScopeForKotlinMirrorClassWithRegularDeclaredScope(firJavaClass, session, scopeSession)
+            //additionalSupertypeScope = buildUseSiteScopeForKotlinMirrorClassWithRegularDeclaredScope(firJavaClass, session, scopeSession)
         )
 
     private val isMutable = JavaToKotlinClassMap.isMutable(firKotlinClass.classId)
@@ -102,8 +113,13 @@ class JvmMappedScope(
             processor(symbol)
         }
 
-        val declaredSignatures by lazy {
-            declared.mapTo(mutableSetOf()) { it.fir.computeJvmDescriptor() }
+        val declaredSignatures: Set<String> by lazy {
+            buildSet {
+                declared.mapTo(this) { it.fir.computeJvmDescriptor() }
+                declaredScopeOfMutableVersion?.processFunctionsByName(name) {
+                    add(it.fir.computeJvmDescriptor())
+                }
+            }
         }
 
         javaMappedClassUseSiteScopeWithCustomSupertype.processFunctionsByName(name) processor@{ symbol ->
@@ -112,13 +128,8 @@ class JvmMappedScope(
             }
 
             val jvmDescriptor = symbol.fir.computeJvmDescriptor()
-            if (jvmDescriptor in declaredSignatures || isOverrideOfKotlinDeclaredFunction(symbol) || isMutabilityViolation(
-                    symbol,
-                    jvmDescriptor
-                )
-            ) {
-                return@processor
-            }
+            if (jvmDescriptor in declaredSignatures || symbol.isMappedToSpecialBuiltIn(jvmDescriptor)) return@processor
+            if (isOverrideOfKotlinDeclaredFunction(symbol) || isMutabilityViolation(symbol, jvmDescriptor)) return@processor
 
             val jdkMemberStatus = getJdkMethodStatus(jvmDescriptor)
 
@@ -141,6 +152,23 @@ class JvmMappedScope(
         return javaMappedClassUseSiteScopeWithCustomSupertype.anyOverriddenOf(symbol) {
             !it.origin.fromSupertypes && it.containingClassLookupTag()?.classId?.let(JavaToKotlinClassMap::isMutable) == true
         }
+    }
+
+    private fun FirNamedFunctionSymbol.isMappedToSpecialBuiltIn(jvmDescriptor: String): Boolean {
+        val fqName = firJavaClass.classId.asSingleFqName().child(name)
+        if (valueParameterSymbols.isEmpty()) {
+            if (valueParameterSymbols.isEmpty() && fqName in BuiltinSpecialProperties.GETTER_FQ_NAMES) return true
+            if (getPropertyNamesCandidatesByAccessorName(name).any(::isTherePropertyWithNameInKotlinClass)) return true
+        }
+
+        val signature = SignatureBuildingComponents.signature(firJavaClass.classId, jvmDescriptor)
+        return signature in SpecialGenericSignatures.JVM_SIGNATURES_FOR_RENAMED_BUILT_INS
+    }
+
+    private fun isTherePropertyWithNameInKotlinClass(name: Name): Boolean {
+        if (name !in declaredMemberScope.getCallableNames()) return false
+
+        return declaredMemberScope.getProperties(name).isNotEmpty()
     }
 
     private fun isDeclaredInBuiltinClass(it: FirNamedFunctionSymbol) =
@@ -308,57 +336,6 @@ class JvmMappedScope(
     }
 
     companion object {
-        private object ScopeSessionForCommonLikeBuiltIn : ScopeSessionKey<ScopeSessionForCommonLikeBuiltIn, ScopeSession>()
-        /**
-         * @return platform-independent scope of (probably) mutable version of built-in class that is mapped to firJavaClass
-         */
-        private fun buildUseSiteScopeForKotlinMirrorClassWithRegularDeclaredScope(
-            firJavaClass: FirJavaClass,
-            session: FirSession,
-            mainScopeSession: ScopeSession,
-        ): FirTypeScope? {
-            val kotlinMutableVersionClassId =
-                JavaToKotlinClassMap.mapJavaToKotlin(firJavaClass.classId.asSingleFqName())
-                    ?.let { JavaToKotlinClassMap.readOnlyToMutable(it) ?: it } ?: return null
-
-            val kotlinMutableVersionFirClass =
-                session.symbolProvider.getClassLikeSymbolByClassId(kotlinMutableVersionClassId)?.fir as? FirRegularClass ?: return null
-
-            return session.kotlinScopeProvider.getUseSiteMemberScope(
-                kotlinMutableVersionFirClass, session,
-                // While we're currently building JvmMappedScope wrapper for the declaration scope for mapped Kotlin built-in class,
-                // it's necessary to avoid computation recursion like
-                // kotlin.collection.MutableCollection (1) -> java.util.Collection (2) -> kotlin.collection.MutableCollection (3)
-                // So we make sure that when we're at step (3) we don't go again to JvmMappedScope there and build something like
-                // the scope of platform-independent version for kotlin.collection.MutableCollection.
-                //
-                // In K1, that was handled via using FallbackBuiltIns.Instance at JvmBuiltInsCustomizer.getAdditionalFunctions
-                // Having some weird ScopeSession flag looks really code-smell, but alternatives:
-                // - having specific scope provider/session for such classes (where `declaredMemberScopeDecorator` does nothing)
-                // - passing that flag through all the places where scopes are created
-                //
-                // Both of them looks quite complicated and non-local, so they don't seem like worth it.
-                mainScopeSession.getOrBuild(ScopeSessionForCommonLikeBuiltIn, ScopeSessionForCommonLikeBuiltIn) { ScopeSession(skipDeclaredMemberScopeDecorator = true) },
-                memberRequiredPhase = null
-            ).let {
-                val substitutor = createMappingSubstitutor(kotlinMutableVersionFirClass, firJavaClass, session)
-
-                FirClassSubstitutionScope(
-                    session, it,
-                    SubstitutionKeyForMappedClass(firJavaClass.symbol.toLookupTag(), substitutor),
-                    substitutor,
-                    substitutor.substituteOrSelf(kotlinMutableVersionFirClass.symbol.defaultType()) as ConeClassLikeType,
-                    skipPrivateMembers = true,
-                    derivedClassLookupTag = firJavaClass.symbol.toLookupTag()
-                )
-            }
-        }
-
-        private data class SubstitutionKeyForMappedClass(
-            val lookupTag: ConeClassLikeLookupTag,
-            val substitutor: ConeSubstitutor,
-        ) : ScopeSessionKey<FirClass, FirClassSubstitutionScope>()
-
         /**
          * For fromClass=A<T1, T2>, toClass=B<F1, F1> classes
          * @returns {T1  -> F1, T2 -> F2} substitution
