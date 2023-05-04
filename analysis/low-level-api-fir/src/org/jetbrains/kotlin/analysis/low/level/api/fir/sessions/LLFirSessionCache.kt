@@ -10,15 +10,11 @@ import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.containers.CollectionFactory
-import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.*
-import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.fir.FirModuleDataImpl
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
-import org.jetbrains.kotlin.fir.extensions.*
-import org.jetbrains.kotlin.fir.resolve.providers.*
 import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.JsPlatform

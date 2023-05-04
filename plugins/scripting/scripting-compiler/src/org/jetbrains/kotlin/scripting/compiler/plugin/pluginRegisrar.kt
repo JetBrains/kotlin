@@ -30,7 +30,6 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.definitions.CliScriptRepor
 import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.JvmStandardReplFactoryExtension
 import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ScriptingCollectAdditionalSourcesExtension
 import org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ScriptingProcessSourcesBeforeCompilingExtension
-import org.jetbrains.kotlin.scripting.compiler.plugin.impl.FirScriptingSamWithReceiverExtensionRegistrar
 import org.jetbrains.kotlin.scripting.definitions.ScriptDefinitionProvider
 import org.jetbrains.kotlin.scripting.definitions.ScriptDependenciesProvider
 import org.jetbrains.kotlin.scripting.extensions.ScriptExtraImportsProviderExtension

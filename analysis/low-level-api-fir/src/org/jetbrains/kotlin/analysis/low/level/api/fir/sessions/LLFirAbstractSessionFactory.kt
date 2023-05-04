@@ -44,8 +44,12 @@ import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
+import org.jetbrains.kotlin.scripting.compiler.plugin.FirScriptingSamWithReceiverExtensionRegistrar
+import org.jetbrains.kotlin.scripting.definitions.findScriptDefinition
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.partitionIsInstance
+import kotlin.script.experimental.host.ScriptingHostConfiguration
+import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
 @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
 internal abstract class LLFirAbstractSessionFactory(protected val project: Project) {
@@ -117,7 +121,23 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
 
             register(FirPredicateBasedProvider::class, FirEmptyPredicateBasedProvider)
             register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, dependencyProvider)
-            register(FirRegisteredPluginAnnotations::class, FirRegisteredPluginAnnotations.Empty)
+            register(FirRegisteredPluginAnnotations::class, FirRegisteredPluginAnnotationsImpl(this))
+            register(FirJvmTypeMapper::class, FirJvmTypeMapper(this))
+
+            FirSessionConfigurator(this).apply {
+                val hostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {}
+                val scriptDefinition = module.file.findScriptDefinition()
+                    ?: error("Cannot load script definition for ${module.file.virtualFilePath}")
+
+                val extensionRegistrar = FirScriptingCompilerExtensionIdeRegistrar(
+                    hostConfiguration,
+                    scriptDefinitionSources = emptyList(),
+                    scriptDefinitions = listOf(scriptDefinition)
+                )
+
+                registerExtensions(extensionRegistrar.configure())
+                registerExtensions(FirScriptingSamWithReceiverExtensionRegistrar().configure())
+            }.configure()
 
             LLFirSessionConfigurator.configure(this)
         }
