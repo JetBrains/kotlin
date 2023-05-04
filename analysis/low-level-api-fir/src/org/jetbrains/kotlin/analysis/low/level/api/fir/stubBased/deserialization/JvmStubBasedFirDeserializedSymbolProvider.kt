@@ -18,15 +18,13 @@ import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.java.deserialization.KotlinBuiltins
+import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.*
-import org.jetbrains.kotlin.psi.KtClassOrObject
-import org.jetbrains.kotlin.psi.KtNamedFunction
-import org.jetbrains.kotlin.psi.KtProperty
-import org.jetbrains.kotlin.psi.KtTypeAlias
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragment
 
@@ -222,5 +220,24 @@ internal open class JvmStubBasedFirDeserializedSymbolProvider(
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
         if (!namesByPackageCache.mayHaveTopLevelClassifier(classId, mayHaveFunctionClass = false)) return null
         return getClass(classId) ?: getTypeAlias(classId)
+    }
+
+    fun getTopLevelCallableSymbol(
+        callableDeclaration: KtCallableDeclaration,
+        packageFqName: FqName,
+        shortName: Name
+    ): FirCallableSymbol<*>? {
+        //possible overloads spoils here
+        //we can't use only this callable instead of index access to fill the cache
+        //names check is redundant though as we already have existing callable in scope
+        val callableId = CallableId(packageFqName, shortName)
+        val callableSymbols = when (callableDeclaration) {
+            is KtNamedFunction -> {
+                functionCache.getValue(callableId)
+            }
+            is KtProperty -> propertyCache.getValue(callableId)
+            else -> null
+        }
+        return callableSymbols?.singleOrNull { it.fir.realPsi == callableDeclaration }
     }
 }

@@ -162,7 +162,7 @@ private fun FirSymbolProvider.findCallableCandidates(
         @OptIn(FirSymbolProviderInternals::class)
         return when (this) {
             is LLFirModuleWithDependenciesSymbolProvider -> buildList {
-                getTopLevelCallableSymbolsToWithoutDependencies(this, packageFqName, shortName)
+                getTopLevelDeserializedCallableSymbolsToWithoutDependencies(this, declaration, packageFqName, shortName)
                 friendBuiltinsProvider?.getTopLevelCallableSymbolsTo(this, packageFqName, shortName)
             }
             else -> getTopLevelCallableSymbols(packageFqName, shortName)
