@@ -1138,16 +1138,9 @@ class CocoaPodsIT : BaseGradleIT() {
     fun testPodPublishing() {
         //test that manually created frameworks are not included into cocoapods xcframework
         project.gradleBuildScript().appendToKotlinBlock("iosX64(\"iOS\") {binaries.framework{}}")
-
-        val currentGradleVersion = project.chooseWrapperVersionOrFinishTest()
         project.build(
             ":podPublishXCFramework",
             "-Pkotlin.native.cocoapods.generate.wrapper=true",
-            options = defaultBuildOptions().suppressDeprecationWarningsSinceGradleVersion(
-                TestVersions.Gradle.G_7_4,
-                currentGradleVersion,
-                "Workaround for KT-57483",
-            ).copy(warningMode = WarningMode.Fail)
         ) {
             assertSuccessful()
 

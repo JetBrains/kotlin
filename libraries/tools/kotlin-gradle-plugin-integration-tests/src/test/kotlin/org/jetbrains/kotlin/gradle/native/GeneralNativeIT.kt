@@ -295,15 +295,8 @@ class GeneralNativeIT : BaseGradleIT() {
         transformNativeTestProjectWithPluginDsl("frameworks", directoryPrefix = "native-binaries")
     ) {
         fun assemble(check: CompiledProject.() -> Unit) {
-            val currentGradleVersion = chooseWrapperVersionOrFinishTest()
             build(
                 "assemble",
-                options = defaultBuildOptions()
-                    .suppressDeprecationWarningsSinceGradleVersion(
-                        TestVersions.Gradle.G_7_4,
-                        currentGradleVersion,
-                        "Workaround for KT-57483"
-                    ).copy(warningMode = WarningMode.Fail),
                 check = check
             )
         }
