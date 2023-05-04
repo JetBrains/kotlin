@@ -1,4 +1,5 @@
 // This test mostly checks frontend behaviour.
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 
 import cForwardDeclarationsTwoLibs1.*
 import cForwardDeclarationsTwoLibs2.*

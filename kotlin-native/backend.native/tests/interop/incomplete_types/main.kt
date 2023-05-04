@@ -1,3 +1,5 @@
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+
 import library.*
 import kotlinx.cinterop.*
 import kotlin.test.*

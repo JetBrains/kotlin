@@ -1,4 +1,5 @@
-@file:OptIn(FreezingIsDeprecated::class, kotlin.experimental.ExperimentalNativeApi::class, kotlin.native.runtime.NativeRuntimeApi::class, ObsoleteWorkersApi::class)
+@file:OptIn(FreezingIsDeprecated::class, kotlin.experimental.ExperimentalNativeApi::class, kotlin.native.runtime.NativeRuntimeApi::class, ObsoleteWorkersApi::class, kotlinx.cinterop.ExperimentalForeignApi::class)
+
 package runtime.workers.worker10
 
 import kotlin.test.*

@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(FreezingIsDeprecated::class)
+@file:OptIn(FreezingIsDeprecated::class, kotlinx.cinterop.ExperimentalForeignApi::class)
 package runtime.atomics.atomic_smoke
 
 import kotlin.test.*
