@@ -150,11 +150,7 @@ internal fun checkPropertyInitializer(
                 if (property.receiverParameter != null && !property.hasAnyAccessorImplementation) {
                     reporter.reportOn(propertySource, FirErrors.EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT, context)
                 } else if (reachable) { // TODO: can be suppressed not to report diagnostics about no body
-                    if (containingClass == null || property.hasAnyAccessorImplementation) {
-                        reporter.reportOn(propertySource, FirErrors.MUST_BE_INITIALIZED, context)
-                    } else {
-                        reporter.reportOn(propertySource, FirErrors.MUST_BE_INITIALIZED_OR_BE_ABSTRACT, context)
-                    }
+                    reportMustBeInitialized(property, isDeferredInitialized, containingClass, propertySource, reporter, context)
                 }
             }
             if (property.isLateInit) {
@@ -170,6 +166,30 @@ internal fun checkPropertyInitializer(
             }
         }
     }
+}
+
+private fun reportMustBeInitialized(
+    property: FirProperty,
+    isDeferredInitialized: Boolean,
+    containingClass: FirClass?,
+    propertySource: KtSourceElement,
+    reporter: DiagnosticReporter,
+    context: CheckerContext,
+) {
+    check(!property.isAbstract) { "${::reportMustBeInitialized.name} isn't called for abstract properties" }
+    val suggestMakingItFinal = containingClass != null &&
+            !property.hasSetterAccessorImplementation &&
+            !property.isFinal &&
+            isDeferredInitialized
+    val suggestMakingItAbstract = containingClass != null && !property.hasAnyAccessorImplementation
+
+    val factory = when {
+        suggestMakingItFinal && suggestMakingItAbstract -> FirErrors.MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT
+        suggestMakingItFinal -> FirErrors.MUST_BE_INITIALIZED_OR_BE_FINAL
+        suggestMakingItAbstract -> FirErrors.MUST_BE_INITIALIZED_OR_BE_ABSTRACT
+        else -> FirErrors.MUST_BE_INITIALIZED
+    }
+    reporter.reportOn(propertySource, factory, context)
 }
 
 private val FirProperty.hasSetterAccessorImplementation: Boolean
