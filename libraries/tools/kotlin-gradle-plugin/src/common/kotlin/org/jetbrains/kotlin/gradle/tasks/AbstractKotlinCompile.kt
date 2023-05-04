@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.UsesCompilerSystemPropertiesService
 import org.jetbrains.kotlin.compilerRunner.createGradleCompilerRunner
 import org.jetbrains.kotlin.daemon.common.MultiModuleICSettings
+import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.incremental.UsesIncrementalModuleInfoBuildService
 import org.jetbrains.kotlin.gradle.internal.UsesClassLoadersCachingBuildService
@@ -108,6 +109,10 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
 
     @get:Internal
     val startParameters = BuildReportsService.getStartParameters(project)
+
+    @get:Input
+    @get:Optional
+    internal abstract val explicitApiMode: Property<ExplicitApiMode>
 
     @get:Internal
     internal abstract val suppressKotlinOptionsFreeArgsModificationWarning: Property<Boolean>

@@ -21,6 +21,7 @@ import org.gradle.api.tasks.Exec
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.TEST_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo.KPM
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.ReadyForExecution
@@ -380,6 +381,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
             konanTarget: KonanTarget
         ): TaskProvider<KotlinNativeCompile> {
             val project = compilationInfo.project
+            val ext = project.topLevelExtension
             val compileTaskProvider = project.registerTask<KotlinNativeCompile>(
                 compilationInfo.compileKotlinTaskName,
                 listOf(
@@ -400,6 +402,10 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
                 }
                 it.compilerOptions.useK2.disallowChanges()
                 it.runViaBuildToolsApi.value(false).disallowChanges() // K/N is not yet supported
+
+                it.explicitApiMode
+                    .value(project.providers.provider { ext.explicitApi })
+                    .finalizeValueOnRead()
             }
 
             compilationInfo.classesDirs.from(compileTaskProvider.map { it.outputFile })

@@ -100,7 +100,7 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
 
 
     constructor(project: Project, ext: KotlinTopLevelExtension) : super(
-        project, ext, languageSettings = getDefaultLangSetting(project, ext)
+        project, ext, languageSettings = getDefaultLangSetting(project)
     )
 
     companion object {
@@ -111,12 +111,8 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
         private const val JAR_ARTIFACT_TYPE = "jar"
         const val CLASSPATH_ENTRY_SNAPSHOT_ARTIFACT_TYPE = "classpath-entry-snapshot"
 
-        private fun getDefaultLangSetting(project: Project, ext: KotlinTopLevelExtension): Provider<LanguageSettings> {
-            return project.provider {
-                DefaultLanguageSettingsBuilder().also {
-                    it.freeCompilerArgsProvider = project.provider { listOfNotNull(ext.explicitApi?.toCompilerArg()) }
-                }
-            }
+        private fun getDefaultLangSetting(project: Project): Provider<LanguageSettings> {
+            return project.provider { DefaultLanguageSettingsBuilder() }
         }
     }
 

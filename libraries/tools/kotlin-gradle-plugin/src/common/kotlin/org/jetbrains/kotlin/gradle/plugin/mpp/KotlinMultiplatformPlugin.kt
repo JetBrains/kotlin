@@ -320,17 +320,6 @@ internal fun sourcesJarTaskNamed(
 }
 
 internal fun Project.setupGeneralKotlinExtensionParameters() {
-    val sourceSetsInMainCompilation by lazy {
-        kotlinExtension.sourceSets.filter { sourceSet ->
-            sourceSet.internal.compilations.any {
-                // kotlin main compilation
-                it.isMain()
-                        // android compilation which is NOT in tested variant
-                        || (it as? KotlinJvmAndroidCompilation)?.let { getTestedVariantData(it.androidVariant) == null } == true
-            }
-        }
-    }
-
     kotlinExtension.sourceSets.all { sourceSet ->
         (sourceSet.languageSettings as? DefaultLanguageSettingsBuilder)?.run {
 
@@ -348,11 +337,6 @@ internal fun Project.setupGeneralKotlinExtensionParameters() {
                         is String -> add(propertyValue)
                         is Iterable<*> -> addAll(propertyValue.map { it.toString() })
                     }
-
-                    val explicitApiState = project.kotlinExtension.explicitApi?.toCompilerArg()
-                    // do not look into lazy set if explicitApiMode was not enabled
-                    if (explicitApiState != null && sourceSet in sourceSetsInMainCompilation)
-                        add(explicitApiState)
                 }
             }
         }

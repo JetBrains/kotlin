@@ -90,6 +90,8 @@ abstract class KotlinCompileCommon @Inject constructor(
 
             args.destination = destinationDirectory.get().asFile.normalize().absolutePath
 
+            explicitApiMode.orNull?.run { args.explicitApi = toCompilerValue() }
+
             KotlinCommonCompilerOptionsHelper.fillCompilerArguments(compilerOptions, args)
 
             val localExecutionTimeFreeCompilerArgs = executionTimeFreeCompilerArgs

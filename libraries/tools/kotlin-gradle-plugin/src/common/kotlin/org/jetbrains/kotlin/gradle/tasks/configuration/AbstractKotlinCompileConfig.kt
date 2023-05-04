@@ -121,6 +121,10 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
             }
             task.runViaBuildToolsApi.convention(propertiesProvider.runKotlinCompilerViaBuildToolsApi).finalizeValueOnRead()
             task.classLoadersCachingService.value(cachedClassLoadersService).disallowChanges()
+
+            task.explicitApiMode
+                .value(project.providers.provider { ext.explicitApi })
+                .finalizeValueOnRead()
         }
     }
 

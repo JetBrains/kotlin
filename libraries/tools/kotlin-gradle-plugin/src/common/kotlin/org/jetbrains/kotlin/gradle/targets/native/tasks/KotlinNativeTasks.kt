@@ -16,6 +16,7 @@ import org.gradle.api.artifacts.result.DependencyResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.file.*
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
@@ -145,6 +146,10 @@ abstract class AbstractKotlinNativeCompile<
 
     @get:Internal
     abstract val baseName: String
+
+    @get:Input
+    @get:Optional
+    internal abstract val explicitApiMode: Property<ExplicitApiMode>
 
     @get:Internal
     protected val konanTarget by project.provider {
@@ -457,6 +462,8 @@ internal constructor(
             }
 
             KotlinNativeCompilerOptionsHelper.fillCompilerArguments(compilerOptions, args)
+
+            explicitApiMode.orNull?.run { args.explicitApi = toCompilerValue() }
         }
 
         pluginClasspath { args ->
