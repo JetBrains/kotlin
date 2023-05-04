@@ -165,6 +165,23 @@ fun main() {
             }
         }
 
+        // ObjCExport tests.
+        testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
+            testClass<AbstractNativeObjCExportTest>(
+                suiteTestClassName = "ObjCExportTestGenerated"
+            ) {
+                model("ObjCExport", pattern = "^([^_](.+))$", recursive = false)
+            }
+            testClass<AbstractNativeObjCExportTest>(
+                suiteTestClassName = "FirObjCExportTestGenerated",
+                annotations = listOf(
+                    *frontendFir()
+                ),
+            ) {
+                model("ObjCExport", pattern = "^([^_](.+))$", recursive = false)
+            }
+        }
+
         // Klib contents tests
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
             testClass<AbstractNativeKlibContentsTest>(

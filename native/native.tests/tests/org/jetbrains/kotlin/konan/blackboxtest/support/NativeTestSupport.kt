@@ -207,6 +207,7 @@ private object NativeTestSupport {
         output += computePipelineType(testClass.get())
         output += computeUsedPartialLinkageConfig(enclosingTestClass)
         output += computeCompilerOutputInterceptor(enforcedProperties)
+        output += computeBinariesDirs(getOrCreateTestProcessSettings().get(), nativeTargets, enclosingTestClass)
 
         return nativeTargets
     }
@@ -337,7 +338,6 @@ private object NativeTestSupport {
 
                 // Put settings that are always required:
                 this += computedTestConfiguration
-                this += computeBinariesDirs(testProcessSettings.get(), nativeTargets, enclosingTestClass)
 
                 // Add custom settings:
                 computedTestConfiguration.configuration.requiredSettings.forEach { clazz ->

@@ -213,6 +213,40 @@ internal class LibraryCompilation(
     }
 }
 
+internal class ObjCFrameworkCompilation(
+    settings: Settings,
+    freeCompilerArgs: TestCompilerArgs,
+    sourceModules: Collection<TestModule>,
+    dependencies: Iterable<TestCompilationDependency<*>>,
+    expectedArtifact: ObjCFramework
+) : SourceBasedCompilation<ObjCFramework>(
+    targets = settings.get(),
+    home = settings.get(),
+    classLoader = settings.get(),
+    optimizationMode = settings.get(),
+    compilerOutputInterceptor = settings.get(),
+    memoryModel = settings.get(),
+    threadStateChecker = settings.get(),
+    sanitizer = settings.get(),
+    gcType = settings.get(),
+    gcScheduler = settings.get(),
+    pipelineType = settings.get(),
+    freeCompilerArgs = freeCompilerArgs,
+    sourceModules = sourceModules,
+    dependencies = CategorizedDependencies(dependencies),
+    expectedArtifact = expectedArtifact
+) {
+    override val binaryOptions get() = BinaryOptions.RuntimeAssertionsMode.defaultForTesting
+
+    override fun applySpecificArgs(argsBuilder: ArgsBuilder) = with(argsBuilder) {
+        add(
+            "-produce", "framework",
+            "-output", expectedArtifact.frameworkDir.absolutePath
+        )
+        super.applySpecificArgs(argsBuilder)
+    }
+}
+
 internal class GivenLibraryCompilation(givenArtifact: KLIB) : TestCompilation<KLIB>() {
     override val result = TestCompilationResult.Success(givenArtifact, LoggedData.NoopCompilerCall(givenArtifact.klibFile))
 }
