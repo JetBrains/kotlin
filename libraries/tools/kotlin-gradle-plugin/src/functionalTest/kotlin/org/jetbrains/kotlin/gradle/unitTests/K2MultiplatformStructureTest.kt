@@ -18,11 +18,9 @@ import org.jetbrains.kotlin.gradle.internal.CompilerArgumentAware
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.lenient
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.IR
-import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformCompilationTask
-import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure
+import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure.Fragment
 import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure.RefinesEdge
-import org.jetbrains.kotlin.gradle.tasks.configureK2Multiplatform
 import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.enableDefaultStdlibDependency
@@ -158,4 +156,10 @@ private fun K2MultiplatformCompilationTask.buildCompilerArguments(): CommonCompi
     @Suppress("UNCHECKED_CAST")
     this as CompilerArgumentAware<CommonCompilerArguments>
     return this.createCompilerArguments(lenient)
+}
+
+internal fun CommonCompilerArguments.configureK2Multiplatform(multiplatformStructure: K2MultiplatformStructure) {
+    fragments = multiplatformStructure.fragmentsCompilerArgs
+    fragmentSources = multiplatformStructure.fragmentSourcesCompilerArgs()
+    fragmentRefines = multiplatformStructure.fragmentRefinesCompilerArgs
 }
