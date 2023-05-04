@@ -56,9 +56,9 @@ private fun reportTargetsWithNonUniqueConsumableConfigurations(project: Project)
         }
 
         SingleWarningPerBuild.show(
-            project,"w: The following targets are not distinguishable:\n$nonUniqueTargetsString" +
-            "\nUse distinguish attribute. " +
-            "See https://kotlinlang.org/docs/multiplatform-set-up-targets.html#distinguish-several-targets-for-one-platform for more details."
+            project, "w: The following targets are not distinguishable:\n$nonUniqueTargetsString" +
+                    "\nUse distinguish attribute. " +
+                    "See https://kotlinlang.org/docs/multiplatform-set-up-targets.html#distinguish-several-targets-for-one-platform for more details."
         )
     }
 }

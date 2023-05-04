@@ -18,6 +18,12 @@ class PreHmppDependenciesDeprecationIT : KGPBaseTest() {
     }
 
     @GradleTest
+    fun testReportFromIntermediateSourceSet(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
+        publishLibrary("preHmppLibrary", gradleVersion, tempDir)
+        checkDiagnostics(gradleVersion, "reportFromIntermediateSourceSet", tempDir, expectReportForDependency = "preHmppLibrary")
+    }
+
+    @GradleTest
     fun testTransitiveDependencyUpgradesVersion(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
         // 0.1
         publishLibrary("preHmppLibrary", gradleVersion, tempDir)

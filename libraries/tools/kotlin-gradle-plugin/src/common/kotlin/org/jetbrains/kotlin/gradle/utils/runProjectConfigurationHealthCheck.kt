@@ -9,8 +9,10 @@ import org.gradle.api.Project
 import org.gradle.api.internal.project.ProjectInternal
 import org.gradle.api.provider.Provider
 import org.gradle.tooling.model.kotlin.dsl.KotlinDslModelsParameters
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.internal.configurationTimePropertiesAccessor
 import org.jetbrains.kotlin.gradle.plugin.internal.usedAtConfigurationTime
+import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 
 /**
@@ -97,7 +99,7 @@ private fun Project.inLenientMode() =
  * @see runProjectConfigurationHealthCheck
  */
 internal inline fun Project.runProjectConfigurationHealthCheckWhenEvaluated(crossinline check: Project.() -> Unit) {
-    whenEvaluated {
+    launchInStage(KotlinPluginLifecycle.Stage.ReadyForExecution) {
         runProjectConfigurationHealthCheck(check)
     }
 }
