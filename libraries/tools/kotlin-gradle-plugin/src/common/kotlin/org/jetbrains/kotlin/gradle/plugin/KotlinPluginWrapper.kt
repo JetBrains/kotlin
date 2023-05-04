@@ -258,7 +258,7 @@ abstract class KotlinBasePluginWrapper : DefaultKotlinBasePlugin() {
 private fun Project.launchDiagnosticChecksAndReporting() {
     project.launchKotlinGradleProjectCheckers()
     project.launch {
-        project.configured.await()
+        project.configurationResult.await()
         renderReportedDiagnostics(
             project.kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(project),
             project.logger,

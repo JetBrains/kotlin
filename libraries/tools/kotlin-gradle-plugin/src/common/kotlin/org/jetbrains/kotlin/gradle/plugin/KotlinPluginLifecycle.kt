@@ -137,7 +137,7 @@ internal val Project.kotlinPluginLifecycle: KotlinPluginLifecycle
  * will lead to:
  * ```kotlin
  * project.launch {
- *     val result = project.configured.await()
+ *     val result = project.configurationResult.await()
  *     val result as Failure
  *     val exception = result.failures.first()
  *     println(exception.message) // 'My Error'
@@ -149,7 +149,7 @@ internal val Project.kotlinPluginLifecycle: KotlinPluginLifecycle
  * Even in case of failure it is still okay to further launch a new coroutine
  * ```kotlin
  * project.launch {
- *    val result = project.configured.await() as Failure
+ *    val result = project.configurationResult.await() as Failure
  *    val anotherJob = project.launch { ... } // <- executed right away
  *    val someFutureEvaluation = project.someFuture.getOrThrow() // <- will return value if all 'requirements' have been met.
  * }
@@ -158,12 +158,12 @@ internal val Project.kotlinPluginLifecycle: KotlinPluginLifecycle
  * Note: [Future.getOrThrow] will throw if e.g. the lifecycle fails in a very early stage, but the Future requires
  * some later data to be available. In this case, the Future still will only return 'sane' data.
  */
-internal val Project.configured: Future<ProjectConfigurationResult>
-    get() = configuredImpl
+internal val Project.configurationResult: Future<ProjectConfigurationResult>
+    get() = configurationResultImpl
 
 
-private val Project.configuredImpl: CompletableFuture<ProjectConfigurationResult>
-    get() = extraProperties.getOrPut("org.jetbrains.kotlin.gradle.plugin.configured") { CompletableFuture() }
+private val Project.configurationResultImpl: CompletableFuture<ProjectConfigurationResult>
+    get() = extraProperties.getOrPut("org.jetbrains.kotlin.gradle.plugin.configurationResult") { CompletableFuture() }
 
 
 /**
@@ -505,13 +505,13 @@ private class KotlinPluginLifecycleImpl(override val project: Project) : KotlinP
         assert(failures.isNotEmpty())
         assert(isStarted.get())
         assert(!isFinishedWithFailures.getAndSet(true))
-        project.configuredImpl.complete(ProjectConfigurationResult.Failure(failures))
+        project.configurationResultImpl.complete(ProjectConfigurationResult.Failure(failures))
     }
 
     private fun finishSuccessfully() {
         assert(isStarted.get())
         assert(!isFinishedSuccessfully.getAndSet(true))
-        project.configuredImpl.complete(ProjectConfigurationResult.Success)
+        project.configurationResultImpl.complete(ProjectConfigurationResult.Success)
     }
 
     override fun enqueue(stage: Stage, action: KotlinPluginLifecycle.() -> Unit) {

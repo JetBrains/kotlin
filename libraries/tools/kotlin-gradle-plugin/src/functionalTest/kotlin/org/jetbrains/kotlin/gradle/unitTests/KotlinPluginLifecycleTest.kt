@@ -214,7 +214,8 @@ class KotlinPluginLifecycleTest {
             fail("AfterEvaluate based stage is not expected to be launched because of exception during .evaluate()", throwable)
         }
 
-        val exceptions = project.configured.getOrThrow().cast<Failure>().failures.withClosure<Throwable> { listOfNotNull(it.cause) }
+        val exceptions = project.configurationResult.getOrThrow().cast<Failure>()
+            .failures.withClosure<Throwable> { listOfNotNull(it.cause) }
         if (thrownException !in exceptions) fail("Expected 'thrownException' in lifecycle.finished")
     }
 
@@ -224,7 +225,8 @@ class KotlinPluginLifecycleTest {
 
         val executedAfterLifecycleFinished = AtomicBoolean(false)
         project.launch {
-            val exceptions = project.configured.await().cast<Failure>().failures.withClosure<Throwable> { listOfNotNull(it.cause) }
+            val exceptions = project.configurationResult.await().cast<Failure>()
+                .failures.withClosure<Throwable> { listOfNotNull(it.cause) }
             assertFalse(executedAfterLifecycleFinished.getAndSet(true))
             if (thrownException !in exceptions) fail("Expected 'thrownException' in lifecycle.finished")
         }
@@ -252,7 +254,7 @@ class KotlinPluginLifecycleTest {
         }
 
         project.launch secondAction@{
-            project.configured.await()
+            project.configurationResult.await()
             assertEquals(AfterEvaluateBuildscript, stage)
             assertEquals(42, future.getOrThrow())
             assertEquals(420, project.future { AfterEvaluateBuildscript.await(); 420 }.getOrThrow())
@@ -280,14 +282,14 @@ class KotlinPluginLifecycleTest {
         }
 
         project.launch {
-            project.configured.await()
+            project.configurationResult.await()
             project.launchInStage(AfterEvaluateBuildscript.nextOrThrow) thirdAction@{
                 assertFalse(thirdActionExecuted.getAndSet(true))
             }
         }
 
         project.launch fourthAction@{
-            project.configured.await()
+            project.configurationResult.await()
             AfterEvaluateBuildscript.nextOrThrow.await()
             assertFalse(fourthActionExecuted.getAndSet(true))
         }
