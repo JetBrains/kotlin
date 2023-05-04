@@ -16,3 +16,9 @@ dependencies {
 publish()
 
 standardPublicJars()
+
+kotlin {
+    sourceSets.all {
+        languageSettings.optIn("org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi")
+    }
+}

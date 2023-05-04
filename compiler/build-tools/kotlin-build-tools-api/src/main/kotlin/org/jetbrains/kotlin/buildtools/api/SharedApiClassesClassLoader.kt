@@ -16,6 +16,7 @@ import kotlin.reflect.KClass
  */
 @Suppress("FunctionName")
 @JvmName("newInstance")
+@ExperimentalBuildToolsApi
 fun SharedApiClassesClassLoader(): ClassLoader = SharedApiClassesClassLoaderImpl(
     SharedApiClassesClassLoaderImpl::class.java.classLoader,
     ClassLoader.getSystemClassLoader(),

@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.buildtools.api.compilation
 
+import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
+
+@ExperimentalBuildToolsApi
 enum class CompilationResult {
     COMPILATION_SUCCESS,
     COMPILATION_ERROR,

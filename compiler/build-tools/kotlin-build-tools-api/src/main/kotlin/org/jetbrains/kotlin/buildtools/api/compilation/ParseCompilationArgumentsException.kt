@@ -5,4 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.api.compilation
 
+import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
+
+@ExperimentalBuildToolsApi
 class ParseCompilationArgumentsException(message: String) : KotlinBuildToolsException(message)

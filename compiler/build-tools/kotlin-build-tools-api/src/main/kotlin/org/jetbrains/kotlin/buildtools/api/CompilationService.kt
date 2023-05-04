@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.buildtools.api.compilation.CompilationStrategySettin
  * A facade for invoking compilation in Kotlin compiler. It allows to use compiler in different modes.
  * TODO: add a mention where to see the available modes after implementing them
  */
+@ExperimentalBuildToolsApi
 interface CompilationService {
     fun compile(
         compilationStrategySettings: CompilationStrategySettings,
@@ -20,6 +21,7 @@ interface CompilationService {
         compilationOptions: CompilationOptions,
     ): CompilationResult
 
+    @ExperimentalBuildToolsApi
     companion object {
         @JvmStatic
         fun loadImplementation(classLoader: ClassLoader) = loadImplementation(CompilationService::class, classLoader)

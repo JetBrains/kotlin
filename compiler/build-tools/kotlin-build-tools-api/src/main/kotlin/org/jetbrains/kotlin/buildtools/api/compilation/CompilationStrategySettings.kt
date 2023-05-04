@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.buildtools.api.compilation
 
+import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
+
+@ExperimentalBuildToolsApi
 sealed class CompilationStrategySettings {
     object InProcess : CompilationStrategySettings()
 
