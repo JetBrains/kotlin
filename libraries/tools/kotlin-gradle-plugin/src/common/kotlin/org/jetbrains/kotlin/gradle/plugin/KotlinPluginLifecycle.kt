@@ -12,13 +12,10 @@ import org.jetbrains.kotlin.gradle.utils.CompletableFuture
 import org.jetbrains.kotlin.gradle.utils.Future
 import org.jetbrains.kotlin.gradle.utils.failures
 import org.jetbrains.kotlin.gradle.utils.getOrPut
-import java.lang.ref.WeakReference
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.collections.ArrayDeque
-import kotlin.collections.set
 import kotlin.coroutines.*
-import kotlin.reflect.KProperty
 
 /*
 Util functions
@@ -191,66 +188,13 @@ internal suspend fun Stage.await() {
 }
 
 /**
- * See [newProperty]
- */
-internal inline fun <reified T : Any> Project.newKotlinPluginLifecycleAwareProperty(
-    finaliseIn: Stage = Stage.FinaliseDsl, initialValue: T? = null,
-): LifecycleAwareProperty<T> {
-    return kotlinPluginLifecycle.newProperty(T::class.java, finaliseIn, initialValue)
-}
-
-/**
- * See [LifecycleAwareProperty]
- * Will create a new [LifecycleAwareProperty] which is going to finalise its value in stage [finaliseIn]
- * and the initialValue [initialValue]
- *
- * ## Sample
- * ```kotlin
- * val myProperty by project.newKotlinPluginLifecycleAwareProperty<String>()
- * myProperty.set("hello")
- * //...
- * project.launch {
- *     val myFinalValue = myProperty.awaitFinalValue() // <- suspends until final value is known!
- * }
- * ```
- */
-internal inline fun <reified T : Any> KotlinPluginLifecycle.newProperty(
-    finaliseIn: Stage = Stage.FinaliseDsl, initialValue: T? = null,
-): LifecycleAwareProperty<T> {
-    return newProperty(T::class.java, finaliseIn, initialValue)
-}
-
-/**
- * Will return the [LifecycleAwareProperty] instance if the given receiver was created by [newKotlinPluginLifecycleAwareProperty]
- */
-internal suspend fun <T : Any> Property<T>.findKotlinPluginLifecycleAwareProperty(): LifecycleAwareProperty<T>? {
-    return (currentKotlinPluginLifecycle() as KotlinPluginLifecycleImpl).findLifecycleAwareProperty(this)
-}
-
-/**
- * Will suspend until the property finalises its value and therefore a final value can returned.
- * Note: This only works on properties that are [isKotlinPluginLifecycleAware]
- * (e.g. by being created using [newKotlinPluginLifecycleAwareProperty]).
- *
- * If a property was not created using 'newKotlinPluginLifecycleAwareProperty' then the execution
- * will suspend until 'FinaliseDsl' and calls [Property.finalizeValue] before returnign the actual value
+ * Will suspend until [Stage.FinaliseDsl], finalise the value using [Property.finalizeValue] and return the
+ * final value.
  */
 internal suspend fun <T : Any> Property<T>.awaitFinalValue(): T? {
-    val lifecycleAwareProperty = findKotlinPluginLifecycleAwareProperty()
-    if (lifecycleAwareProperty != null) {
-        return lifecycleAwareProperty.awaitFinalValue()
-    }
-
     Stage.FinaliseDsl.await()
     finalizeValue()
     return orNull
-}
-
-/**
- * @return true if this property has an associated [LifecycleAwareProperty]
- */
-internal suspend fun Property<*>.isKotlinPluginLifecycleAware(): Boolean {
-    return findKotlinPluginLifecycleAwareProperty() != null
 }
 
 /**
@@ -395,31 +339,7 @@ internal interface KotlinPluginLifecycle {
 
     suspend fun await(stage: Stage)
 
-    fun <T : Any> newProperty(
-        type: Class<T>, finaliseIn: Stage, initialValue: T?,
-    ): LifecycleAwareProperty<T>
-
     class IllegalLifecycleException(message: String) : IllegalStateException(message)
-
-    /**
-     * Wrapper around Gradle's [Property] that is aware of the [KotlinPluginLifecycle] and ensures that
-     * the given [property] is finalised in [stage] (also calling [Property.finalizeValue]).
-     *
-     * A property finalised in a given [stage] will allow to safely get the final value using the
-     * [awaitFinalValue] function, suspending the execution until the value is indeed finalised.
-     *
-     * See [Project.newKotlinPluginLifecycleAwareProperty] to create a new instance
-     */
-    interface LifecycleAwareProperty<T : Any> {
-        val finaliseIn: Stage
-        val property: Property<T>
-
-        /**
-         * See [LifecycleAwareProperty]
-         */
-        suspend fun awaitFinalValue(): T?
-        operator fun getValue(thisRef: Any?, property: KProperty<*>): Property<T> = this.property
-    }
 }
 
 
@@ -437,7 +357,6 @@ private class KotlinPluginLifecycleImpl(override val project: Project) : KotlinP
     private val isFinishedWithFailures = AtomicBoolean(false)
 
     override var stage: Stage = Stage.values.first()
-    private val properties = WeakHashMap<Property<*>, WeakReference<LifecycleAwareProperty<*>>>()
 
     fun start() {
         check(!isStarted.getAndSet(true)) {
@@ -574,32 +493,6 @@ private class KotlinPluginLifecycleImpl(override val project: Project) : KotlinP
             enqueue(stage) {
                 continuation.resume(Unit)
             }
-        }
-    }
-
-    override fun <T : Any> newProperty(type: Class<T>, finaliseIn: Stage, initialValue: T?): LifecycleAwareProperty<T> {
-        val property = project.objects.property(type)
-        if (initialValue != null) property.set(initialValue)
-        if (finaliseIn <= stage) property.finalizeValue()
-        else enqueue(finaliseIn) { property.finalizeValue() }
-        val lifecycleAwareProperty = LifecycleAwarePropertyImpl(finaliseIn, property)
-        properties[property] = WeakReference(lifecycleAwareProperty)
-        return lifecycleAwareProperty
-    }
-
-    fun <T : Any> findLifecycleAwareProperty(property: Property<T>): LifecycleAwareProperty<T>? {
-        @Suppress("UNCHECKED_CAST")
-        return properties[property]?.get() as? LifecycleAwareProperty<T>
-    }
-
-    private class LifecycleAwarePropertyImpl<T : Any>(
-        override val finaliseIn: Stage,
-        override val property: Property<T>,
-    ) : LifecycleAwareProperty<T> {
-
-        override suspend fun awaitFinalValue(): T? {
-            finaliseIn.await()
-            return property.orNull
         }
     }
 }

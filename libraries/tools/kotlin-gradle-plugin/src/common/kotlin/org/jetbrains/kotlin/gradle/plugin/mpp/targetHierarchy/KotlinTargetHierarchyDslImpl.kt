@@ -16,19 +16,19 @@ import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.utils.property
 
 internal class KotlinTargetHierarchyDslImpl(
-    private val lifecycle: KotlinPluginLifecycle,
+    objects: ObjectFactory,
     private val targets: DomainObjectCollection<KotlinTarget>,
-    private val sourceSets: NamedDomainObjectContainer<KotlinSourceSet>
+    private val sourceSets: NamedDomainObjectContainer<KotlinSourceSet>,
 ) : KotlinTargetHierarchyDsl {
 
     private val _appliedDescriptors = mutableListOf<KotlinTargetHierarchyDescriptor>()
     val appliedDescriptors: List<KotlinTargetHierarchyDescriptor> get() = _appliedDescriptors
 
-    override val android: KotlinAndroidTargetHierarchyDsl = KotlinAndroidTargetHierarchyDslImpl(lifecycle)
+    override val android: KotlinAndroidTargetHierarchyDsl = KotlinAndroidTargetHierarchyDslImpl(objects)
 
     override fun apply(
         hierarchyDescriptor: KotlinTargetHierarchyDescriptor,
-        describeExtension: (KotlinTargetHierarchyBuilder.Root.() -> Unit)?
+        describeExtension: (KotlinTargetHierarchyBuilder.Root.() -> Unit)?,
     ) {
         val descriptor = hierarchyDescriptor.extendIfNotNull(describeExtension)
         _appliedDescriptors.add(descriptor)
@@ -51,12 +51,12 @@ internal class KotlinTargetHierarchyDslImpl(
 private fun KotlinTargetHierarchyDescriptor.extendIfNotNull(describe: (KotlinTargetHierarchyBuilder.Root.() -> Unit)?) =
     if (describe == null) this else extend(describe)
 
-internal class KotlinAndroidTargetHierarchyDslImpl(lifecycle: KotlinPluginLifecycle) : KotlinAndroidTargetHierarchyDsl {
-    override val main: KotlinAndroidVariantHierarchyDsl = KotlinAndroidVariantHierarchyDslImpl(lifecycle)
-    override val unitTest: KotlinAndroidVariantHierarchyDsl = KotlinAndroidVariantHierarchyDslImpl(lifecycle)
-    override val instrumentedTest: KotlinAndroidVariantHierarchyDsl = KotlinAndroidVariantHierarchyDslImpl(lifecycle)
+internal class KotlinAndroidTargetHierarchyDslImpl(objects: ObjectFactory) : KotlinAndroidTargetHierarchyDsl {
+    override val main: KotlinAndroidVariantHierarchyDsl = KotlinAndroidVariantHierarchyDslImpl(objects)
+    override val unitTest: KotlinAndroidVariantHierarchyDsl = KotlinAndroidVariantHierarchyDslImpl(objects)
+    override val instrumentedTest: KotlinAndroidVariantHierarchyDsl = KotlinAndroidVariantHierarchyDslImpl(objects)
 }
 
-internal class KotlinAndroidVariantHierarchyDslImpl(lifecycle: KotlinPluginLifecycle) : KotlinAndroidVariantHierarchyDsl {
-    override val sourceSetTree: Property<KotlinTargetHierarchy.SourceSetTree> by lifecycle.newProperty()
+internal class KotlinAndroidVariantHierarchyDslImpl(objects: ObjectFactory) : KotlinAndroidVariantHierarchyDsl {
+    override val sourceSetTree: Property<KotlinTargetHierarchy.SourceSetTree> = objects.property()
 }

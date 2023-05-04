@@ -53,7 +53,7 @@ abstract class KotlinMultiplatformExtension(project: Project) :
     }
 
     internal val internalKotlinTargetHierarchy by lazy {
-        KotlinTargetHierarchyDslImpl(project.kotlinPluginLifecycle, targets, sourceSets)
+        KotlinTargetHierarchyDslImpl(project.objects, targets, sourceSets)
     }
 
     @ExperimentalKotlinGradlePluginApi

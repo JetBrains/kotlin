@@ -25,7 +25,7 @@ class KotlinAndroidTargetHierarchyDsl {
 
     @Test
     fun `test -  module - not set`() = buildProjectWithMPP().runLifecycleAwareTest {
-        val dsl = KotlinAndroidVariantHierarchyDslImpl(project.kotlinPluginLifecycle)
+        val dsl = KotlinAndroidVariantHierarchyDslImpl(project.objects)
         project.kotlinPluginLifecycle.launch {
             assertNull(dsl.sourceSetTree.orNull)
             assertNull(dsl.sourceSetTree.awaitFinalValue())
@@ -34,23 +34,11 @@ class KotlinAndroidTargetHierarchyDsl {
 
     @Test
     fun `test - module - can be set in users afterEvaluate`() = buildProjectWithMPP().runLifecycleAwareTest {
-        val dsl = KotlinAndroidVariantHierarchyDslImpl(project.kotlinPluginLifecycle)
+        val dsl = KotlinAndroidVariantHierarchyDslImpl(project.objects)
         afterEvaluate { dsl.sourceSetTree.set(KotlinTargetHierarchy.SourceSetTree("x")) }
         dsl.sourceSetTree.set(KotlinTargetHierarchy.SourceSetTree("-set-before-after-evaluate-"))
         assertEquals("x", dsl.sourceSetTree.awaitFinalValue()?.name)
         assertEquals(KotlinPluginLifecycle.Stage.FinaliseDsl, currentKotlinPluginLifecycle().stage)
-    }
-
-    @Test
-    fun `test - module - cannot be set after FinaliseDsl`() = buildProjectWithMPP().runLifecycleAwareTest {
-        val dsl = KotlinAndroidVariantHierarchyDslImpl(project.kotlinPluginLifecycle)
-        launchInStage(KotlinPluginLifecycle.Stage.FinaliseDsl.previousOrThrow) {
-            dsl.sourceSetTree.set(KotlinTargetHierarchy.SourceSetTree("x"))
-        }
-
-        launchInStage(KotlinPluginLifecycle.Stage.FinaliseDsl) {
-            assertFails { dsl.sourceSetTree.set(KotlinTargetHierarchy.SourceSetTree("y")) }
-        }
     }
 
     @Test
