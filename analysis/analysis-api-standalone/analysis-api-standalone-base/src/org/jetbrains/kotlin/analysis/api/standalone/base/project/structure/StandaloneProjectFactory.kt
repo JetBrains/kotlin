@@ -178,10 +178,13 @@ object StandaloneProjectFactory {
             registerService(ModuleAnnotationsResolver::class.java, CliModuleAnnotationsResolver())
         }
 
+        val modules = projectStructureProvider.allKtModules
         project.registerService(ProjectStructureProvider::class.java, projectStructureProvider)
+        project.registerService(KotlinModuleDependentsProvider::class.java, KtStaticModuleDependentsProvider(modules))
+
         initialiseVirtualFileFinderServices(
             environment,
-            projectStructureProvider.allKtModules,
+            modules,
             projectStructureProvider.allSourceFiles,
             languageVersionSettings,
             jdkHome,
