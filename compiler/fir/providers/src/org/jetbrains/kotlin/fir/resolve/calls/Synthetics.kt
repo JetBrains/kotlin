@@ -235,15 +235,20 @@ class FirSyntheticPropertiesScope private constructor(
 
     private fun FirNamedFunctionSymbol.mayBeUsedAsGetterForSyntheticProperty(): Boolean {
         var result = false
+        var isHiddenEverywhereBesideSuperCalls = false
         baseScope.processOverriddenFunctionsAndSelf(this) {
-            if (it.unwrapFakeOverrides().fir.origin == FirDeclarationOrigin.Enhancement) {
+            val unwrapped = it.unwrapFakeOverrides().fir
+            if (unwrapped.origin == FirDeclarationOrigin.Enhancement) {
                 result = true
-                ProcessorAction.STOP
-            } else {
-                ProcessorAction.NEXT
             }
+
+            if (unwrapped.isHiddenEverywhereBesideSuperCalls == true) {
+                isHiddenEverywhereBesideSuperCalls = true
+            }
+
+            ProcessorAction.NEXT
         }
 
-        return result && fir.isHiddenEverywhereBesideSuperCalls != true
+        return result && !isHiddenEverywhereBesideSuperCalls
     }
 }
