@@ -278,6 +278,7 @@ open class FirFrontendFacade(
         val sessionProvider = moduleInfoProvider.firSessionProvider
 
         val project = compilerConfigurationProvider.getProject(module)
+        val compilerConfiguration = compilerConfigurationProvider.getCompilerConfiguration(module)
 
         PsiElementFinder.EP.getPoint(project).unregisterExtension(JavaElementFinder::class.java)
 
@@ -319,8 +320,8 @@ open class FirFrontendFacade(
             moduleBasedSession,
             Fir2IrConfiguration(
                 languageVersionSettings = module.languageVersionSettings,
-                linkViaSignatures = module.targetBackend == TargetBackend.JVM_IR_SERIALIZE,
-                evaluatedConstTracker = compilerConfigurationProvider.getCompilerConfiguration(module)
+                linkViaSignatures = compilerConfiguration.getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES),
+                evaluatedConstTracker = compilerConfiguration
                     .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
             ),
             ktFiles,
