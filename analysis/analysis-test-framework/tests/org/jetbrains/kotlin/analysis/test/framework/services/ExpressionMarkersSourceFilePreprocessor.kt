@@ -137,7 +137,9 @@ class ExpressionMarkerProvider : TestService {
     fun getSelectedElementOfTypeByDirective(ktFile: KtFile, module: TestModule): PsiElement {
         val selectedElement = getSelectedElement(ktFile)
         val expectedType = module.directives[Directives.LOOK_UP_FOR_ELEMENT_OF_TYPE].firstOrNull() ?: return selectedElement
-        @Suppress("UNCHECKED_CAST") val expectedClass = Class.forName(expectedType) as Class<PsiElement>
+        val ktPsiPackage = "org.jetbrains.kotlin.psi."
+        val expectedTypeFqName = ktPsiPackage + expectedType.removePrefix(ktPsiPackage)
+        @Suppress("UNCHECKED_CAST") val expectedClass = Class.forName(expectedTypeFqName) as Class<PsiElement>
         if (expectedClass.isInstance(selectedElement)) return selectedElement
 
         return selectedElement.collectDescendantsOfType<PsiElement> {
