@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerC
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.canBePartOfParentDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.retryOnInvalidSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FirElementsRecorder
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirLibrarySession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache
@@ -78,17 +78,23 @@ internal abstract class LLFirResolvableResolveSession(
     }
 
     override fun getOrBuildFirFor(element: KtElement): FirElement? {
-        if (element.containingKtFile.isCompiled) {
-            val container = element.getNonLocalContainingOrThisDeclaration {
-                !it.canBePartOfParentDeclaration
-            } ?: return null
-            val fir = findFirCompiledSymbol(container).fir
-            if (container == element) return fir
-            return FirElementsRecorder.recordElementsFrom(fir, FirElementsRecorder())[element]
-        }
         retryOnInvalidSession {
-            val moduleComponents = getModuleComponentsForElement(element)
-            return moduleComponents.elementsBuilder.getOrBuildFirFor(element, this)
+            val ktModule = element.getKtModule()
+            when (getModuleKind(ktModule)) {
+                ModuleKind.RESOLVABLE_MODULE -> {
+                    val moduleComponents = getResolvableSessionFor(ktModule).moduleComponents
+                    return moduleComponents.elementsBuilder.getOrBuildFirFor(element, this)
+                }
+                ModuleKind.BINARY_MODULE -> {
+                    val container = element.getNonLocalContainingOrThisDeclaration {
+                        !it.canBePartOfParentDeclaration
+                    } ?: return null
+                    val fir = findFirCompiledSymbol(container).fir
+                    if (container == element) return fir
+                    val session = getSessionFor(ktModule) as LLFirLibrarySession
+                    return session.getKtToFirMapping(fir)[element]
+                }
+            }
         }
     }
 
@@ -108,9 +114,6 @@ internal abstract class LLFirResolvableResolveSession(
         ktDeclaration: KtDeclaration,
         phase: FirResolvePhase
     ): FirBasedSymbol<*> {
-        if (ktDeclaration.containingKtFile.isCompiled) {
-            return findFirCompiledSymbol(ktDeclaration)
-        }
         val module = ktDeclaration.getKtModule()
         retryOnInvalidSession {
             return when (getModuleKind(module)) {
