@@ -8,12 +8,10 @@
 package org.jetbrains.kotlin.gradle.unitTests.compilerArgumetns
 
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.idea.tcs.extras.sourcesClasspathKey
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.default
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.lenient
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
@@ -39,22 +37,23 @@ class KotlinNativeCompileArgumentsTest {
         run {
             val linuxX64MainCompilation = linuxX64Target.compilations.main
             val linuxX64MainCompileTask = linuxX64MainCompilation.compileTaskProvider.get()
-            `assert buildCompilerArgs and createCompilerArgs are equal`(linuxX64MainCompileTask)
+            `assert setupCompilerArgs and createCompilerArguments are equal`(linuxX64MainCompileTask)
         }
 
         /* Check commonMain compilation as 'shared native compilation' */
         run {
             val commonMainCompilation = kotlin.metadata().compilations.getByName("commonMain")
             val commonMainCompileTask = commonMainCompilation.compileTaskProvider.get() as KotlinNativeCompile
-            `assert buildCompilerArgs and createCompilerArgs are equal`(commonMainCompileTask)
+            `assert setupCompilerArgs and createCompilerArguments are equal`(commonMainCompileTask)
         }
     }
 
 
-    private fun `assert buildCompilerArgs and createCompilerArgs are equal`(compile: KotlinNativeCompile) {
+    private fun `assert setupCompilerArgs and createCompilerArguments are equal`(compile: KotlinNativeCompile) {
         val argumentsFromCompilerArgumentsProducer = compile.createCompilerArguments(lenient)
         val argumentsFromBuildCompilerArgs = K2NativeCompilerArguments().apply {
-            parseCommandLineArguments(compile.buildCompilerArgs(true), this)
+            @Suppress("DEPRECATION_ERROR")
+            compile.setupCompilerArgs(this, true)
         }
 
         assertEquals(

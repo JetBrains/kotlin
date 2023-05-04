@@ -503,29 +503,6 @@ internal constructor(
         return SharedCompilationData(manifestFile, isAllowCommonizer, refinesModule)
     }
 
-    internal fun buildCompilerArgs(isLenient: Boolean = false): List<String> = buildKotlinNativeKlibCompilerArgs(
-        outFile = outputFile.get(),
-        optimized = optimized,
-        debuggable = debuggable,
-        target = konanTarget,
-        libraries = runCatching { libraries.files.filterKlibsPassedToCompiler() }.getOrElse {
-            if (isLenient) emptyList() else throw it
-        },
-        languageSettings = languageSettings,
-        compilerOptions = compilerOptions,
-        compilerPlugins = listOfNotNull(
-            compilerPluginClasspath?.let { CompilerPluginData(it, compilerPluginOptions) },
-            kotlinPluginData?.orNull?.let { CompilerPluginData(it.classpath, it.options) }
-        ),
-        shortModuleName = shortModuleName,
-        friendModule = friendModule,
-        libraryVersion = artifactVersion,
-        sharedCompilationData = createSharedCompilationDataOrNull(),
-        source = sources.asFileTree,
-        commonSourcesTree = commonSourcesTree,
-        k2MultiplatformCompilationData = multiplatformStructure
-    )
-
     @TaskAction
     fun compile() {
         val output = outputFile.get()
