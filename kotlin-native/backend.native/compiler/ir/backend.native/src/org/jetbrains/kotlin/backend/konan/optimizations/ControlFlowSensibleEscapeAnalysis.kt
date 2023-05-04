@@ -78,10 +78,10 @@ internal object ControlFlowSensibleEscapeAnalysis {
             generationState: NativeGenerationState,
             val callGraph: CallGraph,
             val moduleDFG: ModuleDFG,
-            val lifetimes: MutableMap<IrElement, Lifetime>,
             val needDebug: (IrFunction) -> Boolean
     ) {
-        fun analyze() {
+        @Suppress("UNUSED_PARAMETER")
+        fun analyze(lifetimes: MutableMap<IrElement, Lifetime>) {
             // TODO: To common function.
             context.logMultiple {
                 +"CALL GRAPH"
@@ -131,8 +131,22 @@ internal object ControlFlowSensibleEscapeAnalysis {
 //            }
 
             val escapeAnalysisResults = mutableMapOf<IrFunctionSymbol, EscapeAnalysisResult>()
-            for (multiNode in condensation.topologicalOrder.reversed())
-                analyze(multiNode, escapeAnalysisResults)
+            for (multiNode in condensation.topologicalOrder.reversed()) {
+                val currentLifetimes = mutableMapOf<IrFunctionAccessExpression, Lifetime>()
+                val allocationToFunction = mutableMapOf<IrFunctionAccessExpression, IrFunction>()
+                analyze(multiNode, escapeAnalysisResults, currentLifetimes, allocationToFunction)
+//                currentLifetimes.forEach { (ir, lifetime) ->
+//                    val expectedLifetime = lifetimes[ir]
+//                    if (expectedLifetime == Lifetime.STACK && lifetime == Lifetime.GLOBAL) {
+//                        println("BUGBUGBUG: ${allocationToFunction[ir]!!.render()}\n${ir.dump()}")
+//                        println()
+//                    }
+//                    if (expectedLifetime == Lifetime.GLOBAL && lifetime == Lifetime.STACK) {
+//                        println("YEAH, BABY: ${allocationToFunction[ir]!!.render()}\n${ir.dump()}")
+//                        println()
+//                    }
+//                }
+            }
         }
 
         private enum class ComputationState {
@@ -156,8 +170,12 @@ internal object ControlFlowSensibleEscapeAnalysis {
             NegligibleSize + numberOfNodes * SwellingFactor
         }
 
-        private fun analyze(multiNode: DirectedGraphMultiNode<DataFlowIR.FunctionSymbol.Declared>,
-                            escapeAnalysisResults: MutableMap<IrFunctionSymbol, EscapeAnalysisResult>) {
+        private fun analyze(
+                multiNode: DirectedGraphMultiNode<DataFlowIR.FunctionSymbol.Declared>,
+                escapeAnalysisResults: MutableMap<IrFunctionSymbol, EscapeAnalysisResult>,
+                lifetimes: MutableMap<IrFunctionAccessExpression, Lifetime>,
+                allocationToFunction: MutableMap<IrFunctionAccessExpression, IrFunction>,
+        ) {
             val nodes = multiNode.nodes.filter { callGraph.directEdges.containsKey(it) && it.irFunction != null }.toMutableSet()
 
             nodes.forEach {
@@ -196,7 +214,13 @@ internal object ControlFlowSensibleEscapeAnalysis {
 //                val pointsToGraph = PointsToGraph(node)
 //                pointsToGraphs[node] = pointsToGraph
 
-                if (!intraproceduralAnalysis(callGraph.directEdges[node]!!, escapeAnalysisResults, maxPointsToGraphSizeOf(node))) {
+                if (!intraproceduralAnalysis(
+                                callGraph.directEdges[node]!!,
+                                escapeAnalysisResults,
+                                lifetimes,
+                                allocationToFunction,
+                                maxPointsToGraphSizeOf(node))
+                ) {
                     failedToConverge = true
                 } else {
                     val endResult = escapeAnalysisResults[function.symbol]!!
@@ -221,7 +245,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
             }
 
             if (failedToConverge) {
-                /*pointsToGraphs = */analyzePessimistically(multiNode, escapeAnalysisResults)
+                /*pointsToGraphs = */analyzePessimistically(multiNode, escapeAnalysisResults, lifetimes, allocationToFunction)
             }
 
             // TODO: fill lifetimes map.
@@ -252,8 +276,12 @@ internal object ControlFlowSensibleEscapeAnalysis {
 //            }
         }
 
-        private fun analyzePessimistically(multiNode: DirectedGraphMultiNode<DataFlowIR.FunctionSymbol.Declared>,
-                                           escapeAnalysisResults: MutableMap<IrFunctionSymbol, EscapeAnalysisResult>) {
+        private fun analyzePessimistically(
+                multiNode: DirectedGraphMultiNode<DataFlowIR.FunctionSymbol.Declared>,
+                escapeAnalysisResults: MutableMap<IrFunctionSymbol, EscapeAnalysisResult>,
+                lifetimes: MutableMap<IrFunctionAccessExpression, Lifetime>,
+                allocationToFunction: MutableMap<IrFunctionAccessExpression, IrFunction>,
+        ) {
             val nodes = multiNode.nodes.filter { callGraph.directEdges.containsKey(it) }.toMutableSet()
             //val pointsToGraphs = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, InterproceduralAnalysis.PointsToGraph>()
             val computationStates = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, ComputationState>()
@@ -295,7 +323,13 @@ internal object ControlFlowSensibleEscapeAnalysis {
                         toAnalyze.pop()
                         computationStates[node] = ComputationState.DONE
 //                        val pointsToGraph = PointsToGraph(node)
-                        if (intraproceduralAnalysis(callGraphNode, escapeAnalysisResults, maxPointsToGraphSizeOf(node))) {
+                        if (intraproceduralAnalysis(
+                                        callGraphNode,
+                                        escapeAnalysisResults,
+                                        lifetimes,
+                                        allocationToFunction,
+                                        maxPointsToGraphSizeOf(node))
+                        ) {
                             //pointsToGraphs[function] = pointsToGraph
                         } else {
                             // TODO: suboptimal. May be it is possible somehow handle the entire component at once?
@@ -328,7 +362,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 }
             }
 
-            fun lifetimeOf(node: Node) = node.forcedLifetime
+            fun lifetimeOf(node: Node.Object) = node.forcedLifetime
                     ?: if (objectsReferencedFromThrown.get(node.id))
                         Lifetime.GLOBAL
                     else when (node.kind) {
@@ -460,13 +494,13 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     else -> PointsToGraphNodeKind.STACK
                 }
 
-            var forcedLifetime: Lifetime? = null
-
             // TODO: Do we need to distinguish fictitious objects and materialized ones?
             open class Object(id: Int, level: Int, var loop: IrLoop?, val label: String? = null) : Node(id, level) {
                 val fields = mutableMapOf<IrFieldSymbol, FieldValue>()
 
                 val isFictitious get() = label == null
+
+                var forcedLifetime: Lifetime? = null
 
                 override fun shallowCopy() = Object(id, level, loop, label)
                 override fun toString() = "${label ?: "D"}$id"
@@ -769,7 +803,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
 
             private inline fun <reified T : Node> getOrPutNodeAt(id: Int, nodeBuilder: (Int) -> T): T {
                 nodes.ensureSize(id + 1)
-                nodes[id]?.let { return it as T }
+                nodes[id]?.let { return it as? T ?: error("Node $it is expected to be of type ${T::class.java}") }
                 return nodeBuilder(id).also { nodes[id] = it }
             }
 
@@ -886,7 +920,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
             }
 
             // Called only for get/set field of [node] further.
-            fun getObjectNodes(node: Node, nodeContext: InterproceduralAnalysis.NodeContext, anchorNodeId: Int = 0) = when (node) {
+            fun getObjectNodes(node: Node, nodeContext: NodeContext, anchorNodeId: Int = 0) = when (node) {
                 is Node.SpecialObject -> emptyList()
                 is Node.Object -> listOf(node)
                 is Node.Reference -> {
@@ -1082,6 +1116,8 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 returnTargetResults[function.symbol] = functionResult
                 val state = BuilderState(pointsToGraph, Levels.FUNCTION, false, null, null)
                 (function.body as IrBlockBody).statements.forEach { it.accept(this, state) }
+                if (forest.totalNodes > maxAllowedGraphSize)
+                    return PointsToGraphBuilderResult(EscapeAnalysisResult.pessimistic(function), emptyMap())
                 if (functionResult.valueIds.isEmpty) // Function returns Nothing.
                     functionResult.valueIds.set(Node.UNIT_ID)
                 val functionResultNode = controlFlowMergePoint(pointsToGraph, state.toNodeContext(null), function.returnType, functionResult)
@@ -1298,14 +1334,16 @@ internal object ControlFlowSensibleEscapeAnalysis {
                     logDigraph(receiverNode)
                 }
 
-                val receiverObjects = getObjectNodes(receiverNode, data.toNodeContext(expression.receiver))
+                val receiverObjects = getObjectNodes(receiverNode, data.toNodeContext(expression), 1)
                 debug {
                     context.log { "after getting receiver's objects" }
                     logDigraph(context, receiverObjects)
                 }
 
                 return (when (receiverObjects.size) {
-                    0 -> { // This will lead to NPE at runtime.
+                    0 -> { // This will lead to NPE at runtime: treat like a throw operator.
+                        (data.tryBlock?.let { tryBlocksThrowGraphs[it]!! } ?: returnTargetResults[function.symbol]!!.graphBuilder)
+                                .merge(this)
                         unreachable()
                     }
                     1 -> {
@@ -1348,15 +1386,19 @@ internal object ControlFlowSensibleEscapeAnalysis {
                             if (data.graph.forest.totalNodes > maxAllowedGraphSize)
                                 emptyList()
                             else
-                                getObjectNodes(data.graph.nodes[receiverNode.id]!!, data.toNodeContext(expression.receiver))
+                                getObjectNodes(data.graph.nodes[receiverNode.id]!!, data.toNodeContext(expression), 1)
                     debug {
                         context.log { "after getting receiver's objects" }
                         logDigraph(context, receiverObjects)
                     }
 
-                    if (receiverObjects.isEmpty()) // This will lead to NPE at runtime.
+                    if (receiverObjects.isEmpty()) {
+                        // This will lead to NPE at runtime: treat like a throw operator.
+                        (data.tryBlock?.let { tryBlocksThrowGraphs[it]!! } ?: returnTargetResults[function.symbol]!!.graphBuilder)
+                                .merge(this)
+
                         unreachable()
-                    else {
+                    } else {
                         receiverObjects.forEach { receiverObject ->
                             val fieldNode = receiverObject.getField(expression.symbol)
                             // TODO: Probably can do for any outer loop as well (not only for the current).
@@ -1873,6 +1915,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 if (returnValue != Node.Nothing)
                     return returnValue
 
+                // The callee always throws an exception.
                 (state.tryBlock?.let { tryBlocksThrowGraphs[it]!! } ?: returnTargetResults[function.symbol]!!.graphBuilder)
                         .merge(state.graph)
                 return state.graph.unreachable()
@@ -2019,6 +2062,8 @@ internal object ControlFlowSensibleEscapeAnalysis {
         private fun intraproceduralAnalysis(
                 callGraphNode: CallGraphNode,
                 escapeAnalysisResults: MutableMap<IrFunctionSymbol, EscapeAnalysisResult>,
+                lifetimes: MutableMap<IrFunctionAccessExpression, Lifetime>,
+                allocationToFunction: MutableMap<IrFunctionAccessExpression, IrFunction>,
                 maxAllowedGraphSize: Int,
         ): Boolean {
             val function = callGraphNode.symbol.irFunction!!
@@ -2064,7 +2109,8 @@ internal object ControlFlowSensibleEscapeAnalysis {
             context.log { "after analyzing body:" }
             functionResult.logDigraph(context)
 
-            functionResult.computeLifetimes(allocations)
+            functionResult.computeLifetimes(allocations, lifetimes)
+            allocations.keys.forEach { allocationToFunction[it] = function }
             context.log { "lifetimes computation results:" }
             functionResult.graph.log(context)
             functionResult.graph.logDigraph(context) {
@@ -2272,9 +2318,13 @@ internal object ControlFlowSensibleEscapeAnalysis {
             else -> null
         }
 
-        private fun EscapeAnalysisResult.computeLifetimes(allocations: Map<IrFunctionAccessExpression, Int>) {
+        private fun EscapeAnalysisResult.computeLifetimes(
+                allocations: Map<IrFunctionAccessExpression, Int>,
+                lifetimes: MutableMap<IrFunctionAccessExpression, Lifetime>,
+        ) {
             propagateLevels()
             allocations.forEach { (ir, id) ->
+                if (id >= graph.nodes.size) return@forEach // An allocation from unreachable code.
                 val node = graph.nodes[id] as Node.Object
                 val computedLifetime = lifetimeOf(node)
                 var lifetime = computedLifetime
@@ -2292,6 +2342,8 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 }
 
                 node.forcedLifetime = lifetime
+
+                lifetimes[ir] = lifetime
             }
         }
 
@@ -2310,8 +2362,13 @@ internal object ControlFlowSensibleEscapeAnalysis {
             }
 
             returnValue.actualLevel = Levels.RETURN_VALUE
+            visited.set(Node.NOTHING_ID)
+            visited.set(Node.NULL_ID)
+            visited.set(Node.UNIT_ID)
 
-            for (node in graph.nodes.filterNotNull().sortedBy { it.actualLevel }) {
+            val nodes = graph.nodes.filterNotNull().toTypedArray()
+            nodes.sortBy { it.actualLevel }
+            for (node in nodes) {
                 if (!visited.get(node.id))
                     propagate(node)
             }
@@ -2327,9 +2384,9 @@ internal object ControlFlowSensibleEscapeAnalysis {
             lifetimes: MutableMap<IrElement, Lifetime>
     ) {
         try {
-            InterproceduralAnalysis(context, generationState, callGraph, moduleDFG, lifetimes) {
+            InterproceduralAnalysis(context, generationState, callGraph, moduleDFG) {
                 it.file.path.endsWith("z.kt")
-            }.analyze()
+            }.analyze(lifetimes)
         } catch (t: Throwable) {
             val extraUserInfo =
                     """
