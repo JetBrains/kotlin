@@ -1,6 +1,6 @@
 // LANGUAGE: +MultiPlatformProjects
 // WITH_STDLIB
-// IGNORE_BACKEND_K1: JS, JS_IR, JS_IR_ES6
+// IGNORE_BACKEND_K1: JS, JS_IR, JS_IR_ES6, NATIVE
 //   JS tests don't support MPP modules compilation
 // ISSUE: KT-58252
 
