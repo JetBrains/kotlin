@@ -13,8 +13,11 @@ import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.psiUtil.collectDescendantsOfType
 import org.jetbrains.kotlin.psi.psiUtil.elementsInRange
+import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestFile
+import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.SourceFilePreprocessor
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestService
@@ -131,6 +134,17 @@ class ExpressionMarkerProvider : TestService {
         return elements.single() as KtElement
     }
 
+    fun getSelectedElementOfTypeByDirective(ktFile: KtFile, module: TestModule): PsiElement {
+        val selectedElement = getSelectedElement(ktFile)
+        val expectedType = module.directives[Directives.LOOK_UP_FOR_ELEMENT_OF_TYPE].firstOrNull() ?: return selectedElement
+        @Suppress("UNCHECKED_CAST") val expectedClass = Class.forName(expectedType) as Class<PsiElement>
+        if (expectedClass.isInstance(selectedElement)) return selectedElement
+
+        return selectedElement.collectDescendantsOfType<PsiElement> {
+            expectedClass.isInstance(it)
+        }.single { it.textRange == selectedElement.textRange }
+    }
+
     inline fun <reified E : KtElement> getSelectedElementOfType(file: KtFile): E {
         return when (val selected = getSelectedElement(file)) {
             is E -> selected
@@ -143,6 +157,10 @@ class ExpressionMarkerProvider : TestService {
     private fun List<PsiElement>.trimWhitespaces(): List<PsiElement> =
         dropWhile { it is PsiWhiteSpace }
             .dropLastWhile { it is PsiWhiteSpace }
+
+    object Directives : SimpleDirectivesContainer() {
+        val LOOK_UP_FOR_ELEMENT_OF_TYPE by stringDirective("LOOK_UP_FOR_ELEMENT_OF_TYPE")
+    }
 }
 
 @PrivateForInline
