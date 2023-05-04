@@ -351,6 +351,9 @@
 /plugins/imports-dumper/ "Kotlin Compiler Core"
 /plugins/jvm-abi-gen/ "Kotlin JVM"
 /plugins/kapt3/ "Kotlin Compiler Core"
+/plugins/kapt3/kapt3-compiler/test/ "Kotlin Compiler Core" "Kotlin JVM"
+/plugins/kapt3/kapt3-compiler/testData/ "Kotlin Compiler Core" "Kotlin JVM"
+/plugins/kapt3/kapt3-compiler/tests-gen/ "Kotlin Compiler Core" "Kotlin JVM"
 /plugins/kotlinx-serialization/ Sergey.Shanshin Leonid.Startsev
 /plugins/lombok/ "Kotlin Compiler Core"
 /plugins/noarg/ "Kotlin Compiler Core"
