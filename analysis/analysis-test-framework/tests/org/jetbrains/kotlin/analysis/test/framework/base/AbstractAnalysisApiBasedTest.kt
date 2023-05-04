@@ -114,6 +114,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable() {
 
         useSourcePreprocessor(::ExpressionMarkersSourceFilePreprocessor)
         useAdditionalService { ExpressionMarkerProvider() }
+        useDirectives(ExpressionMarkerProvider.Directives)
 
         registerAnalysisApiBaseTestServices(disposable, configurator)
         configureTest(this)
