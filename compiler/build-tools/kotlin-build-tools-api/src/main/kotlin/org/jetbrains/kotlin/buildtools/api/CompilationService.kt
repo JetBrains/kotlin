@@ -9,11 +9,12 @@ package org.jetbrains.kotlin.buildtools.api
  * A facade for invoking compilation in Kotlin compiler. It allows to use compiler in different modes.
  * TODO: add a mention where to see the available modes after implementing them
  */
-interface CompilationService {
-    fun compile()
+public interface CompilationService {
+    public fun compile()
 
-    companion object {
+    public companion object {
         @JvmStatic
-        fun loadImplementation(classLoader: ClassLoader) = loadImplementation(CompilationService::class, classLoader)
+        public fun loadImplementation(classLoader: ClassLoader): CompilationService =
+            loadImplementation(CompilationService::class, classLoader)
     }
 }
