@@ -80,7 +80,7 @@ interface IrScriptSymbol : IrClassifierSymbol, IrBindableSymbol<ScriptDescriptor
 
 interface IrTypeParameterSymbol : IrClassifierSymbol, IrBindableSymbol<TypeParameterDescriptor, IrTypeParameter>, TypeParameterMarker
 
-interface IrValueSymbol : IrSymbol {
+sealed interface IrValueSymbol : IrSymbol {
     @ObsoleteDescriptorBasedAPI
     override val descriptor: ValueDescriptor
 

@@ -213,7 +213,6 @@ open class DeepCopySymbolRemapper(
         when (symbol) {
             is IrValueParameterSymbol -> valueParameters.getReferenced(symbol)
             is IrVariableSymbol -> variables.getReferenced(symbol)
-            else -> throw IllegalArgumentException("Unexpected symbol $symbol")
         }
 
     override fun getReferencedFunction(symbol: IrFunctionSymbol): IrFunctionSymbol =
