@@ -284,11 +284,16 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
             buildGradle.appendText(
                 """
                 |
-                |tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile.class).configureEach {
-                |    if (it.name == "compileKotlin") {
-                |        it.destinationDirectory.set(project.layout.buildDirectory.dir("banana"))
-                |    }
+                |def compileKotlinTask = tasks.named("compileKotlin", org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile.class)
+                |
+                |compileKotlinTask.configure {
+                |    it.destinationDirectory.set(project.layout.buildDirectory.dir("banana"))
                 |}
+                |
+                |def compileKotlinTaskOutput = compileKotlinTask.flatMap { it.destinationDirectory }
+                |sourceSets.test.compileClasspath.from(compileKotlinTaskOutput)
+                |sourceSets.test.runtimeClasspath.from(compileKotlinTaskOutput)
+                |
                 """.trimMargin()
             )
 
