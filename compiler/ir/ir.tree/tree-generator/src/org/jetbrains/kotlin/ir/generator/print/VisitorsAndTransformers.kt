@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.generator.VISITOR_PACKAGE
 import org.jetbrains.kotlin.ir.generator.irTypeType
 import org.jetbrains.kotlin.ir.generator.model.*
 import org.jetbrains.kotlin.ir.generator.util.GeneratedFile
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.io.File
 
 private val visitorTypeName = ClassName(VISITOR_PACKAGE, "IrElementVisitor")
@@ -186,6 +187,12 @@ fun printTypeVisitor(generationPath: File, model: Model): GeneratedFile {
                     val visitorParam = element.visitorParam
                     when (element.name) {
                         IrTree.memberAccessExpression.name -> {
+                            if (irTypeFields.singleOrNull()?.name != "typeArguments") {
+                                error(
+                                    """`Ir${IrTree.memberAccessExpression.name.capitalizeAsciiOnly()}` has unexpected fields with `IrType` type. 
+                                        |Please adjust logic of `${typeTransformerVoidTypeName.simpleName}`'s generation.""".trimMargin()
+                                )
+                            }
                             beginControlFlow("(0 until $visitorParam.typeArgumentsCount).forEach {")
                             beginControlFlow("$visitorParam.getTypeArgument(it)?.let { type ->")
                             addStatement("expression.putTypeArgument(it, $transformTypeFunName($visitorParam, type, data))")
