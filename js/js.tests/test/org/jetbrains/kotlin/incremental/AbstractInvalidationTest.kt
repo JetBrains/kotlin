@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.backend.js.ic.*
 import org.jetbrains.kotlin.ir.backend.js.SourceMapsInfo
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputs
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.extension
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.safeModuleName
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
@@ -60,8 +61,6 @@ abstract class AbstractInvalidationTest(
         private const val STDLIB_MODULE_NAME = "kotlin-kotlin-stdlib-js-ir"
 
         private val TEST_FILE_IGNORE_PATTERN = Regex("^.*\\..+\\.\\w\\w$")
-
-        private val JS_MODULE_KIND = ModuleKind.COMMON_JS
 
         private const val SOURCE_MAPPING_URL_PREFIX = "//# sourceMappingURL="
     }
@@ -110,11 +109,11 @@ abstract class AbstractInvalidationTest(
         return File(File(buildDir, moduleName), "$moduleName.klib")
     }
 
-    private fun createConfiguration(moduleName: String, language: List<String>): CompilerConfiguration {
+    private fun createConfiguration(moduleName: String, language: List<String>, moduleKind: ModuleKind): CompilerConfiguration {
         val copy = environment.configuration.copy()
         copy.put(CommonConfigurationKeys.MODULE_NAME, moduleName)
         copy.put(JSConfigurationKeys.GENERATE_DTS, true)
-        copy.put(JSConfigurationKeys.MODULE_KIND, JS_MODULE_KIND)
+        copy.put(JSConfigurationKeys.MODULE_KIND, moduleKind)
         copy.put(JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION, true)
         copy.put(JSConfigurationKeys.SOURCE_MAP, true)
 
@@ -178,7 +177,7 @@ abstract class AbstractInvalidationTest(
                         friends += klibFile
                     }
                 }
-                val configuration = createConfiguration(module, projStep.language)
+                val configuration = createConfiguration(module, projStep.language, projectInfo.moduleKind)
                 buildArtifact(configuration, module, moduleSourceDir, dependencies, friends, outputKlibFile)
             }
 
@@ -233,7 +232,7 @@ abstract class AbstractInvalidationTest(
         }
 
         private fun File.writeAsJsModule(jsCode: String, moduleName: String) {
-            writeText(ClassicJsBackendFacade.wrapWithModuleEmulationMarkers(jsCode, JS_MODULE_KIND, moduleName))
+            writeText(ClassicJsBackendFacade.wrapWithModuleEmulationMarkers(jsCode, projectInfo.moduleKind, moduleName))
         }
 
         private fun prepareExternalJsFiles(): MutableList<String> {
@@ -247,8 +246,8 @@ abstract class AbstractInvalidationTest(
         }
 
         private fun verifyJsCode(stepId: Int, mainModuleName: String, jsOutput: CompilationOutputs) {
-            val compiledJsFiles = jsOutput.writeAll(jsDir, mainModuleName, true, mainModuleName, JS_MODULE_KIND).filter {
-                it.extension == "js"
+            val compiledJsFiles = jsOutput.writeAll(jsDir, mainModuleName, true, mainModuleName, projectInfo.moduleKind).filter {
+                it.extension == "js" || it.extension == "mjs"
             }
             for (jsCodeFile in compiledJsFiles) {
                 val sourceMappingUrlLine = jsCodeFile.readLines().singleOrNull { it.startsWith(SOURCE_MAPPING_URL_PREFIX) }
@@ -259,15 +258,18 @@ abstract class AbstractInvalidationTest(
                 jsCodeFile.writeAsJsModule(jsCodeFile.readText(), "./${jsCodeFile.name}")
             }
 
+            val jsFiles = compiledJsFiles.mapTo(prepareExternalJsFiles()) { it.absolutePath }
+
             try {
                 V8IrJsTestChecker.checkWithTestFunctionArgs(
-                    files = compiledJsFiles.mapTo(prepareExternalJsFiles()) { it.absolutePath },
-                    testModuleName = "./$mainModuleName.js",
+                    files = jsFiles,
+                    testModuleName = "./$mainModuleName${projectInfo.moduleKind.extension}",
                     testPackageName = null,
                     testFunctionName = BOX_FUNCTION_NAME,
                     testFunctionArgs = "$stepId",
                     expectedResult = "OK",
-                    withModuleSystem = true
+                    entryModulePath = jsFiles.last(),
+                    withModuleSystem = projectInfo.moduleKind in setOf(ModuleKind.COMMON_JS, ModuleKind.UMD, ModuleKind.AMD)
                 )
             } catch (e: ComparisonFailure) {
                 throw ComparisonFailure("Mismatched box out at step $stepId", e.expected, e.actual)
@@ -301,7 +303,7 @@ abstract class AbstractInvalidationTest(
                     error("module ${it.moduleName} has friends, but only main module may have the friends")
                 }
 
-                val configuration = createConfiguration(projStep.order.last(), projStep.language)
+                val configuration = createConfiguration(projStep.order.last(), projStep.language, projectInfo.moduleKind)
                 val cacheUpdater = CacheUpdater(
                     mainModule = mainModuleInfo.modulePath,
                     allModules = testInfo.mapTo(mutableListOf(STDLIB_KLIB)) { it.modulePath },

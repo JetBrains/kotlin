@@ -110,6 +110,11 @@ public class JsIrInvalidationTestGenerated extends AbstractJsIrInvalidationTest 
         runTest("js/js.translator/testData/incremental/invalidation/enumsInInlineFunctions/");
     }
 
+    @TestMetadata("esModules")
+    public void testEsModules() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/esModules/");
+    }
+
     @TestMetadata("exceptionsFromInlineFunction")
     public void testExceptionsFromInlineFunction() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/exceptionsFromInlineFunction/");

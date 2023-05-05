@@ -122,6 +122,26 @@ public class IrJsTypeScriptExportTestGenerated extends AbstractIrJsTypeScriptExp
     }
 
     @Nested
+    @TestMetadata("js/js.translator/testData/typescript-export/deprecated")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Deprecated {
+        @Test
+        public void testAllFilesPresentInDeprecated() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/deprecated"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+        }
+    }
+
+    @Nested
+    @TestMetadata("js/js.translator/testData/typescript-export/deprecated-in-exported-file")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Deprecated_in_exported_file {
+        @Test
+        public void testAllFilesPresentInDeprecated_in_exported_file() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/deprecated-in-exported-file"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+        }
+    }
+
+    @Nested
     @TestMetadata("js/js.translator/testData/typescript-export/enum-classes")
     @TestDataPath("$PROJECT_ROOT")
     public class Enum_classes {
