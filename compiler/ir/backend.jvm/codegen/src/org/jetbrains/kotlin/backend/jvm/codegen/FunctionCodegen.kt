@@ -21,10 +21,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
-import org.jetbrains.kotlin.ir.expressions.IrClassReference
-import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrGetValue
-import org.jetbrains.kotlin.ir.expressions.IrVararg
+import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.name.JvmNames.JVM_SYNTHETIC_ANNOTATION_FQ_NAME
@@ -240,7 +237,12 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
         val backingField = (irFunction as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.backingField
         val getValue = backingField?.initializer?.expression as? IrGetValue
         val parameter = getValue?.symbol?.owner as? IrValueParameter
-        return parameter?.defaultValue?.expression
+
+        val expression = parameter?.defaultValue?.expression
+        return if (expression is IrGetField && expression.symbol.owner.correspondingPropertySymbol?.owner?.isConst == true) {
+            expression.symbol.owner.initializer?.expression
+        } else
+            expression
     }
 
     private fun IrFunction.createFrameMapWithReceivers(): IrFrameMap {

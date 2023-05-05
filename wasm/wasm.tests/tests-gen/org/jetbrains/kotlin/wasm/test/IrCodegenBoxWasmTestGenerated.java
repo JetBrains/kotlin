@@ -53,6 +53,11 @@ public class IrCodegenBoxWasmTestGenerated extends AbstractIrCodegenBoxWasmTest 
             runTest("compiler/testData/codegen/box/annotations/genericAnnotations.kt");
         }
 
+        @TestMetadata("kt58007.kt")
+        public void testKt58007() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/kt58007.kt");
+        }
+
         @TestMetadata("nestedAnnotation.kt")
         public void testNestedAnnotation() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/nestedAnnotation.kt");

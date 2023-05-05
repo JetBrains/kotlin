@@ -300,6 +300,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         }
 
         @Test
+        @TestMetadata("kt58007.kt")
+        public void testKt58007() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/kt58007.kt");
+        }
+
+        @Test
         @TestMetadata("mustBeDocumented.kt")
         public void testMustBeDocumented() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/mustBeDocumented.kt");

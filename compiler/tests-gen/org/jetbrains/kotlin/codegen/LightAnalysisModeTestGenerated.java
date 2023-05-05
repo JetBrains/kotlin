@@ -233,6 +233,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/annotations/kt25489.kt");
         }
 
+        @TestMetadata("kt58007.kt")
+        public void testKt58007() throws Exception {
+            runTest("compiler/testData/codegen/box/annotations/kt58007.kt");
+        }
+
         @TestMetadata("mustBeDocumented.kt")
         public void testMustBeDocumented() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/mustBeDocumented.kt");
