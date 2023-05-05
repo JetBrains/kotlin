@@ -566,7 +566,7 @@ class Fir2IrDeclarationStorage(
         val visibility = simpleFunction?.visibility ?: Visibilities.Local
         val isSuspend =
             if (isLambda) ((function as FirAnonymousFunction).typeRef as? FirResolvedTypeRef)?.type?.isSuspendOrKSuspendFunctionType(session) == true
-            else simpleFunction?.isSuspend == true
+            else function.isSuspend
         val created = function.convertWithOffsets { startOffset, endOffset ->
             val result = declareIrSimpleFunction(signature, simpleFunction?.containerSource) { symbol ->
                 classifierStorage.preCacheTypeParameters(function, symbol)

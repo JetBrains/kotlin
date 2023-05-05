@@ -33043,6 +33043,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("suspendCallFromAnonymousSuspend.kt")
+            public void testSuspendCallFromAnonymousSuspend() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/suspendConversion/suspendCallFromAnonymousSuspend.kt");
+            }
+
+            @Test
             @TestMetadata("suspendConversionCompatibility.kt")
             public void testSuspendConversionCompatibility() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/suspendConversion/suspendConversionCompatibility.kt");

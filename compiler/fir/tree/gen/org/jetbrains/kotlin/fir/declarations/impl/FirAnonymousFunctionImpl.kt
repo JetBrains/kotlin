@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.InlineStatus
 import org.jetbrains.kotlin.fir.declarations.asResolveState
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
@@ -50,6 +49,7 @@ internal class FirAnonymousFunctionImpl(
     override val moduleData: FirModuleData,
     override val origin: FirDeclarationOrigin,
     override val attributes: FirDeclarationAttributes,
+    override var status: FirDeclarationStatus,
     override var returnTypeRef: FirTypeRef,
     override var receiverParameter: FirReceiverParameter?,
     override var deprecationsProvider: DeprecationsProvider,
@@ -69,8 +69,6 @@ internal class FirAnonymousFunctionImpl(
     override val typeParameters: MutableList<FirTypeParameter>,
     override var typeRef: FirTypeRef,
 ) : FirAnonymousFunction() {
-    override var status: FirDeclarationStatus = FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
-
     init {
         symbol.bind(this)
         @OptIn(ResolveStateAccess::class)

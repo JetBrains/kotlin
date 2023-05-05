@@ -271,8 +271,9 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
             defaultNull("invocationKind", "label", "body", "controlFlowGraphReference")
             default("inlineStatus", "InlineStatus.Unknown")
             default("contractDescription", "FirEmptyContractDescription")
+            default("status", "FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS")
             withCopy()
-            useTypes(emptyContractDescriptionType)
+            useTypes(emptyContractDescriptionType, resolvedDeclarationStatusImport)
         }
 
         builder(propertyAccessor) {

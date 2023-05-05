@@ -130,9 +130,12 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker() {
     private fun findEnclosingSuspendFunction(context: CheckerContext): FirFunction? {
         return context.containingDeclarations.lastOrNull {
             when (it) {
-                is FirAnonymousFunction -> it.typeRef.coneType.isSuspendOrKSuspendFunctionType(context.session)
-                is FirSimpleFunction -> it.isSuspend
-                else -> false
+                is FirAnonymousFunction ->
+                    if (it.isLambda) it.typeRef.coneType.isSuspendOrKSuspendFunctionType(context.session) else it.isSuspend
+                is FirSimpleFunction ->
+                    it.isSuspend
+                else ->
+                    false
             }
         } as? FirFunction
     }

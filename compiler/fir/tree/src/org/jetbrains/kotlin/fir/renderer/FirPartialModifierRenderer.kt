@@ -57,4 +57,10 @@ class FirPartialModifierRenderer : FirModifierRenderer() {
 
     override fun renderModifiers(propertyAccessor: FirPropertyAccessor) {
     }
+
+    override fun renderModifiers(anonymousFunction: FirAnonymousFunction) {
+        if (anonymousFunction.isSuspend) {
+            renderModifier("suspend")
+        }
+    }
 }

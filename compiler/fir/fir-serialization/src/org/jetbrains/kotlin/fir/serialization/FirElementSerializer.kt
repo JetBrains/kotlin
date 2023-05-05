@@ -465,7 +465,7 @@ class FirElementSerializer private constructor(
             simpleFunction?.isInline == true,
             simpleFunction?.isTailRec == true,
             simpleFunction?.isExternal == true,
-            simpleFunction?.isSuspend == true,
+            function.isSuspend,
             simpleFunction?.isExpect == true,
             shouldSetStableParameterNames(function),
         )

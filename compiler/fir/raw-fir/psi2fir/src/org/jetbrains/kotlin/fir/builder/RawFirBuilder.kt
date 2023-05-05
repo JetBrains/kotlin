@@ -1441,6 +1441,9 @@ open class RawFirBuilder(
                     hasExplicitParameterList = true
                     label = context.getLastLabel(function)
                     labelName = label?.name ?: context.calleeNamesForLambda.lastOrNull()?.identifier
+                    if (function.hasModifier(SUSPEND_KEYWORD)) {
+                        status = FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_SUSPEND_FUNCTION_EXPRESSION
+                    }
                 }
             } else {
                 FirSimpleFunctionBuilder().apply {

@@ -59,6 +59,7 @@ class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirAnnotationContainerBu
     override lateinit var moduleData: FirModuleData
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
+    override var status: FirDeclarationStatus = FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
     override lateinit var returnTypeRef: FirTypeRef
     var receiverParameter: FirReceiverParameter? = null
     override var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
@@ -86,6 +87,7 @@ class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirAnnotationContainerBu
             moduleData,
             origin,
             attributes,
+            status,
             returnTypeRef,
             receiverParameter,
             deprecationsProvider,
@@ -107,13 +109,6 @@ class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirAnnotationContainerBu
         )
     }
 
-
-    @Deprecated("Modification of 'status' has no impact for FirAnonymousFunctionBuilder", level = DeprecationLevel.HIDDEN)
-    override var status: FirDeclarationStatus
-        get() = throw IllegalStateException()
-        set(_) {
-            throw IllegalStateException()
-        }
 }
 
 @OptIn(ExperimentalContracts::class)
@@ -136,6 +131,7 @@ inline fun buildAnonymousFunctionCopy(original: FirAnonymousFunction, init: FirA
     copyBuilder.moduleData = original.moduleData
     copyBuilder.origin = original.origin
     copyBuilder.attributes = original.attributes.copy()
+    copyBuilder.status = original.status
     copyBuilder.returnTypeRef = original.returnTypeRef
     copyBuilder.receiverParameter = original.receiverParameter
     copyBuilder.deprecationsProvider = original.deprecationsProvider
