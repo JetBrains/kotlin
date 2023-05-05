@@ -451,6 +451,14 @@ private class KotlinPluginLifecycleImpl(override val project: Project) : KotlinP
         loopIfNecessary()
 
         project.whenEvaluated {
+            /* Check for failures happening during buildscript evaluation */
+            project.failures.let { failures ->
+                if (failures.isNotEmpty()) {
+                    finishWithFailures(failures)
+                    return@whenEvaluated
+                }
+            }
+
             assert(enqueuedActions.getValue(stage).isEmpty()) { "Expected empty queue from '$stage'" }
             stage = stage.nextOrThrow
             executeCurrentStageAndScheduleNext()
