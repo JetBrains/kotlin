@@ -22,6 +22,7 @@ abstract class FirModifierRenderer {
     abstract fun renderModifiers(backingField: FirBackingField)
     abstract fun renderModifiers(constructor: FirConstructor)
     abstract fun renderModifiers(propertyAccessor: FirPropertyAccessor)
+    abstract fun renderModifiers(anonymousFunction: FirAnonymousFunction)
     open fun renderModifiers(valueParameter: FirValueParameter) {
         if (valueParameter.isCrossinline) {
             renderModifier("crossinline")

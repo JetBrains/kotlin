@@ -1660,6 +1660,9 @@ class DeclarationsConverter(
                 label = context.getLastLabel(functionDeclaration)
                 val labelName = label?.name ?: context.calleeNamesForLambda.lastOrNull()?.identifier
                 target = FirFunctionTarget(labelName = labelName, isLambda = false)
+                if (modifiers.hasSuspend()) {
+                    status = FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_SUSPEND_FUNCTION_EXPRESSION
+                }
             }
         } else {
             val functionName = identifier.nameAsSafeName()

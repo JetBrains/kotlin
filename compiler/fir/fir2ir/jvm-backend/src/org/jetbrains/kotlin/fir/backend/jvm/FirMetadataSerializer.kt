@@ -227,6 +227,7 @@ private fun FirFunction.copyToFreeAnonymousFunction(approximator: AbstractTypeAp
             }
         })
         typeParameters += typeParameterSet
+        status = function.status
     }
 }
 

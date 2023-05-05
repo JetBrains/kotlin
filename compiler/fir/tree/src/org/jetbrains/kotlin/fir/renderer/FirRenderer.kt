@@ -388,6 +388,7 @@ class FirRenderer(
 
         override fun visitAnonymousFunction(anonymousFunction: FirAnonymousFunction) {
             annotationRenderer?.render(anonymousFunction)
+            modifierRenderer?.renderModifiers(anonymousFunction)
             declarationRenderer?.render(anonymousFunction)
             print(" ")
             val receiverParameter = anonymousFunction.receiverParameter
