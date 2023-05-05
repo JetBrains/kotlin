@@ -98,7 +98,7 @@ interface IrReturnTargetSymbol : IrSymbol {
     override val owner: IrReturnTarget
 }
 
-interface IrFunctionSymbol : IrReturnTargetSymbol {
+sealed interface IrFunctionSymbol : IrReturnTargetSymbol {
     override val owner: IrFunction
 }
 

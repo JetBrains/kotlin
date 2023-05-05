@@ -219,7 +219,6 @@ open class DeepCopySymbolRemapper(
         when (symbol) {
             is IrSimpleFunctionSymbol -> functions.getReferenced(symbol)
             is IrConstructorSymbol -> constructors.getReferenced(symbol)
-            else -> throw IllegalArgumentException("Unexpected symbol $symbol")
         }
 
     override fun getReferencedReturnableBlock(symbol: IrReturnableBlockSymbol): IrReturnableBlockSymbol =

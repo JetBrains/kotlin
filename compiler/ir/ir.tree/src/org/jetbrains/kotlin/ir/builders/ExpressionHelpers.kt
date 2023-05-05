@@ -272,7 +272,6 @@ fun IrBuilderWithScope.irCall(callee: IrFunctionSymbol, type: IrType): IrFunctio
     when (callee) {
         is IrConstructorSymbol -> irCall(callee, type)
         is IrSimpleFunctionSymbol -> irCall(callee, type)
-        else -> throw AssertionError("Unexpected callee: $callee")
     }
 
 fun IrBuilderWithScope.irCall(callee: IrSimpleFunctionSymbol): IrCall =

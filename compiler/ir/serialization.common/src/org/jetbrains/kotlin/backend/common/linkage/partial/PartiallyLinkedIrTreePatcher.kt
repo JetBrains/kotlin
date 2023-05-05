@@ -708,7 +708,6 @@ internal class PartiallyLinkedIrTreePatcher(
                     val expectedDispatchReceiverClassifier: IrClassSymbol = when (symbol) {
                         is IrSimpleFunctionSymbol -> function.parent as? IrClass
                         is IrConstructorSymbol -> (function.parent as? IrClass)?.takeIf { it.isInner }?.parent as? IrClass
-                        else -> null
                     }?.symbol ?: return@run false
 
                     val referenceType: IrSimpleType = type as? IrSimpleType ?: return@run false

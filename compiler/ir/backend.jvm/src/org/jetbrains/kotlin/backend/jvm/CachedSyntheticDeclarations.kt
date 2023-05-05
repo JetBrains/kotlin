@@ -115,7 +115,6 @@ class CachedSyntheticDeclarations(private val context: JvmBackendContext) {
                     symbol.owner.makeConstructorAccessor().symbol
                 is IrSimpleFunctionSymbol ->
                     symbol.owner.makeSimpleFunctionAccessor(superQualifierSymbol, dispatchReceiverType, parent, scopes).symbol
-                else -> error("Unknown subclass of IrFunctionSymbol")
             }
         }
     }

@@ -313,7 +313,6 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
                 IrConstructorCallImpl.fromSymbolDescriptor(startOffset, endOffset, irType, adapteeSymbol)
             is IrSimpleFunctionSymbol ->
                 IrCallImpl.fromSymbolDescriptor(startOffset, endOffset, irType, adapteeSymbol)
-            else -> error("Unknown symbol kind $adapteeSymbol")
         }
 
         val hasBoundDispatchReceiver = resolvedCall.dispatchReceiver != null && resolvedCall.dispatchReceiver !is TransientReceiver

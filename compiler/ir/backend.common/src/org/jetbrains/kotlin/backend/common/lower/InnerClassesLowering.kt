@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.classOrNull
@@ -261,10 +262,9 @@ class InnerClassConstructorCallsLowering(val context: BackendContext, val innerC
 
                 val newCallee = innerClassesSupport.getInnerClassConstructorWithOuterThisParameter(callee.owner)
                 val newReflectionTarget = expression.reflectionTarget?.let { reflectionTarget ->
-                    if (reflectionTarget is IrConstructorSymbol) {
-                        innerClassesSupport.getInnerClassConstructorWithOuterThisParameter(reflectionTarget.owner)
-                    } else {
-                        null
+                    when (reflectionTarget) {
+                        is IrConstructorSymbol -> innerClassesSupport.getInnerClassConstructorWithOuterThisParameter(reflectionTarget.owner)
+                        is IrSimpleFunctionSymbol -> null
                     }
                 }
 

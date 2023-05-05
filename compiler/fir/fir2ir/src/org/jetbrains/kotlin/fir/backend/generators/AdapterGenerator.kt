@@ -308,8 +308,6 @@ internal class AdapterGenerator(
                     origin = null,
                     superQualifierSymbol = null
                 )
-            else ->
-                error("unknown callee kind: ${adapteeFunction.render()}")
         }
 
         var adapterParameterIndex = 0
