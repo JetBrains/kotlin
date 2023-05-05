@@ -284,7 +284,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
                 if (superTypeListEntry is KtDelegatedSuperTypeEntry) {
                     val expectedName = NameUtils.delegateFieldName(index)
                     if (originalDeclaration.name == expectedName) {
-                        return classOrObject.buildFieldForSupertypeDelegate(
+                        return buildFieldForSupertypeDelegate(
                             superTypeListEntry, superTypeListEntry.typeReference.toFirOrErrorType(), index
                         )
                     }

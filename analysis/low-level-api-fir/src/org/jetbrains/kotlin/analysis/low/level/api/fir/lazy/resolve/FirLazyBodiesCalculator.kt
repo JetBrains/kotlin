@@ -190,7 +190,7 @@ internal object FirLazyBodiesCalculator {
             session = field.moduleData.session,
             scopeProvider = field.moduleData.session.kotlinScopeProvider,
             designation = designation,
-            rootNonLocalDeclaration = field.psi as KtClassOrObject,
+            rootNonLocalDeclaration = designation.path.last().psi as KtClassOrObject,
         ) as FirField
         field.apply {
             replaceInitializer(newField.initializer)

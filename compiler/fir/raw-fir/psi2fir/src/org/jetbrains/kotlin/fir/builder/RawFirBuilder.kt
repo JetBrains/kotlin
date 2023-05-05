@@ -833,11 +833,8 @@ open class RawFirBuilder(
             container.argumentList = argumentList
         }
 
-        protected fun KtClassOrObject.buildFieldForSupertypeDelegate(entry: KtDelegatedSuperTypeEntry, type: FirTypeRef, fieldOrd: Int): FirField {
-            val delegateSource = when (mode) {
-                BodyBuildingMode.NORMAL -> entry.delegateExpression?.toFirSourceElement(KtFakeSourceElementKind.ClassDelegationField)
-                BodyBuildingMode.LAZY_BODIES -> toFirSourceElement(KtFakeSourceElementKind.ClassDelegationField)
-            }
+        protected fun buildFieldForSupertypeDelegate(entry: KtDelegatedSuperTypeEntry, type: FirTypeRef, fieldOrd: Int): FirField {
+            val delegateSource = entry.toFirSourceElement(KtFakeSourceElementKind.ClassDelegationField)
 
             val delegateExpression = buildOrLazyExpression(delegateSource) {
                 { entry.delegateExpression }

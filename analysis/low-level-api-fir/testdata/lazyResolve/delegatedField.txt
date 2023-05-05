@@ -16,7 +16,7 @@ FILE: [ResolvedTo(RAW_FIR)] delegatedField.kt
             LAZY_super<<implicit>>
         }
 
-        private final [ResolvedTo(RAW_FIR)] field $$delegate_0: Foo = prop#
+        private final [ResolvedTo(RAW_FIR)] field $$delegate_0: Foo = LAZY_EXPRESSION
 
         public? final? [ResolvedTo(RAW_FIR)] fun baz([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -40,7 +40,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
             LAZY_super<<implicit>>
         }
 
-        private final [ResolvedTo(RAW_FIR)] field $$delegate_0: Foo = prop#
+        private final [ResolvedTo(RAW_FIR)] field $$delegate_0: Foo = LAZY_EXPRESSION
 
         public? final? [ResolvedTo(RAW_FIR)] fun baz([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -64,7 +64,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
             LAZY_super<<implicit>>
         }
 
-        private final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] field $$delegate_0: Foo = prop#
+        private final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] field $$delegate_0: Foo = LAZY_EXPRESSION
 
         public? final? [ResolvedTo(RAW_FIR)] fun baz([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -88,7 +88,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
             LAZY_super<<implicit>>
         }
 
-        private final [ResolvedTo(COMPANION_GENERATION)] field $$delegate_0: Foo = prop#
+        private final [ResolvedTo(COMPANION_GENERATION)] field $$delegate_0: Foo = LAZY_EXPRESSION
 
         public? final? [ResolvedTo(RAW_FIR)] fun baz([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -112,7 +112,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
             LAZY_super<<implicit>>
         }
 
-        private final [ResolvedTo(SUPER_TYPES)] field $$delegate_0: Foo = prop#
+        private final [ResolvedTo(SUPER_TYPES)] field $$delegate_0: Foo = LAZY_EXPRESSION
 
         public? final? [ResolvedTo(RAW_FIR)] fun baz([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -136,7 +136,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
             LAZY_super<<implicit>>
         }
 
-        private final [ResolvedTo(TYPES)] field $$delegate_0: R|one/Foo| = prop#
+        private final [ResolvedTo(TYPES)] field $$delegate_0: R|one/Foo| = LAZY_EXPRESSION
 
         public? final? [ResolvedTo(RAW_FIR)] fun baz([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -160,7 +160,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
             LAZY_super<<implicit>>
         }
 
-        private final [ResolvedTo(STATUS)] field $$delegate_0: R|one/Foo| = prop#
+        private final [ResolvedTo(STATUS)] field $$delegate_0: R|one/Foo| = LAZY_EXPRESSION
 
         public final [ResolvedTo(STATUS)] fun baz([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -184,7 +184,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
             LAZY_super<<implicit>>
         }
 
-        private final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] field $$delegate_0: R|one/Foo| = prop#
+        private final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] field $$delegate_0: R|one/Foo| = LAZY_EXPRESSION
 
         public final [ResolvedTo(STATUS)] fun baz([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -208,7 +208,7 @@ FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
             LAZY_super<<implicit>>
         }
 
-        private final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] field $$delegate_0: R|one/Foo| = prop#
+        private final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] field $$delegate_0: R|one/Foo| = LAZY_EXPRESSION
 
         public final [ResolvedTo(STATUS)] fun baz([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
 
