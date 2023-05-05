@@ -12,16 +12,14 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.FirModifierList
 import org.jetbrains.kotlin.fir.analysis.checkers.contains
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.getModifierList
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeLocalVariableNoTypeOrInitializer
@@ -189,27 +187,41 @@ private fun reportMustBeInitialized(
         !context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitOpenValDeferredInitialization) &&
                 property.getEffectiveModality(containingClass, context.languageVersionSettings) == Modality.OPEN && property.isVal &&
                 isDefinitelyAssignedInConstructor
-
-    val factory = when {
-        suggestMakingItFinal && suggestMakingItAbstract -> when (isOpenValDeferredInitDeprecationWarning) {
-            true -> FirErrors.MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT_WARNING
-            false -> FirErrors.MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT
-        }
-        suggestMakingItFinal -> when (isOpenValDeferredInitDeprecationWarning) {
-            true -> FirErrors.MUST_BE_INITIALIZED_OR_BE_FINAL_WARNING
-            false -> FirErrors.MUST_BE_INITIALIZED_OR_BE_FINAL
-        }
-        suggestMakingItAbstract -> when (isOpenValDeferredInitDeprecationWarning) {
-            true -> error("Not reachable case. Every \"open val + deferred init\" case that could be made `abstract`, also could be made `final`")
-            false -> FirErrors.MUST_BE_INITIALIZED_OR_BE_ABSTRACT
-        }
-        else -> when (isOpenValDeferredInitDeprecationWarning) {
-            true -> error("Not reachable case. We can always suggest making `open val` property `final`")
-            false -> FirErrors.MUST_BE_INITIALIZED
-        }
+    if (isOpenValDeferredInitDeprecationWarning && !suggestMakingItFinal && suggestMakingItAbstract) {
+        error("Not reachable case. Every \"open val + deferred init\" case that could be made `abstract`, also could be made `final`")
     }
-    reporter.reportOn(propertySource, factory, context)
+    val isMissedMustBeInitializedDeprecationWarning =
+        !context.languageVersionSettings.supportsFeature(LanguageFeature.ProhibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor) &&
+                containingClass != null &&
+                containingClass.primaryConstructorIfAny(context.session) == null &&
+                isDefinitelyAssignedInConstructor
+    val factory = when {
+        suggestMakingItFinal && suggestMakingItAbstract -> FirErrors.MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT
+        suggestMakingItFinal -> FirErrors.MUST_BE_INITIALIZED_OR_BE_FINAL
+        suggestMakingItAbstract -> FirErrors.MUST_BE_INITIALIZED_OR_BE_ABSTRACT
+        else -> FirErrors.MUST_BE_INITIALIZED
+    }
+    if (isOpenValDeferredInitDeprecationWarning && factory == FirErrors.MUST_BE_INITIALIZED) {
+        error("Not reachable case. We can always suggest making `open val` property `final`")
+    }
+    reporter.reportOn(
+        propertySource,
+        when (isMissedMustBeInitializedDeprecationWarning || isOpenValDeferredInitDeprecationWarning) {
+            true -> factory.deprecationWarning
+            false -> factory
+        },
+        context
+    )
 }
+
+private val KtDiagnosticFactory0.deprecationWarning
+    get() = when (this) {
+        FirErrors.MUST_BE_INITIALIZED -> FirErrors.MUST_BE_INITIALIZED_WARNING
+        FirErrors.MUST_BE_INITIALIZED_OR_BE_ABSTRACT -> FirErrors.MUST_BE_INITIALIZED_OR_BE_ABSTRACT_WARNING
+        FirErrors.MUST_BE_INITIALIZED_OR_BE_FINAL -> FirErrors.MUST_BE_INITIALIZED_OR_BE_FINAL_WARNING
+        FirErrors.MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT -> FirErrors.MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT_WARNING
+        else -> error("Only MUST_BE_INITIALIZED is supported")
+    }
 
 private val FirProperty.hasSetterAccessorImplementation: Boolean
     get() = (setter !is FirDefaultPropertyAccessor && setter?.hasBody == true)

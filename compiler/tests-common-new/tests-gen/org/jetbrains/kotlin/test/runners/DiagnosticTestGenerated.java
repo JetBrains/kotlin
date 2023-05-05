@@ -3019,6 +3019,124 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             public void testVarDeferredInitInOpenClass() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/backingField/VarDeferredInitInOpenClass.kt");
             }
+
+            @Nested
+            @TestMetadata("compiler/testData/diagnostics/tests/backingField/prohibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor")
+            @TestDataPath("$PROJECT_ROOT")
+            public class ProhibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor {
+                @Test
+                public void testAllFilesPresentInProhibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/backingField/prohibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor"), Pattern.compile("^(.*)\\.kts?$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+                }
+
+                @Test
+                @TestMetadata("implicitPrimaryConstructor_errorAnyway.kt")
+                public void testImplicitPrimaryConstructor_errorAnyway() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/backingField/prohibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor/implicitPrimaryConstructor_errorAnyway.kt");
+                }
+
+                @Test
+                @TestMetadata("noPrimary_oneInheritedSecondary_mustBeInitializedError.kt")
+                public void testNoPrimary_oneInheritedSecondary_mustBeInitializedError() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/backingField/prohibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor/noPrimary_oneInheritedSecondary_mustBeInitializedError.kt");
+                }
+
+                @Test
+                @TestMetadata("noPrimary_oneInheritedSecondary_mustBeInitializedWarning.kt")
+                public void testNoPrimary_oneInheritedSecondary_mustBeInitializedWarning() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/backingField/prohibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor/noPrimary_oneInheritedSecondary_mustBeInitializedWarning.kt");
+                }
+
+                @Test
+                @TestMetadata("noPrimary_oneSecondary_deferredInitInSecondary_mustBeInitializedError.kt")
+                public void testNoPrimary_oneSecondary_deferredInitInSecondary_mustBeInitializedError() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/backingField/prohibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor/noPrimary_oneSecondary_deferredInitInSecondary_mustBeInitializedError.kt");
+                }
+
+                @Test
+                @TestMetadata("noPrimary_oneSecondary_deferredInitInSecondary_mustBeInitializedWarning.kt")
+                public void testNoPrimary_oneSecondary_deferredInitInSecondary_mustBeInitializedWarning() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/backingField/prohibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor/noPrimary_oneSecondary_deferredInitInSecondary_mustBeInitializedWarning.kt");
+                }
+
+                @Test
+                @TestMetadata("noPrimary_oneSecondary_mustBeInitializedError.kt")
+                public void testNoPrimary_oneSecondary_mustBeInitializedError() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/backingField/prohibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor/noPrimary_oneSecondary_mustBeInitializedError.kt");
+                }
+
+                @Test
+                @TestMetadata("noPrimary_oneSecondary_mustBeInitializedWarning.kt")
+                public void testNoPrimary_oneSecondary_mustBeInitializedWarning() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/backingField/prohibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor/noPrimary_oneSecondary_mustBeInitializedWarning.kt");
+                }
+
+                @Test
+                @TestMetadata("noPrimary_oneSecondary_openValError_mustBeInitializedError.kt")
+                public void testNoPrimary_oneSecondary_openValError_mustBeInitializedError() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/backingField/prohibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor/noPrimary_oneSecondary_openValError_mustBeInitializedError.kt");
+                }
+
+                @Test
+                @TestMetadata("noPrimary_oneSecondary_openValError_mustBeInitializedWarning.kt")
+                public void testNoPrimary_oneSecondary_openValError_mustBeInitializedWarning() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/backingField/prohibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor/noPrimary_oneSecondary_openValError_mustBeInitializedWarning.kt");
+                }
+
+                @Test
+                @TestMetadata("noPrimary_oneSecondary_openValWarning_mustBeInitializedError.kt")
+                public void testNoPrimary_oneSecondary_openValWarning_mustBeInitializedError() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/backingField/prohibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor/noPrimary_oneSecondary_openValWarning_mustBeInitializedError.kt");
+                }
+
+                @Test
+                @TestMetadata("noPrimary_oneSecondary_openValWarning_mustBeInitializedWarning.kt")
+                public void testNoPrimary_oneSecondary_openValWarning_mustBeInitializedWarning() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/backingField/prohibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor/noPrimary_oneSecondary_openValWarning_mustBeInitializedWarning.kt");
+                }
+
+                @Test
+                @TestMetadata("noPrimary_oneSecondary_openVar_mustBeInitializedError.kt")
+                public void testNoPrimary_oneSecondary_openVar_mustBeInitializedError() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/backingField/prohibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor/noPrimary_oneSecondary_openVar_mustBeInitializedError.kt");
+                }
+
+                @Test
+                @TestMetadata("noPrimary_oneSecondary_openVar_mustBeInitializedWarning.kt")
+                public void testNoPrimary_oneSecondary_openVar_mustBeInitializedWarning() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/backingField/prohibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor/noPrimary_oneSecondary_openVar_mustBeInitializedWarning.kt");
+                }
+
+                @Test
+                @TestMetadata("noPrimary_partialDeferredInitInSecondary_errorAnyway.kt")
+                public void testNoPrimary_partialDeferredInitInSecondary_errorAnyway() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/backingField/prohibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor/noPrimary_partialDeferredInitInSecondary_errorAnyway.kt");
+                }
+
+                @Test
+                @TestMetadata("noPrimary_partialDeferredInitInTwoSecondaries_errorAnyway.kt")
+                public void testNoPrimary_partialDeferredInitInTwoSecondaries_errorAnyway() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/backingField/prohibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor/noPrimary_partialDeferredInitInTwoSecondaries_errorAnyway.kt");
+                }
+
+                @Test
+                @TestMetadata("noPrimary_twoSecondary_mustBeInitializedError.kt")
+                public void testNoPrimary_twoSecondary_mustBeInitializedError() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/backingField/prohibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor/noPrimary_twoSecondary_mustBeInitializedError.kt");
+                }
+
+                @Test
+                @TestMetadata("noPrimary_twoSecondary_mustBeInitializedWarning.kt")
+                public void testNoPrimary_twoSecondary_mustBeInitializedWarning() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/backingField/prohibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor/noPrimary_twoSecondary_mustBeInitializedWarning.kt");
+                }
+
+                @Test
+                @TestMetadata("onePrimary_oneSecondary_errorAnyway.kt")
+                public void testOnePrimary_oneSecondary_errorAnyway() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/backingField/prohibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor/onePrimary_oneSecondary_errorAnyway.kt");
+                }
+            }
         }
 
         @Nested
