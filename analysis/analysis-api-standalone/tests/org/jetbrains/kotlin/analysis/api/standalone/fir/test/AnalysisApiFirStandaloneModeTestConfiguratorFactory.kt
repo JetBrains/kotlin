@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.api.standalone.fir.test
 
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.*
 
-object AnalysisApiFirStandaloneModeTestConfiguratorFactory : AnalysisApiTestConfiguratorFactory() {
+public object AnalysisApiFirStandaloneModeTestConfiguratorFactory : AnalysisApiTestConfiguratorFactory() {
     override fun createConfigurator(data: AnalysisApiTestConfiguratorFactoryData): AnalysisApiTestConfigurator {
         requireSupported(data)
 
