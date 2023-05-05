@@ -72,8 +72,8 @@ class ClassicFrontend2IrConverter(
         return IrBackendInput.JvmIrBackendInput(
             state,
             codegenFactory,
-            dependentInputs = emptyList(),
             conversionResult,
+            dependentIrModuleFragments = emptyList(),
             sourceFiles = emptyList(),
             descriptorMangler = conversionResult.symbolTable.signaturer.mangler,
             irMangler = JvmIrMangler,
@@ -111,12 +111,12 @@ class ClassicFrontend2IrConverter(
 
         return IrBackendInput.JsIrBackendInput(
             moduleFragment,
-            dependentModuleFragments = emptyList(),
+            dependentIrModuleFragments = emptyList(),
             pluginContext,
             sourceFiles.map(::KtPsiSourceFile),
             icData,
             expectDescriptorToSymbol = expectDescriptorToSymbol,
-            diagnosticsCollector = DiagnosticReporterFactory.createReporter(),
+            diagnosticReporter = DiagnosticReporterFactory.createReporter(),
             hasErrors,
             descriptorMangler = (pluginContext.symbolTable as SymbolTable).signaturer.mangler,
             irMangler = JsManglerIr,

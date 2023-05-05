@@ -17,22 +17,12 @@ class ActualizerOnlyFacade(
 ) : AbstractTestFacade<IrBackendInput, IrBackendInput>() {
     override fun transform(module: TestModule, inputArtifact: IrBackendInput): IrBackendInput {
         if (module.useIrActualizer()) {
-            when (inputArtifact) {
-                is IrBackendInput.JvmIrBackendInput ->
-                    IrActualizer.actualize(
-                        inputArtifact.backendInput.irModuleFragment,
-                        inputArtifact.dependentInputs.map { it.irModuleFragment },
-                        inputArtifact.state.diagnosticReporter,
-                        inputArtifact.state.languageVersionSettings
-                    )
-                is IrBackendInput.JsIrBackendInput ->
-                    IrActualizer.actualize(
-                        inputArtifact.mainModuleFragment,
-                        inputArtifact.dependentModuleFragments,
-                        inputArtifact.diagnosticsCollector,
-                        testServices.compilerConfigurationProvider.getCompilerConfiguration(module).languageVersionSettings
-                    )
-            }
+            IrActualizer.actualize(
+                inputArtifact.irModuleFragment,
+                inputArtifact.dependentIrModuleFragments,
+                inputArtifact.diagnosticReporter,
+                testServices.compilerConfigurationProvider.getCompilerConfiguration(module).languageVersionSettings
+            )
         }
         return inputArtifact
     }

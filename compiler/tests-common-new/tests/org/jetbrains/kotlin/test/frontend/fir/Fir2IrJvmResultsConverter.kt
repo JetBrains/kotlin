@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
 import org.jetbrains.kotlin.fir.pipeline.signatureComposerForJvmFir2Ir
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.CompilerEnvironment
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
@@ -82,8 +83,8 @@ class Fir2IrJvmResultsConverter(
 
         val phaseConfig = configuration.get(CLIConfigurationKeys.PHASE_CONFIG)
 
-        val dependentIrParts = mutableListOf<JvmIrCodegenFactory.JvmIrBackendInput>()
-        lateinit var mainIrPart: JvmIrCodegenFactory.JvmIrBackendInput
+        val dependentIrParts = mutableListOf<IrModuleFragment>()
+        lateinit var backendInput: JvmIrCodegenFactory.JvmIrBackendInput
         lateinit var mainModuleComponents: Fir2IrComponents
 
         val firAnalyzerFacade = inputArtifact.partsForDependsOnModules.last().firAnalyzerFacade as? FirAnalyzerFacade
@@ -98,22 +99,20 @@ class Fir2IrJvmResultsConverter(
             )
             irBuiltIns = components.irBuiltIns
 
-            val irPart = JvmIrCodegenFactory.JvmIrBackendInput(
-                irModuleFragment,
-                components.symbolTable,
-                phaseConfig,
-                components.irProviders,
-                fir2IrExtensions,
-                FirJvmBackendExtension(components, irActualizedResult = null),
-                pluginContext,
-                notifyCodegenStart = {},
-            )
-
             if (index < inputArtifact.partsForDependsOnModules.size - 1) {
-                dependentIrParts.add(irPart)
+                dependentIrParts.add(irModuleFragment)
             } else {
                 mainModuleComponents = components
-                mainIrPart = irPart
+                backendInput = JvmIrCodegenFactory.JvmIrBackendInput(
+                    irModuleFragment,
+                    components.symbolTable,
+                    phaseConfig,
+                    components.irProviders,
+                    fir2IrExtensions,
+                    FirJvmBackendExtension(components, irActualizedResult = null),
+                    pluginContext,
+                    notifyCodegenStart = {},
+                )
             }
         }
 
@@ -130,8 +129,8 @@ class Fir2IrJvmResultsConverter(
         return IrBackendInput.JvmIrBackendInput(
             generationState,
             codegenFactory,
+            backendInput,
             dependentIrParts,
-            mainIrPart,
             sourceFiles,
             descriptorMangler = commonMemberStorage.symbolTable.signaturer.mangler,
             irMangler = irMangler,

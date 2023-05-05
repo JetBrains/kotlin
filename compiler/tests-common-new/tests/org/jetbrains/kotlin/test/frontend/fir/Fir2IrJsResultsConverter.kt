@@ -46,7 +46,9 @@ import org.jetbrains.kotlin.test.model.BackendKinds
 import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
+import org.jetbrains.kotlin.test.services.jsLibraryProvider
 import org.jetbrains.kotlin.utils.metadataVersion
 
 class Fir2IrJsResultsConverter(
@@ -125,7 +127,7 @@ class Fir2IrJsResultsConverter(
             sourceFiles,
             configuration.incrementalDataProvider?.getSerializedData(sourceFiles) ?: emptyList(),
             expectDescriptorToSymbol = mutableMapOf(),
-            diagnosticsCollector = DiagnosticReporterFactory.createReporter(),
+            diagnosticReporter = DiagnosticReporterFactory.createReporter(),
             hasErrors = inputArtifact.hasErrors,
             descriptorMangler = commonMemberStorage.symbolTable.signaturer.mangler,
             irMangler = irMangler,

@@ -37,8 +37,8 @@ class JvmIrBackendFacade(
 
         if (module.useIrActualizer()) {
             IrActualizer.actualize(
-                inputArtifact.backendInput.irModuleFragment,
-                inputArtifact.dependentInputs.map { it.irModuleFragment },
+                inputArtifact.irModuleFragment,
+                inputArtifact.dependentIrModuleFragments,
                 inputArtifact.state.diagnosticReporter,
                 inputArtifact.state.languageVersionSettings
             )

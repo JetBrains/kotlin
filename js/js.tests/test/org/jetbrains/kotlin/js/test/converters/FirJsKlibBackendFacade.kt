@@ -68,8 +68,8 @@ class FirJsKlibBackendFacade(
             val irActualizedResult =
                 if (module.frontendKind == FrontendKinds.FIR && module.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) {
                     IrActualizer.actualize(
-                        inputArtifact.mainModuleFragment,
-                        inputArtifact.dependentModuleFragments,
+                        inputArtifact.irModuleFragment,
+                        inputArtifact.dependentIrModuleFragments,
                         diagnosticReporter,
                         configuration.languageVersionSettings
                     )

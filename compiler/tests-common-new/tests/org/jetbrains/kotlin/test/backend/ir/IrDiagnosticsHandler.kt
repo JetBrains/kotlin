@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.test.backend.ir
 
-import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.backend.handlers.AbstractIrHandler
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
@@ -22,10 +21,7 @@ class IrDiagnosticsHandler(testServices: TestServices) : AbstractIrHandler(testS
         get() = testServices.diagnosticsService
 
     override fun processModule(module: TestModule, info: IrBackendInput) {
-        val diagnosticsByFilePath = when (info) {
-            is IrBackendInput.JvmIrBackendInput -> (info.state.diagnosticReporter as BaseDiagnosticsCollector).diagnosticsByFilePath
-            is IrBackendInput.JsIrBackendInput -> info.diagnosticsCollector.diagnosticsByFilePath
-        }
+        val diagnosticsByFilePath = info.diagnosticReporter.diagnosticsByFilePath
         for (currentModule in testServices.moduleStructure.modules) {
             val lightTreeComparingModeEnabled = FirDiagnosticsDirectives.COMPARE_WITH_LIGHT_TREE in currentModule.directives
             val lightTreeEnabled = currentModule.directives.singleOrZeroValue(FirDiagnosticsDirectives.FIR_PARSER) == FirParser.LightTree
