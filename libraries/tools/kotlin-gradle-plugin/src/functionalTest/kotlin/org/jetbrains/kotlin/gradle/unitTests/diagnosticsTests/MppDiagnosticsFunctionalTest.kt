@@ -14,36 +14,6 @@ import org.junit.Test
 class MppDiagnosticsFunctionalTest {
 
     @Test
-    @Ignore
-    fun testKmmLibrary() {
-        checkDiagnosticsWithMppProject("kmmLibrary") {
-            androidLibrary {
-                compileSdk = 32
-            }
-
-            kotlin {
-                androidTarget()
-                ios()
-            }
-        }
-    }
-
-    @Test
-    @Ignore
-    fun testKmmApplication() {
-        checkDiagnosticsWithMppProject("kmmApplication") {
-            androidApplication {
-                compileSdk = 32
-            }
-
-            kotlin {
-                androidTarget()
-                ios()
-            }
-        }
-    }
-
-    @Test
     fun testCommonMainWithDependsOn() {
         checkDiagnosticsWithMppProject("commonMainWithDependsOn") {
             kotlin {
