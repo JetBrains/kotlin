@@ -18,13 +18,7 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-tasks.withType<KotlinCompile>().configureEach {
-    kotlinOptions {
-        languageVersion = "1.4"
-        apiVersion = "1.4"
-        freeCompilerArgs += listOf("-Xsuppress-version-warnings")
-    }
-}
+configureKotlinCompileTasksGradleCompatibility()
 
 publish()
 

@@ -24,13 +24,7 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
     useJUnitPlatform()
 }
 
-tasks.withType<KotlinJvmCompile>().configureEach {
-    kotlinOptions {
-        languageVersion = "1.4"
-        apiVersion = "1.4"
-        freeCompilerArgs += listOf("-Xskip-prerelease-check", "-Xsuppress-version-warnings")
-    }
-}
+configureKotlinCompileTasksGradleCompatibility()
 
 tasks.named<KotlinJvmCompile>("compileTestFixturesKotlin") {
     kotlinOptions {

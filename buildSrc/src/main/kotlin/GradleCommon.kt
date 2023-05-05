@@ -29,6 +29,7 @@ import org.jetbrains.dokka.DokkaVersion
 import org.jetbrains.dokka.gradle.DokkaTask
 import org.jetbrains.dokka.gradle.GradleExternalDocumentationLinkBuilder
 import org.jetbrains.kotlin.gradle.dsl.KotlinSingleJavaTargetExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import plugins.configureDefaultPublishing
@@ -504,15 +505,25 @@ private fun Project.commonVariantAttributes(): Action<Configuration> = Action<Co
 }
 
 fun Project.configureKotlinCompileTasksGradleCompatibility() {
-    @Suppress("DEPRECATION")
     tasks.withType<KotlinCompile>().configureEach {
-        kotlinOptions.languageVersion = "1.4"
-        kotlinOptions.apiVersion = "1.4"
-        kotlinOptions.freeCompilerArgs += listOf(
-            "-Xskip-prerelease-check",
-            "-Xsuppress-version-warnings",
-            "-Xuse-ir" // Needed as long as languageVersion is less than 1.5.
-        )
+        compilerOptions {
+            // check https://docs.gradle.org/current/userguide/compatibility.html#kotlin for Kotlin-Gradle versions matrix
+            @Suppress("DEPRECATION") // we can't use language version greater than 1.5 as minimal supported Gradle embeds Kotlin 1.4
+            languageVersion.set(KotlinVersion.KOTLIN_1_5)
+            @Suppress("DEPRECATION") // we can't use api version greater than 1.4 as minimal supported Gradle version uses kotlin-stdlib 1.4
+            apiVersion.set(KotlinVersion.KOTLIN_1_4)
+            freeCompilerArgs.addAll(
+                listOf(
+                    "-Xskip-prerelease-check",
+                    "-Xsuppress-version-warnings",
+                    // We have to override the default value for `-Xsam-conversions` to `class`
+                    // otherwise the compiler would compile lambdas using invokedynamic,
+                    // such lambdas are not serializable so are not compatible with Gradle configuration cache.
+                    // It doesn't lead to a significant difference in binaries sizes, and previously (before LV 1.5) the `class` value was set by default.
+                    "-Xsam-conversions=class",
+                )
+            )
+        }
     }
 }
 

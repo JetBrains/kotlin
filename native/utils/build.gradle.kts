@@ -22,15 +22,9 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-tasks {
-    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
-        kotlinOptions {
-            languageVersion = "1.4"
-            apiVersion = "1.4"
-            freeCompilerArgs += "-Xsuppress-version-warnings"
-        }
-    }
+configureKotlinCompileTasksGradleCompatibility()
 
+tasks {
     withType<Test>().configureEach {
         useJUnitPlatform()
     }
