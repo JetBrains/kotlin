@@ -71,7 +71,7 @@ public external interface NotificationOptions : JsAny {
     var sound: String?
         get() = definedExternally
         set(value) = definedExternally
-    var vibrate: JsAny?
+    var vibrate: JsAny? /* Int|JsArray<JsNumber> */
         get() = definedExternally
         set(value) = definedExternally
     var timestamp: JsNumber?
@@ -101,7 +101,7 @@ public external interface NotificationOptions : JsAny {
 }
 
 @Suppress("UNUSED_PARAMETER")
-public fun NotificationOptions(dir: NotificationDirection? = NotificationDirection.AUTO, lang: String? = "", body: String? = "", tag: String? = "", image: String? = undefined, icon: String? = undefined, badge: String? = undefined, sound: String? = undefined, vibrate: JsAny? = undefined, timestamp: JsNumber? = undefined, renotify: Boolean? = false, silent: Boolean? = false, noscreen: Boolean? = false, requireInteraction: Boolean? = false, sticky: Boolean? = false, data: JsAny? = null, actions: JsArray<NotificationAction>? = JsArray()): NotificationOptions { js("return { dir, lang, body, tag, image, icon, badge, sound, vibrate, timestamp, renotify, silent, noscreen, requireInteraction, sticky, data, actions };") }
+public fun NotificationOptions(dir: NotificationDirection? = NotificationDirection.AUTO, lang: String? = "", body: String? = "", tag: String? = "", image: String? = undefined, icon: String? = undefined, badge: String? = undefined, sound: String? = undefined, vibrate: JsAny? /* Int|JsArray<JsNumber> */ = undefined, timestamp: JsNumber? = undefined, renotify: Boolean? = false, silent: Boolean? = false, noscreen: Boolean? = false, requireInteraction: Boolean? = false, sticky: Boolean? = false, data: JsAny? = null, actions: JsArray<NotificationAction>? = JsArray()): NotificationOptions { js("return { dir, lang, body, tag, image, icon, badge, sound, vibrate, timestamp, renotify, silent, noscreen, requireInteraction, sticky, data, actions };") }
 
 public external interface NotificationAction : JsAny {
     var action: String?

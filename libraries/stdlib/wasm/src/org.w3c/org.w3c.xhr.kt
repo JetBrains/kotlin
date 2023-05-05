@@ -12,6 +12,7 @@ import kotlin.js.*
 import org.khronos.webgl.*
 import org.w3c.dom.*
 import org.w3c.dom.events.*
+import org.w3c.dom.url.*
 import org.w3c.files.*
 
 /**
@@ -48,7 +49,12 @@ public external open class XMLHttpRequest : XMLHttpRequestEventTarget, JsAny {
     fun open(method: String, url: String)
     fun open(method: String, url: String, async: Boolean, username: String? = definedExternally, password: String? = definedExternally)
     fun setRequestHeader(name: String, value: String)
-    fun send(body: JsAny? = definedExternally)
+    fun send(body: Document)
+    fun send(body: Blob)
+    fun send(body: FormData)
+    fun send(body: URLSearchParams)
+    fun send(body: String)
+    fun send()
     fun abort()
     fun getResponseHeader(name: String): String?
     fun getAllResponseHeaders(): String
@@ -70,8 +76,8 @@ public external open class FormData(form: HTMLFormElement = definedExternally) :
     fun append(name: String, value: String)
     fun append(name: String, value: Blob, filename: String = definedExternally)
     fun delete(name: String)
-    fun get(name: String): JsAny?
-    fun getAll(name: String): JsArray<JsAny?>
+    fun get(name: String): JsAny? /* File|String */
+    fun getAll(name: String): JsArray<JsAny? /* File|String */>
     fun has(name: String): Boolean
     fun set(name: String, value: String)
     fun set(name: String, value: Blob, filename: String = definedExternally)

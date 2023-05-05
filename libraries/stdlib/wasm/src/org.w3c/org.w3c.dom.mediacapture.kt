@@ -175,61 +175,61 @@ public external interface MediaTrackConstraints : MediaTrackConstraintSet, JsAny
 }
 
 @Suppress("UNUSED_PARAMETER")
-public fun MediaTrackConstraints(advanced: JsArray<MediaTrackConstraintSet>? = undefined, width: JsAny? = undefined, height: JsAny? = undefined, aspectRatio: JsAny? = undefined, frameRate: JsAny? = undefined, facingMode: JsAny? = undefined, resizeMode: JsAny? = undefined, volume: JsAny? = undefined, sampleRate: JsAny? = undefined, sampleSize: JsAny? = undefined, echoCancellation: JsAny? = undefined, autoGainControl: JsAny? = undefined, noiseSuppression: JsAny? = undefined, latency: JsAny? = undefined, channelCount: JsAny? = undefined, deviceId: JsAny? = undefined, groupId: JsAny? = undefined): MediaTrackConstraints { js("return { advanced, width, height, aspectRatio, frameRate, facingMode, resizeMode, volume, sampleRate, sampleSize, echoCancellation, autoGainControl, noiseSuppression, latency, channelCount, deviceId, groupId };") }
+public fun MediaTrackConstraints(advanced: JsArray<MediaTrackConstraintSet>? = undefined, width: JsAny? /* Int|ConstrainULongRange */ = undefined, height: JsAny? /* Int|ConstrainULongRange */ = undefined, aspectRatio: JsAny? /* Double|ConstrainDoubleRange */ = undefined, frameRate: JsAny? /* Double|ConstrainDoubleRange */ = undefined, facingMode: JsAny? /* String|JsArray<JsString>|ConstrainDOMStringParameters */ = undefined, resizeMode: JsAny? /* String|JsArray<JsString>|ConstrainDOMStringParameters */ = undefined, volume: JsAny? /* Double|ConstrainDoubleRange */ = undefined, sampleRate: JsAny? /* Int|ConstrainULongRange */ = undefined, sampleSize: JsAny? /* Int|ConstrainULongRange */ = undefined, echoCancellation: JsAny? /* Boolean|ConstrainBooleanParameters */ = undefined, autoGainControl: JsAny? /* Boolean|ConstrainBooleanParameters */ = undefined, noiseSuppression: JsAny? /* Boolean|ConstrainBooleanParameters */ = undefined, latency: JsAny? /* Double|ConstrainDoubleRange */ = undefined, channelCount: JsAny? /* Int|ConstrainULongRange */ = undefined, deviceId: JsAny? /* String|JsArray<JsString>|ConstrainDOMStringParameters */ = undefined, groupId: JsAny? /* String|JsArray<JsString>|ConstrainDOMStringParameters */ = undefined): MediaTrackConstraints { js("return { advanced, width, height, aspectRatio, frameRate, facingMode, resizeMode, volume, sampleRate, sampleSize, echoCancellation, autoGainControl, noiseSuppression, latency, channelCount, deviceId, groupId };") }
 
 public external interface MediaTrackConstraintSet : JsAny {
-    var width: JsAny?
+    var width: JsAny? /* Int|ConstrainULongRange */
         get() = definedExternally
         set(value) = definedExternally
-    var height: JsAny?
+    var height: JsAny? /* Int|ConstrainULongRange */
         get() = definedExternally
         set(value) = definedExternally
-    var aspectRatio: JsAny?
+    var aspectRatio: JsAny? /* Double|ConstrainDoubleRange */
         get() = definedExternally
         set(value) = definedExternally
-    var frameRate: JsAny?
+    var frameRate: JsAny? /* Double|ConstrainDoubleRange */
         get() = definedExternally
         set(value) = definedExternally
-    var facingMode: JsAny?
+    var facingMode: JsAny? /* String|JsArray<JsString>|ConstrainDOMStringParameters */
         get() = definedExternally
         set(value) = definedExternally
-    var resizeMode: JsAny?
+    var resizeMode: JsAny? /* String|JsArray<JsString>|ConstrainDOMStringParameters */
         get() = definedExternally
         set(value) = definedExternally
-    var volume: JsAny?
+    var volume: JsAny? /* Double|ConstrainDoubleRange */
         get() = definedExternally
         set(value) = definedExternally
-    var sampleRate: JsAny?
+    var sampleRate: JsAny? /* Int|ConstrainULongRange */
         get() = definedExternally
         set(value) = definedExternally
-    var sampleSize: JsAny?
+    var sampleSize: JsAny? /* Int|ConstrainULongRange */
         get() = definedExternally
         set(value) = definedExternally
-    var echoCancellation: JsAny?
+    var echoCancellation: JsAny? /* Boolean|ConstrainBooleanParameters */
         get() = definedExternally
         set(value) = definedExternally
-    var autoGainControl: JsAny?
+    var autoGainControl: JsAny? /* Boolean|ConstrainBooleanParameters */
         get() = definedExternally
         set(value) = definedExternally
-    var noiseSuppression: JsAny?
+    var noiseSuppression: JsAny? /* Boolean|ConstrainBooleanParameters */
         get() = definedExternally
         set(value) = definedExternally
-    var latency: JsAny?
+    var latency: JsAny? /* Double|ConstrainDoubleRange */
         get() = definedExternally
         set(value) = definedExternally
-    var channelCount: JsAny?
+    var channelCount: JsAny? /* Int|ConstrainULongRange */
         get() = definedExternally
         set(value) = definedExternally
-    var deviceId: JsAny?
+    var deviceId: JsAny? /* String|JsArray<JsString>|ConstrainDOMStringParameters */
         get() = definedExternally
         set(value) = definedExternally
-    var groupId: JsAny?
+    var groupId: JsAny? /* String|JsArray<JsString>|ConstrainDOMStringParameters */
         get() = definedExternally
         set(value) = definedExternally
 }
 
 @Suppress("UNUSED_PARAMETER")
-public fun MediaTrackConstraintSet(width: JsAny? = undefined, height: JsAny? = undefined, aspectRatio: JsAny? = undefined, frameRate: JsAny? = undefined, facingMode: JsAny? = undefined, resizeMode: JsAny? = undefined, volume: JsAny? = undefined, sampleRate: JsAny? = undefined, sampleSize: JsAny? = undefined, echoCancellation: JsAny? = undefined, autoGainControl: JsAny? = undefined, noiseSuppression: JsAny? = undefined, latency: JsAny? = undefined, channelCount: JsAny? = undefined, deviceId: JsAny? = undefined, groupId: JsAny? = undefined): MediaTrackConstraintSet { js("return { width, height, aspectRatio, frameRate, facingMode, resizeMode, volume, sampleRate, sampleSize, echoCancellation, autoGainControl, noiseSuppression, latency, channelCount, deviceId, groupId };") }
+public fun MediaTrackConstraintSet(width: JsAny? /* Int|ConstrainULongRange */ = undefined, height: JsAny? /* Int|ConstrainULongRange */ = undefined, aspectRatio: JsAny? /* Double|ConstrainDoubleRange */ = undefined, frameRate: JsAny? /* Double|ConstrainDoubleRange */ = undefined, facingMode: JsAny? /* String|JsArray<JsString>|ConstrainDOMStringParameters */ = undefined, resizeMode: JsAny? /* String|JsArray<JsString>|ConstrainDOMStringParameters */ = undefined, volume: JsAny? /* Double|ConstrainDoubleRange */ = undefined, sampleRate: JsAny? /* Int|ConstrainULongRange */ = undefined, sampleSize: JsAny? /* Int|ConstrainULongRange */ = undefined, echoCancellation: JsAny? /* Boolean|ConstrainBooleanParameters */ = undefined, autoGainControl: JsAny? /* Boolean|ConstrainBooleanParameters */ = undefined, noiseSuppression: JsAny? /* Boolean|ConstrainBooleanParameters */ = undefined, latency: JsAny? /* Double|ConstrainDoubleRange */ = undefined, channelCount: JsAny? /* Int|ConstrainULongRange */ = undefined, deviceId: JsAny? /* String|JsArray<JsString>|ConstrainDOMStringParameters */ = undefined, groupId: JsAny? /* String|JsArray<JsString>|ConstrainDOMStringParameters */ = undefined): MediaTrackConstraintSet { js("return { width, height, aspectRatio, frameRate, facingMode, resizeMode, volume, sampleRate, sampleSize, echoCancellation, autoGainControl, noiseSuppression, latency, channelCount, deviceId, groupId };") }
 
 /**
  * Exposes the JavaScript [MediaTrackSettings](https://developer.mozilla.org/en/docs/Web/API/MediaTrackSettings) to Kotlin
@@ -358,16 +358,16 @@ public external abstract class InputDeviceInfo : MediaDeviceInfo, JsAny {
  * Exposes the JavaScript [MediaStreamConstraints](https://developer.mozilla.org/en/docs/Web/API/MediaStreamConstraints) to Kotlin
  */
 public external interface MediaStreamConstraints : JsAny {
-    var video: JsAny? /* = false */
+    var video: JsAny? /* Boolean|MediaTrackConstraints */
         get() = definedExternally
         set(value) = definedExternally
-    var audio: JsAny? /* = false */
+    var audio: JsAny? /* Boolean|MediaTrackConstraints */
         get() = definedExternally
         set(value) = definedExternally
 }
 
 @Suppress("UNUSED_PARAMETER")
-public fun MediaStreamConstraints(video: JsAny? = false.toJsBoolean(), audio: JsAny? = false.toJsBoolean()): MediaStreamConstraints { js("return { video, audio };") }
+public fun MediaStreamConstraints(video: JsAny? /* Boolean|MediaTrackConstraints */ = false.toJsBoolean(), audio: JsAny? /* Boolean|MediaTrackConstraints */ = false.toJsBoolean()): MediaStreamConstraints { js("return { video, audio };") }
 
 public external interface ConstrainablePattern : JsAny {
     var onoverconstrained: ((Event) -> Unit)?
@@ -449,16 +449,16 @@ public fun ConstrainBooleanParameters(exact: Boolean? = undefined, ideal: Boolea
  * Exposes the JavaScript [ConstrainDOMStringParameters](https://developer.mozilla.org/en/docs/Web/API/ConstrainDOMStringParameters) to Kotlin
  */
 public external interface ConstrainDOMStringParameters : JsAny {
-    var exact: JsAny?
+    var exact: JsAny? /* String|JsArray<JsString> */
         get() = definedExternally
         set(value) = definedExternally
-    var ideal: JsAny?
+    var ideal: JsAny? /* String|JsArray<JsString> */
         get() = definedExternally
         set(value) = definedExternally
 }
 
 @Suppress("UNUSED_PARAMETER")
-public fun ConstrainDOMStringParameters(exact: JsAny? = undefined, ideal: JsAny? = undefined): ConstrainDOMStringParameters { js("return { exact, ideal };") }
+public fun ConstrainDOMStringParameters(exact: JsAny? /* String|JsArray<JsString> */ = undefined, ideal: JsAny? /* String|JsArray<JsString> */ = undefined): ConstrainDOMStringParameters { js("return { exact, ideal };") }
 
 public external interface Capabilities : JsAny
 

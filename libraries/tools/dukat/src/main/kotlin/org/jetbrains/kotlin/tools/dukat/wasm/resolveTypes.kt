@@ -98,12 +98,8 @@ private class TypeResolver : IDLLowering {
                         nullable = declaration.nullable,
                         comment = declaration.comment
                 )
-                in failedToResolveUnionTypes -> IDLSingleTypeDeclaration(
-                    name = "\$dynamic",
-                    typeParameter = null,
-                    nullable = false,
-                    comment = declaration.comment
-                )
+                // Keeping unresolved union types as-is to process later
+                in failedToResolveUnionTypes -> declaration
                 else -> raiseConcern("unprocessed UnionTypeDeclaration: $this") { declaration }
             }
         }
@@ -203,7 +199,7 @@ private class DependencyResolver(val typeResolver: TypeResolver) : IDLLowering {
     }
 }
 
-fun IDLSourceSetDeclaration.resolveTypes(): IDLSourceSetDeclaration {
+fun IDLSourceSetDeclaration.resolveTypesKeepingUnions(): IDLSourceSetDeclaration {
     val typeResolver = TypeResolver()
     val dependencyResolver = DependencyResolver(typeResolver)
     val declarationAdder = DeclarationAdder(typeResolver)

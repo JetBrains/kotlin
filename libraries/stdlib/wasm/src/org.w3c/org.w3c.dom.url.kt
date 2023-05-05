@@ -43,7 +43,7 @@ public external open class URL(url: String, base: String = definedExternally) : 
 /**
  * Exposes the JavaScript [URLSearchParams](https://developer.mozilla.org/en/docs/Web/API/URLSearchParams) to Kotlin
  */
-public external open class URLSearchParams(init: JsAny? = definedExternally) : JsAny {
+public external open class URLSearchParams(init: JsAny? /* String|URLSearchParams */ = definedExternally) : JsAny {
     fun append(name: String, value: String)
     fun delete(name: String)
     fun get(name: String): String?

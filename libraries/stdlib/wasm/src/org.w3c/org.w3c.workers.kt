@@ -316,13 +316,21 @@ public fun ExtendableMessageEventInit(data: JsAny? = undefined, origin: String? 
  * Exposes the JavaScript [Cache](https://developer.mozilla.org/en/docs/Web/API/Cache) to Kotlin
  */
 public external abstract class Cache : JsAny {
-    fun match(request: JsAny?, options: CacheQueryOptions = definedExternally): Promise<JsAny?>
-    fun matchAll(request: JsAny? = definedExternally, options: CacheQueryOptions = definedExternally): Promise<JsArray<Response>>
-    fun add(request: JsAny?): Promise<Nothing?>
-    fun addAll(requests: JsArray<JsAny?>): Promise<Nothing?>
-    fun put(request: JsAny?, response: Response): Promise<Nothing?>
-    fun delete(request: JsAny?, options: CacheQueryOptions = definedExternally): Promise<JsBoolean>
-    fun keys(request: JsAny? = definedExternally, options: CacheQueryOptions = definedExternally): Promise<JsArray<Request>>
+    fun match(request: Request, options: CacheQueryOptions = definedExternally): Promise<JsAny?>
+    fun match(request: String, options: CacheQueryOptions = definedExternally): Promise<JsAny?>
+    fun matchAll(request: Request, options: CacheQueryOptions = definedExternally): Promise<JsArray<Response>>
+    fun matchAll(request: String, options: CacheQueryOptions = definedExternally): Promise<JsArray<Response>>
+    fun matchAll(): Promise<JsArray<Response>>
+    fun add(request: Request): Promise<Nothing?>
+    fun add(request: String): Promise<Nothing?>
+    fun addAll(requests: JsArray<JsAny? /* Request|String */>): Promise<Nothing?>
+    fun put(request: Request, response: Response): Promise<Nothing?>
+    fun put(request: String, response: Response): Promise<Nothing?>
+    fun delete(request: Request, options: CacheQueryOptions = definedExternally): Promise<JsBoolean>
+    fun delete(request: String, options: CacheQueryOptions = definedExternally): Promise<JsBoolean>
+    fun keys(request: Request, options: CacheQueryOptions = definedExternally): Promise<JsArray<Request>>
+    fun keys(request: String, options: CacheQueryOptions = definedExternally): Promise<JsArray<Request>>
+    fun keys(): Promise<JsArray<Request>>
 }
 
 public external interface CacheQueryOptions : JsAny {
@@ -365,7 +373,8 @@ public fun CacheBatchOperation(type: String? = undefined, request: Request? = un
  * Exposes the JavaScript [CacheStorage](https://developer.mozilla.org/en/docs/Web/API/CacheStorage) to Kotlin
  */
 public external abstract class CacheStorage : JsAny {
-    fun match(request: JsAny?, options: CacheQueryOptions = definedExternally): Promise<JsAny?>
+    fun match(request: Request, options: CacheQueryOptions = definedExternally): Promise<JsAny?>
+    fun match(request: String, options: CacheQueryOptions = definedExternally): Promise<JsAny?>
     fun has(cacheName: String): Promise<JsBoolean>
     fun open(cacheName: String): Promise<Cache>
     fun delete(cacheName: String): Promise<JsBoolean>

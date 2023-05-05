@@ -17,7 +17,7 @@ import org.w3c.xhr.*
 /**
  * Exposes the JavaScript [Blob](https://developer.mozilla.org/en/docs/Web/API/Blob) to Kotlin
  */
-public external open class Blob(blobParts: JsArray<JsAny?> = definedExternally, options: BlobPropertyBag = definedExternally) : MediaProvider, ImageBitmapSource, JsAny {
+public external open class Blob(blobParts: JsArray<JsAny? /* BufferSource|Blob|String */> = definedExternally, options: BlobPropertyBag = definedExternally) : MediaProvider, ImageBitmapSource, JsAny {
     open val size: JsNumber
     open val type: String
     open val isClosed: Boolean
@@ -37,7 +37,7 @@ public fun BlobPropertyBag(type: String? = ""): BlobPropertyBag { js("return { t
 /**
  * Exposes the JavaScript [File](https://developer.mozilla.org/en/docs/Web/API/File) to Kotlin
  */
-public external open class File(fileBits: JsArray<JsAny?>, fileName: String, options: FilePropertyBag = definedExternally) : Blob, JsAny {
+public external open class File(fileBits: JsArray<JsAny? /* BufferSource|Blob|String */>, fileName: String, options: FilePropertyBag = definedExternally) : Blob, JsAny {
     open val name: String
     open val lastModified: Int
 }
@@ -68,7 +68,7 @@ public operator fun FileList.get(index: Int): File? = getMethodImplForFileList(t
  */
 public external open class FileReader : EventTarget, JsAny {
     open val readyState: Short
-    open val result: JsAny?
+    open val result: JsAny? /* String|ArrayBuffer */
     open val error: JsAny?
     var onloadstart: ((ProgressEvent) -> Unit)?
     var onprogress: ((ProgressEvent) -> Unit)?

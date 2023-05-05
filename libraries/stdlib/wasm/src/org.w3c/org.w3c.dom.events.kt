@@ -343,10 +343,18 @@ public external open class Event(type: String, eventInitDict: EventInit = define
  * Exposes the JavaScript [EventTarget](https://developer.mozilla.org/en/docs/Web/API/EventTarget) to Kotlin
  */
 public external abstract class EventTarget : JsAny {
-    fun addEventListener(type: String, callback: EventListener?, options: JsAny? = definedExternally)
-    fun addEventListener(type: String, callback: ((Event) -> Unit)?, options: JsAny? = definedExternally)
-    fun removeEventListener(type: String, callback: EventListener?, options: JsAny? = definedExternally)
-    fun removeEventListener(type: String, callback: ((Event) -> Unit)?, options: JsAny? = definedExternally)
+    fun addEventListener(type: String, callback: EventListener?, options: AddEventListenerOptions)
+    fun addEventListener(type: String, callback: ((Event) -> Unit)?, options: AddEventListenerOptions)
+    fun addEventListener(type: String, callback: EventListener?, options: Boolean)
+    fun addEventListener(type: String, callback: ((Event) -> Unit)?, options: Boolean)
+    fun addEventListener(type: String, callback: EventListener?)
+    fun addEventListener(type: String, callback: ((Event) -> Unit)?)
+    fun removeEventListener(type: String, callback: EventListener?, options: EventListenerOptions)
+    fun removeEventListener(type: String, callback: ((Event) -> Unit)?, options: EventListenerOptions)
+    fun removeEventListener(type: String, callback: EventListener?, options: Boolean)
+    fun removeEventListener(type: String, callback: ((Event) -> Unit)?, options: Boolean)
+    fun removeEventListener(type: String, callback: EventListener?)
+    fun removeEventListener(type: String, callback: ((Event) -> Unit)?)
     fun dispatchEvent(event: Event): Boolean
 }
 

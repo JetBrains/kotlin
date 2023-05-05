@@ -50,6 +50,7 @@ import org.jetbrains.dukat.panic.raiseConcern
 import org.jetbrains.dukat.stdlib.TSLIBROOT
 import org.jetbrains.dukat.stdlib.isTsStdlibPrefixed
 import org.jetbrains.dukat.translator.ROOT_PACKAGENAME
+import org.jetbrains.dukat.translatorString.translate
 import java.io.File
 
 private val jsAnyHeritageModel: HeritageModel = HeritageModel(
@@ -224,6 +225,13 @@ private class IdlFileConverter(
         return when (this) {
             is IDLSingleTypeDeclaration -> convertToModel(isTypeParameter)
             is IDLFunctionTypeDeclaration -> convertToModel()
+            is IDLUnionTypeDeclaration -> TypeValueModel(
+                IdentifierEntity("JsAny"),
+                listOf(),
+                metaDescription = this.unionMembers.joinToString("|") { it.convertToModel(false).translate() },
+                null,
+                nullable = true,
+            )
             //there shouldn't be any UnionTypeDeclarations at this stage
             else -> raiseConcern("unprocessed type declaration: ${this}") {
                 TypeValueModel(

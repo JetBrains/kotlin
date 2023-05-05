@@ -16,7 +16,7 @@ import org.w3c.xhr.*
 /**
  * Exposes the JavaScript [Headers](https://developer.mozilla.org/en/docs/Web/API/Headers) to Kotlin
  */
-public external open class Headers(init: JsAny? = definedExternally) : JsAny {
+public external open class Headers(init: JsAny? /* Headers|JsArray<JsArray<JsString>>|OpenEndedDictionary<JsString> */ = definedExternally) : JsAny {
     fun append(name: String, value: String)
     fun delete(name: String)
     fun get(name: String): String?
@@ -39,7 +39,7 @@ public external interface Body : JsAny {
 /**
  * Exposes the JavaScript [Request](https://developer.mozilla.org/en/docs/Web/API/Request) to Kotlin
  */
-public external open class Request(input: JsAny?, init: RequestInit = definedExternally) : Body, JsAny {
+public external open class Request(input: JsAny? /* Request|String */, init: RequestInit = definedExternally) : Body, JsAny {
     open val method: String
     open val url: String
     open val headers: Headers
@@ -66,10 +66,10 @@ public external interface RequestInit : JsAny {
     var method: String?
         get() = definedExternally
         set(value) = definedExternally
-    var headers: JsAny?
+    var headers: JsAny? /* Headers|JsArray<JsArray<JsString>>|OpenEndedDictionary<JsString> */
         get() = definedExternally
         set(value) = definedExternally
-    var body: JsAny?
+    var body: JsAny? /* Blob|BufferSource|FormData|URLSearchParams|String */
         get() = definedExternally
         set(value) = definedExternally
     var referrer: String?
@@ -102,12 +102,12 @@ public external interface RequestInit : JsAny {
 }
 
 @Suppress("UNUSED_PARAMETER")
-public fun RequestInit(method: String? = undefined, headers: JsAny? = undefined, body: JsAny? = undefined, referrer: String? = undefined, referrerPolicy: JsAny? = undefined, mode: RequestMode? = undefined, credentials: RequestCredentials? = undefined, cache: RequestCache? = undefined, redirect: RequestRedirect? = undefined, integrity: String? = undefined, keepalive: Boolean? = undefined, window: JsAny? = undefined): RequestInit { js("return { method, headers, body, referrer, referrerPolicy, mode, credentials, cache, redirect, integrity, keepalive, window };") }
+public fun RequestInit(method: String? = undefined, headers: JsAny? /* Headers|JsArray<JsArray<JsString>>|OpenEndedDictionary<JsString> */ = undefined, body: JsAny? /* Blob|BufferSource|FormData|URLSearchParams|String */ = undefined, referrer: String? = undefined, referrerPolicy: JsAny? = undefined, mode: RequestMode? = undefined, credentials: RequestCredentials? = undefined, cache: RequestCache? = undefined, redirect: RequestRedirect? = undefined, integrity: String? = undefined, keepalive: Boolean? = undefined, window: JsAny? = undefined): RequestInit { js("return { method, headers, body, referrer, referrerPolicy, mode, credentials, cache, redirect, integrity, keepalive, window };") }
 
 /**
  * Exposes the JavaScript [Response](https://developer.mozilla.org/en/docs/Web/API/Response) to Kotlin
  */
-public external open class Response(body: JsAny? = definedExternally, init: ResponseInit = definedExternally) : Body, JsAny {
+public external open class Response(body: JsAny? /* JsAny?|ReadableStream */ = definedExternally, init: ResponseInit = definedExternally) : Body, JsAny {
     open val type: ResponseType
     open val url: String
     open val redirected: Boolean
@@ -138,13 +138,13 @@ public external interface ResponseInit : JsAny {
     var statusText: String? /* = "OK" */
         get() = definedExternally
         set(value) = definedExternally
-    var headers: JsAny?
+    var headers: JsAny? /* Headers|JsArray<JsArray<JsString>>|OpenEndedDictionary<JsString> */
         get() = definedExternally
         set(value) = definedExternally
 }
 
 @Suppress("UNUSED_PARAMETER")
-public fun ResponseInit(status: Short? = 200, statusText: String? = "OK", headers: JsAny? = undefined): ResponseInit { js("return { status, statusText, headers };") }
+public fun ResponseInit(status: Short? = 200, statusText: String? = "OK", headers: JsAny? /* Headers|JsArray<JsArray<JsString>>|OpenEndedDictionary<JsString> */ = undefined): ResponseInit { js("return { status, statusText, headers };") }
 
 /* please, don't implement this interface! */
 @JsName("null")

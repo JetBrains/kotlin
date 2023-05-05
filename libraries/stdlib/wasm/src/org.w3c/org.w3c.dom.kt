@@ -58,7 +58,9 @@ public external abstract class RadioNodeList : NodeList, UnionElementOrRadioNode
 public external abstract class HTMLOptionsCollection : HTMLCollection, JsAny {
     override var length: Int
     open var selectedIndex: Int
-    fun add(element: UnionHTMLOptGroupElementOrHTMLOptionElement, before: JsAny? = definedExternally)
+    fun add(element: UnionHTMLOptGroupElementOrHTMLOptionElement, before: HTMLElement)
+    fun add(element: UnionHTMLOptGroupElementOrHTMLOptionElement, before: Int)
+    fun add(element: UnionHTMLOptGroupElementOrHTMLOptionElement)
     fun remove(index: Int)
 }
 
@@ -2034,7 +2036,9 @@ public external abstract class HTMLSelectElement : HTMLElement, ItemArrayLike<El
     open val validationMessage: String
     open val labels: NodeList
     fun namedItem(name: String): HTMLOptionElement?
-    fun add(element: UnionHTMLOptGroupElementOrHTMLOptionElement, before: JsAny? = definedExternally)
+    fun add(element: UnionHTMLOptGroupElementOrHTMLOptionElement, before: HTMLElement)
+    fun add(element: UnionHTMLOptGroupElementOrHTMLOptionElement, before: Int)
+    fun add(element: UnionHTMLOptGroupElementOrHTMLOptionElement)
     fun remove(index: Int)
     fun checkValidity(): Boolean
     fun reportValidity(): Boolean
@@ -2771,8 +2775,8 @@ public external interface CanvasImageSmoothing : JsAny {
 }
 
 public external interface CanvasFillStrokeStyles : JsAny {
-    var strokeStyle: JsAny?
-    var fillStyle: JsAny?
+    var strokeStyle: JsAny? /* String|CanvasGradient|CanvasPattern */
+    var fillStyle: JsAny? /* String|CanvasGradient|CanvasPattern */
     fun createLinearGradient(x0: Double, y0: Double, x1: Double, y1: Double): CanvasGradient
     fun createRadialGradient(x0: Double, y0: Double, r0: Double, x1: Double, y1: Double, r1: Double): CanvasGradient
     fun createPattern(image: CanvasImageSource, repetition: String): CanvasPattern?
@@ -3433,7 +3437,7 @@ public external interface GlobalEventHandlers : JsAny {
     var onended: ((Event) -> Unit)?
         get() = definedExternally
         set(value) = definedExternally
-    var onerror: ((JsAny?, String, Int, Int, JsAny?) -> JsAny?)?
+    var onerror: ((JsAny? /* Event|String */, String, Int, Int, JsAny?) -> JsAny?)?
         get() = definedExternally
         set(value) = definedExternally
     var onfocus: ((FocusEvent) -> Unit)?
@@ -3653,13 +3657,16 @@ public external interface WindowOrWorkerGlobalScope : JsAny {
     val caches: CacheStorage
     fun btoa(data: String): String
     fun atob(data: String): String
-    fun setTimeout(handler: JsAny?, timeout: Int = definedExternally, vararg arguments: JsAny?): Int
+    fun setTimeout(handler: String, timeout: Int = definedExternally, vararg arguments: JsAny?): Int
+    fun setTimeout(handler: () -> JsAny?, timeout: Int = definedExternally, vararg arguments: JsAny?): Int
     fun clearTimeout(handle: Int = definedExternally)
-    fun setInterval(handler: JsAny?, timeout: Int = definedExternally, vararg arguments: JsAny?): Int
+    fun setInterval(handler: String, timeout: Int = definedExternally, vararg arguments: JsAny?): Int
+    fun setInterval(handler: () -> JsAny?, timeout: Int = definedExternally, vararg arguments: JsAny?): Int
     fun clearInterval(handle: Int = definedExternally)
     fun createImageBitmap(image: ImageBitmapSource, options: ImageBitmapOptions = definedExternally): Promise<ImageBitmap>
     fun createImageBitmap(image: ImageBitmapSource, sx: Int, sy: Int, sw: Int, sh: Int, options: ImageBitmapOptions = definedExternally): Promise<ImageBitmap>
-    fun fetch(input: JsAny?, init: RequestInit = definedExternally): Promise<Response>
+    fun fetch(input: Request, init: RequestInit = definedExternally): Promise<Response>
+    fun fetch(input: String, init: RequestInit = definedExternally): Promise<Response>
 }
 
 /**
@@ -3672,7 +3679,8 @@ public external abstract class Navigator : NavigatorID, NavigatorLanguage, Navig
     open val serviceWorker: ServiceWorkerContainer
     fun requestMediaKeySystemAccess(keySystem: String, supportedConfigurations: JsArray<MediaKeySystemConfiguration>): Promise<MediaKeySystemAccess>
     fun getUserMedia(constraints: MediaStreamConstraints, successCallback: (MediaStream) -> Unit, errorCallback: (JsAny) -> Unit)
-    fun vibrate(pattern: JsAny?): Boolean
+    fun vibrate(pattern: Int): Boolean
+    fun vibrate(pattern: JsArray<JsNumber>): Boolean
 }
 
 /**
@@ -3894,7 +3902,7 @@ public fun EventSourceInit(withCredentials: Boolean? = false): EventSourceInit {
 /**
  * Exposes the JavaScript [WebSocket](https://developer.mozilla.org/en/docs/Web/API/WebSocket) to Kotlin
  */
-public external open class WebSocket(url: String, protocols: JsAny? = definedExternally) : EventTarget, JsAny {
+public external open class WebSocket(url: String, protocols: JsAny? /* String|JsArray<JsString> */ = definedExternally) : EventTarget, JsAny {
     open val url: String
     open val readyState: Short
     open val bufferedAmount: JsNumber
@@ -3985,7 +3993,7 @@ public external abstract class WorkerGlobalScope : EventTarget, WindowOrWorkerGl
     open val self: WorkerGlobalScope
     open val location: WorkerLocation
     open val navigator: WorkerNavigator
-    open var onerror: ((JsAny?, String, Int, Int, JsAny?) -> JsAny?)?
+    open var onerror: ((JsAny? /* Event|String */, String, Int, Int, JsAny?) -> JsAny?)?
     open var onlanguagechange: ((Event) -> Unit)?
     open var onoffline: ((Event) -> Unit)?
     open var ononline: ((Event) -> Unit)?
@@ -4439,8 +4447,10 @@ public external interface ParentNode : JsAny {
     val lastElementChild: Element?
         get() = definedExternally
     val childElementCount: Int
-    fun prepend(vararg nodes: JsAny?)
-    fun append(vararg nodes: JsAny?)
+    fun prepend(vararg nodes: Node)
+    fun prepend(vararg nodes: String)
+    fun append(vararg nodes: Node)
+    fun append(vararg nodes: String)
     fun querySelector(selectors: String): Element?
     fun querySelectorAll(selectors: String): NodeList
 }
@@ -4459,9 +4469,12 @@ public external interface NonDocumentTypeChildNode : JsAny {
  * Exposes the JavaScript [ChildNode](https://developer.mozilla.org/en/docs/Web/API/ChildNode) to Kotlin
  */
 public external interface ChildNode : JsAny {
-    fun before(vararg nodes: JsAny?)
-    fun after(vararg nodes: JsAny?)
-    fun replaceWith(vararg nodes: JsAny?)
+    fun before(vararg nodes: Node)
+    fun before(vararg nodes: String)
+    fun after(vararg nodes: Node)
+    fun after(vararg nodes: String)
+    fun replaceWith(vararg nodes: Node)
+    fun replaceWith(vararg nodes: String)
     fun remove()
 }
 
@@ -4695,7 +4708,7 @@ public external open class Document : Node, GlobalEventHandlers, DocumentAndElem
     override var ondurationchange: ((Event) -> Unit)?
     override var onemptied: ((Event) -> Unit)?
     override var onended: ((Event) -> Unit)?
-    override var onerror: ((JsAny?, String, Int, Int, JsAny?) -> JsAny?)?
+    override var onerror: ((JsAny? /* Event|String */, String, Int, Int, JsAny?) -> JsAny?)?
     override var onfocus: ((FocusEvent) -> Unit)?
     override var oninput: ((InputEvent) -> Unit)?
     override var oninvalid: ((Event) -> Unit)?
@@ -4795,14 +4808,22 @@ public external open class Document : Node, GlobalEventHandlers, DocumentAndElem
     fun createTouchList(vararg touches: Touch): TouchList
     fun exitFullscreen(): Promise<Nothing?>
     override fun getElementById(elementId: String): Element?
-    override fun prepend(vararg nodes: JsAny?)
-    override fun append(vararg nodes: JsAny?)
+    override fun prepend(vararg nodes: Node)
+    override fun prepend(vararg nodes: String)
+    override fun append(vararg nodes: Node)
+    override fun append(vararg nodes: String)
     override fun querySelector(selectors: String): Element?
     override fun querySelectorAll(selectors: String): NodeList
     override fun getBoxQuads(options: BoxQuadOptions /* = definedExternally */): JsArray<DOMQuad>
-    override fun convertQuadFromNode(quad: JsAny?, from: JsAny?, options: ConvertCoordinateOptions /* = definedExternally */): DOMQuad
-    override fun convertRectFromNode(rect: DOMRectReadOnly, from: JsAny?, options: ConvertCoordinateOptions /* = definedExternally */): DOMQuad
-    override fun convertPointFromNode(point: DOMPointInit, from: JsAny?, options: ConvertCoordinateOptions /* = definedExternally */): DOMPoint
+    override fun convertQuadFromNode(quad: JsAny?, from: Text, options: ConvertCoordinateOptions /* = definedExternally */): DOMQuad
+    override fun convertQuadFromNode(quad: JsAny?, from: Element, options: ConvertCoordinateOptions /* = definedExternally */): DOMQuad
+    override fun convertQuadFromNode(quad: JsAny?, from: Document, options: ConvertCoordinateOptions /* = definedExternally */): DOMQuad
+    override fun convertRectFromNode(rect: DOMRectReadOnly, from: Text, options: ConvertCoordinateOptions /* = definedExternally */): DOMQuad
+    override fun convertRectFromNode(rect: DOMRectReadOnly, from: Element, options: ConvertCoordinateOptions /* = definedExternally */): DOMQuad
+    override fun convertRectFromNode(rect: DOMRectReadOnly, from: Document, options: ConvertCoordinateOptions /* = definedExternally */): DOMQuad
+    override fun convertPointFromNode(point: DOMPointInit, from: Text, options: ConvertCoordinateOptions /* = definedExternally */): DOMPoint
+    override fun convertPointFromNode(point: DOMPointInit, from: Element, options: ConvertCoordinateOptions /* = definedExternally */): DOMPoint
+    override fun convertPointFromNode(point: DOMPointInit, from: Document, options: ConvertCoordinateOptions /* = definedExternally */): DOMPoint
 
     companion object {
         val ELEMENT_NODE: Short
@@ -4915,8 +4936,10 @@ public external open class DocumentFragment : Node, NonElementParentNode, Parent
     override val lastElementChild: Element?
     override val childElementCount: Int
     override fun getElementById(elementId: String): Element?
-    override fun prepend(vararg nodes: JsAny?)
-    override fun append(vararg nodes: JsAny?)
+    override fun prepend(vararg nodes: Node)
+    override fun prepend(vararg nodes: String)
+    override fun append(vararg nodes: Node)
+    override fun append(vararg nodes: String)
     override fun querySelector(selectors: String): Element?
     override fun querySelectorAll(selectors: String): NodeList
 
@@ -5023,7 +5046,8 @@ public external abstract class Element : Node, ParentNode, NonDocumentTypeChildN
     fun getClientRects(): JsArray<DOMRect>
     fun getBoundingClientRect(): DOMRect
     fun scrollIntoView()
-    fun scrollIntoView(arg: JsAny?)
+    fun scrollIntoView(arg: Boolean)
+    fun scrollIntoView(arg: JsAny)
     fun scroll(options: ScrollToOptions = definedExternally)
     fun scroll(x: Double, y: Double)
     fun scrollTo(options: ScrollToOptions = definedExternally)
@@ -5166,12 +5190,21 @@ public external open class Text(data: String = definedExternally) : CharacterDat
     override val nextElementSibling: Element?
     fun splitText(offset: Int): Text
     override fun getBoxQuads(options: BoxQuadOptions /* = definedExternally */): JsArray<DOMQuad>
-    override fun convertQuadFromNode(quad: JsAny?, from: JsAny?, options: ConvertCoordinateOptions /* = definedExternally */): DOMQuad
-    override fun convertRectFromNode(rect: DOMRectReadOnly, from: JsAny?, options: ConvertCoordinateOptions /* = definedExternally */): DOMQuad
-    override fun convertPointFromNode(point: DOMPointInit, from: JsAny?, options: ConvertCoordinateOptions /* = definedExternally */): DOMPoint
-    override fun before(vararg nodes: JsAny?)
-    override fun after(vararg nodes: JsAny?)
-    override fun replaceWith(vararg nodes: JsAny?)
+    override fun convertQuadFromNode(quad: JsAny?, from: Text, options: ConvertCoordinateOptions /* = definedExternally */): DOMQuad
+    override fun convertQuadFromNode(quad: JsAny?, from: Element, options: ConvertCoordinateOptions /* = definedExternally */): DOMQuad
+    override fun convertQuadFromNode(quad: JsAny?, from: Document, options: ConvertCoordinateOptions /* = definedExternally */): DOMQuad
+    override fun convertRectFromNode(rect: DOMRectReadOnly, from: Text, options: ConvertCoordinateOptions /* = definedExternally */): DOMQuad
+    override fun convertRectFromNode(rect: DOMRectReadOnly, from: Element, options: ConvertCoordinateOptions /* = definedExternally */): DOMQuad
+    override fun convertRectFromNode(rect: DOMRectReadOnly, from: Document, options: ConvertCoordinateOptions /* = definedExternally */): DOMQuad
+    override fun convertPointFromNode(point: DOMPointInit, from: Text, options: ConvertCoordinateOptions /* = definedExternally */): DOMPoint
+    override fun convertPointFromNode(point: DOMPointInit, from: Element, options: ConvertCoordinateOptions /* = definedExternally */): DOMPoint
+    override fun convertPointFromNode(point: DOMPointInit, from: Document, options: ConvertCoordinateOptions /* = definedExternally */): DOMPoint
+    override fun before(vararg nodes: Node)
+    override fun before(vararg nodes: String)
+    override fun after(vararg nodes: Node)
+    override fun after(vararg nodes: String)
+    override fun replaceWith(vararg nodes: Node)
+    override fun replaceWith(vararg nodes: String)
     override fun remove()
 
     companion object {
@@ -5256,9 +5289,12 @@ public external abstract class ProcessingInstruction : CharacterData, LinkStyle,
 public external open class Comment(data: String = definedExternally) : CharacterData, JsAny {
     override val previousElementSibling: Element?
     override val nextElementSibling: Element?
-    override fun before(vararg nodes: JsAny?)
-    override fun after(vararg nodes: JsAny?)
-    override fun replaceWith(vararg nodes: JsAny?)
+    override fun before(vararg nodes: Node)
+    override fun before(vararg nodes: String)
+    override fun after(vararg nodes: Node)
+    override fun after(vararg nodes: String)
+    override fun replaceWith(vararg nodes: Node)
+    override fun replaceWith(vararg nodes: String)
     override fun remove()
 
     companion object {
@@ -5703,13 +5739,13 @@ public external interface BoxQuadOptions : JsAny {
     var box: CSSBoxType? /* = CSSBoxType.BORDER */
         get() = definedExternally
         set(value) = definedExternally
-    var relativeTo: JsAny?
+    var relativeTo: JsAny? /* Text|Element|CSSPseudoElement|Document */
         get() = definedExternally
         set(value) = definedExternally
 }
 
 @Suppress("UNUSED_PARAMETER")
-public fun BoxQuadOptions(box: CSSBoxType? = CSSBoxType.BORDER, relativeTo: JsAny? = undefined): BoxQuadOptions { js("return { box, relativeTo };") }
+public fun BoxQuadOptions(box: CSSBoxType? = CSSBoxType.BORDER, relativeTo: JsAny? /* Text|Element|CSSPseudoElement|Document */ = undefined): BoxQuadOptions { js("return { box, relativeTo };") }
 
 public external interface ConvertCoordinateOptions : JsAny {
     var fromBox: CSSBoxType? /* = CSSBoxType.BORDER */
@@ -5728,9 +5764,15 @@ public fun ConvertCoordinateOptions(fromBox: CSSBoxType? = CSSBoxType.BORDER, to
  */
 public external interface GeometryUtils : JsAny {
     fun getBoxQuads(options: BoxQuadOptions = definedExternally): JsArray<DOMQuad>
-    fun convertQuadFromNode(quad: JsAny?, from: JsAny?, options: ConvertCoordinateOptions = definedExternally): DOMQuad
-    fun convertRectFromNode(rect: DOMRectReadOnly, from: JsAny?, options: ConvertCoordinateOptions = definedExternally): DOMQuad
-    fun convertPointFromNode(point: DOMPointInit, from: JsAny?, options: ConvertCoordinateOptions = definedExternally): DOMPoint
+    fun convertQuadFromNode(quad: JsAny?, from: Text, options: ConvertCoordinateOptions = definedExternally): DOMQuad
+    fun convertQuadFromNode(quad: JsAny?, from: Element, options: ConvertCoordinateOptions = definedExternally): DOMQuad
+    fun convertQuadFromNode(quad: JsAny?, from: Document, options: ConvertCoordinateOptions = definedExternally): DOMQuad
+    fun convertRectFromNode(rect: DOMRectReadOnly, from: Text, options: ConvertCoordinateOptions = definedExternally): DOMQuad
+    fun convertRectFromNode(rect: DOMRectReadOnly, from: Element, options: ConvertCoordinateOptions = definedExternally): DOMQuad
+    fun convertRectFromNode(rect: DOMRectReadOnly, from: Document, options: ConvertCoordinateOptions = definedExternally): DOMQuad
+    fun convertPointFromNode(point: DOMPointInit, from: Text, options: ConvertCoordinateOptions = definedExternally): DOMPoint
+    fun convertPointFromNode(point: DOMPointInit, from: Element, options: ConvertCoordinateOptions = definedExternally): DOMPoint
+    fun convertPointFromNode(point: DOMPointInit, from: Document, options: ConvertCoordinateOptions = definedExternally): DOMPoint
 }
 
 /**
@@ -5800,7 +5842,7 @@ public external open class Image(width: Int = definedExternally, height: Int = d
     override var ondurationchange: ((Event) -> Unit)?
     override var onemptied: ((Event) -> Unit)?
     override var onended: ((Event) -> Unit)?
-    override var onerror: ((JsAny?, String, Int, Int, JsAny?) -> JsAny?)?
+    override var onerror: ((JsAny? /* Event|String */, String, Int, Int, JsAny?) -> JsAny?)?
     override var onfocus: ((FocusEvent) -> Unit)?
     override var oninput: ((InputEvent) -> Unit)?
     override var oninvalid: ((Event) -> Unit)?
@@ -5862,18 +5904,29 @@ public external open class Image(width: Int = definedExternally, height: Int = d
     override val previousElementSibling: Element?
     override val nextElementSibling: Element?
     override val assignedSlot: HTMLSlotElement?
-    override fun prepend(vararg nodes: JsAny?)
-    override fun append(vararg nodes: JsAny?)
+    override fun prepend(vararg nodes: Node)
+    override fun prepend(vararg nodes: String)
+    override fun append(vararg nodes: Node)
+    override fun append(vararg nodes: String)
     override fun querySelector(selectors: String): Element?
     override fun querySelectorAll(selectors: String): NodeList
-    override fun before(vararg nodes: JsAny?)
-    override fun after(vararg nodes: JsAny?)
-    override fun replaceWith(vararg nodes: JsAny?)
+    override fun before(vararg nodes: Node)
+    override fun before(vararg nodes: String)
+    override fun after(vararg nodes: Node)
+    override fun after(vararg nodes: String)
+    override fun replaceWith(vararg nodes: Node)
+    override fun replaceWith(vararg nodes: String)
     override fun remove()
     override fun getBoxQuads(options: BoxQuadOptions /* = definedExternally */): JsArray<DOMQuad>
-    override fun convertQuadFromNode(quad: JsAny?, from: JsAny?, options: ConvertCoordinateOptions /* = definedExternally */): DOMQuad
-    override fun convertRectFromNode(rect: DOMRectReadOnly, from: JsAny?, options: ConvertCoordinateOptions /* = definedExternally */): DOMQuad
-    override fun convertPointFromNode(point: DOMPointInit, from: JsAny?, options: ConvertCoordinateOptions /* = definedExternally */): DOMPoint
+    override fun convertQuadFromNode(quad: JsAny?, from: Text, options: ConvertCoordinateOptions /* = definedExternally */): DOMQuad
+    override fun convertQuadFromNode(quad: JsAny?, from: Element, options: ConvertCoordinateOptions /* = definedExternally */): DOMQuad
+    override fun convertQuadFromNode(quad: JsAny?, from: Document, options: ConvertCoordinateOptions /* = definedExternally */): DOMQuad
+    override fun convertRectFromNode(rect: DOMRectReadOnly, from: Text, options: ConvertCoordinateOptions /* = definedExternally */): DOMQuad
+    override fun convertRectFromNode(rect: DOMRectReadOnly, from: Element, options: ConvertCoordinateOptions /* = definedExternally */): DOMQuad
+    override fun convertRectFromNode(rect: DOMRectReadOnly, from: Document, options: ConvertCoordinateOptions /* = definedExternally */): DOMQuad
+    override fun convertPointFromNode(point: DOMPointInit, from: Text, options: ConvertCoordinateOptions /* = definedExternally */): DOMPoint
+    override fun convertPointFromNode(point: DOMPointInit, from: Element, options: ConvertCoordinateOptions /* = definedExternally */): DOMPoint
+    override fun convertPointFromNode(point: DOMPointInit, from: Document, options: ConvertCoordinateOptions /* = definedExternally */): DOMPoint
 
     companion object {
         val ELEMENT_NODE: Short
@@ -5920,7 +5973,7 @@ public external open class Audio(src: String = definedExternally) : HTMLAudioEle
     override var ondurationchange: ((Event) -> Unit)?
     override var onemptied: ((Event) -> Unit)?
     override var onended: ((Event) -> Unit)?
-    override var onerror: ((JsAny?, String, Int, Int, JsAny?) -> JsAny?)?
+    override var onerror: ((JsAny? /* Event|String */, String, Int, Int, JsAny?) -> JsAny?)?
     override var onfocus: ((FocusEvent) -> Unit)?
     override var oninput: ((InputEvent) -> Unit)?
     override var oninvalid: ((Event) -> Unit)?
@@ -5982,18 +6035,29 @@ public external open class Audio(src: String = definedExternally) : HTMLAudioEle
     override val previousElementSibling: Element?
     override val nextElementSibling: Element?
     override val assignedSlot: HTMLSlotElement?
-    override fun prepend(vararg nodes: JsAny?)
-    override fun append(vararg nodes: JsAny?)
+    override fun prepend(vararg nodes: Node)
+    override fun prepend(vararg nodes: String)
+    override fun append(vararg nodes: Node)
+    override fun append(vararg nodes: String)
     override fun querySelector(selectors: String): Element?
     override fun querySelectorAll(selectors: String): NodeList
-    override fun before(vararg nodes: JsAny?)
-    override fun after(vararg nodes: JsAny?)
-    override fun replaceWith(vararg nodes: JsAny?)
+    override fun before(vararg nodes: Node)
+    override fun before(vararg nodes: String)
+    override fun after(vararg nodes: Node)
+    override fun after(vararg nodes: String)
+    override fun replaceWith(vararg nodes: Node)
+    override fun replaceWith(vararg nodes: String)
     override fun remove()
     override fun getBoxQuads(options: BoxQuadOptions /* = definedExternally */): JsArray<DOMQuad>
-    override fun convertQuadFromNode(quad: JsAny?, from: JsAny?, options: ConvertCoordinateOptions /* = definedExternally */): DOMQuad
-    override fun convertRectFromNode(rect: DOMRectReadOnly, from: JsAny?, options: ConvertCoordinateOptions /* = definedExternally */): DOMQuad
-    override fun convertPointFromNode(point: DOMPointInit, from: JsAny?, options: ConvertCoordinateOptions /* = definedExternally */): DOMPoint
+    override fun convertQuadFromNode(quad: JsAny?, from: Text, options: ConvertCoordinateOptions /* = definedExternally */): DOMQuad
+    override fun convertQuadFromNode(quad: JsAny?, from: Element, options: ConvertCoordinateOptions /* = definedExternally */): DOMQuad
+    override fun convertQuadFromNode(quad: JsAny?, from: Document, options: ConvertCoordinateOptions /* = definedExternally */): DOMQuad
+    override fun convertRectFromNode(rect: DOMRectReadOnly, from: Text, options: ConvertCoordinateOptions /* = definedExternally */): DOMQuad
+    override fun convertRectFromNode(rect: DOMRectReadOnly, from: Element, options: ConvertCoordinateOptions /* = definedExternally */): DOMQuad
+    override fun convertRectFromNode(rect: DOMRectReadOnly, from: Document, options: ConvertCoordinateOptions /* = definedExternally */): DOMQuad
+    override fun convertPointFromNode(point: DOMPointInit, from: Text, options: ConvertCoordinateOptions /* = definedExternally */): DOMPoint
+    override fun convertPointFromNode(point: DOMPointInit, from: Element, options: ConvertCoordinateOptions /* = definedExternally */): DOMPoint
+    override fun convertPointFromNode(point: DOMPointInit, from: Document, options: ConvertCoordinateOptions /* = definedExternally */): DOMPoint
 
     companion object {
         val NETWORK_EMPTY: Short
@@ -6052,7 +6116,7 @@ public external open class Option(text: String = definedExternally, value: Strin
     override var ondurationchange: ((Event) -> Unit)?
     override var onemptied: ((Event) -> Unit)?
     override var onended: ((Event) -> Unit)?
-    override var onerror: ((JsAny?, String, Int, Int, JsAny?) -> JsAny?)?
+    override var onerror: ((JsAny? /* Event|String */, String, Int, Int, JsAny?) -> JsAny?)?
     override var onfocus: ((FocusEvent) -> Unit)?
     override var oninput: ((InputEvent) -> Unit)?
     override var oninvalid: ((Event) -> Unit)?
@@ -6114,18 +6178,29 @@ public external open class Option(text: String = definedExternally, value: Strin
     override val previousElementSibling: Element?
     override val nextElementSibling: Element?
     override val assignedSlot: HTMLSlotElement?
-    override fun prepend(vararg nodes: JsAny?)
-    override fun append(vararg nodes: JsAny?)
+    override fun prepend(vararg nodes: Node)
+    override fun prepend(vararg nodes: String)
+    override fun append(vararg nodes: Node)
+    override fun append(vararg nodes: String)
     override fun querySelector(selectors: String): Element?
     override fun querySelectorAll(selectors: String): NodeList
-    override fun before(vararg nodes: JsAny?)
-    override fun after(vararg nodes: JsAny?)
-    override fun replaceWith(vararg nodes: JsAny?)
+    override fun before(vararg nodes: Node)
+    override fun before(vararg nodes: String)
+    override fun after(vararg nodes: Node)
+    override fun after(vararg nodes: String)
+    override fun replaceWith(vararg nodes: Node)
+    override fun replaceWith(vararg nodes: String)
     override fun remove()
     override fun getBoxQuads(options: BoxQuadOptions /* = definedExternally */): JsArray<DOMQuad>
-    override fun convertQuadFromNode(quad: JsAny?, from: JsAny?, options: ConvertCoordinateOptions /* = definedExternally */): DOMQuad
-    override fun convertRectFromNode(rect: DOMRectReadOnly, from: JsAny?, options: ConvertCoordinateOptions /* = definedExternally */): DOMQuad
-    override fun convertPointFromNode(point: DOMPointInit, from: JsAny?, options: ConvertCoordinateOptions /* = definedExternally */): DOMPoint
+    override fun convertQuadFromNode(quad: JsAny?, from: Text, options: ConvertCoordinateOptions /* = definedExternally */): DOMQuad
+    override fun convertQuadFromNode(quad: JsAny?, from: Element, options: ConvertCoordinateOptions /* = definedExternally */): DOMQuad
+    override fun convertQuadFromNode(quad: JsAny?, from: Document, options: ConvertCoordinateOptions /* = definedExternally */): DOMQuad
+    override fun convertRectFromNode(rect: DOMRectReadOnly, from: Text, options: ConvertCoordinateOptions /* = definedExternally */): DOMQuad
+    override fun convertRectFromNode(rect: DOMRectReadOnly, from: Element, options: ConvertCoordinateOptions /* = definedExternally */): DOMQuad
+    override fun convertRectFromNode(rect: DOMRectReadOnly, from: Document, options: ConvertCoordinateOptions /* = definedExternally */): DOMQuad
+    override fun convertPointFromNode(point: DOMPointInit, from: Text, options: ConvertCoordinateOptions /* = definedExternally */): DOMPoint
+    override fun convertPointFromNode(point: DOMPointInit, from: Element, options: ConvertCoordinateOptions /* = definedExternally */): DOMPoint
+    override fun convertPointFromNode(point: DOMPointInit, from: Document, options: ConvertCoordinateOptions /* = definedExternally */): DOMPoint
 
     companion object {
         val ELEMENT_NODE: Short
