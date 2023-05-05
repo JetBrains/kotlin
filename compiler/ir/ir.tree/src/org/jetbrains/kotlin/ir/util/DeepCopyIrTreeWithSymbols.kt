@@ -806,7 +806,6 @@ open class DeepCopyIrTreeWithSymbols(
         when (returnTarget) {
             is IrFunctionSymbol -> getReferencedFunction(returnTarget)
             is IrReturnableBlockSymbol -> getReferencedReturnableBlock(returnTarget)
-            else -> throw AssertionError("Unexpected return target: ${returnTarget.javaClass} $returnTarget")
         }
 
     override fun visitThrow(expression: IrThrow): IrThrow =

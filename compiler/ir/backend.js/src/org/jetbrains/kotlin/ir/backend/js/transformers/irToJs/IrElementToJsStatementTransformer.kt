@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.types.isAny
 import org.jetbrains.kotlin.ir.util.constructedClassType
@@ -125,17 +126,19 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
     }
 
     override fun visitReturn(expression: IrReturn, context: JsGenerationContext): JsStatement {
-        val targetSymbol = expression.returnTargetSymbol
         val lastStatementTransformer: (() -> JsExpression) -> JsStatement =
-            if (targetSymbol is IrReturnableBlockSymbol) {
-                // TODO assert that value is Unit?
-                {
-                    context.getNameForReturnableBlock(targetSymbol.owner)
-                        .takeIf { !expression.isTheLastReturnStatementIn(targetSymbol) }
-                        ?.run { JsBreak(makeRef()) } ?: JsEmpty
+            when (val targetSymbol = expression.returnTargetSymbol) {
+                is IrReturnableBlockSymbol -> {
+                    // TODO assert that value is Unit?
+                    {
+                        context.getNameForReturnableBlock(targetSymbol.owner)
+                            .takeIf { !expression.isTheLastReturnStatementIn(targetSymbol) }
+                            ?.run { JsBreak(makeRef()) } ?: JsEmpty
+                    }
                 }
-            } else {
-                { JsReturn(it()) }
+                is IrFunctionSymbol -> {
+                    { JsReturn(it()) }
+                }
             }
 
         return expression.value.maybeOptimizeIntoSwitch(context, lastStatementTransformer).withSource(expression, context)

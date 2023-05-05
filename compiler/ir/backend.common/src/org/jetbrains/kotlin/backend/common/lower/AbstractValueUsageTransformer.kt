@@ -72,7 +72,6 @@ abstract class AbstractValueUsageTransformer(
             is IrSimpleFunctionSymbol -> this.useAs(returnTarget.owner.returnType)
             is IrConstructorSymbol -> this.useAs(irBuiltIns.unitType)
             is IrReturnableBlockSymbol -> this.useAs(returnTarget.owner.type)
-            else -> error(returnTarget)
         }
 
     protected open fun IrExpression.useAsResult(enclosing: IrExpression): IrExpression =

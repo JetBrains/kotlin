@@ -79,7 +79,6 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
         is IrSimpleFunctionSymbol -> this.useAs(returnTarget.owner.returnType)
         is IrConstructorSymbol -> this.useAs(irBuiltIns.unitType)
         is IrReturnableBlockSymbol -> this.useAs(returnTarget.owner.type)
-        else -> error(returnTarget)
     }
 
     override fun IrExpression.useAs(type: IrType): IrExpression {

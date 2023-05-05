@@ -149,7 +149,6 @@ class AutoboxingTransformer(context: JsCommonBackendContext) : AbstractValueUsag
         is IrSimpleFunctionSymbol -> useReturnableExpressionAsType(returnTarget.owner.returnType)
         is IrConstructorSymbol -> useReturnableExpressionAsType(irBuiltIns.unitType)
         is IrReturnableBlockSymbol -> useReturnableExpressionAsType(returnTarget.owner.type)
-        else -> error(returnTarget)
     }
 
     override fun IrExpression.useExpressionAsType(actualType: IrType, expectedType: IrType): IrExpression {

@@ -91,7 +91,7 @@ interface IrValueParameterSymbol : IrValueSymbol, IrBindableSymbol<ParameterDesc
 
 interface IrVariableSymbol : IrValueSymbol, IrBindableSymbol<VariableDescriptor, IrVariable>
 
-interface IrReturnTargetSymbol : IrSymbol {
+sealed interface IrReturnTargetSymbol : IrSymbol {
     @ObsoleteDescriptorBasedAPI
     override val descriptor: FunctionDescriptor
 
