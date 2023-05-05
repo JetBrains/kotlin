@@ -22,6 +22,7 @@ import org.gradle.tooling.events.task.TaskExecutionResult
 import org.gradle.tooling.events.task.TaskFailureResult
 import org.gradle.tooling.events.task.TaskFinishEvent
 import org.gradle.tooling.events.task.TaskSkippedResult
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
@@ -224,25 +225,27 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
             // BuildScanExtension cant be parameter nor BuildService's field
             val buildScanExtension = project.rootProject.extensions.findByName("buildScan")
             val buildScan = buildScanExtension?.let { BuildScanExtensionHolder(it) }
-            val buildReportService = buildMetricService.map { it.buildReportService }
+
+            val buildScanReportSettings = buildMetricService.get().parameters.reportingSettings.orNull?.buildScanReportSettings
             BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(project.provider {
                 OperationCompletionListener { event ->
                     if (event is TaskFinishEvent) {
                         val buildOperation = buildMetricService.get().updateBuildOperationRecord(event)
                         val buildParameters = buildMetricService.get().parameters.toBuildReportParameters()
+                        val buildReportService = buildMetricService.map { it.buildReportService }
                         buildReportService.get().onFinish(event, buildOperation, buildParameters, buildScan)
                     }
                 }
             })
-
-            val buildScanReportSettings = buildMetricService.get().parameters.reportingSettings.orNull?.buildScanReportSettings
             if (buildScanReportSettings != null) {
                 buildScan?.also {
-                    buildReportService.get().initBuildScanTags(
+                    buildMetricService.map { it.buildReportService }.get().initBuildScanTags(
                         it, buildMetricService.get().parameters.label.orNull
                     )
-                    it.buildScan.buildFinished {
-                        buildReportService.get().addCollectedTags(buildScan)
+                    if (GradleVersion.current().baseVersion < GradleVersion.version("8.0")) {
+                        it.buildScan.buildFinished {
+                            buildMetricService.map { it.addCollectedTagsToBuildScan(buildScan) }
+                        }
                     }
                 }
             }
@@ -271,6 +274,11 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
             }
             return additionalTags
         }
+    }
+
+    internal fun addCollectedTagsToBuildScan(buildScan: BuildScanExtensionHolder?) {
+        if (buildScan == null) return
+        buildReportService.addCollectedTags(buildScan)
     }
 
 }
