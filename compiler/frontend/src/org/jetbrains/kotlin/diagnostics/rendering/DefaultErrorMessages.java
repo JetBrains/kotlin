@@ -307,9 +307,11 @@ public class DefaultErrorMessages {
         MAP.put(BACKING_FIELD_IN_INTERFACE, "Property in an interface cannot have a backing field");
 
         MAP.put(MUST_BE_INITIALIZED, "Property must be initialized");
+        MAP.put(MUST_BE_INITIALIZED_WARNING, "Property must be initialized. This warning will become an error in future releases.");
         MAP.put(MUST_BE_INITIALIZED_OR_BE_FINAL, "Property must be initialized or be final");
         MAP.put(MUST_BE_INITIALIZED_OR_BE_FINAL_WARNING, "Property must be initialized or be final. This warning will become an error in future releases.");
         MAP.put(MUST_BE_INITIALIZED_OR_BE_ABSTRACT, "Property must be initialized or be abstract");
+        MAP.put(MUST_BE_INITIALIZED_OR_BE_ABSTRACT_WARNING, "Property must be initialized or be abstract. This warning will become an error in future releases.");
         MAP.put(MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT, "Property must be initialized, be final, or be abstract");
         MAP.put(MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT_WARNING, "Property must be initialized, be final, or be abstract. This warning will become an error in future releases.");
 
