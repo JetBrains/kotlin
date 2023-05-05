@@ -232,9 +232,7 @@ internal open class JvmStubBasedFirDeserializedSymbolProvider(
         //names check is redundant though as we already have existing callable in scope
         val callableId = CallableId(packageFqName, shortName)
         val callableSymbols = when (callableDeclaration) {
-            is KtNamedFunction -> {
-                functionCache.getValue(callableId)
-            }
+            is KtNamedFunction -> functionCache.getValue(callableId)
             is KtProperty -> propertyCache.getValue(callableId)
             else -> null
         }

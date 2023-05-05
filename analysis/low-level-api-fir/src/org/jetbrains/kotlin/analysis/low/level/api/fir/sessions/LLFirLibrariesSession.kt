@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.fir.BuiltinTypes
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 import java.util.concurrent.ConcurrentHashMap
 
@@ -22,9 +23,9 @@ internal class LLFirLibrarySession @PrivateSessionConstructor constructor(
     dependencyTracker: ModificationTracker,
     builtinTypes: BuiltinTypes,
 ) : LLFirLibraryLikeSession(ktModule, dependencyTracker, builtinTypes) {
-    private val cache = ConcurrentHashMap<FirElement, Map<KtElement, FirElement>>()
+    private val cache = ConcurrentHashMap<FirDeclaration, Map<KtElement, FirElement>>()
 
-    fun getKtToFirMapping(firElement: FirElement): Map<KtElement, FirElement> = cache.computeIfAbsent(firElement) {
+    fun getKtToFirMapping(firElement: FirDeclaration): Map<KtElement, FirElement> = cache.computeIfAbsent(firElement) {
         FirElementsRecorder.recordElementsFrom(it, FirElementsRecorder())
     }
 }

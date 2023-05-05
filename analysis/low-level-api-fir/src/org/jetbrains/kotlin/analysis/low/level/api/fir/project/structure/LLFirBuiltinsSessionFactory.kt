@@ -116,7 +116,7 @@ class LLFirBuiltinsSessionFactory(private val project: Project) {
     }
 }
 
-class BuiltinsGlobalSearchScope(project: Project) : DelegatingGlobalSearchScope(project, allScope(project)) {
+internal class BuiltinsGlobalSearchScope(project: Project) : DelegatingGlobalSearchScope(project, allScope(project)) {
     override fun contains(file: VirtualFile): Boolean {
         if (file.extension != BuiltInSerializerProtocol.BUILTINS_FILE_EXTENSION) {
             return false

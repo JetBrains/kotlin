@@ -52,18 +52,23 @@ object AnalysisApiBaseTestServiceRegistrar: AnalysisApiTestServiceRegistrar()  {
             moduleStructure.binaryModules.flatMap { binary -> binary.getBinaryRoots() },
             testServices.environmentManager.getProjectEnvironment()
         )
-        if (moduleStructure.binaryModules.none { it is KtBuiltinsModule }) {
-            BuiltInDefinitionFile.FILTER_OUT_CLASSES_EXISTING_AS_JVM_CLASS_FILES = false
-        }
         project.apply {
             registerService(KtModuleScopeProvider::class.java, KtModuleScopeProviderImpl())
             registerService(KotlinAnnotationsResolverFactory::class.java, KotlinStaticAnnotationsResolverFactory(allKtFiles))
 
-            registerService(KotlinDeclarationProviderFactory::class.java, KotlinStaticDeclarationProviderFactory(
-                    project,
-                    allKtFiles,
-                    additionalRoots = roots
-                ))
+            val filter = BuiltInDefinitionFile.FILTER_OUT_CLASSES_EXISTING_AS_JVM_CLASS_FILES
+            try {
+                BuiltInDefinitionFile.FILTER_OUT_CLASSES_EXISTING_AS_JVM_CLASS_FILES = false
+                registerService(
+                    KotlinDeclarationProviderFactory::class.java, KotlinStaticDeclarationProviderFactory(
+                        project,
+                        allKtFiles,
+                        additionalRoots = roots
+                    )
+                )
+            } finally {
+                BuiltInDefinitionFile.FILTER_OUT_CLASSES_EXISTING_AS_JVM_CLASS_FILES = filter
+            }
             registerService(KotlinPackageProviderFactory::class.java, KotlinStaticPackageProviderFactory(project, allKtFiles))
             registerService(KotlinReferenceProvidersService::class.java, HLApiReferenceProviderService::class.java)
             registerService(KotlinResolutionScopeProvider::class.java, KotlinByModulesResolutionScopeProvider::class.java)
