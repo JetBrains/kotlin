@@ -53,8 +53,8 @@ class BuildSessionLoggerTest {
 
         assertEquals(true, logger1.isBuildSessionStarted())
 
-        logger1.finishBuildSession("", null)
-        logger2.finishBuildSession("", null)
+        logger1.finishBuildSession("", false)
+        logger2.finishBuildSession("", false)
 
         rootFolder.listFiles()?.first()?.listFiles()?.forEach { file ->
             assertTrue(
@@ -69,21 +69,21 @@ class BuildSessionLoggerTest {
         val maxFileSize = 10_000
         val logger = BuildSessionLogger(rootFolder, 100, maxFileSize.toLong())
         logger.startBuildSession(0, null)
-        logger.finishBuildSession("", null)
+        logger.finishBuildSession("", false)
 
         assertEquals(1, statFilesCount())
 
         val file2edit = rootFolder.listFiles()?.first()?.listFiles()?.first() ?: fail("Could not find single stat file")
 
         logger.startBuildSession(0, 0)
-        logger.finishBuildSession("", null)
+        logger.finishBuildSession("", false)
         //new file should not be created
         assertEquals(1, statFilesCount())
 
         file2edit.appendBytes(ByteArray(maxFileSize))
 
         logger.startBuildSession(0, 0)
-        logger.finishBuildSession("", null)
+        logger.finishBuildSession("", false)
 
         // a new file should be created as maximal file size
         assertEquals(2, statFilesCount())
@@ -94,7 +94,7 @@ class BuildSessionLoggerTest {
         val maxFiles = 100
         val logger = BuildSessionLogger(rootFolder, maxFiles)
         logger.startBuildSession(0, null)
-        logger.finishBuildSession("", null)
+        logger.finishBuildSession("", false)
         assertEquals(1, statFilesCount())
 
         val statsFolder = rootFolder.listFiles()?.single() ?: fail("${rootFolder.absolutePath} was not created")
@@ -107,7 +107,7 @@ class BuildSessionLoggerTest {
         }
 
         logger.startBuildSession(0, 0)
-        logger.finishBuildSession("", null)
+        logger.finishBuildSession("", false)
 
         assertTrue(
             statsFolder.listFiles()?.count { it.name == singleStatFile.name } == 1,
@@ -139,7 +139,7 @@ class BuildSessionLoggerTest {
 
         val startTime = System.currentTimeMillis() - 1001
         logger.startBuildSession(1, startTime)
-        logger.finishBuildSession("Build", null)
+        logger.finishBuildSession("Build", false)
         assertEquals(1, statFilesCount())
 
         val statFile = rootFolder.listFiles()?.single()?.listFiles()?.single() ?: fail("Could not find stat file")
@@ -158,7 +158,7 @@ class BuildSessionLoggerTest {
         }
 
 
-        logger.finishBuildSession("", null)
+        logger.finishBuildSession("", false)
 
         val metrics = ArrayList<MetricsContainer>()
         MetricsContainer.readFromFile(statFile) {
@@ -194,7 +194,7 @@ class BuildSessionLoggerTest {
         for (metric in NumericalMetrics.values()) {
             logger.report(metric, System.currentTimeMillis())
         }
-        logger.finishBuildSession("Build", null)
+        logger.finishBuildSession("Build", false)
 
         MetricsContainer.readFromFile(rootFolder.listFiles()?.single()?.listFiles()?.single() ?: fail("Could not find stat file")) {
             for (metric in StringMetrics.values()) {
@@ -217,7 +217,7 @@ class BuildSessionLoggerTest {
         logger.report(NumericalMetrics.ANALYSIS_LINES_PER_SECOND, 10, null, 9)
         logger.report(NumericalMetrics.ANALYSIS_LINES_PER_SECOND, 100, null, 1)
 
-        logger.finishBuildSession("Build", null)
+        logger.finishBuildSession("Build", false)
         MetricsContainer.readFromFile(rootFolder.listFiles()?.single()?.listFiles()?.single() ?: fail("Could not find stat file")) {
             assertEquals(19L, it.getMetric(NumericalMetrics.ANALYSIS_LINES_PER_SECOND)?.getValue())
         }
