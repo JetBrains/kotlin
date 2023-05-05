@@ -61,27 +61,26 @@ class KotlinBuildStatHandler {
         }
     }
 
-    fun reportGlobalMetricsAndBuildFinished(
+    fun reportGlobalMetrics(
         gradle: Gradle?,
-        beanName: ObjectName,
         sessionLogger: BuildSessionLogger,
-        action: String?,
-        failure: Throwable?
     ) {
         runSafe("${KotlinBuildStatHandler::class.java}.reportGlobalMetrics") {
-            try {
-                try {
-                    if (gradle != null) reportGlobalMetrics(gradle, sessionLogger)
-                } finally {
-                    sessionLogger.finishBuildSession(action, failure)
-                }
-            } finally {
-                buildFinished(beanName)
-            }
+            if (gradle != null) reportGlobalMetricsImpl(gradle, sessionLogger)
         }
     }
 
-    internal fun reportGlobalMetrics(gradle: Gradle, sessionLogger: BuildSessionLogger) {
+    fun reportBuildFinished(
+        sessionLogger: BuildSessionLogger,
+        action: String?,
+        buildFailed: Boolean,
+    ) {
+        runSafe("${KotlinBuildStatHandler::class.java}.reportBuildFinish") {
+            sessionLogger.finishBuildSession(action, buildFailed)
+        }
+    }
+
+    private fun reportGlobalMetricsImpl(gradle: Gradle, sessionLogger: BuildSessionLogger) {
         sessionLogger.report(StringMetrics.PROJECT_PATH, gradle.rootProject.projectDir.absolutePath)
         System.getProperty("os.name")?.also { sessionLogger.report(StringMetrics.OS_TYPE, System.getProperty("os.name")) }
         sessionLogger.report(NumericalMetrics.CPU_NUMBER_OF_CORES, Runtime.getRuntime().availableProcessors().toLong())

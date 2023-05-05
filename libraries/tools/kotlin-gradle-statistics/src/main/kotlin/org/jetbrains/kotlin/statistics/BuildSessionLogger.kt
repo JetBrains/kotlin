@@ -131,7 +131,7 @@ class BuildSessionLogger(
     }
 
     @Synchronized
-    fun finishBuildSession(@Suppress("UNUSED_PARAMETER") action: String?, failure: Throwable?) {
+    fun finishBuildSession(@Suppress("UNUSED_PARAMETER") action: String?, buildFailed: Boolean) {
         try {
             // nanotime could not be used as build start time in nanotime is unknown. As result, the measured duration
             // could be affected by system clock correction
@@ -142,7 +142,7 @@ class BuildSessionLogger(
                 }
                 report(NumericalMetrics.GRADLE_EXECUTION_DURATION, finishTime - it.projectEvaluatedTime)
                 report(NumericalMetrics.BUILD_FINISH_TIME, finishTime)
-                report(BooleanMetrics.BUILD_FAILED, failure != null)
+                report(BooleanMetrics.BUILD_FAILED, buildFailed)
             }
             buildSession = null
         } finally {

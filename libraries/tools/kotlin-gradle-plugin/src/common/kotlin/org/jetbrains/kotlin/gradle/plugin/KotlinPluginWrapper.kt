@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSetFactory
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.report.BuildMetricsService
+import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFlowService
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.addNpmDependencyExtension
@@ -65,16 +66,18 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
     override val pluginVersion: String = getKotlinPluginVersion(logger)
 
     override fun apply(project: Project) {
-        val kotlinPluginVersion = project.getKotlinPluginVersion()
-
-        val statisticsReporter = KotlinBuildStatsService.getOrCreateInstance(project)
-        statisticsReporter?.report(StringMetrics.KOTLIN_COMPILER_VERSION, kotlinPluginVersion)
-
         checkGradleCompatibility()
 
         project.gradle.projectsEvaluated {
             whenBuildEvaluated(project)
         }
+
+        val kotlinPluginVersion = project.getKotlinPluginVersion()
+
+        KotlinBuildStatsService.getOrCreateInstance(project)?.apply {
+            report(StringMetrics.KOTLIN_COMPILER_VERSION, kotlinPluginVersion)
+        }
+        BuildFlowService.registerIfAbsentImpl(project)
 
         addKotlinCompilerConfiguration(project)
 
@@ -197,6 +200,9 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
     }
 
     open fun whenBuildEvaluated(project: Project) {
+        KotlinBuildStatsService.applyIfInitialised {
+            it.projectsEvaluated(project.gradle)
+        }
     }
 }
 

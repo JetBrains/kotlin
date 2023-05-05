@@ -224,24 +224,25 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
             // BuildScanExtension cant be parameter nor BuildService's field
             val buildScanExtension = project.rootProject.extensions.findByName("buildScan")
             val buildScan = buildScanExtension?.let { BuildScanExtensionHolder(it) }
-            val buildReportService = buildMetricService.map { it.buildReportService }
-            BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(project.provider {
-                OperationCompletionListener { event ->
-                    if (event is TaskFinishEvent) {
-                        val buildOperation = buildMetricService.get().updateBuildOperationRecord(event)
-                        val buildParameters = buildMetricService.get().parameters.toBuildReportParameters()
-                        buildReportService.get().onFinish(event, buildOperation, buildParameters, buildScan)
-                    }
-                }
-            })
 
             val buildScanReportSettings = buildMetricService.get().parameters.reportingSettings.orNull?.buildScanReportSettings
             if (buildScanReportSettings != null) {
                 buildScan?.also {
-                    buildReportService.get().initBuildScanTags(
+                    BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(project.provider {
+                        OperationCompletionListener { event ->
+                            if (event is TaskFinishEvent) {
+                                val buildOperation = buildMetricService.get().updateBuildOperationRecord(event)
+                                val buildParameters = buildMetricService.get().parameters.toBuildReportParameters()
+                                val buildReportService = buildMetricService.map { it.buildReportService }
+                                buildReportService.get().onFinish(event, buildOperation, buildParameters, buildScan)
+                            }
+                        }
+                    })
+                    buildMetricService.map { it.buildReportService }.get().initBuildScanTags(
                         it, buildMetricService.get().parameters.label.orNull
                     )
                     it.buildScan.buildFinished {
+                        val buildReportService = buildMetricService.map { it.buildReportService }
                         buildReportService.get().addCollectedTags(buildScan)
                     }
                 }
