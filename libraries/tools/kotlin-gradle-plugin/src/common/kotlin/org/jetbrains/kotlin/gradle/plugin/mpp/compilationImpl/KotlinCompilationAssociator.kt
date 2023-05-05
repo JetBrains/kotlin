@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Dependency
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.jvm
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.plugin.mpp.isTest
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
@@ -76,7 +78,11 @@ internal object KotlinNativeCompilationAssociator : KotlinCompilationAssociator 
 internal object KotlinJvmCompilationAssociator : KotlinCompilationAssociator {
     override fun associate(target: KotlinTarget, auxiliary: InternalKotlinCompilation<*>, main: InternalKotlinCompilation<*>) {
         /* Main to Test association handled already by java plugin */
-        if (target is KotlinJvmTarget && target.withJavaEnabled && auxiliary.isTest() && main.isMain()) {
+        if (
+            ((target is KotlinWithJavaTarget<*, *> && target.platformType == jvm) ||
+                    (target is KotlinJvmTarget && target.withJavaEnabled)) &&
+            auxiliary.isTest() && main.isMain()
+        ) {
             return
         } else DefaultKotlinCompilationAssociator.associate(target, auxiliary, main)
     }
