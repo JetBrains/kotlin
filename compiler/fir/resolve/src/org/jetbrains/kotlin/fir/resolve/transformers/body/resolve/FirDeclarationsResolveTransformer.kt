@@ -145,11 +145,19 @@ open class FirDeclarationsResolveTransformer(
             context.withProperty(property) {
                 context.forPropertyInitializer {
                     if (!initializerIsAlreadyResolved) {
-                        property.transformChildrenWithoutComponents(returnTypeRefBeforeResolve)
-                        property.replaceBodyResolveState(FirPropertyBodyResolveState.INITIALIZER_RESOLVED)
+                        val resolutionMode = withExpectedType(returnTypeRefBeforeResolve)
+                        property.transformReturnTypeRef(transformer, resolutionMode)
+                            .transformInitializer(transformer, resolutionMode)
+                            .transformTypeParameters(transformer, resolutionMode)
+                            .replaceBodyResolveState(FirPropertyBodyResolveState.INITIALIZER_RESOLVED)
                     }
+                    // Return type needs to be resolved before resolving annotations (transformOtherChildren) because of a possible cycle
+                    // @Ann(myConst) const val myConst = ""
                     if (property.initializer != null) {
                         storeVariableReturnType(property)
+                    }
+                    if (!initializerIsAlreadyResolved) {
+                        property.transformOtherChildren(transformer, data)
                     }
                     val canResolveBackingFieldEarly = property.hasExplicitBackingField || property.returnTypeRef is FirResolvedTypeRef
                     if (!initializerIsAlreadyResolved && canResolveBackingFieldEarly) {
@@ -410,17 +418,6 @@ open class FirDeclarationsResolveTransformer(
         context.storeVariable(variable, session)
         dataFlowAnalyzer.exitLocalVariableDeclaration(variable, hadExplicitType)
         return variable
-    }
-
-    /**
-     * This function is expected to transform everything but property accessors, backing field and delegate
-     */
-    private fun FirProperty.transformChildrenWithoutComponents(returnTypeRef: FirTypeRef): FirProperty {
-        val data = withExpectedType(returnTypeRef)
-        return transformReturnTypeRef(transformer, data)
-            .transformInitializer(transformer, data)
-            .transformTypeParameters(transformer, data)
-            .transformOtherChildren(transformer, data)
     }
 
     private fun FirProperty.transformAccessors(mayResolveSetter: Boolean = true) {

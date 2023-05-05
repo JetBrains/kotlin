@@ -24903,6 +24903,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
             }
 
             @Test
+            @TestMetadata("constAnnotationCycle.kt")
+            public void testConstAnnotationCycle() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/properties/constAnnotationCycle.kt");
+            }
+
+            @Test
             @TestMetadata("extensionPropertyMustHaveAccessorsOrBeAbstract.kt")
             public void testExtensionPropertyMustHaveAccessorsOrBeAbstract() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/properties/extensionPropertyMustHaveAccessorsOrBeAbstract.kt");
