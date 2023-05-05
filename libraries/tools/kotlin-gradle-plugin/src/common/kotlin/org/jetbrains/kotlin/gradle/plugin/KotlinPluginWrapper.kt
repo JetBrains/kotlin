@@ -68,8 +68,10 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
     override fun apply(project: Project) {
         val kotlinPluginVersion = project.getKotlinPluginVersion()
 
-        val statisticsReporter = KotlinBuildStatsService.getOrCreateInstance(project)
-        statisticsReporter?.report(StringMetrics.KOTLIN_COMPILER_VERSION, kotlinPluginVersion)
+        val statisticsReporter = KotlinBuildStatsService.getOrCreateInstance(project)?.apply {
+            report(StringMetrics.KOTLIN_COMPILER_VERSION, kotlinPluginVersion)
+            buildStarted(project.gradle)
+        }
 
         checkGradleCompatibility()
 
