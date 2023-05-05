@@ -59,23 +59,42 @@ class BuildReportsIT : KGPBaseTest() {
                 assertBuildReportPathIsPrinted()
             }
             //Should contains build metrics for all compile kotlin tasks
-            assertFileContains(
-                reportFile,
-                "Time metrics:",
-                "Run compilation:",
-                "Incremental compilation in daemon:",
-                "Size metrics:",
-                "Total size of the cache directory:",
-                "Total compiler iteration:",
-                "ABI snapshot size:",
-                //for non-incremental builds
-                "Build attributes:",
-                "REBUILD_REASON:",
-                //gc metrics
-                "GC count:",
-                "GC time:",
-            )
+            validateBuildReportFile()
         }
+    }
+
+    @DisplayName("Build metrics produces valid report for JS project")
+    @GradleTest
+    fun testBuildMetricsForJsProject(gradleVersion: GradleVersion) {
+        project("kotlin-js-plugin-project", gradleVersion) {
+            build("compileKotlinJs") {
+                assertBuildReportPathIsPrinted()
+            }
+            //Should contains build metrics for all compile kotlin tasks
+            validateBuildReportFile()
+        }
+    }
+
+    private fun TestProject.validateBuildReportFile() {
+        assertFileContains(
+            reportFile,
+            "Time metrics:",
+            "Run compilation:",
+            "Incremental compilation in daemon:",
+            "Size metrics:",
+            "Total size of the cache directory:",
+            "Total compiler iteration:",
+            "ABI snapshot size:",
+            //for non-incremental builds
+            "Build attributes:",
+            "REBUILD_REASON:",
+            //gc metrics
+            "GC count:",
+            "GC time:",
+            //task info
+            "Task info:",
+            "Kotlin language version:",
+        )
     }
 
     @DisplayName("Compiler build metrics report is produced")
