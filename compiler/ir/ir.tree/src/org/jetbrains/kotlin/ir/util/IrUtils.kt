@@ -1422,3 +1422,7 @@ fun IrAttributeContainer.extractRelatedDeclaration(): IrDeclaration? {
         else -> null
     }
 }
+
+inline fun <reified Symbol : IrSymbol> IrSymbol.unexpectedSymbolKind(): Nothing {
+    throw IllegalArgumentException("Unexpected kind of ${Symbol::class.java.typeName}: $this")
+}

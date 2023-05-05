@@ -231,7 +231,6 @@ open class DeepCopySymbolRemapper(
             is IrClassSymbol -> classes.getReferenced(symbol)
             is IrScriptSymbol -> scripts.getReferenced(symbol)
             is IrTypeParameterSymbol -> typeParameters.getReferenced(symbol)
-            else -> throw IllegalArgumentException("Unexpected symbol $symbol")
         }
 
     override fun getReferencedTypeAlias(symbol: IrTypeAliasSymbol): IrTypeAliasSymbol = typeAliases.getReferenced(symbol)

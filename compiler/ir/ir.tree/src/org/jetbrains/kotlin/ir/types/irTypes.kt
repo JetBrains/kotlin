@@ -163,7 +163,7 @@ val IrClassifierSymbol.defaultType: IrType
     get() = when (this) {
         is IrClassSymbol -> owner.defaultType
         is IrTypeParameterSymbol -> owner.defaultType
-        else -> error("Unexpected classifier symbol type $this")
+        is IrScriptSymbol -> unexpectedSymbolKind<IrClassifierSymbol>()
     }
 
 val IrTypeParameter.defaultType: IrType

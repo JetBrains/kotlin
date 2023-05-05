@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -36,7 +38,7 @@ internal fun IrType.erasure(): IrType {
             // In the second case, there is only a single supertype.
             classifier.owner.superTypes.first().erasure()
         }
-        else -> TODO(classifier.toString())
+        is IrScriptSymbol -> classifier.unexpectedSymbolKind<IrClassifierSymbol>()
     }
 
     return upperBound.mergeNullability(this)

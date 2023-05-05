@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.inlineClassRepresentation
 import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
@@ -284,13 +286,10 @@ internal object IrTypeInlineClassesSupport : InlineClassesSupport<IrClass, IrTyp
         }
     }
 
-    override fun computeFullErasure(type: IrType): Sequence<IrClass> {
-        val classifier = type.classifierOrFail
-        return when (classifier) {
-            is IrClassSymbol -> sequenceOf(classifier.owner)
-            is IrTypeParameterSymbol -> classifier.owner.superTypes.asSequence().flatMap { computeFullErasure(it) }
-            else -> error(classifier)
-        }
+    override fun computeFullErasure(type: IrType): Sequence<IrClass> = when (val classifier = type.classifierOrFail) {
+        is IrClassSymbol -> sequenceOf(classifier.owner)
+        is IrTypeParameterSymbol -> classifier.owner.superTypes.asSequence().flatMap { computeFullErasure(it) }
+        is IrScriptSymbol -> classifier.unexpectedSymbolKind<IrClassifierSymbol>()
     }
 
     override fun hasInlineModifier(clazz: IrClass): Boolean = clazz.isSingleFieldValueClass

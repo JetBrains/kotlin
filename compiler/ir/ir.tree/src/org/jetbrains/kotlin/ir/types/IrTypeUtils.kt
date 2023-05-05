@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 fun IrClassifierSymbol.superTypes(): List<IrType> = when (this) {
     is IrClassSymbol -> owner.superTypes
     is IrTypeParameterSymbol -> owner.superTypes
-    else -> emptyList()
+    is IrScriptSymbol -> emptyList()
 }
 
 fun IrClassifierSymbol.isSubtypeOfClass(superClass: IrClassSymbol): Boolean =
@@ -44,7 +44,6 @@ fun IrType.isNullable(): Boolean =
                 SimpleTypeNullability.DEFINITELY_NOT_NULL -> false
             }
             is IrScriptSymbol -> nullability == SimpleTypeNullability.MARKED_NULLABLE
-            else -> error("Unsupported classifier: $classifier")
         }
         is IrDynamicType -> true
         is IrErrorType -> this.isMarkedNullable

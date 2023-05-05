@@ -27,10 +27,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrValueParameterImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrVariableImpl
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrFieldSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
@@ -172,8 +169,7 @@ fun IrFunctionAccessExpression.addArguments(args: Map<IrValueParameter, IrExpres
 fun IrType.substitute(map: Map<IrTypeParameterSymbol, IrType>): IrType {
     if (this !is IrSimpleType) return this
 
-    val classifier = this.classifier
-    return when (classifier) {
+    return when (val classifier = this.classifier) {
         is IrTypeParameterSymbol ->
             map[classifier]?.mergeNullability(this) ?: this
         is IrClassSymbol -> if (this.arguments.isEmpty()) {
@@ -187,7 +183,7 @@ fun IrType.substitute(map: Map<IrTypeParameterSymbol, IrType>): IrType {
             }
             IrSimpleTypeImpl(classifier, nullability, newArguments, annotations)
         }
-        else -> error(classifier)
+        is IrScriptSymbol -> classifier.unexpectedSymbolKind<IrClassifierSymbol>()
     }
 
 }

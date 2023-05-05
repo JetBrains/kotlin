@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.ir.util.isLocal
 import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.unexpectedSymbolKind
 
 /**
  * Perform as much type erasure as is significant for JVM signature generation.
@@ -87,7 +89,7 @@ val IrType.erasedUpperBound: IrClass
             is IrClassSymbol -> classifier.owner
             is IrTypeParameterSymbol -> classifier.owner.erasedUpperBound
             is IrScriptSymbol -> classifier.owner.targetClass!!.owner
-            else -> if (this is IrErrorType) symbol.owner else error(render())
+            null -> if (this is IrErrorType) symbol.owner else error(render())
         }
 
 /**
@@ -139,7 +141,7 @@ fun IrType.eraseToScope(visibleTypeParameters: Set<IrTypeParameter>): IrType {
                 this
             else
                 upperBound.mergeNullability(this)
-        else -> error("unknown IrType classifier kind: ${classifier.owner.render()}")
+        is IrScriptSymbol -> classifier.unexpectedSymbolKind<IrClassifierSymbol>()
     }
 }
 

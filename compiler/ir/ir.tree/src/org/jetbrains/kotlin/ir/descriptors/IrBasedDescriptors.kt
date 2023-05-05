@@ -1211,7 +1211,6 @@ private fun makeKotlinType(
                 KotlinTypeFactory.EMPTY_REFINED_TYPE_FACTORY
             ).makeNullableAsSpecified(hasQuestionMark)
         }
-        else -> error("unknown classifier kind $classifier")
     }
 
 /* When IR-based descriptors are used from Psi2Ir, symbols may be unbound, thus we may need to resort to real descriptors. */

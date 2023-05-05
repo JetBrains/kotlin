@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
+import org.jetbrains.kotlin.ir.util.unexpectedSymbolKind
 import org.jetbrains.kotlin.js.backend.ast.JsNameRef
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
@@ -44,18 +45,13 @@ private fun IrTypeArgument.asString(): String = when (this) {
 private fun IrClassifierSymbol.asString() = when (this) {
     is IrTypeParameterSymbol -> this.owner.name.asString()
     is IrClassSymbol -> this.owner.fqNameWhenAvailable!!.asString()
-    else -> error("Unexpected kind of IrClassifierSymbol: " + javaClass.typeName)
+    is IrScriptSymbol -> unexpectedSymbolKind<IrClassifierSymbol>()
 }
 
-tailrec fun erase(type: IrType): IrClass? {
-    val classifier = type.classifierOrFail
-
-    return when (classifier) {
-        is IrClassSymbol -> classifier.owner
-        is IrTypeParameterSymbol -> erase(classifier.owner.superTypes.first())
-        is IrScriptSymbol -> null
-        else -> error(classifier)
-    }
+tailrec fun erase(type: IrType): IrClass? = when (val classifier = type.classifierOrFail) {
+    is IrClassSymbol -> classifier.owner
+    is IrTypeParameterSymbol -> erase(classifier.owner.superTypes.first())
+    is IrScriptSymbol -> null
 }
 
 fun IrType.getClassRef(context: JsGenerationContext): JsNameRef =

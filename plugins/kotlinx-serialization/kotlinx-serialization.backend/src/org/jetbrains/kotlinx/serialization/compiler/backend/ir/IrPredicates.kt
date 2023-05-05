@@ -248,11 +248,11 @@ fun findSerializerConstructorForTypeArgumentsSerializers(serializer: IrClass): I
     }?.symbol
 }
 
-fun IrType.classOrUpperBound(): IrClassSymbol? = when(val cls = classifierOrNull) {
+fun IrType.classOrUpperBound(): IrClassSymbol? = when (val cls = classifierOrNull) {
     is IrClassSymbol -> cls
     is IrScriptSymbol -> cls.owner.targetClass
     is IrTypeParameterSymbol -> cls.owner.representativeUpperBound.classOrUpperBound()
-    else -> null
+    null -> null
 }
 
 /**

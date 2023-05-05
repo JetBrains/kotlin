@@ -69,7 +69,7 @@ interface IrEnumEntrySymbol : IrBindableSymbol<ClassDescriptor, IrEnumEntry>
 
 interface IrFieldSymbol : IrBindableSymbol<PropertyDescriptor, IrField>
 
-interface IrClassifierSymbol : IrSymbol, TypeConstructorMarker {
+sealed interface IrClassifierSymbol : IrSymbol, TypeConstructorMarker {
     @ObsoleteDescriptorBasedAPI
     override val descriptor: ClassifierDescriptor
 }

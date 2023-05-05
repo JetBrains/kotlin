@@ -158,7 +158,7 @@ class Fir2IrDeclarationStorage(
                                 val irClass = irClassifierSymbol.owner
                                 firType is ConeClassLikeType && irClass.name == firType.lookupTag.name
                             }
-                            else -> {
+                            is IrScriptSymbol -> {
                                 false
                             }
                         }
