@@ -31,6 +31,9 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.BUILDER_INFERENCE_ANNOTATION_
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
+/**
+ * General documentation for builder inference algorithm is located at `/docs/fir/builder_inference.md`
+ */
 class FirBuilderInferenceSession(
     private val lambda: FirAnonymousFunction,
     resolutionContext: ResolutionContext,

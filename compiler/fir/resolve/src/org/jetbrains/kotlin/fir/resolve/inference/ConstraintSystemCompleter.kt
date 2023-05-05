@@ -174,6 +174,12 @@ class ConstraintSystemCompleter(components: BodyResolveComponents, private val c
         }
     }
 
+    /**
+     * General documentation for builder inference algorithm is located at `/docs/fir/builder_inference.md`
+     *
+     * This function checks if any of the postponed arguments are suitable for builder inference, and performs it for all eligible lambda arguments
+     * @return true if we got new proper constraints after builder inference
+     */
     private fun ConstraintSystemCompletionContext.tryToCompleteWithBuilderInference(
         completionMode: ConstraintSystemCompletionMode,
         topLevelType: ConeKotlinType,
