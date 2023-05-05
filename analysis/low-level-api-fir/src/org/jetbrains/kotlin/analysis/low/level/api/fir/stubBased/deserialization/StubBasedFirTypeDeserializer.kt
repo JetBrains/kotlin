@@ -42,7 +42,7 @@ internal class StubBasedFirTypeDeserializer(
     private val annotationDeserializer: StubBasedAnnotationDeserializer,
     private val parent: StubBasedFirTypeDeserializer?,
     private val containingSymbol: FirBasedSymbol<*>?,
-    owner: KtTypeParameterListOwner,
+    owner: KtTypeParameterListOwner?,
     initialOrigin: FirDeclarationOrigin
 ) {
     private val typeParametersByName: Map<String, FirTypeParameterSymbol>
@@ -51,8 +51,8 @@ internal class StubBasedFirTypeDeserializer(
         get() = typeParametersByName.values.toList()
 
     init {
-        val typeParameters = owner.typeParameters
-        if (typeParameters.isNotEmpty()) {
+        val typeParameters = owner?.typeParameters
+        if (!typeParameters.isNullOrEmpty()) {
             typeParametersByName = mutableMapOf()
             val builders = mutableListOf<FirTypeParameterBuilder>()
             for (typeParameter in typeParameters) {

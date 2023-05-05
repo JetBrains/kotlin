@@ -65,7 +65,7 @@ internal open class JvmStubBasedFirDeserializedSymbolProvider(
 
     private val typeAliasCache: FirCache<ClassId, FirTypeAliasSymbol?, StubBasedFirDeserializationContext?> =
         session.firCachesFactory.createCacheWithPostCompute(
-            createValue = { classId, _ -> findAndDeserializeTypeAlias(classId) },
+            createValue = { classId, context -> findAndDeserializeTypeAlias(classId, context) },
             postCompute = { _, symbol, postProcessor ->
                 if (postProcessor != null && symbol != null) {
                     postProcessor.invoke(symbol)
@@ -91,12 +91,16 @@ internal open class JvmStubBasedFirDeserializedSymbolProvider(
         return namesByPackageCache.getTopLevelClassifierNamesInPackage(packageFqName)
     }
 
-    private fun findAndDeserializeTypeAlias(classId: ClassId): Pair<FirTypeAliasSymbol?, DeserializedTypeAliasPostProcessor?> {
-        val classLikeDeclaration = declarationProvider.getClassLikeDeclarationByClassId(classId)?.originalElement
+    private fun findAndDeserializeTypeAlias(
+        classId: ClassId,
+        context: StubBasedFirDeserializationContext?
+    ): Pair<FirTypeAliasSymbol?, DeserializedTypeAliasPostProcessor?> {
+        val classLikeDeclaration =
+            context?.classLikeDeclaration ?: declarationProvider.getClassLikeDeclarationByClassId(classId)?.originalElement
         if (classLikeDeclaration is KtTypeAlias) {
             val symbol = FirTypeAliasSymbol(classId)
             val postProcessor: DeserializedTypeAliasPostProcessor = {
-                val rootContext = StubBasedFirDeserializationContext.createRootContext(
+                val rootContext = context ?: StubBasedFirDeserializationContext.createRootContext(
                     moduleData,
                     StubBasedAnnotationDeserializer(session),
                     classId.packageFqName,
@@ -115,7 +119,12 @@ internal open class JvmStubBasedFirDeserializedSymbolProvider(
         classId: ClassId,
         parentContext: StubBasedFirDeserializationContext? = null
     ): FirRegularClassSymbol? {
-        val classLikeDeclaration = declarationProvider.getClassLikeDeclarationByClassId(classId)?.originalElement ?: return null
+        val (classLikeDeclaration, context) =
+            if (parentContext?.classLikeDeclaration != null) {
+                parentContext.classLikeDeclaration to null
+            } else {
+                (declarationProvider.getClassLikeDeclarationByClassId(classId)?.originalElement ?: return null) to parentContext
+            }
         val symbol = FirRegularClassSymbol(classId)
         if (classLikeDeclaration is KtClassOrObject) {
             deserializeClassToSymbol(
@@ -126,14 +135,14 @@ internal open class JvmStubBasedFirDeserializedSymbolProvider(
                 moduleData,
                 StubBasedAnnotationDeserializer(session),
                 kotlinScopeProvider,
-                parentContext,
+                parentContext = context,
                 containerSource = if (initialOrigin == FirDeclarationOrigin.BuiltIns) null else JvmFromStubDecompilerSource(
                     JvmClassName.byClassId(
                         classId
                     )
                 ),
                 deserializeNestedClass = this::getClass,
-                initialOrigin
+                initialOrigin = initialOrigin
             )
             return symbol
         }
@@ -220,6 +229,36 @@ internal open class JvmStubBasedFirDeserializedSymbolProvider(
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
         if (!namesByPackageCache.mayHaveTopLevelClassifier(classId, mayHaveFunctionClass = false)) return null
         return getClass(classId) ?: getTypeAlias(classId)
+    }
+
+    fun getClassLikeSymbolByClassId(classLikeDeclaration: KtClassLikeDeclaration, classId: ClassId): FirClassLikeSymbol<*>? {
+        val annotationDeserializer = StubBasedAnnotationDeserializer(session)
+        val deserializationContext = StubBasedFirDeserializationContext(
+            moduleData,
+            classId.packageFqName,
+            classId.relativeClassName,
+            StubBasedFirTypeDeserializer(
+                moduleData,
+                annotationDeserializer,
+                null,
+                null,
+                null,
+                initialOrigin
+            ),
+            annotationDeserializer,
+            null,
+            null,
+            emptyList(),
+            initialOrigin,
+            classLikeDeclaration
+        )
+        if (classLikeDeclaration is KtClassOrObject) {
+            return classCache.getValue(
+                classId,
+                deserializationContext
+            )
+        }
+        return typeAliasCache.getValue(classId, deserializationContext)
     }
 
     fun getTopLevelCallableSymbol(

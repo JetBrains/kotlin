@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.utils.SmartSet
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -34,6 +35,14 @@ internal class LLFirModuleWithDependenciesSymbolProvider(
 
     fun getClassLikeSymbolByFqNameWithoutDependencies(classId: ClassId): FirClassLikeSymbol<*>? =
         providers.firstNotNullOfOrNull { it.getClassLikeSymbolByClassId(classId) }
+
+    fun getClassLikeSymbolByFqNameWithoutDependencies(
+        classLikeDeclaration: KtClassLikeDeclaration,
+        classId: ClassId
+    ): FirClassLikeSymbol<*>? {
+        return providers.filterIsInstance(JvmStubBasedFirDeserializedSymbolProvider::class.java)
+            .firstNotNullOfOrNull { it.getClassLikeSymbolByClassId(classLikeDeclaration, classId) }
+    }
 
     @FirSymbolProviderInternals
     override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {

@@ -70,7 +70,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
 
         val classCandidate = when (symbolProvider) {
             is LLFirModuleWithDependenciesSymbolProvider -> {
-                symbolProvider.getClassLikeSymbolByFqNameWithoutDependencies(classId)
+                symbolProvider.getClassLikeSymbolByFqNameWithoutDependencies(declaration, classId)
                     ?: symbolProvider.friendBuiltinsProvider?.getClassLikeSymbolByClassId(classId)
             }
             else -> {
