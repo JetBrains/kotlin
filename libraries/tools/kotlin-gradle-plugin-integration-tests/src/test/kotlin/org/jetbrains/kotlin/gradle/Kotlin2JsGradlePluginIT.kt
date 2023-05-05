@@ -94,7 +94,7 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
                 buildGradleKts.modify(::transformBuildScriptWithPluginsDsl)
             }
 
-            fun moduleVersion(rootModulePath: String, moduleName: String): String =
+            fun BuildResult.moduleVersion(rootModulePath: String, moduleName: String): String =
                 projectPath.resolve(rootModulePath).toFile()
                     .resolve(NpmProject.PACKAGE_JSON)
                     .also {
@@ -136,6 +136,8 @@ class Kotlin2JsIrGradlePluginIT : AbstractKotlin2JsGradlePluginIT(true) {
                                         println("lib2 package.json does not exists")
                                     }
                                 }
+
+                            printBuildOutput()
                         }
                     }
                     .let { fromSrcPackageJson(it) }
