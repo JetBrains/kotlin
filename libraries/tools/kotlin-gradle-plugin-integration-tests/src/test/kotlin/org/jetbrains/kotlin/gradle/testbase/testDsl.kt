@@ -55,6 +55,7 @@ fun KGPBaseTest.project(
     projectPath.addDefaultBuildFiles()
     projectPath.enableCacheRedirector()
     projectPath.enableAndroidSdk()
+    projectPath.applyKotlinCompilerArgsPlugin()
 
     if (addHeapDumpOptions) projectPath.addHeapDumpOptions()
 
@@ -547,6 +548,7 @@ internal fun Path.enableAndroidSdk() {
     acceptAndroidSdkLicenses(androidSdk)
     applyAndroidTestFixes()
 }
+
 
 internal fun Path.enableCacheRedirector() {
     // Path relative to the current gradle module project dir
