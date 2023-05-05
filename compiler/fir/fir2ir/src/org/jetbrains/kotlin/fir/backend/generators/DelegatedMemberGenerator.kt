@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
+import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.JvmNames.JVM_DEFAULT_CLASS_ID
@@ -236,8 +237,8 @@ class DelegatedMemberGenerator(private val components: Fir2IrComponents) : Fir2I
         superFunction: IrSimpleFunction,
         callTypeCanBeNullable: Boolean
     ): IrBlockBody {
-        val startOffset = irField.startOffset
-        val endOffset = irField.endOffset
+        val startOffset = SYNTHETIC_OFFSET
+        val endOffset = SYNTHETIC_OFFSET
         val body = irFactory.createBlockBody(startOffset, endOffset)
         val irCall = IrCallImpl(
             startOffset,

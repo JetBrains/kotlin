@@ -158,6 +158,12 @@ public class FirLightTreeSteppingTestGenerated extends AbstractFirLightTreeStepp
     }
 
     @Test
+    @TestMetadata("delegation.kt")
+    public void testDelegation() throws Exception {
+        runTest("compiler/testData/debug/stepping/delegation.kt");
+    }
+
+    @Test
     @TestMetadata("enum.kt")
     public void testEnum() throws Exception {
         runTest("compiler/testData/debug/stepping/enum.kt");

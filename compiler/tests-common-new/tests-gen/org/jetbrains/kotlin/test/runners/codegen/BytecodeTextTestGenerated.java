@@ -4163,6 +4163,12 @@ public class BytecodeTextTestGenerated extends AbstractBytecodeTextTest {
         }
 
         @Test
+        @TestMetadata("delegationToList.kt")
+        public void testDelegationToList() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/lineNumbers/delegationToList.kt");
+        }
+
+        @Test
         @TestMetadata("ifConsts.kt")
         public void testIfConsts() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/lineNumbers/ifConsts.kt");
