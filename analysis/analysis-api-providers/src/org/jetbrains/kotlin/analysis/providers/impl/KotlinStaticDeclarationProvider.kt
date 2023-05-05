@@ -280,3 +280,4 @@ public class KotlinStaticDeclarationProviderFactory(
         return KotlinStaticDeclarationProvider(index, searchScope)
     }
 }
+

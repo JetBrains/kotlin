@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KtScope
 
 public abstract class KtSymbolFromResolveExtensionProvider : KtAnalysisSessionComponent() {
-    abstract fun getResolveExtensionScopeWithTopLevelDeclarations(): KtScope
+    public abstract fun getResolveExtensionScopeWithTopLevelDeclarations(): KtScope
 }
 
 public interface KtSymbolFromResolveExtensionProviderMixIn : KtAnalysisSessionMixIn {
@@ -19,7 +19,7 @@ public interface KtSymbolFromResolveExtensionProviderMixIn : KtAnalysisSessionMi
      * @see org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtension
      * @see org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionProvider
      */
-    fun getResolveExtensionScopeWithTopLevelDeclarations(): KtScope = withValidityAssertion {
+    public fun getResolveExtensionScopeWithTopLevelDeclarations(): KtScope = withValidityAssertion {
         analysisSession.resolveExtensionProvider.getResolveExtensionScopeWithTopLevelDeclarations()
     }
 }

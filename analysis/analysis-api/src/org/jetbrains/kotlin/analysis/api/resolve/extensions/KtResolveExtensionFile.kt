@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.name.Name
  *
  * @see KtResolveExtension
  */
-abstract class KtResolveExtensionFile {
+public abstract class KtResolveExtensionFile {
     /**
      * The name a Kotlin file which will be generated.
      *
@@ -28,7 +28,7 @@ abstract class KtResolveExtensionFile {
      *
      * @see KtResolveExtensionFile
      */
-    abstract fun getFileName(): String
+    public abstract fun getFileName(): String
 
     /**
      * [FqName] of the package specified in the file
@@ -39,7 +39,7 @@ abstract class KtResolveExtensionFile {
      *
      * @see KtResolveExtensionFile
      */
-    abstract fun getFilePackageName(): FqName
+    public abstract fun getFilePackageName(): FqName
 
     /**
      * Returns the set of top-level classifier (classes, interfaces, objects, and type-aliases) names in the file.
@@ -48,7 +48,7 @@ abstract class KtResolveExtensionFile {
      *
      * @see KtResolveExtensionFile
      */
-    abstract fun getTopLevelClassifierNames(): Set<Name>
+    public abstract fun getTopLevelClassifierNames(): Set<Name>
 
     /**
      * Returns the set of top-level callable (functions and properties) names in the file.
@@ -57,7 +57,7 @@ abstract class KtResolveExtensionFile {
      *
      * @see KtResolveExtensionFile
      */
-    abstract fun getTopLevelCallableNames(): Set<Name>
+    public abstract fun getTopLevelCallableNames(): Set<Name>
 
     /**
      * Creates the generated Kotlin source file text.
@@ -74,7 +74,7 @@ abstract class KtResolveExtensionFile {
      *
      * @see KtResolveExtensionFile
      */
-    abstract fun buildFileText(): String
+    public abstract fun buildFileText(): String
 
     /**
      * Creates a [KtResolveExtensionReferencePsiTargetsProvider] for this [KtResolveExtensionFile].
@@ -82,6 +82,5 @@ abstract class KtResolveExtensionFile {
      * @see KtResolveExtensionReferencePsiTargetsProvider
      * @see KtResolveExtensionFile
      */
-    abstract fun createPsiTargetsProvider(): KtResolveExtensionReferencePsiTargetsProvider
-
+    public abstract fun createPsiTargetsProvider(): KtResolveExtensionReferencePsiTargetsProvider
 }

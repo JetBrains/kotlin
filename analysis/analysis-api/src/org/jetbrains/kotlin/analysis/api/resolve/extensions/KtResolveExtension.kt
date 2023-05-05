@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.name.FqName
  * @see KtResolveExtensionFile
  * @see KtResolveExtensionProvider
  */
-abstract class KtResolveExtension {
+public abstract class KtResolveExtension {
     /**
      * Get the list of files that should be generated for the module.
      *
@@ -32,7 +32,7 @@ abstract class KtResolveExtension {
      * @see KtResolveExtensionFile
      * @see KtResolveExtension
      */
-    abstract fun getKtFiles(): List<KtResolveExtensionFile>
+    public abstract fun getKtFiles(): List<KtResolveExtensionFile>
 
     /**
      * Returns a [ModificationTracker], which controls the validity lifecycle of the files provided by [getKtFiles].
@@ -42,7 +42,7 @@ abstract class KtResolveExtension {
      *
      * @see KtResolveExtension
      */
-    abstract fun getModificationTracker(): ModificationTracker
+    public abstract fun getModificationTracker(): ModificationTracker
 
     /**
      * Returns the set of packages that are contained in the files provided by [getKtFiles].
@@ -52,5 +52,5 @@ abstract class KtResolveExtension {
      *
      * @see KtResolveExtension
      */
-    abstract fun getContainedPackages(): Set<FqName>
+    public abstract fun getContainedPackages(): Set<FqName>
 }

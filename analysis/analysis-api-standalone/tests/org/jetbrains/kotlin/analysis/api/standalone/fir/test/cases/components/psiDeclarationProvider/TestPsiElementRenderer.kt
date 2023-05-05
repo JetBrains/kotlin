@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtNamedFunction
 import org.jetbrains.kotlin.psi.KtParameter
 
-object TestPsiElementRenderer {
-    fun render(psiElement: PsiElement): String = when (psiElement) {
+public object TestPsiElementRenderer {
+    public fun render(psiElement: PsiElement): String = when (psiElement) {
         is KtNamedFunction -> buildString {
             append("KtNamedFunction:")
             append(psiElement.name)

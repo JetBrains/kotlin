@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.project.structure.KtModule
  *
  * All member implementations should consider caching the results for subsequent invocations.
  */
-abstract class KtResolveExtensionProvider {
+public abstract class KtResolveExtensionProvider {
     /**
      * Provides a list of [KtResolveExtension]s for a given [KtModule].
      *
@@ -25,12 +25,13 @@ abstract class KtResolveExtensionProvider {
      *
      * Implementation cannot use the Kotlin resolve inside, as this function is called during session initialization, so Analysis API access is forbidden.
      */
-    abstract fun provideExtensionsFor(module: KtModule): List<KtResolveExtension>
+    public abstract fun provideExtensionsFor(module: KtModule): List<KtResolveExtension>
 
-    companion object {
-        val EP_NAME = ExtensionPointName<KtResolveExtensionProvider>("org.jetbrains.kotlin.ktResolveExtensionProvider")
+    public companion object {
+        public val EP_NAME: ExtensionPointName<KtResolveExtensionProvider> =
+            ExtensionPointName<KtResolveExtensionProvider>("org.jetbrains.kotlin.ktResolveExtensionProvider")
 
-        fun provideExtensionsFor(module: KtModule): List<KtResolveExtension> {
+        public fun provideExtensionsFor(module: KtModule): List<KtResolveExtension> {
             return EP_NAME.getExtensionList(module.project).flatMap { it.provideExtensionsFor(module) }
         }
     }
