@@ -24,7 +24,7 @@ abstract class KotlinIrLinkerIssue {
 
     fun raiseIssue(messageLogger: IrMessageLogger): Nothing {
         messageLogger.report(IrMessageLogger.Severity.ERROR, errorMessage, null)
-        throw CompilationErrorException()
+        throw CompilationErrorException(errorMessage)
     }
 }
 
