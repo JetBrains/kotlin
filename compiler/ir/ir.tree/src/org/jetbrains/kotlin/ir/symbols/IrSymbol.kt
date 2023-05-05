@@ -54,7 +54,7 @@ interface IrBindableSymbol<out D : DeclarationDescriptor, B : IrSymbolOwner> : I
     fun bind(owner: B)
 }
 
-interface IrPackageFragmentSymbol : IrSymbol {
+sealed interface IrPackageFragmentSymbol : IrSymbol {
     @ObsoleteDescriptorBasedAPI
     override val descriptor: PackageFragmentDescriptor
 }
