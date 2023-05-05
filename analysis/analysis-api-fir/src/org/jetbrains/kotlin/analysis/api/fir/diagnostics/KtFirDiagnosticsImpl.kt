@@ -2409,6 +2409,11 @@ internal class MustBeInitializedImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.MustBeInitialized(), KtAbstractFirDiagnostic<KtProperty>
 
+internal class MustBeInitializedWarningImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.MustBeInitializedWarning(), KtAbstractFirDiagnostic<KtProperty>
+
 internal class MustBeInitializedOrBeFinalImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,
@@ -2423,6 +2428,11 @@ internal class MustBeInitializedOrBeAbstractImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.MustBeInitializedOrBeAbstract(), KtAbstractFirDiagnostic<KtProperty>
+
+internal class MustBeInitializedOrBeAbstractWarningImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.MustBeInitializedOrBeAbstractWarning(), KtAbstractFirDiagnostic<KtProperty>
 
 internal class MustBeInitializedOrFinalOrAbstractImpl(
     override val firDiagnostic: KtPsiDiagnostic,

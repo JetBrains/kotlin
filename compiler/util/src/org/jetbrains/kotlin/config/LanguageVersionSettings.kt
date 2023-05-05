@@ -294,6 +294,7 @@ enum class LanguageFeature(
     // 2.1
 
     ReferencesToSyntheticJavaProperties(KOTLIN_2_1), // KT-8575
+    ProhibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor(KOTLIN_2_1), // KT-58472
 
     // End of 2.* language features --------------------------------------------------
 
