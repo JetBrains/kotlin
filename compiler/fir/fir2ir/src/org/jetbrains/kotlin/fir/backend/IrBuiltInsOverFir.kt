@@ -823,6 +823,7 @@ class IrBuiltInsOverFir(
                         it.valueParameters.count() == fn.valueParameters.count() &&
                         it.valueParameters.zip(fn.valueParameters).all { (l, r) -> l.type == r.type }
             }?.let {
+                assert(it.symbol != fn) { "Cannot add function $fn to its own overriddenSymbols" }
                 fn.overriddenSymbols += it.symbol
             }
         }
@@ -939,6 +940,7 @@ class IrBuiltInsOverFir(
             // TODO: replace with correct logic or explicit specification if cases become more complex
             forEachSuperClass {
                 properties.find { it.name == property.name }?.let {
+                    assert(property != it.symbol) { "Cannot add property $property to its own overriddenSymbols"}
                     property.overriddenSymbols += it.symbol
                 }
             }

@@ -179,7 +179,10 @@ private fun IrSimpleFunction.getObjCMethodInfo(onlyExternal: Boolean): ObjCMetho
         }
     }
 
-    return overriddenSymbols.firstNotNullOfOrNull { it.owner.getObjCMethodInfo(onlyExternal) }
+    return overriddenSymbols.firstNotNullOfOrNull {
+        assert(it.owner != this) { "Function ${it.owner.descriptor.fqNameSafe}() is wrongly contained in its own overriddenSymbols"}
+        it.owner.getObjCMethodInfo(onlyExternal)
+    }
 }
 
 fun FunctionDescriptor.getExternalObjCMethodInfo(): ObjCMethodInfo? = this.getObjCMethodInfo(onlyExternal = true)

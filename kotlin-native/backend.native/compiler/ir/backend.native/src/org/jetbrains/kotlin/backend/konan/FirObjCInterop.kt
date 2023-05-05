@@ -51,6 +51,7 @@ internal fun FirFunction.getObjCMethodInfoFromOverriddenFunctions(session: FirSe
                 // call of `processFunctionsByName()` is needed only for necessary side-effect before `getDirectOverriddenFunctions` call
                 unsubstitutedScope.processFunctionsByName(symbol.name) {}
                 unsubstitutedScope.getDirectOverriddenFunctions(symbol).firstNotNullOfOrNull {
+                    assert(it.fir != this) { "Function ${symbol.name}() is wrongly contained in its own getDirectOverriddenFunctions" }
                     it.fir.getObjCMethodInfoFromOverriddenFunctions(session, scopeSession)
                 }
             }

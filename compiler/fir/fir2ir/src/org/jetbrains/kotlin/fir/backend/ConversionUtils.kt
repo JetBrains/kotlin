@@ -406,6 +406,7 @@ internal fun FirSimpleFunction.generateOverriddenFunctionSymbols(containingClass
 
     processOverriddenFunctionSymbols(containingClass) {
         for (overridden in fakeOverrideGenerator.getOverriddenSymbolsInSupertypes(it, superClasses)) {
+            assert(overridden != symbol) { "Cannot add function $overridden to its own overriddenSymbols" }
             overriddenSet += overridden
         }
     }
@@ -483,6 +484,7 @@ internal fun FirProperty.generateOverriddenPropertySymbols(containingClass: FirC
 
     processOverriddenPropertySymbols(containingClass) {
         for (overridden in fakeOverrideGenerator.getOverriddenSymbolsInSupertypes(it, superClasses)) {
+            assert(overridden != symbol) { "Cannot add property $overridden to its own overriddenSymbols" }
             overriddenSet += overridden
         }
     }
@@ -510,6 +512,7 @@ internal fun FirProperty.generateOverriddenAccessorSymbols(containingClass: FirC
                 if (isGetter) overriddenIrPropertySymbol.owner.getter?.symbol
                 else overriddenIrPropertySymbol.owner.setter?.symbol
             if (overriddenIrAccessorSymbol != null) {
+                assert(overriddenIrAccessorSymbol != symbol) { "Cannot add property $overriddenIrAccessorSymbol to its own overriddenSymbols" }
                 overriddenSet += overriddenIrAccessorSymbol
             }
         }

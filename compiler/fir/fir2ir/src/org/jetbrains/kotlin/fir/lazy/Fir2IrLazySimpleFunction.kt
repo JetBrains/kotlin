@@ -93,7 +93,10 @@ class Fir2IrLazySimpleFunction(
             fakeOverrideGenerator.calcBaseSymbolsForFakeOverrideFunction(
                 firParent, this, fir.symbol
             )
-            fakeOverrideGenerator.getOverriddenSymbolsForFakeOverride(this)?.let { return@lazyVar it }
+            fakeOverrideGenerator.getOverriddenSymbolsForFakeOverride(this)?.let {
+                assert(!it.contains(symbol)) { "Cannot add function $symbol to its own overriddenSymbols" }
+                return@lazyVar it
+            }
         }
         fir.generateOverriddenFunctionSymbols(firParent)
     }
