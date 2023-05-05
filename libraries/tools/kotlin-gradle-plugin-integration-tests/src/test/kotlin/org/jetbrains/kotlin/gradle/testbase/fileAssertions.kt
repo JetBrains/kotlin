@@ -191,7 +191,7 @@ fun assertFileContains(
         |${textNotInTheFile.joinToString(separator = "\n")}
         |
         |actual file content:
-        |$text"
+        |"$text"
         |       
         """.trimMargin()
     }

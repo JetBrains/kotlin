@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.KotlinPm20ProjectExtension
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSetFactory
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.report.BuildMetricsService
+import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFlowService
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsPlugin
 import org.jetbrains.kotlin.gradle.targets.js.npm.addNpmDependencyExtension
@@ -65,10 +66,11 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
     override val pluginVersion: String = getKotlinPluginVersion(logger)
 
     override fun apply(project: Project) {
-        val kotlinPluginVersion = project.getKotlinPluginVersion()
 
-        val statisticsReporter = KotlinBuildStatsService.getOrCreateInstance(project)
-        statisticsReporter?.report(StringMetrics.KOTLIN_COMPILER_VERSION, kotlinPluginVersion)
+        KotlinBuildStatsService.getOrCreateInstance(project)?.apply {
+            report(StringMetrics.KOTLIN_COMPILER_VERSION, pluginVersion)
+        }
+        BuildFlowService.registerIfAbsent(project)
 
         checkGradleCompatibility()
 
@@ -89,7 +91,7 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
 
         val kotlinGradleBuildServices = KotlinGradleBuildServices.registerIfAbsent(project.gradle).get()
         if (!project.isProjectIsolationEnabled) {
-            kotlinGradleBuildServices.detectKotlinPluginLoadedInMultipleProjects(project, kotlinPluginVersion)
+            kotlinGradleBuildServices.detectKotlinPluginLoadedInMultipleProjects(project, pluginVersion)
         }
 
         BuildMetricsService.registerIfAbsent(project)
@@ -212,7 +214,6 @@ abstract class KotlinBasePluginWrapper : DefaultKotlinBasePlugin() {
 
     override fun apply(project: Project) {
         super.apply(project)
-        val kotlinPluginVersion = project.getKotlinPluginVersion()
 
         project.logger.info("Using Kotlin Gradle Plugin $pluginVariant variant")
 
@@ -225,7 +226,7 @@ abstract class KotlinBasePluginWrapper : DefaultKotlinBasePlugin() {
         project.maybeCreateCommonizerClasspathConfiguration()
 
         project.createKotlinExtension(projectExtensionClass).apply {
-            coreLibrariesVersion = kotlinPluginVersion
+            coreLibrariesVersion = pluginVersion
 
             fun kotlinSourceSetContainer(factory: NamedDomainObjectFactory<KotlinSourceSet>) =
                 project.container(KotlinSourceSet::class.java, factory)

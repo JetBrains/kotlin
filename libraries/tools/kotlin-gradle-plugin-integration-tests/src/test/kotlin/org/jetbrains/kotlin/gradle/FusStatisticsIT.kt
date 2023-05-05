@@ -15,8 +15,23 @@ import java.nio.file.Path
 @DisplayName("FUS statistic")
 //Tests for FUS statistics have to create new instance of KotlinBuildStatsService
 class FusStatisticsIT : KGPDaemonsBaseTest() {
+    private val expectedMetrics = arrayOf(
+        "OS_TYPE",
+        "BUILD_FAILED=false",
+        "EXECUTED_FROM_IDEA=false",
+        "BUILD_FINISH_TIME",
+        "GRADLE_VERSION",
+        "KOTLIN_STDLIB_VERSION",
+        "KOTLIN_COMPILER_VERSION",
+    )
+
     @DisplayName("for dokka")
     @GradleTest
+    @GradleTestVersions(
+        minVersion = TestVersions.Gradle.MIN_SUPPORTED,
+        additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
+        maxVersion = TestVersions.Gradle.G_8_1
+    )
     fun testDokka(gradleVersion: GradleVersion) {
         project(
             "simpleProject",
@@ -48,6 +63,11 @@ class FusStatisticsIT : KGPDaemonsBaseTest() {
 
     @DisplayName("general fields")
     @GradleTest
+    @GradleTestVersions(
+        minVersion = TestVersions.Gradle.MIN_SUPPORTED,
+        additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
+        maxVersion = TestVersions.Gradle.G_8_1
+    )
     fun testFusStatistics(gradleVersion: GradleVersion) {
         project(
             "simpleProject",
@@ -57,13 +77,7 @@ class FusStatisticsIT : KGPDaemonsBaseTest() {
                 val fusStatisticsPath = fusStatisticsPath
                 assertFileContains(
                     fusStatisticsPath,
-                    "OS_TYPE",
-                    "BUILD_FAILED=false",
-                    "EXECUTED_FROM_IDEA=false",
-                    "BUILD_FINISH_TIME",
-                    "GRADLE_VERSION",
-                    "KOTLIN_STDLIB_VERSION",
-                    "KOTLIN_COMPILER_VERSION",
+                    *expectedMetrics,
                 )
                 assertFileDoesNotContain(
                     fusStatisticsPath,
@@ -74,8 +88,65 @@ class FusStatisticsIT : KGPDaemonsBaseTest() {
         }
     }
 
+    @DisplayName("for project with buildSrc")
+    @GradleTest
+    @GradleTestVersions(
+        minVersion = TestVersions.Gradle.MIN_SUPPORTED,
+        additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
+        maxVersion = TestVersions.Gradle.G_8_1
+    )
+    fun testProjectWithBuildSrc(gradleVersion: GradleVersion) {
+        project(
+            "instantExecutionWithBuildSrc",
+            gradleVersion,
+        ) {
+            build("compileKotlin", "-Pkotlin.session.logger.root.path=$projectPath") {
+                val fusStatisticsPath = fusStatisticsPath
+                assertFileContains(
+                    fusStatisticsPath,
+                    *expectedMetrics,
+                    "BUILD_SRC_EXISTS=true"
+                )
+            }
+        }
+    }
+
+    @DisplayName("for project with included build")
+    @GradleTest
+    @GradleTestVersions(
+        minVersion = TestVersions.Gradle.G_7_6,
+        maxVersion = TestVersions.Gradle.G_8_0
+    )
+    fun testProjectWithIncludedBuild(gradleVersion: GradleVersion) {
+        project(
+            "instantExecutionWithIncludedBuildPlugin",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(configurationCache = true)
+        ) {
+            build("compileKotlin", "-Pkotlin.session.logger.root.path=$projectPath") {
+                val fusStatisticsPath = fusStatisticsPath
+                assertFileContains(
+                    fusStatisticsPath,
+                    *expectedMetrics,
+                )
+            }
+            build("compileKotlin", "-Pkotlin.session.logger.root.path=$projectPath") {
+                val fusStatisticsPath = fusStatisticsPath
+                assertFileContains(
+                    fusStatisticsPath,
+                    *expectedMetrics,
+                )
+            }
+        }
+    }
+
     @DisplayName("for failed build")
     @GradleTest
+    @GradleTestVersions(
+        minVersion = TestVersions.Gradle.MIN_SUPPORTED,
+        additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
+        maxVersion = TestVersions.Gradle.G_8_1
+    )
     fun testFusStatisticsForFailedBuild(gradleVersion: GradleVersion) {
         project(
             "simpleProject",
@@ -95,6 +166,35 @@ class FusStatisticsIT : KGPDaemonsBaseTest() {
                     "KOTLIN_STDLIB_VERSION",
                     "KOTLIN_COMPILER_VERSION",
                 )
+            }
+        }
+    }
+
+    @DisplayName("general fields with configuration cache")
+    @GradleTest
+    @GradleTestVersions(
+        minVersion = TestVersions.Gradle.MIN_SUPPORTED,
+        additionalVersions = [TestVersions.Gradle.G_7_6, TestVersions.Gradle.G_8_0],
+        maxVersion = TestVersions.Gradle.G_8_1
+    )
+    fun testFusStatisticsWithConfigurationCache(gradleVersion: GradleVersion) {
+        project(
+            "simpleProject",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(configurationCache = true),
+        ) {
+            build(
+                "compileKotlin",
+                "-Pkotlin.session.logger.root.path=$projectPath",
+            ) {
+                assertConfigurationCacheStored()
+            }
+
+            build(
+                "compileKotlin",
+                "-Pkotlin.session.logger.root.path=$projectPath",
+            ) {
+                assertConfigurationCacheReused()
             }
         }
     }
