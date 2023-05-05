@@ -2253,6 +2253,12 @@ public class FirPsiJsIrTextTestGenerated extends AbstractFirPsiJsIrTextTest {
         }
 
         @Test
+        @TestMetadata("LocalSuspendFun.kt")
+        public void testLocalSuspendFun() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/LocalSuspendFun.kt");
+        }
+
+        @Test
         @TestMetadata("readWriteProperty.kt")
         public void testReadWriteProperty() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/readWriteProperty.kt");

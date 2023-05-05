@@ -1965,6 +1965,11 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
             runTest("compiler/testData/ir/irText/firProblems/localCompanion.kt");
         }
 
+        @TestMetadata("LocalSuspendFun.kt")
+        public void testLocalSuspendFun() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/LocalSuspendFun.kt");
+        }
+
         @TestMetadata("readWriteProperty.kt")
         public void testReadWriteProperty() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/readWriteProperty.kt");
