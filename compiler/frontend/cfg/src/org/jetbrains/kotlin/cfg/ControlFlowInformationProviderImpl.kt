@@ -327,7 +327,7 @@ class ControlFlowInformationProviderImpl private constructor(
     private fun markUninitializedVariables() {
         val varWithUninitializedErrorGenerated = hashSetOf<VariableDescriptor>()
         val varWithValReassignErrorGenerated = hashSetOf<VariableDescriptor>()
-        val processClassOrObject = subroutine is KtClassOrObject
+        val processClassOrObject = subroutine is KtClassOrObject || subroutine is KtSecondaryConstructor
 
         val initializers = pseudocodeVariablesData.variableInitializers
         val declaredVariables = pseudocodeVariablesData.getDeclaredVariables(pseudocode, true)

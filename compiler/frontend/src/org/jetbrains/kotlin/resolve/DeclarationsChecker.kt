@@ -825,27 +825,38 @@ class DeclarationsChecker(
                     propertyDescriptor.effectiveModality == Modality.OPEN &&
                     !propertyDescriptor.isVar &&
                     trace.bindingContext.get(IS_DEFERRED_INITIALIZED, propertyDescriptor) == true
-
-        val factory = when {
-            suggestMakingItFinal && suggestMakingItAbstract -> when (isOpenValDeferredInitDeprecationWarning) {
-                true -> MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT_WARNING
-                false -> MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT
-            }
-            suggestMakingItFinal -> when (isOpenValDeferredInitDeprecationWarning) {
-                true -> MUST_BE_INITIALIZED_OR_BE_FINAL_WARNING
-                false -> MUST_BE_INITIALIZED_OR_BE_FINAL
-            }
-            suggestMakingItAbstract -> when (isOpenValDeferredInitDeprecationWarning) {
-                true -> error("Not reachable case. Every \"open val + deferred init\" case that could be made `abstract`, also could be made `final`")
-                false -> MUST_BE_INITIALIZED_OR_BE_ABSTRACT
-            }
-            else -> when (isOpenValDeferredInitDeprecationWarning) {
-                true -> error("Not reachable case. We can always suggest making `open val` property `final`")
-                false -> MUST_BE_INITIALIZED
-            }
+        if (isOpenValDeferredInitDeprecationWarning && !suggestMakingItFinal && suggestMakingItAbstract) {
+            error("Not reachable case. Every \"open val + deferred init\" case that could be made `abstract`, also could be made `final`")
         }
-        trace.report(factory.on(property))
+        val isMissedMustBeInitializedDeprecationWarning =
+            !languageVersionSettings.supportsFeature(LanguageFeature.ProhibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor) &&
+                    containingDeclaration is ClassDescriptor &&
+                    containingDeclaration.constructors.none { it.isPrimary }
+        val factory = when {
+            suggestMakingItFinal && suggestMakingItAbstract -> MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT
+            suggestMakingItFinal -> MUST_BE_INITIALIZED_OR_BE_FINAL
+            suggestMakingItAbstract -> MUST_BE_INITIALIZED_OR_BE_ABSTRACT
+            else -> MUST_BE_INITIALIZED
+        }
+        if (isOpenValDeferredInitDeprecationWarning && factory == MUST_BE_INITIALIZED) {
+            error("Not reachable case. We can always suggest making `open val` property `final`")
+        }
+        trace.report(
+            when (isMissedMustBeInitializedDeprecationWarning || isOpenValDeferredInitDeprecationWarning) {
+                true -> factory.deprecationWarning
+                false -> factory
+            }.on(property)
+        )
     }
+
+    private val DiagnosticFactory0<KtProperty>.deprecationWarning: DiagnosticFactory0<KtProperty>
+        get() = when (this) {
+            MUST_BE_INITIALIZED -> MUST_BE_INITIALIZED_WARNING
+            MUST_BE_INITIALIZED_OR_BE_ABSTRACT -> MUST_BE_INITIALIZED_OR_BE_ABSTRACT_WARNING
+            MUST_BE_INITIALIZED_OR_BE_FINAL -> MUST_BE_INITIALIZED_OR_BE_FINAL_WARNING
+            MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT -> MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT_WARNING
+            else -> error("Only MUST_BE_INITIALIZED is supported")
+        }
 
     private fun noExplicitTypeOrGetterType(property: KtProperty) =
         property.typeReference == null
