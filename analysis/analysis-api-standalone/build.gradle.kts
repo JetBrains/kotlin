@@ -3,10 +3,6 @@ plugins {
     id("jps-compatible")
 }
 
-kotlin {
-    explicitApiWarning()
-}
-
 dependencies {
     implementation(intellijCore())
     implementation(project(":compiler:psi"))

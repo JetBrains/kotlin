@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
  */
 public abstract class KtCompilerPluginsProvider {
 
-    enum class CompilerPluginType {
+    public enum class CompilerPluginType {
         ASSIGNMENT
     }
 

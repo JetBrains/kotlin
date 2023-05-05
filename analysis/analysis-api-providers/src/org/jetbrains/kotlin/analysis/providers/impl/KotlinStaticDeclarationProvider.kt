@@ -338,11 +338,11 @@ public class KotlinStaticDeclarationProviderFactory(
  *
  * Otherwise, each test would start indexing of stdlib from scratch,
  * and under the lock which makes tests extremely slow*/
-class KotlinFakeClsStubsCache {
+public class KotlinFakeClsStubsCache {
     private val fakeFileClsStubs = CollectionFactory.createConcurrentWeakValueMap<String, List<KotlinFileStubImpl>>()
 
-    companion object {
-        fun processAdditionalRoot(root: VirtualFile, storage: (VirtualFile) -> List<KotlinFileStubImpl>): List<KotlinFileStubImpl>? {
+    public companion object {
+        public fun processAdditionalRoot(root: VirtualFile, storage: (VirtualFile) -> List<KotlinFileStubImpl>): List<KotlinFileStubImpl>? {
             val service = ApplicationManager.getApplication().getService(KotlinFakeClsStubsCache::class.java) ?: return null
             if (service.fakeFileClsStubs[root.path] == null) {
                 service.fakeFileClsStubs[root.path] = storage(root)

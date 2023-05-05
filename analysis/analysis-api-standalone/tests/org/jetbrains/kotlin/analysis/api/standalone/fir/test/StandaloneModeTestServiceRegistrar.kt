@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.test.services.TestServices
 
-object StandaloneModeTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
+public object StandaloneModeTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
     override fun registerProjectExtensionPoints(project: MockProject, testServices: TestServices) {
     }
 

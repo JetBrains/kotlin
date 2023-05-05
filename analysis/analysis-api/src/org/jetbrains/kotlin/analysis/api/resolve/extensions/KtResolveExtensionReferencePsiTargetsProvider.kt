@@ -9,7 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KtAnalysisSession
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 
-abstract class KtResolveExtensionReferencePsiTargetsProvider {
+public abstract class KtResolveExtensionReferencePsiTargetsProvider {
     /**
      * Provides a [PsiElement] where `reference.resolveTo` will lead for a [symbol]
      *
@@ -18,5 +18,5 @@ abstract class KtResolveExtensionReferencePsiTargetsProvider {
      *
      * Returned [PsiElement] will be used as a navigation target for a reference inside the IDE.
      */
-    abstract fun KtAnalysisSession.getReferenceTargetsForSymbol(symbol: KtSymbol): Collection<PsiElement>
+    public abstract fun KtAnalysisSession.getReferenceTargetsForSymbol(symbol: KtSymbol): Collection<PsiElement>
 }
