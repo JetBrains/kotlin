@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 The Android Open Source Project
+ * Copyright 2023 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,8 +50,6 @@ import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.psi.KtTryExpression
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL
-import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
-import org.jetbrains.kotlin.resolve.calls.util.getValueArgumentForExpression
 import org.jetbrains.kotlin.resolve.calls.checkers.AdditionalTypeChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallChecker
 import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
@@ -60,6 +58,8 @@ import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.model.ArgumentMatch
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.model.VariableAsFunctionResolvedCall
+import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
+import org.jetbrains.kotlin.resolve.calls.util.getValueArgumentForExpression
 import org.jetbrains.kotlin.resolve.inline.InlineUtil.isInlinedArgument
 import org.jetbrains.kotlin.resolve.sam.getSingleAbstractMethodOrNull
 import org.jetbrains.kotlin.types.KotlinType
@@ -243,6 +243,10 @@ open class ComposableCallChecker :
                                 // setValue delegate is not allowed for now.
                                 illegalComposableDelegate(context, reportOn)
                             }
+                            if (descriptor is PropertyDescriptor &&
+                                descriptor.getter?.hasComposableAnnotation() != true) {
+                                composableExpected(context, node.nameIdentifier ?: node)
+                            }
                             return
                         }
                     }
@@ -318,8 +322,15 @@ open class ComposableCallChecker :
     ) {
         context.trace.report(ComposeErrors.COMPOSABLE_INVOCATION.on(callEl))
         if (functionEl != null) {
-            context.trace.report(ComposeErrors.COMPOSABLE_EXPECTED.on(functionEl))
+            composableExpected(context, functionEl)
         }
+    }
+
+    private fun composableExpected(
+        context: CallCheckerContext,
+        functionEl: PsiElement
+    ) {
+        context.trace.report(ComposeErrors.COMPOSABLE_EXPECTED.on(functionEl))
     }
 
     private fun illegalCallMustBeReadonly(
