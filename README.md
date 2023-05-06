@@ -97,8 +97,8 @@ Builds of the Gradle plugin are available through the
 
 ```kotlin
 plugins {
-  kotlin("multiplatform") version "1.7.0"
-  id("com.bnorm.power.kotlin-power-assert") version "0.12.1"
+  kotlin("multiplatform") version "1.8.20"
+  id("com.bnorm.power.kotlin-power-assert") version "0.13.0"
 }
 ```
 
@@ -167,6 +167,7 @@ it can be assumed to maintain compatibility with the next oldest version listed.
 | 1.5.20         | 0.10.0         |
 | 1.6.0          | 0.11.0         |
 | 1.7.0          | 0.12.0         |
+| 1.8.20         | 0.13.0         |
 
 ## Kotlin IR
 

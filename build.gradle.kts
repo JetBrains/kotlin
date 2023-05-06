@@ -13,7 +13,7 @@ plugins {
 
 allprojects {
   group = "com.bnorm.power"
-  version = "0.13.0-SNAPSHOT"
+  version = "0.13.0"
 }
 
 allprojects {
