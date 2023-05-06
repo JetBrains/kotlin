@@ -53,7 +53,7 @@ private fun Executor.service(project: Project) = object: ExecutorService {
         val execSpec = project.objects.newInstance<DefaultExecSpec>().apply {
             action.execute(this)
         }
-        val request = executeRequest(
+        val request = ExecuteRequest(
                 executableAbsolutePath = execSpec.executable,
                 args = execSpec.args,
         ).apply {
@@ -105,6 +105,7 @@ fun create(project: Project): ExecutorService {
             }
         }.service(project)
         supportsRunningTestsOnDevice(testTarget) -> deviceLauncher(project)
+        configurables is AppleConfigurables && RosettaExecutor.availableFor(configurables) -> RosettaExecutor(configurables).service(project)
         else -> HostExecutor().service(project)
     }
 }

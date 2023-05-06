@@ -40,6 +40,7 @@ private abstract class RunGTestJob : WorkAction<RunGTestJob.Parameters> {
         when {
             target == hostTarget -> HostExecutor()
             configurables is AppleConfigurables && configurables.targetTriple.isSimulator -> XcodeSimulatorExecutor(configurables)
+            configurables is AppleConfigurables && RosettaExecutor.availableFor(configurables) -> RosettaExecutor(configurables)
             else -> error("Cannot run for target $target")
         }
     }
@@ -50,7 +51,7 @@ private abstract class RunGTestJob : WorkAction<RunGTestJob.Parameters> {
         with(parameters) {
             reportFileUnprocessed.asFile.get().parentFile.mkdirs()
 
-            executor.execute(executeRequest(this@with.executable.asFile.get().absolutePath).apply {
+            executor.execute(ExecuteRequest(this@with.executable.asFile.get().absolutePath).apply {
                 this.args.add("--gtest_output=xml:${reportFileUnprocessed.asFile.get().absolutePath}")
                 filter.orNull?.also {
                     this.args.add("--gtest_filter=${it}")

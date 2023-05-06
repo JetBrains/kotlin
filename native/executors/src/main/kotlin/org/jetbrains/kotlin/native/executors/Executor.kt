@@ -3,8 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:OptIn(ExperimentalTime::class)
-
 package org.jetbrains.kotlin.native.executors
 
 import java.io.*
@@ -61,13 +59,6 @@ data class ExecuteRequest(
      */
     inline fun copying(block: ExecuteRequest.() -> Unit): ExecuteRequest = copy().apply(block)
 }
-
-/**
- * Helper for [ExecuteRequest] creation.
- * Allows to create it without opting in [kotlin.time.ExperimentalTime] for API < 1.6.
- */
-fun executeRequest(executableAbsolutePath: String, args: MutableList<String> = mutableListOf()): ExecuteRequest =
-        ExecuteRequest(executableAbsolutePath, args)
 
 data class ExecuteResponse(
         /**
