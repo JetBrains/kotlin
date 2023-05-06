@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
@@ -410,20 +409,6 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun SimpleTypeMarker.isPrimitiveType(): Boolean =
         this is IrSimpleType && irTypePredicates_isPrimitiveType()
-
-    override fun KotlinTypeMarker.getAttributes(): List<AnnotationMarker> {
-        require(this is IrType)
-        return this.annotations.memoryOptimizedMap { object : AnnotationMarker, IrElement by it {} }
-    }
-
-    override fun KotlinTypeMarker.hasCustomAttributes(): Boolean {
-        return false
-    }
-
-    override fun KotlinTypeMarker.getCustomAttributes(): List<AnnotationMarker> {
-        require(this is IrType)
-        return emptyList()
-    }
 
     override fun createErrorType(debugName: String): SimpleTypeMarker {
         TODO("IrTypeSystemContext doesn't support constraint system resolution")

@@ -299,6 +299,23 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return attributes.noInfer != null
     }
 
+    override fun KotlinTypeMarker.getAttributes(): List<AnnotationMarker> {
+        require(this is ConeKotlinType)
+        return attributes.toList()
+    }
+
+    override fun KotlinTypeMarker.hasCustomAttributes(): Boolean {
+        require(this is ConeKotlinType)
+        val compilerAttributes = CompilerConeAttributes.classIdByCompilerAttributeKey
+        return this.attributes.any { it.key !in compilerAttributes && it !is CustomAnnotationTypeAttribute }
+    }
+
+    override fun KotlinTypeMarker.getCustomAttributes(): List<AnnotationMarker> {
+        require(this is ConeKotlinType)
+        val compilerAttributes = CompilerConeAttributes.classIdByCompilerAttributeKey
+        return attributes.filterNot { it.key in compilerAttributes || it is CustomAnnotationTypeAttribute }
+    }
+
     override fun TypeConstructorMarker.isFinalClassConstructor(): Boolean {
         val symbol = toClassLikeSymbol() ?: return false
         if (symbol is FirAnonymousObjectSymbol) return true

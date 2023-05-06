@@ -219,6 +219,10 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
     fun KotlinTypeMarker.hasExactAnnotation(): Boolean
     fun KotlinTypeMarker.hasNoInferAnnotation(): Boolean
 
+    fun KotlinTypeMarker.getAttributes(): List<AnnotationMarker>
+    fun KotlinTypeMarker.hasCustomAttributes(): Boolean
+    fun KotlinTypeMarker.getCustomAttributes(): List<AnnotationMarker>
+
     fun TypeConstructorMarker.isFinalClassConstructor(): Boolean
 
     fun TypeVariableMarker.freshTypeConstructor(): TypeConstructorMarker
@@ -542,12 +546,6 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun KotlinTypeMarker.isSimpleType(): Boolean = asSimpleType() != null
 
     fun SimpleTypeMarker.isPrimitiveType(): Boolean
-
-    fun KotlinTypeMarker.getAttributes(): List<AnnotationMarker>
-
-    fun KotlinTypeMarker.hasCustomAttributes(): Boolean
-
-    fun KotlinTypeMarker.getCustomAttributes(): List<AnnotationMarker>
 
     fun substitutionSupertypePolicy(type: SimpleTypeMarker): TypeCheckerState.SupertypesPolicy
 

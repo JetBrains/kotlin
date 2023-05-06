@@ -423,23 +423,6 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return false
     }
 
-    override fun KotlinTypeMarker.getAttributes(): List<AnnotationMarker> {
-        require(this is ConeKotlinType)
-        return attributes.toList()
-    }
-
-    override fun KotlinTypeMarker.hasCustomAttributes(): Boolean {
-        require(this is ConeKotlinType)
-        val compilerAttributes = CompilerConeAttributes.classIdByCompilerAttributeKey
-        return this.attributes.any { it.key !in compilerAttributes && it !is CustomAnnotationTypeAttribute }
-    }
-
-    override fun KotlinTypeMarker.getCustomAttributes(): List<AnnotationMarker> {
-        require(this is ConeKotlinType)
-        val compilerAttributes = CompilerConeAttributes.classIdByCompilerAttributeKey
-        return attributes.filterNot { it.key in compilerAttributes || it is CustomAnnotationTypeAttribute }
-    }
-
     override fun SimpleTypeMarker.isStubType(): Boolean {
         return this is ConeStubType
     }
