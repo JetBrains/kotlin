@@ -190,6 +190,8 @@ abstract class AbstractFirStatusResolveTransformer(
     private val designationMapForLocalClasses: Map<FirClassLikeDeclaration, FirClassLikeDeclaration?>,
     private val scopeForLocalClass: FirScope?
 ) : FirAbstractTreeTransformer<FirResolvedDeclarationStatus?>(phase = FirResolvePhase.STATUS) {
+    private val isTransformerForLocalDeclarations: Boolean get() = scopeForLocalClass != null
+
     @PrivateForInline
     val classes = mutableListOf<FirClass>()
     val statusResolver = FirStatusResolver(session, scopeSession)
@@ -329,7 +331,12 @@ abstract class AbstractFirStatusResolveTransformer(
 
     private fun forceResolveStatusOfCorrespondingClass(typeRef: FirTypeRef) {
         val superClassSymbol = typeRef.coneType.toSymbol(session)
-        superClassSymbol?.lazyResolveToPhase(FirResolvePhase.STATUS.previous)
+        if (isTransformerForLocalDeclarations) {
+            superClassSymbol?.lazyResolveToPhase(FirResolvePhase.STATUS)
+        } else {
+            superClassSymbol?.lazyResolveToPhase(FirResolvePhase.STATUS.previous)
+        }
+
         when (superClassSymbol) {
             is FirRegularClassSymbol -> forceResolveStatusesOfClass(superClassSymbol.fir)
             is FirTypeAliasSymbol -> forceResolveStatusOfCorrespondingClass(superClassSymbol.fir.expandedTypeRef)

@@ -121,8 +121,8 @@ FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
     }
 
         private [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Wrong number of type arguments>
-    public abstract [ResolvedTo(TYPES)] interface A<[ResolvedTo(TYPES)] T> : R|kotlin/Any| {
-        public abstract [ResolvedTo(TYPES)] fun x(): R|kotlin/Unit|
+    public abstract [ResolvedTo(STATUS)] interface A<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun x(): R|kotlin/Unit|
 
     }
 
@@ -140,8 +140,8 @@ FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
     }
 
         private [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] get(): <ERROR TYPE REF: Wrong number of type arguments>
-    public abstract [ResolvedTo(TYPES)] interface A<[ResolvedTo(TYPES)] T> : R|kotlin/Any| {
-        public abstract [ResolvedTo(TYPES)] fun x(): R|kotlin/Unit|
+    public abstract [ResolvedTo(STATUS)] interface A<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun x(): R|kotlin/Unit|
 
     }
 
@@ -159,8 +159,8 @@ FILE: [ResolvedTo(IMPORTS)] anonymousObjectInInvalidPosition.kt
     }
 
         private [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Wrong number of type arguments>
-    public abstract [ResolvedTo(TYPES)] interface A<[ResolvedTo(TYPES)] T> : R|kotlin/Any| {
-        public abstract [ResolvedTo(TYPES)] fun x(): R|kotlin/Unit|
+    public abstract [ResolvedTo(STATUS)] interface A<[ResolvedTo(STATUS)] T> : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun x(): R|kotlin/Unit|
 
     }
 
