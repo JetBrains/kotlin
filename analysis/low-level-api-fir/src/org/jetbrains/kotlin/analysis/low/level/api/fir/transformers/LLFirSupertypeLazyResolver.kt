@@ -73,11 +73,23 @@ private class LLFirSuperTypeTargetResolver(
     private val supertypeComputationSession: LLFirSupertypeComputationSession = LLFirSupertypeComputationSession(session),
     private val visitedElements: MutableSet<FirElementWithResolveState> = hashSetOf(),
 ) : LLFirTargetResolver(target, lockProvider, FirResolvePhase.SUPER_TYPES, isJumpingPhase = true) {
-    private val supertypeResolver = FirSupertypeResolverVisitor(
+    private val supertypeResolver = object : FirSupertypeResolverVisitor(
         session = session,
         supertypeComputationSession = supertypeComputationSession,
         scopeSession = scopeSession,
-    )
+    ) {
+        /**
+         * We can do nothing here because at a call moment we've already resolved [outerClass]
+         * because we resolve classes from top to down
+         */
+        override fun resolveAllSupertypesForOuterClass(outerClass: FirClass) {
+            // We can get into this function during a loop calculation, so it is possible that the result for [outerClass]
+            // is not yet published, so we expect that this class was already visited or resolved
+            if (outerClass !in visitedElements) {
+                LLFirSupertypeLazyResolver.checkIsResolved(outerClass)
+            }
+        }
+    }
 
     override fun withFile(firFile: FirFile, action: () -> Unit) {
         action()

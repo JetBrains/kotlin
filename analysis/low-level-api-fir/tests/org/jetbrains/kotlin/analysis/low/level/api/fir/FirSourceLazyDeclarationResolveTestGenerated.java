@@ -376,6 +376,12 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
         }
 
         @Test
+        @TestMetadata("nestedClass.kt")
+        public void testNestedClass() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/classes/nestedClass.kt");
+        }
+
+        @Test
         @TestMetadata("nestedClassWithPropertiesOverrides.kt")
         public void testNestedClassWithPropertiesOverrides() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/lazyResolve/classes/nestedClassWithPropertiesOverrides.kt");

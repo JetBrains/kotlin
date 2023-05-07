@@ -237,7 +237,7 @@ private fun createOtherScopesForNestedClassesOrCompanion(
         // See: prepareScopes()
     }
 
-class FirSupertypeResolverVisitor(
+open class FirSupertypeResolverVisitor(
     private val session: FirSession,
     private val supertypeComputationSession: SupertypeComputationSession,
     private val scopeSession: ScopeSession,
@@ -300,13 +300,26 @@ class FirSupertypeResolverVisitor(
     }
 
     private fun calculateScopes(
-        klass: FirClass,
+        outerClass: FirClass,
         withCompanionScopes: Boolean,
     ): PersistentList<FirScope> {
-        resolveAllSupertypes(klass, klass.superTypeRefs)
-        return prepareScopes(klass).pushAll(
-            createOtherScopesForNestedClassesOrCompanion(klass, session, scopeSession, supertypeComputationSession, withCompanionScopes)
+        resolveAllSupertypesForOuterClass(outerClass)
+        return prepareScopes(outerClass).pushAll(
+            createOtherScopesForNestedClassesOrCompanion(
+                klass = outerClass,
+                session = session,
+                scopeSession = scopeSession,
+                supertypeComputationSession = supertypeComputationSession,
+                withCompanionScopes = withCompanionScopes,
+            )
         )
+    }
+
+    /**
+     * Resolve all super types. [outerClass] is used as an outer scope for nested class or companion
+     */
+    protected open fun resolveAllSupertypesForOuterClass(outerClass: FirClass) {
+        resolveAllSupertypes(outerClass, outerClass.superTypeRefs)
     }
 
     private fun resolveAllSupertypes(
