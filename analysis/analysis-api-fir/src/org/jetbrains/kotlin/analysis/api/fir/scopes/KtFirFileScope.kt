@@ -82,17 +82,16 @@ internal class KtFirFileScope(
         sequence {
             owner.firSymbol.fir.declarations.forEach { firDeclaration ->
                 val classLikeDeclaration = when (firDeclaration) {
-                        is FirTypeAlias -> if (nameFilter(firDeclaration.name)) firDeclaration else null
-                        is FirRegularClass -> if (nameFilter(firDeclaration.name)) firDeclaration else null
-                        else -> null
-                    }
+                    is FirTypeAlias -> firDeclaration.takeIf { nameFilter(it.name) }
+                    is FirRegularClass -> firDeclaration.takeIf { nameFilter(it.name) }
+                    else -> null
+                }
                 if (classLikeDeclaration != null) {
                     yield(builder.classifierBuilder.buildClassLikeSymbol(classLikeDeclaration.symbol))
                 }
             }
         }
     }
-
 
     override fun getConstructors(): Sequence<KtConstructorSymbol> = withValidityAssertion { emptySequence() }
 

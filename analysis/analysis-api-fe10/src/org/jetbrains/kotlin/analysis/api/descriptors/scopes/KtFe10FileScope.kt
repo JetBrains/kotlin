@@ -44,7 +44,7 @@ internal class KtFe10FileScope(
             for (declaration in ktFile.declarations) {
                 if (declaration is KtCallableDeclaration) {
                     val descriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration] as? CallableDescriptor ?: continue
-                    val ktSymbol = descriptor.toKtCallableSymbol(analysisContext) ?: continue
+                    val ktSymbol = descriptor.takeIf { nameFilter(it.name) }?.toKtCallableSymbol(analysisContext) ?: continue
                     yield(ktSymbol)
                 }
             }
@@ -58,7 +58,7 @@ internal class KtFe10FileScope(
             for (declaration in ktFile.declarations) {
                 if (declaration is KtClassLikeDeclaration) {
                     val descriptor = context[BindingContext.DECLARATION_TO_DESCRIPTOR, declaration] as? ClassifierDescriptor ?: continue
-                    val ktSymbol = descriptor.toKtClassifierSymbol(analysisContext) ?: continue
+                    val ktSymbol = descriptor.takeIf { nameFilter(it.name) }?.toKtClassifierSymbol(analysisContext) ?: continue
                     yield(ktSymbol)
                 }
             }
