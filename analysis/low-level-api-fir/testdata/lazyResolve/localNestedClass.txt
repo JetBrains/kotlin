@@ -1,0 +1,414 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] localNestedClass.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? open [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? open [ResolvedTo(RAW_FIR)] fun boo([ResolvedTo(RAW_FIR)] b: String): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public? open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
+            LAZY_super<TopLevelClass>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] localNestedClass.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? open [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? open [ResolvedTo(RAW_FIR)] fun boo([ResolvedTo(RAW_FIR)] b: String): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public? open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
+            LAZY_super<TopLevelClass>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] localNestedClass.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? open [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? open [ResolvedTo(RAW_FIR)] fun boo([ResolvedTo(RAW_FIR)] b: String): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public? open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
+            LAZY_super<TopLevelClass>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] localNestedClass.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? open [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? open [ResolvedTo(RAW_FIR)] fun boo([ResolvedTo(RAW_FIR)] b: String): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public? open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
+            LAZY_super<TopLevelClass>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] localNestedClass.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? open [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? open [ResolvedTo(RAW_FIR)] fun boo([ResolvedTo(RAW_FIR)] b: String): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public? open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
+            LAZY_super<TopLevelClass>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] localNestedClass.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? open [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? open [ResolvedTo(RAW_FIR)] fun boo([ResolvedTo(RAW_FIR)] b: String): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public? open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
+            LAZY_super<TopLevelClass>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public? final? [ResolvedTo(TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] localNestedClass.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? open [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? open [ResolvedTo(RAW_FIR)] fun boo([ResolvedTo(RAW_FIR)] b: String): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public? open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
+            LAZY_super<TopLevelClass>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] localNestedClass.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? open [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? open [ResolvedTo(RAW_FIR)] fun boo([ResolvedTo(RAW_FIR)] b: String): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public? open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
+            LAZY_super<TopLevelClass>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] localNestedClass.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? open [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? open [ResolvedTo(RAW_FIR)] fun boo([ResolvedTo(RAW_FIR)] b: String): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public? open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
+            LAZY_super<TopLevelClass>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] localNestedClass.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? open [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? open [ResolvedTo(RAW_FIR)] fun boo([ResolvedTo(RAW_FIR)] b: String): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public? open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
+            LAZY_super<TopLevelClass>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public final [ResolvedTo(CONTRACTS)] fun resolveMe(): R|kotlin/Unit| {
+        local final? [ResolvedTo(RAW_FIR)] class LocalClass : AnotherTopLevelClass {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|LocalClass| {
+                super<AnotherTopLevelClass>()
+            }
+
+            public? open? override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| {
+            }
+
+            local final? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] class NestedLocalClass : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedLocalClass] constructor(): R|LocalClass.NestedLocalClass| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] localNestedClass.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? open [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? open [ResolvedTo(RAW_FIR)] fun boo([ResolvedTo(RAW_FIR)] b: String): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public? open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
+            LAZY_super<TopLevelClass>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+        local final? [ResolvedTo(RAW_FIR)] class LocalClass : AnotherTopLevelClass {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|LocalClass| {
+                super<AnotherTopLevelClass>()
+            }
+
+            public? open? override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| {
+            }
+
+            local final? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] class NestedLocalClass : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedLocalClass] constructor(): R|LocalClass.NestedLocalClass| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+    }
+
+ANNOTATIONS_ARGUMENTS_MAPPING:
+FILE: [ResolvedTo(IMPORTS)] localNestedClass.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? open [ResolvedTo(RAW_FIR)] class TopLevelClass : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? open [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public? open [ResolvedTo(RAW_FIR)] fun boo([ResolvedTo(RAW_FIR)] b: String): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public? open [ResolvedTo(RAW_FIR)] class AnotherTopLevelClass : TopLevelClass {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
+            LAZY_super<TopLevelClass>
+        }
+
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun resolveMe(): R|kotlin/Unit| {
+        local final? [ResolvedTo(RAW_FIR)] class LocalClass : AnotherTopLevelClass {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] constructor(): R|LocalClass| {
+                super<AnotherTopLevelClass>()
+            }
+
+            public? open? override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit| {
+            }
+
+            local final? [ResolvedTo(RAW_FIR)] [ContainingClassKey=LocalClass] class NestedLocalClass : R|kotlin/Any| {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedLocalClass] constructor(): R|LocalClass.NestedLocalClass| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] localNestedClass.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public open [ResolvedTo(STATUS)] class TopLevelClass : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public open [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public open [ResolvedTo(STATUS)] fun boo([ResolvedTo(STATUS)] b: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public open [ResolvedTo(STATUS)] class AnotherTopLevelClass : R|TopLevelClass| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
+            LAZY_super<R|TopLevelClass|>
+        }
+
+        public open override [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+        local final [ResolvedTo(BODY_RESOLVE)] class LocalClass : R|AnotherTopLevelClass| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LocalClass] constructor(): R|LocalClass| {
+                super<R|AnotherTopLevelClass|>()
+            }
+
+            public open override [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|): R|kotlin/Unit| {
+            }
+
+            local final [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LocalClass] class NestedLocalClass : R|kotlin/Any| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NestedLocalClass] constructor(): R|LocalClass.NestedLocalClass| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(IMPORTS)] localNestedClass.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public open [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|TopLevelClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        public open [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|): R|kotlin/Unit| {
+        }
+
+        public open [ResolvedTo(BODY_RESOLVE)] fun boo([ResolvedTo(BODY_RESOLVE)] b: R|kotlin/String|): R|kotlin/Unit| {
+        }
+
+    }
+    public open [ResolvedTo(BODY_RESOLVE)] class AnotherTopLevelClass : R|TopLevelClass| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnotherTopLevelClass] constructor(): R|AnotherTopLevelClass| {
+            super<R|TopLevelClass|>()
+        }
+
+        public open override [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|): R|kotlin/Unit| {
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+        local final [ResolvedTo(BODY_RESOLVE)] class LocalClass : R|AnotherTopLevelClass| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LocalClass] constructor(): R|LocalClass| {
+                super<R|AnotherTopLevelClass|>()
+            }
+
+            public open override [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|): R|kotlin/Unit| {
+            }
+
+            local final [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=LocalClass] class NestedLocalClass : R|kotlin/Any| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=NestedLocalClass] constructor(): R|LocalClass.NestedLocalClass| {
+                    super<R|kotlin/Any|>()
+                }
+
+            }
+
+        }
+
+    }

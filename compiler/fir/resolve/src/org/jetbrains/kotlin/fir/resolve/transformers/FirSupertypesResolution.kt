@@ -43,6 +43,8 @@ import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.model.TypeArgumentMarker
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 
 class FirSupertypeResolverProcessor(session: FirSession, scopeSession: ScopeSession) : FirTransformerBasedResolveProcessor(
     session, scopeSession, FirResolvePhase.SUPER_TYPES
@@ -81,7 +83,7 @@ fun <F : FirClassLikeDeclaration> F.runSupertypeResolvePhaseForLocalClass(
     useSiteFile: FirFile,
     containingDeclarations: List<FirDeclaration>,
 ): F {
-    val supertypeComputationSession = SupertypeComputationSession()
+    val supertypeComputationSession = SupertypeComputationSessionForLocalClasses()
     val supertypeResolverVisitor = FirSupertypeResolverVisitor(
         session, supertypeComputationSession, scopeSession,
         currentScopeList.toPersistentList(),
@@ -95,6 +97,41 @@ fun <F : FirClassLikeDeclaration> F.runSupertypeResolvePhaseForLocalClass(
 
     val applySupertypesTransformer = FirApplySupertypesTransformer(supertypeComputationSession, session, scopeSession)
     return this.transform<F, Nothing?>(applySupertypesTransformer, null)
+}
+
+/**
+ * We should resolve non-local classes to [FirResolvePhase.SUPER_TYPES] explicitly
+ * to avoid unsafe access to unresolved super type references
+ *
+ * Example:
+ * ```
+ * open class TopLevelClass
+ * open class AnotherTopLevelClass : TopLevelClass()
+ *
+ * fun resolveMe() {
+ *     class LocalClass : AnotherTopLevelClass() {
+ *         class NestedLocalClass
+ *     }
+ * }
+ * ```
+ *
+ * During the resolution of local classes, in the best case, we will only try
+ * to access the unresolved super type reference of "AnotherTopLevelClass" that is unsafe in the context of parallel resolution.
+ * In the worst case, from NestedLocalClass we will visit the entire hierarchy of "LocalClass"
+ */
+private class SupertypeComputationSessionForLocalClasses : SupertypeComputationSession() {
+    override fun getResolvedSuperTypeRefsForOutOfSessionDeclaration(classLikeDeclaration: FirClassLikeDeclaration): List<FirResolvedTypeRef>? {
+        classLikeDeclaration.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
+        return super.getResolvedSuperTypeRefsForOutOfSessionDeclaration(classLikeDeclaration)
+    }
+
+    override fun supertypeRefs(declaration: FirClassLikeDeclaration): List<FirTypeRef> {
+        if (!declaration.isLocal) {
+            declaration.lazyResolveToPhase(FirResolvePhase.SUPER_TYPES)
+        }
+
+        return super.supertypeRefs(declaration)
+    }
 }
 
 private class FirApplySupertypesTransformer(
@@ -285,14 +322,8 @@ class FirSupertypeResolverVisitor(
             if (supertype !is ConeClassLikeType) continue
             val supertypeModuleSession = supertype.toSymbol(session)?.moduleData?.session ?: continue
             val fir = supertype.lookupTag.toSymbol(supertypeModuleSession)?.fir ?: continue
-            resolveAllSupertypes(fir, fir.supertypeRefs(), visited)
+            resolveAllSupertypes(fir, supertypeComputationSession.supertypeRefs(fir), visited)
         }
-    }
-
-    private fun FirClassLikeDeclaration.supertypeRefs() = when (this) {
-        is FirRegularClass -> superTypeRefs
-        is FirTypeAlias -> listOf(expandedTypeRef)
-        else -> emptyList()
     }
 
     private fun prepareScopes(classLikeDeclaration: FirClassLikeDeclaration): PersistentList<FirScope> {
@@ -580,6 +611,12 @@ open class SupertypeComputationSession {
         else -> null
     }
 
+    internal open fun supertypeRefs(declaration: FirClassLikeDeclaration): List<FirTypeRef> = when (declaration) {
+        is FirRegularClass -> declaration.superTypeRefs
+        is FirTypeAlias -> listOf(declaration.expandedTypeRef)
+        else -> emptyList()
+    }
+
     /**
      * @param declaration declaration to be checked for loops
      * @param visited visited declarations during the current loop search
@@ -724,7 +761,6 @@ open class SupertypeComputationSession {
         newClassifiersForBreakingLoops.clear()
     }
 }
-
 
 sealed class SupertypeComputationStatus {
     object NotComputed : SupertypeComputationStatus()
