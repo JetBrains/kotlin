@@ -1710,7 +1710,8 @@ internal class CodeGeneratorVisitor(
 
     private fun needLifetimeConstraintsCheck(valueToAssign: LLVMValueRef, irClass: IrClass): Boolean {
         // TODO: Likely, we don't need isFrozen check here at all.
-        return functionGenerationContext.isObjectType(valueToAssign.type) && !irClass.isFrozen(context)
+        return context.config.memoryModel != MemoryModel.EXPERIMENTAL
+                && functionGenerationContext.isObjectType(valueToAssign.type) && !irClass.isFrozen(context)
     }
 
     private fun isZeroConstValue(value: IrExpression): Boolean {
