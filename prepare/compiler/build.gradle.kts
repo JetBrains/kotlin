@@ -416,3 +416,5 @@ inline fun <reified T : AbstractCopyTask> Project.distTask(
     rename(quote("-$bootstrapKotlinVersion"), "")
     block()
 }
+
+configureSbom(setOf("runtimeClasspath", libraries.name, librariesStripVersion.name, compilerPlugins.name))
