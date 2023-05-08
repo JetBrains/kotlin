@@ -12,8 +12,7 @@ import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.model.ObjectFactory
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
-import org.jetbrains.kotlin.gradle.plugin.internal.ProjectIsolationStartParameterAccessor
-import org.jetbrains.kotlin.gradle.plugin.internal.ProjectIsolationStartParameterAccessorG76
+import org.jetbrains.kotlin.gradle.plugin.internal.*
 import javax.inject.Inject
 
 private const val PLUGIN_VARIANT_NAME = "gradle76"
@@ -151,4 +150,6 @@ private fun Project.registerVariantImplementations() {
     val factories = VariantImplementationFactoriesConfigurator.get(gradle)
     factories[ProjectIsolationStartParameterAccessor.Factory::class] =
         ProjectIsolationStartParameterAccessorG76.Factory()
+    factories[CompatibilityConventionRegistrar.Factory::class] =
+        CompatibilityConventionRegistrarG76.Factory()
 }

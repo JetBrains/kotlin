@@ -12,6 +12,7 @@ import org.gradle.api.Project
 import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.model.ObjectFactory
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
+import org.jetbrains.kotlin.gradle.plugin.internal.*
 import javax.inject.Inject
 
 private const val PLUGIN_VARIANT_NAME = "gradle80"
@@ -144,7 +145,8 @@ open class KotlinApiPlugin : KotlinBaseApiPlugin() {
     }
 }
 
-@Suppress("UnusedReceiverParameter")
 private fun Project.registerVariantImplementations() {
-
+    val factories = VariantImplementationFactoriesConfigurator.get(gradle)
+    factories[CompatibilityConventionRegistrar.Factory::class] =
+        CompatibilityConventionRegistrarG80.Factory()
 }

@@ -151,4 +151,6 @@ private fun Project.registerVariantImplementations() {
         MppTestReportHelperG74.MppTestReportHelperVariantFactoryG74()
     factories[ProjectIsolationStartParameterAccessor.Factory::class] =
         ProjectIsolationStartParameterAccessorG74.Factory()
+    factories[CompatibilityConventionRegistrar.Factory::class] =
+        CompatibilityConventionRegistrarG74.Factory()
 }

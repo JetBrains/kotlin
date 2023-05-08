@@ -145,7 +145,8 @@ open class KotlinApiPlugin : KotlinBaseApiPlugin() {
     }
 }
 
-@Suppress("UnusedReceiverParameter")
 private fun Project.registerVariantImplementations() {
-
+    val factories = VariantImplementationFactoriesConfigurator.get(gradle)
+    factories[CompatibilityConventionRegistrar.Factory::class] =
+        CompatibilityConventionRegistrarG81.Factory()
 }
