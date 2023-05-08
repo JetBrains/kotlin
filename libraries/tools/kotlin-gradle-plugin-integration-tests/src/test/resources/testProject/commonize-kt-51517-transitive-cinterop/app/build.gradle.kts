@@ -47,4 +47,8 @@ kotlin {
             mingwX64Test.dependsOn(this)
         }
     }
+
+    sourceSets.all {
+        languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
+    }
 }

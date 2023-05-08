@@ -66,9 +66,9 @@ kotlin {
         }
     }
 
-
     sourceSets.all {
         languageSettings.optIn("kotlin.RequiresOptIn")
+        languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
     }
 
     targets.withType<KotlinNativeTarget>().forEach { target ->

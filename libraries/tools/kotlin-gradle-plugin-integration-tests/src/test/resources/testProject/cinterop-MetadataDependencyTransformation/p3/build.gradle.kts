@@ -100,4 +100,8 @@ kotlin {
     sourceSets.commonMain.get().dependencies {
         implementation(project(":p2"))
     }
+
+    sourceSets.all {
+        languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
+    }
 }

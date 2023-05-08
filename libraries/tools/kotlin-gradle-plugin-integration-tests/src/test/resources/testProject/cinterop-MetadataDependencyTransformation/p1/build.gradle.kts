@@ -87,4 +87,8 @@ kotlin {
             header(file("libs/simple.h"))
         }
     }
+
+    sourceSets.all {
+        languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
+    }
 }
