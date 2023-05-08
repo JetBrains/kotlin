@@ -30,18 +30,19 @@ internal class LLFirModuleWithDependenciesSymbolProvider(
     val dependencyProvider: LLFirDependenciesSymbolProvider,
 ) : FirSymbolProvider(session) {
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? =
-        getClassLikeSymbolByFqNameWithoutDependencies(classId)
+        getClassLikeSymbolByClassIdWithoutDependencies(classId)
             ?: dependencyProvider.getClassLikeSymbolByClassId(classId)
 
-    fun getClassLikeSymbolByFqNameWithoutDependencies(classId: ClassId): FirClassLikeSymbol<*>? =
+    fun getClassLikeSymbolByClassIdWithoutDependencies(classId: ClassId): FirClassLikeSymbol<*>? =
         providers.firstNotNullOfOrNull { it.getClassLikeSymbolByClassId(classId) }
 
-    fun getClassLikeSymbolByFqNameWithoutDependencies(
+    @OptIn(FirSymbolProviderInternals::class)
+    fun getDeserializedClassLikeSymbolByClassIdWithoutDependencies(
+        classId: ClassId,
         classLikeDeclaration: KtClassLikeDeclaration,
-        classId: ClassId
-    ): FirClassLikeSymbol<*>? {
-        return providers.filterIsInstance(JvmStubBasedFirDeserializedSymbolProvider::class.java)
-            .firstNotNullOfOrNull { it.getClassLikeSymbolByClassId(classLikeDeclaration, classId) }
+    ): FirClassLikeSymbol<*>? = providers.firstNotNullOfOrNull { provider ->
+        if (provider !is JvmStubBasedFirDeserializedSymbolProvider) return@firstNotNullOfOrNull null
+        provider.getClassLikeSymbolByClassId(classId, classLikeDeclaration)
     }
 
     @FirSymbolProviderInternals
@@ -53,12 +54,14 @@ internal class LLFirModuleWithDependenciesSymbolProvider(
     @FirSymbolProviderInternals
     fun getTopLevelDeserializedCallableSymbolsToWithoutDependencies(
         destination: MutableList<FirCallableSymbol<*>>,
-        callableDeclaration: KtCallableDeclaration,
         packageFqName: FqName,
-        shortName: Name
+        shortName: Name,
+        callableDeclaration: KtCallableDeclaration,
     ) {
-        providers.filterIsInstance(JvmStubBasedFirDeserializedSymbolProvider::class.java)
-            .forEach { destination.addIfNotNull(it.getTopLevelCallableSymbol(callableDeclaration, packageFqName, shortName)) }
+        providers.forEach { provider ->
+            if (provider !is JvmStubBasedFirDeserializedSymbolProvider) return@forEach
+            destination.addIfNotNull(provider.getTopLevelCallableSymbol(packageFqName, shortName, callableDeclaration))
+        }
     }
 
     @FirSymbolProviderInternals

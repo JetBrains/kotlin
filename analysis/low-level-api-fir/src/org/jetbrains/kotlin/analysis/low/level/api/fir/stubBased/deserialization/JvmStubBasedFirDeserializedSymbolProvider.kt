@@ -7,19 +7,19 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserializatio
 
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirKotlinSymbolProviderWithNameCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirKotlinSymbolProviderNameCache
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
-import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
+import org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.KotlinBuiltins
 import org.jetbrains.kotlin.fir.realPsi
-import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragment
+import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 typealias DeserializedTypeAliasPostProcessor = (FirTypeAliasSymbol) -> Unit
 
@@ -49,16 +50,11 @@ internal open class JvmStubBasedFirDeserializedSymbolProvider(
     project: Project,
     scope: GlobalSearchScope,
     private val initialOrigin: FirDeclarationOrigin
-) : FirSymbolProvider(session) {
+) : LLFirKotlinSymbolProviderWithNameCache(session) {
     private val declarationProvider by lazy(LazyThreadSafetyMode.PUBLICATION) { project.createDeclarationProvider(scope, module = null) }
     private val moduleData = moduleDataProvider.getModuleData(null)
 
-    private val namesByPackageCache by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        LLFirKotlinSymbolProviderNameCache(
-            session,
-            declarationProvider
-        )
-    }
+    override val symbolNameCache: LLFirKotlinSymbolProviderNameCache = LLFirKotlinSymbolProviderNameCache(session, declarationProvider)
 
     private val typeAliasCache: FirCache<ClassId, FirTypeAliasSymbol?, StubBasedFirDeserializationContext?> =
         session.firCachesFactory.createCacheWithPostCompute(
@@ -69,6 +65,7 @@ internal open class JvmStubBasedFirDeserializedSymbolProvider(
                 }
             }
         )
+
     private val classCache: FirCache<ClassId, FirRegularClassSymbol?, StubBasedFirDeserializationContext?> =
         session.firCachesFactory.createCache(
             createValue = { classId, context -> findAndDeserializeClass(classId, context) }
@@ -77,23 +74,12 @@ internal open class JvmStubBasedFirDeserializedSymbolProvider(
     private val functionCache = session.firCachesFactory.createCache(::loadFunctionsByCallableId)
     private val propertyCache = session.firCachesFactory.createCache(::loadPropertiesByCallableId)
 
-    override fun computePackageSetWithTopLevelCallables(): Set<String>? {
-        return namesByPackageCache.getPackageNamesWithTopLevelCallables()
-    }
-
-    override fun computeCallableNamesInPackage(packageFqName: FqName): Set<Name>? =
-        namesByPackageCache.getTopLevelCallableNamesInPackage(packageFqName)
-
-    override fun knownTopLevelClassifiersInPackage(packageFqName: FqName): Set<String>? {
-        return namesByPackageCache.getTopLevelClassifierNamesInPackage(packageFqName)
-    }
-
     private fun findAndDeserializeTypeAlias(
         classId: ClassId,
-        context: StubBasedFirDeserializationContext?
+        context: StubBasedFirDeserializationContext?,
     ): Pair<FirTypeAliasSymbol?, DeserializedTypeAliasPostProcessor?> {
         val classLikeDeclaration =
-            context?.classLikeDeclaration ?: declarationProvider.getClassLikeDeclarationByClassId(classId)?.originalElement
+            (context?.classLikeDeclaration ?: declarationProvider.getClassLikeDeclarationByClassId(classId))?.originalElement
         if (classLikeDeclaration is KtTypeAlias) {
             val symbol = FirTypeAliasSymbol(classId)
             val postProcessor: DeserializedTypeAliasPostProcessor = {
@@ -114,14 +100,15 @@ internal open class JvmStubBasedFirDeserializedSymbolProvider(
 
     private fun findAndDeserializeClass(
         classId: ClassId,
-        parentContext: StubBasedFirDeserializationContext? = null
+        parentContext: StubBasedFirDeserializationContext?,
     ): FirRegularClassSymbol? {
         val (classLikeDeclaration, context) =
             if (parentContext?.classLikeDeclaration != null) {
-                parentContext.classLikeDeclaration to null
+                parentContext.classLikeDeclaration.originalElement to null
             } else {
                 (declarationProvider.getClassLikeDeclarationByClassId(classId)?.originalElement ?: return null) to parentContext
             }
+
         val symbol = FirRegularClassSymbol(classId)
         if (classLikeDeclaration is KtClassOrObject) {
             deserializeClassToSymbol(
@@ -146,8 +133,11 @@ internal open class JvmStubBasedFirDeserializedSymbolProvider(
         return null
     }
 
-    private fun loadFunctionsByCallableId(callableId: CallableId): List<FirNamedFunctionSymbol> {
-        val topLevelFunctions = declarationProvider.getTopLevelFunctions(callableId)
+    private fun loadFunctionsByCallableId(
+        callableId: CallableId,
+        foundFunctions: Collection<KtNamedFunction>?,
+    ): List<FirNamedFunctionSymbol> {
+        val topLevelFunctions = foundFunctions ?: declarationProvider.getTopLevelFunctions(callableId)
         val origins = if (topLevelFunctions.size > 1) mutableSetOf<KtNamedFunction>() else null
         return topLevelFunctions
             .mapNotNull { function ->
@@ -166,8 +156,8 @@ internal open class JvmStubBasedFirDeserializedSymbolProvider(
             }
     }
 
-    private fun loadPropertiesByCallableId(callableId: CallableId): List<FirPropertySymbol> {
-        val topLevelProperties = declarationProvider.getTopLevelProperties(callableId)
+    private fun loadPropertiesByCallableId(callableId: CallableId, foundProperties: Collection<KtProperty>?): List<FirPropertySymbol> {
+        val topLevelProperties = foundProperties ?: declarationProvider.getTopLevelProperties(callableId)
         val origins = if (topLevelProperties.size > 1) mutableSetOf<KtProperty>() else null
         return topLevelProperties
             .mapNotNull { property ->
@@ -187,45 +177,81 @@ internal open class JvmStubBasedFirDeserializedSymbolProvider(
         return classCache.getValue(classId, parentContext)
     }
 
-    private fun getTypeAlias(classId: ClassId): FirTypeAliasSymbol? {
+    private fun getTypeAlias(classId: ClassId, context: StubBasedFirDeserializationContext? = null): FirTypeAliasSymbol? {
         if (!classId.relativeClassName.isOneSegmentFQN()) return null
-        return typeAliasCache.getValue(classId)
+        return typeAliasCache.getValue(classId, context)
     }
 
     @FirSymbolProviderInternals
     override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
         val callableId = CallableId(packageFqName, name)
-        destination += functionCache.getCallables(callableId)
-        destination += propertyCache.getCallables(callableId)
+        destination += functionCache.getCallablesWithoutContext(callableId)
+        destination += propertyCache.getCallablesWithoutContext(callableId)
     }
 
-    private fun <C : FirCallableSymbol<*>> FirCache<CallableId, List<C>, Nothing?>.getCallables(id: CallableId): List<C> {
-        if (!namesByPackageCache.mayHaveTopLevelCallable(id.packageName, id.callableName)) return emptyList()
-        return getValue(id)
+    private fun <C : FirCallableSymbol<*>, CONTEXT> FirCache<CallableId, List<C>, CONTEXT?>.getCallablesWithoutContext(
+        id: CallableId,
+    ): List<C> {
+        if (!symbolNameCache.mayHaveTopLevelCallable(id.packageName, id.callableName)) return emptyList()
+        return getValue(id, null)
+    }
+
+    @FirSymbolProviderInternals
+    override fun getTopLevelCallableSymbolsTo(
+        destination: MutableList<FirCallableSymbol<*>>,
+        callableId: CallableId,
+        callables: Collection<KtCallableDeclaration>,
+    ) {
+        callables.filterIsInstance<KtNamedFunction>().ifNotEmpty {
+            destination += functionCache.getValue(callableId, this)
+        }
+
+        callables.filterIsInstance<KtProperty>().ifNotEmpty {
+            destination += propertyCache.getValue(callableId, this)
+        }
     }
 
     @FirSymbolProviderInternals
     override fun getTopLevelFunctionSymbolsTo(destination: MutableList<FirNamedFunctionSymbol>, packageFqName: FqName, name: Name) {
-        destination += functionCache.getCallables(CallableId(packageFqName, name))
+        destination += functionCache.getCallablesWithoutContext(CallableId(packageFqName, name))
+    }
+
+    @FirSymbolProviderInternals
+    override fun getTopLevelFunctionSymbolsTo(
+        destination: MutableList<FirNamedFunctionSymbol>,
+        callableId: CallableId,
+        functions: Collection<KtNamedFunction>,
+    ) {
+        destination += functionCache.getValue(callableId, functions)
     }
 
     @FirSymbolProviderInternals
     override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {
-        destination += propertyCache.getCallables(CallableId(packageFqName, name))
+        destination += propertyCache.getCallablesWithoutContext(CallableId(packageFqName, name))
+    }
+
+    @FirSymbolProviderInternals
+    override fun getTopLevelPropertySymbolsTo(
+        destination: MutableList<FirPropertySymbol>,
+        callableId: CallableId,
+        properties: Collection<KtProperty>,
+    ) {
+        destination += propertyCache.getValue(callableId, properties)
     }
 
     override fun getPackage(fqName: FqName): FqName? =
         fqName.takeIf {
-            namesByPackageCache.getTopLevelClassifierNamesInPackage(fqName)?.isNotEmpty() == true ||
-                    namesByPackageCache.getPackageNamesWithTopLevelCallables()?.contains(fqName.asString()) == true
+            symbolNameCache.getTopLevelClassifierNamesInPackage(fqName)?.isNotEmpty() == true ||
+                    symbolNameCache.getPackageNamesWithTopLevelCallables()?.contains(fqName.asString()) == true
         }
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
-        if (!namesByPackageCache.mayHaveTopLevelClassifier(classId, mayHaveFunctionClass = false)) return null
+        if (!symbolNameCache.mayHaveTopLevelClassifier(classId, mayHaveFunctionClass = false)) return null
         return getClass(classId) ?: getTypeAlias(classId)
     }
 
-    fun getClassLikeSymbolByClassId(classLikeDeclaration: KtClassLikeDeclaration, classId: ClassId): FirClassLikeSymbol<*>? {
+    @FirSymbolProviderInternals
+    override fun getClassLikeSymbolByClassId(classId: ClassId, classLikeDeclaration: KtClassLikeDeclaration): FirClassLikeSymbol<*>? {
         val annotationDeserializer = StubBasedAnnotationDeserializer(session)
         val deserializationContext = StubBasedFirDeserializationContext(
             moduleData,
@@ -256,9 +282,9 @@ internal open class JvmStubBasedFirDeserializedSymbolProvider(
     }
 
     fun getTopLevelCallableSymbol(
-        callableDeclaration: KtCallableDeclaration,
         packageFqName: FqName,
-        shortName: Name
+        shortName: Name,
+        callableDeclaration: KtCallableDeclaration,
     ): FirCallableSymbol<*>? {
         //possible overloads spoils here
         //we can't use only this callable instead of index access to fill the cache

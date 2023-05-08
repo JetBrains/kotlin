@@ -75,7 +75,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
 
         val classCandidate = when (symbolProvider) {
             is LLFirModuleWithDependenciesSymbolProvider -> {
-                symbolProvider.getClassLikeSymbolByFqNameWithoutDependencies(declaration, classId)
+                symbolProvider.getDeserializedClassLikeSymbolByClassIdWithoutDependencies(classId, declaration)
                     ?: symbolProvider.friendBuiltinsProvider?.getClassLikeSymbolByClassId(classId)
             }
             else -> {
@@ -170,7 +170,7 @@ private fun FirSymbolProvider.findCallableCandidates(
         @OptIn(FirSymbolProviderInternals::class)
         return when (this) {
             is LLFirModuleWithDependenciesSymbolProvider -> buildList {
-                getTopLevelDeserializedCallableSymbolsToWithoutDependencies(this, declaration, packageFqName, shortName)
+                getTopLevelDeserializedCallableSymbolsToWithoutDependencies(this, packageFqName, shortName, declaration)
                 friendBuiltinsProvider?.getTopLevelCallableSymbolsTo(this, packageFqName, shortName)
             }
             else -> getTopLevelCallableSymbols(packageFqName, shortName)
