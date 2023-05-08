@@ -199,9 +199,21 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     }
 
     @Test
+    @TestMetadata("localFunctionInsideSuperEntryCall.kt")
+    public void testLocalFunctionInsideSuperEntryCall() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/localFunctionInsideSuperEntryCall.kt");
+    }
+
+    @Test
     @TestMetadata("localNestedClass.kt")
     public void testLocalNestedClass() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/lazyResolve/localNestedClass.kt");
+    }
+
+    @Test
+    @TestMetadata("localParameterInsideSuperEntryCall.kt")
+    public void testLocalParameterInsideSuperEntryCall() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/localParameterInsideSuperEntryCall.kt");
     }
 
     @Test

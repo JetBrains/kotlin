@@ -121,7 +121,12 @@ internal fun PsiElement.getNonLocalContainingOrThisDeclaration(predicate: (KtDec
 
     for (parent in parentsWithSelf) {
         candidate?.let { notNullCandidate ->
-            if (parent is KtEnumEntry || parent is KtCallableDeclaration && !notNullCandidate.isPartOf(parent) || parent is KtClassInitializer) {
+            if (parent is KtEnumEntry ||
+                parent is KtCallableDeclaration &&
+                !notNullCandidate.isPartOf(parent) ||
+                parent is KtClassInitializer ||
+                parent is KtObjectLiteralExpression
+            ) {
                 // Candidate turned out to be local. Let's find another one.
                 candidate = null
             }
