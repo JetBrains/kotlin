@@ -578,4 +578,22 @@ public class CompilerLightClassTestGenerated extends AbstractCompilerLightClassT
             runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/script/InnerClasses.kts");
         }
     }
+
+    @TestMetadata("compiler/testData/asJava/lightClasses/lightClassByFqName/withTestCompilerPluginEnabled")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class WithTestCompilerPluginEnabled extends AbstractCompilerLightClassTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest(this::doTest, this, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInWithTestCompilerPluginEnabled() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/asJava/lightClasses/lightClassByFqName/withTestCompilerPluginEnabled"), Pattern.compile("^([^.]+)\\.(kt|kts)$"), null, true);
+        }
+
+        @TestMetadata("allOpen.kt")
+        public void testAllOpen() throws Exception {
+            runTest("compiler/testData/asJava/lightClasses/lightClassByFqName/withTestCompilerPluginEnabled/allOpen.kt");
+        }
+    }
 }

@@ -37,21 +37,19 @@ internal class KtFirNamedClassOrObjectSymbol(
     override val classIdIfNonLocal: ClassId?
         get() = withValidityAssertion { firSymbol.getClassIdIfNonLocal() }
 
-    /* FirRegularClass modality is not modified by STATUS, so it can be taken from RAW */
     override val modality: Modality
         get() = withValidityAssertion {
-            firSymbol.fir.modality
+            firSymbol.modality
                 ?: when (classKind) { // default modality
                     KtClassKind.INTERFACE -> Modality.ABSTRACT
                     else -> Modality.FINAL
                 }
         }
 
-    /* FirRegularClass visibility is not modified by STATUS only for Unknown, so it can be taken from RAW */
     override val visibility: Visibility
         get() = withValidityAssertion {
-            when (val possiblyRawVisibility = firSymbol.fir.visibility) {
-                Visibilities.Unknown -> if (firSymbol.fir.isLocal) Visibilities.Local else Visibilities.Public
+            when (val possiblyRawVisibility = firSymbol.visibility) {
+                Visibilities.Unknown -> if (firSymbol.isLocal) Visibilities.Local else Visibilities.Public
                 else -> possiblyRawVisibility
             }
         }
