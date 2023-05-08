@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+
 package org.jetbrains.typesBenchmarks
 
 import kotlin.random.Random

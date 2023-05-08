@@ -3,6 +3,8 @@
  * that can be found in the LICENSE file.
  */
 
+@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
+
 package org.jetbrains.ring
 
 import org.jetbrains.benchmarksLauncher.Blackhole

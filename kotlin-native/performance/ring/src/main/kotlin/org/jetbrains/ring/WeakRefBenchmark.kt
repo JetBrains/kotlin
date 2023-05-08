@@ -3,6 +3,8 @@
  * that can be found in the LICENSE file.
  */
 
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class,kotlin.experimental.ExperimentalNativeApi::class)
+
 package org.jetbrains.ring
 
 import kotlin.native.runtime.GC

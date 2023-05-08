@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+
 package org.jetbrains.structsBenchmarks
 import kotlinx.cinterop.*
 import platform.posix.*

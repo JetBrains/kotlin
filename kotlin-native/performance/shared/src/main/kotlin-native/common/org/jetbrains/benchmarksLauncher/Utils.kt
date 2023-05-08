@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class,kotlin.experimental.ExperimentalNativeApi::class)
+
 package org.jetbrains.benchmarksLauncher
 
 import kotlin.native.runtime.GC
