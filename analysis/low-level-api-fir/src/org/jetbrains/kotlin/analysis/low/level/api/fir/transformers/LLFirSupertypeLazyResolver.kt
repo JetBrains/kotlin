@@ -110,7 +110,12 @@ private class LLFirSuperTypeTargetResolver(
         when (target) {
             is FirRegularClass -> performResolve(
                 declaration = target,
-                resolver = { target.resolveSupertypeRefs() },
+                superTypeRefsForTransformation = {
+                    // We should create a copy of the original collection
+                    // to avoid [ConcurrentModificationException] during another thread publication
+                    ArrayList(target.superTypeRefs)
+                },
+                resolver = { supertypeResolver.resolveSpecificClassLikeSupertypes(target, it) },
                 superTypeUpdater = {
                     target.replaceSuperTypeRefs(it)
                     session.platformSupertypeUpdater?.updateSupertypesIfNeeded(target, scopeSession)
@@ -118,7 +123,8 @@ private class LLFirSuperTypeTargetResolver(
             )
             is FirTypeAlias -> performResolve(
                 declaration = target,
-                resolver = { target.resolveExpandedTypeRef() },
+                superTypeRefsForTransformation = { target.expandedTypeRef },
+                resolver = { supertypeResolver.resolveTypeAliasSupertype(target, it, resolveRecursively = false) },
                 superTypeUpdater = { target.replaceExpandedTypeRef(it.single()) },
             )
             else -> performCustomResolveUnderLock(target) {
@@ -129,24 +135,13 @@ private class LLFirSuperTypeTargetResolver(
         return true
     }
 
-    private fun FirRegularClass.resolveSupertypeRefs(): List<FirResolvedTypeRef> {
-        val superTypeRefs = superTypeRefs
-        /**
-         * TODO: KT-56551 this is safe, because we have a global phase lock
-         * Without such lock we should make a copy of [superTypeRefs] under a lock or
-         * FirRegularClassImpl should have "var superTypeRefs" + assign instead of "val superTypeRefs" + mutation
-         */
-        return supertypeResolver.resolveSpecificClassLikeSupertypes(this, superTypeRefs)
-    }
-
-    private fun FirTypeAlias.resolveExpandedTypeRef(): List<FirResolvedTypeRef> {
-        val expandedTypeRef = expandedTypeRef
-        return supertypeResolver.resolveTypeAliasSupertype(this, expandedTypeRef, resolveRecursively = false)
-    }
-
-    private inline fun <T : FirClassLikeDeclaration> performResolve(
+    /**
+     * [superTypeRefsForTransformation] will be executed under [declaration] lock
+     */
+    private inline fun <T : FirClassLikeDeclaration, S> performResolve(
         declaration: T,
-        resolver: () -> List<FirResolvedTypeRef>,
+        superTypeRefsForTransformation: () -> S,
+        resolver: (S) -> List<FirResolvedTypeRef>,
         crossinline superTypeUpdater: (List<FirTypeRef>) -> Unit,
     ) {
         // To avoid redundant work, because a publication won't be executed
@@ -154,8 +149,17 @@ private class LLFirSuperTypeTargetResolver(
 
         declaration.lazyResolveToPhase(resolverPhase.previous)
 
+        var superTypeRefs: S? = null
+        withReadLock(declaration) {
+            superTypeRefs = superTypeRefsForTransformation()
+        }
+
+        // "null" means that some other thread is already resolved [declaration] to [resolverPhase]
+        if (superTypeRefs == null) return
+
         // 1. Resolve declaration super type refs
-        val resolvedSuperTypeRefs = resolver()
+        @Suppress("UNCHECKED_CAST")
+        val resolvedSuperTypeRefs = resolver(superTypeRefs as S)
 
         // 2. Resolve super declarations
         val status = supertypeComputationSession.getSupertypesComputationStatus(declaration)

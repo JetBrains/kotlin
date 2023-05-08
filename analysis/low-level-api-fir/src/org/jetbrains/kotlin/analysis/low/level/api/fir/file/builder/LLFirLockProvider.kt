@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractChecker) {
     private val globalLock = ReentrantLock()
 
-    private val superTypesLock = ReentrantLock()
     private val implicitTypesLock = ReentrantLock()
     private val statusLock = ReentrantLock()
     private val compilerAnnotationsLock = ReentrantLock()
@@ -55,7 +54,6 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
         val lock = when (phase) {
             FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE -> implicitTypesLock
             FirResolvePhase.STATUS -> statusLock
-            FirResolvePhase.SUPER_TYPES -> superTypesLock
             FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS -> compilerAnnotationsLock
             else -> null
         }
