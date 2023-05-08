@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache
@@ -22,6 +23,11 @@ class LLFirResolveSessionService(project: Project) {
 
     fun getFirResolveSession(module: KtModule): LLFirResolveSession {
         return create(module, cache::getSession)
+    }
+
+    @TestOnly
+    fun getFirResolveSessionForBinaryModule(module: KtModule): LLFirResolveSession {
+        return create(module) { cache.getSession(it, true) }
     }
 
     fun getFirResolveSessionNoCaching(module: KtModule): LLFirResolveSession {

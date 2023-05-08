@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.configurators
 import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
+import com.intellij.openapi.project.Project
+import com.intellij.psi.PsiClass
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.impl.base.references.HLApiReferenceProviderService
 import org.jetbrains.kotlin.analysis.api.lifetime.KtDefaultLifetimeTokenProvider
@@ -16,6 +18,9 @@ import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionPr
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltInDefinitionFile
 import org.jetbrains.kotlin.analysis.project.structure.KtBuiltinsModule
+import org.jetbrains.kotlin.analysis.decompiled.light.classes.DecompiledLightClassesFactory
+import org.jetbrains.kotlin.analysis.decompiled.light.classes.ClsJavaStubByVirtualFileCache
+import org.jetbrains.kotlin.analysis.decompiler.psi.file.KtClsFile
 import org.jetbrains.kotlin.analysis.project.structure.KtModuleScopeProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtModuleScopeProviderImpl
 import org.jetbrains.kotlin.analysis.providers.*
@@ -24,7 +29,9 @@ import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModulePr
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestServiceRegistrar
 import org.jetbrains.kotlin.psi.KotlinReferenceProvidersService
+import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtFileClassProvider
 import org.jetbrains.kotlin.test.services.TestServices
 
 object AnalysisApiBaseTestServiceRegistrar: AnalysisApiTestServiceRegistrar()  {
@@ -42,6 +49,26 @@ object AnalysisApiBaseTestServiceRegistrar: AnalysisApiTestServiceRegistrar()  {
         project.apply {
             registerService(KotlinModificationTrackerFactory::class.java, KotlinStaticModificationTrackerFactory::class.java)
             registerService(KtDefaultLifetimeTokenProvider::class.java, KtReadActionConfinementDefaultLifetimeTokenProvider::class.java)
+
+            //KotlinClassFileDecompiler is registered as application service so it's available for the tests run in parallel as well
+            //when the decompiler is registered, for compiled class KtClsFile is created instead of ClsFileImpl
+            //and KtFile doesn't return any classes in classOwner.getClasses if there is no KtFileClassProvider
+            //but getClasses is used during java resolve, thus it's required to return some PsiClass for such cases
+            registerService(KtFileClassProvider::class.java, KtClsFileClassProvider(project))
+            registerService(ClsJavaStubByVirtualFileCache::class.java, ClsJavaStubByVirtualFileCache())
+        }
+    }
+
+    class KtClsFileClassProvider(val project: Project) : KtFileClassProvider {
+        override fun getFileClasses(file: KtFile): Array<PsiClass> {
+            val virtualFile = file.virtualFile
+            val classOrObject = file.declarations.filterIsInstance<KtClassOrObject>().singleOrNull()
+            if (file is KtClsFile && virtualFile != null) {
+                DecompiledLightClassesFactory.createClsJavaClassFromVirtualFile(file, virtualFile, classOrObject, project)?.let {
+                    return arrayOf(it)
+                }
+            }
+            return emptyArray()
         }
     }
 
@@ -51,7 +78,7 @@ object AnalysisApiBaseTestServiceRegistrar: AnalysisApiTestServiceRegistrar()  {
         val roots = StandaloneProjectFactory.getVirtualFilesForLibraryRoots(
             moduleStructure.binaryModules.flatMap { binary -> binary.getBinaryRoots() },
             testServices.environmentManager.getProjectEnvironment()
-        )
+        ).distinct()
         project.apply {
             registerService(KtModuleScopeProvider::class.java, KtModuleScopeProviderImpl())
             registerService(KotlinAnnotationsResolverFactory::class.java, KotlinStaticAnnotationsResolverFactory(allKtFiles))

@@ -1,0 +1,6 @@
+KT element: KtPrimaryConstructor
+FIR element: FirPrimaryConstructor
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+public [ResolvedTo(BODY_RESOLVE)] constructor([ResolvedTo(BODY_RESOLVE)] p: R|kotlin/String|): R|FooBar|
