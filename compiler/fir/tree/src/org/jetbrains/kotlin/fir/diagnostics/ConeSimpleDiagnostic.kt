@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.name.Name
 
 class ConeSimpleDiagnostic(override val reason: String, val kind: DiagnosticKind = DiagnosticKind.Other) : ConeDiagnostic
 
+class ConeSyntaxDiagnostic(override val reason: String) : ConeDiagnostic
+
 class ConeNotAnnotationContainer(val text: String) : ConeDiagnostic {
     override val reason: String get() = "Strange annotated expression: $text"
 }
@@ -70,7 +72,6 @@ class ConeAmbiguousFunctionTypeKinds(val kinds: List<FunctionTypeKind>) : ConeDi
 }
 
 enum class DiagnosticKind {
-    Syntax,
     ExpressionExpected,
     NotLoopLabel,
     JumpOutsideLoop,

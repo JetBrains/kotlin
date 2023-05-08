@@ -7,8 +7,7 @@ package org.jetbrains.kotlin.fir.lightTree.fir
 
 import com.intellij.lang.LighterASTNode
 import org.jetbrains.kotlin.fir.builder.buildBalancedOrExpressionTree
-import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
-import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.ConeSyntaxDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.buildErrorExpression
@@ -26,7 +25,7 @@ data class WhenEntry(
 
     fun toFirWhenConditionWithoutSubject(): FirExpression {
         return when (val condition = conditions.firstOrNull()) {
-            null -> buildErrorExpression(null, ConeSimpleDiagnostic("No expression in condition with expression", DiagnosticKind.Syntax))
+            null -> buildErrorExpression(null, ConeSyntaxDiagnostic("No expression in condition with expression"))
             else -> condition
         }
     }

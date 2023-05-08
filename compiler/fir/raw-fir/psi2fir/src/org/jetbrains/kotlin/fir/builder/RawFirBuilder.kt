@@ -253,8 +253,8 @@ open class RawFirBuilder(
         private fun KtTypeReference?.toFirOrErrorType(): FirTypeRef =
             convertSafe() ?: buildErrorTypeRef {
                 source = this@toFirOrErrorType?.toFirSourceElement()
-                diagnostic = ConeSimpleDiagnostic(
-                    if (this@toFirOrErrorType == null) "Incomplete code" else "Conversion failed", DiagnosticKind.Syntax
+                diagnostic = ConeSyntaxDiagnostic(
+                    if (this@toFirOrErrorType == null) "Incomplete code" else "Conversion failed"
                 )
             }
 
@@ -265,9 +265,11 @@ open class RawFirBuilder(
         private fun KtElement?.toFirExpression(
             errorReason: String,
             kind: DiagnosticKind = DiagnosticKind.ExpressionExpected
-        ): FirExpression {
+        ): FirExpression = toFirExpression { ConeSimpleDiagnostic(errorReason, kind) }
+
+        private inline fun KtElement?.toFirExpression(diagnosticFn: () -> ConeDiagnostic): FirExpression {
             if (this == null) {
-                return buildErrorExpression(source = null, ConeSimpleDiagnostic(errorReason, kind))
+                return buildErrorExpression(source = null, diagnosticFn())
             }
 
             val result = when (val fir = convertElement(this)) {
@@ -275,13 +277,16 @@ open class RawFirBuilder(
                 else -> {
                     return buildErrorExpression {
                         nonExpressionElement = fir
-                        diagnostic = ConeSimpleDiagnostic(errorReason, kind)
+                        diagnostic = diagnosticFn()
                         source = toFirSourceElement()
                     }
                 }
             }
 
+            return toFirExpression(result)
+        }
 
+        private fun KtElement.toFirExpression(result: FirExpression): FirExpression {
             val callExpressionCallee = (this as? KtCallExpression)?.calleeExpression?.unwrapParenthesesLabelsAndAnnotations()
 
             if (this is KtNameReferenceExpression ||
@@ -307,7 +312,7 @@ open class RawFirBuilder(
                 is FirStatement -> fir
                 else -> buildErrorExpression {
                     nonExpressionElement = fir
-                    diagnostic = ConeSimpleDiagnostic(errorReasonLazy(), DiagnosticKind.Syntax)
+                    diagnostic = ConeSyntaxDiagnostic(errorReasonLazy())
                     source = toFirSourceElement()
                 }
             }
@@ -393,7 +398,7 @@ open class RawFirBuilder(
             if (this == null) {
                 return buildErrorExpression(
                     source = null,
-                    ConeSimpleDiagnostic("No argument given", DiagnosticKind.Syntax),
+                    ConeSyntaxDiagnostic("No argument given"),
                 )
             }
             val name = this.getArgumentName()?.asName
@@ -1614,7 +1619,7 @@ open class RawFirBuilder(
                 }
                 val ktBody = literal.bodyExpression
                 body = if (ktBody == null) {
-                    val errorExpression = buildErrorExpression(source, ConeSimpleDiagnostic("Lambda has no body", DiagnosticKind.Syntax))
+                    val errorExpression = buildErrorExpression(source, ConeSyntaxDiagnostic("Lambda has no body"))
                     FirSingleExpressionBlock(errorExpression.toReturn())
                 } else {
                     configureBlockWithoutBuilding(ktBody).apply {
@@ -1959,7 +1964,7 @@ open class RawFirBuilder(
                     } else {
                         FirErrorTypeRefBuilder().apply {
                             this.source = source
-                            diagnostic = ConeSimpleDiagnostic("Incomplete user type", DiagnosticKind.Syntax)
+                            diagnostic = ConeSyntaxDiagnostic("Incomplete user type")
                         }
                     }
                 }
@@ -1997,7 +2002,7 @@ open class RawFirBuilder(
                 }
                 null -> FirErrorTypeRefBuilder().apply {
                     this.source = source
-                    diagnostic = ConeSimpleDiagnostic("Incomplete code", DiagnosticKind.Syntax)
+                    diagnostic = ConeSyntaxDiagnostic("Incomplete code")
                 }
                 else -> throw AssertionError("Unexpected type element: ${unwrappedElement.text}")
             }
@@ -2538,7 +2543,7 @@ open class RawFirBuilder(
 
                 null -> {
                     CalleeAndReceiver(
-                        buildErrorNamedReference { diagnostic = ConeSimpleDiagnostic("Call has no callee", DiagnosticKind.Syntax) }
+                        buildErrorNamedReference { diagnostic = ConeSyntaxDiagnostic("Call has no callee") }
                     )
                 }
 
@@ -2620,7 +2625,7 @@ open class RawFirBuilder(
             val selector = expression.selectorExpression
                 ?: return buildErrorExpression {
                     source = expression.toFirSourceElement()
-                    diagnostic = ConeSimpleDiagnostic("Qualified expression without selector", DiagnosticKind.Syntax)
+                    diagnostic = ConeSyntaxDiagnostic("Qualified expression without selector")
 
                     // if there is no selector, we still want to resolve the receiver
                     this.expression = receiver
@@ -2644,7 +2649,7 @@ open class RawFirBuilder(
                     this.receiver = receiver
                     this.selector = firSelector
                     source = expression.toFirSourceElement()
-                    diagnostic = ConeSimpleDiagnostic("Qualified expression with unexpected selector", DiagnosticKind.Syntax)
+                    diagnostic = ConeSyntaxDiagnostic("Qualified expression with unexpected selector")
                 }
             }
             return firSelector
@@ -2679,7 +2684,7 @@ open class RawFirBuilder(
             return expression.expression?.accept(this, data)
                 ?: buildErrorExpression(
                     expression.toFirSourceElement(),
-                    ConeSimpleDiagnostic("Empty parentheses", DiagnosticKind.Syntax)
+                    ConeSyntaxDiagnostic("Empty parentheses")
                 )
         }
 
@@ -2726,10 +2731,7 @@ open class RawFirBuilder(
                 baseModuleData,
                 multiDeclaration.toFirSourceElement(),
                 "destruct",
-                multiDeclaration.initializer.toFirExpression(
-                    "Initializer required for destructuring declaration",
-                    DiagnosticKind.Syntax
-                ),
+                multiDeclaration.initializer.toFirExpression { ConeSyntaxDiagnostic("Initializer required for destructuring declaration") },
                 extractAnnotationsTo = { extractAnnotationsTo(it) }
             )
             return generateDestructuringBlock(

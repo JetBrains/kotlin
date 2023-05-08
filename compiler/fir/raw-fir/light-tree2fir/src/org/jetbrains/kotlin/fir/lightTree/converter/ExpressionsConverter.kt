@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirContractCallBlock
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
 import org.jetbrains.kotlin.fir.expressions.impl.buildSingleExpressionBlock
-import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
 import org.jetbrains.kotlin.fir.lightTree.fir.ValueParameter
 import org.jetbrains.kotlin.fir.lightTree.fir.WhenEntry
 import org.jetbrains.kotlin.fir.references.FirNamedReference
@@ -210,7 +209,7 @@ class ExpressionsConverter(
                     statements.addAll(0, destructuringStatements)
                 }.build()
             } else {
-                buildSingleExpressionBlock(buildErrorExpression(null, ConeSimpleDiagnostic("Lambda has no body", DiagnosticKind.Syntax)))
+                buildSingleExpressionBlock(buildErrorExpression(null, ConeSyntaxDiagnostic("Lambda has no body")))
             }
             context.firFunctionTargets.removeLast()
         }.also {
@@ -261,7 +260,7 @@ class ExpressionsConverter(
             if (rightArg != null)
                 getAsFirExpression<FirExpression>(rightArg, "No right operand")
             else
-                buildErrorExpression(null, ConeSimpleDiagnostic("No right operand", DiagnosticKind.Syntax))
+                buildErrorExpression(null, ConeSyntaxDiagnostic("No right operand"))
 
         val leftArgAsFir = getAsFirExpression<FirExpression>(leftArgNode, "No left operand")
 
@@ -336,7 +335,7 @@ class ExpressionsConverter(
             operation = operationTokenName.toFirOperation()
             conversionTypeRef = firType
             argumentList = buildUnaryArgumentList(
-                leftArgAsFir ?: buildErrorExpression(null, ConeSimpleDiagnostic("No left operand", DiagnosticKind.Syntax))
+                leftArgAsFir ?: buildErrorExpression(null, ConeSyntaxDiagnostic("No left operand"))
             )
         }
     }
@@ -466,7 +465,7 @@ class ExpressionsConverter(
             source = classLiteralExpression.toFirSourceElement()
             argumentList = buildUnaryArgumentList(
                 firReceiverExpression
-                    ?: buildErrorExpression(null, ConeSimpleDiagnostic("No receiver in class literal", DiagnosticKind.Syntax))
+                    ?: buildErrorExpression(null, ConeSyntaxDiagnostic("No receiver in class literal"))
             )
         }
     }
@@ -567,14 +566,14 @@ class ExpressionsConverter(
                     this.receiver = receiver
                     this.selector = errorExpression
                     source = dotQualifiedExpression.toFirSourceElement()
-                    diagnostic = ConeSimpleDiagnostic("Qualified expression with unexpected selector", DiagnosticKind.Syntax)
+                    diagnostic = ConeSyntaxDiagnostic("Qualified expression with unexpected selector")
                 }
             }
         }
 
         return result ?: buildErrorExpression {
             source = null
-            diagnostic = ConeSimpleDiagnostic("Qualified expression without selector", DiagnosticKind.Syntax)
+            diagnostic = ConeSyntaxDiagnostic("Qualified expression without selector")
 
             // if there is no selector, we still want to resolve the receiver
             expression = firReceiver
@@ -653,7 +652,7 @@ class ExpressionsConverter(
             else -> CalleeAndReceiver(
                 buildErrorNamedReference {
                     this.source = source
-                    diagnostic = ConeSimpleDiagnostic("Call has no callee", DiagnosticKind.Syntax)
+                    diagnostic = ConeSyntaxDiagnostic("Call has no callee")
                 }
             )
         }
@@ -692,7 +691,7 @@ class ExpressionsConverter(
         this?.forEachChildren(LONG_TEMPLATE_ENTRY_START, LONG_TEMPLATE_ENTRY_END) {
             firExpression = getAsFirExpression(it, errorReason)
         }
-        return firExpression ?: buildErrorExpression(null, ConeSimpleDiagnostic(errorReason, DiagnosticKind.Syntax))
+        return firExpression ?: buildErrorExpression(null, ConeSyntaxDiagnostic(errorReason))
     }
 
     /**
@@ -822,7 +821,7 @@ class ExpressionsConverter(
 
         val calculatedFirExpression = firExpression ?: buildErrorExpression(
             source = null,
-            ConeSimpleDiagnostic("No expression in condition with expression", DiagnosticKind.Syntax)
+            ConeSyntaxDiagnostic("No expression in condition with expression")
         )
 
         if (whenRefWithSubject == null) {
@@ -879,7 +878,7 @@ class ExpressionsConverter(
 
         val calculatedFirExpression = firExpression ?: buildErrorExpression(
             null,
-            ConeSimpleDiagnostic("No range in condition with range", DiagnosticKind.Syntax)
+            ConeSyntaxDiagnostic("No range in condition with range")
         )
 
         return calculatedFirExpression.generateContainsOperation(
@@ -949,7 +948,7 @@ class ExpressionsConverter(
                 name = if (isGet) OperatorNameConventions.GET else OperatorNameConventions.SET
             }
             explicitReceiver =
-                firExpression ?: buildErrorExpression(null, ConeSimpleDiagnostic("No array expression", DiagnosticKind.Syntax))
+                firExpression ?: buildErrorExpression(null, ConeSyntaxDiagnostic("No array expression"))
             argumentList = buildArgumentList {
                 arguments += indices
                 getArgument?.let { arguments += it }
@@ -1038,7 +1037,7 @@ class ExpressionsConverter(
                 }
             }
             condition =
-                firCondition ?: buildErrorExpression(null, ConeSimpleDiagnostic("No condition in do-while loop", DiagnosticKind.Syntax))
+                firCondition ?: buildErrorExpression(null, ConeSyntaxDiagnostic("No condition in do-while loop"))
         }.configure(target) { convertLoopBody(block) }
     }
 
@@ -1060,7 +1059,7 @@ class ExpressionsConverter(
         return FirWhileLoopBuilder().apply {
             source = whileLoop.toFirSourceElement()
             condition =
-                firCondition ?: buildErrorExpression(null, ConeSimpleDiagnostic("No condition in while loop", DiagnosticKind.Syntax))
+                firCondition ?: buildErrorExpression(null, ConeSyntaxDiagnostic("No condition in while loop"))
             // break/continue in the while loop condition will refer to an outer loop if any.
             // So, prepare the loop target after building the condition.
             target = prepareTarget(whileLoop)
@@ -1084,7 +1083,7 @@ class ExpressionsConverter(
         }
 
         val calculatedRangeExpression =
-            rangeExpression ?: buildErrorExpression(null, ConeSimpleDiagnostic("No range in for loop", DiagnosticKind.Syntax))
+            rangeExpression ?: buildErrorExpression(null, ConeSyntaxDiagnostic("No range in for loop"))
         val fakeSource = forLoop.toFirSourceElement(KtFakeSourceElementKind.DesugaredForLoop)
         val target: FirLoopTarget
         // NB: FirForLoopChecker relies on this block existence and structure
@@ -1271,7 +1270,7 @@ class ExpressionsConverter(
                         source = thenBlock?.toFirSourceElement()
                         condition = firCondition ?: buildErrorExpression(
                             null,
-                            ConeSimpleDiagnostic("If statement should have condition", DiagnosticKind.Syntax)
+                            ConeSyntaxDiagnostic("If statement should have condition")
                         )
                         result = trueBranch
                     }
@@ -1393,7 +1392,7 @@ class ExpressionsConverter(
 
         return buildThrowExpression {
             source = throwExpression.toFirSourceElement()
-            exception = firExpression ?: buildErrorExpression(null, ConeSimpleDiagnostic("Nothing to throw", DiagnosticKind.Syntax))
+            exception = firExpression ?: buildErrorExpression(null, ConeSyntaxDiagnostic("Nothing to throw"))
         }
     }
 
@@ -1466,7 +1465,7 @@ class ExpressionsConverter(
             }
         }
         val calculatedFirExpression =
-            firExpression ?: buildErrorExpression(null, ConeSimpleDiagnostic("Argument is absent", DiagnosticKind.Syntax))
+            firExpression ?: buildErrorExpression(null, ConeSyntaxDiagnostic("Argument is absent"))
         return when {
             identifier != null -> buildNamedArgumentExpression {
                 source = valueArgument.toFirSourceElement()

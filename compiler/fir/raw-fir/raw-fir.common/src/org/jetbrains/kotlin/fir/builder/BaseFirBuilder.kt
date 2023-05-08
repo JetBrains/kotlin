@@ -22,7 +22,9 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
-import org.jetbrains.kotlin.fir.references.builder.*
+import org.jetbrains.kotlin.fir.references.builder.buildImplicitThisReference
+import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
+import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.FirErrorTypeRef
@@ -460,7 +462,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                             hasExpressions = true
                             buildErrorExpression {
                                 source = entry.toFirSourceElement()
-                                diagnostic = ConeSimpleDiagnostic("Incorrect template entry: ${entry.asText}", DiagnosticKind.Syntax)
+                                diagnostic = ConeSyntaxDiagnostic("Incorrect template entry: ${entry.asText}")
                             }
                         }
                     }
@@ -482,7 +484,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         convert: T.() -> FirExpression
     ): FirExpression {
         val unwrappedReceiver = receiver.unwrap() ?: return buildErrorExpression {
-            diagnostic = ConeSimpleDiagnostic("Inc/dec without operand", DiagnosticKind.Syntax)
+            diagnostic = ConeSyntaxDiagnostic("Inc/dec without operand")
         }
 
         if (unwrappedReceiver.elementType == ARRAY_ACCESS_EXPRESSION) {
@@ -668,7 +670,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
     ): FirExpression {
         val receiverFir = receiver?.convert() ?: buildErrorExpression {
             source = sourceElementForError
-            diagnostic = ConeSimpleDiagnostic("No receiver expression", DiagnosticKind.Syntax)
+            diagnostic = ConeSyntaxDiagnostic("No receiver expression")
         }
 
         if (receiverFir is FirSafeCallExpression) {
@@ -677,7 +679,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                     init(
                         receiverFir.selector as? FirExpression ?: buildErrorExpression {
                             source = sourceElementForError
-                            diagnostic = ConeSimpleDiagnostic("Safe call selector expected to be an expression here", DiagnosticKind.Syntax)
+                            diagnostic = ConeSyntaxDiagnostic("Safe call selector expected to be an expression here")
                         }
                     )
                 }
@@ -706,7 +708,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         convert: T.() -> FirExpression
     ): FirStatement {
         val unwrappedLhs = this.unwrap() ?: return buildErrorExpression {
-            diagnostic = ConeSimpleDiagnostic("Inc/dec without operand", DiagnosticKind.Syntax)
+            diagnostic = ConeSyntaxDiagnostic("Inc/dec without operand")
         }
 
         val tokenType = unwrappedLhs.elementType
@@ -830,7 +832,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             this.lhsGetCall = receiver
             this.rhs = rhs?.convert() ?: buildErrorExpression(
                 null,
-                ConeSimpleDiagnostic("No value for array set", DiagnosticKind.Syntax)
+                ConeSyntaxDiagnostic("No value for array set")
             )
             this.arrayAccessSource = arrayAccessSource
             this.annotations += annotations
@@ -944,7 +946,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 element
             }
         } else {
-            buildErrorExpression(elementSource, ConeSimpleDiagnostic("Empty label", DiagnosticKind.Syntax))
+            buildErrorExpression(elementSource, ConeSyntaxDiagnostic("Empty label"))
         }
     }
 

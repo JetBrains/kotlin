@@ -22,7 +22,9 @@ import org.jetbrains.kotlin.fir.extensions.assignAltererExtensions
 import org.jetbrains.kotlin.fir.extensions.expressionResolutionExtensions
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.references.*
-import org.jetbrains.kotlin.fir.references.builder.*
+import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
+import org.jetbrains.kotlin.fir.references.builder.buildExplicitSuperReference
+import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
@@ -701,7 +703,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         val expression = when (originalExpression) {
             is FirSafeCallExpression -> originalExpression.selector as? FirExpression ?: buildErrorExpression {
                 source = originalExpression.source
-                diagnostic = ConeSimpleDiagnostic("Safe call selector expected to be an expression here", DiagnosticKind.Syntax)
+                diagnostic = ConeSyntaxDiagnostic("Safe call selector expected to be an expression here")
             }
             else -> originalExpression
         }
@@ -1519,7 +1521,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             initializer = lhsGetCall.explicitReceiver ?: buildErrorExpression {
                 source = augmentedArraySetCall.source
                     ?.fakeElement(KtFakeSourceElementKind.DesugaredCompoundAssignment)
-                diagnostic = ConeSimpleDiagnostic("No receiver for array access", DiagnosticKind.Syntax)
+                diagnostic = ConeSyntaxDiagnostic("No receiver for array access")
             }
         )
 

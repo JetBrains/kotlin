@@ -29,10 +29,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.DanglingTypeConstraint
 import org.jetbrains.kotlin.fir.declarations.utils.addDeclarations
 import org.jetbrains.kotlin.fir.declarations.utils.addDefaultBoundIfNecessary
 import org.jetbrains.kotlin.fir.declarations.utils.danglingTypeConstraints
-import org.jetbrains.kotlin.fir.diagnostics.ConeDanglingModifierOnTopLevel
-import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
+import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
@@ -47,10 +44,13 @@ import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.FirTypeProjection
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.FirUserTypeRef
 import org.jetbrains.kotlin.fir.types.builder.*
-import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
+import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
 import org.jetbrains.kotlin.fir.types.impl.FirTypeArgumentListImpl
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
@@ -1329,7 +1329,7 @@ class DeclarationsConverter(
             entries,
             firExpression ?: buildErrorExpression(
                 null,
-                ConeSimpleDiagnostic("Initializer required for destructuring declaration", DiagnosticKind.Syntax)
+                ConeSyntaxDiagnostic("Initializer required for destructuring declaration")
             ),
             source,
             modifiers
@@ -1875,7 +1875,7 @@ class DeclarationsConverter(
         }
 
         val calculatedFirExpression = firExpression ?: buildErrorExpression(
-            explicitDelegation.toFirSourceElement(), ConeSimpleDiagnostic("Should have delegate", DiagnosticKind.Syntax)
+            explicitDelegation.toFirSourceElement(), ConeSyntaxDiagnostic("Should have delegate")
         )
 
         delegateFieldsMap.put(
@@ -2028,14 +2028,14 @@ class DeclarationsConverter(
                 CONTEXT_RECEIVER_LIST, TokenType.ERROR_ELEMENT -> firType =
                     buildErrorTypeRef {
                         source = typeRefSource
-                        diagnostic = ConeSimpleDiagnostic("Unwrapped type is null", DiagnosticKind.Syntax)
+                        diagnostic = ConeSyntaxDiagnostic("Unwrapped type is null")
                     }
             }
         }
 
         val calculatedFirType = firType ?: buildErrorTypeRef {
             source = typeRefSource
-            diagnostic = ConeSimpleDiagnostic("Incomplete code", DiagnosticKind.Syntax)
+            diagnostic = ConeSyntaxDiagnostic("Incomplete code")
         }
 
         for (modifierList in allTypeModifiers) {
@@ -2057,7 +2057,7 @@ class DeclarationsConverter(
         if (children.size != 2) {
             return buildErrorTypeRef {
                 source = typeRefSource
-                diagnostic = ConeSimpleDiagnostic("Wrong code", DiagnosticKind.Syntax)
+                diagnostic = ConeSyntaxDiagnostic("Wrong code")
             }
         }
 
@@ -2140,7 +2140,7 @@ class DeclarationsConverter(
         if (identifier == null)
             return buildErrorTypeRef {
                 source = typeRefSource
-                diagnostic = ConeSimpleDiagnostic("Incomplete user type", DiagnosticKind.Syntax)
+                diagnostic = ConeSyntaxDiagnostic("Incomplete user type")
             }
 
         val qualifierPart = FirQualifierPartImpl(

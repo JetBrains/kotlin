@@ -14,8 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
-import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
-import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
+import org.jetbrains.kotlin.fir.diagnostics.ConeSyntaxDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -62,7 +61,7 @@ internal fun KtWhenCondition.toFirWhenCondition(
             }
         }
         else -> {
-            buildErrorExpression(firSubjectSource, ConeSimpleDiagnostic("Unsupported when condition: ${this.javaClass}", DiagnosticKind.Syntax))
+            buildErrorExpression(firSubjectSource, ConeSyntaxDiagnostic("Unsupported when condition: ${this.javaClass}"))
         }
     }
 }

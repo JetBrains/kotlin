@@ -100,9 +100,10 @@ private fun ConeDiagnostic.toKtDiagnostic(
     is ConeNoTypeArgumentsOnRhsError ->
         FirErrors.NO_TYPE_ARGUMENTS_ON_RHS.createOn(qualifiedAccessSource ?: source, this.desiredCount, this.symbol)
 
+    is ConeSyntaxDiagnostic -> FirSyntaxErrors.SYNTAX.createOn(qualifiedAccessSource ?: source, reason)
+
     is ConeSimpleDiagnostic -> when {
         source.kind is KtFakeSourceElementKind && source.kind != KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess -> null
-        kind == DiagnosticKind.Syntax -> FirSyntaxErrors.SYNTAX.createOn(qualifiedAccessSource ?: source, reason)
         else -> this.getFactory(source).createOn(qualifiedAccessSource ?: source)
     }
 
@@ -534,7 +535,6 @@ private fun ConeSimpleDiagnostic.getFactory(source: KtSourceElement): KtDiagnost
         DiagnosticKind.UnresolvedSupertype,
         DiagnosticKind.UnresolvedExpandedType,
         DiagnosticKind.Other -> FirErrors.OTHER_ERROR
-        DiagnosticKind.Syntax -> error("Must not be called on `Syntax` because a message is required.")
     }
 }
 
