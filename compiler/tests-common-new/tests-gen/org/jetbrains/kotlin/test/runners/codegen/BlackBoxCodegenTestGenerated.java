@@ -12685,6 +12685,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
             }
 
             @Test
+            @TestMetadata("bigArityLambda.kt")
+            public void testBigArityLambda() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/reflect/bigArityLambda.kt");
+            }
+
+            @Test
             @TestMetadata("callSuspend.kt")
             public void testCallSuspend() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/reflect/callSuspend.kt");

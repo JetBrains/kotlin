@@ -241,8 +241,8 @@ internal fun IrTypeMapper.mapClassSignature(irClass: IrClass, type: Type, genera
     if (generateBodies && irClass.superTypes.any { it.isSuspendFunction() || it.isKSuspendFunction() }) {
         // Do not generate this class in the kapt3 mode (generateBodies=false), because kapt3 transforms supertypes correctly in the
         // "correctErrorTypes" mode only when the number of supertypes between PSI and bytecode is equal. Otherwise it tries to "correct"
-        // the FunctionN type and fails, because that type doesn't need an import in the Kotlin source (kotlin.FunctionN), but needs one
-        // in the Java source (kotlin.jvm.functions.FunctionN), and kapt3 doesn't perform any Kotlin->Java name lookup.
+        // the Function{n} type and fails, because that type doesn't need an import in the Kotlin source (kotlin.Function{n}), but needs one
+        // in the Java source (kotlin.jvm.functions.Function{n}), and kapt3 doesn't perform any Kotlin->Java name lookup.
         kotlinMarkerInterfaces.add("kotlin/coroutines/jvm/internal/SuspendFunction")
     }
 

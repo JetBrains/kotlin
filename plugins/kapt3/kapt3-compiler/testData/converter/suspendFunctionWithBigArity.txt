@@ -1,0 +1,43 @@
+@kotlin.Metadata()
+public abstract interface Flow<T extends java.lang.Object> {
+}
+
+////////////////////
+
+
+@kotlin.Metadata()
+public final class SuspendFunctionWithBigArityKt {
+
+    public SuspendFunctionWithBigArityKt() {
+        super();
+    }
+
+    @org.jetbrains.annotations.NotNull()
+    public static final <T1 extends java.lang.Object, T2 extends java.lang.Object, T3 extends java.lang.Object, T4 extends java.lang.Object, T5 extends java.lang.Object, T6 extends java.lang.Object, T7 extends java.lang.Object, T8 extends java.lang.Object, T9 extends java.lang.Object, T10 extends java.lang.Object, T11 extends java.lang.Object, T12 extends java.lang.Object, T13 extends java.lang.Object, T14 extends java.lang.Object, T15 extends java.lang.Object, T16 extends java.lang.Object, T17 extends java.lang.Object, T18 extends java.lang.Object, T19 extends java.lang.Object, T20 extends java.lang.Object, T21 extends java.lang.Object, T22 extends java.lang.Object, T23 extends java.lang.Object, R extends java.lang.Object>Flow<R> combine(@org.jetbrains.annotations.NotNull()
+    Flow<T1> flow, @org.jetbrains.annotations.NotNull()
+    Flow<T2> flow2, @org.jetbrains.annotations.NotNull()
+    Flow<T3> flow3, @org.jetbrains.annotations.NotNull()
+    Flow<T4> flow4, @org.jetbrains.annotations.NotNull()
+    Flow<T5> flow5, @org.jetbrains.annotations.NotNull()
+    Flow<T6> flow6, @org.jetbrains.annotations.NotNull()
+    Flow<T7> flow7, @org.jetbrains.annotations.NotNull()
+    Flow<T8> flow8, @org.jetbrains.annotations.NotNull()
+    Flow<T9> flow9, @org.jetbrains.annotations.NotNull()
+    Flow<T10> flow10, @org.jetbrains.annotations.NotNull()
+    Flow<T11> flow11, @org.jetbrains.annotations.NotNull()
+    Flow<T12> flow12, @org.jetbrains.annotations.NotNull()
+    Flow<T13> flow13, @org.jetbrains.annotations.NotNull()
+    Flow<T14> flow14, @org.jetbrains.annotations.NotNull()
+    Flow<T15> flow15, @org.jetbrains.annotations.NotNull()
+    Flow<T16> flow16, @org.jetbrains.annotations.NotNull()
+    Flow<T17> flow17, @org.jetbrains.annotations.NotNull()
+    Flow<T18> flow18, @org.jetbrains.annotations.NotNull()
+    Flow<T19> flow19, @org.jetbrains.annotations.NotNull()
+    Flow<T20> flow20, @org.jetbrains.annotations.NotNull()
+    Flow<T21> flow21, @org.jetbrains.annotations.NotNull()
+    Flow<T22> flow22, @org.jetbrains.annotations.NotNull()
+    Flow<T23> flow23, @org.jetbrains.annotations.NotNull()
+    kotlin.jvm.functions.FunctionN<? extends java.lang.Object> transform) {
+        return null;
+    }
+}
