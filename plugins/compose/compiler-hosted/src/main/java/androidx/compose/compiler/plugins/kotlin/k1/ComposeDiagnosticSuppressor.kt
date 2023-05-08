@@ -17,7 +17,6 @@
 package androidx.compose.compiler.plugins.kotlin.k1
 
 import com.intellij.openapi.extensions.Extensions
-import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtAnnotatedExpression
@@ -31,12 +30,11 @@ open class ComposeDiagnosticSuppressor : DiagnosticSuppressor {
 
     companion object {
         fun registerExtension(
-            project: Project,
             extension: DiagnosticSuppressor
         ) {
             @Suppress("DEPRECATION")
             Extensions.getRootArea().getExtensionPoint(DiagnosticSuppressor.EP_NAME)
-                .registerExtension(extension, project)
+                .registerExtension(extension)
         }
     }
 

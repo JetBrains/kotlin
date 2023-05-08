@@ -18,8 +18,6 @@ package androidx.compose.compiler.plugins.kotlin
 
 import androidx.compose.compiler.plugins.kotlin.AbstractIrTransformTest.TruncateTracingInfoMode
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
 
 /**
  * Verifies trace data passed to tracing. Relies on [TruncateTracingInfoMode.KEEP_INFO_STRING] to
@@ -28,8 +26,7 @@ import org.junit.runners.JUnit4
  * More complex cases tested in other IrTransform tests that use
  * the [TruncateTracingInfoMode.KEEP_INFO_STRING].
  */
-@RunWith(JUnit4::class)
-class TraceInformationTest : AbstractIrTransformTest(useFir = false) {
+class TraceInformationTest(useFir: Boolean) : AbstractIrTransformTest(useFir) {
     @Test
     fun testBasicComposableFunctions() = verifyComposeIrTransform(
         """

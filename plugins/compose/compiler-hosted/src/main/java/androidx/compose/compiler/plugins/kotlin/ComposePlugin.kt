@@ -21,9 +21,8 @@ import androidx.compose.compiler.plugins.kotlin.k1.ComposableDeclarationChecker
 import androidx.compose.compiler.plugins.kotlin.k1.ComposableTargetChecker
 import androidx.compose.compiler.plugins.kotlin.k1.ComposeDiagnosticSuppressor
 import androidx.compose.compiler.plugins.kotlin.k1.ComposeTypeResolutionInterceptorExtension
+import androidx.compose.compiler.plugins.kotlin.k2.ComposeFirExtensionRegistrar
 import androidx.compose.compiler.plugins.kotlin.lower.ClassStabilityFieldSerializationPlugin
-import com.intellij.mock.MockProject
-import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
@@ -31,13 +30,16 @@ import org.jetbrains.kotlin.compiler.plugin.AbstractCliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOption
 import org.jetbrains.kotlin.compiler.plugin.CliOptionProcessingException
 import org.jetbrains.kotlin.compiler.plugin.CommandLineProcessor
+import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.extensions.StorageComponentContainerContributor
 import org.jetbrains.kotlin.extensions.internal.TypeResolutionInterceptor
+import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
 import org.jetbrains.kotlin.serialization.DescriptorSerializerPlugin
 
 object ComposeConfiguration {
@@ -60,8 +62,8 @@ object ComposeConfiguration {
     val INTRINSIC_REMEMBER_OPTIMIZATION_ENABLED_KEY =
         CompilerConfigurationKey<Boolean>("Enable optimization to treat remember as an intrinsic")
     val SUPPRESS_KOTLIN_VERSION_COMPATIBILITY_CHECK = CompilerConfigurationKey<String?>(
-            "Version of Kotlin for which version compatibility check should be suppressed"
-        )
+        "Version of Kotlin for which version compatibility check should be suppressed"
+    )
     val DECOYS_ENABLED_KEY =
         CompilerConfigurationKey<Boolean>("Generate decoy methods in IR transform")
 }
@@ -195,16 +197,14 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
 }
 
 @OptIn(ExperimentalCompilerApi::class)
-class ComposeComponentRegistrar :
-    @Suppress("DEPRECATION") org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar {
-    override fun registerProjectComponents(
-        project: MockProject,
-        configuration: CompilerConfiguration
-    ) {
+class ComposePluginRegistrar : CompilerPluginRegistrar() {
+    override val supportsK2: Boolean
+        get() = true
+
+    override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         if (checkCompilerVersion(configuration)) {
-            registerCommonExtensions(project)
+            registerCommonExtensions()
             IrGenerationExtension.registerExtension(
-                project,
                 createComposeIrExtension(configuration)
             )
         }
@@ -288,33 +288,20 @@ class ComposeComponentRegistrar :
             }
         }
 
-        fun registerCommonExtensions(project: Project) {
-            StorageComponentContainerContributor.registerExtension(
-                project,
-                ComposableCallChecker()
-            )
-            StorageComponentContainerContributor.registerExtension(
-                project,
-                ComposableDeclarationChecker()
-            )
-            StorageComponentContainerContributor.registerExtension(
-                project,
-                ComposableTargetChecker()
-            )
-            ComposeDiagnosticSuppressor.registerExtension(
-                project,
-                ComposeDiagnosticSuppressor()
-            )
+        fun ExtensionStorage.registerCommonExtensions() {
+            StorageComponentContainerContributor.registerExtension(ComposableCallChecker())
+            StorageComponentContainerContributor.registerExtension(ComposableDeclarationChecker())
+            StorageComponentContainerContributor.registerExtension(ComposableTargetChecker())
+            ComposeDiagnosticSuppressor.registerExtension(ComposeDiagnosticSuppressor())
             @Suppress("OPT_IN_USAGE_ERROR")
             TypeResolutionInterceptor.registerExtension(
-                project,
                 @Suppress("IllegalExperimentalApiUsage")
                 ComposeTypeResolutionInterceptorExtension()
             )
             DescriptorSerializerPlugin.registerExtension(
-                project,
                 ClassStabilityFieldSerializationPlugin()
             )
+            FirExtensionRegistrarAdapter.registerExtension(ComposeFirExtensionRegistrar())
         }
 
         fun createComposeIrExtension(
@@ -350,6 +337,9 @@ class ComposeComponentRegistrar :
             val validateIr = configuration.getBoolean(
                 JVMConfigurationKeys.VALIDATE_IR
             )
+            val useK2 = configuration.getBoolean(
+                CommonConfigurationKeys.USE_FIR
+            )
 
             return ComposeIrGenerationExtension(
                 liveLiteralsEnabled = liveLiteralsEnabled,
@@ -361,6 +351,7 @@ class ComposeComponentRegistrar :
                 metricsDestination = metricsDestination,
                 reportsDestination = reportsDestination,
                 validateIr = validateIr,
+                useK2 = useK2,
             )
         }
     }

@@ -19,6 +19,7 @@ package androidx.compose.compiler.plugins.kotlin
 import androidx.compose.compiler.plugins.kotlin.lower.ClassStabilityTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.ComposableFunInterfaceLowering
 import androidx.compose.compiler.plugins.kotlin.lower.ComposableFunctionBodyTransformer
+import androidx.compose.compiler.plugins.kotlin.lower.ComposableLambdaAnnotator
 import androidx.compose.compiler.plugins.kotlin.lower.ComposableSymbolRemapper
 import androidx.compose.compiler.plugins.kotlin.lower.ComposableTargetAnnotationsTransformer
 import androidx.compose.compiler.plugins.kotlin.lower.ComposerIntrinsicTransformer
@@ -41,6 +42,7 @@ import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSigna
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsGlobalDeclarationTable
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
 
@@ -54,6 +56,7 @@ class ComposeIrGenerationExtension(
     private val metricsDestination: String? = null,
     private val reportsDestination: String? = null,
     private val validateIr: Boolean = false,
+    private val useK2: Boolean = false,
 ) : IrGenerationExtension {
     var metrics: ModuleMetrics = EmptyModuleMetrics
 
@@ -71,6 +74,10 @@ class ComposeIrGenerationExtension(
 
         // create a symbol remapper to be used across all transforms
         val symbolRemapper = ComposableSymbolRemapper()
+
+        if (useK2) {
+            moduleFragment.acceptVoid(ComposableLambdaAnnotator(pluginContext))
+        }
 
         if (metricsDestination != null || reportsDestination != null) {
             metrics = ModuleMetricsImpl(moduleFragment.name.asString())
@@ -108,7 +115,9 @@ class ComposeIrGenerationExtension(
             metrics
         ).lower(moduleFragment)
 
-        CopyDefaultValuesFromExpectLowering(pluginContext).lower(moduleFragment)
+        if (!useK2) {
+            CopyDefaultValuesFromExpectLowering(pluginContext).lower(moduleFragment)
+        }
 
         val mangler = when {
             pluginContext.platform.isJs() -> JsManglerIr

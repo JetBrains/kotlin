@@ -17,8 +17,6 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
 
 /**
  * This test merely ensures that code gen changes are evaluated against potentially
@@ -28,8 +26,7 @@ import org.junit.runners.JUnit4
  * The Android Studio debugger searches for `ComposableSingletons` classes by name.
  * Any changes to the naming scheme have to be reflected in the Android Studio code.
  */
-@RunWith(JUnit4::class)
-class LambdaMemoizationRegressionTests : AbstractIrTransformTest(useFir = false) {
+class LambdaMemoizationRegressionTests(useFir: Boolean) : AbstractIrTransformTest(useFir) {
     @Test
     fun testNestedComposableSingletonsClass() = verifyComposeIrTransform(
         """

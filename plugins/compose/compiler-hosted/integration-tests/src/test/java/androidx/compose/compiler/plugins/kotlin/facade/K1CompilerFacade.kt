@@ -30,16 +30,18 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 
 class K1AnalysisResult(
     override val files: List<KtFile>,
     val moduleDescriptor: ModuleDescriptor,
     val bindingContext: BindingContext
 ) : AnalysisResult {
-    override val diagnostics: List<AnalysisResult.Diagnostic>
-        get() = bindingContext.diagnostics.all().map {
-            AnalysisResult.Diagnostic(it.factoryName, it.textRanges)
-        }
+    override val diagnostics: Map<String, List<AnalysisResult.Diagnostic>>
+        get() = bindingContext.diagnostics.all().groupBy(
+            keySelector = { it.psiFile.name },
+            valueTransform = { AnalysisResult.Diagnostic(it.factoryName, it.textRanges) }
+        )
 }
 
 private class K1FrontendResult(
@@ -49,11 +51,20 @@ private class K1FrontendResult(
 )
 
 class K1CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacade(environment) {
-    override fun analyze(files: List<SourceFile>): K1AnalysisResult {
-        val ktFiles = files.map { it.toKtFile(environment.project) }
+    override fun analyze(
+        platformFiles: List<SourceFile>,
+        commonFiles: List<SourceFile>
+    ): K1AnalysisResult {
+        val allKtFiles = platformFiles.map { it.toKtFile(environment.project) } +
+            commonFiles.map {
+                it.toKtFile(environment.project).also { ktFile ->
+                    ktFile.isCommonSource = true
+                }
+            }
+
         val result = TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(
             environment.project,
-            ktFiles,
+            allKtFiles,
             CliBindingTrace(),
             environment.configuration,
             environment::createPackagePartProvider
@@ -65,11 +76,14 @@ class K1CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             throw TestsCompilerError(e)
         }
 
-        return K1AnalysisResult(ktFiles, result.moduleDescriptor, result.bindingContext)
+        return K1AnalysisResult(allKtFiles, result.moduleDescriptor, result.bindingContext)
     }
 
-    private fun frontend(files: List<SourceFile>): K1FrontendResult {
-        val analysisResult = analyze(files)
+    private fun frontend(
+        platformFiles: List<SourceFile>,
+        commonFiles: List<SourceFile>
+    ): K1FrontendResult {
+        val analysisResult = analyze(platformFiles, commonFiles)
 
         // `analyze` only throws if the analysis itself failed, since we use it to test code
         // with errors. That's why we have to check for errors before we run psi2ir.
@@ -116,15 +130,17 @@ class K1CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
     }
 
     override fun compileToIr(files: List<SourceFile>): IrModuleFragment =
-        frontend(files).backendInput.irModuleFragment
+        frontend(files, listOf()).backendInput.irModuleFragment
 
-    override fun compile(files: List<SourceFile>): GenerationState =
-        try {
-            frontend(files).apply {
-                codegenFactory.generateModule(state, backendInput)
-                state.factory.done()
-            }.state
-        } catch (e: Exception) {
-            throw TestsCompilerError(e)
-        }
+    override fun compile(
+        platformFiles: List<SourceFile>,
+        commonFiles: List<SourceFile>
+    ): GenerationState = try {
+        frontend(platformFiles, commonFiles).apply {
+            codegenFactory.generateModule(state, backendInput)
+            state.factory.done()
+        }.state
+    } catch (e: Exception) {
+        throw TestsCompilerError(e)
+    }
 }

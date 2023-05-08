@@ -2031,7 +2031,10 @@ class ComposableFunctionBodyTransformer(
 
             val name = declaration.kotlinFqName
             val file = declaration.file.name
-            val line = declaration.file.fileEntry.getLineNumber(declaration.startOffset)
+            // FIXME: This should probably use `declaration.startOffset`, but the K2 implementation
+            //        is unfinished (i.e., in K2 the start offset of an annotated function could
+            //        point at the annotation instead of the start of the function).
+            val line = declaration.file.fileEntry.getLineNumber(startOffset)
             val traceInfo = "$name ($file:$line)" // TODO(174715171) decide on what to log
             val dirty = scope.dirty
             val changed = scope.changedParameter
@@ -3855,16 +3858,16 @@ class ComposableFunctionBodyTransformer(
                 for (param in function.valueParameters) {
                     val paramName = param.name.asString()
                     when {
-                        paramName.startsWith("_context_receiver_") -> Unit
                         paramName == KtxNameConventions.COMPOSER_PARAMETER.identifier ->
                             composerParameter = param
                         paramName.startsWith(KtxNameConventions.DEFAULT_PARAMETER.identifier) ->
                             defaultParams += param
                         paramName.startsWith(KtxNameConventions.CHANGED_PARAMETER.identifier) ->
                             changedParams += param
-                        paramName.startsWith("\$anonymous\$parameter") -> Unit
-                        paramName.startsWith("\$name\$for\$destructuring") -> Unit
-                        paramName.startsWith("\$noName_") -> Unit
+                        paramName.startsWith("\$context_receiver_") ||
+                        paramName.startsWith("\$anonymous\$parameter") ||
+                        paramName.startsWith("\$name\$for\$destructuring") ||
+                        paramName.startsWith("\$noName_") ||
                         paramName == "\$this" -> Unit
                         else -> realValueParamCount++
                     }

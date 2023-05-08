@@ -22,11 +22,8 @@ import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
 import org.jetbrains.kotlin.utils.addToStdlib.flatGroupBy
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
 
-@RunWith(JUnit4::class)
-abstract class AbstractComposeDiagnosticsTest : AbstractCompilerTest(useFir = false) {
+abstract class AbstractComposeDiagnosticsTest(useFir: Boolean) : AbstractCompilerTest(useFir) {
     protected fun check(expectedText: String, ignoreParseErrors: Boolean = false) {
         val diagnosedRanges: MutableList<DiagnosedRange> = ArrayList()
         val clearText = CheckerTestUtil.parseDiagnosedRanges(expectedText, diagnosedRanges)

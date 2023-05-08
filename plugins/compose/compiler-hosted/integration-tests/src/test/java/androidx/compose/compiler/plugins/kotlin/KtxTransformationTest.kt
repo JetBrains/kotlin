@@ -16,12 +16,10 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
+import org.junit.Assume.assumeFalse
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
 
-@RunWith(JUnit4::class)
-class KtxTransformationTest : AbstractCodegenTest(useFir = false) {
+class KtxTransformationTest(useFir: Boolean) : AbstractCodegenTest(useFir) {
 //    b/179279455
 //    @Test
 //    fun testObserveLowering() {
@@ -540,6 +538,9 @@ class KtxTransformationTest : AbstractCodegenTest(useFir = false) {
 
     @Test
     fun testLambdaWithArgs() {
+        // FIR does not support named lambda arguments
+        // We will deprecate this in Compose, see b/281677454
+        assumeFalse(useFir)
         testCompile(
             """
         import androidx.compose.runtime.*

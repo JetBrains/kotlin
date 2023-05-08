@@ -21,17 +21,23 @@ import org.junit.Assert.assertTrue
 import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
+import org.robolectric.ParameterizedRobolectricTestRunner
 import org.robolectric.annotation.Config
 
 /* ktlint-disable max-line-length */
-@RunWith(RobolectricTestRunner::class)
+@RunWith(ParameterizedRobolectricTestRunner::class)
 @Config(
     manifest = Config.NONE,
     minSdk = 23,
     maxSdk = 23
 )
-class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
+class ComposerParamSignatureTests(useFir: Boolean) : AbstractCodegenSignatureTest(useFir) {
+    companion object {
+        @JvmStatic
+        @ParameterizedRobolectricTestRunner.Parameters(name = "useFir = {0}")
+        fun data() = arrayOf<Any>(false, true)
+    }
+
     @Test
     fun testParameterlessChildrenLambdasReused() = checkApi(
         """
@@ -96,6 +102,21 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
         """
     ) {
         assert(!it.contains("INVOKESTATIC kotlin/jvm/internal/Intrinsics.checkParameterIsNotNull"))
+    }
+
+    @Test
+    fun testComposableLambdaCall() = validateBytecode(
+        """
+            @Composable
+            fun Foo(f: @Composable () -> Unit) {
+              f()
+            }
+        """
+    ) {
+        // Calls to a composable lambda needs to invoke the `Function2.invoke` interface method
+        // taking two objects and *not* directly the `invoke` method that takes a Composer and
+        // an unboxed int.
+        assertTrue(it.contains("INVOKEINTERFACE kotlin/jvm/functions/Function2.invoke (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object; (itf)"))
     }
 
     @Test
@@ -1503,6 +1524,26 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
         """
     )
 
+    val hashCodeEqualsAndToString = if (useFir) {
+        """
+              public static equals-impl(ILjava/lang/Object;)Z
+              public equals(Ljava/lang/Object;)Z
+              public static hashCode-impl(I)I
+              public hashCode()I
+              public static toString-impl(I)Ljava/lang/String;
+              public toString()Ljava/lang/String;
+        """
+    } else {
+        """
+              public static toString-impl(I)Ljava/lang/String;
+              public toString()Ljava/lang/String;
+              public static hashCode-impl(I)I
+              public hashCode()I
+              public static equals-impl(ILjava/lang/Object;)Z
+              public equals(Ljava/lang/Object;)Z
+        """
+    }
+
     @Test
     fun testFunInterfaceWithInlineReturnType() = checkApi(
         """
@@ -1517,12 +1558,7 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
         """
             public final class Color {
               public final getValue()I
-              public static toString-impl(I)Ljava/lang/String;
-              public toString()Ljava/lang/String;
-              public static hashCode-impl(I)I
-              public hashCode()I
-              public static equals-impl(ILjava/lang/Object;)Z
-              public equals(Ljava/lang/Object;)Z
+              $hashCodeEqualsAndToString
               private synthetic <init>(I)V
               public static constructor-impl(I)I
               public final static synthetic box-impl(I)LColor;
@@ -1562,12 +1598,7 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
         """
             public final class Color {
               public final getValue()I
-              public static toString-impl(I)Ljava/lang/String;
-              public toString()Ljava/lang/String;
-              public static hashCode-impl(I)I
-              public hashCode()I
-              public static equals-impl(ILjava/lang/Object;)Z
-              public equals(Ljava/lang/Object;)Z
+              $hashCodeEqualsAndToString
               private synthetic <init>(I)V
               public static constructor-impl(I)I
               public final static synthetic box-impl(I)LColor;

@@ -17,11 +17,8 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
 
-@RunWith(JUnit4::class)
-class LambdaMemoizationTransformTests : AbstractIrTransformTest(useFir = false) {
+class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest(useFir) {
     @Test
     fun testCapturedThisFromFieldInitializer() = verifyComposeIrTransform(
         """
@@ -320,7 +317,7 @@ class LambdaMemoizationTransformTests : AbstractIrTransformTest(useFir = false) 
                   }
                   %composer.endReplaceableGroup()
                 }
-                AnimatedContent(1.0f, composableLambda(%composer, <>, false) { it: Float, %composer: Composer?, %changed: Int ->
+                AnimatedContent(1.0f, composableLambda(%composer, <>, false) { it: ${if (useFir) "@[ParameterName(name = 'targetState')] " else ""}Float, %composer: Composer?, %changed: Int ->
                   sourceInformation(%composer, "C<Foo()>:Test.kt")
                   if (isTraceInProgress()) {
                     traceEventStart(<>, %changed, -1, <>)
@@ -1123,49 +1120,52 @@ class LambdaMemoizationTransformTests : AbstractIrTransformTest(useFir = false) 
     )
 
     @Test
-    fun testComposableCaptureInDelegates() = verifyComposeIrTransform(
-        """
-            import androidx.compose.runtime.*
+    fun testComposableCaptureInDelegates() {
+        val delegateImplementation = """
+                  val content: Function2<Composer, Int, Unit>
+                    get() {
+                      return <this>.%%delegate_0.content
+                    }"""
+        verifyComposeIrTransform(
+            """
+                import androidx.compose.runtime.*
 
-            class Test(val value: Int) : Delegate by Impl({
-                value
-            })
-        """,
-        """
-            @StabilityInferred(parameters = 0)
-            class Test(val value: Int) : Delegate {
-              private val %%delegate_0: Impl = Impl(composableLambdaInstance(<>, true) { %composer: Composer?, %changed: Int ->
-                sourceInformation(%composer, "C:Test.kt")
-                if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
-                  if (isTraceInProgress()) {
-                    traceEventStart(<>, %changed, -1, <>)
+                class Test(val value: Int) : Delegate by Impl({
+                    value
+                })
+            """,
+            """
+                @StabilityInferred(parameters = 0)
+                class Test(val value: Int) : Delegate {${if (useFir) delegateImplementation else ""}
+                  private val %%delegate_0: Impl = Impl(composableLambdaInstance(<>, true) { %composer: Composer?, %changed: Int ->
+                    sourceInformation(%composer, "C:Test.kt")
+                    if (%changed and 0b1011 !== 0b0010 || !%composer.skipping) {
+                      if (isTraceInProgress()) {
+                        traceEventStart(<>, %changed, -1, <>)
+                      }
+                      value
+                      if (isTraceInProgress()) {
+                        traceEventEnd()
+                      }
+                    } else {
+                      %composer.skipToGroupEnd()
+                    }
                   }
-                  value
-                  if (isTraceInProgress()) {
-                    traceEventEnd()
-                  }
-                } else {
-                  %composer.skipToGroupEnd()
+                  )${if (!useFir) delegateImplementation else ""}
+                  static val %stable: Int = 0
                 }
-              }
-              )
-              val content: Function2<Composer, Int, Unit>
-                get() {
-                  return <this>.%%delegate_0.content
+            """,
+            """
+                import androidx.compose.runtime.Composable
+
+                interface Delegate {
+                    val content: @Composable () -> Unit
                 }
-              static val %stable: Int = 0
-            }
-        """,
-        """
-            import androidx.compose.runtime.Composable
 
-            interface Delegate {
-                val content: @Composable () -> Unit
-            }
-
-            class Impl(override val content: @Composable () -> Unit) : Delegate
-        """
-    )
+                class Impl(override val content: @Composable () -> Unit) : Delegate
+            """
+        )
+    }
 
     @Test // Regression validating b/246399235
     fun testB246399235() {
