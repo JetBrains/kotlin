@@ -239,7 +239,9 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
                     throw IllegalArgumentException("Global '$typeInfoSymbolName' already exists")
                 }
             } else {
-                if (!context.config.producePerFileCache || declaration !in generationState.constructedFromExportedInlineFunctions)
+                if (declaration.visibility.isPublicAPI) {
+                    LLVMSetLinkage(llvmTypeInfoPtr, LLVMLinkage.LLVMExternalLinkage)
+                } else if (!context.config.producePerFileCache || declaration !in generationState.constructedFromExportedInlineFunctions)
                     LLVMSetLinkage(llvmTypeInfoPtr, LLVMLinkage.LLVMInternalLinkage)
             }
 
@@ -343,7 +345,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
             val storage = if (declaration.storageKind(context) == FieldStorageKind.THREAD_LOCAL) {
                 addKotlinThreadLocal(name, declaration.type.toLLVMType(llvm), alignmnet)
             } else {
-                addKotlinGlobal(name, declaration.type.toLLVMType(llvm), alignmnet, isExported = false)
+                addKotlinGlobal(name, declaration.type.toLLVMType(llvm), alignmnet, isExported = declaration.visibility.isPublicAPI)
             }
 
             declaration.metadata = CodegenStaticFieldMetadata(

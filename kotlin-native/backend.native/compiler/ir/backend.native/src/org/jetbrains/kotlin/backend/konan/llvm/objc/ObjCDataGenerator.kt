@@ -115,9 +115,9 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
                     ConstArray(methodType, methodStructs)
             )
 
-            val globalName = "\u0001l_OBJC_\$_INSTANCE_METHODS_$name"
+            val globalName = "_OBJC_\$_INSTANCE_METHODS_$name"
             val global = llvm.staticData.placeGlobal(globalName, methodList).also {
-                it.setLinkage(LLVMLinkage.LLVMPrivateLinkage)
+                it.setLinkage(LLVMLinkage.LLVMInternalLinkage)
                 it.setAlignment(runtime.pointerAlignment)
                 it.setSection("__DATA, __objc_const")
             }

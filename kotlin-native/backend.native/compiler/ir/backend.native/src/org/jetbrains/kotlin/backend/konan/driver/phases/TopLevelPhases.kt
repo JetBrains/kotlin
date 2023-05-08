@@ -83,6 +83,7 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runObjCExportCodegen(
     objCCodeGenerator.generate(objCExportCodeSpec)
     codegen.objCDataGenerator?.finishModule()
     codegen.createGlobalCtors()
+    objCCodeGenerator.emitImageInfo()
     objCCodeGenerator.dispose()
 
     runPhase(WriteBitcodeFilePhase, WriteBitcodeFileInput(

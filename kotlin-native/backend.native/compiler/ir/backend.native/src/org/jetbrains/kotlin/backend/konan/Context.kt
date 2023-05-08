@@ -122,8 +122,6 @@ internal class Context(
     }
 
     var cAdapterExportedElements: CAdapterExportedElements? = null
-    var objCExportedInterface: ObjCExportedInterface? = null
-    var objCExportCodeSpec: ObjCExportCodeSpec? = null
 
     fun ghaEnabled() = ::globalHierarchyAnalysisResult.isInitialized
 

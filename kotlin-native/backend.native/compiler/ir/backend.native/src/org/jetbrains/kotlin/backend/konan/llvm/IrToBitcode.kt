@@ -441,7 +441,7 @@ internal class CodeGeneratorVisitor(
                 ObjCExportBlockCodeGenerator(codegen).generate()
             }
 
-            codegen.objCDataGenerator?.finishModule()
+//            codegen.objCDataGenerator?.finishModule()
 
             generationState.coverage.writeRegionInfo()
             overrideRuntimeGlobals()

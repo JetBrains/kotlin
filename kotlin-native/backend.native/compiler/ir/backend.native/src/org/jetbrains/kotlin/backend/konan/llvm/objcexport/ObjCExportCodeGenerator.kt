@@ -308,6 +308,43 @@ internal class ObjCExportCodeGenerator(
         else -> this
     }
 
+    private fun addModuleMetadata(metadataNode: LLVMValueRef?) {
+        LLVMAddNamedMetadataOperand(llvm.module, "llvm.module.flags", metadataNode)
+    }
+
+    fun emitImageInfo() {
+        val llvmOne = llvm.int32(1)
+        val objcVersion = node(llvm.llvmContext,
+                llvmOne,
+                "Objective-C Version".mdString(llvm.llvmContext),
+                llvm.int32(2)
+        )
+        addModuleMetadata(objcVersion)
+        val imageInfoVersion = node(llvm.llvmContext,
+                llvmOne,
+                "Objective-C Image Info Version".mdString(llvm.llvmContext),
+                llvm.int32(0)
+        )
+        addModuleMetadata(imageInfoVersion)
+        val imageInfoSection = node(llvm.llvmContext,
+                llvmOne,
+                "Objective-C Image Info Section".mdString(llvm.llvmContext),
+                "__DATA,__objc_imageinfo,regular,no_dead_strip".mdString(llvm.llvmContext)
+        )
+        addModuleMetadata(imageInfoSection)
+        val objcGC = node(llvm.llvmContext, llvmOne,
+                "Objective-C Garbage Collection".mdString(llvm.llvmContext),
+                llvm.int8(2)
+        )
+        addModuleMetadata(objcGC)
+        val classProperties = node(llvm.llvmContext,
+                llvmOne,
+                "Objective-C Class Properties".mdString(llvm.llvmContext),
+                llvm.int32(64)
+        )
+        addModuleMetadata(classProperties)
+    }
+
     val ObjCMethodSpec.BaseMethod<IrFunctionSymbol>.owner get() = symbol.owner.getLowered()
     val ObjCMethodSpec.BaseMethod<IrConstructorSymbol>.owner get() = symbol.owner.getLowered()
     val ObjCMethodSpec.BaseMethod<IrSimpleFunctionSymbol>.owner get() = symbol.owner.getLowered()
