@@ -16296,6 +16296,12 @@ public class BlackBoxCodegenTestGenerated extends AbstractBlackBoxCodegenTest {
         }
 
         @Test
+        @TestMetadata("enumEntriesCompatibilityCheck.kt")
+        public void testEnumEntriesCompatibilityCheck() throws Exception {
+            runTest("compiler/testData/codegen/box/enum/enumEntriesCompatibilityCheck.kt");
+        }
+
+        @Test
         @TestMetadata("enumEntriesInCompanion.kt")
         public void testEnumEntriesInCompanion() throws Exception {
             runTest("compiler/testData/codegen/box/enum/enumEntriesInCompanion.kt");

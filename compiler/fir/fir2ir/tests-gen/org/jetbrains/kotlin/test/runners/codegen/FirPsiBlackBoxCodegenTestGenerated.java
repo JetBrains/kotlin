@@ -16644,6 +16644,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
         }
 
         @Test
+        @TestMetadata("enumEntriesCompatibilityCheck.kt")
+        public void testEnumEntriesCompatibilityCheck() throws Exception {
+            runTest("compiler/testData/codegen/box/enum/enumEntriesCompatibilityCheck.kt");
+        }
+
+        @Test
         @TestMetadata("enumEntriesFromJava.kt")
         public void testEnumEntriesFromJava() throws Exception {
             runTest("compiler/testData/codegen/box/enum/enumEntriesFromJava.kt");
