@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.ir.backend.js.ic
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.CodedOutputStream
+import org.jetbrains.kotlin.utils.newHashMapWithExpectedSize
+import org.jetbrains.kotlin.utils.newHashSetWithExpectedSize
 import java.io.File
 import java.io.OutputStream
 
@@ -41,11 +43,11 @@ internal fun notFoundIcError(what: String, libFile: KotlinLibraryFile? = null, s
 }
 
 internal inline fun <E> buildSetUntil(to: Int, builderAction: MutableSet<E>.(Int) -> Unit): Set<E> {
-    return HashSet<E>(to).apply { repeat(to) { builderAction(it) } }
+    return newHashSetWithExpectedSize<E>(to).apply { repeat(to) { builderAction(it) } }
 }
 
 internal inline fun <K, V> buildMapUntil(to: Int, builderAction: MutableMap<K, V>.(Int) -> Unit): Map<K, V> {
-    return HashMap<K, V>(to).apply { repeat(to) { builderAction(it) } }
+    return newHashMapWithExpectedSize<K, V>(to).apply { repeat(to) { builderAction(it) } }
 }
 
 internal fun findStdlib(

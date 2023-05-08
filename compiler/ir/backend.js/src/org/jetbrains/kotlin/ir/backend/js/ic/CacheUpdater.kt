@@ -478,11 +478,11 @@ class CacheUpdater(
         }
 
         fun collectFilesToRebuildSignatures(
-            filesWithModifiedExports: KotlinSourceFileMap<UpdatedDependenciesMetadata>
+            filesWithModifiedExportsOrImports: KotlinSourceFileMap<UpdatedDependenciesMetadata>
         ): KotlinSourceFileMap<KotlinSourceFileExports> {
             val libFilesToRebuild = KotlinSourceFileMutableMap<KotlinSourceFileExports>()
 
-            for ((libFile, srcFiles) in filesWithModifiedExports) {
+            for ((libFile, srcFiles) in filesWithModifiedExportsOrImports) {
                 val filesToRebuild by lazy(LazyThreadSafetyMode.NONE) { libFilesToRebuild.getOrPutFiles(libFile) }
                 val fileStats by lazy(LazyThreadSafetyMode.NONE) { dirtyFileStats.getOrPutFiles(libFile) }
                 val cache = getLibIncrementalCache(libFile)
@@ -697,7 +697,9 @@ class CacheUpdater(
         // Load declarations referenced during `context` initialization
         loadedIr.loadUnboundSymbols()
 
-        val dirtyFiles = dirtyFileExports.entries.associateTo(newHashMapWithExpectedSize(dirtyFileExports.size)) { it.key to HashSet(it.value.keys) }
+        val dirtyFiles = dirtyFileExports.entries.associateTo(newHashMapWithExpectedSize(dirtyFileExports.size)) {
+            it.key to HashSet(it.value.keys)
+        }
 
         stopwatch.startNext("Processing IR - updating intrinsics and builtins dependencies")
         updater.updateStdlibIntrinsicDependencies(loadedIr, mainModuleFragment, dirtyFiles)
