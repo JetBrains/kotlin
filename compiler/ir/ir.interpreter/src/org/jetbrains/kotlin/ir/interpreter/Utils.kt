@@ -219,7 +219,7 @@ internal fun IrFieldAccessExpression.accessesTopLevelOrObjectField(): Boolean {
 
 internal fun IrClass.getOriginalPropertyByName(name: String): IrProperty {
     val property = this.properties.single { it.name.asString() == name }
-    return (property.getter!!.getLastOverridden() as IrSimpleFunction).correspondingPropertySymbol!!.owner
+    return property.getter!!.getLastOverridden().property!!
 }
 
 internal fun IrFunctionAccessExpression.getFunctionThatContainsDefaults(): IrFunction {
@@ -342,3 +342,7 @@ internal fun IrEnumEntry.toState(irBuiltIns: IrBuiltIns): Common {
 
     return enumClassObject
 }
+
+internal val IrFunction.property: IrProperty?
+    get() = (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner
+

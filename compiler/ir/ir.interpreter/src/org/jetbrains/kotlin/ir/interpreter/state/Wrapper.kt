@@ -64,7 +64,7 @@ internal class Wrapper(val value: Any, override val irClass: IrClass, environmen
 
     fun getMethod(irFunction: IrFunction): MethodHandle? {
         // if function is actually a getter, then use "get${property.name.capitalize()}" as method name
-        val propertyName = (irFunction as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.name?.asString()
+        val propertyName = irFunction.property?.name?.asString()
         val propertyCall = listOfNotNull(propertyName, "get${propertyName?.capitalizeAsciiOnly()}")
             .firstOrNull { receiverClass.methods.any { method -> method.name == it } }
 

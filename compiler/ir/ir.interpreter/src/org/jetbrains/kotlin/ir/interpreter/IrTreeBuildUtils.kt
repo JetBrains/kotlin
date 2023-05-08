@@ -114,7 +114,7 @@ internal fun createTempClass(name: Name, origin: IrDeclarationOrigin = TEMP_CLAS
 }
 
 internal fun IrFunction.createGetField(): IrExpression {
-    val backingField = (this as IrSimpleFunction).correspondingPropertySymbol?.owner?.backingField!!
+    val backingField = this.property!!.backingField!!
     val receiver = dispatchReceiverParameter ?: extensionReceiverParameter
     return backingField.createGetField(receiver)
 }

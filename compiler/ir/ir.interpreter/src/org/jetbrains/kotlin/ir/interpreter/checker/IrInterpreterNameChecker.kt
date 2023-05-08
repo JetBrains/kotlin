@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrCallableReference
 import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
 import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
+import org.jetbrains.kotlin.ir.interpreter.property
 import org.jetbrains.kotlin.ir.util.isSubclassOf
 
 class IrInterpreterNameChecker : IrInterpreterChecker {
@@ -35,9 +36,7 @@ class IrInterpreterNameChecker : IrInterpreterChecker {
         fun IrCall.isKCallableNameCall(irBuiltIns: IrBuiltIns): Boolean {
             if (this.dispatchReceiver !is IrCallableReference<*>) return false
 
-            val directMember = this.symbol.owner.let {
-                (it as? IrSimpleFunction)?.correspondingPropertySymbol?.owner ?: it
-            }
+            val directMember = this.symbol.owner.let { it.property ?: it }
 
             val irClass = directMember.parent as? IrClass ?: return false
             if (!irClass.isSubclassOf(irBuiltIns.kCallableClass.owner)) return false
@@ -53,7 +52,7 @@ class IrInterpreterNameChecker : IrInterpreterChecker {
         private fun IrCall.isEnumName(): Boolean {
             val owner = this.symbol.owner
             if (owner.extensionReceiverParameter != null || owner.valueParameters.isNotEmpty()) return false
-            val property = (owner as? IrSimpleFunction)?.correspondingPropertySymbol?.owner ?: return false
+            val property = owner.property ?: return false
             return this.dispatchReceiver is IrGetEnumValue && property.name.asString() == "name"
         }
     }

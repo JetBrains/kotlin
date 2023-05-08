@@ -116,6 +116,3 @@ enum class EvaluationMode {
         return (this.parent as? IrClass)?.isMarkedWith(annotation) ?: false
     }
 }
-
-private val IrFunction.property: IrProperty?
-    get() = (this as? IrSimpleFunction)?.correspondingPropertySymbol?.owner

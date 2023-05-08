@@ -171,7 +171,7 @@ internal object EnumIntrinsics : IntrinsicBase() {
         val enumEntry = callStack.loadState(irFunction.dispatchReceiverParameter!!.symbol)
         when (irFunction.name.asString()) {
             "<get-name>", "<get-ordinal>" -> {
-                val symbol = (irFunction as IrSimpleFunction).correspondingPropertySymbol!!
+                val symbol = irFunction.property!!.symbol
                 callStack.pushState(enumEntry.getField(symbol)!!)
             }
             "compareTo" -> {
