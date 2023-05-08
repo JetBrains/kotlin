@@ -41,7 +41,7 @@ tasks.withType(KotlinCompile).configureEach {
 }
 
 androidx {
-    name = "AndroidX Compose Hosted Compiler Plugin"
+    name = "Compose Hosted Compiler Plugin"
     // This is only published because that is required when exporting it to g3.
     // Nobody should ever get this artifact from maven; just from studio or from source
     type = LibraryType.COMPILER_PLUGIN
