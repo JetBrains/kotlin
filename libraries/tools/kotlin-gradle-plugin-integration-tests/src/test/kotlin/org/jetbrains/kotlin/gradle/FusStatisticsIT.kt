@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.gradle.util.replaceText
 import java.nio.file.Path
 
 @DisplayName("FUS statistic")
-class FusStatisticsIT : KGPBaseTest() {
+//Tests for FUS statistics have to create new instance of KotlinBuildStatsService
+class FusStatisticsIT : KGPDaemonsBaseTest() {
     @DisplayName("for dokka")
     @GradleTest
     fun testDokka(gradleVersion: GradleVersion) {
@@ -37,25 +38,9 @@ class FusStatisticsIT : KGPBaseTest() {
             "plugins {",
             """
                     plugins {
-                        id("org.jetbrains.dokka") version "1.7.10"
+                        id("org.jetbrains.dokka") version "1.8.10"
                     """.trimIndent()
         )
-        buildGradle.modify {
-            """
-                        import org.jetbrains.dokka.DokkaConfiguration.Visibility
-                        import org.jetbrains.dokka.gradle.DokkaTask
-                        $it
-                        tasks.withType(DokkaTask.class) {
-                            dokkaSourceSets.configureEach {
-                                documentedVisibilities.set([
-                                        Visibility.PUBLIC,
-                                        Visibility.PROTECTED
-                                ])
-                            }
-                        }
-                    """.trimIndent()
-
-        }
     }
 
     private val GradleProject.fusStatisticsPath: Path
