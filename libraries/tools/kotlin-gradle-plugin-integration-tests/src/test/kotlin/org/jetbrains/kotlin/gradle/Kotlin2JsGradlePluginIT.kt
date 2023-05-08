@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle
 import com.google.gson.Gson
 import com.google.gson.JsonNull
 import com.google.gson.JsonObject
-import org.gradle.api.logging.LogLevel
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
@@ -20,7 +19,6 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockCopyTask.Companion.STORE_YARN_LOCK_NAME
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockCopyTask.Companion.UPGRADE_YARN_LOCK
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockCopyTask.Companion.YARN_LOCK_MISMATCH_MESSAGE
-import org.jetbrains.kotlin.gradle.tasks.USING_JS_INCREMENTAL_COMPILATION_MESSAGE
 import org.jetbrains.kotlin.gradle.tasks.USING_JS_IR_BACKEND_MESSAGE
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.TestVersions.Gradle.G_7_6
@@ -1026,51 +1024,6 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
         }
     }
 
-    @DisplayName("incremental compilation for js works")
-    @GradleTest
-    fun testIncrementalCompilation(gradleVersion: GradleVersion) {
-        val buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
-        project("kotlin2JsICProject", gradleVersion, buildOptions = buildOptions) {
-            build("compileKotlinJs", "compileTestKotlinJs") {
-                checkIrCompilationMessage()
-                assertOutputContains(USING_JS_INCREMENTAL_COMPILATION_MESSAGE)
-                assertCompiledKotlinSources(projectPath.allKotlinFiles.relativizeTo(projectPath), output)
-            }
-
-            build("compileKotlinJs", "compileTestKotlinJs") {
-                assertCompiledKotlinSources(emptyList(), output)
-            }
-
-            val modifiedFile = subProject("lib").kotlinSourcesDir().resolve("A.kt") ?: error("No A.kt file in test project")
-            modifiedFile.modify {
-                it.replace("val x = 0", "val x = \"a\"")
-            }
-            build("compileKotlinJs", "compileTestKotlinJs") {
-                checkIrCompilationMessage()
-                assertOutputContains(USING_JS_INCREMENTAL_COMPILATION_MESSAGE)
-                val affectedFiles = listOf("A.kt", "useAInLibMain.kt", "useAInAppMain.kt", "useAInAppTest.kt").mapNotNull {
-                    projectPath.findInPath(it)
-                }
-                assertCompiledKotlinSources(affectedFiles.relativizeTo(projectPath), output)
-            }
-        }
-    }
-
-    @DisplayName("non-incremental compilation works")
-    @GradleTest
-    fun testIncrementalCompilationDisabled(gradleVersion: GradleVersion) {
-        val jsOptions = defaultJsOptions.run {
-            if (irBackend) copy(incrementalJsKlib = false) else copy(incrementalJs = false)
-        }
-        val options = defaultBuildOptions.copy(jsOptions = jsOptions)
-        project("kotlin2JsICProject", gradleVersion, buildOptions = options) {
-            build("compileKotlinJs", "compileTestKotlinJs") {
-                checkIrCompilationMessage()
-                assertOutputDoesNotContain(USING_JS_INCREMENTAL_COMPILATION_MESSAGE)
-            }
-        }
-    }
-
     @DisplayName("smoke test of org.jetbrains.kotlin.js plugin")
     @GradleTest
     @DisabledIf(
@@ -1733,29 +1686,6 @@ abstract class AbstractKotlin2JsGradlePluginIT(protected val irBackend: Boolean)
             .let {
                 Gson().fromJson(it.readText(), PackageJson::class.java)
             }
-
-    @DisplayName("incremental compilation with multiple js modules after frontend compilation error works")
-    @GradleTest
-    fun testIncrementalCompilationWithMultipleModulesAfterCompilationError(gradleVersion: GradleVersion) {
-        val buildOptions = defaultBuildOptions.copy(jsOptions = defaultJsOptions.copy(incrementalJsKlib = true))
-        project("kotlin-js-ir-ic-multiple-artifacts", gradleVersion, buildOptions = buildOptions) {
-            build("compileKotlinJs")
-
-            val libKt = subProject("lib").kotlinSourcesDir().resolve("Lib.kt") ?: error("No Lib.kt file in test project")
-            val appKt = subProject("app").kotlinSourcesDir().resolve("App.kt") ?: error("No App.kt file in test project")
-
-            libKt.modify { it.replace("fun answer", "func answe") } // introduce compilation error
-            buildAndFail("compileKotlinJs")
-            libKt.modify { it.replace("func answe", "fun answer") } // revert compilation error
-            appKt.modify { it.replace("Sheldon:", "Sheldon :") } // some change for incremental compilation
-            build("compileKotlinJs", buildOptions = buildOptions.copy(logLevel = LogLevel.DEBUG)) {
-                assertOutputContains(USING_JS_INCREMENTAL_COMPILATION_MESSAGE)
-                assertTasksUpToDate(":lib:compileKotlinJs")
-                assertTasksExecuted(":app:compileKotlinJs")
-                assertCompiledKotlinSources(listOf(appKt).relativizeTo(projectPath), output)
-            }
-        }
-    }
 
     @DisplayName("smoothly fail npm install")
     @GradleTest

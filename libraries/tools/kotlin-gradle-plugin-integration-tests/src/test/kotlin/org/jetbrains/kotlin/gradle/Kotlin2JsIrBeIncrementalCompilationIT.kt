@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import kotlin.io.path.appendText
@@ -18,20 +19,34 @@ import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
 import kotlin.test.assertTrue
 
+@DisplayName("Incremental compilation tests for Kotlin JS IR backend with 2.0")
+@JsGradlePluginTests
+class Kotlin2FirJsIrBeIncrementalCompilationIT : Kotlin2JsIrBeIncrementalCompilationIT() {
+    override val defaultBuildOptions: BuildOptions
+        get() = super.defaultBuildOptions.copy(
+            languageVersion = "2.0"
+        )
+
+    @Disabled("Not found way to fail BE compilation with successful FE 2.0 compilation")
+    override fun testRebuildAfterError(gradleVersion: GradleVersion) {
+        super.testRebuildAfterError(gradleVersion)
+    }
+}
+
 @DisplayName("Incremental compilation tests for Kotlin JS IR backend")
 @JsGradlePluginTests
-class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
+open class Kotlin2JsIrBeIncrementalCompilationIT : KGPBaseTest() {
     override val defaultBuildOptions = BuildOptions(
         jsOptions = BuildOptions.JsOptions(
             jsCompilerType = KotlinJsCompilerType.IR,
             incrementalJsKlib = true,
             incrementalJsIr = true
-        )
+        ),
     )
 
     @DisplayName("Test rebuild after backend error")
     @GradleTest
-    fun testRebuildAfterError(gradleVersion: GradleVersion) {
+    open fun testRebuildAfterError(gradleVersion: GradleVersion) {
         project("kotlin-js-ir-ic-rebuild-after-error", gradleVersion) {
             fun readCacheFiles(): Map<String, Int> {
                 val cacheFiles = mutableMapOf<String, Int>()
