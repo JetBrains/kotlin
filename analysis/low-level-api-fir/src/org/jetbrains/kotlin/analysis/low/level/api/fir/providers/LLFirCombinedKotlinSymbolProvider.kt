@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
+import org.jetbrains.kotlin.fir.resolve.providers.flatMapToNullableSet
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -47,13 +48,14 @@ internal class LLFirCombinedKotlinSymbolProvider private constructor(
     private val declarationProvider: KotlinDeclarationProvider,
 ) : LLFirSelectingCombinedSymbolProvider<LLFirProvider.SymbolProvider>(session, project, providers) {
     private val symbolNameCache = object : LLFirSymbolProviderNameCacheBase(session) {
-        override fun computeClassifierNames(packageFqName: FqName): Set<String>? = buildSet {
-            providers.forEach { addAll(it.knownTopLevelClassifiersInPackage(packageFqName) ?: return null) }
-        }
+        override fun computeClassifierNames(packageFqName: FqName): Set<String>? =
+            providers.flatMapToNullableSet { it.knownTopLevelClassifiersInPackage(packageFqName) }
 
-        override fun computeCallableNames(packageFqName: FqName): Set<Name>? = buildSet {
-            providers.forEach { addAll(it.computeCallableNamesInPackage(packageFqName) ?: return null) }
-        }
+        override fun computeCallableNames(packageFqName: FqName): Set<Name>? =
+            providers.flatMapToNullableSet { it.computeCallableNamesInPackage(packageFqName) }
+
+        override fun computePackageNamesWithTopLevelCallables(): Set<String>? =
+            providers.flatMapToNullableSet { it.computePackageSetWithTopLevelCallables() }
     }
 
     private val classifierCache = NullableCaffeineCache<ClassId, FirClassLikeSymbol<*>> { it.maximumSize(500) }

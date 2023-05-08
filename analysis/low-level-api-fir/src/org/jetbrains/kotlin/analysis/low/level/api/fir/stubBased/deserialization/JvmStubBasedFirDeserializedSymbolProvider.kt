@@ -52,9 +52,6 @@ internal open class JvmStubBasedFirDeserializedSymbolProvider(
 ) : FirSymbolProvider(session) {
     private val declarationProvider by lazy(LazyThreadSafetyMode.PUBLICATION) { project.createDeclarationProvider(scope, module = null) }
     private val moduleData = moduleDataProvider.getModuleData(null)
-    private val packageSetWithTopLevelCallableDeclarations: Set<String> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        declarationProvider.computePackageSetWithTopLevelCallableDeclarations()
-    }
 
     private val namesByPackageCache by lazy(LazyThreadSafetyMode.PUBLICATION) {
         LLFirKotlinSymbolProviderNameCache(
@@ -80,8 +77,8 @@ internal open class JvmStubBasedFirDeserializedSymbolProvider(
     private val functionCache = session.firCachesFactory.createCache(::loadFunctionsByCallableId)
     private val propertyCache = session.firCachesFactory.createCache(::loadPropertiesByCallableId)
 
-    override fun computePackageSetWithTopLevelCallables(): Set<String> {
-        return packageSetWithTopLevelCallableDeclarations
+    override fun computePackageSetWithTopLevelCallables(): Set<String>? {
+        return namesByPackageCache.getPackageNamesWithTopLevelCallables()
     }
 
     override fun computeCallableNamesInPackage(packageFqName: FqName): Set<Name>? =
@@ -203,7 +200,6 @@ internal open class JvmStubBasedFirDeserializedSymbolProvider(
     }
 
     private fun <C : FirCallableSymbol<*>> FirCache<CallableId, List<C>, Nothing?>.getCallables(id: CallableId): List<C> {
-        if (id.packageName.asString() !in packageSetWithTopLevelCallableDeclarations) return emptyList()
         if (!namesByPackageCache.mayHaveTopLevelCallable(id.packageName, id.callableName)) return emptyList()
         return getValue(id)
     }
@@ -218,13 +214,11 @@ internal open class JvmStubBasedFirDeserializedSymbolProvider(
         destination += propertyCache.getCallables(CallableId(packageFqName, name))
     }
 
-    override fun getPackage(fqName: FqName): FqName? {
-        return if (!namesByPackageCache.getTopLevelClassifierNamesInPackage(fqName)
-                .isNullOrEmpty() || packageSetWithTopLevelCallableDeclarations.contains(fqName.asString())
-        ) {
-            fqName
-        } else null
-    }
+    override fun getPackage(fqName: FqName): FqName? =
+        fqName.takeIf {
+            namesByPackageCache.getTopLevelClassifierNamesInPackage(fqName)?.isNotEmpty() == true ||
+                    namesByPackageCache.getPackageNamesWithTopLevelCallables()?.contains(fqName.asString()) == true
+        }
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
         if (!namesByPackageCache.mayHaveTopLevelClassifier(classId, mayHaveFunctionClass = false)) return null

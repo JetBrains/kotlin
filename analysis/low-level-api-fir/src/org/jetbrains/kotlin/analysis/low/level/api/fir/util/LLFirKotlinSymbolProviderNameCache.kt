@@ -22,6 +22,9 @@ internal class LLFirKotlinSymbolProviderNameCache(
             .getTopLevelKotlinClassLikeDeclarationNamesInPackage(packageFqName)
             .mapTo(mutableSetOf()) { it.asString() }
 
+    override fun computePackageNamesWithTopLevelCallables(): Set<String> =
+        declarationProvider.computePackageSetWithTopLevelCallableDeclarations()
+
     override fun computeCallableNames(packageFqName: FqName): Set<Name> =
         declarationProvider.getTopLevelCallableNamesInPackage(packageFqName)
 }

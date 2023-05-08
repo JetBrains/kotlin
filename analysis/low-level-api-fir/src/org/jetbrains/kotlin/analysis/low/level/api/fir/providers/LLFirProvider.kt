@@ -195,8 +195,8 @@ internal class LLFirProvider(
         override fun getPackage(fqName: FqName): FqName? =
             providerHelper.getPackage(fqName)
 
-        // Computing the set of such package names is expensive and would require a new index. For now, it is not worth the marginal gains.
-        override fun computePackageSetWithTopLevelCallables(): Set<String>? = null
+        override fun computePackageSetWithTopLevelCallables(): Set<String>? =
+            providerHelper.symbolNameCache.getPackageNamesWithTopLevelCallables()
 
         override fun knownTopLevelClassifiersInPackage(packageFqName: FqName): Set<String>? =
             providerHelper.symbolNameCache.getTopLevelClassifierNamesInPackage(packageFqName)

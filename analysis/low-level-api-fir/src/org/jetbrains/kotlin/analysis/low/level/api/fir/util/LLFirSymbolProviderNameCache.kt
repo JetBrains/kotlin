@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.name.Name
  * Caches the names of classifiers and callables contained in a package. [LLFirSymbolProviderNameCache] is used by symbol providers to abort
  * symbol finding early if the symbol name isn't contained in the symbol provider's domain.
  *
- * For the [getTopLevelClassifierNamesInPackage] and [getTopLevelCallableNamesInPackage] functions,
+ * For the [getTopLevelClassifierNamesInPackage], [getTopLevelCallableNamesInPackage], and [getPackageNamesWithTopLevelCallables] functions,
  * the result may have false-positive entries but cannot have false-negative entries.
  * It should contain all the names in the package but may have some additional names that are not there.
  * Also, the `null` value might be returned when it's too heavyweight to calculate the results.
@@ -35,6 +35,10 @@ internal abstract class LLFirSymbolProviderNameCache {
      */
     abstract fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<String>?
 
+    /**
+     * Returns the set of package names which contain a top-level callable declaration within the cache's scope.
+     */
+    abstract fun getPackageNamesWithTopLevelCallables(): Set<String>?
 
     /**
      * Returns the set of top-level callable (functions and properties) names in a given scope inside the [packageFqName].
@@ -59,24 +63,34 @@ internal abstract class LLFirSymbolProviderNameCache {
     abstract fun mayHaveTopLevelCallable(packageFqName: FqName, name: Name): Boolean
 }
 
-
 internal abstract class LLFirSymbolProviderNameCacheBase(
     private val firSession: FirSession
 ) : LLFirSymbolProviderNameCache() {
     abstract fun computeClassifierNames(packageFqName: FqName): Set<String>?
+    abstract fun computePackageNamesWithTopLevelCallables(): Set<String>?
     abstract fun computeCallableNames(packageFqName: FqName): Set<Name>?
 
     private val topLevelClassifierNamesByPackage =
-        firSession.firCachesFactory.createCache<FqName, Set<String>?>(::computeClassifierNames)
+        firSession.firCachesFactory.createCache(::computeClassifierNames)
+
+    private val topLevelCallablePackageNames by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        computePackageNamesWithTopLevelCallables()
+    }
 
     private val topLevelCallableNamesByPackage =
-        firSession.firCachesFactory.createCache<FqName, Set<Name>?>(::computeCallableNames)
+        firSession.firCachesFactory.createCache(::computeCallableNames)
 
     final override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<String>? =
         topLevelClassifierNamesByPackage.getValue(packageFqName)
 
-    final override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name>? =
-        topLevelCallableNamesByPackage.getValue(packageFqName)
+    final override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name>? {
+        val packageNames = getPackageNamesWithTopLevelCallables()
+        if (packageNames != null && packageFqName.asString() !in packageNames) return null
+
+        return topLevelCallableNamesByPackage.getValue(packageFqName)
+    }
+
+    final override fun getPackageNamesWithTopLevelCallables(): Set<String>? = topLevelCallablePackageNames
 
     final override fun mayHaveTopLevelClassifier(classId: ClassId, mayHaveFunctionClass: Boolean): Boolean {
         val names = getTopLevelClassifierNamesInPackage(classId.packageFqName) ?: return true
@@ -90,10 +104,10 @@ internal abstract class LLFirSymbolProviderNameCacheBase(
     }
 }
 
-
 internal object LLFirEmptySymbolProviderNameCache : LLFirSymbolProviderNameCache() {
-    override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<String>? = emptySet()
-    override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name>? = emptySet()
+    override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<String> = emptySet()
+    override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> = emptySet()
+    override fun getPackageNamesWithTopLevelCallables(): Set<String> = emptySet()
     override fun mayHaveTopLevelClassifier(classId: ClassId, mayHaveFunctionClass: Boolean): Boolean = false
     override fun mayHaveTopLevelCallable(packageFqName: FqName, name: Name): Boolean = false
 }
@@ -104,6 +118,10 @@ private constructor(
 ) : LLFirSymbolProviderNameCache() {
     override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<String>? {
         return caches.flatMapToNullableSet { it.getTopLevelClassifierNamesInPackage(packageFqName) }
+    }
+
+    override fun getPackageNamesWithTopLevelCallables(): Set<String>? {
+        return caches.flatMapToNullableSet { it.getPackageNamesWithTopLevelCallables() }
     }
 
     override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name>? {

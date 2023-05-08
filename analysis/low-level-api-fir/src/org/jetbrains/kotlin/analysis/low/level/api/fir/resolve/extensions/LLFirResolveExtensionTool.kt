@@ -70,30 +70,34 @@ private class LLFirResolveExtensionToolNameCache(
     private val packageFilter: LLFirResolveExtensionToolPackageFilter,
     private val fileProvider: LLFirResolveExtensionsFileProvider,
 ) : LLFirSymbolProviderNameCache() {
-    override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<String>? = forbidAnalysis {
+    override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<String> = forbidAnalysis {
         if (!packageFilter.packageExists(packageFqName)) return emptySet()
-        return fileProvider.getFilesByPackage(packageFqName)
+        fileProvider.getFilesByPackage(packageFqName)
             .flatMap { it.getTopLevelClassifierNames() }
             .mapTo(mutableSetOf()) { it.asString() }
     }
 
+    override fun getPackageNamesWithTopLevelCallables(): Set<String> = forbidAnalysis {
+        packageFilter.getAllPackages().mapTo(mutableSetOf()) { it.asString() }
+    }
+
     override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> = forbidAnalysis {
         if (!packageFilter.packageExists(packageFqName)) return emptySet()
-        return fileProvider.getFilesByPackage(packageFqName)
+        fileProvider.getFilesByPackage(packageFqName)
             .flatMapTo(mutableSetOf()) { it.getTopLevelCallableNames() }
     }
 
     override fun mayHaveTopLevelClassifier(classId: ClassId, mayHaveFunctionClass: Boolean): Boolean = forbidAnalysis {
         if (!packageFilter.packageExists(classId.packageFqName)) return false
 
-        return fileProvider.getFilesByPackage(classId.packageFqName)
+        fileProvider.getFilesByPackage(classId.packageFqName)
             .any { it.mayHaveTopLevelClassifier(classId.getTopLevelShortClassName()) }
     }
 
     override fun mayHaveTopLevelCallable(packageFqName: FqName, name: Name): Boolean = forbidAnalysis {
         if (!packageFilter.packageExists(packageFqName)) return false
 
-        return fileProvider.getFilesByPackage(packageFqName)
+        fileProvider.getFilesByPackage(packageFqName)
             .any { it.mayHaveTopLevelCallable(name) }
     }
 }
