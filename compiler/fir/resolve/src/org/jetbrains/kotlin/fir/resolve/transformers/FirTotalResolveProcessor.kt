@@ -63,7 +63,7 @@ private inline fun <T : FirResolveProcessor> createAllResolveProcessors(
 ): List<T> {
     @Suppress("NAME_SHADOWING")
     val scopeSession = scopeSession ?: ScopeSession()
-    val phases = FirResolvePhase.values().filter {
+    val phases = entries.filter {
         !it.noProcessor
     }
     return phases.map { it.creator(scopeSession) }

@@ -108,7 +108,7 @@ class ClassFileToSourceStubConverter(val kaptContext: KaptContextForStubGenerati
         private val JAVA_KEYWORD_FILTER_REGEX = "[a-z]+".toRegex()
 
         @Suppress("UselessCallOnNotNull") // nullable toString(), KT-27724
-        private val JAVA_KEYWORDS = Tokens.TokenKind.values()
+        private val JAVA_KEYWORDS = Tokens.TokenKind.entries
             .filter { JAVA_KEYWORD_FILTER_REGEX.matches(it.toString().orEmpty()) }
             .mapTo(hashSetOf(), Any::toString)
 

@@ -123,7 +123,7 @@ class TextDiagnostic(
         }
 
         private fun computeInferenceCompatibility(abbreviation: String?): InferenceCompatibility {
-            return if (abbreviation == null) InferenceCompatibility.ALL else InferenceCompatibility.values().single { inference -> abbreviation == inference.abbreviation }
+            return if (abbreviation == null) InferenceCompatibility.ALL else InferenceCompatibility.entries.single { inference -> abbreviation == inference.abbreviation }
         }
 
         private fun extractDataBefore(prefix: String?, anchor: String): String? {

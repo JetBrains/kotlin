@@ -138,7 +138,7 @@ private fun collectLanguageFeatureMap(directives: String): Map<LanguageFeature, 
         val name = matcher.group(2)
         val feature = LanguageFeature.fromString(name) ?: throw AssertionError(
                 "Language feature not found, please check spelling: $name\n" +
-                "Known features:\n    ${LanguageFeature.values().joinToString("\n    ")}"
+                "Known features:\n    ${LanguageFeature.entries.joinToString("\n    ")}"
         )
         if (values.put(feature, mode) != null) {
             Assert.fail("Duplicate entry for the language feature: $name")

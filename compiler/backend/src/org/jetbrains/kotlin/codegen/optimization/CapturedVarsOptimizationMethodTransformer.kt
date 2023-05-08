@@ -236,7 +236,7 @@ internal const val INIT_METHOD_NAME = "<init>"
 
 internal val REF_TYPE_TO_ELEMENT_TYPE = HashMap<String, Type>().apply {
     put(AsmTypes.OBJECT_REF_TYPE.internalName, AsmTypes.OBJECT_TYPE)
-    PrimitiveType.values().forEach {
+    PrimitiveType.entries.forEach {
         put(AsmTypes.sharedTypeForPrimitive(it).internalName, AsmTypes.valueTypeForPrimitive(it))
     }
 }

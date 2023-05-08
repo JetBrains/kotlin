@@ -25,8 +25,8 @@ enum class PrimitiveType(val byteSize: Int) {
     val isIntegral: Boolean get() = this in integral
 
     companion object {
-        val exceptBoolean = PrimitiveType.values().filterNot { it == BOOLEAN }
-        val onlyNumeric = PrimitiveType.values().filterNot { it == BOOLEAN || it == CHAR }
+        val exceptBoolean = entries.filterNot { it == BOOLEAN }
+        val onlyNumeric = entries.filterNot { it == BOOLEAN || it == CHAR }
         val floatingPoint = listOf(FLOAT, DOUBLE)
         val integral = exceptBoolean - floatingPoint
     }

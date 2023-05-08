@@ -188,7 +188,7 @@ class JsIrBackendFacade(
         // If runIrDce then include DCE results
         // If perModuleOnly then skip whole program
         // (it.dce => runIrDce) && (perModuleOnly => it.perModule)
-        val translationModes = TranslationMode.values()
+        val translationModes = TranslationMode.entries
             .filter { (it.production || !onlyIrDce) && (!it.production || runIrDce) && (!perModuleOnly || it.perModule) }
             .filter { it.production == it.minimizedMemberNames }
             .toSet()

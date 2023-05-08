@@ -37,13 +37,13 @@ class EnumEntriesListTest {
     @Test
     fun testEmptyEnumBehaviour() {
         val list = enumEntries(EmptyEnum::values)
-        compare(EmptyEnum.values().toList(), list) { listBehavior() }
+        compare(EmptyEnum.entries, list) { listBehavior() }
     }
 
     @Test
     fun testForEnum() {
         val list = enumEntries(NonEmptyEnum::values)
-        val goldenCopy = NonEmptyEnum.values().toList()
+        val goldenCopy = NonEmptyEnum.entries
         assertEquals(goldenCopy, list)
         assertFalse { list is MutableList<*> }
         for ((idx, e) in goldenCopy.withIndex()) {
@@ -58,7 +58,7 @@ class EnumEntriesListTest {
     @Test
     fun testyEnumBehaviour() {
         val list = enumEntries(NonEmptyEnum::values)
-        compare(NonEmptyEnum.values().toList(), list) { listBehavior() }
+        compare(NonEmptyEnum.entries, list) { listBehavior() }
     }
 
     enum class E1 {

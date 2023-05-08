@@ -856,7 +856,7 @@ class DiagnosticReporterByTrackingStrategy(
 
             if (argumentsExpression != null) {
                 val specialFunctionName = requireNotNull(
-                    ControlStructureTypingUtils.ResolveConstruct.values().find { specialFunction ->
+                    ControlStructureTypingUtils.ResolveConstruct.entries.find { specialFunction ->
                         specialFunction.specialFunctionName == resolvedAtom.candidateDescriptor.name
                     }
                 ) { "Unsupported special construct: ${resolvedAtom.candidateDescriptor.name} not found in special construct names" }
@@ -913,7 +913,7 @@ class DiagnosticReporterByTrackingStrategy(
         }
         if (atom !is ResolvedCallAtom) return false
 
-        return ControlStructureTypingUtils.ResolveConstruct.values().any { specialFunction ->
+        return ControlStructureTypingUtils.ResolveConstruct.entries.any { specialFunction ->
             specialFunction.specialFunctionName == atom.candidateDescriptor.name
         }
     }

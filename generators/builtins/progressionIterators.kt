@@ -60,7 +60,7 @@ internal class ${t}ProgressionIterator(first: $t, last: $t, val step: $increment
 class GenerateProgressionIterators(out: PrintWriter) : BuiltInsSourceGenerator(out) {
     override fun getPackage() = "kotlin.ranges"
     override fun generateBody() {
-        for (kind in ProgressionKind.values()) {
+        for (kind in entries) {
             out.println(integerProgressionIterator(kind))
             out.println()
         }

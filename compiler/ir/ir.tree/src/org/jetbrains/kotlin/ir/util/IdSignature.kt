@@ -279,7 +279,7 @@ sealed class IdSignature {
         val nameSegments: List<String> get() = declarationFqName.split('.')
 
         private fun adaptMask(old: Long): Long =
-            old xor Flags.values().fold(0L) { a, f ->
+            old xor Flags.entries.toTypedArray().fold(0L) { a, f ->
                 if (!f.recursive) a or (old and (1L shl f.ordinal))
                 else a
             }

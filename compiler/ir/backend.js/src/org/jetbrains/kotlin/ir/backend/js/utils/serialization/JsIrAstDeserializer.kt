@@ -265,10 +265,10 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
         }
     }
 
-    private val sideEffectKindValues = SideEffectKind.values()
-    private val jsBinaryOperatorValues = JsBinaryOperator.values()
-    private val jsUnaryOperatorValues = JsUnaryOperator.values()
-    private val jsFunctionModifiersValues = JsFunction.Modifier.values()
+    private val sideEffectKindValues = SideEffectKind.entries.toTypedArray()
+    private val jsBinaryOperatorValues = JsBinaryOperator.entries.toTypedArray()
+    private val jsUnaryOperatorValues = JsUnaryOperator.entries.toTypedArray()
+    private val jsFunctionModifiersValues = JsFunction.Modifier.entries.toTypedArray()
 
     private fun readExpression(): JsExpression {
         return withComments {
@@ -436,7 +436,7 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
         }
     }
 
-    private val specialFunctionValues = SpecialFunction.values()
+    private val specialFunctionValues = SpecialFunction.entries.toTypedArray()
 
     private fun readName(): JsName {
         val identifier = stringTable[readInt()]

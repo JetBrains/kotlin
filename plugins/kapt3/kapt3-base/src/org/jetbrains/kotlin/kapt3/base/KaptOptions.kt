@@ -69,7 +69,7 @@ class KaptOptions(
         val javacOptions: MutableMap<String, String> = mutableMapOf()
 
         // Initialize this set with the flags that are enabled by default. This set may be changed later (with flags added or removed).
-        val flags: MutableSet<KaptFlag> = KaptFlag.values().filter { it.defaultValue }.toMutableSet()
+        val flags: MutableSet<KaptFlag> = KaptFlag.entries.filter { it.defaultValue }.toMutableSet()
 
         var mode: AptMode = AptMode.WITH_COMPILATION
         var detectMemoryLeaks: DetectMemoryLeaksMode = DetectMemoryLeaksMode.DEFAULT
@@ -195,7 +195,7 @@ fun KaptOptions.logString(additionalInfo: String = "") = buildString {
 
     appendLine("Annotation processing mode: ${mode.stringValue}")
     appendLine("Memory leak detection mode: ${detectMemoryLeaks.stringValue}")
-    KaptFlag.values().forEach { appendLine(it.description + ": " + this@logString[it]) }
+    KaptFlag.entries.forEach { appendLine(it.description + ": " + this@logString[it]) }
 
     appendLine("Project base dir: $projectBaseDir")
     appendLine("Compile classpath: " + compileClasspath.joinToString())

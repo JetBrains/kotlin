@@ -27,13 +27,13 @@ class EnumEntriesJvmTest {
     @Test
     fun testEmptyEnumSerialization() {
         val entries = serializeAndDeserialize(enumEntries(EmptyEnum::values))
-        compare(EmptyEnum.values().toList(), entries) { listBehavior() }
+        compare(EmptyEnum.entries, entries) { listBehavior() }
     }
 
     @Test
     fun testNonEmptyEnumSerialization() {
         val entries = serializeAndDeserialize(enumEntries(NonEmptyEnum::values))
-        compare(NonEmptyEnum.values().toList(), entries) { listBehavior() }
+        compare(NonEmptyEnum.entries, entries) { listBehavior() }
     }
 
     @Test
@@ -41,7 +41,7 @@ class EnumEntriesJvmTest {
         val nonSerializable = object {}  // Deliberately non-serializable
         val entries = enumEntries {
             nonSerializable // Capture it
-            EmptyEnum.values()
+            EmptyEnum.entries
         }
 
         val newEntries = serializeAndDeserialize(entries)

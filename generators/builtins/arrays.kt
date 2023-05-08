@@ -24,7 +24,7 @@ class GenerateArrays(out: PrintWriter) : BuiltInsSourceGenerator(out) {
     override fun getPackage() = "kotlin"
 
     override fun generateBody() {
-        for (kind in PrimitiveType.values()) {
+        for (kind in PrimitiveType.entries) {
             val typeLower = kind.name.lowercase()
             val s = kind.capitalized
             val defaultValue = when (kind) {

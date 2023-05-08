@@ -22,7 +22,7 @@ internal class HierarchicalStructureOptInMigrationArtifactContentMppIT : BaseGra
     companion object {
         @Parameterized.Parameters(name = "{0}")
         @JvmStatic
-        fun params() = Mode.values().map { arrayOf(it) }
+        fun params() = entries.map { arrayOf(it) }
     }
 
     @Parameterized.Parameter(0)

@@ -19,7 +19,7 @@ fun generateUnsignedTypes(
     targetDir: File,
     generate: (File, (PrintWriter) -> BuiltInsSourceGenerator) -> Unit
 ) {
-    for (type in UnsignedType.values()) {
+    for (type in UnsignedType.entries) {
         generate(File(targetDir, "kotlin/${type.capitalized}.kt")) { UnsignedTypeGenerator(type, it) }
         generate(File(targetDir, "kotlin/${type.capitalized}Array.kt")) { UnsignedArrayGenerator(type, it) }
     }
@@ -119,7 +119,7 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
 
 
     private fun generateCompareTo() {
-        for (otherType in UnsignedType.values()) {
+        for (otherType in UnsignedType.entries) {
             out.println("""
     /**
      * Compares this value with the specified value for order.
@@ -155,7 +155,7 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
     }
 
     private fun generateOperator(name: String) {
-        for (otherType in UnsignedType.values()) {
+        for (otherType in UnsignedType.entries) {
             val returnType = getOperatorReturnType(type, otherType)
 
             out.printDoc(binaryOperatorDoc(name, type, otherType), "    ")
@@ -176,7 +176,7 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
     }
 
     private fun generateFloorDivMod(name: String) {
-        for (otherType in UnsignedType.values()) {
+        for (otherType in UnsignedType.entries) {
             val operationType = getOperatorReturnType(type, otherType)
             val returnType = if (name == "mod") otherType else operationType
 
@@ -269,7 +269,7 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
     private fun msb(count: Int) = "most significant $count bits"
 
     private fun generateMemberConversions() {
-        for (otherType in UnsignedType.values()) {
+        for (otherType in UnsignedType.entries) {
             val signed = otherType.asSigned.capitalized
 
             out.println("    /**\n     * Converts this [$className] value to [$signed].\n     *")
@@ -306,7 +306,7 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
         }
         out.println()
 
-        for (otherType in UnsignedType.values()) {
+        for (otherType in UnsignedType.entries) {
             val name = otherType.capitalized
 
             if (type == otherType)
@@ -368,7 +368,7 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
     }
 
     private fun generateExtensionConversions() {
-        for (otherType in UnsignedType.values()) {
+        for (otherType in UnsignedType.entries) {
             val otherSigned = otherType.asSigned.capitalized
             val thisSigned = type.asSigned.capitalized
 

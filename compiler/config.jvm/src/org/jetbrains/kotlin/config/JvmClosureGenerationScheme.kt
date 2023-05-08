@@ -19,7 +19,7 @@ enum class JvmClosureGenerationScheme(
         @JvmStatic
         fun fromString(string: String?): JvmClosureGenerationScheme? {
             val lowerStr = string?.toLowerCaseAsciiOnly() ?: return null
-            return values().find { it.description == lowerStr }
+            return entries.find { it.description == lowerStr }
         }
     }
 }

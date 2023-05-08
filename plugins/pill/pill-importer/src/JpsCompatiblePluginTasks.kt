@@ -92,7 +92,7 @@ class JpsCompatiblePluginTasks(
         initEnvironment(rootProject)
 
         val variantOptionValue = System.getProperty("pill.variant", "base").uppercase(Locale.US)
-        val variant = PillExtensionMirror.Variant.values().firstOrNull { it.name == variantOptionValue }
+        val variant = PillExtensionMirror.Variant.entries.firstOrNull { it.name == variantOptionValue }
             ?: run {
                 rootProject.logger.error("Invalid variant name: $variantOptionValue")
                 return

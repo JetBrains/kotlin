@@ -15,7 +15,7 @@ import java.io.PrintWriter
 class GenerateRanges(out: PrintWriter) : BuiltInsSourceGenerator(out) {
     override fun getPackage() = "kotlin.ranges"
     override fun generateBody() {
-        for (kind in ProgressionKind.values()) {
+        for (kind in entries) {
             val t = kind.capitalized
             val range = "${t}Range"
 

@@ -82,7 +82,7 @@ enum class BuildTime(val parent: BuildTime? = null, val readableString: String) 
         const val serialVersionUID = 0L
 
         val children by lazy {
-            values().filter { it.parent != null }.groupBy { it.parent }
+            entries.filter { it.parent != null }.groupBy { it.parent }
         }
     }
 }

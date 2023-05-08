@@ -45,7 +45,7 @@ class FirStatusResolver(
         )
 
         private val MODIFIERS_FROM_OVERRIDDEN: List<FirDeclarationStatusImpl.Modifier> =
-            FirDeclarationStatusImpl.Modifier.values().toList() - NOT_INHERITED_MODIFIERS
+            FirDeclarationStatusImpl.Modifier.entries - NOT_INHERITED_MODIFIERS
     }
 
     private val extensionStatusTransformers = session.extensionService.statusTransformerExtensions

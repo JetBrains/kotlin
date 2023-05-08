@@ -849,7 +849,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             }
 
             if (progressiveMode) {
-                LanguageFeature.values().filter { it.kind.enabledInProgressiveMode }.forEach {
+                LanguageFeature.entries.filter { it.kind.enabledInProgressiveMode }.forEach {
                     // Don't overwrite other settings: users may want to turn off some particular
                     // breaking change manually instead of turning off whole progressive mode
                     if (!contains(it)) put(it, LanguageFeature.State.ENABLED)
@@ -1062,7 +1062,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         if (value == null) null
         else LanguageVersion.fromVersionString(value)
             ?: run {
-                val versionStrings = LanguageVersion.values().filterNot(LanguageVersion::isUnsupported).map(LanguageVersion::description)
+                val versionStrings = LanguageVersion.entries.filterNot(LanguageVersion::isUnsupported).map(LanguageVersion::description)
                 val message = "Unknown $versionOf version: $value\nSupported $versionOf versions: ${versionStrings.joinToString(", ")}"
                 collector.report(CompilerMessageSeverity.ERROR, message, null)
                 null

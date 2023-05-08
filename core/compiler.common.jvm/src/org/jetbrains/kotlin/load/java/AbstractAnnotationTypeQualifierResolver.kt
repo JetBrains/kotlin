@@ -69,7 +69,7 @@ abstract class AbstractAnnotationTypeQualifierResolver<TAnnotation : Any>(
     // They are not applicable for type parameter bounds because it would be a breaking change otherwise.
     private fun Set<AnnotationQualifierApplicabilityType>.allIfTypeUse(): Set<AnnotationQualifierApplicabilityType> =
         if (AnnotationQualifierApplicabilityType.TYPE_USE in this)
-            AnnotationQualifierApplicabilityType.values().toSet() - AnnotationQualifierApplicabilityType.TYPE_PARAMETER_BOUNDS + this
+            AnnotationQualifierApplicabilityType.entries.toSet() - AnnotationQualifierApplicabilityType.TYPE_PARAMETER_BOUNDS + this
         else
             this
 
@@ -204,7 +204,7 @@ abstract class AbstractAnnotationTypeQualifierResolver<TAnnotation : Any>(
 
     private companion object {
         val JAVA_APPLICABILITY_TYPES = mutableMapOf<String, AnnotationQualifierApplicabilityType>().apply {
-            for (type in AnnotationQualifierApplicabilityType.values()) {
+            for (type in AnnotationQualifierApplicabilityType.entries) {
                 getOrPut(type.javaTarget) { type }
             }
         }

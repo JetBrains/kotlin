@@ -37,7 +37,7 @@ enum class ReportCategory(val code: Int) {
 
     companion object {
         fun fromCode(code: Int): ReportCategory? =
-                ReportCategory.values().firstOrNull { it.code == code }
+                entries.firstOrNull { it.code == code }
     }
 }
 
@@ -49,7 +49,7 @@ enum class ReportSeverity(val code: Int) {
 
     companion object {
         fun fromCode(code: Int): ReportSeverity {
-            return values().firstOrNull { it.code == code } ?: error("Can't find a matching ReportSeverity with code = $code")
+            return entries.firstOrNull { it.code == code } ?: error("Can't find a matching ReportSeverity with code = $code")
         }
     }
 }

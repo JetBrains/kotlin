@@ -311,9 +311,9 @@ enum class DescriptorRendererModifier(val includeByDefault: Boolean) {
 
     companion object {
         @JvmField
-        val ALL_EXCEPT_ANNOTATIONS = values().filter { it.includeByDefault }.toSet()
+        val ALL_EXCEPT_ANNOTATIONS = entries.filter { it.includeByDefault }.toSet()
 
         @JvmField
-        val ALL = values().toSet()
+        val ALL = entries.toSet()
     }
 }

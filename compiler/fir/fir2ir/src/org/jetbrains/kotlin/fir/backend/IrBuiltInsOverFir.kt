@@ -471,7 +471,7 @@ class IrBuiltInsOverFir(
     }
 
     override val unsignedTypesToUnsignedArrays: Map<UnsignedType, IrClassSymbol> by lazy {
-        UnsignedType.values().mapNotNull { unsignedType ->
+        UnsignedType.entries.mapNotNull { unsignedType ->
             val array = referenceClassByClassId(unsignedType.arrayClassId)
             if (array == null) null else unsignedType to array
         }.toMap()

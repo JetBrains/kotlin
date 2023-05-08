@@ -42,7 +42,7 @@ fun generateUtils(targetDir: File) {
     FileWriter(targetDir.resolve("_UtilsGenerated.kt")).use { writer ->
         writer.generateHeader()
 
-        for (type in PrimitiveInteropType.values()) {
+        for (type in PrimitiveInteropType.entries) {
             writer.generateAllocWithValue(type)
             writer.appendLine()
         }

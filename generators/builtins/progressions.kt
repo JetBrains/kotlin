@@ -125,7 +125,7 @@ public open class $progression
     override fun generateBody() {
         out.println("import kotlin.internal.getProgressionLastElement")
         out.println()
-        for (kind in ProgressionKind.values()) {
+        for (kind in entries) {
             generateDiscreteBody(kind)
         }
     }

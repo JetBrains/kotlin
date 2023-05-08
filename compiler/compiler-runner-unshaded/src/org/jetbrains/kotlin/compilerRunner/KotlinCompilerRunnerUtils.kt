@@ -30,7 +30,7 @@ import java.util.concurrent.TimeUnit
 
 object KotlinCompilerRunnerUtils {
     fun exitCodeFromProcessExitCode(log: KotlinLogger, code: Int): ExitCode {
-        val exitCode = ExitCode.values().find { it.code == code }
+        val exitCode = ExitCode.entries.find { it.code == code }
         if (exitCode != null) return exitCode
 
         log.debug("Could not find exit code by value: $code")

@@ -187,24 +187,24 @@ object StandardNames {
         @JvmField val uIntArrayFqName: FqName = fqName("UIntArray")
         @JvmField val uLongArrayFqName: FqName = fqName("ULongArray")
 
-        @JvmField val primitiveTypeShortNames: Set<Name> = newHashSetWithExpectedSize<Name>(PrimitiveType.values().size).apply {
-            PrimitiveType.values().mapTo(this) { it.typeName }
+        @JvmField val primitiveTypeShortNames: Set<Name> = newHashSetWithExpectedSize<Name>(PrimitiveType.entries.size).apply {
+            PrimitiveType.entries.mapTo(this) { it.typeName }
         }
 
-        @JvmField val primitiveArrayTypeShortNames: Set<Name> = newHashSetWithExpectedSize<Name>(PrimitiveType.values().size).apply {
-            PrimitiveType.values().mapTo(this) { it.arrayTypeName }
+        @JvmField val primitiveArrayTypeShortNames: Set<Name> = newHashSetWithExpectedSize<Name>(PrimitiveType.entries.size).apply {
+            PrimitiveType.entries.mapTo(this) { it.arrayTypeName }
         }
 
         @JvmField val fqNameToPrimitiveType: Map<FqNameUnsafe, PrimitiveType> =
-            newHashMapWithExpectedSize<FqNameUnsafe, PrimitiveType>(PrimitiveType.values().size).apply {
-                for (primitiveType in PrimitiveType.values()) {
+            newHashMapWithExpectedSize<FqNameUnsafe, PrimitiveType>(PrimitiveType.entries.size).apply {
+                for (primitiveType in PrimitiveType.entries) {
                     this[fqNameUnsafe(primitiveType.typeName.asString())] = primitiveType
                 }
             }
 
         @JvmField val arrayClassFqNameToPrimitiveType: MutableMap<FqNameUnsafe, PrimitiveType> =
-            newHashMapWithExpectedSize<FqNameUnsafe, PrimitiveType>(PrimitiveType.values().size).apply {
-                for (primitiveType in PrimitiveType.values()) {
+            newHashMapWithExpectedSize<FqNameUnsafe, PrimitiveType>(PrimitiveType.entries.size).apply {
+                for (primitiveType in PrimitiveType.entries) {
                     this[fqNameUnsafe(primitiveType.arrayTypeName.asString())] = primitiveType
                 }
             }

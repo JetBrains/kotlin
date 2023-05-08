@@ -54,7 +54,7 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractLowLevelApiSingle
             val declarationSymbol = ktDeclaration.resolveToFirSymbol(firResolveSession)
             val declarationToResolve = chooseMemberDeclarationIfNeeded(declarationSymbol, moduleStructure)
 
-            for (currentPhase in FirResolvePhase.values()) {
+            for (currentPhase in FirResolvePhase.entries) {
                 if (currentPhase == FirResolvePhase.SEALED_CLASS_INHERITORS) continue
                 declarationToResolve.lazyResolveToPhase(currentPhase)
 

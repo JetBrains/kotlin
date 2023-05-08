@@ -27,8 +27,8 @@ enum class TestType(val type: String) {
     NEGATIVE("neg");
 
     companion object {
-        private val map = values().associateBy(TestType::type)
-        val joinedValues = values().joinToString("|").withSpaces()
+        private val map = entries.associateBy(TestType::type)
+        val joinedValues = entries.joinToString("|").withSpaces()
 
         fun fromValue(type: String) = map[type]
     }
@@ -51,7 +51,7 @@ enum class TestArea(val testDataPath: String) {
     CODEGEN_BOX("codegen/box");
 
     companion object {
-        val joinedValues = values().joinToString("|").withSpaces()
+        val joinedValues = entries.joinToString("|").withSpaces()
     }
 }
 
@@ -63,12 +63,12 @@ enum class SpecTestLinkedType(
     LINKED(
         "linked",
         lazy { LinkedSpecTestPatterns },
-        lazy { LinkedSpecTestFileInfoElementType.values() }
+        lazy { LinkedSpecTestFileInfoElementType.entries }
     ),
     NOT_LINKED(
         "notLinked",
         lazy { NotLinkedSpecTestPatterns },
-        lazy { NotLinkedSpecTestFileInfoElementType.values() }
+        lazy { NotLinkedSpecTestFileInfoElementType.entries }
     )
 }
 

@@ -147,7 +147,7 @@ object GenerateInRangeExpressionTestData {
 
         val unsignedNumbers = numbers.drop(1).map { it + "u" }
 
-        val allFunctions = Function.values().toList()
+        val allFunctions = entries
         val rangeFunctions = allFunctions - DOWN_TO
 
         generateRangeOperatorTestCases("char", allFunctions, "'1'" to "'3'", charLiterals)

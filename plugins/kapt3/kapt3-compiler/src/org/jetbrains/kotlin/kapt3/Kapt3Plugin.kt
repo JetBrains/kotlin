@@ -61,7 +61,7 @@ private val KAPT_OPTIONS = CompilerConfigurationKey.create<KaptOptions.Builder>(
 class Kapt3CommandLineProcessor : CommandLineProcessor {
     override val pluginId: String = ANNOTATION_PROCESSING_COMPILER_PLUGIN_ID
 
-    override val pluginOptions: Collection<AbstractCliOption> = values().asList()
+    override val pluginOptions: Collection<AbstractCliOption> = entries
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) {
         doOpenInternalPackagesIfRequired()

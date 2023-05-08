@@ -39,7 +39,7 @@ class InfrastructureCompressedNamesTest {
 
     @Test
     fun familyNameCompression() {
-        val knownFamilies: Set<Family> = Family.values().toSet()
+        val knownFamilies: Set<Family> = Family.entries.toSet()
 
         val compressedNameToFamily: Map<Char, Family> = knownFamilies.associateBy { it.compressedName }
         val missingFamilies: Set<Family> = compressedNameToFamily.values.toSet() - knownFamilies
@@ -50,7 +50,7 @@ class InfrastructureCompressedNamesTest {
 
     @Test
     fun architectureNameCompression() {
-        val knownArchitectures: Set<Architecture> = Architecture.values().toSet()
+        val knownArchitectures: Set<Architecture> = Architecture.entries.toSet()
 
         val compressedNameToArchitecture: Map<String, Architecture> = knownArchitectures.associateBy { it.compressedName }
         val missingArchitecture: Set<Architecture> = compressedNameToArchitecture.values.toSet() - knownArchitectures

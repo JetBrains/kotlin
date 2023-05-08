@@ -43,7 +43,7 @@ private fun parseTestInfo(testFilePath: String, testFiles: TestFiles, linkedTest
         throw SpecTestValidationException(SpecTestValidationFailedReason.TESTINFO_NOT_VALID)
 
     val testInfoElements = CommonParser.parseTestInfoElements(
-        arrayOf(*CommonInfoElementType.values(), *CommonSpecTestFileInfoElementType.values(), *linkedTestType.infoElements.value),
+        arrayOf(*CommonInfoElementType.entries.toTypedArray(), *CommonSpecTestFileInfoElementType.entries.toTypedArray(), *linkedTestType.infoElements.value),
         testInfoByContentMatcher.group("infoElements")
     )
     val helpers = testInfoElements[CommonSpecTestFileInfoElementType.HELPERS]?.content?.splitByComma()?.toSet()
@@ -73,7 +73,7 @@ private fun parseImplementationTestInfo(testFilePath: String, linkedTestType: Sp
 
     val testInfoElements = CommonParser.parseTestInfoElements(
         arrayOf(
-            *CommonInfoElementType.values(),
+            *CommonInfoElementType.entries.toTypedArray(),
             *linkedTestType.infoElements.value
         ),
         testInfoByContentMatcher.group("infoElements")

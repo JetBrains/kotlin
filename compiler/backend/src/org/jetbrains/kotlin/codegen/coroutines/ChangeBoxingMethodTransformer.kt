@@ -26,7 +26,7 @@ object ChangeBoxingMethodTransformer : MethodTransformer() {
 
     init {
         val map = hashMapOf<String, String>()
-        for (primitiveType in JvmPrimitiveType.values()) {
+        for (primitiveType in JvmPrimitiveType.entries) {
             val name = primitiveType.wrapperFqName.topLevelClassInternalName()
             map[name] = "box${primitiveType.javaKeywordName.replaceFirstChar(Char::uppercaseChar)}"
         }

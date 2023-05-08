@@ -251,7 +251,7 @@ class ModuleInfoParser(infoFile: File) : InfoParser<ModuleInfo>(infoFile) {
 
             fun getOpArgs() = line.substring(opIndex + 1).splitAndTrim()
 
-            val expectedState = DirtyFileState.values().find { it.str == op }
+            val expectedState = DirtyFileState.entries.find { it.str == op }
             if (expectedState != null) {
                 expectedFileStats[expectedState.str] = getOpArgs().toSet()
             } else {

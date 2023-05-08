@@ -94,7 +94,7 @@ internal class VarargLowering(val context: JvmBackendContext) : FileLoweringPass
 }
 
 internal val PRIMITIVE_ARRAY_OF_NAMES: Set<String> =
-    (PrimitiveType.values().map { type -> type.name } + UnsignedType.values().map { type -> type.typeName.asString() })
+    (PrimitiveType.entries.map { type -> type.name } + UnsignedType.entries.map { type -> type.typeName.asString() })
         .map { name -> name.toLowerCaseAsciiOnly() + "ArrayOf" }.toSet()
 
 internal const val ARRAY_OF_NAME = "arrayOf"

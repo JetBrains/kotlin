@@ -101,7 +101,7 @@ class KaptJavaLog(
             val kotlinPosition = stubLineInfo.getPositionInKotlinFile(sourceFile, targetElement.tree)
             val kotlinFile = kotlinPosition?.let { getKotlinSourceFile(it) }
             if (kotlinPosition != null && kotlinFile != null) {
-                val flags = JCDiagnostic.DiagnosticFlag.values().filterTo(mutableSetOf(), diagnostic::isFlagSet)
+                val flags = JCDiagnostic.DiagnosticFlag.entries.toTypedArray().filterTo(mutableSetOf(), diagnostic::isFlagSet)
 
                 val kotlinDiagnostic = diags.create(
                     diagnostic.type,

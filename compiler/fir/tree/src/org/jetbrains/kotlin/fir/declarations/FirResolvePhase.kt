@@ -27,11 +27,11 @@ enum class FirResolvePhase(val noProcessor: Boolean = false) {
             IMPORTS -> RAW_FIR
             STATUS -> TYPES
             IMPLICIT_TYPES_BODY_RESOLVE, BODY_RESOLVE -> STATUS
-            else -> values()[ordinal - 1]
+            else -> entries[ordinal - 1]
         }
 
-    val next: FirResolvePhase get() = values()[ordinal + 1]
-    val previous: FirResolvePhase get() = values()[ordinal - 1]
+    val next: FirResolvePhase get() = entries[ordinal + 1]
+    val previous: FirResolvePhase get() = entries[ordinal - 1]
 
     companion object {
         // Short-cut

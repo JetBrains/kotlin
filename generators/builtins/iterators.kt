@@ -23,7 +23,7 @@ import java.io.PrintWriter
 class GenerateIterators(out: PrintWriter) : BuiltInsSourceGenerator(out) {
     override fun getPackage() = "kotlin.collections"
     override fun generateBody() {
-        for (kind in PrimitiveType.values()) {
+        for (kind in PrimitiveType.entries) {
             val s = kind.capitalized
             out.println("/** An iterator over a sequence of values of type `$s`. */")
             out.println("public abstract class ${s}Iterator : Iterator<$s> {"   )

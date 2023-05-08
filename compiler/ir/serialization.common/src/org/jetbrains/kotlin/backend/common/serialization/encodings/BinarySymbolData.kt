@@ -30,7 +30,7 @@ value class BinarySymbolData(val code: Long) {
 
     val signatureId: Int get() = (code ushr 8).toInt()
     val kind: SymbolKind
-        get() = SymbolKind.values()[symbolKindId()]
+        get() = SymbolKind.entries[symbolKindId()]
 
     companion object {
         fun encode(kind: SymbolKind, signatureId: Int): Long {

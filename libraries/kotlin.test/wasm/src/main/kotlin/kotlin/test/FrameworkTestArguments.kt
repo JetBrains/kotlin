@@ -61,7 +61,7 @@ internal class FrameworkTestArguments(
                 }
 
                 if (isIgnoredTestSuites) {
-                    val value = IgnoredTestSuitesReporting.values().firstOrNull { it.name == arg }
+                    val value = IgnoredTestSuitesReporting.entries.firstOrNull { it.name == arg }
                     if (value != null) {
                         ignoredTestSuites = value
                     }

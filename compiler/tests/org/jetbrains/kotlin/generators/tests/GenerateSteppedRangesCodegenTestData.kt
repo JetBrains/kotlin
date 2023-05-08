@@ -150,7 +150,7 @@ object GenerateSteppedRangesCodegenTestData {
         function: Function,
         extraCode: String? = null,
         subdir: String? = null
-    ) = generateTestsForFunction(fileName, Type.values().associate { it to builder }, function, extraCode, subdir)
+    ) = generateTestsForFunction(fileName, Type.entries.associate { it to builder }, function, extraCode, subdir)
 
     private fun generateTestsForFunction(
         fileName: String,

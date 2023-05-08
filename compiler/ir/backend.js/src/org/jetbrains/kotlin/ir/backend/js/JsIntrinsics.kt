@@ -256,7 +256,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     val jsArrayIteratorFunction = getInternalFunction("arrayIterator")
 
     val jsPrimitiveArrayIteratorFunctions =
-        PrimitiveType.values().associate { it to getInternalFunction("${it.typeName.asString().toLowerCaseAsciiOnly()}ArrayIterator") }
+        PrimitiveType.entries.associate { it to getInternalFunction("${it.typeName.asString().toLowerCaseAsciiOnly()}ArrayIterator") }
 
     val jsClass = getInternalFunction("jsClassIntrinsic")
     val arrayLiteral: IrSimpleFunctionSymbol = getInternalFunction("arrayLiteral")
@@ -296,14 +296,14 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, val context: JsIrBackendC
     )
 
     val primitiveToSizeConstructor =
-        PrimitiveType.values().associate { type ->
+        PrimitiveType.entries.associate { type ->
             type to (primitiveToTypedArrayMap[type]?.let {
                 getInternalFunction("${it.toLowerCaseAsciiOnly()}Array")
             } ?: getInternalFunction("${type.typeName.asString().toLowerCaseAsciiOnly()}Array"))
         }
 
     val primitiveToLiteralConstructor =
-        PrimitiveType.values().associate { type ->
+        PrimitiveType.entries.associate { type ->
             type to (primitiveToTypedArrayMap[type]?.let {
                 getInternalFunction("${it.toLowerCaseAsciiOnly()}ArrayOf")
             } ?: getInternalFunction("${type.typeName.asString().toLowerCaseAsciiOnly()}ArrayOf"))

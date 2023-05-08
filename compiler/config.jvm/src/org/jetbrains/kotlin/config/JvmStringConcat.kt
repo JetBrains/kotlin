@@ -15,6 +15,6 @@ enum class JvmStringConcat(val description: String) {
 
     companion object {
         @JvmStatic
-        fun fromString(string: String) = values().find { it.description == string }
+        fun fromString(string: String) = entries.find { it.description == string }
     }
 }

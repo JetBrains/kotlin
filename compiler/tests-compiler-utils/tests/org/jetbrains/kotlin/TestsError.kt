@@ -15,7 +15,7 @@ enum class TestsExceptionType(val postfix: String) {
     INFRASTRUCTURE_ERROR("infrastructure");
 
     companion object {
-        private val map = values().associateBy(TestsExceptionType::postfix)
+        private val map = entries.associateBy(TestsExceptionType::postfix)
 
         fun fromValue(type: String) = map[type]
     }

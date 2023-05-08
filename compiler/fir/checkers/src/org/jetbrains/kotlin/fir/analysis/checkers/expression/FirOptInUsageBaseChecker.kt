@@ -255,7 +255,7 @@ object FirOptInUsageBaseChecker {
 
         val levelArgument = experimental.findArgumentByName(LEVEL) as? FirQualifiedAccessExpression
         val levelName = levelArgument?.calleeReference?.resolved?.name?.asString()
-        val level = OptInLevel.values().firstOrNull { it.name == levelName } ?: OptInLevel.DEFAULT
+        val level = OptInLevel.entries.firstOrNull { it.name == levelName } ?: OptInLevel.DEFAULT
         val message = (experimental.findArgumentByName(MESSAGE) as? FirConstExpression<*>)?.value as? String
         return Experimentality(symbol.classId, level.severity, message, annotatedOwnerClassName)
     }

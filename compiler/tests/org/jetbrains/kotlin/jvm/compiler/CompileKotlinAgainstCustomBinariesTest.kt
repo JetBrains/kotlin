@@ -120,7 +120,7 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
     ) {
         // Compiles the library with some non-stable language version, then compiles a usage of this library with stable LV.
         // If there's no non-stable language version yet, the test does nothing.
-        val someNonStableVersion = LanguageVersion.values().firstOrNull { it > LanguageVersion.LATEST_STABLE } ?: return
+        val someNonStableVersion = LanguageVersion.entries.firstOrNull { it > LanguageVersion.LATEST_STABLE } ?: return
 
         val libraryOptions = listOf(
             "-language-version", someNonStableVersion.versionString,
@@ -401,7 +401,7 @@ class CompileKotlinAgainstCustomBinariesTest : AbstractKotlinCompilerIntegration
     }
 
     fun testMetadataVersionDerivedFromLanguage() {
-        for (languageVersion in LanguageVersion.values()) {
+        for (languageVersion in LanguageVersion.entries) {
             if (languageVersion.isUnsupported) continue
 
             compileKotlin(

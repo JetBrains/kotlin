@@ -48,7 +48,7 @@ open class BuiltinSymbolsBase(val irBuiltIns: IrBuiltIns, private val symbolTabl
     val charSequence = getClass(Name.identifier("CharSequence"), "kotlin")
     val string = getClass(Name.identifier("String"), "kotlin")
 
-    val primitiveIteratorsByType = PrimitiveType.values().associate { type ->
+    val primitiveIteratorsByType = PrimitiveType.entries.associate { type ->
         val iteratorClass = getClass(Name.identifier(type.typeName.asString() + "Iterator"), "kotlin", "collections")
         type to iteratorClass
     }

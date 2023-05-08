@@ -42,7 +42,7 @@ object TestsStatisticCollector {
     fun collect(testLinkedType: SpecTestLinkedType): Map<TestArea, SpecTestsStatElement> {
         val statistic = mutableMapOf<TestArea, SpecTestsStatElement>()
 
-        for (specTestArea in TestArea.values()) {
+        for (specTestArea in TestArea.entries) {
             val specTestsPath = "$SPEC_TESTDATA_PATH/${specTestArea.name.lowercase().replace("_", "/")}/${testLinkedType.testDataPath}"
 
             statistic[specTestArea] =

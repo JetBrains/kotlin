@@ -146,7 +146,7 @@ private fun FirAnnotation.asKtAnnotationApplicationForJavaTargetAnnotation(
     index = index,
     expectedEnumClassId = StandardClassIds.Annotations.Java.ElementType,
     annotationParameterName = StandardClassIds.Annotations.ParameterNames.value,
-    nameMapper = { ElementType.values().firstOrNull { enumValue -> enumValue.name == it }?.name },
+    nameMapper = { ElementType.entries.firstOrNull { enumValue -> enumValue.name == it }?.name },
 )
 
 private fun <T> FirAnnotation.findFromRawArguments(expectedEnumClass: ClassId, transformer: (String) -> T?): Set<T> = buildSet {

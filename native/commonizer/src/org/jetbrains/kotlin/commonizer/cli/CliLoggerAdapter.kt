@@ -18,12 +18,12 @@ internal class CliLoggerAdapter(
 
     override fun log(message: String) = printlnIndented(message, CommonizerLogLevel.Info)
 
-    override fun warning(message: String) = printlnIndented("Warning: $message", *CommonizerLogLevel.values())
+    override fun warning(message: String) = printlnIndented("Warning: $message", *CommonizerLogLevel.entries.toTypedArray())
 
     override fun error(message: String) = fatal(message)
 
     override fun fatal(message: String): Nothing {
-        printlnIndented("Error: $message\n", *CommonizerLogLevel.values())
+        printlnIndented("Error: $message\n", *CommonizerLogLevel.entries.toTypedArray())
         exitProcess(1)
     }
 

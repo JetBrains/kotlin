@@ -17,7 +17,7 @@ value class BinaryTypeProjection(val code: Long) {
     val variance: Variance
         get() {
             assert(!isStarProjection)
-            return Variance.values()[varianceId()]
+            return Variance.entries[varianceId()]
         }
 
     val typeIndex: Int get() = (code ushr 2).toInt()

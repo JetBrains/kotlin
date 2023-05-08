@@ -215,12 +215,12 @@ private object NativeTestSupport {
     private fun computeOptimizationMode(enforcedProperties: EnforcedProperties): OptimizationMode =
         ClassLevelProperty.OPTIMIZATION_MODE.readValue(
             enforcedProperties,
-            OptimizationMode.values(),
+            OptimizationMode.entries.toTypedArray(),
             default = OptimizationMode.DEBUG
         )
 
     private fun computeMemoryModel(enforcedProperties: EnforcedProperties): MemoryModel =
-        ClassLevelProperty.MEMORY_MODEL.readValue(enforcedProperties, MemoryModel.values(), default = MemoryModel.EXPERIMENTAL)
+        ClassLevelProperty.MEMORY_MODEL.readValue(enforcedProperties, MemoryModel.entries.toTypedArray(), default = MemoryModel.EXPERIMENTAL)
 
     private fun computeThreadStateChecker(enforcedProperties: EnforcedProperties): ThreadStateChecker {
         val useThreadStateChecker =
@@ -229,20 +229,20 @@ private object NativeTestSupport {
     }
 
     private fun computeSanitizer(enforcedProperties: EnforcedProperties): Sanitizer =
-        ClassLevelProperty.SANITIZER.readValue(enforcedProperties, Sanitizer.values(), default = Sanitizer.NONE)
+        ClassLevelProperty.SANITIZER.readValue(enforcedProperties, Sanitizer.entries.toTypedArray(), default = Sanitizer.NONE)
 
     private fun computeCompilerOutputInterceptor(enforcedProperties: EnforcedProperties): CompilerOutputInterceptor =
         ClassLevelProperty.COMPILER_OUTPUT_INTERCEPTOR.readValue(
             enforcedProperties,
-            CompilerOutputInterceptor.values(),
+            CompilerOutputInterceptor.entries.toTypedArray(),
             default = CompilerOutputInterceptor.DEFAULT
         )
 
     private fun computeGCType(enforcedProperties: EnforcedProperties): GCType =
-        ClassLevelProperty.GC_TYPE.readValue(enforcedProperties, GCType.values(), default = GCType.UNSPECIFIED)
+        ClassLevelProperty.GC_TYPE.readValue(enforcedProperties, GCType.entries.toTypedArray(), default = GCType.UNSPECIFIED)
 
     private fun computeGCScheduler(enforcedProperties: EnforcedProperties): GCScheduler =
-        ClassLevelProperty.GC_SCHEDULER.readValue(enforcedProperties, GCScheduler.values(), default = GCScheduler.UNSPECIFIED)
+        ClassLevelProperty.GC_SCHEDULER.readValue(enforcedProperties, GCScheduler.entries.toTypedArray(), default = GCScheduler.UNSPECIFIED)
 
     private fun computeNativeTargets(enforcedProperties: EnforcedProperties, hostManager: HostManager): KotlinNativeTargets {
         val hostTarget = HostManager.host
@@ -264,7 +264,7 @@ private object NativeTestSupport {
     ): CacheMode {
         val cacheMode = ClassLevelProperty.CACHE_MODE.readValue(
             enforcedProperties,
-            CacheMode.Alias.values(),
+            CacheMode.Alias.entries.toTypedArray(),
             default = CacheMode.defaultForTestTarget(distribution, kotlinNativeTargets)
         )
         val useStaticCacheForUserLibraries = when (cacheMode) {
@@ -285,7 +285,7 @@ private object NativeTestSupport {
     }
 
     private fun computeTestMode(enforcedProperties: EnforcedProperties): TestMode =
-        ClassLevelProperty.TEST_MODE.readValue(enforcedProperties, TestMode.values(), default = TestMode.TWO_STAGE_MULTI_MODULE)
+        ClassLevelProperty.TEST_MODE.readValue(enforcedProperties, TestMode.entries.toTypedArray(), default = TestMode.TWO_STAGE_MULTI_MODULE)
 
     private fun computeCustomKlibs(enforcedProperties: EnforcedProperties): CustomKlibs =
         CustomKlibs(

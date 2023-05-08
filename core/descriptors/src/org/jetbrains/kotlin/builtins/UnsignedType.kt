@@ -44,10 +44,10 @@ object UnsignedTypes {
         UnsignedArrayType.ULONGARRAY to Name.identifier("ulongArrayOf"),
     )
 
-    private val arrayClassesShortNames: Set<Name> = UnsignedType.values().mapTo(mutableSetOf()) { it.arrayClassId.shortClassName }
+    private val arrayClassesShortNames: Set<Name> = UnsignedType.entries.mapTo(mutableSetOf()) { it.arrayClassId.shortClassName }
 
     init {
-        for (unsignedType in UnsignedType.values()) {
+        for (unsignedType in UnsignedType.entries) {
             arrayClassIdToUnsignedClassId[unsignedType.arrayClassId] = unsignedType.classId
             unsignedClassIdToArrayClassId[unsignedType.classId] = unsignedType.arrayClassId
         }

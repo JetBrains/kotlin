@@ -43,13 +43,13 @@ private fun FirAnnotation.getRetention(): AnnotationRetention? {
         return null
     }
 
-    return AnnotationRetention.values().firstOrNull { it.name == callableId.callableName.asString() }
+    return AnnotationRetention.entries.firstOrNull { it.name == callableId.callableName.asString() }
 }
 
 private val defaultAnnotationTargets = KotlinTarget.DEFAULT_TARGET_SET
 
 fun FirAnnotation.getAllowedAnnotationTargets(session: FirSession): Set<KotlinTarget> {
-    if (annotationTypeRef is FirErrorTypeRef) return KotlinTarget.values().toSet()
+    if (annotationTypeRef is FirErrorTypeRef) return KotlinTarget.entries.toSet()
     val annotationClassSymbol = (this.annotationTypeRef.coneType as? ConeClassLikeType)
         ?.fullyExpandedType(session)?.lookupTag?.toSymbol(session) ?: return defaultAnnotationTargets
     annotationClassSymbol.lazyResolveToPhase(FirResolvePhase.BODY_RESOLVE)
@@ -77,7 +77,7 @@ fun FirClassLikeSymbol<*>.getAllowedAnnotationTargets(session: FirSession): Set<
     return arguments.mapNotNullTo(mutableSetOf()) { argument ->
         val targetExpression = argument as? FirQualifiedAccessExpression
         val targetName = targetExpression?.calleeReference?.resolved?.name?.asString() ?: return@mapNotNullTo null
-        KotlinTarget.values().firstOrNull { target -> target.name == targetName }
+        KotlinTarget.entries.firstOrNull { target -> target.name == targetName }
     }
 }
 
