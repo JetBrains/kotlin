@@ -28,16 +28,22 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
+import org.robolectric.ParameterizedRobolectricTestRunner
 import org.robolectric.annotation.Config
 
-@RunWith(RobolectricTestRunner::class)
+@RunWith(ParameterizedRobolectricTestRunner::class)
 @Config(
     manifest = Config.NONE,
     minSdk = 23,
     maxSdk = 23
 )
-class KtxCrossModuleTests : AbstractCodegenTest(useFir = false) {
+class KtxCrossModuleTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
+    companion object {
+        @JvmStatic
+        @ParameterizedRobolectricTestRunner.Parameters(name = "useFir = {0}")
+        fun data() = arrayOf<Any>(false, true)
+    }
+
     @Test
     fun testInlineFunctionDefaultArgument() {
         compile(

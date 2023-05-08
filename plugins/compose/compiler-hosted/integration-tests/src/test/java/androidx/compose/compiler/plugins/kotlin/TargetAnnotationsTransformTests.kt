@@ -17,12 +17,9 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
 
-@RunWith(JUnit4::class)
 @Suppress("SpellCheckingInspection") // Expected strings can have partial words
-class TargetAnnotationsTransformTests : AbstractIrTransformTest(useFir = false) {
+class TargetAnnotationsTransformTests(useFir: Boolean) : AbstractIrTransformTest(useFir) {
     @Test
     fun testInferUIFromCall() = verify(
         """
@@ -894,7 +891,7 @@ class TargetAnnotationsTransformTests : AbstractIrTransformTest(useFir = false) 
           static val %stable: Int = 0
         }
         val localBoxMeasurePolicy: MeasurePolicy = class <no name provided> : MeasurePolicy {
-          override fun measure(%this%MeasurePolicy: MeasureScope, <anonymous parameter 0>: List<Measurable>, constraints: Constraints): MeasureResult {
+          override fun measure(%this%MeasurePolicy: MeasureScope, <unused var>: List<Measurable>, constraints: Constraints): MeasureResult {
             return %this%MeasurePolicy.layout(
               width = constraints.minWidth,
               height = constraints.minHeight
@@ -987,8 +984,8 @@ class TargetAnnotationsTransformTests : AbstractIrTransformTest(useFir = false) 
               Unit
               sourceInformationMarkerEnd(%composer)
             }, null, class <no name provided> : MeasurePolicy {
-              override fun measure(%this%Layout: MeasureScope, <anonymous parameter 0>: List<Measurable>, <anonymous parameter 1>: Constraints): MeasureResult {
-                return error("")
+              override fun measure(%this%Layout: MeasureScope, <unused var>: List<Measurable>, <unused var>: Constraints): MeasureResult {
+                ${if (!useFir) "return " else ""}error("")
               }
             }
             <no name provided>(), %composer, 0, 0b0010)
@@ -1016,8 +1013,8 @@ class TargetAnnotationsTransformTests : AbstractIrTransformTest(useFir = false) 
               traceEventStart(<>, %dirty, -1, <>)
             }
             Layout(content, null, class <no name provided> : MeasurePolicy {
-              override fun measure(%this%Layout: MeasureScope, <anonymous parameter 0>: List<Measurable>, <anonymous parameter 1>: Constraints): MeasureResult {
-                return error("")
+              override fun measure(%this%Layout: MeasureScope, <unused var>: List<Measurable>, <unused var>: Constraints): MeasureResult {
+                ${if (!useFir) "return " else ""}error("")
               }
             }
             <no name provided>(), %composer, 0b1110 and %dirty, 0b0010)

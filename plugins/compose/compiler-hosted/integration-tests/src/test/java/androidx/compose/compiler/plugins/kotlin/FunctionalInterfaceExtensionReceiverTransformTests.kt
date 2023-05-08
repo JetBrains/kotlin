@@ -18,7 +18,9 @@ package androidx.compose.compiler.plugins.kotlin
 
 import org.junit.Test
 
-class FunctionalInterfaceExtensionReceiverTransformTests : AbstractControlFlowTransformTests() {
+class FunctionalInterfaceExtensionReceiverTransformTests(
+    useFir: Boolean
+) : AbstractControlFlowTransformTests(useFir) {
     @Test
     fun testFunctionalInterfaceWithExtensionReceiverTransformation() {
         verifyComposeIrTransform(

@@ -286,7 +286,7 @@ class StaticExpressionDetectionTests(useFir: Boolean) : AbstractIrTransformTest(
         val compositionContextBody = irModule.files.last().declarations
             .filterIsInstance<IrFunction>()
             .first { it.name.identifier == "CompositionContext" }
-            .dumpSrc()
+            .dumpSrc(useFir)
             .replace('$', '%')
 
         assertChangedBits(

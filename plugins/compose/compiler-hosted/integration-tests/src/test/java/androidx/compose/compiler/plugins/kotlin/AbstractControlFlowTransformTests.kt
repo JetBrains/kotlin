@@ -17,11 +17,10 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import org.intellij.lang.annotations.Language
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
 
-@RunWith(JUnit4::class)
-abstract class AbstractControlFlowTransformTests : AbstractIrTransformTest(useFir = false) {
+abstract class AbstractControlFlowTransformTests(
+    useFir: Boolean
+) : AbstractIrTransformTest(useFir) {
     protected fun controlFlow(
         @Language("kotlin")
         source: String,

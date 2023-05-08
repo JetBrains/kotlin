@@ -16,7 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin.facade
 
-import androidx.compose.compiler.plugins.kotlin.ComposeComponentRegistrar
+import androidx.compose.compiler.plugins.kotlin.ComposePluginRegistrar
 import androidx.compose.compiler.plugins.kotlin.TestsCompilerError
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
@@ -86,13 +86,19 @@ interface AnalysisResult {
     )
 
     val files: List<KtFile>
-    val diagnostics: List<Diagnostic>
+    val diagnostics: Map<String, List<Diagnostic>>
 }
 
 abstract class KotlinCompilerFacade(val environment: KotlinCoreEnvironment) {
-    abstract fun analyze(files: List<SourceFile>): AnalysisResult
+    abstract fun analyze(
+        platformFiles: List<SourceFile>,
+        commonFiles: List<SourceFile>
+    ): AnalysisResult
     abstract fun compileToIr(files: List<SourceFile>): IrModuleFragment
-    abstract fun compile(files: List<SourceFile>): GenerationState
+    abstract fun compile(
+        platformFiles: List<SourceFile>,
+        commonFiles: List<SourceFile>
+    ): GenerationState
 
     companion object {
         const val TEST_MODULE_NAME = "test-module"
@@ -116,7 +122,7 @@ abstract class KotlinCompilerFacade(val environment: KotlinCoreEnvironment) {
                 disposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES
             )
 
-            ComposeComponentRegistrar.checkCompilerVersion(configuration)
+            ComposePluginRegistrar.checkCompilerVersion(configuration)
 
             environment.project.registerExtensions(configuration)
 

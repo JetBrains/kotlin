@@ -64,6 +64,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
+import org.jetbrains.kotlin.ir.expressions.IrGetField
 import org.jetbrains.kotlin.ir.expressions.IrGetObjectValue
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
@@ -293,7 +294,9 @@ abstract class AbstractComposeLowering(
             return true
         val function = symbol.owner
         return function.name == OperatorNameConventions.INVOKE &&
-            function.parentClassOrNull?.defaultType?.isFunction() == true
+            function.parentClassOrNull?.defaultType?.let {
+                it.isFunction() || it.isSyntheticComposableFunction()
+            } ?: false
     }
 
     fun IrCall.isComposableCall(): Boolean {
@@ -311,7 +314,9 @@ abstract class AbstractComposeLowering(
         // `Function3<T1, Composer, Int, T2>`. After this lowering runs we have to check the
         // `attributeOwnerId` to recover the original type.
         val receiver = dispatchReceiver?.let { it.attributeOwnerId as? IrExpression ?: it }
-        return receiver?.type?.hasComposableAnnotation() == true
+        return receiver?.type?.let {
+            it.hasComposableAnnotation() || it.isSyntheticComposableFunction()
+        } ?: false
     }
 
     fun IrCall.isComposableSingletonGetter(): Boolean {
@@ -883,6 +888,9 @@ abstract class AbstractComposeLowering(
             }
             is IrFunctionExpression ->
                 context.irTrace[ComposeWritableSlices.IS_STATIC_FUNCTION_EXPRESSION, this] ?: false
+            is IrGetField ->
+                // K2 sometimes produces `IrGetField` for reads from constant properties
+                symbol.owner.correspondingPropertySymbol?.owner?.isConst == true
             else -> false
         }
     }

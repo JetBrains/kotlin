@@ -24,10 +24,11 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.util.io.FileUtil
 import java.io.File
 import java.net.URLClassLoader
-import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 import org.jetbrains.kotlin.codegen.GeneratedClassLoader
+import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
+import org.jetbrains.kotlin.compiler.plugin.registerExtensionsForTest
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
@@ -104,6 +105,7 @@ abstract class AbstractCompilerTest(val useFir: Boolean) {
 
     protected open fun CompilerConfiguration.updateConfiguration() {}
 
+    @OptIn(ExperimentalCompilerApi::class)
     private fun createCompilerFacade(
         additionalPaths: List<File> = listOf(),
         registerExtensions: (Project.(CompilerConfiguration) -> Unit)? = null
@@ -122,16 +124,19 @@ abstract class AbstractCompilerTest(val useFir: Boolean) {
             configureJdkClasspathRoots()
         },
         registerExtensions = registerExtensions ?: { configuration ->
-            ComposeComponentRegistrar.registerCommonExtensions(this)
-            IrGenerationExtension.registerExtension(
-                this,
-                ComposeComponentRegistrar.createComposeIrExtension(configuration)
-            )
+            registerExtensionsForTest(this, configuration) {
+                with(ComposePluginRegistrar()) {
+                    registerExtensions(it)
+                }
+            }
         }
     )
 
-    protected fun analyze(sourceFiles: List<SourceFile>): AnalysisResult =
-        createCompilerFacade().analyze(sourceFiles)
+    protected fun analyze(
+        platformSources: List<SourceFile>,
+        commonSources: List<SourceFile> = listOf()
+    ): AnalysisResult =
+        createCompilerFacade().analyze(platformSources, commonSources)
 
     protected fun compileToIr(
         sourceFiles: List<SourceFile>,
@@ -141,7 +146,8 @@ abstract class AbstractCompilerTest(val useFir: Boolean) {
         createCompilerFacade(additionalPaths, registerExtensions).compileToIr(sourceFiles)
 
     protected fun createClassLoader(
-        sourceFiles: List<SourceFile>,
+        platformSourceFiles: List<SourceFile>,
+        commonSourceFiles: List<SourceFile> = listOf(),
         additionalPaths: List<File> = listOf()
     ): GeneratedClassLoader {
         val classLoader = URLClassLoader(
@@ -151,7 +157,8 @@ abstract class AbstractCompilerTest(val useFir: Boolean) {
             null
         )
         return GeneratedClassLoader(
-            createCompilerFacade(additionalPaths).compile(sourceFiles).factory,
+            createCompilerFacade(additionalPaths)
+                .compile(platformSourceFiles, commonSourceFiles).factory,
             classLoader
         )
     }

@@ -18,11 +18,8 @@ package androidx.compose.compiler.plugins.kotlin
 
 import org.intellij.lang.annotations.Language
 import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
 
-@RunWith(JUnit4::class)
-class DefaultParamTransformTests : AbstractIrTransformTest(useFir = false) {
+class DefaultParamTransformTests(useFir: Boolean) : AbstractIrTransformTest(useFir) {
     private fun defaultParams(
         @Language("kotlin")
         unchecked: String,

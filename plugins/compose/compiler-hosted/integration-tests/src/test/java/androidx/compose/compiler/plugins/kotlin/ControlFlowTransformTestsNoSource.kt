@@ -19,7 +19,9 @@ package androidx.compose.compiler.plugins.kotlin
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.junit.Test
 
-class ControlFlowTransformTestsNoSource : AbstractControlFlowTransformTests() {
+class ControlFlowTransformTestsNoSource(
+    useFir: Boolean
+) : AbstractControlFlowTransformTests(useFir) {
     override fun CompilerConfiguration.updateConfiguration() {
         put(ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY, false)
     }

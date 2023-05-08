@@ -1,9 +1,10 @@
 package androidx.compose.compiler.plugins.kotlin.analysis
 
 import androidx.compose.compiler.plugins.kotlin.AbstractComposeDiagnosticsTest
+import org.junit.Assume.assumeTrue
 import org.junit.Test
 
-class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
+class ComposableCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(useFir) {
     @Test
     fun testCfromNC() = check(
         """
@@ -185,6 +186,77 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         @Composable fun B() { A { B() } }
     """
     )
+
+    @Test
+    fun testGenericComposableInference1() {
+        assumeTrue(useFir)
+        check("""
+        import androidx.compose.runtime.Composable
+
+        fun <T> identity(value: T): T = value
+
+        // We should infer `ComposableFunction0<Unit>` for `T`
+        val cl = identity(@Composable {})
+        val l: () -> Unit = <!INITIALIZER_TYPE_MISMATCH!>cl<!>
+        """)
+    }
+
+    @Test
+    fun testGenericComposableInference2() {
+        assumeTrue(useFir)
+        check("""
+        import androidx.compose.runtime.Composable
+
+        @Composable fun A() {}
+        fun <T> identity(value: T): T = value
+
+        // Explicitly instantiate `T` with `ComposableFunction0<Unit>`
+        val cl = identity<@Composable () -> Unit> { A() }
+        val l: () -> Unit = <!INITIALIZER_TYPE_MISMATCH!>cl<!>
+        """)
+    }
+
+    @Test
+    fun testGenericComposableInference3() {
+        assumeTrue(useFir)
+        check("""
+        import androidx.compose.runtime.Composable
+
+        @Composable fun A() {}
+        fun <T> identity(value: T): T = value
+
+        // We should infer `T` as `ComposableFunction0<Unit>` from the context and then
+        // infer that the argument to `identity` is a composable lambda.
+        val cl: @Composable () -> Unit = identity { A() }
+        """)
+    }
+
+    @Test
+    fun testGenericComposableInference4() {
+        assumeTrue(useFir)
+        check("""
+        import androidx.compose.runtime.Composable
+
+        fun <T> identity(value: T): T = value
+
+        // We should infer `T` as `Function0<Unit>` from the context and
+        // reject the lambda which is explicitly typed as `ComposableFunction...`.
+        val cl: () -> Unit = identity(@Composable <!ARGUMENT_TYPE_MISMATCH!>{}<!>)
+        """)
+    }
+
+    @Test
+    fun testGenericComposableInference5() {
+        assumeTrue(useFir)
+        check("""
+        import androidx.compose.runtime.Composable
+
+        fun <T> identity(value: T): T = value
+
+        // We should infer `Function0<Unit>` for `T`
+        val lambda = identity<() -> Unit>(@Composable <!ARGUMENT_TYPE_MISMATCH!>{}<!>)
+        """)
+    }
 
     @Test
     fun testCfromAnnotatedComposableFunInterface() = check(
@@ -379,13 +451,13 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
 
     @Test
     fun testComposableReporting008() {
-        checkFail(
+        check(
             """
             import androidx.compose.runtime.*;
 
             @Composable fun Leaf() {}
 
-            fun foo() {
+            fun <!COMPOSABLE_EXPECTED!>foo<!>() {
                 val bar: @Composable ()->Unit = @Composable {
                     Leaf()
                 }
@@ -469,6 +541,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
             }
         """
         )
+        val error = if (useFir) "INITIALIZER_TYPE_MISMATCH" else "TYPE_MISMATCH"
         check(
             """
             import androidx.compose.runtime.*;
@@ -477,7 +550,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
             fun Leaf() {}
 
             fun foo() {
-                val myVariable: ()->Unit = <!TYPE_MISMATCH!>@Composable { Leaf() }<!>
+                val myVariable: ()->Unit = <!$error!>@Composable { Leaf() }<!>
                 System.out.println(myVariable)
             }
         """
@@ -486,6 +559,9 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
 
     @Test
     fun testComposableReporting021() {
+        // In K1, we erroneously allowed `@Composable` annotations on non-composable inline
+        // lambdas. See b/281975618.
+        assumeTrue(useFir)
         check(
             """
             import androidx.compose.runtime.*;
@@ -496,10 +572,10 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
             @Composable
             fun foo() {
                 val myList = listOf(1,2,3,4,5)
-                myList.forEach <!REDUNDANT_COMPOSABLE_ANNOTATION!>@Composable<!> { value: Int ->
+                myList.forEach @Composable <!ARGUMENT_TYPE_MISMATCH!>{ value: Int ->
                     Leaf()
                     System.out.println(value)
-                }
+                }<!>
             }
         """
         )
@@ -660,12 +736,13 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
             }
         """
         )
+        val error = if (useFir) "INITIALIZER_TYPE_MISMATCH" else "TYPE_MISMATCH"
         check(
             """
             import androidx.compose.runtime.*;
 
             fun foo(v: @Composable ()->Unit) {
-                val myVariable: ()->Unit = <!TYPE_MISMATCH!>v<!>
+                val myVariable: ()->Unit = <!$error!>v<!>
                 myVariable()
             }
         """
@@ -742,6 +819,8 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
             }
         """
         )
+        val argumentTypeMismatch = if (useFir) "ARGUMENT_TYPE_MISMATCH" else "TYPE_MISMATCH"
+        val initializerTypeMismatch = if (useFir) "INITIALIZER_TYPE_MISMATCH" else "TYPE_MISMATCH"
         check(
             """
             import androidx.compose.runtime.*;
@@ -750,7 +829,7 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
 
             @Composable
             fun test(f: @Composable ()->Unit) {
-                val f2: @Composable ()->Unit = <!TYPE_MISMATCH!>identity (<!TYPE_MISMATCH!>f<!>)<!>;
+                val f2: @Composable ()->Unit = <!$initializerTypeMismatch!>identity (<!$argumentTypeMismatch!>f<!>)<!>;
                 f2()
             }
         """
@@ -1205,6 +1284,28 @@ class ComposableCheckerTests : AbstractComposeDiagnosticsTest() {
         }
     """
     )
+
+    @Test
+    fun testDisallowComposableCallPropagationWithInvoke() {
+        // The frontend distinguishes between implicit and explicit invokes, which is why this test
+        // fails in K1.
+        assumeTrue(useFir)
+        check(
+            """
+            import androidx.compose.runtime.*
+            class Foo
+            @Composable inline fun a(block1: @DisallowComposableCalls () -> Foo): Foo {
+                return block1()
+            }
+            @Composable inline fun b(<!MISSING_DISALLOW_COMPOSABLE_CALLS_ANNOTATION!>block2: () -> Foo<!>): Foo {
+              return a { block2.invoke() }
+            }
+            @Composable inline fun c(block2: @DisallowComposableCalls () -> Foo): Foo {
+              return a { block2.invoke() }
+            }
+        """
+        )
+    }
 
     @Test
     fun testComposableLambdaToAll() = check(

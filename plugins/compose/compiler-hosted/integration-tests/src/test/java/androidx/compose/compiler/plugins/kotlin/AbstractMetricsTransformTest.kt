@@ -19,9 +19,12 @@ package androidx.compose.compiler.plugins.kotlin
 import androidx.compose.compiler.plugins.kotlin.facade.KotlinCompilerFacade
 import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
+import org.jetbrains.kotlin.compiler.plugin.registerExtensionsForTest
 import org.junit.Assert.assertEquals
 
 abstract class AbstractMetricsTransformTest(useFir: Boolean) : AbstractIrTransformTest(useFir) {
+    @OptIn(ExperimentalCompilerApi::class)
     private fun verifyMetrics(
         source: String,
         verify: ModuleMetrics.() -> Unit
@@ -31,10 +34,12 @@ abstract class AbstractMetricsTransformTest(useFir: Boolean) : AbstractIrTransfo
         compileToIr(
             files,
             registerExtensions = { configuration ->
-                ComposeComponentRegistrar.registerCommonExtensions(this)
-                val extension = ComposeComponentRegistrar.createComposeIrExtension(configuration)
-                extension.metrics = metrics
-                IrGenerationExtension.registerExtension(this, extension)
+                registerExtensionsForTest(this, configuration) {
+                    with(ComposePluginRegistrar) { registerCommonExtensions() }
+                    val extension = ComposePluginRegistrar.createComposeIrExtension(configuration)
+                    extension.metrics = metrics
+                    IrGenerationExtension.registerExtension(extension)
+                }
             }
         )
         metrics.verify()

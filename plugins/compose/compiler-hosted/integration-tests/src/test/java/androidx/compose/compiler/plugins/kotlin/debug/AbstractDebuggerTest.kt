@@ -52,16 +52,13 @@ import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
 
 private const val RUNNER_CLASS = "RunnerKt"
 private const val MAIN_METHOD = "main"
 private const val CONTENT_METHOD = "content"
 private const val TEST_CLASS = "TestKt"
 
-@RunWith(JUnit4::class)
-abstract class AbstractDebuggerTest : AbstractCodegenTest(useFir = false) {
+abstract class AbstractDebuggerTest(useFir: Boolean) : AbstractCodegenTest(useFir) {
     companion object {
         private lateinit var testServerProcess: Process
         lateinit var virtualMachine: VirtualMachine

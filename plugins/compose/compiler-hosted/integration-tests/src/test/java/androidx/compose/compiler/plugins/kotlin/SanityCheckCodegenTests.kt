@@ -16,7 +16,6 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
-import org.junit.Assume
 import org.junit.Test
 
 class SanityCheckCodegenTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
@@ -126,7 +125,6 @@ class SanityCheckCodegenTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
     // Regression validating b/237863365
     @Test
     fun testComposableAsLastStatementInUnitReturningLambda() {
-        Assume.assumeFalse(useFir)
         testCompile(
             """
             import androidx.compose.runtime.Composable

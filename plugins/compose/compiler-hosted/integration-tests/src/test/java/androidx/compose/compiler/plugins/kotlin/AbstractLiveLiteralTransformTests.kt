@@ -22,14 +22,16 @@ import androidx.compose.compiler.plugins.kotlin.lower.LiveLiteralTransformer
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
+import org.jetbrains.kotlin.compiler.plugin.registerExtensionsForTest
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.DeepCopySymbolRemapper
 import org.junit.Assert.assertEquals
-import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
 
-@RunWith(JUnit4::class)
-abstract class AbstractLiveLiteralTransformTests : AbstractIrTransformTest(useFir = false) {
+abstract class AbstractLiveLiteralTransformTests(
+    useFir: Boolean
+) : AbstractIrTransformTest(useFir) {
+    @OptIn(ExperimentalCompilerApi::class)
     private fun computeKeys(files: List<SourceFile>): List<String> {
         var builtKeys = mutableSetOf<String>()
         compileToIr(
@@ -41,29 +43,34 @@ abstract class AbstractLiveLiteralTransformTests : AbstractIrTransformTest(useFi
                 val liveLiteralsV2Enabled = configuration.getBoolean(
                     ComposeConfiguration.LIVE_LITERALS_V2_ENABLED_KEY
                 )
-                ComposeComponentRegistrar.registerCommonExtensions(this)
-                IrGenerationExtension.registerExtension(this, object : IrGenerationExtension {
-                    override fun generate(
-                        moduleFragment: IrModuleFragment,
-                        pluginContext: IrPluginContext
-                    ) {
-                        val symbolRemapper = DeepCopySymbolRemapper()
-                        val keyVisitor = DurableKeyVisitor(builtKeys)
-                        val transformer = object : LiveLiteralTransformer(
-                            liveLiteralsEnabled || liveLiteralsV2Enabled,
-                            liveLiteralsV2Enabled,
-                            keyVisitor,
-                            pluginContext,
-                            symbolRemapper,
-                            ModuleMetricsImpl("temp")
-                        ) {
-                            override fun makeKeySet(): MutableSet<String> {
-                                return super.makeKeySet().also { builtKeys = it }
+                registerExtensionsForTest(this, configuration) {
+                    with(ComposePluginRegistrar) { registerCommonExtensions() }
+                    IrGenerationExtension.registerExtension(
+                        this@compileToIr,
+                        object : IrGenerationExtension {
+                            override fun generate(
+                                moduleFragment: IrModuleFragment,
+                                pluginContext: IrPluginContext
+                            ) {
+                                val symbolRemapper = DeepCopySymbolRemapper()
+                                val keyVisitor = DurableKeyVisitor(builtKeys)
+                                val transformer = object : LiveLiteralTransformer(
+                                    liveLiteralsEnabled || liveLiteralsV2Enabled,
+                                    liveLiteralsV2Enabled,
+                                    keyVisitor,
+                                    pluginContext,
+                                    symbolRemapper,
+                                    ModuleMetricsImpl("temp")
+                                ) {
+                                    override fun makeKeySet(): MutableSet<String> {
+                                        return super.makeKeySet().also { builtKeys = it }
+                                    }
+                                }
+                                transformer.lower(moduleFragment)
                             }
                         }
-                        transformer.lower(moduleFragment)
-                    }
-                })
+                    )
+                }
             }
         )
         return builtKeys.toList()

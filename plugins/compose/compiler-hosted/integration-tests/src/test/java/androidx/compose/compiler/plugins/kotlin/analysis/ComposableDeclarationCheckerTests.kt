@@ -19,7 +19,7 @@ package androidx.compose.compiler.plugins.kotlin.analysis
 import androidx.compose.compiler.plugins.kotlin.AbstractComposeDiagnosticsTest
 import org.junit.Test
 
-class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
+class ComposableDeclarationCheckerTests(useFir: Boolean) : AbstractComposeDiagnosticsTest(useFir) {
     @Test
     fun testPropertyWithInitializer() {
         check(
@@ -34,7 +34,7 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
 
     @Test
     fun testComposableFunctionReferences() {
-        check(
+        check(if (!useFir) {
             """
             import androidx.compose.runtime.Composable
 
@@ -49,24 +49,49 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
                 B(<!COMPOSABLE_FUNCTION_REFERENCE,TYPE_MISMATCH!>::A<!>)
             }
         """
-        )
+        } else {
+            // In K2, we are taking composability into account when resolving function references,
+            // so trying to resolve `::A` in a context where we expect a non-composable function
+            // type fails with an `UNRESOLVED_REFERENCE` error, instead of a
+            // `COMPOSABLE_FUNCTION_REFERENCE` error in the plugin..
+            """
+            import androidx.compose.runtime.Composable
+
+            @Composable fun A() {}
+            val aCallable: () -> Unit = ::<!UNRESOLVED_REFERENCE!>A<!>
+            val bCallable: @Composable () -> Unit = <!COMPOSABLE_FUNCTION_REFERENCE!>::A<!>
+            val cCallable = <!COMPOSABLE_FUNCTION_REFERENCE!>::A<!>
+            fun doSomething(fn: () -> Unit) { print(fn) }
+            @Composable fun B(content: @Composable () -> Unit) {
+                content()
+                <!INAPPLICABLE_CANDIDATE!>doSomething<!>(::<!UNRESOLVED_REFERENCE!>A<!>)
+                B(<!COMPOSABLE_FUNCTION_REFERENCE!>::A<!>)
+            }
+        """
+        })
     }
 
     @Test
     fun testNonComposableFunctionReferences() {
+        // This code fails for two different reasons in K1 and K2. In K1, the code fails with
+        // a TYPE_MISMATCH, since we infer a non-composable function type in a context where a
+        // composable function type is expected. In K2, we can promote non-composable function
+        // types to composable function types (as this matches the behavior for suspend functions),
+        // but we explicitly forbid composable function references.
+        val error = if (useFir) "COMPOSABLE_FUNCTION_REFERENCE" else "TYPE_MISMATCH"
         check(
             """
             import androidx.compose.runtime.Composable
 
             fun A() {}
             val aCallable: () -> Unit = ::A
-            val bCallable: @Composable () -> Unit = <!TYPE_MISMATCH!>::A<!>
+            val bCallable: @Composable () -> Unit = <!$error!>::A<!>
             val cCallable = ::A
             fun doSomething(fn: () -> Unit) { print(fn) }
             @Composable fun B(content: @Composable () -> Unit) {
                 content()
                 doSomething(::A)
-                B(<!TYPE_MISMATCH!>::A<!>)
+                B(<!$error!>::A<!>)
             }
         """
         )
@@ -112,7 +137,7 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
 
     @Test
     fun testSuspendComposable() {
-        check(
+        check(if (!useFir) {
             """
             import androidx.compose.runtime.Composable
 
@@ -131,7 +156,29 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
                 acceptSuspend(<!COMPOSABLE_SUSPEND_FUN,TYPE_MISMATCH!>@Composable suspend fun() { }<!>)
             }
         """
-        )
+        } else {
+            // In K2, the frontend forbids function types with multiple kinds, so
+            // `@Composable suspend` function types get turned into error types. This is the
+            // reason for the additional ARGUMENT_TYPE_MISMATCH errors.
+            """
+            import androidx.compose.runtime.Composable
+
+            @Composable suspend fun <!COMPOSABLE_SUSPEND_FUN!>Foo<!>() {}
+
+            fun acceptSuspend(fn: suspend () -> Unit) { print(fn) }
+            fun acceptComposableSuspend(fn: <!AMBIGUOUS_FUNCTION_TYPE_KIND!>@Composable suspend () -> Unit<!>) { print(fn.hashCode()) }
+
+            val foo: suspend () -> Unit = <!INITIALIZER_TYPE_MISMATCH!>@Composable {}<!>
+            val bar: suspend () -> Unit = {}
+            fun Test() {
+                val composableLambda = @Composable {}
+                acceptSuspend @Composable <!ARGUMENT_TYPE_MISMATCH!>{}<!>
+                acceptComposableSuspend @Composable <!ARGUMENT_TYPE_MISMATCH!>{}<!>
+                acceptComposableSuspend(<!ARGUMENT_TYPE_MISMATCH!>composableLambda<!>)
+                acceptSuspend(<!COMPOSABLE_SUSPEND_FUN!>@Composable suspend fun()<!> { })
+            }
+        """
+        })
     }
 
     @Test
@@ -167,6 +214,8 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
 
     @Test
     fun testMissingComposableOnOverride() {
+        // In K1, we report the `CONFLICTING_OVERLOADS` error on properties as well as property
+        // accessors. In K2 we only report the error on property accessors.
         check(
             """
             import androidx.compose.runtime.Composable
@@ -181,7 +230,7 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
             object FakeFoo : Foo {
                 <!CONFLICTING_OVERLOADS!>override fun composableFunction(param: Boolean)<!> = true
                 <!CONFLICTING_OVERLOADS!>@Composable override fun nonComposableFunction(param: Boolean)<!> = true
-                <!CONFLICTING_OVERLOADS!>override val nonComposableProperty: Boolean<!> <!CONFLICTING_OVERLOADS!>@Composable get()<!> = true
+                ${if (!useFir) "<!CONFLICTING_OVERLOADS!>" else ""}override val nonComposableProperty: Boolean${if (!useFir) "<!>" else ""} <!CONFLICTING_OVERLOADS!>@Composable get()<!> = true
             }
 
             interface Bar {
@@ -194,9 +243,9 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
 
             object FakeBar : Bar {
                 <!CONFLICTING_OVERLOADS!>override fun composableFunction(param: Boolean)<!> = true
-                <!CONFLICTING_OVERLOADS!>override val composableProperty: Boolean<!> <!CONFLICTING_OVERLOADS!>get()<!> = true
+                <!CONFLICTING_OVERLOADS!>override val composableProperty: Boolean<!> = true
                 <!CONFLICTING_OVERLOADS!>@Composable override fun nonComposableFunction(param: Boolean)<!> = true
-                <!CONFLICTING_OVERLOADS!>override val nonComposableProperty: Boolean<!> <!CONFLICTING_OVERLOADS!>@Composable get()<!> = true
+                ${if (!useFir) "<!CONFLICTING_OVERLOADS!>" else ""}override val nonComposableProperty: Boolean${if (!useFir) "<!>" else ""} <!CONFLICTING_OVERLOADS!>@Composable get()<!> = true
             }
         """
         )
@@ -273,7 +322,7 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
 
     @Test
     fun testOverrideWithoutComposeAnnotation() {
-        check(
+        check(if (!useFir) {
             """
                 import androidx.compose.runtime.Composable
                 interface Base {
@@ -284,7 +333,20 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
                     <!CONFLICTING_OVERLOADS!>override fun compose(content: @Composable () -> Unit)<!> {}
                 }
             """
-        )
+        } else {
+            // In K2, the `@Composable` type is part of the function signature, so the `override`
+            // does not match the `compose` function in `Base`.
+            """
+                import androidx.compose.runtime.Composable
+                interface Base {
+                    fun compose(content: () -> Unit)
+                }
+
+                <!ABSTRACT_MEMBER_NOT_IMPLEMENTED!>class Impl<!> : Base {
+                    <!NOTHING_TO_OVERRIDE!>override<!> fun compose(content: @Composable () -> Unit) {}
+                }
+            """
+        })
     }
 
     @Test

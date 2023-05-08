@@ -22,17 +22,23 @@ import org.intellij.lang.annotations.Language
 import org.junit.Ignore
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.robolectric.RobolectricTestRunner
+import org.robolectric.ParameterizedRobolectricTestRunner
 import org.robolectric.Shadows.shadowOf
 import org.robolectric.annotation.Config
 
-@RunWith(RobolectricTestRunner::class)
+@RunWith(ParameterizedRobolectricTestRunner::class)
 @Config(
     manifest = Config.NONE,
     minSdk = 23,
     maxSdk = 23
 )
-class LambdaMemoizationTests : AbstractLoweringTests(useFir = false) {
+class LambdaMemoizationTests(useFir: Boolean) : AbstractLoweringTests(useFir) {
+    companion object {
+        @JvmStatic
+        @ParameterizedRobolectricTestRunner.Parameters(name = "useFir = {0}")
+        fun data() = arrayOf<Any>(false, true)
+    }
+
     @Test
     @Ignore("b/179279455")
     fun nonCapturingEventLambda() = skipping(

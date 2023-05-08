@@ -60,7 +60,7 @@ fun printPublicApi(classDump: String, name: String): String {
         .replace('$', '%') // replace $ to % to make comparing it to kotlin string literals easier
 }
 
-abstract class AbstractCodegenSignatureTest : AbstractCodegenTest(useFir = false) {
+abstract class AbstractCodegenSignatureTest(useFir: Boolean) : AbstractCodegenTest(useFir) {
     private fun OutputFile.printApi(): String {
         return printPublicApi(asText(), relativePath)
     }

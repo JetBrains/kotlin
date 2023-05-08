@@ -18,7 +18,7 @@ package androidx.compose.compiler.plugins.kotlin.debug
 
 import org.junit.Test
 
-class StepTest : AbstractDebuggerTest() {
+class StepTest(useFir: Boolean) : AbstractDebuggerTest(useFir) {
     @Test
     fun testSteppingIntoIf() {
         collectDebugEvents(
