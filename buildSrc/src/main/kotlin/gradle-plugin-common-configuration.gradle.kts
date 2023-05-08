@@ -101,4 +101,11 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         commonSourceSet = commonSourceSet
     )
     publishShadowedJar(gradle80SourceSet, commonSourceSet)
+
+    // Used for Gradle 8.1+ versions
+    val gradle81SourceSet = createGradlePluginVariant(
+        GradlePluginVariant.GRADLE_81,
+        commonSourceSet = commonSourceSet
+    )
+    publishShadowedJar(gradle81SourceSet, commonSourceSet)
 }
