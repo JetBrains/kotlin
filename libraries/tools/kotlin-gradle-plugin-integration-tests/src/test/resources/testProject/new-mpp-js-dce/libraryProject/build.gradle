@@ -1,22 +1,16 @@
-buildscript {
-    repositories {
-        mavenLocal()
-        mavenCentral()
-    }
-    dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
+plugins {
+    id("org.jetbrains.kotlin.multiplatform")
 }
-
-apply plugin: 'kotlin-multiplatform'
 
 repositories {
     mavenLocal()
     mavenCentral()
 }
 
-kotlin.targets.fromPreset(kotlin.presets.js, 'nodeJs') {
-    nodejs()
+kotlin {
+    js("nodeJs") {
+        nodejs()
+    }
 }
 
 dependencies {
