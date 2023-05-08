@@ -19,10 +19,11 @@ package org.jetbrains.kotlin.load.java.structure.impl
 import com.intellij.psi.*
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
 import org.jetbrains.kotlin.load.java.structure.JavaType
+import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementTypeSource
 
-import java.util.ArrayList
-
-class JavaClassifierTypeImpl(psiClassType: PsiClassType) : JavaTypeImpl<PsiClassType>(psiClassType), JavaClassifierType {
+class JavaClassifierTypeImpl(
+    psiClassTypeSource: JavaElementTypeSource<PsiClassType>,
+) : JavaTypeImpl<PsiClassType>(psiClassTypeSource), JavaClassifierType {
 
     private var resolutionResult: ResolutionResult? = null
 
@@ -52,7 +53,7 @@ class JavaClassifierTypeImpl(psiClassType: PsiClassType) : JavaTypeImpl<PsiClass
             val result = ArrayList<JavaType?>(parameters.size)
             for (typeParameter in parameters) {
                 val substitutedType = substitutor.substitute(typeParameter)
-                result.add(substitutedType?.let { JavaTypeImpl.create(it) })
+                result.add(substitutedType?.let { JavaTypeImpl.create(createTypeSource(it)) })
             }
 
             return result
@@ -70,7 +71,7 @@ class JavaClassifierTypeImpl(psiClassType: PsiClassType) : JavaTypeImpl<PsiClass
             val psiClass = result.element
             val substitutor = result.substitutor
             ResolutionResult(
-                psiClass?.let { JavaClassifierImpl.create(it) }, substitutor, PsiClassType.isRaw(result)
+                psiClass?.let { JavaClassifierImpl.create(it, sourceFactory) }, substitutor, PsiClassType.isRaw(result)
             ).apply {
                 resolutionResult = this
             }

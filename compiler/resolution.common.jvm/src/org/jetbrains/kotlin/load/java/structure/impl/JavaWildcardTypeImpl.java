@@ -21,17 +21,18 @@ import com.intellij.psi.PsiWildcardType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.load.java.structure.JavaWildcardType;
+import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementTypeSource;
 
 public class JavaWildcardTypeImpl extends JavaTypeImpl<PsiWildcardType> implements JavaWildcardType {
-    public JavaWildcardTypeImpl(@NotNull PsiWildcardType psiWildcardType) {
-        super(psiWildcardType);
+    public JavaWildcardTypeImpl(@NotNull JavaElementTypeSource<PsiWildcardType> psiWildcardTypeSource) {
+        super(psiWildcardTypeSource);
     }
 
     @Override
     @Nullable
     public JavaTypeImpl<?> getBound() {
         PsiType bound = getPsi().getBound();
-        return bound == null ? null : create(bound);
+        return bound == null ? null : create(createTypeSource(bound));
     }
 
     @Override

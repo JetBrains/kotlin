@@ -22,22 +22,24 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation;
 import org.jetbrains.kotlin.load.java.structure.JavaClassifier;
+import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementPsiSource;
+import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory;
 import org.jetbrains.kotlin.name.FqName;
 
 import java.util.Collection;
 
 public abstract class JavaClassifierImpl<Psi extends PsiClass> extends JavaElementImpl<Psi> implements JavaClassifier, JavaAnnotationOwnerImpl {
-    protected JavaClassifierImpl(@NotNull Psi psiClass) {
-        super(psiClass);
+    protected JavaClassifierImpl(@NotNull JavaElementPsiSource<Psi> psi) {
+        super(psi);
     }
 
     @NotNull
-    /* package */ static JavaClassifierImpl<?> create(@NotNull PsiClass psiClass) {
+    /* package */ static JavaClassifierImpl<?> create(@NotNull PsiClass psiClass, JavaElementSourceFactory sourceFactory) {
         if (psiClass instanceof PsiTypeParameter) {
-            return new JavaTypeParameterImpl((PsiTypeParameter) psiClass);
+            return new JavaTypeParameterImpl(sourceFactory.createPsiSource((PsiTypeParameter) psiClass));
         }
         else {
-            return new JavaClassImpl(psiClass);
+            return new JavaClassImpl(sourceFactory.createPsiSource(psiClass));
         }
     }
 
@@ -49,13 +51,13 @@ public abstract class JavaClassifierImpl<Psi extends PsiClass> extends JavaEleme
     @NotNull
     @Override
     public Collection<JavaAnnotation> getAnnotations() {
-        return JavaElementUtil.getAnnotations(this);
+        return JavaElementUtil.getAnnotations(this, getSourceFactory());
     }
 
     @Nullable
     @Override
     public JavaAnnotation findAnnotation(@NotNull FqName fqName) {
-        return JavaElementUtil.findAnnotation(this, fqName);
+        return JavaElementUtil.findAnnotation(this, fqName, getSourceFactory());
     }
 
     @Override

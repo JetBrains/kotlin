@@ -22,6 +22,7 @@ import com.intellij.psi.*
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.load.java.NULLABILITY_ANNOTATIONS
 import org.jetbrains.kotlin.load.java.structure.*
+import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory
 import org.jetbrains.kotlin.name.Name
 
 inline fun <Psi, Java> Array<Psi>.convert(factory: (Psi) -> Java): List<Java> =
@@ -38,47 +39,47 @@ fun <Psi, Java> Collection<Psi>.convert(factory: (Psi) -> Java): List<Java> =
             else -> map(factory)
         }
 
-internal fun classes(classes: Array<PsiClass>): Collection<JavaClass> =
-        classes.convert(::JavaClassImpl)
+internal fun classes(classes: Array<PsiClass>, sourceFactory: JavaElementSourceFactory): Collection<JavaClass> =
+        classes.convert { JavaClassImpl(sourceFactory.createPsiSource(it)) }
 
-internal fun classes(classes: Collection<PsiClass>): Collection<JavaClass> =
-        classes.convert(::JavaClassImpl)
+internal fun classes(classes: Collection<PsiClass>, sourceFactory: JavaElementSourceFactory): Collection<JavaClass> =
+        classes.convert { JavaClassImpl(sourceFactory.createPsiSource(it)) }
 
-internal fun packages(packages: Array<PsiPackage>, scope: GlobalSearchScope): Collection<JavaPackage> =
-        packages.convert { psi -> JavaPackageImpl(psi, scope) }
+internal fun packages(packages: Array<PsiPackage>, scope: GlobalSearchScope, sourceFactory: JavaElementSourceFactory): Collection<JavaPackage> =
+        packages.convert { psi -> JavaPackageImpl(sourceFactory.createPsiSource(psi), scope) }
 
-internal fun methods(methods: Collection<PsiMethod>): Collection<JavaMethod> =
-        methods.convert(::JavaMethodImpl)
+internal fun methods(methods: Collection<PsiMethod>, sourceFactory: JavaElementSourceFactory): Collection<JavaMethod> =
+        methods.convert { JavaMethodImpl(sourceFactory.createPsiSource(it)) }
 
-internal fun constructors(methods: Collection<PsiMethod>): Collection<JavaConstructor> =
-        methods.convert(::JavaConstructorImpl)
+internal fun constructors(methods: Collection<PsiMethod>, sourceFactory: JavaElementSourceFactory): Collection<JavaConstructor> =
+        methods.convert { JavaConstructorImpl(sourceFactory.createPsiSource(it)) }
 
-internal fun fields(fields: Collection<PsiField>): Collection<JavaField> =
-        fields.convert(::JavaFieldImpl)
+internal fun fields(fields: Collection<PsiField>, sourceFactory: JavaElementSourceFactory): Collection<JavaField> =
+        fields.convert { JavaFieldImpl(sourceFactory.createPsiSource(it)) }
 
-internal fun valueParameters(parameters: Array<PsiParameter>): List<JavaValueParameter> =
-        parameters.convert(::JavaValueParameterImpl)
+internal fun valueParameters(parameters: Array<PsiParameter>, sourceFactory: JavaElementSourceFactory): List<JavaValueParameter> =
+        parameters.convert { JavaValueParameterImpl(sourceFactory.createPsiSource(it)) }
 
-internal fun typeParameters(typeParameters: Array<PsiTypeParameter>): List<JavaTypeParameter> =
-        typeParameters.convert(::JavaTypeParameterImpl)
+internal fun typeParameters(typeParameters: Array<PsiTypeParameter>, sourceFactory: JavaElementSourceFactory): List<JavaTypeParameter> =
+        typeParameters.convert { JavaTypeParameterImpl(sourceFactory.createPsiSource(it)) }
 
-internal fun classifierTypes(classTypes: Array<PsiClassType>): Collection<JavaClassifierType> =
-        classTypes.convert(::JavaClassifierTypeImpl)
+internal fun classifierTypes(classTypes: Array<PsiClassType>, sourceFactory: JavaElementSourceFactory): Collection<JavaClassifierType> =
+        classTypes.convert { JavaClassifierTypeImpl(sourceFactory.createTypeSource(it)) }
 
-internal fun annotations(annotations: Array<out PsiAnnotation>): Collection<JavaAnnotation> =
-        annotations.convert(::JavaAnnotationImpl)
+internal fun annotations(annotations: Array<out PsiAnnotation>, sourceFactory: JavaElementSourceFactory): Collection<JavaAnnotation> =
+        annotations.convert { JavaAnnotationImpl(sourceFactory.createPsiSource(it)) }
 
-internal fun nullabilityAnnotations(annotations: Array<out PsiAnnotation>): Collection<JavaAnnotation> =
-        annotations.convert(::JavaAnnotationImpl)
+internal fun nullabilityAnnotations(annotations: Array<out PsiAnnotation>, sourceFactory: JavaElementSourceFactory): Collection<JavaAnnotation> =
+        annotations.convert { JavaAnnotationImpl(sourceFactory.createPsiSource(it)) }
                 .filter { annotation ->
                     val fqName = annotation.classId?.asSingleFqName() ?: return@filter false
                     fqName in NULLABILITY_ANNOTATIONS
                 }
 
 
-internal fun namedAnnotationArguments(nameValuePairs: Array<PsiNameValuePair>): Collection<JavaAnnotationArgument> =
+internal fun namedAnnotationArguments(nameValuePairs: Array<PsiNameValuePair>, sourceFactory: JavaElementSourceFactory): Collection<JavaAnnotationArgument> =
         nameValuePairs.convert { psi ->
             val name = psi.name?.let(Name::identifier)
             val value = psi.value ?: error("Annotation argument value cannot be null: $name")
-            JavaAnnotationArgumentImpl.create(value, name)
+            JavaAnnotationArgumentImpl.create(value, name, sourceFactory)
         }

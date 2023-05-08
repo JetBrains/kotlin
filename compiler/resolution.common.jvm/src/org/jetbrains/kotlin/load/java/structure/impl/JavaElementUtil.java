@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities;
 import org.jetbrains.kotlin.descriptors.Visibility;
 import org.jetbrains.kotlin.descriptors.java.JavaVisibilities;
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation;
+import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory;
 import org.jetbrains.kotlin.name.FqName;
 
 import java.util.ArrayList;
@@ -72,10 +73,10 @@ import static org.jetbrains.kotlin.load.java.structure.impl.JavaElementCollectio
     }
 
     @NotNull
-    public static Collection<JavaAnnotation> getAnnotations(@NotNull JavaAnnotationOwnerImpl owner) {
+    public static Collection<JavaAnnotation> getAnnotations(@NotNull JavaAnnotationOwnerImpl owner, JavaElementSourceFactory sourceFactory) {
         PsiAnnotationOwner annotationOwnerPsi = owner.getAnnotationOwnerPsi();
         if (annotationOwnerPsi != null) {
-            return annotations(annotationOwnerPsi.getAnnotations());
+            return annotations(annotationOwnerPsi.getAnnotations(), sourceFactory);
         }
         return Collections.emptyList();
     }
@@ -90,23 +91,23 @@ import static org.jetbrains.kotlin.load.java.structure.impl.JavaElementCollectio
 
     @NotNull
     static <T extends JavaAnnotationOwnerImpl & JavaModifierListOwnerImpl>
-    Collection<JavaAnnotation> getRegularAndExternalAnnotations(@NotNull T owner) {
+    Collection<JavaAnnotation> getRegularAndExternalAnnotations(@NotNull T owner, JavaElementSourceFactory sourceFactory) {
         PsiAnnotation[] externalAnnotations = getExternalAnnotations(owner);
         if (externalAnnotations == null) {
-            return getAnnotations(owner);
+            return getAnnotations(owner, sourceFactory);
         }
-        Collection<JavaAnnotation> annotations = new ArrayList<>(getAnnotations(owner));
-        annotations.addAll(nullabilityAnnotations(externalAnnotations));
+        Collection<JavaAnnotation> annotations = new ArrayList<>(getAnnotations(owner, sourceFactory));
+        annotations.addAll(nullabilityAnnotations(externalAnnotations, sourceFactory));
         return annotations;
     }
 
 
     @Nullable
-    public static JavaAnnotation findAnnotation(@NotNull JavaAnnotationOwnerImpl owner, @NotNull FqName fqName) {
+    public static JavaAnnotation findAnnotation(@NotNull JavaAnnotationOwnerImpl owner, @NotNull FqName fqName, JavaElementSourceFactory sourceFactory) {
         PsiAnnotationOwner annotationOwnerPsi = owner.getAnnotationOwnerPsi();
         if (annotationOwnerPsi != null) {
             PsiAnnotation psiAnnotation = annotationOwnerPsi.findAnnotation(fqName.asString());
-            return psiAnnotation == null ? null : new JavaAnnotationImpl(psiAnnotation);
+            return psiAnnotation == null ? null : new JavaAnnotationImpl(sourceFactory.createPsiSource(psiAnnotation));
         }
         return null;
     }

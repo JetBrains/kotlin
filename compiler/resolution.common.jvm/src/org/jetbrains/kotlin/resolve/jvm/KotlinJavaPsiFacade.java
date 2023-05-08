@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.idea.KotlinLanguage;
 import org.jetbrains.kotlin.load.java.JavaClassFinder;
 import org.jetbrains.kotlin.load.java.structure.JavaClass;
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl;
+import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus;
@@ -222,8 +223,8 @@ public class KotlinJavaPsiFacade implements Disposable {
     }
 
     @NotNull
-    private static JavaClass createJavaClass(@NotNull ClassId classId, @NotNull PsiClass psiClass) {
-        JavaClassImpl javaClass = new JavaClassImpl(psiClass);
+    private JavaClass createJavaClass(@NotNull ClassId classId, @NotNull PsiClass psiClass) {
+        JavaClassImpl javaClass = new JavaClassImpl(JavaElementSourceFactory.getInstance(project).createPsiSource(psiClass));
         FqName fqName = classId.asSingleFqName();
         if (!fqName.equals(javaClass.getFqName())) {
             throw new IllegalStateException("Requested " + fqName + ", got " + javaClass.getFqName());

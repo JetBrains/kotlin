@@ -26,6 +26,7 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation;
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotationArgument;
 import org.jetbrains.kotlin.load.java.structure.JavaClass;
+import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementPsiSource;
 import org.jetbrains.kotlin.name.ClassId;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
@@ -36,14 +37,14 @@ import java.util.Objects;
 import static org.jetbrains.kotlin.load.java.structure.impl.JavaElementCollectionFromPsiArrayUtil.namedAnnotationArguments;
 
 public class JavaAnnotationImpl extends JavaElementImpl<PsiAnnotation> implements JavaAnnotation {
-    public JavaAnnotationImpl(@NotNull PsiAnnotation psiAnnotation) {
+    public JavaAnnotationImpl(@NotNull JavaElementPsiSource<PsiAnnotation> psiAnnotation) {
         super(psiAnnotation);
     }
 
     @Override
     @NotNull
     public Collection<JavaAnnotationArgument> getArguments() {
-        return namedAnnotationArguments(getPsi().getParameterList().getAttributes());
+        return namedAnnotationArguments(getPsi().getParameterList().getAttributes(), getSourceFactory());
     }
 
     @Override
@@ -64,7 +65,7 @@ public class JavaAnnotationImpl extends JavaElementImpl<PsiAnnotation> implement
     @Override
     public JavaClass resolve() {
         PsiClass resolved = resolvePsi();
-        return resolved == null ? null : new JavaClassImpl(resolved);
+        return resolved == null ? null : new JavaClassImpl(createPsiSource(resolved));
     }
 
     @Nullable

@@ -35,12 +35,12 @@ import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassSigna
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.ClassifierResolutionContext
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.isNotTopLevelClass
+import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
 import org.jetbrains.kotlin.util.PerformanceCounter
 import org.jetbrains.kotlin.utils.addIfNotNull
-import java.util.*
 
 // TODO: do not inherit from CoreJavaFileManager to avoid accidental usage of its methods which do not use caches/indices
 // Currently, the only relevant usage of this class as CoreJavaFileManager is at CoreJavaDirectoryService.getPackage,
@@ -136,7 +136,14 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
             }
         }
 
-        return virtualFile.findPsiClassInVirtualFile(classId.relativeClassName.asString())?.let(::JavaClassImpl)
+        return virtualFile.findPsiClassInVirtualFile(classId.relativeClassName.asString())
+            ?.let { createJavaClassByPsiClass(it) }
+    }
+
+    private fun createJavaClassByPsiClass(psiClass: PsiClass): JavaClassImpl {
+        val project = myPsiManager.project
+        val sourceFactory = JavaElementSourceFactory.getInstance(project)
+        return JavaClassImpl(sourceFactory.createPsiSource(psiClass))
     }
 
     // this method is called from IDEA to resolve dependencies in Java code

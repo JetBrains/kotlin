@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.descriptors.Visibility;
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation;
 import org.jetbrains.kotlin.load.java.structure.JavaClass;
 import org.jetbrains.kotlin.load.java.structure.JavaMember;
+import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementPsiSource;
 import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.name.Name;
 
@@ -33,7 +34,7 @@ import java.util.Collection;
 
 public abstract class JavaMemberImpl<Psi extends PsiMember> extends JavaElementImpl<Psi>
         implements JavaMember, JavaAnnotationOwnerImpl, JavaModifierListOwnerImpl {
-    protected JavaMemberImpl(@NotNull Psi psiMember) {
+    protected JavaMemberImpl(JavaElementPsiSource<Psi> psiMember) {
         super(psiMember);
     }
 
@@ -61,7 +62,7 @@ public abstract class JavaMemberImpl<Psi extends PsiMember> extends JavaElementI
     public JavaClass getContainingClass() {
         PsiClass psiClass = getPsi().getContainingClass();
         assert psiClass != null : "Member must have a containing class: " + getPsi();
-        return new JavaClassImpl(psiClass);
+        return new JavaClassImpl(createPsiSource(psiClass));
     }
 
     @Override
@@ -88,13 +89,13 @@ public abstract class JavaMemberImpl<Psi extends PsiMember> extends JavaElementI
     @NotNull
     @Override
     public Collection<JavaAnnotation> getAnnotations() {
-        return JavaElementUtil.getRegularAndExternalAnnotations(this);
+        return JavaElementUtil.getRegularAndExternalAnnotations(this, getSourceFactory());
     }
 
     @Nullable
     @Override
     public JavaAnnotation findAnnotation(@NotNull FqName fqName) {
-        return JavaElementUtil.findAnnotation(this, fqName);
+        return JavaElementUtil.findAnnotation(this, fqName, getSourceFactory());
     }
 
     @Override

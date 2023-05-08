@@ -21,6 +21,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.load.java.structure.JavaConstructor;
 import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter;
 import org.jetbrains.kotlin.load.java.structure.JavaValueParameter;
+import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementPsiSource;
 
 import java.util.List;
 
@@ -28,8 +29,9 @@ import static org.jetbrains.kotlin.load.java.structure.impl.JavaElementCollectio
 import static org.jetbrains.kotlin.load.java.structure.impl.JavaElementCollectionFromPsiArrayUtil.valueParameters;
 
 public class JavaConstructorImpl extends JavaMemberImpl<PsiMethod> implements JavaConstructor {
-    public JavaConstructorImpl(@NotNull PsiMethod psiMethod) {
-        super(psiMethod);
+    public JavaConstructorImpl(@NotNull JavaElementPsiSource<PsiMethod> psiConstructorSource) {
+        super(psiConstructorSource);
+        PsiMethod psiMethod = psiConstructorSource.getPsi();
         assert psiMethod.isConstructor() :
                 "PsiMethod which is not a constructor should not be wrapped in JavaConstructorImpl: " +
                 psiMethod.getName() + " " + psiMethod.getClass().getName();
@@ -38,12 +40,12 @@ public class JavaConstructorImpl extends JavaMemberImpl<PsiMethod> implements Ja
     @NotNull
     @Override
     public List<JavaValueParameter> getValueParameters() {
-        return valueParameters(getPsi().getParameterList().getParameters());
+        return valueParameters(getPsi().getParameterList().getParameters(), getSourceFactory());
     }
 
     @NotNull
     @Override
     public List<JavaTypeParameter> getTypeParameters() {
-        return typeParameters(getPsi().getTypeParameters());
+        return typeParameters(getPsi().getTypeParameters(), getSourceFactory());
     }
 }

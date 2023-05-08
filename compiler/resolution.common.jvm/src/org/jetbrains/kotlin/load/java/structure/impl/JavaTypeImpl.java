@@ -21,20 +21,30 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation;
 import org.jetbrains.kotlin.load.java.structure.JavaType;
+import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory;
+import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementTypeSource;
+import org.jetbrains.kotlin.load.java.structure.impl.source.JavaSourceFactoryOwner;
 import org.jetbrains.kotlin.name.FqName;
 
 import java.util.Collection;
 
-public abstract class JavaTypeImpl<Psi extends PsiType> implements JavaType, JavaAnnotationOwnerImpl {
-    private final Psi psiType;
+public abstract class JavaTypeImpl<Psi extends PsiType> implements JavaType, JavaAnnotationOwnerImpl, JavaSourceFactoryOwner {
+    private final JavaElementTypeSource<Psi> psiType;
 
-    public JavaTypeImpl(@NotNull Psi psiType) {
-        this.psiType = psiType;
+    public JavaTypeImpl(@NotNull JavaElementTypeSource<Psi> psiTypeSource) {
+        this.psiType = psiTypeSource;
     }
+
+    @Override
+    @NotNull
+    public JavaElementSourceFactory getSourceFactory() {
+        return psiType.getFactory();
+    }
+
 
     @NotNull
     public Psi getPsi() {
-        return psiType;
+        return psiType.getType();
     }
 
     @Nullable
@@ -44,8 +54,10 @@ public abstract class JavaTypeImpl<Psi extends PsiType> implements JavaType, Jav
     }
 
     @NotNull
-    public static JavaTypeImpl<?> create(@NotNull PsiType psiType) {
-        return psiType.accept(new PsiTypeVisitor<JavaTypeImpl<?>>() {
+    public static JavaTypeImpl<?> create(@NotNull JavaElementTypeSource<PsiType> psiTypeSource) {
+        JavaElementSourceFactory sourceFactory = psiTypeSource.getFactory();
+        return psiTypeSource.getType().accept(new PsiTypeVisitor<JavaTypeImpl<?>>() {
+
             @Nullable
             @Override
             public JavaTypeImpl<?> visitType(@NotNull PsiType type) {
@@ -55,25 +67,25 @@ public abstract class JavaTypeImpl<Psi extends PsiType> implements JavaType, Jav
             @Nullable
             @Override
             public JavaTypeImpl<?> visitPrimitiveType(@NotNull PsiPrimitiveType primitiveType) {
-                return new JavaPrimitiveTypeImpl(primitiveType);
+                return new JavaPrimitiveTypeImpl(sourceFactory.createTypeSource(primitiveType));
             }
 
             @Nullable
             @Override
             public JavaTypeImpl<?> visitArrayType(@NotNull PsiArrayType arrayType) {
-                return new JavaArrayTypeImpl(arrayType);
+                return new JavaArrayTypeImpl(sourceFactory.createTypeSource(arrayType));
             }
 
             @Nullable
             @Override
             public JavaTypeImpl<?> visitClassType(@NotNull PsiClassType classType) {
-                return new JavaClassifierTypeImpl(classType);
+                return new JavaClassifierTypeImpl(sourceFactory.createTypeSource(classType));
             }
 
             @Nullable
             @Override
             public JavaTypeImpl<?> visitWildcardType(@NotNull PsiWildcardType wildcardType) {
-                return new JavaWildcardTypeImpl(wildcardType);
+                return new JavaWildcardTypeImpl(sourceFactory.createTypeSource(wildcardType));
             }
         });
     }
@@ -81,13 +93,13 @@ public abstract class JavaTypeImpl<Psi extends PsiType> implements JavaType, Jav
     @NotNull
     @Override
     public Collection<JavaAnnotation> getAnnotations() {
-        return JavaElementUtil.getAnnotations(this);
+        return JavaElementUtil.getAnnotations(this, getSourceFactory());
     }
 
     @Nullable
     @Override
     public JavaAnnotation findAnnotation(@NotNull FqName fqName) {
-        return JavaElementUtil.findAnnotation(this, fqName);
+        return JavaElementUtil.findAnnotation(this, fqName, getSourceFactory());
     }
 
     @Override

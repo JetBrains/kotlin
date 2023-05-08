@@ -27,10 +27,11 @@ import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassSigna
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.ClassifierResolutionContext
 import org.jetbrains.kotlin.load.java.structure.impl.convert
+import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
-import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.kotlin.utils.compact
+import org.jetbrains.org.objectweb.asm.*
 import org.jetbrains.org.objectweb.asm.Opcodes.ACC_TRANSITIVE
 import java.io.IOException
 
@@ -59,7 +60,11 @@ class JavaModuleInfo(
                     Exports(FqName(packageName), statement.moduleNames)
                 }
             },
-            psiJavaModule.annotations.convert(::JavaAnnotationImpl)
+            psiJavaModule.annotations.convert {
+                JavaAnnotationImpl(
+                    JavaElementSourceFactory.getInstance(psiJavaModule.project).createPsiSource(it)
+                )
+            }
         )
 
         fun read(file: VirtualFile, javaFileManager: KotlinCliJavaFileManager, searchScope: GlobalSearchScope): JavaModuleInfo? {

@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.fir.java.modality
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
+import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
@@ -46,7 +47,7 @@ internal class KtFirPsiJavaClassSymbol(
     /**
      * [javaClass] is used to defer some properties to the compiler's view of a Java class.
      */
-    private val javaClass: JavaClass = JavaClassImpl(psi)
+    private val javaClass: JavaClass = JavaClassImpl(JavaElementSourceFactory.getInstance(analysisSession.project).createPsiSource(psi))
 
     override val name: Name = withValidityAssertion { javaClass.name }
 
