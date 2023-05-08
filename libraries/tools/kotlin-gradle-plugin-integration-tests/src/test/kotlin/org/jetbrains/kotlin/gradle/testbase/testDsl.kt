@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.presetName
 import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
@@ -56,7 +57,6 @@ fun KGPBaseTest.project(
     projectPath.enableCacheRedirector()
     projectPath.enableAndroidSdk()
 
-    if (addHeapDumpOptions) projectPath.addHeapDumpOptions()
 
     val gradleRunner = GradleRunner
         .create()
@@ -74,6 +74,7 @@ fun KGPBaseTest.project(
         enableBuildScan = enableBuildScan,
         enableGradleDebug = enableGradleDebug,
     )
+    addHeapDumpOptions.ifTrue { testProject.addHeapDumpOptions() }
     localRepoDir?.let { testProject.configureLocalRepository(localRepoDir) }
     if (buildJdk != null) testProject.setupNonDefaultJdk(buildJdk)
     testProject.addKotlinCompilerArgumentsPlugin()
@@ -595,49 +596,14 @@ internal fun Path.enableCacheRedirector() {
     }
 }
 
-private fun Path.addHeapDumpOptions() {
-    val propertiesFile = resolve("gradle.properties")
-    if (!propertiesFile.exists()) propertiesFile.createFile()
-
-    val propertiesContent = propertiesFile.readText()
-    val (existingJvmArgsLine, otherLines) = propertiesContent
-        .lines()
-        .partition {
-            it.trim().startsWith("org.gradle.jvmargs")
-        }
-
-    val heapDumpOutOfErrorStr = "-XX:+HeapDumpOnOutOfMemoryError"
-    val heapDumpPathStr = "-XX:HeapDumpPath=\"${System.getProperty("user.dir")}${File.separatorChar}build\""
-
-    if (existingJvmArgsLine.isEmpty()) {
-        propertiesFile.writeText(
-            """
-            |# modified in addHeapDumpOptions
-            |org.gradle.jvmargs=$heapDumpOutOfErrorStr $heapDumpPathStr
-            | 
-            |$propertiesContent
-            """.trimMargin()
-        )
-    } else {
-        val argsLine = existingJvmArgsLine.first()
-        val appendedOptions = buildString {
-            if (!argsLine.contains("HeapDumpOnOutOfMemoryError")) append(" $heapDumpOutOfErrorStr")
-            if (!argsLine.contains("HeapDumpPath")) append(" $heapDumpPathStr")
-        }
-
-        if (appendedOptions.isNotEmpty()) {
-            propertiesFile.writeText(
-                """
-                # modified in addHeapDumpOptions
-                $argsLine$appendedOptions
-                
-                ${otherLines.joinToString(separator = "\n")}
-                """.trimIndent()
-            )
-        } else {
-            println("<=== Heap dump options are already exists! ===>")
-        }
-    }
+private fun GradleProject.addHeapDumpOptions() {
+    addPropertyToGradleProperties(
+        propertyName = "org.gradle.jvmargs",
+        mapOf(
+            "-XX:+HeapDumpOnOutOfMemoryError" to "-XX:+HeapDumpOnOutOfMemoryError",
+            "-XX:HeapDumpPath" to "-XX:HeapDumpPath=\"${System.getProperty("user.dir")}${File.separatorChar}build\""
+        ),
+    )
 }
 
 private const val SINGLE_NATIVE_TARGET_PLACEHOLDER = "<SingleNativeTarget>"

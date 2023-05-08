@@ -47,7 +47,7 @@ class FatFrameworkIT : KGPBaseTest() {
         nativeProject(
             "native-fat-framework/smoke",
             gradleVersion,
-            // TODO(d.krasnov): return default statisticsForceValidation, when KT-58104 will be fixed
+            // TODO(Dmitrii Krasnov): return default statisticsForceValidation, when KT-58104 will be fixed
             buildOptions = defaultBuildOptions.copy(statisticsForceValidation = false)
         ) {
             buildGradleKts.modify {
