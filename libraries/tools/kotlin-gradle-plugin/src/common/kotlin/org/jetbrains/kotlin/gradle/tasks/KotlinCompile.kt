@@ -144,7 +144,7 @@ abstract class KotlinCompile @Inject constructor(
 
     @get:Internal
     final override val defaultKotlinJavaToolchain: Provider<DefaultKotlinJavaToolchain> = objectFactory
-        .propertyWithNewInstance({ this })
+        .propertyWithNewInstance({ compilerOptions })
 
     final override val kotlinJavaToolchainProvider: Provider<KotlinJavaToolchain> = defaultKotlinJavaToolchain.cast()
 
