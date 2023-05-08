@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
 import org.jetbrains.kotlin.gradle.model.builder.KotlinModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.internal.JavaSourceSetsAccessor
 import org.jetbrains.kotlin.gradle.plugin.internal.MavenPluginConfigurator
+import org.jetbrains.kotlin.gradle.plugin.internal.compatibilityConventionRegistrar
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.tasks.InspectClassesForMultiModuleIC
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
@@ -186,12 +187,10 @@ internal abstract class AbstractKotlinPlugin(
                     kotlinSourceSet.kotlin.source(javaSourceSet.java)
                     @Suppress("DEPRECATION")
                     kotlinCompilation.source(kotlinSourceSet)
-                    @Suppress("DEPRECATION")
-                    javaSourceSet.addConvention(kotlinSourceSetDslName, kotlinSourceSet)
+                    project.compatibilityConventionRegistrar.addConvention(javaSourceSet, kotlinSourceSetDslName, kotlinSourceSet)
                     javaSourceSet.addExtension(kotlinSourceSetDslName, kotlinSourceSet.kotlin)
                 } else {
-                    @Suppress("DEPRECATION")
-                    javaSourceSet.addConvention(kotlinSourceSetDslName, kotlinCompilation.defaultSourceSet)
+                    project.compatibilityConventionRegistrar.addConvention(javaSourceSet, kotlinSourceSetDslName, kotlinCompilation.defaultSourceSet)
                     javaSourceSet.addExtension(kotlinSourceSetDslName, kotlinCompilation.defaultSourceSet.kotlin)
                 }
             }

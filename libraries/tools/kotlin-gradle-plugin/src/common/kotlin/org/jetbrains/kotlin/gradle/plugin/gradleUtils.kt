@@ -22,22 +22,6 @@ import org.gradle.api.internal.HasConvention
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.plugins.ExtraPropertiesExtension
 
-@Deprecated("Conventions are deprecated in Gradle")
-internal inline fun <reified T : Any> Any.addConvention(name: String, plugin: T) {
-    // Verifying conventions are still available via reflection,
-    // so Gradle could remove them in Gradle 8.0 release
-    val conventionsIsAvailable = try {
-        Class.forName("org.gradle.api.internal.HasConvention")
-        true
-    } catch (_: ClassNotFoundException) {
-        false
-    }
-
-    if (conventionsIsAvailable) {
-        (this as HasConvention).convention.plugins[name] = plugin
-    }
-}
-
 internal inline fun <reified T : Any> Any.addExtension(name: String, extension: T) =
     (this as ExtensionAware).extensions.add(T::class.java, name, extension)
 

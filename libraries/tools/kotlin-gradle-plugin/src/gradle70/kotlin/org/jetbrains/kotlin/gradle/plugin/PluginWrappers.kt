@@ -161,4 +161,6 @@ private fun Project.registerVariantImplementations() {
         ArtifactTypeAttributeAccessorG70.ArtifactTypeAttributeAccessorVariantFactoryG70()
     factories[ProjectIsolationStartParameterAccessor.Factory::class] =
         ProjectIsolationStartParameterAccessorG70.Factory()
+    factories[CompatibilityConventionRegistrar.Factory::class] =
+        CompatibilityConventionRegistrarG70.Factory()
 }

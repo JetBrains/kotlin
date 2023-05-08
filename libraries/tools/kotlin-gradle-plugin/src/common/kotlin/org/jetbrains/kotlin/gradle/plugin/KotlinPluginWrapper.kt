@@ -178,6 +178,11 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
             ProjectIsolationStartParameterAccessor.Factory::class,
             DefaultProjectIsolationStartParameterAccessorVariantFactory()
         )
+
+        factories.putIfAbsent(
+            CompatibilityConventionRegistrar.Factory::class,
+            DefaultCompatibilityConventionRegistrar.Factory()
+        )
     }
 
     protected fun setupAttributeMatchingStrategy(
