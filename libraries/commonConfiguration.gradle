@@ -56,6 +56,10 @@ ext.configurePublishing = { Project project, configure = { } ->
     }
 }
 
+ext.configureSbom = { Project project, Iterable<String> gradleConfigurations = ["runtimeClasspath"] ->
+    SbomKt.configureSbom(project, gradleConfigurations)
+}
+
 ext.configureFrontendIr = { Project project ->
     project.tasks.withType(KotlinCompile.class) { task ->
         task.kotlinOptions {

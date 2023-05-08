@@ -96,6 +96,8 @@ dependencies {
     implementation("com.gradle.publish:plugin-publish-plugin:1.0.0")
     implementation("org.jetbrains.dokka:dokka-gradle-plugin:1.8.10")
 
+    implementation("org.spdx:spdx-gradle-plugin:0.1.0-dev-5")
+
     implementation("com.jakewharton.dex:dex-member-list:4.1.1")
 
     implementation("gradle.plugin.com.github.johnrengelman:shadow:${rootProject.extra["versions.shadow"]}") {
