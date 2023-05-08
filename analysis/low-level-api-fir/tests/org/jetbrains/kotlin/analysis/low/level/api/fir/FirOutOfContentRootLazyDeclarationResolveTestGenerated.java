@@ -199,6 +199,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("localConstructor.kt")
+    public void testLocalConstructor() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/localConstructor.kt");
+    }
+
+    @Test
     @TestMetadata("localFunctionInsideSuperEntryCall.kt")
     public void testLocalFunctionInsideSuperEntryCall() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/lazyResolve/localFunctionInsideSuperEntryCall.kt");
@@ -274,6 +280,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     @TestMetadata("propertyWithInitializer.kt")
     public void testPropertyWithInitializer() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/lazyResolve/propertyWithInitializer.kt");
+    }
+
+    @Test
+    @TestMetadata("redeclaration.kt")
+    public void testRedeclaration() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/redeclaration.kt");
     }
 
     @Test

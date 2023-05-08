@@ -27,7 +27,7 @@ FILE: implicitInLocalClasses.kt
 
         }
 
-        lval a: R|A| = R|/A.A|()
+        lval a: R|A| = R|<local>/A.A|()
         R|/useBoolean|(R|<local>/a|.R|<local>/foo|(Int(1)))
         R|/useBoolean|(R|<local>/a|.R|<local>/bar|(Int(1)))
         R|/useBoolean|(R|<local>/a|.R|<local>/w|)
@@ -45,7 +45,7 @@ FILE: implicitInLocalClasses.kt
                 ^bar CMP(>, this@R|/B|.R|kotlin/Any.hashCode|().R|kotlin/Int.plus|(R|<local>/y|).R|kotlin/Int.compareTo|(Int(0)))
             }
 
-            public final val inner: R|B.Inner| = this@R|/B|.R|/B.Inner.Inner|()
+            public final val inner: R|B.Inner| = this@R|/B|.R|<local>/B.Inner.Inner|()
                 public get(): R|B.Inner|
 
             local final inner class Inner : R|kotlin/Any| {
@@ -67,7 +67,7 @@ FILE: implicitInLocalClasses.kt
 
         }
 
-        lval b: R|B| = R|/B.B|()
+        lval b: R|B| = R|<local>/B.B|()
         R|/useBoolean|(R|<local>/b|.R|<local>/foo|(Int(1)))
         R|/useBoolean|(R|<local>/b|.R|<local>/bar|(Int(1)))
         R|/useBoolean|(R|<local>/b|.R|<local>/inner|.R|<local>/w|)

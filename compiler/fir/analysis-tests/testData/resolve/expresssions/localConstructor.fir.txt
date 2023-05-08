@@ -7,5 +7,5 @@ FILE: localConstructor.kt
 
         }
 
-        lval l: R|Local| = R|/Local.Local|()
+        lval l: R|Local| = R|<local>/Local.Local|()
     }

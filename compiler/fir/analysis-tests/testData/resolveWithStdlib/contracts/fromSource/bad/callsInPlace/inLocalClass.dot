@@ -15,8 +15,8 @@ digraph inLocalClass_kt {
                 3 [label="Exit block"];
             }
             4 [label="Local class declaration"];
-            5 [label="Function call: R|/LocalClass.LocalClass|()" style="filled" fillcolor=yellow];
-            6 [label="Function call: R|/LocalClass.LocalClass|().R|<local>/run|()" style="filled" fillcolor=yellow];
+            5 [label="Function call: R|<local>/LocalClass.LocalClass|()" style="filled" fillcolor=yellow];
+            6 [label="Function call: R|<local>/LocalClass.LocalClass|().R|<local>/run|()" style="filled" fillcolor=yellow];
             7 [label="Function call: R|<local>/e|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()" style="filled" fillcolor=yellow];
             8 [label="Exit block"];
         }

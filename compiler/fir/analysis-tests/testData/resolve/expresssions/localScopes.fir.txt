@@ -19,7 +19,7 @@ FILE: localScopes.kt
 
         }
 
-        lval base: R|BaseLocal| = R|/BaseLocal.BaseLocal|()
+        lval base: R|BaseLocal| = R|<local>/BaseLocal.BaseLocal|()
         R|<local>/base|.R|<local>/baz|()
         R|<local>/base|.R|/Bar.foo|()
         lval anonymous: R|<anonymous>| = object : R|Bar| {
@@ -44,7 +44,7 @@ FILE: localScopes.kt
 
         }
 
-        lval derived: R|DerivedLocal| = R|/DerivedLocal.DerivedLocal|()
+        lval derived: R|DerivedLocal| = R|<local>/DerivedLocal.DerivedLocal|()
         R|<local>/derived|.R|<local>/gau|()
         R|<local>/derived|.R|<local>/baz|()
         R|<local>/derived|.R|/Bar.foo|()

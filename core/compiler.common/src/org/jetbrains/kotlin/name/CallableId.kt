@@ -13,8 +13,8 @@ data class CallableId(
     // Currently, it's only used for debug info
     private val pathToLocal: FqName? = null
 ) {
-    private companion object {
-        val LOCAL_NAME = SpecialNames.LOCAL
+    companion object {
+        private val LOCAL_NAME = SpecialNames.LOCAL
         val PACKAGE_FQ_NAME_FOR_LOCAL = FqName.topLevel(LOCAL_NAME)
     }
 
@@ -23,13 +23,12 @@ data class CallableId(
      * Otherwise, returns `false`
      */
     val isLocal: Boolean
-        get() = packageName == PACKAGE_FQ_NAME_FOR_LOCAL
-                || classId?.isLocal == true
+        get() = packageName == PACKAGE_FQ_NAME_FOR_LOCAL || classId?.isLocal == true
 
     var classId: ClassId? = null
         get() {
             if (field == null && className != null) {
-                field = ClassId(packageName, className, false)
+                field = ClassId(packageName, className, packageName == PACKAGE_FQ_NAME_FOR_LOCAL)
             }
             return field
         }

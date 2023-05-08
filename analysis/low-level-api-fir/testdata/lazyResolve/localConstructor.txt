@@ -1,0 +1,294 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] localConstructor.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] class Q : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Q] constructor(): R|Q| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] E, [ResolvedTo(RAW_FIR)] F> foo(): <implicit> { LAZY_BLOCK }
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] class Q : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Q] constructor(): R|Q| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] E, [ResolvedTo(RAW_FIR)] F> foo(): <implicit> { LAZY_BLOCK }
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] class Q : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Q] constructor(): R|Q| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun <[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] E, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] F> foo(): <implicit> { LAZY_BLOCK }
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
+    public? final? [ResolvedTo(RAW_FIR)] class Q : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Q] constructor(): R|Q| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(COMPANION_GENERATION)] fun <[ResolvedTo(COMPANION_GENERATION)] E, [ResolvedTo(COMPANION_GENERATION)] F> foo(): <implicit> { LAZY_BLOCK }
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
+    public? final? [ResolvedTo(SUPER_TYPES)] class Q : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Q] constructor(): R|Q| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(SUPER_TYPES)] fun <[ResolvedTo(SUPER_TYPES)] E, [ResolvedTo(SUPER_TYPES)] F> foo(): <implicit> { LAZY_BLOCK }
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
+    public? final? [ResolvedTo(TYPES)] class Q : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Q] constructor(): R|Q| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(TYPES)] fun <[ResolvedTo(TYPES)] E, [ResolvedTo(TYPES)] F> foo(): <implicit> { LAZY_BLOCK }
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] class Q : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Q] constructor(): R|Q| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] fun <[ResolvedTo(STATUS)] E, [ResolvedTo(STATUS)] F> foo(): <implicit> { LAZY_BLOCK }
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] class Q : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Q] constructor(): R|Q| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun <[ResolvedTo(EXPECT_ACTUAL_MATCHING)] E, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] F> foo(): <implicit> { LAZY_BLOCK }
+
+    }
+
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] class Q : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Q] constructor(): R|Q| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun <[ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] E, [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] F> foo(): <implicit> { LAZY_BLOCK }
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
+    public final [ResolvedTo(STATUS)] class Q : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Q] constructor(): R|Q| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] E, [ResolvedTo(CONTRACTS)] F> foo(): <implicit> {
+            ^foo [ResolvedTo(RAW_FIR)] fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                local final? [ResolvedTo(RAW_FIR)] class C<[ResolvedTo(RAW_FIR)] G, [ResolvedTo(CONTRACTS)] E, [ResolvedTo(CONTRACTS)] F> : R|kotlin/Any| {
+                    public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor<[ResolvedTo(RAW_FIR)] G>(): R|Q.C<G, E, F>| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                    public? final? [ResolvedTo(RAW_FIR)] val e: E = magic#()
+                        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): E
+
+                    public? final? [ResolvedTo(RAW_FIR)] val f: F = magic#()
+                        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): F
+
+                    public? final? [ResolvedTo(RAW_FIR)] val g: G = magic#()
+                        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): G
+
+                }
+
+                C#<F>()
+            }
+
+        }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> magic(): R|T| {
+        ^magic Null(null)!!
+    }
+    public final [ResolvedTo(STATUS)] class Q : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Q] constructor(): R|Q| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun <[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] E, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] F> foo(): R|() -> Q.C<F, E, F>| {
+            ^foo [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|Q.C<F, E, F>| <inline=Unknown>  {
+                local final [ResolvedTo(RAW_FIR)] class C<[ResolvedTo(RAW_FIR)] G, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] E, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] F> : R|kotlin/Any| {
+                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor<[ResolvedTo(RAW_FIR)] G>(): R|Q.C<G, E, F>| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                    public final [ResolvedTo(RAW_FIR)] val e: R|E| = R|/magic|<R|E|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|E|
+
+                    public final [ResolvedTo(RAW_FIR)] val f: R|F| = R|/magic|<R|F|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|F|
+
+                    public final [ResolvedTo(RAW_FIR)] val g: R|G| = R|/magic|<R|G|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|G|
+
+                }
+
+                ^ R|SubstitutionOverride<<local>/Q.C.C>|<R|F|>()
+            }
+
+        }
+
+    }
+
+ANNOTATIONS_ARGUMENTS_MAPPING:
+FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> magic(): R|T| {
+        ^magic Null(null)!!
+    }
+    public final [ResolvedTo(STATUS)] class Q : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Q] constructor(): R|Q| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun <[ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] E, [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] F> foo(): R|() -> Q.C<F, E, F>| {
+            ^foo [ResolvedTo(RAW_FIR)] fun <anonymous>(): R|Q.C<F, E, F>| <inline=Unknown>  {
+                local final [ResolvedTo(RAW_FIR)] class C<[ResolvedTo(RAW_FIR)] G, [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] E, [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] F> : R|kotlin/Any| {
+                    public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] constructor<[ResolvedTo(RAW_FIR)] G>(): R|Q.C<G, E, F>| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                    public final [ResolvedTo(RAW_FIR)] val e: R|E| = R|/magic|<R|E|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|E|
+
+                    public final [ResolvedTo(RAW_FIR)] val f: R|F| = R|/magic|<R|F|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|F|
+
+                    public final [ResolvedTo(RAW_FIR)] val g: R|G| = R|/magic|<R|G|>()
+                        public [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] get(): R|G|
+
+                }
+
+                ^ R|SubstitutionOverride<<local>/Q.C.C>|<R|F|>()
+            }
+
+        }
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> magic(): R|T| {
+        ^magic Null(null)!!
+    }
+    public final [ResolvedTo(STATUS)] class Q : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Q] constructor(): R|Q| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] E, [ResolvedTo(BODY_RESOLVE)] F> foo(): R|() -> Q.C<F, E, F>| {
+            ^foo [ResolvedTo(BODY_RESOLVE)] fun <anonymous>(): R|Q.C<F, E, F>| <inline=Unknown>  {
+                local final [ResolvedTo(BODY_RESOLVE)] class C<[ResolvedTo(BODY_RESOLVE)] G, [ResolvedTo(BODY_RESOLVE)] E, [ResolvedTo(BODY_RESOLVE)] F> : R|kotlin/Any| {
+                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] constructor<[ResolvedTo(BODY_RESOLVE)] G>(): R|Q.C<G, E, F>| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                    public final [ResolvedTo(BODY_RESOLVE)] val e: R|E| = R|/magic|<R|E|>()
+                        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] get(): R|E|
+
+                    public final [ResolvedTo(BODY_RESOLVE)] val f: R|F| = R|/magic|<R|F|>()
+                        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] get(): R|F|
+
+                    public final [ResolvedTo(BODY_RESOLVE)] val g: R|G| = R|/magic|<R|G|>()
+                        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] get(): R|G|
+
+                }
+
+                ^ R|SubstitutionOverride<<local>/Q.C.C>|<R|F|>()
+            }
+
+        }
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(IMPORTS)] localConstructor.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T> magic(): R|T| {
+        ^magic Null(null)!!
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class Q : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Q] constructor(): R|Q| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] E, [ResolvedTo(BODY_RESOLVE)] F> foo(): R|() -> Q.C<F, E, F>| {
+            ^foo [ResolvedTo(BODY_RESOLVE)] fun <anonymous>(): R|Q.C<F, E, F>| <inline=Unknown>  {
+                local final [ResolvedTo(BODY_RESOLVE)] class C<[ResolvedTo(BODY_RESOLVE)] G, [ResolvedTo(BODY_RESOLVE)] E, [ResolvedTo(BODY_RESOLVE)] F> : R|kotlin/Any| {
+                    public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] constructor<[ResolvedTo(BODY_RESOLVE)] G>(): R|Q.C<G, E, F>| {
+                        super<R|kotlin/Any|>()
+                    }
+
+                    public final [ResolvedTo(BODY_RESOLVE)] val e: R|E| = R|/magic|<R|E|>()
+                        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] get(): R|E|
+
+                    public final [ResolvedTo(BODY_RESOLVE)] val f: R|F| = R|/magic|<R|F|>()
+                        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] get(): R|F|
+
+                    public final [ResolvedTo(BODY_RESOLVE)] val g: R|G| = R|/magic|<R|G|>()
+                        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] get(): R|G|
+
+                }
+
+                ^ R|SubstitutionOverride<<local>/Q.C.C>|<R|F|>()
+            }
+
+        }
+
+    }

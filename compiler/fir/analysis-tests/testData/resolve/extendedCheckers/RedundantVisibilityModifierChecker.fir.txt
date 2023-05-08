@@ -12,7 +12,7 @@ FILE: RedundantVisibilityModifierChecker.kt
 
         }
 
-        R|/LocalClass.LocalClass|().R|<local>/foo| = Int(1)
+        R|<local>/LocalClass.LocalClass|().R|<local>/foo| = Int(1)
     }
     internal final inline fun internal(): R|kotlin/Unit| {
         R|/f|()

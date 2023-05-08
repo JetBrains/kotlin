@@ -20,7 +20,7 @@ FILE: test.kt
             }
 
             public final fun bar(): R|kotlin/String| {
-                ^bar this@R|/<anonymous>|.R|/<anonymous>.S.S|().R|<local>/foo|()
+                ^bar this@R|/<anonymous>|.R|<local>/<anonymous>.S.S|().R|<local>/foo|()
             }
 
         }

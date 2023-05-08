@@ -151,9 +151,19 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         return dispatchReceivers.getOrNull(dispatchReceivers.lastIndex - 1)
     }
 
-    fun callableIdForClassConstructor() =
-        if (context.className == FqName.ROOT) CallableId(context.packageFqName, Name.special("<anonymous-init>"))
-        else CallableId(context.packageFqName, context.className, context.className.shortName())
+    fun callableIdForClassConstructor(): CallableId {
+        val packageName = if (context.inLocalContext) {
+            CallableId.PACKAGE_FQ_NAME_FOR_LOCAL
+        } else {
+            context.packageFqName
+        }
+
+        return if (context.className == FqName.ROOT) {
+            CallableId(packageName, Name.special("<anonymous-init>"))
+        } else {
+            CallableId(packageName, context.className, context.className.shortName())
+        }
+    }
 
 
     /**** Function utils ****/

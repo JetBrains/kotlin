@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
 import org.jetbrains.kotlin.analysis.utils.errors.buildErrorWithAttachment
 import org.jetbrains.kotlin.analysis.utils.errors.checkWithAttachmentBuilder
+import org.jetbrains.kotlin.analysis.utils.errors.requireIsInstance
 import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -59,10 +60,11 @@ private fun collectDesignationPath(target: FirElementWithResolveState): List<Fir
         is FirField,
         is FirConstructor,
         is FirEnumEntry,
-        is FirPropertyAccessor -> {
-            require(target is FirCallableDeclaration)
+        is FirPropertyAccessor,
+        -> {
+            requireIsInstance<FirCallableDeclaration>(target)
 
-            if ((target !is FirConstructor && target.symbol.callableId.isLocal) || target.status.visibility == Visibilities.Local) {
+            if (target.symbol.callableId.isLocal || target.status.visibility == Visibilities.Local) {
                 return null
             }
 

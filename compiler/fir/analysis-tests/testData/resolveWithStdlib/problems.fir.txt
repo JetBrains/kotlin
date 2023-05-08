@@ -24,7 +24,7 @@ FILE: problems.kt
 
         }
 
-        R|/Local.Local|()
+        R|<local>/Local.Local|()
     }
     public final val R|kotlin/Any|.bar: R|kotlin/String|
         public get(): R|kotlin/String| {

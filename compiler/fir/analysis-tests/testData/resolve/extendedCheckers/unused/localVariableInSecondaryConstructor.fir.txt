@@ -15,5 +15,5 @@ FILE: localVariableInSecondaryConstructor.kt
 
         }
 
-        R|/LocalClass.LocalClass|().R|<local>/arg|
+        R|<local>/LocalClass.LocalClass|().R|<local>/arg|
     }

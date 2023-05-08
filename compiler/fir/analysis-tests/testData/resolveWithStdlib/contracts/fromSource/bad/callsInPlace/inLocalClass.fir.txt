@@ -42,6 +42,6 @@ FILE: inLocalClass.kt
 
         }
 
-        R|/LocalClass.LocalClass|().R|<local>/run|()
+        R|<local>/LocalClass.LocalClass|().R|<local>/run|()
         R|<local>/e|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
     }

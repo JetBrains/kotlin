@@ -8,7 +8,7 @@ FILE: localInnerClass.kt
             }
 
             public final fun foo(): R|Foo| {
-                ^foo this@R|/<anonymous>|.R|/<anonymous>.Derived.Derived|(Int(42))
+                ^foo this@R|/<anonymous>|.R|<local>/<anonymous>.Derived.Derived|(Int(42))
             }
 
             local final inner class Derived : R|Foo| {
