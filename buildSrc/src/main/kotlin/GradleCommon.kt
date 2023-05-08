@@ -54,6 +54,7 @@ enum class GradlePluginVariant(
     GRADLE_75("gradle75", "7.5", "7.5", "https://docs.gradle.org/7.5.1/javadoc/"),
     GRADLE_76("gradle76", "7.6", "7.6", "https://docs.gradle.org/7.6.1/javadoc/"),
     GRADLE_80("gradle80", "8.0", "8.0", "https://docs.gradle.org/8.0.2/javadoc/"),
+    GRADLE_81("gradle81", "8.1", "8.1", "https://docs.gradle.org/8.1.1/javadoc/"),
 }
 
 val commonSourceSetName = "common"
@@ -714,7 +715,8 @@ fun Project.configureDokkaPublication(
 // Gradle 7.6 javadoc does not have published 'package-list' file
 private fun GradleExternalDocumentationLinkBuilder.addWorkaroundForElementList(pluginVariant: GradlePluginVariant) {
     if (pluginVariant == GradlePluginVariant.GRADLE_76 ||
-        pluginVariant == GradlePluginVariant.GRADLE_80
+        pluginVariant == GradlePluginVariant.GRADLE_80 ||
+        pluginVariant == GradlePluginVariant.GRADLE_81
     ) {
         packageListUrl.set(URL("${pluginVariant.gradleApiJavadocUrl}element-list"))
     }
