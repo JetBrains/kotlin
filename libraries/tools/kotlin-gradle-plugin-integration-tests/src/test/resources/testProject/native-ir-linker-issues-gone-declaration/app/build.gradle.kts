@@ -1,11 +1,11 @@
 plugins {
-    id("org.jetbrains.kotlin.multiplatform").version("<pluginMarkerVersion>")
+    id("org.jetbrains.kotlin.multiplatform")
 }
 
 repositories {
     mavenCentral()
     mavenLocal()
-    maven("<LocalRepo>")
+    maven("<localRepo>")
 }
 
 kotlin {

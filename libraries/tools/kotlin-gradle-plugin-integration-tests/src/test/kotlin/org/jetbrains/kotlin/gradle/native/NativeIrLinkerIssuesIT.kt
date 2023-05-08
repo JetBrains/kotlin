@@ -1,48 +1,51 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.native
 
-import org.jetbrains.kotlin.gradle.BaseGradleIT
-import org.jetbrains.kotlin.gradle.GradleVersionRequired
-import org.jetbrains.kotlin.gradle.native.GeneralNativeIT.Companion.getOutputForTask
-import org.jetbrains.kotlin.gradle.testbase.DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX
-import org.jetbrains.kotlin.gradle.testbase.findParameterInOutput
+import org.gradle.api.logging.LogLevel
+import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
+import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.konan.library.KONAN_PLATFORM_LIBS_NAME_PREFIX
-import org.jetbrains.kotlin.konan.target.HostManager
-import org.jetbrains.kotlin.konan.target.KonanTarget
-import org.junit.Assume.assumeFalse
-import org.junit.Assume.assumeTrue
-import org.junit.Ignore
-import org.junit.Test
-import java.io.File
-import java.nio.file.Files
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.DisabledOnOs
+import org.junit.jupiter.api.condition.OS
+import org.junit.jupiter.api.io.TempDir
+import java.nio.file.Path
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
-class NativeIrLinkerIssuesIT : BaseGradleIT() {
-    override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.FOR_MPP_SUPPORT
+@DisplayName("Tests for K/N builds with ir linker issues")
+@NativeGradlePluginTests
+internal class NativeIrLinkerIssuesIT : KGPBaseTest() {
 
-    @Test
-    @Ignore(
+    @DisplayName("KT-46697: ktor 1_5_4 and coroutines 1_5_0-RC-native-mt")
+    @GradleTest
+    @Disabled(
         "This sample fails in a way that was not expected because kotlin/Experimental annotation that is still used in ktor 1.5.4" +
                 " was removed in stdlib in 1.8. We need to find another appropriate sample to replace this one."
     )
-    fun `ktor 1_5_4 and coroutines 1_5_0-RC-native-mt (KT-46697)`() {
-        // Run this test only on macOS x64,
-        // arm64 requires newer ktor (>=1.6.5) and coroutines (>=1.5.2-native-mt)
-        // that compatible to each other and don't fail this way.
-        // TODO: consider finding a newer versions that support arm64 and reproduce this issue
-        assumeTrue(HostManager.host == KonanTarget.MACOS_X64)
+    // TODO: consider finding a newer versions that support arm64 and reproduce this issue
+    @DisabledOnOs(
+        OS.MAC,
+        architectures = ["aarch64"],
+        disabledReason =
+        "Run this test only on macOS x64," +
+                " arm64 requires newer ktor (>=1.6.5) and coroutines (>=1.5.2-native-mt) " +
+                "that compatible to each other and don't fail this way."
+    )
+    fun shouldBuildKtorAndCoroutines(gradleVersion: GradleVersion) {
 
         buildApplicationAndFail(
             directoryPrefix = null,
             projectName = "native-ir-linker-issues-ktor-and-coroutines",
             localRepo = null,
-            useCache = true
+            nativeCacheKind = NativeCacheKind.STATIC,
+            gradleVersion = gradleVersion
         ) { kotlinNativeCompilerVersion ->
             """
             |e: The symbol of unexpected type encountered during IR deserialization: IrTypeAliasPublicSymbolImpl, kotlinx.coroutines/CancellationException|null[0]. IrClassifierSymbol is expected.
@@ -117,14 +120,19 @@ class NativeIrLinkerIssuesIT : BaseGradleIT() {
         }
     }
 
-    @Test
-    fun `declaration that is gone (KT-41378) - with cache`() {
-        // Don't run it on Windows. Caches are not supported there yet.
-        assumeFalse(HostManager.hostIsMingw)
+    @DisplayName("KT-41378: declaration that is gone - with cache")
+    @GradleTest
+    @DisabledOnOs(OS.WINDOWS, disabledReason = "Don't run it on Windows. Caches are not supported there yet.")
+    fun shouldBuildIrLinkerWithCache(
+        gradleVersion: GradleVersion,
+        @TempDir tempDir: Path,
+    ) {
 
         buildConflictingLibrariesAndApplication(
             directoryPrefix = "native-ir-linker-issues-gone-declaration",
-            useCache = true
+            nativeCacheKind = NativeCacheKind.STATIC,
+            gradleVersion = gradleVersion,
+            localRepo = tempDir
         ) { kotlinNativeCompilerVersion ->
             """
             |e: Module "org.sample:libb (org.sample:libb-native)" has a reference to symbol sample.liba/C|null[0]. Neither the module itself nor its dependencies contain such declaration.
@@ -147,11 +155,17 @@ class NativeIrLinkerIssuesIT : BaseGradleIT() {
         }
     }
 
-    @Test
-    fun `declaration that is gone (KT-41378) - without cache`() {
+    @DisplayName("KT-41378: declaration that is gone - without cache")
+    @GradleTest
+    fun shouldBuildIrLinkerWithoutCache(
+        gradleVersion: GradleVersion,
+        @TempDir tempDir: Path,
+    ) {
         buildConflictingLibrariesAndApplication(
             directoryPrefix = "native-ir-linker-issues-gone-declaration",
-            useCache = false
+            nativeCacheKind = NativeCacheKind.NONE,
+            gradleVersion = gradleVersion,
+            localRepo = tempDir
         ) { kotlinNativeCompilerVersion ->
             """
             |e: Module "org.sample:libb (org.sample:libb-native)" has a reference to symbol sample.liba/C|null[0]. Neither the module itself nor its dependencies contain such declaration.
@@ -176,14 +190,17 @@ class NativeIrLinkerIssuesIT : BaseGradleIT() {
         }
     }
 
-    @Test
-    fun `symbol type mismatch (KT-47285) - with cache`() {
-        // Don't run it on Windows. Caches are not supported there yet.
-        assumeFalse(HostManager.hostIsMingw)
-
+    @DisplayName("KT-47285: symbol type mismatch - with cache")
+    @GradleTest
+    fun shouldBuildIrLinkerSymbolTypeMismatchWithCache(
+        gradleVersion: GradleVersion,
+        @TempDir tempDir: Path,
+    ) {
         buildConflictingLibrariesAndApplication(
             directoryPrefix = "native-ir-linker-issues-symbol-mismatch",
-            useCache = true
+            nativeCacheKind = NativeCacheKind.STATIC,
+            gradleVersion = gradleVersion,
+            localRepo = tempDir
         ) { kotlinNativeCompilerVersion ->
             """
             |e: The symbol of unexpected type encountered during IR deserialization: IrTypeAliasPublicSymbolImpl, sample.liba/B|null[0]. IrClassifierSymbol is expected.
@@ -207,11 +224,17 @@ class NativeIrLinkerIssuesIT : BaseGradleIT() {
         }
     }
 
-    @Test
-    fun `symbol type mismatch (KT-47285) - without cache`() {
+    @DisplayName("KT-47285: symbol type mismatch - without cache")
+    @GradleTest
+    fun shouldBuildIrLinkerSymbolTypeMismatchWithoutCache(
+        gradleVersion: GradleVersion,
+        @TempDir tempDir: Path,
+    ) {
         buildConflictingLibrariesAndApplication(
             directoryPrefix = "native-ir-linker-issues-symbol-mismatch",
-            useCache = false
+            nativeCacheKind = NativeCacheKind.NONE,
+            gradleVersion = gradleVersion,
+            localRepo = tempDir
         ) { kotlinNativeCompilerVersion ->
             """
             |e: The symbol of unexpected type encountered during IR deserialization: IrTypeAliasPublicSymbolImpl, sample.liba/B|null[0]. IrClassifierSymbol is expected.
@@ -239,20 +262,21 @@ class NativeIrLinkerIssuesIT : BaseGradleIT() {
 
     private fun buildConflictingLibrariesAndApplication(
         directoryPrefix: String,
-        useCache: Boolean,
-        expectedErrorMessage: (compilerVersion: String) -> String
+        nativeCacheKind: NativeCacheKind,
+        gradleVersion: GradleVersion,
+        localRepo: Path,
+        expectedErrorMessage: (compilerVersion: String) -> String,
     ) {
-        val repo = setupLocalRepo()
-
-        buildAndPublishLibrary(directoryPrefix = directoryPrefix, projectName = "liba-v1.0", localRepo = repo)
-        buildAndPublishLibrary(directoryPrefix = directoryPrefix, projectName = "liba-v2.0", localRepo = repo)
-        buildAndPublishLibrary(directoryPrefix = directoryPrefix, projectName = "libb", localRepo = repo)
+        buildAndPublishLibrary(directoryPrefix = directoryPrefix, projectName = "liba-v1.0", localRepo = localRepo, gradleVersion)
+        buildAndPublishLibrary(directoryPrefix = directoryPrefix, projectName = "liba-v2.0", localRepo = localRepo, gradleVersion)
+        buildAndPublishLibrary(directoryPrefix = directoryPrefix, projectName = "libb", localRepo = localRepo, gradleVersion)
 
         buildApplicationAndFail(
             directoryPrefix = directoryPrefix,
             projectName = "app",
-            localRepo = repo,
-            useCache = useCache,
+            localRepo = localRepo,
+            nativeCacheKind = nativeCacheKind,
+            gradleVersion = gradleVersion,
             expectedErrorMessage = expectedErrorMessage
         )
     }
@@ -260,22 +284,20 @@ class NativeIrLinkerIssuesIT : BaseGradleIT() {
     private fun buildApplicationAndFail(
         directoryPrefix: String?,
         projectName: String,
-        localRepo: File?,
-        useCache: Boolean,
-        expectedErrorMessage: (compilerVersion: String) -> String
+        localRepo: Path?,
+        nativeCacheKind: NativeCacheKind,
+        gradleVersion: GradleVersion,
+        expectedErrorMessage: (compilerVersion: String) -> String,
     ) {
-        prepareProject(directoryPrefix, projectName, localRepo, useCache) {
-            build("linkDebugExecutableNative") {
-                assertFailed()
-
+        prepareProject(directoryPrefix, projectName, localRepo, nativeCacheKind, gradleVersion) {
+            buildAndFail("linkDebugExecutableNative", buildOptions = this.buildOptions.copy(logLevel = LogLevel.DEBUG)) {
 
                 val kotlinNativeCompilerVersion = findKotlinNativeCompilerVersion(output)
                 assertNotNull(kotlinNativeCompilerVersion)
 
                 val errorMessage = ERROR_LINE_REGEX.findAll(getOutputForTask(":linkDebugExecutableNative"))
                     .map { matchResult -> matchResult.groupValues[1] }
-                    .filterNot { it.startsWith("w:") || it.startsWith("v:") || it.startsWith("i:") }
-                    .map { line ->
+                    .filterNot { it.startsWith("w:") || it.startsWith("v:") || it.startsWith("i:") }.map { line ->
                         line.replace(COMPRESSED_PLATFORM_LIBS_REGEX) { result ->
                             val rangeWithPlatformLibrariesCount = result.groups[1]!!.range
                             buildString {
@@ -284,39 +306,35 @@ class NativeIrLinkerIssuesIT : BaseGradleIT() {
                                 append(line.substring(rangeWithPlatformLibrariesCount.last + 1))
                             }
                         }
-                    }
-                    .joinToString("\n")
+                    }.joinToString("\n")
 
                 assertEquals(expectedErrorMessage(kotlinNativeCompilerVersion), errorMessage)
             }
         }
     }
 
-    private fun buildAndPublishLibrary(directoryPrefix: String, projectName: String, localRepo: File) {
-        prepareProject(directoryPrefix, projectName, localRepo, useCache = true) {
-            build("publish") {
-                assertSuccessful()
-            }
+    private fun buildAndPublishLibrary(
+        directoryPrefix: String, projectName: String, localRepo: Path, gradleVersion: GradleVersion,
+    ) {
+        prepareProject(directoryPrefix, projectName, localRepo, nativeCacheKind = NativeCacheKind.STATIC, gradleVersion) {
+            build("publish")
         }
     }
 
     private fun prepareProject(
         directoryPrefix: String?,
         projectName: String,
-        localRepo: File?,
-        useCache: Boolean,
-        block: Project.() -> Unit
+        localRepo: Path?,
+        nativeCacheKind: NativeCacheKind,
+        gradleVersion: GradleVersion,
+        block: TestProject.() -> Unit,
     ) {
-        with(transformNativeTestProjectWithPluginDsl(directoryPrefix = directoryPrefix, projectName = projectName)) {
-            if (localRepo != null) {
-                val localRepoUri = localRepo.absoluteFile.toURI().toString()
-                gradleBuildScript().apply {
-                    writeText(readText().replace("<LocalRepo>", localRepoUri))
-                }
-            }
-
-            gradleProperties().appendText("\nkotlin.native.cacheKind=${if (useCache) "static" else "none"}\n")
-
+        nativeProject(
+            directoryPrefix + "/" + projectName,
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(nativeCacheKind = nativeCacheKind),
+            localRepoDir = localRepo
+        ) {
             block()
         }
     }
@@ -326,9 +344,7 @@ class NativeIrLinkerIssuesIT : BaseGradleIT() {
         private val COMPRESSED_PLATFORM_LIBS_REGEX =
             ".*${KONAN_PLATFORM_LIBS_NAME_PREFIX.replace(".", "\\.")}\\* \\((\\d+) libraries\\).*".toRegex()
 
-        private fun setupLocalRepo(): File = Files.createTempDirectory("localRepo").toAbsolutePath().toFile()
-
-        fun findKotlinNativeCompilerVersion(output: String): String? = findParameterInOutput(
+        private fun findKotlinNativeCompilerVersion(output: String): String? = findParameterInOutput(
             "for_test_kotlin_native_compiler_version",
             output
         )

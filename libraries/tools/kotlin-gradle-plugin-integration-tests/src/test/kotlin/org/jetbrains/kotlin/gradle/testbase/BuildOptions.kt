@@ -10,6 +10,7 @@ import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_ARTIFACT_TRANSFORM
 import org.jetbrains.kotlin.gradle.BaseGradleIT
+import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.junit.jupiter.api.condition.OS
@@ -43,6 +44,7 @@ data class BuildOptions(
     val keepIncrementalCompilationCachesInMemory: Boolean? = null,
     val useDaemonFallbackStrategy: Boolean = false,
     val verboseDiagnostics: Boolean = true,
+    val nativeCacheKind: NativeCacheKind = NativeCacheKind.NONE
 ) {
     val safeAndroidVersion: String
         get() = androidVersion ?: error("AGP version is expected to be set")
@@ -169,6 +171,8 @@ data class BuildOptions(
         if (verboseDiagnostics) {
             arguments.add("-Pkotlin.internal.verboseDiagnostics=$verboseDiagnostics")
         }
+
+        arguments.add("-Pkotlin.native.cacheKind=${nativeCacheKind.name.lowercase()}")
 
         arguments.addAll(freeArgs)
 

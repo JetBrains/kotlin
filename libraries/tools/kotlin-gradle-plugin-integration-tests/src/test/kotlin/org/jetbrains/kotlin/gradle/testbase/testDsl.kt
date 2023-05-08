@@ -13,7 +13,6 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.BaseGradleIT.Companion.acceptAndroidSdkLicenses
 import org.jetbrains.kotlin.gradle.model.ModelContainer
 import org.jetbrains.kotlin.gradle.model.ModelFetcherBuildAction
-import org.jetbrains.kotlin.gradle.native.disableKotlinNativeCaches
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.util.modify
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -45,7 +44,7 @@ fun KGPBaseTest.project(
     projectPathAdditionalSuffix: String = "",
     buildJdk: File? = null,
     localRepoDir: Path? = null,
-    test: TestProject.() -> Unit = {}
+    test: TestProject.() -> Unit = {},
 ): TestProject {
     val projectPath = setupProjectFromTestResources(
         projectName,
@@ -105,7 +104,7 @@ fun KGPBaseTest.nativeProject(
     projectPathAdditionalSuffix: String = "",
     buildJdk: File? = null,
     localRepoDir: Path? = null,
-    test: TestProject.() -> Unit = {}
+    test: TestProject.() -> Unit = {},
 ): TestProject {
     val project = project(
         projectName = projectName,
@@ -120,7 +119,6 @@ fun KGPBaseTest.nativeProject(
         localRepoDir = localRepoDir,
     )
     project.configureSingleNativeTarget()
-    project.disableKotlinNativeCaches()
     project.test()
     return project
 }
@@ -136,7 +134,7 @@ fun TestProject.build(
     enableBuildCacheDebug: Boolean = false,
     enableBuildScan: Boolean = this.enableBuildScan,
     buildOptions: BuildOptions = this.buildOptions,
-    assertions: BuildResult.() -> Unit = {}
+    assertions: BuildResult.() -> Unit = {},
 ) {
     if (enableBuildScan) agreeToBuildScanService()
 
@@ -171,7 +169,7 @@ fun TestProject.buildAndFail(
     enableBuildCacheDebug: Boolean = false,
     enableBuildScan: Boolean = this.enableBuildScan,
     buildOptions: BuildOptions = this.buildOptions,
-    assertions: BuildResult.() -> Unit = {}
+    assertions: BuildResult.() -> Unit = {},
 ) {
     if (enableBuildScan) agreeToBuildScanService()
 
@@ -203,7 +201,7 @@ private fun BuildResult.additionalAssertions(buildOptions: BuildOptions) {
 }
 
 internal inline fun <reified T> TestProject.getModels(
-    crossinline assertions: ModelContainer<T>.() -> Unit
+    crossinline assertions: ModelContainer<T>.() -> Unit,
 ) {
 
     val allBuildArguments = commonBuildSetup(
@@ -231,7 +229,7 @@ internal inline fun <reified T> TestProject.getModels(
 }
 
 fun TestProject.enableLocalBuildCache(
-    buildCacheLocation: Path
+    buildCacheLocation: Path,
 ) {
     // language=Groovy
     settingsGradle.append(
@@ -247,7 +245,7 @@ fun TestProject.enableLocalBuildCache(
 
 fun TestProject.enableStatisticReports(
     type: BuildReportType,
-    url: String?
+    url: String?,
 ) {
     gradleProperties.append(
         "\nkotlin.build.report.output=${type.name}\n"
@@ -262,7 +260,7 @@ fun TestProject.enableStatisticReports(
 
 open class GradleProject(
     val projectName: String,
-    val projectPath: Path
+    val projectPath: Path,
 ) {
     val buildGradle: Path get() = projectPath.resolve("build.gradle")
     val buildGradleKts: Path get() = projectPath.resolve("build.gradle.kts")
@@ -273,27 +271,27 @@ open class GradleProject(
 
     fun classesDir(
         sourceSet: String = "main",
-        language: String = "kotlin"
+        language: String = "kotlin",
     ): Path = projectPath.resolve("build/classes/$language/$sourceSet/")
 
     fun kotlinClassesDir(
-        sourceSet: String = "main"
+        sourceSet: String = "main",
     ): Path = classesDir(sourceSet, language = "kotlin")
 
     fun javaClassesDir(
-        sourceSet: String = "main"
+        sourceSet: String = "main",
     ): Path = classesDir(sourceSet, language = "java")
 
     fun kotlinSourcesDir(
-        sourceSet: String = "main"
+        sourceSet: String = "main",
     ): Path = projectPath.resolve("src/$sourceSet/kotlin")
 
     fun javaSourcesDir(
-        sourceSet: String = "main"
+        sourceSet: String = "main",
     ): Path = projectPath.resolve("src/$sourceSet/java")
 
     fun relativeToProject(
-        files: List<Path>
+        files: List<Path>,
     ): List<Path> = files.map { projectPath.relativize(it) }
 }
 
@@ -314,7 +312,7 @@ class TestProject(
      * A port to debug the Kotlin daemon at.
      * Note that we'll need to let the debugger start listening at this port first *before* the Kotlin daemon is launched.
      */
-    val kotlinDaemonDebugPort: Int? = null
+    val kotlinDaemonDebugPort: Int? = null,
 ) : GradleProject(projectName, projectPath) {
     fun subProject(name: String) = GradleProject(name, projectPath.resolve(name))
 
@@ -350,7 +348,7 @@ class TestProject(
         otherProjectName: String,
         pathPrefix: String,
         newSubmoduleName: String = otherProjectName,
-        isKts: Boolean = false
+        isKts: Boolean = false,
     ) {
         val otherProjectPath = "$pathPrefix/$otherProjectName".testProjectPath
         otherProjectPath.copyRecursively(projectPath.resolve(newSubmoduleName))
@@ -367,7 +365,7 @@ class TestProject(
 
     fun includeOtherProjectAsIncludedBuild(
         otherProjectName: String,
-        pathPrefix: String
+        pathPrefix: String,
     ) {
         val otherProjectPath = "$pathPrefix/$otherProjectName".testProjectPath
         otherProjectPath.copyRecursively(projectPath.resolve(otherProjectName))
@@ -389,7 +387,7 @@ private fun commonBuildSetup(
     enableBuildCacheDebug: Boolean,
     enableBuildScan: Boolean,
     gradleVersion: GradleVersion,
-    kotlinDaemonDebugPort: Int? = null
+    kotlinDaemonDebugPort: Int? = null,
 ): List<String> {
     return buildOptions.toArguments(gradleVersion) + buildArguments + listOfNotNull(
         "--full-stacktrace",
@@ -406,7 +404,7 @@ private fun commonBuildSetup(
 
 private fun TestProject.withBuildSummary(
     buildArguments: List<String>,
-    run: () -> Unit
+    run: () -> Unit,
 ) {
     try {
         run()
@@ -623,8 +621,6 @@ private fun TestProject.configureLocalRepository(localRepoDir: Path) {
             file.modify { it.replace(LOCAL_REPOSITORY_PLACEHOLDER, localRepoDir.absolutePathString().replace("\\", "\\\\")) }
         }
 }
-
-internal fun TestProject.disableKotlinNativeCaches() = gradleProperties.toFile().disableKotlinNativeCaches()
 
 internal fun TestProject.enableStableConfigurationCachePreview() {
     val settingsFile = if (settingsGradleKts.exists()) {
