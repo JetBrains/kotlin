@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.resolve.providers.FirCompositeSymbolNamesProvider
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirSyntheticFunctionInterfaceProviderBase
@@ -29,11 +31,20 @@ internal class LLFirCombinedSyntheticFunctionSymbolProvider private constructor(
 ) : FirSymbolProvider(session) {
     private val combinedPackageNames: Set<FqName> = providers.flatMapTo(mutableSetOf()) { it.getFunctionKindPackageNames() }
 
+    override val symbolNamesProvider: FirSymbolNamesProvider =
+        // `FirCompositeSymbolNamesProvider` defines `mayHaveSyntheticFunctionTypes` and `mayHaveSyntheticFunctionType` correctly, which is
+        // needed for consistency should this symbol provider be part of another composite symbol provider.
+        object : FirCompositeSymbolNamesProvider(providers.map { it.symbolNamesProvider }) {
+            override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<String> = emptySet()
+            override fun getPackageNamesWithTopLevelCallables(): Set<String> = emptySet()
+            override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> = emptySet()
+        }
+
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
         if (!classId.mayBeSyntheticFunctionClassName()) return null
         if (classId.packageFqName !in combinedPackageNames) return null
 
-        return providers.firstNotNullOfOrNull { it.getClassLikeSymbolByClassIdWithoutClassIdChecks(classId) }
+        return providers.firstNotNullOfOrNull { it.getClassLikeSymbolByClassId(classId) }
     }
 
     @FirSymbolProviderInternals
@@ -49,10 +60,6 @@ internal class LLFirCombinedSyntheticFunctionSymbolProvider private constructor(
     }
 
     override fun getPackage(fqName: FqName): FqName? = fqName.takeIf { it in combinedPackageNames }
-
-    override fun computePackageSetWithTopLevelCallables(): Set<String>? = null
-    override fun knownTopLevelClassifiersInPackage(packageFqName: FqName): Set<String>? = null
-    override fun computeCallableNamesInPackage(packageFqName: FqName): Set<Name>? = null
 
     companion object {
         fun merge(session: FirSession, providers: List<FirSyntheticFunctionInterfaceProviderBase>): FirSymbolProvider? =

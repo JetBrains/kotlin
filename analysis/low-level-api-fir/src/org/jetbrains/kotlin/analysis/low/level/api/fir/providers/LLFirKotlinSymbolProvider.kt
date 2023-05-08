@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirSymbolProviderNameCache
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
@@ -16,8 +15,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
 import org.jetbrains.kotlin.psi.KtNamedFunction
@@ -64,16 +61,4 @@ internal abstract class LLFirKotlinSymbolProvider(session: FirSession) : FirSymb
         callableId: CallableId,
         properties: Collection<KtProperty>,
     )
-}
-
-internal abstract class LLFirKotlinSymbolProviderWithNameCache(session: FirSession) : LLFirKotlinSymbolProvider(session) {
-    protected abstract val symbolNameCache: LLFirSymbolProviderNameCache
-
-    final override fun knownTopLevelClassifiersInPackage(packageFqName: FqName): Set<String>? =
-        symbolNameCache.getTopLevelClassifierNamesInPackage(packageFqName)
-
-    final override fun computeCallableNamesInPackage(packageFqName: FqName): Set<Name>? =
-        symbolNameCache.getTopLevelCallableNamesInPackage(packageFqName)
-
-    final override fun computePackageSetWithTopLevelCallables(): Set<String>? = symbolNameCache.getPackageNamesWithTopLevelCallables()
 }

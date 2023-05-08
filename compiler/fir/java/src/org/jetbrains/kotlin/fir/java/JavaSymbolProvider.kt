@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.fir.java
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProviderWithoutCallables
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -68,9 +70,10 @@ class JavaSymbolProvider(
 
     override fun getPackage(fqName: FqName): FqName? = javaFacade.getPackage(fqName)
 
-    override fun computePackageSetWithTopLevelCallables(): Set<String> = emptySet()
-    override fun knownTopLevelClassifiersInPackage(packageFqName: FqName): Set<String>? = javaFacade.knownClassNamesInPackage(packageFqName)
-    override fun computeCallableNamesInPackage(packageFqName: FqName): Set<Name> = emptySet()
+    override val symbolNamesProvider: FirSymbolNamesProvider = object : FirSymbolNamesProviderWithoutCallables() {
+        override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<String>? =
+            javaFacade.knownClassNamesInPackage(packageFqName)
+    }
 }
 
 val FirSession.javaSymbolProvider: JavaSymbolProvider? by FirSession.nullableSessionComponentAccessor()

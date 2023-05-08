@@ -16,6 +16,9 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProviderWithoutCallables
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
@@ -67,6 +70,13 @@ class FirCloneableSymbolProvider(
 
     }
 
+    override val symbolNamesProvider: FirSymbolNamesProvider = object : FirSymbolNamesProviderWithoutCallables() {
+        override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<String> =
+            if (packageFqName == StandardClassIds.Cloneable.packageFqName) {
+                setOf(StandardClassIds.Cloneable.shortClassName.asString())
+            } else emptySet()
+    }
+
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
         return if (classId == StandardClassIds.Cloneable) klass.symbol else null
     }
@@ -86,13 +96,4 @@ class FirCloneableSymbolProvider(
     override fun getPackage(fqName: FqName): FqName? {
         return null
     }
-
-    override fun computePackageSetWithTopLevelCallables(): Set<String> = emptySet()
-    override fun knownTopLevelClassifiersInPackage(packageFqName: FqName): Set<String> =
-        if (packageFqName == StandardClassIds.Cloneable.packageFqName)
-            setOf(StandardClassIds.Cloneable.shortClassName.asString())
-        else
-            emptySet()
-
-    override fun computeCallableNamesInPackage(packageFqName: FqName): Set<Name> = emptySet()
 }

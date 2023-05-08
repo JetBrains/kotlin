@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirMo
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProviderWithoutCallables
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
@@ -48,6 +50,11 @@ internal class LLFirCombinedJavaSymbolProvider private constructor(
      */
     private val classCache: NullableCaffeineCache<ClassId, FirRegularClassSymbol> = NullableCaffeineCache { it.maximumSize(2500) }
 
+    override val symbolNamesProvider: FirSymbolNamesProvider = object : FirSymbolNamesProviderWithoutCallables() {
+        override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<String>? = null
+        override fun mayHaveTopLevelClassifier(classId: ClassId): Boolean = true
+    }
+
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? =
         classCache.get(classId) { computeClassLikeSymbolByClassId(it) }
 
@@ -81,10 +88,6 @@ internal class LLFirCombinedJavaSymbolProvider private constructor(
     }
 
     override fun getPackage(fqName: FqName): FqName? = providers.firstNotNullOfOrNull { it.getPackage(fqName) }
-
-    override fun computePackageSetWithTopLevelCallables(): Set<String>? = null
-    override fun knownTopLevelClassifiersInPackage(packageFqName: FqName): Set<String>? = null
-    override fun computeCallableNamesInPackage(packageFqName: FqName): Set<Name>? = null
 
     companion object {
         fun merge(session: FirSession, project: Project, providers: List<JavaSymbolProvider>): FirSymbolProvider? =

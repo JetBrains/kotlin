@@ -10,8 +10,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.Composi
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.LLFirResolveExtensionTool
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.llResolveExtensionTool
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirElementFinder
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirCompositeSymbolProviderNameCache
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirKotlinSymbolProviderNameCache
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirKotlinSymbolNamesProvider
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.KotlinPackageProvider
 import org.jetbrains.kotlin.analysis.providers.impl.CompositeKotlinDeclarationProvider
@@ -24,6 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.resolve.providers.FirCompositeCachedSymbolNamesProvider
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -80,10 +80,11 @@ internal class LLFirProviderHelper(
             }
         }
 
-    val symbolNameCache = LLFirCompositeSymbolProviderNameCache.create(
+    val symbolNameCache = FirCompositeCachedSymbolNamesProvider.create(
+        firSession,
         listOfNotNull(
-            LLFirKotlinSymbolProviderNameCache(firSession, declarationProvider),
-            extensionTool?.symbolNameCache,
+            LLFirKotlinSymbolNamesProvider(declarationProvider),
+            extensionTool?.symbolNamesProvider,
         )
     )
 

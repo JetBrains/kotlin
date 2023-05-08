@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirKotlinSymbolProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirKotlinSymbolNamesProvider
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
-import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirKotlinSymbolProviderWithNameCache
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirKotlinSymbolProviderNameCache
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
 import org.jetbrains.kotlin.fir.FirSession
@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.KotlinBuiltins
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
@@ -50,11 +51,11 @@ internal open class JvmStubBasedFirDeserializedSymbolProvider(
     project: Project,
     scope: GlobalSearchScope,
     private val initialOrigin: FirDeclarationOrigin
-) : LLFirKotlinSymbolProviderWithNameCache(session) {
+) : LLFirKotlinSymbolProvider(session) {
     private val declarationProvider by lazy(LazyThreadSafetyMode.PUBLICATION) { project.createDeclarationProvider(scope, module = null) }
     private val moduleData = moduleDataProvider.getModuleData(null)
 
-    override val symbolNameCache: LLFirKotlinSymbolProviderNameCache = LLFirKotlinSymbolProviderNameCache(session, declarationProvider)
+    override val symbolNamesProvider: FirSymbolNamesProvider = LLFirKotlinSymbolNamesProvider.cached(session, declarationProvider)
 
     private val typeAliasCache: FirCache<ClassId, FirTypeAliasSymbol?, StubBasedFirDeserializationContext?> =
         session.firCachesFactory.createCacheWithPostCompute(
@@ -192,7 +193,7 @@ internal open class JvmStubBasedFirDeserializedSymbolProvider(
     private fun <C : FirCallableSymbol<*>, CONTEXT> FirCache<CallableId, List<C>, CONTEXT?>.getCallablesWithoutContext(
         id: CallableId,
     ): List<C> {
-        if (!symbolNameCache.mayHaveTopLevelCallable(id.packageName, id.callableName)) return emptyList()
+        if (!symbolNamesProvider.mayHaveTopLevelCallable(id.packageName, id.callableName)) return emptyList()
         return getValue(id, null)
     }
 
@@ -241,12 +242,12 @@ internal open class JvmStubBasedFirDeserializedSymbolProvider(
 
     override fun getPackage(fqName: FqName): FqName? =
         fqName.takeIf {
-            symbolNameCache.getTopLevelClassifierNamesInPackage(fqName)?.isNotEmpty() == true ||
-                    symbolNameCache.getPackageNamesWithTopLevelCallables()?.contains(fqName.asString()) == true
+            symbolNamesProvider.getTopLevelClassifierNamesInPackage(fqName)?.isNotEmpty() == true ||
+                    symbolNamesProvider.getPackageNamesWithTopLevelCallables()?.contains(fqName.asString()) == true
         }
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
-        if (!symbolNameCache.mayHaveTopLevelClassifier(classId, mayHaveFunctionClass = false)) return null
+        if (!symbolNamesProvider.mayHaveTopLevelClassifier(classId)) return null
         return getClass(classId) ?: getTypeAlias(classId)
     }
 

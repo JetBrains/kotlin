@@ -7,14 +7,14 @@ package org.jetbrains.kotlin.fir.resolve.providers.impl
 
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.NoMutableState
-import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.createCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
+import org.jetbrains.kotlin.fir.resolve.providers.FirCompositeCachedSymbolNamesProvider
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
-import org.jetbrains.kotlin.fir.resolve.providers.flatMapToNullableSet
-import org.jetbrains.kotlin.fir.resolve.providers.mayHaveTopLevelClassifier
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirSyntheticFunctionInterfaceProviderBase.Companion.isNameForFunctionClass
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -39,25 +39,31 @@ class FirCachingCompositeSymbolProvider(
     private val topLevelPropertyCache = session.firCachesFactory.createCache(::computeTopLevelProperties)
     private val packageCache = session.firCachesFactory.createCache(::computePackage)
 
-    private val callablePackageSet: Set<String>? by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        computePackageSetWithTopLevelCallables().also {
-            ensureNotNull(it) { "package names with callables" }
-        }
-    }
-
-    private val knownTopLevelClassifierNamesInPackage: FirCache<FqName, Set<String>?, Nothing?> =
-        session.firCachesFactory.createCache { packageFqName ->
-            knownTopLevelClassifiersInPackage(packageFqName).also {
+    override val symbolNamesProvider: FirSymbolNamesProvider = object : FirCompositeCachedSymbolNamesProvider(
+        session,
+        providers.map { it.symbolNamesProvider },
+    ) {
+        override fun computeTopLevelClassifierNames(packageFqName: FqName): Set<String>? =
+            super.computeTopLevelClassifierNames(packageFqName).also {
                 ensureNotNull(it) { "classifier names in package $packageFqName" }
             }
-        }
 
-    private val callableNamesInPackage: FirCache<FqName, Set<Name>?, Nothing?> =
-        session.firCachesFactory.createCache { packageFqName ->
-            computeCallableNamesInPackage(packageFqName).also {
+        override fun computePackageNamesWithTopLevelCallables(): Set<String>? =
+            super.computePackageNamesWithTopLevelCallables().also {
+                ensureNotNull(it) { "package names with top-level callables" }
+            }
+
+        override fun computeTopLevelCallableNames(packageFqName: FqName): Set<Name>? =
+            super.computeTopLevelCallableNames(packageFqName).also {
                 ensureNotNull(it) { "callable names in package $packageFqName" }
             }
+
+        @OptIn(FirSymbolProviderInternals::class)
+        override fun mayHaveSyntheticFunctionType(classId: ClassId): Boolean {
+            // We know that `session` is the same as the sessions of all `providers`, so we can take a shortcut here.
+            return classId.isNameForFunctionClass(session)
         }
+    }
 
     private inline fun ensureNotNull(v: Any?, representation: () -> String) {
         require(v != null || expectedCachesToBeCleanedOnce) {
@@ -73,14 +79,8 @@ class FirCachingCompositeSymbolProvider(
     }
 
     override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> {
-        if (!mayHaveTopLevelCallablesInPackage(packageFqName, name)) return emptyList()
+        if (!symbolNamesProvider.mayHaveTopLevelCallable(packageFqName, name)) return emptyList()
         return topLevelCallableCache.getValue(CallableId(packageFqName, name))
-    }
-
-    private fun mayHaveTopLevelCallablesInPackage(packageFqName: FqName, name: Name): Boolean {
-        if (callablePackageSet != null && packageFqName.asString() !in callablePackageSet!!) return false
-        val callableNamesInPackage = callableNamesInPackage.getValue(packageFqName) ?: return true
-        return name in callableNamesInPackage
     }
 
     @FirSymbolProviderInternals
@@ -90,13 +90,13 @@ class FirCachingCompositeSymbolProvider(
 
     @FirSymbolProviderInternals
     override fun getTopLevelFunctionSymbolsTo(destination: MutableList<FirNamedFunctionSymbol>, packageFqName: FqName, name: Name) {
-        if (!mayHaveTopLevelCallablesInPackage(packageFqName, name)) return
+        if (!symbolNamesProvider.mayHaveTopLevelCallable(packageFqName, name)) return
         destination += topLevelFunctionCache.getValue(CallableId(packageFqName, name))
     }
 
     @FirSymbolProviderInternals
     override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {
-        if (!mayHaveTopLevelCallablesInPackage(packageFqName, name)) return
+        if (!symbolNamesProvider.mayHaveTopLevelCallable(packageFqName, name)) return
         destination += topLevelPropertyCache.getValue(CallableId(packageFqName, name))
     }
 
@@ -105,9 +105,7 @@ class FirCachingCompositeSymbolProvider(
     }
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
-        val knownClassifierNames = knownTopLevelClassifierNamesInPackage.getValue(classId.packageFqName)
-        if (knownClassifierNames != null && !knownClassifierNames.mayHaveTopLevelClassifier(classId, session)) return null
-
+        if (!symbolNamesProvider.mayHaveTopLevelClassifier(classId)) return null
         return classLikeCache.getValue(classId)
     }
 
@@ -131,13 +129,4 @@ class FirCachingCompositeSymbolProvider(
 
     private fun computeClass(classId: ClassId): FirClassLikeSymbol<*>? =
         providers.firstNotNullOfOrNull { provider -> provider.getClassLikeSymbolByClassId(classId) }
-
-    override fun computePackageSetWithTopLevelCallables(): Set<String>? =
-        providers.flatMapToNullableSet { it.computePackageSetWithTopLevelCallables() }
-
-    override fun knownTopLevelClassifiersInPackage(packageFqName: FqName): Set<String>? =
-        providers.flatMapToNullableSet { it.knownTopLevelClassifiersInPackage(packageFqName) }
-
-    override fun computeCallableNamesInPackage(packageFqName: FqName): Set<Name>? =
-        providers.flatMapToNullableSet { it.computeCallableNamesInPackage(packageFqName) }
 }

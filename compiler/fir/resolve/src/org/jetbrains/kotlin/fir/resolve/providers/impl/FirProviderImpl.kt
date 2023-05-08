@@ -9,10 +9,7 @@ import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
-import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
-import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
-import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.resolve.providers.*
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
@@ -80,22 +77,24 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
             return null
         }
 
-        override fun computePackageSetWithTopLevelCallables(): Set<String> =
-            state.allSubPackages.mapTo(mutableSetOf()) { it.asString() }
+        override val symbolNamesProvider: FirSymbolNamesProvider = object : FirSymbolNamesProvider() {
+            override fun getPackageNamesWithTopLevelCallables(): Set<String> =
+                state.allSubPackages.mapTo(mutableSetOf()) { it.asString() }
 
-        override fun knownTopLevelClassifiersInPackage(packageFqName: FqName): Set<String> =
-            state.classifierInPackage[packageFqName].orEmpty().mapTo(mutableSetOf()) { it.asString() }
+            override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<String> =
+                state.classifierInPackage[packageFqName].orEmpty().mapTo(mutableSetOf()) { it.asString() }
 
-        override fun computeCallableNamesInPackage(packageFqName: FqName): Set<Name> = buildSet {
-            for (key in state.functionMap.keys) {
-                if (key.packageName == packageFqName) {
-                    add(key.callableName)
+            override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> = buildSet {
+                for (key in state.functionMap.keys) {
+                    if (key.packageName == packageFqName) {
+                        add(key.callableName)
+                    }
                 }
-            }
 
-            for (key in state.propertyMap.keys) {
-                if (key.packageName == packageFqName) {
-                    add(key.callableName)
+                for (key in state.propertyMap.keys) {
+                    if (key.packageName == packageFqName) {
+                        add(key.callableName)
+                    }
                 }
             }
         }

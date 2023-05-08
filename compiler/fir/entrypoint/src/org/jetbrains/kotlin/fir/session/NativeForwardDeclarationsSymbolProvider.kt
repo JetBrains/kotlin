@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.buildRegularClass
 import org.jetbrains.kotlin.fir.declarations.getDeprecationsProvider
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProviderWithoutCallables
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
@@ -137,11 +139,8 @@ class NativeForwardDeclarationsSymbolProvider(
         return null
     }
 
-    override fun knownTopLevelClassifiersInPackage(packageFqName: FqName): Set<String> {
-        return includedForwardDeclarationsByPackage[packageFqName].orEmpty()
+    override val symbolNamesProvider: FirSymbolNamesProvider = object : FirSymbolNamesProviderWithoutCallables() {
+        override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<String> =
+            includedForwardDeclarationsByPackage[packageFqName].orEmpty()
     }
-
-    override fun computePackageSetWithTopLevelCallables(): Set<String> = emptySet()
-
-    override fun computeCallableNamesInPackage(packageFqName: FqName): Set<Name> = emptySet()
 }

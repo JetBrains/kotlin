@@ -10,14 +10,14 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.NullableCaffeineCache
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirSymbolProviderNameCacheBase
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.resolve.providers.FirCompositeCachedSymbolNamesProvider
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
-import org.jetbrains.kotlin.fir.resolve.providers.flatMapToNullableSet
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
@@ -47,21 +47,12 @@ internal class LLFirCombinedKotlinSymbolProvider private constructor(
     providers: List<LLFirKotlinSymbolProvider>,
     private val declarationProvider: KotlinDeclarationProvider,
 ) : LLFirSelectingCombinedSymbolProvider<LLFirKotlinSymbolProvider>(session, project, providers) {
-    private val symbolNameCache = object : LLFirSymbolProviderNameCacheBase(session) {
-        override fun computeClassifierNames(packageFqName: FqName): Set<String>? =
-            providers.flatMapToNullableSet { it.knownTopLevelClassifiersInPackage(packageFqName) }
-
-        override fun computeCallableNames(packageFqName: FqName): Set<Name>? =
-            providers.flatMapToNullableSet { it.computeCallableNamesInPackage(packageFqName) }
-
-        override fun computePackageNamesWithTopLevelCallables(): Set<String>? =
-            providers.flatMapToNullableSet { it.computePackageSetWithTopLevelCallables() }
-    }
+    override val symbolNamesProvider: FirSymbolNamesProvider = FirCompositeCachedSymbolNamesProvider.fromSymbolProviders(session, providers)
 
     private val classifierCache = NullableCaffeineCache<ClassId, FirClassLikeSymbol<*>> { it.maximumSize(500) }
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
-        if (!symbolNameCache.mayHaveTopLevelClassifier(classId, mayHaveFunctionClass = false)) return null
+        if (!symbolNamesProvider.mayHaveTopLevelClassifier(classId)) return null
 
         return classifierCache.get(classId) { computeClassLikeSymbolByClassId(it) }
     }
@@ -107,7 +98,7 @@ internal class LLFirCombinedKotlinSymbolProvider private constructor(
         getCallables: (CallableId) -> Collection<A>,
         provide: LLFirKotlinSymbolProvider.(CallableId, Collection<A>) -> Unit,
     ) {
-        if (!symbolNameCache.mayHaveTopLevelCallable(packageFqName, name)) return
+        if (!symbolNamesProvider.mayHaveTopLevelCallable(packageFqName, name)) return
 
         val callableId = CallableId(packageFqName, name)
 
@@ -123,14 +114,6 @@ internal class LLFirCombinedKotlinSymbolProvider private constructor(
     }
 
     override fun getPackage(fqName: FqName): FqName? = providers.firstNotNullOfOrNull { it.getPackage(fqName) }
-
-    override fun computePackageSetWithTopLevelCallables(): Set<String>? = null
-
-    override fun knownTopLevelClassifiersInPackage(packageFqName: FqName): Set<String>? =
-        symbolNameCache.getTopLevelClassifierNamesInPackage(packageFqName)
-
-    override fun computeCallableNamesInPackage(packageFqName: FqName): Set<Name>? =
-        symbolNameCache.getTopLevelCallableNamesInPackage(packageFqName)
 
     companion object {
         fun merge(session: LLFirSession, project: Project, providers: List<LLFirKotlinSymbolProvider>): FirSymbolProvider? =

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.extensions
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
@@ -32,6 +33,17 @@ class FirSwitchableExtensionDeclarationsSymbolProvider private constructor(
     }
 
     private var disabled: Boolean = false
+
+    override val symbolNamesProvider: FirSymbolNamesProvider = object : FirSymbolNamesProvider() {
+        override fun getPackageNamesWithTopLevelCallables(): Set<String>? =
+            if (disabled) null else delegate.symbolNamesProvider.getPackageNamesWithTopLevelCallables()
+
+        override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<String>? =
+            if (disabled) null else delegate.symbolNamesProvider.getTopLevelClassifierNamesInPackage(packageFqName)
+
+        override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name>? =
+            if (disabled) null else delegate.symbolNamesProvider.getTopLevelCallableNamesInPackage(packageFqName)
+    }
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
         if (disabled) return null
@@ -70,16 +82,6 @@ class FirSwitchableExtensionDeclarationsSymbolProvider private constructor(
     fun enable() {
         disabled = false
     }
-
-    override fun computePackageSetWithTopLevelCallables(): Set<String>? =
-        if (disabled) null else delegate.computePackageSetWithTopLevelCallables()
-
-    override fun knownTopLevelClassifiersInPackage(packageFqName: FqName): Set<String>? =
-        if (disabled) null else delegate.knownTopLevelClassifiersInPackage(packageFqName)
-
-    override fun computeCallableNamesInPackage(packageFqName: FqName): Set<Name>? =
-        if (disabled) null else delegate.computeCallableNamesInPackage(packageFqName)
-
 }
 
 val FirSession.generatedDeclarationsSymbolProvider: FirSwitchableExtensionDeclarationsSymbolProvider? by FirSession.nullableSessionComponentAccessor()

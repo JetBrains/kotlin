@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.providers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.SyntheticFirClassProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFirSymbolProviderNameCache
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.KotlinPackageProvider
 import org.jetbrains.kotlin.fir.FirSession
@@ -17,10 +16,7 @@ import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.synthetic.FirSyntheticProperty
 import org.jetbrains.kotlin.fir.originalForSubstitutionOverride
-import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
-import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
-import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.resolve.providers.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
@@ -112,12 +108,11 @@ internal class LLFirProvider(
         declarationProvider.getTopLevelKotlinClassLikeDeclarationNamesInPackage(fqName)
 
     @NoMutableState
-    internal inner class SymbolProvider : LLFirKotlinSymbolProviderWithNameCache(session) {
-        override val symbolNameCache: LLFirSymbolProviderNameCache
-            get() = providerHelper.symbolNameCache
+    internal inner class SymbolProvider : LLFirKotlinSymbolProvider(session) {
+        override val symbolNamesProvider: FirSymbolNamesProvider get() = providerHelper.symbolNameCache
 
         override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
-            if (!providerHelper.symbolNameCache.mayHaveTopLevelClassifier(classId, mayHaveFunctionClass = false)) return null
+            if (!providerHelper.symbolNameCache.mayHaveTopLevelClassifier(classId)) return null
             return getFirClassifierByFqName(classId)?.symbol
         }
 

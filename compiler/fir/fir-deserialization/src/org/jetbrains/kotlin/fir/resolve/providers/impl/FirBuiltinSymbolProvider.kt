@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.deserialization.FirBuiltinAnnotationDeserializer
 import org.jetbrains.kotlin.fir.deserialization.FirConstDeserializer
 import org.jetbrains.kotlin.fir.deserialization.FirDeserializationContext
 import org.jetbrains.kotlin.fir.deserialization.deserializeClassToSymbol
+import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolNamesProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
@@ -71,18 +72,26 @@ open class FirBuiltinSymbolProvider(
         } ?: syntheticFunctionInterfaceProvider.getClassLikeSymbolByClassId(classId)
     }
 
-    override fun computePackageSetWithTopLevelCallables(): Set<String> =
-        allPackageFragments.keys.mapTo(mutableSetOf()) { it.asString() }
+    override val symbolNamesProvider: FirSymbolNamesProvider = object : FirSymbolNamesProvider() {
+        override fun getPackageNamesWithTopLevelCallables(): Set<String> =
+            allPackageFragments.keys.mapTo(mutableSetOf()) { it.asString() }
 
-    override fun knownTopLevelClassifiersInPackage(packageFqName: FqName): Set<String> =
-        allPackageFragments[packageFqName]?.flatMapTo(mutableSetOf()) { fragment ->
-            fragment.classDataFinder.allClassIds.map { it.shortClassName.asString() }
-        }.orEmpty()
+        override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<String> =
+            allPackageFragments[packageFqName]?.flatMapTo(mutableSetOf()) { fragment ->
+                fragment.classDataFinder.allClassIds.map { it.shortClassName.asString() }
+            }.orEmpty()
 
-    override fun computeCallableNamesInPackage(packageFqName: FqName): Set<Name> =
-        allPackageFragments[packageFqName]?.flatMapTo(mutableSetOf()) {
-            it.getTopLevelCallableNames()
-        }.orEmpty()
+        override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> =
+            allPackageFragments[packageFqName]?.flatMapTo(mutableSetOf()) {
+                it.getTopLevelCallableNames()
+            }.orEmpty()
+
+        // This symbol provider delegates to `FirBuiltinSyntheticFunctionInterfaceProvider`, so synthetic function types can be provided.
+        override val mayHaveSyntheticFunctionTypes: Boolean get() = true
+
+        override fun mayHaveSyntheticFunctionType(classId: ClassId): Boolean =
+            syntheticFunctionInterfaceProvider.symbolNamesProvider.mayHaveSyntheticFunctionType(classId)
+    }
 
     @FirSymbolProviderInternals
     override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
