@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.symbols.IrScriptSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.isSuspendFunction
 import org.jetbrains.kotlin.load.kotlin.TypeMappingMode
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.AbstractTypeMapper
@@ -195,9 +196,7 @@ open class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapp
         val parameters = classifier.typeParameters.map(IrTypeParameter::symbol)
         val arguments = type.arguments
 
-        if ((classifier.symbol.isFunction() && arguments.size > BuiltInFunctionArity.BIG_ARITY)
-            || classifier.symbol.isKFunction() || classifier.symbol.isKSuspendFunction()
-        ) {
+        if (isBigArityFunction(classifier, arguments) || classifier.symbol.isKFunction() || classifier.symbol.isKSuspendFunction()) {
             writeGenericArguments(sw, listOf(arguments.last()), listOf(parameters.last()), mode)
             return
         }
@@ -205,11 +204,15 @@ open class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapp
         writeGenericArguments(sw, arguments, parameters, mode)
     }
 
+    private fun isBigArityFunction(classifier: IrClass, arguments: List<IrTypeArgument>): Boolean =
+        arguments.size > BuiltInFunctionArity.BIG_ARITY &&
+                (classifier.symbol.isFunction() || classifier.symbol.isSuspendFunction())
+
     private fun writeGenericArguments(
         sw: JvmSignatureWriter,
         arguments: List<IrTypeArgument>,
         parameters: List<IrTypeParameterSymbol>,
-        mode: TypeMappingMode
+        mode: TypeMappingMode,
     ) {
         with(KotlinTypeMapper) {
             typeSystem.writeGenericArguments(sw, arguments, parameters, mode) { type, sw, mode ->

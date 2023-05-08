@@ -632,6 +632,12 @@ public class IrClassFileToSourceStubConverterTestGenerated extends AbstractIrCla
     }
 
     @Test
+    @TestMetadata("suspendFunctionWithBigArity.kt")
+    public void testSuspendFunctionWithBigArity() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/suspendFunctionWithBigArity.kt");
+    }
+
+    @Test
     @TestMetadata("topLevel.kt")
     public void testTopLevel() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/topLevel.kt");
