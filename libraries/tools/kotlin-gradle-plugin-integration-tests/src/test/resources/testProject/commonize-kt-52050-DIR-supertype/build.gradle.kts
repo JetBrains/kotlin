@@ -21,4 +21,8 @@ kotlin {
     unixMain.dependsOn(commonMain)
     linuxMain.dependsOn(unixMain)
     macosMain.dependsOn(unixMain)
+
+    sourceSets.all {
+        languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
+    }
 }

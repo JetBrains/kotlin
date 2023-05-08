@@ -23,6 +23,7 @@ kotlin {
 
     sourceSets.all {
         languageSettings.optIn("kotlin.RequiresOptIn")
+        languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
     }
 
     targetA.compilations.getByName("main").cinterops.create("withPosix") {

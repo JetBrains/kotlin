@@ -20,6 +20,10 @@ kotlin {
     sourceSets["jsMain"].dependencies {
         implementation(kotlin("stdlib-js"))
     }
+
+    sourceSets.all {
+        languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
+    }
 }
 
 

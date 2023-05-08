@@ -78,6 +78,10 @@ kotlin {
 		configure(listOf(mingwX64(), mingwX86())) {
 			compilations["main"].defaultSourceSet.dependsOn(windowsMain)
 		}
+
+		all {
+			languageSettings.optIn("kotlinx.cinterop.ExperimentalForeignApi")
+		}
 	}
 }
 
