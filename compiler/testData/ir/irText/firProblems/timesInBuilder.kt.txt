@@ -1,0 +1,66 @@
+private fun test(x: Long) {
+  return countIssues(restrictionsBuilder = local fun ArgumentsBuilder.<anonymous>() {
+    ($this$countIssues, <get-spentTime>().lessEq<Int>(t = 2.times(other = 60))).unaryPlus()
+    ($this$countIssues, <get-spentTime>().lessEq<Int>(t = id<Int>(arg = 2.times(other = 60)))).unaryPlus()
+    ($this$countIssues, <get-spentTime>().select<Long>(t = 2.times(other = 60).toLong(), r = x)).unaryPlus()
+  }
+)
+}
+
+val spentTime: Column
+  field = integer(name = "spentTime")
+  get
+
+fun integer(name: String): Column {
+  return Column()
+}
+
+fun <I : Any?> id(arg: I): I {
+  return arg
+}
+
+infix fun <T : Comparable<T>> Column.lessEq(t: T): Expression {
+  return Expression()
+}
+
+fun <T : Comparable<T>> Column.select(t: T, r: T): Expression {
+  return Expression()
+}
+
+class Expression {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+class Column {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+class ArgumentsBuilder {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val arguments: MutableList<Expression>
+    field = mutableListOf<Expression>()
+    get
+
+  operator fun Expression.unaryPlus() {
+    <this>.<get-arguments>().add(element = <this>) /*~> Unit */
+  }
+
+}
+
+private fun countIssues(restrictionsBuilder: @ExtensionFunctionType Function1<ArgumentsBuilder, Unit>) {
+}
