@@ -134,17 +134,7 @@ abstract class KotlinBuildStatsService internal constructor() : IStatisticsValue
                             registerPre232IdeaStatsBean(mbs, gradle, log)
                         }
 
-                        if (GradleVersion.current().baseVersion < GradleVersion.version("8.1")) {
-                            BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(project.provider {
-                                OperationCompletionListener { event ->
-                                    if ((event is TaskFinishEvent) && (event.result is TaskFailureResult)) {
-                                        getInstance()?.report(BooleanMetrics.BUILD_FAILED, true)
-                                    }
-                                }
-                            })
-                        } else {
-                            FlowParameterHolder.getInstance(project).subscribeForBuildResult()
-                        }
+                        subscribeForBuildResult(project)
 
                         BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(project.provider {
                             OperationCompletionListener { event ->
@@ -156,6 +146,20 @@ abstract class KotlinBuildStatsService internal constructor() : IStatisticsValue
                     }
                     instance
                 }
+            }
+        }
+
+        private fun subscribeForBuildResult(project: Project) {
+            if (GradleVersion.current().baseVersion < GradleVersion.version("8.1")) {
+                BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(project.provider {
+                    OperationCompletionListener { event ->
+                        if ((event is TaskFinishEvent) && (event.result is TaskFailureResult)) {
+                            getInstance()?.report(BooleanMetrics.BUILD_FAILED, true)
+                        }
+                    }
+                })
+            } else {
+                FlowParameterHolder.getInstance(project).subscribeForBuildResult()
             }
         }
 

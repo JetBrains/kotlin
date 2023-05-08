@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.plugin
 
-import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.flow.*
 import org.gradle.api.provider.Property
