@@ -111,9 +111,14 @@ class JpsStatisticsReportService {
         val compileStatisticsData = metrics.flush(context)
         httpService?.sendData(compileStatisticsData, loggerAdapter)
         fileReportSettings?.also {
-            FileReportService(it.buildReportDir, true, loggerAdapter)
-                .process(listOf(compileStatisticsData),
-                         BuildStartParameters(tasks = listOf(jpsBuildTaskName)))
+            FileReportService.reportBuildStatInFile(
+                it.buildReportDir, context.projectDescriptor.project.name,
+                true,
+                listOf(compileStatisticsData),
+                BuildStartParameters(tasks = listOf(jpsBuildTaskName)),
+                emptyList(),
+                loggerAdapter
+            )
         }
     }
 }
