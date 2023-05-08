@@ -205,6 +205,18 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     }
 
     @Test
+    @TestMetadata("nestedTypeAlias.kt")
+    public void testNestedTypeAlias() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/nestedTypeAlias.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedTypeAlias2.kt")
+    public void testNestedTypeAlias2() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/nestedTypeAlias2.kt");
+    }
+
+    @Test
     @TestMetadata("parameterOfNonLocalSetter.kt")
     public void testParameterOfNonLocalSetter() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/lazyResolve/parameterOfNonLocalSetter.kt");

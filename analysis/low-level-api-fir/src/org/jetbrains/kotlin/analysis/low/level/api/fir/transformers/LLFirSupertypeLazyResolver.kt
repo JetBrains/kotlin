@@ -141,7 +141,7 @@ private class LLFirSuperTypeTargetResolver(
 
     private fun FirTypeAlias.resolveExpandedTypeRef(): List<FirResolvedTypeRef> {
         val expandedTypeRef = expandedTypeRef
-        return supertypeResolver.resolveTypeAliasSupertype(this, expandedTypeRef)
+        return supertypeResolver.resolveTypeAliasSupertype(this, expandedTypeRef, resolveRecursively = false)
     }
 
     private inline fun <T : FirClassLikeDeclaration> performResolve(
@@ -245,10 +245,11 @@ private fun FirClassLikeDeclaration.canHaveLoopInSupertypesHierarchy(
 
     // We should still process resolved if it has loop in super type refs, because we can be part of this cycle
     !forceSkipResolvedClasses && this is FirRegularClass -> hasLoopInSupertypeRefs(session)
+    !forceSkipResolvedClasses && this is FirTypeAlias -> hasLoopInSupertypeRefs(session)
     else -> false
 }
 
-private fun FirRegularClass.outerClass(session: FirSession): FirRegularClass? = symbol.classId.parentClassId?.let { parentClassId ->
+private fun FirClassLikeDeclaration.outerClass(session: FirSession): FirRegularClass? = symbol.classId.parentClassId?.let { parentClassId ->
     session.symbolProvider.getClassLikeSymbolByClassId(parentClassId)?.fir as? FirRegularClass
 }
 
@@ -257,6 +258,17 @@ private fun FirRegularClass.outerClass(session: FirSession): FirRegularClass? = 
  */
 private fun FirRegularClass.hasLoopInSupertypeRefs(session: FirSession): Boolean {
     if (superTypeRefs.any(FirTypeRef::isLoopedSupertypeRef)) {
+        return true
+    }
+
+    return outerClass(session)?.hasLoopInSupertypeRefs(session) == true
+}
+
+/**
+ * The typealias must be already resolved
+ */
+private fun FirTypeAlias.hasLoopInSupertypeRefs(session: FirSession): Boolean {
+    if (expandedTypeRef.isLoopedSupertypeRef) {
         return true
     }
 

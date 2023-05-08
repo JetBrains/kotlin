@@ -501,10 +501,14 @@ open class FirSupertypeResolverVisitor(
     }
 
     override fun visitTypeAlias(typeAlias: FirTypeAlias, data: Any?) {
-        resolveTypeAliasSupertype(typeAlias, typeAlias.expandedTypeRef)
+        resolveTypeAliasSupertype(typeAlias, typeAlias.expandedTypeRef, resolveRecursively = true)
     }
 
-    fun resolveTypeAliasSupertype(typeAlias: FirTypeAlias, expandedTypeRef: FirTypeRef): List<FirResolvedTypeRef> {
+    fun resolveTypeAliasSupertype(
+        typeAlias: FirTypeAlias,
+        expandedTypeRef: FirTypeRef,
+        resolveRecursively: Boolean,
+    ): List<FirResolvedTypeRef> {
         // TODO: this if is a temporary hack for built-in types (because we can't load file for them)
         if (expandedTypeRef is FirResolvedTypeRef) {
             return listOf(expandedTypeRef)
@@ -520,20 +524,22 @@ open class FirSupertypeResolverVisitor(
                     )
                 )
 
-            fun visitNestedTypeAliases(type: TypeArgumentMarker) {
-                if (type is ConeClassLikeType) {
-                    val symbol = type.lookupTag.toSymbol(session)
-                    if (symbol is FirTypeAliasSymbol) {
-                        visitTypeAlias(symbol.fir, null)
-                    } else if (symbol is FirClassLikeSymbol) {
-                        for (typeArgument in type.typeArguments) {
-                            visitNestedTypeAliases(typeArgument)
+            if (resolveRecursively) {
+                fun visitNestedTypeAliases(type: TypeArgumentMarker) {
+                    if (type is ConeClassLikeType) {
+                        val symbol = type.lookupTag.toSymbol(session)
+                        if (symbol is FirTypeAliasSymbol) {
+                            visitTypeAlias(symbol.fir, null)
+                        } else if (symbol is FirClassLikeSymbol) {
+                            for (typeArgument in type.typeArguments) {
+                                visitNestedTypeAliases(typeArgument)
+                            }
                         }
                     }
                 }
-            }
 
-            visitNestedTypeAliases(resolvedTypeRef.type)
+                visitNestedTypeAliases(resolvedTypeRef.type)
+            }
 
             listOf(resolvedTypeRef)
         }
