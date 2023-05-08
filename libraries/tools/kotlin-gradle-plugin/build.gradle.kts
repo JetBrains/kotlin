@@ -277,6 +277,8 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
             languageVersion.set(JavaLanguageVersion.of(11))
         })
         dependsOnKotlinGradlePluginInstall()
+        useAndroidSdk()
+        doFirst { acceptAndroidSdkLicenses() }
 
         testLogging {
             events("passed", "skipped", "failed")

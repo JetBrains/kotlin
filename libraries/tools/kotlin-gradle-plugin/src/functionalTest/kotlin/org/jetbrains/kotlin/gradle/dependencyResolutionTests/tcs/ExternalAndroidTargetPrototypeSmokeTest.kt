@@ -10,7 +10,6 @@ package org.jetbrains.kotlin.gradle.dependencyResolutionTests.tcs
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.api.publish.maven.plugins.MavenPublishPlugin
-import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.gradle.android.androidTargetPrototype
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -48,6 +47,7 @@ class ExternalAndroidTargetPrototypeSmokeTest {
     @Test
     fun `apply prototype - evaluate - configurations can be resolved`() {
         val project = buildProjectWithMPP()
+        setAndroidSdkDirProperty(project)
         project.androidLibrary { compileSdk = 31 }
 
         val androidTargetPrototype = project.multiplatformExtension.androidTargetPrototype()
@@ -84,7 +84,7 @@ class ExternalAndroidTargetPrototypeSmokeTest {
             applyMultiplatformPlugin()
             repositories.mavenCentralCacheRedirector()
         }
-
+        setAndroidSdkDirProperty(project)
         project.androidLibrary { compileSdk = 31 }
         project.multiplatformExtension.androidTargetPrototype()
         project.evaluate()
