@@ -31,12 +31,6 @@ internal class LLFirFileBuilder(
                 it.toString()
             }
         }
-        checkWithAttachmentBuilder(!ktFile.isCompiled, { "Called on compiled element" }) {
-            withEntry("file", ktFile.name)
-            withEntry("file module", ktFile.getKtModule()) {
-                it.toString()
-            }
-        }
         val bodyBuildingMode = when {
             ktFile.isScript() -> {
                 // As 'FirScript' content is never transformed, lazy bodies are not replaced with calculated ones even on BODY_RESOLVE.
