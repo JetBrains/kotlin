@@ -220,7 +220,10 @@ open class SymbolTable(
 
         protected inline fun createOwnerSafe(symbol: S, createOwner: (S) -> B): B {
             val owner = createOwner(symbol)
-            assert(symbol.isBound && symbol.owner === owner)
+            require(symbol.isBound)
+            require(symbol.owner === owner) {
+                "Attempt to rebind an IR symbol or to re-create its owner: old owner ${symbol.owner.render()}, new owner ${owner.render()}"
+            }
             return owner
         }
     }
