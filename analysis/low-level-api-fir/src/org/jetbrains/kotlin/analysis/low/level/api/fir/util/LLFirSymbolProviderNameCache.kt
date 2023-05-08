@@ -19,17 +19,17 @@ import org.jetbrains.kotlin.name.Name
  * Caches the names of classifiers and callables contained in a package. [LLFirSymbolProviderNameCache] is used by symbol providers to abort
  * symbol finding early if the symbol name isn't contained in the symbol provider's domain.
  *
- * For the [getTopLevelClassifierNamesInPackage], [getTopLevelCallableNamesInPackage], and [getPackageNamesWithTopLevelCallables] functions,
- * the result may have false-positive entries but cannot have false-negative entries.
- * It should contain all the names in the package but may have some additional names that are not there.
- * Also, the `null` value might be returned when it's too heavyweight to calculate the results.
+ * For [getTopLevelClassifierNamesInPackage], [getTopLevelCallableNamesInPackage], and [getPackageNamesWithTopLevelCallables], the result
+ * may have false-positive entries but cannot have false-negative entries.
+ * It should contain all the names in the package/all package names but may have some additional names that are not there.
+ * Also, `null` might be returned when it's too expensive to calculate the sets.
  *
- * For the [mayHaveTopLevelClassifier] and [mayHaveTopLevelCallable] functions,
- * the result may be a false-positive result but cannot be a false-negative.
+ * For [mayHaveTopLevelClassifier] and [mayHaveTopLevelCallable], the result may be a false-positive result but cannot be a false-negative.
  */
 internal abstract class LLFirSymbolProviderNameCache {
     /**
-     * Returns the set of top-level classifier (classes, interfaces, objects, and type-aliases) names in a given scope inside the [packageFqName].
+     * Returns the set of top-level classifier names (classes, interfaces, objects, and type aliases) inside the [packageFqName] package
+     * within the cache's scope.
      *
      * @see LLFirSymbolProviderNameCache
      */
@@ -37,26 +37,27 @@ internal abstract class LLFirSymbolProviderNameCache {
 
     /**
      * Returns the set of package names which contain a top-level callable declaration within the cache's scope.
+     *
+     * @see LLFirSymbolProviderNameCache
      */
     abstract fun getPackageNamesWithTopLevelCallables(): Set<String>?
 
     /**
-     * Returns the set of top-level callable (functions and properties) names in a given scope inside the [packageFqName].
+     * Returns the set of top-level callable names (functions and properties) inside the [packageFqName] package within the cache's scope.
      *
      * @see LLFirSymbolProviderNameCache
      */
     abstract fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name>?
 
-
     /**
-     * Checks if a scope may contain a top-level classifier (class, interface, object, or type-alias) with the given [classId].
+     * Checks if the cache's scope may contain a top-level classifier (class, interface, object, or type alias) with the given [classId].
      *
      * @see LLFirSymbolProviderNameCache
      */
     abstract fun mayHaveTopLevelClassifier(classId: ClassId, mayHaveFunctionClass: Boolean): Boolean
 
     /**
-     * Checks if a scope may contain a top-level callable (function or property) with the [name] inside the [packageFqName].
+     * Checks if the cache's scope may contain a top-level callable (function or property) called [name] inside the [packageFqName] package.
      *
      * @see LLFirSymbolProviderNameCache
      */
