@@ -24,14 +24,14 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
 internal fun KtWhenCondition.toFirWhenCondition(
-    whenRefWithSibject: FirExpressionRef<FirWhenExpression>,
+    whenRefWithSubject: FirExpressionRef<FirWhenExpression>,
     convert: KtExpression?.(String) -> FirExpression,
     toFirOrErrorTypeRef: KtTypeReference?.() -> FirTypeRef,
 ): FirExpression {
     val firSubjectSource = this.toKtPsiSourceElement(KtFakeSourceElementKind.WhenGeneratedSubject)
     val firSubjectExpression = buildWhenSubjectExpression {
         source = firSubjectSource
-        whenRef = whenRefWithSibject
+        whenRef = whenRefWithSubject
     }
     return when (this) {
         is KtWhenConditionWithExpression -> {
