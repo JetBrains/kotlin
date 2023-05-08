@@ -85,4 +85,22 @@ class CustomK2Tests : KGPBaseTest() {
             }
         }
     }
+
+    @Disabled("disable until kotlin/native dependency is updated to include KT-58444")
+    @GradleTest
+    @DisplayName("Compiling shared native source with intrinsic initializer from common source set in Native-shared source set. KT-58444")
+    fun kt58444NativeSharedConstantIntrinsic(gradleVersion: GradleVersion) {
+        with(
+            project(
+                "kt-58444-native-shared-constant-intrinsic",
+                gradleVersion,
+                buildOptions = defaultBuildOptions.copy(languageVersion = "2.0"),
+            )
+        ) {
+            val taskToExecute = ":compileNativeMainKotlinMetadata"
+            build(taskToExecute) {
+                assertTasksExecuted(taskToExecute)
+            }
+        }
+    }
 }
