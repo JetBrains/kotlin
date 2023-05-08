@@ -321,13 +321,13 @@ internal class KonanSymbols(
             }
 
     val arrayContentToString = arrayToExtensionSymbolMap("contentToString") {
-        lookup.isExtensionReceiverNullable(it) == false
+        lookup.isExtensionReceiverNullable(it) == true
     }
     val arrayContentHashCode = arrayToExtensionSymbolMap("contentHashCode") {
-        lookup.isExtensionReceiverNullable(it) == false
+        lookup.isExtensionReceiverNullable(it) == true
     }
     val arrayContentEquals = arrayToExtensionSymbolMap("contentEquals") {
-        lookup.isExtensionReceiverNullable(it) == false
+        lookup.isExtensionReceiverNullable(it) == true
     }
 
     override val arraysContentEquals by lazy { arrayContentEquals.mapKeys { it.key.defaultType } }
