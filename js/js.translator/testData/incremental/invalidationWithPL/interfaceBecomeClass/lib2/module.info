@@ -1,0 +1,34 @@
+STEP 0:
+    dependencies: lib1
+    modifications:
+        U : l2.0.kt -> l2.kt
+    added file: l2.kt
+STEP 1..2:
+    dependencies: lib1
+    rebuild klib: false
+    updated imports: l2.kt
+STEP 3:
+    dependencies: lib1
+    modifications:
+        U : l2.3.kt -> l2.kt
+    modified ir: l2.kt
+STEP 4:
+    dependencies: lib1
+    modifications:
+        U : l2.4.kt -> l2.kt
+    modified ir: l2.kt
+STEP 5:
+    dependencies: lib1
+    rebuild klib: false
+    updated exports: l2.kt
+    updated imports: l2.kt
+STEP 6:
+    dependencies: lib1
+    modifications:
+        U : l2.6.kt -> l2.kt
+    modified ir: l2.kt
+STEP 7:
+    dependencies: lib1
+    modifications:
+        U : l2.7.kt -> l2.kt
+    modified ir: l2.kt

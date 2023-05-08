@@ -1,0 +1,5 @@
+MODULES: lib1, lib2, main
+
+STEP 0..2:
+    libs: lib1, lib2, main
+    dirty js: lib1, lib2, main

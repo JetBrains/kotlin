@@ -121,7 +121,7 @@ abstract class AbstractInvalidationTest(private val targetBackend: TargetBackend
         return File(File(buildDir, moduleName), "$moduleName.klib")
     }
 
-    private fun createConfiguration(moduleName: String, language: List<String>, moduleKind: ModuleKind): CompilerConfiguration {
+    protected open fun createConfiguration(moduleName: String, language: List<String>, moduleKind: ModuleKind): CompilerConfiguration {
         val copy = environment.configuration.copy()
         copy.put(CommonConfigurationKeys.MODULE_NAME, moduleName)
         copy.put(JSConfigurationKeys.GENERATE_DTS, true)

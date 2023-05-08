@@ -1,0 +1,35 @@
+STEP 0:
+    dependencies: lib1, lib2
+    modifications:
+        U : klass.0.kt -> klass.kt
+        U : test.0.kt -> test.kt
+    added file: m.kt, test.kt, klass.kt
+STEP 1..2:
+    dependencies: lib1, lib2
+    rebuild klib: false
+    updated imports: test.kt, klass.kt
+STEP 3:
+    dependencies: lib1, lib2
+    rebuild klib: false
+STEP 4:
+    dependencies: lib1, lib2
+    modifications:
+        U : klass.4.kt -> klass.kt
+        U : test.4.kt -> test.kt
+    modified ir: klass.kt, test.kt
+STEP 5:
+    dependencies: lib1, lib2
+    rebuild klib: false
+    updated exports: klass.kt
+    updated imports: test.kt, klass.kt
+STEP 6:
+    dependencies: lib1, lib2
+    modifications:
+        U : klass.6.kt -> klass.kt
+    modified ir: klass.kt
+    updated exports: klass.kt
+    updated imports: test.kt
+STEP 7:
+    dependencies: lib1, lib2
+    rebuild klib: false
+    updated imports: klass.kt

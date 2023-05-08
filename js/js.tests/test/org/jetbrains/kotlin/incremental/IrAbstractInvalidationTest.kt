@@ -11,12 +11,35 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageConfig
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageLogLevel
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageMode
+import org.jetbrains.kotlin.ir.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
 
-abstract class AbstractJsIrInvalidationTest : IrAbstractInvalidationTest(TargetBackend.JS_IR, "incrementalOut/invalidation")
-abstract class AbstractJsIrES6InvalidationTest : IrAbstractInvalidationTest(TargetBackend.JS_IR_ES6, "incrementalOut/invalidationES6")
+abstract class AbstractJsIrInvalidationTest : IrAbstractInvalidationTest(
+    targetBackend = TargetBackend.JS_IR,
+    workingDirPath = "incrementalOut/invalidation"
+)
+
+abstract class AbstractJsIrES6InvalidationTest : IrAbstractInvalidationTest(
+    targetBackend = TargetBackend.JS_IR_ES6,
+    workingDirPath = "incrementalOut/invalidationES6"
+)
+
+abstract class AbstractJsIrInvalidationWithPLTest : IrAbstractInvalidationTest(
+    targetBackend = TargetBackend.JS_IR,
+    workingDirPath = "incrementalOut/invalidationWithPL"
+) {
+    override fun createConfiguration(moduleName: String, language: List<String>, moduleKind: ModuleKind): CompilerConfiguration {
+        val config = super.createConfiguration(moduleName, language, moduleKind)
+        config.setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.WARNING))
+        return config
+    }
+}
 
 abstract class IrAbstractInvalidationTest(
     targetBackend: TargetBackend,
