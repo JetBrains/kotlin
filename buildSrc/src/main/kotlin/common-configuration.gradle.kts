@@ -80,6 +80,7 @@ fun Project.configureJavaCompile() {
             options.compilerArgs.add("-Xlint:deprecation")
             options.compilerArgs.add("-Xlint:unchecked")
             options.compilerArgs.add("-Werror")
+            options.compilerArgs.add("-opt-in=kotlin.ExperimentalStdlibApi")
         }
     }
 }
@@ -105,6 +106,7 @@ fun Project.configureKotlinCompilationOptions() {
     plugins.withType<KotlinBasePluginWrapper> {
         val commonCompilerArgs = listOfNotNull(
             "-opt-in=kotlin.RequiresOptIn",
+            "-opt-in=kotlin.ExperimentalStdlibApi",
             "-progressive".takeIf { getBooleanProperty("test.progressive.mode") ?: false }
         )
 
