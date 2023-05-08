@@ -38,6 +38,10 @@ internal class MissingDeclarationStubGenerator(private val builtIns: IrBuiltIns)
 
     private var declarationsToPatch = arrayListOf<IrDeclaration>()
 
+    private val stubbedSymbols = hashSetOf<IrSymbol>()
+
+    val allStubbedSymbols: Set<IrSymbol> get() = stubbedSymbols
+
     fun grabDeclarationsToPatch(): Collection<IrDeclaration> {
         val result = declarationsToPatch
         declarationsToPatch = arrayListOf()
@@ -46,6 +50,8 @@ internal class MissingDeclarationStubGenerator(private val builtIns: IrBuiltIns)
 
     override fun getDeclaration(symbol: IrSymbol): IrDeclaration {
         require(!symbol.isBound)
+
+        stubbedSymbols.add(symbol)
 
         return when (symbol) {
             is IrClassSymbol -> generateClass(symbol)

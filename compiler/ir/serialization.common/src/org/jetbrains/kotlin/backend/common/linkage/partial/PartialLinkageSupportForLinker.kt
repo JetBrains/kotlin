@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.SymbolTable
 
 interface PartialLinkageSupportForLinker {
@@ -48,6 +49,11 @@ interface PartialLinkageSupportForLinker {
     fun generateStubsAndPatchUsages(symbolTable: SymbolTable, roots: () -> Sequence<IrModuleFragment>)
     fun generateStubsAndPatchUsages(symbolTable: SymbolTable, root: IrDeclaration)
 
+    /**
+     * Collect all symbols which were stubbed
+     */
+    fun collectAllStubbedSymbols(): Set<IrSymbol>
+
     companion object {
         val DISABLED = object : PartialLinkageSupportForLinker {
             override val isEnabled get() = false
@@ -56,6 +62,7 @@ interface PartialLinkageSupportForLinker {
             override fun exploreClassifiersInInlineLazyIrFunction(function: IrFunction) = Unit
             override fun generateStubsAndPatchUsages(symbolTable: SymbolTable, roots: () -> Sequence<IrModuleFragment>) = Unit
             override fun generateStubsAndPatchUsages(symbolTable: SymbolTable, root: IrDeclaration) = Unit
+            override fun collectAllStubbedSymbols(): Set<IrSymbol> = emptySet()
         }
     }
 }

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageConfig
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageLogger
+import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.allUnbound
@@ -64,6 +65,10 @@ internal class PartialLinkageSupportForLinkerImpl(
 
     override fun generateStubsAndPatchUsages(symbolTable: SymbolTable, root: IrDeclaration) {
         generateStubsAndPatchUsagesInternal(symbolTable) { patcher.patchDeclarations(listOf(root)) }
+    }
+
+    override fun collectAllStubbedSymbols(): Set<IrSymbol> {
+        return stubGenerator.allStubbedSymbols
     }
 
     private fun generateStubsAndPatchUsagesInternal(symbolTable: SymbolTable, patchIrTree: () -> Unit) {
