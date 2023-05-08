@@ -75,7 +75,7 @@ abstract class KotlinTopLevelExtension(internal val project: Project) : KotlinTo
 
     override lateinit var coreLibrariesVersion: String
 
-    private val toolchainSupport = ToolchainSupport.createToolchain(project)
+    private val toolchainSupport = ToolchainSupport.createToolchain(project, this)
 
     /**
      * Configures [Java toolchain](https://docs.gradle.org/current/userguide/toolchains.html) both for Kotlin JVM and Java tasks.

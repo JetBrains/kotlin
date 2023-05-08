@@ -12,6 +12,7 @@ import org.gradle.internal.jvm.Jvm
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import kotlin.io.path.appendText
@@ -698,6 +699,61 @@ class KotlinJavaToolchainTest : KGPBaseTest() {
             build(":lib:compileKotlin") {
                 assertOutputDoesNotContain("-jvm-target 1.8")
                 assertOutputContains("-jvm-target 11")
+            }
+        }
+    }
+
+    @DisplayName("Toolchain should not override Jvm target configured in project level DSL")
+    @TestMetadata("kotlin-java-toolchain/simple")
+    @GradleTest
+    fun toolchainNotOverrideProjectJvmTarget(gradleVersion: GradleVersion) {
+        project(
+            projectName = "simple".fullProjectName,
+            gradleVersion = gradleVersion,
+            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+        ) {
+            buildGradle.appendText(
+                //language=groovy
+                """
+                |
+                |kotlin.compilerOptions.jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
+                |
+                """.trimMargin()
+            )
+
+            build(":compileKotlin") {
+                assertTasksExecuted(":compileKotlin")
+                assertCompilerArgument(":compileKotlin", "-jvm-target 11")
+            }
+        }
+    }
+
+    @AndroidGradlePluginTests
+    @DisplayName("Toolchain should not override Jvm taget configured via kotlinOptions in android project")
+    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_42)
+    @GradleAndroidTest
+    internal fun kotlinOptionsAndroidAndToolchainNotOverrideJvmTarget(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        providedJdk: JdkVersions.ProvidedJdk
+    ) {
+        project(
+            "android".fullProjectName,
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion, logLevel = LogLevel.DEBUG),
+            buildJdk = providedJdk.location
+        ) {
+            buildGradle.appendText(
+                //language=groovy
+                """
+                |
+                |android.kotlinOptions.jvmTarget = "11"
+                """.trimMargin()
+            )
+
+            build(":compileDebugKotlin") {
+                assertTasksExecuted(":compileDebugKotlin")
+                assertCompilerArgument(":compileDebugKotlin", "-jvm-target 11")
             }
         }
     }

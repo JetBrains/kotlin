@@ -33,6 +33,10 @@ internal open class KotlinJvmPlugin(
         ) {
             extensionCompilerOptions.verbose.convention(logger.isDebugEnabled)
             extensionCompilerOptions.moduleName.convention(baseModuleName())
+            DefaultKotlinJavaToolchain.wireJvmTargetToToolchain(
+                extensionCompilerOptions,
+                project
+            )
             compilationsContainer.configureEach {
                 val jvmCompilerOptions = it.compilerOptions.options as KotlinJvmCompilerOptions
                 KotlinJvmCompilerOptionsHelper.syncOptionsAsConvention(
