@@ -80,7 +80,6 @@ fun Project.configureJavaCompile() {
             options.compilerArgs.add("-Xlint:deprecation")
             options.compilerArgs.add("-Xlint:unchecked")
             options.compilerArgs.add("-Werror")
-            options.compilerArgs.add("-opt-in=kotlin.ExperimentalStdlibApi")
         }
     }
 }
