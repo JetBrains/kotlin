@@ -146,7 +146,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
         if (target.resolvePhase >= FirResolvePhase.IMPORTS) return
         val firFile = target.getContainingFile() ?: return
         if (firFile.resolvePhase >= FirResolvePhase.IMPORTS) return
-        moduleComponents.globalResolveComponents.lockProvider.withLock(firFile, FirResolvePhase.IMPORTS) {
+        moduleComponents.globalResolveComponents.lockProvider.withWriteLock(firFile, FirResolvePhase.IMPORTS) {
             resolveFileToImportsWithoutLock(firFile)
         }
     }

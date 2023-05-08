@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder
 import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirLazyResolveContractChecker
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.lockWithPCECheck
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.*
@@ -68,13 +67,47 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
         }
     }
 
-    inline fun withLock(
+    /**
+     * Locks an a [FirElementWithResolveState] to resolve from `phase - 1` to [phase] and
+     * then updates the [FirElementWithResolveState.resolveState] to a [phase].
+     * Does nothing if [target] already has at least [phase] phase.
+     *
+     * [action] will be executed once if [target] is not yet resolved to [phase] phase.
+     *
+     * @see withReadLock
+     */
+    inline fun withWriteLock(
         target: FirElementWithResolveState,
         phase: FirResolvePhase,
         action: () -> Unit
     ) {
+        withLock(target, phase, updatePhase = true, action)
+    }
+
+    /**
+     * Locks an a [FirElementWithResolveState] to read something required for [phase].
+     * Does nothing if [target] already has at least [phase] phase.
+     *
+     * [action] will be executed once if [target] is not yet resolved to [phase] phase.
+     *
+     * @see withWriteLock
+     */
+    inline fun withReadLock(
+        target: FirElementWithResolveState,
+        phase: FirResolvePhase,
+        action: () -> Unit
+    ) {
+        withLock(target, phase, updatePhase = false, action)
+    }
+
+    private inline fun withLock(
+        target: FirElementWithResolveState,
+        phase: FirResolvePhase,
+        updatePhase: Boolean,
+        action: () -> Unit
+    ) {
         checker.lazyResolveToPhaseInside(phase) {
-            target.withCriticalSection(phase, action)
+            target.withCriticalSection(toPhase = phase, updatePhase = updatePhase, action = action)
         }
     }
 
@@ -84,20 +117,23 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
         action: () -> Unit
     ) {
         checker.lazyResolveToPhaseInside(phase, isJumpingPhase = true) {
-            target.withCriticalSection(phase, action)
+            target.withCriticalSection(toPhase = phase, updatePhase = true, action = action)
         }
     }
 
     /**
-     * Locks an a [FirElementWithResolveState] to resolve from `toPhase - 1` to [toPhase] and then updates the [FirElementWithResolveState.resolveState] to a [toPhase].
+     * Locks an a [FirElementWithResolveState] to resolve from `toPhase - 1` to [toPhase] and
+     * then updates the [FirElementWithResolveState.resolveState] to a [toPhase] if [updatePhase] is **true**.
+     *
+     * [updatePhase] == false means that we want to read some data under a lock.
      *
      * If [FirElementWithResolveState] is already at least at [toPhase], does nothing.
      *
      * Otherwise:
      *  - Marks [FirElementWithResolveState] as in a process of resovle
      *  - performs the resolve by calling [action]
-     *  - updates the resolve phase to [toPhase]
-     *  - notifies other threads waiting on the same lock that the declaration is already resolved by this thread, so other thread can continue its execution.
+     *  - updates the resolve phase to [toPhase] if [updatePhase] is **true**.
+     *  - notifies other threads waiting on the same lock that the declaration is already resolved by this thread, so other threads can continue its execution.
      *
      *
      *  Contention handling:
@@ -107,6 +143,7 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
      */
     private inline fun FirElementWithResolveState.withCriticalSection(
         toPhase: FirResolvePhase,
+        updatePhase: Boolean,
         action: () -> Unit
     ) {
         while (true) {
@@ -118,25 +155,29 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
                 // already resolved by some other thread
                 return
             }
+
             when (stateSnapshot) {
                 is FirInProcessOfResolvingToPhaseStateWithoutBarrier -> {
                     // some thread is resolving the phase, so we wait until it finishes
                     trySettingBarrier(toPhase, stateSnapshot)
                     continue
                 }
+
                 is FirInProcessOfResolvingToPhaseStateWithBarrier -> {
-                    // some thread is waiting on a barrier as the declaration is beeing resovled, so we try too
-                    if (!waitOnBarrier(stateSnapshot)) continue
-                    checkPhase(toPhase)
-                    return
+                    // some thread is waiting on a barrier as the declaration is being resolved, so we try too
+                    waitOnBarrier(stateSnapshot)
+                    continue
                 }
+
                 is FirResolvedToPhaseState -> {
                     if (!tryLock(toPhase, stateSnapshot)) continue
                     try {
                         action()
                     } finally {
-                        unlock(toPhase)
+                        val newPhase = if (updatePhase) toPhase else stateSnapshot.resolvePhase
+                        unlock(toPhase = newPhase)
                     }
+
                     return
                 }
             }
@@ -201,7 +242,7 @@ private val shouldRetryFlag: ThreadLocal<Boolean> = ThreadLocal.withInitial { fa
 private val LOG = Logger.getInstance(LLFirLockProvider::class.java)
 
 /**
- * Retry the `action` calculation with a new FIR session if session passed to [LLFirLockProvider.withLock] turns to be invalid.
+ * Retry the `action` calculation with a new FIR session if session passed to [LLFirLockProvider.withWriteLock] turns to be invalid.
  * This is a temporary solution to fix inconsistent analysis state in common cases of idempotent analysis.
  * The right solution would be to modify the FIR tree after the analysis is done, so the tree will always be in consistent state.
  */

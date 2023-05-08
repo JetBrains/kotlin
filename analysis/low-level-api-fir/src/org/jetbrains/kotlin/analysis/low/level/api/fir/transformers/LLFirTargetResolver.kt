@@ -113,8 +113,18 @@ internal abstract class LLFirTargetResolver(
         if (isJumpingPhase) {
             lockProvider.withJumpingLock(target, resolverPhase, action)
         } else {
-            lockProvider.withLock(target, resolverPhase, action)
+            lockProvider.withWriteLock(target, resolverPhase, action)
         }
+    }
+
+    /**
+     * Execute action under a declaration lock.
+     * [action] will be executed only once in case of successful lock.
+     * If some another thread is already resolved [target] declaration to [resolverPhase] then [action] won't be executed.
+     */
+    protected inline fun withReadLock(target: FirElementWithResolveState, action: () -> Unit) {
+        checkThatResolvedAtLeastToPreviousPhase(target)
+        lockProvider.withReadLock(target, resolverPhase, action)
     }
 
     private fun checkThatResolvedAtLeastToPreviousPhase(target: FirElementWithResolveState) {
