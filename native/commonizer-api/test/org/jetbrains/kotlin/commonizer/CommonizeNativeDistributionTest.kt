@@ -16,13 +16,13 @@ import org.junit.rules.TemporaryFolder
 import kotlin.test.assertTrue
 
 
-class CommonizeNativeDistributionTest {
+public class CommonizeNativeDistributionTest {
 
     @get:Rule
-    val temporaryOutputDirectory = TemporaryFolder()
+    public val temporaryOutputDirectory: TemporaryFolder = TemporaryFolder()
 
     @Test
-    fun `commonize - linux platforms`() {
+    public fun `commonize - linux platforms`() {
         val linuxTarget1 = CommonizerTarget(LINUX_X64, LINUX_ARM64)
         val linuxTarget2 = CommonizerTarget(LINUX_X64, LINUX_ARM64, LINUX_ARM32_HFP)
 
@@ -45,7 +45,7 @@ class CommonizeNativeDistributionTest {
     }
 
     @Test
-    fun `commonize - unix platforms`() {
+    public fun `commonize - unix platforms`() {
         val unixTarget = CommonizerTarget(
             LINUX_X64, LINUX_ARM64,
             MACOS_X64, MACOS_ARM64,
@@ -68,7 +68,7 @@ class CommonizeNativeDistributionTest {
     }
 
     @Test
-    fun `commonize - apple platforms`() {
+    public fun `commonize - apple platforms`() {
         assumeTrue("Test is only supported on macos", HostManager.hostIsMac)
         val iosTarget = CommonizerTarget(IOS_ARM64, IOS_X64, IOS_SIMULATOR_ARM64)
         val watchosTarget = CommonizerTarget(WATCHOS_ARM64, WATCHOS_X64, WATCHOS_SIMULATOR_ARM64, WATCHOS_DEVICE_ARM64)
@@ -104,7 +104,7 @@ class CommonizeNativeDistributionTest {
     }
 
     @Test
-    fun `commonize - linux macos - linux macos mingw`() {
+    public fun `commonize - linux macos - linux macos mingw`() {
         val unixTarget = CommonizerTarget(LINUX_X64, MACOS_X64)
         val nativeTarget = CommonizerTarget(MINGW_X64, LINUX_X64, MACOS_X64)
         CliCommonizer(this::class.java.classLoader).commonizeNativeDistribution(
@@ -121,7 +121,7 @@ class CommonizeNativeDistributionTest {
     }
 
     @Test
-    fun `commonize - no outputTargets specified`() {
+    public fun `commonize - no outputTargets specified`() {
         CliCommonizer(this::class.java.classLoader).commonizeNativeDistribution(
             konanHome = konanHome,
             outputTargets = emptySet(),
