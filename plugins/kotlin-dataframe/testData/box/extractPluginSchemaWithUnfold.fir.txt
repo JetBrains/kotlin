@@ -1286,201 +1286,7 @@ FILE: __GENERATED DECLARATIONS__.kt
     }
     internal final interface Token1 {
     }
-    internal final interface Token2 {
-    }
-    internal final interface Token3 {
-    }
-    internal final interface Token4 {
-    }
-    internal final interface Token5 {
-    }
-    internal final interface Token6 {
-    }
-    internal final interface Token7 {
-    }
-    internal final interface Token8 {
-    }
-    internal final interface Token9 {
-    }
     internal final interface Token10 {
-    }
-    internal final interface Token11 {
-    }
-    internal final interface Token12 {
-    }
-    internal final interface Token13 {
-    }
-    internal final interface Token14 {
-    }
-    internal final interface Token15 {
-    }
-    internal final interface Token16 {
-    }
-    internal final interface Token17 {
-    }
-    internal final interface Token18 {
-    }
-    internal final interface Token19 {
-    }
-    internal final interface Token20 {
-    }
-    internal final interface Token21 {
-    }
-    internal final interface Token22 {
-    }
-    internal final interface Token23 {
-    }
-    internal final interface Token24 {
-    }
-    internal final interface Token25 {
-    }
-    internal final interface Token26 {
-    }
-    internal final interface Token27 {
-    }
-    internal final interface Token28 {
-    }
-    internal final interface Token29 {
-    }
-    internal final interface Token30 {
-    }
-    internal final interface Token31 {
-    }
-    internal final interface Token32 {
-    }
-    internal final interface Token33 {
-    }
-    internal final interface Token34 {
-    }
-    internal final interface Token35 {
-    }
-    internal final interface Token36 {
-    }
-    internal final interface Token37 {
-    }
-    internal final interface Token38 {
-    }
-    internal final interface Token39 {
-    }
-    internal final interface Token40 {
-    }
-    internal final interface Token41 {
-    }
-    internal final interface Token42 {
-    }
-    internal final interface Token43 {
-    }
-    internal final interface Token44 {
-    }
-    internal final interface Token45 {
-    }
-    internal final interface Token46 {
-    }
-    internal final interface Token47 {
-    }
-    internal final interface Token48 {
-    }
-    internal final interface Token49 {
-    }
-    internal final interface Token50 {
-    }
-    internal final interface Token51 {
-    }
-    internal final interface Token52 {
-    }
-    internal final interface Token53 {
-    }
-    internal final interface Token54 {
-    }
-    internal final interface Token55 {
-    }
-    internal final interface Token56 {
-    }
-    internal final interface Token57 {
-    }
-    internal final interface Token58 {
-    }
-    internal final interface Token59 {
-    }
-    internal final interface Token60 {
-    }
-    internal final interface Token61 {
-    }
-    internal final interface Token62 {
-    }
-    internal final interface Token63 {
-    }
-    internal final interface Token64 {
-    }
-    internal final interface Token65 {
-    }
-    internal final interface Token66 {
-    }
-    internal final interface Token67 {
-    }
-    internal final interface Token68 {
-    }
-    internal final interface Token69 {
-    }
-    internal final interface Token70 {
-    }
-    internal final interface Token71 {
-    }
-    internal final interface Token72 {
-    }
-    internal final interface Token73 {
-    }
-    internal final interface Token74 {
-    }
-    internal final interface Token75 {
-    }
-    internal final interface Token76 {
-    }
-    internal final interface Token77 {
-    }
-    internal final interface Token78 {
-    }
-    internal final interface Token79 {
-    }
-    internal final interface Token80 {
-    }
-    internal final interface Token81 {
-    }
-    internal final interface Token82 {
-    }
-    internal final interface Token83 {
-    }
-    internal final interface Token84 {
-    }
-    internal final interface Token85 {
-    }
-    internal final interface Token86 {
-    }
-    internal final interface Token87 {
-    }
-    internal final interface Token88 {
-    }
-    internal final interface Token89 {
-    }
-    internal final interface Token90 {
-    }
-    internal final interface Token91 {
-    }
-    internal final interface Token92 {
-    }
-    internal final interface Token93 {
-    }
-    internal final interface Token94 {
-    }
-    internal final interface Token95 {
-    }
-    internal final interface Token96 {
-    }
-    internal final interface Token97 {
-    }
-    internal final interface Token98 {
-    }
-    internal final interface Token99 {
     }
     internal final interface Token100 {
     }
@@ -1502,6 +1308,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     }
     internal final interface Token109 {
     }
+    internal final interface Token11 {
+    }
     internal final interface Token110 {
     }
     internal final interface Token111 {
@@ -1521,6 +1329,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final interface Token118 {
     }
     internal final interface Token119 {
+    }
+    internal final interface Token12 {
     }
     internal final interface Token120 {
     }
@@ -1542,6 +1352,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     }
     internal final interface Token129 {
     }
+    internal final interface Token13 {
+    }
     internal final interface Token130 {
     }
     internal final interface Token131 {
@@ -1561,6 +1373,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final interface Token138 {
     }
     internal final interface Token139 {
+    }
+    internal final interface Token14 {
     }
     internal final interface Token140 {
     }
@@ -1582,6 +1396,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     }
     internal final interface Token149 {
     }
+    internal final interface Token15 {
+    }
     internal final interface Token150 {
     }
     internal final interface Token151 {
@@ -1601,6 +1417,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final interface Token158 {
     }
     internal final interface Token159 {
+    }
+    internal final interface Token16 {
     }
     internal final interface Token160 {
     }
@@ -1622,6 +1440,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     }
     internal final interface Token169 {
     }
+    internal final interface Token17 {
+    }
     internal final interface Token170 {
     }
     internal final interface Token171 {
@@ -1641,6 +1461,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final interface Token178 {
     }
     internal final interface Token179 {
+    }
+    internal final interface Token18 {
     }
     internal final interface Token180 {
     }
@@ -1662,6 +1484,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     }
     internal final interface Token189 {
     }
+    internal final interface Token19 {
+    }
     internal final interface Token190 {
     }
     internal final interface Token191 {
@@ -1681,6 +1505,10 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final interface Token198 {
     }
     internal final interface Token199 {
+    }
+    internal final interface Token2 {
+    }
+    internal final interface Token20 {
     }
     internal final interface Token200 {
     }
@@ -1702,6 +1530,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     }
     internal final interface Token209 {
     }
+    internal final interface Token21 {
+    }
     internal final interface Token210 {
     }
     internal final interface Token211 {
@@ -1721,6 +1551,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final interface Token218 {
     }
     internal final interface Token219 {
+    }
+    internal final interface Token22 {
     }
     internal final interface Token220 {
     }
@@ -1742,6 +1574,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     }
     internal final interface Token229 {
     }
+    internal final interface Token23 {
+    }
     internal final interface Token230 {
     }
     internal final interface Token231 {
@@ -1761,6 +1595,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final interface Token238 {
     }
     internal final interface Token239 {
+    }
+    internal final interface Token24 {
     }
     internal final interface Token240 {
     }
@@ -1782,6 +1618,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     }
     internal final interface Token249 {
     }
+    internal final interface Token25 {
+    }
     internal final interface Token250 {
     }
     internal final interface Token251 {
@@ -1801,6 +1639,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final interface Token258 {
     }
     internal final interface Token259 {
+    }
+    internal final interface Token26 {
     }
     internal final interface Token260 {
     }
@@ -1822,6 +1662,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     }
     internal final interface Token269 {
     }
+    internal final interface Token27 {
+    }
     internal final interface Token270 {
     }
     internal final interface Token271 {
@@ -1841,6 +1683,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final interface Token278 {
     }
     internal final interface Token279 {
+    }
+    internal final interface Token28 {
     }
     internal final interface Token280 {
     }
@@ -1862,6 +1706,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     }
     internal final interface Token289 {
     }
+    internal final interface Token29 {
+    }
     internal final interface Token290 {
     }
     internal final interface Token291 {
@@ -1881,6 +1727,10 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final interface Token298 {
     }
     internal final interface Token299 {
+    }
+    internal final interface Token3 {
+    }
+    internal final interface Token30 {
     }
     internal final interface Token300 {
     }
@@ -1902,6 +1752,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     }
     internal final interface Token309 {
     }
+    internal final interface Token31 {
+    }
     internal final interface Token310 {
     }
     internal final interface Token311 {
@@ -1921,6 +1773,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final interface Token318 {
     }
     internal final interface Token319 {
+    }
+    internal final interface Token32 {
     }
     internal final interface Token320 {
     }
@@ -1942,6 +1796,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     }
     internal final interface Token329 {
     }
+    internal final interface Token33 {
+    }
     internal final interface Token330 {
     }
     internal final interface Token331 {
@@ -1961,6 +1817,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final interface Token338 {
     }
     internal final interface Token339 {
+    }
+    internal final interface Token34 {
     }
     internal final interface Token340 {
     }
@@ -1982,6 +1840,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     }
     internal final interface Token349 {
     }
+    internal final interface Token35 {
+    }
     internal final interface Token350 {
     }
     internal final interface Token351 {
@@ -2001,6 +1861,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final interface Token358 {
     }
     internal final interface Token359 {
+    }
+    internal final interface Token36 {
     }
     internal final interface Token360 {
     }
@@ -2022,6 +1884,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     }
     internal final interface Token369 {
     }
+    internal final interface Token37 {
+    }
     internal final interface Token370 {
     }
     internal final interface Token371 {
@@ -2041,6 +1905,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final interface Token378 {
     }
     internal final interface Token379 {
+    }
+    internal final interface Token38 {
     }
     internal final interface Token380 {
     }
@@ -2062,6 +1928,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     }
     internal final interface Token389 {
     }
+    internal final interface Token39 {
+    }
     internal final interface Token390 {
     }
     internal final interface Token391 {
@@ -2081,6 +1949,10 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final interface Token398 {
     }
     internal final interface Token399 {
+    }
+    internal final interface Token4 {
+    }
+    internal final interface Token40 {
     }
     internal final interface Token400 {
     }
@@ -2102,6 +1974,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     }
     internal final interface Token409 {
     }
+    internal final interface Token41 {
+    }
     internal final interface Token410 {
     }
     internal final interface Token411 {
@@ -2121,6 +1995,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final interface Token418 {
     }
     internal final interface Token419 {
+    }
+    internal final interface Token42 {
     }
     internal final interface Token420 {
     }
@@ -2142,6 +2018,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     }
     internal final interface Token429 {
     }
+    internal final interface Token43 {
+    }
     internal final interface Token430 {
     }
     internal final interface Token431 {
@@ -2161,6 +2039,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final interface Token438 {
     }
     internal final interface Token439 {
+    }
+    internal final interface Token44 {
     }
     internal final interface Token440 {
     }
@@ -2182,6 +2062,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     }
     internal final interface Token449 {
     }
+    internal final interface Token45 {
+    }
     internal final interface Token450 {
     }
     internal final interface Token451 {
@@ -2201,6 +2083,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final interface Token458 {
     }
     internal final interface Token459 {
+    }
+    internal final interface Token46 {
     }
     internal final interface Token460 {
     }
@@ -2222,6 +2106,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     }
     internal final interface Token469 {
     }
+    internal final interface Token47 {
+    }
     internal final interface Token470 {
     }
     internal final interface Token471 {
@@ -2242,6 +2128,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     }
     internal final interface Token479 {
     }
+    internal final interface Token48 {
+    }
     internal final interface Token480 {
     }
     internal final interface Token481 {
@@ -2261,6 +2149,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final interface Token488 {
     }
     internal final interface Token489 {
+    }
+    internal final interface Token49 {
     }
     internal final interface Token490 {
     }
@@ -2326,6 +2216,116 @@ FILE: __GENERATED DECLARATIONS__.kt
         internal abstract val supported: R|kotlin/Boolean|
             internal get(): R|kotlin/Boolean|
 
+    }
+    internal final interface Token5 {
+    }
+    internal final interface Token50 {
+    }
+    internal final interface Token51 {
+    }
+    internal final interface Token52 {
+    }
+    internal final interface Token53 {
+    }
+    internal final interface Token54 {
+    }
+    internal final interface Token55 {
+    }
+    internal final interface Token56 {
+    }
+    internal final interface Token57 {
+    }
+    internal final interface Token58 {
+    }
+    internal final interface Token59 {
+    }
+    internal final interface Token6 {
+    }
+    internal final interface Token60 {
+    }
+    internal final interface Token61 {
+    }
+    internal final interface Token62 {
+    }
+    internal final interface Token63 {
+    }
+    internal final interface Token64 {
+    }
+    internal final interface Token65 {
+    }
+    internal final interface Token66 {
+    }
+    internal final interface Token67 {
+    }
+    internal final interface Token68 {
+    }
+    internal final interface Token69 {
+    }
+    internal final interface Token7 {
+    }
+    internal final interface Token70 {
+    }
+    internal final interface Token71 {
+    }
+    internal final interface Token72 {
+    }
+    internal final interface Token73 {
+    }
+    internal final interface Token74 {
+    }
+    internal final interface Token75 {
+    }
+    internal final interface Token76 {
+    }
+    internal final interface Token77 {
+    }
+    internal final interface Token78 {
+    }
+    internal final interface Token79 {
+    }
+    internal final interface Token8 {
+    }
+    internal final interface Token80 {
+    }
+    internal final interface Token81 {
+    }
+    internal final interface Token82 {
+    }
+    internal final interface Token83 {
+    }
+    internal final interface Token84 {
+    }
+    internal final interface Token85 {
+    }
+    internal final interface Token86 {
+    }
+    internal final interface Token87 {
+    }
+    internal final interface Token88 {
+    }
+    internal final interface Token89 {
+    }
+    internal final interface Token9 {
+    }
+    internal final interface Token90 {
+    }
+    internal final interface Token91 {
+    }
+    internal final interface Token92 {
+    }
+    internal final interface Token93 {
+    }
+    internal final interface Token94 {
+    }
+    internal final interface Token95 {
+    }
+    internal final interface Token96 {
+    }
+    internal final interface Token97 {
+    }
+    internal final interface Token98 {
+    }
+    internal final interface Token99 {
     }
 FILE: __GENERATED DECLARATIONS__.kt
     package org.jetbrains.kotlinx.dataframe.api

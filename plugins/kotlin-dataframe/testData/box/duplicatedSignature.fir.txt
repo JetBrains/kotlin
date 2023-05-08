@@ -15,16 +15,16 @@ FILE: Test.kt
 
     }
     public final fun main(args: R|kotlin/Array<kotlin/String>|): R|kotlin/Unit| {
-        lval res: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>| = R|org/jetbrains/kotlinx/dataframe/api/dataFrameOf|(vararg(String(a))).R|org/jetbrains/kotlinx/dataframe/api/DataFrameBuilder.invoke|(vararg(Int(1))).R|org/jetbrains/kotlinx/dataframe/api/cast|<R|org/jetbrains/kotlinx/dataframe/Schema|>().R|org/jetbrains/kotlinx/dataframe/api/refined_499|<R|kotlin/Int|, R|org/jetbrains/kotlinx/dataframe/Schema|>(String(ba), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/Schema>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/Schema>|): R|kotlin/Int| <inline=NoInline, kind=UNKNOWN>  {
+        lval res: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>| = R|org/jetbrains/kotlinx/dataframe/api/dataFrameOf|(vararg(String(a))).R|org/jetbrains/kotlinx/dataframe/api/DataFrameBuilder.invoke|(vararg(Int(1))).R|org/jetbrains/kotlinx/dataframe/api/cast|<R|org/jetbrains/kotlinx/dataframe/Schema|>().R|org/jetbrains/kotlinx/dataframe/api/refined_499|<R|kotlin/Int|, R|org/jetbrains/kotlinx/dataframe/Schema|>(String(ba), <L> = add@fun R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/Schema>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/AddDataRow<org/jetbrains/kotlinx/dataframe/Schema>|): R|kotlin/Int| <inline=NoInline>  {
             ^ Int(42)
         }
         )
         (this@R|org/jetbrains/kotlinx/dataframe/main|, R|<local>/res|).R|org/jetbrains/kotlinx/dataframe/Scope499.ba|.R|org/jetbrains/kotlinx/dataframe/api/print|<R|kotlin/Int|>()
         (this@R|org/jetbrains/kotlinx/dataframe/main|, R|<local>/res|).R|org/jetbrains/kotlinx/dataframe/Scope499.a|.R|org/jetbrains/kotlinx/dataframe/api/print|<R|kotlin/Int|>()
-        lval a: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token498>| = R|<local>/res|.R|org/jetbrains/kotlinx/dataframe/api/convert|<R|org/jetbrains/kotlinx/dataframe/Token499|, R|kotlin/Int|>(<L> = convert@fun R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/Token499>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/Token499>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnSet<kotlin/Int>| <inline=NoInline>  {
+        lval a: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token497>| = R|<local>/res|.R|org/jetbrains/kotlinx/dataframe/api/convert|<R|org/jetbrains/kotlinx/dataframe/Token499|, R|kotlin/Int|>(<L> = convert@fun R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/Token499>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/Token499>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnSet<kotlin/Int>| <inline=NoInline>  {
             ^ (this@R|org/jetbrains/kotlinx/dataframe/main|, this@R|special/anonymous|).R|org/jetbrains/kotlinx/dataframe/Scope499.a|
         }
-        ).R|org/jetbrains/kotlinx/dataframe/api/refined_498|<R|org/jetbrains/kotlinx/dataframe/Token499|, R|kotlin/Int|, R|kotlin/Char|>(<L> = with@fun R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token499>|.<anonymous>(it: R|kotlin/Int|): R|kotlin/Char| <inline=NoInline, kind=UNKNOWN>  {
+        ).R|org/jetbrains/kotlinx/dataframe/api/refined_497|<R|org/jetbrains/kotlinx/dataframe/Token499|, R|kotlin/Int|, R|kotlin/Char|>(<L> = with@fun R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token499>|.<anonymous>(it: R|kotlin/Int|): R|kotlin/Char| <inline=NoInline>  {
             ^ R|<local>/it|.R|kotlin/text/digitToChar|()
         }
         )
@@ -60,14 +60,14 @@ FILE: duplicatedSignature.kt
     public final fun box(): R|kotlin/String| {
         lval df: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/ActivePlayer>| = R|org/jetbrains/kotlinx/dataframe/api/dataFrameOf|(vararg(String(char), String(level), String(race), String(charclass), String(zone), String(guild), String(timestamp))).R|org/jetbrains/kotlinx/dataframe/api/DataFrameBuilder.invoke|(vararg(Int(59425), Int(1), String(Orc), String(Rogue), String(Orgrimmar), Int(165), String(01/01/08 00:02:04))).R|org/jetbrains/kotlinx/dataframe/api/cast|<R|org/jetbrains/kotlinx/dataframe/ActivePlayer|>(verify = Boolean(true))
         lval format: R|java/time/format/DateTimeFormatter!| = Q|java/time/format/DateTimeFormatter|.R|java/time/format/DateTimeFormatter.ofPattern|(String(MM/dd/yy HH:mm:ss))
-        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token497>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/convert|<R|org/jetbrains/kotlinx/dataframe/ActivePlayer|, R|kotlin/String|>(<L> = convert@fun R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/ActivePlayer>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/ActivePlayer>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnSet<kotlin/String>| <inline=NoInline>  {
+        lval df1: R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token496>| = R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/convert|<R|org/jetbrains/kotlinx/dataframe/ActivePlayer|, R|kotlin/String|>(<L> = convert@fun R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/ActivePlayer>|.<anonymous>(it: R|org/jetbrains/kotlinx/dataframe/api/ColumnsSelectionDsl<org/jetbrains/kotlinx/dataframe/ActivePlayer>|): R|org/jetbrains/kotlinx/dataframe/columns/ColumnSet<kotlin/String>| <inline=NoInline>  {
             ^ this@R|special/anonymous|.R|org/jetbrains/kotlinx/dataframe/timestamp|
         }
-        ).R|org/jetbrains/kotlinx/dataframe/api/refined_497|<R|org/jetbrains/kotlinx/dataframe/ActivePlayer|, R|kotlin/String|, R|java/time/LocalDateTime|>(<L> = with@fun R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/ActivePlayer>|.<anonymous>(it: R|kotlin/String|): R|java/time/LocalDateTime| <inline=NoInline, kind=UNKNOWN>  {
+        ).R|org/jetbrains/kotlinx/dataframe/api/refined_496|<R|org/jetbrains/kotlinx/dataframe/ActivePlayer|, R|kotlin/String|, R|java/time/LocalDateTime|>(<L> = with@fun R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/ActivePlayer>|.<anonymous>(it: R|kotlin/String|): R|java/time/LocalDateTime| <inline=NoInline>  {
             ^ Q|java/time/LocalDateTime|.R|java/time/LocalDateTime.parse|(R|<local>/it|, R|<local>/format|)!!
         }
         )
-        R|<local>/df1|.R|org/jetbrains/kotlinx/dataframe/api/print|<R|org/jetbrains/kotlinx/dataframe/Token497|>()
+        R|<local>/df1|.R|org/jetbrains/kotlinx/dataframe/api/print|<R|org/jetbrains/kotlinx/dataframe/Token496|>()
         ^box String(OK)
     }
 FILE: __GENERATED DECLARATIONS__.kt
@@ -1108,62 +1108,62 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final class Scope496 {
     }
     internal final class Scope497 {
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token497>|.char: R|kotlin/Int|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token496>|.char: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token497>|.char: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token496>|.char: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token497>|.level: R|kotlin/Int|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token496>|.level: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token497>|.level: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token496>|.level: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token497>|.race: R|kotlin/String|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token496>|.race: R|kotlin/String|
             public get(): R|kotlin/String|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token497>|.race: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token496>|.race: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token497>|.charclass: R|kotlin/String|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token496>|.charclass: R|kotlin/String|
             public get(): R|kotlin/String|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token497>|.charclass: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token496>|.charclass: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token497>|.zone: R|kotlin/String|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token496>|.zone: R|kotlin/String|
             public get(): R|kotlin/String|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token497>|.zone: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token496>|.zone: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/String>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token497>|.guild: R|kotlin/Int|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token496>|.guild: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token497>|.guild: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token496>|.guild: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token497>|.timestamp: R|java/time/LocalDateTime|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token496>|.timestamp: R|java/time/LocalDateTime|
             public get(): R|java/time/LocalDateTime|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token497>|.timestamp: R|org/jetbrains/kotlinx/dataframe/DataColumn<java/time/LocalDateTime>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token496>|.timestamp: R|org/jetbrains/kotlinx/dataframe/DataColumn<java/time/LocalDateTime>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<java/time/LocalDateTime>|
 
         public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope497|
 
     }
     internal final class Scope498 {
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token498>|.a: R|kotlin/Char|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token497>|.a: R|kotlin/Char|
             public get(): R|kotlin/Char|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token498>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Char>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token497>|.a: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Char>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Char>|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token498>|.ba: R|kotlin/Int|
+        public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/Token497>|.ba: R|kotlin/Int|
             public get(): R|kotlin/Int|
 
-        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token498>|.ba: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
+        public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/Token497>|.ba: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
             public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/Int>|
 
         public constructor(): R|org/jetbrains/kotlinx/dataframe/Scope498|
@@ -1189,201 +1189,7 @@ FILE: __GENERATED DECLARATIONS__.kt
     }
     internal final interface Token1 {
     }
-    internal final interface Token2 {
-    }
-    internal final interface Token3 {
-    }
-    internal final interface Token4 {
-    }
-    internal final interface Token5 {
-    }
-    internal final interface Token6 {
-    }
-    internal final interface Token7 {
-    }
-    internal final interface Token8 {
-    }
-    internal final interface Token9 {
-    }
     internal final interface Token10 {
-    }
-    internal final interface Token11 {
-    }
-    internal final interface Token12 {
-    }
-    internal final interface Token13 {
-    }
-    internal final interface Token14 {
-    }
-    internal final interface Token15 {
-    }
-    internal final interface Token16 {
-    }
-    internal final interface Token17 {
-    }
-    internal final interface Token18 {
-    }
-    internal final interface Token19 {
-    }
-    internal final interface Token20 {
-    }
-    internal final interface Token21 {
-    }
-    internal final interface Token22 {
-    }
-    internal final interface Token23 {
-    }
-    internal final interface Token24 {
-    }
-    internal final interface Token25 {
-    }
-    internal final interface Token26 {
-    }
-    internal final interface Token27 {
-    }
-    internal final interface Token28 {
-    }
-    internal final interface Token29 {
-    }
-    internal final interface Token30 {
-    }
-    internal final interface Token31 {
-    }
-    internal final interface Token32 {
-    }
-    internal final interface Token33 {
-    }
-    internal final interface Token34 {
-    }
-    internal final interface Token35 {
-    }
-    internal final interface Token36 {
-    }
-    internal final interface Token37 {
-    }
-    internal final interface Token38 {
-    }
-    internal final interface Token39 {
-    }
-    internal final interface Token40 {
-    }
-    internal final interface Token41 {
-    }
-    internal final interface Token42 {
-    }
-    internal final interface Token43 {
-    }
-    internal final interface Token44 {
-    }
-    internal final interface Token45 {
-    }
-    internal final interface Token46 {
-    }
-    internal final interface Token47 {
-    }
-    internal final interface Token48 {
-    }
-    internal final interface Token49 {
-    }
-    internal final interface Token50 {
-    }
-    internal final interface Token51 {
-    }
-    internal final interface Token52 {
-    }
-    internal final interface Token53 {
-    }
-    internal final interface Token54 {
-    }
-    internal final interface Token55 {
-    }
-    internal final interface Token56 {
-    }
-    internal final interface Token57 {
-    }
-    internal final interface Token58 {
-    }
-    internal final interface Token59 {
-    }
-    internal final interface Token60 {
-    }
-    internal final interface Token61 {
-    }
-    internal final interface Token62 {
-    }
-    internal final interface Token63 {
-    }
-    internal final interface Token64 {
-    }
-    internal final interface Token65 {
-    }
-    internal final interface Token66 {
-    }
-    internal final interface Token67 {
-    }
-    internal final interface Token68 {
-    }
-    internal final interface Token69 {
-    }
-    internal final interface Token70 {
-    }
-    internal final interface Token71 {
-    }
-    internal final interface Token72 {
-    }
-    internal final interface Token73 {
-    }
-    internal final interface Token74 {
-    }
-    internal final interface Token75 {
-    }
-    internal final interface Token76 {
-    }
-    internal final interface Token77 {
-    }
-    internal final interface Token78 {
-    }
-    internal final interface Token79 {
-    }
-    internal final interface Token80 {
-    }
-    internal final interface Token81 {
-    }
-    internal final interface Token82 {
-    }
-    internal final interface Token83 {
-    }
-    internal final interface Token84 {
-    }
-    internal final interface Token85 {
-    }
-    internal final interface Token86 {
-    }
-    internal final interface Token87 {
-    }
-    internal final interface Token88 {
-    }
-    internal final interface Token89 {
-    }
-    internal final interface Token90 {
-    }
-    internal final interface Token91 {
-    }
-    internal final interface Token92 {
-    }
-    internal final interface Token93 {
-    }
-    internal final interface Token94 {
-    }
-    internal final interface Token95 {
-    }
-    internal final interface Token96 {
-    }
-    internal final interface Token97 {
-    }
-    internal final interface Token98 {
-    }
-    internal final interface Token99 {
     }
     internal final interface Token100 {
     }
@@ -1405,6 +1211,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     }
     internal final interface Token109 {
     }
+    internal final interface Token11 {
+    }
     internal final interface Token110 {
     }
     internal final interface Token111 {
@@ -1424,6 +1232,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final interface Token118 {
     }
     internal final interface Token119 {
+    }
+    internal final interface Token12 {
     }
     internal final interface Token120 {
     }
@@ -1445,6 +1255,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     }
     internal final interface Token129 {
     }
+    internal final interface Token13 {
+    }
     internal final interface Token130 {
     }
     internal final interface Token131 {
@@ -1464,6 +1276,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final interface Token138 {
     }
     internal final interface Token139 {
+    }
+    internal final interface Token14 {
     }
     internal final interface Token140 {
     }
@@ -1485,6 +1299,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     }
     internal final interface Token149 {
     }
+    internal final interface Token15 {
+    }
     internal final interface Token150 {
     }
     internal final interface Token151 {
@@ -1504,6 +1320,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final interface Token158 {
     }
     internal final interface Token159 {
+    }
+    internal final interface Token16 {
     }
     internal final interface Token160 {
     }
@@ -1525,6 +1343,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     }
     internal final interface Token169 {
     }
+    internal final interface Token17 {
+    }
     internal final interface Token170 {
     }
     internal final interface Token171 {
@@ -1544,6 +1364,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final interface Token178 {
     }
     internal final interface Token179 {
+    }
+    internal final interface Token18 {
     }
     internal final interface Token180 {
     }
@@ -1565,6 +1387,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     }
     internal final interface Token189 {
     }
+    internal final interface Token19 {
+    }
     internal final interface Token190 {
     }
     internal final interface Token191 {
@@ -1584,6 +1408,10 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final interface Token198 {
     }
     internal final interface Token199 {
+    }
+    internal final interface Token2 {
+    }
+    internal final interface Token20 {
     }
     internal final interface Token200 {
     }
@@ -1605,6 +1433,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     }
     internal final interface Token209 {
     }
+    internal final interface Token21 {
+    }
     internal final interface Token210 {
     }
     internal final interface Token211 {
@@ -1624,6 +1454,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final interface Token218 {
     }
     internal final interface Token219 {
+    }
+    internal final interface Token22 {
     }
     internal final interface Token220 {
     }
@@ -1645,6 +1477,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     }
     internal final interface Token229 {
     }
+    internal final interface Token23 {
+    }
     internal final interface Token230 {
     }
     internal final interface Token231 {
@@ -1664,6 +1498,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final interface Token238 {
     }
     internal final interface Token239 {
+    }
+    internal final interface Token24 {
     }
     internal final interface Token240 {
     }
@@ -1685,6 +1521,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     }
     internal final interface Token249 {
     }
+    internal final interface Token25 {
+    }
     internal final interface Token250 {
     }
     internal final interface Token251 {
@@ -1704,6 +1542,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final interface Token258 {
     }
     internal final interface Token259 {
+    }
+    internal final interface Token26 {
     }
     internal final interface Token260 {
     }
@@ -1725,6 +1565,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     }
     internal final interface Token269 {
     }
+    internal final interface Token27 {
+    }
     internal final interface Token270 {
     }
     internal final interface Token271 {
@@ -1744,6 +1586,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final interface Token278 {
     }
     internal final interface Token279 {
+    }
+    internal final interface Token28 {
     }
     internal final interface Token280 {
     }
@@ -1765,6 +1609,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     }
     internal final interface Token289 {
     }
+    internal final interface Token29 {
+    }
     internal final interface Token290 {
     }
     internal final interface Token291 {
@@ -1784,6 +1630,10 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final interface Token298 {
     }
     internal final interface Token299 {
+    }
+    internal final interface Token3 {
+    }
+    internal final interface Token30 {
     }
     internal final interface Token300 {
     }
@@ -1805,6 +1655,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     }
     internal final interface Token309 {
     }
+    internal final interface Token31 {
+    }
     internal final interface Token310 {
     }
     internal final interface Token311 {
@@ -1824,6 +1676,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final interface Token318 {
     }
     internal final interface Token319 {
+    }
+    internal final interface Token32 {
     }
     internal final interface Token320 {
     }
@@ -1845,6 +1699,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     }
     internal final interface Token329 {
     }
+    internal final interface Token33 {
+    }
     internal final interface Token330 {
     }
     internal final interface Token331 {
@@ -1864,6 +1720,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final interface Token338 {
     }
     internal final interface Token339 {
+    }
+    internal final interface Token34 {
     }
     internal final interface Token340 {
     }
@@ -1885,6 +1743,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     }
     internal final interface Token349 {
     }
+    internal final interface Token35 {
+    }
     internal final interface Token350 {
     }
     internal final interface Token351 {
@@ -1904,6 +1764,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final interface Token358 {
     }
     internal final interface Token359 {
+    }
+    internal final interface Token36 {
     }
     internal final interface Token360 {
     }
@@ -1925,6 +1787,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     }
     internal final interface Token369 {
     }
+    internal final interface Token37 {
+    }
     internal final interface Token370 {
     }
     internal final interface Token371 {
@@ -1944,6 +1808,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final interface Token378 {
     }
     internal final interface Token379 {
+    }
+    internal final interface Token38 {
     }
     internal final interface Token380 {
     }
@@ -1965,6 +1831,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     }
     internal final interface Token389 {
     }
+    internal final interface Token39 {
+    }
     internal final interface Token390 {
     }
     internal final interface Token391 {
@@ -1984,6 +1852,10 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final interface Token398 {
     }
     internal final interface Token399 {
+    }
+    internal final interface Token4 {
+    }
+    internal final interface Token40 {
     }
     internal final interface Token400 {
     }
@@ -2005,6 +1877,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     }
     internal final interface Token409 {
     }
+    internal final interface Token41 {
+    }
     internal final interface Token410 {
     }
     internal final interface Token411 {
@@ -2024,6 +1898,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final interface Token418 {
     }
     internal final interface Token419 {
+    }
+    internal final interface Token42 {
     }
     internal final interface Token420 {
     }
@@ -2045,6 +1921,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     }
     internal final interface Token429 {
     }
+    internal final interface Token43 {
+    }
     internal final interface Token430 {
     }
     internal final interface Token431 {
@@ -2064,6 +1942,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final interface Token438 {
     }
     internal final interface Token439 {
+    }
+    internal final interface Token44 {
     }
     internal final interface Token440 {
     }
@@ -2085,6 +1965,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     }
     internal final interface Token449 {
     }
+    internal final interface Token45 {
+    }
     internal final interface Token450 {
     }
     internal final interface Token451 {
@@ -2104,6 +1986,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final interface Token458 {
     }
     internal final interface Token459 {
+    }
+    internal final interface Token46 {
     }
     internal final interface Token460 {
     }
@@ -2125,6 +2009,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     }
     internal final interface Token469 {
     }
+    internal final interface Token47 {
+    }
     internal final interface Token470 {
     }
     internal final interface Token471 {
@@ -2144,6 +2030,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final interface Token478 {
     }
     internal final interface Token479 {
+    }
+    internal final interface Token48 {
     }
     internal final interface Token480 {
     }
@@ -2165,6 +2053,8 @@ FILE: __GENERATED DECLARATIONS__.kt
     }
     internal final interface Token489 {
     }
+    internal final interface Token49 {
+    }
     internal final interface Token490 {
     }
     internal final interface Token491 {
@@ -2178,16 +2068,160 @@ FILE: __GENERATED DECLARATIONS__.kt
     internal final interface Token495 {
     }
     internal final interface Token496 {
+        internal abstract val char: R|kotlin/Int|
+            internal get(): R|kotlin/Int|
+
+        internal abstract val level: R|kotlin/Int|
+            internal get(): R|kotlin/Int|
+
+        internal abstract val race: R|kotlin/String|
+            internal get(): R|kotlin/String|
+
+        internal abstract val charclass: R|kotlin/String|
+            internal get(): R|kotlin/String|
+
+        internal abstract val zone: R|kotlin/String|
+            internal get(): R|kotlin/String|
+
+        internal abstract val guild: R|kotlin/Int|
+            internal get(): R|kotlin/Int|
+
+        internal abstract val timestamp: R|java/time/LocalDateTime|
+            internal get(): R|java/time/LocalDateTime|
+
     }
     internal final interface Token497 {
+        internal abstract val a: R|kotlin/Char|
+            internal get(): R|kotlin/Char|
+
+        internal abstract val ba: R|kotlin/Int|
+            internal get(): R|kotlin/Int|
+
     }
     internal final interface Token498 {
     }
     internal final interface Token499 {
+        internal abstract val a: R|kotlin/Int|
+            internal get(): R|kotlin/Int|
+
+        internal abstract val ba: R|kotlin/Int|
+            internal get(): R|kotlin/Int|
+
+    }
+    internal final interface Token5 {
+    }
+    internal final interface Token50 {
+    }
+    internal final interface Token51 {
+    }
+    internal final interface Token52 {
+    }
+    internal final interface Token53 {
+    }
+    internal final interface Token54 {
+    }
+    internal final interface Token55 {
+    }
+    internal final interface Token56 {
+    }
+    internal final interface Token57 {
+    }
+    internal final interface Token58 {
+    }
+    internal final interface Token59 {
+    }
+    internal final interface Token6 {
+    }
+    internal final interface Token60 {
+    }
+    internal final interface Token61 {
+    }
+    internal final interface Token62 {
+    }
+    internal final interface Token63 {
+    }
+    internal final interface Token64 {
+    }
+    internal final interface Token65 {
+    }
+    internal final interface Token66 {
+    }
+    internal final interface Token67 {
+    }
+    internal final interface Token68 {
+    }
+    internal final interface Token69 {
+    }
+    internal final interface Token7 {
+    }
+    internal final interface Token70 {
+    }
+    internal final interface Token71 {
+    }
+    internal final interface Token72 {
+    }
+    internal final interface Token73 {
+    }
+    internal final interface Token74 {
+    }
+    internal final interface Token75 {
+    }
+    internal final interface Token76 {
+    }
+    internal final interface Token77 {
+    }
+    internal final interface Token78 {
+    }
+    internal final interface Token79 {
+    }
+    internal final interface Token8 {
+    }
+    internal final interface Token80 {
+    }
+    internal final interface Token81 {
+    }
+    internal final interface Token82 {
+    }
+    internal final interface Token83 {
+    }
+    internal final interface Token84 {
+    }
+    internal final interface Token85 {
+    }
+    internal final interface Token86 {
+    }
+    internal final interface Token87 {
+    }
+    internal final interface Token88 {
+    }
+    internal final interface Token89 {
+    }
+    internal final interface Token9 {
+    }
+    internal final interface Token90 {
+    }
+    internal final interface Token91 {
+    }
+    internal final interface Token92 {
+    }
+    internal final interface Token93 {
+    }
+    internal final interface Token94 {
+    }
+    internal final interface Token95 {
+    }
+    internal final interface Token96 {
+    }
+    internal final interface Token97 {
+    }
+    internal final interface Token98 {
+    }
+    internal final interface Token99 {
     }
 FILE: __GENERATED DECLARATIONS__.kt
     package org.jetbrains.kotlinx.dataframe.api
 
+    @R|org/jetbrains/kotlinx/dataframe/annotations/Refine|(id = String(with_0)) @R|org/jetbrains/kotlinx/dataframe/annotations/Interpretable|(interpreter = <getClass>(<getClass>(R|org/jetbrains/kotlinx/dataframe/plugin/With0|))) public final inline fun <T, C, reified R> R|org/jetbrains/kotlinx/dataframe/api/Convert<T, C>|.refined_496(noinline rowConverter: R|@ExtensionFunctionType org/jetbrains/kotlinx/dataframe/RowValueExpression<T, C, R>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token496>|
     @R|org/jetbrains/kotlinx/dataframe/annotations/Refine|(id = String(with_0)) @R|org/jetbrains/kotlinx/dataframe/annotations/Interpretable|(interpreter = <getClass>(<getClass>(R|org/jetbrains/kotlinx/dataframe/plugin/With0|))) public final inline fun <T, C, reified R> R|org/jetbrains/kotlinx/dataframe/api/Convert<T, C>|.refined_497(noinline rowConverter: R|@ExtensionFunctionType org/jetbrains/kotlinx/dataframe/RowValueExpression<T, C, R>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token497>|
-    @R|org/jetbrains/kotlinx/dataframe/annotations/Refine|(id = String(with_0)) @R|org/jetbrains/kotlinx/dataframe/annotations/Interpretable|(interpreter = <getClass>(<getClass>(R|org/jetbrains/kotlinx/dataframe/plugin/With0|))) public final inline fun <T, C, reified R> R|org/jetbrains/kotlinx/dataframe/api/Convert<T, C>|.refined_498(noinline rowConverter: R|@ExtensionFunctionType org/jetbrains/kotlinx/dataframe/RowValueExpression<T, C, R>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token498>|
+    @R|org/jetbrains/kotlinx/dataframe/annotations/Refine|(id = String(add_2)) @R|org/jetbrains/kotlinx/dataframe/annotations/Interpretable|(interpreter = <getClass>(<getClass>(R|org/jetbrains/kotlinx/dataframe/annotations/AddWithDsl|))) public final fun <T> R|org/jetbrains/kotlinx/dataframe/DataFrame<T>|.refined_498(body: R|org/jetbrains/kotlinx/dataframe/api/AddDsl<T>.() -> kotlin/Unit|): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token498>|
     @R|org/jetbrains/kotlinx/dataframe/annotations/Interpretable|(interpreter = <getClass>(<getClass>(R|org/jetbrains/kotlinx/dataframe/annotations/Add|))) @R|org/jetbrains/kotlinx/dataframe/annotations/Refine|(id = String(add_1)) public final inline fun <reified R, T> R|org/jetbrains/kotlinx/dataframe/DataFrame<T>|.refined_499(name: R|kotlin/String|, noinline expression: R|@ExtensionFunctionType org/jetbrains/kotlinx/dataframe/api/AddExpression<T, R>|): R|org/jetbrains/kotlinx/dataframe/DataFrame<org/jetbrains/kotlinx/dataframe/Token499>|
