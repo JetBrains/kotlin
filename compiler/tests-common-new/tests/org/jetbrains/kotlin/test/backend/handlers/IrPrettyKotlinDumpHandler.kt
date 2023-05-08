@@ -36,21 +36,23 @@ class IrPrettyKotlinDumpHandler(testServices: TestServices) : AbstractIrHandler(
     override fun processModule(module: TestModule, info: IrBackendInput) {
         if (DUMP_KT_IR !in module.directives || SKIP_KT_DUMP in module.directives) return
 
-        val irFiles = info.irModuleFragment.files
-        val builder = dumper.builderForModule(module)
-        val filteredIrFiles = irFiles.groupWithTestFiles(module).filterNot {
-            it.first?.directives?.contains(EXTERNAL_FILE) == true
-        }.map { it.second }
-        val printFileName = filteredIrFiles.size > 1 || testServices.moduleStructure.modules.size > 1
-        for (irFile in filteredIrFiles) {
-            val dump = irFile.dumpKotlinLike(
-                KotlinLikeDumpOptions(
-                    printFileName = printFileName,
-                    printFilePath = false,
-                    printFakeOverridesStrategy = FakeOverridesStrategy.NONE
+        info.processAllIrModuleFragments(module) { irModuleFragment, moduleName ->
+            val irFiles = irModuleFragment.files
+            val builder = dumper.builderForModule(moduleName)
+            val filteredIrFiles = irFiles.groupWithTestFiles(module).filterNot {
+                it.first?.directives?.contains(EXTERNAL_FILE) == true
+            }.map { it.second }
+            val printFileName = filteredIrFiles.size > 1 || testServices.moduleStructure.modules.size > 1
+            for (irFile in filteredIrFiles) {
+                val dump = irFile.dumpKotlinLike(
+                    KotlinLikeDumpOptions(
+                        printFileName = printFileName,
+                        printFilePath = false,
+                        printFakeOverridesStrategy = FakeOverridesStrategy.NONE
+                    )
                 )
-            )
-            builder.append(dump)
+                builder.append(dump)
+            }
         }
     }
 

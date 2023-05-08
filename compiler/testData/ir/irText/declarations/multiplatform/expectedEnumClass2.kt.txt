@@ -1,3 +1,22 @@
+// MODULE: <lib>
+// FILE: lib.kt
+
+expect enum class MyEnum : Enum<MyEnum> {
+  private expect constructor() /* primary */
+  FOO = MyEnum()
+
+  BAR = MyEnum()
+
+  expect fun values(): Array<MyEnum>
+
+  expect fun valueOf(value: String): MyEnum
+
+  expect val entries: EnumEntries<MyEnum>
+    get(): EnumEntries<MyEnum> /* Synthetic body for ENUM_ENTRIES */
+
+}
+
+// MODULE: main
 // FILE: main.kt
 
 enum class MyEnum : Enum<MyEnum> {
@@ -21,3 +40,4 @@ enum class MyEnum : Enum<MyEnum> {
     get(): EnumEntries<MyEnum> /* Synthetic body for ENUM_ENTRIES */
 
 }
+

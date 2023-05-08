@@ -23,9 +23,11 @@ class IrInlineBodiesHandler(testServices: TestServices) : AbstractIrHandler(test
     val declaredInlineFunctionSignatures = mutableSetOf<IdSignature>()
 
     override fun processModule(module: TestModule, info: IrBackendInput) {
-        val irModule = info.irModuleFragment
-        irModule.acceptChildrenVoid(InlineFunctionsCollector())
-        irModule.acceptChildrenVoid(InlineCallBodiesCheck())
+        info.processAllIrModuleFragments(module) { irModule, _ ->
+            irModule.acceptChildrenVoid(InlineFunctionsCollector())
+            irModule.acceptChildrenVoid(InlineCallBodiesCheck())
+        }
+
         assertions.assertTrue((info as IrBackendInput.JvmIrBackendInput).backendInput.symbolTable.allUnbound.isEmpty())
     }
 

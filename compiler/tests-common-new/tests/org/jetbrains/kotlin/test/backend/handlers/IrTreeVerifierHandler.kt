@@ -23,18 +23,21 @@ class IrTreeVerifierHandler(testServices: TestServices) : AbstractIrHandler(test
 
     override fun processModule(module: TestModule, info: IrBackendInput) {
         if (CodegenTestDirectives.DUMP_IR !in module.directives) return
-        val irFiles = info.irModuleFragment.files
-        val testFileToIrFile = irFiles.groupWithTestFiles(module)
-        for ((testFile, irFile) in testFileToIrFile) {
-            if (testFile?.directives?.contains(EXTERNAL_FILE) == true) continue
 
-            IrVerifier(assertions, module.frontendKind == FrontendKinds.FIR).verifyWithAssert(irFile)
+        info.processAllIrModuleFragments(module) { irModuleFragment, _ ->
+            val irFiles = irModuleFragment.files
+            val testFileToIrFile = irFiles.groupWithTestFiles(module)
+            for ((testFile, irFile) in testFileToIrFile) {
+                if (testFile?.directives?.contains(EXTERNAL_FILE) == true) continue
 
-            val actualDump = irFile.dumpTreesFromLineNumber(lineNumber = 0, normalizeNames = true)
+                IrVerifier(assertions, module.frontendKind == FrontendKinds.FIR).verifyWithAssert(irFile)
 
-            val irFileCopy = irFile.deepCopyWithSymbols()
-            val dumpOfCopy = irFileCopy.dumpTreesFromLineNumber(lineNumber = 0, normalizeNames = true)
-            assertions.assertEquals(actualDump, dumpOfCopy) { "IR dump mismatch after deep copy with symbols" }
+                val actualDump = irFile.dumpTreesFromLineNumber(lineNumber = 0, normalizeNames = true)
+
+                val irFileCopy = irFile.deepCopyWithSymbols()
+                val dumpOfCopy = irFileCopy.dumpTreesFromLineNumber(lineNumber = 0, normalizeNames = true)
+                assertions.assertEquals(actualDump, dumpOfCopy) { "IR dump mismatch after deep copy with symbols" }
+            }
         }
     }
 
