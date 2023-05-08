@@ -1,0 +1,23 @@
+public final val x1: R|kotlin/String|
+    public get(): R|kotlin/String|
+
+public final val x2: R|kotlin/String|
+    public get(): R|kotlin/String|
+
+public final val x3: R|kotlin/String|
+    public get(): R|kotlin/String|
+
+public final val x4: R|kotlin/String?|
+    public get(): R|kotlin/String?|
+
+public final val x5: R|kotlin/String?|
+    public get(): R|kotlin/String?|
+
+public final val x6: R|kotlin/String?|
+    public get(): R|kotlin/String?|
+
+public final typealias S = R|kotlin/String|
+
+public final typealias SS = R|kotlin/String|
+
+public final typealias SSS = R|kotlin/String|

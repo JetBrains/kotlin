@@ -200,8 +200,9 @@ class FirTypeDeserializer(
             }
             else -> ConeClassLikeTypeImpl(constructor, arguments, isNullable = proto.nullable, attributes)
         }
-        val abbreviatedTypeProto = proto.abbreviatedType(typeTable) ?: return simpleType
-        return simpleType(abbreviatedTypeProto, attributes)
+
+        // TODO: Return abbreviated types for type aliases, see KT-58542
+        return simpleType
     }
 
     private fun createSuspendFunctionTypeForBasicCase(

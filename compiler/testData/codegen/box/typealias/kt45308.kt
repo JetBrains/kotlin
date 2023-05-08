@@ -1,8 +1,5 @@
 // This test checks that unresolved typealias in an abbreviated type does not crash the compiler or result in a compilation error.
-// Apparently, there's some demand for this behavior, see KT-45308.
-
-// IGNORE_BACKEND_K2: JVM_IR
-// FIR status: reports RETURN_TYPE_MISMATCH: Return type mismatch: expected kotlin/String, actual a/A
+// Apparently, there's some demand for this behavior, see KT-45308, KT-58335.
 
 // MODULE: a
 // FILE: a.kt

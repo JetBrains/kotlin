@@ -5,7 +5,7 @@ FILE: noneWithForEach.kt
 
     }
     public final fun foo(conflicting: R|kotlin/collections/List<Diagnostic>|): R|kotlin/Unit| {
-        lval filtered: R|kotlin/collections/ArrayList<Diagnostic>| = R|kotlin/collections/arrayListOf|<R|Diagnostic|>()
+        lval filtered: R|java/util/ArrayList<Diagnostic>| = R|kotlin/collections/arrayListOf|<R|Diagnostic|>()
         R|<local>/conflicting|.R|kotlin/collections/groupBy|<R|Diagnostic|, R|kotlin/String|>(<L> = groupBy@fun <anonymous>(it: R|Diagnostic|): R|kotlin/String| <inline=Inline, kind=UNKNOWN>  {
             ^ R|<local>/it|.R|/Diagnostic.name|
         }

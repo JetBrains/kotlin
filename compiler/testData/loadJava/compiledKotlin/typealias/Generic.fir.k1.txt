@@ -1,0 +1,17 @@
+public final fun test1(x: R|kotlin/collections/List<kotlin/String>|): R|kotlin/Unit|
+
+public final fun test2(x: R|kotlin/collections/List<kotlin/String>|): R|kotlin/Unit|
+
+public final fun test3(x: R|kotlin/collections/List<kotlin/String>|): R|kotlin/Unit|
+
+public final fun test4(x: R|kotlin/collections/List<kotlin/collections/List<kotlin/String>>|): R|kotlin/Unit|
+
+public final fun test5(x: R|kotlin/collections/List<kotlin/collections/List<kotlin/String>>|): R|kotlin/Unit|
+
+public final fun test6(x: R|kotlin/collections/List<kotlin/collections/List<kotlin/String>>|): R|kotlin/Unit|
+
+public final typealias L<T> = R|kotlin/collections/List<T>|
+
+public final typealias LL<T> = R|test/L<T>|
+
+public final typealias LLL<T> = R|test/LL<T>|
