@@ -4690,8 +4690,7 @@ interopTest("interop_concurrentTerminate") {
 }
 
 interopTest("interop_incompleteTypes") {
-    disabled = (project.testTarget == 'wasm32') || // No interop for wasm yet.
-            isK2(project) // KT-56027
+    disabled = (project.testTarget == 'wasm32')  // No interop for wasm yet.
     source = "interop/incomplete_types/main.kt"
     interop = 'incomplete_types'
 }

@@ -1,4 +1,6 @@
-// IGNORE_BACKEND_K2: JS_IR, NATIVE
+// IGNORE_BACKEND_K2: JS_IR
+// KT-55457
+// IGNORE_BACKEND_K2: NATIVE
 
 fun test(b: Boolean): String {
     val a = if (b) IntArray(5) else LongArray(5)

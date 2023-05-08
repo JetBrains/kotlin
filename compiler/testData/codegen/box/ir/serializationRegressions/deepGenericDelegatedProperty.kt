@@ -4,6 +4,7 @@
 // SKIP_MANGLE_VERIFICATION
 //For KT-6020
 // KT-24643: language version in K2 is >= 1.8
+// KT-58555
 // IGNORE_BACKEND_K2: NATIVE
 
 // MODULE: lib
