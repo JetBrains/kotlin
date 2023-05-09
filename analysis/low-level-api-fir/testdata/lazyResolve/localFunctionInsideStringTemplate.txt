@@ -1,0 +1,265 @@
+RAW_FIR:
+FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplate.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] s: R|kotlin/String|): R|one/ClassWithParameter| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+                ^ String()
+            }
+            .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()))
+        }
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplate.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] s: R|kotlin/String|): R|one/ClassWithParameter| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+                ^ String()
+            }
+            .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()))
+        }
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplate.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] s: R|kotlin/String|): R|one/ClassWithParameter| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+                ^ String()
+            }
+            .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()))
+        }
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplate.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] s: R|kotlin/String|): R|one/ClassWithParameter| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+                ^ String()
+            }
+            .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()))
+        }
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplate.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] s: R|kotlin/String|): R|one/ClassWithParameter| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+                ^ String()
+            }
+            .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()))
+        }
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplate.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] s: R|kotlin/String|): R|one/ClassWithParameter| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+                ^ String()
+            }
+            .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()))
+        }
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplate.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] s: R|kotlin/String|): R|one/ClassWithParameter| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+                ^ String()
+            }
+            .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()))
+        }
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplate.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] s: R|kotlin/String|): R|one/ClassWithParameter| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+                ^ String()
+            }
+            .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()))
+        }
+
+    }
+
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplate.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] s: R|kotlin/String|): R|one/ClassWithParameter| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+                ^ String()
+            }
+            .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()))
+        }
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplate.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] s: R|kotlin/String|): R|one/ClassWithParameter| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+                ^ String()
+            }
+            .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()))
+        }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplate.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] s: R|kotlin/String|): R|one/ClassWithParameter| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+                ^ String()
+            }
+            .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()))
+        }
+
+    }
+
+ANNOTATIONS_ARGUMENTS_MAPPING:
+FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplate.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] s: R|kotlin/String|): R|one/ClassWithParameter| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+                ^ String()
+            }
+            .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()))
+        }
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplate.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] s: R|kotlin/String|): R|one/ClassWithParameter| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+                ^ String()
+            }
+            .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()))
+        }
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStringTemplate.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public open [ResolvedTo(BODY_RESOLVE)] class ClassWithParameter : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(BODY_RESOLVE)] s: R|kotlin/String|): R|one/ClassWithParameter| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            super<R|one/ClassWithParameter|>(<strcat>([ResolvedTo(RAW_FIR)] fun <anonymous>(): R|kotlin/String| <inline=Unknown>  {
+                ^ String()
+            }
+            .R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/String|>|()))
+        }
+
+    }

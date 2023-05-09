@@ -1,0 +1,8 @@
+package one
+
+/* anchor --> */open class ClassWithParameter/* anchor --> */(/* anchor --> */i: () -> Unit/* <-- */)/* <-- *//* <-- */
+
+/* anchor --> */class TopLevelClass : ClassWithParameter({
+    fun foo(param: String) {
+    }
+})/* <-- */

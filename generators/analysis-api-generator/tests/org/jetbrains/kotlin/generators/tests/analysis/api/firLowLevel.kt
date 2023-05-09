@@ -95,6 +95,10 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
         testClass<AbstractFileBasedKotlinDeclarationProviderTest> {
             model("fileBasedDeclarationProvider", pattern = TestGeneratorUtil.KT_OR_KTS)
         }
+
+        testClass<AbstractFirNonLocalDeclarationAnchorTest> {
+            model("nonLocalDeclarationAnchors")
+        }
     }
 
     testGroup(

@@ -211,6 +211,30 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("localFunctionInsideAnnotationCall.kt")
+    public void testLocalFunctionInsideAnnotationCall() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/localFunctionInsideAnnotationCall.kt");
+    }
+
+    @Test
+    @TestMetadata("localFunctionInsideFunctionLiteral.kt")
+    public void testLocalFunctionInsideFunctionLiteral() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/localFunctionInsideFunctionLiteral.kt");
+    }
+
+    @Test
+    @TestMetadata("localFunctionInsideLambdaCallInsideStringTemplate.kt")
+    public void testLocalFunctionInsideLambdaCallInsideStringTemplate() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/localFunctionInsideLambdaCallInsideStringTemplate.kt");
+    }
+
+    @Test
+    @TestMetadata("localFunctionInsideStringTemplate.kt")
+    public void testLocalFunctionInsideStringTemplate() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/localFunctionInsideStringTemplate.kt");
+    }
+
+    @Test
     @TestMetadata("localFunctionInsideSuperEntryCall.kt")
     public void testLocalFunctionInsideSuperEntryCall() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/lazyResolve/localFunctionInsideSuperEntryCall.kt");

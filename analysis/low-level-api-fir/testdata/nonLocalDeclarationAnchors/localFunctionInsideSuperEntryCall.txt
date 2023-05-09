@@ -1,0 +1,12 @@
+package one
+
+/* anchor --> */interface Interface {
+    /* anchor --> */fun foo(/* anchor --> */param: String/* <-- */)/* <-- */
+}/* <-- */
+
+/* anchor --> */open class ClassWithParameter/* anchor --> */(/* anchor --> */i: Interface/* <-- */)/* <-- *//* <-- */
+
+/* anchor --> */class TopLevelClass : ClassWithParameter(object : Interface {
+    override fun foo(param: String) {
+    }
+})/* <-- */
