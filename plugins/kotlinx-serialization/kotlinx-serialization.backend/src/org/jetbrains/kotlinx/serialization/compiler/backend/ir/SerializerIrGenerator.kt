@@ -89,7 +89,7 @@ open class SerializerIrGenerator(
 
     // non-object serializers which can be cached
     private val cacheableChildSerializers by lazy {
-        serializableIrClass.createCachedChildSerializers(properties.serializableProperties).map { it != null }
+        serializableIrClass.createCachedChildSerializers(serializableIrClass, properties.serializableProperties).map { it != null }
     }
 
     // null if was not found — we're in FIR
