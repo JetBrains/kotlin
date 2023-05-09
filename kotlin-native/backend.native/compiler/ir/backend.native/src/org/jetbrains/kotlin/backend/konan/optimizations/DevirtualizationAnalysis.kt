@@ -1361,6 +1361,7 @@ internal object DevirtualizationAnalysis {
     fun devirtualize(irModule: IrModuleFragment, context: Context, externalModulesDFG: ExternalModulesDFG,
                      devirtualizedCallSites: Map<IrCall, DevirtualizedCallSite>) {
         val symbols = context.ir.symbols
+        val irBuiltIns = context.irBuiltIns
         val nativePtrEqualityOperatorSymbol = symbols.areEqualByValue[PrimitiveBinaryType.POINTER]!!
         val optimize = context.shouldOptimize()
 
@@ -1456,9 +1457,8 @@ internal object DevirtualizationAnalysis {
         }
 
         fun IrBuilderWithScope.irDevirtualizedCall(callSite: IrCall, actualType: IrType,
-                                                   devirtualizedCallee: DevirtualizedCallee,
+                                                   actualCallee: DataFlowIR.FunctionSymbol.Declared,
                                                    arguments: List<PossiblyCoercedValue>): IrExpression {
-            val actualCallee = devirtualizedCallee.callee as DataFlowIR.FunctionSymbol.Declared
             return actualCallee.bridgeTarget.let { bridgeTarget ->
                 if (bridgeTarget == null)
                     irDevirtualizedCall(callSite, actualType,
@@ -1491,12 +1491,13 @@ internal object DevirtualizationAnalysis {
 
                 if (expression.superQualifierSymbol == null && expression.symbol.owner.isOverridable)
                     ++callSitesCount
-                val devirtualizedCallSite = devirtualizedCallSites[expression]
-                val possibleCallees = devirtualizedCallSite?.possibleCallees
-                if (possibleCallees == null
-                        || possibleCallees.any { it.callee is DataFlowIR.FunctionSymbol.External }
-                        || possibleCallees.any { it.receiverType is DataFlowIR.Type.External })
-                    return expression
+                val devirtualizedCallSite = devirtualizedCallSites[expression] ?: return expression
+                val possibleCallees = devirtualizedCallSite.possibleCallees.groupBy {
+                    if (it.receiverType is DataFlowIR.Type.External) return expression
+                    it.callee as? DataFlowIR.FunctionSymbol.Declared ?: return expression
+                }.entries.map { entry ->
+                    entry.key to entry.value.map { it.receiverType as DataFlowIR.Type.Declared }.distinct()
+                }
 
                 val caller = data ?: error("At this point code is expected to have been moved to a declaration: ${expression.render()}")
                 val callee = expression.symbol.owner
@@ -1540,7 +1541,7 @@ internal object DevirtualizationAnalysis {
                                     // Temporary val is not required here for a parameter, since each one is used for only one devirtualized callsite
                                     irSplitCoercion(caller, arg.second, tempName = null, arg.first.owner.type)
                                 }
-                                +irDevirtualizedCall(expression, type, possibleCallees[0], parameters)
+                                +irDevirtualizedCall(expression, type, possibleCallees[0].first, parameters)
                             }
                         }
 
@@ -1548,34 +1549,56 @@ internal object DevirtualizationAnalysis {
                             val arguments = expression.getArgumentsWithSymbols().mapIndexed { index, arg ->
                                 irSplitCoercion(caller, arg.second, "arg$index", arg.first.owner.type)
                             }
-                            val typeInfo = irTemporary(irCall(symbols.getObjectTypeInfo).apply {
-                                putValueArgument(0, arguments[0].getFullValue(this@irBlock))
-                            })
+                            val receiver = irTemporary(arguments[0].getFullValue(this@irBlock))
+                            val typeInfo by lazy {
+                                irTemporary(irCall(symbols.getObjectTypeInfo).apply {
+                                    putValueArgument(0, irGet(receiver))
+                                })
+                            }
 
                             val branches = mutableListOf<IrBranchImpl>()
-                            possibleCallees.mapIndexedTo(branches) { index, devirtualizedCallee ->
-                                val actualReceiverType = devirtualizedCallee.receiverType as DataFlowIR.Type.Declared
-                                val expectedTypeInfo = IrClassReferenceImpl(
-                                        startOffset, endOffset,
-                                        symbols.nativePtrType,
-                                        actualReceiverType.irClass!!.symbol,
-                                        actualReceiverType.irClass.defaultType
-                                )
-                                val condition =
-                                        if (optimize && index == possibleCallees.size - 1)
-                                            irTrue() // Don't check last type in optimize mode.
-                                        else
-                                            irCall(nativePtrEqualityOperatorSymbol).apply {
-                                                putValueArgument(0, irGet(typeInfo))
-                                                putValueArgument(1, expectedTypeInfo)
-                                            }
-                                IrBranchImpl(
-                                        startOffset = startOffset,
-                                        endOffset   = endOffset,
-                                        condition   = condition,
-                                        result      = irDevirtualizedCall(expression, type, devirtualizedCallee, arguments)
-                                )
-                            }
+                            possibleCallees
+                                    // Try to leave the most complicated case for the last,
+                                    // and, hopefully, place it in the else clause.
+                                    .sortedBy { it.second.size }
+                                    .mapIndexedTo(branches) { index, devirtualizedCallee ->
+                                        val (actualCallee, receiverTypes) = devirtualizedCallee
+                                        val condition =
+                                                if (optimize && index == possibleCallees.size - 1)
+                                                    irTrue() // Don't check last type in optimize mode.
+                                                else {
+                                                    if (receiverTypes.size == 1) {
+                                                        // It is faster to just compare type infos instead of a full type check.
+                                                        val receiverType = receiverTypes[0]
+                                                        val expectedTypeInfo = IrClassReferenceImpl(
+                                                                startOffset, endOffset,
+                                                                symbols.nativePtrType,
+                                                                receiverType.irClass!!.symbol,
+                                                                receiverType.irClass.defaultType
+                                                        )
+                                                        irCall(nativePtrEqualityOperatorSymbol).apply {
+                                                            putValueArgument(0, irGet(typeInfo))
+                                                            putValueArgument(1, expectedTypeInfo)
+                                                        }
+                                                    } else {
+                                                        val receiverType = actualCallee.irFunction!!.parentAsClass
+                                                        IrTypeOperatorCallImpl(
+                                                                startOffset = startOffset,
+                                                                endOffset = endOffset,
+                                                                type = irBuiltIns.booleanType,
+                                                                operator = IrTypeOperator.INSTANCEOF,
+                                                                typeOperand = receiverType.defaultType,
+                                                                argument = irGet(receiver)
+                                                        )
+                                                    }
+                                                }
+                                        IrBranchImpl(
+                                                startOffset = startOffset,
+                                                endOffset = endOffset,
+                                                condition = condition,
+                                                result = irDevirtualizedCall(expression, type, actualCallee, arguments)
+                                        )
+                                    }
                             if (!optimize) { // Add else branch throwing exception for debug purposes.
                                 branches.add(IrBranchImpl(
                                         startOffset = startOffset,
