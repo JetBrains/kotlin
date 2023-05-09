@@ -21,7 +21,10 @@ allprojects {
     }
 
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile>().configureEach {
-        compilerOptions.freeCompilerArgs.add("-XXLanguage:+ImplicitSignedToUnsignedIntegerConversion")
+        compilerOptions.freeCompilerArgs.addAll(
+                "-XXLanguage:+ImplicitSignedToUnsignedIntegerConversion",
+                "-opt-in=kotlinx.cinterop.ExperimentalForeignApi"
+        )
     }
 }
 
