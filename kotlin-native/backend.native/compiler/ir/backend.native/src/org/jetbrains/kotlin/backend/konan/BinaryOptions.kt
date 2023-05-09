@@ -43,7 +43,7 @@ object BinaryOptions : BinaryOptionRegistry() {
 
     val gcMutatorsCooperate by booleanOption()
 
-    val auxGCThreads by intOption()
+    val auxGCThreads by uintOption()
 
     val linkRuntime by option<RuntimeLinkageStrategyBinaryOption>()
 
@@ -99,9 +99,9 @@ open class BinaryOptionRegistry {
                 }
             }
 
-    protected fun intOption(): PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, CompilerConfigurationKey<Int>>> =
+    protected fun uintOption(): PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, CompilerConfigurationKey<UInt>>> =
             PropertyDelegateProvider { _, property ->
-                val option = BinaryOption(property.name, IntValueParser)
+                val option = BinaryOption(property.name, UIntValueParser)
                 register(option)
                 ReadOnlyProperty { _, _ ->
                     option.compilerConfigurationKey
@@ -134,11 +134,11 @@ private object BooleanValueParser : BinaryOption.ValueParser<Boolean> {
         get() = "true|false"
 }
 
-private object IntValueParser : BinaryOption.ValueParser<Int> {
-    override fun parse(value: String): Int? = value.toIntOrNull()
+private object UIntValueParser : BinaryOption.ValueParser<UInt> {
+    override fun parse(value: String): UInt? = value.toUIntOrNull()
 
     override val validValuesHint: String?
-        get() = null // FIXME can do better
+        get() = "non-negative-number"
 }
 
 private object StringValueParser : BinaryOption.ValueParser<String> {

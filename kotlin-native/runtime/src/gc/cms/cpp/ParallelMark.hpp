@@ -6,15 +6,12 @@
 #include "GCStatistics.hpp"
 #include "MarkStack.hpp"
 #include "std_support/Vector.hpp"
-#include "CooperativeIntrusiveList.hpp"
 #include "ThreadRegistry.hpp"
 #include "Utils.hpp"
+#include "parproc/ParallelProcessor.hpp"
+#include "ManuallyScoped.hpp"
 
 namespace kotlin::gc::mark {
-
-namespace test {
-class ParallelMarkTestSupport;
-}
 
 class MarkPacer : private Pinned {
 public:
@@ -35,33 +32,29 @@ public:
          * 2) In the native code;
          * 3) Registered as cooperative markers during previous phase.
          *
-         * Now all the GC workers are summoned to participate in root set collection and mark.
-         * Parallel mark can't stop before all the expected workers begun the marking.
+         * Now all the GC workers are summoned to participate in a root set collection.
+         */
+        kRootSet,
+        /**
+         * Root set is collected. No more workers can be instantiated, time to begin parallel mark.
+         * Parallel mark can't stop before all the created workers begin the marking.
          */
         kParallelMark,
         /** A shutdown was requested. There is nothing more to wait for. */
         kShutdown,
     };
 
+    bool is(Phase phase) const;
+    void begin(Phase phase);
+    void wait(Phase phase);
+
     void beginEpoch(uint64_t epoch);
     void waitNewEpochReadyOrShutdown() const;
-
-    bool isRecruiting() const;
-
-    void requestParallelMark();
-    void waitForParallelMark() const;
-
-    void reset();
     void waitEpochFinished(uint64_t epoch) const;
 
-    void requestShutdown();
-    bool shutdownRequested() const;
+    bool acceptingNewWorkers() const;
 
 private:
-    bool is(Phase phase) const;
-    void waitFor(Phase phase) const;
-    void begin(Phase phase);
-
     std::atomic<uint64_t> epoch_ = 0;
     std::atomic<Phase> phase_ = Phase::kIdle;
     mutable std::mutex mutex_;
@@ -71,89 +64,87 @@ private:
 /**
  * Parallel mark dispatcher.
  * Mark can be performed on one or more threads.
- * Each threads wanting to participate have to:
- * instantiate a `MarkJob` and execute an appropriate run- routine when ready to mark.
- * There must be exactly one executor of a `MarkJob.runMainInSTW()`.
+ * Each threads wanting to participate have to execute an appropriate run- routine when ready to mark.
+ * There must be exactly one executor of a `runMainInSTW()`.
  *
- * Mark jobs are able to balance work between each other through sharing/stealing.
+ * Mark workers are able to balance work between each other through sharing/stealing.
  */
-class MarkDispatcher : private Pinned {
-    friend test::ParallelMarkTestSupport;
+class ParallelMark : private Pinned {
+    using MarkStackImpl = intrusive_forward_list<ObjectData>;
+    // work balancing parameters were chosen pretty arbitrary
+    using ParallelProcessor = ParallelProcessor<MarkStackImpl, 512, 4096>;
 public:
-    static const std::size_t kInitialJobsArraySize = 128; // big enough to avoid most of the possible reallocations
-
-    // These numbers were chosen pretty arbitrary.
-    /** A marker will from time to time share this amount of jobs with others. */
-    static const std::size_t kMinWorkSizeToShare = 256;
-    /** A marker depleted of work will try to steal at most `kMaxWorkSieToSteal` jobs from a victim worker at once. */
-    static const std::size_t kMaxWorkSizeToSteal = kMinWorkSizeToShare / 2;
-    /** A marker will iterate over other workers this number of times searching for a victim for work-stealing. */
-    static const std::size_t kStealingAttemptCyclesBeforeWait = 4;
-
-    /** See `MarkDispatcher`. */
-    class MarkJob : private Pinned {
-        friend class MarkDispatcher;
-        friend test::ParallelMarkTestSupport;
+    class MarkTraits {
     public:
-        explicit MarkJob(MarkDispatcher& dispatcher) : dispatcher_(dispatcher) {}
+        using MarkQueue = ParallelProcessor::Worker;
+        using ObjectFactory = ObjectData::ObjectFactory;
 
-        /** To be run by a single "main" GC thread during STW. */
-        void runMainInSTW();
-        /**
-         * To be run by mutator threads that would like to participate in mark.
-         * Will wait for STW detection by a "main" routine.
-         */
-        void runOnMutator(mm::ThreadData& mutatorThread);
-        /**
-         * To be run by auxiliary GC threads.
-         * Will wait for STW detection by a "main" routine.
-         */
-        void runAuxiliary();
+        static void clear(MarkQueue& queue) noexcept {
+            RuntimeAssert(queue.localEmpty(), "Mark queue must be empty");
+        }
 
-    private:
-        void completeMutatorsRootSet();
-        void collectRootSet(mm::ThreadData& thread);
+        static ALWAYS_INLINE ObjHeader* tryDequeue(MarkQueue& queue) noexcept {
+            auto* obj = compiler::gcMarkSingleThreaded() ? queue.tryPopLocal() : queue.tryPop();
+            if (obj) {
+                auto node = ObjectFactory::NodeRef::From(*obj);
+                return node->GetObjHeader();
+            }
+            return nullptr;
+        }
 
-        void parallelMark();
-        bool tryAcquireWork();
-        void performWork(GCHandle::GCMarkScope& markHandle);
-        bool shareWork();
+        static ALWAYS_INLINE bool tryEnqueue(MarkQueue& queue, ObjHeader* object) noexcept {
+            auto& objectData = ObjectFactory::NodeRef::From(object).ObjectData();
+            return compiler::gcMarkSingleThreaded() ? queue.tryPushLocal(objectData) : queue.tryPush(objectData);
+        }
 
-        MarkDispatcher& dispatcher_;
-        CooperativeIntrusiveList<ObjectData> workList_;
+        static ALWAYS_INLINE bool tryMark(ObjHeader* object) noexcept {
+            auto& objectData = ObjectFactory::NodeRef::From(object).ObjectData();
+            return objectData.tryMark();
+        }
 
-        // used in logs
-        const int carrierThreadId_ = konan::currentThreadId();
+        static ALWAYS_INLINE void processInMark(MarkQueue& markQueue, ObjHeader* object) noexcept {
+            auto process = object->type_info()->processObjectInMark;
+            RuntimeAssert(process != nullptr, "Got null processObjectInMark for object %p", object);
+            process(static_cast<void*>(&markQueue), object);
+        }
     };
 
-    explicit MarkDispatcher(std::size_t gcWorkerPoolSize, bool mutatorsCooperate);
+    ParallelMark(bool mutatorsCooperate);
 
     void beginMarkingEpoch(gc::GCHandle gcHandle);
     void waitForThreadsPauseMutation() noexcept;
+    void endMarkingEpoch();
+
+    /** To be run by a single "main" GC thread during STW. */
+    void runMainInSTW();
+
+    /**
+     * To be run by mutator threads that would like to participate in mark.
+     * Will wait for STW detection by a "main" routine.
+     */
+    void runOnMutator(mm::ThreadData& mutatorThread);
+
+    /**
+     * To be run by auxiliary GC threads.
+     * Will wait for STW detection by a "main" routine.
+     */
+    void runAuxiliary();
 
     void requestShutdown();
     bool shutdownRequested() const;
 
     template<typename Pred>
-    void reset(bool mutatorsCooperate, size_t gcWorkerPoolSize, Pred waitForWorkersToFinish) {
-        pacer_.requestShutdown();
+    void reset(std::size_t maxParallelism, bool mutatorsCooperate, Pred waitForWorkersToFinish) {
+        pacer_.begin(MarkPacer::Phase::kShutdown);
         waitForWorkersToFinish();
-        pacer_.reset();
-        setParallelismLevel(mutatorsCooperate, gcWorkerPoolSize);
+        pacer_.begin(MarkPacer::Phase::kIdle);
+        setParallelismLevel(maxParallelism, mutatorsCooperate);
     }
 
 private:
     GCHandle& gcHandle();
 
-    void setParallelismLevel(bool mutatorsCooperate, size_t gcWorkerPoolSize);
-
-    void expandJobsArrayIfNeeded();
-
-    void registerTask(MarkJob& task);
-    // primarily to be used in assertions
-    bool isRegistered(const MarkJob& task) const;
-
-    void allCooperativeMutatorsAreRegistered();
+    void setParallelismLevel(size_t maxParallelism, bool mutatorsCooperate);
 
     template <typename Pred>
     bool allMutators(Pred predicate) noexcept {
@@ -164,23 +155,26 @@ private:
         }
         return true;
     }
+
+    void completeRootSetAndMark(ParallelProcessor::Worker& parallelWorker);
+    void completeMutatorsRootSet(MarkTraits::MarkQueue& markQueue);
+    void tryCollectRootSet(mm::ThreadData& thread, ParallelProcessor::Worker& markQueue);
+    void parallelMark(ParallelProcessor::Worker& worker);
+
+    std::optional<ParallelProcessor::Worker> createWorker();
+
     void resetMutatorFlags();
 
-    std::size_t gcWorkerPoolSize_ = 1;
+    std::size_t maxParallelism_ = 1;
     bool mutatorsCooperate_ = false;
 
     GCHandle gcHandle_ = GCHandle::invalid();
     MarkPacer pacer_;
-
     std::optional<mm::ThreadRegistry::Iterable> lockedMutatorsList_;
+    ManuallyScoped<ParallelProcessor> parallelProcessor_;
 
-    std_support::vector<std::atomic<MarkJob*>> jobs_{kInitialJobsArraySize};
-    std::size_t expectedJobs_ = 0;
-    std::atomic<std::size_t> registeredJobs_ = 0;
-    std::atomic<std::size_t> waitingJobs_ = 0;
-    std::atomic<bool> allDone_ = false;
-    std::mutex waitMutex_;
-    std::condition_variable waitCV_;
+    std::mutex workerCreationMutex_;
+    std::atomic<std::size_t> activeWorkersCount_ = 0;
 };
 
 } // namespace kotlin::gc::mark

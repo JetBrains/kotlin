@@ -66,10 +66,9 @@ public:
         BarriersThreadData& barriers() noexcept { return barriers_; }
 
         bool tryLockRootSet();
-        bool rootSetLocked() const;
         void beginCooperation();
         bool cooperative() const;
-        void publish(); // TODO make publish
+        void publish();
         bool published() const;
         void clearMarkFlags();
 
@@ -112,7 +111,7 @@ public:
     void StopFinalizerThreadIfRunning() noexcept;
     bool FinalizersThreadIsRunning() noexcept;
 
-    void reconfigure(bool mutatorsCooperate, size_t auxGCThreads);
+    void reconfigure(std::size_t maxParallelism, bool mutatorsCooperate, size_t auxGCThreads) noexcept;
 
 #ifdef CUSTOM_ALLOCATOR
     alloc::Heap& heap() noexcept { return heap_; }
@@ -124,7 +123,7 @@ public:
 private:
     void mainGCThreadBody();
     void auxiliaryGCThreadBody();
-    void PerformFullGC(int64_t epoch, mark::MarkDispatcher::MarkJob& markContext) noexcept;
+    void PerformFullGC(int64_t epoch) noexcept;
 
 #ifndef CUSTOM_ALLOCATOR
     mm::ObjectFactory<ConcurrentMarkAndSweep>& objectFactory_;
@@ -136,7 +135,7 @@ private:
     GCStateHolder state_;
     FinalizerProcessor<FinalizerQueue, FinalizerQueueTraits> finalizerProcessor_;
 
-    mark::MarkDispatcher markDispatcher_;
+    mark::ParallelMark markDispatcher_;
     ScopedThread mainThread_;
     std_support::vector<ScopedThread> auxThreads_;
 };

@@ -15,16 +15,15 @@ namespace kotlin {
 /**
  * A list for thread-local use with a separate shared part that can be accessed by other threads.
  */
-template<typename T, typename Traits = DefaultIntrusiveForwardListTraits<T>>
-class CooperativeIntrusiveList : Pinned {
-    using ListImpl = intrusive_forward_list<T, Traits>;
+template<typename ListImpl>
+class SplitSharedList : private Pinned {
 public:
     using value_type = typename ListImpl::value_type;
     using size_type = typename ListImpl::size_type;
     using reference = typename ListImpl::reference;
     using pointer = typename ListImpl::pointer;
 
-    CooperativeIntrusiveList() = default;
+    SplitSharedList() = default;
 
     bool localEmpty() const {
         return local_.empty();
@@ -38,7 +37,7 @@ public:
      * Tries to add `value` to the local list.
      * See `intrusive_forward_list.try_push_front`.
      */
-    bool tryPushLocal(reference value) {
+    bool tryPushLocal(reference value) noexcept {
         auto pushed = local_.try_push_front(value);
         if (pushed) ++localSize_;
         return pushed;
@@ -48,7 +47,7 @@ public:
      * Tries to pop a value from the local list.
      * See `intrusive_forward_list.try_pop_front`.
      */
-    pointer tryPopLocal() {
+    pointer tryPopLocal() noexcept {
         auto popped = local_.try_pop_front();
         if (popped) {
             --localSize_;
@@ -56,11 +55,6 @@ public:
             RuntimeAssert(localEmpty(), "Pop can only fail if the list is empty");
         }
         return popped;
-    }
-
-    void clearLocal() {
-        local_.clear();
-        localSize_ = 0;
     }
 
     bool sharedEmpty() const {
@@ -72,8 +66,8 @@ public:
      * In case some other thread is currently operating with the from's shared list, returns `0`.
      * @return the number of elements stolen
      */
-    size_type tryTransferFrom(CooperativeIntrusiveList<T, Traits>& from, size_type maxAmount) noexcept {
-        std::unique_lock guard(from.sharedLocked_, std::try_to_lock);
+    size_type tryTransferFrom(SplitSharedList& from, size_type maxAmount) noexcept {
+        std::unique_lock guard(from.sharedLock_, std::try_to_lock);
         if (!guard || from.sharedEmpty()) {
             return 0;
         }
@@ -92,13 +86,13 @@ public:
      * Moves all of the local items into own shared list.
      * @return `0` if the shared list is busy, amount of newly shared items otherwise.
      */
-    size_type shareAll() noexcept {
+    size_type shareAllWith(SplitSharedList& with) noexcept {
         RuntimeAssert(!localEmpty(), "Nothing to share");
-        std::unique_lock guard(sharedLocked_, std::try_to_lock);
+        std::unique_lock guard(with.sharedLock_, std::try_to_lock);
         if (!guard) return 0;
 
-        auto amount = shared_.splice_after(shared_.before_begin(), local_.before_begin(), local_.end(), localSize_);
-        sharedSize_ += amount;
+        auto amount = with.shared_.splice_after(with.shared_.before_begin(), local_.before_begin(), local_.end(), localSize_);
+        with.sharedSize_ += amount;
         localSize_ -= amount;
 
         return amount;
@@ -110,7 +104,7 @@ private:
 
     ListImpl shared_;
     size_type sharedSize_ = 0;
-    SpinLock<MutexThreadStateHandling::kIgnore> sharedLocked_;
+    SpinLock<MutexThreadStateHandling::kIgnore> sharedLock_;
 };
 
 }

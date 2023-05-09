@@ -56,6 +56,22 @@ protected:
     ~Pinned() = default;
 };
 
+// A helper that executes the action provided upon destruction of the ScopeGuard instance.
+template<typename FinalAction>
+class ScopeGuard final : private Pinned {
+public:
+    template<typename InitAction>
+    ScopeGuard(InitAction initAction, FinalAction finalAction) noexcept : finalAction_(finalAction) {
+        initAction();
+    }
+    ScopeGuard(FinalAction finalAction) noexcept : finalAction_(finalAction) {}
+    ~ScopeGuard() noexcept {
+        finalAction_();
+    }
+private:
+    FinalAction finalAction_;
+};
+
 // A helper that scopley assigns a value to a variable. The variable will
 // be set to its original value upon destruction of the AutoReset instance.
 // Note that an AutoReset instance must have a shorter lifetime than

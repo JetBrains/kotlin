@@ -35,7 +35,7 @@ void processFieldInMark(void* state, ObjHeader* field) noexcept {
 
 template <typename Traits>
 void processObjectInMark(void* state, ObjHeader* object) noexcept {
-    traverseClassObjectFields(object, [state] (ObjHeader** fieldLocation) {
+    traverseClassObjectFields(object, [state] (ObjHeader** fieldLocation) noexcept {
         if (auto field = *fieldLocation) {
             processFieldInMark<Traits>(state, field);
         }
@@ -44,7 +44,7 @@ void processObjectInMark(void* state, ObjHeader* object) noexcept {
 
 template <typename Traits>
 void processArrayInMark(void* state, ArrayHeader* array) noexcept {
-    traverseArrayOfObjectsElements(array, [state] (ObjHeader** elemLocation) {
+    traverseArrayOfObjectsElements(array, [state] (ObjHeader** elemLocation) noexcept {
         if (auto elem = *elemLocation) {
             processFieldInMark<Traits>(state, elem);
         }
@@ -88,6 +88,11 @@ void processExtraObjectData(GCHandle::GCMarkScope& markHandle, typename Traits::
 template <typename Traits>
 void Mark(GCHandle handle, typename Traits::MarkQueue& markQueue) noexcept {
     auto markHandle = handle.mark();
+    Mark<Traits>(markHandle, markQueue);
+}
+
+template <typename Traits>
+void Mark(GCHandle::GCMarkScope& markHandle, typename Traits::MarkQueue& markQueue) noexcept {
     while (ObjHeader* top = Traits::tryDequeue(markQueue)) {
         // TODO: Consider moving it to the sweep phase to make this loop more tight.
         //       This, however, requires care with scheduler interoperation.

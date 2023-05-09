@@ -40,6 +40,8 @@ private:
     PageStore<NextFitPage> nextFitPages_;
     PageStore<SingleObjectPage> singleObjectPages_;
     PageStore<ExtraObjectPage> extraObjectPages_;
+
+    std::atomic<std::size_t> concurrentSweepersCount_ = 0;
 };
 
 } // namespace kotlin::alloc
