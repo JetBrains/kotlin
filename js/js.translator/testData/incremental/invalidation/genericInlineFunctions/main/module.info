@@ -14,7 +14,7 @@ STEP 8:
     dependencies: lib1, libProxy
     modifications:
         U : m.proxy.kt -> m.kt
-    added file: m.kt
+    modified ir: m.kt
 STEP 9..13:
     dependencies: lib1, libProxy
     updated imports: m.kt

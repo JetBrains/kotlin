@@ -9,6 +9,7 @@ STEP 1:
         D : l1a.kt
         D : l1b.kt
         D : l1c.kt
+    removed file: l1c.kt, l1b.kt, l1a.kt
 STEP 2..3:
 STEP 4:
     modifications:

@@ -5,13 +5,13 @@ STEP 0:
     dirty js: lib1, lib2, main
 STEP 1:
     libs: lib1-a, lib1-b, lib1-c, lib2, main
-    dirty js: lib1-a, lib1-b, lib1-c, main, lib2
+    dirty js: lib1-a, lib1-b, lib1-c, lib2
 STEP 2..3:
     libs: lib1-a, lib1-b, lib1-c, lib2, main
     dirty js: lib1-b, lib2
 STEP 4:
     libs: lib1, lib2, main
-    dirty js: lib1, lib2, main
+    dirty js: lib1, lib2
 STEP 5:
     libs: lib1, lib2, main
     dirty js: lib1

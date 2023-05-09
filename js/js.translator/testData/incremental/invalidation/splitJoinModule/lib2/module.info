@@ -5,12 +5,12 @@ STEP 0:
     added file: l2.kt
 STEP 1:
     dependencies: lib1-a, lib1-b, lib1-c
-    added file: l2.kt
+    removed direct depends: l2.kt
 STEP 2..3:
     dependencies: lib1-a, lib1-b, lib1-c
     updated imports: l2.kt
 STEP 4:
     dependencies: lib1
-    added file: l2.kt
+    removed direct depends: l2.kt
 STEP 5:
     dependencies: lib1

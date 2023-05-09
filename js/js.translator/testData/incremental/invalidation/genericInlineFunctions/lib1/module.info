@@ -33,7 +33,7 @@ STEP 7:
 STEP 8:
     modifications:
         U : l1.0.kt -> l1.kt
-    added file: l1.kt
+    modified ir: l1.kt
 STEP 9:
     modifications:
         U : l1.1.kt -> l1.kt
