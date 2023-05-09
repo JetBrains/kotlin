@@ -205,6 +205,7 @@ test_support::RegularWeakReferenceImpl& InstallWeakReference(mm::ThreadData& thr
 }
 
 struct ParallelismOptions {
+    std::size_t maxParallelism;
     bool cooperativeMutators;
     std::size_t auxGCThreads;
 };
@@ -213,7 +214,7 @@ class ConcurrentMarkAndSweepTest : public testing::TestWithParam<ParallelismOpti
 public:
 
     ConcurrentMarkAndSweepTest() {
-        mm::GlobalData::Instance().gc().impl().gc().reconfigure(GetParam().cooperativeMutators, GetParam().auxGCThreads);
+        mm::GlobalData::Instance().gc().impl().gc().reconfigure(GetParam().maxParallelism, GetParam().cooperativeMutators, GetParam().auxGCThreads);
     }
 
     ~ConcurrentMarkAndSweepTest() {
@@ -1144,16 +1145,20 @@ TEST_P(ConcurrentMarkAndSweepTest, FreeObjectWithFreeWeakReversedOrder) {
 INSTANTIATE_TEST_SUITE_P(,
     ConcurrentMarkAndSweepTest,
     testing::Values(
-            ParallelismOptions{false, 0},
-            ParallelismOptions{true, 0},
-            ParallelismOptions{false, kDefaultThreadCount},
-            ParallelismOptions{true, kDefaultThreadCount}
+            ParallelismOptions{kDefaultThreadCount * 3, false, 0},
+            ParallelismOptions{kDefaultThreadCount * 3, true, 0},
+            ParallelismOptions{kDefaultThreadCount * 3, false, kDefaultThreadCount},
+            ParallelismOptions{kDefaultThreadCount * 3, true, kDefaultThreadCount},
+
+            ParallelismOptions{kDefaultThreadCount / 2, true, kDefaultThreadCount},
+            ParallelismOptions{kDefaultThreadCount / 2 * 3, true, kDefaultThreadCount}
     ),
     [] (const testing::TestParamInfo<ParallelismOptions>& paramInfo) {
         using namespace std::string_literals;
         auto base = "Mark"s;
+        auto parallelism = std::to_string(paramInfo.param.maxParallelism) + "Parallel";
         auto withMutators = paramInfo.param.cooperativeMutators ? "WithMutators" : "";
         auto withAux = paramInfo.param.auxGCThreads > 0 ? "WithGCThreads" : "";
-        return base + withMutators + withAux;
+        return base + parallelism + withMutators + withAux;
     });
 
