@@ -278,6 +278,12 @@ public class JsIrInvalidationTestGenerated extends AbstractJsIrInvalidationTest 
     }
 
     @Test
+    @TestMetadata("interfaceOpenMethodsInOpenClass")
+    public void testInterfaceOpenMethodsInOpenClass() throws Exception {
+        runTest("js/js.translator/testData/incremental/invalidation/interfaceOpenMethodsInOpenClass/");
+    }
+
+    @Test
     @TestMetadata("interfaceSuperUsage")
     public void testInterfaceSuperUsage() throws Exception {
         runTest("js/js.translator/testData/incremental/invalidation/interfaceSuperUsage/");

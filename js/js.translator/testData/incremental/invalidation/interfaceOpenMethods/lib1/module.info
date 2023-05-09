@@ -12,3 +12,11 @@ STEP 1:
     updated imports: InterfaceB.kt, InterfaceC.kt
 STEP 2:
     updated exports: InterfaceB.kt, InterfaceC.kt
+STEP 3:
+    modifications:
+        U : InterfaceA.3.kt -> InterfaceA.kt
+    modified ir: InterfaceA.kt
+    updated exports: InterfaceA.kt
+    updated imports: InterfaceB.kt, InterfaceC.kt
+STEP 4:
+    updated exports: InterfaceB.kt, InterfaceC.kt, InterfaceA.kt

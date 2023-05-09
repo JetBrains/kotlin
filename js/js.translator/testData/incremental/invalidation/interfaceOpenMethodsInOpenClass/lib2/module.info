@@ -1,0 +1,13 @@
+STEP 0:
+    dependencies: lib1
+    added file: MyClass.kt, GetB.kt, GetA.kt
+STEP 1..4:
+    dependencies: lib1
+STEP 5:
+    dependencies: lib1
+    updated imports: GetA.kt, MyClass.kt
+STEP 6:
+    dependencies: lib1
+STEP 7:
+    dependencies: lib1
+    updated imports: MyClass.kt

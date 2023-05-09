@@ -5251,6 +5251,24 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
         }
 
         @Test
+        @TestMetadata("overrideDefaultMethod.kt")
+        public void testOverrideDefaultMethod() throws Exception {
+            runTest("js/js.translator/testData/box/inheritance/overrideDefaultMethod.kt");
+        }
+
+        @Test
+        @TestMetadata("overrideDefaultProperty.kt")
+        public void testOverrideDefaultProperty() throws Exception {
+            runTest("js/js.translator/testData/box/inheritance/overrideDefaultProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("overrideGenericDefaultMethod.kt")
+        public void testOverrideGenericDefaultMethod() throws Exception {
+            runTest("js/js.translator/testData/box/inheritance/overrideGenericDefaultMethod.kt");
+        }
+
+        @Test
         @TestMetadata("prototypeOrder.kt")
         public void testPrototypeOrder() throws Exception {
             runTest("js/js.translator/testData/box/inheritance/prototypeOrder.kt");

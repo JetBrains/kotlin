@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.dce
 
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.serialization.js.ModuleKind
+import org.jetbrains.kotlin.utils.addToStdlib.popLast
 
 internal class JsUsefulDeclarationProcessor(
     override val context: JsIrBackendContext,
@@ -174,6 +176,33 @@ internal class JsUsefulDeclarationProcessor(
         }
     }
 
+    private fun collectLastBaseClassOverrides(declaration: IrOverridableDeclaration<*>): Set<IrDeclaration> {
+        val allOverrides = mutableSetOf<IrDeclaration>()
+
+        val todo = mutableListOf(declaration)
+        val visited = hashSetOf<IrDeclaration>(declaration)
+        while (todo.isNotEmpty()) {
+            val decl = todo.popLast()
+            if (decl.parentClassOrNull?.isClass == true) {
+                for (overriddenSymbol in decl.overriddenSymbols) {
+                    val overriddenDeclaration = overriddenSymbol.owner as? IrOverridableDeclaration<*> ?: continue
+                    val parent = overriddenDeclaration.parentClassOrNull ?: continue
+                    if (parent.isInterface) {
+                        if (overriddenDeclaration.modality != Modality.ABSTRACT) {
+                            allOverrides.add(decl)
+                        }
+                    } else {
+                        if (visited.add(overriddenDeclaration)) {
+                            todo.add(overriddenDeclaration)
+                        }
+                    }
+                }
+            }
+        }
+
+        return allOverrides.also { it.remove(declaration) }
+    }
+
     override fun processSimpleFunction(irFunction: IrSimpleFunction) {
         super.processSimpleFunction(irFunction)
 
@@ -183,6 +212,10 @@ internal class JsUsefulDeclarationProcessor(
 
         if (irFunction.isReal && irFunction.body != null) {
             irFunction.parentClassOrNull?.takeIf { it.isInterface }?.enqueue(irFunction, "interface default method is used")
+        }
+
+        collectLastBaseClassOverrides(irFunction).forEach {
+            it.enqueue(irFunction, "first override of interface default")
         }
 
         if (context.es6mode && isEsModules) return
