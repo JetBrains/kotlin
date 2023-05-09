@@ -160,14 +160,17 @@ fun BuildResult.assertNativeTasksClasspath(
  *                          it could contain task paths as well, but without the first semicolon.
  * @param notRegisteredTasks An optional list of task names that should not have been registered,
  *                           it could contain task paths as well, but without the first semicolon.
+ * @param environmentVariables environmental variables for build process
  * @throws AssertionError if any of the registered tasks do not match the expected task names,
  * or if any of the not-registered tasks were actually registered.
  */
+@OptIn(EnvironmentalVariablesOverride::class)
 fun TestProject.buildAndAssertAllTasks(
     registeredTasks: List<String> = emptyList(),
-    notRegisteredTasks: List<String> = emptyList()
+    notRegisteredTasks: List<String> = emptyList(),
+    environmentVariables: EnvironmentalVariables = EnvironmentalVariables()
 ) {
-    build("tasks", "--all") {
+    build("tasks", "--all", environmentVariables = environmentVariables) {
         assertTasksInBuildOutput(registeredTasks, notRegisteredTasks)
     }
 }

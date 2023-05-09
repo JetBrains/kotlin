@@ -33,6 +33,7 @@ import kotlin.test.assertTrue
  * @param [buildOptions] common Gradle build options
  * @param [buildJdk] path to JDK build should run with. *Note* Only append to 'gradle.properties'!
  */
+@OptIn(EnvironmentalVariablesOverride::class)
 fun KGPBaseTest.project(
     projectName: String,
     gradleVersion: GradleVersion,
@@ -44,7 +45,8 @@ fun KGPBaseTest.project(
     projectPathAdditionalSuffix: String = "",
     buildJdk: File? = null,
     localRepoDir: Path? = null,
-    test: TestProject.() -> Unit = {},
+    environmentVariables: EnvironmentalVariables = EnvironmentalVariables(),
+    test: TestProject.() -> Unit = {}
 ): TestProject {
     val projectPath = setupProjectFromTestResources(
         projectName,
@@ -55,7 +57,6 @@ fun KGPBaseTest.project(
     projectPath.addDefaultBuildFiles()
     projectPath.enableCacheRedirector()
     projectPath.enableAndroidSdk()
-
 
     val gradleRunner = GradleRunner
         .create()
@@ -72,6 +73,7 @@ fun KGPBaseTest.project(
         forceOutput = forceOutput,
         enableBuildScan = enableBuildScan,
         enableGradleDebug = enableGradleDebug,
+        environmentVariables = environmentVariables
     )
     addHeapDumpOptions.ifTrue { testProject.addHeapDumpOptions() }
     localRepoDir?.let { testProject.configureLocalRepository(localRepoDir) }
@@ -93,6 +95,7 @@ fun KGPBaseTest.project(
  * @param [buildOptions] common Gradle build options
  * @param [buildJdk] path to JDK build should run with. *Note* Only append to 'gradle.properties'!
  */
+@OptIn(EnvironmentalVariablesOverride::class)
 fun KGPBaseTest.nativeProject(
     projectName: String,
     gradleVersion: GradleVersion,
@@ -104,7 +107,8 @@ fun KGPBaseTest.nativeProject(
     projectPathAdditionalSuffix: String = "",
     buildJdk: File? = null,
     localRepoDir: Path? = null,
-    test: TestProject.() -> Unit = {},
+    environmentVariables: EnvironmentalVariables = EnvironmentalVariables(),
+    test: TestProject.() -> Unit = {}
 ): TestProject {
     val project = project(
         projectName = projectName,
@@ -117,6 +121,7 @@ fun KGPBaseTest.nativeProject(
         projectPathAdditionalSuffix = projectPathAdditionalSuffix,
         buildJdk = buildJdk,
         localRepoDir = localRepoDir,
+        environmentVariables = environmentVariables,
     )
     project.configureSingleNativeTarget()
     project.test()
@@ -126,6 +131,7 @@ fun KGPBaseTest.nativeProject(
 /**
  * Trigger test project build with given [buildArguments] and assert build is successful.
  */
+@OptIn(EnvironmentalVariablesOverride::class)
 fun TestProject.build(
     vararg buildArguments: String,
     forceOutput: Boolean = this.forceOutput,
@@ -134,7 +140,8 @@ fun TestProject.build(
     enableBuildCacheDebug: Boolean = false,
     enableBuildScan: Boolean = this.enableBuildScan,
     buildOptions: BuildOptions = this.buildOptions,
-    assertions: BuildResult.() -> Unit = {},
+    environmentVariables: EnvironmentalVariables = this.environmentVariables,
+    assertions: BuildResult.() -> Unit = {}
 ) {
     if (enableBuildScan) agreeToBuildScanService()
 
@@ -148,6 +155,7 @@ fun TestProject.build(
     )
     val gradleRunnerForBuild = gradleRunner
         .also { if (forceOutput) it.forwardOutput() }
+        .also { if (environmentVariables.environmentalVariables.isNotEmpty()) it.withEnvironment(System.getenv() + environmentVariables.environmentalVariables) }
         .withDebug(enableGradleDebug)
         .withArguments(allBuildArguments)
     withBuildSummary(allBuildArguments) {
@@ -169,7 +177,8 @@ fun TestProject.buildAndFail(
     enableBuildCacheDebug: Boolean = false,
     enableBuildScan: Boolean = this.enableBuildScan,
     buildOptions: BuildOptions = this.buildOptions,
-    assertions: BuildResult.() -> Unit = {},
+    environmentVariables: EnvironmentalVariables = this.environmentVariables,
+    assertions: BuildResult.() -> Unit = {}
 ) {
     if (enableBuildScan) agreeToBuildScanService()
 
@@ -183,6 +192,7 @@ fun TestProject.buildAndFail(
     )
     val gradleRunnerForBuild = gradleRunner
         .also { if (forceOutput) it.forwardOutput() }
+        .also { if (environmentVariables.environmentalVariables.isNotEmpty()) it.withEnvironment(System.getenv() + environmentVariables.environmentalVariables) }
         .withDebug(enableGradleDebug)
         .withArguments(allBuildArguments)
     withBuildSummary(allBuildArguments) {
@@ -295,6 +305,13 @@ open class GradleProject(
     ): List<Path> = files.map { projectPath.relativize(it) }
 }
 
+@JvmInline
+value class EnvironmentalVariables @EnvironmentalVariablesOverride constructor(val environmentalVariables: Map<String, String> = emptyMap())
+
+@RequiresOptIn("Environmental variables override may lead to interference of parallel builds and breaks Gradle tests debugging")
+annotation class EnvironmentalVariablesOverride
+
+@OptIn(EnvironmentalVariablesOverride::class)
 class TestProject(
     val gradleRunner: GradleRunner,
     projectName: String,
@@ -313,6 +330,7 @@ class TestProject(
      * Note that we'll need to let the debugger start listening at this port first *before* the Kotlin daemon is launched.
      */
     val kotlinDaemonDebugPort: Int? = null,
+    val environmentVariables: EnvironmentalVariables = EnvironmentalVariables(),
 ) : GradleProject(projectName, projectPath) {
     fun subProject(name: String) = GradleProject(name, projectPath.resolve(name))
 

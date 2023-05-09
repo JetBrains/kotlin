@@ -18,6 +18,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @GradleTestVersions
+@OsCondition
 @JdkVersions
 @ParameterizedTest(name = "{1} with {0}: {displayName}")
 @ArgumentsSource(GradleAndJdkArgumentsProvider.class)

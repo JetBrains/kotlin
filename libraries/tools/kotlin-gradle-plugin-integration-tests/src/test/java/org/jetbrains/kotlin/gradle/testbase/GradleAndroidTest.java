@@ -18,6 +18,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @GradleTestVersions
+@OsCondition
 @AndroidTestVersions
 @ParameterizedTest(name = "AGP {1} with {0}: {displayName}")
 @ArgumentsSource(GradleAndAgpArgumentsProvider.class)

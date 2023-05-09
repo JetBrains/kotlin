@@ -98,6 +98,30 @@ fun GradleProject.assertFileNotExistsInTree(
 }
 
 /**
+ * Asserts symlink under [path] exists and is a symlink
+ */
+fun assertSymlinkExists(
+    path: Path
+) {
+    assert(Files.exists(path)) {
+        "Symlink '${path}' does not exist!"
+    }
+
+    assert(Files.isSymbolicLink(path)) {
+        "'${path}' is not a symlink!"
+    }
+}
+
+/**
+ * Asserts symlink under [pathToFile] relative to the test project exists and is a symlink.
+ */
+fun TestProject.assertSymlinkInProjectExists(
+    pathToFile: String
+) {
+    assertSymlinkExists(projectPath.resolve(pathToFile))
+}
+
+/**
  * Asserts directory under [pathToDir] relative to the test project exists and is a directory.
  */
 fun GradleProject.assertDirectoryInProjectExists(
@@ -105,9 +129,9 @@ fun GradleProject.assertDirectoryInProjectExists(
 ) = assertDirectoryExists(projectPath.resolve(pathToDir))
 
 /**
- * Asserts directory under [file] exists and is a directory.
+ * Asserts directory under [dirPath] exists and is a directory.
  */
-fun GradleProject.assertDirectoryExists(
+fun assertDirectoryExists(
     dirPath: Path
 ) = assertDirectoriesExist(dirPath)
 
@@ -132,7 +156,7 @@ fun assertDirectoriesExist(
 }
 
 /**
- * Asserts file under [pathToFile] relative to the test project exists and contains all the lines from [expectedLines]
+ * Asserts file under [pathToFile] relative to the test project exists and contains all the lines from [expectedText]
  */
 fun GradleProject.assertFileInProjectContains(
     pathToFile: String,
