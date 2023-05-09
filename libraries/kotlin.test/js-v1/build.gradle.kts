@@ -54,7 +54,8 @@ tasks.withType<KotlinCompile<*>>().configureEach {
     kotlinOptions.freeCompilerArgs += listOf(
         "-Xallow-kotlin-package",
         "-opt-in=kotlin.ExperimentalMultiplatform",
-        "-opt-in=kotlin.contracts.ExperimentalContracts"
+        "-opt-in=kotlin.contracts.ExperimentalContracts",
+        "-Xforce-deprecated-legacy-compiler-usage",
     )
 
     doFirst {
