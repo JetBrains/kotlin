@@ -121,17 +121,17 @@ internal class DynamicCompilerDriver(
                     topLevelPrefix = abbreviate(config.fullExportedNamePrefix),
                     modulesInfo = exportedModules,
                     name = "Kotlin",
-                    headerStrategy = ObjCExportHeaderStrategy.PerKlib("Kotlin", mapOf(
-                            frontendOutput.moduleDescriptor.allDependencyModules.single { it.isNativeStdlib() }.kotlinLibrary to "Kotlin.h"
-                    ))
+                    headerStrategy = ObjCExportHeaderStrategy.Global("Kotlin", "Kotlin.h")
             ))
         }
         val objcExportStructure = ObjCExportStructure(headerInfos)
         val objCExportGlobalConfig = ObjCExportGlobalConfig.create(config, frontendOutput.frontendServices,
                 stdlibPrefix = "Kotlin")
+        val stdlib = frontendOutput.moduleDescriptor.allDependencyModules.first { it.isNativeStdlib() }.kotlinLibrary
         val objCExportedInterfaces = engine.runPhase(ProduceObjCExportMultipleInterfacesPhase, ProduceObjCExportInterfaceInput(
                 globalConfig = objCExportGlobalConfig,
                 structure = objcExportStructure,
+                stdlib = stdlib,
         ))
         objCExportedInterfaces.forEach { objCExportedInterface ->
             val frameworkDirectory = (files.getComponent<CompilationFiles.Component.FrameworkDirectory>().value).parentFile.resolve("${objCExportedInterface.frameworkName}.framework")
@@ -171,7 +171,6 @@ internal class DynamicCompilerDriver(
             val (objectFiles, caches, deps) = if (frameworkId.name == "Kotlin") {
                 Triple(listOf(objectFile, mainFile), resolvedCaches, dependencies)
             } else {
-                additionalLinkerFlags += listOf("-framework", "Kotlin")
                 Triple(listOf(objectFile), ResolvedCacheBinaries(emptyList(), emptyList()), DependenciesTrackingResult.Empty)
             }
             engine.link(

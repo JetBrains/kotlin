@@ -249,7 +249,7 @@ internal class ObjCExportTranslatorImpl(
                     .asSequence()
                     .filter { mapper.shouldBeExposed(it) }
                     .map {
-                        generator?.generateExtraInterfaceEarly(it)
+                        generator?.classGenerator?.generateExtraInterfaceEarly(it)
                         referenceProtocol(it).objCName
                     }
                     .toList()
@@ -258,7 +258,7 @@ internal class ObjCExportTranslatorImpl(
             classDescriptor: ClassDescriptor,
             declarations: List<CallableMemberDescriptor>
     ): ObjCInterface {
-        generator?.generateExtraClassEarly(classDescriptor)
+        generator?.classGenerator?.generateExtraClassEarly(classDescriptor)
 
         val name = referenceClass(classDescriptor).objCName
         val members = buildMembers {
@@ -306,7 +306,7 @@ internal class ObjCExportTranslatorImpl(
         val superName = if (superClass == null) {
             kotlinAnyName
         } else {
-            generator?.generateExtraClassEarly(superClass)
+            generator?.classGenerator?.generateExtraClassEarly(superClass)
             referenceClass(superClass)
         }
 

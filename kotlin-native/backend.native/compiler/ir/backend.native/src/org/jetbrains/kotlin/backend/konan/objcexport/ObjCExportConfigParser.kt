@@ -56,14 +56,6 @@ internal class ObjCExportConfigParser(
     private fun parseHeaderStrategy(frameworkName: String, element: Element): ObjCExportHeaderStrategy {
         val kind = element.getChildText("kind")
         return when (kind) {
-            "perKlib" -> {
-                val map = allModules.filter { it.klibModuleOrigin is DeserializedKlibModuleOrigin }.map { it.kotlinLibrary }
-                val mappingNode = element.getChild("mapping")
-                val mapping = mappingNode.children.associate { node ->
-                    map.single { node.name == it.uniqueName } to node.value
-                }
-                ObjCExportHeaderStrategy.PerKlib(frameworkName, mapping)
-            }
             "global" -> {
                 ObjCExportHeaderStrategy.Global(frameworkName, element.getChildText("headerName"))
             }

@@ -13,27 +13,16 @@ import org.jetbrains.kotlin.backend.konan.objcexport.createCodeSpec
 import org.jetbrains.kotlin.backend.konan.objcexport.createObjCFramework
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
+import org.jetbrains.kotlin.descriptors.konan.isNativeStdlib
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.kotlinLibrary
 import java.io.File
 
 internal data class ProduceObjCExportInterfaceInput(
         val globalConfig: ObjCExportGlobalConfig,
         val structure: ObjCExportStructure,
+        val stdlib: KotlinLibrary,
 )
-
-/**
- * Create internal representation of Objective-C wrapper.
- */
-//internal val ProduceObjCExportInterfacePhase = createSimpleNamedCompilerPhase<PhaseContext, ProduceObjCExportInterfaceInput, ObjCExportedInterface>(
-//        "ObjCExportInterface",
-//        "Objective-C header generation",
-//        outputIfNotEnabled = { _, _, _, _ -> error("Cannot disable `ObjCExportInterface` phase when producing ObjC framework") }
-//) { context, input ->
-//    require(input.structure.frameworks.size == 1)
-//    val stdlibNamer = ObjCExportStdlibNamer.create(input.globalConfig.stdlibPrefix)
-//    val headerGenerator = createObjCExportHeaderGenerator(context, input.globalConfig, input.structure.frameworks.first(), stdlibNamer)
-//    produceObjCExportInterface(headerGenerator)
-//}
 
 internal val ProduceObjCExportMultipleInterfacesPhase = createSimpleNamedCompilerPhase<PhaseContext, ProduceObjCExportInterfaceInput, List<ObjCExportedInterface>>(
         "ObjCExportInterface",
@@ -43,24 +32,38 @@ internal val ProduceObjCExportMultipleInterfacesPhase = createSimpleNamedCompile
     val globalConfig = input.globalConfig
     val structure = input.structure
     val frameworkIdProvider = ObjCExportFrameworkIdProvider(structure)
-    val headerIdProvider = ObjCExportHeaderIdProvider(frameworkIdProvider, structure)
+    val stdlibKlib = input.stdlib
+    val headerIdProvider = ObjCExportHeaderIdProvider(frameworkIdProvider, structure, stdlibKlib)
     val namerProvider = ObjCNamerProvider(globalConfig, structure)
     val mapper = ObjCExportMapper(globalConfig.frontendServices.deprecationResolver, unitSuspendFunctionExport = globalConfig.unitSuspendFunctionExport)
     val namerProxy = ObjCExportNamerProxy(namerProvider, headerIdProvider)
     val headerToGeneratorMapping = mutableMapOf<ObjCExportFrameworkId, ObjCExportClassGenerator>()
+
     val headerGenerators = structure.reverseTopSortFrameworks(context.config).associateWith { frameworkStructure ->
-        val objCExportHeaderGeneratorImpl = ObjCExportHeaderGeneratorImpl(context, frameworkStructure.modulesInfo, mapper, namerProxy, namerProvider.getStdlibNamer(),
+        val objCExportHeaderGeneratorImpl = ObjCExportHeaderGeneratorImpl(
+                context, frameworkStructure.modulesInfo, mapper, namerProxy,
+                namerProvider.getStdlibNamer(),
                 objcGenerics = globalConfig.objcGenerics)
+
         frameworkStructure.modulesInfo.forEach { moduleInfo ->
             val frameworkId = frameworkIdProvider.getFrameworkId(moduleInfo.module.kotlinLibrary)
             headerToGeneratorMapping[frameworkId] = object : ObjCExportClassGenerator {
                 override fun requireClassOrInterface(descriptor: ClassDescriptor) {
                     objCExportHeaderGeneratorImpl.requireClassOrInterface(descriptor)
                 }
+
+                override fun generateExtraClassEarly(descriptor: ClassDescriptor) {
+                    objCExportHeaderGeneratorImpl.generateExtraClassEarly(descriptor)
+                }
+
+                override fun generateExtraInterfaceEarly(descriptor: ClassDescriptor) {
+                    objCExportHeaderGeneratorImpl.generateExtraInterfaceEarly(descriptor)
+                }
             }
         }
         objCExportHeaderGeneratorImpl
     }
+
     val classGeneratorProvider = ObjCClassGeneratorProvider(headerToGeneratorMapping)
     val listOfDependenciesPerGenerator = mutableMapOf<ObjCExportHeaderGenerator, MutableSet<ObjCExportHeaderId>>()
     headerGenerators.forEach { (structure, headerGenerator) ->
@@ -76,7 +79,12 @@ internal val ProduceObjCExportMultipleInterfacesPhase = createSimpleNamedCompile
         headerGenerators.values.filter { it.hasPendingRequests() }.forEach { it.processRequests() }
     }
     headerGenerators.map { (frameworkStructure, headerGenerator) ->
-        val deps = listOfDependenciesPerGenerator[headerGenerator] ?: emptySet()
+        val mandatoryDeps = if (frameworkStructure.modulesInfo.any { it.module.isNativeStdlib() }) {
+            emptySet()
+        } else {
+            setOf(headerIdProvider.getStdlibHeaderId())
+        }
+        val deps = mandatoryDeps + (listOfDependenciesPerGenerator[headerGenerator] ?: emptySet())
         headerGenerator.buildInterface(deps, ObjCExportFrameworkId(frameworkStructure.name))
     }
 }

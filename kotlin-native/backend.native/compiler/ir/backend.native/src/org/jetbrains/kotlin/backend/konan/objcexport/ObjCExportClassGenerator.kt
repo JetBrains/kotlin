@@ -12,11 +12,10 @@ interface ObjCExportClassGenerator {
      * Require generation of Objective-C declaration for the [descriptor].
      */
     fun requireClassOrInterface(descriptor: ClassDescriptor)
-}
 
+    fun generateExtraClassEarly(descriptor: ClassDescriptor)
 
-interface ObjCExportClassGeneratorRegistry {
-    fun register(frameworkId: ObjCExportFrameworkId, classGenerator: ObjCExportClassGenerator)
+    fun generateExtraInterfaceEarly(descriptor: ClassDescriptor)
 }
 
 class ObjCExportClassGeneratorProxy(
@@ -28,5 +27,17 @@ class ObjCExportClassGeneratorProxy(
         val headerId = headerIdProvider.getHeaderId(descriptor)
         onHeaderRequested(headerId)
         classGeneratorProvider.getClassGenerator(headerId).requireClassOrInterface(descriptor)
+    }
+
+    override fun generateExtraClassEarly(descriptor: ClassDescriptor) {
+        val headerId = headerIdProvider.getHeaderId(descriptor)
+        onHeaderRequested(headerId)
+        classGeneratorProvider.getClassGenerator(headerId).generateExtraClassEarly(descriptor)
+    }
+
+    override fun generateExtraInterfaceEarly(descriptor: ClassDescriptor) {
+        val headerId = headerIdProvider.getHeaderId(descriptor)
+        onHeaderRequested(headerId)
+        classGeneratorProvider.getClassGenerator(headerId).generateExtraInterfaceEarly(descriptor)
     }
 }

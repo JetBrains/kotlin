@@ -32,6 +32,8 @@ class ObjCExportModuleInfo(
 
 /**
  * Describes how Kotlin declarations are mapped to Objective-C headers.
+ *
+ * TODO: get rid of. For now we need only global.
  */
 sealed class ObjCExportHeaderStrategy {
 
@@ -42,29 +44,11 @@ sealed class ObjCExportHeaderStrategy {
     abstract fun containsHeader(headerId: ObjCExportHeaderId): Boolean
 
     /**
-     * Each Klib is mapped to a separate header.
+     * All klibs are mapped to a single header.
      */
-    class PerKlib(
-            private val frameworkName: String,
-            private val klibToHeader: Map<KotlinLibrary, String>
-    ) : ObjCExportHeaderStrategy() {
-        override fun findHeader(declaration: DeclarationDescriptor): String {
-            return klibToHeader.getValue(declaration.module.kotlinLibrary)
-        }
-
-        override fun containsHeader(headerId: ObjCExportHeaderId): Boolean {
-            return headerId.frameworkId.name == frameworkName && klibToHeader.values.any { it == headerId.name }
-        }
-
-        override fun findHeader(sourceFile: SourceFile): String {
-            require(sourceFile is DeserializedSourceFile)
-            return klibToHeader.getValue(sourceFile.library)
-        }
-    }
-
     class Global(
             private val frameworkName: String,
-            private val headerName: String
+            val headerName: String
     ) : ObjCExportHeaderStrategy() {
         override fun findHeader(declaration: DeclarationDescriptor): String {
             return headerName
@@ -133,16 +117,20 @@ interface ObjCExportHeaderIdProvider {
     fun getHeaderId(declaration: DeclarationDescriptor): ObjCExportHeaderId
 
     fun getHeaderId(sourceFile: SourceFile): ObjCExportHeaderId
+
+    fun getStdlibHeaderId(): ObjCExportHeaderId
 }
 
 fun ObjCExportHeaderIdProvider(
         frameworkProvider: ObjCExportFrameworkIdProvider,
         structure: ObjCExportStructure,
-): ObjCExportHeaderIdProvider = ObjCExportHeaderIdProviderImpl(frameworkProvider, structure)
+        stdlib: KotlinLibrary,
+): ObjCExportHeaderIdProvider = ObjCExportHeaderIdProviderImpl(frameworkProvider, structure, stdlib)
 
 private class ObjCExportHeaderIdProviderImpl(
         private val frameworkProvider: ObjCExportFrameworkIdProvider,
         private val structure: ObjCExportStructure,
+        private val stdlib: KotlinLibrary,
 ) : ObjCExportHeaderIdProvider {
 
     override fun getHeaderId(declaration: DeclarationDescriptor): ObjCExportHeaderId {
@@ -159,9 +147,16 @@ private class ObjCExportHeaderIdProviderImpl(
         val headerName = frameworkStructure.headerStrategy.findHeader(sourceFile)
         return ObjCExportHeaderId(frameworkId, headerName)
     }
+
+    override fun getStdlibHeaderId(): ObjCExportHeaderId {
+        val frameworkId = frameworkProvider.getFrameworkId(stdlib)
+        val frameworkStructure = structure.frameworks.first { it.name == frameworkId.name }
+        val headerName = (frameworkStructure.headerStrategy as ObjCExportHeaderStrategy.Global).headerName
+        return ObjCExportHeaderId(frameworkId, headerName)
+    }
 }
 
-interface ObjCClassGeneratorProvider : ObjCExportClassGeneratorRegistry {
+interface ObjCClassGeneratorProvider {
     fun getClassGenerator(headerId: ObjCExportHeaderId): ObjCExportClassGenerator
 }
 
@@ -173,10 +168,6 @@ private class ObjCClassGeneratorProviderImpl(
 ) : ObjCClassGeneratorProvider {
     override fun getClassGenerator(headerId: ObjCExportHeaderId): ObjCExportClassGenerator =
             mapping.getValue(headerId.frameworkId)
-
-    override fun register(frameworkId: ObjCExportFrameworkId, classGenerator: ObjCExportClassGenerator) {
-        TODO("Not yet implemented")
-    }
 }
 
 interface ObjCNamerProvider {
@@ -226,20 +217,4 @@ private class ObjCNamerProviderImpl(
                 ignoreInterfaceMethodCollisions = ignoreInterfaceMethodCollisions,
         )
     }
-}
-
-/**
- * TODO: Should be easily parseable from CLI arg (JSON file)?
- */
-class ObjCExportFrameworkInfo(
-        val topLevelPrefix: String,
-        val modules: List<ObjCExportModuleInfo>,
-        val frameworkName: String,
-        val headerName: String,
-) {
-    override fun equals(other: Any?): Boolean = other is ObjCExportFrameworkInfo &&
-            other.frameworkName == frameworkName &&
-            other.headerName == headerName
-
-    override fun hashCode(): Int = frameworkName.hashCode() * 31 + headerName.hashCode()
 }
