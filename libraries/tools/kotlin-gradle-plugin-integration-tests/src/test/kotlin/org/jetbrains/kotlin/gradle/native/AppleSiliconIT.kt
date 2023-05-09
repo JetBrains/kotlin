@@ -19,9 +19,6 @@ import kotlin.test.fail
 @NativeGradlePluginTests
 class AppleSiliconIT : KGPBaseTest() {
 
-    // TODO(Dmitrii Krasnov): remove it, when KT-58104 will be fixed
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(statisticsForceValidation = false)
-
     private val host = HostManager.host
 
     @DisplayName("Tests compilation")

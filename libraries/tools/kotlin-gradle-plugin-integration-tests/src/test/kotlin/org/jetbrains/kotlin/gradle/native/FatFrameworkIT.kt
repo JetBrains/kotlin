@@ -47,8 +47,6 @@ class FatFrameworkIT : KGPBaseTest() {
         nativeProject(
             "native-fat-framework/smoke",
             gradleVersion,
-            // TODO(Dmitrii Krasnov): return default statisticsForceValidation, when KT-58104 will be fixed
-            buildOptions = defaultBuildOptions.copy(statisticsForceValidation = false)
         ) {
             buildGradleKts.modify {
                 it.checkedReplace("iosArm32()", "watchosArm32()")

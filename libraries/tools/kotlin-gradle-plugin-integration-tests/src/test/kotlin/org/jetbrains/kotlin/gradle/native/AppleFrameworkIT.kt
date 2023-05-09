@@ -20,9 +20,6 @@ import kotlin.io.path.appendText
 @NativeGradlePluginTests
 class AppleFrameworkIT : KGPBaseTest() {
 
-    // TODO(Dmitrii Krasnov): remove it, when KT-58104 will be fixed
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(statisticsForceValidation = false)
-
     @DisplayName("Assembling AppleFrameworkForXcode tasks for IosArm64")
     @OptIn(EnvironmentalVariablesOverride::class)
     @GradleAndroidTest
@@ -30,7 +27,7 @@ class AppleFrameworkIT : KGPBaseTest() {
     fun shouldAssembleAppleFrameworkForXcodeForIosArm64(
         gradleVersion: GradleVersion,
         agpVersion: String,
-        jdkProvider: JdkVersions.ProvidedJdk
+        jdkProvider: JdkVersions.ProvidedJdk,
     ) {
 
         nativeProject(
@@ -78,7 +75,7 @@ class AppleFrameworkIT : KGPBaseTest() {
     fun shouldAssembleAppleFrameworkForXcodeForArm64AndX64Simulators(
         gradleVersion: GradleVersion,
         agpVersion: String,
-        jdkProvider: JdkVersions.ProvidedJdk
+        jdkProvider: JdkVersions.ProvidedJdk,
     ) {
 
         nativeProject(
@@ -114,7 +111,7 @@ class AppleFrameworkIT : KGPBaseTest() {
     fun shouldCheckThatMacOSFrameworkHasSymlinks(
         gradleVersion: GradleVersion,
         agpVersion: String,
-        jdkProvider: JdkVersions.ProvidedJdk
+        jdkProvider: JdkVersions.ProvidedJdk,
     ) {
 
         nativeProject(
@@ -148,7 +145,7 @@ class AppleFrameworkIT : KGPBaseTest() {
     fun shouldFailWithExecutingEmbedAndSignAppleFrameworkForXcode(
         gradleVersion: GradleVersion,
         agpVersion: String,
-        jdkProvider: JdkVersions.ProvidedJdk
+        jdkProvider: JdkVersions.ProvidedJdk,
     ) {
         nativeProject("sharedAppleFramework", gradleVersion, buildJdk = jdkProvider.location) {
             buildAndFail(
@@ -167,7 +164,7 @@ class AppleFrameworkIT : KGPBaseTest() {
     fun shouldCheckAllRegisteredTasksWithXcodeEnvironmentForDebugIosArm64(
         gradleVersion: GradleVersion,
         agpVersion: String,
-        jdkProvider: JdkVersions.ProvidedJdk
+        jdkProvider: JdkVersions.ProvidedJdk,
     ) {
         val buildOptions = defaultBuildOptions.copy(
             androidVersion = agpVersion
@@ -212,7 +209,7 @@ class AppleFrameworkIT : KGPBaseTest() {
     fun shouldCheckEmbedAndSignAppleFrameworkForXcodeDoesNotRequireXcodeEnv(
         gradleVersion: GradleVersion,
         agpVersion: String,
-        jdkProvider: JdkVersions.ProvidedJdk
+        jdkProvider: JdkVersions.ProvidedJdk,
     ) {
         val buildOptions = defaultBuildOptions.copy(
             androidVersion = agpVersion
@@ -264,7 +261,7 @@ class AppleFrameworkIT : KGPBaseTest() {
     fun shouldCheckThatStaticFrameworkForArm64IsBuildAndNotEmbedded(
         gradleVersion: GradleVersion,
         agpVersion: String,
-        jdkProvider: JdkVersions.ProvidedJdk
+        jdkProvider: JdkVersions.ProvidedJdk,
     ) {
 
         nativeProject(
@@ -309,7 +306,7 @@ class AppleFrameworkIT : KGPBaseTest() {
     fun shouldReportConfErrorsToXcodeWhenRequestedByEmbedAndSign(
         gradleVersion: GradleVersion,
         agpVersion: String,
-        jdkProvider: JdkVersions.ProvidedJdk
+        jdkProvider: JdkVersions.ProvidedJdk,
     ) {
         val buildOptions = defaultBuildOptions.copy(
             androidVersion = agpVersion
@@ -354,7 +351,7 @@ class AppleFrameworkIT : KGPBaseTest() {
     fun shouldReportCompilationErrorsToXcodeWhenRequestedByEmbedAndSign(
         gradleVersion: GradleVersion,
         agpVersion: String,
-        jdkProvider: JdkVersions.ProvidedJdk
+        jdkProvider: JdkVersions.ProvidedJdk,
     ) {
         val buildOptions = defaultBuildOptions.copy(
             androidVersion = agpVersion
@@ -393,7 +390,7 @@ class AppleFrameworkIT : KGPBaseTest() {
     fun shouldPrintCompilationErrorsWithGradleStyle(
         gradleVersion: GradleVersion,
         agpVersion: String,
-        jdkProvider: JdkVersions.ProvidedJdk
+        jdkProvider: JdkVersions.ProvidedJdk,
     ) {
         val buildOptions = defaultBuildOptions.copy(
             androidVersion = agpVersion
@@ -432,7 +429,7 @@ class AppleFrameworkIT : KGPBaseTest() {
     fun shouldPrintCompilationErrorsWithXcodeStyle(
         gradleVersion: GradleVersion,
         agpVersion: String,
-        jdkProvider: JdkVersions.ProvidedJdk
+        jdkProvider: JdkVersions.ProvidedJdk,
     ) {
         val buildOptions = defaultBuildOptions.copy(
             androidVersion = agpVersion
@@ -475,7 +472,7 @@ class AppleFrameworkIT : KGPBaseTest() {
     fun shouldReportErrorsToXcodeWhenEmbedAndSignRequestedAndDisableCompilerDaemon(
         gradleVersion: GradleVersion,
         agpVersion: String,
-        jdkProvider: JdkVersions.ProvidedJdk
+        jdkProvider: JdkVersions.ProvidedJdk,
     ) {
         val buildOptions = defaultBuildOptions.copy(
             androidVersion = agpVersion
@@ -525,7 +522,7 @@ class AppleFrameworkIT : KGPBaseTest() {
     @JdkVersions(versions = [JavaVersion.VERSION_11])
     fun smokeTestWithAppleGradlePlugin(
         gradleVersion: GradleVersion,
-        providedJdk: JdkVersions.ProvidedJdk
+        providedJdk: JdkVersions.ProvidedJdk,
     ) {
 
         nativeProject(

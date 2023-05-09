@@ -18,9 +18,6 @@ import org.junit.jupiter.api.condition.OS
 @NativeGradlePluginTests
 class XCFrameworkIT : KGPBaseTest() {
 
-    // TODO(Dmitrii Krasnov): remove it, when KT-58104 will be fixed
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(statisticsForceValidation = false)
-
     @DisplayName("Assembling shared debug XCFramework for all available ios and watchos targets ")
     @GradleTest
     fun shouldAssembleXCFrameworkForAllAvailableTargets(gradleVersion: GradleVersion) {

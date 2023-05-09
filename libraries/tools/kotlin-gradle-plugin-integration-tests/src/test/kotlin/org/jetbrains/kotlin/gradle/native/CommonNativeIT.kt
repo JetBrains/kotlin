@@ -17,9 +17,6 @@ import java.util.*
 @NativeGradlePluginTests
 class CommonNativeIT : KGPBaseTest() {
 
-    // TODO(Dmitrii Krasnov): remove it, when KT-58104 will be fixed
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(statisticsForceValidation = false)
-
     private val String.withPrefix get() = "native-apple-devices-common/$this"
 
     @DisplayName("Common ios")
@@ -59,7 +56,7 @@ class CommonNativeIT : KGPBaseTest() {
         projectName: String,
         libTargets: List<String>,
         appTargets: List<String>,
-        gradleVersion: GradleVersion
+        gradleVersion: GradleVersion,
     ) {
         nativeProject(projectName.withPrefix, gradleVersion) {
 
