@@ -1,9 +1,12 @@
 import org.gradle.api.Project
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.api.artifacts.Configuration
+import org.gradle.api.tasks.Copy
 import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.findByType
+
 import org.spdx.sbom.gradle.SpdxSbomExtension
 import org.spdx.sbom.gradle.SpdxSbomPlugin
 import plugins.mainPublicationName
@@ -14,7 +17,7 @@ import java.util.*
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-fun Project.configureSbom(gradleConfigurations: Iterable<String> = setOf("runtimeClasspath")) {
+fun Project.configureSbom(gradleConfigurations: Iterable<String> = setOf("runtimeClasspath")): Configuration {
     val project = this
     apply<SpdxSbomPlugin>()
 
@@ -39,9 +42,12 @@ fun Project.configureSbom(gradleConfigurations: Iterable<String> = setOf("runtim
         }
     }
 
-    configurations.maybeCreate("sbom")
+    val sbomCfg = configurations.maybeCreate("sbom").apply {
+        isCanBeResolved = false
+        isCanBeConsumed = true
+    }
     val sbomFile = layout.buildDirectory.file("spdx/${project.name}.spdx.json")
-    val sbomArtifact = artifacts.add("sbom", sbomFile.get().asFile) {
+    val sbomArtifact = artifacts.add(sbomCfg.name, sbomFile.get().asFile) {
         type = "sbom"
         extension = "spdx.json"
         builtBy("spdxSbom")
@@ -51,5 +57,12 @@ fun Project.configureSbom(gradleConfigurations: Iterable<String> = setOf("runtim
         ?.findByName(mainPublicationName) as MavenPublication?
     publication?.apply {
         artifact(sbomArtifact)
+    }
+    return sbomCfg
+}
+
+fun Copy.fromSbom(sbom: Configuration) {
+    from(sbom.artifacts.files) {
+        rename("${project.name}.spdx.json", "${project.name}-${project.version}.spdx.json")
     }
 }
