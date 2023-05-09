@@ -90,10 +90,6 @@ private class LLFirBodyTargetResolver(
             is FirRegularClass -> {
                 if (target.resolvePhase >= resolverPhase) return true
 
-                withRegularClass(target) {
-                    transformer.firTowerDataContextCollector?.addDeclarationContext(target, transformer.context.towerDataContext)
-                }
-
                 // resolve class CFG graph here, to do this we need to have property & init blocks resoled
                 resolveMemberProperties(target)
                 performCustomResolveUnderLock(target) {
@@ -127,6 +123,8 @@ private class LLFirBodyTargetResolver(
 
     private fun resolveMemberProperties(target: FirRegularClass) {
         withRegularClass(target) {
+            transformer.firTowerDataContextCollector?.addDeclarationContext(target, transformer.context.towerDataContext)
+
             for (member in target.declarations) {
                 if (member is FirCallableDeclaration || member is FirAnonymousInitializer) {
                     /* TODO we should resolve only properties and init blocks here but due to the recent changes in the compiler, we also have to do this for all callable members
