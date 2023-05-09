@@ -727,16 +727,6 @@ tasks {
 
 configureDefaultPublishing()
 
-val defaultKotlinPublications = listOf("kotlinMultiplatform", "jvm", "js", "jsV1")
-afterEvaluate {
-    tasks.withType<AbstractPublishToMaven>().all {
-        if (publication.name in defaultKotlinPublications) {
-            enabled = false
-        }
-        println("$name - ${publication.name} - enabled: $enabled")
-    }
-}
-
 open class ComponentsFactoryAccess
 @javax.inject.Inject
 constructor(val factory: SoftwareComponentFactory)
