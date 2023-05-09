@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure
+package org.jetbrains.kotlin.analysis.providers.impl
 
 import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.name.CallableId
@@ -12,11 +12,9 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
-class CompositeKotlinDeclarationProvider
-private constructor(
+public class CompositeKotlinDeclarationProvider private constructor(
     private val providers: List<KotlinDeclarationProvider>
 ) : KotlinDeclarationProvider() {
-
     override fun getClassLikeDeclarationByClassId(classId: ClassId): KtClassLikeDeclaration? {
         return providers.firstNotNullOfOrNull { it.getClassLikeDeclarationByClassId(classId) }
     }
@@ -65,12 +63,12 @@ private constructor(
         return providers.flatMapTo(mutableListOf()) { it.findFilesForScript(scriptFqName) }
     }
 
-     override fun computePackageSetWithTopLevelCallableDeclarations(): Set<String> {
+    override fun computePackageSetWithTopLevelCallableDeclarations(): Set<String> {
         return providers.flatMapTo(mutableSetOf()) { it.computePackageSetWithTopLevelCallableDeclarations() }
     }
 
-    companion object {
-        fun create(providers: List<KotlinDeclarationProvider>): KotlinDeclarationProvider {
+    public companion object {
+        public fun create(providers: List<KotlinDeclarationProvider>): KotlinDeclarationProvider {
             return when (providers.size) {
                 0 -> EmptyKotlinDeclarationProvider
                 1 -> providers.single()
