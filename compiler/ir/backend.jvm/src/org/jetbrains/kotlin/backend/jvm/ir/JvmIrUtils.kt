@@ -441,11 +441,14 @@ fun IrMemberAccessExpression<*>.getBooleanConstArgument(i: Int): Boolean =
     } ?: throw AssertionError("Value argument #$i should be a Boolean const: ${dump()}")
 
 val IrDeclaration.fileParent: IrFile
-    get() {
-        return when (val myParent = parent) {
-            is IrFile -> myParent
-            else -> (myParent as IrDeclaration).fileParent
-        }
+    get() = fileParentOrNull ?: error("No file parent: $this")
+
+@Suppress("RecursivePropertyAccessor")
+val IrDeclaration.fileParentOrNull: IrFile?
+    get() = when (val myParent = parent) {
+        is IrFile -> myParent
+        is IrDeclaration -> myParent.fileParentOrNull
+        else -> null
     }
 
 private val RETENTION_PARAMETER_NAME = Name.identifier("value")
