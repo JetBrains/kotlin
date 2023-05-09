@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirDeprecationChecker
-import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.analysis.checkers.unsubstitutedScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.getSourceForImportSegment
@@ -128,7 +127,7 @@ object FirImportsChecker : FirFileChecker() {
         }
 
         resolvedDeclaration?.let {
-            val source = import.getSourceForImportSegment(0)
+            val source = import.getSourceForImportSegment(0) ?: import.source
             reporter.reportOn(source, FirErrors.INVISIBLE_REFERENCE, it.symbol, context)
             return
         }

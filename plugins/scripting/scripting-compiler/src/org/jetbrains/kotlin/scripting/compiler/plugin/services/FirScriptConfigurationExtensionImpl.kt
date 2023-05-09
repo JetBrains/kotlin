@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin.services
 
+import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.scripting.definitions.annotationsForSamWithReceivers
 import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.VirtualFileScriptSource
@@ -61,6 +63,10 @@ class FirScriptConfiguratorExtensionImpl(
                 val stripped = if (endsWithStar) trimmed.substring(0, trimmed.length - 2) else trimmed
                 val fqName = FqName.fromSegments(stripped.split("."))
                 fileBuilder.imports += buildImport {
+                    fileBuilder.sourceFile?.project()?.let {
+                        val dummyElement = KtPsiFactory(it, markGenerated = true).createColon()
+                        source = KtFakeSourceElement(dummyElement, KtFakeSourceElementKind.ImplicitImport)
+                    }
                     importedFqName = fqName
                     isAllUnder = endsWithStar
                 }
@@ -147,6 +153,8 @@ class FirScriptConfiguratorExtensionImpl(
         }
     }
 }
+
+private fun KtSourceFile.project(): Project? = (toSourceCode() as? KtFileScriptSource)?.ktFile?.project
 
 fun KtSourceFile.toSourceCode(): SourceCode? = when (this) {
     is KtPsiSourceFile -> (psiFile as? KtFile)?.let(::KtFileScriptSource) ?: VirtualFileScriptSource(psiFile.virtualFile)

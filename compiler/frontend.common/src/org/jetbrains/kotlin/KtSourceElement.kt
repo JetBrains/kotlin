@@ -272,6 +272,9 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
 
     // When property doesn't have an initializer and explicit return type, but its getter's return type is specified
     object PropertyTypeFromGetterReturnType : KtFakeSourceElementKind()
+
+    // Scripts get implicit imports from their configurations
+    object ImplicitImport : KtFakeSourceElementKind()
 }
 
 sealed class AbstractKtSourceElement {
