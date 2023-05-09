@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.forAllFiles
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.idea.KotlinFileType
+import java.util.TreeSet
 
 private const val kotlinFileExtensionWithDot = ".${KotlinFileType.EXTENSION}"
 private const val javaFileExtensionWithDot = ".${JavaFileType.DEFAULT_EXTENSION}"
@@ -35,13 +36,19 @@ fun collectSources(
     return collectSources(compilerConfiguration, projectEnvironment.project, messageCollector)
 }
 
+private val ktSourceFileComparator = Comparator<KtSourceFile> { o1, o2 ->
+    val path1 = o1.path ?: error("Expected a file with a well-defined path")
+    val path2 = o2.path ?: error("Expected a file with a well-defined path")
+    path1.compareTo(path2)
+}
+
 fun collectSources(
     compilerConfiguration: CompilerConfiguration,
     project: Project,
     messageCollector: MessageCollector
 ): GroupedKtSources {
-    val platformSources = linkedSetOf<KtSourceFile>()
-    val commonSources = linkedSetOf<KtSourceFile>()
+    val platformSources = TreeSet(ktSourceFileComparator)
+    val commonSources = TreeSet(ktSourceFileComparator)
     val sourcesByModuleName = mutableMapOf<String, MutableSet<KtSourceFile>>()
 
     // TODO: the scripts checking should be part of the scripting plugin functionality, as it is implemented now in ScriptingProcessSourcesBeforeCompilingExtension
