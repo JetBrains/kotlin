@@ -39,8 +39,6 @@ namespace gc {
 class FinalizerProcessor;
 #endif
 
-class ConcurrentMarkAndSweep;
-
 // Stop-the-world parallel mark + concurrent sweep. The GC runs in a separate thread, finalizers run in another thread of their own.
 // TODO: Also make marking run concurrently with Kotlin threads.
 class ConcurrentMarkAndSweep : private Pinned {
@@ -104,7 +102,7 @@ public:
     void StopFinalizerThreadIfRunning() noexcept;
     bool FinalizersThreadIsRunning() noexcept;
 
-    void reconfigure(bool mutatorsCooperate, size_t auxGCThreads);
+    void reconfigure(bool mutatorsCooperate, size_t auxGCThreads) noexcept;
 
 #ifdef CUSTOM_ALLOCATOR
     alloc::Heap& heap() noexcept { return heap_; }

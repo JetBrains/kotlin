@@ -186,7 +186,7 @@ gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep(GCScheduler& gcScheduler,
     for (std::size_t i = 0; i < auxGCThreads; ++i) {
         auxThreads_.emplace_back(createGCThread("Auxiliary GC thread", [this] { auxiliaryGCThreadBody(); }));
     }
-    RuntimeLogInfo({kTagGC}, "Stop The World Mark & Concurrent Sweep GC initialized");
+    RuntimeLogInfo({kTagGC}, "Parallel Mark & Concurrent Sweep GC initialized");
 }
 
 gc::ConcurrentMarkAndSweep::~ConcurrentMarkAndSweep() {
@@ -293,7 +293,7 @@ bool gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch, mark::MarkDispatch
     return true;
 }
 
-void gc::ConcurrentMarkAndSweep::reconfigure(bool mutatorsCooperate, std::size_t auxGCThreads) {
+void gc::ConcurrentMarkAndSweep::reconfigure(bool mutatorsCooperate, std::size_t auxGCThreads) noexcept {
     std::unique_lock mainGCLock(gcMutex);
     markDispatcher_.reset(mutatorsCooperate, 1 + auxGCThreads, [this] { auxThreads_.clear(); });
     for (std::size_t i = 0; i < auxGCThreads; ++i) {

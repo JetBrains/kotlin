@@ -22,7 +22,7 @@ class GC::Impl : private Pinned {
 public:
 #ifdef CUSTOM_ALLOCATOR
     Impl() noexcept : gc_(gcScheduler_,
-                         !compiler::gcMarkSingleThreaded(), compiler::auxGCThreads()) {}
+                         compiler::gcMutatorsCooperate(), compiler::auxGCThreads()) {}
 #else
 
     Impl() noexcept: gc_(objectFactory_, gcScheduler_,

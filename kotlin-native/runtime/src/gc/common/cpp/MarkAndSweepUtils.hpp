@@ -35,7 +35,7 @@ void processFieldInMark(void* state, ObjHeader* field) noexcept {
 
 template <typename Traits>
 void processObjectInMark(void* state, ObjHeader* object) noexcept {
-    traverseClassObjectFields(object, [state] (ObjHeader** fieldLocation) {
+    traverseClassObjectFields(object, [state] (ObjHeader** fieldLocation) noexcept {
         if (auto field = *fieldLocation) {
             processFieldInMark<Traits>(state, field);
         }
@@ -44,7 +44,7 @@ void processObjectInMark(void* state, ObjHeader* object) noexcept {
 
 template <typename Traits>
 void processArrayInMark(void* state, ArrayHeader* array) noexcept {
-    traverseArrayOfObjectsElements(array, [state] (ObjHeader** elemLocation) {
+    traverseArrayOfObjectsElements(array, [state] (ObjHeader** elemLocation) noexcept {
         if (auto elem = *elemLocation) {
             processFieldInMark<Traits>(state, elem);
         }

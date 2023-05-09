@@ -115,7 +115,7 @@ ALWAYS_INLINE inline bool gcMarkSingleThreaded() noexcept {
 WorkerExceptionHandling workerExceptionHandling() noexcept;
 DestroyRuntimeMode destroyRuntimeMode() noexcept;
 bool gcMutatorsCooperate() noexcept;
-int auxGCThreads() noexcept;
+uint32_t auxGCThreads() noexcept;
 bool suspendFunctionsFromAnyThreadFromObjCEnabled() noexcept;
 AppStateTracking appStateTracking() noexcept;
 int getSourceInfo(void* addr, SourceInfo *result, int result_size) noexcept;
