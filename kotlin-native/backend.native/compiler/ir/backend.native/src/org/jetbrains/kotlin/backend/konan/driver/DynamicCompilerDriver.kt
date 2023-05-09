@@ -121,7 +121,7 @@ internal class DynamicCompilerDriver(
                     topLevelPrefix = abbreviate(config.fullExportedNamePrefix),
                     modulesInfo = exportedModules,
                     name = "Kotlin",
-                    headerStrategy = ObjCExportHeaderStrategy.Global("Kotlin", "Kotlin.h")
+                    headerName = "Kotlin.h"
             ))
         }
         val objcExportStructure = ObjCExportStructure(headerInfos)

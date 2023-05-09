@@ -42,25 +42,15 @@ internal class ObjCExportConfigParser(
             val libraries = frameworkNode.getChild("libraries").children.map { libraryNode ->
                 parseLibrary(libraryNode)
             }
-            val headerStrategy: ObjCExportHeaderStrategy = parseHeaderStrategy(frameworkName, frameworkNode.getChild("headerStrategy"))
+            val headerName = frameworkNode.getChildText("headerName")
             ObjCExportFrameworkStructure(
                     topLevelPrefix = topLevelPrefix,
                     name = frameworkName,
                     modulesInfo = libraries.map { it.resolve() },
-                    headerStrategy = headerStrategy,
+                    headerName = headerName
             )
         }
         return result
-    }
-
-    private fun parseHeaderStrategy(frameworkName: String, element: Element): ObjCExportHeaderStrategy {
-        val kind = element.getChildText("kind")
-        return when (kind) {
-            "global" -> {
-                ObjCExportHeaderStrategy.Global(frameworkName, element.getChildText("headerName"))
-            }
-            else -> error("Unsupported header strategy: $kind")
-        }
     }
 
     private fun ObjCExportConfig.Library.resolve(): ObjCExportModuleInfo {

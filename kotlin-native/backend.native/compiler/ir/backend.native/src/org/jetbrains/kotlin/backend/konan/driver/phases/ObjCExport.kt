@@ -68,7 +68,7 @@ internal val ProduceObjCExportMultipleInterfacesPhase = createSimpleNamedCompile
     val listOfDependenciesPerGenerator = mutableMapOf<ObjCExportHeaderGenerator, MutableSet<ObjCExportHeaderId>>()
     headerGenerators.forEach { (structure, headerGenerator) ->
         val classGenerator = ObjCExportClassGeneratorProxy(classGeneratorProvider, headerIdProvider, onHeaderRequested = { headerId ->
-            if (structure.headerStrategy.containsHeader(headerId)) {
+            if (headerId.frameworkId.name == structure.name && headerId.name == structure.headerName) {
                 return@ObjCExportClassGeneratorProxy
             }
             listOfDependenciesPerGenerator.getOrPut(headerGenerator, ::mutableSetOf) += headerId

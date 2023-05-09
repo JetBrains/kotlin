@@ -30,45 +30,11 @@ class ObjCExportModuleInfo(
         val exported: Boolean,
 )
 
-/**
- * Describes how Kotlin declarations are mapped to Objective-C headers.
- *
- * TODO: get rid of. For now we need only global.
- */
-sealed class ObjCExportHeaderStrategy {
-
-    abstract fun findHeader(declaration: DeclarationDescriptor): String
-
-    abstract fun findHeader(sourceFile: SourceFile): String
-
-    abstract fun containsHeader(headerId: ObjCExportHeaderId): Boolean
-
-    /**
-     * All klibs are mapped to a single header.
-     */
-    class Global(
-            private val frameworkName: String,
-            val headerName: String
-    ) : ObjCExportHeaderStrategy() {
-        override fun findHeader(declaration: DeclarationDescriptor): String {
-            return headerName
-        }
-
-        override fun findHeader(sourceFile: SourceFile): String {
-            return headerName
-        }
-
-        override fun containsHeader(headerId: ObjCExportHeaderId): Boolean {
-            return headerId.frameworkId.name == frameworkName && headerId.name == headerName
-        }
-    }
-}
-
 data class ObjCExportFrameworkStructure(
         val name: String,
         val topLevelPrefix: String,
         val modulesInfo: List<ObjCExportModuleInfo>,
-        val headerStrategy: ObjCExportHeaderStrategy
+        val headerName: String,
 )
 
 data class ObjCExportStructure(
@@ -136,7 +102,7 @@ private class ObjCExportHeaderIdProviderImpl(
     override fun getHeaderId(declaration: DeclarationDescriptor): ObjCExportHeaderId {
         val frameworkId = frameworkProvider.getFrameworkId(declaration.module.kotlinLibrary)
         val frameworkStructure = structure.frameworks.first { it.name == frameworkId.name }
-        val headerName = frameworkStructure.headerStrategy.findHeader(declaration)
+        val headerName = frameworkStructure.headerName
         return ObjCExportHeaderId(frameworkId, headerName)
     }
 
@@ -144,14 +110,14 @@ private class ObjCExportHeaderIdProviderImpl(
         require(sourceFile is DeserializedSourceFile)
         val frameworkId = frameworkProvider.getFrameworkId(sourceFile.library)
         val frameworkStructure = structure.frameworks.first { it.name == frameworkId.name }
-        val headerName = frameworkStructure.headerStrategy.findHeader(sourceFile)
+        val headerName = frameworkStructure.headerName
         return ObjCExportHeaderId(frameworkId, headerName)
     }
 
     override fun getStdlibHeaderId(): ObjCExportHeaderId {
         val frameworkId = frameworkProvider.getFrameworkId(stdlib)
         val frameworkStructure = structure.frameworks.first { it.name == frameworkId.name }
-        val headerName = (frameworkStructure.headerStrategy as ObjCExportHeaderStrategy.Global).headerName
+        val headerName = frameworkStructure.headerName
         return ObjCExportHeaderId(frameworkId, headerName)
     }
 }
