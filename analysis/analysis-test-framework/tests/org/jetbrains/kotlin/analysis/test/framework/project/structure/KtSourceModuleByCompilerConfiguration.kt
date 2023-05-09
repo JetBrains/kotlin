@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.test.getAnalyzerServices
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
-import org.jetbrains.kotlin.utils.addIfNotNull
 import java.io.File
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -44,8 +43,8 @@ abstract class KtModuleByCompilerConfiguration(
     val directRegularDependencies: List<KtModule> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         buildList {
             testModule.allDependencies.mapTo(this) { moduleProvider.getModule(it.moduleName) }
-            addIfNotNull(
-                libraryByRoots(
+            addAll(
+                librariesByRoots(
                     (configuration.jvmModularRoots + configuration.jvmClasspathRoots).map(File::toPath)
                 )
             )
@@ -62,22 +61,15 @@ abstract class KtModuleByCompilerConfiguration(
     val directFriendDependencies: List<KtModule> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         buildList {
             testModule.friendDependencies.mapTo(this) { moduleProvider.getModule(it.moduleName) }
-            addIfNotNull(
-                libraryByRoots(configuration[JVMConfigurationKeys.FRIEND_PATHS].orEmpty().map(Paths::get))
+            addAll(
+                librariesByRoots(configuration[JVMConfigurationKeys.FRIEND_PATHS].orEmpty().map(Paths::get))
             )
         }
     }
 
     protected abstract val ktModule: KtModule
 
-    private fun libraryByRoots(roots: List<Path>): LibraryByRoots? {
-        if (roots.isEmpty()) return null
-        return LibraryByRoots(
-            roots,
-            ktModule,
-            project,
-        )
-    }
+    private fun librariesByRoots(roots: List<Path>): List<LibraryByRoot> = roots.map { LibraryByRoot(it, ktModule, project) }
 
     val languageVersionSettings: LanguageVersionSettings
         get() = testModule.languageVersionSettings
@@ -131,33 +123,33 @@ class KtLibrarySourceModuleByCompilerConfiguration(
     override val libraryName: String get() = testModule.name
 }
 
-private class LibraryByRoots(
-    private val roots: List<Path>,
-    private val module: KtModule,
+private class LibraryByRoot(
+    private val root: Path,
+    private val parentModule: KtModule,
     override val project: Project,
 ) : KtLibraryModule {
-    override val libraryName: String get() = "Test Library"
+    override val libraryName: String get() = "Test Library $root"
     override val directRegularDependencies: List<KtModule> get() = emptyList()
     override val directDependsOnDependencies: List<KtModule> get() = emptyList()
     override val transitiveDependsOnDependencies: List<KtModule> get() = emptyList()
     override val directFriendDependencies: List<KtModule> get() = emptyList()
     override val contentScope: GlobalSearchScope get() = ProjectScope.getLibrariesScope(project)
-    override val platform: TargetPlatform get() = module.platform
-    override val analyzerServices: PlatformDependentAnalyzerServices get() = module.analyzerServices
-    override fun getBinaryRoots(): Collection<Path> = roots
+    override val platform: TargetPlatform get() = parentModule.platform
+    override val analyzerServices: PlatformDependentAnalyzerServices get() = parentModule.analyzerServices
+    override fun getBinaryRoots(): Collection<Path> = listOf(root)
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as LibraryByRoots
+        other as LibraryByRoot
 
-        return roots == other.roots
+        return root == other.root
     }
 
     override fun hashCode(): Int {
-        return roots.hashCode()
+        return root.hashCode()
     }
 
     override val librarySources: KtLibrarySourceModule? get() = null
 }
-
