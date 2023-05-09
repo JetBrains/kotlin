@@ -56,6 +56,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
             (arguments.produce ?: "program").uppercase())
     put(PRODUCE, outputKind)
     put(METADATA_KLIB, arguments.metadataKlib)
+    putIfNotNull(HEADER_KLIB, arguments.headerKlibPath)
 
     arguments.libraryVersion?.let { put(LIBRARY_VERSION, it) }
 

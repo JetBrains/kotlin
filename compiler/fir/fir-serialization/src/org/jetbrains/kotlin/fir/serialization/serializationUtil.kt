@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.diagnostics.ConeIntermediateDiagnostic
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -47,6 +48,10 @@ fun ConeKotlinType.suspendFunctionTypeToFunctionTypeWithContinuation(session: Fi
     )
 }
 
-fun FirMemberDeclaration.shouldBeSerialized(actualizedExpectDeclaration: Set<FirDeclaration>?): Boolean {
+fun FirMemberDeclaration.isNotExpectOrShouldBeSerialized(actualizedExpectDeclaration: Set<FirDeclaration>?): Boolean {
     return !isExpect || actualizedExpectDeclaration == null || this !in actualizedExpectDeclaration
+}
+
+fun FirMemberDeclaration.isNotPrivateOrShouldBeSerialized(produceHeaderKlib: Boolean): Boolean {
+    return !produceHeaderKlib || visibility.isPublicAPI
 }

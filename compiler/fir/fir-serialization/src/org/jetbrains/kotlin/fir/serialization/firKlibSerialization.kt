@@ -22,12 +22,14 @@ fun serializeSingleFirFile(
     actualizedExpectDeclarations: Set<FirDeclaration>?,
     serializerExtension: FirKLibSerializerExtension,
     languageVersionSettings: LanguageVersionSettings,
+    produceHeaderKlib: Boolean = false,
 ): ProtoBuf.PackageFragment {
     val approximator = TypeApproximatorForMetadataSerializer(session)
     val packageSerializer = FirElementSerializer.createTopLevel(
         session, scopeSession, serializerExtension,
         approximator,
-        languageVersionSettings
+        languageVersionSettings,
+        produceHeaderKlib
     )
 
     // TODO: typealiases (see klib serializer)
@@ -40,13 +42,16 @@ fun serializeSingleFirFile(
 
     fun List<FirClassSymbol<*>>.makeClassesProtoWithNested() {
         val classSymbols = this
-            .filter { it.fir.shouldBeSerialized(actualizedExpectDeclarations) }
+            .filter {
+                it.fir.isNotExpectOrShouldBeSerialized(actualizedExpectDeclarations) &&
+                        it.fir.isNotPrivateOrShouldBeSerialized(produceHeaderKlib)
+            }
             .sortedBy { it.classId.asFqNameString() }
         for (symbol in classSymbols) {
             val klass = symbol.fir
             val classSerializer = FirElementSerializer.create(
                 session, scopeSession, klass, serializerExtension, null,
-                approximator, languageVersionSettings
+                approximator, languageVersionSettings, produceHeaderKlib
             )
             val index = classSerializer.stringTable.getFqNameIndex(klass)
 
@@ -60,7 +65,8 @@ fun serializeSingleFirFile(
     }
 
     val hasTopLevelDeclarations = file.declarations.any {
-        it is FirMemberDeclaration && it.shouldBeSerialized(actualizedExpectDeclarations) &&
+        it is FirMemberDeclaration && it.isNotExpectOrShouldBeSerialized(actualizedExpectDeclarations) &&
+                it.isNotPrivateOrShouldBeSerialized(produceHeaderKlib) &&
                 (it is FirProperty || it is FirSimpleFunction || it is FirTypeAlias)
     }
 

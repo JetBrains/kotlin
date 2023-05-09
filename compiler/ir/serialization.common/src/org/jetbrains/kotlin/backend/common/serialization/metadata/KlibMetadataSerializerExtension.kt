@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.common.serialization.metadata
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.library.metadata.KlibMetadataProtoBuf
@@ -15,8 +14,10 @@ import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtPrimaryConstructor
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
+import org.jetbrains.kotlin.serialization.DescriptorSerializer.Companion.sort
 import org.jetbrains.kotlin.serialization.KotlinSerializerExtensionBase
 import org.jetbrains.kotlin.serialization.StringTableImpl
 import org.jetbrains.kotlin.serialization.deserialization.DYNAMIC_TYPE_DESERIALIZER_ID
@@ -28,9 +29,22 @@ class KlibMetadataSerializerExtension(
     override val metadataVersion: BinaryVersion,
     override val stringTable: StringTableImpl,
     private val allowErrorTypes: Boolean,
-    private val exportKDoc: Boolean
+    private val exportKDoc: Boolean,
+    private val produceHeaderKlib: Boolean
 ) : KotlinSerializerExtensionBase(KlibMetadataSerializerProtocol) {
     override fun shouldUseTypeTable(): Boolean = true
+    override val customClassMembersProducer: ClassMembersProducer?
+        get() = if (produceHeaderKlib)
+            object : ClassMembersProducer {
+                override fun getCallableMembers(classDescriptor: ClassDescriptor) =
+                    sort(
+                        DescriptorUtils.getAllDescriptors(classDescriptor.defaultType.memberScope)
+                            .filterIsInstance<CallableMemberDescriptor>()
+                            .filter { it.kind != CallableMemberDescriptor.Kind.FAKE_OVERRIDE }
+                            .filter { it.visibility.isPublicAPI }
+                    )
+            }
+        else super.customClassMembersProducer
 
     private fun descriptorFileId(descriptor: DeclarationDescriptorWithSource): Int? {
         val fileName = descriptor.source.containingFile.name ?: return null

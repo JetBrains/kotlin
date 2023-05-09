@@ -45,6 +45,7 @@ fun copyK2NativeCompilerArguments(from: K2NativeCompilerArguments, to: K2NativeC
     to.generateNoExitTestRunner = from.generateNoExitTestRunner
     to.generateTestRunner = from.generateTestRunner
     to.generateWorkerTestRunner = from.generateWorkerTestRunner
+    to.headerKlibPath = from.headerKlibPath
     to.includeBinaries = from.includeBinaries?.copyOf()
     to.includes = from.includes?.copyOf()
     to.incrementalCacheDir = from.incrementalCacheDir

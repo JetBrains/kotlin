@@ -15,6 +15,8 @@ class KonanIrModuleSerializer(
         normalizeAbsolutePaths: Boolean,
         sourceBaseDirs: Collection<String>,
         private val languageVersionSettings: LanguageVersionSettings,
+        private val bodiesOnlyForInlines: Boolean = false,
+        private val skipPrivateApi: Boolean = false,
 ) : IrModuleSerializer<KonanIrFileSerializer>(messageLogger, compatibilityMode, normalizeAbsolutePaths, sourceBaseDirs) {
 
     private val globalDeclarationTable = KonanGlobalDeclarationTable(irBuiltIns)
@@ -33,5 +35,7 @@ class KonanIrModuleSerializer(
                     compatibilityMode = compatibilityMode,
                     normalizeAbsolutePaths = normalizeAbsolutePaths,
                     sourceBaseDirs = sourceBaseDirs,
-                    languageVersionSettings = languageVersionSettings)
+                    languageVersionSettings = languageVersionSettings,
+                    bodiesOnlyForInlines = bodiesOnlyForInlines,
+                    skipPrivateApi = skipPrivateApi)
 }

@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.library.impl.IrMemoryStringWriter
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import java.io.File
 import org.jetbrains.kotlin.backend.common.serialization.proto.AccessorIdSignature as ProtoAccessorIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.CommonIdSignature as ProtoCommonIdSignature
@@ -118,6 +119,7 @@ open class IrFileSerializer(
     private val languageVersionSettings: LanguageVersionSettings,
     private val bodiesOnlyForInlines: Boolean = false,
     private val normalizeAbsolutePaths: Boolean = false,
+    private val skipPrivateApi: Boolean = false,
     private val sourceBaseDirs: Collection<String>
 ) {
     private val loopIndex = hashMapOf<IrLoop, Int>()
@@ -183,7 +185,11 @@ open class IrFileSerializer(
     private fun serializeIrStatementOrigin(origin: IrStatementOrigin): Int =
         serializeString((origin as? IrStatementOriginImpl)?.debugName ?: error("Unable to serialize origin ${origin.javaClass.name}"))
 
-    private fun serializeCoordinates(start: Int, end: Int): Long = BinaryCoordinates.encode(start, end)
+    private fun serializeCoordinates(start: Int, end: Int): Long = if (skipPrivateApi) {
+        0L
+    } else {
+        BinaryCoordinates.encode(start, end)
+    }
 
     /* ------- Strings ---------------------------------------------------------- */
 
@@ -1340,9 +1346,9 @@ open class IrFileSerializer(
 
 // ---------- Top level ------------------------------------------------------
 
-    private fun serializeFileEntry(entry: IrFileEntry): ProtoFileEntry = ProtoFileEntry.newBuilder()
+    private fun serializeFileEntry(entry: IrFileEntry, includeLineStartOffsets: Boolean = true): ProtoFileEntry = ProtoFileEntry.newBuilder()
         .setName(entry.matchAndNormalizeFilePath())
-        .addAllLineStartOffset(entry.lineStartOffsets.asIterable())
+        .applyIf(includeLineStartOffsets) { addAllLineStartOffset(entry.lineStartOffsets.asIterable()) }
         .build()
 
     open fun backendSpecificExplicitRoot(node: IrAnnotationContainer): Boolean = false
@@ -1351,12 +1357,18 @@ open class IrFileSerializer(
     open fun backendSpecificSerializeAllMembers(irClass: IrClass) = false
     open fun backendSpecificMetadata(irFile: IrFile): FileBackendSpecificMetadata? = null
 
+    private fun skipIfPrivate(declaration: IrDeclaration) =
+        skipPrivateApi && (declaration as? IrDeclarationWithVisibility)?.visibility?.isPublicAPI != true
+
     open fun memberNeedsSerialization(member: IrDeclaration): Boolean {
         val parent = member.parent
         require(parent is IrClass)
         if (backendSpecificSerializeAllMembers(parent)) return true
         if (bodiesOnlyForInlines && member is IrAnonymousInitializer && parent.visibility != DescriptorVisibilities.LOCAL)
             return false
+        if (skipIfPrivate(member)) {
+            return false
+        }
 
         return (!member.isFakeOverride)
     }
@@ -1414,11 +1426,15 @@ open class IrFileSerializer(
         val topLevelDeclarations = mutableListOf<SerializedDeclaration>()
 
         val proto = ProtoFile.newBuilder()
-            .setFileEntry(serializeFileEntry(file.fileEntry))
+            .setFileEntry(serializeFileEntry(file.fileEntry, includeLineStartOffsets = !skipPrivateApi))
             .addAllFqName(serializeFqName(file.packageFqName.asString()))
             .addAllAnnotation(serializeAnnotations(file.annotations))
 
         file.declarations.forEach {
+            if (skipIfPrivate(it)) {
+                // Skip the declaration if producing header klib and the declaration is not public.
+                return@forEach
+            }
             if (it.descriptor.isExpectMember && !it.descriptor.isSerializableExpectClass) {
                 // Skip the declaration unless it is `expect annotation class` marked with `OptionalExpectation`
                 // without the corresponding `actual` counterpart for the current leaf target.
@@ -1441,7 +1457,7 @@ open class IrFileSerializer(
 
         // Make sure that all top level properties are initialized on library's load.
         file.declarations
-            .filterIsInstanceAnd<IrProperty> { it.backingField?.initializer != null && keepOrderOfProperties(it) }
+            .filterIsInstanceAnd<IrProperty> { it.backingField?.initializer != null && keepOrderOfProperties(it) && !skipIfPrivate(it) }
             .forEach {
                 val fieldSymbol = it.backingField?.symbol ?: error("Not found ID ${it.render()}")
                 proto.addExplicitlyExportedToCompiler(serializeIrSymbol(fieldSymbol))

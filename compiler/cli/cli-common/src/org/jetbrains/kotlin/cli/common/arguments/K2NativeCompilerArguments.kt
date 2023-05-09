@@ -372,6 +372,12 @@ class K2NativeCompilerArguments : CommonCompilerArguments() {
     @Argument(value = "-Xmetadata-klib", description = "Produce a klib that only contains the declarations metadata")
     var metadataKlib: Boolean = false
 
+    @Argument(
+        value = "-Xheader-klib-path",
+        description = "Save a klib that only contains the public abi to the given path"
+    )
+    var headerKlibPath: String? = null
+
     @Argument(value = "-Xdebug-prefix-map", valueDescription = "<old1=new1,old2=new2,...>", description = "Remap file source directory paths in debug info")
     var debugPrefixMap: Array<String>? = null
 

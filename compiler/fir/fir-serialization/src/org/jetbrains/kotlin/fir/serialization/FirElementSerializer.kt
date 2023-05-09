@@ -74,6 +74,7 @@ class FirElementSerializer private constructor(
     private val serializeTypeTableToFunction: Boolean,
     private val typeApproximator: AbstractTypeApproximator,
     private val languageVersionSettings: LanguageVersionSettings,
+    private val produceHeaderKlib: Boolean,
 ) {
     private val contractSerializer = FirContractSerializer()
     private val providedDeclarationsService = session.providedDeclarationsForMetadataService
@@ -89,7 +90,8 @@ class FirElementSerializer private constructor(
 
         fun addDeclaration(declaration: FirDeclaration, onUnsupportedDeclaration: (FirDeclaration) -> Unit) {
             if (declaration is FirMemberDeclaration) {
-                if (!declaration.shouldBeSerialized(actualizedExpectDeclarations)) return
+                if (!declaration.isNotExpectOrShouldBeSerialized(actualizedExpectDeclarations)) return
+                if (!declaration.isNotPrivateOrShouldBeSerialized(produceHeaderKlib)) return
                 when (declaration) {
                     is FirProperty -> propertyProto(declaration)?.let { builder.addProperty(it) }
                     is FirSimpleFunction -> functionProto(declaration)?.let { builder.addFunction(it) }
@@ -178,6 +180,7 @@ class FirElementSerializer private constructor(
          */
         if (regularClass != null && regularClass.classKind != ClassKind.ENUM_ENTRY) {
             for (constructor in regularClass.constructors()) {
+                if (!constructor.isNotPrivateOrShouldBeSerialized(produceHeaderKlib)) continue
                 builder.addConstructor(constructorProto(constructor))
             }
 
@@ -203,6 +206,7 @@ class FirElementSerializer private constructor(
 
         for (declaration in callableMembers) {
             if (declaration !is FirEnumEntry && declaration.isStatic) continue // ??? Miss values() & valueOf()
+            if (!declaration.isNotPrivateOrShouldBeSerialized(produceHeaderKlib)) continue
             when (declaration) {
                 is FirProperty -> propertyProto(declaration)?.let { builder.addProperty(it) }
                 is FirSimpleFunction -> functionProto(declaration)?.let { builder.addFunction(it) }
@@ -1042,7 +1046,7 @@ class FirElementSerializer private constructor(
         FirElementSerializer(
             session, scopeSession, declaration, Interner(typeParameters), extension,
             typeTable, versionRequirementTable, serializeTypeTableToFunction = false,
-            typeApproximator, languageVersionSettings
+            typeApproximator, languageVersionSettings, produceHeaderKlib
         )
 
     val stringTable: FirElementAwareStringTable
@@ -1148,6 +1152,7 @@ class FirElementSerializer private constructor(
             extension: FirSerializerExtension,
             typeApproximator: AbstractTypeApproximator,
             languageVersionSettings: LanguageVersionSettings,
+            produceHeaderKlib: Boolean = false,
         ): FirElementSerializer =
             FirElementSerializer(
                 session, scopeSession, null,
@@ -1155,6 +1160,7 @@ class FirElementSerializer private constructor(
                 serializeTypeTableToFunction = false,
                 typeApproximator,
                 languageVersionSettings,
+                produceHeaderKlib,
             )
 
         @JvmStatic
@@ -1171,6 +1177,7 @@ class FirElementSerializer private constructor(
                 versionRequirementTable = null, serializeTypeTableToFunction = true,
                 typeApproximator,
                 languageVersionSettings,
+                produceHeaderKlib = false,
             )
 
         @JvmStatic
@@ -1182,16 +1189,17 @@ class FirElementSerializer private constructor(
             parentSerializer: FirElementSerializer?,
             typeApproximator: AbstractTypeApproximator,
             languageVersionSettings: LanguageVersionSettings,
+            produceHeaderKlib: Boolean = false,
         ): FirElementSerializer {
             val parentClassId = klass.symbol.classId.outerClassId
             val parent = if (parentClassId != null && !parentClassId.isLocal) {
                 val parentClass = session.symbolProvider.getClassLikeSymbolByClassId(parentClassId)!!.fir as FirRegularClass
                 parentSerializer ?: create(
                     session, scopeSession, parentClass, extension, null, typeApproximator,
-                    languageVersionSettings,
+                    languageVersionSettings, produceHeaderKlib
                 )
             } else {
-                createTopLevel(session, scopeSession, extension, typeApproximator, languageVersionSettings)
+                createTopLevel(session, scopeSession, extension, typeApproximator, languageVersionSettings, produceHeaderKlib)
             }
 
             // Calculate type parameter ids for the outer class beforehand, as it would've had happened if we were always
@@ -1212,6 +1220,7 @@ class FirElementSerializer private constructor(
                 serializeTypeTableToFunction = false,
                 typeApproximator,
                 languageVersionSettings,
+                produceHeaderKlib,
             )
             for (typeParameter in klass.typeParameters) {
                 if (typeParameter !is FirTypeParameter) continue

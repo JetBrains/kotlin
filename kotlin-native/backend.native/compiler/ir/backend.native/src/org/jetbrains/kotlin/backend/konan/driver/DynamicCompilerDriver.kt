@@ -108,8 +108,15 @@ internal class DynamicCompilerDriver : CompilerDriver() {
             engine.runFirSerializer(frontendOutput)
         } else {
             val fir2IrOutput = engine.runFir2Ir(frontendOutput)
+
+            val headerKlibPath = environment.configuration.get(KonanConfigKeys.HEADER_KLIB)
+            if (!headerKlibPath.isNullOrEmpty()) {
+                val headerKlib = engine.runFir2IrSerializer(FirSerializerInput(fir2IrOutput, produceHeaderKlib = true))
+                engine.writeKlib(headerKlib, headerKlibPath)
+            }
+
             engine.runK2SpecialBackendChecks(fir2IrOutput)
-            engine.runFir2IrSerializer(fir2IrOutput)
+            engine.runFir2IrSerializer(FirSerializerInput(fir2IrOutput))
         }
     }
 
@@ -123,6 +130,10 @@ internal class DynamicCompilerDriver : CompilerDriver() {
             null
         } else {
             engine.runPsiToIr(frontendOutput, isProducingLibrary = true) as PsiToIrOutput.ForKlib
+        }
+        if (!config.headerKlibPath.isNullOrEmpty()) {
+            val headerKlib = engine.runSerializer(frontendOutput.moduleDescriptor, psiToIrOutput, produceHeaderKlib = true)
+            engine.writeKlib(headerKlib, config.headerKlibPath)
         }
         return engine.runSerializer(frontendOutput.moduleDescriptor, psiToIrOutput)
     }

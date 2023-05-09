@@ -14,13 +14,19 @@ import org.jetbrains.kotlin.konan.library.impl.buildLibrary
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibraryVersioning
 import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
+import org.jetbrains.kotlin.util.removeSuffixIfPresent
 
-internal val WriteKlibPhase = createSimpleNamedCompilerPhase<PhaseContext, SerializerOutput>(
+internal data class KlibWriterInput(
+        val serializerOutput: SerializerOutput,
+        val customOutputPath: String?
+)
+internal val WriteKlibPhase = createSimpleNamedCompilerPhase<PhaseContext, KlibWriterInput>(
         "WriteKlib", "Write klib output",
 ) { context, input ->
     val config = context.config
     val configuration = config.configuration
-    val outputFiles = OutputFiles(config.outputPath, config.target, config.produce)
+    val outputFiles = OutputFiles(input.customOutputPath?.removeSuffixIfPresent(".klib")
+            ?: config.outputPath, config.target, config.produce)
     val nopack = configuration.getBoolean(KonanConfigKeys.NOPACK)
     val output = outputFiles.klibOutputFileName(!nopack)
     val libraryName = config.moduleId
@@ -51,14 +57,14 @@ internal val WriteKlibPhase = createSimpleNamedCompilerPhase<PhaseContext, Seria
     (e.g. commonized cinterops, host vs client environment differences).
     */
     val linkDependencies = if (context.config.metadataKlib) emptyList()
-    else input.neededLibraries
+    else input.serializerOutput.neededLibraries
 
     buildLibrary(
             natives = config.nativeLibraries,
             included = config.includeBinaries,
             linkDependencies = linkDependencies,
-            metadata = input.serializedMetadata!!,
-            ir = input.serializedIr,
+            metadata = input.serializerOutput.serializedMetadata!!,
+            ir = input.serializerOutput.serializedIr,
             versions = versions,
             target = target,
             output = output,
@@ -66,12 +72,13 @@ internal val WriteKlibPhase = createSimpleNamedCompilerPhase<PhaseContext, Seria
             nopack = nopack,
             shortName = shortLibraryName,
             manifestProperties = manifestProperties,
-            dataFlowGraph = input.dataFlowGraph
+            dataFlowGraph = input.serializerOutput.dataFlowGraph
     )
 }
 
 internal fun <T : PhaseContext> PhaseEngine<T>.writeKlib(
         serializationOutput: SerializerOutput,
+        customOutputPath: String? = null,
 ) {
-    this.runPhase(WriteKlibPhase, serializationOutput)
+    this.runPhase(WriteKlibPhase, KlibWriterInput(serializationOutput, customOutputPath))
 }

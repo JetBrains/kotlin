@@ -12,21 +12,23 @@ import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 
 class KonanIrFileSerializer(
-        messageLogger: IrMessageLogger,
-        declarationTable: DeclarationTable,
-        languageVersionSettings: LanguageVersionSettings,
-        bodiesOnlyForInlines: Boolean = false,
-        compatibilityMode: CompatibilityMode,
-        normalizeAbsolutePaths: Boolean,
-        sourceBaseDirs: Collection<String>
+    messageLogger: IrMessageLogger,
+    declarationTable: DeclarationTable,
+    languageVersionSettings: LanguageVersionSettings,
+    bodiesOnlyForInlines: Boolean = false,
+    compatibilityMode: CompatibilityMode,
+    normalizeAbsolutePaths: Boolean,
+    sourceBaseDirs: Collection<String>,
+    skipPrivateApi: Boolean = false,
 ) : IrFileSerializer(
-        messageLogger = messageLogger,
-        declarationTable = declarationTable,
-        compatibilityMode = compatibilityMode,
-        languageVersionSettings = languageVersionSettings,
-        bodiesOnlyForInlines = bodiesOnlyForInlines,
-        normalizeAbsolutePaths = normalizeAbsolutePaths,
-        sourceBaseDirs = sourceBaseDirs
+    messageLogger,
+    declarationTable,
+    compatibilityMode,
+    languageVersionSettings,
+    skipPrivateApi = skipPrivateApi,
+    bodiesOnlyForInlines = bodiesOnlyForInlines,
+    normalizeAbsolutePaths = normalizeAbsolutePaths,
+    sourceBaseDirs = sourceBaseDirs
 ) {
 
     override fun backendSpecificExplicitRoot(node: IrAnnotationContainer): Boolean {
