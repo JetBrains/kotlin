@@ -395,6 +395,8 @@ val distJs = distTask<Sync>("distJs") {
     from(distJSContents)
 }
 
+val sbom = configureSbom(setOf("runtimeClasspath", libraries.name, librariesStripVersion.name, compilerPlugins.name))
+
 distTask<Copy>("dist") {
     destinationDir = File(distDir)
 
@@ -405,6 +407,7 @@ distTask<Copy>("dist") {
 
     from(buildNumber)
     from(distStdlibMinimalForTests)
+    fromSbom(sbom)
 }
 
 inline fun <reified T : AbstractCopyTask> Project.distTask(
@@ -416,5 +419,3 @@ inline fun <reified T : AbstractCopyTask> Project.distTask(
     rename(quote("-$bootstrapKotlinVersion"), "")
     block()
 }
-
-configureSbom(setOf("runtimeClasspath", libraries.name, librariesStripVersion.name, compilerPlugins.name))
