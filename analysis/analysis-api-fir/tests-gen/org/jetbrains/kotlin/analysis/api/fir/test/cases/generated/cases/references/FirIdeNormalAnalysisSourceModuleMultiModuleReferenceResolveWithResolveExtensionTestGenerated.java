@@ -45,4 +45,32 @@ public class FirIdeNormalAnalysisSourceModuleMultiModuleReferenceResolveWithReso
     public void testAllFilesPresentInReferenceResolve() throws Exception {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/resolveExtensions/multiModule/referenceResolve"), Pattern.compile("^(.+)\\.kt$"), null, true);
     }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/resolveExtensions/multiModule/referenceResolve/extendedModuleDependency")
+    @TestDataPath("$PROJECT_ROOT")
+    public class ExtendedModuleDependency {
+        @Test
+        public void testAllFilesPresentInExtendedModuleDependency() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/resolveExtensions/multiModule/referenceResolve/extendedModuleDependency"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("classMember.kt")
+        public void testClassMember() throws Exception {
+            runTest("analysis/analysis-api/testData/resolveExtensions/multiModule/referenceResolve/extendedModuleDependency/classMember.kt");
+        }
+
+        @Test
+        @TestMetadata("extensionFunction.kt")
+        public void testExtensionFunction() throws Exception {
+            runTest("analysis/analysis-api/testData/resolveExtensions/multiModule/referenceResolve/extendedModuleDependency/extensionFunction.kt");
+        }
+
+        @Test
+        @TestMetadata("topLevelFunction.kt")
+        public void testTopLevelFunction() throws Exception {
+            runTest("analysis/analysis-api/testData/resolveExtensions/multiModule/referenceResolve/extendedModuleDependency/topLevelFunction.kt");
+        }
+    }
 }
