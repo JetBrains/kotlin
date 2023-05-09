@@ -206,11 +206,11 @@ bool gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
     objectFactoryIterable = std::nullopt;
     kotlin::compactObjectPoolInMainThread();
 #else
-    auto finalizerQueue = heap_.SweepExtraObjects(gcHandle);
-
     mm::ResumeThreads();
     gcHandle.threadsAreResumed();
-    heap_.Sweep(gcHandle);
+
+    // also sweeps extraObjects
+    auto finalizerQueue = heap_.Sweep(gcHandle);
 #endif
     state_.finish(epoch);
     gcHandle.finalizersScheduled(finalizerQueue.size());

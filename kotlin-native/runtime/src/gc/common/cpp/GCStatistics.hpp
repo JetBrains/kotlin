@@ -46,6 +46,7 @@ public:
     class GCSweepScope : GCStageScopeUsTimer, Pinned {
         GCHandle& handle_;
         SweepStats stats_;
+        uint64_t markedCount_ = 0;
 
     public:
         explicit GCSweepScope(GCHandle& handle);
@@ -53,12 +54,13 @@ public:
 
         void addSweptObject() noexcept { stats_.sweptCount += 1; }
         void addKeptObject() noexcept { stats_.keptCount += 1; }
+        // Custom allocator only. To be finalized objects are kept alive.
+        void addMarkedObject() noexcept { markedCount_ += 1; }
     };
 
     class GCSweepExtraObjectsScope : GCStageScopeUsTimer, Pinned {
         GCHandle& handle_;
         SweepStats stats_;
-        uint64_t markedCount_ = 0;
 
     public:
         explicit GCSweepExtraObjectsScope(GCHandle& handle);
@@ -66,8 +68,6 @@ public:
 
         void addSweptObject() noexcept { stats_.sweptCount += 1; }
         void addKeptObject() noexcept { stats_.keptCount += 1; }
-        // Custom allocator only. To be finalized objects are kept alive.
-        void addMarkedObject() noexcept { markedCount_ += 1; }
     };
 
     class GCGlobalRootSetScope : GCStageScopeUsTimer, Pinned {
@@ -130,8 +130,8 @@ private:
 
     void threadRootSetCollected(mm::ThreadData& threadData, uint64_t threadLocalReferences, uint64_t stackReferences);
     void globalRootSetCollected(uint64_t globalReferences, uint64_t stableReferences);
-    void swept(SweepStats stats) noexcept;
-    void sweptExtraObjects(SweepStats stats, uint64_t markedCount) noexcept;
+    void swept(SweepStats stats, uint64_t markedCount) noexcept;
+    void sweptExtraObjects(SweepStats stats) noexcept;
     void marked(MarkStats stats);
 
 public:

@@ -37,15 +37,13 @@ uint8_t* SingleObjectPage::TryAllocate() noexcept {
     return Data();
 }
 
-bool SingleObjectPage::Sweep(gc::GCHandle::GCSweepScope& sweepHandle) noexcept {
+bool SingleObjectPage::Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept {
     CustomAllocDebug("SingleObjectPage@%p::Sweep()", this);
-    if (!TryResetMark(Data())) {
-        isAllocated_ = false;
-        sweepHandle.addKeptObject();
-        return false;
+    if (SweepObject(Data(), finalizerQueue, sweepHandle)) {
+        return true;
     }
-    sweepHandle.addSweptObject();
-    return true;
+    isAllocated_ = false;
+    return false;
 }
 
 } // namespace kotlin::alloc

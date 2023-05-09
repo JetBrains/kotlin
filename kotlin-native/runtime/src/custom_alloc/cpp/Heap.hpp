@@ -22,29 +22,24 @@ namespace kotlin::alloc {
 
 class Heap {
 public:
-    ~Heap() noexcept;
-
     // Called once by the GC thread after all mutators have been suspended
     void PrepareForGC() noexcept;
 
     // Sweep through all remaining pages, freeing those blocks where CanReclaim
     // returns true. If multiple sweepers are active, each page will only be
     // seen by one sweeper.
-    void Sweep(gc::GCHandle gcHandle) noexcept;
+    FinalizerQueue Sweep(gc::GCHandle gcHandle) noexcept;
 
-    AtomicStack<ExtraObjectCell> SweepExtraObjects(gc::GCHandle gcHandle) noexcept;
-
-    FixedBlockPage* GetFixedBlockPage(uint32_t cellCount) noexcept;
-    NextFitPage* GetNextFitPage(uint32_t cellCount) noexcept;
-    SingleObjectPage* GetSingleObjectPage(uint64_t cellCount) noexcept;
-    ExtraObjectPage* GetExtraObjectPage() noexcept;
+    FixedBlockPage* GetFixedBlockPage(uint32_t cellCount, FinalizerQueue& finalizerQueue) noexcept;
+    NextFitPage* GetNextFitPage(uint32_t cellCount, FinalizerQueue& finalizerQueue) noexcept;
+    SingleObjectPage* GetSingleObjectPage(uint64_t cellCount, FinalizerQueue& finalizerQueue) noexcept;
+    ExtraObjectPage* GetExtraObjectPage(FinalizerQueue& finalizerQueue) noexcept;
 
 private:
     PageStore<FixedBlockPage> fixedBlockPages_[FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE + 1];
     PageStore<NextFitPage> nextFitPages_;
     PageStore<SingleObjectPage> singleObjectPages_;
-    AtomicStack<ExtraObjectPage> extraObjectPages_;
-    AtomicStack<ExtraObjectPage> usedExtraObjectPages_;
+    PageStore<ExtraObjectPage> extraObjectPages_;
 };
 
 } // namespace kotlin::alloc

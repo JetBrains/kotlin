@@ -25,7 +25,7 @@ TEST(CustomAllocTest, SmallAllocNonNull) {
     const int N = 200;
     TypeInfo fakeTypes[N];
     for (int i = 1; i < N; ++i) {
-        fakeTypes[i] = {.instanceSize_ = 8 * i, .flags_ = 0};
+        fakeTypes[i] = {.typeInfo_ = &fakeTypes[i], .instanceSize_ = 8 * i, .flags_ = 0};
     }
     Heap heap;
     kotlin::gc::GCSchedulerConfig config;
@@ -46,7 +46,7 @@ TEST(CustomAllocTest, SmallAllocSameFixedBlockPage) {
         kotlin::gc::GCSchedulerConfig config;
         kotlin::gc::GCSchedulerThreadData schedulerData(config, [](auto&) {});
         CustomAllocator ca(heap, schedulerData);
-        TypeInfo fakeType = {.instanceSize_ = 8 * blocks, .flags_ = 0};
+        TypeInfo fakeType = {.typeInfo_ = &fakeType, .instanceSize_ = 8 * blocks, .flags_ = 0};
         uint8_t* first = reinterpret_cast<uint8_t*>(ca.CreateObject(&fakeType));
         for (int i = 1; i < N; ++i) {
             uint8_t* obj = reinterpret_cast<uint8_t*>(ca.CreateObject(&fakeType));
@@ -64,7 +64,7 @@ TEST(CustomAllocTest, FixedBlockPageThreshold) {
     const int FROM = FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE - 10;
     const int TO = FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE + 10;
     for (int blocks = FROM; blocks <= TO; ++blocks) {
-        TypeInfo fakeType = {.instanceSize_ = 8 * blocks, .flags_ = 0};
+        TypeInfo fakeType = {.typeInfo_ = &fakeType, .instanceSize_ = 8 * blocks, .flags_ = 0};
         ca.CreateObject(&fakeType);
     }
 }
@@ -77,7 +77,7 @@ TEST(CustomAllocTest, NextFitPageThreshold) {
     const int FROM = NEXT_FIT_PAGE_MAX_BLOCK_SIZE - 10;
     const int TO = NEXT_FIT_PAGE_MAX_BLOCK_SIZE + 10;
     for (int blocks = FROM; blocks <= TO; ++blocks) {
-        TypeInfo fakeType = {.instanceSize_ = 8 * blocks, .flags_ = 0};
+        TypeInfo fakeType = {.typeInfo_ = &fakeType, .instanceSize_ = 8 * blocks, .flags_ = 0};
         ca.CreateObject(&fakeType);
     }
 }
@@ -90,7 +90,7 @@ TEST(CustomAllocTest, TwoAllocatorsDifferentPages) {
         kotlin::gc::GCSchedulerThreadData schedulerData2(config, [](auto&) {});
         CustomAllocator ca1(heap, schedulerData1);
         CustomAllocator ca2(heap, schedulerData2);
-        TypeInfo fakeType = {.instanceSize_ = 8 * blocks, .flags_ = 0};
+        TypeInfo fakeType = {.typeInfo_ = &fakeType, .instanceSize_ = 8 * blocks, .flags_ = 0};
         uint8_t* obj1 = reinterpret_cast<uint8_t*>(ca1.CreateObject(&fakeType));
         uint8_t* obj2 = reinterpret_cast<uint8_t*>(ca2.CreateObject(&fakeType));
         uint64_t dist = abs(obj2 - obj1);

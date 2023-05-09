@@ -26,7 +26,7 @@ public:
         FLAGS_FROZEN = 0,
         FLAGS_NEVER_FROZEN = 1,
         FLAGS_IN_FINALIZER_QUEUE = 2,
-        FLAGS_FINALIZED = 3,
+        FLAGS_SWEEPABLE = 3,
         FLAGS_RELEASE_ON_MAIN_QUEUE = 4,
     };
 

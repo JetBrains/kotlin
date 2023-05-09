@@ -7,6 +7,7 @@
 #define CUSTOM_ALLOC_CPP_EXTRA_OBJECTPAGE_HPP_
 
 #include <atomic>
+#include <cstddef>
 #include <cstdint>
 
 #include "AtomicStack.hpp"
@@ -24,18 +25,28 @@ struct ExtraObjectCell {
     struct alignas(mm::ExtraObjectData) {
         uint8_t data_[sizeof(mm::ExtraObjectData)];
     };
+
+    static ExtraObjectCell* fromExtraObject(mm::ExtraObjectData* extraObjectData) {
+        return reinterpret_cast<ExtraObjectCell*>(reinterpret_cast<uint8_t*>(extraObjectData) - offsetof(ExtraObjectCell, data_));
+    }
 };
+
+using FinalizerQueue = AtomicStack<ExtraObjectCell>;
 
 class alignas(8) ExtraObjectPage {
 public:
-    static ExtraObjectPage* Create() noexcept;
+    using GCSweepScope = gc::GCHandle::GCSweepExtraObjectsScope;
+
+    static GCSweepScope currentGCSweepScope() noexcept { return gc::GCHandle::currentEpoch()->sweepExtraObjects(); }
+
+    static ExtraObjectPage* Create(uint32_t ignored) noexcept;
 
     void Destroy() noexcept;
 
     // Tries to allocate in current page, returns null if no free block in page
     mm::ExtraObjectData* TryAllocate() noexcept;
 
-    bool Sweep(gc::GCHandle::GCSweepExtraObjectsScope& sweepHandle, AtomicStack<ExtraObjectCell>& finalizerQueue) noexcept;
+    bool Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept;
 
 private:
     friend class AtomicStack<ExtraObjectPage>;

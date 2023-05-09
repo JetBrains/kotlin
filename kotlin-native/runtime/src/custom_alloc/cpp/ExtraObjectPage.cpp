@@ -6,6 +6,7 @@
 #include "ExtraObjectPage.hpp"
 
 #include <atomic>
+#include <cstdint>
 #include <cstring>
 #include <random>
 
@@ -17,7 +18,7 @@
 
 namespace kotlin::alloc {
 
-ExtraObjectPage* ExtraObjectPage::Create() noexcept {
+ExtraObjectPage* ExtraObjectPage::Create(uint32_t ignored) noexcept {
     CustomAllocInfo("ExtraObjectPage::Create()");
     return new (SafeAlloc(EXTRA_OBJECT_PAGE_SIZE)) ExtraObjectPage();
 }
@@ -41,11 +42,11 @@ mm::ExtraObjectData* ExtraObjectPage::TryAllocate() noexcept {
     }
     ExtraObjectCell* freeBlock = nextFree_;
     nextFree_ = freeBlock->next_;
-    CustomAllocDebug("ExtraObjectPage(%p)::TryAllocate() = %p", this, freeBlock);
+    CustomAllocDebug("ExtraObjectPage(%p)::TryAllocate() = %p", this, freeBlock->Data());
     return freeBlock->Data();
 }
 
-bool ExtraObjectPage::Sweep(gc::GCHandle::GCSweepExtraObjectsScope& sweepHandle, AtomicStack<ExtraObjectCell>& finalizerQueue) noexcept {
+bool ExtraObjectPage::Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept {
     CustomAllocInfo("ExtraObjectPage(%p)::Sweep()", this);
     // `end` is after the last legal allocation of a block, but does not
     // necessarily match an actual block starting point.
@@ -58,23 +59,14 @@ bool ExtraObjectPage::Sweep(gc::GCHandle::GCSweepExtraObjectsScope& sweepHandle,
             nextFree = &cell->next_;
             continue;
         }
-        auto status = SweepExtraObject(cell, finalizerQueue);
-        switch (status) {
-            case ExtraObjectStatus::TO_BE_FINALIZED:
-                sweepHandle.addMarkedObject();
-                // fallthrough
-            case ExtraObjectStatus::KEPT:
-                // If the current cell was marked, it's alive, and the whole page is alive.
-                alive = true;
-                sweepHandle.addKeptObject();
-                break;
-            case ExtraObjectStatus::SWEPT:
-                // Free the current block and insert it into the free list.
-                cell->next_ = *nextFree;
-                *nextFree = cell;
-                nextFree = &cell->next_;
-                sweepHandle.addSweptObject();
-                break;
+        if (SweepExtraObject(cell->Data(), sweepHandle)) {
+            // If the current cell was marked, it's alive, and the whole page is alive.
+            alive = true;
+        } else {
+            // Free the current block and insert it into the free list.
+            cell->next_ = *nextFree;
+            *nextFree = cell;
+            nextFree = &cell->next_;
         }
     }
     return alive;

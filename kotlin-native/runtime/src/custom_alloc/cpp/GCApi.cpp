@@ -10,7 +10,10 @@
 
 #include "ConcurrentMarkAndSweep.hpp"
 #include "CustomLogging.hpp"
+#include "ExtraObjectData.hpp"
+#include "ExtraObjectPage.hpp"
 #include "FinalizerHooks.hpp"
+#include "GCStatistics.hpp"
 #include "KAssert.h"
 #include "ObjectFactory.hpp"
 
@@ -22,66 +25,41 @@ std::atomic<size_t> allocatedBytesCounter;
 
 namespace kotlin::alloc {
 
-bool TryResetMark(void* ptr) noexcept {
-    using Node = typename kotlin::mm::ObjectFactory<kotlin::gc::ConcurrentMarkAndSweep>::Storage::Node;
-    using NodeRef = typename kotlin::mm::ObjectFactory<kotlin::gc::ConcurrentMarkAndSweep>::NodeRef;
-    Node& node = Node::FromData(ptr);
-    NodeRef ref = NodeRef(node);
-    auto& objectData = ref.ObjectData();
-    bool reset = objectData.tryResetMark();
-    CustomAllocDebug("TryResetMark(%p) = %d", ptr, reset);
-    return reset;
-}
-
-using ObjectFactory = mm::ObjectFactory<gc::ConcurrentMarkAndSweep>;
-using ExtraObjectsFactory = mm::ExtraObjectDataFactory;
-
-static void KeepAlive(ObjHeader* baseObject) noexcept {
-    auto& objectData = ObjectFactory::NodeRef::From(baseObject).ObjectData();
-    objectData.tryMark();
-}
-
-static bool IsAlive(ObjHeader* baseObject) noexcept {
-    auto& objectData = ObjectFactory::NodeRef::From(baseObject).ObjectData();
-    return objectData.marked();
-}
-
-ExtraObjectStatus SweepExtraObject(ExtraObjectCell* extraObjectCell, AtomicStack<ExtraObjectCell>& finalizerQueue) noexcept {
-    auto* extraObject = extraObjectCell->Data();
-    if (extraObject->getFlag(mm::ExtraObjectData::FLAGS_FINALIZED)) {
-        CustomAllocDebug("SweepIsCollectable(%p): already finalized", extraObject);
-        return ExtraObjectStatus::SWEPT;
+bool SweepObject(uint8_t* object, FinalizerQueue& finalizerQueue, gc::GCHandle::GCSweepScope& gcHandle) noexcept {
+    HeapObjHeader* objHeader = reinterpret_cast<HeapObjHeader*>(object);
+    if (objHeader->gcData.tryResetMark()) {
+        CustomAllocDebug("SweepObject(%p): still alive", object);
+        gcHandle.addKeptObject();
+        return true;
     }
-    auto* baseObject = extraObject->GetBaseObject();
-    RuntimeAssert(baseObject->heap(), "SweepIsCollectable on a non-heap object");
-    if (extraObject->getFlag(mm::ExtraObjectData::FLAGS_IN_FINALIZER_QUEUE)) {
-        CustomAllocDebug("SweepIsCollectable(%p): already in finalizer queue, keep base object (%p) alive", extraObject, baseObject);
-        KeepAlive(baseObject);
-        return ExtraObjectStatus::TO_BE_FINALIZED;
-    }
-    if (IsAlive(baseObject)) {
-        CustomAllocDebug("SweepIsCollectable(%p): base object (%p) is alive", extraObject, baseObject);
-        return ExtraObjectStatus::KEPT;
-    }
-    extraObject->ClearRegularWeakReferenceImpl();
-    if (extraObject->HasAssociatedObject()) {
-        extraObject->setFlag(mm::ExtraObjectData::FLAGS_IN_FINALIZER_QUEUE);
-        finalizerQueue.Push(extraObjectCell);
-        KeepAlive(baseObject);
-        CustomAllocDebug("SweepIsCollectable(%p): add to finalizerQueue", extraObject);
-        return ExtraObjectStatus::TO_BE_FINALIZED;
-    } else {
-        if (HasFinalizers(baseObject)) {
+    auto* extraObject = mm::ExtraObjectData::Get(&objHeader->object);
+    if (extraObject) {
+        if (!extraObject->getFlag(mm::ExtraObjectData::FLAGS_IN_FINALIZER_QUEUE)) {
+            CustomAllocDebug("SweepObject(%p): needs to be finalized, extraObject at %p", object, extraObject);
             extraObject->setFlag(mm::ExtraObjectData::FLAGS_IN_FINALIZER_QUEUE);
-            finalizerQueue.Push(extraObjectCell);
-            KeepAlive(baseObject);
-            CustomAllocDebug("SweepIsCollectable(%p): addings to finalizerQueue, keep base object (%p) alive", extraObject, baseObject);
-            return ExtraObjectStatus::TO_BE_FINALIZED;
+            CustomAllocDebug("SweepObject: fromExtraObject(%p) = %p", extraObject, ExtraObjectCell::fromExtraObject(extraObject));
+            finalizerQueue.Push(ExtraObjectCell::fromExtraObject(extraObject));
+            gcHandle.addMarkedObject();
+            return true;
         }
-        extraObject->Uninstall();
-        CustomAllocDebug("SweepIsCollectable(%p): uninstalled extraObject", extraObject);
-        return ExtraObjectStatus::SWEPT;
+        if (!extraObject->getFlag(mm::ExtraObjectData::FLAGS_SWEEPABLE)) {
+            CustomAllocDebug("SweepObject(%p): already waiting to be finalized", object);
+            gcHandle.addMarkedObject();
+            return true;
+        }
     }
+    CustomAllocDebug("SweepObject(%p): can be reclaimed", object);
+    gcHandle.addSweptObject();
+    return false;
+}
+
+bool SweepExtraObject(mm::ExtraObjectData* extraObject, gc::GCHandle::GCSweepExtraObjectsScope& gcHandle) noexcept {
+    if (extraObject->getFlag(mm::ExtraObjectData::FLAGS_SWEEPABLE)) {
+        CustomAllocDebug("SweepExtraObject(%p): can be reclaimed", extraObject);
+        return false;
+    }
+    CustomAllocDebug("SweepExtraObject(%p): is still needed", extraObject);
+    return true;
 }
 
 void* SafeAlloc(uint64_t size) noexcept {

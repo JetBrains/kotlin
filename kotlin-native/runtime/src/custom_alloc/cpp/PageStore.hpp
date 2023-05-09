@@ -9,6 +9,7 @@
 #include <atomic>
 
 #include "AtomicStack.hpp"
+#include "ExtraObjectPage.hpp"
 #include "GCStatistics.hpp"
 
 namespace kotlin::alloc {
@@ -16,6 +17,8 @@ namespace kotlin::alloc {
 template <class T>
 class PageStore {
 public:
+    using GCSweepScope = typename T::GCSweepScope;
+
     void PrepareForGC() noexcept {
         unswept_.TransferAllFrom(std::move(ready_));
         unswept_.TransferAllFrom(std::move(used_));
@@ -23,15 +26,15 @@ public:
         while ((page = empty_.Pop())) page->Destroy();
     }
 
-    void Sweep(gc::GCHandle::GCSweepScope& sweepHandle) noexcept {
-        while (SweepSingle(sweepHandle, unswept_.Pop(), unswept_, ready_)) {
+    void Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept {
+        while (SweepSingle(sweepHandle, unswept_.Pop(), unswept_, ready_, finalizerQueue)) {
         }
     }
 
-    void SweepAndFree(gc::GCHandle::GCSweepScope& sweepHandle) noexcept {
+    void SweepAndFree(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept {
         T* page;
         while ((page = unswept_.Pop())) {
-            if (page->Sweep(sweepHandle)) {
+            if (page->Sweep(sweepHandle, finalizerQueue)) {
                 ready_.Push(page);
             } else {
                 page->Destroy();
@@ -39,12 +42,12 @@ public:
         }
     }
 
-    T* GetPage(uint32_t cellCount) noexcept {
+    T* GetPage(uint32_t cellCount, FinalizerQueue& finalizerQueue) noexcept {
         T* page;
         if ((page = unswept_.Pop())) {
             // If there're unswept_ pages, the GC is in progress.
-            auto sweepHandle = gc::GCHandle::currentEpoch()->sweep();
-            if ((page = SweepSingle(sweepHandle, page, unswept_, used_))) {
+            GCSweepScope sweepHandle = T::currentGCSweepScope();
+            if ((page = SweepSingle(sweepHandle, page, unswept_, used_, finalizerQueue))) {
                 return page;
             }
         }
@@ -74,12 +77,12 @@ public:
     }
 
 private:
-    T* SweepSingle(gc::GCHandle::GCSweepScope& sweepHandle, T* page, AtomicStack<T>& from, AtomicStack<T>& to) noexcept {
+    T* SweepSingle(GCSweepScope& sweepHandle, T* page, AtomicStack<T>& from, AtomicStack<T>& to, FinalizerQueue& finalizerQueue) noexcept {
         if (!page) {
             return nullptr;
         }
         do {
-            if (page->Sweep(sweepHandle)) {
+            if (page->Sweep(sweepHandle, finalizerQueue)) {
                 to.Push(page);
                 return page;
             }

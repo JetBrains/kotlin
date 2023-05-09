@@ -42,11 +42,11 @@ uint8_t* FixedBlockPage::TryAllocate() noexcept {
         return nullptr;
     }
     nextFree_ = freeBlock->nextFree;
-    CustomAllocDebug("FixedBlockPage(%p){%u}::TryAllocate() = %p", this, blockSize_, freeBlock);
+    CustomAllocDebug("FixedBlockPage(%p){%u}::TryAllocate() = %p", this, blockSize_, freeBlock->data);
     return freeBlock->data;
 }
 
-bool FixedBlockPage::Sweep(gc::GCHandle::GCSweepScope& sweepHandle) noexcept {
+bool FixedBlockPage::Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept {
     CustomAllocInfo("FixedBlockPage(%p)::Sweep()", this);
     // `end` is after the last legal allocation of a block, but does not
     // necessarily match an actual block starting point.
@@ -60,7 +60,7 @@ bool FixedBlockPage::Sweep(gc::GCHandle::GCSweepScope& sweepHandle) noexcept {
             continue;
         }
         // If the current cell was marked, it's alive, and the whole page is alive.
-        if (TryResetMark(cell)) {
+        if (SweepObject(cell->data, finalizerQueue, sweepHandle)) {
             alive = true;
             sweepHandle.addKeptObject();
             continue;

@@ -38,7 +38,7 @@ mm::ExtraObjectData& mm::ExtraObjectData::Install(ObjHeader* object) noexcept {
 
     if (!compareExchange(object->typeInfoOrMeta_, typeInfo, reinterpret_cast<TypeInfo*>(&data))) {
         // Somebody else created `mm::ExtraObjectData` for this object.
-        data.setFlag(mm::ExtraObjectData::FLAGS_FINALIZED);
+        data.setFlag(mm::ExtraObjectData::FLAGS_SWEEPABLE);
 #else
     auto& data = mm::ExtraObjectDataFactory::Instance().CreateExtraObjectDataForObject(threadData, object, typeInfo);
 

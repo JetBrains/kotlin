@@ -324,7 +324,7 @@ MarkStats GCHandle::getMarked() {
     return MarkStats{};
 }
 
-void GCHandle::swept(gc::SweepStats stats) noexcept {
+void GCHandle::swept(gc::SweepStats stats, uint64_t markedCount) noexcept {
     std::lock_guard guard(lock);
     if (auto* stat = statByEpoch(epoch_)) {
         auto& heap = stat->sweepStats.heap;
@@ -333,10 +333,12 @@ void GCHandle::swept(gc::SweepStats stats) noexcept {
         }
         heap->keptCount += stats.keptCount;
         heap->sweptCount += stats.sweptCount;
+        RuntimeAssert(static_cast<bool>(stat->markStats), "Mark must have already happened");
+        stat->markStats->markedCount += markedCount;
     }
 }
 
-void GCHandle::sweptExtraObjects(gc::SweepStats stats, uint64_t markedCount) noexcept {
+void GCHandle::sweptExtraObjects(gc::SweepStats stats) noexcept {
     std::lock_guard guard(lock);
     if (auto* stat = statByEpoch(epoch_)) {
         auto& extra = stat->sweepStats.extra;
@@ -345,15 +347,13 @@ void GCHandle::sweptExtraObjects(gc::SweepStats stats, uint64_t markedCount) noe
         }
         extra->keptCount += stats.keptCount;
         extra->sweptCount += stats.sweptCount;
-        RuntimeAssert(static_cast<bool>(stat->markStats), "Mark must have already happened");
-        stat->markStats->markedCount += markedCount;
     }
 }
 
 GCHandle::GCSweepScope::GCSweepScope(kotlin::gc::GCHandle& handle) : handle_(handle) {}
 
 GCHandle::GCSweepScope::~GCSweepScope() {
-    handle_.swept(stats_);
+    handle_.swept(stats_, markedCount_);
     GCLogDebug(
             handle_.getEpoch(),
             "Collected %" PRId64 " heap objects in %" PRIu64 " microseconds. "
@@ -364,7 +364,7 @@ GCHandle::GCSweepScope::~GCSweepScope() {
 GCHandle::GCSweepExtraObjectsScope::GCSweepExtraObjectsScope(kotlin::gc::GCHandle& handle) : handle_(handle) {}
 
 GCHandle::GCSweepExtraObjectsScope::~GCSweepExtraObjectsScope() {
-    handle_.sweptExtraObjects(stats_, markedCount_);
+    handle_.sweptExtraObjects(stats_);
     GCLogDebug(
             handle_.getEpoch(),
             "Collected %" PRId64 " extra objects in %" PRIu64 " microseconds. "

@@ -7,6 +7,7 @@
 #include <random>
 
 #include "CustomAllocConstants.hpp"
+#include "ExtraObjectPage.hpp"
 #include "gtest/gtest.h"
 #include "SingleObjectPage.hpp"
 #include "TypeInfo.h"
@@ -15,7 +16,7 @@ namespace {
 
 using SingleObjectPage = typename kotlin::alloc::SingleObjectPage;
 
-TypeInfo fakeType = {.flags_ = 0}; // a type without a finalizer
+TypeInfo fakeType = {.typeInfo_ = &fakeType, .flags_ = 0}; // a type without a finalizer
 
 #define MIN_BLOCK_SIZE NEXT_FIT_PAGE_CELL_COUNT
 
@@ -36,7 +37,8 @@ TEST(CustomAllocTest, SingleObjectPageSweepEmptyPage) {
     EXPECT_TRUE(page);
     auto gcHandle = kotlin::gc::GCHandle::createFakeForTests();
     auto gcScope = gcHandle.sweep();
-    EXPECT_FALSE(page->Sweep(gcScope));
+    kotlin::alloc::FinalizerQueue finalizerQueue;
+    EXPECT_FALSE(page->Sweep(gcScope, finalizerQueue));
     page->Destroy();
 }
 
@@ -47,7 +49,8 @@ TEST(CustomAllocTest, SingleObjectPageSweepFullPage) {
     mark(page->Data());
     auto gcHandle = kotlin::gc::GCHandle::createFakeForTests();
     auto gcScope = gcHandle.sweep();
-    EXPECT_TRUE(page->Sweep(gcScope));
+    kotlin::alloc::FinalizerQueue finalizerQueue;
+    EXPECT_TRUE(page->Sweep(gcScope, finalizerQueue));
     page->Destroy();
 }
 

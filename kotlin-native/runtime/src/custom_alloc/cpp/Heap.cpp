@@ -20,12 +20,6 @@
 
 namespace kotlin::alloc {
 
-Heap::~Heap() noexcept {
-    ExtraObjectPage* page;
-    while ((page = extraObjectPages_.Pop())) page->Destroy();
-    while ((page = usedExtraObjectPages_.Pop())) page->Destroy();
-}
-
 void Heap::PrepareForGC() noexcept {
     CustomAllocDebug("Heap::PrepareForGC()");
     for (auto& thread : kotlin::mm::ThreadRegistry::Instance().LockForIter()) {
@@ -37,58 +31,49 @@ void Heap::PrepareForGC() noexcept {
     for (int blockSize = 0; blockSize <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE; ++blockSize) {
         fixedBlockPages_[blockSize].PrepareForGC();
     }
-    usedExtraObjectPages_.TransferAllFrom(std::move(extraObjectPages_));
+    extraObjectPages_.PrepareForGC();
 }
 
-void Heap::Sweep(gc::GCHandle gcHandle) noexcept {
-    auto sweepHandle = gcHandle.sweep();
+FinalizerQueue Heap::Sweep(gc::GCHandle gcHandle) noexcept {
+    FinalizerQueue finalizerQueue;
     CustomAllocDebug("Heap::Sweep()");
-    for (int blockSize = 0; blockSize <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE; ++blockSize) {
-        fixedBlockPages_[blockSize].Sweep(sweepHandle);
-    }
-    nextFitPages_.Sweep(sweepHandle);
-    singleObjectPages_.SweepAndFree(sweepHandle);
-}
-
-AtomicStack<ExtraObjectCell> Heap::SweepExtraObjects(gc::GCHandle gcHandle) noexcept {
-    auto sweepHandle = gcHandle.sweepExtraObjects();
-    CustomAllocDebug("Heap::SweepExtraObjects()");
-    AtomicStack<ExtraObjectCell> finalizerQueue;
-    ExtraObjectPage* page;
-    while ((page = usedExtraObjectPages_.Pop())) {
-        if (!page->Sweep(sweepHandle, finalizerQueue)) {
-            CustomAllocInfo("SweepExtraObjects free(%p)", page);
-            page->Destroy();
-        } else {
-            extraObjectPages_.Push(page);
+    {
+        auto sweepHandle = gcHandle.sweep();
+        for (int blockSize = 0; blockSize <= FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE; ++blockSize) {
+            fixedBlockPages_[blockSize].Sweep(sweepHandle, finalizerQueue);
         }
+        nextFitPages_.Sweep(sweepHandle, finalizerQueue);
+        singleObjectPages_.SweepAndFree(sweepHandle, finalizerQueue);
     }
+    {
+        auto sweepHandle = gcHandle.sweepExtraObjects();
+        extraObjectPages_.Sweep(sweepHandle, finalizerQueue);
+    }
+    for (auto& thread : kotlin::mm::ThreadRegistry::Instance().LockForIter()) {
+        finalizerQueue.TransferAllFrom(thread.gc().impl().alloc().ExtractFinalizerQueue());
+    }
+    CustomAllocDebug("Heap::Sweep done");
     return finalizerQueue;
 }
 
-NextFitPage* Heap::GetNextFitPage(uint32_t cellCount) noexcept {
+NextFitPage* Heap::GetNextFitPage(uint32_t cellCount, FinalizerQueue& finalizerQueue) noexcept {
     CustomAllocDebug("Heap::GetNextFitPage()");
-    return nextFitPages_.GetPage(cellCount);
+    return nextFitPages_.GetPage(cellCount, finalizerQueue);
 }
 
-FixedBlockPage* Heap::GetFixedBlockPage(uint32_t cellCount) noexcept {
+FixedBlockPage* Heap::GetFixedBlockPage(uint32_t cellCount, FinalizerQueue& finalizerQueue) noexcept {
     CustomAllocDebug("Heap::GetFixedBlockPage()");
-    return fixedBlockPages_[cellCount].GetPage(cellCount);
+    return fixedBlockPages_[cellCount].GetPage(cellCount, finalizerQueue);
 }
 
-SingleObjectPage* Heap::GetSingleObjectPage(uint64_t cellCount) noexcept {
+SingleObjectPage* Heap::GetSingleObjectPage(uint64_t cellCount, FinalizerQueue& finalizerQueue) noexcept {
     CustomAllocInfo("CustomAllocator::AllocateInSingleObjectPage(%" PRIu64 ")", cellCount);
     return singleObjectPages_.NewPage(cellCount);
 }
 
-ExtraObjectPage* Heap::GetExtraObjectPage() noexcept {
+ExtraObjectPage* Heap::GetExtraObjectPage(FinalizerQueue& finalizerQueue) noexcept {
     CustomAllocInfo("CustomAllocator::GetExtraObjectPage()");
-    ExtraObjectPage* page = extraObjectPages_.Pop();
-    if (page == nullptr) {
-        page = ExtraObjectPage::Create();
-    }
-    usedExtraObjectPages_.Push(page);
-    return page;
+    return extraObjectPages_.GetPage(0, finalizerQueue);
 }
 
 } // namespace kotlin::alloc

@@ -10,12 +10,17 @@
 #include <cstdint>
 
 #include "AtomicStack.hpp"
+#include "ExtraObjectPage.hpp"
 #include "GCStatistics.hpp"
 
 namespace kotlin::alloc {
 
 class alignas(8) SingleObjectPage {
 public:
+    using GCSweepScope = gc::GCHandle::GCSweepScope;
+
+    static GCSweepScope currentGCSweepScope() noexcept { return gc::GCHandle::currentEpoch()->sweep(); }
+
     static SingleObjectPage* Create(uint64_t cellCount) noexcept;
 
     void Destroy() noexcept;
@@ -24,7 +29,7 @@ public:
 
     uint8_t* TryAllocate() noexcept;
 
-    bool Sweep(gc::GCHandle::GCSweepScope& sweepHandle) noexcept;
+    bool Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept;
 
 private:
     friend class AtomicStack<SingleObjectPage>;

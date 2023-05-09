@@ -50,7 +50,6 @@ void CustomFinalizerProcessor::StartFinalizerThreadIfNone() noexcept {
                     auto* extraObject = cell->Data();
                     auto* baseObject = extraObject->GetBaseObject();
                     RunFinalizers(baseObject);
-                    extraObject->setFlag(mm::ExtraObjectData::FLAGS_FINALIZED);
                 }
             }
             epochDoneCallback_(finalizersEpoch);

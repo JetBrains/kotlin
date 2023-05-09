@@ -7,11 +7,10 @@
 #define CUSTOM_ALLOC_CPP_CUSTOMLOGGING_HPP_
 
 #include "Logging.hpp"
-#include "Porting.h"
 
-#define CustomAllocInfo(format, ...) RuntimeLogInfo({"alloc"}, "t%u " format, konan::currentThreadId(), ##__VA_ARGS__)
-#define CustomAllocDebug(format, ...) RuntimeLogDebug({"alloc"}, "t%u " format, konan::currentThreadId(), ##__VA_ARGS__)
-#define CustomAllocWarning(format, ...) RuntimeLogWarning({"alloc"}, "t%u " format, konan::currentThreadId(), ##__VA_ARGS__)
-#define CustomAllocError(format, ...) RuntimeLogError({"alloc"}, "t%u " format, konan::currentThreadId(), ##__VA_ARGS__)
+#define CustomAllocInfo(format, ...) RuntimeLogInfo({"alloc"}, format, ##__VA_ARGS__)
+#define CustomAllocDebug(format, ...) RuntimeLogDebug({"alloc"}, format, ##__VA_ARGS__)
+#define CustomAllocWarning(format, ...) RuntimeLogWarning({"alloc"}, format, ##__VA_ARGS__)
+#define CustomAllocError(format, ...) RuntimeLogError({"alloc"}, format, ##__VA_ARGS__)
 
 #endif

@@ -79,7 +79,9 @@ void ObjHeader::destroyMetaObject(ObjHeader* object) {
     RuntimeAssert(object->has_meta_object(), "Object must have a meta object set");
     auto &extraObject = *mm::ExtraObjectData::Get(object);
     extraObject.Uninstall();
-#ifndef CUSTOM_ALLOCATOR
+#ifdef CUSTOM_ALLOCATOR
+    extraObject.setFlag(mm::ExtraObjectData::FLAGS_SWEEPABLE);
+#else
     auto *threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     mm::ExtraObjectDataFactory::Instance().DestroyExtraObjectData(threadData, extraObject);
 #endif

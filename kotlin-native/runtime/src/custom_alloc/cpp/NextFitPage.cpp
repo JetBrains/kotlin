@@ -39,13 +39,13 @@ uint8_t* NextFitPage::TryAllocate(uint32_t blockSize) noexcept {
     return curBlock_->TryAllocate(cellsNeeded);
 }
 
-bool NextFitPage::Sweep(gc::GCHandle::GCSweepScope& sweepHandle) noexcept {
+bool NextFitPage::Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept {
     CustomAllocDebug("NextFitPage@%p::Sweep()", this);
     Cell* end = cells_ + NEXT_FIT_PAGE_CELL_COUNT;
     bool alive = false;
     for (Cell* block = cells_ + 1; block != end; block = block->Next()) {
         if (block->isAllocated_) {
-            if (TryResetMark(block->data_)) {
+            if (SweepObject(block->data_, finalizerQueue, sweepHandle)) {
                 alive = true;
                 sweepHandle.addKeptObject();
             } else {

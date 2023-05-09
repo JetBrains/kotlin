@@ -10,6 +10,7 @@
 #include <cstdint>
 
 #include "AtomicStack.hpp"
+#include "ExtraObjectPage.hpp"
 #include "GCStatistics.hpp"
 
 namespace kotlin::alloc {
@@ -24,6 +25,10 @@ struct alignas(8) FixedBlockCell {
 
 class alignas(8) FixedBlockPage {
 public:
+    using GCSweepScope = gc::GCHandle::GCSweepScope;
+
+    static GCSweepScope currentGCSweepScope() noexcept { return gc::GCHandle::currentEpoch()->sweep(); }
+
     static FixedBlockPage* Create(uint32_t blockSize) noexcept;
 
     void Destroy() noexcept;
@@ -31,7 +36,7 @@ public:
     // Tries to allocate in current page, returns null if no free block in page
     uint8_t* TryAllocate() noexcept;
 
-    bool Sweep(gc::GCHandle::GCSweepScope& sweepHandle) noexcept;
+    bool Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept;
 
 private:
     friend class AtomicStack<FixedBlockPage>;

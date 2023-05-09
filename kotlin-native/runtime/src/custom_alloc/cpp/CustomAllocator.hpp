@@ -34,6 +34,8 @@ public:
 
     void PrepareForGC() noexcept;
 
+    FinalizerQueue ExtractFinalizerQueue() noexcept;
+
     static size_t GetAllocatedHeapSize(ObjHeader* object) noexcept;
 
 private:
@@ -47,6 +49,7 @@ private:
     NextFitPage* nextFitPage_;
     FixedBlockPage* fixedBlockPages_[FIXED_BLOCK_PAGE_MAX_BLOCK_SIZE + 1];
     ExtraObjectPage* extraObjectPage_;
+    FinalizerQueue finalizerQueue_;
 };
 
 } // namespace kotlin::alloc
