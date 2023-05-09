@@ -5867,7 +5867,6 @@ if (isAppleTarget(project)) {
         swiftSources = ['framework/values_generics/']
     }
 
-    if(!isK2(project))  // KT-56271
     frameworkTest("testStdlibFramework") {
         framework('Stdlib') {
             sources = ['framework/stdlib']

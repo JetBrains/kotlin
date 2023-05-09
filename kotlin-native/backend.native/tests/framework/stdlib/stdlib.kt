@@ -72,7 +72,6 @@ fun gc() = kotlin.native.runtime.GC.collect()
 @Throws(Throwable::class)
 @Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 fun testSet(set: Set<String>) {
-    set as kotlin.native.internal.KonanSet<String> // Smart cast to access getElement below.
     val setAny: Set<Any?> = set
 
     assertTrue(set.contains("a"))
@@ -80,7 +79,7 @@ fun testSet(set: Set<String>) {
     assertFalse(set.contains("h"))
     assertFalse(setAny.contains(1))
 
-
+    set as kotlin.native.internal.KonanSet<String> // Smart cast to access getElement below.
     assertEquals("a", set.getElement("a"))
     assertNull(set.getElement("aa"))
     assertNull((setAny as kotlin.native.internal.KonanSet<Any?>).getElement(1))
