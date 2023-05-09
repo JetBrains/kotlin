@@ -196,7 +196,8 @@ kotlin {
                     main = "noCall"
                     moduleKind = "commonjs"
                     freeCompilerArgs += listOf(
-                        "-Xallow-kotlin-package"
+                        "-Xallow-kotlin-package",
+                        "-Xforce-deprecated-legacy-compiler-usage",
                     )
                 }
                 compileTaskProvider.configure {
@@ -732,7 +733,7 @@ afterEvaluate {
         if (publication.name in defaultKotlinPublications) {
             enabled = false
         }
-//        println("$name - ${publication.name} - enabled: $enabled")
+        println("$name - ${publication.name} - enabled: $enabled")
     }
 }
 
