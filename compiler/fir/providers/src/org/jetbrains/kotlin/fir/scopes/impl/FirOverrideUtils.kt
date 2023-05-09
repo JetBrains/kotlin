@@ -35,7 +35,7 @@ fun <D : FirCallableSymbol<*>> filterOutOverridden(
 }
 
 // Whether f overrides g
-private fun <D : FirCallableSymbol<*>> overrides(
+fun <D : FirCallableSymbol<*>> overrides(
     f: MemberWithBaseScope<D>,
     gMember: D,
     processAllOverridden: ProcessAllOverridden<D>,
