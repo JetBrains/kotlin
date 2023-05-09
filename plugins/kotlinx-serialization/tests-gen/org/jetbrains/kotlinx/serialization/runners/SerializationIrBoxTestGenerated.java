@@ -212,6 +212,12 @@ public class SerializationIrBoxTestGenerated extends AbstractSerializationIrBoxT
     }
 
     @Test
+    @TestMetadata("serializableFromAnotherModule_multipleFields.kt")
+    public void testSerializableFromAnotherModule_multipleFields() throws Exception {
+        runTest("plugins/kotlinx-serialization/testData/boxIr/serializableFromAnotherModule_multipleFields.kt");
+    }
+
+    @Test
     @TestMetadata("serializableOnPropertyType.kt")
     public void testSerializableOnPropertyType() throws Exception {
         runTest("plugins/kotlinx-serialization/testData/boxIr/serializableOnPropertyType.kt");
