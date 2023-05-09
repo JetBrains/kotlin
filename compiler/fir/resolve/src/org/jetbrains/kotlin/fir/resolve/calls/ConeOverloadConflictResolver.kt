@@ -14,8 +14,14 @@ import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
 import org.jetbrains.kotlin.fir.resolve.inference.ConeTypeParameterBasedTypeVariable
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
+import org.jetbrains.kotlin.fir.scopes.*
+import org.jetbrains.kotlin.fir.scopes.impl.overrides
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.unwrapSubstitutionOverrides
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.results.FlatSignature
@@ -44,6 +50,9 @@ class ConeOverloadConflictResolver(
         discriminateAbstracts: Boolean,
     ): Set<Candidate> = chooseMaximallySpecificCandidates(candidates, discriminateAbstracts, discriminateGenerics = true)
 
+    /**
+     * Partial mirror of [org.jetbrains.kotlin.resolve.calls.results.OverloadingConflictResolver.chooseMaximallySpecificCandidates]
+     */
     private fun chooseMaximallySpecificCandidates(
         candidates: Set<Candidate>,
         discriminateAbstracts: Boolean,
@@ -57,14 +66,66 @@ class ConeOverloadConflictResolver(
             else
                 candidates
 
+        // The same logic as at
+        val noOverrides = filterOverrides(fixedCandidates)
+
         return chooseMaximallySpecificCandidates(
-            fixedCandidates,
+            noOverrides,
             discriminateGenerics,
             discriminateAbstracts,
             discriminateSAMs = true,
             discriminateSuspendConversions = true,
             discriminateByUnwrappedSmartCastOrigin = true,
         )
+    }
+
+    /**
+     * See K1 version at OverridingUtil.filterOverrides
+     */
+    private fun filterOverrides(
+        candidateSet: Set<Candidate>,
+    ): Set<Candidate> {
+        if (candidateSet.size <= 1) return candidateSet
+
+        val result = mutableSetOf<Candidate>()
+
+        // Assuming `overrides` is a partial order, this loop leaves minimal elements of `candidateSet` in `result`.
+        // Namely, it leaves in `result` only candidates, for any pair of them (x, y): !x.overrides(y) && !y.overrides(x)
+        // And for any pair original candidates (x, y) if x.overrides(y) && !y.overrides(x) then `x` belongs `result`
+        outerLoop@ for (me in candidateSet) {
+            val iterator = result.iterator()
+            while (iterator.hasNext()) {
+                val other = iterator.next()
+                if (me.overrides(other)) {
+                    iterator.remove()
+                } else if (other.overrides(me)) {
+                    continue@outerLoop
+                }
+            }
+
+            result.add(me)
+        }
+
+        require(result.isNotEmpty()) { "All candidates filtered out from $candidateSet" }
+        return result
+    }
+
+    private fun Candidate.overrides(other: Candidate): Boolean {
+        if (symbol !is FirCallableSymbol || other.symbol !is FirCallableSymbol) return false
+
+        val otherOriginal = other.symbol.unwrapSubstitutionOverrides()
+        if (symbol.unwrapSubstitutionOverrides<FirCallableSymbol<*>>() == otherOriginal) return true
+
+        val scope = originScope as? FirTypeScope ?: return false
+
+        @Suppress("UNCHECKED_CAST")
+        val overriddenProducer = when (symbol) {
+            is FirNamedFunctionSymbol -> FirTypeScope::processOverriddenFunctions as ProcessAllOverridden<FirCallableSymbol<*>>
+            is FirPropertySymbol -> FirTypeScope::processOverriddenProperties as ProcessAllOverridden<FirCallableSymbol<*>>
+            else -> return false
+        }
+
+        return overrides(MemberWithBaseScope(symbol, scope), otherOriginal, overriddenProducer)
     }
 
     private fun chooseCandidatesWithMostSpecificInvokeReceiver(candidates: Set<Candidate>): Set<Candidate> {

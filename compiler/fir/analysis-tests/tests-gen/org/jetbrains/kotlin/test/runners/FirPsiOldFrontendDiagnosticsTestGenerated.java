@@ -27330,6 +27330,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
                 }
 
                 @Test
+                @TestMetadata("filteringOutOverrides.kt")
+                public void testFilteringOutOverrides() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/resolve/overloadConflicts/filteringOutOverrides.kt");
+                }
+
+                @Test
                 @TestMetadata("genericClash.kt")
                 public void testGenericClash() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/resolve/overloadConflicts/genericClash.kt");
