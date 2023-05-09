@@ -48,8 +48,9 @@ internal class KtFirNamedClassOrObjectSymbol(
 
     override val visibility: Visibility
         get() = withValidityAssertion {
-            when (val possiblyRawVisibility = firSymbol.visibility) {
-                Visibilities.Unknown -> if (firSymbol.isLocal) Visibilities.Local else Visibilities.Public
+            // TODO: We should use resolvedStatus, because it can be altered by status-transforming compiler plugins. See KT-58572
+            when (val possiblyRawVisibility = firSymbol.fir.visibility) {
+                Visibilities.Unknown -> if (firSymbol.fir.isLocal) Visibilities.Local else Visibilities.Public
                 else -> possiblyRawVisibility
             }
         }
