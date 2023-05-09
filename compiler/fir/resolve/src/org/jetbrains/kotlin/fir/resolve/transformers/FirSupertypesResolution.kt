@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
-import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.FirStatement
@@ -624,7 +623,7 @@ open class SupertypeComputationSession {
     protected open fun getResolvedSuperTypeRefsForOutOfSessionDeclaration(
         classLikeDeclaration: FirClassLikeDeclaration,
     ): List<FirResolvedTypeRef>? = when (classLikeDeclaration) {
-        is FirRegularClass -> classLikeDeclaration.superTypeRefs.filterIsInstance<FirResolvedTypeRef>()
+        is FirClass -> classLikeDeclaration.superTypeRefs.filterIsInstance<FirResolvedTypeRef>()
         is FirTypeAlias -> listOfNotNull(classLikeDeclaration.expandedTypeRef as? FirResolvedTypeRef)
         else -> null
     }
