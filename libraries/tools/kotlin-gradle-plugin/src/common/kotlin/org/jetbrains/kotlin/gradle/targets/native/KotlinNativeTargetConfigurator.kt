@@ -20,6 +20,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Exec
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
+import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.TEST_COMPILATION_NAME
@@ -404,7 +405,17 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
                 it.runViaBuildToolsApi.value(false).disallowChanges() // K/N is not yet supported
 
                 it.explicitApiMode
-                    .value(project.providers.provider { ext.explicitApi })
+                    .value(
+                        project.providers.provider {
+                            // Plugin explicitly does not configures 'explicitApi' mode for test sources
+                            // compilation, as test sources are not published
+                            if (compilationInfo.isMain) {
+                                ext.explicitApi
+                            } else {
+                                ExplicitApiMode.Disabled
+                            }
+                        }
+                    )
                     .finalizeValueOnRead()
             }
 

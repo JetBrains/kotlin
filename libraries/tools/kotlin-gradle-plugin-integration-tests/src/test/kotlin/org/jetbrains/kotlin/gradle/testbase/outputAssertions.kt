@@ -254,6 +254,22 @@ fun BuildResult.assertCompilerArgument(
     }
 }
 
+fun BuildResult.assertNoCompilerArgument(
+    taskPath: String,
+    notExpectedArgument: String,
+) {
+    val taskOutput = getOutputForTask(taskPath)
+    val compilerArguments = taskOutput.lines().first {
+        it.contains("Kotlin compiler args:")
+    }.substringAfter("Kotlin compiler args:")
+
+    assert(!compilerArguments.contains(notExpectedArgument)) {
+        printBuildOutput()
+
+        "$taskPath task compiler arguments contains $notExpectedArgument. Actual content: $compilerArguments"
+    }
+}
+
 /**
  * Asserts command line arguments of the given K/N compiler for given tasks' paths
  *

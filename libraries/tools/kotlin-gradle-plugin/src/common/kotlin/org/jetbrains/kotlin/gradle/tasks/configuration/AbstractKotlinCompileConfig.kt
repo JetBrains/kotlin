@@ -14,6 +14,7 @@ import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.compilerRunner.CompilerSystemPropertiesService
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
+import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
 import org.jetbrains.kotlin.gradle.incremental.IncrementalModuleInfoBuildService
@@ -21,6 +22,8 @@ import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJvmAndroidCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.associateWithClosure
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToCompilerOptions
@@ -162,6 +165,28 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
                     }
                 }
             )
+
+            task.explicitApiMode
+                .value(
+                    project.providers.provider {
+                        // Plugin explicitly does not configures 'explicitApi' mode for test sources
+                        // compilation, as test sources are not published
+                        val compilation = compilationInfo.tcsOrNull?.compilation
+                        val isCommonCompilation = compilation?.target is KotlinMetadataTarget
+
+                        val androidCompilation = compilationInfo.tcsOrNull?.compilation as? KotlinJvmAndroidCompilation
+                        val isMainAndroidCompilation = androidCompilation?.let {
+                            getTestedVariantData(it.androidVariant) == null
+                        } ?: false
+
+                        if (compilationInfo.isMain || isCommonCompilation || isMainAndroidCompilation) {
+                            ext.explicitApi
+                        } else {
+                            ExplicitApiMode.Disabled
+                        }
+                    }
+                )
+                .finalizeValueOnRead()
         }
     }
 }
