@@ -22,6 +22,17 @@ val DEFAULT_CURRENT_PLATFORM_TARGET_NAME_POSTFIX = HostManager.host.presetName.l
 fun extractNativeCompilerClasspath(taskOutput: String, toolName: NativeToolKind): List<String> =
     extractNativeToolSettings(taskOutput, toolName, NativeToolSettingsKind.COMPILER_CLASSPATH).toList()
 
+/**
+ * Extracts command line arguments of given task's output
+ *
+ * @param taskOutput debug level output of the task
+ * @param toolName compiler type
+ *
+ * @return list of command line arguments
+ */
+fun extractNativeCompilerCommandLineArguments(taskOutput: String, toolName: NativeToolKind): List<String> =
+    extractNativeToolSettings(taskOutput, toolName, NativeToolSettingsKind.COMMAND_LINE_ARGUMENTS).toList()
+
 enum class NativeToolKind(val title: String) {
     KONANC("konanc"),
     GENERATE_PLATFORM_LIBRARIES("generatePlatformLibraries"),

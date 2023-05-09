@@ -252,3 +252,55 @@ fun BuildResult.assertCompilerArgument(
         "$taskPath task compiler arguments don't contain $expectedArgument. Actual content: $compilerArguments"
     }
 }
+
+fun BuildResult.assertNoCompilerArgument(
+    taskPath: String,
+    notExpectedArgument: String,
+) {
+    val taskOutput = getOutputForTask(taskPath)
+    val compilerArguments = taskOutput.lines().first {
+        it.contains("Kotlin compiler args:")
+    }.substringAfter("Kotlin compiler args:")
+
+    assert(!compilerArguments.contains(notExpectedArgument)) {
+        printBuildOutput()
+
+        "$taskPath task compiler arguments contains $notExpectedArgument. Actual content: $compilerArguments"
+    }
+}
+
+/**
+ * Asserts command line arguments of the given K/N compiler for given tasks' paths
+ *
+ * Note: Log level of output must be set to [LogLevel.DEBUG].
+ *
+ * @param tasksPaths tasks' paths, for which command line arguments should be checked with give assertions
+ * @param toolName name of build tool
+ * @param assertions assertions, with will be applied to each command line arguments of each given task
+ */
+fun BuildResult.assertNativeTasksCommandLineArguments(
+    vararg tasksPaths: String,
+    toolName: NativeToolKind = NativeToolKind.KONANC,
+    assertions: (List<String>) -> Unit
+) = tasksPaths.forEach { taskPath ->
+    assertions(extractNativeCompilerCommandLineArguments(getOutputForTask(taskPath), toolName))
+}
+
+/**
+ * Asserts that the given list of command line arguments contains all the expected arguments.
+ *
+ * @param expectedArgs the list of expected arguments
+ * @param commandLineArguments the list of actual command line arguments
+ * @throws AssertionError if any of the expected arguments are missing from the actual arguments list
+ */
+fun BuildResult.assertCommandLineArgumentsContain(
+    vararg expectedArgs: String,
+    commandLineArguments: List<String>
+) {
+    expectedArgs.forEach {
+        assert(commandLineArguments.contains(it)) {
+            printBuildOutput()
+            "There is no ${it} in actual command line arguments are: ${commandLineArguments}"
+        }
+    }
+}

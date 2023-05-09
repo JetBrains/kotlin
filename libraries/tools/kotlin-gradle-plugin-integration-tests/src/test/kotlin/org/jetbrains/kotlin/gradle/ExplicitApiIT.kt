@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.AGPVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.junit.jupiter.api.DisplayName
@@ -36,6 +37,12 @@ class ExplicitApiIT : KGPBaseTest() {
                 assertTasksExecuted(":compileKotlin")
 
                 assertCompilerArgument(":compileKotlin", "-Xexplicit-api=warning")
+            }
+
+            build(":compileTestKotlin") {
+                assertTasksExecuted(":compileTestKotlin")
+
+                assertNoCompilerArgument(":compileTestKotlin", "-Xexplicit-api=warning")
             }
         }
     }
@@ -139,6 +146,47 @@ class ExplicitApiIT : KGPBaseTest() {
                         assertCommandLineArgumentsContain("-Xexplicit-api=warning", commandLineArguments = it)
                     }
                 }
+            }
+        }
+    }
+
+    @DisplayName("Explicit api mode is enabled only for non-test variants in Android project")
+    @AndroidGradlePluginTests
+    @GradleAndroidTest
+    fun explicitApiAndroid(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk
+    ) {
+        project(
+            "AndroidSimpleApp",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(
+                androidVersion = agpVersion,
+                logLevel = LogLevel.DEBUG
+            ),
+            buildJdk = jdkVersion.location
+        ) {
+
+            buildGradle.appendText(
+                //language=groovy
+                """
+                |
+                |kotlin.explicitApiWarning()
+                |
+                """.trimMargin()
+            )
+
+            build(":compileDebugKotlin") {
+                assertTasksExecuted(":compileDebugKotlin")
+
+                assertCompilerArgument(":compileDebugKotlin", "-Xexplicit-api=warning")
+            }
+
+            build(":compileDebugUnitTestKotlin") {
+                assertTasksExecuted(":compileDebugUnitTestKotlin")
+
+                assertNoCompilerArgument(":compileDebugUnitTestKotlin", "-Xexplicit-api=warning")
             }
         }
     }
