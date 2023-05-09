@@ -6,15 +6,10 @@
 package org.jetbrains.kotlin.test
 
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
-import org.jetbrains.kotlin.test.directives.extractIgnoredDirectivesForTargetBackend
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
-import org.jetbrains.kotlin.test.directives.model.SimpleDirective
-import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
-import org.jetbrains.kotlin.test.model.FrontendKinds
-import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.*
-import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
+import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.moduleStructure
 
 class FirMetadataLoadingTestSuppressor(testServices: TestServices) : AfterAnalysisChecker(testServices) {
     override val directiveContainers: List<DirectivesContainer>
@@ -22,11 +17,7 @@ class FirMetadataLoadingTestSuppressor(testServices: TestServices) : AfterAnalys
 
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
         val moduleStructure = testServices.moduleStructure
-        val directive = when (testServices.defaultsProvider.defaultFrontend) {
-            FrontendKinds.ClassicFrontend -> CodegenTestDirectives.IGNORE_FIR_METADATA_LOADING_K1
-            FrontendKinds.FIR -> CodegenTestDirectives.IGNORE_FIR_METADATA_LOADING_K2
-            else -> shouldNotBeCalled()
-        }
+        val directive = testServices.loadedMetadataSuppressionDirective
         if (moduleStructure.modules.any { directive in it.directives }) {
             return if (failedAssertions.isNotEmpty()) {
                 emptyList()
@@ -36,4 +27,5 @@ class FirMetadataLoadingTestSuppressor(testServices: TestServices) : AfterAnalys
         }
         return failedAssertions
     }
+
 }

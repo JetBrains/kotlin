@@ -41,6 +41,7 @@ class LoadedMetadataDumpHandler(testServices: TestServices) : JvmBinaryArtifactH
     private val dumper: MultiModuleInfoDumper = MultiModuleInfoDumper()
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
+        if (testServices.loadedMetadataSuppressionDirective in module.directives) return
         val emptyModule = TestModule(
             name = "empty", JvmPlatforms.defaultJvmPlatform, TargetBackend.JVM_IR, FrontendKinds.FIR,
             BackendKinds.IrBackend, ArtifactKinds.Jvm, files = emptyList(),
