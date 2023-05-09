@@ -55,6 +55,7 @@ fun KGPBaseTest.project(
     projectPath.addDefaultBuildFiles()
     projectPath.enableCacheRedirector()
     projectPath.enableAndroidSdk()
+    projectPath.addKotlinCompilerArgumentsPlugin()
 
     if (addHeapDumpOptions) projectPath.addHeapDumpOptions()
 
@@ -76,7 +77,6 @@ fun KGPBaseTest.project(
     )
     localRepoDir?.let { testProject.configureLocalRepository(localRepoDir) }
     if (buildJdk != null) testProject.setupNonDefaultJdk(buildJdk)
-    testProject.addKotlinCompilerArgumentsPlugin()
 
     val result = runCatching {
         testProject.test()
@@ -84,6 +84,25 @@ fun KGPBaseTest.project(
     // A convenient place to place a breakpoint to be able to inspect project output files
     result.getOrThrow()
     return testProject
+}
+
+private fun Path.addKotlinCompilerArgumentsPlugin() {
+    toFile().walkTopDown().forEach { file ->
+        when {
+            file.name.equals("build.gradle") -> file.modify {
+                it.replaceFirst(
+                    "plugins {",
+                    "plugins {\nid \"org.jetbrains.kotlin.test.kotlin-compiler-args-properties\""
+                )
+            }
+            file.name.equals("build.gradle.kts") -> file.modify {
+                it.replaceFirst(
+                    "plugins {",
+                    "plugins {\nid(\"org.jetbrains.kotlin.test.kotlin-compiler-args-properties\")"
+                )
+            }
+        }
+    }
 }
 
 /**
@@ -316,27 +335,6 @@ class TestProject(
     val kotlinDaemonDebugPort: Int? = null
 ) : GradleProject(projectName, projectPath) {
     fun subProject(name: String) = GradleProject(name, projectPath.resolve(name))
-
-    fun addKotlinCompilerArgumentsPlugin() {
-        if (buildOptions.languageVersion != null || buildOptions.languageApiVersion != null) {
-            projectPath.toFile().walkTopDown().forEach { file ->
-                when {
-                    file.name.equals("build.gradle") -> file.modify {
-                        it.replaceFirst(
-                            "plugins {",
-                            "plugins {\nid \"org.jetbrains.kotlin.test.kotlin-compiler-args-properties\""
-                        )
-                    }
-                    file.name.equals("build.gradle.kts") -> file.modify {
-                        it.replaceFirst(
-                            "plugins {",
-                            "plugins {\nid(\"org.jetbrains.kotlin.test.kotlin-compiler-args-properties\")"
-                        )
-                    }
-                }
-            }
-        }
-    }
 
     /**
      * Includes another project as a submodule in the current project.

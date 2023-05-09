@@ -475,6 +475,7 @@ class KotlinGradleIT : KGPBaseTest() {
                     
                     plugins {
                         id "org.jetbrains.kotlin.test.fixes.android" version "${'$'}test_fixes_version"
+                        id "org.jetbrains.kotlin.test.kotlin-compiler-args-properties" version "${'$'}test_fixes_version"
                     }
                 }
                 """.trimIndent()
