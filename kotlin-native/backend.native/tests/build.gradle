@@ -5236,10 +5236,16 @@ if (PlatformInfo.isAppleTarget(project)) {
                 "-Werror" // to forbid retry with auto-cache disabled
         ]
 
+        UtilsKt.findKonanBuildTask(project, "objc_kt55938", target).configure {
+            it.doFirst {
+                def cacheDir = new File("$testOutputRoot/local/interop_objc_kt55938/cache")
+                cacheDir.deleteDir()
+                mkdir(cacheDir)
+            }
+        }
+
         doBeforeBuild {
             mkdir(buildDir)
-            def cacheDir = new File("-Xauto-cache-dir=$testOutputRoot/local/interop_objc_kt55938/cache")
-            cacheDir.deleteDir()
             project.extensions.execClang.execClangForCompilerTests(project.target) {
                 args "$projectDir/interop/objc/kt55938/objclib.m"
                 args "-lobjc", '-fobjc-arc'
