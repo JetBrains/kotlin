@@ -41,7 +41,7 @@
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
-            <artifactId>kotlinx-serialization-compiler-plugin</artifactId>
+            <artifactId>kotlin-serialization-compiler-plugin</artifactId>
             <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>

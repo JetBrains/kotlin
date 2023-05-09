@@ -51,8 +51,17 @@ val libraries by configurations.creating {
 val librariesStripVersion by configurations.creating
 
 // Compiler plugins should be copied without `kotlin-` prefix
-val compilerPlugins by configurations.creating  {
+val compilerPlugins by configurations.creating {
     exclude("org.jetbrains.kotlin", "kotlin-stdlib-common")
+
+    isCanBeConsumed = false
+    isCanBeResolved = true
+}
+val compilerPluginsCompat by configurations.creating {
+    exclude("org.jetbrains.kotlin", "kotlin-stdlib-common")
+
+    isCanBeConsumed = false
+    isCanBeResolved = true
 }
 
 val sources by configurations.creating {
@@ -119,6 +128,9 @@ val distCompilerPluginProjects = listOf(
     ":kotlin-lombok-compiler-plugin",
     ":kotlin-assignment-compiler-plugin"
 )
+val distCompilerPluginProjectsCompat = listOf(
+    ":kotlinx-serialization-compiler-plugin",
+)
 
 val distSourcesProjects = listOfNotNull(
     ":kotlin-annotations-jvm",
@@ -167,6 +179,16 @@ dependencies {
 
     distCompilerPluginProjects.forEach {
         compilerPlugins(project(it)) { isTransitive = false }
+    }
+    distCompilerPluginProjectsCompat.forEach {
+        compilerPluginsCompat(
+            project(
+                mapOf(
+                    "path" to it,
+                    "configuration" to "distCompat"
+                )
+            )
+        )
     }
 
     distSourcesProjects.forEach {
@@ -365,6 +387,7 @@ val distKotlinc = distTask<Sync>("distKotlinc") {
     val librariesStripVersionFiles = files(librariesStripVersion)
     val sourcesFiles = files(sources)
     val compilerPluginsFiles = files(compilerPlugins)
+    val compilerPluginsCompatFiles = files(compilerPluginsCompat)
     into("lib") {
         from(jarFiles) { rename { "$compilerBaseName.jar" } }
         from(librariesFiles)
@@ -375,6 +398,17 @@ val distKotlinc = distTask<Sync>("distKotlinc") {
         }
         from(sourcesFiles)
         from(compilerPluginsFiles) {
+            rename {
+                // We want to migrate all compiler plugin in 'dist' to have 'kotlin-' prefix
+                // 'kotlin-serialization-compiler-plugin' is a new jar and should have such prefix from the start
+                if (!it.startsWith("kotlin-serialization")) {
+                    it.removePrefix("kotlin-")
+                } else {
+                    it
+                }
+            }
+        }
+        from(compilerPluginsCompatFiles) {
             rename { it.removePrefix("kotlin-") }
         }
     }
