@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.test.services.PreAnalysisHandler
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 
-class KtResolveExtensionProviderForTest(
+class KtSingleModuleResolveExtensionProviderForTest(
     private val files: List<KtResolveExtensionFile>,
     private val packages: Set<FqName>,
 ) : KtResolveExtensionProvider() {
@@ -31,9 +31,20 @@ class KtResolveExtensionProviderForTest(
     }
 }
 
+class KtMultiModuleResolveExtensionProviderForTest(
+    private val files: List<KtResolveExtensionFile>,
+    private val packages: Set<FqName>,
+    private val hasResolveExtension: (KtModule) -> Boolean,
+) : KtResolveExtensionProvider() {
+    override fun provideExtensionsFor(module: KtModule): List<KtResolveExtension> {
+        if (!hasResolveExtension(module)) return emptyList()
+        return listOf(KtResolveExtensionForTest(files, packages))
+    }
+}
+
 class KtResolveExtensionProviderForTestPreAnalysisHandler(
     testServices: TestServices,
-    private val providers: List<KtResolveExtensionProviderForTest>,
+    private val providers: List<KtResolveExtensionProvider>,
 ) : PreAnalysisHandler(testServices) {
     override fun preprocessModuleStructure(moduleStructure: TestModuleStructure) {
         val project = testServices.environmentManager.getProject() as MockProject

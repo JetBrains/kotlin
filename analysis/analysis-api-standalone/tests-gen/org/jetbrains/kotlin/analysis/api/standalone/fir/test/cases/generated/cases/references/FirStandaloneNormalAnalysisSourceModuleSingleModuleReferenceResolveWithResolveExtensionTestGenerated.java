@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModul
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.FrontendKind;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractReferenceResolveWithResolveExtensionTest;
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractSingleModuleReferenceResolveWithResolveExtensionTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("analysis/analysis-api/testData/resolveExtensions/referenceResolve")
 @TestDataPath("$PROJECT_ROOT")
-public class FirStandaloneNormalAnalysisSourceModuleReferenceResolveWithResolveExtensionTestGenerated extends AbstractReferenceResolveWithResolveExtensionTest {
+public class FirStandaloneNormalAnalysisSourceModuleSingleModuleReferenceResolveWithResolveExtensionTestGenerated extends AbstractSingleModuleReferenceResolveWithResolveExtensionTest {
     @NotNull
     @Override
     public AnalysisApiTestConfigurator getConfigurator() {

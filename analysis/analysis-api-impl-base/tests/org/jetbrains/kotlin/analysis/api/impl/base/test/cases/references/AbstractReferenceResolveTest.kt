@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KtDeclaratio
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.renderers.callables.KtPropertyAccessorsRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KtSymbol
 import org.jetbrains.kotlin.analysis.test.framework.AnalysisApiTestDirectives
-import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedSingleModuleTest
+import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
+import org.jetbrains.kotlin.analysis.test.framework.project.structure.ktModuleProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.utils.unwrapMultiReferences
 import org.jetbrains.kotlin.idea.references.KtReference
@@ -21,10 +22,11 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractReferenceResolveTest : AbstractAnalysisApiBasedSingleModuleTest() {
+abstract class AbstractReferenceResolveTest : AbstractAnalysisApiBasedTest() {
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
         with(builder) {
@@ -41,7 +43,16 @@ abstract class AbstractReferenceResolveTest : AbstractAnalysisApiBasedSingleModu
         }
     }
 
-    override fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
+    final override fun doTestByModuleStructure(moduleStructure: TestModuleStructure, testServices: TestServices) {
+        val mainModule = moduleStructure.modules.singleOrNull() ?: findMainModule(moduleStructure)
+        val ktFiles = testServices.ktModuleProvider.getModuleFiles(mainModule).filterIsInstance<KtFile>()
+        doTestByFileStructure(ktFiles, mainModule, testServices)
+    }
+
+    private fun findMainModule(moduleStructure: TestModuleStructure): TestModule =
+        moduleStructure.modules.find { it.name == "main" } ?: error("There should be a module named 'main' in the multi-module test.")
+
+    fun doTestByFileStructure(ktFiles: List<KtFile>, mainModule: TestModule, testServices: TestServices) {
         val mainKtFile = ktFiles.singleOrNull() ?: ktFiles.firstOrNull { it.name == "main.kt" } ?: ktFiles.first()
         val caretPosition = testServices.expressionMarkerProvider.getCaretPosition(mainKtFile)
         val ktReferences = findReferencesAtCaret(mainKtFile, caretPosition)
@@ -52,11 +63,11 @@ abstract class AbstractReferenceResolveTest : AbstractAnalysisApiBasedSingleModu
         val resolvedTo =
             analyseForTest(ktReferences.first().element) {
                 val symbols = ktReferences.flatMap { it.resolveToSymbols() }
-                checkReferenceResultForValidity(ktReferences, module, testServices, symbols)
+                checkReferenceResultForValidity(ktReferences, mainModule, testServices, symbols)
                 renderResolvedTo(symbols, renderingOptions)
             }
 
-        if (Directives.UNRESOLVED_REFERENCE in module.directives) {
+        if (Directives.UNRESOLVED_REFERENCE in mainModule.directives) {
             return
         }
 

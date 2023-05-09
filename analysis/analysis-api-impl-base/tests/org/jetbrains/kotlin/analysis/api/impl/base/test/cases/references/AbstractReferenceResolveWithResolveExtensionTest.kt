@@ -5,17 +5,23 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references
 
-import org.jetbrains.kotlin.analysis.api.impl.base.test.util.KtResolveExtensionProviderForTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.util.KtResolveExtensionProviderForTestPreAnalysisHandler
 import org.jetbrains.kotlin.analysis.api.impl.base.test.util.KtResolveExtensionFileForTests
+import org.jetbrains.kotlin.analysis.api.impl.base.test.util.KtResolveExtensionProviderForTestPreAnalysisHandler
+import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionFile
+import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionProvider
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.test.bind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 
 abstract class AbstractReferenceResolveWithResolveExtensionTest : AbstractReferenceResolveTest() {
+    abstract fun createResolveExtensionProvider(
+        files: List<KtResolveExtensionFile>,
+        packages: Set<FqName>,
+    ): KtResolveExtensionProvider
+
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
-        val provider = KtResolveExtensionProviderForTest(
+        val provider = createResolveExtensionProvider(
             listOf(
                 KtResolveExtensionFileForTests(
                     "extension1.kt",
