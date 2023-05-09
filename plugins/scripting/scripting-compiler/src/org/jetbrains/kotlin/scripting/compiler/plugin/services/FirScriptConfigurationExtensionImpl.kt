@@ -58,7 +58,7 @@ class FirScriptConfiguratorExtensionImpl(
             compilationConfiguration[ScriptCompilationConfiguration.defaultImports]?.forEach { defaultImport ->
                 val trimmed = defaultImport.trim()
                 val endsWithStar = trimmed.endsWith("*")
-                val stripped = if (endsWithStar) trimmed.substring(0, trimmed.length - 1) else trimmed
+                val stripped = if (endsWithStar) trimmed.substring(0, trimmed.length - 2) else trimmed
                 val fqName = FqName.fromSegments(stripped.split("."))
                 fileBuilder.imports += buildImport {
                     importedFqName = fqName
