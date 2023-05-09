@@ -5,11 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
-import com.intellij.openapi.extensions.LoadingOrder
 import com.intellij.psi.PsiElement
-import com.intellij.psi.compiled.ClassFileDecompilers
-import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInDecompiler
-import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinClassFileDecompiler
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirLibraryBinaryTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirDeclarationForCompiledElementSearcher
