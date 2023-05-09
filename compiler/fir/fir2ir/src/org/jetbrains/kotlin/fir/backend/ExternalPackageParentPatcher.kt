@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
 // TODO: should be a lowering
-internal class ExternalPackageParentPatcher(
+class ExternalPackageParentPatcher(
     private val components: Fir2IrComponents,
     private val fir2IrExtensions: Fir2IrExtensions
 ) : IrElementVisitorVoid {

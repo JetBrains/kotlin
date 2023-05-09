@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.util.IdSignatureComposer
 import org.jetbrains.kotlin.ir.util.KotlinMangler
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 data class FirResult(val outputs: List<ModuleCompilerAnalyzedOutput>)
 
@@ -91,7 +92,7 @@ fun FirResult.convertToIrAndActualize(
             fir2IrResult = outputs.single().convertToIr(
                 fir2IrExtensions,
                 fir2IrConfiguration,
-                irGeneratorExtensions,
+                listOf(),  // Wait until after actualization with running IrGenerationExtensions.
                 commonMemberStorage = commonMemberStorage,
                 irBuiltIns = null,
                 irMangler,
@@ -110,7 +111,7 @@ fun FirResult.convertToIrAndActualize(
                 it.convertToIr(
                     fir2IrExtensions,
                     fir2IrConfiguration,
-                    irGeneratorExtensions,
+                    listOf(),  // Wait until after actualization with running IrGenerationExtensions.
                     commonMemberStorage = commonMemberStorage,
                     irBuiltIns = irBuiltIns,
                     irMangler,
@@ -126,7 +127,7 @@ fun FirResult.convertToIrAndActualize(
             fir2IrResult = platformOutput.convertToIr(
                 fir2IrExtensions,
                 fir2IrConfiguration,
-                irGeneratorExtensions,
+                listOf(),  // Wait until after actualization with running IrGenerationExtensions.
                 commonMemberStorage = commonMemberStorage,
                 irBuiltIns = irBuiltIns!!,
                 irMangler,
@@ -146,6 +147,14 @@ fun FirResult.convertToIrAndActualize(
     }
 
     val (irModuleFragment, components, pluginContext) = fir2IrResult
+
+    // Run IR generator extensions after actualization so that they have access to the
+    // entire actualized definition including default arguments.
+    for (extension in irGeneratorExtensions) {
+        extension.generate(irModuleFragment, pluginContext)
+    }
+    irModuleFragment.acceptVoid(ExternalPackageParentPatcher(components, fir2IrExtensions))
+
     return Fir2IrActualizedResult(irModuleFragment, components, pluginContext, actualizationResult)
 }
 
