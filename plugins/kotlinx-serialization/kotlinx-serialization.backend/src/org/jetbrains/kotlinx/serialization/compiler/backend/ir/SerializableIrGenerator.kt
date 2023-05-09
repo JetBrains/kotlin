@@ -55,7 +55,7 @@ class SerializableIrGenerator(
     private val IrClass.isInternalSerializable: Boolean get() = kind == ClassKind.CLASS && hasSerializableOrMetaAnnotationWithoutArgs()
 
     private val cachedChildSerializers: List<IrExpression?> =
-        irClass.companionObject()!!.createCachedChildSerializers(properties.serializableProperties)
+        irClass.companionObject()!!.createCachedChildSerializers(irClass, properties.serializableProperties)
 
     private val cachedChildSerializersProperty: IrProperty? =
         irClass.companionObject()!!.addCachedChildSerializersProperty(cachedChildSerializers)

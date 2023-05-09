@@ -34,6 +34,12 @@ public class SerializationFirLightTreeBlackBoxTestGenerated extends AbstractSeri
         }
 
         @Test
+        @TestMetadata("caching.kt")
+        public void testCaching() throws Exception {
+            runTest("plugins/kotlinx-serialization/testData/boxIr/caching.kt");
+        }
+
+        @Test
         @TestMetadata("classSerializerAsObject.kt")
         public void testClassSerializerAsObject() throws Exception {
             runTest("plugins/kotlinx-serialization/testData/boxIr/classSerializerAsObject.kt");
