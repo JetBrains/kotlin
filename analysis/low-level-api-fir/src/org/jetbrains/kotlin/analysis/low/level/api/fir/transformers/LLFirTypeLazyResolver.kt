@@ -126,13 +126,11 @@ private class LLFirTypeTargetResolver(
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
         when (target) {
             is FirConstructor -> {
-                // TODO: should be uncommented after KT-58546
-//                error("Shoul be resolved during ${::resolveConstructors.name}")
+                error("Should be resolved during ${::resolveConstructors.name}")
             }
             is FirDanglingModifierList, is FirFileAnnotationsContainer, is FirCallableDeclaration, is FirTypeAlias, is FirScript -> {
                 target.accept(transformer, null)
             }
-
             is FirRegularClass -> {
                 resolveClassTypes(target)
             }

@@ -85,6 +85,12 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     }
 
     @Test
+    @TestMetadata("complexRedeclaration.kt")
+    public void testComplexRedeclaration() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/complexRedeclaration.kt");
+    }
+
+    @Test
     @TestMetadata("cyclicHierarchy.kt")
     public void testCyclicHierarchy() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/lazyResolve/cyclicHierarchy.kt");

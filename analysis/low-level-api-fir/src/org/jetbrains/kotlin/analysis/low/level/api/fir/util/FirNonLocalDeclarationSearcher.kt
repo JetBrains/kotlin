@@ -15,7 +15,30 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.ClassId
 
 object FirElementFinder {
-    fun findClassifierWithClassId(firFile: FirFile, classId: ClassId): FirClassLikeDeclaration? {
+    fun findClassifierWithClassId(
+        firFile: FirFile,
+        classId: ClassId,
+    ): FirClassLikeDeclaration? = findPathToClassifierWithClassId(
+        firFile = firFile,
+        classId = classId,
+        expectedMemberDeclaration = null
+    )?.second
+
+    fun findClassPathToDeclaration(
+        firFile: FirFile,
+        declarationContainerClassId: ClassId,
+        targetMemberDeclaration: FirDeclaration,
+    ): List<FirRegularClass>? = findPathToClassifierWithClassId(
+        firFile = firFile,
+        classId = declarationContainerClassId,
+        expectedMemberDeclaration = targetMemberDeclaration
+    )?.first
+
+    private fun findPathToClassifierWithClassId(
+        firFile: FirFile,
+        classId: ClassId,
+        expectedMemberDeclaration: FirDeclaration?,
+    ): Pair<List<FirRegularClass>, FirClassLikeDeclaration>? {
         requireWithAttachmentBuilder(!classId.isLocal, { "ClassId should not be local" }) {
             withEntry("classId", classId) { it.asString() }
         }
@@ -28,33 +51,56 @@ object FirElementFinder {
         }
 
         val classIdPathSegment = classId.relativeClassName.pathSegments()
+        val path = ArrayList<FirRegularClass>(classIdPathSegment.size)
         var result: FirClassLikeDeclaration? = null
 
-        fun find(declarations: Iterable<FirDeclaration>, classIdPathIndex: Int) {
-            if (result != null) return
+        fun find(declarations: Iterable<FirDeclaration>, classIdPathIndex: Int): Boolean {
             val currentClassSegment = classIdPathSegment[classIdPathIndex]
 
             for (subDeclaration in declarations) {
                 if (subDeclaration is FirScript) {
                     val scriptDeclarations = subDeclaration.statements.asSequence().filterIsInstance<FirDeclaration>()
-                    find(scriptDeclarations.asIterable(), classIdPathIndex)
+                    if (find(scriptDeclarations.asIterable(), classIdPathIndex)) {
+                        return true
+                    }
+
                     continue
                 }
 
                 if (subDeclaration is FirClassLikeDeclaration && currentClassSegment == subDeclaration.symbol.name) {
                     if (classIdPathIndex == classIdPathSegment.lastIndex) {
-                        result = subDeclaration
-                        return
+                        if (expectedMemberDeclaration == null ||
+                            subDeclaration is FirRegularClass && expectedMemberDeclaration in subDeclaration.declarations
+                        ) {
+                            if (subDeclaration is FirRegularClass) {
+                                path += subDeclaration
+                            }
+
+                            result = subDeclaration
+                            return true
+                        }
+
+                        continue
                     }
+
                     if (subDeclaration is FirRegularClass) {
-                        find(subDeclaration.declarations, classIdPathIndex + 1)
+                        path += subDeclaration
+                        if (find(subDeclaration.declarations, classIdPathIndex + 1)) {
+                            return true
+                        }
+
+                        path.removeLast()
                     }
                 }
             }
+
+            return false
         }
 
         find(firFile.declarations, classIdPathIndex = 0)
-        return result
+        return result?.let {
+            (path as List<FirRegularClass>) to it
+        }
     }
 
     inline fun <reified E : FirElement> findElementIn(

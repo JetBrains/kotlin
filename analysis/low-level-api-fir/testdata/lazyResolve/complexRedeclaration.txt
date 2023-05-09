@@ -1,0 +1,1328 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] complexRedeclaration.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? sealed [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] class B : A {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<A>
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface C : A {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface D : C, A {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] class E : B, A {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] constructor(): R|E| {
+            LAZY_super<A>
+        }
+
+    }
+    public? sealed [ResolvedTo(RAW_FIR)] class P : R|kotlin/Any| {
+        protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] constructor(): R|P| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] object H : P {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=H] constructor(): R|P.H| {
+                LAZY_super<P>
+            }
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] class J : P {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=J] constructor(): R|P.J| {
+                LAZY_super<P>
+            }
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] object T : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=T] constructor(): R|P.T| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] object V : P {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=V] constructor(): R|P.T.V| {
+                    LAZY_super<P>
+                }
+
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] class M : P {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=M] constructor(): R|P.T.M| {
+                    LAZY_super<P>
+                }
+
+            }
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val p: P = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] get(): P
+
+        public? final? [ResolvedTo(RAW_FIR)] val r: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] get(): <implicit>
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] class K : P {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=K] constructor(): R|K| {
+            LAZY_super<P>
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] object B : R|kotlin/Any| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] class I : P {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=I] constructor(): R|B.I| {
+                LAZY_super<P>
+            }
+
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] complexRedeclaration.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? sealed [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] class B : A {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<A>
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface C : A {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface D : C, A {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] class E : B, A {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] constructor(): R|E| {
+            LAZY_super<A>
+        }
+
+    }
+    public? sealed [ResolvedTo(RAW_FIR)] class P : R|kotlin/Any| {
+        protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] constructor(): R|P| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] object H : P {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=H] constructor(): R|P.H| {
+                LAZY_super<P>
+            }
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] class J : P {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=J] constructor(): R|P.J| {
+                LAZY_super<P>
+            }
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] object T : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=T] constructor(): R|P.T| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] object V : P {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=V] constructor(): R|P.T.V| {
+                    LAZY_super<P>
+                }
+
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] class M : P {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=M] constructor(): R|P.T.M| {
+                    LAZY_super<P>
+                }
+
+            }
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val p: P = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] get(): P
+
+        public? final? [ResolvedTo(RAW_FIR)] val r: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] get(): <implicit>
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] class K : P {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=K] constructor(): R|K| {
+            LAZY_super<P>
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] object B : R|kotlin/Any| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] class I : P {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=I] constructor(): R|B.I| {
+                LAZY_super<P>
+            }
+
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] complexRedeclaration.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? sealed [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] class B : A {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<A>
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface C : A {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface D : C, A {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] class E : B, A {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] constructor(): R|E| {
+            LAZY_super<A>
+        }
+
+    }
+    public? sealed [ResolvedTo(RAW_FIR)] class P : R|kotlin/Any| {
+        protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] constructor(): R|P| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] object H : P {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=H] constructor(): R|P.H| {
+                LAZY_super<P>
+            }
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] class J : P {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=J] constructor(): R|P.J| {
+                LAZY_super<P>
+            }
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] object T : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=T] constructor(): R|P.T| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] object V : P {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=V] constructor(): R|P.T.V| {
+                    LAZY_super<P>
+                }
+
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] class M : P {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=M] constructor(): R|P.T.M| {
+                    LAZY_super<P>
+                }
+
+            }
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val p: P = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] get(): P
+
+        public? final? [ResolvedTo(RAW_FIR)] val r: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] get(): <implicit>
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] class K : P {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=K] constructor(): R|K| {
+            LAZY_super<P>
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] object B : R|kotlin/Any| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] class I : P {
+            public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=I] constructor(): R|B.I| {
+                LAZY_super<P>
+            }
+
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] complexRedeclaration.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? sealed [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+        protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] class B : A {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<A>
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface C : A {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface D : C, A {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] class E : B, A {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] constructor(): R|E| {
+            LAZY_super<A>
+        }
+
+    }
+    public? sealed [ResolvedTo(RAW_FIR)] class P : R|kotlin/Any| {
+        protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] constructor(): R|P| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] object H : P {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=H] constructor(): R|P.H| {
+                LAZY_super<P>
+            }
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] class J : P {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=J] constructor(): R|P.J| {
+                LAZY_super<P>
+            }
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] object T : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=T] constructor(): R|P.T| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] object V : P {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=V] constructor(): R|P.T.V| {
+                    LAZY_super<P>
+                }
+
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] class M : P {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=M] constructor(): R|P.T.M| {
+                    LAZY_super<P>
+                }
+
+            }
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val p: P = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] get(): P
+
+        public? final? [ResolvedTo(RAW_FIR)] val r: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] get(): <implicit>
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] class K : P {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=K] constructor(): R|K| {
+            LAZY_super<P>
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] object B : R|kotlin/Any| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] class I : P {
+            public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=I] constructor(): R|B.I| {
+                LAZY_super<P>
+            }
+
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] complexRedeclaration.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? sealed [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
+        protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] class B : R|A| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<A>
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface C : A {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface D : C, A {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] class E : B, A {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] constructor(): R|E| {
+            LAZY_super<A>
+        }
+
+    }
+    public? sealed [ResolvedTo(SUPER_TYPES)] class P : R|kotlin/Any| {
+        protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] constructor(): R|P| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] object H : P {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=H] constructor(): R|P.H| {
+                LAZY_super<P>
+            }
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] class J : P {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=J] constructor(): R|P.J| {
+                LAZY_super<P>
+            }
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] object T : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=T] constructor(): R|P.T| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] object V : P {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=V] constructor(): R|P.T.V| {
+                    LAZY_super<P>
+                }
+
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] class M : P {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=M] constructor(): R|P.T.M| {
+                    LAZY_super<P>
+                }
+
+            }
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val p: P = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] get(): P
+
+        public? final? [ResolvedTo(RAW_FIR)] val r: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] get(): <implicit>
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] class K : P {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=K] constructor(): R|K| {
+            LAZY_super<P>
+        }
+
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] object B : R|kotlin/Any| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(SUPER_TYPES)] class I : R|P| {
+            public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=I] constructor(): R|B.I| {
+                LAZY_super<P>
+            }
+
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] complexRedeclaration.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? sealed [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
+        protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] class B : R|A| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<A>
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface C : A {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface D : C, A {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] class E : B, A {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] constructor(): R|E| {
+            LAZY_super<A>
+        }
+
+    }
+    public? sealed [ResolvedTo(SUPER_TYPES)] class P : R|kotlin/Any| {
+        protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] constructor(): R|P| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] object H : P {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=H] constructor(): R|P.H| {
+                LAZY_super<P>
+            }
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] class J : P {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=J] constructor(): R|P.J| {
+                LAZY_super<P>
+            }
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] object T : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=T] constructor(): R|P.T| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] object V : P {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=V] constructor(): R|P.T.V| {
+                    LAZY_super<P>
+                }
+
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] class M : P {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=M] constructor(): R|P.T.M| {
+                    LAZY_super<P>
+                }
+
+            }
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] val p: P = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] get(): P
+
+        public? final? [ResolvedTo(RAW_FIR)] val r: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P] get(): <implicit>
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] class K : P {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=K] constructor(): R|K| {
+            LAZY_super<P>
+        }
+
+    }
+    public? final? [ResolvedTo(TYPES)] object B : R|kotlin/Any| {
+        private [ResolvedTo(TYPES)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(TYPES)] class I : R|P| {
+            public? [ResolvedTo(TYPES)] [ContainingClassKey=I] constructor(): R|B.I| {
+                LAZY_super<R|P|>
+            }
+
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] complexRedeclaration.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? sealed [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
+        protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] class B : R|A| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<A>
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface C : A {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface D : C, A {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] class E : B, A {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] constructor(): R|E| {
+            LAZY_super<A>
+        }
+
+    }
+    public sealed [ResolvedTo(STATUS)] class P : R|kotlin/Any| {
+        protected [ResolvedTo(STATUS)] [ContainingClassKey=P] constructor(): R|P| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] object H : P {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=H] constructor(): R|P.H| {
+                LAZY_super<P>
+            }
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] class J : P {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=J] constructor(): R|P.J| {
+                LAZY_super<P>
+            }
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] object T : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=T] constructor(): R|P.T| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] object V : P {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=V] constructor(): R|P.T.V| {
+                    LAZY_super<P>
+                }
+
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] class M : P {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=M] constructor(): R|P.T.M| {
+                    LAZY_super<P>
+                }
+
+            }
+
+        }
+
+        public final [ResolvedTo(STATUS)] val p: R|P| = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] [ContainingClassKey=P] get(): R|P|
+
+        public final [ResolvedTo(STATUS)] val r: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] [ContainingClassKey=P] get(): <implicit>
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] class K : P {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=K] constructor(): R|K| {
+            LAZY_super<P>
+        }
+
+    }
+    public final [ResolvedTo(STATUS)] object B : R|kotlin/Any| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] class I : R|P| {
+            public [ResolvedTo(STATUS)] [ContainingClassKey=I] constructor(): R|B.I| {
+                LAZY_super<R|P|>
+            }
+
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] complexRedeclaration.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? sealed [ResolvedTo(SUPER_TYPES)] class A : R|kotlin/Any| {
+        protected [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] class B : R|A| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<A>
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface C : A {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface D : C, A {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] class E : B, A {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] constructor(): R|E| {
+            LAZY_super<A>
+        }
+
+    }
+    public sealed [ResolvedTo(STATUS)] class P : R|kotlin/Any| {
+        protected [ResolvedTo(STATUS)] [ContainingClassKey=P] constructor(): R|P| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] object H : P {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=H] constructor(): R|P.H| {
+                LAZY_super<P>
+            }
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] class J : P {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=J] constructor(): R|P.J| {
+                LAZY_super<P>
+            }
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] object T : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=T] constructor(): R|P.T| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] object V : P {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=V] constructor(): R|P.T.V| {
+                    LAZY_super<P>
+                }
+
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] class M : P {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=M] constructor(): R|P.T.M| {
+                    LAZY_super<P>
+                }
+
+            }
+
+        }
+
+        public final [ResolvedTo(STATUS)] val p: R|P| = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] [ContainingClassKey=P] get(): R|P|
+
+        public final [ResolvedTo(STATUS)] val r: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] [ContainingClassKey=P] get(): <implicit>
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] class K : P {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=K] constructor(): R|K| {
+            LAZY_super<P>
+        }
+
+    }
+    public final [ResolvedTo(STATUS)] object B : R|kotlin/Any| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] class I : R|P| {
+            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=I] constructor(): R|B.I| {
+                LAZY_super<R|P|>
+            }
+
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
+
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] complexRedeclaration.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public sealed [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+        protected [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(STATUS)] class B : R|A| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<R|A|>
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface C : A {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface D : C, A {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] class E : B, A {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] constructor(): R|E| {
+            LAZY_super<A>
+        }
+
+    }
+    public sealed [ResolvedTo(STATUS)] class P : R|kotlin/Any| {
+        protected [ResolvedTo(STATUS)] [ContainingClassKey=P] constructor(): R|P| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] object H : P {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=H] constructor(): R|P.H| {
+                LAZY_super<P>
+            }
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] class J : P {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=J] constructor(): R|P.J| {
+                LAZY_super<P>
+            }
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] object T : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=T] constructor(): R|P.T| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] object V : P {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=V] constructor(): R|P.T.V| {
+                    LAZY_super<P>
+                }
+
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] class M : P {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=M] constructor(): R|P.T.M| {
+                    LAZY_super<P>
+                }
+
+            }
+
+        }
+
+        public final [ResolvedTo(STATUS)] val p: R|P| = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] [ContainingClassKey=P] get(): R|P|
+
+        public final [ResolvedTo(STATUS)] val r: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] [ContainingClassKey=P] get(): <implicit>
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] class K : P {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=K] constructor(): R|K| {
+            LAZY_super<P>
+        }
+
+    }
+    public final [ResolvedTo(STATUS)] object B : R|kotlin/Any| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] class I : R|P| {
+            public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] [ContainingClassKey=I] constructor(): R|B.I| {
+                LAZY_super<R|P|>
+            }
+
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] complexRedeclaration.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public sealed [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+        protected [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(STATUS)] class B : R|A| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<R|A|>
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface C : A {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface D : C, A {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] class E : B, A {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] constructor(): R|E| {
+            LAZY_super<A>
+        }
+
+    }
+    public sealed [ResolvedTo(STATUS)] class P : R|kotlin/Any| {
+        protected [ResolvedTo(STATUS)] [ContainingClassKey=P] constructor(): R|P| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] object H : P {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=H] constructor(): R|P.H| {
+                LAZY_super<P>
+            }
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] class J : P {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=J] constructor(): R|P.J| {
+                LAZY_super<P>
+            }
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] object T : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=T] constructor(): R|P.T| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] object V : P {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=V] constructor(): R|P.T.V| {
+                    LAZY_super<P>
+                }
+
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] class M : P {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=M] constructor(): R|P.T.M| {
+                    LAZY_super<P>
+                }
+
+            }
+
+        }
+
+        public final [ResolvedTo(STATUS)] val p: R|P| = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] [ContainingClassKey=P] get(): R|P|
+
+        public final [ResolvedTo(STATUS)] val r: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] [ContainingClassKey=P] get(): <implicit>
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] class K : P {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=K] constructor(): R|K| {
+            LAZY_super<P>
+        }
+
+    }
+    public final [ResolvedTo(STATUS)] object B : R|kotlin/Any| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] class I : R|P| {
+            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=I] constructor(): R|B.I| {
+                super<R|P|>()
+            }
+
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] complexRedeclaration.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public sealed [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+        protected [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(STATUS)] class B : R|A| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<R|A|>
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface C : A {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface D : C, A {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] class E : B, A {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] constructor(): R|E| {
+            LAZY_super<A>
+        }
+
+    }
+    public sealed [ResolvedTo(STATUS)] class P : R|kotlin/Any| {
+        protected [ResolvedTo(STATUS)] [ContainingClassKey=P] constructor(): R|P| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] object H : P {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=H] constructor(): R|P.H| {
+                LAZY_super<P>
+            }
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] class J : P {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=J] constructor(): R|P.J| {
+                LAZY_super<P>
+            }
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] object T : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=T] constructor(): R|P.T| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] object V : P {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=V] constructor(): R|P.T.V| {
+                    LAZY_super<P>
+                }
+
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] class M : P {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=M] constructor(): R|P.T.M| {
+                    LAZY_super<P>
+                }
+
+            }
+
+        }
+
+        public final [ResolvedTo(STATUS)] val p: R|P| = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] [ContainingClassKey=P] get(): R|P|
+
+        public final [ResolvedTo(STATUS)] val r: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] [ContainingClassKey=P] get(): <implicit>
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] class K : P {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=K] constructor(): R|K| {
+            LAZY_super<P>
+        }
+
+    }
+    public final [ResolvedTo(STATUS)] object B : R|kotlin/Any| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] class I : R|P| {
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=I] constructor(): R|B.I| {
+                super<R|P|>()
+            }
+
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
+
+ANNOTATIONS_ARGUMENTS_MAPPING:
+FILE: [ResolvedTo(IMPORTS)] complexRedeclaration.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public sealed [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+        protected [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(STATUS)] class B : R|A| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<R|A|>
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface C : A {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface D : C, A {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] class E : B, A {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] constructor(): R|E| {
+            LAZY_super<A>
+        }
+
+    }
+    public sealed [ResolvedTo(STATUS)] class P : R|kotlin/Any| {
+        protected [ResolvedTo(STATUS)] [ContainingClassKey=P] constructor(): R|P| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] object H : P {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=H] constructor(): R|P.H| {
+                LAZY_super<P>
+            }
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] class J : P {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=J] constructor(): R|P.J| {
+                LAZY_super<P>
+            }
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] object T : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=T] constructor(): R|P.T| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] object V : P {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=V] constructor(): R|P.T.V| {
+                    LAZY_super<P>
+                }
+
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] class M : P {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=M] constructor(): R|P.T.M| {
+                    LAZY_super<P>
+                }
+
+            }
+
+        }
+
+        public final [ResolvedTo(STATUS)] val p: R|P| = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] [ContainingClassKey=P] get(): R|P|
+
+        public final [ResolvedTo(STATUS)] val r: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] [ContainingClassKey=P] get(): <implicit>
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] class K : P {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=K] constructor(): R|K| {
+            LAZY_super<P>
+        }
+
+    }
+    public final [ResolvedTo(STATUS)] object B : R|kotlin/Any| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] class I : R|P| {
+            public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=I] constructor(): R|B.I| {
+                super<R|P|>()
+            }
+
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] complexRedeclaration.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public sealed [ResolvedTo(STATUS)] class A : R|kotlin/Any| {
+        protected [ResolvedTo(STATUS)] [ContainingClassKey=A] constructor(): R|A| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(STATUS)] class B : R|A| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<R|A|>
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface C : A {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface D : C, A {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] class E : B, A {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=E] constructor(): R|E| {
+            LAZY_super<A>
+        }
+
+    }
+    public sealed [ResolvedTo(STATUS)] class P : R|kotlin/Any| {
+        protected [ResolvedTo(STATUS)] [ContainingClassKey=P] constructor(): R|P| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] object H : P {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=H] constructor(): R|P.H| {
+                LAZY_super<P>
+            }
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] class J : P {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=J] constructor(): R|P.J| {
+                LAZY_super<P>
+            }
+
+        }
+
+        public? final? [ResolvedTo(RAW_FIR)] object T : R|kotlin/Any| {
+            private [ResolvedTo(RAW_FIR)] [ContainingClassKey=T] constructor(): R|P.T| {
+                LAZY_super<R|kotlin/Any|>
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] object V : P {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=V] constructor(): R|P.T.V| {
+                    LAZY_super<P>
+                }
+
+            }
+
+            public? final? [ResolvedTo(RAW_FIR)] class M : P {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=M] constructor(): R|P.T.M| {
+                    LAZY_super<P>
+                }
+
+            }
+
+        }
+
+        public final [ResolvedTo(STATUS)] val p: R|P| = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] [ContainingClassKey=P] get(): R|P|
+
+        public final [ResolvedTo(STATUS)] val r: <implicit> = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] [ContainingClassKey=P] get(): <implicit>
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] class K : P {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=K] constructor(): R|K| {
+            LAZY_super<P>
+        }
+
+    }
+    public final [ResolvedTo(STATUS)] object B : R|kotlin/Any| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] class I : R|P| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=I] constructor(): R|B.I| {
+                super<R|P|>()
+            }
+
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(IMPORTS)] complexRedeclaration.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public sealed [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
+        protected [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class B : R|A| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] constructor(): R|B| {
+            super<R|A|>()
+        }
+
+    }
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface C : R|A| {
+    }
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface D : R|C|, R|A| {
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class E : R|B|, R|A| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=E] constructor(): R|E| {
+            super<R|A|>()
+        }
+
+    }
+    public sealed [ResolvedTo(BODY_RESOLVE)] class P : R|kotlin/Any| {
+        protected [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=P] constructor(): R|P| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] object H : R|P| {
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=H] constructor(): R|P.H| {
+                super<R|P|>()
+            }
+
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] class J : R|P| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=J] constructor(): R|P.J| {
+                super<R|P|>()
+            }
+
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] object T : R|kotlin/Any| {
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=T] constructor(): R|P.T| {
+                super<R|kotlin/Any|>()
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] object V : R|P| {
+                private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=V] constructor(): R|P.T.V| {
+                    super<R|P|>()
+                }
+
+            }
+
+            public final [ResolvedTo(BODY_RESOLVE)] class M : R|P| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=M] constructor(): R|P.T.M| {
+                    super<R|P|>()
+                }
+
+            }
+
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val p: R|P| = object : R|P| {
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                super<R|P|>()
+            }
+
+        }
+
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=P] get(): R|P|
+
+        public final [ResolvedTo(BODY_RESOLVE)] val r: R|P| = object : R|P| {
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                super<R|P|>()
+            }
+
+        }
+
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=P] get(): R|P|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class K : R|P| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=K] constructor(): R|K| {
+            super<R|P|>()
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] object B : R|kotlin/Any| {
+        private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] class I : R|P| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=I] constructor(): R|B.I| {
+                super<R|P|>()
+            }
+
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
+        local final [ResolvedTo(BODY_RESOLVE)] class L : R|P| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=L] constructor(): R|L| {
+                super<R|P|>()
+            }
+
+        }
+
+        [ResolvedTo(BODY_RESOLVE)] lval a: R|<anonymous>| = object : R|P| {
+            private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                super<R|P|>()
+            }
+
+        }
+
+    }

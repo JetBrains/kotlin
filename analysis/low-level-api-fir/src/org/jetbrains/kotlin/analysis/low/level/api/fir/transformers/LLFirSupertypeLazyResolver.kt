@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirSingleResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.asResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.tryCollectDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
@@ -26,7 +27,6 @@ import org.jetbrains.kotlin.fir.resolve.transformers.SupertypeComputationSession
 import org.jetbrains.kotlin.fir.resolve.transformers.SupertypeComputationStatus
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.platformSupertypeUpdater
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.ClassId
@@ -86,6 +86,12 @@ private class LLFirSuperTypeTargetResolver(
             // We can get into this function during a loop calculation, so it is possible that the result for [outerClass]
             // is not yet published, so we expect that this class was already visited or resolved
             if (outerClass !in visitedElements) {
+                outerClass.asResolveTarget()?.let { resolveTarget ->
+                    // It is possible in case of declaration collision,
+                    // so we need this logic only to be sure that [outerClass] is resolved
+                    resolveToSupertypePhase(resolveTarget)
+                }
+
                 LLFirSupertypeLazyResolver.checkIsResolved(outerClass)
             }
         }
@@ -181,6 +187,25 @@ private class LLFirSuperTypeTargetResolver(
         }
     }
 
+    private fun FirClassLikeDeclaration.asResolveTarget(): LLFirSingleResolveTarget? {
+        return takeIf { it.canHaveLoopInSupertypesHierarchy(session, forceSkipResolvedClasses = true) }
+            ?.tryCollectDesignationWithFile()
+            ?.asResolveTarget()
+    }
+
+    private fun resolveToSupertypePhase(target: LLFirSingleResolveTarget) {
+        LLFirSuperTypeTargetResolver(
+            target = target,
+            lockProvider = lockProvider,
+            session = session,
+            scopeSession = scopeSession,
+            supertypeComputationSession = supertypeComputationSession,
+            visitedElements = visitedElements,
+        ).resolveDesignation()
+
+        LLFirLazyPhaseResolverByPhase.getByPhase(resolverPhase).checkIsResolved(target)
+    }
+
     /**
      * We want to apply resolved supertypes to as many designations as possible.
      * So we crawl the resolved supertypes of visited designations to find more designations to collect.
@@ -205,21 +230,9 @@ private class LLFirSuperTypeTargetResolver(
             return
         }
 
-        val resolveTarget = classLikeDeclaration.takeIf { it.canHaveLoopInSupertypesHierarchy(session, forceSkipResolvedClasses = true) }
-            ?.tryCollectDesignationWithFile()
-            ?.asResolveTarget()
-
+        val resolveTarget = classLikeDeclaration.asResolveTarget()
         if (resolveTarget != null) {
-            LLFirSuperTypeTargetResolver(
-                target = resolveTarget,
-                lockProvider = lockProvider,
-                session = session,
-                scopeSession = scopeSession,
-                supertypeComputationSession = supertypeComputationSession,
-                visitedElements = visitedElements,
-            ).resolveDesignation()
-
-            LLFirLazyPhaseResolverByPhase.getByPhase(resolverPhase).checkIsResolved(resolveTarget)
+            resolveToSupertypePhase(resolveTarget)
         } else if (type is ConeClassLikeType) {
             // The `classLikeDeclaration` is not associated with a file, and thus there is no need to resolve it, but it may still point
             // to declarations via its type arguments which need to be collected and have a containing file.

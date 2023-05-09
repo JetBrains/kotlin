@@ -116,9 +116,28 @@ private fun collectDesignationPath(target: FirElementWithResolveState): List<Fir
     }
 }
 
+private fun collectDesignationPathWithContainingClassByFirFile(
+    firFile: FirFile,
+    containingClassId: ClassId,
+    target: FirDeclaration,
+): List<FirRegularClass>? = FirElementFinder.findClassPathToDeclaration(
+    firFile = firFile,
+    declarationContainerClassId = containingClassId,
+    targetMemberDeclaration = target,
+)
+
 private fun collectDesignationPathWithContainingClass(target: FirDeclaration, containingClassId: ClassId): List<FirRegularClass>? {
     if (containingClassId.isLocal) {
         return null
+    }
+
+    val firFile = target.getContainingFile()
+    if (firFile != null && firFile.packageFqName == containingClassId.packageFqName) {
+        // We should do fallback to the heavy implementation if something goes wrong.
+        // For example, we can't be able to find an on-air declaration by this way
+        collectDesignationPathWithContainingClassByFirFile(firFile, containingClassId, target)?.let {
+            return it
+        }
     }
 
     val useSiteSession = getTargetSession(target)
