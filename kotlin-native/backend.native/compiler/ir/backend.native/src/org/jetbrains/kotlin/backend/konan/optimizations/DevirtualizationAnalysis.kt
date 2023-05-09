@@ -1602,13 +1602,11 @@ internal object DevirtualizationAnalysis {
                             if (!optimize) { // Add else branch throwing exception for debug purposes.
                                 branches.add(IrBranchImpl(
                                         startOffset = startOffset,
-                                        endOffset   = endOffset,
-                                        condition   = irTrue(),
-                                        result      = irCall(symbols.throwInvalidReceiverTypeException).apply {
+                                        endOffset = endOffset,
+                                        condition = irTrue(),
+                                        result = irCall(symbols.throwInvalidReceiverTypeException).apply {
                                             putValueArgument(0,
-                                                    irCall(symbols.kClassImplConstructor,
-                                                            listOf(dispatchReceiver.type)
-                                                    ).apply {
+                                                    irCall(symbols.kClassImplConstructor, listOf(dispatchReceiver.type)).apply {
                                                         putValueArgument(0, irGet(typeInfo))
                                                     }
                                             )
@@ -1618,10 +1616,10 @@ internal object DevirtualizationAnalysis {
 
                             +IrWhenImpl(
                                     startOffset = startOffset,
-                                    endOffset   = endOffset,
-                                    type        = type,
-                                    origin      = expression.origin,
-                                    branches    = branches
+                                    endOffset = endOffset,
+                                    type = type,
+                                    origin = expression.origin,
+                                    branches = branches
                             )
                         }
                     }
