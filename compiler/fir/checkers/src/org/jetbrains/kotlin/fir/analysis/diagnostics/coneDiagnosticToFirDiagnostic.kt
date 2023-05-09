@@ -107,7 +107,7 @@ private fun ConeDiagnostic.toKtDiagnostic(
         else -> this.getFactory(source).createOn(qualifiedAccessSource ?: source)
     }
 
-    is ConeDestructuringDeclarationsOnTopLevel -> null // reported as regular syntax error
+    is ConeDestructuringDeclarationsOnTopLevel -> null // TODO Currently a parsing error. Would be better to report here instead KT-58563
     is ConeCannotInferTypeParameterType -> FirErrors.CANNOT_INFER_PARAMETER_TYPE.createOn(source)
     is ConeCannotInferValueParameterType -> FirErrors.CANNOT_INFER_PARAMETER_TYPE.createOn(source)
     is ConeTypeVariableTypeIsNotInferred -> FirErrors.INFERENCE_ERROR.createOn(qualifiedAccessSource ?: source)
