@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementPsiSource
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory
 
 internal class JavaElementPsiSourceWithSmartPointer<PSI : PsiElement>(
-    private val pointer: SmartPsiElementPointer<PSI>,
+    val pointer: SmartPsiElementPointer<PSI>,
     override val factory: JavaElementSourceFactory,
 ) : JavaElementPsiSource<PSI>() {
 
@@ -20,9 +20,5 @@ internal class JavaElementPsiSourceWithSmartPointer<PSI : PsiElement>(
             return pointer.element
                 ?: error("Cannot restore a PsiElement from $pointer")
         }
-
-    override fun toString(): String {
-        return pointer.element?.toString() ?: "Cannot restore a PsiElement from $pointer"
-    }
 }
 

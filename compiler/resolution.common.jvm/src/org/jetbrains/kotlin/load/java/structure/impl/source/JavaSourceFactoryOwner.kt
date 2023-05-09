@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.load.java.structure.impl.source
 
 import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiType
+import com.intellij.psi.PsiVariable
 
 interface JavaSourceFactoryOwner {
     val sourceFactory: JavaElementSourceFactory
@@ -18,4 +20,13 @@ interface JavaSourceFactoryOwner {
     fun <TYPE : PsiType> createTypeSource(type: TYPE): JavaElementTypeSource<TYPE> {
         return sourceFactory.createTypeSource(type)
     }
+
+    fun <TYPE : PsiType> createVariableReturnTypeSource(psiVariableSource: JavaElementPsiSource<out PsiVariable>): JavaElementTypeSource<TYPE> {
+        return sourceFactory.createVariableReturnTypeSource(psiVariableSource)
+    }
+
+    fun <TYPE : PsiType> createMethodReturnTypeSource(psiMethodSource: JavaElementPsiSource<out PsiMethod>): JavaElementTypeSource<TYPE> {
+        return sourceFactory.createMethodReturnTypeSource(psiMethodSource)
+    }
+
 }

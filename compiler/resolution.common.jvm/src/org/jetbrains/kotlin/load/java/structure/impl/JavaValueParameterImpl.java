@@ -102,7 +102,7 @@ public class JavaValueParameterImpl extends JavaElementImpl<PsiParameter>
     @Override
     @NotNull
     public JavaType getType() {
-        return JavaTypeImpl.create(createTypeSource(getPsi().getType()));
+        return JavaTypeImpl.create(getPsi().getType(), createVariableReturnTypeSource(psiElementSource));
     }
 
     @Override

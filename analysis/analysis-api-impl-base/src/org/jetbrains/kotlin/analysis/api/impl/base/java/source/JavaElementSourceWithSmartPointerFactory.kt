@@ -6,15 +6,12 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.java.source
 
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiType
-import com.intellij.psi.SmartPointerManager
-import com.intellij.psi.SmartTypePointerManager
+import com.intellij.psi.*
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementPsiSource
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFactory
 import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementTypeSource
 
- class JavaElementSourceWithSmartPointerFactory(project: Project) : JavaElementSourceFactory() {
+class JavaElementSourceWithSmartPointerFactory(project: Project) : JavaElementSourceFactory() {
     private val smartTypePointerManager = SmartTypePointerManager.getInstance(project)
     private val smartPsiPointerManager = SmartPointerManager.getInstance(project)
 
@@ -24,5 +21,20 @@ import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementTypeSourc
 
     override fun <TYPE : PsiType> createTypeSource(type: TYPE): JavaElementTypeSource<TYPE> {
         return JavaElementTypeSourceWithSmartPointer(smartTypePointerManager.createSmartTypePointer(type), this)
+    }
+
+    override fun <TYPE : PsiType> createVariableReturnTypeSource(psiVariableSource: JavaElementPsiSource<out PsiVariable>): JavaElementTypeSource<TYPE> {
+        require(psiVariableSource is JavaElementPsiSourceWithSmartPointer)
+        return JavaElementDelegatingVariableReturnTypeSourceWithSmartPointer(psiVariableSource.pointer, psiVariableSource.factory)
+    }
+
+    override fun <TYPE : PsiType> createMethodReturnTypeSource(psiMethodSource: JavaElementPsiSource<out PsiMethod>): JavaElementTypeSource<TYPE> {
+        require(psiMethodSource is JavaElementPsiSourceWithSmartPointer)
+        return JavaElementDelegatingMethodReturnTypeSourceWithSmartPointer(psiMethodSource.pointer, psiMethodSource.factory)
+    }
+
+    override fun <TYPE : PsiType> createExpressionTypeSource(psiExpressionSource: JavaElementPsiSource<out PsiExpression>): JavaElementTypeSource<TYPE> {
+        require(psiExpressionSource is JavaElementPsiSourceWithSmartPointer)
+        return JavaElementDelegatingExpressionTypeSourceWithSmartPointer(psiExpressionSource.pointer, psiExpressionSource.factory)
     }
 }
