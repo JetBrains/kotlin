@@ -10,15 +10,10 @@ import org.jetbrains.annotations.NotNull;
 public interface InitializableDescriptor {
 
     /**
-     * [action] to be executed when descriptor will be finalized with initialization.
-     * If descriptor's initialization is finalized with constructor action could be executed immediately.
+     * [action] to be executed when descriptor is finalized with initialization.
      * @param action
      */
-    default void addInitFinalizationAction(@NotNull Runnable action) {
-        action.run();
-    }
+    void addInitFinalizationAction(@NotNull Runnable action);
 
-    default boolean isInitFinalized() {
-        return true;
-    }
+    boolean isInitFinalized();
 }

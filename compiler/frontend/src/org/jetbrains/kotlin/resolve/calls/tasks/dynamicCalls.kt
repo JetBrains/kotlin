@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.utils.Printer
-import java.util.*
 
 class DynamicCallableDescriptors(private val storageManager: StorageManager, builtIns: KotlinBuiltIns) {
 
@@ -165,21 +164,25 @@ class DynamicCallableDescriptors(private val storageManager: StorageManager, bui
         fun addParameter(arg: ValueArgument, outType: KotlinType, varargElementType: KotlinType?) {
             val index = parameters.size
 
-            parameters.add(
-                ValueParameterDescriptorImpl(
-                    owner,
-                    null,
-                    index,
-                    Annotations.EMPTY,
-                    arg.getArgumentName()?.asName ?: Name.identifier("p$index"),
-                    outType,
-                    /* declaresDefaultValue = */ false,
-                    /* isCrossinline = */ false,
-                    /* isNoinline = */ false,
-                    varargElementType,
-                    SourceElement.NO_SOURCE
-                )
+            val valueParameterDescriptorImpl = ValueParameterDescriptorImpl(
+                owner,
+                null,
+                index,
+                Annotations.EMPTY,
+                arg.getArgumentName()?.asName ?: Name.identifier("p$index"),
+                outType,
+                /* declaresDefaultValue = */ false,
+                /* isCrossinline = */ false,
+                /* isNoinline = */ false,
+                varargElementType,
+                SourceElement.NO_SOURCE
             )
+            if (owner is DeclarationDescriptorNonRootImpl) {
+                owner.addInitFinalizationAction(valueParameterDescriptorImpl::finalizeInit)
+            } else {
+                valueParameterDescriptorImpl.finalizeInit()
+            }
+            parameters.add(valueParameterDescriptorImpl)
         }
 
         fun getFunctionType(funLiteralExpr: KtLambdaExpression): KotlinType {

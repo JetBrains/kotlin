@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.isLibraryToSourceAnalysisEnabled
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.incremental.KotlinLookupLocation
 import org.jetbrains.kotlin.incremental.components.LookupLocation
@@ -772,7 +773,12 @@ class QualifiedExpressionResolver(val languageVersionSettings: LanguageVersionSe
             return null
         }
 
-        descriptor.addInitFinalizationAction {
+        if (descriptor is TypeParameterDescriptorImpl) {
+            // classifier could be non-finally initialized [TypeParameterDescriptorImpl]
+            descriptor.addInitFinalizationAction {
+                trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, descriptor)
+            }
+        } else {
             trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, descriptor)
         }
 

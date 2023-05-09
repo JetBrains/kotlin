@@ -68,13 +68,19 @@ public class PropertySetterDescriptorImpl extends PropertyAccessorDescriptorImpl
             @NotNull KotlinType type,
             @NotNull Annotations annotations
     ) {
-        return new ValueParameterDescriptorImpl(
+        ValueParameterDescriptorImpl descriptor = new ValueParameterDescriptorImpl(
                 setterDescriptor, null, 0, annotations, SpecialNames.IMPLICIT_SET_PARAMETER, type,
                 /* declaresDefaultValue = */ false,
                 /* isCrossinline = */ false,
                 /* isNoinline = */ false,
                 null, SourceElement.NO_SOURCE
         );
+        if (setterDescriptor instanceof DeclarationDescriptorNonRootImpl) {
+            ((DeclarationDescriptorNonRootImpl) setterDescriptor).addInitFinalizationAction(descriptor::finalizeInit);
+        } else {
+            descriptor.finalizeInit();
+        }
+        return descriptor;
     }
 
     @NotNull

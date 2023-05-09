@@ -26,7 +26,7 @@ import java.util.List;
 
 public abstract class DeclarationDescriptorNonRootImpl
         extends DeclarationDescriptorImpl
-        implements DeclarationDescriptorNonRoot {
+        implements DeclarationDescriptorNonRoot, InitializableDescriptor {
 
     @NotNull
     private final DeclarationDescriptor containingDeclaration;
@@ -36,6 +36,7 @@ public abstract class DeclarationDescriptorNonRootImpl
 
     private List<Runnable> initFinalizationActions;
 
+    private final Exception created = new Exception();
     private boolean initFinalized;
 
     protected DeclarationDescriptorNonRootImpl(
@@ -81,6 +82,9 @@ public abstract class DeclarationDescriptorNonRootImpl
     }
 
     public final void finalizeInit() {
+        if (containingDeclaration instanceof InitializableDescriptor && !((InitializableDescriptor)containingDeclaration).isInitFinalized()) {
+            throw new IllegalStateException("Initialization of " + containingDeclaration + " descriptor is finalized.");
+        }
         if (initFinalized && allowReInitialization()) {
             if (initFinalizationActions != null && !initFinalizationActions.isEmpty()) {
                 throw new IllegalStateException();
@@ -116,7 +120,7 @@ public abstract class DeclarationDescriptorNonRootImpl
 
     protected void checkInitNotFinalized() {
         if (initFinalized) {
-            throw new IllegalStateException(initializedMessage());
+            throw new IllegalStateException(initializedMessage(), created);
         }
     }
 

@@ -490,12 +490,17 @@ public class DescriptorResolver {
                 supertypeLoopsResolver,
                 storageManager
         );
-        containingDescriptor.addInitFinalizationAction(
-                () -> {
-                    typeParameterDescriptor.finalizeInit();
-                    trace.record(BindingContext.TYPE_PARAMETER, typeParameter, typeParameterDescriptor);
-                }
-        );
+        if (containingDescriptor instanceof DeclarationDescriptorNonRootImpl) {
+            ((DeclarationDescriptorNonRootImpl) containingDescriptor).addInitFinalizationAction(
+                    () -> {
+                        typeParameterDescriptor.finalizeInit();
+                        trace.record(BindingContext.TYPE_PARAMETER, typeParameter, typeParameterDescriptor);
+                    }
+            );
+        } else {
+            typeParameterDescriptor.finalizeInit();
+            trace.record(BindingContext.TYPE_PARAMETER, typeParameter, typeParameterDescriptor);
+        }
         return typeParameterDescriptor;
     }
 

@@ -19,11 +19,11 @@ package org.jetbrains.kotlin.load.java.lazy.descriptors
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
+import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorNonRootImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
-import org.jetbrains.kotlin.types.TypeUsage
 import org.jetbrains.kotlin.load.java.descriptors.JavaMethodDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaPropertyDescriptor
 import org.jetbrains.kotlin.load.java.lazy.LazyJavaResolverContext
@@ -37,20 +37,22 @@ import org.jetbrains.kotlin.load.java.structure.JavaValueParameter
 import org.jetbrains.kotlin.load.java.toDescriptorVisibility
 import org.jetbrains.kotlin.load.kotlin.computeJvmDescriptor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.DescriptorFactory
+import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindExclude.NonExtensions
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.resolve.scopes.MemberScopeImpl
+import org.jetbrains.kotlin.resolve.selectMostSpecificInEachOverridableGroup
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNotNull
 import org.jetbrains.kotlin.storage.MemoizedFunctionToNullable
 import org.jetbrains.kotlin.storage.NotNullLazyValue
 import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUsage
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addIfNotNull
-import java.util.*
 
 abstract class LazyJavaScope(
     protected val c: LazyJavaResolverContext,
@@ -239,7 +241,7 @@ abstract class LazyJavaScope(
                 javaName ?: Name.identifier("p$index")
             }
 
-            ValueParameterDescriptorImpl(
+            val valueParameterDescriptorImpl = ValueParameterDescriptorImpl(
                 function,
                 null,
                 index,
@@ -252,6 +254,12 @@ abstract class LazyJavaScope(
                 varargElementType,
                 c.components.sourceElementFactory.source(javaParameter)
             )
+            if (function is DeclarationDescriptorNonRootImpl) {
+                function.addInitFinalizationAction(valueParameterDescriptorImpl::finalizeInit)
+            } else {
+                valueParameterDescriptorImpl.finalizeInit()
+            }
+            valueParameterDescriptorImpl
         }.toList()
         return ResolvedValueParameters(descriptors, synthesizedNames)
     }

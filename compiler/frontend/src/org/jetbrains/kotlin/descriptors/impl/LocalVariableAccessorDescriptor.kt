@@ -38,7 +38,13 @@ sealed class LocalVariableAccessorDescriptor(
 
     init {
         val valueParameters =
-            if (isGetter) emptyList() else listOf(createValueParameter(Name.identifier("value"), correspondingVariable.type))
+            if (isGetter) {
+                emptyList()
+            } else {
+                val valueParameterDescriptorImpl = createValueParameter(Name.identifier("value"), correspondingVariable.type)
+                this.addInitFinalizationAction(valueParameterDescriptorImpl::finalizeInit)
+                listOf(valueParameterDescriptorImpl)
+            }
         val returnType =
             if (isGetter) correspondingVariable.type else correspondingVariable.builtIns.unitType
         @Suppress("LeakingThis")

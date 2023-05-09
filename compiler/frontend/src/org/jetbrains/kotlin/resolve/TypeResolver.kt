@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.annotations.composeAnnotations
+import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorNonRootImpl
 import org.jetbrains.kotlin.descriptors.impl.TypeParameterDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.VariableDescriptorImpl
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -273,8 +274,12 @@ class TypeResolver(
                 if (!languageVersionSettings.supportsFeature(LanguageFeature.YieldIsNoMoreReserved)) {
                     checkReservedYield(referenceExpression, c.trace)
                 }
-                // classifier could be non-finally initialized TypeParameterDescriptorImpl
-                classifier.addInitFinalizationAction {
+                // classifier could be non-finally initialized [TypeParameterDescriptorImpl]
+                if (classifier is TypeParameterDescriptorImpl) {
+                    classifier.addInitFinalizationAction {
+                        c.trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, classifier)
+                    }
+                } else {
                     c.trace.record(BindingContext.REFERENCE_TARGET, referenceExpression, classifier)
                 }
 
@@ -433,7 +438,9 @@ class TypeResolver(
                     source: SourceElement
                 ) : VariableDescriptorImpl(containingDeclaration, annotations, name, type, source) {
                     init {
-                        containingDeclaration.addInitFinalizationAction {
+                        if (containingDeclaration is InitializableDescriptor) {
+                            containingDeclaration.addInitFinalizationAction(::finalizeInit)
+                        } else {
                             finalizeInit()
                         }
                     }
@@ -471,7 +478,11 @@ class TypeResolver(
                         parameterType,
                         parameter.toSourceElement()
                     )
-                    containingDeclaration.addInitFinalizationAction {
+                    if (containingDeclaration is DeclarationDescriptorNonRootImpl) {
+                        containingDeclaration.addInitFinalizationAction {
+                            c.trace.record(BindingContext.VALUE_PARAMETER, parameter, descriptor)
+                        }
+                    } else {
                         c.trace.record(BindingContext.VALUE_PARAMETER, parameter, descriptor)
                     }
                     descriptor

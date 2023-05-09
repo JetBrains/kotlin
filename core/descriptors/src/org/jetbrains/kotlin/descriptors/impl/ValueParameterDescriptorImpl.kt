@@ -36,36 +36,42 @@ open class ValueParameterDescriptorImpl(
         source: SourceElement
 ) : VariableDescriptorImpl(containingDeclaration, annotations, name, outType, source), ValueParameterDescriptor {
 
-    init {
-        containingDeclaration.addInitFinalizationAction {
-            finalizeInit()
-        }
-    }
-
     companion object {
         @JvmStatic
         fun getDestructuringVariablesOrNull(valueParameterDescriptor: ValueParameterDescriptor) =
                 (valueParameterDescriptor as? ValueParameterDescriptorImpl.WithDestructuringDeclaration)?.destructuringVariables
 
         @JvmStatic
-        fun createWithDestructuringDeclarations(containingDeclaration: CallableDescriptor,
-                                                original: ValueParameterDescriptor?,
-                                                index: Int,
-                                                annotations: Annotations,
-                                                name: Name,
-                                                outType: KotlinType,
-                                                declaresDefaultValue: Boolean,
-                                                isCrossinline: Boolean,
-                                                isNoinline: Boolean, varargElementType: KotlinType?, source: SourceElement,
-                                                destructuringVariables: (() -> List<VariableDescriptor>)?
-        ): ValueParameterDescriptorImpl =
-                if (destructuringVariables == null)
-                    ValueParameterDescriptorImpl(containingDeclaration, original, index, annotations, name, outType,
-                                                 declaresDefaultValue, isCrossinline, isNoinline, varargElementType, source)
-                else
-                    WithDestructuringDeclaration(containingDeclaration, original, index, annotations, name, outType,
-                                                 declaresDefaultValue, isCrossinline, isNoinline, varargElementType, source,
-                                                 destructuringVariables)
+        fun createWithDestructuringDeclarations(
+            containingDeclaration: CallableDescriptor,
+            original: ValueParameterDescriptor?,
+            index: Int,
+            annotations: Annotations,
+            name: Name,
+            outType: KotlinType,
+            declaresDefaultValue: Boolean,
+            isCrossinline: Boolean,
+            isNoinline: Boolean, varargElementType: KotlinType?, source: SourceElement,
+            destructuringVariables: (() -> List<VariableDescriptor>)?,
+        ): ValueParameterDescriptorImpl {
+            val valueParameterDescriptor = if (destructuringVariables == null)
+                ValueParameterDescriptorImpl(
+                    containingDeclaration, original, index, annotations, name, outType,
+                    declaresDefaultValue, isCrossinline, isNoinline, varargElementType, source
+                )
+            else
+                WithDestructuringDeclaration(
+                    containingDeclaration, original, index, annotations, name, outType,
+                    declaresDefaultValue, isCrossinline, isNoinline, varargElementType, source,
+                    destructuringVariables
+                )
+            if (containingDeclaration is DeclarationDescriptorNonRootImpl) {
+                containingDeclaration.addInitFinalizationAction(valueParameterDescriptor::finalizeInit)
+            } else {
+                valueParameterDescriptor.finalizeInit()
+            }
+            return valueParameterDescriptor
+        }
     }
 
     class WithDestructuringDeclaration internal constructor(

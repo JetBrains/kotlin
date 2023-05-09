@@ -338,7 +338,10 @@ class FunctionDescriptorResolver(
                     valueParameterDescriptor.isCrossinline, valueParameterDescriptor.isNoinline,
                     valueParameterDescriptor.varargElementType, SourceElement.NO_SOURCE
                 )
-                trace.record(BindingContext.AUTO_CREATED_IT, it)
+                functionDescriptor.addInitFinalizationAction {
+                    it.finalizeInit()
+                    trace.record(BindingContext.AUTO_CREATED_IT, it)
+                }
                 return listOf(it)
             }
             if (function.valueParameters.size != expectedValueParameters.size) {
