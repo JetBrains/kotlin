@@ -80,13 +80,14 @@ class BuildReportsIT : KGPBaseTest() {
     private fun testBuildReportInFile(project: String, task: String, gradleVersion: GradleVersion,
                                       languageVersion: String = KotlinVersion.KOTLIN_2_0.version) {
         project(project, gradleVersion) {
-            build(task, buildOptions = buildOptions) {
+            build(task) {
                 assertBuildReportPathIsPrinted()
             }
             //Should contains build metrics for all compile kotlin tasks
             validateBuildReportFile(KotlinVersion.DEFAULT.version)
-            reportFile.deleteExisting()
+        }
 
+        project(project, gradleVersion, buildOptions = defaultBuildOptions.copy(languageVersion = languageVersion)) {
             build(task, buildOptions = buildOptions.copy(languageVersion = languageVersion)) {
                 assertBuildReportPathIsPrinted()
             }

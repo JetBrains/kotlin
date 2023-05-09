@@ -55,7 +55,6 @@ fun KGPBaseTest.project(
     projectPath.addDefaultBuildFiles()
     projectPath.enableCacheRedirector()
     projectPath.enableAndroidSdk()
-    projectPath.applyKotlinCompilerArgsPlugin()
 
     if (addHeapDumpOptions) projectPath.addHeapDumpOptions()
 
