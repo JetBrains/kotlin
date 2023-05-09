@@ -20,11 +20,13 @@ class KonanIrFileSerializer(
     skipExpects: Boolean,
     languageVersionSettings: LanguageVersionSettings,
     bodiesOnlyForInlines: Boolean = false,
+    addDebugInfo: Boolean = true,
     compatibilityMode: CompatibilityMode,
     normalizeAbsolutePaths: Boolean,
-    sourceBaseDirs: Collection<String>
+    sourceBaseDirs: Collection<String>,
+    skipPrivateApi: Boolean = false
 ): IrFileSerializer(messageLogger, declarationTable, expectDescriptorToSymbol, compatibilityMode, languageVersionSettings,
-        bodiesOnlyForInlines, skipExpects, normalizeAbsolutePaths = normalizeAbsolutePaths, sourceBaseDirs = sourceBaseDirs) {
+        skipPrivateApi = skipPrivateApi, bodiesOnlyForInlines = bodiesOnlyForInlines, skipExpects = skipExpects, addDebugInfo = addDebugInfo, normalizeAbsolutePaths = normalizeAbsolutePaths, sourceBaseDirs = sourceBaseDirs) {
 
     override fun backendSpecificExplicitRoot(node: IrAnnotationContainer): Boolean {
         val fqn = when (node) {

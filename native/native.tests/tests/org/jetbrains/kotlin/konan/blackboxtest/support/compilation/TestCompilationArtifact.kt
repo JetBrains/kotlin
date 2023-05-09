@@ -12,11 +12,18 @@ internal sealed interface TestCompilationArtifact {
 
     data class KLIB(val klibFile: File) : TestCompilationArtifact {
         val path: String get() = klibFile.path
+        var hasHeader: Boolean = false
+        val header: String get() = klibFile.parent + "/header/" + klibFile.name
         override val logFile: File get() = klibFile.resolveSibling("${klibFile.name}.log")
     }
 
     data class KLIBStaticCache(val cacheDir: File, val klib: KLIB) : TestCompilationArtifact {
         override val logFile: File get() = cacheDir.resolve("${klib.klibFile.nameWithoutExtension}-cache.log")
+    }
+
+    data class KLIBHeader(val klibFile: File): TestCompilationArtifact {
+        override val logFile: File get() = klibFile.resolveSibling("${klibFile.name}.log")
+        val path: String get() = klibFile.path
     }
 
     data class Executable(val executableFile: File) : TestCompilationArtifact {

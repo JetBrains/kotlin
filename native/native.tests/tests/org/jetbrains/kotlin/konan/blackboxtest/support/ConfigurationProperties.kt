@@ -68,6 +68,7 @@ internal enum class ClassLevelProperty(shortName: String) {
     EXECUTION_TIMEOUT("executionTimeout"),
     SANITIZER("sanitizer"),
     COMPILER_OUTPUT_INTERCEPTOR("compilerOutputInterceptor"),
+    HEADER_KLIB_MODE("headerKlibsMode"),
 
     ;
 

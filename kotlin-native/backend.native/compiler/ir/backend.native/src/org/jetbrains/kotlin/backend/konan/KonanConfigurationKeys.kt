@@ -75,6 +75,8 @@ class KonanConfigKeys {
                 = CompilerConfigurationKey.create("provide manifest addend file")
         val METADATA_KLIB: CompilerConfigurationKey<Boolean>
                 = CompilerConfigurationKey.create("metadata klib")
+        val HEADER_KLIB: CompilerConfigurationKey<String?>
+                = CompilerConfigurationKey.create("header klib")
         val MODULE_NAME: CompilerConfigurationKey<String?>
                 = CompilerConfigurationKey.create("module name")
         val NATIVE_LIBRARY_FILES: CompilerConfigurationKey<List<String>>

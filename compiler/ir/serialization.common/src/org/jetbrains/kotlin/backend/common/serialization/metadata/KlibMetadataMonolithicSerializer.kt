@@ -27,8 +27,9 @@ class KlibMetadataMonolithicSerializer(
     exportKDoc: Boolean,
     skipExpects: Boolean,
     includeOnlyModuleContent: Boolean = false,
-    allowErrorTypes: Boolean = false
-) : KlibMetadataSerializer(languageVersionSettings, metadataVersion, project, exportKDoc, skipExpects, includeOnlyModuleContent, allowErrorTypes) {
+    allowErrorTypes: Boolean = false,
+    headerKlib: Boolean = false,
+) : KlibMetadataSerializer(languageVersionSettings, metadataVersion, project, exportKDoc, skipExpects, includeOnlyModuleContent, allowErrorTypes, headerKlib) {
 
     private fun serializePackageFragment(fqName: FqName, module: ModuleDescriptor): List<ProtoBuf.PackageFragment> {
 

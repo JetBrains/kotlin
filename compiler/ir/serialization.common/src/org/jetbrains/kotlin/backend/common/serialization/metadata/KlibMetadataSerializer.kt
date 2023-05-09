@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
+import org.jetbrains.kotlin.resolve.descriptorUtil.*
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.serialization.ApproximatingStringTable
 import org.jetbrains.kotlin.serialization.DescriptorSerializer
@@ -36,7 +36,8 @@ abstract class KlibMetadataSerializer(
     val exportKDoc: Boolean = false,
     val skipExpects: Boolean = false,
     val includeOnlyModuleContent: Boolean = false,
-    private val allowErrorTypes: Boolean
+    private val allowErrorTypes: Boolean,
+    val headerKlib: Boolean = false,
 ) {
 
     lateinit var serializerContext: SerializerContext
@@ -54,7 +55,8 @@ abstract class KlibMetadataSerializer(
             metadataVersion,
             ApproximatingStringTable(),
             allowErrorTypes,
-            exportKDoc
+            exportKDoc,
+            headerKlib
         )
         return SerializerContext(
             extension,
@@ -109,6 +111,11 @@ abstract class KlibMetadataSerializer(
         else
             this.filterOutExpectsWithActuals()
 
+    protected fun List<DeclarationDescriptor>.filterPrivate(): List<DeclarationDescriptor> =
+        if (headerKlib)
+            this.filterNot { it is DeclarationDescriptorWithVisibility && it.isEffectivelyPrivateApi }
+        else this
+
     private fun serializeClasses(packageName: FqName,
                                  //builder: ProtoBuf.PackageFragment.Builder,
                                  descriptors: Collection<DeclarationDescriptor>): List<Pair<ProtoBuf.Class, Int>> {
@@ -131,8 +138,8 @@ abstract class KlibMetadataSerializer(
         allTopLevelDescriptors: List<DeclarationDescriptor>
     ): List<ProtoBuf.PackageFragment> {
 
-        val classifierDescriptors = allClassifierDescriptors.filterOutExpects()
-        val topLevelDescriptors = allTopLevelDescriptors.filterOutExpects()
+        val classifierDescriptors = allClassifierDescriptors.filterOutExpects().filterPrivate()
+        val topLevelDescriptors = allTopLevelDescriptors.filterOutExpects().filterPrivate()
 
         if (TOP_LEVEL_CLASS_DECLARATION_COUNT_PER_FILE == null &&
             TOP_LEVEL_DECLARATION_COUNT_PER_FILE == null) {

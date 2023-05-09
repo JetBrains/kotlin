@@ -124,6 +124,10 @@ internal class DynamicCompilerDriver : CompilerDriver() {
         } else {
             engine.runPsiToIr(frontendOutput, isProducingLibrary = true) as PsiToIrOutput.ForKlib
         }
+        if (!config.headerKlib.isNullOrEmpty()) {
+            val headerKlib = engine.runSerializer(frontendOutput.moduleDescriptor, psiToIrOutput, headerKlib = true)
+            engine.writeKlib(headerKlib, config.headerKlib)
+        }
         return engine.runSerializer(frontendOutput.moduleDescriptor, psiToIrOutput)
     }
 
