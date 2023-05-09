@@ -34,13 +34,12 @@ enum class MutexThreadStateHandling {
 template <MutexThreadStateHandling threadStateHandling>
 class SpinLock;
 
-template <>
-class SpinLock<MutexThreadStateHandling::kIgnore> : private Pinned {
+namespace internal {
+
+class SpinLockBase : private Pinned {
 public:
-    void lock() noexcept {
-        while(flag_.test_and_set(std::memory_order_acquire)) {
-            yield();
-        }
+    bool try_lock() noexcept {
+        return !flag_.test_and_set(std::memory_order_acquire);
     }
 
     void unlock() noexcept {
@@ -49,7 +48,20 @@ public:
 
 private:
     std::atomic_flag flag_ = ATOMIC_FLAG_INIT;
+};
 
+}
+
+template <>
+class SpinLock<MutexThreadStateHandling::kIgnore> : public internal::SpinLockBase {
+public:
+    void lock() noexcept {
+        while(!try_lock()) {
+            yield();
+        }
+    }
+
+private:
     // No need to check for external calls, because we explicitly ignore thread state.
     static NO_EXTERNAL_CALLS_CHECK NO_INLINE void yield() {
         std::this_thread::yield();
@@ -57,26 +69,19 @@ private:
 };
 
 template <>
-class SpinLock<MutexThreadStateHandling::kSwitchIfRegistered> : private Pinned {
+class SpinLock<MutexThreadStateHandling::kSwitchIfRegistered> : public internal::SpinLockBase {
 public:
     void lock() noexcept {
         // Fast path without thread state switching.
-        if (!flag_.test_and_set(std::memory_order_acquire)) {
+        if (try_lock()) {
             return;
         }
 
         kotlin::NativeOrUnregisteredThreadGuard guard(/* reentrant = */ true);
-        while (flag_.test_and_set(std::memory_order_acquire)) {
+        while (!try_lock()) {
             std::this_thread::yield();
         }
     }
-
-    void unlock() noexcept {
-        flag_.clear(std::memory_order_release);
-    }
-
-private:
-    std::atomic_flag flag_ = ATOMIC_FLAG_INIT;
 };
 
 template <MutexThreadStateHandling threadStateHandling>

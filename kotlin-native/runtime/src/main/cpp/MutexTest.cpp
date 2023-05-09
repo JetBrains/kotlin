@@ -19,8 +19,35 @@ using namespace kotlin;
 template <typename T>
 class MutexTest : public testing::Test {};
 
-using LockTypes = testing::Types<SpinLock<MutexThreadStateHandling::kIgnore>, SpinLock<MutexThreadStateHandling::kSwitchIfRegistered>>;
+using LockTypes = testing::Types<
+        SpinLock<MutexThreadStateHandling::kIgnore>,
+        SpinLock<MutexThreadStateHandling::kSwitchIfRegistered>,
+        RWSpinLock<MutexThreadStateHandling::kIgnore>
+>;
 TYPED_TEST_SUITE(MutexTest, LockTypes);
+
+TYPED_TEST(MutexTest, Lock) {
+    using LockUnderTest = TypeParam;
+
+    LockUnderTest mutex;
+    mutex.lock();
+    mutex.unlock();
+    // Check that unlock unlocked.
+    mutex.lock();
+    mutex.unlock();
+}
+
+TYPED_TEST(MutexTest, TryLock) {
+    using LockUnderTest = TypeParam;
+
+    LockUnderTest mutex;
+    EXPECT_TRUE(mutex.try_lock());
+    EXPECT_FALSE(mutex.try_lock());
+    mutex.unlock();
+    mutex.lock();
+    EXPECT_FALSE(mutex.try_lock());
+    mutex.unlock();
+}
 
 TYPED_TEST(MutexTest, SmokeDetachedThread) {
     using LockUnderTest = TypeParam;
@@ -49,24 +76,6 @@ TYPED_TEST(MutexTest, SmokeDetachedThread) {
     EXPECT_EQ(protectedCounter, 2);
 }
 
-TEST(RWSpinLockTest, Lock) {
-    RWSpinLock<MutexThreadStateHandling::kIgnore> mutex;
-    mutex.lock();
-    mutex.unlock();
-    // Check that unlock unlocked.
-    mutex.lock();
-    mutex.unlock();
-}
-
-TEST(RWSpinLockTest, TryLock) {
-    RWSpinLock<MutexThreadStateHandling::kIgnore> mutex;
-    EXPECT_TRUE(mutex.try_lock());
-    EXPECT_FALSE(mutex.try_lock());
-    mutex.unlock();
-    mutex.lock();
-    EXPECT_FALSE(mutex.try_lock());
-    mutex.unlock();
-}
 
 TEST(RWSpinLockTest, LockShared) {
     RWSpinLock<MutexThreadStateHandling::kIgnore> mutex;
