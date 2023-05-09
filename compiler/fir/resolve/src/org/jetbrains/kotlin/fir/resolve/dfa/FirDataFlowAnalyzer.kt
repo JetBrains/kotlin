@@ -919,11 +919,8 @@ abstract class FirDataFlowAnalyzer(
         assignmentLhs: FirExpression?,
         hasExplicitType: Boolean,
     ) {
-        val propertyVariable = variableStorage.getOrCreateRealVariableWithoutUnwrappingAlias(
-            flow,
-            property.symbol,
-            assignmentLhs ?: property,
-            if (property.isVal) PropertyStability.STABLE_VALUE else PropertyStability.LOCAL_VAR
+        val propertyVariable = variableStorage.getOrCreateRealVariableWithoutUnwrappingAliasForPropertyInitialization(
+            flow, property.symbol, assignmentLhs ?: property
         )
         val isAssignment = assignmentLhs != null
         if (isAssignment) {
@@ -932,8 +929,7 @@ abstract class FirDataFlowAnalyzer(
 
         val initializerVariable = variableStorage.getOrCreateIfReal(flow, initializer)
         if (initializerVariable is RealVariable) {
-            val isInitializerStable =
-                initializerVariable.isStable || (initializerVariable.hasLocalStability && !isAccessToUnstableLocalVariable(initializer))
+            val isInitializerStable = initializerVariable.isStableOrLocalStableAccess(initializer)
             if (!hasExplicitType && isInitializerStable && (propertyVariable.hasLocalStability || propertyVariable.isStable)) {
                 // val a = ...
                 // val b = a
@@ -945,7 +941,7 @@ abstract class FirDataFlowAnalyzer(
                 // if (b != null) { /* a != null, but a.x could have changed */ }
                 logicSystem.translateVariableFromConditionInStatements(flow, initializerVariable, propertyVariable)
             }
-        } else if (initializerVariable != null) {
+        } else if (initializerVariable != null && propertyVariable.isStable) {
             // val b = x is String
             // if (b) { /* x is String */ }
             logicSystem.translateVariableFromConditionInStatements(flow, initializerVariable, propertyVariable)
@@ -961,6 +957,9 @@ abstract class FirDataFlowAnalyzer(
     private val RealVariable.isStable get() = stability == PropertyStability.STABLE_VALUE
     private val RealVariable.hasLocalStability get() = stability == PropertyStability.LOCAL_VAR
 
+    private fun RealVariable.isStableOrLocalStableAccess(access: FirExpression): Boolean {
+        return isStable || (hasLocalStability && !isAccessToUnstableLocalVariable(access))
+    }
 
     fun exitThrowExceptionNode(throwExpression: FirThrowExpression) {
         graphBuilder.exitThrowExceptionNode(throwExpression).mergeIncomingFlow()

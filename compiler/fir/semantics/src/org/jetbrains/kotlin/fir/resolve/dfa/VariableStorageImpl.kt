@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
-import org.jetbrains.kotlin.fir.expressions.explicitReceiver
 
 @OptIn(DfaInternals::class)
 class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
@@ -38,14 +37,15 @@ class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
 
     fun clear(): VariableStorageImpl = VariableStorageImpl(session)
 
-    fun getOrCreateRealVariableWithoutUnwrappingAlias(
+    fun getOrCreateRealVariableWithoutUnwrappingAliasForPropertyInitialization(
         flow: Flow,
         symbol: FirBasedSymbol<*>,
         fir: FirElement,
-        stability: PropertyStability
     ): RealVariable {
         val realFir = fir.unwrapElement()
         val identifier = getIdentifierBySymbol(flow, symbol, realFir)
+        val stability = symbol.getStability(fir)
+        requireNotNull(stability) { "Stability for initialized variable always should be computable" }
         return _realVariables[identifier] ?: createReal(flow, identifier, realFir, stability)
     }
 

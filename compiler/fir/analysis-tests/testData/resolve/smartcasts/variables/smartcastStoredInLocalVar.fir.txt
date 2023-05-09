@@ -1,0 +1,122 @@
+FILE: smartcastStoredInLocalVar.kt
+    public final fun nonInPlaceRun(block: R|() -> kotlin/Unit|): R|kotlin/Unit| {
+    }
+    public final fun test_0(a: R|kotlin/Any|): R|kotlin/Unit| {
+        lvar b: R|kotlin/Boolean| = (R|<local>/a| is R|kotlin/String|)
+        when () {
+            R|<local>/b| ->  {
+                R|<local>/a|.<Unresolved name: length>#
+            }
+        }
+
+        R|/nonInPlaceRun|(<L> = nonInPlaceRun@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            when () {
+                R|<local>/b| ->  {
+                    R|<local>/a|.<Unresolved name: length>#
+                }
+            }
+
+        }
+        )
+        when () {
+            R|<local>/b| ->  {
+                R|<local>/a|.<Unresolved name: length>#
+            }
+        }
+
+    }
+    public final fun test_1(a: R|kotlin/Any|): R|kotlin/Unit| {
+        lvar b: R|kotlin/Boolean| = (R|<local>/a| is R|kotlin/String|)
+        when () {
+            R|<local>/b| ->  {
+                R|<local>/a|.<Unresolved name: length>#
+            }
+        }
+
+        R|/nonInPlaceRun|(<L> = nonInPlaceRun@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            when () {
+                R|<local>/b| ->  {
+                    R|<local>/a|.<Unresolved name: length>#
+                }
+            }
+
+        }
+        )
+        R|<local>/b| = Boolean(true)
+    }
+    public final fun test_2(a: R|kotlin/Any|): R|kotlin/Unit| {
+        lvar b: R|kotlin/Boolean| = (R|<local>/a| is R|kotlin/String|)
+        when () {
+            R|<local>/b| ->  {
+                R|<local>/a|.<Unresolved name: length>#
+            }
+        }
+
+        R|/nonInPlaceRun|(<L> = nonInPlaceRun@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+            R|<local>/b| = Boolean(true)
+        }
+        )
+        when () {
+            R|<local>/b| ->  {
+                R|<local>/a|.<Unresolved name: length>#
+            }
+        }
+
+    }
+    public final fun test_3(a: R|kotlin/Any|): R|kotlin/Unit| {
+        lvar b: R|kotlin/Boolean| = (R|<local>/a| is R|kotlin/String|)
+        when () {
+            R|<local>/b| ->  {
+                R|<local>/a|.<Unresolved name: length>#
+            }
+        }
+
+        R|kotlin/run|<R|kotlin/Unit|>(<L> = run@fun <anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            when () {
+                R|<local>/b| ->  {
+                    R|<local>/a|.<Unresolved name: length>#
+                }
+            }
+
+        }
+        )
+        R|<local>/b| = Boolean(true)
+    }
+    public final fun test_4(a: R|kotlin/Any|): R|kotlin/Unit| {
+        lvar b: R|kotlin/Boolean| = (R|<local>/a| is R|kotlin/String|)
+        when () {
+            R|<local>/b| ->  {
+                R|<local>/a|.<Unresolved name: length>#
+            }
+        }
+
+        R|kotlin/run|<R|kotlin/Unit|>(<L> = run@fun <anonymous>(): R|kotlin/Unit| <inline=Inline, kind=EXACTLY_ONCE>  {
+            R|<local>/b| = Boolean(true)
+        }
+        )
+        when () {
+            R|<local>/b| ->  {
+                R|<local>/a|.<Unresolved name: length>#
+            }
+        }
+
+    }
+    public final fun test_5(a: R|kotlin/Any|): R|kotlin/Unit| {
+        lvar b: R|kotlin/Boolean| = (R|<local>/a| is R|kotlin/String|)
+        while(R|<local>/b|) {
+            when () {
+                R|<local>/b| ->  {
+                    R|<local>/a|.<Unresolved name: length>#
+                }
+            }
+
+            R|<local>/b| = (R|<local>/a| is R|kotlin/String|)
+        }
+
+        when () {
+            R|<local>/b| ->  {
+                R|<local>/a|.<Unresolved name: length>#
+            }
+        }
+
+    }

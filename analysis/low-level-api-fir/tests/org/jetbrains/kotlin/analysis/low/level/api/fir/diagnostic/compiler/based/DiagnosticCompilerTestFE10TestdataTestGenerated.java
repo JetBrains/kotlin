@@ -31288,6 +31288,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
                 }
 
                 @Test
+                @TestMetadata("localDelegatedProperty.kt")
+                public void testLocalDelegatedProperty() throws Exception {
+                    runTest("compiler/testData/diagnostics/tests/smartCasts/variables/localDelegatedProperty.kt");
+                }
+
+                @Test
                 @TestMetadata("objectMembers.kt")
                 public void testObjectMembers() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/smartCasts/variables/objectMembers.kt");

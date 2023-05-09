@@ -4771,6 +4771,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFirTestDataTestGenerated 
                 public void testSmartcastAfterReassignment() throws Exception {
                     runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/variables/smartcastAfterReassignment.kt");
                 }
+
+                @Test
+                @TestMetadata("smartcastStoredInLocalVar.kt")
+                public void testSmartcastStoredInLocalVar() throws Exception {
+                    runTest("compiler/fir/analysis-tests/testData/resolve/smartcasts/variables/smartcastStoredInLocalVar.kt");
+                }
             }
         }
 

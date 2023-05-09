@@ -15,6 +15,6 @@ fun foo(arg: Int?) {
     var z = arg
     z = z?.let { 42 }
     if (z != null) {
-        arg.hashCode()
+        arg<!UNSAFE_CALL!>.<!>hashCode()
     }
 }
