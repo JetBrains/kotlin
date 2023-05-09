@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.*
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.name
 import org.jetbrains.kotlin.ir.descriptors.IrDescriptorBasedFunctionFactory
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
@@ -616,6 +617,8 @@ private fun getDescriptorForElement(
     element: PsiElement
 ): DeclarationDescriptor = BindingContextUtils.getNotNull(context, BindingContext.DECLARATION_TO_DESCRIPTOR, element)
 
+var index = 0
+
 fun serializeModuleIntoKlib(
     moduleName: String,
     configuration: CompilerConfiguration,
@@ -640,6 +643,18 @@ fun serializeModuleIntoKlib(
     val sourceBaseDirs = configuration[CommonConfigurationKeys.KLIB_RELATIVE_PATH_BASES] ?: emptyList()
     val absolutePathNormalization = configuration[CommonConfigurationKeys.KLIB_NORMALIZE_ABSOLUTE_PATH] ?: false
     val signatureClashChecks = configuration[CommonConfigurationKeys.PRODUCE_KLIB_SIGNATURES_CLASH_CHECKS] ?: false
+
+    val irDump = klibPath.reversed().split("/", limit = 2).drop(1).joinToString("") { it.reversed() } + "/irDump${index}"
+
+    if (!File(irDump).mkdir()) {
+        error("Couldn't create the dir: $irDump")
+    }
+
+    index++
+
+    moduleFragment.files.forEach {
+        File(irDump + "/" + it.name + ".ir.txt").writeText(it.dump())
+    }
 
     val serializedIr =
         JsIrModuleSerializer(
