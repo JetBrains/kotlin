@@ -17,25 +17,27 @@ import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirPropertyAccessExpressionImpl
 import org.jetbrains.kotlin.fir.references.FirNamedReference
-import org.jetbrains.kotlin.fir.references.builder.buildErrorNamedReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedCallableReference
-import org.jetbrains.kotlin.fir.references.builder.buildResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.FirErrorReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
-import org.jetbrains.kotlin.fir.resolve.diagnostics.*
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeConstraintSystemHasContradiction
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeInapplicableCandidateError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConePropertyAsOperator
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeTypeParameterInQualifiedAccess
 import org.jetbrains.kotlin.fir.resolve.inference.ResolvedLambdaAtom
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.*
 import org.jetbrains.kotlin.fir.scopes.impl.ConvertibleIntegerOperators.binaryOperatorsWithSignedArgument
 import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperator
 import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperatorForUnsignedType
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -64,6 +66,18 @@ class FirCallCompletionResultsWriterTransformer(
     private val context: BodyResolveContext,
     private val mode: Mode = Mode.Normal
 ) : FirAbstractTreeTransformer<ExpectedArgumentType?>(phase = FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE) {
+
+    private fun finallySubstituteOrNull(type: ConeKotlinType): ConeKotlinType? {
+        val result = finalSubstitutor.substituteOrNull(type)
+        if (result == null && type is ConeIntegerLiteralType) {
+            return type.approximateIntegerLiteralType()
+        }
+        return result?.approximateIntegerLiteralType()
+    }
+
+    private fun finallySubstituteOrSelf(type: ConeKotlinType): ConeKotlinType {
+        return finallySubstituteOrNull(type) ?: type
+    }
 
     private val arrayOfCallTransformer = FirArrayOfCallTransformer()
     private var enableArrayOfCallTransformation = false
@@ -309,7 +323,7 @@ class FirCallCompletionResultsWriterTransformer(
         candidate: Candidate,
     ): FirResolvedTypeRef {
         val initialType = candidate.substitutor.substituteOrSelf(type)
-        val substitutedType = finalSubstitutor.substituteOrNull(initialType)
+        val substitutedType = finallySubstituteOrNull(initialType)
         val finalType = typeApproximator.approximateToSuperType(
             type = substitutedType ?: initialType, TypeApproximatorConfiguration.FinalApproximationAfterResolutionAndInference,
         ) ?: substitutedType
@@ -360,7 +374,7 @@ class FirCallCompletionResultsWriterTransformer(
         val typeRef = callableReferenceAccess.typeRef as FirResolvedTypeRef
 
         val initialType = calleeReference.candidate.substitutor.substituteOrSelf(typeRef.type)
-        val finalType = finalSubstitutor.substituteOrSelf(initialType)
+        val finalType = finallySubstituteOrSelf(initialType)
 
         val resultType = typeRef.withReplacedConeType(finalType)
         callableReferenceAccess.replaceTypeRef(resultType)
@@ -399,7 +413,7 @@ class FirCallCompletionResultsWriterTransformer(
             data: Any?
         ): FirStatement {
             val originalType = qualifiedAccessExpression.typeRef.coneType
-            val substitutedReceiverType = finalSubstitutor.substituteOrNull(originalType) ?: return qualifiedAccessExpression
+            val substitutedReceiverType = finallySubstituteOrNull(originalType) ?: return qualifiedAccessExpression
             val resolvedTypeRef = qualifiedAccessExpression.typeRef.resolvedTypeFromPrototype(substitutedReceiverType)
             qualifiedAccessExpression.replaceTypeRef(resolvedTypeRef)
             session.lookupTracker?.recordTypeResolveAsLookup(resolvedTypeRef, qualifiedAccessExpression.source, context.file.source)
@@ -413,11 +427,11 @@ class FirCallCompletionResultsWriterTransformer(
 
     private fun FirTypeRef.substitute(candidate: Candidate): ConeKotlinType =
         coneType.let { candidate.substitutor.substituteOrSelf(it) }
-            .let { finalSubstitutor.substituteOrSelf(it) }
+            .let { finallySubstituteOrSelf(it) }
 
     private fun Candidate.createArgumentsMapping(): ExpectedArgumentType? {
         val lambdasReturnType = postponedAtoms.filterIsInstance<ResolvedLambdaAtom>().associate {
-            Pair(it.atom, finalSubstitutor.substituteOrSelf(substitutor.substituteOrSelf(it.returnType)).approximateIntegerLiteralType())
+            Pair(it.atom, finallySubstituteOrSelf(substitutor.substituteOrSelf(it.returnType)))
         }
 
         val isIntegerOperator = symbol.isWrappedIntegerOperator()
@@ -514,7 +528,7 @@ class FirCallCompletionResultsWriterTransformer(
         return declaration.typeParameters.map {
             val typeParameter = ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false)
             val substitution = candidate.substitutor.substituteOrSelf(typeParameter)
-            finalSubstitutor.substituteOrSelf(substitution).let { substitutedType ->
+            finallySubstituteOrSelf(substitution).let { substitutedType ->
                 typeApproximator.approximateToSuperType(
                     substitutedType, TypeApproximatorConfiguration.TypeArgumentApproximation,
                 ) ?: substitutedType
@@ -566,14 +580,14 @@ class FirCallCompletionResultsWriterTransformer(
 
         val receiverParameter = anonymousFunction.receiverParameter
         val initialReceiverType = receiverParameter?.typeRef?.coneTypeSafe<ConeKotlinType>()
-        val resultReceiverType = initialReceiverType?.let { finalSubstitutor.substituteOrNull(it) }
+        val resultReceiverType = initialReceiverType?.let { finallySubstituteOrNull(it) }
         if (resultReceiverType != null) {
             receiverParameter.replaceTypeRef(receiverParameter.typeRef.resolvedTypeFromPrototype(resultReceiverType))
             needUpdateLambdaType = true
         }
 
         val initialReturnType = anonymousFunction.returnTypeRef.coneTypeSafe<ConeKotlinType>()
-        val expectedReturnType = initialReturnType?.let { finalSubstitutor.substituteOrSelf(it) }
+        val expectedReturnType = initialReturnType?.let { finallySubstituteOrSelf(it) }
             ?: expectedType?.returnType(session) as? ConeClassLikeType
             ?: (data as? ExpectedArgumentType.ArgumentsMap)?.lambdasReturnTypes?.get(anonymousFunction)
 
@@ -649,7 +663,7 @@ class FirCallCompletionResultsWriterTransformer(
     override fun transformBlock(block: FirBlock, data: ExpectedArgumentType?): FirStatement {
         val initialType = block.resultType.coneTypeSafe<ConeKotlinType>()
         if (initialType != null) {
-            val finalType = finalSubstitutor.substituteOrNull(initialType)
+            val finalType = finallySubstituteOrNull(initialType)
             var resultType = block.resultType.withReplacedConeType(finalType)
             resultType.coneTypeSafe<ConeIntegerLiteralType>()?.let {
                 resultType = resultType.resolvedTypeFromPrototype(it.getApproximatedType(data?.getExpectedType(block)?.fullyExpandedType(session)))
