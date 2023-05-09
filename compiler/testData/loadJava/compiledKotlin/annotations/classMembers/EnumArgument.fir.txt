@@ -1,0 +1,18 @@
+public final annotation class Anno : R|kotlin/Annotation| {
+    public final val t: R|java/lang/annotation/ElementType|
+        public get(): R|java/lang/annotation/ElementType|
+
+    public constructor(t: R|java/lang/annotation/ElementType|): R|test/Anno|
+
+}
+
+public final class Class : R|kotlin/Any| {
+    @R|test/Anno|(t = R|java/lang/annotation/ElementType.METHOD|) public final fun foo(): R|kotlin/Unit|
+
+    field:@FIELD:R|test/Anno|(t = R|java/lang/annotation/ElementType.FIELD|) public final var bar: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+        public set(value: R|kotlin/Int|): R|kotlin/Unit|
+
+    public constructor(): R|test/Class|
+
+}

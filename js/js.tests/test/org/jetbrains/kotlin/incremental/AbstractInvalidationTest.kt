@@ -10,6 +10,7 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.local.CoreLocalFileSystem
 import com.intellij.psi.PsiManager
 import com.intellij.psi.SingleRootFileViewProvider
+import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.common.phaser.toPhaseMap
 import org.jetbrains.kotlin.cli.jvm.compiler.EnvironmentConfigFiles
@@ -19,11 +20,14 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.languageVersionSettings
-import org.jetbrains.kotlin.ir.backend.js.*
-import org.jetbrains.kotlin.ir.backend.js.ic.*
+import org.jetbrains.kotlin.ir.backend.js.JsIrCompilerWithIC
 import org.jetbrains.kotlin.ir.backend.js.SourceMapsInfo
+import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
+import org.jetbrains.kotlin.ir.backend.js.ic.*
+import org.jetbrains.kotlin.ir.backend.js.jsPhases
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputs
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.extension
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.safeModuleName
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
@@ -35,19 +39,17 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.test.DebugMode
-import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
-import org.jetbrains.kotlin.test.KotlinTestWithEnvironment
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
 import org.jetbrains.kotlin.test.util.JUnit4Assertions
+import org.jetbrains.kotlin.test.utils.TestDisposable
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.junit.ComparisonFailure
+import org.junit.jupiter.api.AfterEach
 import java.io.File
-import java.util.EnumSet
+import java.util.*
 
-abstract class AbstractInvalidationTest(
-    private val targetBackend: TargetBackend,
-    private val workingDirPath: String
-) : KotlinTestWithEnvironment() {
+abstract class AbstractInvalidationTest(private val targetBackend: TargetBackend, private val workingDirPath: String) {
     companion object {
         private val OUT_DIR_PATH = System.getProperty("kotlin.js.test.root.out.dir") ?: error("'kotlin.js.test.root.out.dir' is not set")
         private val STDLIB_KLIB = File(System.getProperty("kotlin.js.stdlib.klib.path") ?: error("Please set stdlib path")).canonicalPath
@@ -57,20 +59,24 @@ abstract class AbstractInvalidationTest(
 
         private val TEST_FILE_IGNORE_PATTERN = Regex("^.*\\..+\\.\\w\\w$")
 
-        private val JS_MODULE_KIND = ModuleKind.COMMON_JS
-
         private const val SOURCE_MAPPING_URL_PREFIX = "//# sourceMappingURL="
     }
 
-    private val zipAccessor = ZipFileSystemCacheableAccessor(2)
-
-    override fun createEnvironment(): KotlinCoreEnvironment {
-        return KotlinCoreEnvironment.createForTests(TestDisposable(), CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
+    open fun getModuleInfoFile(directory: File): File {
+        return directory.resolve(MODULE_INFO_FILE)
     }
 
-    override fun tearDown() {
+    open fun getProjectInfoFile(directory: File): File {
+        return directory.resolve(PROJECT_INFO_FILE)
+    }
+
+    private val zipAccessor = ZipFileSystemCacheableAccessor(2)
+    protected val environment =
+        KotlinCoreEnvironment.createForParallelTests(TestDisposable(), CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
+
+    @AfterEach
+    protected fun clearZipAccessor() {
         zipAccessor.reset()
-        super.tearDown()
     }
 
     private fun parseProjectInfo(testName: String, infoFile: File): ProjectInfo {
@@ -84,20 +90,20 @@ abstract class AbstractInvalidationTest(
     private val File.filesInDir
         get() = listFiles() ?: error("cannot retrieve the file list for $absolutePath directory")
 
-    protected fun doTest(testPath: String) {
+    protected fun runTest(@TestDataFile testPath: String) {
         val testDirectory = File(testPath)
         val testName = testDirectory.name
-        val projectInfoFile = File(testDirectory, PROJECT_INFO_FILE)
+        val projectInfoFile = getProjectInfoFile(testDirectory)
         val projectInfo = parseProjectInfo(testName, projectInfoFile)
 
-        if (isIgnoredTest(projectInfo)){
+        if (isIgnoredTest(projectInfo)) {
             return
         }
 
         val modulesInfos = mutableMapOf<String, ModuleInfo>()
         for (module in projectInfo.modules) {
             val moduleDirectory = File(testDirectory, module)
-            val moduleInfo = File(moduleDirectory, MODULE_INFO_FILE)
+            val moduleInfo = getModuleInfoFile(moduleDirectory)
             modulesInfos[module] = parseModuleInfo(module, moduleInfo)
         }
 
@@ -115,11 +121,11 @@ abstract class AbstractInvalidationTest(
         return File(File(buildDir, moduleName), "$moduleName.klib")
     }
 
-    private fun createConfiguration(moduleName: String, language: List<String>): CompilerConfiguration {
+    private fun createConfiguration(moduleName: String, language: List<String>, moduleKind: ModuleKind): CompilerConfiguration {
         val copy = environment.configuration.copy()
         copy.put(CommonConfigurationKeys.MODULE_NAME, moduleName)
         copy.put(JSConfigurationKeys.GENERATE_DTS, true)
-        copy.put(JSConfigurationKeys.MODULE_KIND, JS_MODULE_KIND)
+        copy.put(JSConfigurationKeys.MODULE_KIND, moduleKind)
         copy.put(JSConfigurationKeys.PROPERTY_LAZY_INITIALIZATION, true)
         copy.put(JSConfigurationKeys.SOURCE_MAP, true)
 
@@ -163,15 +169,8 @@ abstract class AbstractInvalidationTest(
             val moduleSourceDir = File(sourceDir, module)
             val moduleInfo = moduleInfos[module] ?: error("No module info found for $module")
             val moduleStep = moduleInfo.steps.getValue(projStepId)
-            val deletedFiles = mutableSetOf<String>()
             for (modification in moduleStep.modifications) {
-                modification.execute(moduleTestDir, moduleSourceDir) { deletedFiles.add(it.name) }
-            }
-
-            val expectedFileStats = moduleStep.expectedFileStats.toMutableMap()
-            if (deletedFiles.isNotEmpty()) {
-                val removedFiles = expectedFileStats[DirtyFileState.REMOVED_FILE.str] ?: emptySet()
-                expectedFileStats[DirtyFileState.REMOVED_FILE.str] = removedFiles + deletedFiles
+                modification.execute(moduleTestDir, moduleSourceDir) {}
             }
 
             val outputKlibFile = resolveModuleArtifact(module, buildDir)
@@ -186,7 +185,7 @@ abstract class AbstractInvalidationTest(
                         friends += klibFile
                     }
                 }
-                val configuration = createConfiguration(module, projStep.language)
+                val configuration = createConfiguration(module, projStep.language, projectInfo.moduleKind)
                 outputKlibFile.delete()
                 buildKlib(configuration, module, moduleSourceDir, dependencies, friends, outputKlibFile)
             }
@@ -198,7 +197,7 @@ abstract class AbstractInvalidationTest(
                 module.safeModuleName,
                 outputKlibFile.canonicalPath,
                 friends.map { it.canonicalPath },
-                expectedFileStats,
+                moduleStep.expectedFileStats,
                 dtsFile?.readText()
             )
         }
@@ -242,7 +241,7 @@ abstract class AbstractInvalidationTest(
         }
 
         private fun File.writeAsJsModule(jsCode: String, moduleName: String) {
-            writeText(ClassicJsBackendFacade.wrapWithModuleEmulationMarkers(jsCode, JS_MODULE_KIND, moduleName))
+            writeText(ClassicJsBackendFacade.wrapWithModuleEmulationMarkers(jsCode, projectInfo.moduleKind, moduleName))
         }
 
         private fun prepareExternalJsFiles(): MutableList<String> {
@@ -259,12 +258,13 @@ abstract class AbstractInvalidationTest(
             try {
                 V8IrJsTestChecker.checkWithTestFunctionArgs(
                     files = jsFiles,
-                    testModuleName = "./$mainModuleName.js",
+                    testModuleName = "./$mainModuleName${projectInfo.moduleKind.extension}",
                     testPackageName = null,
                     testFunctionName = BOX_FUNCTION_NAME,
                     testFunctionArgs = "$stepId",
                     expectedResult = "OK",
-                    withModuleSystem = true
+                    entryModulePath = jsFiles.last(),
+                    withModuleSystem = projectInfo.moduleKind in setOf(ModuleKind.COMMON_JS, ModuleKind.UMD, ModuleKind.AMD)
                 )
             } catch (e: ComparisonFailure) {
                 throw ComparisonFailure("Mismatched box out at step $stepId", e.expected, e.actual)
@@ -302,8 +302,8 @@ abstract class AbstractInvalidationTest(
         }
 
         private fun writeJsCode(stepId: Int, mainModuleName: String, jsOutput: CompilationOutputs): List<String> {
-            val compiledJsFiles = jsOutput.writeAll(jsDir, mainModuleName, true, mainModuleName, JS_MODULE_KIND).filter {
-                it.extension == "js"
+            val compiledJsFiles = jsOutput.writeAll(jsDir, mainModuleName, true, mainModuleName, projectInfo.moduleKind).filter {
+                it.extension == "js" || it.extension == "mjs"
             }
             for (jsCodeFile in compiledJsFiles) {
                 val sourceMappingUrlLine = jsCodeFile.readLines().singleOrNull { it.startsWith(SOURCE_MAPPING_URL_PREFIX) }
@@ -326,7 +326,7 @@ abstract class AbstractInvalidationTest(
                     error("module ${it.moduleName} has friends, but only main module may have the friends")
                 }
 
-                val configuration = createConfiguration(projStep.order.last(), projStep.language)
+                val configuration = createConfiguration(projStep.order.last(), projStep.language, projectInfo.moduleKind)
                 val cacheUpdater = CacheUpdater(
                     mainModule = mainModuleInfo.modulePath,
                     allModules = testInfo.mapTo(mutableListOf(STDLIB_KLIB)) { it.modulePath },

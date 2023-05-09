@@ -3,6 +3,26 @@ KtKotlinPropertySymbol:
     PropertyAnnotation()
       psi: KtAnnotationEntry
   ]
+  backingFieldSymbol: KtBackingFieldSymbol:
+    annotationsList: [
+      FieldAnnotation()
+        psi: KtAnnotationEntry
+    ]
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    isExtension: false
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KtKotlinPropertySymbol(/prop)
+    receiverParameter: null
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Int
+    symbolKind: LOCAL
+    typeParameters: []
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   callableIdIfNonLocal: /prop
   contextReceivers: []
   getter: KtPropertyGetterSymbol:

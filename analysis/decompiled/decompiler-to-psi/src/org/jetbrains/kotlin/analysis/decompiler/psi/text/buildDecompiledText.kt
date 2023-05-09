@@ -6,9 +6,13 @@
 package org.jetbrains.kotlin.analysis.decompiler.psi.text
 
 import com.intellij.openapi.util.TextRange
+import org.jetbrains.kotlin.analysis.decompiler.stub.COMPILED_DEFAULT_INITIALIZER
+import org.jetbrains.kotlin.analysis.decompiler.stub.COMPILED_DEFAULT_PARAMETER_VALUE
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.contracts.description.ContractProviderKey
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.psiUtil.quoteIfNeeded
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.renderer.DescriptorRendererModifier
@@ -16,8 +20,11 @@ import org.jetbrains.kotlin.renderer.DescriptorRendererOptions
 import org.jetbrains.kotlin.renderer.render
 import org.jetbrains.kotlin.resolve.DataClassDescriptorResolver
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
+import org.jetbrains.kotlin.resolve.constants.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.secondaryConstructors
 import org.jetbrains.kotlin.types.isFlexible
+import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 private const val DECOMPILED_CODE_COMMENT = "/* compiled code */"
 private const val DECOMPILED_COMMENT_FOR_PARAMETER = "/* = compiled code */"
@@ -32,6 +39,9 @@ fun DescriptorRendererOptions.defaultDecompilerRendererOptions() {
     excludedTypeAnnotationClasses = emptySet()
     alwaysRenderModifiers = true
     parameterNamesInFunctionalTypes = false // to support parameters names in decompiled text we need to load annotation arguments
+    defaultParameterValueRenderer = { _ -> COMPILED_DEFAULT_PARAMETER_VALUE }
+    includePropertyConstant = true
+    propertyConstantRenderer = { _ -> COMPILED_DEFAULT_INITIALIZER }
 }
 
 internal fun CallableMemberDescriptor.mustNotBeWrittenToDecompiledText(): Boolean {
@@ -43,7 +53,11 @@ internal fun CallableMemberDescriptor.mustNotBeWrittenToDecompiledText(): Boolea
 
         CallableMemberDescriptor.Kind.SYNTHESIZED -> {
             // Of all synthesized functions, only `component*` functions are rendered (for historical reasons)
-            !DataClassDescriptorResolver.isComponentLike(name)
+            !DataClassDescriptorResolver.isComponentLike(name) && name !in listOf(
+                OperatorNameConventions.EQUALS,
+                StandardNames.HASHCODE_NAME,
+                OperatorNameConventions.TO_STRING
+            )
         }
     }
 }
@@ -52,7 +66,6 @@ fun buildDecompiledText(
     packageFqName: FqName,
     descriptors: List<DeclarationDescriptor>,
     descriptorRenderer: DescriptorRenderer,
-    indexers: Collection<DecompiledTextIndexer<*>> = listOf(ByDescriptorIndexer),
 ): DecompiledText {
     val builder = StringBuilder()
 
@@ -64,14 +77,7 @@ fun buildDecompiledText(
         }
     }
 
-    val textIndex = DecompiledTextIndex(indexers)
-
-    fun indexDescriptor(descriptor: DeclarationDescriptor, startOffset: Int, endOffset: Int) {
-        textIndex.addToIndex(descriptor, TextRange(startOffset, endOffset))
-    }
-
     fun appendDescriptor(descriptor: DeclarationDescriptor, indent: String, lastEnumEntry: Boolean? = null) {
-        val startOffset = builder.length
         if (isEnumEntry(descriptor)) {
             for (annotation in descriptor.annotations) {
                 builder.append(descriptorRenderer.renderAnnotation(annotation))
@@ -82,7 +88,6 @@ fun buildDecompiledText(
         } else {
             builder.append(descriptorRenderer.render(descriptor).replace("= ...", DECOMPILED_COMMENT_FOR_PARAMETER))
         }
-        var endOffset = builder.length
 
         if (descriptor is CallableDescriptor) {
             //NOTE: assuming that only return types can be flexible
@@ -105,7 +110,39 @@ fun buildDecompiledText(
                     // descriptor instanceof PropertyDescriptor
                     builder.append(" ").append(DECOMPILED_CODE_COMMENT)
                 }
-                endOffset = builder.length
+            }
+            if (descriptor is PropertyDescriptor) {
+                for (accessor in descriptor.accessors) {
+                    if (accessor.isDefault) continue
+                    builder.append("\n$indent    ")
+                    builder.append(accessor.visibility.internalDisplayName).append(" ")
+                    builder.append(accessor.modality.name.toLowerCaseAsciiOnly()).append(" ")
+                    if (accessor.isExternal) {
+                        builder.append("external ")
+                    }
+                    for (annotation in accessor.annotations) {
+                        builder.append(descriptorRenderer.renderAnnotation(annotation))
+                        builder.append(" ")
+                    }
+                    if (accessor is PropertyGetterDescriptor) {
+                        builder.append("get")
+                    } else if (accessor is PropertySetterDescriptor) {
+                        builder.append("set(")
+                        val parameterDescriptor = accessor.valueParameters[0]
+                        for (annotation in parameterDescriptor.annotations) {
+                            builder.append(descriptorRenderer.renderAnnotation(annotation))
+                            builder.append(" ")
+                        }
+                        val paramName = when (val name = parameterDescriptor.name) {
+                            SpecialNames.IMPLICIT_SET_PARAMETER -> StandardNames.DEFAULT_VALUE_PARAMETER
+                            else -> name
+                        }
+                        builder.append(paramName.asString()).append(": ")
+                            .append(descriptorRenderer.renderType(parameterDescriptor.type))
+                        builder.append(")")
+                        builder.append(" {").append(DECOMPILED_CODE_COMMENT).append(" }")
+                    }
+                }
             }
         } else if (descriptor is ClassDescriptor && !isEnumEntry(descriptor)) {
             builder.append(" {\n")
@@ -153,18 +190,9 @@ fun buildDecompiledText(
             }
 
             builder.append(indent).append("}")
-            endOffset = builder.length
         }
 
         builder.append("\n")
-        indexDescriptor(descriptor, startOffset, endOffset)
-
-        if (descriptor is ClassDescriptor) {
-            val primaryConstructor = descriptor.unsubstitutedPrimaryConstructor
-            if (primaryConstructor != null) {
-                indexDescriptor(primaryConstructor, startOffset, endOffset)
-            }
-        }
     }
 
     appendDecompiledTextAndPackageName()
@@ -173,5 +201,5 @@ fun buildDecompiledText(
         builder.append("\n")
     }
 
-    return DecompiledText(builder.toString(), textIndex)
+    return DecompiledText(builder.toString())
 }

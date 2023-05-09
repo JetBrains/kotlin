@@ -1,15 +1,19 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2023 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
-
+@file:OptIn(ExperimentalForeignApi::class)
 @file:Suppress("RESERVED_MEMBER_INSIDE_VALUE_CLASS")
 
 package kotlin.native.internal
 
-@TypedIntrinsic(IntrinsicType.INTEROP_GET_NATIVE_NULL_PTR)
-external fun getNativeNullPtr(): NativePtr
+import kotlinx.cinterop.*
 
+@TypedIntrinsic(IntrinsicType.INTEROP_GET_NATIVE_NULL_PTR)
+@PublishedApi
+internal external fun getNativeNullPtr(): NativePtr
+
+@ExperimentalForeignApi
 class NativePtr @PublishedApi internal constructor(private val value: NonNullNativePtr?) {
     companion object {
         // TODO: make it properly precreated, maybe use an intrinsic for that.

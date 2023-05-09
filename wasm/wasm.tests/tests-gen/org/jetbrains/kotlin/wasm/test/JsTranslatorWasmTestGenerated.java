@@ -363,4 +363,27 @@ public class JsTranslatorWasmTestGenerated extends AbstractJsTranslatorWasmTest 
             runTest("js/js.translator/testData/box/jsQualifier/simple.kt");
         }
     }
+
+    @TestMetadata("js/js.translator/testData/box/reflection")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Reflection extends AbstractJsTranslatorWasmTest {
+        private void runTest(String testDataFilePath) throws Exception {
+            KotlinTestUtils.runTest0(this::doTest, TargetBackend.WASM, testDataFilePath);
+        }
+
+        public void testAllFilesPresentInReflection() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/box/reflection"), Pattern.compile("^(findAssociatedObject(InSeparatedFile)?)\\.kt$"), null, TargetBackend.WASM, true);
+        }
+
+        @TestMetadata("findAssociatedObject.kt")
+        public void testFindAssociatedObject() throws Exception {
+            runTest("js/js.translator/testData/box/reflection/findAssociatedObject.kt");
+        }
+
+        @TestMetadata("findAssociatedObjectInSeparatedFile.kt")
+        public void testFindAssociatedObjectInSeparatedFile() throws Exception {
+            runTest("js/js.translator/testData/box/reflection/findAssociatedObjectInSeparatedFile.kt");
+        }
+    }
 }

@@ -20,6 +20,10 @@ import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.utils.memoryOptimizedFilterNot
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
+import org.jetbrains.kotlin.utils.memoryOptimizedMapIndexed
+import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
 private fun IrType.withNullability(newNullability: Boolean): IrType =
     when (this) {
@@ -50,10 +54,10 @@ fun IrType.addAnnotations(newAnnotations: List<IrConstructorCall>): IrType =
     else when (this) {
         is IrSimpleType ->
             toBuilder().apply {
-                annotations = annotations + newAnnotations
+                annotations = annotations memoryOptimizedPlus newAnnotations
             }.buildSimpleType()
         is IrDynamicType ->
-            IrDynamicTypeImpl(null, annotations + newAnnotations, Variance.INVARIANT)
+            IrDynamicTypeImpl(null, annotations memoryOptimizedPlus newAnnotations, Variance.INVARIANT)
         else ->
             this
     }
@@ -62,10 +66,10 @@ fun IrType.removeAnnotations(predicate: (IrConstructorCall) -> Boolean): IrType 
     when (this) {
         is IrSimpleType ->
             toBuilder().apply {
-                annotations = annotations.filterNot(predicate)
+                annotations = annotations.memoryOptimizedFilterNot(predicate)
             }.buildSimpleType()
         is IrDynamicType ->
-            IrDynamicTypeImpl(null, annotations.filterNot(predicate), Variance.INVARIANT)
+            IrDynamicTypeImpl(null, annotations.memoryOptimizedFilterNot(predicate), Variance.INVARIANT)
         else ->
             this
     }
@@ -146,7 +150,7 @@ private fun makeKotlinType(
     arguments: List<IrTypeArgument>,
     hasQuestionMark: Boolean
 ): SimpleType {
-    val kotlinTypeArguments = arguments.mapIndexed { index, it ->
+    val kotlinTypeArguments = arguments.memoryOptimizedMapIndexed { index, it ->
         when (it) {
             is IrTypeProjection -> TypeProjectionImpl(it.variance, it.type.toKotlinType())
             is IrStarProjection -> StarProjectionImpl((classifier.descriptor as ClassDescriptor).typeConstructor.parameters[index])
@@ -219,7 +223,7 @@ fun IrClassifierSymbol.typeWith(arguments: List<IrType>): IrSimpleType =
     IrSimpleTypeImpl(
         this,
         SimpleTypeNullability.NOT_SPECIFIED,
-        arguments.map { makeTypeProjection(it, Variance.INVARIANT) },
+        arguments.memoryOptimizedMap { makeTypeProjection(it, Variance.INVARIANT) },
         emptyList()
     )
 

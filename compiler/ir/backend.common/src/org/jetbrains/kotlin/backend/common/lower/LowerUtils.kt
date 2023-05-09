@@ -19,13 +19,9 @@ import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.linkage.partial.isPartialLinkageRuntimeError
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
-import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
-import org.jetbrains.kotlin.ir.util.DeepCopyIrTreeWithSymbols
-import org.jetbrains.kotlin.ir.util.IrTypeParameterRemapper
-import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -254,60 +250,33 @@ fun ParameterDescriptor.copyAsValueParameter(newOwner: CallableDescriptor, index
     else -> throw Error("Unexpected parameter descriptor: $this")
 }
 
-fun IrExpressionBody.copyAndActualizeDefaultValue(
-    actualFunction: IrFunction,
-    actualValueParameter: IrValueParameter,
-    expectActualTypeParametersMap: Map<IrTypeParameter, IrTypeParameter>,
-    classActualizer: (IrClass) -> IrClass,
-    functionActualizer: (IrFunction) -> IrFunction
-) = actualValueParameter.factory.createExpressionBody(startOffset, endOffset) {
-    expression = this@copyAndActualizeDefaultValue.expression
-        .deepCopyWithSymbols(actualFunction) { symbolRemapper, _ ->
-            DeepCopyIrTreeWithSymbols(symbolRemapper, IrTypeParameterRemapper(expectActualTypeParametersMap))
+fun IrGetValue.actualize(classActualizer: (IrClass) -> IrClass, functionActualizer: (IrFunction) -> IrFunction): IrGetValue {
+    val symbol = symbol
+    if (symbol !is IrValueParameterSymbol) {
+        return this
+    }
+
+    val parameter = symbol.owner
+    val newSymbol = when (val parent = parameter.parent) {
+        is IrClass -> {
+            assert(parameter == parent.thisReceiver)
+            classActualizer(parent).thisReceiver!!
         }
-        .transform(object : IrElementTransformerVoid() {
-            override fun visitGetValue(expression: IrGetValue): IrExpression {
-                expression.transformChildrenVoid()
-                val newValue = remapExpectValue(expression.symbol) ?: return expression
 
-                return IrGetValueImpl(
-                    expression.startOffset,
-                    expression.endOffset,
-                    newValue.type,
-                    newValue.symbol,
-                    expression.origin
-                )
-            }
-
-            private fun remapExpectValue(symbol: IrValueSymbol): IrValueParameter? {
-                if (symbol !is IrValueParameterSymbol) {
-                    return null
-                }
-
-                val parameter = symbol.owner
-
-                return when (val parent = parameter.parent) {
-                    is IrClass -> {
-                        assert(parameter == parent.thisReceiver)
-                        classActualizer(parent).thisReceiver!!
-                    }
-
-                    is IrFunction -> {
-                        val function = functionActualizer(parent)
-                        when (parameter) {
-                            parent.dispatchReceiverParameter -> function.dispatchReceiverParameter!!
-                            parent.extensionReceiverParameter -> function.extensionReceiverParameter!!
-                            else -> {
-                                assert(parent.valueParameters[parameter.index] == parameter)
-                                function.valueParameters[parameter.index]
-                            }
-                        }
-                    }
-
-                    else -> error(parent)
+        is IrFunction -> {
+            val actualizedFunction = functionActualizer(parent)
+            when (parameter) {
+                parent.dispatchReceiverParameter -> actualizedFunction.dispatchReceiverParameter!!
+                parent.extensionReceiverParameter -> actualizedFunction.extensionReceiverParameter!!
+                else -> {
+                    assert(parent.valueParameters[parameter.index] == parameter)
+                    actualizedFunction.valueParameters[parameter.index]
                 }
             }
-        }, data = null)
+        }
+
+        else -> error(parent)
+    }
+
+    return IrGetValueImpl(startOffset, endOffset, newSymbol.type, newSymbol.symbol, origin)
 }
-
-

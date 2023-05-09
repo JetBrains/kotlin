@@ -138,7 +138,7 @@ FILE fqName:<root> fileName:/implicitNotNullOnDelegatedImplementation.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun foo (): kotlin.String declared in <root>.TestJFoo'
           TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-            CALL 'public open fun foo (): @[EnhancedNullability] kotlin.String declared in <root>.JFoo' type=kotlin.String origin=null
+            CALL 'public open fun foo (): @[EnhancedNullability] kotlin.String declared in <root>.JFoo' type=@[EnhancedNullability] kotlin.String origin=null
               $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.JFoo visibility:private [final]' type=<root>.JFoo origin=null
                 receiver: GET_VAR '<this>: <root>.TestJFoo declared in <root>.TestJFoo.foo' type=<root>.TestJFoo origin=null
     FIELD DELEGATE name:$$delegate_0 type:<root>.JFoo visibility:private [final]
@@ -170,7 +170,7 @@ FILE fqName:<root> fileName:/implicitNotNullOnDelegatedImplementation.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun foo (): kotlin.String declared in <root>.TestK1'
           TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-            CALL 'public open fun foo (): @[EnhancedNullability] kotlin.String [fake_override] declared in <root>.K1' type=kotlin.String origin=null
+            CALL 'public open fun foo (): @[EnhancedNullability] kotlin.String declared in <root>.JFoo' type=@[EnhancedNullability] kotlin.String origin=null
               $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.K1 visibility:private [final]' type=<root>.K1 origin=null
                 receiver: GET_VAR '<this>: <root>.TestK1 declared in <root>.TestK1.foo' type=<root>.TestK1 origin=null
     FIELD DELEGATE name:$$delegate_0 type:<root>.K1 visibility:private [final]
@@ -264,7 +264,7 @@ FILE fqName:<root> fileName:/implicitNotNullOnDelegatedImplementation.kt
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun foo (): kotlin.String declared in <root>.TestK4'
           TYPE_OP type=kotlin.String origin=IMPLICIT_NOTNULL typeOperand=kotlin.String
-            CALL 'public open fun foo (): @[FlexibleNullability] kotlin.String? declared in <root>.K4' type=kotlin.String origin=null
+            CALL 'public open fun foo (): @[FlexibleNullability] kotlin.String? declared in <root>.K4' type=@[FlexibleNullability] kotlin.String? origin=null
               $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.K4 visibility:private [final]' type=<root>.K4 origin=null
                 receiver: GET_VAR '<this>: <root>.TestK4 declared in <root>.TestK4.foo' type=<root>.TestK4 origin=null
     FIELD DELEGATE name:$$delegate_0 type:<root>.K4 visibility:private [final]

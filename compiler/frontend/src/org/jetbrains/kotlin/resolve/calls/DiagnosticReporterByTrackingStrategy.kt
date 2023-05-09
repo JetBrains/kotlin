@@ -16,10 +16,12 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticFactory2
 import org.jetbrains.kotlin.diagnostics.Errors.*
 import org.jetbrains.kotlin.diagnostics.Errors.BadNamedArgumentsTarget.*
 import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
+import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.isNull
 import org.jetbrains.kotlin.psi.psiUtil.lastBlockStatementOrThis
+import org.jetbrains.kotlin.psi.psiUtil.parents
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.calls.context.BasicCallResolutionContext
 import org.jetbrains.kotlin.resolve.calls.inference.BuilderInferenceExpectedTypeConstraintPosition
@@ -40,6 +42,7 @@ import org.jetbrains.kotlin.resolve.constants.evaluate.ConstantExpressionEvaluat
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.receivers.ExpressionReceiver
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
+import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.StubTypeForBuilderInference
 import org.jetbrains.kotlin.types.TypeUtils
@@ -77,9 +80,18 @@ class DiagnosticReporterByTrackingStrategy(
             is VisibilityError -> tracingStrategy.invisibleMember(trace, diagnostic.invisibleMember)
             is NoValueForParameter -> tracingStrategy.noValueForParameter(trace, diagnostic.parameterDescriptor)
             is TypeCheckerHasRanIntoRecursion -> {
-                val shouldReportErrorsOnRecursiveTypeInsidePlusAssignment =
-                    context.languageVersionSettings.supportsFeature(LanguageFeature.ReportErrorsOnRecursiveTypeInsidePlusAssignment)
-                tracingStrategy.recursiveType(trace, shouldReportErrorsOnRecursiveTypeInsidePlusAssignment)
+                // Note: we have two similar diagnostics here
+                // - TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM (error starting from 1.7)
+                // - TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM_IN_AUGMENTED_ASSIGNMENT (error starting from 1.9)
+                // however they have different deprecation cycle, and thus it's better to distinguish them.
+                // This 'insideAugmentedAssignment' is just a heuristics (approximate) to do it.
+                // It cannot turn red code to green or green to red; the worst thing we can get here
+                // is replacing red code with yellow, if e.g. LV is set to 1.8 explicitly,
+                // and we have chosen the second diagnostics instead of the first one.
+                val insideAugmentedAssignment = call.callElement.parents.any {
+                    it is KtBinaryExpression && it.operationToken in KtTokens.AUGMENTED_ASSIGNMENTS
+                }
+                tracingStrategy.recursiveType(trace, context.languageVersionSettings, insideAugmentedAssignment)
             }
             is InstantiationOfAbstractClass -> tracingStrategy.instantiationOfAbstractClass(trace)
             is AbstractSuperCall -> {
@@ -148,6 +160,17 @@ class DiagnosticReporterByTrackingStrategy(
                 val callElement = psiKotlinCall.psiCall.callElement
                 trace.report(UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL.on(callElement))
             }
+
+            is AdaptedCallableReferenceIsUsedWithReflection, is NotCallableMemberReference, is CallableReferencesDefaultArgumentUsed -> {
+                // AdaptedCallableReferenceIsUsedWithReflection -> reported in onCallArgument
+                // NotCallableMemberReference -> UNSUPPORTED reported in DoubleColonExpressionResolver
+                // CallableReferencesDefaultArgumentUsed -> possible in 1.3 and earlier versions only
+                return
+            }
+
+            else -> {
+                unknownError(diagnostic, "onCall")
+            }
         }
     }
 
@@ -164,6 +187,23 @@ class DiagnosticReporterByTrackingStrategy(
                 val expectedTypeArgumentsCount = diagnostic.descriptor.typeParameters.size
                 trace.report(WRONG_NUMBER_OF_TYPE_ARGUMENTS.on(reportElement, expectedTypeArgumentsCount, diagnostic.descriptor))
             }
+            else -> {
+                unknownError(diagnostic, "onTypeArguments")
+            }
+        }
+    }
+
+    private fun unknownError(diagnostic: KotlinCallDiagnostic, onTarget: String) {
+        if (AbstractTypeChecker.RUN_SLOW_ASSERTIONS) {
+            throw AssertionError("$onTarget should not be called with ${diagnostic::class.java}")
+        } else if (reportAdditionalErrors) {
+            trace.report(
+                NEW_INFERENCE_UNKNOWN_ERROR.on(
+                    psiKotlinCall.psiCall.callElement,
+                    diagnostic.candidateApplicability,
+                    onTarget
+                )
+            )
         }
     }
 
@@ -205,6 +245,9 @@ class DiagnosticReporterByTrackingStrategy(
                         originalTypeParameter?.containingDeclaration?.name ?: SpecialNames.NO_NAME_PROVIDED
                     )
                 )
+            }
+            else -> {
+                unknownError(diagnostic, "onCallReceiver")
             }
         }
     }
@@ -324,6 +367,16 @@ class DiagnosticReporterByTrackingStrategy(
                     )
                 )
             }
+
+            is NotCallableMemberReference, is NotCallableExpectedType -> {
+                // NotCallableMemberReference -> UNSUPPORTED is reported in DoubleColonExpressionResolver
+                // NotCallableExpectedType -> TYPE_MISMATCH is reported in reportConstraintErrorByPosition
+                return
+            }
+
+            else -> {
+                unknownError(diagnostic, "onCallArgument")
+            }
         }
     }
 
@@ -348,6 +401,9 @@ class DiagnosticReporterByTrackingStrategy(
                 )
             )
             is ArgumentPassedTwice -> trace.report(ARGUMENT_PASSED_TWICE.on(nameReference))
+            else -> {
+                unknownError(diagnostic, "onCallArgumentName")
+            }
         }
     }
 
@@ -368,6 +424,9 @@ class DiagnosticReporterByTrackingStrategy(
                         trace.report(NON_VARARG_SPREAD.on(context.languageVersionSettings, spreadElement))
                     }
                 }
+            }
+            else -> {
+                unknownError(diagnostic, "onCallArgumentSpread")
             }
         }
     }
@@ -459,19 +518,22 @@ class DiagnosticReporterByTrackingStrategy(
             is ArgumentConstraintPosition<*> -> {
                 reportArgumentConstraintErrorByPosition(
                     error, position.argument as KotlinCallArgument,
-                    isWarning, typeMismatchDiagnostic, report
+                    isWarning, typeMismatchDiagnostic,
+                    selectorCall = null, report
                 )
             }
             is ReceiverConstraintPosition<*> -> {
                 reportArgumentConstraintErrorByPosition(
                     error, position.argument as KotlinCallArgument,
-                    isWarning, typeMismatchDiagnostic, report
+                    isWarning, typeMismatchDiagnostic,
+                    selectorCall = (position as ReceiverConstraintPositionImpl).selectorCall, report
                 )
             }
             is LambdaArgumentConstraintPosition<*> -> {
                 reportArgumentConstraintErrorByPosition(
                     error, (position.lambda as ResolvedLambdaAtom).atom,
-                    isWarning, typeMismatchDiagnostic, report
+                    isWarning, typeMismatchDiagnostic,
+                    selectorCall = null, report
                 )
             }
             is BuilderInferenceExpectedTypeConstraintPosition -> {
@@ -512,31 +574,46 @@ class DiagnosticReporterByTrackingStrategy(
             BuilderInferencePosition -> {
                 // some error reported later?
             }
-            is CallableReferenceConstraintPosition<*> -> TODO()
             is DeclaredUpperBoundConstraintPosition<*> -> {
                 val originalCall = (position as DeclaredUpperBoundConstraintPositionImpl).kotlinCall
                 val typeParameterDescriptor = position.typeParameter
                 val ownerDescriptor = typeParameterDescriptor.containingDeclaration
-                trace.reportDiagnosticOnce(
-                    UPPER_BOUND_VIOLATION_IN_CONSTRAINT.on(
-                        (originalCall as PSIKotlinCall).psiCall.callElement,
-                        typeParameterDescriptor.name,
-                        ownerDescriptor.name,
-                        error.upperKotlinType,
-                        error.lowerKotlinType
+                if (reportAdditionalErrors) {
+                    trace.reportDiagnosticOnce(
+                        UPPER_BOUND_VIOLATION_IN_CONSTRAINT.on(
+                            (originalCall as PSIKotlinCall).psiCall.callElement,
+                            typeParameterDescriptor.name,
+                            ownerDescriptor.name,
+                            error.upperKotlinType,
+                            error.lowerKotlinType
+                        )
                     )
-                )
+                }
             }
             is DelegatedPropertyConstraintPosition<*> -> {
                 // DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE, reported later
             }
-            is IncorporationConstraintPosition -> TODO()
-            is InjectedAnotherStubTypeConstraintPosition<*> -> TODO()
             is KnownTypeParameterConstraintPosition<*> -> {
                 // UPPER_BOUND_VIOLATED, reported later?
             }
-            is LHSArgumentConstraintPosition<*, *> -> TODO()
-            SimpleConstraintSystemConstraintPosition -> TODO()
+            is CallableReferenceConstraintPosition<*>,
+            is IncorporationConstraintPosition,
+            is InjectedAnotherStubTypeConstraintPosition<*>,
+            is LHSArgumentConstraintPosition<*, *>,
+            SimpleConstraintSystemConstraintPosition -> {
+                if (AbstractTypeChecker.RUN_SLOW_ASSERTIONS) {
+                    throw AssertionError("Constraint error in unexpected position: $position")
+                } else if (reportAdditionalErrors) {
+                    report(
+                        TYPE_MISMATCH_IN_CONSTRAINT.on(
+                            psiKotlinCall.psiCall.callElement,
+                            error.upperKotlinType,
+                            error.lowerKotlinType,
+                            position
+                        )
+                    )
+                }
+            }
         }
     }
 
@@ -545,6 +622,7 @@ class DiagnosticReporterByTrackingStrategy(
         argument: KotlinCallArgument,
         isWarning: Boolean,
         typeMismatchDiagnostic: DiagnosticFactory2<KtExpression, KotlinType, KotlinType>,
+        selectorCall: KotlinCall?,
         report: (Diagnostic) -> Unit
     ) {
         if (argument is LambdaKotlinCallArgument) {
@@ -562,8 +640,21 @@ class DiagnosticReporterByTrackingStrategy(
             }
         }
 
-        // TODO: FIXME (KT-55056)
-        val expression = argument.psiExpression ?: return
+        val expression = argument.psiExpression ?: run {
+            val psiCall = (selectorCall as? PSIKotlinCall)?.psiCall ?: psiKotlinCall.psiCall
+            // Note: we don't report RECEIVER_TYPE_MISMATCH w/out ProperTypeInferenceConstraintsProcessing
+            // See KT-57854. This is needed for intellij.go.tests (recursive generics case) compilation with K1
+            if (context.languageVersionSettings.supportsFeature(LanguageFeature.ProperTypeInferenceConstraintsProcessing) &&
+                reportAdditionalErrors
+            ) {
+                report(
+                    RECEIVER_TYPE_MISMATCH.on(
+                        psiCall.calleeExpression ?: psiCall.callElement, error.upperKotlinType, error.lowerKotlinType
+                    )
+                )
+            }
+            return
+        }
 
         val deparenthesized = KtPsiUtil.safeDeparenthesize(expression)
         if (reportConstantTypeMismatch(error, deparenthesized)) return
@@ -582,6 +673,17 @@ class DiagnosticReporterByTrackingStrategy(
         }
         report(typeMismatchDiagnostic.on(deparenthesized, error.upperKotlinType, error.lowerKotlinType))
     }
+
+    /**
+     * Should we report additional errors appeared in Kotlin compiler 1.9.0 or not
+     *
+     * This property appeared in Kotlin compiler 1.9.0, after we discovered some "swallowed" diagnostics in this class.
+     * We added a set of diagnostics (see property usages) to have additional protection before migrating to K2.
+     * For details see KT-55055, KT-55056, KT-55079.
+     * This property is normally true, but can be disabled with a feature NoAdditionalErrorsInK1DiagnosticReporter
+     */
+    private val reportAdditionalErrors: Boolean
+        get() = !context.languageVersionSettings.supportsFeature(LanguageFeature.NoAdditionalErrorsInK1DiagnosticReporter)
 
     override fun constraintError(error: ConstraintSystemError) {
         when (error) {
@@ -705,10 +807,16 @@ class DiagnosticReporterByTrackingStrategy(
                     trace.reportDiagnosticOnce(diagnostic)
                 }
             }
+            // ConstrainingTypeIsError means that some type isError, so it's reported somewhere else
             is ConstrainingTypeIsError -> {}
+            // LowerPriorityToPreserveCompatibility is not expected to report something
             is LowerPriorityToPreserveCompatibility -> {}
+            // NoSuccessfulFork does not exist in K1
             is NoSuccessfulFork -> {}
-            is NotEnoughInformationForTypeParameter<*> -> {}
+            // NotEnoughInformationForTypeParameterImpl is already considered above
+            is NotEnoughInformationForTypeParameter<*> -> {
+                throw AssertionError("constraintError should not be called with ${error::class.java}")
+            }
         }
     }
 

@@ -70,7 +70,8 @@ fun FirAnnotationContainer.nonSourceAnnotations(session: FirSession): List<FirAn
     annotations.nonSourceAnnotations(session)
 
 @Suppress("NOTHING_TO_INLINE")
-inline fun FirProperty.hasJvmFieldAnnotation(session: FirSession): Boolean = annotations.any { it.isJvmFieldAnnotation(session) }
+inline fun FirProperty.hasJvmFieldAnnotation(session: FirSession): Boolean =
+    backingField?.annotations?.any { it.isJvmFieldAnnotation(session) } == true
 
 fun FirAnnotation.isJvmFieldAnnotation(session: FirSession): Boolean =
     toAnnotationClassId(session) == StandardClassIds.Annotations.JvmField
@@ -175,6 +176,12 @@ fun FirAnnotationContainer.getAnnotationsByClassId(classId: ClassId, session: Fi
 fun List<FirAnnotation>.getAnnotationsByClassId(classId: ClassId, session: FirSession): List<FirAnnotation> {
     return filter {
         it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType(session)?.lookupTag?.classId == classId
+    }
+}
+
+fun List<FirAnnotation>.getAnnotationByClassIds(classIds: Collection<ClassId>, session: FirSession): FirAnnotation? {
+    return firstOrNull {
+        it.annotationTypeRef.coneTypeSafe<ConeClassLikeType>()?.fullyExpandedType(session)?.lookupTag?.classId in classIds
     }
 }
 

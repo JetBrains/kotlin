@@ -220,7 +220,10 @@ open class SymbolTable(
 
         protected inline fun createOwnerSafe(symbol: S, createOwner: (S) -> B): B {
             val owner = createOwner(symbol)
-            assert(symbol.isBound /*&& symbol.owner === owner*/) // TODO: unmute the second condition immediately when KT-57049 is fixed
+            require(symbol.isBound)
+            require(symbol.owner === owner) {
+                "Attempt to rebind an IR symbol or to re-create its owner: old owner ${symbol.owner.render()}, new owner ${owner.render()}"
+            }
             return owner
         }
     }
@@ -1147,23 +1150,28 @@ open class SymbolTable(
                 throw IllegalArgumentException("Unexpected value descriptor: $value")
         }
 
-    private inline fun <D : DeclarationDescriptor, IR : IrSymbolOwner, S : IrBindableSymbol<D, IR>> FlatSymbolTable<D, IR, S>.forEachPublicSymbolImpl(
+    private inline fun <D : DeclarationDescriptor, IR : IrSymbolOwner, S : IrBindableSymbol<D, IR>> FlatSymbolTable<D, IR, S>.forEachSymbolImpl(
         block: (IrSymbol) -> Unit
     ) {
         idSigToSymbol.forEach { (_, sym) ->
-            assert(sym.isPublicApi)
             block(sym)
         }
     }
 
-    fun forEachPublicSymbol(block: (IrSymbol) -> Unit) {
-        classSymbolTable.forEachPublicSymbolImpl { block(it) }
-        constructorSymbolTable.forEachPublicSymbolImpl { block(it) }
-        simpleFunctionSymbolTable.forEachPublicSymbolImpl { block(it) }
-        propertySymbolTable.forEachPublicSymbolImpl { block(it) }
-        enumEntrySymbolTable.forEachPublicSymbolImpl { block(it) }
-        typeAliasSymbolTable.forEachPublicSymbolImpl { block(it) }
-        fieldSymbolTable.forEachPublicSymbolImpl { block(it) }
+    /**
+     * This function is quite messy and doesn't have good contract of what exactly is traversed.
+     * Basic idea is it traverse symbols which can be reasonable referered from other module
+     *
+     * Be careful when using it, and avoid it, except really need.
+     */
+    fun forEachDeclarationSymbol(block: (IrSymbol) -> Unit) {
+        classSymbolTable.forEachSymbolImpl { block(it) }
+        constructorSymbolTable.forEachSymbolImpl { block(it) }
+        simpleFunctionSymbolTable.forEachSymbolImpl { block(it) }
+        propertySymbolTable.forEachSymbolImpl { block(it) }
+        enumEntrySymbolTable.forEachSymbolImpl { block(it) }
+        typeAliasSymbolTable.forEachSymbolImpl { block(it) }
+        fieldSymbolTable.forEachSymbolImpl { block(it) }
     }
 }
 

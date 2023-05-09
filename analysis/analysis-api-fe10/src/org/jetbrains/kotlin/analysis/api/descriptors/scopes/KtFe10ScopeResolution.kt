@@ -17,12 +17,10 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtPossiblyNamedSymbol
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
-import org.jetbrains.kotlin.resolve.scopes.LexicalScope
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
-import org.jetbrains.kotlin.resolve.scopes.ResolutionScope
+import org.jetbrains.kotlin.resolve.scopes.*
 
 internal abstract class KtFe10ScopeResolution : KtScope, KtLifetimeOwner {
     abstract val analysisContext: Fe10AnalysisContext
@@ -90,4 +88,19 @@ internal open class KtFe10ScopeMember(
     override fun getConstructors(): Sequence<KtConstructorSymbol> = sequence {
         constructors.forEach { yield(it.toKtConstructorSymbol(analysisContext)) }
     }
+}
+
+internal class KtFe10ScopeImporting(
+    override val scope: ImportingScope,
+    override val analysisContext: Fe10AnalysisContext
+) : KtFe10ScopeResolution() {
+    override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
+        return getCallableSymbols().mapNotNullTo(mutableSetOf()) { (it as? KtPossiblyNamedSymbol)?.name }
+    }
+
+    override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion {
+        return getClassifierSymbols().mapNotNullTo(mutableSetOf()) { (it as? KtPossiblyNamedSymbol)?.name }
+    }
+
+    override fun getConstructors(): Sequence<KtConstructorSymbol> = withValidityAssertion { emptySequence() }
 }

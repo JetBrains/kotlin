@@ -16,6 +16,7 @@ dependencies {
     compileOnly(project(":compiler:ir.tree"))
     compileOnly(project(":compiler:ir.backend.common"))
     compileOnly(project(":compiler:ir.serialization.common"))
+    compileOnly(project(":compiler:fir:fir-serialization"))
 
     compileOnly(intellijCore())
 
@@ -26,7 +27,6 @@ dependencies {
     testApi(projectTests(":compiler:tests-compiler-utils"))
     testApi(projectTests(":compiler:tests-common-new"))
     testApi(projectTests(":compiler:fir:analysis-tests"))
-    testApi(project(":compiler:fir:fir-serialization"))
 
     testApiJUnit5()
 
@@ -39,7 +39,7 @@ dependencies {
     testCompileOnly(intellijCore())
     testRuntimeOnly(intellijCore())
 
-    testRuntimeOnly(commonDependency("net.java.dev.jna:jna"))
+    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.fastutil:intellij-deps-fastutil"))
     testRuntimeOnly(commonDependency("one.util:streamex"))
 
@@ -80,7 +80,10 @@ fun Test.configure(configureJUnit: JUnitPlatformOptions.() -> Unit = {}) {
     }
 }
 
-projectTest(jUnitMode = JUnitMode.JUnit5) {
+projectTest(
+    jUnitMode = JUnitMode.JUnit5,
+    defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0)
+) {
     configure()
 }
 

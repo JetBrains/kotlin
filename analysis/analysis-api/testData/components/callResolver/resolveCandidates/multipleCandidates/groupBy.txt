@@ -48,8 +48,7 @@ KtApplicableCallCandidateInfo:
   isInBestCandidates = true
 
 KtInapplicableCallCandidateInfo:
-  diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public final inline fun <T, K> R|kotlin/collections/Iterable<T>|.kotlin/collections/groupBy(keySelector: R|(T) -> K|): R|kotlin/collections/Map<K, kotlin/collections/List<T>>|
-  >
+  diagnostic = ERROR<TOO_MANY_ARGUMENTS: Too many arguments for public final inline fun <T, K> R|kotlin/collections/Iterable<T>|.kotlin/collections/groupBy(keySelector: R|(T) -> K|): R|kotlin/collections/Map<K, kotlin/collections/List<T>>|>
   candidate = KtSimpleFunctionCall:
     isImplicitInvoke = false
     partiallyAppliedSymbol = KtPartiallyAppliedSymbol:

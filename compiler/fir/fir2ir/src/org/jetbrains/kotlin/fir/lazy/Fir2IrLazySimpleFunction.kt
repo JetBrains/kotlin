@@ -76,7 +76,7 @@ class Fir2IrLazySimpleFunction(
 
             fir.valueParameters.mapIndexedTo(this) { index, valueParameter ->
                 declarationStorage.createIrParameter(
-                    valueParameter, index, skipDefaultParameter = isFakeOverride
+                    valueParameter, index + contextReceiverParametersCount, skipDefaultParameter = isFakeOverride
                 ).apply {
                     this.parent = this@Fir2IrLazySimpleFunction
                 }
@@ -93,7 +93,10 @@ class Fir2IrLazySimpleFunction(
             fakeOverrideGenerator.calcBaseSymbolsForFakeOverrideFunction(
                 firParent, this, fir.symbol
             )
-            fakeOverrideGenerator.getOverriddenSymbolsForFakeOverride(this)?.let { return@lazyVar it }
+            fakeOverrideGenerator.getOverriddenSymbolsForFakeOverride(this)?.let {
+                assert(!it.contains(symbol)) { "Cannot add function $symbol to its own overriddenSymbols" }
+                return@lazyVar it
+            }
         }
         fir.generateOverriddenFunctionSymbols(firParent)
     }

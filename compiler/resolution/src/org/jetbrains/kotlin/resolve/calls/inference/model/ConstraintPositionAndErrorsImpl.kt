@@ -39,7 +39,10 @@ class ArgumentConstraintPositionImpl(argument: KotlinCallArgument) : ArgumentCon
 class CallableReferenceConstraintPositionImpl(val callableReferenceCall: CallableReferenceKotlinCall) :
     CallableReferenceConstraintPosition<CallableReferenceResolutionAtom>(callableReferenceCall)
 
-class ReceiverConstraintPositionImpl(argument: KotlinCallArgument) : ReceiverConstraintPosition<KotlinCallArgument>(argument)
+class ReceiverConstraintPositionImpl(
+    argument: KotlinCallArgument,
+    val selectorCall: KotlinCall?
+) : ReceiverConstraintPosition<KotlinCallArgument>(argument)
 
 class FixVariableConstraintPositionImpl(
     variable: TypeVariableMarker,

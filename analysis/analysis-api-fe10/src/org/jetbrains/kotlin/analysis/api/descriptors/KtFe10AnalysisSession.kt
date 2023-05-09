@@ -53,6 +53,7 @@ class KtFe10AnalysisSession(
     override val visibilityCheckerImpl: KtVisibilityChecker = KtFe10VisibilityChecker(this)
     override val overrideInfoProviderImpl: KtOverrideInfoProvider = KtFe10OverrideInfoProvider(this)
     override val multiplatformInfoProviderImpl: KtMultiplatformInfoProvider = KtFe10MultiplatformInfoProvider(this)
+    override val originalPsiProviderImpl: KtOriginalPsiProvider = KtFe10OriginalPsiProvider(this)
     override val inheritorsProviderImpl: KtInheritorsProvider = KtFe10InheritorsProvider(this)
     override val typesCreatorImpl: KtTypeCreator = KtFe10TypeCreator(this)
     override val samResolverImpl: KtSamResolver = KtFe10SamResolver(this)
@@ -65,6 +66,7 @@ class KtFe10AnalysisSession(
     override val scopeSubstitutionImpl: KtScopeSubstitution = KtFe10ScopeSubstitution(this)
     override val substitutorFactoryImpl: KtSubstitutorFactory = KtFe10SubstitutorFactory(this)
     override val symbolProviderByJavaPsiImpl: KtSymbolProviderByJavaPsi = KtFe10SymbolProviderByJavaPsi(this)
+    override val resolveExtensionProviderImpl: KtSymbolFromResolveExtensionProvider = KtFe10SymbolFromResolveExtensionProvider(this)
 
     override fun createContextDependentCopy(originalKtFile: KtFile, elementToReanalyze: KtElement): KtAnalysisSession =
         withValidityAssertion {

@@ -16,14 +16,6 @@ internal object KotlinJsDceCompilerToolOptionsHelper {
         args.outputDirectory = from.outputDirectory.orNull
     }
 
-    internal fun fillDefaultValues(
-        args: org.jetbrains.kotlin.cli.common.arguments.K2JSDceArguments,
-    ) {
-        org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerToolOptionsHelper.fillDefaultValues(args)
-        args.devMode = false
-        args.outputDirectory = null
-    }
-
     internal fun syncOptionsAsConvention(
         from: org.jetbrains.kotlin.gradle.dsl.KotlinJsDceCompilerToolOptions,
         into: org.jetbrains.kotlin.gradle.dsl.KotlinJsDceCompilerToolOptions,

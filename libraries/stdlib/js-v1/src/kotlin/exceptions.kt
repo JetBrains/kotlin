@@ -82,7 +82,7 @@ public actual open class ClassCastException actual constructor(message: String?)
 
 public actual open class AssertionError
 @SinceKotlin("1.4")
-constructor(message: String?, cause: Throwable?) : Error(message, cause) {
+actual constructor(message: String?, cause: Throwable?) : Error(message, cause) {
     actual constructor() : this(null)
     constructor(message: String?) : this(message, null)
     actual constructor(message: Any?) : this(message.toString(), message as? Throwable)

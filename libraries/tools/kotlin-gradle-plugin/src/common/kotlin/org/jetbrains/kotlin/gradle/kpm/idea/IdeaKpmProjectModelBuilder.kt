@@ -3,6 +3,7 @@
 package org.jetbrains.kotlin.gradle.kpm.idea
 
 import org.jetbrains.kotlin.compilerRunner.konanHome
+import org.jetbrains.kotlin.gradle.dsl.explicitApiModeAsCompilerArg
 import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmProject
 import org.jetbrains.kotlin.gradle.idea.kpm.IdeaKpmProjectImpl
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializationExtension
@@ -147,7 +148,7 @@ internal fun IdeaKpmProjectBuildingContext.IdeaKpmProject(extension: KotlinPm20P
     return IdeaKpmProjectImpl(
         gradlePluginVersion = extension.project.getKotlinPluginVersion(),
         coreLibrariesVersion = extension.coreLibrariesVersion,
-        explicitApiModeCliOption = extension.explicitApi?.cliOption,
+        explicitApiModeCliOption = extension.explicitApiModeAsCompilerArg(),
         kotlinNativeHome = File(extension.project.konanHome).absoluteFile,
         modules = extension.modules.map { module -> IdeaKpmModule(module) }
     )

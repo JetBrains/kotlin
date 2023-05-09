@@ -24,4 +24,11 @@ internal sealed interface TestCompilationArtifact {
         override val logFile: File get() = executableFile.resolveSibling("${executableFile.name}.log")
         val testDumpFile: File get() = executableFile.resolveSibling("${executableFile.name}.dump")
     }
+
+    data class ObjCFramework(private val buildDir: File, val frameworkName: String) : TestCompilationArtifact {
+        override val logFile: File get() = buildDir.resolve("$frameworkName.log")
+        val frameworkDir = buildDir.resolve("$frameworkName.framework")
+        val headersDir: File = frameworkDir.resolve("Headers")
+        val mainHeader: File = headersDir.resolve("$frameworkName.h")
+    }
 }

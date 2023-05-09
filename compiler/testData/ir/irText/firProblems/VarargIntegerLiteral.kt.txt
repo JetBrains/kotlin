@@ -1,0 +1,45 @@
+fun <T : Comparable<T>> arrayData(vararg values: T, toArray: @ExtensionFunctionType Function1<Array<T>, Unit>) {
+}
+
+fun <T : Long> arrayLongInheritedData(vararg values: T, toArray: @ExtensionFunctionType Function1<Array<T>, Unit>) {
+}
+
+fun longArrayData(vararg values: Long, toArray: @ExtensionFunctionType Function1<LongArray, Unit>) {
+}
+
+fun shortArrayData(vararg values: Short, toArray: @ExtensionFunctionType Function1<ShortArray, Unit>) {
+}
+
+fun arrayOfLongData(vararg values: Long, toArray: @ExtensionFunctionType Function1<Array<Long>, Unit>) {
+}
+
+fun arrayOfShortData(vararg values: Short, toArray: @ExtensionFunctionType Function1<Array<Short>, Unit>) {
+}
+
+fun box(): String {
+  arrayData<Int>(values = [42], toArray = local fun Array<Int>.<anonymous>() {
+    return Unit
+  }
+)
+  arrayLongInheritedData<Long>(values = [42L], toArray = local fun Array<Long>.<anonymous>() {
+    return Unit
+  }
+)
+  longArrayData(values = [42L], toArray = local fun LongArray.<anonymous>() {
+    return Unit
+  }
+)
+  shortArrayData(values = [42S], toArray = local fun ShortArray.<anonymous>() {
+    return Unit
+  }
+)
+  arrayOfLongData(values = [42L], toArray = local fun Array<Long>.<anonymous>() {
+    return Unit
+  }
+)
+  arrayOfShortData(values = [42S], toArray = local fun Array<Short>.<anonymous>() {
+    return Unit
+  }
+)
+  return "OK"
+}

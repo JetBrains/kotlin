@@ -1,7 +1,6 @@
 // IGNORE_BACKEND_K2: JVM_IR, JS_IR, NATIVE
 // FIR status: expect/actual in the same module (ACTUAL_WITHOUT_EXPECT)
 // IGNORE_BACKEND: JVM
-// IGNORE_BACKEND: WASM
 
 // (supported: JVM_IR, JS_IR(_E6))
 

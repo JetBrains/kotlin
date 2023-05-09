@@ -8,26 +8,11 @@ package org.jetbrains.kotlin.analysis.api.fir.symbols
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.symbols.KtReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KtType
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.resolve.transformers.resolveSupertypesInTheAir
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
-import org.jetbrains.kotlin.fir.declarations.resolvePhase
 
-internal fun FirClassSymbol<*>.superTypesList(builder: KtSymbolByFirBuilder): List<KtType> =
-    resolvedSuperTypeRefs.mapToKtType(builder)
-
-internal fun FirRegularClassSymbol.superTypesAndAnnotationsListForRegularClass(builder: KtSymbolByFirBuilder): List<KtType> {
-    val fir = fir
-
-    if (fir.resolvePhase >= FirResolvePhase.SUPER_TYPES) {
-        return fir.superTypeRefs.mapToKtType(builder)
-    }
-
-    return fir.resolveSupertypesInTheAir(builder.rootSession).mapToKtType(builder)
-}
+internal fun FirClassSymbol<*>.superTypesList(builder: KtSymbolByFirBuilder): List<KtType> = resolvedSuperTypeRefs.mapToKtType(builder)
 
 private fun List<FirTypeRef>.mapToKtType(
     builder: KtSymbolByFirBuilder,

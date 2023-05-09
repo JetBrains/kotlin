@@ -5,23 +5,21 @@
 
 package org.jetbrains.kotlin.ir.interpreter.checker
 
+import org.jetbrains.kotlin.constant.ErrorValue
+import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
-import org.jetbrains.kotlin.ir.declarations.IrField
-import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrStringConcatenationImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
-import org.jetbrains.kotlin.ir.interpreter.IrInterpreter
-import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
+import org.jetbrains.kotlin.ir.interpreter.*
 import org.jetbrains.kotlin.ir.interpreter.isPrimitiveArray
-import org.jetbrains.kotlin.ir.interpreter.toIrConst
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
+import org.jetbrains.kotlin.name.Name
 import kotlin.math.max
 import kotlin.math.min
 
@@ -29,6 +27,7 @@ class IrConstTransformer(
     private val interpreter: IrInterpreter,
     private val irFile: IrFile,
     private val mode: EvaluationMode,
+    private val evaluatedConstTracker: EvaluatedConstTracker? = null,
     private val onWarning: (IrFile, IrElement, IrErrorExpression) -> Unit = { _, _, _ -> },
     private val onError: (IrFile, IrElement, IrErrorExpression) -> Unit = { _, _, _ -> },
     private val suppressExceptions: Boolean = false,
@@ -77,6 +76,11 @@ class IrConstTransformer(
             throw AssertionError("Error occurred while optimizing an expression:\n${this.dump()}", e)
         }
 
+        evaluatedConstTracker?.save(
+            result.startOffset, result.endOffset, irFile.fqName.child(Name.identifier(irFile.name)).asString(),
+            constant = if (result is IrErrorExpression) ErrorValue.create(result.description)
+            else (result as IrConst<*>).toConstantValue()
+        )
         return if (failAsError) result.reportIfError(this) else result.warningIfError(this)
     }
 
@@ -92,7 +96,6 @@ class IrConstTransformer(
 
         val initializer = declaration.initializer
         val expression = initializer?.expression ?: return declaration
-        if (expression is IrConst<*>) return declaration
         val isConst = declaration.correspondingPropertySymbol?.owner?.isConst == true
         if (!isConst) return super.visitField(declaration)
 

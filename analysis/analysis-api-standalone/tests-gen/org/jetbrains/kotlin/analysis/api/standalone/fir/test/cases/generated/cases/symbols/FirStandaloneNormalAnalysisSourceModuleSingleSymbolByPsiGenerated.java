@@ -119,6 +119,12 @@ public class FirStandaloneNormalAnalysisSourceModuleSingleSymbolByPsiGenerated e
     }
 
     @Test
+    @TestMetadata("typeAnnotationWithArgument.kt")
+    public void testTypeAnnotationWithArgument() throws Exception {
+        runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/typeAnnotationWithArgument.kt");
+    }
+
+    @Test
     @TestMetadata("typeAnnotationsOnFunctionParameterType.kt")
     public void testTypeAnnotationsOnFunctionParameterType() throws Exception {
         runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/typeAnnotationsOnFunctionParameterType.kt");

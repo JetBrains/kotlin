@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_K2: JS_IR, NATIVE
-// ISSUE: KT-52057
 // MODULE: lib
 // FILE: Class.kt
 

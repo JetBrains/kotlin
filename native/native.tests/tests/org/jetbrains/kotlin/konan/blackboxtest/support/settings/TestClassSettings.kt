@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.konan.blackboxtest.support.settings
 
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageConfig
 import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeBlackBoxTest
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCaseId
 import java.io.File
@@ -37,3 +38,8 @@ internal data class ComputedTestConfiguration(val configuration: TestConfigurati
  * This is applicable only to inheritors of [AbstractNativeBlackBoxTest] that use [TestCaseId.TestDataFile].
  */
 internal class DisabledTestDataFiles(val filesAndDirectories: Set<File>)
+
+/**
+ * Which PL mode and PL log level to use in tests.
+ */
+internal class UsedPartialLinkageConfig(val config: PartialLinkageConfig)

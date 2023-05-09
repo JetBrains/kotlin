@@ -1,3 +1,4 @@
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 @file:Suppress("OPT_IN_USAGE_ERROR")
 
 import kotlinx.cinterop.*
@@ -11,7 +12,7 @@ fun main() {
 
     // TODO: the test used to work with forceCheckedShutdown,
     // but it is broken now. Revisit after it is fixed.
-    // kotlin.native.internal.Debugging.forceCheckedShutdown = true
+    // kotlin.native.runtime.Debugging.forceCheckedShutdown = true
     Platform.isCleanersLeakCheckerActive = true
 
     val f = Foo()

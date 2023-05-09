@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveCompone
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
+import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.retryOnInvalidSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache
@@ -76,13 +77,17 @@ internal abstract class LLFirResolvableResolveSession(
     }
 
     override fun getOrBuildFirFor(element: KtElement): FirElement? {
-        val moduleComponents = getModuleComponentsForElement(element)
-        return moduleComponents.elementsBuilder.getOrBuildFirFor(element, this)
+        retryOnInvalidSession {
+            val moduleComponents = getModuleComponentsForElement(element)
+            return moduleComponents.elementsBuilder.getOrBuildFirFor(element, this)
+        }
     }
 
     override fun getOrBuildFirFile(ktFile: KtFile): FirFile {
-        val moduleComponents = getModuleComponentsForElement(ktFile)
-        return moduleComponents.firFileBuilder.buildRawFirFileWithCaching(ktFile)
+        retryOnInvalidSession {
+            val moduleComponents = getModuleComponentsForElement(ktFile)
+            return moduleComponents.firFileBuilder.buildRawFirFileWithCaching(ktFile)
+        }
     }
 
     protected fun getModuleComponentsForElement(element: KtElement): LLFirModuleResolveComponents {
@@ -94,10 +99,15 @@ internal abstract class LLFirResolvableResolveSession(
         ktDeclaration: KtDeclaration,
         phase: FirResolvePhase
     ): FirBasedSymbol<*> {
+        if (ktDeclaration.containingKtFile.isCompiled) {
+            return findFirCompiledSymbol(ktDeclaration)
+        }
         val module = ktDeclaration.getKtModule()
-        return when (getModuleKind(module)) {
-            ModuleKind.RESOLVABLE_MODULE -> findSourceFirSymbol(ktDeclaration, module).also { resolveFirToPhase(it.fir, phase) }
-            ModuleKind.BINARY_MODULE -> findFirCompiledSymbol(ktDeclaration)
+        retryOnInvalidSession {
+            return when (getModuleKind(module)) {
+                ModuleKind.RESOLVABLE_MODULE -> findSourceFirSymbol(ktDeclaration, module).also { resolveFirToPhase(it.fir, phase) }
+                ModuleKind.BINARY_MODULE -> findFirCompiledSymbol(ktDeclaration)
+            }
         }
     }
 
@@ -121,15 +131,16 @@ internal abstract class LLFirResolvableResolveSession(
         require(getModuleKind(module) == ModuleKind.RESOLVABLE_MODULE) {
             "Declaration should be resolvable module, instead it had ${module::class}"
         }
-        val nonLocalNamedDeclaration = ktDeclaration.getNonLocalContainingOrThisDeclaration()
+
+        val nonLocalDeclaration = ktDeclaration.getNonLocalContainingOrThisDeclaration()
             ?: buildErrorWithAttachment("Declaration should have non-local container") {
                 withPsiEntry("ktDeclaration", ktDeclaration)
                 withEntry("module", module) { it.moduleDescription }
             }
 
-        if (ktDeclaration == nonLocalNamedDeclaration) {
+        if (ktDeclaration == nonLocalDeclaration) {
             val session = getResolvableSessionFor(module)
-            return nonLocalNamedDeclaration.findSourceNonLocalFirDeclaration(
+            return nonLocalDeclaration.findSourceNonLocalFirDeclaration(
                 firFileBuilder = session.moduleComponents.firFileBuilder,
                 provider = session.firProvider,
             ).symbol

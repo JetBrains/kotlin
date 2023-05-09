@@ -20,9 +20,12 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
 
+@Suppress("DEPRECATION")
 class SourceSetVisibilityInferenceTest {
     private val project = buildProjectWithMPP()
-    private val kotlin = project.multiplatformExtension
+    private val kotlin = project.multiplatformExtension.apply {
+        targetHierarchy.default()
+    }
 
     @Test
     fun testBasicSuccessful() {

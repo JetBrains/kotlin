@@ -22,9 +22,7 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory2
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirPrimaryConstructor
-import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
-import org.jetbrains.kotlin.fir.declarations.utils.isInner
-import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -85,7 +83,7 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
                 val modifier = secondModifier.token
                 when {
                     !checkTarget(modifierSource, modifier, actualTargets, parent, context, reporter) -> reportedNodes += secondModifier
-                    !checkParent(modifierSource, modifier, actualParents, context, reporter) -> reportedNodes += secondModifier
+                    !checkParent(modifierSource, modifier, actualParents, parent, context, reporter) -> reportedNodes += secondModifier
                 }
             }
         }
@@ -236,6 +234,7 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
         modifierSource: KtSourceElement,
         modifierToken: KtModifierKeywordToken,
         actualParents: List<KotlinTarget>,
+        parent: FirDeclaration?,
         context: CheckerContext,
         reporter: DiagnosticReporter
     ): Boolean {
@@ -251,6 +250,15 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
             return true
         }
 
+        if (modifierToken == KtTokens.PROTECTED_KEYWORD && isFinalExpectClass(parent)) {
+            reporter.reportOn(
+                modifierSource,
+                FirErrors.WRONG_MODIFIER_CONTAINING_DECLARATION,
+                modifierToken,
+                "final expect class",
+                context,
+            )
+        }
         val possibleParentPredicate = possibleParentTargetPredicateMap[modifierToken] ?: return true
         if (actualParents.any { possibleParentPredicate.isAllowed(it, context.session.languageVersionSettings) }) return true
 
@@ -267,5 +275,9 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
 
     private fun List<KotlinTarget>.firstOrThis(): String {
         return firstOrNull()?.description ?: "this"
+    }
+
+    private fun isFinalExpectClass(d: FirDeclaration?): Boolean {
+        return d is FirClass && d.isFinal && d.isExpect
     }
 }

@@ -20,9 +20,14 @@ fun eliminateDeadDeclarations(modules: List<IrModuleFragment>, context: WasmBack
         context.configuration.getBoolean(JSConfigurationKeys.PRINT_REACHABILITY_INFO) ||
                 java.lang.Boolean.getBoolean("kotlin.wasm.dce.print.reachability.info")
 
+    val dumpReachabilityInfoToFile: String? =
+        context.configuration.get(JSConfigurationKeys.DUMP_REACHABILITY_INFO_TO_FILE)
+            ?: System.getProperty("kotlin.wasm.dce.dump.reachability.info.to.file")
+
     val usefulDeclarations = WasmUsefulDeclarationProcessor(
         context = context,
-        printReachabilityInfo = printReachabilityInfo
+        printReachabilityInfo = printReachabilityInfo,
+        dumpReachabilityInfoToFile
     ).collectDeclarations(rootDeclarations = buildRoots(modules, context))
 
     val remover = WasmUselessDeclarationsRemover(usefulDeclarations)
@@ -53,6 +58,11 @@ private fun buildRoots(modules: List<IrModuleFragment>, context: WasmBackendCont
     add(context.irBuiltIns.throwableClass.owner)
     add(context.mainCallsWrapperFunction)
     add(context.fieldInitFunction)
+    // TODO move Unit related optimization on IR level and make unit usages explicit 
+    add(context.findUnitGetInstanceFunction())
+
+    // Remove all functions used to call a kotlin closure from JS side, reachable ones will be added back later.
+    removeAll(context.closureCallExports.values)
 }
 
 private inline fun List<IrModuleFragment>.onAllFiles(body: IrFile.() -> Unit) {

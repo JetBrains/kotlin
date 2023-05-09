@@ -64,7 +64,7 @@ FILE fqName:<root> fileName:/FakeOverrideInAnonymousWithDelegation.kt
                   $this: VALUE_PARAMETER name:<this> type:<root>.Wrapper.bar.<no name provided>
                   BLOCK_BODY
                     RETURN type=kotlin.Nothing from='public open fun <get-foo> (): kotlin.String declared in <root>.Wrapper.bar.<no name provided>'
-                      CALL 'public open fun <get-foo> (): kotlin.String [fake_override] declared in <root>.Wrapper.dummy.<no name provided>' type=kotlin.String origin=null
+                      CALL 'public open fun <get-foo> (): kotlin.String declared in <root>.Bar' type=kotlin.String origin=null
                         $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.Wrapper.dummy.<no name provided> visibility:private [final]' type=<root>.Wrapper.dummy.<no name provided> origin=null
                           receiver: GET_VAR '<this>: <root>.Wrapper.bar.<no name provided> declared in <root>.Wrapper.bar.<no name provided>.<get-foo>' type=<root>.Wrapper.bar.<no name provided> origin=null
               FIELD DELEGATE name:$$delegate_0 type:<root>.Wrapper.dummy.<no name provided> visibility:private [final]

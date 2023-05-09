@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -57,6 +57,10 @@ open class RawFirBuilder(
     bodyBuildingMode: BodyBuildingMode = BodyBuildingMode.NORMAL
 ) : BaseFirBuilder<PsiElement>(session) {
     protected open fun bindFunctionTarget(target: FirFunctionTarget, function: FirFunction) = target.bind(function)
+    protected open fun FirFunctionBuilder.additionalFunctionInit() {}
+    protected open fun FirPropertyBuilder.additionalPropertyInit() {}
+    protected open fun FirPropertyAccessorBuilder.additionalPropertyAccessorInit() {}
+    protected open fun FirBackingFieldBuilder.additionalBackingFieldInit() {}
 
     var mode: BodyBuildingMode = bodyBuildingMode
         private set
@@ -479,6 +483,8 @@ open class RawFirBuilder(
                             this.contractDescription = it
                         }
                         this.propertySymbol = propertySymbol
+
+                        additionalPropertyAccessorInit()
                     }.also {
                         it.initContainingClassAttr()
                         bindFunctionTarget(accessorTarget, it)
@@ -534,6 +540,7 @@ open class RawFirBuilder(
             property: KtProperty,
             propertySymbol: FirPropertySymbol,
             propertyReturnType: FirTypeRef,
+            annotationsFromProperty: List<FirAnnotationCall>,
         ): FirBackingField {
             val componentVisibility = if (this?.visibility != null && this.visibility != Visibilities.Unknown) {
                 this.visibility
@@ -552,17 +559,20 @@ open class RawFirBuilder(
                     returnTypeRef = returnType
                     this.status = status
                     extractAnnotationsTo(this)
+                    this.annotations += annotationsFromProperty
                     name = BACKING_FIELD
                     symbol = FirBackingFieldSymbol(CallableId(name))
                     this.propertySymbol = propertySymbol
                     this.initializer = backingFieldInitializer
                     this.isVar = property.isVar
                     this.isVal = !property.isVar
+
+                    additionalBackingFieldInit()
                 }
             } else {
                 FirDefaultPropertyBackingField(
                     moduleData = baseModuleData,
-                    annotations = mutableListOf(),
+                    annotations = annotationsFromProperty.toMutableList(),
                     returnTypeRef = propertyReturnType.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
                     isVar = property.isVar,
                     propertySymbol = propertySymbol,
@@ -646,7 +656,9 @@ open class RawFirBuilder(
                 isLocal = false
                 backingField = FirDefaultPropertyBackingField(
                     moduleData = baseModuleData,
-                    annotations = mutableListOf(),
+                    annotations = parameterAnnotations.filter {
+                        it.useSiteTarget == FIELD || it.useSiteTarget == PROPERTY_DELEGATE_FIELD
+                    }.toMutableList(),
                     returnTypeRef = returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
                     isVar = isVar,
                     propertySymbol = symbol,
@@ -679,9 +691,7 @@ open class RawFirBuilder(
                     setter.replaceAnnotations(parameterAnnotations.filterUseSiteTarget(PROPERTY_SETTER))
                 } else null
                 annotations += parameterAnnotations.filter {
-                    it.useSiteTarget == null || it.useSiteTarget == PROPERTY ||
-                            it.useSiteTarget == FIELD ||
-                            it.useSiteTarget == PROPERTY_DELEGATE_FIELD
+                    it.useSiteTarget == null || it.useSiteTarget == PROPERTY
                 }
 
                 dispatchReceiverType = currentDispatchReceiverType()
@@ -1497,6 +1507,7 @@ open class RawFirBuilder(
                     }
                 }
                 context.firFunctionTargets.removeLast()
+                additionalFunctionInit()
             }.build().also {
                 bindFunctionTarget(target, it)
                 if (it is FirSimpleFunction) {
@@ -1713,9 +1724,14 @@ open class RawFirBuilder(
 
         private fun KtDeclarationWithInitializer.toInitializerExpression() =
             runIf(hasInitializer()) {
-                buildOrLazyExpression(null) {
+                this@RawFirBuilder.context.calleeNamesForLambda += null
+
+                val expression = buildOrLazyExpression(null) {
                     initializer.toFirExpression("Should have initializer")
                 }
+
+                this@RawFirBuilder.context.calleeNamesForLambda.removeLast()
+                expression
             }
 
         private fun <T> KtProperty.toFirProperty(
@@ -1753,6 +1769,7 @@ open class RawFirBuilder(
                         this@toFirProperty,
                         propertySymbol = symbol,
                         propertyType,
+                        emptyList(),
                     )
 
                     status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL).apply {
@@ -1787,6 +1804,7 @@ open class RawFirBuilder(
                             this@toFirProperty,
                             propertySymbol = symbol,
                             propertyType,
+                            propertyAnnotations.filter { it.useSiteTarget == FIELD || it.useSiteTarget == PROPERTY_DELEGATE_FIELD },
                         )
 
                         getter = this@toFirProperty.getter.toFirPropertyAccessor(
@@ -1842,11 +1860,12 @@ open class RawFirBuilder(
                     }
                 }
                 annotations += if (isLocal) propertyAnnotations else propertyAnnotations.filter {
-                    it.useSiteTarget != PROPERTY_GETTER &&
+                    it.useSiteTarget != FIELD && it.useSiteTarget != PROPERTY_DELEGATE_FIELD && it.useSiteTarget != PROPERTY_GETTER &&
                             (!isVar || it.useSiteTarget != SETTER_PARAMETER && it.useSiteTarget != PROPERTY_SETTER)
                 }
 
                 contextReceivers.addAll(convertContextReceivers(this@toFirProperty.contextReceivers))
+                additionalPropertyInit()
             }.also {
                 if (!isLocal) {
                     fillDanglingConstraintsTo(it)
@@ -2380,15 +2399,15 @@ open class RawFirBuilder(
 
             if (operationToken == IDENTIFIER) {
                 context.calleeNamesForLambda += expression.operationReference.getReferencedNameAsName()
+            } else {
+                context.calleeNamesForLambda += null
             }
 
             val leftArgument = expression.left.toFirExpression("No left operand")
             val rightArgument = expression.right.toFirExpression("No right operand")
 
-            if (operationToken == IDENTIFIER) {
-                // No need for the callee name since arguments are already generated
-                context.calleeNamesForLambda.removeLast()
-            }
+            // No need for the callee name since arguments are already generated
+            context.calleeNamesForLambda.removeLast()
 
             val source = expression.toFirSourceElement()
 
@@ -2399,11 +2418,13 @@ open class RawFirBuilder(
                     return leftArgument.generateLazyLogicalOperation(rightArgument, operationToken == ANDAND, source)
                 in OperatorConventions.IN_OPERATIONS ->
                     return rightArgument.generateContainsOperation(
-                        leftArgument, operationToken == NOT_IN, source, expression.operationReference.toFirSourceElement(),
+                        leftArgument, operationToken == NOT_IN, source,
+                        expression.operationReference.toFirSourceElement(),
                     )
                 in OperatorConventions.COMPARISON_OPERATIONS ->
                     return leftArgument.generateComparisonExpression(
-                        rightArgument, operationToken, source, expression.operationReference.toFirSourceElement(),
+                        rightArgument, operationToken, source,
+                        expression.operationReference.toFirSourceElement(),
                     )
             }
             val conventionCallName = operationToken.toBinaryName()

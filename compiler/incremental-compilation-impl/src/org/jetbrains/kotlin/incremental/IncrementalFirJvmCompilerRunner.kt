@@ -38,7 +38,9 @@ import org.jetbrains.kotlin.cli.jvm.compiler.pipeline.*
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.jvm.plugins.PluginCliParser
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
 import org.jetbrains.kotlin.fir.pipeline.FirResult
 import org.jetbrains.kotlin.fir.pipeline.convertToIrAndActualizeForJvm
@@ -60,7 +62,7 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.progress.CompilationCanceledException
 import java.io.File
 
-class IncrementalFirJvmCompilerRunner(
+open class IncrementalFirJvmCompilerRunner(
     workingDir: File,
     reporter: BuildReporter,
     buildHistoryFile: File,
@@ -273,14 +275,16 @@ class IncrementalFirJvmCompilerRunner(
             performanceManager?.notifyIRTranslationStarted()
 
             val extensions = JvmFir2IrExtensions(configuration, JvmIrDeserializerImpl(), JvmIrMangler)
+            val fir2IrConfiguration = Fir2IrConfiguration(
+                languageVersionSettings = configuration.languageVersionSettings,
+                linkViaSignatures = false,
+                evaluatedConstTracker = configuration
+                    .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
+            )
             val irGenerationExtensions =
                 (projectEnvironment as? VfsBasedProjectEnvironment)?.project?.let { IrGenerationExtension.getInstances(it) }.orEmpty()
-            val (irModuleFragment, components, pluginContext, irActualizationResult) = cycleResult.convertToIrAndActualizeForJvm(
-                extensions,
-                irGenerationExtensions,
-                linkViaSignatures = false,
-                compilerEnvironment.diagnosticsReporter,
-                configuration.languageVersionSettings
+            val (irModuleFragment, components, pluginContext, irActualizedResult) = cycleResult.convertToIrAndActualizeForJvm(
+                extensions, fir2IrConfiguration, irGenerationExtensions, compilerEnvironment.diagnosticsReporter,
             )
 
             performanceManager?.notifyIRTranslationFinished()
@@ -292,7 +296,7 @@ class IncrementalFirJvmCompilerRunner(
                 irModuleFragment,
                 components,
                 pluginContext,
-                irActualizationResult
+                irActualizedResult
             )
 
             val codegenOutput = generateCodeFromIr(irInput, compilerEnvironment, performanceManager)

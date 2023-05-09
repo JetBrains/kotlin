@@ -1,12 +1,12 @@
 public abstract class C /* C*/<T>  {
   @org.jetbrains.annotations.NotNull()
-  private java.util.List<java.lang.CharSequence> constructorParam;
+  private java.util.List<? extends java.lang.CharSequence> constructorParam;
 
   @org.jetbrains.annotations.Nullable()
   private java.util.HashSet<java.lang.String> sHashSetProp;
 
   @org.jetbrains.annotations.Nullable()
-  private java.util.List<java.lang.CharSequence> csListProp;
+  private java.util.List<? extends java.lang.CharSequence> csListProp;
 
   @org.jetbrains.annotations.Nullable()
   private java.util.List<java.lang.String> sListProp;

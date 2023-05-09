@@ -10,7 +10,10 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.isJsImplicitExport
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
@@ -18,6 +21,7 @@ import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.isPrimitiveArray
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
+import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
 class ImplicitlyExportedDeclarationsMarkingLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
     private val strictImplicitExport = context.configuration.getBoolean(JSConfigurationKeys.GENERATE_STRICT_IMPLICIT_EXPORT)
@@ -38,9 +42,11 @@ class ImplicitlyExportedDeclarationsMarkingLowering(private val context: JsIrBac
     }
 
     private fun IrClass.collectImplicitlyExportedDeclarations(): Set<IrDeclaration> {
-        return typeParameters
-            .flatMap { it.superTypes }.toSet()
-            .flatMap { it.collectImplicitlyExportedDeclarations() }.toSet()
+        return typeParameters.asSequence()
+            .flatMap { it.superTypes }
+            .distinct()
+            .flatMap { it.collectImplicitlyExportedDeclarations() }
+            .toSet()
     }
 
 
@@ -85,7 +91,7 @@ class ImplicitlyExportedDeclarationsMarkingLowering(private val context: JsIrBac
 
     private fun IrDeclaration.markWithJsImplicitExport() {
         val jsImplicitExportCtor = context.intrinsics.jsImplicitExportAnnotationSymbol.constructors.single()
-        annotations += JsIrBuilder.buildConstructorCall(jsImplicitExportCtor)
+        annotations = annotations memoryOptimizedPlus JsIrBuilder.buildConstructorCall(jsImplicitExportCtor)
 
         parentClassOrNull?.takeIf { it.shouldBeMarkedWithImplicitExport() }?.markWithJsImplicitExport()
     }

@@ -171,8 +171,7 @@ internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostPro
             null -> {}
         }
     }
-    val checkExternalCalls = context.config.configuration.getBoolean(KonanConfigKeys.CHECK_EXTERNAL_CALLS)
-    if (checkExternalCalls && context is NativeGenerationState) {
+    if (context is NativeGenerationState && context.coverage.enabled) {
         newEngine(context) { it.runPhase(CoveragePhase) }
     }
     if (context.config.memoryModel == MemoryModel.EXPERIMENTAL) {

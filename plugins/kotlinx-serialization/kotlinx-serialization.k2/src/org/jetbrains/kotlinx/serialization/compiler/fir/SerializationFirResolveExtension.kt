@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.platform.isJs
+import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.platform.konan.isNative
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames
 import org.jetbrains.kotlinx.serialization.compiler.resolve.SerialEntityNames.SERIALIZER_FACTORY_INTERFACE_NAME
@@ -311,7 +312,7 @@ class SerializationFirResolveExtension(session: FirSession) : FirDeclarationGene
     context(FirSession)
     private val FirClassSymbol<*>.companionNeedsSerializerFactory: Boolean
         get() {
-            if (!(moduleData.platform.isNative() || moduleData.platform.isJs())) return false
+            if (!(moduleData.platform.isNative() || moduleData.platform.isJs() || moduleData.platform.isWasm())) return false
             if (isSerializableObject) return true
             if (isSerializableEnum) return true
             if (isAbstractOrSealedSerializableClass) return true

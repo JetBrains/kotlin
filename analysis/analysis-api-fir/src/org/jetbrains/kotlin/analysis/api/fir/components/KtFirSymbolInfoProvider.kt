@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.fir.analysis.checkers.getAllowedAnnotationTargets
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.name.Name
@@ -33,7 +34,7 @@ internal class KtFirSymbolInfoProvider(
     private val apiVersion = analysisSession.useSiteSession.languageVersionSettings.apiVersion
 
     override fun getDeprecation(symbol: KtSymbol): DeprecationInfo? {
-        if (symbol is KtFirBackingFieldSymbol || symbol is KtFirPackageSymbol || symbol is KtReceiverParameterSymbol) return null
+        if (symbol is KtFirPackageSymbol || symbol is KtReceiverParameterSymbol) return null
         require(symbol is KtFirSymbol<*>) { "${this::class}" }
 
         // Optimization: Avoid building `firSymbol` of `KtFirPsiJavaClassSymbol` if it definitely isn't deprecated.
@@ -44,6 +45,10 @@ internal class KtFirSymbolInfoProvider(
         return when (val firSymbol = symbol.firSymbol) {
             is FirPropertySymbol -> {
                 firSymbol.getDeprecationForCallSite(apiVersion, AnnotationUseSiteTarget.PROPERTY)
+                    ?: firSymbol.backingFieldSymbol?.getDeprecationForCallSite(apiVersion, AnnotationUseSiteTarget.FIELD)
+            }
+            is FirBackingFieldSymbol -> {
+                firSymbol.getDeprecationForCallSite(apiVersion, AnnotationUseSiteTarget.FIELD)
             }
             else -> {
                 firSymbol.getDeprecationForCallSite(apiVersion)
@@ -115,7 +120,9 @@ internal class KtFirSymbolInfoProvider(
     }
 
     private fun getJvmName(property: FirProperty, isSetter: Boolean): Name {
-        if (property.hasAnnotation(StandardClassIds.Annotations.JvmField, analysisSession.useSiteSession)) return property.name
+        if (property.backingField?.symbol?.hasAnnotation(StandardClassIds.Annotations.JvmField, analysisSession.useSiteSession) == true) {
+            return property.name
+        }
         return Name.identifier(getJvmNameAsString(property, isSetter))
     }
 

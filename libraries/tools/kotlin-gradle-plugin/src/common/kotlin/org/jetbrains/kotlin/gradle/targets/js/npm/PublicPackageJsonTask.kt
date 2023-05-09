@@ -78,10 +78,10 @@ abstract class PublicPackageJsonTask :
             externalDependencies,
             packageJsonHandlers
         ).let { packageJson ->
-            packageJson.main = "${npmProjectName}.js"
+            packageJson.main = "${npmProjectName.get()}.js"
 
             if (jsIrCompilation.get()) {
-                packageJson.types = "${npmProjectName}.d.ts"
+                packageJson.types = "${npmProjectName.get()}.d.ts"
             }
 
             packageJson.apply {

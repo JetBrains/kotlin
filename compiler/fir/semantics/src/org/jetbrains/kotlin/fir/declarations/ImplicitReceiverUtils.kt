@@ -202,6 +202,21 @@ class FirTowerDataContext private constructor(
         return addNonLocalScope(scope)
     }
 
+    // Optimized version for two parameters
+    fun addNonLocalScopesIfNotNull(scope1: FirScope?, scope2: FirScope?): FirTowerDataContext {
+        return if (scope1 != null) {
+            if (scope2 != null) {
+                addNonLocalScopeElements(listOf(scope1.asTowerDataElement(isLocal = false), scope2.asTowerDataElement(isLocal = false)))
+            } else {
+                addNonLocalScope(scope1)
+            }
+        } else if (scope2 != null) {
+            addNonLocalScope(scope2)
+        } else {
+            this
+        }
+    }
+
     fun addNonLocalScope(scope: FirScope): FirTowerDataContext {
         val element = scope.asTowerDataElement(isLocal = false)
         return FirTowerDataContext(
@@ -209,6 +224,15 @@ class FirTowerDataContext private constructor(
             implicitReceiverStack,
             localScopes,
             nonLocalTowerDataElements.add(element)
+        )
+    }
+
+    private fun addNonLocalScopeElements(elements: List<FirTowerDataElement>): FirTowerDataContext {
+        return FirTowerDataContext(
+            towerDataElements.addAll(elements),
+            implicitReceiverStack,
+            localScopes,
+            nonLocalTowerDataElements.addAll(elements)
         )
     }
 

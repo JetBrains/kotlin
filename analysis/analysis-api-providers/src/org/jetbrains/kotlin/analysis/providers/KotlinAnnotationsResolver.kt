@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.providers
 
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.name.ClassId
@@ -50,5 +49,5 @@ public interface KotlinAnnotationsResolverFactory {
 }
 
 public fun Project.createAnnotationResolver(searchScope: GlobalSearchScope): KotlinAnnotationsResolver =
-    ServiceManager.getService(this, KotlinAnnotationsResolverFactory::class.java)
+    this.getService(KotlinAnnotationsResolverFactory::class.java)
         .createAnnotationResolver(searchScope)

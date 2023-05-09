@@ -18,11 +18,13 @@ SingleObjectPage* SingleObjectPage::Create(uint64_t cellCount) noexcept {
     CustomAllocInfo("SingleObjectPage::Create(%" PRIu64 ")", cellCount);
     RuntimeAssert(cellCount > NEXT_FIT_PAGE_MAX_BLOCK_SIZE, "blockSize too small for SingleObjectPage");
     uint64_t size = sizeof(SingleObjectPage) + cellCount * sizeof(uint64_t);
-    return new (SafeAlloc(size)) SingleObjectPage();
+    auto* page = new (SafeAlloc(size)) SingleObjectPage();
+    page->size_ = size;
+    return page;
 }
 
 void SingleObjectPage::Destroy() noexcept {
-    std_support::free(this);
+    Free(this, size_);
 }
 
 uint8_t* SingleObjectPage::Data() noexcept {
@@ -35,12 +37,14 @@ uint8_t* SingleObjectPage::TryAllocate() noexcept {
     return Data();
 }
 
-bool SingleObjectPage::Sweep() noexcept {
+bool SingleObjectPage::Sweep(gc::GCHandle::GCSweepScope& sweepHandle) noexcept {
     CustomAllocDebug("SingleObjectPage@%p::Sweep()", this);
     if (!TryResetMark(Data())) {
         isAllocated_ = false;
+        sweepHandle.addKeptObject();
         return false;
     }
+    sweepHandle.addSweptObject();
     return true;
 }
 

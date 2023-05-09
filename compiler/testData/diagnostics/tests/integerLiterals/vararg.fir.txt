@@ -1,0 +1,19 @@
+FILE: vararg.fir.kt
+    public final fun <A : R|kotlin/Comparable<A>|> arrayData(vararg values: R|kotlin/Array<out A>|): R|A| {
+        ^arrayData Null(null)!!
+    }
+    public final fun <A> arrayDataNoBound(vararg values: R|kotlin/Array<out A>|): R|A| {
+        ^arrayDataNoBound Null(null)!!
+    }
+    public final fun test(b: R|kotlin/Byte|): R|kotlin/Unit| {
+        R|/select|<R|kotlin/Byte|>(R|/arrayData|<R|kotlin/Byte|>(vararg(Byte(1))), R|<local>/b|)
+        R|/select|<R|kotlin/Byte|>(R|/id|<R|kotlin/Byte|>(Byte(1)), R|<local>/b|)
+        R|/select|<R|kotlin/Byte|>(R|/id|<R|kotlin/Byte|>(R|/arrayData|<R|kotlin/Byte|>(vararg(Byte(1)))), R|<local>/b|)
+        R|/select|<R|kotlin/Byte|>(R|/arrayDataNoBound|<R|kotlin/Byte|>(vararg(Byte(1))), R|<local>/b|)
+    }
+    public final fun <S> select(a: R|S|, b: R|S|): R|S| {
+        ^select R|<local>/a|
+    }
+    public final fun <I : R|kotlin/Comparable<I>|> id(arg: R|I|): R|I| {
+        ^id R|<local>/arg|
+    }

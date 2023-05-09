@@ -72,24 +72,24 @@ internal fun CInteropCommonizerDependent.Factory.from(
     return CInteropCommonizerDependent(target, scopes, interops)
 }
 
-internal fun CInteropCommonizerDependent.Factory.from(compilation: KotlinSharedNativeCompilation): CInteropCommonizerDependent? {
+internal suspend fun CInteropCommonizerDependent.Factory.from(compilation: KotlinSharedNativeCompilation): CInteropCommonizerDependent? {
     return from(
-        getCommonizerTarget(compilation) as? SharedCommonizerTarget ?: return null,
+        compilation.commonizerTarget.await() as? SharedCommonizerTarget ?: return null,
         compilation.getImplicitlyDependingNativeCompilations()
     )
 }
 
-internal fun CInteropCommonizerDependent.Factory.from(sourceSet: KotlinSourceSet): CInteropCommonizerDependent? {
+internal suspend fun CInteropCommonizerDependent.Factory.from(sourceSet: KotlinSourceSet): CInteropCommonizerDependent? {
     return from(
-        target = getCommonizerTarget(sourceSet) as? SharedCommonizerTarget ?: return null,
+        target = sourceSet.commonizerTarget.await() as? SharedCommonizerTarget ?: return null,
         compilations = sourceSet.internal.compilations
             .filterIsInstance<KotlinNativeCompilation>().toSet()
     )
 }
 
-internal fun CInteropCommonizerDependent.Factory.fromAssociateCompilations(sourceSet: KotlinSourceSet): CInteropCommonizerDependent? {
+internal suspend fun CInteropCommonizerDependent.Factory.fromAssociateCompilations(sourceSet: KotlinSourceSet): CInteropCommonizerDependent? {
     return from(
-        target = getCommonizerTarget(sourceSet) as? SharedCommonizerTarget ?: return null,
+        target = sourceSet.commonizerTarget.await() as? SharedCommonizerTarget ?: return null,
         compilations = sourceSet.internal.compilations
             .filterIsInstance<KotlinNativeCompilation>()
             .flatMap { compilation -> compilation.associateWithClosure }

@@ -23,8 +23,9 @@
 @file:Suppress("DEPRECATION") // Char.toInt()
 package kotlin.text.regex
 
+import kotlin.experimental.ExperimentalNativeApi
 import kotlin.collections.associate
-import kotlin.native.concurrent.AtomicReference
+import kotlin.concurrent.AtomicReference
 import kotlin.native.concurrent.freeze
 import kotlin.native.BitSet
 import kotlin.native.FreezingIsDeprecated
@@ -373,6 +374,8 @@ internal abstract class AbstractCharClass : SpecialToken() {
         init {
             initValues()
         }
+
+        @OptIn(ExperimentalNativeApi::class)
         override fun computeValue(): AbstractCharClass =
                 object: AbstractCharClass() {
                     override fun contains(ch: Int): Boolean = alt xor (ch in start..end)
@@ -650,7 +653,7 @@ internal abstract class AbstractCharClass : SpecialToken() {
         fun getPredefinedClass(name: String, negative: Boolean): AbstractCharClass {
             val charClass = classCacheMap[name] ?: throw PatternSyntaxException("No such character class")
             val cachedClass = classCache[charClass.ordinal].value ?: run {
-                classCache[charClass.ordinal].compareAndSwap(null, charClass.factory().freeze())
+                classCache[charClass.ordinal].compareAndExchange(null, charClass.factory().freeze())
                 classCache[charClass.ordinal].value!!
             }
             return cachedClass.getValue(negative)

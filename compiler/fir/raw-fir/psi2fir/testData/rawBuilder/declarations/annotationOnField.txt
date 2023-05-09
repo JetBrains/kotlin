@@ -1,0 +1,52 @@
+FILE: annotationOnField.kt
+    public? final? annotation class Ann : R|kotlin/Annotation| {
+        public? [ContainingClassKey=Ann] constructor(): R|Ann| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public? final? class CustomDelegate : R|kotlin/Any| {
+        public? [ContainingClassKey=CustomDelegate] constructor(): R|CustomDelegate| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? operator fun getValue(thisRef: Any?, prop: KProperty<*>): String {
+            ^getValue prop#.name#
+        }
+
+    }
+    @FIELD:Ann() public? final? class SomeClass : R|kotlin/Any| {
+        @FIELD:Ann() public? [ContainingClassKey=SomeClass] constructor(): R|SomeClass| {
+            super<R|kotlin/Any|>()
+        }
+
+        field:@FIELD:Ann() protected final? val simpleProperty: String = String(text)
+            protected [ContainingClassKey=SomeClass] get(): String
+
+        field:@FIELD:Ann() protected final? val simplePropertyWithAnnotationList: String = String(text)
+            protected [ContainingClassKey=SomeClass] get(): String
+
+        field:@FIELD:Ann() protected final? val delegatedProperty: Stringby CustomDelegate#()
+            protected [ContainingClassKey=SomeClass] get(): <implicit> {
+                ^ this@R|/SomeClass|.D|/SomeClass.delegatedProperty|.getValue#(this@R|/SomeClass|, ::R|/SomeClass.delegatedProperty|)
+            }
+
+        field:@FIELD:Ann() public? final? val propertyWithCustomGetter: Int
+            public? [ContainingClassKey=SomeClass] get(): Int {
+                ^ IntegerLiteral(5)
+            }
+
+        @FIELD:Ann() public? final? fun anotherFun(@FIELD:Ann() s: String): R|kotlin/Unit| {
+            @FIELD:Ann() lval localVariable: <implicit> = IntegerLiteral(5)
+        }
+
+    }
+    public? final? class WithPrimaryConstructor : R|kotlin/Any| {
+        public? [ContainingClassKey=WithPrimaryConstructor] constructor([CorrespondingProperty=/WithPrimaryConstructor.a] a: String): R|WithPrimaryConstructor| {
+            super<R|kotlin/Any|>()
+        }
+
+        field:@FIELD:Ann() public? final? [IsFromPrimaryConstructor=true] val a: String = R|<local>/a|
+            public? [ContainingClassKey=WithPrimaryConstructor] get(): String
+
+    }

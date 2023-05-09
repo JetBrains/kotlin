@@ -10,6 +10,7 @@
 #include <cstdint>
 
 #include "AtomicStack.hpp"
+#include "GCStatistics.hpp"
 
 namespace kotlin::alloc {
 
@@ -23,12 +24,13 @@ public:
 
     uint8_t* TryAllocate() noexcept;
 
-    bool Sweep() noexcept;
+    bool Sweep(gc::GCHandle::GCSweepScope& sweepHandle) noexcept;
 
 private:
     friend class AtomicStack<SingleObjectPage>;
     SingleObjectPage* next_;
     bool isAllocated_ = false;
+    size_t size_;
     struct alignas(8) {
         uint8_t data_[];
     };

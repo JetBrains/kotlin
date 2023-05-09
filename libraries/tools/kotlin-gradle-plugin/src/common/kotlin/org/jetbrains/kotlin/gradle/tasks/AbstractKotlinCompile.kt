@@ -27,14 +27,13 @@ import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.compilerRunner.CompilerExecutionSettings
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
-import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers
 import org.jetbrains.kotlin.compilerRunner.UsesCompilerSystemPropertiesService
+import org.jetbrains.kotlin.compilerRunner.createGradleCompilerRunner
 import org.jetbrains.kotlin.daemon.common.MultiModuleICSettings
+import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.incremental.UsesIncrementalModuleInfoBuildService
-import org.jetbrains.kotlin.gradle.internal.AbstractKotlinCompileArgumentsContributor
-import org.jetbrains.kotlin.gradle.internal.compilerArgumentsConfigurationFlags
-import org.jetbrains.kotlin.gradle.internal.prepareCompilerArguments
+import org.jetbrains.kotlin.gradle.internal.UsesClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
 import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
@@ -43,13 +42,7 @@ import org.jetbrains.kotlin.gradle.plugin.UsesBuildFinishedListenerService
 import org.jetbrains.kotlin.gradle.plugin.UsesVariantImplementationFactories
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
 import org.jetbrains.kotlin.gradle.report.*
-import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
-import org.jetbrains.kotlin.gradle.report.UsesBuildReportsService
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.gradle.utils.newInstance
-import org.jetbrains.kotlin.gradle.utils.property
-import org.jetbrains.kotlin.gradle.utils.propertyWithConvention
-import org.jetbrains.kotlin.gradle.utils.propertyWithNewInstance
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.incremental.IncrementalCompilerRunner
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
@@ -64,11 +57,11 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
 ) : AbstractKotlinCompileTool<T>(objectFactory),
     CompileUsingKotlinDaemonWithNormalization,
     UsesBuildMetricsService,
-    UsesBuildReportsService,
     UsesIncrementalModuleInfoBuildService,
     UsesCompilerSystemPropertiesService,
     UsesVariantImplementationFactories,
     UsesBuildFinishedListenerService,
+    UsesClassLoadersCachingBuildService,
     BaseKotlinCompile {
 
     init {
@@ -110,17 +103,21 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     internal open fun isIncrementalCompilationEnabled(): Boolean =
         incremental
 
-    @Deprecated("Scheduled for removal with Kotlin 1.9", ReplaceWith("moduleName"))
+    @Deprecated("Scheduled for removal with Kotlin 2.0", ReplaceWith("moduleName"))
     @get:Input
     abstract val ownModuleName: Property<String>
 
     @get:Internal
     val startParameters = BuildReportsService.getStartParameters(project)
 
+    @get:Input
+    @get:Optional
+    internal abstract val explicitApiMode: Property<ExplicitApiMode>
+
     @get:Internal
     internal abstract val suppressKotlinOptionsFreeArgsModificationWarning: Property<Boolean>
 
-    internal fun reportingSettings() = buildReportsService.orNull?.parameters?.reportingSettings?.orNull ?: ReportingSettings()
+    internal fun reportingSettings() = buildMetricsService.orNull?.parameters?.reportingSettings?.orNull ?: ReportingSettings()
 
     @get:Internal
     protected val multiModuleICSettings: MultiModuleICSettings
@@ -181,7 +178,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
                         defaultKotlinJavaToolchain
                             .map {
                                 val toolsJar = it.currentJvmJdkToolsJar.orNull
-                                GradleCompilerRunnerWithWorkers(
+                                createGradleCompilerRunner(
                                     taskProvider,
                                     toolsJar,
                                     CompilerExecutionSettings(
@@ -190,7 +187,9 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
                                         useDaemonFallbackStrategy.get()
                                     ),
                                     params.first,
-                                    workerExecutor
+                                    workerExecutor,
+                                    runViaBuildToolsApi.get(),
+                                    classLoadersCachingService,
                                 )
                             }
                     }
@@ -318,12 +317,12 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
             return
         }
 
-        val args = prepareCompilerArguments()
+        val args = createCompilerArguments()
+
         taskBuildCacheableOutputDirectory.get().asFile.mkdirs()
         taskBuildLocalStateDirectory.get().asFile.mkdirs()
         callCompilerAsync(
             args,
-            allKotlinSources,
             inputChanges,
             taskOutputsBackup
         )
@@ -357,25 +356,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
      */
     internal abstract fun callCompilerAsync(
         args: T,
-        kotlinSources: Set<File>,
         inputChanges: InputChanges,
         taskOutputsBackup: TaskOutputsBackup?
     )
-
-    @get:Internal
-    internal val abstractKotlinCompileArgumentsContributor by lazy {
-        AbstractKotlinCompileArgumentsContributor(
-            KotlinCompileArgumentsProvider(this)
-        )
-    }
-
-    override fun setupCompilerArgs(args: T, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
-        abstractKotlinCompileArgumentsContributor.contributeArguments(
-            args,
-            compilerArgumentsConfigurationFlags(defaultsOnly, ignoreClasspathResolutionErrors)
-        )
-        if (reportingSettings().buildReportMode == BuildReportMode.VERBOSE) {
-            args.reportPerf = true
-        }
-    }
 }

@@ -126,7 +126,7 @@ abstract class AnnotationCodegen(
         if (declaration is IrValueParameter) {
             val parent = declaration.parent as IrDeclaration
             if (isInvisibleForNullabilityAnalysis(parent)) return
-            if (isMovedReceiverParameterOfStaticInlineClassReplacement(declaration, parent)) return
+            if (isMovedReceiverParameterOfStaticValueClassReplacement(declaration, parent)) return
         }
 
         // No need to annotate annotation methods since they're always non-null
@@ -165,8 +165,8 @@ abstract class AnnotationCodegen(
         generateAnnotationIfNotPresent(annotationDescriptorsAlreadyPresent, annotationClass)
     }
 
-    private fun isMovedReceiverParameterOfStaticInlineClassReplacement(parameter: IrValueParameter, parent: IrDeclaration): Boolean =
-        parent.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT &&
+    private fun isMovedReceiverParameterOfStaticValueClassReplacement(parameter: IrValueParameter, parent: IrDeclaration): Boolean =
+        (parent.origin == JvmLoweredDeclarationOrigin.STATIC_INLINE_CLASS_REPLACEMENT || parent.origin == JvmLoweredDeclarationOrigin.STATIC_MULTI_FIELD_VALUE_CLASS_REPLACEMENT) &&
                 parameter.origin == IrDeclarationOrigin.MOVED_DISPATCH_RECEIVER
 
     private fun generateAnnotationIfNotPresent(annotationDescriptorsAlreadyPresent: MutableSet<String>, annotationClass: Class<*>) {

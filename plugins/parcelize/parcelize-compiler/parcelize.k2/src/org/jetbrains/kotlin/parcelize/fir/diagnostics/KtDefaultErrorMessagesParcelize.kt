@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.RENDER_CLASS_OR_OBJECT
-import org.jetbrains.kotlin.fir.analysis.diagnostics.checkMissingMessages
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.CLASS_SHOULD_BE_PARCELIZE
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.CREATOR_DEFINITION_IS_NOT_ALLOWED
 import org.jetbrains.kotlin.parcelize.fir.diagnostics.KtErrorsParcelize.DEPRECATED_ANNOTATION
@@ -171,7 +170,5 @@ object KtDefaultErrorMessagesParcelize : BaseDiagnosticRendererFactory() {
             DEPRECATED_PARCELER,
             "'kotlinx.android.parcel.Parceler' is deprecated. Use 'kotlinx.parcelize.Parceler' instead"
         )
-
-        map.checkMissingMessages(KtErrorsParcelize)
     }
 }

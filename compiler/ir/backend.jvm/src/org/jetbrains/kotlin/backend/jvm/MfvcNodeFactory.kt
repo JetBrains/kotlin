@@ -341,12 +341,11 @@ fun getRootNode(context: JvmBackendContext, mfvc: IrClass): RootMfvcNode {
 
     val subnodes = makeRootMfvcNodeSubnodes(representation, properties, context, mfvc)
 
-    val mfvcNodeWithSubnodesImpl = MfvcNodeWithSubnodesImpl(subnodes, null)
-    val leaves = mfvcNodeWithSubnodesImpl.leaves
-    val fields = mfvcNodeWithSubnodesImpl.fields
+    val leaves = subnodes.leaves
+    val fields = subnodes.fields
 
     val newPrimaryConstructor = makeMfvcPrimaryConstructor(context, oldPrimaryConstructor, mfvc, leaves, fields)
-    val primaryConstructorImpl = makePrimaryConstructorImpl(context, oldPrimaryConstructor, mfvc, leaves, mfvcNodeWithSubnodesImpl)
+    val primaryConstructorImpl = makePrimaryConstructorImpl(context, oldPrimaryConstructor, mfvc, leaves, subnodes)
     val boxMethod = makeBoxMethod(context, mfvc, leaves, newPrimaryConstructor)
 
     val customEqualsAny = mfvc.functions.singleOrNull {
@@ -438,7 +437,7 @@ private fun makePrimaryConstructorImpl(
     oldPrimaryConstructor: IrConstructor,
     mfvc: IrClass,
     leaves: List<LeafMfvcNode>,
-    subnodesImpl: MfvcNodeWithSubnodesImpl,
+    subnodes: List<NameableMfvcNode>,
 ) = context.irFactory.buildFun {
     name = InlineClassAbi.mangledNameFor(oldPrimaryConstructor, false, false)
     visibility = oldPrimaryConstructor.visibility
@@ -452,9 +451,10 @@ private fun makePrimaryConstructorImpl(
         addValueParameter(leaf.fullFieldName, leaf.type.substitute(mfvc.typeParameters, typeParameters.map { it.defaultType }))
     }
     for ((index, oldParameter) in oldPrimaryConstructor.valueParameters.withIndex()) {
-        val node = subnodesImpl.subnodes[index]
+        val node = subnodes[index]
+        val subnodesIndices = subnodes.subnodeIndices
         if (node is LeafMfvcNode) {
-            val newIndex = subnodesImpl.subnodeIndices[node]!!.first
+            val newIndex = subnodesIndices[node]!!.first
             valueParameters[newIndex].annotations = oldParameter.annotations
         }
     }

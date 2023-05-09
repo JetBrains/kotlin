@@ -54,8 +54,6 @@ object FirJvmErrors {
 
     // annotations
     val STRICTFP_ON_CLASS by error0<KtAnnotationEntry>()
-    val VOLATILE_ON_VALUE by error0<KtAnnotationEntry>()
-    val VOLATILE_ON_DELEGATE by error0<KtAnnotationEntry>()
     val SYNCHRONIZED_ON_ABSTRACT by error0<KtAnnotationEntry>()
     val SYNCHRONIZED_IN_INTERFACE by error0<KtAnnotationEntry>()
     val SYNCHRONIZED_ON_INLINE by warning0<KtAnnotationEntry>()
@@ -92,13 +90,10 @@ object FirJvmErrors {
     val ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE by error0<PsiElement>()
 
     // JVM Default
-    val JVM_DEFAULT_NOT_IN_INTERFACE by error0<PsiElement>()
     val JVM_DEFAULT_IN_JVM6_TARGET by error1<PsiElement, String>()
-    val JVM_DEFAULT_REQUIRED_FOR_OVERRIDE by error0<KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
     val JVM_DEFAULT_IN_DECLARATION by error1<KtElement, String>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
     val JVM_DEFAULT_WITH_COMPATIBILITY_IN_DECLARATION by error0<KtElement>()
     val JVM_DEFAULT_WITH_COMPATIBILITY_NOT_ON_INTERFACE by error0<KtElement>()
-    val NON_JVM_DEFAULT_OVERRIDES_JAVA_DEFAULT by warning0<KtDeclaration>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
 
     // External Declaration
     val EXTERNAL_DECLARATION_CANNOT_BE_ABSTRACT by error0<KtDeclaration>(SourceElementPositioningStrategies.ABSTRACT_MODIFIER)
@@ -129,7 +124,6 @@ object FirJvmErrors {
     val CONCURRENT_HASH_MAP_CONTAINS_OPERATOR by deprecationError0<PsiElement>(ProhibitConcurrentHashMapContains)
     val SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL by deprecationError0<PsiElement>(ProhibitSpreadOnSignaturePolymorphicCall, SourceElementPositioningStrategies.SPREAD_OPERATOR)
     val JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE by error0<PsiElement>()
-    val JAVA_SHADOWED_PROTECTED_FIELD_REFERENCE by error2<PsiElement, ClassId, ClassId>()
 
     init {
         RootDiagnosticRendererFactory.registerFactory(FirJvmErrorsDefaultMessages)

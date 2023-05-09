@@ -62,12 +62,48 @@ private class DeallocRetain : DeallocRetainBase {
     }
 }
 
+private class DeallocRetainAndAccess : DeallocRetainBase {
+    static var deallocated = false
+    static var retainObject: DeallocRetainAndAccess? = nil
+
+    deinit {
+        DeallocRetainAndAccess.retainObject = self
+        DeallocRetainKt.assertNull(value: DeallocRetainAndAccess.retainObject)
+        DeallocRetainAndAccess.retainObject = nil
+
+        try! assertFalse(DeallocRetainAndAccess.deallocated)
+        DeallocRetainAndAccess.deallocated = true
+    }
+}
+
+private func test2() throws {
+    // Attempt to make the state predictable:
+    DeallocRetainKt.garbageCollect()
+
+    DeallocRetainAndAccess.deallocated = false
+
+    autoreleasepool {
+        DeallocRetainAndAccess()
+    }
+
+    // Runs DeallocRetainAndAccess.deinit:
+    DeallocRetainKt.garbageCollect()
+
+    try assertTrue(DeallocRetain.deallocated)
+
+    // Might crash due to double-dispose if the dealloc applied addRef/releaseRef to reclaimed Kotlin object:
+    DeallocRetainKt.garbageCollect()
+}
+
 class DeallocRetainTests : SimpleTestProvider {
     override init() {
         super.init()
 
 #if !NOOP_GC
         test("Test1", test1)
+        if (DeallocRetainKt.isExperimentalMM()) {
+            test("Test2", test2)
+        }
 #endif
     }
 }

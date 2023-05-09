@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import java.util.*
 
 class FirRenderer(
@@ -88,9 +89,9 @@ class FirRenderer(
         fileAnnotationsContainerRenderer?.components = this
     }
 
-    fun renderElementAsString(element: FirElement): String {
+    fun renderElementAsString(element: FirElement, trim: Boolean = false): String {
         element.accept(visitor)
-        return printer.toString()
+        return printer.toString().applyIf(trim, String::trim)
     }
 
     fun renderElementWithTypeAsString(element: FirElement): String {
@@ -198,6 +199,13 @@ class FirRenderer(
         override fun visitCallableDeclaration(callableDeclaration: FirCallableDeclaration) {
             renderContexts(callableDeclaration.contextReceivers)
             annotationRenderer?.render(callableDeclaration)
+            if (callableDeclaration is FirProperty) {
+                val backingField = callableDeclaration.backingField
+                if (backingField?.annotations?.isNotEmpty() == true) {
+                    print("field:")
+                    annotationRenderer?.render(backingField)
+                }
+            }
             visitMemberDeclaration(callableDeclaration)
             val receiverParameter = callableDeclaration.receiverParameter
             if (callableDeclaration !is FirProperty || callableDeclaration.isCatchParameter != true) {
@@ -309,6 +317,16 @@ class FirRenderer(
             visitVariable(property)
             if (property.isLocal) return
             propertyAccessorRenderer?.render(property)
+        }
+
+        override fun visitErrorProperty(errorProperty: FirErrorProperty) {
+            print("<ERROR PROPERTY: ${errorProperty.diagnostic.reason}>")
+            printer.newLine()
+        }
+
+        override fun visitErrorFunction(errorFunction: FirErrorFunction) {
+            print("<ERROR FUNCTION: ${errorFunction.diagnostic.reason}>")
+            printer.newLine()
         }
 
         override fun visitBackingField(backingField: FirBackingField) {

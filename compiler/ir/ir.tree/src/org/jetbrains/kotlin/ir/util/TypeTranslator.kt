@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.types.impl.*
 import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 import org.jetbrains.kotlin.types.typesApproximation.approximateCapturedTypes
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.utils.threadLocal
 import java.util.*
 
@@ -305,7 +306,7 @@ abstract class TypeTranslator(
     }
 
     private fun translateTypeArguments(arguments: List<TypeProjection>) =
-        arguments.map {
+        arguments.memoryOptimizedMap {
             if (it.isStarProjection)
                 IrStarProjectionImpl
             else

@@ -3,12 +3,12 @@
  * that can be found in the LICENSE file.
  */
 
-@file:OptIn(FreezingIsDeprecated::class)
+@file:OptIn(FreezingIsDeprecated::class, ObsoleteWorkersApi::class)
 package runtime.workers.worker4
 
 import kotlin.test.*
-
 import kotlin.native.concurrent.*
+import kotlin.concurrent.AtomicInt
 
 @Test fun runTest1() {
     withWorker {
@@ -32,13 +32,14 @@ import kotlin.native.concurrent.*
             assertTrue(Worker.current.processQueue())
             assertEquals(1, counter.value)
             // Let main proceed.
-            counter.increment()  // counter becomes 2 here.
+            counter.incrementAndGet()  // counter becomes 2 here.
             assertTrue(Worker.current.park(10_000_000, true))
             assertEquals(3, counter.value)
         }.freeze())
 
         executeAfter(0, {
-            counter.increment()
+            counter.incrementAndGet()
+            Unit
         }.freeze())
 
         while (counter.value < 2) {
@@ -46,7 +47,8 @@ import kotlin.native.concurrent.*
         }
 
         executeAfter(0, {
-            counter.increment()
+            counter.incrementAndGet()
+            Unit
         }.freeze())
 
         while (counter.value == 2) {
@@ -60,7 +62,8 @@ import kotlin.native.concurrent.*
     val counter = AtomicInt(0)
     worker.executeAfter(0, {
         assertEquals("Lumberjack", Worker.current.name)
-        counter.increment()
+        counter.incrementAndGet()
+        Unit
     }.freeze())
 
     while (counter.value == 0) {
@@ -76,7 +79,8 @@ import kotlin.native.concurrent.*
 @Test fun runTest4() {
     val counter = AtomicInt(0)
     Worker.current.executeAfter(10_000, {
-        counter.increment()
+        counter.incrementAndGet()
+        Unit
     }.freeze())
     assertTrue(Worker.current.park(1_000_000, process = true))
     assertEquals(1, counter.value)
@@ -88,7 +92,8 @@ import kotlin.native.concurrent.*
     withWorker {
         executeAfter(1000, {
             main.executeAfter(1, {
-                counter.increment()
+                counter.incrementAndGet()
+                Unit
             }.freeze())
         }.freeze())
         assertTrue(main.park(1000L * 1000 * 1000, process = true))
@@ -106,13 +111,13 @@ import kotlin.native.concurrent.*
     withWorker {
         val f1 = execute(TransferMode.SAFE, { counter }) { counter ->
             Worker.current.park(Long.MAX_VALUE / 1000L, process = true)
-            counter.increment()
+            counter.incrementAndGet()
         }
         // wait a bit
         Worker.current.park(10_000L)
         // submit a task
         val f2 = execute(TransferMode.SAFE, { counter }) { counter ->
-            counter.increment()
+            counter.incrementAndGet()
         }
         f1.consume {}
         f2.consume {}
@@ -139,14 +144,15 @@ import kotlin.native.concurrent.*
 
         submitters.forEach {
             it.executeAfter(0L, {
-                readySubmittersCounter.increment()
+                readySubmittersCounter.incrementAndGet()
                 // Wait for other submitters, to make them all start at the same time:
                 while (readySubmittersCounter.value != numberOfSubmitters) {}
 
                 // Concurrently submit tasks with matching scheduled execution time:
                 repeat(numberOfTasks) {
                     targetWorker.executeAfter(delayInMicroseconds, {
-                        executedTasksCounter.increment()
+                        executedTasksCounter.incrementAndGet()
+                        Unit
                     }.freeze())
                 }
 
@@ -157,7 +163,8 @@ import kotlin.native.concurrent.*
                 // the test still might hang without a fix.
                 targetWorker.executeAfter(delayInMicroseconds + 1, {
                     mainWorker.executeAfter(0L, {
-                        finishedBatchesCounter.increment()
+                        finishedBatchesCounter.incrementAndGet()
+                        Unit
                     }.freeze())
                 }.freeze())
             }.freeze())

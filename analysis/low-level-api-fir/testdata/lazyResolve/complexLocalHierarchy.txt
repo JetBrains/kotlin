@@ -1,0 +1,207 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] complexLocalHierarchy.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchy.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchy.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchy.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchy.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchy.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+    }
+    public? final? [ResolvedTo(TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchy.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchy.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchy.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchy.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(CONTRACTS)] fun resolveMe(): R|kotlin/Unit| {
+        local open [ResolvedTo(RAW_FIR)] class A : B {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|one/A| {
+                super<B>()
+            }
+
+        }
+
+        local final? [ResolvedTo(RAW_FIR)] class B : NonLocalInterface {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/B| {
+                super<<implicit>>()
+            }
+
+            local final? inner [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] class C : A {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] one/B.constructor(): R|one/B.C| {
+                    super<A>()
+                }
+
+            }
+
+        }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchy.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+        local open [ResolvedTo(RAW_FIR)] class A : B {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|one/A| {
+                super<B>()
+            }
+
+        }
+
+        local final? [ResolvedTo(RAW_FIR)] class B : NonLocalInterface {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/B| {
+                super<<implicit>>()
+            }
+
+            local final? inner [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] class C : A {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] one/B.constructor(): R|one/B.C| {
+                    super<A>()
+                }
+
+            }
+
+        }
+
+    }
+
+ANNOTATIONS_ARGUMENTS_MAPPING:
+FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchy.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] interface NonLocalInterface : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun resolveMe(): R|kotlin/Unit| {
+        local open [ResolvedTo(RAW_FIR)] class A : B {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|one/A| {
+                super<B>()
+            }
+
+        }
+
+        local final? [ResolvedTo(RAW_FIR)] class B : NonLocalInterface {
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|one/B| {
+                super<<implicit>>()
+            }
+
+            local final? inner [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] class C : A {
+                public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=C] one/B.constructor(): R|one/B.C| {
+                    super<A>()
+                }
+
+            }
+
+        }
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchy.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public abstract [ResolvedTo(STATUS)] interface NonLocalInterface : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+        local open [ResolvedTo(BODY_RESOLVE)] class A : <ERROR TYPE REF: Symbol not found for B> {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|one/A| {
+                super<<ERROR TYPE REF: Symbol not found for B>>()
+            }
+
+        }
+
+        local final [ResolvedTo(BODY_RESOLVE)] class B : R|one/NonLocalInterface| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] constructor(): R|one/B| {
+                super<R|kotlin/Any|>()
+            }
+
+            local final inner [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] class C : R|one/A| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] one/B.constructor(): R|one/B.C| {
+                    super<R|one/A|>()
+                }
+
+            }
+
+        }
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(IMPORTS)] complexLocalHierarchy.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface NonLocalInterface : R|kotlin/Any| {
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+        local open [ResolvedTo(BODY_RESOLVE)] class A : <ERROR TYPE REF: Symbol not found for B> {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|one/A| {
+                super<<ERROR TYPE REF: Symbol not found for B>>()
+            }
+
+        }
+
+        local final [ResolvedTo(BODY_RESOLVE)] class B : R|one/NonLocalInterface| {
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] constructor(): R|one/B| {
+                super<R|kotlin/Any|>()
+            }
+
+            local final inner [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=B] class C : R|one/A| {
+                public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=C] one/B.constructor(): R|one/B.C| {
+                    super<R|one/A|>()
+                }
+
+            }
+
+        }
+
+    }

@@ -89,8 +89,6 @@ fun buildSimpleAnnotation(irBuiltIns: IrBuiltIns, startOffset: Int, endOffset: I
 internal fun IrExpression.isBoxOrUnboxCall() =
         (this is IrCall && symbol.owner.origin == DECLARATION_ORIGIN_INLINE_CLASS_SPECIAL_FUNCTION)
 
-internal fun IrBranch.isUnconditional(): Boolean = (condition as? IrConst<*>)?.value == true
-
 internal val IrFunctionAccessExpression.actualCallee: IrFunction
     get() {
         val callee = symbol.owner

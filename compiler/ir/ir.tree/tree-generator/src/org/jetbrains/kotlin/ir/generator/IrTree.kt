@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.generator
 
 import com.squareup.kotlinpoet.FunSpec
+import com.squareup.kotlinpoet.PropertySpec
 import com.squareup.kotlinpoet.KModifier
 import com.squareup.kotlinpoet.MemberName
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
 import org.jetbrains.kotlin.ir.generator.config.AbstractTreeBuilder
 import org.jetbrains.kotlin.ir.generator.config.ElementConfig
 import org.jetbrains.kotlin.ir.generator.config.ElementConfig.Category.*
+import org.jetbrains.kotlin.ir.generator.config.ListFieldConfig.Mutability.Array
 import org.jetbrains.kotlin.ir.generator.config.ListFieldConfig.Mutability.List
 import org.jetbrains.kotlin.ir.generator.config.ListFieldConfig.Mutability.Var
 import org.jetbrains.kotlin.ir.generator.config.SimpleFieldConfig
@@ -199,7 +201,15 @@ object IrTree : AbstractTreeBuilder() {
             type<ValueClassRepresentation<*>>().withArgs(type(Packages.types, "IrSimpleType")),
             nullable = true,
         )
-        +listField("sealedSubclasses", classSymbolType, mutability = Var)
+        +listField("sealedSubclasses", classSymbolType, mutability = Var) {
+            kdoc = """
+            If this is a sealed class or interface, this list contains symbols of all its immediate subclasses.
+            Otherwise, this is an empty list.
+            
+            NOTE: If this [${elementName2typeName(this@element.name)}] was deserialized from a klib, this list will always be empty!
+            See [KT-54028](https://youtrack.jetbrains.com/issue/KT-54028).
+            """.trimIndent()
+        }
     }
     val attributeContainer: ElementConfig by element(Declaration) {
         kDoc = """
@@ -584,7 +594,6 @@ object IrTree : AbstractTreeBuilder() {
         //diff: no accept
     }
     val memberAccessExpression: ElementConfig by element(Expression) {
-        suppressPrint = true //todo: generate this element too
         visitorParent = declarationReference
         visitorName = "memberAccess"
         transformerReturnType = rootElement
@@ -593,15 +602,69 @@ object IrTree : AbstractTreeBuilder() {
         parent(declarationReference)
 
         +field("dispatchReceiver", expression, nullable = true, isChild = true) {
-            baseDefaultValue = code("this")
+            baseDefaultValue = code("null")
         }
         +field("extensionReceiver", expression, nullable = true, isChild = true) {
-            baseDefaultValue = code("this")
+            baseDefaultValue = code("null")
         }
         +symbol(s)
         +field("origin", statementOriginType, nullable = true)
-        +field("typeArgumentsCount", int)
-        +field("typeArgumentsByIndex", type<Array<*>>(irTypeType.copy(nullable = true)))
+        +listField("valueArguments", expression.copy(nullable = true), mutability = Array, isChild = true) {
+            generationCallback = {
+                addModifiers(KModifier.PROTECTED)
+            }
+        }
+        +listField("typeArguments", irTypeType.copy(nullable = true), mutability = Array) {
+            generationCallback = {
+                addModifiers(KModifier.PROTECTED)
+            }
+        }
+
+        val checkArgumentSlotAccess = MemberName("org.jetbrains.kotlin.ir.expressions", "checkArgumentSlotAccess", true)
+        generationCallback = {
+            addFunction(
+                FunSpec.builder("getValueArgument")
+                    .addParameter("index", int.toPoet())
+                    .returns(expression.toPoet().copy(nullable = true))
+                    .addCode("%M(\"value\", index, valueArguments.size)\n", checkArgumentSlotAccess)
+                    .addCode("return valueArguments[index]")
+                    .build()
+            )
+            addFunction(
+                FunSpec.builder("getTypeArgument")
+                    .addParameter("index", int.toPoet())
+                    .returns(irTypeType.toPoet().copy(nullable = true))
+                    .addCode("%M(\"type\", index, typeArguments.size)\n", checkArgumentSlotAccess)
+                    .addCode("return typeArguments[index]")
+                    .build()
+            )
+            addFunction(
+                FunSpec.builder("putValueArgument")
+                    .addParameter("index", int.toPoet())
+                    .addParameter("valueArgument", expression.toPoet().copy(nullable = true))
+                    .addCode("%M(\"value\", index, valueArguments.size)\n", checkArgumentSlotAccess)
+                    .addCode("valueArguments[index] = valueArgument")
+                    .build()
+            )
+            addFunction(
+                FunSpec.builder("putTypeArgument")
+                    .addParameter("index", int.toPoet())
+                    .addParameter("type", irTypeType.toPoet().copy(nullable = true))
+                    .addCode("%M(\"type\", index, typeArguments.size)\n", checkArgumentSlotAccess)
+                    .addCode("typeArguments[index] = type")
+                    .build()
+            )
+            addProperty(
+                PropertySpec.builder("valueArgumentsCount", int.toPoet())
+                    .getter(FunSpec.getterBuilder().addCode("return valueArguments.size").build())
+                    .build()
+            )
+            addProperty(
+                PropertySpec.builder("typeArgumentsCount", int.toPoet())
+                    .getter(FunSpec.getterBuilder().addCode("return typeArguments.size").build())
+                    .build()
+            )
+        }
     }
     val functionAccessExpression: ElementConfig by element(Expression) {
         visitorParent = memberAccessExpression

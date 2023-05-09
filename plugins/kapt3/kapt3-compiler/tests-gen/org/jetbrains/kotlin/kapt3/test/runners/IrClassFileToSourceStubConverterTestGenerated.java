@@ -158,6 +158,12 @@ public class IrClassFileToSourceStubConverterTestGenerated extends AbstractIrCla
     }
 
     @Test
+    @TestMetadata("delegationAndCompanionObject.kt")
+    public void testDelegationAndCompanionObject() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/delegationAndCompanionObject.kt");
+    }
+
+    @Test
     @TestMetadata("deprecated.kt")
     public void testDeprecated() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/deprecated.kt");
@@ -173,6 +179,12 @@ public class IrClassFileToSourceStubConverterTestGenerated extends AbstractIrCla
     @TestMetadata("enumInCompanion.kt")
     public void testEnumInCompanion() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/enumInCompanion.kt");
+    }
+
+    @Test
+    @TestMetadata("enumSecondaryConstructor.kt")
+    public void testEnumSecondaryConstructor() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/enumSecondaryConstructor.kt");
     }
 
     @Test
@@ -323,18 +335,6 @@ public class IrClassFileToSourceStubConverterTestGenerated extends AbstractIrCla
     @TestMetadata("jvmDefaultAllCompatibility.kt")
     public void testJvmDefaultAllCompatibility() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/jvmDefaultAllCompatibility.kt");
-    }
-
-    @Test
-    @TestMetadata("jvmDefaultDisable.kt")
-    public void testJvmDefaultDisable() throws Exception {
-        runTest("plugins/kapt3/kapt3-compiler/testData/converter/jvmDefaultDisable.kt");
-    }
-
-    @Test
-    @TestMetadata("jvmDefaultEnable.kt")
-    public void testJvmDefaultEnable() throws Exception {
-        runTest("plugins/kapt3/kapt3-compiler/testData/converter/jvmDefaultEnable.kt");
     }
 
     @Test
@@ -605,6 +605,12 @@ public class IrClassFileToSourceStubConverterTestGenerated extends AbstractIrCla
     @TestMetadata("stripMetadata.kt")
     public void testStripMetadata() throws Exception {
         runTest("plugins/kapt3/kapt3-compiler/testData/converter/stripMetadata.kt");
+    }
+
+    @Test
+    @TestMetadata("superConstructorCall.kt")
+    public void testSuperConstructorCall() throws Exception {
+        runTest("plugins/kapt3/kapt3-compiler/testData/converter/superConstructorCall.kt");
     }
 
     @Test

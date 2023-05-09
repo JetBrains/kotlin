@@ -64,10 +64,10 @@ public final class GenericFakeOverrideMFVC {
     public method hashCode(): int
     public static method hashCode-impl(p0: java.lang.Object, p1: java.lang.Object): int
     public synthetic bridge method setP(p0: java.lang.Object): void
-    public method setP-E-wHi0Q(@org.jetbrains.annotations.NotNull p0: XPoint): void
+    public method setP-E-wHi0Q(p0: java.lang.Object): void
     public static method setP-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
     public synthetic bridge method setP1(p0: java.lang.Object): void
-    public method setP1-E-wHi0Q(@org.jetbrains.annotations.NotNull p0: XPoint): void
+    public method setP1-E-wHi0Q(p0: java.lang.Object): void
     public static method setP1-E-wHi0Q(p0: java.lang.Object, p1: java.lang.Object, p2: java.lang.Object, p3: java.lang.Object): void
     public @org.jetbrains.annotations.NotNull method toString(): java.lang.String
     public static method toString-impl(p0: java.lang.Object, p1: java.lang.Object): java.lang.String

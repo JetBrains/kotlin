@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassLikeSymbol
 import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtUserType
 
@@ -41,7 +42,7 @@ internal class KtFe10ReferenceShortener(
 
             override fun getQualifiersToShorten(): List<SmartPsiElementPointer<KtDotQualifiedExpression>> = emptyList()
 
-            override fun invokeShortening() {}
+            override fun invokeShortening(): List<KtElement> = emptyList()
         }
     }
 }

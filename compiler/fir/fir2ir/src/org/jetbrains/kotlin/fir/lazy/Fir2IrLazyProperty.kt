@@ -154,6 +154,9 @@ class Fir2IrLazyProperty(
             }
         }?.apply {
             this.parent = this@Fir2IrLazyProperty.parent
+            this.annotations = fir.backingField?.annotations?.mapNotNull {
+                callGenerator.convertToIrConstructorCall(it) as? IrConstructorCall
+            }.orEmpty()
         }
     }
 
@@ -182,9 +185,7 @@ class Fir2IrLazyProperty(
             correspondingPropertySymbol = this@Fir2IrLazyProperty.symbol
             with(classifierStorage) {
                 setTypeParameters(
-                    this@Fir2IrLazyProperty.fir, ConversionTypeContext(
-                        origin = ConversionTypeOrigin.DEFAULT
-                    )
+                    this@Fir2IrLazyProperty.fir, ConversionTypeContext.DEFAULT
                 )
             }
         }
@@ -216,9 +217,7 @@ class Fir2IrLazyProperty(
                     correspondingPropertySymbol = this@Fir2IrLazyProperty.symbol
                     with(classifierStorage) {
                         setTypeParameters(
-                            this@Fir2IrLazyProperty.fir, ConversionTypeContext(
-                                origin = ConversionTypeOrigin.SETTER
-                            )
+                            this@Fir2IrLazyProperty.fir, ConversionTypeContext.IN_SETTER
                         )
                     }
                 }

@@ -1,12 +1,13 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2023 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
-
+@file:OptIn(ExperimentalForeignApi::class)
 package kotlin.native.concurrent
 
 import kotlinx.cinterop.*
 import kotlin.native.internal.Frozen
+import kotlin.concurrent.AtomicNativePtr
 
 /**
  * Note: modern Kotlin/Native memory manager allows to share objects between threads without additional ceremonies,
@@ -33,9 +34,10 @@ import kotlin.native.internal.Frozen
  *   Note, that for some cases cycle collection need to be done to ensure that dead cycles do not affect
  *  reachability of passed object graph.
  *
- *  @see [kotlin.native.internal.GC.collect].
+ *  @see [kotlin.native.runtime.GC.collect].
  */
 // Not @FreezingIsDeprecated: every `Worker.execute` uses this.
+@ObsoleteWorkersApi
 public enum class TransferMode(val value: Int) {
     /**
      * Reachability check is performed.
@@ -54,6 +56,7 @@ public enum class TransferMode(val value: Int) {
  */
 @Frozen
 @FreezingIsDeprecated
+@ObsoleteWorkersApi
 public class DetachedObjectGraph<T> internal constructor(pointer: NativePtr) {
     @PublishedApi
     internal val stable = AtomicNativePtr(pointer)
@@ -74,6 +77,7 @@ public class DetachedObjectGraph<T> internal constructor(pointer: NativePtr) {
     /**
      * Returns raw C pointer value, usable for interoperability with C scenarious.
      */
+    @ExperimentalForeignApi
     public fun asCPointer(): COpaquePointer? = interpretCPointer<COpaque>(stable.value)
 }
 
@@ -84,6 +88,7 @@ public class DetachedObjectGraph<T> internal constructor(pointer: NativePtr) {
  * happen once.
  */
 @FreezingIsDeprecated
+@ObsoleteWorkersApi
 public inline fun <reified T> DetachedObjectGraph<T>.attach(): T {
     var rawStable: NativePtr
     do {

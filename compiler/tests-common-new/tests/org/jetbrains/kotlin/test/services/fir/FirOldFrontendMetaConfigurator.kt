@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -18,7 +18,7 @@ class FirOldFrontendMetaConfigurator(testServices: TestServices) : MetaTestConfi
 
         // Skip `.ll.kt` tests, whose path is provided by `LLFirMetaTestConfigurator`. Because `FirOldFrontendMetaConfigurator` is usually
         // configured with `forTestsMatching`, it'll be executed after `LLFirMetaTestConfigurator`, which is configured generally.
-        if (originalFile.isLLFirTestData) return testDataFileName
+        if (originalFile.isLLFirTestData || ".reversed." in originalFile.path) return testDataFileName
 
         val isFirIdentical = originalFile.useLines { lines -> lines.any { it == "// ${FirDiagnosticsDirectives.FIR_IDENTICAL.name}" } }
         return if (isFirIdentical) {

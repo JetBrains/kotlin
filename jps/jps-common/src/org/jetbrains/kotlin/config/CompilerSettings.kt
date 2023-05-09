@@ -50,6 +50,8 @@ class CompilerSettings : Freezable() {
         val DEFAULT_ADDITIONAL_ARGUMENTS = ""
         private val DEFAULT_OUTPUT_DIRECTORY = "lib"
     }
+
+    override fun copyOf(): Freezable = copyCompilerSettings(this, CompilerSettings())
 }
 
 val CompilerSettings.additionalArgumentsAsList: List<String>

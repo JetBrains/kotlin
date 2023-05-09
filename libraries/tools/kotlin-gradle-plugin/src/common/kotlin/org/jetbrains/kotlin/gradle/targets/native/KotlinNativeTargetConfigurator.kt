@@ -21,8 +21,10 @@ import org.gradle.api.tasks.Exec
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.TEST_COMPILATION_NAME
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo.KPM
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.ReadyForExecution
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.KOTLIN_NATIVE_IGNORE_INCORRECT_DEPENDENCIES
 import org.jetbrains.kotlin.gradle.plugin.internal.artifactTypeAttribute
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
@@ -72,6 +74,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
             it.usesService(konanPropertiesBuildService)
             it.toolOptions.freeCompilerArgs.value(compilationCompilerOptions.options.freeCompilerArgs)
             it.toolOptions.freeCompilerArgs.addAll(providers.provider { PropertiesProvider(project).nativeLinkArgs })
+            it.runViaBuildToolsApi.value(false).disallowChanges() // K/N is not yet supported
         }
 
 
@@ -324,10 +327,10 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
         implementationToApiElements(target)
     }
 
-    private fun warnAboutIncorrectDependencies(target: KotlinNativeTarget) = target.project.whenEvaluated {
+    private fun warnAboutIncorrectDependencies(target: KotlinNativeTarget) = target.project.launchInStage(ReadyForExecution) {
 
         val compileOnlyDependencies = target.compilations.mapNotNull {
-            val dependencies = configurations.getByName(it.compileOnlyConfigurationName).allDependencies
+            val dependencies = project.configurations.getByName(it.compileOnlyConfigurationName).allDependencies
             if (dependencies.isNotEmpty()) {
                 it to dependencies
             } else null
@@ -378,6 +381,7 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
             konanTarget: KonanTarget
         ): TaskProvider<KotlinNativeCompile> {
             val project = compilationInfo.project
+            val ext = project.topLevelExtension
             val compileTaskProvider = project.registerTask<KotlinNativeCompile>(
                 compilationInfo.compileKotlinTaskName,
                 listOf(
@@ -397,6 +401,11 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
                     it.compilerOptions.useK2.set(true)
                 }
                 it.compilerOptions.useK2.disallowChanges()
+                it.runViaBuildToolsApi.value(false).disallowChanges() // K/N is not yet supported
+
+                it.explicitApiMode
+                    .value(project.providers.provider { ext.explicitApi })
+                    .finalizeValueOnRead()
             }
 
             compilationInfo.classesDirs.from(compileTaskProvider.map { it.outputFile })
@@ -571,8 +580,9 @@ class KotlinNativeTargetWithSimulatorTestsConfigurator :
                 Xcode.getDefaultTestDeviceId(target.konanTarget)
                     ?: error("Xcode does not support simulator tests for ${target.konanTarget.name}. Check that requested SDK is installed.")
             }
-            testTask.device.set(deviceIdProvider)
+            testTask.device.convention(deviceIdProvider).finalizeValueOnRead()
         }
+        testTask.standalone.convention(true).finalizeValueOnRead()
     }
 
     override fun createTestRun(

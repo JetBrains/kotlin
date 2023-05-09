@@ -3,11 +3,14 @@
  * that can be found in the LICENSE file.
  */
 
+@file:OptIn(ObsoleteWorkersApi::class)
 package runtime.basic.initializers6
 
 import kotlin.test.*
 
 import kotlin.native.concurrent.*
+import kotlin.concurrent.*
+import kotlin.concurrent.AtomicInt
 
 val aWorkerId = AtomicInt(0)
 val bWorkersCount = 3
@@ -20,7 +23,7 @@ object A {
         // Must be called by aWorker only.
         assertEquals(aWorkerId.value, Worker.current.id)
         // Only allow b workers to run, when a worker has started initialization.
-        bWorkerUnlocker.increment()
+        bWorkerUnlocker.incrementAndGet()
         // Only proceed with initialization, when all b workers have started executing.
         while (aWorkerUnlocker.value < bWorkersCount) {}
         // And now wait a bit, to increase probability of races.
@@ -56,7 +59,7 @@ fun produceB(): String {
             // Wait until A has started to initialize.
             while (bWorkerUnlocker.value < 1) {}
             // Now allow A initialization to continue.
-            aWorkerUnlocker.increment()
+            aWorkerUnlocker.incrementAndGet()
             // And this should not've tried to init A itself.
             A.a + A.b
         })

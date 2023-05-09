@@ -25,7 +25,7 @@ public annotation class ShouldRefineInSwift
 package plugin
 
 @HidesFromObjC
-@Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION)
+@Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
 annotation class PluginHiddenFromObjC
 
@@ -45,7 +45,7 @@ import plugin.PluginShouldRefineInSwift
 annotation class MyRefinedAnnotationA
 
 <!INVALID_OBJC_REFINEMENT_TARGETS!>@HidesFromObjC<!>
-@Target(AnnotationTarget.PROPERTY, AnnotationTarget.CLASS)
+@Target(AnnotationTarget.PROPERTY, AnnotationTarget.FILE)
 @Retention(AnnotationRetention.BINARY)
 annotation class MyRefinedAnnotationB
 

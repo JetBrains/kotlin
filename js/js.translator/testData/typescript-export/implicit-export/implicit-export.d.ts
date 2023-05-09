@@ -45,5 +45,19 @@ declare namespace JS_TESTS {
         class TheNewException extends Error {
             constructor();
         }
+        interface Service<Self extends foo.Service<Self, TEvent>, TEvent extends foo.Event<Self>> {
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.Service": unique symbol;
+            };
+        }
+        interface Event<TService extends foo.Service<TService, any /*UnknownType **/>> {
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.Event": unique symbol;
+            };
+        }
+        class SomeServiceRequest implements foo.Service<any/* foo.SomeService */, foo.Event<any/* foo.SomeService */>/* foo.SomeEvent */> {
+            constructor();
+            readonly __doNotUseOrImplementIt: foo.Service<any/* foo.SomeService */, foo.Event<any/* foo.SomeService */>/* foo.SomeEvent */>["__doNotUseOrImplementIt"];
+        }
     }
 }

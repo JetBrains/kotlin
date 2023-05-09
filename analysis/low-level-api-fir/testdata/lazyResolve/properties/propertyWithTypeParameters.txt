@@ -1,4 +1,3 @@
-
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] propertyWithTypeParameters.kt
     [ResolvedTo(RAW_FIR)] annotations container
@@ -45,17 +44,13 @@ EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] propertyWithTypeParameters.kt
     [ResolvedTo(RAW_FIR)] annotations container
     public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val <[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T : R|kotlin/Int|, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] K> R|T|.resolveMe: R|K|
-        public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): R|K| {
-            ^ TODO#()
-        }
+        public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): R|K| { LAZY_BLOCK }
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] propertyWithTypeParameters.kt
     [ResolvedTo(RAW_FIR)] annotations container
     public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] val <[ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] T : R|kotlin/Int|, [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] K> R|T|.resolveMe: R|K|
-        public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] get(): R|K| {
-            ^ TODO#()
-        }
+        public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] get(): R|K| { LAZY_BLOCK }
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] propertyWithTypeParameters.kt

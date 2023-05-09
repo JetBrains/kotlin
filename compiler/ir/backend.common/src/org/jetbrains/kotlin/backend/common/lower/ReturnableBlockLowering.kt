@@ -127,14 +127,20 @@ class ReturnableBlockTransformer(val context: CommonBackendContext, val containe
             }
         }
 
-        val newStatements = expression.statements.mapIndexed { i, s ->
-            if (expression.statements.size == 1 && s is IrInlinedFunctionBlock) {
-                for ((j, statement) in s.statements.withIndex()) {
-                    s.statements[j] = transformSingleStatement(statement, j == s.statements.lastIndex)
+        val newStatements = expression.statements.mapIndexed { i, currentStatement ->
+            if (expression.statements.size == 1 && currentStatement is IrInlinedFunctionBlock) {
+                val lastIndex = currentStatement.statements.lastIndex
+                for ((j, statement) in currentStatement.statements.withIndex()) {
+                    val lastInList = j == lastIndex
+                    val transformedStatement = transformSingleStatement(statement, lastInList)
+                    currentStatement.statements[j] = transformedStatement
+                    if (lastInList) {
+                        currentStatement.type = (transformedStatement as? IrExpression)?.type ?: context.irBuiltIns.unitType
+                    }
                 }
-                s
+                currentStatement
             } else {
-                transformSingleStatement(s, i == expression.statements.lastIndex)
+                transformSingleStatement(currentStatement, i == expression.statements.lastIndex)
             }
         }
 
@@ -164,6 +170,7 @@ class ReturnableBlockTransformer(val context: CommonBackendContext, val containe
                     // In case of Unit return type we don't need to return an explicit value. This will not be optimized by JVM backend and
                     // may result in exceptions in `MethodVerifier` before optimizations.
                     // Also note that `UNDEFINED_OFFSET` is needed to make proper line number for JVM.
+                    expression.type = context.irBuiltIns.unitType
                     +at(UNDEFINED_OFFSET, UNDEFINED_OFFSET).irGet(variable)
                 }
             }

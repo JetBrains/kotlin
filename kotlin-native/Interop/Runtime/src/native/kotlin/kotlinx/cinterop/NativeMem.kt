@@ -1,19 +1,8 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-
+@file:OptIn(ExperimentalForeignApi::class)
 package kotlinx.cinterop
 
 import kotlin.native.*
@@ -139,6 +128,7 @@ internal object nativeMemUtils {
     }
 }
 
+@ExperimentalForeignApi
 public fun CPointer<UShortVar>.toKStringFromUtf16(): String {
     val nativeBytes = this
 
@@ -155,8 +145,10 @@ public fun CPointer<UShortVar>.toKStringFromUtf16(): String {
     return chars.concatToString()
 }
 
+@ExperimentalForeignApi
 public fun CPointer<ShortVar>.toKString(): String = this.toKStringFromUtf16()
 
+@ExperimentalForeignApi
 public fun CPointer<UShortVar>.toKString(): String = this.toKStringFromUtf16()
 
 @GCUnsafeCall("Kotlin_interop_malloc")
@@ -165,7 +157,10 @@ private external fun malloc(size: Long, align: Int): NativePtr
 @GCUnsafeCall("Kotlin_interop_free")
 private external fun cfree(ptr: NativePtr)
 
+@ExperimentalForeignApi
 @TypedIntrinsic(IntrinsicType.INTEROP_READ_BITS)
 external fun readBits(ptr: NativePtr, offset: Long, size: Int, signed: Boolean): Long
+
+@ExperimentalForeignApi
 @TypedIntrinsic(IntrinsicType.INTEROP_WRITE_BITS)
 external fun writeBits(ptr: NativePtr, offset: Long, size: Int, value: Long)

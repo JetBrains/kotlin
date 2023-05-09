@@ -63,6 +63,7 @@ class WasmSymbols(
         override val primitiveClassesObject = getInternalClass("PrimitiveClasses")
         override val kTypeClass: IrClassSymbol = getIrClass(FqName("kotlin.reflect.KClass"))
 
+        val getTypeInfoTypeDataByPtr: IrSimpleFunctionSymbol = getInternalFunction("getTypeInfoTypeDataByPtr")
         val wasmTypeInfoData: IrClassSymbol = getInternalClass("TypeInfoData")
     }
 
@@ -73,6 +74,10 @@ class WasmSymbols(
     internal val isNotFirstWasmExportCall: IrPropertySymbol = symbolTable.referenceProperty(
         getProperty(FqName.fromSegments(listOf("kotlin", "wasm", "internal", "isNotFirstWasmExportCall")))
     )
+
+    internal val initAssociatedObjects = getInternalFunction("initAssociatedObjects")
+    internal val addAssociatedObject = getInternalFunction("addAssociatedObject")
+
     internal val throwAsJsException: IrSimpleFunctionSymbol = getInternalFunction("throwAsJsException")
 
     override val throwNullPointerException = getInternalFunction("THROW_NPE")
@@ -204,8 +209,7 @@ class WasmSymbols(
     val suiteFun = maybeGetFunction("suite", kotlinTestPackage)
     val startUnitTests = maybeGetFunction("startUnitTests", kotlinTestPackage)
 
-    val wasmClassId = getInternalFunction("wasmClassId")
-    val wasmInterfaceId = getInternalFunction("wasmInterfaceId")
+    val wasmTypeId = getInternalFunction("wasmTypeId")
 
     val wasmIsInterface = getInternalFunction("wasmIsInterface")
 

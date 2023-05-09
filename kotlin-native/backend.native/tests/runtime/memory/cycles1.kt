@@ -3,16 +3,19 @@
  * that can be found in the LICENSE file.
  */
 
+@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
+
 package runtime.memory.cycles1
 
 import kotlin.test.*
 import kotlin.native.ref.*
 
+@OptIn(kotlin.native.runtime.NativeRuntimeApi::class)
 @Test fun runTest() {
     // TODO: make it work in relaxed model as well.
     if (Platform.memoryModel == MemoryModel.RELAXED) return
     val weakRefToTrashCycle = createLoop()
-    kotlin.native.internal.GC.collect()
+    kotlin.native.runtime.GC.collect()
     assertNull(weakRefToTrashCycle.get())
 }
 

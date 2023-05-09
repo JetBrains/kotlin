@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.gradle.plugin.sources.android
 
 import org.gradle.api.logging.Logging
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
-import org.jetbrains.kotlin.gradle.plugin.sources.android.checker.KotlinAndroidSourceSetLayoutChecker
 import org.jetbrains.kotlin.gradle.utils.androidExtension
 import org.jetbrains.kotlin.gradle.utils.forAllAndroidVariants
 import org.jetbrains.kotlin.gradle.utils.runProjectConfigurationHealthCheck
@@ -23,12 +23,13 @@ internal object KotlinAndroidSourceSets {
     ) {
         logger.debug("Applying ${KotlinAndroidSourceSetLayout::class.java.simpleName}: ${layout.name}")
 
-        val android = target.project.androidExtension
-        val diagnosticReporter = KotlinAndroidSourceSetLayoutChecker.DiagnosticReporter.create(target.project, logger, layout)
-        val factory = KotlinAndroidSourceSetFactory(target, target.project.kotlinExtension, layout, diagnosticReporter)
+        val project = target.project
+        val android = project.androidExtension
+        val diagnosticsCollector = project.kotlinToolingDiagnosticsCollector
+        val factory = KotlinAndroidSourceSetFactory(target, project.kotlinExtension, layout, diagnosticsCollector)
 
-        target.project.runProjectConfigurationHealthCheck {
-            layout.checker.checkBeforeLayoutApplied(diagnosticReporter, target, layout)
+        project.runProjectConfigurationHealthCheck {
+            layout.checker.checkBeforeLayoutApplied(diagnosticsCollector, target, layout)
         }
 
         /*
@@ -46,7 +47,7 @@ internal object KotlinAndroidSourceSets {
         }
 
         /* Hook into Android's variant creation: This is invoked in 'afterEvaluate' */
-        target.project.forAllAndroidVariants { variant ->
+        project.forAllAndroidVariants { variant ->
             variant.sourceSets.forEach { sourceProvider ->
                 val androidSourceSet = android.sourceSets.findByName(sourceProvider.name) ?: return@forEach
 
@@ -60,5 +61,3 @@ internal object KotlinAndroidSourceSets {
         }
     }
 }
-
-

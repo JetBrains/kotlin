@@ -110,6 +110,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
     }
 
     @Test
+    @TestMetadata("sealedClassWithPrivateConstructor.kt")
+    public void testSealedClassWithPrivateConstructor() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/sealedClassWithPrivateConstructor.kt");
+    }
+
+    @Test
     @TestMetadata("sealedTypeAlias.kt")
     public void testSealedTypeAlias() throws Exception {
         runTest("compiler/testData/diagnostics/tests/multiplatform/sealedTypeAlias.kt");
@@ -125,6 +131,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
     @TestMetadata("smartcastOnMemberPropertyFromCommonClass.kt")
     public void testSmartcastOnMemberPropertyFromCommonClass() throws Exception {
         runTest("compiler/testData/diagnostics/tests/multiplatform/smartcastOnMemberPropertyFromCommonClass.kt");
+    }
+
+    @Test
+    @TestMetadata("varSetterVisibility.kt")
+    public void testVarSetterVisibility() throws Exception {
+        runTest("compiler/testData/diagnostics/tests/multiplatform/varSetterVisibility.kt");
     }
 
     @Nested
@@ -344,6 +356,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
         }
 
         @Test
+        @TestMetadata("actualMethodInExpectClass.kt")
+        public void testActualMethodInExpectClass() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/headerClass/actualMethodInExpectClass.kt");
+        }
+
+        @Test
         @TestMetadata("actualMissing.kt")
         public void testActualMissing() throws Exception {
             runTest("compiler/testData/diagnostics/tests/multiplatform/headerClass/actualMissing.kt");
@@ -406,6 +424,12 @@ public class FirOldFrontendMPPDiagnosticsWithPsiTestGenerated extends AbstractFi
         @TestMetadata("expectFinalActualOpen.kt")
         public void testExpectFinalActualOpen() throws Exception {
             runTest("compiler/testData/diagnostics/tests/multiplatform/headerClass/expectFinalActualOpen.kt");
+        }
+
+        @Test
+        @TestMetadata("expectFunInterface.kt")
+        public void testExpectFunInterface() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/multiplatform/headerClass/expectFunInterface.kt");
         }
 
         @Test

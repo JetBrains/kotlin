@@ -34,6 +34,7 @@ public inline infix fun kotlin.Short.xor(other: kotlin.Short): kotlin.Short
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.ANNOTATION_CLASS})
 @kotlin.annotation.Retention(value = AnnotationRetention.BINARY)
 @kotlin.annotation.MustBeDocumented
+@kotlin.SinceKotlin(version = "1.8")
 public final annotation class ExperimentalObjCName : kotlin.Annotation {
     public constructor ExperimentalObjCName()
 }
@@ -42,6 +43,7 @@ public final annotation class ExperimentalObjCName : kotlin.Annotation {
 @kotlin.annotation.Target(allowedTargets = {AnnotationTarget.ANNOTATION_CLASS})
 @kotlin.annotation.Retention(value = AnnotationRetention.BINARY)
 @kotlin.annotation.MustBeDocumented
+@kotlin.SinceKotlin(version = "1.8")
 public final annotation class ExperimentalObjCRefinement : kotlin.Annotation {
     public constructor ExperimentalObjCRefinement()
 }

@@ -35,7 +35,7 @@ abstract class CompilationOutputs {
         fun File.writeAsJsFile(out: CompilationOutputs) {
             parentFile.mkdirs()
             val jsMapFile = mapForJsFile
-            val jsFile = canonicalFile
+            val jsFile = normalizedAbsoluteFile
             out.writeJsCode(jsFile, jsMapFile)
 
             writtenFiles += jsFile
@@ -65,11 +65,14 @@ abstract class CompilationOutputs {
         return allTsDefinitions.toTypeScript(moduleName, moduleKind)
     }
 
+    private val File.normalizedAbsoluteFile
+        get() = absoluteFile.normalize()
+
     private val File.mapForJsFile
-        get() = resolveSibling("$name.map").canonicalFile
+        get() = resolveSibling("$name.map").normalizedAbsoluteFile
 
     private val File.dtsForJsFile
-        get() = resolveSibling("$nameWithoutExtension.d.ts").canonicalFile
+        get() = resolveSibling("$nameWithoutExtension.d.ts").normalizedAbsoluteFile
 }
 
 private fun File.copyModificationTimeFrom(from: File) {

@@ -5,14 +5,17 @@
 
 package org.jetbrains.kotlin.fir.contracts.description
 
+import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.fir.contracts.*
 import org.jetbrains.kotlin.fir.contracts.impl.FirEmptyContractDescription
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.renderer.FirRendererComponents
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.renderForDebugging
 
-class ConeContractRenderer : ConeContractDescriptionVisitor<Unit, Nothing?>() {
+class ConeContractRenderer : KtContractDescriptionVisitor<Unit, Nothing?, ConeKotlinType, ConeDiagnostic>() {
 
     internal lateinit var components: FirRendererComponents
     private val printer get() = components.printer
@@ -74,54 +77,54 @@ class ConeContractRenderer : ConeContractDescriptionVisitor<Unit, Nothing?>() {
         printer.println(">")
     }
 
-    override fun visitConditionalEffectDeclaration(conditionalEffect: ConeConditionalEffectDeclaration, data: Nothing?) {
+    override fun visitConditionalEffectDeclaration(conditionalEffect: KtConditionalEffectDeclaration<ConeKotlinType, ConeDiagnostic>, data: Nothing?) {
         conditionalEffect.effect.accept(this, data)
         printer.print(" -> ")
         conditionalEffect.condition.accept(this, data)
     }
 
-    override fun visitReturnsEffectDeclaration(returnsEffect: ConeReturnsEffectDeclaration, data: Nothing?) {
+    override fun visitReturnsEffectDeclaration(returnsEffect: KtReturnsEffectDeclaration<ConeKotlinType, ConeDiagnostic>, data: Nothing?) {
         printer.print("Returns(")
         returnsEffect.value.accept(this, data)
         printer.print(")")
     }
 
-    override fun visitCallsEffectDeclaration(callsEffect: ConeCallsEffectDeclaration, data: Nothing?) {
+    override fun visitCallsEffectDeclaration(callsEffect: KtCallsEffectDeclaration<ConeKotlinType, ConeDiagnostic>, data: Nothing?) {
         printer.print("CallsInPlace(")
         callsEffect.valueParameterReference.accept(this, data)
         printer.print(", ${callsEffect.kind})")
     }
 
-    override fun visitLogicalBinaryOperationContractExpression(binaryLogicExpression: ConeBinaryLogicExpression, data: Nothing?) {
+    override fun visitLogicalBinaryOperationContractExpression(binaryLogicExpression: KtBinaryLogicExpression<ConeKotlinType, ConeDiagnostic>, data: Nothing?) {
         inBracketsIfNecessary(binaryLogicExpression, binaryLogicExpression.left) { binaryLogicExpression.left.accept(this, data) }
         printer.print(" ${binaryLogicExpression.kind.token} ")
         inBracketsIfNecessary(binaryLogicExpression, binaryLogicExpression.right) { binaryLogicExpression.right.accept(this, data) }
     }
 
-    override fun visitLogicalNot(logicalNot: ConeLogicalNot, data: Nothing?) {
+    override fun visitLogicalNot(logicalNot: KtLogicalNot<ConeKotlinType, ConeDiagnostic>, data: Nothing?) {
         inBracketsIfNecessary(logicalNot, logicalNot.arg) { printer.print("!") }
         logicalNot.arg.accept(this, data)
     }
 
-    override fun visitIsInstancePredicate(isInstancePredicate: ConeIsInstancePredicate, data: Nothing?) {
+    override fun visitIsInstancePredicate(isInstancePredicate: KtIsInstancePredicate<ConeKotlinType, ConeDiagnostic>, data: Nothing?) {
         isInstancePredicate.arg.accept(this, data)
         printer.print(" ${if (isInstancePredicate.isNegated) "!" else ""}is ${isInstancePredicate.type.renderForDebugging()}")
     }
 
-    override fun visitIsNullPredicate(isNullPredicate: ConeIsNullPredicate, data: Nothing?) {
+    override fun visitIsNullPredicate(isNullPredicate: KtIsNullPredicate<ConeKotlinType, ConeDiagnostic>, data: Nothing?) {
         isNullPredicate.arg.accept(this, data)
         printer.print(" ${if (isNullPredicate.isNegated) "!=" else "=="} null")
     }
 
-    override fun visitConstantDescriptor(constantReference: ConeConstantReference, data: Nothing?) {
+    override fun visitConstantDescriptor(constantReference: KtConstantReference<ConeKotlinType, ConeDiagnostic>, data: Nothing?) {
         printer.print(constantReference.name)
     }
 
-    override fun visitValueParameterReference(valueParameterReference: ConeValueParameterReference, data: Nothing?) {
+    override fun visitValueParameterReference(valueParameterReference: KtValueParameterReference<ConeKotlinType, ConeDiagnostic>, data: Nothing?) {
         printer.print(valueParameterReference.name)
     }
 
-    private fun inBracketsIfNecessary(parent: ConeContractDescriptionElement, child: ConeContractDescriptionElement, block: () -> Unit) {
+    private fun inBracketsIfNecessary(parent: KtContractDescriptionElement<ConeKotlinType, ConeDiagnostic>, child: KtContractDescriptionElement<ConeKotlinType, ConeDiagnostic>, block: () -> Unit) {
         if (needsBrackets(parent, child)) {
             printer.print("(")
             block()
@@ -131,12 +134,12 @@ class ConeContractRenderer : ConeContractDescriptionVisitor<Unit, Nothing?>() {
         }
     }
 
-    private fun ConeContractDescriptionElement.isAtom(): Boolean =
-        this is ConeValueParameterReference || this is ConeConstantReference || this is ConeIsNullPredicate || this is ConeIsInstancePredicate
+    private fun KtContractDescriptionElement<ConeKotlinType, ConeDiagnostic>.isAtom(): Boolean =
+        this is KtValueParameterReference || this is KtConstantReference || this is KtIsNullPredicate || this is KtIsInstancePredicate
 
-    private fun needsBrackets(parent: ConeContractDescriptionElement, child: ConeContractDescriptionElement): Boolean {
+    private fun needsBrackets(parent: KtContractDescriptionElement<ConeKotlinType, ConeDiagnostic>, child: KtContractDescriptionElement<ConeKotlinType, ConeDiagnostic>): Boolean {
         if (child.isAtom()) return false
-        if (parent is ConeLogicalNot) return true
+        if (parent is KtLogicalNot) return true
         return parent::class != child::class
     }
 }

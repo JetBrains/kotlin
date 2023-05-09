@@ -1,6 +1,7 @@
 // !LANGUAGE: -NewCapturedReceiverFieldNamingConvention
 // IR_DIFFERENCE
 // LOCAL_VARIABLE_TABLE
+// LAMBDAS: CLASS
 
 fun String.foo(count: Int) {
     val x = false

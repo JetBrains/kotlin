@@ -19,6 +19,7 @@ public class Boolean private constructor(private val value: Boolean) : Comparabl
      * Returns the inverse of this boolean.
      */
     @WasmOp(WasmOp.I32_EQZ)
+    @kotlin.internal.IntrinsicConstEvaluation
     public operator fun not(): Boolean =
         implementedAsIntrinsic
 
@@ -27,6 +28,7 @@ public class Boolean private constructor(private val value: Boolean) : Comparabl
      * this function does not perform short-circuit evaluation. Both `this` and [other] will always be evaluated.
      */
     @WasmOp(WasmOp.I32_AND)
+    @kotlin.internal.IntrinsicConstEvaluation
     public infix fun and(other: Boolean): Boolean =
         implementedAsIntrinsic
 
@@ -35,6 +37,7 @@ public class Boolean private constructor(private val value: Boolean) : Comparabl
      * this function does not perform short-circuit evaluation. Both `this` and [other] will always be evaluated.
      */
     @WasmOp(WasmOp.I32_OR)
+    @kotlin.internal.IntrinsicConstEvaluation
     public infix fun or(other: Boolean): Boolean =
         implementedAsIntrinsic
 
@@ -42,18 +45,22 @@ public class Boolean private constructor(private val value: Boolean) : Comparabl
      * Performs a logical `xor` operation between this Boolean and the [other] one.
      */
     @WasmOp(WasmOp.I32_XOR)
+    @kotlin.internal.IntrinsicConstEvaluation
     public infix fun xor(other: Boolean): Boolean =
         implementedAsIntrinsic
 
+    @kotlin.internal.IntrinsicConstEvaluation
     public override fun compareTo(other: Boolean): Int =
         wasm_i32_compareTo(this.toInt(), other.toInt())
 
+    @kotlin.internal.IntrinsicConstEvaluation
     override fun toString(): String =
         if (this) "true" else "false"
 
     override fun hashCode(): Int =
         toInt()
 
+    @kotlin.internal.IntrinsicConstEvaluation
     override fun equals(other: Any?): Boolean {
         return if (other !is Boolean) {
             false

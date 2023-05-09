@@ -1,4 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
 interface Base {
     val x: Int
 }

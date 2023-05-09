@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.cli.common
 import com.intellij.ide.highlighter.JavaFileType
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.ManualLanguageFeatureSetting
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -19,10 +20,12 @@ import org.jetbrains.kotlin.utils.KotlinPathsFromHomeDir
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 
-fun <A : CommonCompilerArguments> CompilerConfiguration.setupCommonArguments(
-    arguments: A,
+fun CompilerConfiguration.setupCommonArguments(
+    arguments: CommonCompilerArguments,
     createMetadataVersion: ((IntArray) -> BinaryVersion)? = null
 ) {
+    val messageCollector = getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
+
     put(CommonConfigurationKeys.DISABLE_INLINE, arguments.noInline)
     put(CommonConfigurationKeys.USE_FIR_EXTENDED_CHECKERS, arguments.useFirExtendedCheckers)
     put(CommonConfigurationKeys.EXPECT_ACTUAL_LINKER, arguments.expectActualLinker)
@@ -35,7 +38,6 @@ fun <A : CommonCompilerArguments> CompilerConfiguration.setupCommonArguments(
     val metadataVersionString = arguments.metadataVersion
     if (metadataVersionString != null) {
         val versionArray = BinaryVersion.parseVersionArray(metadataVersionString)
-        val messageCollector = getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         when {
             versionArray == null -> messageCollector.report(
                 CompilerMessageSeverity.ERROR, "Invalid metadata version: $metadataVersionString", null
@@ -45,6 +47,7 @@ fun <A : CommonCompilerArguments> CompilerConfiguration.setupCommonArguments(
         }
     }
 
+    switchToFallbackModeIfNecessary(arguments, messageCollector)
     setupLanguageVersionSettings(arguments)
 
     val usesK2 = arguments.useK2 || languageVersionSettings.languageVersion.usesK2
@@ -53,7 +56,30 @@ fun <A : CommonCompilerArguments> CompilerConfiguration.setupCommonArguments(
     buildHmppModuleStructure(arguments)?.let { put(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE, it) }
 }
 
-fun <A : CommonCompilerArguments> CompilerConfiguration.setupLanguageVersionSettings(arguments: A) {
+fun switchToFallbackModeIfNecessary(arguments: CommonCompilerArguments, messageCollector: MessageCollector) {
+    val isK2 = arguments.useK2 || (arguments.languageVersion?.startsWith('2') ?: (LanguageVersion.LATEST_STABLE >= LanguageVersion.KOTLIN_2_0))
+    if (isK2) {
+        val isKaptUsed = arguments.pluginOptions?.any { it.startsWith("plugin:org.jetbrains.kotlin.kapt3") } == true
+        if (isKaptUsed) {
+            if (!arguments.suppressVersionWarnings) {
+                messageCollector.report(
+                    CompilerMessageSeverity.STRONG_WARNING,
+                    "Kapt currently doesn't support language version 2.0+.\nFalling back to 1.9."
+                )
+            }
+            arguments.languageVersion = LanguageVersion.KOTLIN_1_9.versionString
+            if (arguments.apiVersion?.startsWith("2") == true) {
+                arguments.apiVersion = ApiVersion.KOTLIN_1_9.versionString
+            }
+            arguments.useK2 = false
+            arguments.skipMetadataVersionCheck = true
+            arguments.skipPrereleaseCheck = true
+            (arguments as? K2JVMCompilerArguments)?.allowUnstableDependencies = true
+        }
+    }
+}
+
+fun CompilerConfiguration.setupLanguageVersionSettings(arguments: CommonCompilerArguments) {
     languageVersionSettings = arguments.toLanguageVersionSettings(getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY))
 }
 
@@ -79,7 +105,7 @@ fun computeKotlinPaths(messageCollector: MessageCollector, arguments: CommonComp
     }
 }
 
-fun <A : CommonToolArguments> MessageCollector.reportArgumentParseProblems(arguments: A) {
+fun MessageCollector.reportArgumentParseProblems(arguments: CommonToolArguments) {
     val errors = arguments.errors ?: return
     for (flag in errors.unknownExtraFlags) {
         report(CompilerMessageSeverity.STRONG_WARNING, "Flag is not supported by this version of the compiler: $flag")
@@ -107,7 +133,7 @@ fun <A : CommonToolArguments> MessageCollector.reportArgumentParseProblems(argum
     }
 }
 
-private fun <A : CommonToolArguments> MessageCollector.reportUnsafeInternalArgumentsIfAny(arguments: A) {
+private fun MessageCollector.reportUnsafeInternalArgumentsIfAny(arguments: CommonToolArguments) {
     val unsafeArguments = arguments.internalArguments.filterNot {
         // -XXLanguage which turns on BUG_FIX considered safe
         it is ManualLanguageFeatureSetting && it.languageFeature.kind == LanguageFeature.Kind.BUG_FIX && it.state == LanguageFeature.State.ENABLED

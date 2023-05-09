@@ -11,8 +11,10 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirDependenci
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirJavaFacadeForBinaries
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.JvmStubBasedFirDeserializedSymbolProvider
 import org.jetbrains.kotlin.analysis.providers.createPackagePartProvider
 import org.jetbrains.kotlin.fir.BuiltinTypes
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider
 import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesProvider
@@ -20,6 +22,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.load.java.createJavaClassFinder
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 internal object LLFirLibraryProviderFactory {
     fun createLibraryProvidersForScope(
@@ -31,21 +34,9 @@ internal object LLFirLibraryProviderFactory {
         scope: GlobalSearchScope,
         builtinSymbolProvider: FirSymbolProvider,
     ): LLFirModuleWithDependenciesSymbolProvider {
-        val moduleDataProvider = SingleModuleDataProvider(moduleData)
-        val packagePartProvider = project.createPackagePartProvider(scope)
         return LLFirModuleWithDependenciesSymbolProvider(
             session,
-            providers = listOfNotNull(
-                JvmClassFileBasedSymbolProvider(
-                    session,
-                    moduleDataProvider,
-                    kotlinScopeProvider,
-                    packagePartProvider,
-                    VirtualFileFinderFactory.getInstance(project).create(scope),
-                    LLFirJavaFacadeForBinaries(session, builtinTypes, project.createJavaClassFinder(scope), moduleDataProvider)
-                ),
-                OptionalAnnotationClassesProvider.createIfNeeded(session, moduleDataProvider, kotlinScopeProvider, packagePartProvider),
-            ),
+            providers = createLibraryProvidersForAllProjectLibraries(session, moduleData, kotlinScopeProvider, project, builtinTypes, scope),
             LLFirDependenciesSymbolProvider(session, listOf(builtinSymbolProvider)),
         )
     }
@@ -60,16 +51,22 @@ internal object LLFirLibraryProviderFactory {
     ): List<FirSymbolProvider> {
         val moduleDataProvider = SingleModuleDataProvider(moduleData)
         val packagePartProvider = project.createPackagePartProvider(scope)
-        return listOfNotNull(
-            JvmClassFileBasedSymbolProvider(
-                session,
-                moduleDataProvider,
-                kotlinScopeProvider,
-                packagePartProvider,
-                VirtualFileFinderFactory.getInstance(project).create(scope),
-                LLFirJavaFacadeForBinaries(session, builtinTypes, project.createJavaClassFinder(scope), moduleDataProvider)
-            ),
-            OptionalAnnotationClassesProvider.createIfNeeded(session, moduleDataProvider, kotlinScopeProvider, packagePartProvider),
-        )
+        return buildList {
+            val firJavaFacade = LLFirJavaFacadeForBinaries(session, builtinTypes, project.createJavaClassFinder(scope), moduleDataProvider)
+            val service = project.getService(JvmFirDeserializedSymbolProviderFactory::class.java)
+            addAll(
+                service.createJvmFirDeserializedSymbolProviders(
+                    project,
+                    session,
+                    moduleData,
+                    kotlinScopeProvider,
+                    moduleDataProvider,
+                    firJavaFacade,
+                    packagePartProvider,
+                    scope
+                )
+            )
+            addIfNotNull(OptionalAnnotationClassesProvider.createIfNeeded(session, moduleDataProvider, kotlinScopeProvider, packagePartProvider))
+        }
     }
 }

@@ -123,6 +123,9 @@ object FirExpectActualResolver {
         if (!equalBy(expectClassSymbol, actualClass) { listOf(it.isCompanion, it.isInner, it.isInline /*|| it.isValue*/) }) {
             return ExpectActualCompatibility.Incompatible.ClassModifiers
         }
+        if (expectClassSymbol.isFun && !actualClass.isFun) {
+            return ExpectActualCompatibility.Incompatible.FunInterfaceModifier
+        }
 
         val expectTypeParameterSymbols = expectClassSymbol.typeParameterSymbols
         val actualTypeParameterSymbols = actualClass.typeParameterSymbols
@@ -520,8 +523,21 @@ object FirExpectActualResolver {
             !equalBy(expected, actual) { p -> p.isVar } -> ExpectActualCompatibility.Incompatible.PropertyKind
             !equalBy(expected, actual) { p -> p.isLateInit } -> ExpectActualCompatibility.Incompatible.PropertyLateinitModifier
             expected.isConst && !actual.isConst -> ExpectActualCompatibility.Incompatible.PropertyConstModifier
+            !arePropertySettersWithCompatibleVisibilities(expected, actual) -> ExpectActualCompatibility.Incompatible.PropertySetterVisibility
             else -> ExpectActualCompatibility.Compatible
         }
+    }
+
+    private fun arePropertySettersWithCompatibleVisibilities(
+        expected: FirPropertySymbol,
+        actual: FirPropertySymbol,
+    ): Boolean {
+        val expectedSetterStatus = expected.setterSymbol?.resolvedStatus
+        val actualSetterStatus = actual.setterSymbol?.resolvedStatus
+        if (expectedSetterStatus == null || actualSetterStatus == null) {
+            return true
+        }
+        return areDeclarationsWithCompatibleVisibilities(expectedSetterStatus, actualSetterStatus)
     }
 
     // ---------------------------------------- Utils ----------------------------------------

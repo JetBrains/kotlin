@@ -533,7 +533,8 @@ private fun ResolutionCandidate.resolveKotlinArgument(
             this,
             receiverInfo,
             convertedArgument?.unknownIntegerType?.unwrap(),
-            inferenceSession
+            inferenceSession,
+            selectorCall = receiverInfo.selectorCall
         )
 
         addResolvedKtPrimitive(resolvedAtom)
@@ -647,7 +648,7 @@ private fun ResolutionCandidate.getReceiverArgumentWithConstraintIfCompatible(
     val expectedTypeUnprepared = argument.getExpectedType(parameter, callComponents.languageVersionSettings)
     val expectedType = prepareExpectedType(expectedTypeUnprepared)
     val argumentType = captureFromTypeParameterUpperBoundIfNeeded(argument.receiver.stableType, expectedType)
-    val position = ReceiverConstraintPositionImpl(argument)
+    val position = ReceiverConstraintPositionImpl(argument, resolvedCall.atom)
     return if (csBuilder.isSubtypeConstraintCompatible(argumentType, expectedType, position))
         ApplicableContextReceiverArgumentWithConstraint(argument, argumentType, expectedType, position)
     else null
@@ -732,7 +733,8 @@ internal object CheckReceivers : ResolutionPart() {
         val receiverInfo = ReceiverInfo(
             isReceiver = true,
             shouldReportUnsafeCall = implicitInvokeState != ImplicitInvokeCheckStatus.UNSAFE_INVOKE_REPORTED,
-            reportUnsafeCallAsUnsafeImplicitInvoke = implicitInvokeState == ImplicitInvokeCheckStatus.INVOKE_ON_NOT_NULL_VARIABLE
+            reportUnsafeCallAsUnsafeImplicitInvoke = implicitInvokeState == ImplicitInvokeCheckStatus.INVOKE_ON_NOT_NULL_VARIABLE,
+            selectorCall = resolvedCall.atom
         )
 
         resolveKotlinArgument(receiverArgument, receiverParameter, receiverInfo)

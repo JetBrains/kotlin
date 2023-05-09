@@ -491,9 +491,10 @@ internal class DescriptorRendererImpl(
         return (defaultList + argumentList).sorted()
     }
 
-    private fun renderConstant(value: ConstantValue<*>): String {
+    private fun renderConstant(value: ConstantValue<*>): String? {
+        options.propertyConstantRenderer?.let { return it.invoke(value) }
         return when (value) {
-            is ArrayValue -> value.value.joinToString(", ", "{", "}") { renderConstant(it) }
+            is ArrayValue -> value.value.mapNotNull { renderConstant(it) }.joinToString(", ", "{", "}")
             is AnnotationValue -> renderAnnotation(value.value).removePrefix("@")
             is KClassValue -> when (val classValue = value.value) {
                 is KClassValue.Value.LocalClass -> "${classValue.type}::class"
@@ -986,7 +987,8 @@ internal class DescriptorRendererImpl(
     private fun renderInitializer(variable: VariableDescriptor, builder: StringBuilder) {
         if (includePropertyConstant) {
             variable.compileTimeInitializer?.let { constant ->
-                builder.append(" = ").append(escape(renderConstant(constant)))
+                val renderedConstant = renderConstant(constant)
+                if (renderedConstant != null) builder.append(" = ").append(escape(renderedConstant))
             }
         }
     }

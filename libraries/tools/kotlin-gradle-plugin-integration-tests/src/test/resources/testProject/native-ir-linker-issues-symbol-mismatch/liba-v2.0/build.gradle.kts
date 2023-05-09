@@ -1,5 +1,5 @@
 plugins {
-    id("org.jetbrains.kotlin.multiplatform").version("<pluginMarkerVersion>")
+    id("org.jetbrains.kotlin.multiplatform")
     id("maven-publish")
 }
 
@@ -18,7 +18,7 @@ kotlin {
 publishing {
     repositories {
         maven {
-            url = uri("<LocalRepo>")
+            url = uri("<localRepo>")
         }
     }
 }

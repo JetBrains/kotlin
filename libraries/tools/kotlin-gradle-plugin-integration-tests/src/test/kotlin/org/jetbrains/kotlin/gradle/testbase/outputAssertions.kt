@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.testbase
 
+import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.testkit.runner.BuildResult
 
@@ -135,7 +136,14 @@ fun BuildResult.assertOutputContainsExactlyTimes(
     expected: String,
     expectedCount: Int = 1
 ) {
-    val occurrenceCount = expected.toRegex(RegexOption.LITERAL).findAll(output).count()
+    assertOutputContainsExactlyTimes(expected.toRegex(RegexOption.LITERAL), expectedCount)
+}
+
+fun BuildResult.assertOutputContainsExactlyTimes(
+    expected: Regex,
+    expectedCount: Int = 1
+) {
+    val occurrenceCount = expected.findAll(output).count()
     assert(occurrenceCount == expectedCount) {
         printBuildOutput()
 
@@ -214,4 +222,89 @@ fun BuildResult.assertDeprecationWarningsArePresent(warningMode: WarningMode) {
         "[GradleWarningsDetectorPlugin] Some deprecation warnings were found during this build.",
         getWarningModeChangeAdvice(warningMode)
     )
+}
+
+/**
+ * This function searches for a given parameter in a multi-line output string and returns its value.
+ *
+ * The output string is assumed to be in the form of key-value pairs separated by an equal sign (‘=’) on each line.
+ *
+ * If the specified parameter name is found at the end of a key, the corresponding value is returned.
+ * If the parameter is not found, the function returns null.
+ */
+fun findParameterInOutput(name: String, output: String): String? =
+    output.lineSequence().mapNotNull { line ->
+        val (key, value) = line.split('=', limit = 2).takeIf { it.size == 2 } ?: return@mapNotNull null
+        if (key.endsWith(name)) value else null
+    }.firstOrNull()
+
+fun BuildResult.assertCompilerArgument(
+    taskPath: String,
+    expectedArgument: String,
+) {
+    val taskOutput = getOutputForTask(taskPath)
+    val compilerArguments = taskOutput.lines().first {
+        it.contains("Kotlin compiler args:")
+    }.substringAfter("Kotlin compiler args:")
+
+    assert(compilerArguments.contains(expectedArgument)) {
+        printBuildOutput()
+
+        "$taskPath task compiler arguments don't contain $expectedArgument. Actual content: $compilerArguments"
+    }
+}
+
+/**
+ * Asserts command line arguments of the given K/N compiler for given tasks' paths
+ *
+ * Note: Log level of output must be set to [LogLevel.DEBUG].
+ *
+ * @param tasksPaths tasks' paths, for which command line arguments should be checked with give assertions
+ * @param toolName name of build tool
+ * @param assertions assertions, with will be applied to each command line arguments of each given task
+ */
+fun BuildResult.assertNativeTasksCommandLineArguments(
+    vararg tasksPaths: String,
+    toolName: NativeToolKind = NativeToolKind.KONANC,
+    assertions: (List<String>) -> Unit
+) = tasksPaths.forEach { taskPath ->
+    assertions(extractNativeCompilerCommandLineArguments(getOutputForTask(taskPath), toolName))
+}
+
+/**
+ * Asserts that the given list of command line arguments does not contain any of the expected arguments.
+ *
+ * @param expectedArgs the list of expected arguments
+ * @param commandLineArguments the list of actual command line arguments
+ * @throws AssertionError if any of the expected arguments are found in the actual arguments list
+ */
+fun BuildResult.assertCommandLineArgumentsDoNotContain(
+    vararg expectedArgs: String,
+    commandLineArguments: List<String>
+) {
+    expectedArgs.forEach {
+        assert(!commandLineArguments.contains(it)) {
+            printBuildOutput()
+            "There is unexpected ${it} in actual command line arguments are: ${commandLineArguments}"
+        }
+    }
+}
+
+/**
+ * Asserts that the given list of command line arguments contains all the expected arguments.
+ *
+ * @param expectedArgs the list of expected arguments
+ * @param commandLineArguments the list of actual command line arguments
+ * @throws AssertionError if any of the expected arguments are missing from the actual arguments list
+ */
+fun BuildResult.assertCommandLineArgumentsContain(
+    vararg expectedArgs: String,
+    commandLineArguments: List<String>
+) {
+    expectedArgs.forEach {
+        assert(commandLineArguments.contains(it)) {
+            printBuildOutput()
+            "There is no ${it} in actual command line arguments are: ${commandLineArguments}"
+        }
+    }
 }

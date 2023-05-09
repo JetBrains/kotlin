@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.asJava.classes
 
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.*
@@ -187,7 +186,7 @@ interface LightClassInheritanceHelper {
 
     companion object {
         fun getService(project: Project): LightClassInheritanceHelper =
-            ServiceManager.getService(project, LightClassInheritanceHelper::class.java) ?: NoHelp
+            project.getService(LightClassInheritanceHelper::class.java) ?: NoHelp
     }
 }
 

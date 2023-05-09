@@ -55,8 +55,6 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
 
     val ANNOTATIONS by object : DiagnosticGroup("annotations") {
         val STRICTFP_ON_CLASS by error<KtAnnotationEntry>()
-        val VOLATILE_ON_VALUE by error<KtAnnotationEntry>()
-        val VOLATILE_ON_DELEGATE by error<KtAnnotationEntry>()
         val SYNCHRONIZED_ON_ABSTRACT by error<KtAnnotationEntry>()
         val SYNCHRONIZED_IN_INTERFACE by error<KtAnnotationEntry>()
         val SYNCHRONIZED_ON_INLINE by warning<KtAnnotationEntry>()
@@ -110,17 +108,14 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
     }
 
     val JVM_DEFAULT by object : DiagnosticGroup("JVM Default") {
-        val JVM_DEFAULT_NOT_IN_INTERFACE by error<PsiElement>()
         val JVM_DEFAULT_IN_JVM6_TARGET by error<PsiElement> {
             parameter<String>("annotation")
         }
-        val JVM_DEFAULT_REQUIRED_FOR_OVERRIDE by error<KtDeclaration>(PositioningStrategy.DECLARATION_SIGNATURE)
         val JVM_DEFAULT_IN_DECLARATION by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<String>("annotation")
         }
         val JVM_DEFAULT_WITH_COMPATIBILITY_IN_DECLARATION by error<KtElement>()
         val JVM_DEFAULT_WITH_COMPATIBILITY_NOT_ON_INTERFACE by error<KtElement>()
-        val NON_JVM_DEFAULT_OVERRIDES_JAVA_DEFAULT by warning<KtDeclaration>(PositioningStrategy.DECLARATION_SIGNATURE)
     }
 
     val EXTERNAL_DECLARATION by object : DiagnosticGroup("External Declaration") {
@@ -190,9 +185,5 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
             PositioningStrategy.SPREAD_OPERATOR
         )
         val JAVA_SAM_INTERFACE_CONSTRUCTOR_REFERENCE by error<PsiElement>()
-        val JAVA_SHADOWED_PROTECTED_FIELD_REFERENCE by error<PsiElement> {
-            parameter<ClassId>("containerClass")
-            parameter<ClassId>("shadowingClass")
-        }
     }
 }

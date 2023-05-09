@@ -79,9 +79,10 @@ abstract class AbstractJsTestChecker {
         testFunctionName: String,
         testFunctionArgs: String,
         expectedResult: String,
-        withModuleSystem: Boolean
+        withModuleSystem: Boolean,
+        entryModulePath: String? = null
     ) {
-        val actualResult = run(files, testModuleName, testPackageName, testFunctionName, testFunctionArgs, withModuleSystem)
+        val actualResult = run(files, testModuleName, testPackageName, testFunctionName, testFunctionArgs, withModuleSystem, entryModulePath)
         Assert.assertEquals(expectedResult, actualResult.normalize())
     }
 

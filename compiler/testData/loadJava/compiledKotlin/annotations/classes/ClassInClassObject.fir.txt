@@ -1,0 +1,20 @@
+public final annotation class Anno : R|kotlin/Annotation| {
+    public constructor(): R|test/Anno|
+
+}
+
+public final class Class : R|kotlin/Any| {
+    public constructor(): R|test/Class|
+
+    public final companion object Companion : R|kotlin/Any| {
+        private constructor(): R|test/Class.Companion|
+
+        @R|test/Anno|() public final class Nested : R|kotlin/Any| {
+            public constructor(): R|test/Class.Companion.Nested|
+
+        }
+
+    }
+
+}
+

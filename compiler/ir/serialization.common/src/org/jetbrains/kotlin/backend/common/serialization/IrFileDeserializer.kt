@@ -74,6 +74,7 @@ class FileDeserializationState(
             ::addIdSignature,
             linker::handleExpectActualMapping,
             symbolProcessor = linker.symbolProcessor,
+            internationService = linker.internationService
         ) { idSignature, symbolKind ->
             linker.deserializeOrReturnUnboundIrSymbolIfPartialLinkageEnabled(idSignature, symbolKind, moduleDeserializer)
         }
@@ -91,7 +92,8 @@ class FileDeserializationState(
         linker.fakeOverrideBuilder.platformSpecificClassFilter,
         linker.fakeOverrideBuilder,
         compatibilityMode = moduleDeserializer.compatibilityMode,
-        linker.partialLinkageSupport.isEnabled
+        linker.partialLinkageSupport.isEnabled,
+        internationService = linker.internationService
     )
 
     val fileDeserializer = IrFileDeserializer(file, fileReader, fileProto, symbolDeserializer, declarationDeserializer)

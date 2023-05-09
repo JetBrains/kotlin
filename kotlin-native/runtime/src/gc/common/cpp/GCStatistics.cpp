@@ -14,6 +14,7 @@
 #include <cinttypes>
 #include <mutex>
 
+using namespace kotlin;
 
 extern "C" {
 void Kotlin_Internal_GC_GCInfoBuilder_setEpoch(KRef thiz, KLong value);
@@ -25,26 +26,41 @@ void Kotlin_Internal_GC_GCInfoBuilder_setPostGcCleanupTime(KRef thiz, KLong valu
 void Kotlin_Internal_GC_GCInfoBuilder_setRootSet(KRef thiz,
                                                  KLong threadLocalReferences, KLong stackReferences,
                                                  KLong globalReferences, KLong stableReferences);
-void Kotlin_Internal_GC_GCInfoBuilder_setMemoryUsageBefore(KRef thiz, KNativePtr name, KLong objectsCount, KLong totalObjectsSize);
-void Kotlin_Internal_GC_GCInfoBuilder_setMemoryUsageAfter(KRef thiz, KNativePtr name, KLong objectsCount, KLong totalObjectsSize);
+void Kotlin_Internal_GC_GCInfoBuilder_setMarkStats(KRef thiz, KLong markedCount);
+void Kotlin_Internal_GC_GCInfoBuilder_setSweepStats(KRef thiz, KNativePtr name, KLong sweptCount, KLong keptCount);
+void Kotlin_Internal_GC_GCInfoBuilder_setMemoryUsageBefore(KRef thiz, KNativePtr name, KLong sizeBytes);
+void Kotlin_Internal_GC_GCInfoBuilder_setMemoryUsageAfter(KRef thiz, KNativePtr name, KLong sizeBytes);
 }
 
 namespace {
 
+constexpr KNativePtr heapPoolKey = const_cast<KNativePtr>(static_cast<const void*>("heap"));
+constexpr KNativePtr extraPoolKey = const_cast<KNativePtr>(static_cast<const void*>("extra"));
+
+struct MemoryUsage {
+    uint64_t sizeBytes;
+};
+
 struct MemoryUsageMap {
-    std::optional<kotlin::gc::MemoryUsage> heap;
-    std::optional<kotlin::gc::MemoryUsage> extra;
+    std::optional<MemoryUsage> heap;
+
+    void build(KRef builder, void (*add)(KRef, KNativePtr, KLong)) {
+        if (heap) {
+            add(builder, heapPoolKey, static_cast<KLong>(heap->sizeBytes));
+        }
+    }
+};
+
+struct SweepStatsMap {
+    std::optional<gc::SweepStats> heap;
+    std::optional<gc::SweepStats> extra;
 
     void build(KRef builder, void (*add)(KRef, KNativePtr, KLong, KLong)) {
         if (heap) {
-            add(builder, const_cast<KNativePtr>(static_cast<const void*>("heap")),
-                static_cast<KLong>(heap->objectsCount),
-                static_cast<KLong>(heap->totalObjectsSize));
+            add(builder, heapPoolKey, static_cast<KLong>(heap->keptCount), static_cast<KLong>(heap->sweptCount));
         }
         if (extra) {
-            add(builder, const_cast<KNativePtr>(static_cast<const void*>("extra")),
-                static_cast<KLong>(extra->objectsCount),
-                static_cast<KLong>(extra->totalObjectsSize));
+            add(builder, extraPoolKey, static_cast<KLong>(extra->keptCount), static_cast<KLong>(extra->sweptCount));
         }
     }
 };
@@ -65,7 +81,8 @@ struct GCInfo {
     std::optional<KLong> pauseEndTime;
     std::optional<KLong> finalizersDoneTime;
     std::optional<RootSetStatistics> rootSet;
-    std::optional<kotlin::gc::MemoryUsage> markStats;
+    std::optional<kotlin::gc::MarkStats> markStats;
+    SweepStatsMap sweepStats;
     MemoryUsageMap memoryUsageBefore;
     MemoryUsageMap memoryUsageAfter;
 
@@ -81,6 +98,9 @@ struct GCInfo {
             Kotlin_Internal_GC_GCInfoBuilder_setRootSet(
                     builder, rootSet->threadLocalReferences, rootSet->stackReferences, rootSet->globalReferences,
                     rootSet->stableReferences);
+        if (markStats)
+            Kotlin_Internal_GC_GCInfoBuilder_setMarkStats(builder, markStats->markedCount);
+        sweepStats.build(builder, Kotlin_Internal_GC_GCInfoBuilder_setSweepStats);
         memoryUsageBefore.build(builder, Kotlin_Internal_GC_GCInfoBuilder_setMemoryUsageBefore);
         memoryUsageAfter.build(builder, Kotlin_Internal_GC_GCInfoBuilder_setMemoryUsageAfter);
     }
@@ -95,6 +115,12 @@ GCInfo* statByEpoch(uint64_t epoch) {
     if (current.epoch == epoch) return &current;
     if (last.epoch == epoch) return &last;
     return nullptr;
+}
+
+MemoryUsage currentHeapUsage() noexcept {
+    return MemoryUsage{
+            mm::GlobalData::Instance().gc().GetTotalHeapObjectsSizeBytes(),
+    };
 }
 
 } // namespace
@@ -122,7 +148,7 @@ GCHandle GCHandle::create(uint64_t epoch) {
     if (current.epoch) {
         last = current;
         current = {};
-        RuntimeLogWarning({kTagGC}, "Starting new GC epoch, while previous is not finished\n");
+        GCLogWarning(epoch, "Starting new GC epoch, while previous is not finished");
     }
     current.epoch = static_cast<KLong>(epoch);
     current.startTime = static_cast<KLong>(konan::getTimeNanos());
@@ -131,12 +157,23 @@ GCHandle GCHandle::create(uint64_t epoch) {
     } else {
         GCLogInfo(epoch, "Started.");
     }
+    current.memoryUsageBefore.heap = currentHeapUsage();
     return getByEpoch(epoch);
 }
 GCHandle GCHandle::createFakeForTests() { return getByEpoch(std::numeric_limits<uint64_t>::max()); }
 GCHandle GCHandle::getByEpoch(uint64_t epoch) {
     return GCHandle{epoch};
 }
+
+// static
+std::optional<gc::GCHandle> gc::GCHandle::currentEpoch() noexcept {
+    std::lock_guard guard(lock);
+    if (auto epoch = current.epoch) {
+        return GCHandle::getByEpoch(*epoch);
+    }
+    return std::nullopt;
+}
+
 void GCHandle::ClearForTests() {
     std::lock_guard guard(lock);
     current = {};
@@ -146,6 +183,7 @@ void GCHandle::finished() {
     std::lock_guard guard(lock);
     if (auto* stat = statByEpoch(epoch_)) {
         stat->endTime = static_cast<KLong>(konan::getTimeNanos());
+        stat->memoryUsageAfter.heap = currentHeapUsage();
         if (stat->rootSet) {
             GCLogInfo(
                     epoch_,
@@ -157,6 +195,28 @@ void GCHandle::finished() {
                     "In total %" PRIu64 " roots.",
                     stat->rootSet->threadLocalReferences, stat->rootSet->stackReferences, stat->rootSet->globalReferences,
                     stat->rootSet->stableReferences, stat->rootSet->total());
+        }
+        if (stat->markStats) {
+            GCLogInfo(epoch_, "Mark: %" PRIu64 " objects.", stat->markStats->markedCount);
+        }
+        if (auto stats = stat->sweepStats.extra) {
+            GCLogInfo(
+                    epoch_, "Sweep extra objects: swept %" PRIu64 " objects, kept %" PRIu64 " objects",
+                    stats->sweptCount, stats->keptCount);
+        }
+        if (auto stats = stat->sweepStats.heap) {
+            GCLogInfo(
+                    epoch_, "Sweep: swept %" PRIu64 " objects, kept %" PRIu64 " objects", stats->sweptCount,
+                    stats->keptCount);
+        }
+        if (stat->memoryUsageBefore.heap && stat->memoryUsageAfter.heap) {
+            GCLogInfo(
+                    epoch_, "Heap memory usage: before %" PRIu64 " bytes, after %" PRIu64 " bytes", stat->memoryUsageBefore.heap->sizeBytes,
+                    stat->memoryUsageAfter.heap->sizeBytes);
+        }
+        if (stat->pauseStartTime && stat->pauseEndTime) {
+            auto time = (*stat->pauseEndTime - *stat->pauseStartTime) / 1000;
+            GCLogInfo(epoch_, "Mutators pause time: %" PRIu64 " microseconds.", time);
         }
         if (stat->startTime) {
             auto time = (*current.endTime - *current.startTime) / 1000;
@@ -171,7 +231,7 @@ void GCHandle::finished() {
 }
 void GCHandle::suspensionRequested() {
     std::lock_guard guard(lock);
-    GCLogDebug(epoch_, "Requested thread suspension by thread %d", konan::currentThreadId());
+    GCLogDebug(epoch_, "Requested thread suspension");
     if (auto* stat = statByEpoch(epoch_)) {
         stat->pauseStartTime = static_cast<KLong>(konan::getTimeNanos());
     }
@@ -181,8 +241,17 @@ void GCHandle::threadsAreSuspended() {
     if (auto* stat = statByEpoch(epoch_)) {
         if (stat->pauseStartTime) {
             auto time = (konan::getTimeNanos() - *stat->pauseStartTime) / 1000;
-            GCLogInfo(epoch_, "Suspended all threads in %" PRIu64 " microseconds", time);
+            GCLogDebug(epoch_, "Suspended all threads in %" PRIu64 " microseconds", time);
             return;
+        }
+    }
+    if (last.epoch) {
+        // Assisted sweeping from the last epoch must be completed before the check can be run.
+        if (last.markStats && last.sweepStats.heap) {
+            RuntimeAssert(
+                    last.markStats->markedCount == last.sweepStats.heap->keptCount,
+                    "Mismatch in statistics: marked %" PRId64 " objects, while %" PRId64 " are alive after sweep",
+                    last.markStats->markedCount, last.sweepStats.heap->keptCount);
         }
     }
 }
@@ -192,7 +261,7 @@ void GCHandle::threadsAreResumed() {
         stat->pauseEndTime = static_cast<KLong>(konan::getTimeNanos());
         if (stat->pauseStartTime) {
             auto time = (*stat->pauseEndTime - *stat->pauseStartTime) / 1000;
-            GCLogInfo(epoch_, "Resume all threads. Total pause time is %" PRId64 " microseconds.", time);
+            GCLogDebug(epoch_, "Resume all threads. Total pause time is %" PRId64 " microseconds.", time);
             return;
         }
     }
@@ -205,12 +274,13 @@ void GCHandle::finalizersDone() {
             auto time = (*stat->finalizersDoneTime - *stat->endTime) / 1000;
             GCLogInfo(epoch_, "Finalization is done in %" PRId64 " microseconds after epoch end.", time);
             return;
+        } else {
+            GCLogInfo(epoch_, "Finalization is done.");
         }
     }
-    GCLogInfo(epoch_, "Finalization is done.");
 }
 void GCHandle::finalizersScheduled(uint64_t finalizersCount) {
-    GCLogInfo(epoch_, "Finalization is scheduled for %" PRIu64 " objects.", finalizersCount);
+    GCLogDebug(epoch_, "Finalization is scheduled for %" PRIu64 " objects.", finalizersCount);
 }
 void GCHandle::threadRootSetCollected(mm::ThreadData &threadData, uint64_t threadLocalReferences, uint64_t stackReferences) {
     std::lock_guard guard(lock);
@@ -233,115 +303,73 @@ void GCHandle::globalRootSetCollected(uint64_t globalReferences, uint64_t stable
     }
 }
 
-
-void GCHandle::heapUsageBefore(MemoryUsage usage) {
-    std::lock_guard guard(lock);
-    if (auto* stat = statByEpoch(epoch_)) {
-        stat->memoryUsageBefore.heap = usage;
-    }
-}
-
-void GCHandle::marked(kotlin::gc::MemoryUsage usage) {
+void GCHandle::marked(kotlin::gc::MarkStats stats) {
     std::lock_guard guard(lock);
     if (auto* stat = statByEpoch(epoch_)) {
         if (!stat->markStats) {
-            stat->markStats = MemoryUsage{0, 0};
+            stat->markStats = MarkStats{};
         }
-        stat->markStats->totalObjectsSize += usage.totalObjectsSize;
-        stat->markStats->objectsCount += usage.objectsCount;
+        stat->markStats->markedSizeBytes += stats.markedSizeBytes;
+        stat->markStats->markedCount += stats.markedCount;
     }
 }
 
-MemoryUsage GCHandle::getMarked() {
+MarkStats GCHandle::getMarked() {
     std::lock_guard guard(lock);
     if (auto* stat = statByEpoch(epoch_)) {
         if (stat->markStats) {
             return *stat->markStats;
         }
     }
-    return MemoryUsage{0, 0};
+    return MarkStats{};
 }
 
-void GCHandle::heapUsageAfter(MemoryUsage usage) {
+void GCHandle::swept(gc::SweepStats stats) noexcept {
     std::lock_guard guard(lock);
     if (auto* stat = statByEpoch(epoch_)) {
-        stat->memoryUsageAfter.heap = usage;
-        if (stat->memoryUsageBefore.heap) {
-            GCLogInfo(
-                    epoch_,
-                    "Collected %" PRId64 " heap objects of total size %" PRId64 " bytes. "
-                    "%" PRId64 " heap objects of total size %" PRId64 " bytes are still alive.",
-                    stat->memoryUsageBefore.heap->objectsCount - stat->memoryUsageAfter.heap->objectsCount,
-                    stat->memoryUsageBefore.heap->totalObjectsSize - stat->memoryUsageAfter.heap->totalObjectsSize,
-                    stat->memoryUsageAfter.heap->objectsCount, stat->memoryUsageAfter.heap->totalObjectsSize);
+        auto& heap = stat->sweepStats.heap;
+        if (!heap) {
+            heap = gc::SweepStats{};
         }
-        if (stat->markStats) {
-            RuntimeAssert(
-                    stat->markStats->objectsCount == usage.objectsCount,
-                    "Mismatch in statistics: marked %" PRId64 " objects, while %" PRId64 " is alive after sweep",
-                    stat->markStats->objectsCount, usage.objectsCount);
-            RuntimeAssert(
-                    stat->markStats->totalObjectsSize == usage.totalObjectsSize,
-                    "Mismatch in statistics: total marked size is %" PRId64 " bytes, while %" PRId64 " bytes is alive after sweep",
-                    stat->markStats->totalObjectsSize, usage.totalObjectsSize);
-        }
+        heap->keptCount += stats.keptCount;
+        heap->sweptCount += stats.sweptCount;
     }
 }
 
-void GCHandle::extraObjectsUsageBefore(MemoryUsage usage) {
+void GCHandle::sweptExtraObjects(gc::SweepStats stats, uint64_t markedCount) noexcept {
     std::lock_guard guard(lock);
     if (auto* stat = statByEpoch(epoch_)) {
-        stat->memoryUsageBefore.extra = usage;
-    }
-}
-void GCHandle::extraObjectsUsageAfter(MemoryUsage usage) {
-    std::lock_guard guard(lock);
-    if (auto* stat = statByEpoch(epoch_)) {
-        stat->memoryUsageAfter.extra = usage;
-        if (stat->memoryUsageBefore.extra) {
-            GCLogInfo(
-                    epoch_,
-                    "Collected %" PRId64 " extra objects of total size %" PRId64 ". "
-                    "%" PRId64 " extra objects of total size %" PRId64 " are still alive.",
-                    stat->memoryUsageBefore.extra->objectsCount - stat->memoryUsageAfter.extra->objectsCount,
-                    stat->memoryUsageBefore.extra->totalObjectsSize - stat->memoryUsageAfter.extra->totalObjectsSize,
-                    stat->memoryUsageAfter.extra->objectsCount, stat->memoryUsageAfter.extra->totalObjectsSize);
+        auto& extra = stat->sweepStats.extra;
+        if (!extra) {
+            extra = gc::SweepStats{};
         }
+        extra->keptCount += stats.keptCount;
+        extra->sweptCount += stats.sweptCount;
+        RuntimeAssert(static_cast<bool>(stat->markStats), "Mark must have already happened");
+        stat->markStats->markedCount += markedCount;
     }
 }
 
-MemoryUsage GCHandle::GCSweepScope::getUsage() {
-    return MemoryUsage{
-            mm::GlobalData::Instance().gc().GetHeapObjectsCountUnsafe(),
-            mm::GlobalData::Instance().gc().GetTotalHeapObjectsSizeUnsafe(),
-    };
-}
-
-GCHandle::GCSweepScope::GCSweepScope(kotlin::gc::GCHandle& handle) :
-    handle_(handle) {
-    handle_.heapUsageBefore(getUsage());
-}
+GCHandle::GCSweepScope::GCSweepScope(kotlin::gc::GCHandle& handle) : handle_(handle) {}
 
 GCHandle::GCSweepScope::~GCSweepScope() {
-    GCLogDebug(handle_.getEpoch(), "Swept is done in %" PRIu64 " microseconds.", getStageTime());
-    handle_.heapUsageAfter(getUsage());
+    handle_.swept(stats_);
+    GCLogDebug(
+            handle_.getEpoch(),
+            "Collected %" PRId64 " heap objects in %" PRIu64 " microseconds. "
+            "%" PRId64 " heap objects are kept alive.",
+            stats_.sweptCount, getStageTime(), stats_.keptCount);
 }
 
-MemoryUsage GCHandle::GCSweepExtraObjectsScope::getUsage() {
-    return MemoryUsage{
-            mm::GlobalData::Instance().gc().GetExtraObjectsCountUnsafe(),
-            mm::GlobalData::Instance().gc().GetTotalExtraObjectsSizeUnsafe(),
-    };
-}
-
-GCHandle::GCSweepExtraObjectsScope::GCSweepExtraObjectsScope(kotlin::gc::GCHandle& handle) :
-    handle_(handle) {
-    handle_.extraObjectsUsageBefore(getUsage());
-}
+GCHandle::GCSweepExtraObjectsScope::GCSweepExtraObjectsScope(kotlin::gc::GCHandle& handle) : handle_(handle) {}
 
 GCHandle::GCSweepExtraObjectsScope::~GCSweepExtraObjectsScope() {
-    GCLogDebug(handle_.getEpoch(), "Swept extra objects is done in %" PRIu64 " microseconds", getStageTime());
-    handle_.extraObjectsUsageAfter(getUsage());
+    handle_.sweptExtraObjects(stats_, markedCount_);
+    GCLogDebug(
+            handle_.getEpoch(),
+            "Collected %" PRId64 " extra objects in %" PRIu64 " microseconds. "
+            "%" PRId64 " extra objects are kept alive.",
+            stats_.sweptCount, getStageTime(), stats_.keptCount);
 }
 
 GCHandle::GCGlobalRootSetScope::GCGlobalRootSetScope(kotlin::gc::GCHandle& handle) : handle_(handle) {}
@@ -364,10 +392,18 @@ GCHandle::GCThreadRootSetScope::~GCThreadRootSetScope(){
 GCHandle::GCMarkScope::GCMarkScope(kotlin::gc::GCHandle& handle) : handle_(handle){}
 
 GCHandle::GCMarkScope::~GCMarkScope() {
-    handle_.marked(MemoryUsage{objectsCount, totalObjectSizeBytes});
-    GCLogDebug(handle_.getEpoch(),
-               "Marked %" PRIu64 " objects in %" PRIu64 " microseconds in thread %d",
-               objectsCount, getStageTime(), konan::currentThreadId());
+    handle_.marked(stats_);
+    GCLogDebug(handle_.getEpoch(), "Marked %" PRIu64 " objects in %" PRIu64 " microseconds.", stats_.markedCount, getStageTime());
+}
+
+gc::GCHandle::GCProcessWeaksScope::GCProcessWeaksScope(gc::GCHandle& handle) noexcept : handle_(handle) {}
+
+gc::GCHandle::GCProcessWeaksScope::~GCProcessWeaksScope() {
+    GCLogDebug(
+            handle_.getEpoch(),
+            "Processed special refs in %" PRIu64 " microseconds. %" PRIu64 " are undisposed, %" PRIu64 " are alive, %" PRIu64
+            " are nulled out",
+            getStageTime(), undisposedCount_, aliveCount_, nulledCount_);
 }
 
 } // namespace kotlin::gc

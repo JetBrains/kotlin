@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.irMessageLogger
+import org.jetbrains.kotlin.js.config.ErrorTolerancePolicy
+import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.library.unresolvedDependencies
@@ -69,8 +71,9 @@ internal data class LoadedJsIr(
     fun loadUnboundSymbols() {
         signatureProvidersImpl.clear()
         ExternalDependenciesGenerator(linker.symbolTable, listOf(linker)).generateUnboundSymbolsAsDependencies()
-        linker.postProcess()
+        linker.postProcess(inOrAfterLinkageStep = true)
         linker.checkNoUnboundSymbols(linker.symbolTable, "at the end of IR linkage process")
+        linker.clear()
     }
 }
 
@@ -108,6 +111,7 @@ internal class JsIrLinkerLoader(
         val symbolTable = SymbolTable(signaturer, irFactory)
         val moduleDescriptor = loadedModules.keys.last()
         val typeTranslator = TypeTranslatorImpl(symbolTable, compilerConfiguration.languageVersionSettings, moduleDescriptor)
+        val errorPolicy = compilerConfiguration[JSConfigurationKeys.ERROR_TOLERANCE_POLICY] ?: ErrorTolerancePolicy.DEFAULT
         val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
         val messageLogger = compilerConfiguration.irMessageLogger
         val linker = JsIrLinker(
@@ -115,7 +119,12 @@ internal class JsIrLinkerLoader(
             messageLogger = messageLogger,
             builtIns = irBuiltIns,
             symbolTable = symbolTable,
-            partialLinkageSupport = createPartialLinkageSupportForLinker(compilerConfiguration.partialLinkageConfig, irBuiltIns, messageLogger),
+            partialLinkageSupport = createPartialLinkageSupportForLinker(
+                partialLinkageConfig = compilerConfiguration.partialLinkageConfig,
+                allowErrorTypes = errorPolicy.allowErrors,
+                builtIns = irBuiltIns,
+                messageLogger = messageLogger
+            ),
             translationPluginContext = null,
             friendModules = mapOf(mainLibrary.uniqueName to mainModuleFriends.map { it.uniqueName })
         )

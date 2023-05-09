@@ -131,6 +131,7 @@ fun createStubForPackageName(packageDirectiveStub: KotlinPlaceHolderStubImpl<KtP
 fun createStubForTypeName(
     typeClassId: ClassId,
     parent: StubElement<out PsiElement>,
+    upperBoundFun: ((Int) -> KotlinTypeBean?)? = null,
     bindTypeArguments: (KotlinUserTypeStub, Int) -> Unit = { _, _ -> }
 ): KotlinUserTypeStub {
     val substituteWithAny = typeClassId.isLocal
@@ -140,14 +141,15 @@ fun createStubForTypeName(
 
     val segments = fqName.pathSegments().asReversed()
     assert(segments.isNotEmpty())
+    val classesNestedLevel = segments.size - if (substituteWithAny) 1 else typeClassId.packageFqName.pathSegments().size
 
     fun recCreateStubForType(current: StubElement<out PsiElement>, level: Int): KotlinUserTypeStub {
         val lastSegment = segments[level]
-        val userTypeStub = KotlinUserTypeStubImpl(current)
+        val userTypeStub = KotlinUserTypeStubImpl(current, upperBoundFun?.invoke(level))
         if (level + 1 < segments.size) {
             recCreateStubForType(userTypeStub, level + 1)
         }
-        KotlinNameReferenceExpressionStubImpl(userTypeStub, lastSegment.ref())
+        KotlinNameReferenceExpressionStubImpl(userTypeStub, lastSegment.ref(), level < classesNestedLevel)
         if (!substituteWithAny) {
             bindTypeArguments(userTypeStub, level)
         }
@@ -191,22 +193,23 @@ fun createEmptyModifierListStub(parent: KotlinStubBaseImpl<*>): KotlinModifierLi
     )
 }
 
-fun createAnnotationStubs(annotationIds: List<ClassId>, parent: KotlinStubBaseImpl<*>) {
-    return createTargetedAnnotationStubs(annotationIds.map { ClassIdWithTarget(it, null) }, parent)
+fun createAnnotationStubs(annotations: List<AnnotationWithArgs>, parent: KotlinStubBaseImpl<*>) {
+    return createTargetedAnnotationStubs(annotations.map { AnnotationWithTarget(it, null) }, parent)
 }
 
 fun createTargetedAnnotationStubs(
-    annotationIds: List<ClassIdWithTarget>,
+    annotations: List<AnnotationWithTarget>,
     parent: KotlinStubBaseImpl<*>
 ) {
-    if (annotationIds.isEmpty()) return
+    if (annotations.isEmpty()) return
 
-    annotationIds.forEach { annotation ->
-        val (annotationClassId, target) = annotation
+    annotations.forEach { annotation ->
+        val (annotationWithArgs, target) = annotation
         val annotationEntryStubImpl = KotlinAnnotationEntryStubImpl(
             parent,
-            shortName = annotationClassId.shortClassName.ref(),
-            hasValueArguments = false
+            shortName = annotationWithArgs.classId.shortClassName.ref(),
+            hasValueArguments = false,
+            annotationWithArgs.args
         )
         if (target != null) {
             KotlinAnnotationUseSiteTargetStubImpl(annotationEntryStubImpl, StringRef.fromString(target.name)!!)
@@ -214,7 +217,7 @@ fun createTargetedAnnotationStubs(
         val constructorCallee =
             KotlinPlaceHolderStubImpl<KtConstructorCalleeExpression>(annotationEntryStubImpl, KtStubElementTypes.CONSTRUCTOR_CALLEE)
         val typeReference = KotlinPlaceHolderStubImpl<KtTypeReference>(constructorCallee, KtStubElementTypes.TYPE_REFERENCE)
-        createStubForTypeName(annotationClassId, typeReference)
+        createStubForTypeName(annotationWithArgs.classId, typeReference)
     }
 }
 

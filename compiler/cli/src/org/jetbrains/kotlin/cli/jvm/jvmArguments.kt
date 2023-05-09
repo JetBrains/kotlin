@@ -164,12 +164,16 @@ fun CompilerConfiguration.configureJdkHome(arguments: K2JVMCompilerArguments): B
         messageCollector.report(LOGGING, "Using JDK home directory $jdkHome")
         put(JVMConfigurationKeys.JDK_HOME, jdkHome)
     } else {
-        val javaHome = File(System.getProperty("java.home"))
-        messageCollector.report(LOGGING, "Using JDK home inferred from java.home: $javaHome")
-        put(JVMConfigurationKeys.JDK_HOME, javaHome)
+        configureJdkHomeFromSystemProperty()
     }
 
     return true
+}
+
+fun CompilerConfiguration.configureJdkHomeFromSystemProperty() {
+    val javaHome = File(System.getProperty("java.home"))
+    messageCollector.report(LOGGING, "Using JDK home inferred from java.home: $javaHome")
+    put(JVMConfigurationKeys.JDK_HOME, javaHome)
 }
 
 fun CompilerConfiguration.configureJavaModulesContentRoots(arguments: K2JVMCompilerArguments) {

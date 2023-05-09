@@ -268,13 +268,18 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
     @Nullable
     public KtExpression getInitializer() {
         KotlinPropertyStub stub = getStub();
-        if (stub != null && !stub.hasInitializer()) {
-            return null;
+        if (stub != null) {
+            if (!stub.hasInitializer()) {
+                return null;
+            }
+
+            if (getContainingKtFile().isCompiled()) {
+                //don't load ast
+                return null;
+            }
         }
 
-        return AstLoadingFilter.forceAllowTreeLoading(this.getContainingFile(), () ->
-                PsiTreeUtil.getNextSiblingOfType(findChildByType(EQ), KtExpression.class)
-        );
+        return PsiTreeUtil.getNextSiblingOfType(findChildByType(EQ), KtExpression.class);
     }
 
     public boolean hasDelegateExpressionOrInitializer() {

@@ -8,6 +8,7 @@ import kotlin.reflect.*
 import kotlin.wasm.internal.TypeInfoData
 import kotlin.wasm.internal.getSuperTypeId
 import kotlin.wasm.internal.isInterfaceById
+import kotlin.wasm.internal.isInterfaceType
 
 internal object NothingKClassImpl : KClass<Nothing> {
     override val simpleName: String = "Nothing"
@@ -23,7 +24,7 @@ internal object ErrorKClass : KClass<Nothing> {
     override fun isInstance(value: Any?): Boolean = error("Can's check isInstance on ErrorKClass")
 }
 
-internal class KClassImpl<T : Any>(private val typeData: TypeInfoData) : KClass<T> {
+internal class KClassImpl<T : Any>(internal val typeData: TypeInfoData) : KClass<T> {
     override val simpleName: String get() = typeData.typeName
     override val qualifiedName: String =
         if (typeData.packageName.isEmpty()) typeData.typeName else "${typeData.packageName}.${typeData.typeName}"
@@ -37,12 +38,16 @@ internal class KClassImpl<T : Any>(private val typeData: TypeInfoData) : KClass<
         return false
     }
 
-    override fun isInstance(value: Any?): Boolean = value?.let {
-        if (typeData.isInterface) isInterfaceById(it, typeData.typeId) else checkSuperTypeInstance(it)
-    } ?: false
+    override fun isInstance(value: Any?): Boolean {
+        if (value !is Any) return false
+        return when (typeData.isInterfaceType) {
+            true -> isInterfaceById(value, typeData.typeId)
+            false -> checkSuperTypeInstance(value)
+        }
+    }
 
     override fun equals(other: Any?): Boolean =
-        (this === other) || (other is KClassImpl<*> && other.typeData.isInterface == typeData.isInterface && other.typeData.typeId == typeData.typeId)
+        (this === other) || (other is KClassImpl<*> && other.typeData.typeId == typeData.typeId)
 
     override fun hashCode(): Int = typeData.typeId
 

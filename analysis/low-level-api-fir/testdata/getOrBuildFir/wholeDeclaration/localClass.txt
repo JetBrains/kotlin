@@ -3,11 +3,11 @@ FIR element: FirRegularClassImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-local final class X : R|kotlin/Any| {
-    public constructor(): R|X| {
+local final [ResolvedTo(BODY_RESOLVE)] class X : R|kotlin/Any| {
+    public [ResolvedTo(BODY_RESOLVE)] constructor(): R|X| {
         super<R|kotlin/Any|>()
     }
 
-    public final fun y(): R|kotlin/String|
+    public final [ResolvedTo(BODY_RESOLVE)] fun y(): R|kotlin/String|
 
 }

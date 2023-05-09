@@ -9,7 +9,6 @@ import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.Application
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Key
 import com.intellij.psi.PsiFile
@@ -41,7 +40,7 @@ abstract class AnalysisApiTestConfigurator {
     open fun prepareFilesInModule(files: List<PsiFile>, module: TestModule, testServices: TestServices) {}
 
     open fun doOutOfBlockModification(file: KtFile) {
-        ServiceManager.getService(file.project, KotlinModificationTrackerFactory::class.java)
+        file.project.getService(KotlinModificationTrackerFactory::class.java)
             .incrementModificationsCount()
     }
 

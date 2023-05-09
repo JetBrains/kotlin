@@ -4,9 +4,13 @@
  */
 package kotlin.native
 
+import kotlin.experimental.ExperimentalNativeApi
+
 /**
  * Returns a list of stack trace addresses representing the stack trace
  * pertaining to this throwable.
  */
+// Deprecate this function in favour of KT-57164 when it gets implemented
+@ExperimentalNativeApi
 public fun Throwable.getStackTraceAddresses(): List<Long> =
         this.getStackTraceAddressesInternal()

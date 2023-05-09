@@ -1,4 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
 class My {
     var x = 1
         set(value) {

@@ -1,4 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
 fun test() {
     fun test1() {}
     fun test1() {}

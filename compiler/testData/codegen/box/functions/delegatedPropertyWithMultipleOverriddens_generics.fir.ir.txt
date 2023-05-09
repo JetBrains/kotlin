@@ -203,7 +203,7 @@ FILE fqName:<root> fileName:/delegatedPropertyWithMultipleOverriddens_generics.k
       $this: VALUE_PARAMETER name:<this> type:<root>.MC
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun foo (): kotlin.String declared in <root>.MC'
-          CALL 'public open fun foo (): E6 of <root>.MyArrayList declared in <root>.MyArrayList' type=kotlin.String origin=null
+          CALL 'public open fun foo (): E6 of <root>.MyArrayList declared in <root>.MyArrayList' type=E6 of <root>.MyArrayList origin=null
             $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.MyArrayList<kotlin.String> visibility:private [final]' type=<root>.MyArrayList<kotlin.String> origin=null
               receiver: GET_VAR '<this>: <root>.MC declared in <root>.MC.foo' type=<root>.MC origin=null
     PROPERTY DELEGATED_MEMBER name:bar visibility:public modality:OPEN [val]
@@ -216,7 +216,7 @@ FILE fqName:<root> fileName:/delegatedPropertyWithMultipleOverriddens_generics.k
         $this: VALUE_PARAMETER name:<this> type:<root>.MC
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun <get-bar> (): kotlin.String declared in <root>.MC'
-            CALL 'public open fun <get-bar> (): E6 of <root>.MyArrayList declared in <root>.MyArrayList' type=kotlin.String origin=null
+            CALL 'public open fun <get-bar> (): E6 of <root>.MyArrayList declared in <root>.MyArrayList' type=E6 of <root>.MyArrayList origin=null
               $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.MyArrayList<kotlin.String> visibility:private [final]' type=<root>.MyArrayList<kotlin.String> origin=null
                 receiver: GET_VAR '<this>: <root>.MC declared in <root>.MC.<get-bar>' type=<root>.MC origin=null
     FIELD DELEGATE name:$$delegate_0 type:<root>.MyArrayList<kotlin.String> visibility:private [final]

@@ -15,25 +15,15 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 import java.util.concurrent.ConcurrentHashMap
 
 class Fir2IrCommonMemberStorage(
-    generateSignatures: Boolean,
-    signatureComposerCreator: (() -> IdSignatureComposer)?,
-    manglerCreator: () -> FirMangler
+    signatureComposer: IdSignatureComposer,
+    firMangler: FirMangler
 ) {
-    val signatureComposer: FirBasedSignatureComposer
+    val firSignatureComposer = FirBasedSignatureComposer(firMangler)
 
-    val symbolTable: SymbolTable
-
-    init {
-        val signaturer = if (generateSignatures && signatureComposerCreator != null)
-            signatureComposerCreator()
-        else
-            DescriptorSignatureComposerStub()
-        signatureComposer = FirBasedSignatureComposer(manglerCreator())
-        symbolTable = SymbolTable(
-            signaturer = WrappedDescriptorSignatureComposer(signaturer, signatureComposer),
-            irFactory = IrFactoryImpl
-        )
-    }
+    val symbolTable = SymbolTable(
+        signaturer = WrappedDescriptorSignatureComposer(signatureComposer, firSignatureComposer),
+        irFactory = IrFactoryImpl
+    )
 
     val classCache: MutableMap<FirRegularClass, IrClass> = mutableMapOf()
 
@@ -49,5 +39,5 @@ class Fir2IrCommonMemberStorage(
 
     val propertyCache: ConcurrentHashMap<FirProperty, IrProperty> = ConcurrentHashMap()
 
-    val fakeOverridesInClass: MutableMap<IrClass, MutableMap<FirCallableDeclaration, FirCallableDeclaration>> = mutableMapOf()
+    val fakeOverridesInClass: MutableMap<IrClass, MutableMap<Fir2IrDeclarationStorage.FakeOverrideKey, FirCallableDeclaration>> = mutableMapOf()
 }

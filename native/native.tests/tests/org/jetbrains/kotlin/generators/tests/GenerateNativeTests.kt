@@ -5,15 +5,18 @@
 
 package org.jetbrains.kotlin.generators.tests
 
+import org.jetbrains.kotlin.generators.TestGroup
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
+import org.jetbrains.kotlin.generators.model.AnnotationModel
 import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.konan.blackboxtest.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.blackboxtest.support.EnforcedHostTarget
 import org.jetbrains.kotlin.konan.blackboxtest.support.EnforcedProperty
+import org.jetbrains.kotlin.konan.blackboxtest.support.group.*
+import org.jetbrains.kotlin.konan.blackboxtest.support.group.DisabledTestsIfProperty
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.FirPipeline
-import org.jetbrains.kotlin.konan.blackboxtest.support.group.UseExtTestCaseGroupProvider
-import org.jetbrains.kotlin.konan.blackboxtest.support.group.UseStandardTestCaseGroupProvider
+import org.jetbrains.kotlin.konan.blackboxtest.support.group.UsePartialLinkage
 import org.jetbrains.kotlin.test.TargetBackend
 import org.junit.jupiter.api.Tag
 
@@ -25,17 +28,45 @@ fun main() {
         testGroup("native/native.tests/tests-gen", "compiler/testData") {
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "NativeCodegenBoxTestGenerated",
-                annotations = listOf(codegen(), k1Codegen(), provider<UseExtTestCaseGroupProvider>())
+                annotations = listOf(
+                    provider<UseExtTestCaseGroupProvider>(),
+                    disabledInOneStageMode(
+                        "codegen/box/coroutines/featureIntersection/defaultExpect.kt",
+                        "codegen/box/multiplatform/defaultArguments/*.kt",
+                        "codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt"
+                    )
+                )
             ) {
                 model("codegen/box", targetBackend = TargetBackend.NATIVE)
                 model("codegen/boxInline", targetBackend = TargetBackend.NATIVE)
             }
-        }
-
-        testGroup("native/native.tests/tests-gen", "compiler/testData") {
+            testClass<AbstractNativeCodegenBoxTest>(
+                suiteTestClassName = "NativeCodegenBoxTestNoPLGenerated",
+                annotations = listOf(
+                    provider<UseExtTestCaseGroupProvider>(),
+                    *noPartialLinkage()
+                )
+            ) {
+                model("codegen/box", targetBackend = TargetBackend.NATIVE)
+                model("codegen/boxInline", targetBackend = TargetBackend.NATIVE)
+            }
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "FirNativeCodegenBoxTestGenerated",
-                annotations = listOf(codegenK2(), firCodegen(), provider<UseExtTestCaseGroupProvider>(), provider<FirPipeline>())
+                annotations = listOf(
+                    *frontendFir(),
+                    provider<UseExtTestCaseGroupProvider>()
+                )
+            ) {
+                model("codegen/box", targetBackend = TargetBackend.NATIVE)
+                model("codegen/boxInline", targetBackend = TargetBackend.NATIVE)
+            }
+            testClass<AbstractNativeCodegenBoxTest>(
+                suiteTestClassName = "FirNativeCodegenBoxTestNoPLGenerated",
+                annotations = listOf(
+                    *frontendFir(),
+                    provider<UseExtTestCaseGroupProvider>(),
+                    *noPartialLinkage()
+                )
             ) {
                 model("codegen/box", targetBackend = TargetBackend.NATIVE)
                 model("codegen/boxInline", targetBackend = TargetBackend.NATIVE)
@@ -46,7 +77,24 @@ fun main() {
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
             testClass<AbstractNativeBlackBoxTest>(
                 suiteTestClassName = "InfrastructureTestGenerated",
-                annotations = listOf(infrastructure(), k1Infrastructure(), provider<UseStandardTestCaseGroupProvider>())
+                annotations = listOf(
+                    infrastructure(),
+                    provider<UseStandardTestCaseGroupProvider>()
+                )
+            ) {
+                model("samples")
+                model("samples2")
+            }
+        }
+
+        testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
+            testClass<AbstractNativeBlackBoxTest>(
+                suiteTestClassName = "FirInfrastructureTestGenerated",
+                annotations = listOf(
+                    infrastructure(),
+                    *frontendFir(),
+                    provider<UseStandardTestCaseGroupProvider>()
+                )
             ) {
                 model("samples")
                 model("samples2")
@@ -62,17 +110,26 @@ fun main() {
             }
             testClass<AbstractNativePartialLinkageTest>(
                 suiteTestClassName = "FirNativePartialLinkageTestGenerated",
-                annotations = listOf(provider<FirPipeline>())
+                annotations = listOf(
+                    *frontendFir()
+                )
             ) {
                 model("klibABI/", pattern = "^([^_](.+))$", recursive = false)
             }
         }
 
-        // KLIB binary compatibility tests.
+        // KLIB evolution tests.
         testGroup("native/native.tests/tests-gen", "compiler/testData") {
-            testClass<AbstractNativeKlibBinaryCompatibilityTest>(
-                suiteTestClassName = "KlibBinaryCompatibilityTestGenerated",
-                annotations = listOf(k1KLibCompatibility())
+            testClass<AbstractNativeKlibEvolutionTest>(
+                suiteTestClassName = "NativeKlibEvolutionTestGenerated"
+            ) {
+                model("binaryCompatibility/klibEvolution", recursive = false)
+            }
+            testClass<AbstractNativeKlibEvolutionTest>(
+                suiteTestClassName = "FirNativeKlibEvolutionTestGenerated",
+                annotations = listOf(
+                    *frontendFir()
+                )
             ) {
                 model("binaryCompatibility/klibEvolution", recursive = false)
             }
@@ -108,11 +165,27 @@ fun main() {
             }
         }
 
+        // ObjCExport tests.
+        testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
+            testClass<AbstractNativeObjCExportTest>(
+                suiteTestClassName = "ObjCExportTestGenerated"
+            ) {
+                model("ObjCExport", pattern = "^([^_](.+))$", recursive = false)
+            }
+            testClass<AbstractNativeObjCExportTest>(
+                suiteTestClassName = "FirObjCExportTestGenerated",
+                annotations = listOf(
+                    *frontendFir()
+                ),
+            ) {
+                model("ObjCExport", pattern = "^([^_](.+))$", recursive = false)
+            }
+        }
+
         // Klib contents tests
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
             testClass<AbstractNativeKlibContentsTest>(
-                suiteTestClassName = "NativeKLibContentsTestGenerated",
-                annotations = listOf(k1libContents())
+                suiteTestClassName = "NativeKLibContentsTestGenerated"
             ) {
                 model("klibContents", pattern = "^([^_](.+)).kt$", recursive = true)
             }
@@ -120,7 +193,9 @@ fun main() {
         testGroup("native/native.tests/tests-gen", "native/native.tests/testData") {
             testClass<AbstractNativeKlibContentsTest>(
                 suiteTestClassName = "FirNativeKLibContentsTestGenerated",
-                annotations = listOf(k2libContents(), firKLibContents(), provider<FirPipeline>())
+                annotations = listOf(
+                    *frontendFir()
+                )
             ) {
                 model("klibContents", pattern = "^([^_](.+)).kt$", recursive = true)
             }
@@ -133,8 +208,8 @@ fun main() {
                 annotations = listOf(
                     debugger(),
                     provider<UseStandardTestCaseGroupProvider>(),
-                    debugOnly(),
-                    hostOnly()
+                    forceDebugMode(),
+                    forceHostTarget()
                 )
             ) {
                 model("lldb")
@@ -145,22 +220,37 @@ fun main() {
 
 private inline fun <reified T : Annotation> provider() = annotation(T::class.java)
 
-private fun debugOnly() = annotation(
+private fun forceDebugMode() = annotation(
     EnforcedProperty::class.java,
     "property" to ClassLevelProperty.OPTIMIZATION_MODE,
     "propertyValue" to "DEBUG"
 )
 
-private fun hostOnly() = provider<EnforcedHostTarget>()
+private fun forceHostTarget() = annotation(EnforcedHostTarget::class.java)
 
-private fun codegen() = annotation(Tag::class.java, "codegen")
-private fun k1Codegen() = annotation(Tag::class.java, "k1Codegen")
-private fun codegenK2() = annotation(Tag::class.java, "codegenK2")
-private fun firCodegen() = annotation(Tag::class.java, "firCodegen")
+private fun noPartialLinkage() = arrayOf(
+    annotation(UsePartialLinkage::class.java, "mode" to UsePartialLinkage.Mode.DISABLED),
+    // This is a special tag to mark codegen box tests with disabled partial linkage that may be skipped in slow TC configurations:
+    annotation(Tag::class.java, "no-partial-linkage-may-be-skipped")
+)
+
+// The concrete tests disabled in one-stage mode.
+@Suppress("SameParameterValue")
+private fun TestGroup.disabledInOneStageMode(vararg unexpandedPaths: String): AnnotationModel {
+    require(unexpandedPaths.isNotEmpty()) { "No unexpanded paths specified" }
+
+    return annotation(
+        DisabledTestsIfProperty::class.java,
+        "sourceLocations" to unexpandedPaths.map { unexpandedPath -> "$testDataRoot/$unexpandedPath" }.toTypedArray(),
+        "property" to ClassLevelProperty.TEST_MODE,
+        "propertyValue" to "ONE_STAGE_MULTI_MODULE"
+    )
+}
+
+private fun frontendFir() = arrayOf(
+    annotation(Tag::class.java, "frontend-fir"),
+    annotation(FirPipeline::class.java)
+)
+
 private fun debugger() = annotation(Tag::class.java, "debugger")
 private fun infrastructure() = annotation(Tag::class.java, "infrastructure")
-private fun k1Infrastructure() = annotation(Tag::class.java, "k1Infrastructure")
-private fun k1libContents() = annotation(Tag::class.java, "k1libContents")
-private fun k2libContents() = annotation(Tag::class.java, "k2libContents")
-private fun firKLibContents() = annotation(Tag::class.java, "firKlibContents")
-private fun k1KLibCompatibility() = annotation(Tag::class.java, "k1KlibCompatibility")

@@ -1,4 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
 // !LANGUAGE: +ForbidRecursiveDelegateExpressions
 // WITH_STDLIB
 

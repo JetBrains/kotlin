@@ -1,4 +1,4 @@
-@file:OptIn(kotlin.ExperimentalStdlibApi::class)
+@file:OptIn(kotlin.ExperimentalStdlibApi::class, ObsoleteWorkersApi::class)
 
 package runtime.workers.worker_list_workers
 

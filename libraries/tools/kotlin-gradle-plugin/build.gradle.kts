@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.pill.PillExtension
 plugins {
     id("gradle-plugin-common-configuration")
     id("jps-compatible")
+    id("org.jetbrains.kotlinx.binary-compatibility-validator")
 }
 
 repositories {
@@ -26,6 +27,12 @@ kotlin.sourceSets.all {
     languageSettings.optIn("org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi")
 }
 
+apiValidation {
+    publicMarkers.add("org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi")
+    nonPublicMarkers.add("org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi")
+    additionalSourceSets.add("common")
+}
+
 dependencies {
     commonApi(platform(project(":kotlin-gradle-plugins-bom")))
     commonApi(project(":kotlin-gradle-plugin-api"))
@@ -41,7 +48,6 @@ dependencies {
     commonCompileOnly(project(":kotlin-build-common"))
     commonCompileOnly(project(":kotlin-compiler-runner"))
     commonCompileOnly(project(":kotlin-annotation-processing"))
-    commonCompileOnly(project(":kotlin-annotation-processing-gradle"))
     commonCompileOnly(project(":kotlin-scripting-compiler"))
     commonCompileOnly(project(":kotlin-gradle-statistics"))
     commonCompileOnly(project(":kotlin-gradle-build-metrics"))
@@ -60,15 +66,18 @@ dependencies {
         exclude(group = "*")
     }
     commonCompileOnly(project(":kotlin-tooling-metadata"))
+    commonCompileOnly(project(":compiler:build-tools:kotlin-build-statistics"))
+
 
     commonImplementation(project(":kotlin-gradle-plugin-idea"))
     commonImplementation(project(":kotlin-gradle-plugin-idea-proto"))
     commonImplementation(project(":kotlin-util-klib"))
     commonImplementation(project(":native:kotlin-klib-commonizer-api"))
     commonImplementation(project(":kotlin-project-model"))
+    commonImplementation(project(":compiler:build-tools:kotlin-build-tools-api"))
 
     commonRuntimeOnly(project(":kotlin-compiler-embeddable"))
-    commonRuntimeOnly(project(":kotlin-annotation-processing-gradle"))
+    commonRuntimeOnly(project(":kotlin-annotation-processing-embeddable"))
     commonRuntimeOnly(project(":kotlin-android-extensions"))
     commonRuntimeOnly(project(":kotlin-compiler-runner")) {
         // Excluding dependency with not-relocated 'com.intellij' types
@@ -89,9 +98,18 @@ dependencies {
         exclude(group = "*")
     }
 
+    if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
+        // Adding workaround KT-57317 for Gradle versions where Kotlin runtime <1.8.0
+        "mainEmbedded"(project(":kotlin-build-tools-enum-compat"))
+        "gradle70Embedded"(project(":kotlin-build-tools-enum-compat"))
+        "gradle71Embedded"(project(":kotlin-build-tools-enum-compat"))
+        "gradle74Embedded"(project(":kotlin-build-tools-enum-compat"))
+        "gradle75Embedded"(project(":kotlin-build-tools-enum-compat"))
+        "gradle76Embedded"(project(":kotlin-build-tools-enum-compat"))
+    }
+
     testCompileOnly(project(":compiler"))
     testCompileOnly(project(":kotlin-annotation-processing"))
-    testCompileOnly(project(":kotlin-annotation-processing-gradle"))
 
     testImplementation(commonDependency("org.jetbrains.teamcity:serviceMessages"))
     testImplementation(projectTests(":kotlin-build-common"))
@@ -102,6 +120,8 @@ dependencies {
     testImplementation(project(":kotlin-gradle-statistics"))
     testImplementation(project(":kotlin-tooling-metadata"))
 }
+
+configurations.commonCompileClasspath.get().exclude("org.jetbrains.kotlinx", "kotlinx-coroutines-core")
 
 if (kotlinBuildProperties.isInJpsBuildIdeaSync) {
     configurations.commonApi.get().exclude("com.android.tools.external.com-intellij", "intellij-core")

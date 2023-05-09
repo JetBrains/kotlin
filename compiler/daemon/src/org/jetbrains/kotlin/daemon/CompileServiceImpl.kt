@@ -319,7 +319,7 @@ abstract class CompileServiceImplBase(
             CompilerMode.JPS_COMPILER -> {
                 @Suppress("UNCHECKED_CAST")
                 servicesFacade as JpsServicesFacadeT
-                withIC(k2PlatformArgs, enabled = servicesFacade.hasIncrementalCaches()) {
+                withIncrementalCompilation(k2PlatformArgs, enabled = servicesFacade.hasIncrementalCaches()) {
                     doCompile(sessionId, daemonReporter, tracer = null) { eventManger, profiler ->
                         val services = createServices(servicesFacade, eventManger, profiler)
                         compiler.exec(messageCollector, services, k2PlatformArgs)
@@ -346,7 +346,7 @@ abstract class CompileServiceImplBase(
                 val gradleIncrementalServicesFacade = servicesFacade
 
                 when (targetPlatform) {
-                    CompileService.TargetPlatform.JVM -> withIC(k2PlatformArgs) {
+                    CompileService.TargetPlatform.JVM -> withIncrementalCompilation(k2PlatformArgs) {
                         doCompile(sessionId, daemonReporter, tracer = null) { _, _ ->
                             execIncrementalCompiler(
                                 k2PlatformArgs as K2JVMCompilerArguments,
@@ -616,7 +616,7 @@ abstract class CompileServiceImplBase(
         val projectRoot = incrementalCompilationOptions.modulesInfo.projectRoot
         val useK2 = k2jvmArgs.useK2 || LanguageVersion.fromVersionString(k2jvmArgs.languageVersion)?.usesK2 == true
         // TODO: This should be reverted after implementing of fir-based java tracker (KT-57147).
-        //  See org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunnerKt.makeIncrementally
+        //  See org.jetbrains.kotlin.incremental.CompilerRunnerUtilsKt.makeJvmIncrementally
         val usePreciseJavaTracking = if (useK2) false else incrementalCompilationOptions.usePreciseJavaTracking
 
         val compiler = IncrementalJvmCompilerRunner(

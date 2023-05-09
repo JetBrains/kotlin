@@ -4,7 +4,7 @@ fun x() {/* ReanalyzableFunctionStructureElement */
     }
 }
 
-class A {/* NonReanalyzableDeclarationStructureElement */
+class A {/* NonReanalyzableClassDeclarationStructureElement */
     fun z() {/* ReanalyzableFunctionStructureElement */
         fun q() {
 

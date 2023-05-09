@@ -27,13 +27,35 @@ class ConfigurationAvoidanceIT : KGPBaseTest() {
 
     @JvmGradlePluginTests
     @GradleTestVersions(
-        maxVersion = TestVersions.Gradle.G_7_5,
-        additionalVersions = [TestVersions.Gradle.G_7_3, TestVersions.Gradle.G_7_4]
+        additionalVersions = [TestVersions.Gradle.G_7_3]
     )
     @DisplayName("KGP/Jvm does not eagerly configure any tasks")
     @GradleTest
     fun testJvmConfigurationAvoidance(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
+            buildGradle.appendText(
+                """
+                |
+                |tasks.configureEach {
+                |    if (name != "help" && name != "clean") {
+                |        throw new GradleException("Configuration avoidance failure for ${'$'}name!")
+                |    }
+                |}
+                """.trimMargin()
+            )
+
+            build("--dry-run")
+        }
+    }
+
+    @OtherGradlePluginTests
+    @GradleTestVersions(
+        additionalVersions = [TestVersions.Gradle.G_7_3]
+    )
+    @DisplayName("KGP/Kapt does not eagerly configure any tasks")
+    @GradleTest
+    fun testKaptConfigurationAvoidance(gradleVersion: GradleVersion) {
+        project("kapt2/simple", gradleVersion) {
             buildGradle.appendText(
                 """
                 |

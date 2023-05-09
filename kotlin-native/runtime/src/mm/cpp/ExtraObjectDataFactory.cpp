@@ -39,9 +39,5 @@ void mm::ExtraObjectDataFactory::ProcessThread(mm::ThreadData* threadData) noexc
     threadData->extraObjectDataThreadQueue().Publish();
 }
 
-void mm::ExtraObjectDataFactory::ProcessDeletions() noexcept {
-    extraObjects_.ApplyDeletions();
-}
-
 mm::ExtraObjectDataFactory::ExtraObjectDataFactory() = default;
 mm::ExtraObjectDataFactory::~ExtraObjectDataFactory() = default;

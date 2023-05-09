@@ -9,6 +9,7 @@ import kotlin.script.templates.standard.ScriptTemplateWithBindings
 
 @Suppress("unused")
 @ScriptTemplateDefinition
+@Deprecated("Use kotlin-scripting-jsr223 instead")
 abstract class KotlinStandardJsr223ScriptTemplate(val jsr223Bindings: Bindings) : ScriptTemplateWithBindings(jsr223Bindings) {
 
     private val myEngine: ScriptEngine? get() = bindings[KOTLIN_SCRIPT_ENGINE_BINDINGS_KEY]?.let { it as? ScriptEngine }

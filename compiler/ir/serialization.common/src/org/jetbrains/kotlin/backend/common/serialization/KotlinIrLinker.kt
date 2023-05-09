@@ -15,7 +15,10 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.builders.TranslationPluginContext
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.linkage.IrDeserializer
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.*
@@ -32,22 +35,23 @@ abstract class KotlinIrLinker(
     private val exportedDependencies: List<ModuleDescriptor>,
     val symbolProcessor: IrSymbolDeserializer.(IrSymbol, IdSignature) -> IrSymbol = { s, _ -> s },
 ) : IrDeserializer, FileLocalAwareLinker {
+    val internationService = IrInterningService()
 
     // Kotlin-MPP related data. Consider some refactoring
-    val expectIdSignatureToActualIdSignature = mutableMapOf<IdSignature, IdSignature>()
-    val topLevelActualIdSignatureToModuleDeserializer = mutableMapOf<IdSignature, IrModuleDeserializer>()
-    internal val expectSymbols = mutableMapOf<IdSignature, IrSymbol>()
-    internal val actualSymbols = mutableMapOf<IdSignature, IrSymbol>()
+    val expectIdSignatureToActualIdSignature = linkedMapOf<IdSignature, IdSignature>()
+    val topLevelActualIdSignatureToModuleDeserializer = hashMapOf<IdSignature, IrModuleDeserializer>()
+    internal val expectSymbols = hashMapOf<IdSignature, IrSymbol>()
+    internal val actualSymbols = hashMapOf<IdSignature, IrSymbol>()
 
-    val modulesWithReachableTopLevels = mutableSetOf<IrModuleDeserializer>()
+    val modulesWithReachableTopLevels = linkedSetOf<IrModuleDeserializer>()
 
-    protected val deserializersForModules = mutableMapOf<String, IrModuleDeserializer>()
+    protected val deserializersForModules = linkedMapOf<String, IrModuleDeserializer>()
 
     abstract val fakeOverrideBuilder: FakeOverrideBuilder
 
     abstract val translationPluginContext: TranslationPluginContext?
 
-    private val triedToDeserializeDeclarationForSymbol = mutableSetOf<IrSymbol>()
+    private val triedToDeserializeDeclarationForSymbol = hashSetOf<IrSymbol>()
 
     private lateinit var linkerExtensions: Collection<IrDeserializer.IrLinkerExtension>
 
@@ -204,23 +208,30 @@ abstract class KotlinIrLinker(
         deserializersForModules.values.forEach { it.init() }
     }
 
-    override fun postProcess() {
+    fun clear() {
+        internationService.clear()
+    }
+
+    override fun postProcess(inOrAfterLinkageStep: Boolean) {
         // TODO: Expect/actual actualization should be fixed to cope with the situation when either expect or actual symbol is unbound.
         finalizeExpectActualLinker()
 
-        // We have to exclude classifiers with unbound symbols in supertypes and in type parameter upper bounds from F.O. generation
-        // to avoid failing with `Symbol for <signature> is unbound` error or generating fake overrides with incorrect signatures.
-        partialLinkageSupport.exploreClassifiers(fakeOverrideBuilder)
+        if (inOrAfterLinkageStep) {
+            // We have to exclude classifiers with unbound symbols in supertypes and in type parameter upper bounds from F.O. generation
+            // to avoid failing with `Symbol for <signature> is unbound` error or generating fake overrides with incorrect signatures.
+            partialLinkageSupport.exploreClassifiers(fakeOverrideBuilder)
+        }
 
         // Fake override generator creates new IR declarations. This may have effect of binding for certain symbols.
         fakeOverrideBuilder.provideFakeOverrides()
         triedToDeserializeDeclarationForSymbol.clear()
 
-        // Finally, generate stubs for the remaining unbound symbols and patch every usage of any unbound symbol inside the IR tree.
-        partialLinkageSupport.generateStubsAndPatchUsages(symbolTable) {
-            deserializersForModules.values.asSequence().map { it.moduleFragment }
+        if (inOrAfterLinkageStep) {
+            // Finally, generate stubs for the remaining unbound symbols and patch every usage of any unbound symbol inside the IR tree.
+            partialLinkageSupport.generateStubsAndPatchUsages(symbolTable) {
+                deserializersForModules.values.asSequence().map { it.moduleFragment }
+            }
         }
-
         // TODO: fix IrPluginContext to make it not produce additional external reference
         // symbolTable.noUnboundLeft("unbound after fake overrides:")
     }

@@ -38,7 +38,7 @@ internal open class KotlinJsIrLinkConfig(
             task.destinationDirectory.convention(
                 project.layout.buildDirectory
                     .dir(COMPILE_SYNC)
-                    .map { it.dir(if (compilation.platformType == KotlinPlatformType.wasm) "wasm" else "js") }
+                    .map { it.dir(compilation.target.targetName) }
                     .map { it.dir(compilation.name) }
                     .map { it.dir(binary.name) }
                     .map { it.dir(NpmProject.DIST_FOLDER) }

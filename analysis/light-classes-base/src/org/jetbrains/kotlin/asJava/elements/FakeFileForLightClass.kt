@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -31,9 +31,19 @@ import java.lang.ref.Reference
 
 open class FakeFileForLightClass(
     val ktFile: KtFile,
-    private val lightClass: () -> KtLightClass,
+    private val lightClass: KtLightClass,
     private val packageFqName: FqName = ktFile.packageFqName,
 ) : ClsFileImpl(ktFile.viewProvider) {
+    @Deprecated("A light class should be provided directly")
+    constructor(
+        ktFile: KtFile,
+        lightClass: () -> KtLightClass,
+        packageFqName: FqName = ktFile.packageFqName,
+    ) : this(
+        ktFile = ktFile,
+        lightClass = lightClass(),
+        packageFqName = packageFqName,
+    )
 
     override fun getVirtualFile(): VirtualFile =
         ktFile.virtualFile ?: ktFile.originalFile.virtualFile ?: super.getVirtualFile()
@@ -49,7 +59,7 @@ open class FakeFileForLightClass(
 
     override fun getStub() = createFakeJavaFileStub()
 
-    override fun getClasses() = arrayOf(lightClass())
+    override fun getClasses() = arrayOf(lightClass)
 
     override fun getNavigationElement() = ktFile
 
@@ -92,29 +102,24 @@ open class FakeFileForLightClass(
     // this should be equal to current compiler target language level
     override fun getLanguageLevel() = LanguageLevel.JDK_1_8
 
-    override fun hashCode(): Int {
-        val thisClass = lightClass()
-        if (thisClass is KtLightClassForSourceDeclaration) return ktFile.hashCode()
-        return thisClass.hashCode()
-    }
+    override fun hashCode(): Int = if (lightClass is KtLightClassForSourceDeclaration) ktFile.hashCode() else lightClass.hashCode()
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is FakeFileForLightClass) return false
-        val thisClass = lightClass()
-        val anotherClass = other.lightClass()
 
-        if (thisClass is KtLightClassForSourceDeclaration) {
+        val anotherClass = other.lightClass
+        if (lightClass is KtLightClassForSourceDeclaration) {
             return anotherClass is KtLightClassForSourceDeclaration && ktFile == other.ktFile
         }
 
-        return thisClass == anotherClass
+        return lightClass == anotherClass
     }
 
     override fun isEquivalentTo(another: PsiElement?) = this == another
 
     override fun setPackageName(packageName: String) {
-        if (lightClass() is KtLightClassForFacade) {
+        if (lightClass is KtLightClassForFacade) {
             ktFile.packageDirective?.fqName = FqName(packageName)
         } else {
             super.setPackageName(packageName)

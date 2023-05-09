@@ -1,1 +1,1 @@
-class ResolveMe<T : Int, K>()
+class Resolve<caret>Me<T : Int, K>()

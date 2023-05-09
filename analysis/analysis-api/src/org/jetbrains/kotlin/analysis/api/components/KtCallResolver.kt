@@ -12,9 +12,6 @@ import org.jetbrains.kotlin.analysis.api.calls.KtCallInfo
 import org.jetbrains.kotlin.analysis.api.calls.KtErrorCallInfo
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtNonBoundToPsiErrorDiagnostic
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
-import org.jetbrains.kotlin.analysis.utils.errors.ExceptionAttachmentBuilder
-import org.jetbrains.kotlin.analysis.utils.errors.logErrorWithAttachment
-import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.psi.KtArrayAccessExpression
 import org.jetbrains.kotlin.psi.KtCallElement
 import org.jetbrains.kotlin.psi.KtElement
@@ -26,25 +23,12 @@ public abstract class KtCallResolver : KtAnalysisSessionComponent() {
     public abstract fun collectCallCandidates(psi: KtElement): List<KtCallCandidateInfo>
 
     @KtAnalysisApiInternals
-    public fun unresolvedKtCallError(psi: KtElement): KtErrorCallInfo {
-        LOG.logErrorWithAttachment("${psi::class.simpleName} should always resolve to a KtCallInfo") {
-            withPsiEntry("psi", psi)
-            provideAdditionalAttachmentToUnresolvedCall(psi, this)
-        }
+    public open fun unresolvedKtCallError(psi: KtElement): KtErrorCallInfo {
         return KtErrorCallInfo(
             _candidateCalls = emptyList(),
             KtNonBoundToPsiErrorDiagnostic(factoryName = null, "Unresolved call", token),
             token
         )
-    }
-
-    @KtAnalysisApiInternals
-    protected open fun provideAdditionalAttachmentToUnresolvedCall(psi: KtElement, builder: ExceptionAttachmentBuilder) {
-    }
-
-    public companion object {
-        @KtAnalysisApiInternals
-        public val LOG: Logger = Logger.getInstance(KtCallResolver::class.java)
     }
 }
 

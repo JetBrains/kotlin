@@ -181,6 +181,7 @@ interface HasKotlinDependencies {
     val compileOnlyConfigurationName: String
     val runtimeOnlyConfigurationName: String
 
+    @Deprecated("Scheduled for removal with Kotlin 2.0")
     val relatedConfigurationNames: List<String>
         get() = listOf(apiConfigurationName, implementationConfigurationName, compileOnlyConfigurationName, runtimeOnlyConfigurationName)
 }

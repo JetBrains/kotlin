@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa.cfg
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.contracts.description.*
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.declarations.*
@@ -88,8 +89,27 @@ class ControlFlowGraphBuilder {
             is BlockExitNode -> when {
                 // lambda@{ x } -> x
                 // lambda@{ class C } -> Unit-returning stub
-                function.isLambda -> fir.statements.lastOrNull() as? FirExpression
-                    ?: buildUnitExpression { source = fir.statements.lastOrNull()?.source ?: fir.source }
+                function.isLambda -> {
+                    val lastStatement = fir.statements.lastOrNull()
+
+                    when {
+                        // Skip last return statement because otherwise it add Nothing constraint on the lambda return type.
+                        // That might lead to preliminary variable fixation to Nothing that is kind of undesirable in most cases.
+                        // Note, that the expression that is going to be returned would be used as another element of `returnValues`.
+                        //
+                        // While that remains a bit questionable why adding such trivial Nothing constraint makes variable being fixed there
+                        // but currently it doesn't look like we've got easy answers to those questions, so we just repeat K1 behavior
+                        // (see `val lastExpressionArgument` at KotlinResolutionCallbacksImpl.analyzeAndGetLambdaReturnArguments)
+                        // Probably, that might be removed once KT-58232 is fixed
+                        lastStatement is FirReturnExpression &&
+                                lastStatement.target.labeledElement.symbol == function.symbol &&
+                                lastStatement.source?.kind != KtFakeSourceElementKind.ImplicitReturn.FromLastStatement ->
+                            null
+                        else ->
+                            lastStatement as? FirExpression
+                                ?: buildUnitExpression { source = fir.statements.lastOrNull()?.source ?: fir.source }
+                    }
+                }
                 // fun() { terminatingExpression } -> nothing (checker will emit an error if return type is not Unit)
                 // fun() { throw } or fun() { returnsNothing() } -> Nothing-returning stub
                 else -> FirStub.takeIf { _ -> previousNodes.all { it is StubNode } }

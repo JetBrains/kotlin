@@ -5,7 +5,9 @@
 
 package kotlin.native.concurrent
 
+import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.internal.Frozen
+import kotlin.concurrent.AtomicInt
 
 @ThreadLocal
 @OptIn(FreezingIsDeprecated::class)
@@ -14,7 +16,7 @@ private object CurrentThread {
 }
 
 @Frozen
-@OptIn(FreezingIsDeprecated::class)
+@OptIn(FreezingIsDeprecated::class, ExperimentalNativeApi::class)
 internal class Lock {
     private val locker_ = AtomicInt(0)
     private val reenterCount_ = AtomicInt(0)
@@ -23,11 +25,11 @@ internal class Lock {
     fun lock() {
         val lockData = CurrentThread.id.hashCode()
         loop@ do {
-            val old = locker_.compareAndSwap(0, lockData)
+            val old = locker_.compareAndExchange(0, lockData)
             when (old) {
                 lockData -> {
                     // Was locked by us already.
-                    reenterCount_.increment()
+                    reenterCount_.incrementAndGet()
                     break@loop
                 }
                 0 -> {
@@ -41,10 +43,10 @@ internal class Lock {
 
     fun unlock() {
         if (reenterCount_.value > 0) {
-            reenterCount_.decrement()
+            reenterCount_.decrementAndGet()
         } else {
             val lockData = CurrentThread.id.hashCode()
-            val old = locker_.compareAndSwap(lockData, 0)
+            val old = locker_.compareAndExchange(lockData, 0)
             assert(old == lockData)
         }
     }

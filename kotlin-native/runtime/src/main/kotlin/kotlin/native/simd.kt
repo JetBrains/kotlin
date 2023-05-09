@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2023 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 package kotlin.native
@@ -7,8 +7,10 @@ package kotlin.native
 import kotlin.native.internal.GCUnsafeCall
 import kotlin.native.internal.TypedIntrinsic
 import kotlin.native.internal.IntrinsicType
+import kotlinx.cinterop.ExperimentalForeignApi
 
 
+@ExperimentalForeignApi
 public final class Vector128 private constructor() {
     @TypedIntrinsic(IntrinsicType.EXTRACT_ELEMENT)
     external fun getByteAt(index: Int): Byte
@@ -37,12 +39,13 @@ public final class Vector128 private constructor() {
     public override fun toString() =
             "(0x${getUIntAt(0).toString(16)}, 0x${getUIntAt(1).toString(16)}, 0x${getUIntAt(2).toString(16)}, 0x${getUIntAt(3).toString(16)})"
 
-    // Not as good for floating types
+    @Deprecated("Provided for binary compatibility", level = DeprecationLevel.HIDDEN)
     public fun equals(other: Vector128): Boolean =
             getLongAt(0) == other.getLongAt(0) && getLongAt(1) == other.getLongAt(1)
 
+    // Not as good for floating types
     public override fun equals(other: Any?): Boolean =
-            other is Vector128 && this.equals(other)
+            other is Vector128 && getLongAt(0) == other.getLongAt(0) && getLongAt(1) == other.getLongAt(1)
 
     override fun hashCode(): Int {
         val x0 = getLongAt(0)
@@ -51,8 +54,10 @@ public final class Vector128 private constructor() {
     }
 }
 
+@ExperimentalForeignApi
 @GCUnsafeCall("Kotlin_Vector4f_of")
 external fun vectorOf(f0: Float, f1: Float, f2: Float, f3: Float): Vector128
 
+@ExperimentalForeignApi
 @GCUnsafeCall("Kotlin_Vector4i32_of")
 external fun vectorOf(f0: Int, f1: Int, f2: Int, f3: Int): Vector128

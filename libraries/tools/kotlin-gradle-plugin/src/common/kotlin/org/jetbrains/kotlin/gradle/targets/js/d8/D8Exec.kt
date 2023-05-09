@@ -13,17 +13,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
 import org.jetbrains.kotlin.gradle.targets.js.addWasmExperimentalArguments
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.newFileProperty
-import javax.inject.Inject
 
-open class D8Exec
-@Inject
-constructor(
-    private val compilation: KotlinJsCompilation
-) : AbstractExecTask<D8Exec>(D8Exec::class.java) {
-    @Transient
-    @get:Internal
-    lateinit var d8: D8RootExtension
-
+open class D8Exec : AbstractExecTask<D8Exec>(D8Exec::class.java) {
     init {
         onlyIf {
             !inputFileProperty.isPresent || inputFileProperty.asFile.map { it.exists() }.get()
@@ -45,9 +36,7 @@ constructor(
         if (inputFileProperty.isPresent) {
             val inputFile = inputFileProperty.asFile.get()
             workingDir = inputFile.parentFile
-            if (compilation.target.platformType == KotlinPlatformType.wasm) {
-                newArgs.add("--module")
-            }
+            newArgs.add("--module")
             newArgs.add(inputFile.canonicalPath)
         }
         args?.let {
@@ -70,10 +59,8 @@ constructor(
             val project = target.project
             val d8 = D8RootPlugin.apply(project.rootProject)
             return project.registerTask(
-                name,
-                listOf(compilation)
+                name
             ) {
-                it.d8 = d8
                 it.executable = d8.requireConfigured().executablePath.absolutePath
                 it.dependsOn(d8.setupTaskProvider)
                 it.dependsOn(compilation.compileKotlinTaskProvider)

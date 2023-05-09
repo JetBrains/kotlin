@@ -50,7 +50,7 @@ public object KtDeclarationRendererForSource {
         classInitializerRender = KtClassInitializerRenderer.INIT_BLOCK_WITH_BRACES
 
         anonymousFunctionRenderer = KtAnonymousFunctionSymbolRenderer.AS_SOURCE
-        backingFieldRenderer = KtBackingFieldSymbolRenderer.AS_FIELD_KEYWROD
+        backingFieldRenderer = KtBackingFieldSymbolRenderer.AS_FIELD_KEYWORD
         constructorRenderer = KtConstructorSymbolRenderer.AS_SOURCE
         enumEntryRenderer = KtEnumEntrySymbolRenderer.AS_SOURCE
         functionSymbolRenderer = KtFunctionSymbolRenderer.AS_SOURCE

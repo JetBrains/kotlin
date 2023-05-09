@@ -168,7 +168,7 @@ fun case_9(x: TypealiasNullableString<!REDUNDANT_NULLABLE!>?<!>) {
 fun case_10() {
     val a = Class()
 
-    if (a.prop_4 === null || <!FORBIDDEN_IDENTITY_EQUALS_WARNING, SENSELESS_COMPARISON!>a.prop_4 === null<!> || true) {
+    if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING!>a.prop_4 === null<!> || <!FORBIDDEN_IDENTITY_EQUALS_WARNING, SENSELESS_COMPARISON!>a.prop_4 === null<!> || true) {
         if (a.prop_4 != null) {
             a.prop_4
             a.prop_4.equals(null)
@@ -388,7 +388,7 @@ fun case_20(b: Boolean) {
 // TESTCASE NUMBER: 21
 fun case_21() {
     val y = null
-    if (EnumClassWithNullableProperty.A.prop_1 !== null && <!SENSELESS_COMPARISON!>y != EnumClassWithNullableProperty.A.prop_1<!>) {
+    if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING!>EnumClassWithNullableProperty.A.prop_1 !== null<!> && <!SENSELESS_COMPARISON!>y != EnumClassWithNullableProperty.A.prop_1<!>) {
         EnumClassWithNullableProperty.A.prop_1
         EnumClassWithNullableProperty.A.prop_1.equals(null)
         EnumClassWithNullableProperty.A.prop_1.propT
@@ -421,9 +421,9 @@ fun case_22(a: (() -> Unit)?) {
 
 // TESTCASE NUMBER: 23
 fun case_23(a: ((Float) -> Int?)?, b: Float?, c: Nothing?) {
-    if (a != null && b !== null || a != c && b !== c) {
+    if (a != null && <!FORBIDDEN_IDENTITY_EQUALS_WARNING!>b !== null<!> || a != c && <!FORBIDDEN_IDENTITY_EQUALS_WARNING!>b !== c<!>) {
         val x = <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>a(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>b<!>)<!>
-        if (x != null || <!SENSELESS_COMPARISON!>c !== x<!>) {
+        if (x != null || <!FORBIDDEN_IDENTITY_EQUALS_WARNING, SENSELESS_COMPARISON!>c !== x<!>) {
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.equals(null)
             <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>x<!>.propT
@@ -533,7 +533,7 @@ fun case_27(y: Nothing?) {
 
 //TESTCASE NUMBER: 28
 fun case_28(a: DeepObject.A.B.C.D.E.F.G.J?) =
-    if (a != null == true == false == false == false == true == false == true == false == false == true == true && a.x !== nullableNothingProperty) {
+    if (a != null == true == false == false == false == true == false == true == false == false == true == true && <!FORBIDDEN_IDENTITY_EQUALS_WARNING!>a.x !== nullableNothingProperty<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J? & DeepObject.A.B.C.D.E.F.G.J")!>a<!>.x
         <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J? & DeepObject.A.B.C.D.E.F.G.J")!>a<!>.equals(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("DeepObject.A.B.C.D.E.F.G.J? & DeepObject.A.B.C.D.E.F.G.J")!>a<!>.propT
@@ -547,13 +547,13 @@ fun case_28(a: DeepObject.A.B.C.D.E.F.G.J?) =
     } else -1
 
 // TESTCASE NUMBER: 29
-fun case_29(a: Int?, b: Nothing?, c: Int = if (a === b) 0 else a) {
+fun case_29(a: Int?, b: Nothing?, c: Int = if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING!>a === b<!>) 0 else a) {
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>a<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>b<!>
 }
 
 // TESTCASE NUMBER: 30
-fun case_30(a: Int?, b: Nothing?, c: Int = if (a === b || <!SENSELESS_COMPARISON!>a == null<!>) 0 else a) {
+fun case_30(a: Int?, b: Nothing?, c: Int = if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING!>a === b<!> || <!SENSELESS_COMPARISON!>a == null<!>) 0 else a) {
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int?")!>a<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>b<!>
 }

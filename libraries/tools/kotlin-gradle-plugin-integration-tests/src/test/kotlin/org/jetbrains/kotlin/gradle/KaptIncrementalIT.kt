@@ -283,7 +283,7 @@ open class KaptIncrementalIT : KGPBaseTest() {
                 val useBKt = javaSourcesDir().resolve("bar/useB.kt")
                 assertCompiledKotlinSources(
                     listOf(projectPath.relativize(bKt), projectPath.relativize(useBKt)),
-                    getOutputForTask("kaptGenerateStubsKotlin"),
+                    getOutputForTask(":kaptGenerateStubsKotlin"),
                     errorMessageSuffix = " in task 'kaptGenerateStubsKotlin'"
                 )
 
@@ -344,13 +344,13 @@ open class KaptIncrementalIT : KGPBaseTest() {
     ) {
         assertCompiledKotlinSources(
             sources,
-            buildResult.getOutputForTask("kaptGenerateStubsKotlin"),
+            buildResult.getOutputForTask(":kaptGenerateStubsKotlin"),
             errorMessageSuffix = " in task 'kaptGenerateStubsKotlin"
         )
 
         assertCompiledKotlinSources(
             sources,
-            buildResult.getOutputForTask("compileKotlin"),
+            buildResult.getOutputForTask(":compileKotlin"),
             errorMessageSuffix = " in task 'compileKotlin'"
         )
     }

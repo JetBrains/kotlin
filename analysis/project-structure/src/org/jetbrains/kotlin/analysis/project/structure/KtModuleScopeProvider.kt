@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.project.structure
 
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 
@@ -38,4 +37,4 @@ public class KtModuleScopeProviderImpl : KtModuleScopeProvider() {
 }
 
 public val Project.moduleScopeProvider: KtModuleScopeProvider
-    get() = ServiceManager.getService(this, KtModuleScopeProvider::class.java)
+    get() = this.getService(KtModuleScopeProvider::class.java)

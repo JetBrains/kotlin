@@ -1,4 +1,4 @@
-open enum class Test0 : Enum<Test0> {
+enum class Test0 : Enum<Test0> {
   private constructor(x: Int) /* primary */ {
     super/*Enum*/<Test0>()
     /* <init>() */
@@ -24,7 +24,7 @@ open enum class Test0 : Enum<Test0> {
 
 }
 
-open enum class Test1 : Enum<Test1> {
+enum class Test1 : Enum<Test1> {
   private constructor(x: Int) /* primary */ {
     super/*Enum*/<Test1>()
     /* <init>() */
@@ -96,6 +96,7 @@ abstract enum class Test2 : Enum<Test2> {
   }
 
   abstract fun foo()
+
   fun values(): Array<Test2> /* Synthetic body for ENUM_VALUES */
 
   fun valueOf(value: String): Test2 /* Synthetic body for ENUM_VALUEOF */

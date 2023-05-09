@@ -212,7 +212,7 @@ D'E"F\G$H */;
   class Companion ...
 }
 
-public final class Foo /* Foo*/ {
+public final class Foo2 /* Foo2*/ {
   @org.jetbrains.annotations.NotNull()
   public final Foo getFoo();//  getFoo()
 
@@ -222,7 +222,7 @@ public final class Foo /* Foo*/ {
   @org.jetbrains.annotations.NotNull()
   public final Foo getMeNonNullFoo();//  getMeNonNullFoo()
 
-  public  Foo();//  .ctor()
+  public  Foo2();//  .ctor()
 }
 
 public final class Modifiers /* Modifiers*/ {

@@ -70,6 +70,18 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
         }
 
         @Test
+        @TestMetadata("annotationOnConstructorProperty.kt")
+        public void testAnnotationOnConstructorProperty() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/annotationOnConstructorProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("annotationOnReturnType.kt")
+        public void testAnnotationOnReturnType() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/annotationOnReturnType.kt");
+        }
+
+        @Test
         @TestMetadata("danglingAnnotation.kt")
         public void testDanglingAnnotation() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/danglingAnnotation.kt");
@@ -88,9 +100,121 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
         }
 
         @Test
+        @TestMetadata("jvmFieldAnnotationOnConstructorProperty.kt")
+        public void testJvmFieldAnnotationOnConstructorProperty() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/jvmFieldAnnotationOnConstructorProperty.kt");
+        }
+
+        @Test
         @TestMetadata("retentionValue.kt")
         public void testRetentionValue() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/retentionValue.kt");
+        }
+
+        @Test
+        @TestMetadata("superCallAnnotation.kt")
+        public void testSuperCallAnnotation() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/superCallAnnotation.kt");
+        }
+
+        @Test
+        @TestMetadata("superCallAnnotation2.kt")
+        public void testSuperCallAnnotation2() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/superCallAnnotation2.kt");
+        }
+
+        @Test
+        @TestMetadata("typeOnAnnotationOnConstructorParameter.kt")
+        public void testTypeOnAnnotationOnConstructorParameter() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/typeOnAnnotationOnConstructorParameter.kt");
+        }
+
+        @Test
+        @TestMetadata("typeOnAnnotationOnConstructorProperty.kt")
+        public void testTypeOnAnnotationOnConstructorProperty() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/typeOnAnnotationOnConstructorProperty.kt");
+        }
+
+        @Test
+        @TestMetadata("typeOnAnnotationOnConstructorPropertyAndParameter.kt")
+        public void testTypeOnAnnotationOnConstructorPropertyAndParameter() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/typeOnAnnotationOnConstructorPropertyAndParameter.kt");
+        }
+
+        @Test
+        @TestMetadata("typeOnAnnotationOnConstructorPropertyWithArguments.kt")
+        public void testTypeOnAnnotationOnConstructorPropertyWithArguments() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/typeOnAnnotationOnConstructorPropertyWithArguments.kt");
+        }
+
+        @Test
+        @TestMetadata("typeOnAnnotationOnFunctionParameter.kt")
+        public void testTypeOnAnnotationOnFunctionParameter() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/typeOnAnnotationOnFunctionParameter.kt");
+        }
+
+        @Test
+        @TestMetadata("typeOnAnnotationOnFunctionParameterWithArguments.kt")
+        public void testTypeOnAnnotationOnFunctionParameterWithArguments() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/typeOnAnnotationOnFunctionParameterWithArguments.kt");
+        }
+
+        @Nested
+        @TestMetadata("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/useSite")
+        @TestDataPath("$PROJECT_ROOT")
+        public class UseSite {
+            @Test
+            public void testAllFilesPresentInUseSite() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/useSite"), Pattern.compile("^(.+)\\.kt$"), null, true);
+            }
+
+            @Test
+            @TestMetadata("delegate.kt")
+            public void testDelegate() throws Exception {
+                runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/useSite/delegate.kt");
+            }
+
+            @Test
+            @TestMetadata("field.kt")
+            public void testField() throws Exception {
+                runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/useSite/field.kt");
+            }
+
+            @Test
+            @TestMetadata("file.kt")
+            public void testFile() throws Exception {
+                runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/useSite/file.kt");
+            }
+
+            @Test
+            @TestMetadata("getter.kt")
+            public void testGetter() throws Exception {
+                runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/useSite/getter.kt");
+            }
+
+            @Test
+            @TestMetadata("param.kt")
+            public void testParam() throws Exception {
+                runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/useSite/param.kt");
+            }
+
+            @Test
+            @TestMetadata("property.kt")
+            public void testProperty() throws Exception {
+                runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/useSite/property.kt");
+            }
+
+            @Test
+            @TestMetadata("setParam.kt")
+            public void testSetParam() throws Exception {
+                runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/useSite/setParam.kt");
+            }
+
+            @Test
+            @TestMetadata("setter.kt")
+            public void testSetter() throws Exception {
+                runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/annotations/useSite/setter.kt");
+            }
         }
     }
 
@@ -107,6 +231,30 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
         @TestMetadata("callArgument.kt")
         public void testCallArgument() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/callArgument.kt");
+        }
+
+        @Test
+        @TestMetadata("callInsideLambdaInsideSuperCallAndExplicitConstructor.kt")
+        public void testCallInsideLambdaInsideSuperCallAndExplicitConstructor() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/callInsideLambdaInsideSuperCallAndExplicitConstructor.kt");
+        }
+
+        @Test
+        @TestMetadata("callInsideLambdaInsideSuperCallAndImplicitConstructor.kt")
+        public void testCallInsideLambdaInsideSuperCallAndImplicitConstructor() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/callInsideLambdaInsideSuperCallAndImplicitConstructor.kt");
+        }
+
+        @Test
+        @TestMetadata("callInsideLambdaInsideSuperCallFromSecondaryConstructor.kt")
+        public void testCallInsideLambdaInsideSuperCallFromSecondaryConstructor() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/callInsideLambdaInsideSuperCallFromSecondaryConstructor.kt");
+        }
+
+        @Test
+        @TestMetadata("callInsideLambdaInsideSuperCallFromSingleSecondaryConstructor.kt")
+        public void testCallInsideLambdaInsideSuperCallFromSingleSecondaryConstructor() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/callInsideLambdaInsideSuperCallFromSingleSecondaryConstructor.kt");
         }
 
         @Test
@@ -212,6 +360,42 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
         }
 
         @Test
+        @TestMetadata("qualifiedCallInsidePropertyInsideConstructor.kt")
+        public void testQualifiedCallInsidePropertyInsideConstructor() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/qualifiedCallInsidePropertyInsideConstructor.kt");
+        }
+
+        @Test
+        @TestMetadata("qualifiedCallInsideSuperCall.kt")
+        public void testQualifiedCallInsideSuperCall() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/qualifiedCallInsideSuperCall.kt");
+        }
+
+        @Test
+        @TestMetadata("qualifiedCallInsideSuperCall2.kt")
+        public void testQualifiedCallInsideSuperCall2() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/qualifiedCallInsideSuperCall2.kt");
+        }
+
+        @Test
+        @TestMetadata("qualifiedCallInsideSuperCall3.kt")
+        public void testQualifiedCallInsideSuperCall3() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/qualifiedCallInsideSuperCall3.kt");
+        }
+
+        @Test
+        @TestMetadata("qualifiedCallInsideSuperCall4.kt")
+        public void testQualifiedCallInsideSuperCall4() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/qualifiedCallInsideSuperCall4.kt");
+        }
+
+        @Test
+        @TestMetadata("qualifiedCallInsideSuperCall5.kt")
+        public void testQualifiedCallInsideSuperCall5() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/qualifiedCallInsideSuperCall5.kt");
+        }
+
+        @Test
         @TestMetadata("qualifiedCallSelector.kt")
         public void testQualifiedCallSelector() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/qualifiedCallSelector.kt");
@@ -228,6 +412,12 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
         public void testSetOperator() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/setOperator.kt");
         }
+
+        @Test
+        @TestMetadata("superType.kt")
+        public void testSuperType() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/calls/superType.kt");
+        }
     }
 
     @Nested
@@ -237,6 +427,12 @@ public class SourceGetOrBuildFirTestGenerated extends AbstractSourceGetOrBuildFi
         @Test
         public void testAllFilesPresentInDeclarations() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/getOrBuildFir/declarations"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("constructorProperty.kt")
+        public void testConstructorProperty() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/getOrBuildFir/declarations/constructorProperty.kt");
         }
 
         @Test

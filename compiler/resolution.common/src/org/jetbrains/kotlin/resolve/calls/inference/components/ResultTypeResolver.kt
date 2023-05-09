@@ -68,16 +68,40 @@ class ResultTypeResolver(
         variableWithConstraints: VariableWithConstraints,
         direction: ResolveDirection
     ): KotlinTypeMarker? {
-        findResultIfThereIsEqualsConstraint(c, variableWithConstraints)?.let { return it }
+        val resultTypeFromEqualConstraint = findResultIfThereIsEqualsConstraint(c, variableWithConstraints)
+        if (resultTypeFromEqualConstraint != null) {
+            with(c) {
+                if (!isK2 || !resultTypeFromEqualConstraint.contains { type ->
+                        type.typeConstructor().isIntegerLiteralConstantTypeConstructor()
+                    }
+                ) {
+                    // In K2, we don't return here ILT-based types immediately
+                    return resultTypeFromEqualConstraint
+                }
+            }
+        }
 
         val subType = c.findSubType(variableWithConstraints)
         // Super type should be the most flexible, sub type should be the least one
         val superType = c.findSuperType(variableWithConstraints).makeFlexibleIfNecessary(c, variableWithConstraints.constraints)
 
-        return if (direction == ResolveDirection.TO_SUBTYPE || direction == ResolveDirection.UNKNOWN) {
+        val resultTypeFromDirection = if (direction == ResolveDirection.TO_SUBTYPE || direction == ResolveDirection.UNKNOWN) {
             c.resultType(subType, superType, variableWithConstraints)
         } else {
             c.resultType(superType, subType, variableWithConstraints)
+        }
+        // In the general case, we can have here two types, one from EQUAL constraint which must be ILT-based,
+        // and the second one from UPPER/LOWER constraints (subType/superType based)
+        // The logic of choice here is:
+        // - if one type is null, we return another one
+        // - we return type from UPPER/LOWER constraints if it's more precise (in fact, only Int/Short/Byte/Long is allowed here)
+        // - otherwise we return ILT-based type
+        return when {
+            resultTypeFromEqualConstraint == null -> resultTypeFromDirection
+            resultTypeFromDirection == null -> resultTypeFromEqualConstraint
+            with(c) { !resultTypeFromDirection.typeConstructor().isNothingConstructor() } &&
+                    AbstractTypeChecker.isSubtypeOf(c, resultTypeFromDirection, resultTypeFromEqualConstraint) -> resultTypeFromDirection
+            else -> resultTypeFromEqualConstraint
         }
     }
 

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.konan.blackboxtest.support.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestModule.Companion.allDependsOn
+import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.ExecutableCompilation.Companion.applyPartialLinkageArgs
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.ExecutableCompilation.Companion.applyTestRunnerSpecificArgs
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.ExecutableCompilation.Companion.assertTestDumpFileNotEmptyIfExists
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationArtifact.*
@@ -212,6 +213,40 @@ internal class LibraryCompilation(
     }
 }
 
+internal class ObjCFrameworkCompilation(
+    settings: Settings,
+    freeCompilerArgs: TestCompilerArgs,
+    sourceModules: Collection<TestModule>,
+    dependencies: Iterable<TestCompilationDependency<*>>,
+    expectedArtifact: ObjCFramework
+) : SourceBasedCompilation<ObjCFramework>(
+    targets = settings.get(),
+    home = settings.get(),
+    classLoader = settings.get(),
+    optimizationMode = settings.get(),
+    compilerOutputInterceptor = settings.get(),
+    memoryModel = settings.get(),
+    threadStateChecker = settings.get(),
+    sanitizer = settings.get(),
+    gcType = settings.get(),
+    gcScheduler = settings.get(),
+    pipelineType = settings.get(),
+    freeCompilerArgs = freeCompilerArgs,
+    sourceModules = sourceModules,
+    dependencies = CategorizedDependencies(dependencies),
+    expectedArtifact = expectedArtifact
+) {
+    override val binaryOptions get() = BinaryOptions.RuntimeAssertionsMode.defaultForTesting
+
+    override fun applySpecificArgs(argsBuilder: ArgsBuilder) = with(argsBuilder) {
+        add(
+            "-produce", "framework",
+            "-output", expectedArtifact.frameworkDir.absolutePath
+        )
+        super.applySpecificArgs(argsBuilder)
+    }
+}
+
 internal class GivenLibraryCompilation(givenArtifact: KLIB) : TestCompilation<KLIB>() {
     override val result = TestCompilationResult.Success(givenArtifact, LoggedData.NoopCompilerCall(givenArtifact.klibFile))
 }
@@ -289,6 +324,8 @@ internal class ExecutableCompilation(
     private val cacheMode: CacheMode = settings.get()
     override val binaryOptions = BinaryOptions.RuntimeAssertionsMode.chooseFor(cacheMode)
 
+    private val partialLinkageConfig: UsedPartialLinkageConfig = settings.get()
+
     override fun applySpecificArgs(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
         add(
             "-produce", "program",
@@ -299,7 +336,7 @@ internal class ExecutableCompilation(
             is WithTestRunnerExtras -> {
                 val testDumpFile: File? = if (sourceModules.isEmpty()
                     && dependencies.includedLibraries.isNotEmpty()
-                    && cacheMode.staticCacheRequiredForEveryLibrary
+                    && cacheMode.useStaticCacheForUserLibraries
                 ) {
                     // If there are no source modules passed to the compiler, but there is an included library with the static cache, then
                     // this should be two-stage test mode: Test functions are already stored in the included library, and they should
@@ -313,12 +350,13 @@ internal class ExecutableCompilation(
                 applyTestRunnerSpecificArgs(extras, testDumpFile)
             }
         }
+        applyPartialLinkageArgs(partialLinkageConfig)
         super.applySpecificArgs(argsBuilder)
     }
 
     override fun applyDependencies(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
         super.applyDependencies(argsBuilder)
-        cacheMode.staticCacheRootDir?.let { cacheRootDir -> add("-Xcache-directory=$cacheRootDir") }
+        cacheMode.staticCacheForDistributionLibrariesRootDir?.let { cacheRootDir -> add("-Xcache-directory=$cacheRootDir") }
         add(dependencies.uniqueCacheDirs) { libraryCacheDir -> "-Xcache-directory=${libraryCacheDir.path}" }
     }
 
@@ -342,6 +380,14 @@ internal class ExecutableCompilation(
                 testDumpFile.useLines { lines ->
                     assertTrue(lines.filter(String::isNotBlank).any()) { "Test dump file is empty: $testDumpFile" }
                 }
+            }
+        }
+
+        internal fun ArgsBuilder.applyPartialLinkageArgs(partialLinkageConfig: UsedPartialLinkageConfig) {
+            with(partialLinkageConfig.config) {
+                add("-Xpartial-linkage=${mode.name.lowercase()}")
+                if (mode.isEnabled)
+                    add("-Xpartial-linkage-loglevel=${logLevel.name.lowercase()}")
             }
         }
     }
@@ -374,10 +420,12 @@ internal class StaticCacheCompilation(
 
     private val cacheRootDir: File = run {
         val cacheMode = settings.get<CacheMode>()
-        cacheMode.staticCacheRootDir ?: fail { "No cache root directory found for cache mode $cacheMode" }
+        cacheMode.staticCacheForDistributionLibrariesRootDir ?: fail { "No cache root directory found for cache mode $cacheMode" }
     }
 
     private val makePerFileCache: Boolean = settings.get<CacheMode>().makePerFileCaches
+
+    private val partialLinkageConfig: UsedPartialLinkageConfig = settings.get()
 
     override fun applySpecificArgs(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
         add("-produce", "static_cache")
@@ -400,6 +448,8 @@ internal class StaticCacheCompilation(
         )
         if (makePerFileCache)
             add("-Xmake-per-file-cache")
+
+        applyPartialLinkageArgs(partialLinkageConfig)
     }
 
     override fun applyDependencies(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
@@ -458,6 +508,6 @@ private object BinaryOptions {
         val defaultForTesting: Map<String, String> = mapOf("runtimeAssertionsMode" to "panic")
         val forUseWithCache: Map<String, String> = mapOf("runtimeAssertionsMode" to "ignore")
 
-        fun chooseFor(cacheMode: CacheMode) = if (cacheMode.staticCacheRootDir != null) forUseWithCache else defaultForTesting
+        fun chooseFor(cacheMode: CacheMode) = if (cacheMode.useStaticCacheForDistributionLibraries) forUseWithCache else defaultForTesting
     }
 }

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.konan.driver.phases
 
-import org.jetbrains.kotlin.backend.konan.InteropBuiltIns
 import org.jetbrains.kotlin.backend.konan.KonanConfig
 import org.jetbrains.kotlin.backend.konan.KonanReflectionTypes
 import org.jetbrains.kotlin.backend.konan.driver.BasicPhaseContext
@@ -66,8 +65,6 @@ internal interface PsiToIrContext : PhaseContext {
 
     val builtIns: KonanBuiltIns
 
-    val interopBuiltIns: InteropBuiltIns
-
     val bindingContext: BindingContext
 
     val stdlibModule: ModuleDescriptor
@@ -88,10 +85,6 @@ internal class PsiToIrContextImpl(
 
     override val builtIns: KonanBuiltIns by lazy(LazyThreadSafetyMode.PUBLICATION) {
         moduleDescriptor.builtIns as KonanBuiltIns
-    }
-
-    override val interopBuiltIns by lazy {
-        InteropBuiltIns(this.builtIns)
     }
 
     override fun dispose() {

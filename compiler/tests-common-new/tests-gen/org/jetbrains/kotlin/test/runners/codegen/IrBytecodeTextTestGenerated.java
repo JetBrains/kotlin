@@ -2253,6 +2253,18 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         public void testKt18731_2() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/enum/kt18731_2.kt");
         }
+
+        @Test
+        @TestMetadata("kt57671_1.kt")
+        public void testKt57671_1() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/enum/kt57671_1.kt");
+        }
+
+        @Test
+        @TestMetadata("kt57671_2.kt")
+        public void testKt57671_2() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/enum/kt57671_2.kt");
+        }
     }
 
     @Nested
@@ -3905,12 +3917,6 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         }
 
         @Test
-        @TestMetadata("interfaceJvmDefaultImplStubs.kt")
-        public void testInterfaceJvmDefaultImplStubs() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/inlineClasses/interfaceJvmDefaultImplStubs.kt");
-        }
-
-        @Test
         @TestMetadata("isCheckForInlineClass.kt")
         public void testIsCheckForInlineClass() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/inlineClasses/isCheckForInlineClass.kt");
@@ -4158,6 +4164,12 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
         @TestMetadata("kt56104.kt")
         public void testKt56104() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/innerClasses/kt56104.kt");
+        }
+
+        @Test
+        @TestMetadata("kt57714.kt")
+        public void testKt57714() throws Exception {
+            runTest("compiler/testData/codegen/bytecodeText/innerClasses/kt57714.kt");
         }
 
         @Test
@@ -4462,46 +4474,6 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
                 @TestMetadata("simpleProperty.kt")
                 public void testSimpleProperty() throws Exception {
                     runTest("compiler/testData/codegen/bytecodeText/jvm8/jvmDefault/allCompatibility/simpleProperty.kt");
-                }
-            }
-
-            @Nested
-            @TestMetadata("compiler/testData/codegen/bytecodeText/jvm8/jvmDefault/compatibility")
-            @TestDataPath("$PROJECT_ROOT")
-            public class Compatibility {
-                @Test
-                public void testAllFilesPresentInCompatibility() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/bytecodeText/jvm8/jvmDefault/compatibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
-                }
-
-                @Test
-                @TestMetadata("defaultArgs.kt")
-                public void testDefaultArgs() throws Exception {
-                    runTest("compiler/testData/codegen/bytecodeText/jvm8/jvmDefault/compatibility/defaultArgs.kt");
-                }
-
-                @Test
-                @TestMetadata("simpleDiamond.kt")
-                public void testSimpleDiamond() throws Exception {
-                    runTest("compiler/testData/codegen/bytecodeText/jvm8/jvmDefault/compatibility/simpleDiamond.kt");
-                }
-
-                @Test
-                @TestMetadata("simpleFunction.kt")
-                public void testSimpleFunction() throws Exception {
-                    runTest("compiler/testData/codegen/bytecodeText/jvm8/jvmDefault/compatibility/simpleFunction.kt");
-                }
-
-                @Test
-                @TestMetadata("simpleFunctionWithAbstractOverride.kt")
-                public void testSimpleFunctionWithAbstractOverride() throws Exception {
-                    runTest("compiler/testData/codegen/bytecodeText/jvm8/jvmDefault/compatibility/simpleFunctionWithAbstractOverride.kt");
-                }
-
-                @Test
-                @TestMetadata("simpleProperty.kt")
-                public void testSimpleProperty() throws Exception {
-                    runTest("compiler/testData/codegen/bytecodeText/jvm8/jvmDefault/compatibility/simpleProperty.kt");
                 }
             }
         }

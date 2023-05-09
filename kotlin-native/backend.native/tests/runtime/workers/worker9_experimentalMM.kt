@@ -3,7 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
-@file:OptIn(FreezingIsDeprecated::class)
+@file:OptIn(FreezingIsDeprecated::class, ObsoleteWorkersApi::class)
 package runtime.workers.worker9_experimentalMM
 
 import kotlin.test.*
@@ -78,12 +78,13 @@ fun makeCyclic(): Node {
     return outer
 }
 
+@OptIn(kotlin.native.runtime.NativeRuntimeApi::class)
 @Test fun runTest4() {
     val worker = Worker.start()
 
     val future = worker.execute(TransferMode.SAFE, { }) {
         makeCyclic().also {
-            kotlin.native.internal.GC.collect()
+            kotlin.native.runtime.GC.collect()
         }
     }
     assert(future.result != null)

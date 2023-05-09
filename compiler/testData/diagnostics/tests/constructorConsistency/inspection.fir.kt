@@ -1,4 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
 class First {
     val x: String
 

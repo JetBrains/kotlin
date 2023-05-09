@@ -61,6 +61,12 @@ public class NativePartialLinkageTestGenerated extends AbstractNativePartialLink
     }
 
     @Test
+    @TestMetadata("externalDeclarations")
+    public void testExternalDeclarations() throws Exception {
+        runTest("compiler/testData/klibABI/externalDeclarations/");
+    }
+
+    @Test
     @TestMetadata("functionTransformations")
     public void testFunctionTransformations() throws Exception {
         runTest("compiler/testData/klibABI/functionTransformations/");

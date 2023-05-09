@@ -1,4 +1,5 @@
 // !LANGUAGE: +ProperVisibilityForCompanionObjectInstanceField
+// LAMBDAS: CLASS
 
 class Host {
     private companion object {

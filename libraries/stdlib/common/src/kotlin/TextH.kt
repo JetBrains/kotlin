@@ -311,6 +311,22 @@ expect fun CharSequence.regionMatches(
     ignoreCase: Boolean = false
 ): Boolean
 
+/**
+ * Returns `true` if the specified range in this string is equal to the specified range in another string.
+ * @param thisOffset the start offset in this string of the substring to compare.
+ * @param other the string against a substring of which the comparison is performed.
+ * @param otherOffset the start offset in the other string of the substring to compare.
+ * @param length the length of the substring to compare.
+ */
+@SinceKotlin("1.9")
+public expect fun String.regionMatches(
+    thisOffset: Int,
+    other: String,
+    otherOffset: Int,
+    length: Int,
+    ignoreCase: Boolean = false
+): Boolean
+
 
 /**
  * A Comparator that orders strings ignoring character case.
@@ -320,15 +336,6 @@ expect fun CharSequence.regionMatches(
  */
 @SinceKotlin("1.2")
 public expect val String.Companion.CASE_INSENSITIVE_ORDER: Comparator<String>
-
-
-/**
- * Returns `true` if the content of this string is equal to the word "true", ignoring case, and `false` otherwise.
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-@kotlin.internal.InlineOnly
-public expect fun String.toBoolean(): Boolean
 
 /**
  * Returns `true` if this string is not `null` and its content is equal to the word "true", ignoring case, and `false` otherwise.

@@ -21,7 +21,7 @@ import kotlin.internal.RequireKotlinVersionKind
 @Target(AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.SOURCE)
 @MustBeDocumented
-@SinceKotlin("1.8")
+@SinceKotlin("1.9")
 @RequireKotlin(version = "1.8.20", versionKind = RequireKotlinVersionKind.COMPILER_VERSION)
-@ExperimentalStdlibApi
+@WasExperimental(ExperimentalStdlibApi::class)
 public actual annotation class Volatile

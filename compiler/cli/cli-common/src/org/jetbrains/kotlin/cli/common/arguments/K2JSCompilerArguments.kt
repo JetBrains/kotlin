@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.cli.common.arguments
 
-import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.arguments.K2JsArgumentConstants.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -290,6 +289,34 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
         description = "Print declarations' reachability info to stdout during performing DCE"
     )
     var irDcePrintReachabilityInfo = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xir-dce-dump-reachability-info-to-file",
+        valueDescription = "<path>",
+        description = "Dump declarations' reachability info collected during performing DCE to a file. " +
+                "The format will be chosen automatically based on the file extension. " +
+                "Supported output formats include JSON for .json, JS const initialized with a plain object containing information for .js, " +
+                "and plain text for all other file types."
+    )
+    var irDceDumpReachabilityInfoToFile: String? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xir-dump-declaration-ir-sizes-to-file",
+        valueDescription = "<path>",
+        description = "Dump the IR size of each declaration to a file. " +
+                "The format will be chosen automatically depending on the file extension. " +
+                "Supported output formats include JSON for .json, JS const initialized with a plain object containing information for .js, " +
+                "and plain text for all other file types."
+    )
+    var irDceDumpDeclarationIrSizesToFile: String? = null
         set(value) {
             checkFrozen()
             field = value
@@ -606,6 +633,16 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
             field = value
         }
 
+    @Argument(
+        value = "-Xoptimize-generated-js",
+        description = "Perform additional optimizations on the generated JS code"
+    )
+    var optimizeGeneratedJs = true
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     private fun MessageCollector.deprecationWarn(value: Boolean, defaultValue: Boolean, name: String) {
         if (value != defaultValue) {
             report(CompilerMessageSeverity.WARNING, "'$name' is deprecated and ignored, it will be removed in a future release")
@@ -654,6 +691,8 @@ class K2JSCompilerArguments : CommonCompilerArguments() {
             }
         }
     }
+
+    override fun copyOf(): Freezable = copyK2JSCompilerArguments(this, K2JSCompilerArguments())
 }
 
 fun K2JSCompilerArguments.isPreIrBackendDisabled(): Boolean =

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.serialization
 
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.overrides.DefaultFakeOverrideClassFilter
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideBuilder
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideDeclarationTable
@@ -44,6 +45,7 @@ fun deserializeFromByteArray(
     toplevelParent: IrClass,
     typeSystemContext: IrTypeSystemContext,
 ) {
+    val internationService = IrInterningService()
     val irProto = JvmIr.ClassOrFile.parseFrom(byteArray.codedInputStream)
     val irLibraryFile = IrLibraryFileFromAnnotation(
         irProto.typeList,
@@ -65,7 +67,8 @@ fun deserializeFromByteArray(
         fileSignature = dummyFileSignature,
         /* TODO */ actuals = emptyList(),
         enqueueLocalTopLevelDeclaration = {}, // just link to it in symbolTable
-        handleExpectActualMapping = { _, symbol -> symbol } // no expect declarations
+        handleExpectActualMapping = { _, symbol -> symbol }, // no expect declarations
+        internationService = internationService
     ) { idSignature, symbolKind ->
         referencePublicSymbol(symbolTable, idSignature, symbolKind)
     }
@@ -85,7 +88,8 @@ fun deserializeFromByteArray(
         DefaultFakeOverrideClassFilter,
         fakeOverrideBuilder,
         compatibilityMode = CompatibilityMode.CURRENT,
-        partialLinkageEnabled = false
+        partialLinkageEnabled = false,
+        internationService = internationService
     )
     for (declarationProto in irProto.declarationList) {
         deserializer.deserializeDeclaration(declarationProto, setParent = false)
@@ -162,7 +166,7 @@ fun makeSimpleFakeOverrideBuilder(
         typeSystemContext,
         fakeOverrideDeclarationTable = PrePopulatedDeclarationTable(symbolDeserializer.deserializedSymbols),
         friendModules = emptyMap(), // TODO: provide friend modules
-        partialLinkageEnabled = false
+        partialLinkageSupport = PartialLinkageSupportForLinker.DISABLED
     )
 }
 

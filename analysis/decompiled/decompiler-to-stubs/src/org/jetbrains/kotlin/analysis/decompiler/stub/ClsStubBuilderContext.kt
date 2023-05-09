@@ -4,23 +4,29 @@ package org.jetbrains.kotlin.analysis.decompiler.stub
 
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
+import org.jetbrains.kotlin.load.kotlin.KotlinClassFinder
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmMetadataVersion
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.deserialization.AnnotationLoader
 import org.jetbrains.kotlin.serialization.deserialization.ClassDataFinder
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.serialization.deserialization.getName
 
-data class ClassIdWithTarget(val classId: ClassId, val target: AnnotationUseSiteTarget?)
+data class AnnotationWithTarget(val annotationWithArgs: AnnotationWithArgs, val target: AnnotationUseSiteTarget?)
 
 class ClsStubBuilderComponents(
     val classDataFinder: ClassDataFinder,
-    val annotationLoader: AnnotationLoader<ClassId>,
-    val virtualFileForDebug: VirtualFile
+    val annotationLoader: AnnotationLoader<AnnotationWithArgs>,
+    val virtualFileForDebug: VirtualFile,
+    val serializationProtocol: SerializerExtensionProtocol,
+    val classFinder: KotlinClassFinder? = null,
+    val jvmMetadataVersion: JvmMetadataVersion? = null
 ) {
     fun createContext(
         nameResolver: NameResolver,

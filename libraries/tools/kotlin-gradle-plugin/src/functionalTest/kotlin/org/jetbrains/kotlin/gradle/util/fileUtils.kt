@@ -7,5 +7,10 @@ package org.jetbrains.kotlin.gradle.util
 
 import org.gradle.api.Project
 import java.io.File
+import java.nio.file.Path
+import java.nio.file.Paths
 
 fun Set<File>.relativeTo(project: Project): Set<File> = map { it.relativeTo(project.projectDir) }.toSet()
+
+val resourcesRoot: Path
+    get() = Paths.get("src", "functionalTest", "resources")

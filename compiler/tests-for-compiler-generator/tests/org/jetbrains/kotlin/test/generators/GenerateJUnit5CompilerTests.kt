@@ -265,6 +265,18 @@ fun generateJUnit5CompilerTests(args: Array<String>) {
             }
         }
 
+        testGroup("compiler/fir/analysis-tests/tests-gen", "compiler/testData") {
+            testClass<AbstractFirLoadK1CompiledKotlin> {
+                model("loadJava/compiledKotlin", extension = "kt")
+                model("loadJava/compiledKotlinWithStdlib", extension = "kt")
+            }
+
+            testClass<AbstractFirLoadK2CompiledKotlin> {
+                model("loadJava/compiledKotlin", extension = "kt")
+                model("loadJava/compiledKotlinWithStdlib", extension = "kt")
+            }
+        }
+
         testGroup(testsRoot = "compiler/fir/fir2ir/tests-gen", testDataRoot = "compiler/testData") {
             testClass<AbstractFirLightTreeBlackBoxCodegenTest> {
                 model("codegen/box")

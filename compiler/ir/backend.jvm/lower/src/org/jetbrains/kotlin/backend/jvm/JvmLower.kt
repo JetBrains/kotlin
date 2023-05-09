@@ -316,7 +316,7 @@ internal val functionInliningPhase = makeIrModulePhase(
     )
 )
 
-val constEvaluationPhase = makeIrModulePhase<JvmBackendContext>(
+private val constEvaluationPhase = makeIrModulePhase<JvmBackendContext>(
     {
         ConstEvaluationLowering(
             it,

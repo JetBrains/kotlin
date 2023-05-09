@@ -12,7 +12,6 @@ import org.gradle.api.file.FileCollection
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.*
 import org.gradle.work.Incremental
 import org.gradle.work.InputChanges
@@ -24,14 +23,16 @@ import org.jetbrains.kotlin.compilerRunner.GradleCompilerEnvironment
 import org.jetbrains.kotlin.compilerRunner.IncrementalCompilationEnvironment
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptionsDefault
 import org.jetbrains.kotlin.gradle.internal.tasks.allOutputFiles
 import org.jetbrains.kotlin.gradle.logging.GradleErrorMessageCollector
 import org.jetbrains.kotlin.gradle.logging.GradlePrintingMessageCollector
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.ContributeCompilerArgumentsContext
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinBuildStatsService
+import org.jetbrains.kotlin.gradle.report.BuildReportMode
 import org.jetbrains.kotlin.gradle.targets.js.internal.LibraryFilterCachingService
 import org.jetbrains.kotlin.gradle.targets.js.internal.UsesLibraryFilterCachingService
 import org.jetbrains.kotlin.gradle.targets.js.ir.DISABLE_PRE_IR
@@ -41,7 +42,7 @@ import org.jetbrains.kotlin.gradle.targets.js.ir.PRODUCE_ZIPPED_KLIB
 import org.jetbrains.kotlin.gradle.tasks.internal.KotlinJsOptionsCompat
 import org.jetbrains.kotlin.gradle.utils.isParentOf
 import org.jetbrains.kotlin.gradle.utils.newInstance
-import org.jetbrains.kotlin.gradle.utils.property
+import org.jetbrains.kotlin.gradle.utils.toPathsArray
 import org.jetbrains.kotlin.incremental.ClasspathChanges
 import org.jetbrains.kotlin.library.impl.isKotlinLibrary
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
@@ -125,43 +126,88 @@ abstract class Kotlin2JsCompile @Inject constructor(
     @get:Nested
     override val multiplatformStructure: K2MultiplatformStructure = objectFactory.newInstance()
 
-    override fun createCompilerArgs(): K2JSCompilerArguments =
-        K2JSCompilerArguments()
-
+    @Suppress("DeprecatedCallableAddReplaceWith")
+    @Deprecated("KTIJ-25227: Necessary override for IDEs < 2023.2", level = DeprecationLevel.ERROR)
     override fun setupCompilerArgs(args: K2JSCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
-        KotlinJsCompilerOptionsHelper.fillDefaultValues(args)
-        super.setupCompilerArgs(args, defaultsOnly = defaultsOnly, ignoreClasspathResolutionErrors = ignoreClasspathResolutionErrors)
+        @Suppress("DEPRECATION_ERROR")
+        super.setupCompilerArgs(args, defaultsOnly, ignoreClasspathResolutionErrors)
+    }
 
-        if (defaultsOnly) return
+    override fun createCompilerArguments(context: CreateCompilerArgumentsContext) = context.create<K2JSCompilerArguments> {
+        primitive { args ->
+            args.multiPlatform = multiPlatformEnabled.get()
 
-        KotlinJsCompilerOptionsHelper.fillCompilerArguments(compilerOptions, args)
-        if (!args.sourceMapPrefix.isNullOrEmpty()) {
-            args.sourceMapBaseDirs = sourceMapBaseDir.get().asFile.absolutePath
-        }
-        if (isIrBackendEnabled()) {
-            val outputFilePath: String? = compilerOptions.outputFile.orNull
-            if (outputFilePath != null) {
-                val outputFile = File(outputFilePath)
-                args.outputDir = (if (outputFile.extension == "") outputFile else outputFile.parentFile).normalize().absolutePath
-                args.moduleName = outputFile.nameWithoutExtension
-            } else {
-                args.outputDir = destinationDirectory.get().asFile.normalize().absolutePath
-                args.moduleName = compilerOptions.moduleName.get()
+            args.pluginOptions = (pluginOptions.toSingleCompilerPluginOptions() + kotlinPluginData?.orNull?.options)
+                .arguments.toTypedArray()
+
+            if (reportingSettings().buildReportMode == BuildReportMode.VERBOSE) {
+                args.reportPerf = true
             }
-        } else {
-            args.outputFile = outputFileProperty.get().absoluteFile.normalize().absolutePath
+
+            KotlinJsCompilerOptionsHelper.fillCompilerArguments(compilerOptions, args)
+
+            if (isIrBackendEnabled()) {
+                val outputFilePath: String? = compilerOptions.outputFile.orNull
+                if (outputFilePath != null) {
+                    val outputFile = File(outputFilePath)
+                    args.outputDir = (if (outputFile.extension == "") outputFile else outputFile.parentFile).normalize().absolutePath
+                    args.moduleName = outputFile.nameWithoutExtension
+                } else {
+                    args.outputDir = destinationDirectory.get().asFile.normalize().absolutePath
+                    args.moduleName = compilerOptions.moduleName.get()
+                }
+            } else {
+                args.outputFile = outputFileProperty.get().absoluteFile.normalize().absolutePath
+            }
+
+            if (compilerOptions.usesK2.get()) {
+                args.fragments = multiplatformStructure.fragmentsCompilerArgs
+                args.fragmentRefines = multiplatformStructure.fragmentRefinesCompilerArgs
+            }
+
+            explicitApiMode.orNull?.run { args.explicitApi = toCompilerValue() }
+
+            // Overriding freeArgs from compilerOptions with enhanced one + additional one set on execution phase
+            // containing additional arguments based on the js compilation configuration
+            args.freeArgs = executionTimeFreeCompilerArgs ?: enhancedFreeCompilerArgs.get().toList()
         }
 
-        args.configureMultiplatform(
-            compilerOptions,
-            k1CommonSources = commonSourceSet.asFileTree,
-            k2MultiplatformFragments = multiplatformStructure
-        )
+        pluginClasspath { args ->
+            args.pluginClasspaths = runSafe {
+                listOfNotNull(
+                    pluginClasspath, kotlinPluginData?.orNull?.classpath
+                ).reduce(FileCollection::plus).toPathsArray()
+            }
+        }
 
-        // Overriding freeArgs from compilerOptions with enhanced one + additional one set on execution phase
-        // containing additional arguments based on the js compilation configuration
-        val localExecutionTimeFreeCompilerArgs = executionTimeFreeCompilerArgs
-        args.freeArgs = if (localExecutionTimeFreeCompilerArgs != null) localExecutionTimeFreeCompilerArgs else enhancedFreeCompilerArgs.get()
+        dependencyClasspath { args ->
+            args.friendModules = friendDependencies.files.joinToString(File.pathSeparator) { it.absolutePath }
+
+            args.libraries = runSafe {
+                libraries
+                    .filter { it.exists() && libraryFilter(it) }
+                    .map { it.normalize().absolutePath }
+                    .toSet()
+                    .takeIf { it.isNotEmpty() }
+                    ?.joinToString(File.pathSeparator)
+            }
+        }
+
+        sources { args ->
+            if (!args.sourceMapPrefix.isNullOrEmpty()) {
+                args.sourceMapBaseDirs = sourceMapBaseDir.get().asFile.absolutePath
+            }
+
+            if (compilerOptions.usesK2.get()) {
+                args.fragmentSources = multiplatformStructure.fragmentSourcesCompilerArgs(sourceFileFilter)
+            } else {
+                args.commonSources = commonSourceSet.asFileTree.toPathsArray()
+            }
+
+            args.freeArgs += sources.asFileTree.files.map { it.absolutePath }
+        }
+
+        contributeAdditionalCompilerArguments(this)
     }
 
     @get:InputFiles
@@ -174,10 +220,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
         .fileCollection()
         .from(friendPaths)
         .filter {
-            // .jar files are not required for js compilation as friend modules
-            // and, because of `@InputFiles` and different normalization strategy from `@Classpath`,
-            // they produce build cache misses
-            it.exists() && !it.name.endsWith(".jar") && libraryFilter(it)
+            it.exists() && libraryFilter(it)
         }
 
     @get:Internal
@@ -242,15 +285,12 @@ abstract class Kotlin2JsCompile @Inject constructor(
     override val incrementalProps: List<FileCollection>
         get() = super.incrementalProps + listOf(friendDependencies)
 
-    open fun processArgs(
-        args: K2JSCompilerArguments
-    ) {
+    protected open fun processArgsBeforeCompile(args: K2JSCompilerArguments) = Unit
 
-    }
+    protected open fun contributeAdditionalCompilerArguments(context: ContributeCompilerArgumentsContext<K2JSCompilerArguments>) = Unit
 
     override fun callCompilerAsync(
         args: K2JSCompilerArguments,
-        kotlinSources: Set<File>,
         inputChanges: InputChanges,
         taskOutputsBackup: TaskOutputsBackup?
     ) {
@@ -277,7 +317,8 @@ abstract class Kotlin2JsCompile @Inject constructor(
         logger.kotlinDebug("compiling with args ${ArgumentUtils.convertArgumentsToStringList(args)}")
 
         val gradlePrintingMessageCollector = GradlePrintingMessageCollector(logger, args.allWarningsAsErrors)
-        val gradleMessageCollector = GradleErrorMessageCollector(gradlePrintingMessageCollector, kotlinPluginVersion = getKotlinPluginVersion(logger))
+        val gradleMessageCollector =
+            GradleErrorMessageCollector(gradlePrintingMessageCollector, kotlinPluginVersion = getKotlinPluginVersion(logger))
         val outputItemCollector = OutputItemsCollectorImpl()
         val compilerRunner = compilerRunner.get()
 
@@ -299,9 +340,8 @@ abstract class Kotlin2JsCompile @Inject constructor(
             reportingSettings = reportingSettings(),
             incrementalCompilationEnvironment = icEnv
         )
-        processArgs(args)
+        processArgsBeforeCompile(args)
         compilerRunner.runJsCompilerAsync(
-            kotlinSources.toList(),
             args,
             environment,
             taskOutputsBackup

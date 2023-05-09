@@ -40,6 +40,8 @@ public abstract class KtScopeProvider : KtAnalysisSessionComponent() {
 
     public abstract fun getSyntheticJavaPropertiesScope(type: KtType): KtTypeScope?
 
+    public abstract fun getImportingScopeContext(file: KtFile): KtScopeContext
+
     public abstract fun getScopeContextForPosition(
         originalFile: KtFile,
         positionInFakeFile: KtElement
@@ -112,8 +114,13 @@ public interface KtScopeProviderMixIn : KtAnalysisSessionMixIn {
     public fun KtFile.getScopeContextForPosition(positionInFakeFile: KtElement): KtScopeContext =
         withValidityAssertion { analysisSession.scopeProvider.getScopeContextForPosition(this, positionInFakeFile) }
 
-    public fun KtFile.getScopeContextForFile(): KtScopeContext =
-        withValidityAssertion { analysisSession.scopeProvider.getScopeContextForPosition(this, this) }
+    /**
+     * Returns a [KtScopeContext] formed by all imports in the [KtFile].
+     *
+     * By default, this will also include default importing scopes, which can be filtered by [KtScopeKind]
+     */
+    public fun KtFile.getImportingScopeContext(): KtScopeContext =
+        withValidityAssertion { analysisSession.scopeProvider.getImportingScopeContext(this) }
 
     /**
      * Returns single scope, containing declarations from all scopes that satisfy [filter]. The order of declarations corresponds to the
@@ -173,6 +180,7 @@ public sealed class KtScopeKind {
      * Represents [KtTypeScope], which doesn't include synthetic Java properties of corresponding type.
      */
     public class SimpleTypeScope(override val indexInTower: Int) : TypeScope()
+
     public class SyntheticJavaPropertiesScope(override val indexInTower: Int) : TypeScope()
 
     public sealed class NonLocalScope : KtScopeKind()
@@ -216,6 +224,11 @@ public sealed class KtScopeKind {
      * Represents [KtScope] containing static members of a classifier.
      */
     public class StaticMemberScope(override val indexInTower: Int) : NonLocalScope()
+
+    /**
+     * Represents [KtScope] containing members of a script.
+     */
+    public class ScriptMemberScope(override val indexInTower: Int) : NonLocalScope()
 }
 
 public data class KtScopeWithKind(

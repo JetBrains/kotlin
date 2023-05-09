@@ -11,13 +11,16 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.common.*
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.logging.*
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskLoggers
+import org.jetbrains.kotlin.build.report.statistics.StatTag
 import org.jetbrains.kotlin.gradle.report.*
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
+import org.jetbrains.kotlin.gradle.tasks.*
+import org.jetbrains.kotlin.gradle.tasks.OOMErrorException
 import org.jetbrains.kotlin.gradle.tasks.cleanOutputsAndLocalState
-import org.jetbrains.kotlin.gradle.tasks.throwExceptionIfCompilationFailed
+import org.jetbrains.kotlin.gradle.tasks.kotlinDaemonOOMHelperMessage
 import org.jetbrains.kotlin.gradle.utils.stackTraceAsString
 import org.jetbrains.kotlin.incremental.ChangedFiles
 import org.jetbrains.kotlin.incremental.ClasspathChanges
@@ -25,6 +28,7 @@ import org.jetbrains.kotlin.incremental.IncrementalModuleInfo
 import org.jetbrains.kotlin.incremental.util.ExceptionLocation
 import org.jetbrains.kotlin.incremental.util.reportException
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
+import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.slf4j.LoggerFactory
 import java.io.*
 import java.net.URLClassLoader
@@ -33,6 +37,7 @@ import java.util.*
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
 import javax.inject.Inject
+import kotlin.collections.HashSet
 
 internal class ProjectFilesForCompilation(
     val projectRootFile: File,
@@ -40,10 +45,9 @@ internal class ProjectFilesForCompilation(
     val sessionFlagFile: File,
     val buildDir: File
 ) : Serializable {
-    //TODO
-    constructor(logger: Logger, projectDir:File, buildDir: File, prjectName: String, projectCacheDirProvider: File, sessionDir: File) : this(
+    constructor(logger: Logger, projectDir:File, buildDir: File, projectName: String, projectCacheDirProvider: File, sessionDir: File) : this(
         projectRootFile = projectDir,
-        clientIsAliveFlagFile = GradleCompilerRunner.getOrCreateClientFlagFile(logger, prjectName),
+        clientIsAliveFlagFile = GradleCompilerRunner.getOrCreateClientFlagFile(logger, projectName),
         sessionFlagFile = GradleCompilerRunner.getOrCreateSessionFlagFile(logger, sessionDir, projectCacheDirProvider),
         buildDir = buildDir
     )
@@ -69,6 +73,7 @@ internal class GradleKotlinCompilerWorkArguments(
     val compilerExecutionSettings: CompilerExecutionSettings,
     val errorsFile: File?,
     val kotlinPluginVersion: String,
+    val kotlinLanguageVersion: KotlinVersion,
 ) : Serializable {
     companion object {
         const val serialVersionUID: Long = 1
@@ -106,12 +111,13 @@ internal class GradleKotlinCompilerWork @Inject constructor(
     private val compilerExecutionSettings = config.compilerExecutionSettings
     private val errorsFile = config.errorsFile
     private val kotlinPluginVersion = config.kotlinPluginVersion
+    private val kotlinLanguageVersion = config.kotlinLanguageVersion
 
     private val log: KotlinLogger =
         TaskLoggers.get(taskPath)?.let { GradleKotlinLogger(it).apply { debug("Using '$taskPath' logger") } }
             ?: run {
                 val logger = LoggerFactory.getLogger("GradleKotlinCompilerWork")
-                val kotlinLogger = if (logger is org.gradle.api.logging.Logger) {
+                val kotlinLogger = if (logger is Logger) {
                     GradleKotlinLogger(logger)
                 } else SL4JKotlinLogger(logger)
 
@@ -138,15 +144,24 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             throwExceptionIfCompilationFailed(exitCode, executionStrategy)
         } finally {
             val taskInfo = TaskExecutionInfo(
+                kotlinLanguageVersion = kotlinLanguageVersion,
                 changedFiles = incrementalCompilationEnvironment?.changedFiles,
                 compilerArguments = if (reportingSettings.includeCompilerArguments) compilerArgs else emptyArray(),
-                withAbiSnapshot = incrementalCompilationEnvironment?.withAbiSnapshot,
-                withArtifactTransform = incrementalCompilationEnvironment?.classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled
+                tags = collectStatTags(),
             )
             metrics.endMeasure(BuildTime.RUN_COMPILATION_IN_WORKER)
             val result = TaskExecutionResult(buildMetrics = metrics.getMetrics(), icLogLines = icLogLines, taskInfo = taskInfo)
             TaskExecutionResults[taskPath] = result
         }
+    }
+
+    private fun collectStatTags(): Set<StatTag> {
+        val statTags = HashSet<StatTag>()
+        incrementalCompilationEnvironment?.withAbiSnapshot?.ifTrue { statTags.add(StatTag.ABI_SNAPSHOT) }
+        if (incrementalCompilationEnvironment?.classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled) {
+            statTags.add(StatTag.ARTIFACT_TRANSFORM)
+        }
+        return statTags
     }
 
     private fun compileWithDaemonOrFallbackImpl(messageCollector: MessageCollector): Pair<ExitCode, KotlinCompilerExecutionStrategy> {
@@ -232,7 +247,11 @@ internal class GradleKotlinCompilerWork @Inject constructor(
             exitCodeFromProcessExitCode(log, res.get())
         } catch (e: Throwable) {
             bufferingMessageCollector.flush(messageCollector)
-            throw e
+            if (e is OutOfMemoryError || e.hasOOMCause()) {
+                throw OOMErrorException(kotlinDaemonOOMHelperMessage)
+            } else {
+                throw e
+            }
         } finally {
             val memoryUsageAfterBuild = daemon.getUsedMemory(withGC = false).takeIf { it.isGood }?.get()
 

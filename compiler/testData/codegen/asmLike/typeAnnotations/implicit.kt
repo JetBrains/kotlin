@@ -3,6 +3,8 @@
 // RENDER_ANNOTATIONS
 // TARGET_BACKEND: JVM
 // JVM_TARGET: 1.8
+// WITH_STDLIB
+
 package foo
 
 @Target(AnnotationTarget.TYPE)
@@ -27,7 +29,12 @@ class Kotlin {
     fun foo4() = { foo2() }()
 
     fun foo5() {
-        val lambda = { foo2() }
+        val lambda = @JvmSerializableLambda { foo2() }
         lambda()
+    }
+
+    fun foo6() {
+        val indyLambda = { foo2() }
+        indyLambda()
     }
 }

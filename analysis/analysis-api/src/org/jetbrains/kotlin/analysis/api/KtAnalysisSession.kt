@@ -55,12 +55,14 @@ public abstract class KtAnalysisSession(final override val token: KtLifetimeToke
     KtVisibilityCheckerMixIn,
     KtMemberSymbolProviderMixin,
     KtMultiplatformInfoProviderMixin,
+    KtOriginalPsiProviderMixIn,
     KtInheritorsProviderMixIn,
     KtTypeCreatorMixIn,
     KtAnalysisScopeProviderMixIn,
     KtSignatureSubstitutorMixIn,
     KtScopeSubstitutionMixIn,
-    KtSymbolProviderByJavaPsiMixIn {
+    KtSymbolProviderByJavaPsiMixIn,
+    KtSymbolFromResolveExtensionProviderMixIn {
 
     public abstract val useSiteModule: KtModule
 
@@ -140,6 +142,9 @@ public abstract class KtAnalysisSession(final override val token: KtLifetimeToke
     internal val multiplatformInfoProvider: KtMultiplatformInfoProvider get() = multiplatformInfoProviderImpl
     protected abstract val multiplatformInfoProviderImpl: KtMultiplatformInfoProvider
 
+    internal val originalPsiProvider: KtOriginalPsiProvider get() = originalPsiProviderImpl
+    protected abstract val originalPsiProviderImpl: KtOriginalPsiProvider
+
     internal val symbolInfoProvider: KtSymbolInfoProvider get() = symbolInfoProviderImpl
     protected abstract val symbolInfoProviderImpl: KtSymbolInfoProvider
 
@@ -154,6 +159,9 @@ public abstract class KtAnalysisSession(final override val token: KtLifetimeToke
 
     internal val scopeSubstitution: KtScopeSubstitution get() = scopeSubstitutionImpl
     protected abstract val scopeSubstitutionImpl: KtScopeSubstitution
+
+    internal val resolveExtensionProvider: KtSymbolFromResolveExtensionProvider get() = resolveExtensionProviderImpl
+    protected abstract val resolveExtensionProviderImpl: KtSymbolFromResolveExtensionProvider
 
     @KtAnalysisApiInternals
     public val substitutorFactory: KtSubstitutorFactory get() = substitutorFactoryImpl

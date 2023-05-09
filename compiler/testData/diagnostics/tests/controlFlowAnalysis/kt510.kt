@@ -1,4 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
 // FIR_IDENTICAL
 //KT-510 `this.` allows initialization without backing field
 

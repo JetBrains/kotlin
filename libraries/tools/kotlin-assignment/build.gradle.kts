@@ -16,8 +16,6 @@ dependencies {
     commonCompileOnly(project(":compiler"))
     commonCompileOnly(project(":kotlin-assignment-compiler-plugin"))
 
-    embedded(project(":kotlin-assignment-compiler-plugin")) { isTransitive = false }
-
     testImplementation(commonDependency("junit"))
 }
 

@@ -7,7 +7,6 @@ buildscript {
         mavenLocal()
         maven { url 'https://maven.google.com' }
         mavenCentral()
-        maven { url = uri("https://jcenter.bintray.com/") }
     }
     dependencies {
         classpath "com.android.tools.build:gradle:$android_tools_version"
@@ -23,6 +22,5 @@ allprojects {
         mavenLocal()
         maven { url 'https://maven.google.com' }
         mavenCentral()
-        maven { url = uri("https://jcenter.bintray.com/") }
     }
 }

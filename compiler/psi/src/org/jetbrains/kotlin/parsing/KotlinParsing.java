@@ -106,11 +106,15 @@ public class KotlinParsing extends AbstractKotlinParsing {
     private final static TokenSet CLASS_INTERFACE_SET = TokenSet.create(CLASS_KEYWORD, INTERFACE_KEYWORD);
 
     static KotlinParsing createForTopLevel(SemanticWhitespaceAwarePsiBuilder builder) {
-        return new KotlinParsing(builder, true);
+        return new KotlinParsing(builder, true, true);
     }
 
-    private static KotlinParsing createForByClause(SemanticWhitespaceAwarePsiBuilder builder) {
-        return new KotlinParsing(new SemanticWhitespaceAwarePsiBuilderForByClause(builder), false);
+    static KotlinParsing createForTopLevelNonLazy(SemanticWhitespaceAwarePsiBuilder builder) {
+        return new KotlinParsing(builder, true, false);
+    }
+
+    private static KotlinParsing createForByClause(SemanticWhitespaceAwarePsiBuilder builder, boolean isLazy) {
+        return new KotlinParsing(new SemanticWhitespaceAwarePsiBuilderForByClause(builder), false, isLazy);
     }
 
     private final KotlinExpressionParsing myExpressionParsing;
@@ -142,11 +146,11 @@ public class KotlinParsing extends AbstractKotlinParsing {
                 }
             });
 
-    private KotlinParsing(SemanticWhitespaceAwarePsiBuilder builder, boolean isTopLevel) {
-        super(builder);
+    private KotlinParsing(SemanticWhitespaceAwarePsiBuilder builder, boolean isTopLevel, boolean isLazy) {
+        super(builder, isLazy);
         myExpressionParsing = isTopLevel
-                              ? new KotlinExpressionParsing(builder, this)
-                              : new KotlinExpressionParsing(builder, this) {
+                              ? new KotlinExpressionParsing(builder, this, isLazy)
+                              : new KotlinExpressionParsing(builder, this, isLazy) {
                                   @Override
                                   protected boolean parseCallWithClosure() {
                                       if (((SemanticWhitespaceAwarePsiBuilderForByClause) builder).getStackSize() > 0) {
@@ -157,7 +161,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
                                   @Override
                                   protected KotlinParsing create(SemanticWhitespaceAwarePsiBuilder builder) {
-                                      return createForByClause(builder);
+                                      return createForByClause(builder, isLazy);
                                   }
                               };
     }
@@ -1914,13 +1918,12 @@ public class KotlinParsing extends AbstractKotlinParsing {
     }
 
     private void parseBlock(boolean collapse) {
-
         PsiBuilder.Marker lazyBlock = mark();
 
         myBuilder.enableNewlines();
 
         boolean hasOpeningBrace = expect(LBRACE, "Expecting '{' to open a block");
-        boolean canCollapse = collapse && hasOpeningBrace;
+        boolean canCollapse = collapse && hasOpeningBrace && isLazy;
 
         if (canCollapse) {
             advanceBalancedBlock();
@@ -1997,7 +2000,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         if (at(BY_KEYWORD)) {
             reference.drop();
             advance(); // BY_KEYWORD
-            createForByClause(myBuilder).myExpressionParsing.parseExpression();
+            createForByClause(myBuilder, isLazy).myExpressionParsing.parseExpression();
             delegator.done(DELEGATED_SUPER_TYPE_ENTRY);
         }
         else if (at(LPAR)) {

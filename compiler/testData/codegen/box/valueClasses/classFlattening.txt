@@ -161,12 +161,12 @@ public final class SimpleMfvc {
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: int, p1: int, p2: java.lang.String, p3: java.lang.Object): boolean
     public final static method equals-impl0(p0: int, p1: int, p2: java.lang.String, p3: int, p4: int, p5: java.lang.String): boolean
-    public final static @org.jetbrains.annotations.NotNull method getA3-ge5QAg4(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String, p3: int, p4: int, @org.jetbrains.annotations.NotNull p5: java.lang.String): SimpleMfvc
-    public final static method getA4-impl(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): int
+    public final static @org.jetbrains.annotations.NotNull method getA3-ge5QAg4(p0: int, p1: int, p2: java.lang.String, p3: int, p4: int, @org.jetbrains.annotations.NotNull p5: java.lang.String): SimpleMfvc
+    public final static method getA4-impl(p0: int, p1: int, p2: java.lang.String): int
     public final static @org.jetbrains.annotations.NotNull method getB1-ge5QAg4(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): SimpleMfvc
     public final static @org.jetbrains.annotations.NotNull method getB2-ge5QAg4(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): SimpleMfvc
-    public final static @org.jetbrains.annotations.NotNull method getB3-ge5QAg4(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String, p3: int, p4: int, @org.jetbrains.annotations.NotNull p5: java.lang.String): SimpleMfvc
-    public final static @org.jetbrains.annotations.NotNull method getB4-impl(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String): SimpleMfvc
+    public final static @org.jetbrains.annotations.NotNull method getB3-ge5QAg4(p0: int, p1: int, p2: java.lang.String, p3: int, p4: int, @org.jetbrains.annotations.NotNull p5: java.lang.String): SimpleMfvc
+    public final static @org.jetbrains.annotations.NotNull method getB4-impl(p0: int, p1: int, p2: java.lang.String): SimpleMfvc
     private final static method getPrivate1-ge5QAg4(p0: int, p1: int, p2: java.lang.String, p3: int, p4: int, p5: java.lang.String): SimpleMfvc
     private final static method getPrivate2-ge5QAg4(p0: int, p1: int, p2: java.lang.String): SimpleMfvc
     private final static method getPrivate2-ge5QAg4(p0: int, p1: int, p2: java.lang.String, p3: int, p4: int, p5: java.lang.String): SimpleMfvc

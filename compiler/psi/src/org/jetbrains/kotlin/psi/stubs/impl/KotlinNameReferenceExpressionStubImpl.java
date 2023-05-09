@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.psi.stubs.impl;
 
+import com.intellij.psi.stubs.IStubElementType;
 import com.intellij.psi.stubs.StubElement;
 import com.intellij.util.io.StringRef;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression;
 import org.jetbrains.kotlin.psi.stubs.KotlinNameReferenceExpressionStub;
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes;
@@ -27,10 +29,26 @@ public class KotlinNameReferenceExpressionStubImpl extends KotlinStubBaseImpl<Kt
                                                                                                        KotlinNameReferenceExpressionStub {
     @NotNull
     private final StringRef referencedName;
+    private final boolean myClassRef;
 
     public KotlinNameReferenceExpressionStubImpl(StubElement parent, @NotNull StringRef referencedName) {
         super(parent, KtStubElementTypes.REFERENCE_EXPRESSION);
         this.referencedName = referencedName;
+        myClassRef = false;
+    }
+
+    public KotlinNameReferenceExpressionStubImpl(
+            @Nullable StubElement<?> parent,
+            @NotNull StringRef referencedName,
+            boolean myClassRef
+    ) {
+        super(parent, KtStubElementTypes.REFERENCE_EXPRESSION);
+        this.referencedName = referencedName;
+        this.myClassRef = myClassRef;
+    }
+
+    public boolean isClassRef() {
+        return myClassRef;
     }
 
     @NotNull

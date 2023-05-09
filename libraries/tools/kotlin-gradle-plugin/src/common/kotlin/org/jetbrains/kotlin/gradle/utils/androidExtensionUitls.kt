@@ -11,3 +11,5 @@ import org.gradle.api.Project
 internal val Project.androidExtensionOrNull: BaseExtension? get() = extensions.findByName("android")?.let { it as? BaseExtension }
 
 internal val Project.androidExtension: BaseExtension get() = extensions.getByName("android") as BaseExtension
+
+internal val Project.hasAndroidPlugin : Boolean get() = extensions.findByName("android") != null

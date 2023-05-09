@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.JavaVersion
 import org.gradle.api.logging.LogLevel
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
@@ -65,6 +66,15 @@ abstract class Kapt3BaseIT : KGPBaseTest() {
     protected val String.withPrefix get() = "kapt2/$this"
 }
 
+/**
+ * Note that some tests are disabled because kapt class loader cache holds a file descriptor open, which leads to problems on Windows.
+ * If you get a failed test on the build server with the message:
+ *
+ *     java.io.IOException: Failed to delete temp directory Z:\BuildAgent\temp\buildTmp\[...].
+ *     The following paths could not be deleted (see suppressed exceptions for details): [...]
+ *
+ * then override and disable the test here via `@Disabled`.
+ */
 @DisplayName("Kapt with classloaders cache")
 class Kapt3ClassLoadersCacheIT : Kapt3IT() {
     override fun kaptOptions(): BuildOptions.KaptOptions = super.kaptOptions().copy(
@@ -98,6 +108,14 @@ class Kapt3ClassLoadersCacheIT : Kapt3IT() {
 
     @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
     override fun testRepeatableAnnotationsWithOldJvmBackend(gradleVersion: GradleVersion) {
+    }
+
+    @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
+    override fun useGeneratedKotlinSource(gradleVersion: GradleVersion) {
+    }
+
+    @Disabled("classloaders cache is leaking file descriptors that prevents cleaning test project")
+    override fun useGeneratedKotlinSourceK2(gradleVersion: GradleVersion) {
     }
 
     override fun testAnnotationProcessorAsFqName(gradleVersion: GradleVersion) {
@@ -1037,7 +1055,7 @@ open class Kapt3IT : Kapt3BaseIT() {
         }
     }
 
-    @DisplayName("KT-52761: generated sources attached to compile task are also used by generate stubs task")
+    @DisplayName("Generated sources attached to KotlinSourceSet are also used by generate stubs task")
     @GradleTest
     fun testGeneratedSourcesUsedInGenerateStubsTask(gradleVersion: GradleVersion) {
         project("generatedSources".withPrefix, gradleVersion) {
@@ -1118,6 +1136,104 @@ open class Kapt3IT : Kapt3BaseIT() {
                     "KaptGenerateStubs task compiler arguments contains $composeSuppressOption times option to suppress compose warning:" +
                             " ${compilerArguments.joinToString("\n")}"
                 }
+            }
+        }
+    }
+
+    @DisplayName("Kapt runs in fallback mode with useK2 = true")
+    @GradleTest
+    internal fun fallBackModeWithUseK2(gradleVersion: GradleVersion) {
+        project("simple".withPrefix, gradleVersion) {
+            buildGradle.appendText(
+                """
+                |tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+                |    compilerOptions {
+                |        freeCompilerArgs.addAll([
+                |            "-Xuse-fir-ic",
+                |            "-Xuse-fir-lt"
+                |        ])
+                |    }
+                |    kotlinOptions {
+                |      useK2 = true
+                |    }
+                |}
+                |
+                |compileKotlin.kotlinOptions.allWarningsAsErrors = false
+                """.trimMargin()
+            )
+            build("build") {
+                assertKaptSuccessful()
+                assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin")
+                assertOutputContains("Falling back to 1.9.")
+            }
+        }
+    }
+
+    @DisplayName("Kapt runs in fallback mode with languageVersion = 2.0")
+    @GradleTest
+    internal fun fallBackModeWithLanguageVersion2_0(gradleVersion: GradleVersion) {
+        project("simple".withPrefix, gradleVersion) {
+            buildGradle.appendText(
+                """
+                |tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+                |    compilerOptions {
+                |        freeCompilerArgs.addAll([
+                |            "-Xuse-fir-ic",
+                |            "-Xuse-fir-lt"
+                |        ])
+                |    }
+                |    kotlinOptions {
+                |      languageVersion = "2.0"
+                |    }
+                |}
+                |
+                |compileKotlin.kotlinOptions.allWarningsAsErrors = false
+                """.trimMargin()
+            )
+            build("build") {
+                assertKaptSuccessful()
+                assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin")
+                assertOutputContains("Falling back to 1.9.")
+            }
+        }
+    }
+
+    @DisplayName("Kapt-generated Kotlin sources can be used in Kotlin")
+    @GradleTest
+    open fun useGeneratedKotlinSource(gradleVersion: GradleVersion) {
+        project("useGeneratedKotlinSource".withPrefix, gradleVersion) {
+            build("build") {
+                assertKaptSuccessful()
+                assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin")
+            }
+        }
+    }
+
+    @DisplayName("Kapt-generated Kotlin sources can be used in Kotlin with languageVersion = 2.0")
+    @GradleTest
+    open fun useGeneratedKotlinSourceK2(gradleVersion: GradleVersion) {
+        project("useGeneratedKotlinSource".withPrefix, gradleVersion) {
+            buildGradle.appendText(
+                """
+                |tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+                |    compilerOptions {
+                |        freeCompilerArgs.addAll([
+                |            "-Xuse-fir-ic",
+                |            "-Xuse-fir-lt"
+                |        ])
+                |    }
+                |    kotlinOptions {
+                |      languageVersion = "2.0"
+                |    }
+                |}
+                |
+                |compileKotlin.kotlinOptions.allWarningsAsErrors = false
+                """.trimMargin()
+            )
+            build("build") {
+                assertKaptSuccessful()
+                assertTasksExecuted(":kaptGenerateStubsKotlin", ":kaptKotlin", ":compileKotlin")
+                assertOutputContains("Falling back to 1.9.")
             }
         }
     }

@@ -6,6 +6,8 @@ package org.jetbrains.kotlin.cli.jvm.compiler
 
 import com.intellij.DynamicBundle
 import com.intellij.codeInsight.ContainerProvider
+import com.intellij.codeInsight.folding.JavaCodeFoldingSettings
+import com.intellij.codeInsight.folding.impl.JavaCodeFoldingSettingsBase
 import com.intellij.codeInsight.runner.JavaMainMethodProvider
 import com.intellij.core.JavaCoreApplicationEnvironment
 import com.intellij.ide.highlighter.JavaClassFileType
@@ -16,6 +18,8 @@ import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.VirtualFileSystem
 import com.intellij.psi.FileContextProvider
 import com.intellij.psi.augment.PsiAugmentProvider
+import com.intellij.psi.codeStyle.JavaFileCodeStyleFacade
+import com.intellij.psi.codeStyle.JavaFileCodeStyleFacadeFactory
 import com.intellij.psi.impl.smartPointers.SmartPointerAnchorProvider
 import com.intellij.psi.meta.MetaDataContributor
 import org.jetbrains.kotlin.cli.jvm.compiler.IdeaExtensionPoints.registerVersionSpecificAppExtensionPoints
@@ -28,6 +32,7 @@ class KotlinCoreApplicationEnvironment private constructor(
     JavaCoreApplicationEnvironment(parentDisposable, unitTestMode) {
 
     init {
+        registerApplicationService(JavaFileCodeStyleFacadeFactory::class.java, DummyJavaFileCodeStyleFacadeFactory())
         registerFileType(JavaClassFileType.INSTANCE, "sig");
     }
 

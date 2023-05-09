@@ -1,1 +1,1 @@
-@FILE:R|kotlin/Deprecated|(message = String(hello))
+@FILE:R|kotlin/Deprecated|[Types](message = String(hello))

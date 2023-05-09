@@ -34,12 +34,16 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
 
 fun FirRegularClassBuilder.generateValuesFunction(
-    moduleData: FirModuleData, packageFqName: FqName, classFqName: FqName, makeExpect: Boolean = false
+    moduleData: FirModuleData,
+    packageFqName: FqName,
+    classFqName: FqName,
+    makeExpect: Boolean = false,
+    origin: FirDeclarationOrigin = FirDeclarationOrigin.Source
 ) {
     val sourceElement = source?.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration)
     declarations += buildSimpleFunction {
         source = sourceElement
-        origin = FirDeclarationOrigin.Source
+        this.origin = origin
         this.moduleData = moduleData
         returnTypeRef = buildResolvedTypeRef {
             source = sourceElement
@@ -67,12 +71,16 @@ fun FirRegularClassBuilder.generateValuesFunction(
 }
 
 fun FirRegularClassBuilder.generateValueOfFunction(
-    moduleData: FirModuleData, packageFqName: FqName, classFqName: FqName, makeExpect: Boolean = false
+    moduleData: FirModuleData,
+    packageFqName: FqName,
+    classFqName: FqName,
+    makeExpect: Boolean = false,
+    origin: FirDeclarationOrigin = FirDeclarationOrigin.Source
 ) {
     val sourceElement = source?.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration)
     declarations += buildSimpleFunction {
         source = sourceElement
-        origin = FirDeclarationOrigin.Source
+        this.origin = origin
         this.moduleData = moduleData
         returnTypeRef = buildResolvedTypeRef {
             source = sourceElement
@@ -92,7 +100,7 @@ fun FirRegularClassBuilder.generateValueOfFunction(
         valueParameters += buildValueParameter vp@{
             source = sourceElement
             containingFunctionSymbol = this@buildSimpleFunction.symbol
-            origin = FirDeclarationOrigin.Source
+            this.origin = origin
             this.moduleData = moduleData
             returnTypeRef = buildResolvedTypeRef {
                 source = sourceElement
@@ -119,14 +127,18 @@ fun FirRegularClassBuilder.generateValueOfFunction(
 }
 
 fun FirRegularClassBuilder.generateEntriesGetter(
-    moduleData: FirModuleData, packageFqName: FqName, classFqName: FqName, makeExpect: Boolean = false
+    moduleData: FirModuleData,
+    packageFqName: FqName,
+    classFqName: FqName,
+    makeExpect: Boolean = false,
+    origin: FirDeclarationOrigin = FirDeclarationOrigin.Source
 ) {
     val sourceElement = source?.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration)
     declarations += buildProperty {
         source = sourceElement
         isVar = false
         isLocal = false
-        origin = FirDeclarationOrigin.Source
+        this.origin = origin
         this.moduleData = moduleData
         returnTypeRef = buildResolvedTypeRef {
             source = sourceElement
@@ -147,8 +159,8 @@ fun FirRegularClassBuilder.generateEntriesGetter(
         resolvePhase = this@generateEntriesGetter.resolvePhase
         getter = FirDefaultPropertyGetter(
             sourceElement?.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration),
-            moduleData, FirDeclarationOrigin.Source, returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.EnumGeneratedDeclaration),
-            Visibilities.Public, symbol
+            moduleData, origin, returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.EnumGeneratedDeclaration),
+            Visibilities.Public, symbol, resolvePhase = this@generateEntriesGetter.resolvePhase
         ).apply {
             this.status = createStatus(this@generateEntriesGetter.status).apply {
                 isStatic = true

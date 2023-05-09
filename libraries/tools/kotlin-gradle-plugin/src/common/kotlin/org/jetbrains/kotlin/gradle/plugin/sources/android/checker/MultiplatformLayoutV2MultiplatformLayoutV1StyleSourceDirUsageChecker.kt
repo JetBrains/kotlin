@@ -6,22 +6,25 @@
 package org.jetbrains.kotlin.gradle.plugin.sources.android.checker
 
 import com.android.build.gradle.api.AndroidSourceSet
-import org.gradle.api.logging.Logging
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.sources.android.KotlinAndroidSourceSetLayout
 import org.jetbrains.kotlin.gradle.plugin.sources.android.androidSourceSetInfo
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV1
 import org.jetbrains.kotlin.gradle.utils.androidExtension
-import java.io.File
+import kotlin.io.path.ExperimentalPathApi
+import kotlin.io.path.relativeTo
 
 /**
  * Detects and warns about usage of source directories from multiplatform layout version 1
  */
 internal object MultiplatformLayoutV2MultiplatformLayoutV1StyleSourceDirUsageChecker : KotlinAndroidSourceSetLayoutChecker {
 
+    @OptIn(ExperimentalPathApi::class)
     override fun checkCreatedSourceSet(
-        diagnosticReporter: KotlinAndroidSourceSetLayoutChecker.DiagnosticReporter,
+        diagnosticsCollector: KotlinToolingDiagnosticsCollector,
         target: KotlinAndroidTarget,
         layout: KotlinAndroidSourceSetLayout,
         kotlinSourceSet: KotlinSourceSet,
@@ -41,29 +44,18 @@ internal object MultiplatformLayoutV2MultiplatformLayoutV1StyleSourceDirUsageChe
          */
         if (target.project.androidExtension.sourceSets.findByName(v1kotlinSourceSetName) != null) return
 
+        val rootDirPath = target.project.rootDir.toPath()
         val v1KotlinSourceDir = target.project.file("src/$v1kotlinSourceSetName/kotlin")
         if (v1KotlinSourceDir.exists()) {
-            diagnosticReporter.warning(
-                V1StyleSourceDirUsageDiagnostic(
-                    layout = layout,
-                    v1StyleSourceDirInUse = v1KotlinSourceDir,
-                    v2StyleSourceDirToUse = target.project.file("src/${kotlinSourceSet.name}/kotlin")
+            val v2SourceDirToUse = target.project.file("src/${kotlinSourceSet.name}/kotlin")
+            diagnosticsCollector.report(
+                target.project,
+                KotlinToolingDiagnostics.SourceSetLayoutV1StyleDirUsageWarning(
+                    v1KotlinSourceDir.toPath().relativeTo(rootDirPath).toString(),
+                    layout.name,
+                    v2SourceDirToUse.toPath().relativeTo(rootDirPath).toString()
                 )
             )
         }
-    }
-
-    data class V1StyleSourceDirUsageDiagnostic(
-        private val layout: KotlinAndroidSourceSetLayout,
-        val v1StyleSourceDirInUse: File,
-        val v2StyleSourceDirToUse: File
-    ) : KotlinAndroidSourceSetLayoutChecker.Diagnostic {
-        override val message: String
-            get() = """
-                Found used source directory $v1StyleSourceDirInUse
-                This source directory was supported by: ${multiplatformAndroidSourceSetLayoutV1.name}
-                Current KotlinAndroidSourceSetLayout: ${layout.name}
-                New source directory is: $v2StyleSourceDirToUse
-            """.trimIndent()
     }
 }

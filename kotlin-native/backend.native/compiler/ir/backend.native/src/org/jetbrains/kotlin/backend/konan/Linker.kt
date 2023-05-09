@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.konan.target.CompilerOutputKind
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.LinkerOutputKind
 import org.jetbrains.kotlin.konan.target.presetName
+import org.jetbrains.kotlin.library.isInterop
+import org.jetbrains.kotlin.library.uniqueName
 
 internal fun determineLinkerOutput(context: PhaseContext): LinkerOutputKind =
         when (context.config.produce) {
@@ -144,15 +146,33 @@ internal fun runLinkerCommands(context: PhaseContext, commands: List<Command>, c
         it.execute()
     }
 } catch (e: KonanExternalToolFailure) {
-    val extraUserInfo =
-            if (cachingInvolved)
-                """
-                        Please try to disable compiler caches and rerun the build. To disable compiler caches, add the following line to the gradle.properties file in the project's root directory:
-                            
-                            kotlin.native.cacheKind.${context.config.target.presetName}=none
-                            
-                        Also, consider filing an issue with full Gradle log here: https://kotl.in/issue
-                        """.trimIndent()
-            else ""
-    context.reportCompilationError("${e.toolName} invocation reported errors\n$extraUserInfo\n${e.message}")
+    val extraUserInfo = if (cachingInvolved)
+        """
+                    Please try to disable compiler caches and rerun the build. To disable compiler caches, add the following line to the gradle.properties file in the project's root directory:
+                        
+                        kotlin.native.cacheKind.${context.config.target.presetName}=none
+                        
+                    Also, consider filing an issue with full Gradle log here: https://kotl.in/issue
+                    """.trimIndent()
+    else null
+
+    val extraUserSetupInfo = run {
+        context.config.resolvedLibraries.getFullResolvedList()
+                .filter { it.library.isInterop }
+                .mapNotNull { library ->
+                    library.library.manifestProperties["userSetupHint"]?.let {
+                        "From ${library.library.uniqueName}:\n$it".takeIf { it.isNotEmpty() }
+                    }
+                }
+                .mapIndexed { index, message -> "$index. $message" }
+                .takeIf { it.isNotEmpty() }
+                ?.joinToString(separator = "\n\n")
+                ?.let {
+                    "It seems your project produced link errors.\nProposed solutions:\n\n$it\n"
+                }
+    }
+
+    val extraInfo = listOfNotNull(extraUserInfo, extraUserSetupInfo).joinToString(separator = "\n")
+
+    context.reportCompilationError("${e.toolName} invocation reported errors\n$extraInfo\n${e.message}")
 }

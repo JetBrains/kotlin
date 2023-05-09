@@ -32,10 +32,8 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile>().configureEa
             "-Xallow-kotlin-package",
             "-opt-in=kotlin.ExperimentalMultiplatform",
             "-opt-in=kotlin.contracts.ExperimentalContracts",
-            // TODO: Better to use friendPaths property, but it does not work
-            //  KT-56690
-            "-Xfriend-modules=${libraries.joinToString(File.pathSeparator) { it.absolutePath }}"
         )
+    friendPaths.from(libraries)
     compilerOptions.allWarningsAsErrors.set(true)
 }
 

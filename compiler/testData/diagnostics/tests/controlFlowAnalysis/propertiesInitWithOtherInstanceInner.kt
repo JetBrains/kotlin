@@ -1,4 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
 class Outer {
     <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val outerProp: String<!>
     inner class Inner(inner: Inner, outer: Outer) {

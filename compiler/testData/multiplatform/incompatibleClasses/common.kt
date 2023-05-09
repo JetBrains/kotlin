@@ -19,3 +19,11 @@ expect class C4<F>
 
 
 expect abstract class ExtendsNumber : Number
+
+expect fun interface FunInterface {
+    fun run()
+}
+
+expect fun interface FunInterface2 {
+    fun run()
+}

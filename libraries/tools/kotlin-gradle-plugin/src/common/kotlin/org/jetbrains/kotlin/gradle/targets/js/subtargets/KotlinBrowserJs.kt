@@ -48,7 +48,7 @@ abstract class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
     private val webpackTaskConfigurations: MutableList<Action<KotlinWebpack>> = mutableListOf()
     private val runTaskConfigurations: MutableList<Action<KotlinWebpack>> = mutableListOf()
     private val dceConfigurations: MutableList<Action<KotlinJsDce>> = mutableListOf()
-    private val distribution: Distribution = createDefaultDistribution(project)
+    private val distribution: Distribution = createDefaultDistribution(project, target.targetName)
 
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside browser using karma and webpack"
@@ -300,6 +300,8 @@ abstract class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
             }
         )
 
+        this.esModules.convention(false).finalizeValueOnRead()
+
         resolveFromModulesFirst = true
 
         mainOutputFileName.convention(defaultArchivesName.orElse("main").map { "$it.js" }).finalizeValueOnRead()
@@ -342,7 +344,7 @@ abstract class KotlinBrowserJs @Inject constructor(target: KotlinJsTarget) :
                     ?: compilation.npmProject.dir.resolve(if (dev) DCE_DEV_DIR else DCE_DIR)
             )
             it.defaultCompilerClasspath.setFrom(project.configurations.named(COMPILER_CLASSPATH_CONFIGURATION_NAME))
-
+            it.runViaBuildToolsApi.value(false).disallowChanges() // The legacy backend task is not going to be supported
             it.setSource(kotlinTask.map { it.outputFileProperty })
         }
     }

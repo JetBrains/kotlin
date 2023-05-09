@@ -1,8 +1,25 @@
 KtKotlinPropertySymbol:
-  annotationsList: [
-    kotlin/jvm/JvmField()
-      psi: KtAnnotationEntry
-  ]
+  annotationsList: []
+  backingFieldSymbol: KtBackingFieldSymbol:
+    annotationsList: [
+      kotlin/jvm/JvmField()
+        psi: KtAnnotationEntry
+    ]
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    isExtension: false
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KtKotlinPropertySymbol(/jvmField)
+    receiverParameter: null
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Long
+    symbolKind: LOCAL
+    typeParameters: []
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   callableIdIfNonLocal: /jvmField
   contextReceivers: []
   getter: KtPropertyGetterSymbol:
@@ -127,10 +144,27 @@ KtKotlinPropertySymbol:
   setterDeprecationStatus: null
 
 KtKotlinPropertySymbol:
-  annotationsList: [
-    kotlin/jvm/JvmField()
-      psi: KtAnnotationEntry
-  ]
+  annotationsList: []
+  backingFieldSymbol: KtBackingFieldSymbol:
+    annotationsList: [
+      kotlin/jvm/JvmField()
+        psi: KtAnnotationEntry
+    ]
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    isExtension: false
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KtKotlinPropertySymbol(/jvmFieldOnField)
+    receiverParameter: null
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Int
+    symbolKind: LOCAL
+    typeParameters: []
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   callableIdIfNonLocal: /jvmFieldOnField
   contextReceivers: []
   getter: KtPropertyGetterSymbol:

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.scopes.processAllFunctions
 import org.jetbrains.kotlin.fir.scopes.scopeForClass
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.classId
@@ -50,6 +51,7 @@ internal fun FirFunction.getObjCMethodInfoFromOverriddenFunctions(session: FirSe
                 // call of `processFunctionsByName()` is needed only for necessary side-effect before `getDirectOverriddenFunctions` call
                 unsubstitutedScope.processFunctionsByName(symbol.name) {}
                 unsubstitutedScope.getDirectOverriddenFunctions(symbol).firstNotNullOfOrNull {
+                    assert(it.fir != this) { "Function ${symbol.name}() is wrongly contained in its own getDirectOverriddenFunctions" }
                     it.fir.getObjCMethodInfoFromOverriddenFunctions(session, scopeSession)
                 }
             }
@@ -131,7 +133,11 @@ private fun FirClassSymbol<*>.isObjCClass(session: FirSession) = classId.package
 private fun FirClassSymbol<*>.selfOrAnySuperClass(session: FirSession, pred: (FirClassSymbol<*>) -> Boolean): Boolean =
         DFS.ifAny(
                 listOf(this),
-                { current -> current.resolvedSuperTypes.mapNotNull { it.classId?.toSymbol(session) as? FirClassSymbol } },
+                { current ->
+                    current.resolvedSuperTypes.mapNotNull {
+                        (it.classId?.toSymbol(session) as? FirClassLikeSymbol)?.fullyExpandedClass(session)
+                    }
+                },
                 pred
         )
 

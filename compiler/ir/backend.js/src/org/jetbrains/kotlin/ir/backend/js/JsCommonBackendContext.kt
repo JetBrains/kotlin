@@ -52,7 +52,7 @@ interface JsCommonBackendContext : CommonBackendContext {
 }
 
 // TODO: investigate if it could be removed
-internal fun <T> BackendContext.lazy2(fn: () -> T) = lazy { irFactory.stageController.withInitialIr(fn) }
+internal fun <T> BackendContext.lazy2(fn: () -> T) = lazy(LazyThreadSafetyMode.NONE) { irFactory.stageController.withInitialIr(fn) }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class JsCommonCoroutineSymbols(
@@ -66,14 +66,14 @@ class JsCommonCoroutineSymbols(
     val coroutineImpl =
         symbolTable.referenceClass(findClass(coroutinePackage.memberScope, COROUTINE_IMPL_NAME))
 
-    val coroutineImplLabelPropertyGetter by lazy { coroutineImpl.getPropertyGetter("state")!!.owner }
-    val coroutineImplLabelPropertySetter by lazy { coroutineImpl.getPropertySetter("state")!!.owner }
-    val coroutineImplResultSymbolGetter by lazy { coroutineImpl.getPropertyGetter("result")!!.owner }
-    val coroutineImplResultSymbolSetter by lazy { coroutineImpl.getPropertySetter("result")!!.owner }
-    val coroutineImplExceptionPropertyGetter by lazy { coroutineImpl.getPropertyGetter("exception")!!.owner }
-    val coroutineImplExceptionPropertySetter by lazy { coroutineImpl.getPropertySetter("exception")!!.owner }
-    val coroutineImplExceptionStatePropertyGetter by lazy { coroutineImpl.getPropertyGetter("exceptionState")!!.owner }
-    val coroutineImplExceptionStatePropertySetter by lazy { coroutineImpl.getPropertySetter("exceptionState")!!.owner }
+    val coroutineImplLabelPropertyGetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertyGetter("state")!!.owner }
+    val coroutineImplLabelPropertySetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertySetter("state")!!.owner }
+    val coroutineImplResultSymbolGetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertyGetter("result")!!.owner }
+    val coroutineImplResultSymbolSetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertySetter("result")!!.owner }
+    val coroutineImplExceptionPropertyGetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertyGetter("exception")!!.owner }
+    val coroutineImplExceptionPropertySetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertySetter("exception")!!.owner }
+    val coroutineImplExceptionStatePropertyGetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertyGetter("exceptionState")!!.owner }
+    val coroutineImplExceptionStatePropertySetter by lazy(LazyThreadSafetyMode.NONE) { coroutineImpl.getPropertySetter("exceptionState")!!.owner }
 
     val continuationClass = symbolTable.referenceClass(
         coroutinePackage.memberScope.getContributedClassifier(

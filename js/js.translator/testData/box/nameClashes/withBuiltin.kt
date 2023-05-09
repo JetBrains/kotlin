@@ -1,4 +1,4 @@
-// EXPECTED_REACHABLE_NODES: 1291
+// EXPECTED_REACHABLE_NODES: 1424
 open class C {
     private fun constructor() = "C.constructor"
 

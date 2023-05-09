@@ -113,7 +113,7 @@ fun case_9(x: String?) {
 
 // TESTCASE NUMBER: 10
 fun case_10(x: Float?) {
-    if (true && true && true && x !== null) else throw Exception()
+    if (true && true && true && <!FORBIDDEN_IDENTITY_EQUALS_WARNING!>x !== null<!>) else throw Exception()
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>x<!>
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>x<!>.equals(null)
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float? & kotlin.Float")!>x<!>.propT

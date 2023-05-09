@@ -50,21 +50,6 @@ class BuildStatServiceTest {
                 return true
             }
 
-            override fun reportBoolean(name: String, value: Boolean, subprojectName: String?): Boolean {
-                callsCount.incrementAndGet()
-                return true
-            }
-
-            override fun reportNumber(name: String, value: Long, subprojectName: String?): Boolean {
-                callsCount.incrementAndGet()
-                return true
-            }
-
-            override fun reportString(name: String, value: String, subprojectName: String?): Boolean {
-                callsCount.incrementAndGet()
-                return true
-            }
-
         }
 
         val beanName = ObjectName(KotlinBuildStatsService.JMX_BEAN_NAME)

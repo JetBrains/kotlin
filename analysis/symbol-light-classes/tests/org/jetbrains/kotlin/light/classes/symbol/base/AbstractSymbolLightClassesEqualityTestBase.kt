@@ -51,15 +51,15 @@ abstract class AbstractSymbolLightClassesEqualityTestBase(
         assertions: AssertionsService,
     ): PsiElementVisitor = object : JavaElementVisitor() {
         override fun visitClass(aClass: PsiClass) {
-            compareArrayElementsWithInvalidation(aClass, PsiClass::methods)
-            compareArrayElementsWithInvalidation(aClass, PsiClass::fields)
-            compareArrayElementsWithInvalidation(aClass, PsiClass::innerClasses)
+            compareArrayElementsWithInvalidation(aClass, PsiClass::getMethods)
+            compareArrayElementsWithInvalidation(aClass, PsiClass::getFields)
+            compareArrayElementsWithInvalidation(aClass, PsiClass::getInnerClasses)
 
             super.visitClass(aClass)
         }
 
         override fun visitEnumConstant(enumConstant: PsiEnumConstant) {
-            compareElementsWithInvalidation(enumConstant, PsiEnumConstant::initializingClass)
+            compareElementsWithInvalidation(enumConstant, PsiEnumConstant::getInitializingClass)
 
             super.visitEnumConstant(enumConstant)
         }

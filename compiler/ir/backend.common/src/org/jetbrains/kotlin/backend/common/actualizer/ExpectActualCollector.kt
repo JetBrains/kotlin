@@ -126,12 +126,7 @@ private class ClassLinksCollector(
         val actualClassSymbol = actualClasses[generateIrElementFullNameFromExpect(declaration, expectActualTypeAliasMap)]
         if (actualClassSymbol != null) {
             expectActualMap[declaration.symbol] = actualClassSymbol
-            val actualClass = actualClassSymbol.owner
-            for (expectTypeParameter in declaration.typeParameters) {
-                actualClass.typeParameters.firstOrNull { it.name == expectTypeParameter.name }?.let { actualTypeParameter ->
-                    expectActualMap[expectTypeParameter.symbol] = actualTypeParameter.symbol
-                }
-            }
+            expectActualMap.appendTypeParametersMap(declaration, actualClassSymbol.owner)
         } else if (!declaration.containsOptionalExpectation()) {
             diagnosticsReporter.reportMissingActual(declaration)
         }
@@ -163,20 +158,41 @@ private class MemberLinksCollector(
     }
 
     private fun addLink(declaration: IrDeclarationBase) {
-        val actualMember = actualMembers.getMatch(declaration, expectActualMap, typeAliasMap)
-        if (actualMember != null) {
-            expectActualMap[declaration.symbol] = actualMember.symbol
-            if (declaration is IrProperty) {
-                val actualProperty = actualMember as IrProperty
-                declaration.getter?.symbol?.let { expectActualMap[it] = actualProperty.getter!!.symbol }
-                declaration.setter?.symbol?.let { expectActualMap[it] = actualProperty.setter!!.symbol }
+        val actualMemberMatches = actualMembers.getMatches(declaration, expectActualMap, typeAliasMap)
+        when {
+            actualMemberMatches.size == 1 -> {
+                val actualMember = actualMemberMatches.single()
+                expectActualMap[declaration.symbol] = actualMember.symbol
+                if (declaration is IrProperty) {
+                    val actualProperty = actualMember as IrProperty
+                    declaration.getter?.let {
+                        val getter = actualProperty.getter!!
+                        expectActualMap[it.symbol] = getter.symbol
+                        expectActualMap.appendTypeParametersMap(it, getter)
+                    }
+                    declaration.setter?.symbol?.let { expectActualMap[it] = actualProperty.setter!!.symbol }
+                } else if (declaration is IrFunction) {
+                    expectActualMap.appendTypeParametersMap(declaration, actualMember as IrFunction)
+                }
             }
-        } else if (!declaration.parent.containsOptionalExpectation() && !(declaration is IrConstructor && declaration.isPrimary)) {
-            diagnosticsReporter.reportMissingActual(declaration)
+            actualMemberMatches.size > 1 -> {
+                // TODO: report AMBIGUOUS_ACTUALS here, see KT-57932
+            }
+            !declaration.parent.containsOptionalExpectation() && !(declaration is IrConstructor && declaration.isPrimary) -> {
+                diagnosticsReporter.reportMissingActual(declaration)
+            }
         }
     }
 
     override fun visitElement(element: IrElement) {
         element.acceptChildrenVoid(this)
     }
+}
+
+private fun MutableMap<IrSymbol, IrSymbol>.appendTypeParametersMap(
+    expectTypeParametersContainer: IrTypeParametersContainer,
+    actualTypeParametersContainer: IrTypeParametersContainer
+) {
+    expectTypeParametersContainer.typeParameters.zip(actualTypeParametersContainer.typeParameters)
+        .forEach { (expectTypeParameter, actualTypeParameter) -> this[expectTypeParameter.symbol] = actualTypeParameter.symbol }
 }

@@ -57,17 +57,6 @@ internal actual inline fun <E> buildListInternal(capacity: Int, builderAction: M
 
 
 /**
- * Replaces each element in the list with a result of a transformation specified.
- */
-public fun <T> MutableList<T>.replaceAll(transformation: (T) -> T) {
-    val it = listIterator()
-    while (it.hasNext()) {
-        val element = it.next()
-        it.set(transformation(element))
-    }
-}
-
-/**
  * Groups elements from the [Grouping] source by key and counts elements in each group.
  *
  * @return a [Map] associating the key of each group with the count of elements in the group.
@@ -133,3 +122,11 @@ internal actual inline fun checkCountOverflow(count: Int): Int {
     }
     return count
 }
+
+/**
+ * Returns a new read-only list containing only the specified object [element].
+ *
+ * @sample samples.collections.Collections.Lists.singletonReadOnlyList
+ */
+@SinceKotlin("1.9")
+public actual fun <T> listOf(element: T): List<T> = arrayListOf(element)

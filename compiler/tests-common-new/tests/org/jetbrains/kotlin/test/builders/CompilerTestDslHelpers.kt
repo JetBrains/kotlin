@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.test.builders.CompilerStepsNames.CLASSIC_FRONTEND_HA
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.FIR_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.JS_ARTIFACTS_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.JVM_ARTIFACTS_HANDLERS_STEP_NAME
+import org.jetbrains.kotlin.test.builders.CompilerStepsNames.KLIB_ARTIFACTS_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.builders.CompilerStepsNames.RAW_IR_HANDLERS_STEP_NAME
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2ClassicBackendConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
@@ -37,6 +38,7 @@ object CompilerStepsNames {
     const val JVM_BACKEND_STEP_NAME = "jvm backend"
     const val JVM_ARTIFACTS_HANDLERS_STEP_NAME = "jvm artifacts handlers"
     const val JS_ARTIFACTS_HANDLERS_STEP_NAME = "js artifacts handlers"
+    const val KLIB_ARTIFACTS_HANDLERS_STEP_NAME = "klib artifacts handlers"
 
 }
 
@@ -103,6 +105,12 @@ inline fun TestConfigurationBuilder.jsArtifactsHandlersStep(
     namedHandlersStep(JS_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.Js, init)
 }
 
+inline fun TestConfigurationBuilder.klibArtifactsHandlersStep(
+    init: HandlersStepBuilder<BinaryArtifacts.KLib>.() -> Unit = {}
+) {
+    namedHandlersStep(KLIB_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.KLib, init)
+}
+
 // and those ones to configure already defined step
 inline fun TestConfigurationBuilder.configureClassicFrontendHandlersStep(
     init: HandlersStepBuilder<ClassicFrontendOutputArtifact>.() -> Unit = {}
@@ -132,4 +140,10 @@ inline fun TestConfigurationBuilder.configureJsArtifactsHandlersStep(
     init: HandlersStepBuilder<BinaryArtifacts.Js>.() -> Unit = {}
 ) {
     configureNamedHandlersStep(JS_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.Js, init)
+}
+
+inline fun TestConfigurationBuilder.configureKlibArtifactsHandlersStep(
+    init: HandlersStepBuilder<BinaryArtifacts.KLib>.() -> Unit = {}
+) {
+    configureNamedHandlersStep(KLIB_ARTIFACTS_HANDLERS_STEP_NAME, ArtifactKinds.KLib, init)
 }

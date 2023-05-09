@@ -1,5 +1,6 @@
 interface Visitor {
   abstract fun visit()
+
   fun visitArray(): Visitor? {
     return null
   }

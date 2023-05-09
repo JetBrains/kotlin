@@ -10,12 +10,14 @@ import org.jetbrains.kotlin.codegen.ProjectInfo
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.Dependencies
 import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.MAIN_MODULE_NAME
+import org.jetbrains.kotlin.klib.PartialLinkageTestUtils.ModuleBuildDirs
 import org.jetbrains.kotlin.konan.blackboxtest.support.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase.WithTestRunnerExtras
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationArtifact.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationDependencyType.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationResult.Companion.assertSuccess
+import org.jetbrains.kotlin.konan.blackboxtest.support.group.UsePartialLinkage
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.*
@@ -25,6 +27,7 @@ import org.opentest4j.TestAbortedException
 import java.io.File
 
 @Tag("partial-linkage")
+@UsePartialLinkage(UsePartialLinkage.Mode.ENABLED_WITH_WARNING)
 abstract class AbstractNativePartialLinkageTest : AbstractNativeSimpleTest() {
     private inner class NativeTestConfiguration(testPath: String) : PartialLinkageTestUtils.TestConfiguration {
         override val testDir = getAbsoluteFile(testPath)
@@ -33,8 +36,8 @@ abstract class AbstractNativePartialLinkageTest : AbstractNativeSimpleTest() {
 
         override val testModeName = with(testRunSettings.get<CacheMode>()) {
             val cacheModeAlias = when {
-                staticCacheRootDir == null -> CacheMode.Alias.NO
-                !staticCacheRequiredForEveryLibrary -> CacheMode.Alias.STATIC_ONLY_DIST
+                !useStaticCacheForDistributionLibraries -> CacheMode.Alias.NO
+                !useStaticCacheForUserLibraries -> CacheMode.Alias.STATIC_ONLY_DIST
                 else -> CacheMode.Alias.STATIC_EVERYWHERE
             }
 
@@ -46,8 +49,12 @@ abstract class AbstractNativePartialLinkageTest : AbstractNativeSimpleTest() {
                 customizeMainModuleSources(moduleSourceDir)
         }
 
-        override fun buildKlib(moduleName: String, moduleSourceDir: File, dependencies: Dependencies, klibFile: File) =
-            this@AbstractNativePartialLinkageTest.buildKlib(moduleName, moduleSourceDir, dependencies, klibFile)
+        override fun buildKlib(
+            moduleName: String,
+            buildDirs: ModuleBuildDirs,
+            dependencies: Dependencies,
+            klibFile: File
+        ) = this@AbstractNativePartialLinkageTest.buildKlib(moduleName, buildDirs.sourceDir, dependencies, klibFile)
 
         override fun buildBinaryAndRun(mainModuleKlibFile: File, dependencies: Dependencies) =
             this@AbstractNativePartialLinkageTest.buildBinaryAndRun(dependencies)
@@ -55,9 +62,14 @@ abstract class AbstractNativePartialLinkageTest : AbstractNativeSimpleTest() {
         override fun onNonEmptyBuildDirectory(directory: File) = backupDirectoryContents(directory)
 
         // Temporarily mute TA tests on FIR FE with caches.
-        override fun isIgnoredTest(projectInfo: ProjectInfo) = super.isIgnoredTest(projectInfo)
-                || (projectInfo.name == "typeAliasChanges" && testModeName.endsWith("STATIC_EVERYWHERE")
-                && this@AbstractNativePartialLinkageTest::class.java.simpleName.startsWith("Fir"))
+        override fun isIgnoredTest(projectInfo: ProjectInfo) = when {
+            super.isIgnoredTest(projectInfo) -> true
+            projectInfo.name == "typeAliasChanges"
+                    && testModeName.endsWith("STATIC_EVERYWHERE")
+                    && this@AbstractNativePartialLinkageTest::class.java.simpleName.startsWith("Fir") -> true
+            projectInfo.name == "externalDeclarations" -> true
+            else -> false
+        }
 
         override fun onIgnoredTest() = throw TestAbortedException()
     }
@@ -86,7 +98,7 @@ abstract class AbstractNativePartialLinkageTest : AbstractNativeSimpleTest() {
     private fun buildKlib(moduleName: String, moduleSourceDir: File, dependencies: Dependencies, klibFile: File) {
         val klibArtifact = KLIB(klibFile)
 
-        val testCase = createTestCase(moduleName, moduleSourceDir, COMPILER_ARGS_FOR_KLIB)
+        val testCase = createTestCase(moduleName, moduleSourceDir, COMPILER_ARGS)
 
         val compilation = LibraryCompilation(
             settings = testRunSettings,
@@ -102,7 +114,7 @@ abstract class AbstractNativePartialLinkageTest : AbstractNativeSimpleTest() {
     }
 
     private fun buildBinaryAndRun(allDependencies: Dependencies) {
-        val cacheDependencies = if (staticCacheRequiredForEveryLibrary) {
+        val cacheDependencies = if (useStaticCacheForUserLibraries) {
             producedKlibs.map { producedKlib ->
                 buildCacheForKlib(producedKlib)
                 producedKlib.klibArtifact.toStaticCacheArtifact().toDependency()
@@ -113,7 +125,7 @@ abstract class AbstractNativePartialLinkageTest : AbstractNativeSimpleTest() {
         val testCase = createTestCase(
             moduleName = LAUNCHER_MODULE_NAME,
             moduleSourceDir = null, // No sources.
-            compilerArgs = COMPILER_ARGS_FOR_STATIC_CACHE_AND_EXECUTABLE
+            compilerArgs = COMPILER_ARGS
         )
 
         val compilation = ExecutableCompilation(
@@ -134,7 +146,7 @@ abstract class AbstractNativePartialLinkageTest : AbstractNativeSimpleTest() {
     private fun buildCacheForKlib(producedKlib: ProducedKlib) {
         val compilation = StaticCacheCompilation(
             settings = testRunSettings,
-            freeCompilerArgs = COMPILER_ARGS_FOR_STATIC_CACHE_AND_EXECUTABLE,
+            freeCompilerArgs = COMPILER_ARGS,
             options = if (producedKlib.moduleName == MAIN_MODULE_NAME)
                 StaticCacheCompilation.Options.ForIncludedLibraryWithTests(executableArtifact, DEFAULT_EXTRAS)
             else
@@ -203,15 +215,11 @@ abstract class AbstractNativePartialLinkageTest : AbstractNativeSimpleTest() {
 
     private val buildDir: File get() = testRunSettings.get<SimpleTestDirectories>().testBuildDir
     private val stdlibFile: File get() = testRunSettings.get<KotlinNativeHome>().stdlibFile
-    private val staticCacheRequiredForEveryLibrary: Boolean get() = testRunSettings.get<CacheMode>().staticCacheRequiredForEveryLibrary
+    private val useStaticCacheForUserLibraries: Boolean get() = testRunSettings.get<CacheMode>().useStaticCacheForUserLibraries
 
     companion object {
-        private val COMPILER_ARGS_FOR_KLIB = TestCompilerArgs(
+        private val COMPILER_ARGS = TestCompilerArgs(
             listOf("-nostdlib") // stdlib is passed explicitly.
-        )
-
-        private val COMPILER_ARGS_FOR_STATIC_CACHE_AND_EXECUTABLE = TestCompilerArgs(
-            COMPILER_ARGS_FOR_KLIB.compilerArgs + "-Xpartial-linkage=enable"
         )
 
         private val DEFAULT_EXTRAS = WithTestRunnerExtras(TestRunnerType.DEFAULT)

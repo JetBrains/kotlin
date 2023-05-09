@@ -21,11 +21,14 @@ import org.gradle.jvm.tasks.Jar
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation.Companion.MAIN_COMPILATION_NAME
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseCompilations
 import org.jetbrains.kotlin.gradle.utils.markResolvable
 import org.jetbrains.kotlin.gradle.targets.metadata.*
 import org.jetbrains.kotlin.gradle.targets.metadata.COMMON_MAIN_ELEMENTS_CONFIGURATION_NAME
 import org.jetbrains.kotlin.gradle.targets.metadata.isCompatibilityMetadataVariantEnabled
 import org.jetbrains.kotlin.gradle.targets.metadata.isKotlinGranularMetadataEnabled
+import org.jetbrains.kotlin.gradle.utils.Future
+import org.jetbrains.kotlin.gradle.utils.future
 import org.jetbrains.kotlin.gradle.utils.setProperty
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
@@ -37,23 +40,30 @@ abstract class KotlinSoftwareComponent(
 
     override fun getName(): String = name
 
-    private val metadataTarget get() = project.multiplatformExtension.metadata()
+    private val metadataTarget get() = project.multiplatformExtension.metadata() as KotlinMetadataTarget
 
-    override fun getVariants(): Set<SoftwareComponent> = kotlinTargets
-        .filter { target -> target !is KotlinMetadataTarget }
-        .flatMap { target ->
-            val targetPublishableComponentNames = target.internal.kotlinComponents
-                .filter { component -> component.publishable }
-                .map { component -> component.name }
-                .toSet()
+    private val _variants = project.future {
+        AfterFinaliseCompilations.await()
+        kotlinTargets
+            .filter { target -> target !is KotlinMetadataTarget }
+            .flatMap { target ->
+                val targetPublishableComponentNames = target.internal.kotlinComponents
+                    .filter { component -> component.publishable }
+                    .map { component -> component.name }
+                    .toSet()
 
-            target.components.filter { it.name in targetPublishableComponentNames }
-        }.toSet()
+                target.components.filter { it.name in targetPublishableComponentNames }
+            }.toSet()
+    }
 
-    private val _usages: Set<DefaultKotlinUsageContext> by lazy {
+    override fun getVariants(): Set<SoftwareComponent> = _variants.getOrThrow()
+
+    private val _usages: Future<Set<DefaultKotlinUsageContext>> = project.future {
+        metadataTarget.awaitMetadataCompilationsCreated()
+
         if (!project.isKotlinGranularMetadataEnabled) {
             val metadataCompilation = metadataTarget.compilations.getByName(MAIN_COMPILATION_NAME)
-            return@lazy metadataTarget.createUsageContexts(metadataCompilation)
+            return@future metadataTarget.createUsageContexts(metadataCompilation)
         }
 
         mutableSetOf<DefaultKotlinUsageContext>().apply {
@@ -68,7 +78,6 @@ abstract class KotlinSoftwareComponent(
                 dependencyConfigurationName = metadataTarget.apiElementsConfigurationName,
                 overrideConfigurationArtifacts = project.setProperty { listOf(allMetadataArtifact) }
             )
-
 
             if (project.isCompatibilityMetadataVariantEnabled) {
                 // Ensure that consumers who expect Kotlin 1.2.x metadata package can still get one:
@@ -96,11 +105,12 @@ abstract class KotlinSoftwareComponent(
         }
     }
 
+
     override fun getUsages(): Set<UsageContext> {
-        return _usages.publishableUsages()
+        return _usages.getOrThrow().publishableUsages()
     }
 
-    private fun allPublishableCommonSourceSets() = getCommonSourceSetsForMetadataCompilation(project) +
+    private suspend fun allPublishableCommonSourceSets() = getCommonSourceSetsForMetadataCompilation(project) +
             getHostSpecificMainSharedSourceSets(project)
 
     /**
@@ -108,12 +118,12 @@ abstract class KotlinSoftwareComponent(
      * user build scripts want to have access to sourcesJar task to configure it
      */
     private val sourcesJarTask: TaskProvider<Jar> = sourcesJarTaskNamed(
-            "sourcesJar",
-            name,
-            project,
-            lazy { allPublishableCommonSourceSets().associate { it.name to it.kotlin } },
-            name.toLowerCaseAsciiOnly()
-        )
+        "sourcesJar",
+        name,
+        project,
+        project.future { allPublishableCommonSourceSets().associate { it.name to it.kotlin } },
+        name.toLowerCaseAsciiOnly()
+    )
 
     private fun addSourcesJarArtifactToConfiguration(configurationName: String): PublishArtifact {
         return project.artifacts.add(configurationName, sourcesJarTask) { sourcesJarArtifact ->

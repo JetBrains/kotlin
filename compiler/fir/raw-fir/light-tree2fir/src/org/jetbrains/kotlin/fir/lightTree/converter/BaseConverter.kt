@@ -27,15 +27,11 @@ abstract class BaseConverter(
     val tree: FlyweightCapableTreeStructure<LighterASTNode>,
     context: Context<LighterASTNode> = Context()
 ) : BaseFirBuilder<LighterASTNode>(baseSession, context) {
-    abstract val offset: Int
-
     protected val implicitType = FirImplicitTypeRefImplWithoutSource
 
-    protected open fun reportSyntaxError(node: LighterASTNode) {}
-
     override fun LighterASTNode.toFirSourceElement(kind: KtFakeSourceElementKind?): KtLightSourceElement {
-        val startOffset = offset + tree.getStartOffset(this)
-        val endOffset = offset + tree.getEndOffset(this)
+        val startOffset = tree.getStartOffset(this)
+        val endOffset = tree.getEndOffset(this)
         return toKtLightSourceElement(tree, kind ?: context.forcedElementSourceKind ?: KtRealSourceElementKind, startOffset, endOffset)
     }
 
@@ -171,17 +167,12 @@ abstract class BaseConverter(
         return getChildrenAsArray().firstOrNull()
     }
 
-    @OptIn(ExperimentalContracts::class)
     protected inline fun LighterASTNode.forEachChildren(vararg skipTokens: KtToken, f: (LighterASTNode) -> Unit) {
         val kidsArray = this.getChildrenAsArray()
         for (kid in kidsArray) {
             if (kid == null) break
             val tokenType = kid.tokenType
-            if (COMMENTS.contains(tokenType) || tokenType == WHITE_SPACE || tokenType == SEMICOLON || tokenType in skipTokens) continue
-            if (tokenType == TokenType.ERROR_ELEMENT) {
-                reportSyntaxError(kid)
-                continue
-            }
+            if (COMMENTS.contains(tokenType) || tokenType == WHITE_SPACE || tokenType == SEMICOLON || tokenType in skipTokens || tokenType == TokenType.ERROR_ELEMENT) continue
             f(kid)
         }
     }
@@ -193,11 +184,7 @@ abstract class BaseConverter(
         for (kid in kidsArray) {
             if (kid == null) break
             val tokenType = kid.tokenType
-            if (COMMENTS.contains(tokenType) || tokenType == WHITE_SPACE || tokenType == SEMICOLON) continue
-            if (tokenType == TokenType.ERROR_ELEMENT) {
-                reportSyntaxError(kid)
-                continue
-            }
+            if (COMMENTS.contains(tokenType) || tokenType == WHITE_SPACE || tokenType == SEMICOLON || tokenType == TokenType.ERROR_ELEMENT) continue
             f(kid, container)
         }
 

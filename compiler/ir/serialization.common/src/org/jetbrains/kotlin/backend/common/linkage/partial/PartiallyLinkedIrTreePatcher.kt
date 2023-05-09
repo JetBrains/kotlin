@@ -58,6 +58,8 @@ internal class PartiallyLinkedIrTreePatcher(
     // Used only to generate IR expressions that throw linkage errors.
     private val supportForLowerings by lazy { PartialLinkageSupportForLoweringsImpl(builtIns, logLevel, messageLogger) }
 
+    fun shouldBeSkipped(declaration: IrDeclaration): Boolean = PLModule.determineModuleFor(declaration).shouldBeSkipped
+
     fun patchModuleFragments(roots: Sequence<IrModuleFragment>) {
         roots.forEach { root ->
             // Optimization: Don't patch stdlib and already visited fragments.
@@ -332,7 +334,10 @@ internal class PartiallyLinkedIrTreePatcher(
                 val invalidConstructorDelegationFound =
                     if (calledConstructor.origin != PartiallyLinkedDeclarationOrigin.MISSING_DECLARATION) {
                         val constructedSuperClassSymbol = calledConstructor.parentAsClass.symbol
-                        constructedSuperClassSymbol != constructedClassSymbol && constructedSuperClassSymbol != actualSuperClassSymbol
+                        // Note: Constructor of an external class may delegate to kotlin.Any
+                        constructedSuperClassSymbol != constructedClassSymbol
+                                && constructedSuperClassSymbol != actualSuperClassSymbol
+                                && (!constructedClass.isExternal || constructedSuperClassSymbol != builtIns.anyClass)
                     } else {
                         // Fallback to signatures.
                         (calledConstructorSymbol.signature as? IdSignature.CommonSignature)?.let { constructorSignature ->
@@ -748,12 +753,21 @@ internal class PartiallyLinkedIrTreePatcher(
                     0 // Does not matter here.
                 )
 
-            if (this is IrFunctionReference) {
-                // Function references don't contain arguments.
-                return null
-            } else if (this is IrEnumConstructorCall && (function.parent as? IrClass)?.symbol == builtIns.enumClass) {
-                // This is a special case. IrEnumConstructorCall don't contain arguments.
-                return null
+            when (this) {
+                is IrFunctionAccessExpression -> {
+                    if (function.isExternal) {
+                        // External functions may have the default arguments declared in native implementations,
+                        // which are not available from Kotlin.
+                        return null
+                    } else if (this is IrEnumConstructorCall && (function.parent as? IrClass)?.symbol == builtIns.enumClass) {
+                        // This is a special case. IrEnumConstructorCall don't contain arguments.
+                        return null
+                    }
+                }
+                is IrFunctionReference -> {
+                    // Function references don't contain arguments.
+                    return null
+                }
             }
 
             // Default values are not kept in value parameters of fake override/delegated/override functions.

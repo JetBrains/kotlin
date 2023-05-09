@@ -1,0 +1,14 @@
+public final enum class MyEnum : R|kotlin/Enum<test/MyEnum>| {
+    private constructor(): R|test/MyEnum|
+
+    public final static enum entry ENTRY: R|test/MyEnum|
+    public final static fun values(): R|kotlin/Array<test/MyEnum>| {
+    }
+
+    public final static fun valueOf(value: R|kotlin/String|): R|test/MyEnum| {
+    }
+
+    public final static val entries: R|kotlin/enums/EnumEntries<test/MyEnum>|
+        public get(): R|kotlin/enums/EnumEntries<test/MyEnum>|
+
+}

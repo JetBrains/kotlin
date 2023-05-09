@@ -1,0 +1,7 @@
+[IncompatibleAgpVersionTooLowWarning | WARNING] Kotlin Multiplatform <-> Android Gradle Plugin compatibility issue:
+The applied Android Gradle Plugin version (4.1.0) is lower than the minimum supported
+
+Minimum supported Android Gradle Plugin version: 4.2
+Maximum tested Android Gradle Plugin version: 8.0
+
+To suppress this message add 'kotlin.mpp.androidGradlePluginCompatibility.nowarn=true' to your gradle.properties

@@ -10,13 +10,13 @@ fun f(): Unit {
     x <!UNSAFE_OPERATOR_CALL!><<!> 1
     <!ASSIGNMENT_TYPE_MISMATCH!>x += 1<!>
 
-    <!EQUALITY_NOT_APPLICABLE_WARNING!>x == 1<!>
-    <!EQUALITY_NOT_APPLICABLE_WARNING!>x != 1<!>
+    x == 1
+    x != 1
 
     <!EQUALITY_NOT_APPLICABLE!>A() == 1<!>
 
-    <!EQUALITY_NOT_APPLICABLE!>x === "1"<!>
-    <!EQUALITY_NOT_APPLICABLE!>x !== "1"<!>
+    <!FORBIDDEN_IDENTITY_EQUALS!>x === "1"<!>
+    <!FORBIDDEN_IDENTITY_EQUALS!>x !== "1"<!>
 
     <!IMPLICIT_BOXING_IN_IDENTITY_EQUALS!>x === 1<!>
     <!IMPLICIT_BOXING_IN_IDENTITY_EQUALS!>x !== 1<!>

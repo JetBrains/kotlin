@@ -1,4 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
 package kt244
 
 

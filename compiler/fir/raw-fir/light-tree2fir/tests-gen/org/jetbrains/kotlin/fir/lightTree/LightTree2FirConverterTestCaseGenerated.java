@@ -46,6 +46,16 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotation.kt");
         }
 
+        @TestMetadata("annotationOnField.kt")
+        public void testAnnotationOnField() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationOnField.kt");
+        }
+
+        @TestMetadata("annotationOnProperty.kt")
+        public void testAnnotationOnProperty() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationOnProperty.kt");
+        }
+
         @TestMetadata("annotationsOnNullableParenthesizedTypes.kt")
         public void testAnnotationsOnNullableParenthesizedTypes() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationsOnNullableParenthesizedTypes.kt");
@@ -54,6 +64,11 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
         @TestMetadata("annotationsOnParenthesizedTypes.kt")
         public void testAnnotationsOnParenthesizedTypes() throws Exception {
             runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/annotationsOnParenthesizedTypes.kt");
+        }
+
+        @TestMetadata("classWithWrongSuperCall.kt")
+        public void testClassWithWrongSuperCall() throws Exception {
+            runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/classWithWrongSuperCall.kt");
         }
 
         @TestMetadata("complexTypes.kt")

@@ -1,4 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
 // !DIAGNOSTICS: -UNUSED_EXPRESSION -UNUSED_VARIABLE
 // SKIP_TXT
 // WITH_EXTENDED_CHECKERS
@@ -122,7 +121,7 @@ fun case_9(x: TypealiasNullableString<!REDUNDANT_NULLABLE!>?<!>) {
 fun case_10() {
     val a = Class()
 
-    if (a.prop_4 === null || <!USELESS_IS_CHECK!>true is Boolean<!>) {
+    if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING!>a.prop_4 === null<!> || <!USELESS_IS_CHECK!>true is Boolean<!>) {
         if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING, SENSELESS_COMPARISON!>a.prop_4 != null !== null<!>) {
             a.prop_4
             a.prop_4<!UNSAFE_CALL!>.<!>equals(null)

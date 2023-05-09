@@ -33,6 +33,21 @@ scopes:
     callables: 5
       KtKotlinPropertySymbol:
         annotationsList: []
+        backingFieldSymbol: KtBackingFieldSymbol:
+          annotationsList: []
+          callableIdIfNonLocal: null
+          contextReceivers: []
+          isExtension: false
+          name: field
+          origin: PROPERTY_BACKING_FIELD
+          owningProperty: KtKotlinPropertySymbol(<local>/propertyInY)
+          receiverParameter: null
+          returnType: KtUsualClassType:
+            annotationsList: []
+            ownTypeArguments: []
+            type: kotlin/Int
+          symbolKind: LOCAL
+          typeParameters: []
         callableIdIfNonLocal: null
         contextReceivers: []
         getter: KtPropertyGetterSymbol:

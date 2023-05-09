@@ -19,17 +19,6 @@ internal object KotlinCommonCompilerOptionsHelper {
         args.useK2 = from.useK2.get()
     }
 
-    internal fun fillDefaultValues(
-        args: org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments,
-    ) {
-        org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerToolOptionsHelper.fillDefaultValues(args)
-        args.apiVersion = null
-        args.languageVersion = null
-        args.optIn = emptyList<String>().toTypedArray()
-        args.progressiveMode = false
-        args.useK2 = false
-    }
-
     internal fun syncOptionsAsConvention(
         from: org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions,
         into: org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions,

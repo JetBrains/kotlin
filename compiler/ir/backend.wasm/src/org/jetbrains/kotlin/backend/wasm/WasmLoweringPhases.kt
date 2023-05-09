@@ -369,7 +369,7 @@ private val addMainFunctionCallsLowering = makeCustomWasmModulePhase(
 )
 
 private val defaultArgumentStubGeneratorPhase = makeWasmModulePhase(
-    { context -> DefaultArgumentStubGenerator(context, skipExternalMethods = true) },
+    { context -> DefaultArgumentStubGenerator(context, MaskedDefaultArgumentFunctionFactory(context), skipExternalMethods = true) },
     name = "DefaultArgumentStubGenerator",
     description = "Generate synthetic stubs for functions with default parameter values"
 )
@@ -382,7 +382,7 @@ private val defaultArgumentPatchOverridesPhase = makeWasmModulePhase(
 )
 
 private val defaultParameterInjectorPhase = makeWasmModulePhase(
-    { context -> DefaultParameterInjector(context, skipExternalMethods = true) },
+    { context -> DefaultParameterInjector(context, MaskedDefaultArgumentFunctionFactory(context), skipExternalMethods = true) },
     name = "DefaultParameterInjector",
     description = "Replace call site with default parameters with corresponding stub function",
     prerequisite = setOf(innerClassesLoweringPhase)
@@ -507,6 +507,13 @@ private val builtInsLoweringPhase = makeWasmModulePhase(
     ::BuiltInsLowering,
     name = "BuiltInsLowering",
     description = "Lower IR builtins"
+)
+
+private val associatedObjectsLowering = makeWasmModulePhase(
+    ::AssociatedObjectsLowering,
+    name = "AssociatedObjectsLowering",
+    description = "Load associated object init body",
+    prerequisite = setOf(localClassExtractionPhase)
 )
 
 private val objectDeclarationLoweringPhase = makeWasmModulePhase(
@@ -687,6 +694,9 @@ val wasmPhases = SameTypeNamedCompilerPhase(
             expressionBodyTransformer then
             eraseVirtualDispatchReceiverParametersTypes then
             bridgesConstructionPhase then
+
+            associatedObjectsLowering then
+
             objectDeclarationLoweringPhase then
             fieldInitializersLoweringPhase then
             genericReturnTypeLowering then

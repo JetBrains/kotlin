@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropMetadataDependencyTransformationTask
 import org.jetbrains.kotlin.gradle.targets.native.internal.cinteropMetadataDependencyTransformationForIdeTaskName
+import org.jetbrains.kotlin.gradle.targets.native.internal.commonizerTarget
 import org.jetbrains.kotlin.gradle.targets.native.internal.createCInteropMetadataDependencyClasspathForIde
-import org.jetbrains.kotlin.gradle.targets.native.internal.getCommonizerTarget
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 
 internal object IdeCInteropMetadataDependencyClasspathResolver : IdeDependencyResolver, IdeDependencyResolver.WithBuildDependencies {
@@ -33,7 +33,7 @@ internal object IdeCInteropMetadataDependencyClasspathResolver : IdeDependencyRe
     override fun dependencies(project: Project): Iterable<Any> {
         return project.multiplatformExtension.sourceSets
             .filterIsInstance<DefaultKotlinSourceSet>()
-            .filter { getCommonizerTarget(it) is SharedCommonizerTarget }
+            .filter { it.commonizerTarget.getOrThrow() is SharedCommonizerTarget}
             .mapNotNull { project.locateDependencyTask(it) }
     }
 

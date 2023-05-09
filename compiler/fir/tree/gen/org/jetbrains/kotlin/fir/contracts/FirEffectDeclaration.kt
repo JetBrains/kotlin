@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.contracts
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
-import org.jetbrains.kotlin.fir.FirPureAbstractElement
 import org.jetbrains.kotlin.fir.contracts.description.ConeEffectDeclaration
 import org.jetbrains.kotlin.fir.visitors.*
 
@@ -16,9 +15,9 @@ import org.jetbrains.kotlin.fir.visitors.*
  * DO NOT MODIFY IT MANUALLY
  */
 
-abstract class FirEffectDeclaration : FirPureAbstractElement(), FirElement {
+abstract class FirEffectDeclaration : FirContractElementDeclaration() {
     abstract override val source: KtSourceElement?
-    abstract val effect: ConeEffectDeclaration
+    abstract override val effect: ConeEffectDeclaration
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R = visitor.visitEffectDeclaration(this, data)
 

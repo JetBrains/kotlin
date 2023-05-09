@@ -12,7 +12,7 @@ class Wrapper {
 
 }
 
-open enum class ConfigurationParameter : Enum<ConfigurationParameter> {
+enum class ConfigurationParameter : Enum<ConfigurationParameter> {
   BASE_URL = ConfigurationParameter(apply = local fun <anonymous>(value: String, nc: Wrapper) {
     println(message = "Base url updated from config parameters ".plus(other = nc.<get-baseUrl>()).plus(other = " -> ").plus(other = value))
     nc.<set-baseUrl>(<set-?> = value)

@@ -11,6 +11,7 @@ import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.analysis.api.components.KtSymbolContainingDeclarationProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
+import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescDefaultBackingFieldSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getDescriptor
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtSymbol
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
@@ -58,6 +59,7 @@ internal class KtFe10SymbolContainingDeclarationProvider(
 
         return psiForModule?.getKtModule(analysisSession.analysisContext.resolveSession.project)
             ?: symbol.getDescriptor()?.getFakeContainingKtModule()
+            ?: (symbol as? KtBackingFieldSymbol)?.owningProperty?.let { getContainingModule(it) }
             ?: TODO(symbol::class.java.name)
     }
 

@@ -6,12 +6,15 @@
 package org.jetbrains.kotlin.fir.serialization
 
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
+import org.jetbrains.kotlin.contracts.description.KtContractDescriptionVisitor
+import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
 import org.jetbrains.kotlin.fir.contracts.description.*
 import org.jetbrains.kotlin.fir.contracts.effects
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.expressions.LogicOperationKind
+import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 
@@ -57,9 +60,9 @@ class FirContractSerializer {
 
                 is ConeReturnsEffectDeclaration -> {
                     when (effectDeclaration.value) {
-                        ConeConstantReference.NOT_NULL ->
+                        ConeContractConstantValues.NOT_NULL ->
                             builder.effectType = ProtoBuf.Effect.EffectType.RETURNS_NOT_NULL
-                        ConeConstantReference.WILDCARD ->
+                        ConeContractConstantValues.WILDCARD ->
                             builder.effectType = ProtoBuf.Effect.EffectType.RETURNS_CONSTANT
                         else -> {
                             builder.effectType = ProtoBuf.Effect.EffectType.RETURNS_CONSTANT
@@ -89,7 +92,7 @@ class FirContractSerializer {
             contractDescriptionElement: ConeContractDescriptionElement,
             contractDescription: FirContractDescription
         ): ProtoBuf.Expression.Builder {
-            return contractDescriptionElement.accept(object : ConeContractDescriptionVisitor<ProtoBuf.Expression.Builder, Unit>() {
+            return contractDescriptionElement.accept(object : KtContractDescriptionVisitor<ProtoBuf.Expression.Builder, Unit, ConeKotlinType, ConeDiagnostic>() {
                 override fun visitLogicalBinaryOperationContractExpression(
                     binaryLogicExpression: ConeBinaryLogicExpression,
                     data: Unit
@@ -201,14 +204,14 @@ class FirContractSerializer {
 
         private fun constantValueProtobufEnum(constantReference: ConeConstantReference): ProtoBuf.Expression.ConstantValue? =
             when (constantReference) {
-                ConeBooleanConstantReference.TRUE -> ProtoBuf.Expression.ConstantValue.TRUE
-                ConeBooleanConstantReference.FALSE -> ProtoBuf.Expression.ConstantValue.FALSE
-                ConeConstantReference.NULL -> ProtoBuf.Expression.ConstantValue.NULL
-                ConeConstantReference.NOT_NULL -> throw IllegalStateException(
+                ConeContractConstantValues.TRUE -> ProtoBuf.Expression.ConstantValue.TRUE
+                ConeContractConstantValues.FALSE -> ProtoBuf.Expression.ConstantValue.FALSE
+                ConeContractConstantValues.NULL -> ProtoBuf.Expression.ConstantValue.NULL
+                ConeContractConstantValues.NOT_NULL -> throw IllegalStateException(
                     "Internal error during serialization of function contract: NOT_NULL constant isn't denotable in protobuf format. " +
                             "Its serialization should be handled at higher level"
                 )
-                ConeConstantReference.WILDCARD -> null
+                ConeContractConstantValues.WILDCARD -> null
                 else -> throw IllegalArgumentException("Unknown constant: $constantReference")
             }
     }

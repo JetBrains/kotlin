@@ -40,7 +40,7 @@ class OptimizationMethodVisitor(
     name: String,
     desc: String,
     signature: String?,
-    exceptions: Array<String>?
+    exceptions: Array<out String>?
 ) : TransformationMethodVisitor(delegate, access, name, desc, signature, exceptions) {
     val normalizationMethodTransformer = CompositeMethodTransformer(
         InplaceArgumentsMethodTransformer(),

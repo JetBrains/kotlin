@@ -126,7 +126,7 @@ internal open class KotlinTasksProvider {
     fun registerKotlinJsIrTask(
         project: Project, taskName: String, configuration: KotlinJsIrLinkConfig
     ): TaskProvider<out KotlinJsIrLink> {
-        return project.registerTask(taskName, KotlinJsIrLink::class.java).also {
+        return project.registerTask(taskName, KotlinJsIrLink::class.java, listOf(project)).also {
             configuration.execute(it)
         }
     }

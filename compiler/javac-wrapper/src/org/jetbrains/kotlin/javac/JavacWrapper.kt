@@ -16,7 +16,6 @@
 
 package org.jetbrains.kotlin.javac
 
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
@@ -74,7 +73,7 @@ class JavacWrapper(
     private val jarFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.JAR_PROTOCOL)!!
 
     companion object {
-        fun getInstance(project: Project): JavacWrapper = ServiceManager.getService(project, JavacWrapper::class.java)
+        fun getInstance(project: Project): JavacWrapper = project.getService(JavacWrapper::class.java)
     }
 
     private fun createCommonClassifierType(classId: ClassId) =

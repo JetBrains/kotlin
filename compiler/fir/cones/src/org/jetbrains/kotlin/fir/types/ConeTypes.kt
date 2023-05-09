@@ -208,11 +208,9 @@ class ConeRawType private constructor(
     }
 }
 
-/*
- * Contract of the intersection type: it is flat. It means that
- *   intersection type can not contains another intersection types
- *   inside it. To keep this contract construct new intersection types
- *   only via ConeTypeIntersector
+/**
+ * Contract of the intersection type: it is flat. It means that an intersection type can not contain another intersection type inside it.
+ * To comply with this contract, construct new intersection types only via [org.jetbrains.kotlin.fir.types.ConeTypeIntersector].
  */
 class ConeIntersectionType(
     val intersectedTypes: Collection<ConeKotlinType>,

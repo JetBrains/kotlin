@@ -94,6 +94,9 @@ public class JSConfigurationKeys {
     public static final CompilerConfigurationKey<Boolean> PRINT_REACHABILITY_INFO =
             CompilerConfigurationKey.create("print declarations' reachability info during performing DCE");
 
+    public static final CompilerConfigurationKey<String> DUMP_REACHABILITY_INFO_TO_FILE =
+            CompilerConfigurationKey.create("dump declarations' reachability info to file during performing DCE");
+
     public static final CompilerConfigurationKey<Boolean> FAKE_OVERRIDE_VALIDATOR =
             CompilerConfigurationKey.create("IR fake override validator");
 
@@ -121,4 +124,6 @@ public class JSConfigurationKeys {
     public static final CompilerConfigurationKey<ZipFileSystemAccessor> ZIP_FILE_SYSTEM_ACCESSOR =
             CompilerConfigurationKey.create("zip file system accessor, used for klib reading");
 
+    public static final CompilerConfigurationKey<Boolean> OPTIMIZE_GENERATED_JS =
+            CompilerConfigurationKey.create("perform additional optimizations on the generated JS code");
 }

@@ -5,13 +5,24 @@
 
 package org.jetbrains.kotlin.backend.common.actualizer
 
-import org.jetbrains.kotlin.backend.common.lower.copyAndActualizeDefaultValue
+import org.jetbrains.kotlin.backend.common.lower.actualize
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.declarations.copyAttributes
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.util.DeepCopyTypeRemapper
+import org.jetbrains.kotlin.ir.util.SymbolRemapper
+import org.jetbrains.kotlin.ir.util.TypeRemapper
+import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 
-class FunctionDefaultParametersActualizer(private val expectActualMap: Map<IrSymbol, IrSymbol>) {
+internal class FunctionDefaultParametersActualizer(
+    symbolRemapper: ActualizerSymbolRemapper,
+    typeRemapper: DeepCopyTypeRemapper,
+    private val expectActualMap: Map<IrSymbol, IrSymbol>
+) {
+    private val visitor = FunctionDefaultParametersActualizerVisitor(symbolRemapper, typeRemapper)
+
     fun actualize() {
         for ((expect, actual) in expectActualMap) {
             if (expect is IrFunctionSymbol) {
@@ -24,14 +35,20 @@ class FunctionDefaultParametersActualizer(private val expectActualMap: Map<IrSym
         expectFunction.valueParameters.zip(actualFunction.valueParameters).forEach { (expectParameter, actualParameter) ->
             val expectDefaultValue = expectParameter.defaultValue
             if (actualParameter.defaultValue == null && expectDefaultValue != null) {
-                actualParameter.defaultValue = expectDefaultValue.copyAndActualizeDefaultValue(
-                    actualFunction,
-                    actualParameter,
-                    mapOf(),
-                    classActualizer = { (expectActualMap[it.symbol] as IrClassSymbol).owner },
-                    functionActualizer = { (expectActualMap[it.symbol] as IrFunctionSymbol).owner }
-                )
+                actualParameter.defaultValue = expectDefaultValue.deepCopyWithSymbols(actualFunction).transform(visitor, null)
             }
         }
+    }
+}
+
+private class FunctionDefaultParametersActualizerVisitor(private val symbolRemapper: SymbolRemapper, typeRemapper: TypeRemapper) :
+    ActualizerVisitor(symbolRemapper, typeRemapper) {
+    override fun visitGetValue(expression: IrGetValue): IrGetValue {
+        // It performs actualization of dispatch/extension receivers
+        // It's actual only for default parameter values of expect functions because expect functions don't have bodies
+        return expression.actualize(
+            classActualizer = { symbolRemapper.getReferencedClass(it.symbol).owner },
+            functionActualizer = { symbolRemapper.getReferencedFunction(it.symbol).owner }
+        ).copyAttributes(expression)
     }
 }

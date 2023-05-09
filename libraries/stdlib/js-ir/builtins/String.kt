@@ -17,8 +17,10 @@ public class String : Comparable<String>, CharSequence {
     /**
      * Returns a string obtained by concatenating this string with the string representation of the given [other] object.
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public operator fun plus(other: Any?): String
 
+    @kotlin.internal.IntrinsicConstEvaluation
     public override val length: Int
 
     /**
@@ -27,15 +29,19 @@ public class String : Comparable<String>, CharSequence {
      * If the [index] is out of bounds of this string, throws an [IndexOutOfBoundsException] except in Kotlin/JS
      * where the behavior is unspecified.
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public override fun get(index: Int): Char
 
     public override fun subSequence(startIndex: Int, endIndex: Int): CharSequence
 
+    @kotlin.internal.IntrinsicConstEvaluation
     public override fun compareTo(other: String): Int
 
+    @kotlin.internal.IntrinsicConstEvaluation
     public override fun equals(other: Any?): Boolean
 
     public override fun hashCode(): Int
 
+    @kotlin.internal.IntrinsicConstEvaluation
     public override fun toString(): String
 }

@@ -28,6 +28,7 @@ internal open class BaseKotlin2JsCompileConfig<TASK : Kotlin2JsCompile>(
             configureAdditionalFreeCompilerArguments(task, compilation)
 
             task.compilerOptions.moduleName.convention(compilation.moduleName)
+            task.moduleName.set(providers.provider { compilation.moduleName })
 
             @Suppress("DEPRECATION")
             task.outputFileProperty.value(

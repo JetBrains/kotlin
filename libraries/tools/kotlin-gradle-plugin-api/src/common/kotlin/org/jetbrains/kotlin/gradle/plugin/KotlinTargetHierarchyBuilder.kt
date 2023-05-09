@@ -8,15 +8,123 @@ import org.jetbrains.kotlin.konan.target.DEPRECATED_TARGET_MESSAGE
 @KotlinTargetsDsl
 @ExperimentalKotlinGradlePluginApi
 interface KotlinTargetHierarchyBuilder {
+
+    @KotlinTargetsDsl
+    @ExperimentalKotlinGradlePluginApi
+    interface Root : KotlinTargetHierarchyBuilder {
+        /**
+         * Defines the trees that the described hierarchy is applied to.
+         * ### Example 1: Only apply a hierarchy for the "main" and "test" [KotlinTargetHierarchy.SourceSetTree]
+         *
+         * ```kotlin
+         * targetHierarchy.custom {
+         *     sourceSetTrees(SourceSetTree.main, SourceSetTree.test)
+         *     common {
+         *         withJvm()
+         *         group("ios") {
+         *             withIos()
+         *         }
+         *     }
+         * }
+         *```
+         *
+         * Will create the following trees given an iosX64(), iosArm64() and jvm() target:
+         * ```
+         *             "main"                      "test"
+         *           commonMain                 commonTest
+         *                |                          |
+         *           +----+-----+               +----+-----+
+         *           |          |               |          |
+         *        iosMain    jvmMain         iosTest    jvmTest
+         *           |                          |
+         *       +---+----+                 +---+----+
+         *       |        |                 |        |
+         * iosX64Main  iosArm64Main   iosX64Test  iosArm64Test
+         * ```
+         *
+         * ### Example 2:
+         * Using a different hierarchy for "main" and "test"
+         *```kotlin
+         * targetHierarchy.custom {
+         *    sourceSetTrees(SourceSetTree.main)  // ! <- only applied to the "main" tree
+         *    common {
+         *        withJvm()
+         *        group("ios") {
+         *            withIos()
+         *        }
+         *    }
+         * }
+         *
+         * targetHierarchy.custom {
+         *     sourceSetTrees(SourceSetTree.test) // ! <- only applied to the "test" tree
+         *     common {
+         *         withJvm()
+         *         withIos()
+         *     }
+         * }
+         * ```
+         *
+         * Will create the following trees given an iosX64(), iosArm64() and jvm() target:
+         * ```
+         *             "main"                            "test"
+         *           commonMain                        commonTest
+         *                |                                 |
+         *           +----+-----+               +-----------+-----------+
+         *           |          |               |           |           |
+         *        iosMain    jvmMain      iosX64Test   iosArm64Test  jvmTest
+         *           |
+         *       +---+----+
+         *       |        |
+         * iosX64Main  iosArm64Main
+         * ```
+         */
+        fun sourceSetTrees(vararg tree: KotlinTargetHierarchy.SourceSetTree)
+
+        /**
+         * Will add the given [tree]s into for this descriptor.
+         * @see sourceSetTrees
+         */
+        fun withSourceSetTree(vararg tree: KotlinTargetHierarchy.SourceSetTree)
+
+        /**
+         * Will remove the given [tree]s from this descriptor
+         * @see sourceSetTrees
+         */
+        fun excludeSourceSetTree(vararg tree: KotlinTargetHierarchy.SourceSetTree)
+    }
+
     /* Declaring groups */
+
+    /**
+     * Shortcut for `group("common") { }`:
+     * Most hierarchies should attach their nodes/groups to 'common'
+     *
+     * e.g.
+     * ```
+     * common {
+     *     group("native") {
+     *         withIos()
+     *         withMacos()
+     *     }
+     * }
+     * ```
+     * applying the shown hierarchy to the main compilations will create a 'nativeMain' source set which will
+     * depend on the usual 'commonMain'
+     *
+     */
     fun common(build: KotlinTargetHierarchyBuilder.() -> Unit) = group("common", build)
     fun group(name: String, build: KotlinTargetHierarchyBuilder.() -> Unit = {})
 
     /* low-level APIs */
     fun withCompilations(predicate: (KotlinCompilation<*>) -> Boolean)
-    fun withoutCompilations(predicate: (KotlinCompilation<*>) -> Boolean)
-    fun filterCompilations(predicate: (KotlinCompilation<*>) -> Boolean) =
-        withoutCompilations { !predicate(it) }
+
+    fun excludeCompilations(predicate: (KotlinCompilation<*>) -> Boolean)
+
+    @Deprecated("Use 'excludeCompilations' instead", ReplaceWith("excludeCompilations(predicate)"))
+    fun withoutCompilations(predicate: (KotlinCompilation<*>) -> Boolean) = excludeCompilations(predicate)
+
+    @Deprecated("Use plain 'withoutCompilations(!predicate) instead'", ReplaceWith("withoutCompilations { !predicate(it) }"))
+    fun filterCompilations(predicate: (KotlinCompilation<*>) -> Boolean) = excludeCompilations { !predicate(it) }
 
     /* Convenient groups */
     fun withNative()

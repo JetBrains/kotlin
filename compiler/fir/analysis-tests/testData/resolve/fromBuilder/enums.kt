@@ -1,4 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
 //  Ignore reason: KT-57619
 import <!UNRESOLVED_IMPORT!>my<!>.println
 

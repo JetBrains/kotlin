@@ -72,3 +72,27 @@ fun incompatibleEnumComparisonSmartCast(c: Any?, e: Any?) {
         <!INCOMPATIBLE_ENUM_COMPARISON!>c == e<!>
     }
 }
+
+fun incompatibleIdentityRegardlessNullability(a: Int?, b: String?) {
+    <!EQUALITY_NOT_APPLICABLE!>a == b<!>
+    <!FORBIDDEN_IDENTITY_EQUALS!>a === b<!>
+}
+
+fun incompatibleIdentityRegardlessNullabilitySmartCast(a: Any?, b: Any?) {
+    if (a is Int? && b is String?) {
+        <!EQUALITY_NOT_APPLICABLE_WARNING!>a == b<!>
+        <!FORBIDDEN_IDENTITY_EQUALS_WARNING!>a === b<!>
+    }
+}
+
+fun incompatibleIdentityRegardlessNullabilityWithValueClasses(c: C?, d: D?) {
+    <!EQUALITY_NOT_APPLICABLE!>c == d<!>
+    <!FORBIDDEN_IDENTITY_EQUALS!>c === d<!>
+}
+
+fun incompatibleIdentityRegardlessNullabilityWithValueClassesSmartCast(c: Any?, d: Any?) {
+    if (c is C? && d is D?) {
+        <!EQUALITY_NOT_APPLICABLE_WARNING!>c == d<!>
+        <!FORBIDDEN_IDENTITY_EQUALS_WARNING!>c === d<!>
+    }
+}

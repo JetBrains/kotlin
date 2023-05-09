@@ -19,6 +19,13 @@ open class AbstractSerializationIrBoxTest : AbstractIrBlackBoxCodegenTest() {
     }
 }
 
+open class AbstractSerializationJdk11IrBoxTest : AbstractIrBlackBoxCodegenTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.configureForKotlinxSerialization(useJdk11 = true)
+    }
+}
+
 open class AbstractSerializationWithoutRuntimeIrBoxTest : AbstractIrBlackBoxCodegenTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)

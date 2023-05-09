@@ -1,5 +1,3 @@
-@kotlin.jvm.JvmField
 var jvmField: kotlin.Long
 
-@field:kotlin.jvm.JvmField
 var jvmFieldOnField: kotlin.Int

@@ -6,7 +6,7 @@ fun test(d: dynamic) {
 
     d.foo { <!UNRESOLVED_REFERENCE!>it<!> }
 
-    d.foo { x -> }
+    d.foo { x -> x.bar() }
 
     d.foo { x: Int -> "" }
 

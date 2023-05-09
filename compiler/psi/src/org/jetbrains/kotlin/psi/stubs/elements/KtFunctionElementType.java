@@ -51,7 +51,8 @@ public class KtFunctionElementType extends KtStubElementType<KotlinFunctionStub,
         return new KotlinFunctionStubImpl(
                 (StubElement<?>) parentStub, StringRef.fromString(psi.getName()), isTopLevel, fqName,
                 isExtension, hasBlockBody, hasBody, psi.hasTypeParameterListBeforeFunctionName(),
-                psi.mayHaveContract()
+                psi.mayHaveContract(),
+                null
         );
     }
 
@@ -67,7 +68,11 @@ public class KtFunctionElementType extends KtStubElementType<KotlinFunctionStub,
         dataStream.writeBoolean(stub.hasBlockBody());
         dataStream.writeBoolean(stub.hasBody());
         dataStream.writeBoolean(stub.hasTypeParameterListBeforeFunctionName());
-        dataStream.writeBoolean(stub.mayHaveContract());
+        boolean haveContract = stub.mayHaveContract();
+        dataStream.writeBoolean(haveContract);
+        if (haveContract && stub instanceof KotlinFunctionStubImpl) {
+            ((KotlinFunctionStubImpl) stub).serializeContract(dataStream);
+        }
     }
 
     @NotNull
@@ -84,10 +89,9 @@ public class KtFunctionElementType extends KtStubElementType<KotlinFunctionStub,
         boolean hasBody = dataStream.readBoolean();
         boolean hasTypeParameterListBeforeFunctionName = dataStream.readBoolean();
         boolean mayHaveContract = dataStream.readBoolean();
-
         return new KotlinFunctionStubImpl(
                 (StubElement<?>) parentStub, name, isTopLevel, fqName, isExtension, hasBlockBody, hasBody,
-                hasTypeParameterListBeforeFunctionName, mayHaveContract
+                hasTypeParameterListBeforeFunctionName, mayHaveContract, mayHaveContract ? KotlinFunctionStubImpl.Companion.deserializeContract(dataStream) : null
         );
     }
 

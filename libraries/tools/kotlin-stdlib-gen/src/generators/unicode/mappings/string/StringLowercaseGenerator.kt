@@ -132,7 +132,7 @@ internal class StringLowercaseGenerator(
             }
             return low.code
         }
-    """.trimIndent()
+    """.trimIndent().prependOptInExperimentalNativeApi(target)
 
     private fun isFinalSigmaAt(): String = """
         // \p{cased} (\p{case-ignorable})* Sigma !( (\p{case-ignorable})* \p{cased} )

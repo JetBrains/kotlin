@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.sourcePsiSafe
 import org.jetbrains.kotlin.analysis.api.types.KtTypeMappingMode
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightIdentifier
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.annotateByKtType
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
@@ -59,7 +60,12 @@ internal abstract class SymbolLightParameterCommon(
         if (isDeclaredAsVararg()) return NullabilityType.NotNull
 
         val nullabilityApplicable = !containingMethod.hasModifierProperty(PsiModifier.PRIVATE) &&
-                !containingMethod.containingClass.let { it.isAnnotationType || it.isEnum }
+                !containingMethod.containingClass.isAnnotationType &&
+                // `enum` synthetic members (e.g., values or valueOf) are not applicable for nullability.
+                // In other words, `enum` non-synthetic members are applicable for nullability.
+                // Technically, we should retrieve the symbol for the containing method and see if its origin is not synthetic.
+                // But, only `enum#valueOf` has a value parameter we want to filter out, so this is cheap yet feasible.
+                (!containingMethod.containingClass.isEnum || containingMethod.name != StandardNames.ENUM_VALUE_OF.identifier)
 
         return if (nullabilityApplicable) {
             parameterSymbolPointer.withSymbol(ktModule) { getTypeNullability(it.returnType) }

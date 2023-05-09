@@ -124,7 +124,7 @@ fun case_9(list: List<Int?>) {
 // TESTCASE NUMBER: 10
 fun case_10(x: Float?) {
     while (false) {
-        if (true && true && true && x !== null) else break
+        if (true && true && true && <!FORBIDDEN_IDENTITY_EQUALS_WARNING!>x !== null<!>) else break
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float?")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float?")!>x<!><!UNSAFE_CALL!>.<!>equals(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Float?")!>x<!>.propT
@@ -158,7 +158,7 @@ fun case_11(x: Out<*>?, list: List<Int>) {
 // TESTCASE NUMBER: 12
 fun case_12(list: List<Int?>) {
     for (element in list) {
-        if (element === null) continue
+        if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING!>element === null<!>) continue
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>element<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>element<!>.inv()
     }
@@ -213,7 +213,7 @@ fun case_15(map: MutableMap<Int?, Int?>, y: Nothing?) {
 // TESTCASE NUMBER: 16
 fun case_16(map: Map<Int?, Int?>) {
     for ((k, v) in map) {
-        if (k !== implicitNullableNothingProperty && v !== implicitNullableNothingProperty) else { continue }
+        if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING!>k !== implicitNullableNothingProperty<!> && <!FORBIDDEN_IDENTITY_EQUALS_WARNING!>v !== implicitNullableNothingProperty<!>) else { continue }
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>k<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>k<!>.inv()
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Int? & kotlin.Int")!>v<!>

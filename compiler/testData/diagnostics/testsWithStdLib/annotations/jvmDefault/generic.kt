@@ -1,26 +1,26 @@
 // FIR_IDENTICAL
 // !JVM_TARGET: 1.8
-// !JVM_DEFAULT_MODE: enable
+// !JVM_DEFAULT_MODE: all
 
 interface A<T> {
-    @<!DEPRECATION!>JvmDefault<!>
     fun test(p: T) {
     }
 }
 
+@JvmDefaultWithCompatibility
 interface ANonDefault {
     fun test(p: String) {}
 }
 
 interface B<T> : A<T> {
 
-    <!JVM_DEFAULT_REQUIRED_FOR_OVERRIDE!>override fun test(p: T)<!>
+    override fun test(p: T)
     {}
 }
 
 interface C<T> : A<T>, ANonDefault {
 
-    <!JVM_DEFAULT_REQUIRED_FOR_OVERRIDE!>override fun test(p: T)<!>
+    override fun test(p: T)
     {}
 
     override fun test(p: String) {
@@ -41,7 +41,7 @@ interface C2 : C<String>, ANonDefault {
 
 interface D<T> : ANonDefault, A<T> {
 
-    <!JVM_DEFAULT_REQUIRED_FOR_OVERRIDE!>override fun test(p: T)<!>
+    override fun test(p: T)
     {}
 
     override fun test(p: String) {

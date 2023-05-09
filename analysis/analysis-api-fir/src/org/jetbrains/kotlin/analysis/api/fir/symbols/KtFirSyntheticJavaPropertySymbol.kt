@@ -84,6 +84,9 @@ internal class KtFirSyntheticJavaPropertySymbol(
             firSymbol.setterSymbol?.let { builder.callableBuilder.buildPropertyAccessorSymbol(it) } as? KtPropertySetterSymbol
         }
 
+    override val backingFieldSymbol: KtBackingFieldSymbol?
+        get() = null
+
     override val isFromPrimaryConstructor: Boolean get() = withValidityAssertion { false }
     override val isOverride: Boolean get() = withValidityAssertion { firSymbol.isOverride }
     override val isStatic: Boolean get() = withValidityAssertion { firSymbol.isStatic }

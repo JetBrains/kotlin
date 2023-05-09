@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.DiagnosticList
 import org.jetbrains.kotlin.fir.checkers.generator.diagnostics.model.PositioningStrategy
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.psi.*
@@ -94,6 +95,13 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
             parameter<ConeKotlinType>("targetType")
         }
         val EXTERNAL_INTERFACE_AS_CLASS_LITERAL by error<KtElement>()
+        val JS_EXTERNAL_INHERITORS_ONLY by error<KtDeclaration>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
+            parameter<FirClassLikeSymbol<*>>("parent")
+            parameter<FirClassLikeSymbol<*>>("kid")
+        }
+        val JS_EXTERNAL_ARGUMENT by error<KtExpression>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
+            parameter<ConeKotlinType>("argType")
+        }
     }
 
     val EXPORT by object : DiagnosticGroup("Export") {
@@ -112,5 +120,9 @@ object JS_DIAGNOSTICS_LIST : DiagnosticList("FirJsErrors") {
 
     val DYNAMICS by object : DiagnosticGroup("Dynamics") {
         val DELEGATION_BY_DYNAMIC by error<KtElement>()
+        val SPREAD_OPERATOR_IN_DYNAMIC_CALL by error<KtElement>(PositioningStrategy.SPREAD_OPERATOR)
+        val WRONG_OPERATION_WITH_DYNAMIC by error<KtElement> {
+            parameter<String>("operation")
+        }
     }
 }

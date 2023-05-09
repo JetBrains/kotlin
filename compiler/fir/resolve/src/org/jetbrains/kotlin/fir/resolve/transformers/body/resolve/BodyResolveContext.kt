@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
-import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.PrivateForInline
+import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
@@ -424,36 +424,45 @@ class BodyResolveContext(
         val towerElementsForClass = holder.collectTowerDataElementsForClass(owner, type)
 
         val base = towerDataContext.addNonLocalTowerDataElements(towerElementsForClass.superClassesStaticsAndCompanionReceivers)
-        val statics = base
-            .addNonLocalScopeIfNotNull(towerElementsForClass.companionStaticScope)
-            .addNonLocalScopeIfNotNull(towerElementsForClass.staticScope)
 
-        val companionReceiver = towerElementsForClass.companionReceiver
-        val staticsAndCompanion = if (companionReceiver == null) statics else base
-            .addReceiver(null, companionReceiver)
-            .addNonLocalScopeIfNotNull(towerElementsForClass.companionStaticScope)
-            .addNonLocalScopeIfNotNull(towerElementsForClass.staticScope)
+        val statics = base
+            .addNonLocalScopesIfNotNull(towerElementsForClass.companionStaticScope, towerElementsForClass.staticScope)
+
+        val staticsAndCompanion = when (val companionReceiver = towerElementsForClass.companionReceiver) {
+            null -> statics
+            else -> base
+                .addReceiver(null, companionReceiver)
+                .addNonLocalScopesIfNotNull(towerElementsForClass.companionStaticScope, towerElementsForClass.staticScope)
+        }
 
         val typeParameterScope = (owner as? FirRegularClass)?.typeParameterScope()
 
-        val forMembersResolution =
+        // Type parameters must be inserted before all of staticsAndCompanion.
+        // Optimization: Only rebuild all of staticsAndCompanion that's below type parameters if there are any type parameters.
+        // Otherwise, reuse staticsAndCompanion.
+        val forConstructorHeader = if (typeParameterScope != null) {
+            towerDataContext
+                .addNonLocalScope(typeParameterScope)
+                .addNonLocalTowerDataElements(towerElementsForClass.superClassesStaticsAndCompanionReceivers)
+                .run { towerElementsForClass.companionReceiver?.let { addReceiver(null, it) } ?: this }
+                .addNonLocalScopesIfNotNull(towerElementsForClass.companionStaticScope, towerElementsForClass.staticScope)
+        } else {
             staticsAndCompanion
-                .addReceiver(labelName, towerElementsForClass.thisReceiver)
-                .addContextReceiverGroup(towerElementsForClass.contextReceivers)
-                .addNonLocalScopeIfNotNull(typeParameterScope)
+        }
 
-        val scopeForConstructorHeader =
-            staticsAndCompanion.addNonLocalScopeIfNotNull(typeParameterScope)
+        val forMembersResolution = forConstructorHeader
+            .addReceiver(labelName, towerElementsForClass.thisReceiver)
+            .addContextReceiverGroup(towerElementsForClass.contextReceivers)
 
         /*
          * Scope for enum entries is equal to initial scope for constructor header
          *
-         * The only difference that we add value parameters to local scope for constructors
+         * The only difference is that we add value parameters to local scope for constructors
          *   and should not do this for enum entries
          */
 
         @Suppress("UnnecessaryVariable")
-        val scopeForEnumEntries = scopeForConstructorHeader
+        val scopeForEnumEntries = forConstructorHeader
 
         val newTowerDataContextForStaticNestedClasses =
             if ((owner as? FirRegularClass)?.classKind?.isSingleton == true)
@@ -464,20 +473,20 @@ class BodyResolveContext(
         val constructor = (owner as? FirRegularClass)?.declarations?.firstOrNull { it is FirConstructor } as? FirConstructor
         val (primaryConstructorPureParametersScope, primaryConstructorAllParametersScope) =
             if (constructor?.isPrimary == true) {
-                constructor.scopesWithPrimaryConstructorParameters(owner, holder.session)
+                constructor.scopesWithPrimaryConstructorParameters(holder.session)
             } else {
                 null to null
             }
 
         val newContexts = FirRegularTowerDataContexts(
-            forMembersResolution,
+            regular = forMembersResolution,
             forClassHeaderAnnotations = base,
-            newTowerDataContextForStaticNestedClasses,
-            statics,
-            scopeForConstructorHeader,
-            scopeForEnumEntries,
-            primaryConstructorPureParametersScope,
-            primaryConstructorAllParametersScope
+            forNestedClasses = newTowerDataContextForStaticNestedClasses,
+            forCompanionObject = statics,
+            forConstructorHeaders = forConstructorHeader,
+            forEnumEntries = scopeForEnumEntries,
+            primaryConstructorPureParametersScope = primaryConstructorPureParametersScope,
+            primaryConstructorAllParametersScope = primaryConstructorAllParametersScope
         )
 
         return withTowerDataContexts(newContexts) {
@@ -551,17 +560,12 @@ class BodyResolveContext(
         }
     }
 
-    private fun FirConstructor.scopesWithPrimaryConstructorParameters(
-        ownerClass: FirClass,
-        session: FirSession
-    ): Pair<FirLocalScope, FirLocalScope> {
+    private fun FirConstructor.scopesWithPrimaryConstructorParameters(session: FirSession): Pair<FirLocalScope, FirLocalScope> {
         var parameterScope = FirLocalScope(session)
         var allScope = FirLocalScope(session)
-        val properties = ownerClass.declarations.filterIsInstance<FirProperty>().associateBy { it.name }
         for (parameter in valueParameters) {
             allScope = allScope.storeVariable(parameter, session)
-            val property = properties[parameter.name]
-            if (property?.source?.kind != KtFakeSourceElementKind.PropertyFromParameter) {
+            if (parameter.correspondingProperty == null) {
                 parameterScope = parameterScope.storeVariable(parameter, session)
             }
         }

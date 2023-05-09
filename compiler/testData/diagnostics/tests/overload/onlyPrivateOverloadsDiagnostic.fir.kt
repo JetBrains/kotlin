@@ -6,7 +6,7 @@ class A {
 }
 
 fun test(a: A) {
-    a.<!NONE_APPLICABLE!>foo<!>(3)
+    a.<!INVISIBLE_REFERENCE!>foo<!>(3)
     a.<!NONE_APPLICABLE!>foo<!>()
 }
 

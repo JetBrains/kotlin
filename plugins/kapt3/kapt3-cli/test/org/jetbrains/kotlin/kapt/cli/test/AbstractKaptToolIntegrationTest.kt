@@ -9,6 +9,7 @@ import com.intellij.openapi.util.SystemInfo
 import org.jetbrains.kotlin.cli.common.arguments.readArgumentsFromArgFile
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInfo
 import java.io.File
@@ -52,6 +53,13 @@ abstract class AbstractKaptToolIntegrationTest {
                     "kapt" -> runKotlinDistBinary("kapt", section.args)
                     "javac" -> runJavac(section.args)
                     "java" -> runJava(section.args)
+                    "output" -> {
+                        val output = File(tmpdir, "processOutput.txt").readText()
+                        val expected = section.content.trim()
+                        JUnit5Assertions.assertTrue(output.contains(expected)) {
+                            "Output\"$output\" doesn't contain the expected string \"$expected\""
+                        }
+                    }
                     "after" -> {}
                     else -> error("Unknown section name ${section.name}")
                 }

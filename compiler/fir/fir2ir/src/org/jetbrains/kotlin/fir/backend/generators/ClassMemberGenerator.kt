@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.backend.*
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.comparators.FirCallableDeclarationComparator
+import org.jetbrains.kotlin.fir.declarations.comparators.FirMemberDeclarationComparator
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
@@ -57,8 +59,8 @@ internal class ClassMemberGenerator(
             val allDeclarations = buildList {
                 addAll(klass.declarations)
                 if (session.extensionService.declarationGenerators.isNotEmpty()) {
-                    addAll(klass.generatedMembers(session))
-                    addAll(klass.generatedNestedClassifiers(session))
+                    addAll(klass.generatedMembers(session).sortedWith(FirCallableDeclarationComparator))
+                    addAll(klass.generatedNestedClassifiers(session).sortedWith(FirMemberDeclarationComparator))
                 }
             }
 
@@ -109,8 +111,9 @@ internal class ClassMemberGenerator(
                 val irParameters = valueParameters.drop(firFunction.contextReceivers.size)
                 val annotationMode = containingClass?.classKind == ClassKind.ANNOTATION_CLASS && irFunction is IrConstructor
                 for ((valueParameter, firValueParameter) in irParameters.zip(firFunction.valueParameters)) {
-                    valueParameter.setDefaultValue(firValueParameter, annotationMode)
-                    annotationGenerator.generate(valueParameter, firValueParameter)
+                    visitor.withAnnotationMode(enableAnnotationMode = annotationMode) {
+                        valueParameter.setDefaultValue(firValueParameter)
+                    }
                 }
                 annotationGenerator.generate(irFunction, firFunction)
             }
@@ -266,7 +269,7 @@ internal class ClassMemberGenerator(
             }
             declarationStorage.leaveScope(this@initializeBackingField)
         }
-        annotationGenerator.generate(irField, property)
+        property.backingField?.let { annotationGenerator.generate(irField, it) }
     }
 
     private fun IrSimpleFunction.setPropertyAccessorContent(
@@ -313,7 +316,6 @@ internal class ClassMemberGenerator(
             }
 
         }
-        annotationGenerator.generate(this, property)
     }
 
     private fun IrFieldAccessExpression.setReceiver(declaration: IrDeclaration): IrFieldAccessExpression {
@@ -347,7 +349,18 @@ internal class ClassMemberGenerator(
             val irConstructorSymbol = declarationStorage.getIrFunctionSymbol(constructorSymbol) as IrConstructorSymbol
             val typeArguments = constructedTypeRef.coneType.fullyExpandedType(session).typeArguments
             val constructor = constructorSymbol.fir
-            if (constructor.isFromEnumClass || constructor.returnTypeRef.isEnum) {
+            /*
+             * We should generate enum constructor call only if it is used to create new enum entry (so it's super constructor call)
+             * If it is this constructor call that we are facing secondary constructor of enum, and should generate
+             *   regular delegating constructor call
+             *
+             * enum class Some(val x: Int) {
+             *   A(); // <---- super call, IrEnumConstructorCall
+             *
+             *   constructor() : this(10) // <---- this call, IrDelegatingConstructorCall
+             * }
+             */
+            if ((constructor.isFromEnumClass || constructor.returnTypeRef.isEnum) && this.isSuper) {
                 IrEnumConstructorCallImpl(
                     startOffset, endOffset,
                     constructedIrType,
@@ -378,7 +391,7 @@ internal class ClassMemberGenerator(
                 }
                 with(callGenerator) {
                     declarationStorage.enterScope(irConstructorSymbol.owner)
-                    val result = it.applyCallArguments(this@toIrDelegatingConstructorCall, annotationMode = false)
+                    val result = it.applyCallArguments(this@toIrDelegatingConstructorCall)
                     declarationStorage.leaveScope(irConstructorSymbol.owner)
                     result
                 }
@@ -386,10 +399,10 @@ internal class ClassMemberGenerator(
         }
     }
 
-    private fun IrValueParameter.setDefaultValue(firValueParameter: FirValueParameter, annotationMode: Boolean) {
+    private fun IrValueParameter.setDefaultValue(firValueParameter: FirValueParameter) {
         val firDefaultValue = firValueParameter.defaultValue
         if (firDefaultValue != null) {
-            this.defaultValue = factory.createExpressionBody(visitor.convertToIrExpression(firDefaultValue, annotationMode))
+            this.defaultValue = factory.createExpressionBody(visitor.convertToIrExpression(firDefaultValue))
         }
     }
 }

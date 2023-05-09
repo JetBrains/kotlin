@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.actualizer
 
 import org.jetbrains.kotlin.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.backend.common.CommonBackendErrors
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.declarations.buildProperty
@@ -22,7 +23,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.FqName
 
-class MissingFakeOverridesAdder(
+internal class MissingFakeOverridesAdder(
     private val expectActualMap: Map<IrSymbol, IrSymbol>,
     private val typeAliasMap: Map<FqName, FqName>,
     private val diagnosticsReporter: KtDiagnosticReporterWithImplicitIrBasedContext
@@ -67,6 +68,7 @@ class MissingFakeOverridesAdder(
             val actualClass = expectActualMap[expectClass.symbol]?.owner as? IrClass ?: continue
             for (actualMember in actualClass.declarations) {
                 if (actualMember.isBuiltinMember() || actualMember in added) continue
+                if ((actualMember as? IrDeclarationWithVisibility)?.visibility == DescriptorVisibilities.PRIVATE) continue
                 addFakeOverride(actualMember, members, declaration)
             }
         }
@@ -83,12 +85,13 @@ class MissingFakeOverridesAdder(
             else -> return
         }
 
-        if (members.getMatch(newMember, expectActualMap, typeAliasMap) == null) {
+        if (members.getMatches(newMember, expectActualMap, typeAliasMap).isEmpty()) {
             declaration.declarations.add(newMember)
             members.getOrPut(generateIrElementFullNameFromExpect(newMember, typeAliasMap)) { mutableListOf() }.add(newMember)
         } else {
             diagnosticsReporter.at(declaration).report(
                 CommonBackendErrors.MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED,
+                declaration.name.asString(),
                 (actualMember as IrDeclarationWithName).name.asString()
             )
         }

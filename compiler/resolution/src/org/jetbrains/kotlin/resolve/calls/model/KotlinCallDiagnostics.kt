@@ -137,14 +137,6 @@ object TypeCheckerHasRanIntoRecursion : KotlinCallDiagnostic(INAPPLICABLE) {
     override fun report(reporter: DiagnosticReporter) = reporter.onCall(this)
 }
 
-// Callable reference resolution
-class CallableReferenceNotCompatible(
-    argument: CallableReferenceResolutionAtom,
-    val candidate: CallableMemberDescriptor,
-    val expectedType: UnwrappedType?,
-    val callableReverenceType: UnwrappedType
-) : CallableReferenceInapplicableDiagnostic(argument)
-
 // supported by FE but not supported by BE now
 class CallableReferencesDefaultArgumentUsed(
     val argument: CallableReferenceResolutionAtom,

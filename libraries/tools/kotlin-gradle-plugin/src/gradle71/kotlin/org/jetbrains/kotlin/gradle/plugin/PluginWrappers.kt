@@ -140,6 +140,14 @@ open class KotlinPlatformCommonPlugin : KotlinPlatformPluginBase("common") {
     }
 }
 
+open class KotlinApiPlugin : KotlinBaseApiPlugin() {
+
+    override fun apply(project: Project) {
+        project.registerVariantImplementations()
+        super.apply(project)
+    }
+}
+
 private fun Project.registerVariantImplementations() {
     val factories = VariantImplementationFactoriesConfigurator.get(gradle)
     factories[IdeaSyncDetector.IdeaSyncDetectorVariantFactory::class] =
@@ -152,4 +160,6 @@ private fun Project.registerVariantImplementations() {
         KotlinTestReportCompatibilityHelperG71.KotlinTestReportCompatibilityHelperVariantFactoryG71()
     factories[ArtifactTypeAttributeAccessor.ArtifactTypeAttributeAccessorVariantFactory::class] =
         ArtifactTypeAttributeAccessorG71.ArtifactTypeAttributeAccessorVariantFactoryG71()
+    factories[ProjectIsolationStartParameterAccessor.Factory::class] =
+        ProjectIsolationStartParameterAccessorG71.Factory()
 }

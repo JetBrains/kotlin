@@ -301,6 +301,7 @@ internal fun CompilerConfiguration.setupCommonOptionsForCaches(konanConfig: Kona
     put(BinaryOptions.gcSchedulerType, konanConfig.gcSchedulerType)
     put(BinaryOptions.freezing, konanConfig.freezing)
     put(BinaryOptions.runtimeAssertionsMode, konanConfig.runtimeAssertsMode)
+    put(LAZY_IR_FOR_CACHES, konanConfig.lazyIrForCaches)
 }
 
 private fun Array<String>?.toNonNullList() = this?.asList().orEmpty()

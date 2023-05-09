@@ -1,23 +1,31 @@
+// DUMP_IR
+
 import org.jetbrains.kotlin.fir.plugin.CoreSerializer
 import org.jetbrains.kotlin.fir.plugin.MySerializable
 
 @CoreSerializer
-object FirstSerializer
+object FirstSerializer {
+    fun bFunction() {}
+    fun aFunction() {}
+
+    val bProp = 1
+    val aProp = 2
+}
 
 @CoreSerializer
 object SecondSerializer
 
 @MySerializable
-class A
-
-@MySerializable
-class B
+class D
 
 @MySerializable
 class C
 
 @MySerializable
-class D
+class B
+
+@MySerializable
+class A
 
 fun testFirstSerializer() {
     FirstSerializer.serializeA(A())

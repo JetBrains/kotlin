@@ -246,8 +246,6 @@ class MainKtsTest {
     @Test
     fun testHelloSerialization() {
         // the embeddable plugin is needed for this test, because embeddable compiler is used.
-        // furtunately appropriate gradle plugin can serve as an embeddable compiler plugin now
-        // so, the path to it is prepared in the build file
         val serializationPluginClasspath = System.getProperty("kotlin.script.test.kotlinx.serialization.plugin.classpath")!!
         val out = captureOut {
             val res = evalFileWithConfigurations(

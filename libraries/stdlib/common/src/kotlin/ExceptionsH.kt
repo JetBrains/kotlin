@@ -78,6 +78,9 @@ public expect open class ClassCastException : RuntimeException {
 public expect open class AssertionError : Error {
     constructor()
     constructor(message: Any?)
+
+    @SinceKotlin("1.9")
+    constructor(message: String?, cause: Throwable?)
 }
 
 public expect open class NoSuchElementException : RuntimeException {

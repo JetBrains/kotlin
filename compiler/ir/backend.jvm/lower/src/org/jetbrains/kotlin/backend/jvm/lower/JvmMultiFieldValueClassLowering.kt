@@ -518,15 +518,21 @@ internal class JvmMultiFieldValueClassLowering(
             name = mangledName
             returnType = source.returnType
         }.apply {
-            val isAnyOverriddenReplaced = replacement.overriddenSymbols.any {
-                it.owner in replacements.bindingNewFunctionToParameterTemplateStructure
+            val implementationStructure = if (isFakeOverride) {
+                val superDeclaration = replacement.allOverridden().singleOrNull { it.body != null }
+                    ?: error("${this.render()} is fake override and has no implementation")
+                replacements.bindingNewFunctionToParameterTemplateStructure[superDeclaration]
+                    ?: superDeclaration.explicitParameters.map { RegularMapping(it) }
+            } else {
+                replacements.bindingNewFunctionToParameterTemplateStructure[replacement]
+                    ?: error("${replacement.render()} must have MFVC structure")
             }
-            if (source.parentAsClass.isMultiFieldValueClass && isAnyOverriddenReplaced) {
-                copyTypeParametersFrom(source) // without static type parameters
-                val substitutionMap = makeTypeParameterSubstitutionMap(source, this)
-                dispatchReceiverParameter = source.dispatchReceiverParameter!!.let { // source!!!
-                    it.copyTo(this, type = it.type.substitute(substitutionMap))
-                }
+            copyTypeParametersFrom(source) // without static type parameters
+            val substitutionMap = makeTypeParameterSubstitutionMap(source, this)
+            dispatchReceiverParameter = source.dispatchReceiverParameter!!.let { // source!!!
+                it.copyTo(this, type = it.type.substitute(substitutionMap))
+            }
+            if ((source.parent as? IrClass)?.isMultiFieldValueClass == true) {
                 require(replacement.dispatchReceiverParameter == null) {
                     """
                         Ambiguous receivers:
@@ -534,19 +540,32 @@ internal class JvmMultiFieldValueClassLowering(
                         ${replacement.dispatchReceiverParameter!!.render()}
                         """.trimIndent()
                 }
-                require(replacement.extensionReceiverParameter == null) {
-                    "Static replacement must have no extension receiver but ${replacement.extensionReceiverParameter!!.render()} found"
-                }
-                val replacementStructure = replacements.bindingNewFunctionToParameterTemplateStructure[replacement]!!
-                val offset = replacementStructure[0].valueParameters.size
-                valueParameters = replacement.valueParameters.drop(offset).map {
-                    it.copyTo(this, type = it.type.substitute(substitutionMap), index = it.index - offset)
-                }
-                val parametersMapping = (replacement.valueParameters.drop(offset) zip valueParameters).toMap()
-                context.remapMultiFieldValueClassStructure(replacement, this, parametersMapping)
-            } else {
-                copyParameterDeclarationsFrom(source)
             }
+            require(replacement.extensionReceiverParameter == null) {
+                "Static replacement must have no extension receiver but ${replacement.extensionReceiverParameter!!.render()} found"
+            }
+            val structure = buildList(implementationStructure.size) {
+                var valueParameterIndex = 0
+                add(RegularMapping(dispatchReceiverParameter!!))
+                val valueParametersAsMutableList = mutableListOf<IrValueParameter>()
+                for (expectedParameterStructure in implementationStructure.asSequence().drop(this.size)) {
+                    fun IrValueParameter.copy() =
+                        copyTo(this@apply, type = type.substitute(substitutionMap), index = valueParameterIndex++)
+
+                    val parameterStructure = when (expectedParameterStructure) {
+                        is RegularMapping -> RegularMapping(expectedParameterStructure.valueParameter.copy())
+                        is MultiFieldValueClassMapping -> MultiFieldValueClassMapping(
+                            expectedParameterStructure.rootMfvcNode,
+                            substitutionMap,
+                            expectedParameterStructure.valueParameters.map { it.copy() }
+                        )
+                    }
+                    add(parameterStructure)
+                    valueParametersAsMutableList.addAll(parameterStructure.valueParameters)
+                }
+                valueParameters = valueParametersAsMutableList
+            }
+            replacements.bindingNewFunctionToParameterTemplateStructure[this] = structure
             annotations = source.annotations
             parent = source.parent
             // We need to ensure that this bridge has the same attribute owner as its static inline class replacement, since this
@@ -557,110 +576,17 @@ internal class JvmMultiFieldValueClassLowering(
 
     override fun createBridgeBody(source: IrSimpleFunction, target: IrSimpleFunction, original: IrFunction, inverted: Boolean) {
         allScopes.push(createScope(source))
-        source.body = context.createJvmIrBuilder(source.symbol).run {
-            val sourceExplicitParameters = source.explicitParameters
-            val targetExplicitParameters = target.explicitParameters
+        source.body = with(context.createJvmIrBuilder(source.symbol)) {
             irExprBody(irBlock {
+                val parameters2arguments = replacements.mapFunctionMfvcStructures(this, target, source) { sourceParameter, _ ->
+                    irGet(sourceParameter)
+                }
                 +irReturn(irCall(target).apply {
                     passTypeArgumentsWithOffsets(target, source) { source.typeParameters[it].defaultType }
-                    val sourceStructure: List<RemappedParameter>? = replacements.bindingNewFunctionToParameterTemplateStructure[source]
-                    val targetStructure: List<RemappedParameter>? = replacements.bindingNewFunctionToParameterTemplateStructure[target]
-                    val errorMessage = {
-                        """
-                        Incompatible structures for
-                        Source: $sourceStructure
-                        ${source.render()}
-                        Target: $targetStructure
-                        ${target.render()}
-                        """.trimIndent()
-                    }
-                    when (targetStructure) {
-                        null -> when (sourceStructure) {
-                            null -> require(targetExplicitParameters.size == sourceExplicitParameters.size, errorMessage)
-                            else -> {
-                                require(targetExplicitParameters.size == sourceStructure.size, errorMessage)
-                                require(sourceExplicitParameters.size == sourceStructure.sumOf { it.valueParameters.size }, errorMessage)
-                            }
+                    for ((parameter, argument) in parameters2arguments) {
+                        if (argument != null) {
+                            putArgument(parameter, argument)
                         }
-
-                        else -> when (sourceStructure) {
-                            null -> {
-                                require(targetStructure.size == sourceExplicitParameters.size, errorMessage)
-                                require(targetStructure.sumOf { it.valueParameters.size } == targetExplicitParameters.size, errorMessage)
-                            }
-
-                            else -> {
-                                require(targetStructure.size == sourceStructure.size, errorMessage)
-                                require(sourceStructure.sumOf { it.valueParameters.size } == sourceExplicitParameters.size, errorMessage)
-                                require(targetStructure.sumOf { it.valueParameters.size } == targetExplicitParameters.size, errorMessage)
-                                require((targetStructure zip sourceStructure).none { (t, s) ->
-                                    t is MultiFieldValueClassMapping && s is MultiFieldValueClassMapping && t.rootMfvcNode != s.rootMfvcNode
-                                }, errorMessage)
-                            }
-                        }
-                    }
-                    val structuresSizes = sourceStructure?.size ?: targetStructure?.size ?: targetExplicitParameters.size
-                    var flattenedSourceIndex = 0
-                    var flattenedTargetIndex = 0
-                    for (i in 0 until structuresSizes) {
-                        val remappedSourceParameter = sourceStructure?.get(i)
-                        val remappedTargetParameter = targetStructure?.get(i)
-                        when (remappedSourceParameter) {
-                            is MultiFieldValueClassMapping -> {
-                                when (remappedTargetParameter) {
-                                    is MultiFieldValueClassMapping -> {
-                                        require(remappedTargetParameter.valueParameters.size == remappedSourceParameter.valueParameters.size) {
-                                            "Incompatible structures: $remappedTargetParameter, $remappedSourceParameter"
-                                        }
-                                        repeat(remappedTargetParameter.valueParameters.size) {
-                                            putArgument(
-                                                targetExplicitParameters[flattenedTargetIndex++],
-                                                irGet(sourceExplicitParameters[flattenedSourceIndex++])
-                                            )
-                                        }
-                                    }
-
-                                    is RegularMapping, null -> {
-                                        val valueArguments = sourceExplicitParameters
-                                            .slice(flattenedSourceIndex until flattenedSourceIndex + remappedSourceParameter.valueParameters.size)
-                                            .map { irGet(it) }
-                                        val targetParameter = targetExplicitParameters[flattenedTargetIndex++]
-                                        val boxedExpression = remappedSourceParameter.rootMfvcNode.makeBoxedExpression(
-                                            this@irBlock,
-                                            remappedSourceParameter.typeArguments,
-                                            valueArguments,
-                                            ::registerPossibleExtraBoxUsage
-                                        )
-                                        putArgument(targetParameter, boxedExpression)
-                                            .also { flattenedSourceIndex += remappedSourceParameter.valueParameters.size }
-                                    }
-                                }
-                            }
-
-                            is RegularMapping, null -> when (remappedTargetParameter) {
-                                is MultiFieldValueClassMapping -> {
-                                    val receiver = sourceExplicitParameters[flattenedSourceIndex++]
-                                    val rootNode = remappedTargetParameter.rootMfvcNode
-                                    val instance = rootNode.createInstanceFromBox(
-                                        this@irBlock, irGet(receiver), AccessType.ChooseEffective, ::variablesSaver,
-                                    )
-                                    val flattenedExpressions = instance.makeFlattenedGetterExpressions(
-                                        this@irBlock, irCurrentClass, ::registerPossibleExtraBoxUsage
-                                    )
-                                    for (expression in flattenedExpressions) {
-                                        putArgument(targetExplicitParameters[flattenedTargetIndex++], expression)
-                                    }
-                                }
-
-                                else -> putArgument(
-                                    targetExplicitParameters[flattenedTargetIndex++],
-                                    irGet(sourceExplicitParameters[flattenedSourceIndex++])
-                                )
-                            }
-                        }
-                    }
-                    require(flattenedTargetIndex == targetExplicitParameters.size && flattenedSourceIndex == sourceExplicitParameters.size) {
-                        "Incorrect source:\n${source.dump()}\n\nfor target\n${target.dump()}"
                     }
                 })
             })
@@ -1076,7 +1002,9 @@ internal class JvmMultiFieldValueClassLowering(
         originalFunction: IrFunction,
         original: IrMemberAccessExpression<*>,
         replacement: IrFunction,
-        makeMemberAccessExpression: (IrFunctionSymbol) -> IrMemberAccessExpression<*> = ::irCall,
+        makeMemberAccessExpression: (IrFunctionSymbol) -> IrMemberAccessExpression<*> = { callee: IrFunctionSymbol ->
+            irCall(callee.owner, superQualifierSymbol = (original as? IrCall)?.superQualifierSymbol)
+        },
     ): IrMemberAccessExpression<*> {
         val parameter2expression = typedArgumentList(originalFunction, original)
         val structure = replacements.bindingOldFunctionToParameterTemplateStructure[originalFunction]!!
@@ -1302,6 +1230,9 @@ internal class JvmMultiFieldValueClassLowering(
             if (expression is IrConstructorCall) expression.symbol.owner.constructedClass else expression.type.erasedUpperBound
         )
         val type = if (expression is IrConstructorCall) expression.symbol.owner.constructedClass.defaultType else expression.type
+        if (type == context.irBuiltIns.nothingType) {
+            return flattenExpressionTo(irImplicitCast(expression, instance.type), instance)
+        }
         val lowering = this@JvmMultiFieldValueClassLowering
         if (rootNode == null || !type.needsMfvcFlattening() || instance.size == 1) {
             require(instance.size == 1) { "Required 1 variable/field to store regular value but got ${instance.size}" }

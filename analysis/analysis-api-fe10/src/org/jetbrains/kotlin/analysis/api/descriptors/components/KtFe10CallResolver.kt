@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.analysis.api.calls.*
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.KtFe10AnalysisSession
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.Fe10KtAnalysisSessionComponent
+import org.jetbrains.kotlin.analysis.api.descriptors.signatures.KtFe10FunctionLikeSignature
+import org.jetbrains.kotlin.analysis.api.descriptors.signatures.KtFe10VariableLikeSignature
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10DescValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.KtFe10ReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.KtFe10DescSymbol
@@ -59,10 +61,6 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.UnwrappedType
-import org.jetbrains.kotlin.types.asSimpleType
-import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.contains
-import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.isTypeVariable
-import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext.typeConstructor
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -122,6 +120,7 @@ internal class KtFe10CallResolver(
             Errors.RESOLUTION_TO_PRIVATE_CONSTRUCTOR_OF_SEALED_CLASS,
             Errors.UNRESOLVED_REFERENCE,
             *Errors.TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM.factories,
+            *Errors.TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM_IN_AUGMENTED_ASSIGNMENT.factories,
         )
 
         private val syntaxErrors = setOf(
@@ -567,8 +566,8 @@ internal class KtFe10CallResolver(
             resultingDescriptor.extensionReceiverParameter?.returnType?.toKtType(analysisContext)
         }
         return when (symbol) {
-            is KtVariableLikeSymbol -> KtVariableLikeSignature(symbol, ktReturnType, receiverType)
-            is KtFunctionLikeSymbol -> KtFunctionLikeSignature(
+            is KtVariableLikeSymbol -> KtFe10VariableLikeSignature(symbol, ktReturnType, receiverType)
+            is KtFunctionLikeSymbol -> KtFe10FunctionLikeSignature(
                 symbol,
                 ktReturnType,
                 receiverType,

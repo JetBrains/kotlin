@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2023 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 
@@ -13,6 +13,9 @@ actual class ArrayList<E> private constructor(
     private val backingList: ArrayList<E>?,
     private val root: ArrayList<E>?
 ) : MutableList<E>, RandomAccess, AbstractMutableList<E>() {
+    private companion object {
+        private val Empty = ArrayList<Nothing>(0).also { it.isReadOnly = true }
+    }
 
     actual constructor() : this(10)
 
@@ -28,7 +31,7 @@ actual class ArrayList<E> private constructor(
         if (backingList != null) throw IllegalStateException() // just in case somebody casts subList to ArrayList
         checkIsMutable()
         isReadOnly = true
-        return this
+        return if (length > 0) this else Empty
     }
 
     override actual val size: Int
@@ -160,7 +163,7 @@ actual class ArrayList<E> private constructor(
     }
 
     override fun toString(): String {
-        return backingArray.subarrayContentToStringImpl(offset, length)
+        return backingArray.subarrayContentToString(offset, length)
     }
 
     @Suppress("UNCHECKED_CAST")

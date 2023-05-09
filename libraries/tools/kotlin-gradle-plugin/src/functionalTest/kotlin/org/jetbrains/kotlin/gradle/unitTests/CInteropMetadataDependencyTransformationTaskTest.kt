@@ -67,13 +67,18 @@ class CInteropMetadataDependencyTransformationTaskTest : MultiplatformExtensionT
         linuxX64Test.dependsOn(nativeTest)
         linuxArm64Test.dependsOn(nativeTest)
 
+        project.evaluate()
         val nativeTestTransformationTask = project.locateOrRegisterCInteropMetadataDependencyTransformationTask(nativeTest)
 
         assertNotNull(nativeTestTransformationTask, "Expected transformation task registered for 'nativeTest'")
         assertEquals(
-            listOf(commonMain, commonTest, nativeMain).map { sourceSet ->
-                project.locateOrRegisterCInteropMetadataDependencyTransformationTask(sourceSet as DefaultKotlinSourceSet)?.get()
-                    ?: fail("Expected transformation task registered for '${sourceSet.name}'")
+            listOf(commonMain, commonTest, nativeMain).flatMap { sourceSet ->
+                listOf(
+                    project.locateOrRegisterCInteropMetadataDependencyTransformationTask(sourceSet as DefaultKotlinSourceSet)?.get()
+                        ?: fail("Expected transformation task registered for '${sourceSet.name}'"),
+                    project.locateOrRegisterCInteropMetadataDependencyTransformationTaskForIde(sourceSet)?.get()
+                        ?: fail("Expected transformation task registered for '${sourceSet.name}'(forIde)")
+                )
             }.toSet(),
             nativeTestTransformationTask.get().mustRunAfter.getDependencies(null).toSet()
         )
@@ -82,6 +87,7 @@ class CInteropMetadataDependencyTransformationTaskTest : MultiplatformExtensionT
     @Test
     fun `test task disabled for non shared-native source sets`() {
         project.enableCInteropCommonization(true)
+        kotlin.targetHierarchy.default()
         kotlin.linuxArm64()
         kotlin.linuxX64()
         kotlin.jvm()
@@ -89,12 +95,13 @@ class CInteropMetadataDependencyTransformationTaskTest : MultiplatformExtensionT
         val commonMain = kotlin.sourceSets.getByName("commonMain")
         val linuxArm64Main = kotlin.sourceSets.getByName("linuxArm64Main")
         val linuxX64Main = kotlin.sourceSets.getByName("linuxX64Main")
-        val linuxMain = kotlin.sourceSets.create("linuxMain") as DefaultKotlinSourceSet
+        val linuxMain = kotlin.sourceSets.getByName("linuxMain") as DefaultKotlinSourceSet
 
         linuxMain.dependsOn(commonMain)
         linuxArm64Main.dependsOn(linuxMain)
         linuxX64Main.dependsOn(linuxMain)
 
+        project.evaluate()
 
         listOf(
             "commonMain", "jvmMain", "linuxArm64Main", "linuxX64Main"
@@ -128,7 +135,7 @@ class CInteropMetadataDependencyTransformationTaskTest : MultiplatformExtensionT
                 linuxX64()
                 linuxArm64()
             }
-        }
+        }.also { it.evaluate() }
 
         fun Project.transformationTaskOutputs(): Set<File> {
             val kotlin = multiplatformExtension

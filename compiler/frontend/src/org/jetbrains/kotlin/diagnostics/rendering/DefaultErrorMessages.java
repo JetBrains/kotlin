@@ -227,7 +227,9 @@ public class DefaultErrorMessages {
         MAP.put(REDUNDANT_MODIFIER_IN_GETTER, "Visibility modifiers are redundant in getter");
         MAP.put(TYPE_PARAMETERS_IN_ENUM, "Enum class cannot have type parameters");
         MAP.put(TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM,
-                "Type checking has run into a recursive problem. Easiest workaround: specify types of your declarations explicitly"); // TODO: message
+                "Type checking has run into a recursive problem. Easiest workaround: specify types of your declarations explicitly");
+        MAP.put(TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM_IN_AUGMENTED_ASSIGNMENT,
+                "Type checking has run into a recursive problem. Easiest workaround: specify types of your declarations explicitly");
         MAP.put(RETURN_NOT_ALLOWED, "'return' is not allowed here");
         MAP.put(PROJECTION_IN_IMMEDIATE_ARGUMENT_TO_SUPERTYPE, "Projections are not allowed for immediate arguments of a supertype");
         MAP.put(LABEL_NAME_CLASH, "There is more than one label with such a name in this scope");
@@ -414,6 +416,8 @@ public class DefaultErrorMessages {
         MAP.put(SETTER_PROJECTED_OUT, "Setter for ''{0}'' is removed by type projection", NAME);
         MAP.put(INVISIBLE_SETTER, "Cannot assign to ''{0}'': the setter is {1} in {2}", NAME, VISIBILITY,
                 NAME_OF_CONTAINING_DECLARATION_OR_FILE);
+        MAP.put(INVISIBLE_SETTER_FROM_DERIVED, "Cannot assign to ''{0}'': the setter is {1} in {2}. This warning will be an error soon. See https://youtrack.jetbrains.com/issue/KT-56662 for details", NAME, VISIBILITY,
+                NAME_OF_CONTAINING_DECLARATION_OR_FILE);
         MAP.put(INITIALIZATION_BEFORE_DECLARATION, "Variable cannot be initialized before declaration", NAME);
         MAP.put(VARIABLE_EXPECTED, "Variable expected");
 
@@ -518,6 +522,16 @@ public class DefaultErrorMessages {
                 RECEIVER_TYPE_MISMATCH_WARNING_FOR_INCORRECT_CAPTURE_APPROXIMATION,
                 "Extension receiver type mismatch: inferred type is {1} but {0} was expected. This warning will be an error soon. See https://youtrack.jetbrains.com/issue/KT-49404 for details",
                 RENDER_TYPE, RENDER_TYPE
+        );
+        MAP.put(
+                RECEIVER_TYPE_MISMATCH,
+                "Constraint error in receiver type argument: inferred type is {1} but {0} was expected",
+                RENDER_TYPE, RENDER_TYPE
+        );
+        MAP.put(
+                TYPE_MISMATCH_IN_CONSTRAINT,
+                "Type mismatch in constraint system: actual type is {1} but {0} was expected. Constraint position is {2}",
+                RENDER_TYPE, RENDER_TYPE, TO_STRING
         );
         MAP.put(LOCAL_EXTENSION_PROPERTY, "Local extension properties are not allowed");
         MAP.put(LOCAL_VARIABLE_WITH_GETTER, "Local variables are not allowed to have getters");
@@ -788,6 +802,7 @@ public class DefaultErrorMessages {
         MAP.put(UNSUPPORTED_WARNING, "Unsupported [{0}]. This warning will be an error in future releases", STRING);
         MAP.put(NEW_INFERENCE_ERROR, "New inference error [{0}]", STRING);
         MAP.put(NEW_INFERENCE_DIAGNOSTIC, "New inference [{0}]", STRING);
+        MAP.put(NEW_INFERENCE_UNKNOWN_ERROR, "Unknown error in new inference with applicability ''{0}'' and target ''{1}'', please report to https://youtrack.jetbrains.com/newIssue?project=KT", TO_STRING, STRING);
         MAP.put(NON_APPLICABLE_CALL_FOR_BUILDER_INFERENCE, "Non-applicable call for builder inference");
 
         MAP.put(UNSUPPORTED_FEATURE, "{0}", new LanguageFeatureMessageRenderer(LanguageFeatureMessageRenderer.Type.UNSUPPORTED));
@@ -1202,6 +1217,9 @@ public class DefaultErrorMessages {
         MAP.put(AMBIGUOUS_CALL_WITH_IMPLICIT_CONTEXT_RECEIVER, "With implicit context receiver, call is ambiguous. Specify the receiver explicitly");
         MAP.put(UNSUPPORTED_CONTEXTUAL_DECLARATION_CALL, "To use contextual declarations, specify the `-Xcontext-receivers` compiler option");
         MAP.put(SUBTYPING_BETWEEN_CONTEXT_RECEIVERS, "Subtyping relation between context receivers is prohibited");
+
+        MAP.put(VOLATILE_ON_VALUE, "'@Volatile' annotation cannot be used on immutable properties");
+        MAP.put(VOLATILE_ON_DELEGATE, "'@Volatile' annotation cannot be used on delegated properties");
 
         MAP.setImmutable();
 

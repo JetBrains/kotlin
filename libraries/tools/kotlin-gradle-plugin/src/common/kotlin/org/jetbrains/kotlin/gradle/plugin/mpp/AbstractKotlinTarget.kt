@@ -44,9 +44,11 @@ abstract class AbstractKotlinTarget(
     override val defaultConfigurationName: String
         get() = disambiguateName("default")
 
+    @Deprecated("Scheduled for removal with Kotlin 2.2")
     override var useDisambiguationClassifierAsSourceSetNamePrefix: Boolean = true
         internal set
 
+    @Deprecated("Scheduled for removal with Kotlin 2.2")
     override var overrideDisambiguationClassifierOnIdeImport: String? = null
         internal set
 
@@ -203,7 +205,7 @@ internal fun Project.buildAdhocComponentsFromKotlinVariants(kotlinVariants: Set<
     return kotlinVariants.map { kotlinVariant ->
         val adhocVariant = softwareComponentFactory.adhoc(kotlinVariant.name)
 
-        project.whenEvaluated {
+        project.launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseCompilations) {
             (kotlinVariant as SoftwareComponentInternal).usages.filterIsInstance<KotlinUsageContext>().forEach { kotlinUsageContext ->
                 val publishedConfigurationName = publishedConfigurationName(kotlinUsageContext.name)
                 val configuration = project.configurations.findByName(publishedConfigurationName)

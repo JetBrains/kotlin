@@ -1,17 +1,17 @@
 // !DIAGNOSTICS: -UNUSED_PARAMETER
 
 fun foo() {
-    for ((x, y) in A()) {
+    for ((<!WRONG_OPERATION_WITH_DYNAMIC!>x<!>, <!WRONG_OPERATION_WITH_DYNAMIC!>y<!>) in A()) {
         println(x + y)
     }
 
-    bar { (x, y) ->
+    bar { (<!WRONG_OPERATION_WITH_DYNAMIC!>x<!>, <!WRONG_OPERATION_WITH_DYNAMIC!>y<!>) ->
         println(x + y)
     }
 
     val x: dynamic = Any()
 
-    val (y, z) = x
+    val (<!WRONG_OPERATION_WITH_DYNAMIC!>y<!>, <!WRONG_OPERATION_WITH_DYNAMIC!>z<!>) = x
     println(y + z)
 }
 

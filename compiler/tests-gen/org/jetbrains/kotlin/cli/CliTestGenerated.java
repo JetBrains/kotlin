@@ -840,14 +840,9 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/jvmDefaultAll.args");
         }
 
-        @TestMetadata("jvmDefaultCompatibility.args")
-        public void testJvmDefaultCompatibility() throws Exception {
-            runTest("compiler/testData/cli/jvm/jvmDefaultCompatibility.args");
-        }
-
-        @TestMetadata("jvmDefaultEnable.args")
-        public void testJvmDefaultEnable() throws Exception {
-            runTest("compiler/testData/cli/jvm/jvmDefaultEnable.args");
+        @TestMetadata("jvmDefaultIncorrectValue.args")
+        public void testJvmDefaultIncorrectValue() throws Exception {
+            runTest("compiler/testData/cli/jvm/jvmDefaultIncorrectValue.args");
         }
 
         @TestMetadata("jvmIrByDefault1_4.args")
@@ -868,6 +863,11 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("jvmRecordWrongTarget.args")
         public void testJvmRecordWrongTarget() throws Exception {
             runTest("compiler/testData/cli/jvm/jvmRecordWrongTarget.args");
+        }
+
+        @TestMetadata("k2SimpleMultiplatformGenericClass.args")
+        public void testK2SimpleMultiplatformGenericClass() throws Exception {
+            runTest("compiler/testData/cli/jvm/k2SimpleMultiplatformGenericClass.args");
         }
 
         @TestMetadata("kotlinHomeWithoutStdlib.args")
@@ -1363,6 +1363,11 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/js/languageVersion.args");
         }
 
+        @TestMetadata("legacyCompilerUsageWithoutFlag.args")
+        public void testLegacyCompilerUsageWithoutFlag() throws Exception {
+            runTest("compiler/testData/cli/js/legacyCompilerUsageWithoutFlag.args");
+        }
+
         @TestMetadata("libraryDirNotFound.args")
         public void testLibraryDirNotFound() throws Exception {
             runTest("compiler/testData/cli/js/libraryDirNotFound.args");
@@ -1637,6 +1642,11 @@ public class CliTestGenerated extends AbstractCliTest {
         @TestMetadata("moduleNameWithFir.args")
         public void testModuleNameWithFir() throws Exception {
             runTest("compiler/testData/cli/metadata/moduleNameWithFir.args");
+        }
+
+        @TestMetadata("noVirtualFileHiddenForMemberWithPlatformDependentAnnotation.args")
+        public void testNoVirtualFileHiddenForMemberWithPlatformDependentAnnotation() throws Exception {
+            runTest("compiler/testData/cli/metadata/noVirtualFileHiddenForMemberWithPlatformDependentAnnotation.args");
         }
 
         @TestMetadata("optionalAnnotationsFromMetadata.args")

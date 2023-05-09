@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.lexer.KtTokens.*
+import org.jetbrains.kotlin.light.classes.symbol.*
 import org.jetbrains.kotlin.light.classes.symbol.annotations.*
 import org.jetbrains.kotlin.light.classes.symbol.copy
 import org.jetbrains.kotlin.light.classes.symbol.fields.SymbolLightField
@@ -284,7 +285,7 @@ internal fun SymbolLightClassBase.createPropertyAccessors(
 
     if (declaration.getter?.hasBody != true && declaration.setter?.hasBody != true && declaration.visibility.isPrivateOrPrivateToThis()) return
 
-    if (declaration.hasJvmFieldAnnotation()) return
+    if (declaration.isJvmField) return
     val propertyTypeIsValueClass = declaration.hasTypeForValueClassInSignature()
 
     /*
@@ -587,7 +588,7 @@ internal fun SymbolLightClassBase.addPropertyBackingFields(
             // All fields for companion object of classes are generated to the containing class
             // For interfaces, only @JvmField-annotated properties are generated to the containing class
             // Probably, the same should work for const vals but it doesn't at the moment (see KT-28294)
-            filter { containingClass?.isInterface == true && !it.hasJvmFieldAnnotation() }
+            filter { containingClass?.isInterface == true && !it.isJvmField }
         }
 
     val (ctorProperties, memberProperties) = propertySymbols.partition { it.isFromPrimaryConstructor }

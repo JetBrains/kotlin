@@ -373,6 +373,10 @@ mi_decl_nodiscard mi_decl_export mi_decl_restrict void* mi_new_n(size_t count, s
 mi_decl_nodiscard mi_decl_export void* mi_new_realloc(void* p, size_t newsize)                mi_attr_alloc_size(2);
 mi_decl_nodiscard mi_decl_export void* mi_new_reallocn(void* p, size_t newcount, size_t size) mi_attr_alloc_size2(2, 3);
 
+#if KONAN_MI_MALLOC
+mi_decl_nodiscard mi_decl_export size_t mi_allocated_size(void) mi_attr_noexcept;
+#endif
+
 #ifdef __cplusplus
 }
 #endif

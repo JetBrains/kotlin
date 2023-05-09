@@ -25,5 +25,7 @@ enum class JvmTarget(val target: String) {
         fun fromTarget(target: String): JvmTarget =
             JvmTarget.values().firstOrNull { it.target == target }
                 ?: throw IllegalArgumentException("Unknown Kotlin JVM target: $target")
+
+        val DEFAULT = JVM_1_8
     }
 }

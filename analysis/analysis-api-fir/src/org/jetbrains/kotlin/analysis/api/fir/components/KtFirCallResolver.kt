@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
+import com.intellij.openapi.diagnostic.Logger
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.calls.*
 import org.jetbrains.kotlin.analysis.api.diagnostics.KtDiagnostic
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.resolver.AllCandidatesRes
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.withFirEntry
 import org.jetbrains.kotlin.analysis.utils.errors.ExceptionAttachmentBuilder
+import org.jetbrains.kotlin.analysis.utils.errors.logErrorWithAttachment
 import org.jetbrains.kotlin.analysis.utils.errors.rethrowExceptionWithDetails
 import org.jetbrains.kotlin.analysis.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
@@ -73,6 +75,8 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions.EQUALS
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+
+private val LOG: Logger = Logger.getInstance(KtFirCallResolver::class.java)
 
 internal class KtFirCallResolver(
     override val analysisSession: KtFirAnalysisSession,
@@ -1272,9 +1276,11 @@ internal class KtFirCallResolver(
     }
 
     private fun FirExpression.findSourceKtExpressionForCallArgument(): KtExpression? {
+        // For smart-casted expression, refer to the source of the original expression
         // For spread, named, and lambda arguments, the source is the KtValueArgument.
         // For other arguments (including array indices), the source is the KtExpression.
         return when (this) {
+            is FirSmartCastExpression -> originalExpression.realPsi as? KtExpression
             is FirNamedArgumentExpression, is FirSpreadArgumentExpression, is FirLambdaArgumentExpression ->
                 realPsi.safeAs<KtValueArgument>()?.getArgumentExpression()
             else -> realPsi as? KtExpression
@@ -1282,7 +1288,16 @@ internal class KtFirCallResolver(
     }
 
     @KtAnalysisApiInternals
-    override fun provideAdditionalAttachmentToUnresolvedCall(psi: KtElement, builder: ExceptionAttachmentBuilder) {
+    override fun unresolvedKtCallError(psi: KtElement): KtErrorCallInfo {
+        LOG.logErrorWithAttachment("${psi::class.simpleName} should always resolve to a KtCallInfo") {
+            withPsiEntry("psi", psi)
+            provideAdditionalAttachmentToUnresolvedCall(psi, this)
+        }
+
+        return super.unresolvedKtCallError(psi)
+    }
+
+    private fun provideAdditionalAttachmentToUnresolvedCall(psi: KtElement, builder: ExceptionAttachmentBuilder) {
         psi.getOrBuildFir(firResolveSession)?.let { builder.withFirEntry("fir", it) }
     }
 

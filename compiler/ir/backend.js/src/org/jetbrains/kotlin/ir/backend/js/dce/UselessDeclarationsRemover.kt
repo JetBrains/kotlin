@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.isAny
@@ -22,6 +21,8 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.js.config.RuntimeDiagnostic
+import org.jetbrains.kotlin.utils.memoryOptimizedFilter
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 class UselessDeclarationsRemover(
     private val removeUnusedAssociatedObjects: Boolean,
@@ -52,13 +53,13 @@ class UselessDeclarationsRemover(
         // Otherwise `JsClassGenerator.generateAssociatedKeyProperties` will try to reference the object factory (which is removed).
         // That will result in an error from the Namer. It cannot generate a name for an absent declaration.
         if (removeUnusedAssociatedObjects && declaration.annotations.any { !it.shouldKeepAnnotation() }) {
-            declaration.annotations = declaration.annotations.filter { it.shouldKeepAnnotation() }
+            declaration.annotations = declaration.annotations.memoryOptimizedFilter { it.shouldKeepAnnotation() }
         }
 
         declaration.superTypes = declaration.superTypes
             .flatMap { it.classOrNull?.collectUsedSuperTypes() ?: emptyList() }
             .distinct()
-            .map { it.defaultType }
+            .memoryOptimizedMap { it.defaultType }
     }
 
     private fun IrClassSymbol.collectUsedSuperTypes(): Set<IrClassSymbol> {
@@ -68,7 +69,7 @@ class UselessDeclarationsRemover(
             } else {
                 owner.superTypes
                     .flatMap { it.takeIf { !it.isAny() }?.classOrNull?.collectUsedSuperTypes() ?: emptyList() }
-                    .toSet()
+                    .toHashSet()
             }
         }
     }

@@ -6,6 +6,7 @@
 #include "ConcurrentMarkAndSweep.hpp"
 
 #include <cinttypes>
+#include <optional>
 
 #include "CompilerConstants.hpp"
 #include "GlobalData.hpp"
@@ -50,6 +51,13 @@ struct SweepTraits {
     }
 };
 
+struct ProcessWeaksTraits {
+    static bool IsMarked(ObjHeader* obj) noexcept {
+        auto& objectData = mm::ObjectFactory<gc::ConcurrentMarkAndSweep>::NodeRef::From(obj).ObjectData();
+        return objectData.marked();
+    }
+};
+
 } // namespace
 
 void gc::ConcurrentMarkAndSweep::ThreadData::SafePointAllocation(size_t size) noexcept {
@@ -58,17 +66,20 @@ void gc::ConcurrentMarkAndSweep::ThreadData::SafePointAllocation(size_t size) no
 }
 
 void gc::ConcurrentMarkAndSweep::ThreadData::Schedule() noexcept {
+    RuntimeLogInfo({kTagGC}, "Scheduling GC manually");
     ThreadStateGuard guard(ThreadState::kNative);
     gc_.state_.schedule();
 }
 
 void gc::ConcurrentMarkAndSweep::ThreadData::ScheduleAndWaitFullGC() noexcept {
+    RuntimeLogInfo({kTagGC}, "Scheduling GC manually");
     ThreadStateGuard guard(ThreadState::kNative);
     auto scheduled_epoch = gc_.state_.schedule();
     gc_.state_.waitEpochFinished(scheduled_epoch);
 }
 
 void gc::ConcurrentMarkAndSweep::ThreadData::ScheduleAndWaitFullGCWithFinalizers() noexcept {
+    RuntimeLogInfo({kTagGC}, "Scheduling GC manually");
     ThreadStateGuard guard(ThreadState::kNative);
     auto scheduled_epoch = gc_.state_.schedule();
     gc_.state_.waitEpochFinalized(scheduled_epoch);
@@ -95,20 +106,20 @@ NO_EXTERNAL_CALLS_CHECK void gc::ConcurrentMarkAndSweep::ThreadData::OnSuspendFo
     gc::Mark<internal::MarkTraits>(handle, markQueue);
 }
 
+#ifndef CUSTOM_ALLOCATOR
 gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep(
         mm::ObjectFactory<ConcurrentMarkAndSweep>& objectFactory, GCScheduler& gcScheduler) noexcept :
-#ifndef CUSTOM_ALLOCATOR
     objectFactory_(objectFactory),
     gcScheduler_(gcScheduler),
     finalizerProcessor_(std_support::make_unique<FinalizerProcessor>([this](int64_t epoch) {
 #else
+gc::ConcurrentMarkAndSweep::ConcurrentMarkAndSweep(GCScheduler& gcScheduler) noexcept :
     gcScheduler_(gcScheduler), finalizerProcessor_(std_support::make_unique<alloc::CustomFinalizerProcessor>([this](int64_t epoch) {
 #endif
         GCHandle::getByEpoch(epoch).finalizersDone();
         state_.finalized(epoch);
     })) {
     gcScheduler_.SetScheduleGC([this]() NO_INLINE {
-        RuntimeLogDebug({kTagGC}, "Scheduling GC by thread %d", konan::currentThreadId());
         // This call acquires a lock, so we need to ensure that we're in the safe state.
         NativeOrUnregisteredThreadGuard guard(/* reentrant = */ true);
         state_.schedule();
@@ -177,27 +188,36 @@ bool gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch) noexcept {
 
     mm::WaitForThreadsSuspension();
     auto markStats = gcHandle.getMarked();
-    scheduler.gcData().UpdateAliveSetBytes(markStats.totalObjectsSize);
+    scheduler.gcData().UpdateAliveSetBytes(markStats.markedSizeBytes);
+
+    gc::processWeaks<ProcessWeaksTraits>(gcHandle, mm::SpecialRefRegistry::instance());
 
 #ifndef CUSTOM_ALLOCATOR
-    mm::ExtraObjectDataFactory& extraObjectDataFactory = mm::GlobalData::Instance().extraObjectDataFactory();
-    gc::SweepExtraObjects<SweepTraits>(gcHandle, extraObjectDataFactory);
-
-    auto objectFactoryIterable = objectFactory_.LockForIter();
+    // Taking the locks before the pause is completed. So that any destroying thread
+    // would not publish into the global state at an unexpected time.
+    std::optional extraObjectFactoryIterable = mm::GlobalData::Instance().extraObjectDataFactory().LockForIter();
+    std::optional objectFactoryIterable = objectFactory_.LockForIter();
     mm::ResumeThreads();
     gcHandle.threadsAreResumed();
-    auto finalizerQueue = gc::Sweep<SweepTraits>(gcHandle, objectFactoryIterable);
+
+    gc::SweepExtraObjects<SweepTraits>(gcHandle, *extraObjectFactoryIterable);
+    extraObjectFactoryIterable = std::nullopt;
+    auto finalizerQueue = gc::Sweep<SweepTraits>(gcHandle, *objectFactoryIterable);
+    objectFactoryIterable = std::nullopt;
     kotlin::compactObjectPoolInMainThread();
 #else
     auto finalizerQueue = heap_.SweepExtraObjects(gcHandle);
 
     mm::ResumeThreads();
     gcHandle.threadsAreResumed();
-    heap_.Sweep();
+    heap_.Sweep(gcHandle);
 #endif
     state_.finish(epoch);
     gcHandle.finalizersScheduled(finalizerQueue.size());
     gcHandle.finished();
+    // This may start a new thread. On some pthreads implementations, this may block waiting for concurrent thread
+    // destructors running. So, it must ensured that no locks are held by this point.
+    // TODO: Consider having an always on sleeping finalizer thread.
     finalizerProcessor_->ScheduleTasks(std::move(finalizerQueue), epoch);
     return true;
 }

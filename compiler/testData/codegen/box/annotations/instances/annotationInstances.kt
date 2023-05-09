@@ -1,5 +1,4 @@
 // IGNORE_BACKEND: JVM
-// IGNORE_BACKEND: WASM
 
 // (supported: JVM_IR, JS_IR(_E6))
 // Regular JS works too, but without proper hashCode or equals

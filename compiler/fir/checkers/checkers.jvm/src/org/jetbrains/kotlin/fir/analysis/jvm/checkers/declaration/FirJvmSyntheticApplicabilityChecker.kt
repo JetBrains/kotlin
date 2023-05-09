@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.name.JvmNames.JVM_SYNTHETIC_ANNOTATION_CLASS_ID
 
 object FirJvmSyntheticApplicabilityChecker : FirPropertyChecker() {
     override fun check(declaration: FirProperty, context: CheckerContext, reporter: DiagnosticReporter) {
-        val annotation = declaration.delegateFieldSymbol?.getAnnotationByClassId(JVM_SYNTHETIC_ANNOTATION_CLASS_ID, context.session)
+        val annotation = declaration.backingField?.getAnnotationByClassId(JVM_SYNTHETIC_ANNOTATION_CLASS_ID, context.session)
         if (annotation != null && annotation.useSiteTarget == AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD) {
             reporter.reportOn(annotation.source, FirJvmErrors.JVM_SYNTHETIC_ON_DELEGATE, context)
         }

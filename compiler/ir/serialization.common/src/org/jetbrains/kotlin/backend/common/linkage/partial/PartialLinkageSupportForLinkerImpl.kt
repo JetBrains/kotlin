@@ -18,23 +18,27 @@ import org.jetbrains.kotlin.ir.util.allUnbound
 
 fun createPartialLinkageSupportForLinker(
     partialLinkageConfig: PartialLinkageConfig,
+    allowErrorTypes: Boolean,
     builtIns: IrBuiltIns,
     messageLogger: IrMessageLogger
 ): PartialLinkageSupportForLinker = if (partialLinkageConfig.isEnabled)
-    PartialLinkageSupportForLinkerImpl(builtIns, partialLinkageConfig.logLevel, messageLogger)
+    PartialLinkageSupportForLinkerImpl(builtIns, allowErrorTypes, partialLinkageConfig.logLevel, messageLogger)
 else
     PartialLinkageSupportForLinker.DISABLED
 
 internal class PartialLinkageSupportForLinkerImpl(
     builtIns: IrBuiltIns,
+    allowErrorTypes: Boolean,
     logLevel: PartialLinkageLogLevel,
     messageLogger: IrMessageLogger
 ) : PartialLinkageSupportForLinker {
     private val stubGenerator = MissingDeclarationStubGenerator(builtIns)
-    private val classifierExplorer = ClassifierExplorer(builtIns, stubGenerator)
+    private val classifierExplorer = ClassifierExplorer(builtIns, stubGenerator, allowErrorTypes)
     private val patcher = PartiallyLinkedIrTreePatcher(builtIns, classifierExplorer, stubGenerator, logLevel, messageLogger)
 
     override val isEnabled get() = true
+
+    override fun shouldBeSkipped(declaration: IrDeclaration) = patcher.shouldBeSkipped(declaration)
 
     override fun exploreClassifiers(fakeOverrideBuilder: FakeOverrideBuilder) {
         val entries = fakeOverrideBuilder.fakeOverrideCandidates

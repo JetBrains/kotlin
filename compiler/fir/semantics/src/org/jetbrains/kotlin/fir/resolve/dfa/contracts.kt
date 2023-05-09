@@ -5,17 +5,20 @@
 
 package org.jetbrains.kotlin.fir.resolve.dfa
 
+import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.fir.contracts.description.*
-import org.jetbrains.kotlin.fir.expressions.LogicOperationKind
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
-import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.fir.types.canBeNull
+import org.jetbrains.kotlin.fir.types.isAny
+import org.jetbrains.kotlin.fir.types.isMarkedNullable
+import org.jetbrains.kotlin.fir.types.isNullableNothing
 
 fun ConeConstantReference.toOperation(): Operation? = when (this) {
-    ConeConstantReference.WILDCARD -> null
-    ConeConstantReference.NULL -> Operation.EqNull
-    ConeConstantReference.NOT_NULL -> Operation.NotEqNull
-    ConeBooleanConstantReference.TRUE -> Operation.EqTrue
-    ConeBooleanConstantReference.FALSE -> Operation.EqFalse
+    ConeContractConstantValues.WILDCARD -> null
+    ConeContractConstantValues.NULL -> Operation.EqNull
+    ConeContractConstantValues.NOT_NULL -> Operation.NotEqNull
+    ConeContractConstantValues.TRUE -> Operation.EqTrue
+    ConeContractConstantValues.FALSE -> Operation.EqFalse
     else -> throw IllegalArgumentException("$this can not be transformed to Operation")
 }
 
@@ -31,7 +34,7 @@ fun LogicSystem.approveContractStatement(
 
     fun ConeBooleanExpression.visit(inverted: Boolean): TypeStatements? = when (this) {
         is ConeBooleanConstantReference ->
-            if (inverted == (this == ConeBooleanConstantReference.TRUE)) null else mapOf()
+            if (inverted == (this == ConeContractConstantValues.TRUE)) null else mapOf()
         is ConeLogicalNot -> arg.visit(inverted = !inverted)
         is ConeIsInstancePredicate ->
             arguments.getOrNull(arg.parameterIndex + 1)?.let {

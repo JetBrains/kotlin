@@ -1,5 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
-
 fun foo(): Int = 42
 
 object ThrowInTryWithCatch {

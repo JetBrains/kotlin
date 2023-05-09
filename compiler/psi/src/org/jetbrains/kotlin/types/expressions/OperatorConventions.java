@@ -104,6 +104,8 @@ public class OperatorConventions {
             .put(KtTokens.MINUSEQ, KtTokens.MINUS)
             .build();
 
+    public static final Name ASSIGN_METHOD = Name.identifier("assign");
+
     public static final ImmutableBiMap<KtSingleValueToken, Name> BOOLEAN_OPERATIONS = ImmutableBiMap.<KtSingleValueToken, Name>builder()
              .put(KtTokens.ANDAND, AND)
              .put(KtTokens.OROR, OR)

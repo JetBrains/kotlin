@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.name.Name
  * heuristics are checked only once.
  */
 @OptIn(FirSymbolProviderInternals::class)
-internal class LLFirCombinedSyntheticFunctionSymbolProvider(
+internal class LLFirCombinedSyntheticFunctionSymbolProvider private constructor(
     session: FirSession,
     private val providers: List<FirSyntheticFunctionInterfaceProviderBase>,
 ) : FirSymbolProvider(session) {
@@ -55,7 +55,8 @@ internal class LLFirCombinedSyntheticFunctionSymbolProvider(
     override fun computeCallableNamesInPackage(packageFqName: FqName): Set<Name>? = null
 
     companion object {
-        fun merge(session: FirSession, providers: List<FirSyntheticFunctionInterfaceProviderBase>): FirSymbolProvider =
-            providers.singleOrNull() ?: LLFirCombinedSyntheticFunctionSymbolProvider(session, providers)
+        fun merge(session: FirSession, providers: List<FirSyntheticFunctionInterfaceProviderBase>): FirSymbolProvider? =
+            if (providers.size > 1) LLFirCombinedSyntheticFunctionSymbolProvider(session, providers)
+            else providers.singleOrNull()
     }
 }

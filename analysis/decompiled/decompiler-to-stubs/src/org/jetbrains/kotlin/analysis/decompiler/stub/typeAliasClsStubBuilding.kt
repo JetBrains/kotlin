@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.metadata.deserialization.underlyingType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeAliasStubImpl
 import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
-import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import org.jetbrains.kotlin.serialization.deserialization.getName
 
 fun createTypeAliasStub(
@@ -42,7 +41,12 @@ fun createTypeAliasStub(
     }
 
     if (Flags.HAS_ANNOTATIONS.get(typeAliasProto.flags)) {
-        createAnnotationStubs(typeAliasProto.annotationList.map { c.nameResolver.getClassId(it.id) }, modifierList)
+        createAnnotationStubs(
+            typeAliasProto.annotationList.map {
+                c.components.annotationLoader.loadAnnotation(it, c.nameResolver)
+            },
+            modifierList
+        )
     }
 
     val typeAliasUnderlyingType = typeAliasProto.underlyingType(c.typeTable)

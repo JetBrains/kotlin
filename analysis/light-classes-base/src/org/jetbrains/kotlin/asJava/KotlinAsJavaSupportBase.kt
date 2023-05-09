@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.asJava
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.util.CachedValueProvider
@@ -199,6 +200,14 @@ abstract class KotlinAsJavaSupportBase<TModule>(protected val project: Project) 
         val value = lightClassCachedValue?.value
         val tracker = lightClassCachedValue?.tracker ?: projectWideOutOfBlockModificationTracker()
         return CachedValueProvider.Result.createSingleDependency(value, tracker)
+    }
+
+    override fun getScriptClasses(scriptFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
+        if (scriptFqName.isRoot) {
+            return emptyList()
+        }
+
+        return findFilesForScript(scriptFqName, scope).mapNotNull { getLightClassForScript(it) }
     }
 }
 

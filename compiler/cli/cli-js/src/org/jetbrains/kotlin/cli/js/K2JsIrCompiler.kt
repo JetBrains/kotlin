@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.incremental.js.IncrementalNextRoundChecker
 import org.jetbrains.kotlin.incremental.js.IncrementalResultsConsumer
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
+import org.jetbrains.kotlin.ir.backend.js.dce.dumpDeclarationIrSizesIfNeed
 import org.jetbrains.kotlin.ir.backend.js.ic.*
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputsBuilt
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.IrModuleToJsTransformer
@@ -61,6 +62,7 @@ import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.progress.IncrementalNextRoundException
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.utils.KotlinPaths
@@ -173,6 +175,7 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         configuration.put(JSConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS, arguments.wasmEnableArrayRangeChecks)
         configuration.put(JSConfigurationKeys.WASM_ENABLE_ASSERTS, arguments.wasmEnableAsserts)
         configuration.put(JSConfigurationKeys.WASM_GENERATE_WAT, arguments.wasmGenerateWat)
+        configuration.put(JSConfigurationKeys.OPTIMIZE_GENERATED_JS, arguments.optimizeGeneratedJs)
 
         val commonSourcesArray = arguments.commonSources
         val commonSources = commonSourcesArray?.toSet() ?: emptySet()
@@ -257,14 +260,6 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
             friendLibraries = friendLibraries,
             configurationJs = configurationJs,
             mainCallArguments = mainCallArguments
-        )
-
-        configuration.setupPartialLinkageConfig(
-            mode = arguments.partialLinkageMode,
-            logLevel = arguments.partialLinkageLogLevel,
-            compilerModeAllowsUsingPartialLinkage = arguments.includes != null, // Don't run PL when producing KLIB.
-            onWarning = { messageCollector.report(WARNING, it) },
-            onError = { messageCollector.report(ERROR, it) }
         )
 
         // Run analysis if main module is sources
@@ -360,6 +355,8 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                     eliminateDeadDeclarations(allModules, backendContext)
                 }
 
+                dumpDeclarationIrSizesIfNeed(arguments.irDceDumpDeclarationIrSizesToFile, allModules)
+
                 val generateSourceMaps = configuration.getBoolean(JSConfigurationKeys.SOURCE_MAP)
 
                 val res = compileWasm(
@@ -379,6 +376,13 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
                 )
 
                 return OK
+            } else {
+                if (arguments.irDceDumpReachabilityInfoToFile != null) {
+                    messageCollector.report(STRONG_WARNING, "Dumping the reachability info to file is supported only for Kotlin/Wasm.")
+                }
+                if (arguments.irDceDumpDeclarationIrSizesToFile != null) {
+                    messageCollector.report(STRONG_WARNING, "Dumping the size of declarations to file is supported only for Kotlin/Wasm.")
+                }
             }
 
             val start = System.currentTimeMillis()
@@ -488,17 +492,27 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         val mainModule = MainModule.SourceFiles(environmentForJS.getSourceFiles())
         val moduleStructure = ModulesStructure(environmentForJS.project, mainModule, configuration, libraries, friendLibraries)
 
+        val lookupTracker = configuration.get(CommonConfigurationKeys.LOOKUP_TRACKER) ?: LookupTracker.DO_NOTHING
+
         val outputs = compileModuleToAnalyzedFir(
             moduleStructure = moduleStructure,
             ktFiles = environmentForJS.getSourceFiles(),
             libraries = libraries,
             friendLibraries = friendLibraries,
             messageCollector = messageCollector,
-            diagnosticsReporter = diagnosticsReporter
+            diagnosticsReporter = diagnosticsReporter,
+            incrementalDataProvider = configuration[JSConfigurationKeys.INCREMENTAL_DATA_PROVIDER],
+            lookupTracker = lookupTracker,
         ) ?: return null
 
         // FIR2IR
         val fir2IrActualizedResult = transformFirToIr(moduleStructure, outputs, diagnosticsReporter)
+
+        if (configuration.getBoolean(CommonConfigurationKeys.INCREMENTAL_COMPILATION)) {
+            if (shouldGoToNextIcRound(moduleStructure, outputs, fir2IrActualizedResult, configuration)) {
+                throw IncrementalNextRoundException()
+            }
+        }
 
         // Serialize klib
         if (arguments.irProduceKlibDir || arguments.irProduceKlibFile) {
@@ -719,6 +733,16 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
 
         configuration.put(JSConfigurationKeys.PRINT_REACHABILITY_INFO, arguments.irDcePrintReachabilityInfo)
         configuration.put(JSConfigurationKeys.FAKE_OVERRIDE_VALIDATOR, arguments.fakeOverrideValidator)
+        configuration.putIfNotNull(JSConfigurationKeys.DUMP_REACHABILITY_INFO_TO_FILE, arguments.irDceDumpReachabilityInfoToFile)
+
+        configuration.setupPartialLinkageConfig(
+            mode = arguments.partialLinkageMode,
+            logLevel = arguments.partialLinkageLogLevel,
+            compilerModeAllowsUsingPartialLinkage =
+                /* disabled for WASM for now */ !arguments.wasm && /* no PL when producing KLIB */ arguments.includes != null,
+            onWarning = { messageCollector.report(WARNING, it) },
+            onError = { messageCollector.report(ERROR, it) }
+        )
     }
 
     override fun executableScriptFileName(): String {

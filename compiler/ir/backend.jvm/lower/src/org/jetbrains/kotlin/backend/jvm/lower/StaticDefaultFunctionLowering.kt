@@ -80,6 +80,11 @@ private class StaticDefaultFunctionLowering(val context: JvmBackendContext) : Ir
 
     private fun getStaticFunctionWithReceivers(function: IrSimpleFunction): IrSimpleFunction =
         context.staticDefaultStubs.getOrPut(function.symbol) {
-            context.irFactory.createStaticFunctionWithReceivers(function.parent, function.name, function)
+            context.irFactory.createStaticFunctionWithReceivers(
+                function.parent,
+                function.name,
+                function,
+                remapMultiFieldValueClassStructure = context::remapMultiFieldValueClassStructure
+            )
         }
 }

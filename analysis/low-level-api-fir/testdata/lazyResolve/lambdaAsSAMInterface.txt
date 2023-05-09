@@ -1,4 +1,3 @@
-
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] lambdaAsSAMInterface.kt
     [ResolvedTo(RAW_FIR)] annotations container
@@ -125,12 +124,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterface.kt
 
     }
     public? final? [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: Foo): R|kotlin/Unit| { LAZY_BLOCK }
-    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| {
-        testMe#(<L> = [ResolvedTo(RAW_FIR)] testMe@fun <implicit>.<anonymous>([ResolvedTo(RAW_FIR)] b: <implicit>): <implicit> <inline=Unknown>  {
-            b#
-        }
-        )
-    }
+    public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterface.kt
@@ -146,12 +140,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterface.kt
 
     }
     public? final? [ResolvedTo(RAW_FIR)] fun testMe([ResolvedTo(RAW_FIR)] f: Foo): R|kotlin/Unit| { LAZY_BLOCK }
-    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| {
-        testMe#(<L> = [ResolvedTo(RAW_FIR)] testMe@fun <implicit>.<anonymous>([ResolvedTo(RAW_FIR)] b: <implicit>): <implicit> <inline=Unknown>  {
-            b#
-        }
-        )
-    }
+    public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterface.kt
@@ -225,7 +214,7 @@ FILE: [ResolvedTo(IMPORTS)] lambdaAsSAMInterface.kt
         }
 
     }
-    public abstract fun [ResolvedTo(SUPER_TYPES)] interface Foo : R|kotlin/Any| {
+    public abstract fun [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
         public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] a: R|foo/Arg|): R|foo/Arg|
 
     }

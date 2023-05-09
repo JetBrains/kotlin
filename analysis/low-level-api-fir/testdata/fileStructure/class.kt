@@ -1,4 +1,4 @@
-class A {/* NonReanalyzableDeclarationStructureElement */
+class A {/* NonReanalyzableClassDeclarationStructureElement */
     fun x() {/* ReanalyzableFunctionStructureElement */
 
     }

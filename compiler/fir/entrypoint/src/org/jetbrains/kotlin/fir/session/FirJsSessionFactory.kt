@@ -11,13 +11,17 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirVisibilityChecker
 import org.jetbrains.kotlin.fir.SessionConfiguration
+import org.jetbrains.kotlin.fir.analysis.FirEmptyOverridesBackwardCompatibilityHelper
 import org.jetbrains.kotlin.fir.analysis.FirOverridesBackwardCompatibilityHelper
+import org.jetbrains.kotlin.fir.analysis.checkers.FirPlatformDiagnosticSuppressor
+import org.jetbrains.kotlin.fir.analysis.js.checkers.FirJsPlatformDiagnosticSuppressor
 import org.jetbrains.kotlin.fir.checkers.registerJsCheckers
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
+import org.jetbrains.kotlin.fir.deserialization.SingleModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirProjectSessionProvider
 import org.jetbrains.kotlin.fir.resolve.calls.ConeCallConflictResolverFactory
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirExtensionSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.scopes.FirPlatformClassMapper
@@ -32,6 +36,7 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
         extensionRegistrars: List<FirExtensionRegistrar>,
         languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
         lookupTracker: LookupTracker?,
+        icData: KlibIcData? = null,
         registerExtraComponents: ((FirSession) -> Unit) = {},
         init: FirSessionConfigurator.() -> Unit
     ): FirSession {
@@ -44,15 +49,23 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
             null,
             init,
             registerExtraComponents = { session ->
-                session.registerJsSpecificResolveComponents()
+                session.registerJsSpecificComponents()
                 registerExtraComponents(session)
             },
             registerExtraCheckers = { it.registerJsCheckers() },
             createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _, _ -> declaredMemberScope } },
-            createProviders = { _, _, symbolProvider, generatedSymbolsProvider, syntheticFunctionInterfaceProvider, dependencies ->
+            createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider, syntheticFunctionInterfaceProvider, dependencies ->
                 listOfNotNull(
                     symbolProvider,
                     generatedSymbolsProvider,
+                    icData?.let {
+                        KlibIcCacheBasedSymbolProvider(
+                            session,
+                            SingleModuleDataProvider(moduleData),
+                            kotlinScopeProvider,
+                            it,
+                        )
+                    },
                     syntheticFunctionInterfaceProvider,
                     *dependencies.toTypedArray(),
                 )
@@ -75,27 +88,25 @@ object FirJsSessionFactory : FirAbstractSessionFactory() {
         languageVersionSettings,
         extensionRegistrars,
         registerExtraComponents = {
-            it.registerJsSpecificResolveComponents()
+            it.registerJsSpecificComponents()
             registerExtraComponents(it)
         },
         createKotlinScopeProvider = { FirKotlinScopeProvider { _, declaredMemberScope, _, _, _ -> declaredMemberScope } },
         createProviders = { session, builtinsModuleData, kotlinScopeProvider ->
             listOfNotNull(
                 KlibBasedSymbolProvider(session, moduleDataProvider, kotlinScopeProvider, resolvedLibraries),
-                // (Most) builtins should be taken from the dependencies in JS compilation, therefore builtins provider is the last one
-                // TODO: consider using "poisoning" provider for builtins to ensure that proper ones are taken from dependencies
-                // NOTE: it requires precise filtering for true builtins, like Function*
-                FirBuiltinSymbolProvider(session, builtinsModuleData, kotlinScopeProvider),
+                FirBuiltinSyntheticFunctionInterfaceProvider(session, builtinsModuleData, kotlinScopeProvider),
                 FirExtensionSyntheticFunctionInterfaceProvider.createIfNeeded(session, builtinsModuleData, kotlinScopeProvider),
             )
         }
     )
 
     @OptIn(SessionConfiguration::class)
-    fun FirSession.registerJsSpecificResolveComponents() {
+    fun FirSession.registerJsSpecificComponents() {
         register(FirVisibilityChecker::class, FirVisibilityChecker.Default)
         register(ConeCallConflictResolverFactory::class, JsCallConflictResolverFactory)
         register(FirPlatformClassMapper::class, FirPlatformClassMapper.Default)
-        register(FirOverridesBackwardCompatibilityHelper::class, FirOverridesBackwardCompatibilityHelper.Default())
+        register(FirOverridesBackwardCompatibilityHelper::class, FirEmptyOverridesBackwardCompatibilityHelper)
+        register(FirPlatformDiagnosticSuppressor::class, FirJsPlatformDiagnosticSuppressor())
     }
 }

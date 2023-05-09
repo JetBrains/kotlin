@@ -1,5 +1,3 @@
-// IGNORE K2
-
 interface A {
     interface B {
         interface C

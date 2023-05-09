@@ -1,0 +1,405 @@
+RAW_FIR:
+FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCall.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|kotlin/String|): R|kotlin/Unit|
+
+    }
+    public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|one/Interface|): R|one/ClassWithParameter| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            super<R|one/ClassWithParameter|>(object : R|one/Interface| {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public open override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/String|): R|kotlin/Unit| {
+                }
+
+            }
+            )
+        }
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCall.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|kotlin/String|): R|kotlin/Unit|
+
+    }
+    public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|one/Interface|): R|one/ClassWithParameter| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            super<R|one/ClassWithParameter|>(object : R|one/Interface| {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public open override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/String|): R|kotlin/Unit| {
+                }
+
+            }
+            )
+        }
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCall.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|kotlin/String|): R|kotlin/Unit|
+
+    }
+    public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|one/Interface|): R|one/ClassWithParameter| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            super<R|one/ClassWithParameter|>(object : R|one/Interface| {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public open override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/String|): R|kotlin/Unit| {
+                }
+
+            }
+            )
+        }
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCall.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|kotlin/String|): R|kotlin/Unit|
+
+    }
+    public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|one/Interface|): R|one/ClassWithParameter| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            super<R|one/ClassWithParameter|>(object : R|one/Interface| {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public open override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/String|): R|kotlin/Unit| {
+                }
+
+            }
+            )
+        }
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCall.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|kotlin/String|): R|kotlin/Unit|
+
+    }
+    public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|one/Interface|): R|one/ClassWithParameter| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            super<R|one/ClassWithParameter|>(object : R|one/Interface| {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public open override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/String|): R|kotlin/Unit| {
+                }
+
+            }
+            )
+        }
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCall.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|kotlin/String|): R|kotlin/Unit|
+
+    }
+    public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|one/Interface|): R|one/ClassWithParameter| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            super<R|one/ClassWithParameter|>(object : R|one/Interface| {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public open override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/String|): R|kotlin/Unit| {
+                }
+
+            }
+            )
+        }
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCall.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|kotlin/String|): R|kotlin/Unit|
+
+    }
+    public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|one/Interface|): R|one/ClassWithParameter| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            super<R|one/ClassWithParameter|>(object : R|one/Interface| {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public open override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/String|): R|kotlin/Unit| {
+                }
+
+            }
+            )
+        }
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCall.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|kotlin/String|): R|kotlin/Unit|
+
+    }
+    public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|one/Interface|): R|one/ClassWithParameter| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            super<R|one/ClassWithParameter|>(object : R|one/Interface| {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public open override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/String|): R|kotlin/Unit| {
+                }
+
+            }
+            )
+        }
+
+    }
+
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCall.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|kotlin/String|): R|kotlin/Unit|
+
+    }
+    public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|one/Interface|): R|one/ClassWithParameter| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            super<R|one/ClassWithParameter|>(object : R|one/Interface| {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public open override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/String|): R|kotlin/Unit| {
+                }
+
+            }
+            )
+        }
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCall.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|kotlin/String|): R|kotlin/Unit|
+
+    }
+    public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|one/Interface|): R|one/ClassWithParameter| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            super<R|one/ClassWithParameter|>(object : R|one/Interface| {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public open override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/String|): R|kotlin/Unit| {
+                }
+
+            }
+            )
+        }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCall.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|kotlin/String|): R|kotlin/Unit|
+
+    }
+    public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|one/Interface|): R|one/ClassWithParameter| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            super<R|one/ClassWithParameter|>(object : R|one/Interface| {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public open override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/String|): R|kotlin/Unit| {
+                }
+
+            }
+            )
+        }
+
+    }
+
+ANNOTATIONS_ARGUMENTS_MAPPING:
+FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCall.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|kotlin/String|): R|kotlin/Unit|
+
+    }
+    public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|one/Interface|): R|one/ClassWithParameter| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            super<R|one/ClassWithParameter|>(object : R|one/Interface| {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public open override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/String|): R|kotlin/Unit| {
+                }
+
+            }
+            )
+        }
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCall.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public abstract [ResolvedTo(STATUS)] interface Interface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] param: R|kotlin/String|): R|kotlin/Unit|
+
+    }
+    public open [ResolvedTo(STATUS)] class ClassWithParameter : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(STATUS)] i: R|one/Interface|): R|one/ClassWithParameter| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            super<R|one/ClassWithParameter|>(object : R|one/Interface| {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public open override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/String|): R|kotlin/Unit| {
+                }
+
+            }
+            )
+        }
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(IMPORTS)] localFunctionInsideSuperEntryCall.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface Interface : R|kotlin/Any| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] param: R|kotlin/String|): R|kotlin/Unit|
+
+    }
+    public open [ResolvedTo(BODY_RESOLVE)] class ClassWithParameter : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=ClassWithParameter] constructor([ResolvedTo(BODY_RESOLVE)] i: R|one/Interface|): R|one/ClassWithParameter| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] class TopLevelClass : R|one/ClassWithParameter| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=TopLevelClass] constructor(): R|one/TopLevelClass| {
+            super<R|one/ClassWithParameter|>(object : R|one/Interface| {
+                private [ResolvedTo(RAW_FIR)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
+                    super<R|kotlin/Any|>()
+                }
+
+                public open override [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] param: R|kotlin/String|): R|kotlin/Unit| {
+                }
+
+            }
+            )
+        }
+
+    }

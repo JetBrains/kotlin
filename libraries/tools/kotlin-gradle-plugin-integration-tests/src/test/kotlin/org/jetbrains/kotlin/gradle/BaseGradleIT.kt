@@ -10,7 +10,6 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.tooling.GradleConnector
 import org.gradle.util.GradleVersion
-import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties.COMPILE_INCREMENTAL_WITH_ARTIFACT_TRANSFORM
 import org.jetbrains.kotlin.gradle.model.ModelContainer
 import org.jetbrains.kotlin.gradle.model.ModelFetcherBuildAction
@@ -283,6 +282,8 @@ abstract class BaseGradleIT {
         val enableCompatibilityMetadataVariant: Boolean? = null,
         val withReports: List<BuildReportType> = emptyList(),
         val enableKpmModelMapping: Boolean? = null,
+        val useDaemonFallbackStrategy: Boolean = false,
+        val useVerboseDiagnosticsReporting: Boolean = true,
     ) {
         val safeAndroidGradlePluginVersion: AGPVersion
             get() = androidGradlePluginVersion ?: error("AGP version is expected to be set")
@@ -725,11 +726,6 @@ abstract class BaseGradleIT {
         }
     }
 
-    fun CompiledProject.assertTasksRegisteredAndNotRealized(vararg tasks: String) {
-        assertTasksRegistered(*tasks)
-        assertTasksNotRealized(*tasks)
-    }
-
     fun CompiledProject.assertTasksSkipped(vararg tasks: String) {
         for (task in tasks) {
             assertContains("Skipping task '$task'")
@@ -739,29 +735,6 @@ abstract class BaseGradleIT {
     fun CompiledProject.assertTasksSkippedByPrefix(taskPrefixes: Iterable<String>) {
         for (prefix in taskPrefixes) {
             assertContainsRegex("Skipping task '$prefix\\w*'".toRegex())
-        }
-    }
-
-    fun CompiledProject.getOutputForTask(taskName: String): String {
-        @Language("RegExp")
-        val taskOutputRegex = """
-            \[org\.gradle\.internal\.operations\.DefaultBuildOperationRunner] Build operation 'Task :$taskName' started
-            ([\s\S]+?)
-            \[org\.gradle\.internal\.operations\.DefaultBuildOperationRunner] Build operation 'Task :$taskName' completed
-            """.trimIndent()
-            .replace("\n", "")
-            .toRegex()
-
-        return taskOutputRegex.find(output)?.run { groupValues[1] } ?: error("Cannot find output for task $taskName")
-    }
-
-    fun CompiledProject.assertCompiledKotlinSources(
-        sources: Iterable<String>,
-        weakTesting: Boolean = false,
-        tasks: List<String>
-    ) {
-        for (task in tasks) {
-            assertCompiledKotlinSources(sources, weakTesting, getOutputForTask(task), suffix = " in task ${task}")
         }
     }
 
@@ -961,8 +934,14 @@ abstract class BaseGradleIT {
                 add("-Pkotlin.kpm.experimentalModelMapping=${options.enableKpmModelMapping}")
             }
 
+            add("-Pkotlin.daemon.useFallbackStrategy=${options.useDaemonFallbackStrategy}")
+
             add("-Dorg.gradle.unsafe.configuration-cache=${options.configurationCache}")
             add("-Dorg.gradle.unsafe.configuration-cache-problems=${options.configurationCacheProblems.name.lowercase(Locale.getDefault())}")
+
+            if (options.useVerboseDiagnosticsReporting) {
+                add("-Pkotlin.internal.verboseDiagnostics=true")
+            }
 
             // Workaround: override a console type set in the user machine gradle.properties (since Gradle 4.3):
             add("--console=plain")

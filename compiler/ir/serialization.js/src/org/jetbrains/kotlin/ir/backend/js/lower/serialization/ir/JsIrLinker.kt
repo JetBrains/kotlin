@@ -45,7 +45,7 @@ class JsIrLinker(
         mangler = JsManglerIr,
         typeSystem = IrTypeSystemContextImpl(builtIns),
         friendModules = friendModules,
-        partialLinkageEnabled = partialLinkageSupport.isEnabled
+        partialLinkageSupport = partialLinkageSupport
     )
 
     override fun isBuiltInModule(moduleDescriptor: ModuleDescriptor): Boolean =
@@ -68,10 +68,11 @@ class JsIrLinker(
     }
 
     private inner class JsModuleDeserializer(moduleDescriptor: ModuleDescriptor, klib: IrLibrary, strategyResolver: (String) -> DeserializationStrategy, libraryAbiVersion: KotlinAbiVersion, allowErrorCode: Boolean) :
-        BasicIrModuleDeserializer(this, moduleDescriptor, klib, strategyResolver, libraryAbiVersion, allowErrorCode)
+        BasicIrModuleDeserializer(this, moduleDescriptor, klib, strategyResolver, libraryAbiVersion, allowErrorCode, false)
 
     override fun createCurrentModuleDeserializer(moduleFragment: IrModuleFragment, dependencies: Collection<IrModuleDeserializer>): IrModuleDeserializer {
         val currentModuleDeserializer = super.createCurrentModuleDeserializer(moduleFragment, dependencies)
+
         icData?.let {
             return CurrentModuleWithICDeserializer(currentModuleDeserializer, symbolTable, builtIns, it.icData) { lib ->
                 JsModuleDeserializer(currentModuleDeserializer.moduleDescriptor, lib, currentModuleDeserializer.strategyResolver, KotlinAbiVersion.CURRENT, it.containsErrorCode)

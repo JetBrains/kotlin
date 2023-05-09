@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2023 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 
@@ -8,6 +8,9 @@ package kotlin.collections
 actual class HashSet<E> internal constructor(
         private val backing: HashMap<E, *>
 ) : MutableSet<E>, kotlin.native.internal.KonanSet<E>, AbstractMutableSet<E>() {
+    private companion object {
+        private val Empty = HashSet(HashMap.EmptyHolder.value<Nothing, Nothing>())
+    }
 
     actual constructor() : this(HashMap<E, Nothing>())
 
@@ -23,7 +26,7 @@ actual class HashSet<E> internal constructor(
     @PublishedApi
     internal fun build(): Set<E> {
         backing.build()
-        return this
+        return if (size > 0) this else Empty
     }
 
     override actual val size: Int get() = backing.size

@@ -5,15 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.scopes.*
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirAnonymousObjectSymbol
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirEnumEntrySymbol
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirFileSymbol
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirNamedClassOrObjectSymbol
+import org.jetbrains.kotlin.analysis.api.fir.symbols.*
 import org.jetbrains.kotlin.analysis.api.fir.types.KtFirType
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KtCompositeScope
@@ -23,9 +19,11 @@ import org.jetbrains.kotlin.analysis.api.scopes.KtTypeScope
 import org.jetbrains.kotlin.analysis.api.symbols.KtEnumEntrySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtFileSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithDeclarations
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithMembers
 import org.jetbrains.kotlin.analysis.api.types.KtType
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirFile
 import org.jetbrains.kotlin.analysis.utils.errors.unexpectedElementError
 import org.jetbrains.kotlin.analysis.utils.printer.getElementTextInContext
 import org.jetbrains.kotlin.fir.FirSession
@@ -37,9 +35,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
 import org.jetbrains.kotlin.fir.java.JavaScopeProvider
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
-import org.jetbrains.kotlin.analysis.api.fir.scopes.JavaClassDeclaredMembersEnhancementScope
-import org.jetbrains.kotlin.analysis.api.fir.symbols.KtFirPsiJavaClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.markers.KtSymbolWithDeclarations
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticPropertiesScope
 import org.jetbrains.kotlin.fir.resolve.scope
@@ -58,7 +53,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 internal class KtFirScopeProvider(
     override val analysisSession: KtFirAnalysisSession,
     private val builder: KtSymbolByFirBuilder,
-    private val project: Project,
     private val firResolveSession: LLFirResolveSession,
 ) : KtScopeProvider() {
 
@@ -110,8 +104,14 @@ internal class KtFirScopeProvider(
     }
 
     override fun getDeclaredMemberScope(classSymbol: KtSymbolWithMembers): KtScope {
+        val useSiteSession = analysisSession.useSiteSession
+        if (classSymbol is KtFirScriptSymbol) {
+            return KtFirDelegatingScope(
+                FirScriptDeclarationsScope(useSiteSession, classSymbol.firSymbol.fir),
+                builder
+            )
+        }
         val firScope = classSymbol.withFirForScope {
-            val useSiteSession = analysisSession.useSiteSession
             when (val regularClass = classSymbol.firSymbol.fir) {
                 is FirJavaClass -> buildJavaEnhancementDeclaredMemberScope(useSiteSession, regularClass.symbol, getScopeSession())
                 else -> useSiteSession.declaredMemberScope(it)
@@ -171,6 +171,20 @@ internal class KtFirScopeProvider(
         )?.let { convertToKtTypeScope(it) }
     }
 
+    override fun getImportingScopeContext(file: KtFile): KtScopeContext {
+        val firFile = file.getOrBuildFirFile(firResolveSession)
+        val firFileSession = firFile.moduleData.session
+        val firImportingScopes = createImportingScopes(
+            firFile,
+            firFileSession,
+            analysisSession.getScopeSessionFor(firFileSession),
+            useCaching = true,
+        )
+
+        val ktScopesWithKinds = createScopesWithKind(firImportingScopes.withIndex())
+        return KtScopeContext(ktScopesWithKinds, _implicitReceivers = emptyList(), token)
+    }
+
     override fun getScopeContextForPosition(
         originalFile: KtFile,
         positionInFakeFile: KtElement
@@ -197,11 +211,15 @@ internal class KtFirScopeProvider(
             val availableScopes = towerDataElement.getAvailableScopes().flatMap { flattenFirScope(it) }
             availableScopes.map { IndexedValue(index, it) }
         }
-        val scopes = firScopes.map { (index, firScope) ->
+        val ktScopesWithKinds = createScopesWithKind(firScopes)
+
+        return KtScopeContext(ktScopesWithKinds, implicitReceivers, token)
+    }
+
+    private fun createScopesWithKind(firScopes: Iterable<IndexedValue<FirScope>>): List<KtScopeWithKind> {
+        return firScopes.map { (index, firScope) ->
             KtScopeWithKind(convertToKtScope(firScope), getScopeKind(firScope, index), token)
         }
-
-        return KtScopeContext(scopes, implicitReceivers, token)
     }
 
     private fun flattenFirScope(firScope: FirScope): List<FirScope> = when (firScope) {
@@ -239,18 +257,13 @@ internal class KtFirScopeProvider(
         is FirDefaultSimpleImportingScope -> KtScopeKind.DefaultSimpleImportingScope(indexInTower)
         is FirDefaultStarImportingScope -> KtScopeKind.DefaultStarImportingScope(indexInTower)
 
+        is FirScriptDeclarationsScope -> KtScopeKind.ScriptMemberScope(indexInTower)
+
         else -> unexpectedElementError("scope", firScope)
     }
 
     private fun createPackageScope(fqName: FqName): KtFirPackageScope {
-        return KtFirPackageScope(
-            fqName,
-            project,
-            builder,
-            analysisSession.useSiteAnalysisScope,
-            analysisSession.useSiteScopeDeclarationProvider,
-            analysisSession.targetPlatform
-        )
+        return KtFirPackageScope(fqName, analysisSession)
     }
 
     private fun convertToKtTypeScope(firScope: FirScope): KtTypeScope {

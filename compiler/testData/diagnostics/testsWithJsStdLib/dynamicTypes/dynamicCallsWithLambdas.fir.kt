@@ -2,19 +2,19 @@
 // !CHECK_TYPE
 
 fun test(d: dynamic) {
-    d.foo <!VARARG_OUTSIDE_PARENTHESES!>{}<!>
+    d.foo {}
 
-    d.foo <!VARARG_OUTSIDE_PARENTHESES!>{ <!UNRESOLVED_REFERENCE!>it<!> }<!>
+    d.foo { <!UNRESOLVED_REFERENCE!>it<!> }
 
-    d.foo <!VARARG_OUTSIDE_PARENTHESES!>{ x -> }<!>
+    d.foo { x -> x.bar() }
 
-    d.foo <!VARARG_OUTSIDE_PARENTHESES!>{ x: Int -> "" }<!>
+    d.foo { x: Int -> "" }
 
-    d.foo <!VARARG_OUTSIDE_PARENTHESES!>{ x, y -> "" }<!>
+    d.foo { x, y -> "" }
 
-    d.foo <!VARARG_OUTSIDE_PARENTHESES!>{ x: String, y: Int -> "" }<!>
+    d.foo { x: String, y: Int -> "" }
 
-    d.foo <!VARARG_OUTSIDE_PARENTHESES!>{ x, y: Int -> "" }<!>
+    d.foo { x, y: Int -> "" }
 
     d.foo({})
 

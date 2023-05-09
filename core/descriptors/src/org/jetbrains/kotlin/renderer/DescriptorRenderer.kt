@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.FqNameUnsafe
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.types.TypeProjection
@@ -233,6 +234,7 @@ interface DescriptorRendererOptions {
     var boldOnlyForNamesInHtml: Boolean
 
     var includePropertyConstant: Boolean
+    var propertyConstantRenderer: ((ConstantValue<*>) -> String?)?
     var parameterNameRenderingPolicy: ParameterNameRenderingPolicy
     var withoutTypeParameters: Boolean
     var receiverAfterName: Boolean

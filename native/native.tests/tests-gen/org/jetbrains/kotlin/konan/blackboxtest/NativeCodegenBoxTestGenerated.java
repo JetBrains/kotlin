@@ -7,8 +7,9 @@ package org.jetbrains.kotlin.konan.blackboxtest;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
-import org.junit.jupiter.api.Tag;
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.UseExtTestCaseGroupProvider;
+import org.jetbrains.kotlin.konan.blackboxtest.support.group.DisabledTestsIfProperty;
+import org.jetbrains.kotlin.konan.blackboxtest.support.ClassLevelProperty;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.utils.TransformersFunctions;
 import org.jetbrains.kotlin.test.TestMetadata;
@@ -24,21 +25,25 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
     @Nested
     @TestMetadata("compiler/testData/codegen/box")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("codegen")
-    @Tag("k1Codegen")
     @UseExtTestCaseGroupProvider()
+    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
     public class Box {
         @Test
         public void testAllFilesPresentInBox() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
         }
 
+        @Test
+        @TestMetadata("kt-57353.kt")
+        public void testKt_57353() throws Exception {
+            runTest("compiler/testData/codegen/box/kt-57353.kt");
+        }
+
         @Nested
         @TestMetadata("compiler/testData/codegen/box/annotations")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Annotations {
             @Test
             public void testAllFilesPresentInAnnotations() throws Exception {
@@ -78,9 +83,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/annotations/annotatedLambda")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class AnnotatedLambda {
                 @Test
                 public void testAllFilesPresentInAnnotatedLambda() throws Exception {
@@ -91,9 +95,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/annotations/instances")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Instances {
                 @Test
                 public void testAllFilesPresentInInstances() throws Exception {
@@ -170,9 +173,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/annotations/kClassMapping")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class KClassMapping {
                 @Test
                 public void testAllFilesPresentInKClassMapping() throws Exception {
@@ -183,9 +185,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/annotations/repeatable")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Repeatable {
                 @Test
                 public void testAllFilesPresentInRepeatable() throws Exception {
@@ -196,9 +197,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/annotations/typeAnnotations")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class TypeAnnotations {
                 @Test
                 public void testAllFilesPresentInTypeAnnotations() throws Exception {
@@ -216,9 +216,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/argumentOrder")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class ArgumentOrder {
             @Test
             public void testAllFilesPresentInArgumentOrder() throws Exception {
@@ -325,9 +324,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/arrays")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Arrays {
             @Test
             public void testAllFilesPresentInArrays() throws Exception {
@@ -727,9 +725,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/arrays/arraysOfInlineClass")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class ArraysOfInlineClass {
                 @Test
                 @TestMetadata("accessArrayOfInlineClass.kt")
@@ -758,9 +755,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/arrays/forInReversed")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class ForInReversed {
                 @Test
                 public void testAllFilesPresentInForInReversed() throws Exception {
@@ -795,9 +791,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/arrays/forInUnsignedArray")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class ForInUnsignedArray {
                 @Test
                 public void testAllFilesPresentInForInUnsignedArray() throws Exception {
@@ -856,9 +851,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/arrays/multiDecl")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class MultiDecl {
                 @Test
                 public void testAllFilesPresentInMultiDecl() throws Exception {
@@ -916,9 +910,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/arrays/multiDecl/int")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class Int {
                     @Test
                     public void testAllFilesPresentInInt() throws Exception {
@@ -953,9 +946,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/arrays/multiDecl/long")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class Long {
                     @Test
                     public void testAllFilesPresentInLong() throws Exception {
@@ -992,9 +984,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/assert")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Assert {
             @Test
             public void testAllFilesPresentInAssert() throws Exception {
@@ -1016,9 +1007,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/assert/jvm")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Jvm {
                 @Test
                 public void testAllFilesPresentInJvm() throws Exception {
@@ -1030,9 +1020,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/binaryOp")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class BinaryOp {
             @Test
             public void testAllFilesPresentInBinaryOp() throws Exception {
@@ -1199,9 +1188,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/boxingOptimization")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class BoxingOptimization {
             @Test
             public void testAllFilesPresentInBoxingOptimization() throws Exception {
@@ -1446,9 +1434,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/bridges")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Bridges {
             @Test
             @TestMetadata("abstractOverrideBridge.kt")
@@ -1806,9 +1793,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/bridges/substitutionInSuperClass")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class SubstitutionInSuperClass {
                 @Test
                 @TestMetadata("abstractFun.kt")
@@ -1886,9 +1872,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/builtinStubMethods")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class BuiltinStubMethods {
             @Test
             public void testAllFilesPresentInBuiltinStubMethods() throws Exception {
@@ -1904,9 +1889,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/builtinStubMethods/bridgesForStubs")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class BridgesForStubs {
                 @Test
                 public void testAllFilesPresentInBridgesForStubs() throws Exception {
@@ -1917,9 +1901,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/builtinStubMethods/extendJavaClasses")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class ExtendJavaClasses {
                 @Test
                 @TestMetadata("abstractSet.kt")
@@ -1960,9 +1943,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/builtinStubMethods/mapGetOrDefault")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class MapGetOrDefault {
                 @Test
                 public void testAllFilesPresentInMapGetOrDefault() throws Exception {
@@ -1973,9 +1955,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/builtinStubMethods/mapRemove")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class MapRemove {
                 @Test
                 public void testAllFilesPresentInMapRemove() throws Exception {
@@ -1987,9 +1968,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/callableReference")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class CallableReference {
             @Test
             public void testAllFilesPresentInCallableReference() throws Exception {
@@ -2155,9 +2135,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/callableReference/adaptedReferences")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class AdaptedReferences {
                 @Test
                 @TestMetadata("adaptedArrayOf.kt")
@@ -2329,9 +2308,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/callableReference/adaptedReferences/suspendConversion")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class SuspendConversion {
                     @Test
                     @TestMetadata("adaptedWithCoercionToUnit.kt")
@@ -2439,9 +2417,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/callableReference/bound")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Bound {
                 @Test
                 @TestMetadata("adapted.kt")
@@ -2619,9 +2596,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/callableReference/bound/equals")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class Equals {
                     @Test
                     public void testAllFilesPresentInEquals() throws Exception {
@@ -2651,9 +2627,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/callableReference/equality")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Equality {
                 @Test
                 public void testAllFilesPresentInEquality() throws Exception {
@@ -2742,9 +2717,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/callableReference/funInterfaceConstructor")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class FunInterfaceConstructor {
                 @Test
                 public void testAllFilesPresentInFunInterfaceConstructor() throws Exception {
@@ -2785,9 +2759,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/callableReference/function")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Function {
                 @Test
                 @TestMetadata("abstractClassMember.kt")
@@ -2963,12 +2936,6 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 }
 
                 @Test
-                @TestMetadata("getArityViaFunctionImpl.kt")
-                public void testGetArityViaFunctionImpl() throws Exception {
-                    runTest("compiler/testData/codegen/box/callableReference/function/getArityViaFunctionImpl.kt");
-                }
-
-                @Test
                 @TestMetadata("innerClassConstructorWithTwoReceivers.kt")
                 public void testInnerClassConstructorWithTwoReceivers() throws Exception {
                     runTest("compiler/testData/codegen/box/callableReference/function/innerClassConstructorWithTwoReceivers.kt");
@@ -3133,9 +3100,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/callableReference/function/local")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class Local {
                     @Test
                     public void testAllFilesPresentInLocal() throws Exception {
@@ -3267,9 +3233,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/callableReference/property")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Property {
                 @Test
                 @TestMetadata("accessViaSubclass.kt")
@@ -3466,9 +3431,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/callableReference/serializability")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Serializability {
                 @Test
                 public void testAllFilesPresentInSerializability() throws Exception {
@@ -3486,9 +3450,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/casts")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Casts {
             @Test
             public void testAllFilesPresentInCasts() throws Exception {
@@ -3553,6 +3516,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @TestMetadata("dontCreateInconsistentTypeDuringStarProjectionSubstitution.kt")
             public void testDontCreateInconsistentTypeDuringStarProjectionSubstitution() throws Exception {
                 runTest("compiler/testData/codegen/box/casts/dontCreateInconsistentTypeDuringStarProjectionSubstitution.kt");
+            }
+
+            @Test
+            @TestMetadata("genericReturnCast.kt")
+            public void testGenericReturnCast() throws Exception {
+                runTest("compiler/testData/codegen/box/casts/genericReturnCast.kt");
             }
 
             @Test
@@ -3678,9 +3647,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/casts/functions")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Functions {
                 @Test
                 public void testAllFilesPresentInFunctions() throws Exception {
@@ -3763,9 +3731,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/casts/javaInterop")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class JavaInterop {
                 @Test
                 public void testAllFilesPresentInJavaInterop() throws Exception {
@@ -3776,9 +3743,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/casts/literalExpressionAsGenericArgument")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class LiteralExpressionAsGenericArgument {
                 @Test
                 public void testAllFilesPresentInLiteralExpressionAsGenericArgument() throws Exception {
@@ -3825,9 +3791,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/casts/mutableCollections")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class MutableCollections {
                 @Test
                 public void testAllFilesPresentInMutableCollections() throws Exception {
@@ -3880,9 +3845,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/casts/nativeCCEMessage")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class NativeCCEMessage {
                 @Test
                 public void testAllFilesPresentInNativeCCEMessage() throws Exception {
@@ -3918,9 +3882,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/checkcastOptimization")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class CheckcastOptimization {
             @Test
             public void testAllFilesPresentInCheckcastOptimization() throws Exception {
@@ -3955,9 +3918,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/classLiteral")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class ClassLiteral {
             @Test
             public void testAllFilesPresentInClassLiteral() throws Exception {
@@ -3985,9 +3947,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/classLiteral/bound")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Bound {
                 @Test
                 public void testAllFilesPresentInBound() throws Exception {
@@ -4022,9 +3983,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/classLiteral/java")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Java {
                 @Test
                 public void testAllFilesPresentInJava() throws Exception {
@@ -4042,9 +4002,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/classes")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Classes {
             @Test
             public void testAllFilesPresentInClasses() throws Exception {
@@ -4726,9 +4685,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/classes/inner")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Inner {
                 @Test
                 public void testAllFilesPresentInInner() throws Exception {
@@ -4782,9 +4740,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/closures")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Closures {
             @Test
             public void testAllFilesPresentInClosures() throws Exception {
@@ -5070,9 +5027,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/closures/captureInSuperConstructorCall")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class CaptureInSuperConstructorCall {
                 @Test
                 public void testAllFilesPresentInCaptureInSuperConstructorCall() throws Exception {
@@ -5275,9 +5231,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/closures/captureOuterProperty")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class CaptureOuterProperty {
                 @Test
                 public void testAllFilesPresentInCaptureOuterProperty() throws Exception {
@@ -5336,9 +5291,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/closures/capturedVarsOptimization")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class CapturedVarsOptimization {
                 @Test
                 public void testAllFilesPresentInCapturedVarsOptimization() throws Exception {
@@ -5427,9 +5381,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/closures/closureInsideClosure")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class ClosureInsideClosure {
                 @Test
                 public void testAllFilesPresentInClosureInsideClosure() throws Exception {
@@ -5477,9 +5430,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/collectionLiterals")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class CollectionLiterals {
             @Test
             public void testAllFilesPresentInCollectionLiterals() throws Exception {
@@ -5490,9 +5442,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/collections")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Collections {
             @Test
             @TestMetadata("addCollectionStubWithCovariantOverride.kt")
@@ -5539,9 +5490,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/companion")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Companion {
             @Test
             public void testAllFilesPresentInCompanion() throws Exception {
@@ -5570,9 +5520,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/compatibility")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Compatibility {
             @Test
             public void testAllFilesPresentInCompatibility() throws Exception {
@@ -5589,9 +5538,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class CompileKotlinAgainstKotlin {
             @Test
             @TestMetadata("adaptedSuspendFunctionReference.kt")
@@ -5847,9 +5795,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/fir")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Fir {
                 @Test
                 public void testAllFilesPresentInFir() throws Exception {
@@ -5860,9 +5807,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class InlineClasses {
                 @Test
                 public void testAllFilesPresentInInlineClasses() throws Exception {
@@ -5968,9 +5914,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/inlineClasses/oldMangling")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class OldMangling {
                     @Test
                     public void testAllFilesPresentInOldMangling() throws Exception {
@@ -5988,9 +5933,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Jvm8 {
                 @Test
                 public void testAllFilesPresentInJvm8() throws Exception {
@@ -6000,13 +5944,18 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class Defaults {
                     @Test
                     public void testAllFilesPresentInDefaults() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                    }
+
+                    @Test
+                    @TestMetadata("callStackTrace.kt")
+                    public void testCallStackTrace() throws Exception {
+                        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/callStackTrace.kt");
                     }
 
                     @Test
@@ -6022,12 +5971,6 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     }
 
                     @Test
-                    @TestMetadata("superCallFromInterface2.kt")
-                    public void testSuperCallFromInterface2() throws Exception {
-                        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/superCallFromInterface2.kt");
-                    }
-
-                    @Test
                     @TestMetadata("superPropAccess.kt")
                     public void testSuperPropAccess() throws Exception {
                         runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/superPropAccess.kt");
@@ -6039,18 +5982,11 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                         runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/superPropAccessFromInterface.kt");
                     }
 
-                    @Test
-                    @TestMetadata("superPropAccessFromInterface2.kt")
-                    public void testSuperPropAccessFromInterface2() throws Exception {
-                        runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/superPropAccessFromInterface2.kt");
-                    }
-
                     @Nested
                     @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility")
                     @TestDataPath("$PROJECT_ROOT")
-                    @Tag("codegen")
-                    @Tag("k1Codegen")
                     @UseExtTestCaseGroupProvider()
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                     public class AllCompatibility {
                         @Test
                         public void testAllFilesPresentInAllCompatibility() throws Exception {
@@ -6102,9 +6038,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                         @Nested
                         @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/allCompatibility/delegationBy")
                         @TestDataPath("$PROJECT_ROOT")
-                        @Tag("codegen")
-                        @Tag("k1Codegen")
                         @UseExtTestCaseGroupProvider()
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                         public class DelegationBy {
                             @Test
                             public void testAllFilesPresentInDelegationBy() throws Exception {
@@ -6116,9 +6051,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     @Nested
                     @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop")
                     @TestDataPath("$PROJECT_ROOT")
-                    @Tag("codegen")
-                    @Tag("k1Codegen")
                     @UseExtTestCaseGroupProvider()
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                     public class Interop {
                         @Test
                         @TestMetadata("allAgainsAllCompatibility.kt")
@@ -6172,40 +6106,14 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                         public void testNewAndOldSchemes3() throws Exception {
                             runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/newAndOldSchemes3.kt");
                         }
-
-                        @Test
-                        @TestMetadata("newSchemeWithJvmDefault.kt")
-                        public void testNewSchemeWithJvmDefault() throws Exception {
-                            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/interop/newSchemeWithJvmDefault.kt");
-                        }
-                    }
-
-                    @Nested
-                    @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/noDefaultImpls")
-                    @TestDataPath("$PROJECT_ROOT")
-                    @Tag("codegen")
-                    @Tag("k1Codegen")
-                    @UseExtTestCaseGroupProvider()
-                    public class NoDefaultImpls {
-                        @Test
-                        public void testAllFilesPresentInNoDefaultImpls() throws Exception {
-                            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/noDefaultImpls"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
-                        }
-
-                        @Test
-                        @TestMetadata("superPropAccessFromInterface.kt")
-                        public void testSuperPropAccessFromInterface() throws Exception {
-                            runTest("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/defaults/noDefaultImpls/superPropAccessFromInterface.kt");
-                        }
                     }
                 }
 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class Jvm8against6 {
                     @Test
                     public void testAllFilesPresentInJvm8against6() throws Exception {
@@ -6251,9 +6159,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     @Nested
                     @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/jvm8/jvm8against6/delegation")
                     @TestDataPath("$PROJECT_ROOT")
-                    @Tag("codegen")
-                    @Tag("k1Codegen")
                     @UseExtTestCaseGroupProvider()
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                     public class Delegation {
                         @Test
                         public void testAllFilesPresentInDelegation() throws Exception {
@@ -6284,9 +6191,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/compileKotlinAgainstKotlin/typeAnnotations")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class TypeAnnotations {
                 @Test
                 public void testAllFilesPresentInTypeAnnotations() throws Exception {
@@ -6298,9 +6204,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/constants")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Constants {
             @Test
             public void testAllFilesPresentInConstants() throws Exception {
@@ -6368,6 +6273,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
+            @TestMetadata("literalToLongConversion.kt")
+            public void testLiteralToLongConversion() throws Exception {
+                runTest("compiler/testData/codegen/box/constants/literalToLongConversion.kt");
+            }
+
+            @Test
             @TestMetadata("long.kt")
             public void testLong() throws Exception {
                 runTest("compiler/testData/codegen/box/constants/long.kt");
@@ -6389,9 +6300,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/constructor")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Constructor {
             @Test
             public void testAllFilesPresentInConstructor() throws Exception {
@@ -6402,9 +6312,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/constructorCall")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class ConstructorCall {
             @Test
             public void testAllFilesPresentInConstructorCall() throws Exception {
@@ -6415,9 +6324,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/contracts")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Contracts {
             @Test
             public void testAllFilesPresentInContracts() throws Exception {
@@ -6524,9 +6432,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/controlStructures")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class ControlStructures {
             @Test
             public void testAllFilesPresentInControlStructures() throws Exception {
@@ -7022,9 +6929,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class BreakContinueInExpressions {
                 @Test
                 public void testAllFilesPresentInBreakContinueInExpressions() throws Exception {
@@ -7154,9 +7060,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/controlStructures/breakContinueInExpressions/inlinedBreakContinue")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class InlinedBreakContinue {
                     @Test
                     public void testAllFilesPresentInInlinedBreakContinue() throws Exception {
@@ -7210,9 +7115,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/controlStructures/forInArray")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class ForInArray {
                 @Test
                 public void testAllFilesPresentInForInArray() throws Exception {
@@ -7283,9 +7187,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/controlStructures/forInArrayWithIndex")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class ForInArrayWithIndex {
                 @Test
                 public void testAllFilesPresentInForInArrayWithIndex() throws Exception {
@@ -7416,9 +7319,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/controlStructures/forInCharSequenceWithIndex")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class ForInCharSequenceWithIndex {
                 @Test
                 public void testAllFilesPresentInForInCharSequenceWithIndex() throws Exception {
@@ -7513,9 +7415,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/controlStructures/forInIterableWithIndex")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class ForInIterableWithIndex {
                 @Test
                 public void testAllFilesPresentInForInIterableWithIndex() throws Exception {
@@ -7598,9 +7499,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/controlStructures/forInIterator")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class ForInIterator {
                 @Test
                 public void testAllFilesPresentInForInIterator() throws Exception {
@@ -7611,9 +7511,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/controlStructures/forInSequenceWithIndex")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class ForInSequenceWithIndex {
                 @Test
                 public void testAllFilesPresentInForInSequenceWithIndex() throws Exception {
@@ -7684,9 +7583,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/controlStructures/returnsNothing")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class ReturnsNothing {
                 @Test
                 public void testAllFilesPresentInReturnsNothing() throws Exception {
@@ -7727,9 +7625,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/controlStructures/slowDsl")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class SlowDsl {
                 @Test
                 public void testAllFilesPresentInSlowDsl() throws Exception {
@@ -7740,9 +7637,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/controlStructures/tryCatchInExpressions")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class TryCatchInExpressions {
                 @Test
                 public void testAllFilesPresentInTryCatchInExpressions() throws Exception {
@@ -7940,9 +7836,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/coroutines")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Coroutines {
             @Test
             @TestMetadata("32defaultParametersInSuspend.kt")
@@ -8076,15 +7971,15 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
-            @TestMetadata("defaultParametersInSuspend.kt")
-            public void testDefaultParametersInSuspend() throws Exception {
-                runTest("compiler/testData/codegen/box/coroutines/defaultParametersInSuspend.kt");
+            @TestMetadata("defaultParameterLambdaInSuspend.kt")
+            public void testDefaultParameterLambdaInSuspend() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/defaultParameterLambdaInSuspend.kt");
             }
 
             @Test
-            @TestMetadata("defaultParamterLambdaInSuspend.kt")
-            public void testDefaultParamterLambdaInSuspend() throws Exception {
-                runTest("compiler/testData/codegen/box/coroutines/defaultParamterLambdaInSuspend.kt");
+            @TestMetadata("defaultParametersInSuspend.kt")
+            public void testDefaultParametersInSuspend() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/defaultParametersInSuspend.kt");
             }
 
             @Test
@@ -8169,6 +8064,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @TestMetadata("infiniteLoopInNextMeaningful.kt")
             public void testInfiniteLoopInNextMeaningful() throws Exception {
                 runTest("compiler/testData/codegen/box/coroutines/infiniteLoopInNextMeaningful.kt");
+            }
+
+            @Test
+            @TestMetadata("inlineCallWithReturns.kt")
+            public void testInlineCallWithReturns() throws Exception {
+                runTest("compiler/testData/codegen/box/coroutines/inlineCallWithReturns.kt");
             }
 
             @Test
@@ -8732,9 +8633,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/coroutines/bridges")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Bridges {
                 @Test
                 public void testAllFilesPresentInBridges() throws Exception {
@@ -8781,9 +8681,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/coroutines/controlFlow")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class ControlFlow {
                 @Test
                 public void testAllFilesPresentInControlFlow() throws Exception {
@@ -8932,9 +8831,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/coroutines/debug")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Debug {
                 @Test
                 public void testAllFilesPresentInDebug() throws Exception {
@@ -8945,9 +8843,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class FeatureIntersection {
                 @Test
                 public void testAllFilesPresentInFeatureIntersection() throws Exception {
@@ -9071,9 +8968,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class CallableReference {
                     @Test
                     public void testAllFilesPresentInCallableReference() throws Exception {
@@ -9101,9 +8997,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     @Nested
                     @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/bound")
                     @TestDataPath("$PROJECT_ROOT")
-                    @Tag("codegen")
-                    @Tag("k1Codegen")
                     @UseExtTestCaseGroupProvider()
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                     public class Bound {
                         @Test
                         public void testAllFilesPresentInBound() throws Exception {
@@ -9120,9 +9015,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     @Nested
                     @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function")
                     @TestDataPath("$PROJECT_ROOT")
-                    @Tag("codegen")
-                    @Tag("k1Codegen")
                     @UseExtTestCaseGroupProvider()
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                     public class Function {
                         @Test
                         @TestMetadata("adapted.kt")
@@ -9144,9 +9038,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                         @Nested
                         @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/callableReference/function/local")
                         @TestDataPath("$PROJECT_ROOT")
-                        @Tag("codegen")
-                        @Tag("k1Codegen")
                         @UseExtTestCaseGroupProvider()
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                         public class Local {
                             @Test
                             public void testAllFilesPresentInLocal() throws Exception {
@@ -9165,9 +9058,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/funInterface")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class FunInterface {
                     @Test
                     public void testAllFilesPresentInFunInterface() throws Exception {
@@ -9202,9 +9094,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/jvmDefault")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class JvmDefault {
                     @Test
                     public void testAllFilesPresentInJvmDefault() throws Exception {
@@ -9214,9 +9105,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     @Nested
                     @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/jvmDefault/kt46007")
                     @TestDataPath("$PROJECT_ROOT")
-                    @Tag("codegen")
-                    @Tag("k1Codegen")
                     @UseExtTestCaseGroupProvider()
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                     public class Kt46007 {
                         @Test
                         public void testAllFilesPresentInKt46007() throws Exception {
@@ -9228,9 +9118,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/coroutines/featureIntersection/tailrec")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class Tailrec {
                     @Test
                     public void testAllFilesPresentInTailrec() throws Exception {
@@ -9326,9 +9215,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/coroutines/inlineClasses")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class InlineClasses {
                 @Test
                 public void testAllFilesPresentInInlineClasses() throws Exception {
@@ -9356,9 +9244,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/coroutines/inlineClasses/direct")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class Direct {
                     @Test
                     public void testAllFilesPresentInDirect() throws Exception {
@@ -9651,9 +9538,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/coroutines/inlineClasses/resume")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class Resume {
                     @Test
                     public void testAllFilesPresentInResume() throws Exception {
@@ -9946,9 +9832,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/coroutines/inlineClasses/resumeWithException")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class ResumeWithException {
                     @Test
                     public void testAllFilesPresentInResumeWithException() throws Exception {
@@ -10212,9 +10097,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/coroutines/intLikeVarSpilling")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class IntLikeVarSpilling {
                 @Test
                 public void testAllFilesPresentInIntLikeVarSpilling() throws Exception {
@@ -10285,9 +10169,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/coroutines/intrinsicSemantics")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class IntrinsicSemantics {
                 @Test
                 public void testAllFilesPresentInIntrinsicSemantics() throws Exception {
@@ -10358,9 +10241,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/coroutines/javaInterop")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class JavaInterop {
                 @Test
                 public void testAllFilesPresentInJavaInterop() throws Exception {
@@ -10371,9 +10253,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/coroutines/localFunctions")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class LocalFunctions {
                 @Test
                 public void testAllFilesPresentInLocalFunctions() throws Exception {
@@ -10383,9 +10264,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/coroutines/localFunctions/anonymous")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class Anonymous {
                     @Test
                     public void testAllFilesPresentInAnonymous() throws Exception {
@@ -10402,9 +10282,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/coroutines/localFunctions/named")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class Named {
                     @Test
                     public void testAllFilesPresentInNamed() throws Exception {
@@ -10488,9 +10367,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/coroutines/multiModule")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class MultiModule {
                 @Test
                 public void testAllFilesPresentInMultiModule() throws Exception {
@@ -10555,9 +10433,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/coroutines/redundantLocalsElimination")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class RedundantLocalsElimination {
                 @Test
                 public void testAllFilesPresentInRedundantLocalsElimination() throws Exception {
@@ -10574,9 +10451,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/coroutines/reflect")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Reflect {
                 @Test
                 public void testAllFilesPresentInReflect() throws Exception {
@@ -10587,9 +10463,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/coroutines/stackUnwinding")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class StackUnwinding {
                 @Test
                 public void testAllFilesPresentInStackUnwinding() throws Exception {
@@ -10636,9 +10511,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/coroutines/suspendConversion")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class SuspendConversion {
                 @Test
                 public void testAllFilesPresentInSuspendConversion() throws Exception {
@@ -10673,9 +10547,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/coroutines/suspendFunctionAsCoroutine")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class SuspendFunctionAsCoroutine {
                 @Test
                 public void testAllFilesPresentInSuspendFunctionAsCoroutine() throws Exception {
@@ -10788,9 +10661,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/coroutines/suspendFunctionTypeCall")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class SuspendFunctionTypeCall {
                 @Test
                 public void testAllFilesPresentInSuspendFunctionTypeCall() throws Exception {
@@ -10831,9 +10703,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/coroutines/tailCallOptimizations")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class TailCallOptimizations {
                 @Test
                 public void testAllFilesPresentInTailCallOptimizations() throws Exception {
@@ -10867,9 +10738,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/coroutines/tailCallOptimizations/unit")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class Unit {
                     @Test
                     public void testAllFilesPresentInUnit() throws Exception {
@@ -10881,9 +10751,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/coroutines/tailOperations")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class TailOperations {
                 @Test
                 public void testAllFilesPresentInTailOperations() throws Exception {
@@ -10918,9 +10787,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/coroutines/unitTypeReturn")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class UnitTypeReturn {
                 @Test
                 public void testAllFilesPresentInUnitTypeReturn() throws Exception {
@@ -10973,9 +10841,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/coroutines/varSpilling")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class VarSpilling {
                 @Test
                 public void testAllFilesPresentInVarSpilling() throws Exception {
@@ -11033,9 +10900,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/coroutines/varSpilling/cleanup")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class Cleanup {
                     @Test
                     public void testAllFilesPresentInCleanup() throws Exception {
@@ -11046,9 +10912,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/coroutines/varSpilling/debugMode")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class DebugMode {
                     @Test
                     public void testAllFilesPresentInDebugMode() throws Exception {
@@ -11061,9 +10926,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/correctFrontendCode")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class CorrectFrontendCode {
             @Test
             public void testAllFilesPresentInCorrectFrontendCode() throws Exception {
@@ -11080,9 +10944,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/dataClasses")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class DataClasses {
             @Test
             public void testAllFilesPresentInDataClasses() throws Exception {
@@ -11200,9 +11063,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/dataClasses/components")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Components {
                 @Test
                 public void testAllFilesPresentInComponents() throws Exception {
@@ -11225,9 +11087,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/dataClasses/copy")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Copy {
                 @Test
                 public void testAllFilesPresentInCopy() throws Exception {
@@ -11286,9 +11147,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/dataClasses/equals")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Equals {
                 @Test
                 public void testAllFilesPresentInEquals() throws Exception {
@@ -11335,9 +11195,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/dataClasses/hashCode")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class HashCode {
                 @Test
                 public void testAllFilesPresentInHashCode() throws Exception {
@@ -11414,9 +11273,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/dataClasses/toString")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class ToString {
                 @Test
                 public void testAllFilesPresentInToString() throws Exception {
@@ -11470,9 +11328,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/dataObjects")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class DataObjects {
             @Test
             public void testAllFilesPresentInDataObjects() throws Exception {
@@ -11501,9 +11358,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/deadCodeElimination")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class DeadCodeElimination {
             @Test
             public void testAllFilesPresentInDeadCodeElimination() throws Exception {
@@ -11538,9 +11394,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/defaultArguments")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class DefaultArguments {
             @Test
             public void testAllFilesPresentInDefaultArguments() throws Exception {
@@ -11694,9 +11549,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/defaultArguments/constructor")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Constructor {
                 @Test
                 public void testAllFilesPresentInConstructor() throws Exception {
@@ -11797,9 +11651,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/defaultArguments/convention")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Convention {
                 @Test
                 public void testAllFilesPresentInConvention() throws Exception {
@@ -11846,9 +11699,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/defaultArguments/function")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Function {
                 @Test
                 @TestMetadata("abstractClass.kt")
@@ -12027,9 +11879,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/defaultArguments/private")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Private {
                 @Test
                 public void testAllFilesPresentInPrivate() throws Exception {
@@ -12064,9 +11915,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/defaultArguments/signature")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Signature {
                 @Test
                 public void testAllFilesPresentInSignature() throws Exception {
@@ -12096,9 +11946,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/delegatedProperty")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class DelegatedProperty {
             @Test
             @TestMetadata("accessTopLevelDelegatedPropertyInClinit.kt")
@@ -12402,9 +12251,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/delegatedProperty/delegateToAnother")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class DelegateToAnother {
                 @Test
                 public void testAllFilesPresentInDelegateToAnother() throws Exception {
@@ -12475,9 +12323,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/delegatedProperty/delegateToConst")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class DelegateToConst {
                 @Test
                 public void testAllFilesPresentInDelegateToConst() throws Exception {
@@ -12506,9 +12353,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/delegatedProperty/delegateToFinalProperty")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class DelegateToFinalProperty {
                 @Test
                 public void testAllFilesPresentInDelegateToFinalProperty() throws Exception {
@@ -12567,9 +12413,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/delegatedProperty/delegateToSingleton")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class DelegateToSingleton {
                 @Test
                 public void testAllFilesPresentInDelegateToSingleton() throws Exception {
@@ -12622,9 +12467,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/delegatedProperty/delegateToThis")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class DelegateToThis {
                 @Test
                 public void testAllFilesPresentInDelegateToThis() throws Exception {
@@ -12653,9 +12497,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/delegatedProperty/local")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Local {
                 @Test
                 public void testAllFilesPresentInLocal() throws Exception {
@@ -12762,9 +12605,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/delegatedProperty/optimizedDelegatedProperties")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class OptimizedDelegatedProperties {
                 @Test
                 public void testAllFilesPresentInOptimizedDelegatedProperties() throws Exception {
@@ -12841,9 +12683,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/delegatedProperty/provideDelegate")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class ProvideDelegate {
                 @Test
                 public void testAllFilesPresentInProvideDelegate() throws Exception {
@@ -12981,9 +12822,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/delegation")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Delegation {
             @Test
             public void testAllFilesPresentInDelegation() throws Exception {
@@ -12994,6 +12834,18 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @TestMetadata("delegationDifferentModule.kt")
             public void testDelegationDifferentModule() throws Exception {
                 runTest("compiler/testData/codegen/box/delegation/delegationDifferentModule.kt");
+            }
+
+            @Test
+            @TestMetadata("delegationDifferentModule2.kt")
+            public void testDelegationDifferentModule2() throws Exception {
+                runTest("compiler/testData/codegen/box/delegation/delegationDifferentModule2.kt");
+            }
+
+            @Test
+            @TestMetadata("delegationToIntersectionType.kt")
+            public void testDelegationToIntersectionType() throws Exception {
+                runTest("compiler/testData/codegen/box/delegation/delegationToIntersectionType.kt");
             }
 
             @Test
@@ -13033,6 +12885,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
+            @TestMetadata("smartCastedDelegation.kt")
+            public void testSmartCastedDelegation() throws Exception {
+                runTest("compiler/testData/codegen/box/delegation/smartCastedDelegation.kt");
+            }
+
+            @Test
             @TestMetadata("viaTypeAlias.kt")
             public void testViaTypeAlias() throws Exception {
                 runTest("compiler/testData/codegen/box/delegation/viaTypeAlias.kt");
@@ -13054,9 +12912,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/deprecated")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Deprecated {
             @Test
             public void testAllFilesPresentInDeprecated() throws Exception {
@@ -13067,9 +12924,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/destructuringDeclInLambdaParam")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class DestructuringDeclInLambdaParam {
             @Test
             public void testAllFilesPresentInDestructuringDeclInLambdaParam() throws Exception {
@@ -13128,9 +12984,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/diagnostics")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Diagnostics {
             @Test
             public void testAllFilesPresentInDiagnostics() throws Exception {
@@ -13140,9 +12995,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/diagnostics/functions")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Functions {
                 @Test
                 public void testAllFilesPresentInFunctions() throws Exception {
@@ -13152,9 +13006,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/diagnostics/functions/inference")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class Inference {
                     @Test
                     public void testAllFilesPresentInInference() throws Exception {
@@ -13171,9 +13024,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/diagnostics/functions/invoke")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class Invoke {
                     @Test
                     public void testAllFilesPresentInInvoke() throws Exception {
@@ -13183,9 +13035,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     @Nested
                     @TestMetadata("compiler/testData/codegen/box/diagnostics/functions/invoke/onObjects")
                     @TestDataPath("$PROJECT_ROOT")
-                    @Tag("codegen")
-                    @Tag("k1Codegen")
                     @UseExtTestCaseGroupProvider()
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                     public class OnObjects {
                         @Test
                         public void testAllFilesPresentInOnObjects() throws Exception {
@@ -13257,9 +13108,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/diagnostics/functions/tailRecursion")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class TailRecursion {
                     @Test
                     public void testAllFilesPresentInTailRecursion() throws Exception {
@@ -13541,9 +13391,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/diagnostics/vararg")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Vararg {
                 @Test
                 public void testAllFilesPresentInVararg() throws Exception {
@@ -13561,9 +13410,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/differentDependencyVersion")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class DifferentDependencyVersion {
             @Test
             public void testAllFilesPresentInDifferentDependencyVersion() throws Exception {
@@ -13574,9 +13422,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/directInvokeOptimization")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class DirectInvokeOptimization {
             @Test
             public void testAllFilesPresentInDirectInvokeOptimization() throws Exception {
@@ -13671,9 +13518,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/elvis")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Elvis {
             @Test
             public void testAllFilesPresentInElvis() throws Exception {
@@ -13738,9 +13584,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/enum")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Enum {
             @Test
             @TestMetadata("abstractMethodInEnum.kt")
@@ -13823,6 +13668,18 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @TestMetadata("enumEntries.kt")
             public void testEnumEntries() throws Exception {
                 runTest("compiler/testData/codegen/box/enum/enumEntries.kt");
+            }
+
+            @Test
+            @TestMetadata("enumEntriesCompatibilityCheck.kt")
+            public void testEnumEntriesCompatibilityCheck() throws Exception {
+                runTest("compiler/testData/codegen/box/enum/enumEntriesCompatibilityCheck.kt");
+            }
+
+            @Test
+            @TestMetadata("enumEntriesInCompanion.kt")
+            public void testEnumEntriesInCompanion() throws Exception {
+                runTest("compiler/testData/codegen/box/enum/enumEntriesInCompanion.kt");
             }
 
             @Test
@@ -14182,9 +14039,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/enum/defaultCtor")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class DefaultCtor {
                 @Test
                 public void testAllFilesPresentInDefaultCtor() throws Exception {
@@ -14238,9 +14094,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/evaluate")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Evaluate {
             @Test
             public void testAllFilesPresentInEvaluate() throws Exception {
@@ -14257,9 +14112,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/exclExcl")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class ExclExcl {
             @Test
             public void testAllFilesPresentInExclExcl() throws Exception {
@@ -14294,9 +14148,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/extensionClasses")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class ExtensionClasses {
             @Test
             public void testAllFilesPresentInExtensionClasses() throws Exception {
@@ -14307,9 +14160,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/extensionFunctions")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class ExtensionFunctions {
             @Test
             public void testAllFilesPresentInExtensionFunctions() throws Exception {
@@ -14487,9 +14339,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/extensionFunctions/contextReceivers")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class ContextReceivers {
                 @Test
                 public void testAllFilesPresentInContextReceivers() throws Exception {
@@ -14499,9 +14350,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/extensionFunctions/contextReceivers/fromKEEP")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class FromKEEP {
                     @Test
                     public void testAllFilesPresentInFromKEEP() throws Exception {
@@ -14514,9 +14364,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/extensionProperties")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class ExtensionProperties {
             @Test
             @TestMetadata("accessorForPrivateSetter.kt")
@@ -14617,9 +14466,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/external")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class External {
             @Test
             public void testAllFilesPresentInExternal() throws Exception {
@@ -14630,9 +14478,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/fakeOverride")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class FakeOverride {
             @Test
             public void testAllFilesPresentInFakeOverride() throws Exception {
@@ -14697,9 +14544,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/fieldRename")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class FieldRename {
             @Test
             public void testAllFilesPresentInFieldRename() throws Exception {
@@ -14728,9 +14574,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/finally")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Finally {
             @Test
             public void testAllFilesPresentInFinally() throws Exception {
@@ -14879,9 +14724,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/fir")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Fir {
             @Test
             public void testAllFilesPresentInFir() throws Exception {
@@ -14905,14 +14749,19 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             public void testNestedClassTypeParameterDeserialization() throws Exception {
                 runTest("compiler/testData/codegen/box/fir/nestedClassTypeParameterDeserialization.kt");
             }
+
+            @Test
+            @TestMetadata("toLong.kt")
+            public void testToLong() throws Exception {
+                runTest("compiler/testData/codegen/box/fir/toLong.kt");
+            }
         }
 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/fullJdk")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class FullJdk {
             @Test
             public void testAllFilesPresentInFullJdk() throws Exception {
@@ -14922,9 +14771,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/fullJdk/native")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Native {
                 @Test
                 public void testAllFilesPresentInNative() throws Exception {
@@ -14935,9 +14783,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/fullJdk/regressions")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Regressions {
                 @Test
                 public void testAllFilesPresentInRegressions() throws Exception {
@@ -14949,9 +14796,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/funInterface")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class FunInterface {
             @Test
             public void testAllFilesPresentInFunInterface() throws Exception {
@@ -15141,9 +14987,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/funInterface/equality")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Equality {
                 @Test
                 public void testAllFilesPresentInEquality() throws Exception {
@@ -15185,9 +15030,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/functions")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Functions {
             @Test
             public void testAllFilesPresentInFunctions() throws Exception {
@@ -15288,12 +15132,6 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @TestMetadata("functionNtoStringGeneric.kt")
             public void testFunctionNtoStringGeneric() throws Exception {
                 runTest("compiler/testData/codegen/box/functions/functionNtoStringGeneric.kt");
-            }
-
-            @Test
-            @TestMetadata("functionNtoStringNoReflect.kt")
-            public void testFunctionNtoStringNoReflect() throws Exception {
-                runTest("compiler/testData/codegen/box/functions/functionNtoStringNoReflect.kt");
             }
 
             @Test
@@ -15503,9 +15341,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/functions/bigArity")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class BigArity {
                 @Test
                 public void testAllFilesPresentInBigArity() throws Exception {
@@ -15558,9 +15395,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/functions/functionExpression")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class FunctionExpression {
                 @Test
                 public void testAllFilesPresentInFunctionExpression() throws Exception {
@@ -15601,9 +15437,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/functions/invoke")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Invoke {
                 @Test
                 public void testAllFilesPresentInInvoke() throws Exception {
@@ -15698,9 +15533,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/functions/localFunctions")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class LocalFunctions {
                 @Test
                 public void testAllFilesPresentInLocalFunctions() throws Exception {
@@ -15892,9 +15726,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ieee754")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Ieee754 {
             @Test
             public void testAllFilesPresentInIeee754() throws Exception {
@@ -16217,9 +16050,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/increment")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Increment {
             @Test
             public void testAllFilesPresentInIncrement() throws Exception {
@@ -16386,9 +16218,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/inference")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Inference {
             @Test
             public void testAllFilesPresentInInference() throws Exception {
@@ -16584,9 +16415,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/inference/builderInference")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class BuilderInference {
                 @Test
                 public void testAllFilesPresentInBuilderInference() throws Exception {
@@ -16796,9 +16626,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/inlineArgsInPlace")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class InlineArgsInPlace {
             @Test
             public void testAllFilesPresentInInlineArgsInPlace() throws Exception {
@@ -16875,9 +16704,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/inlineClasses")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class InlineClasses {
             public InlineClasses() {
                 register("compiler/testData/codegen/box/inlineClasses/annotatedMemberExtensionProperty.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -17123,6 +16951,7 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 register("compiler/testData/codegen/box/inlineClasses/kt51254.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/kt52913.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/kt54455.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                register("compiler/testData/codegen/box/inlineClasses/kt57973.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/lateinitInlineClasses.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/mangledDefaultParameterFunction.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/mangledDefaultParameterFunctionGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -17164,6 +16993,7 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 register("compiler/testData/codegen/box/inlineClasses/safeAsOfTypeParameterWithInlineClassBoundGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/samWrapperDifferentModule.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/samWrapperDifferentModuleGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
+                register("compiler/testData/codegen/box/inlineClasses/secondaryConstructorVisibilies.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/secondaryConstructorWithVararg.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/secondaryConstructorWithVarargGeneric.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
                 register("compiler/testData/codegen/box/inlineClasses/secondaryConstructorsInsideInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -18982,6 +18812,13 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
+            @TestMetadata("kt57973.kt")
+            public void testKt57973() throws Exception {
+                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                runTest("compiler/testData/codegen/box/inlineClasses/kt57973.kt");
+            }
+
+            @Test
             @TestMetadata("lateinitInlineClasses.kt")
             public void testLateinitInlineClasses() throws Exception {
                 // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
@@ -19284,6 +19121,13 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             public void testSamWrapperDifferentModuleGeneric() throws Exception {
                 // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
                 runTest("compiler/testData/codegen/box/inlineClasses/samWrapperDifferentModuleGeneric.kt");
+            }
+
+            @Test
+            @TestMetadata("secondaryConstructorVisibilies.kt")
+            public void testSecondaryConstructorVisibilies() throws Exception {
+                // There is a registered source transformer for the testcase: TransformersFunctions.getRemoveOptionalJvmInlineAnnotation()
+                runTest("compiler/testData/codegen/box/inlineClasses/secondaryConstructorVisibilies.kt");
             }
 
             @Test
@@ -19644,9 +19488,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class BoxReturnValueInLambda {
                 public BoxReturnValueInLambda() {
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueInLambda/boxAny.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -19880,9 +19723,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class BoxReturnValueOnOverride {
                 public BoxReturnValueOnOverride() {
                     register("compiler/testData/codegen/box/inlineClasses/boxReturnValueOnOverride/boxReturnValueInDefaultMethod.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -20384,9 +20226,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/inlineClasses/callableReferences")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class CallableReferences {
                 public CallableReferences() {
                     register("compiler/testData/codegen/box/inlineClasses/callableReferences/boundInlineClassExtensionFun.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -20719,9 +20560,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/inlineClasses/callableReferences/let")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class Let {
                     public Let() {
                         register("compiler/testData/codegen/box/inlineClasses/callableReferences/let/any.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -20878,9 +20718,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class ContextsAndAccessors {
                 public ContextsAndAccessors() {
                     register("compiler/testData/codegen/box/inlineClasses/contextsAndAccessors/accessPrivateInlineClassCompanionMethod.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -21230,9 +21069,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/inlineClasses/defaultParameterValues")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class DefaultParameterValues {
                 public DefaultParameterValues() {
                     register("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultConstructorParameterValuesOfInlineClassType.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -21429,9 +21267,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/defaultWithDefaultParameter")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class DefaultWithDefaultParameter {
                     @Test
                     public void testAllFilesPresentInDefaultWithDefaultParameter() throws Exception {
@@ -21442,9 +21279,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/inlineClasses/defaultParameterValues/overrideFunctionWithDefaultParameter")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class OverrideFunctionWithDefaultParameter {
                     @Test
                     public void testAllFilesPresentInOverrideFunctionWithDefaultParameter() throws Exception {
@@ -21456,9 +21292,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/inlineClasses/delegationByUnderlyingType")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class DelegationByUnderlyingType {
                 @Test
                 public void testAllFilesPresentInDelegationByUnderlyingType() throws Exception {
@@ -21505,9 +21340,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/inlineClasses/funInterface")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class FunInterface {
                 public FunInterface() {
                     register("compiler/testData/codegen/box/inlineClasses/funInterface/argumentIC.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -21613,9 +21447,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/inlineClasses/functionNameMangling")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class FunctionNameMangling {
                 public FunctionNameMangling() {
                     register("compiler/testData/codegen/box/inlineClasses/functionNameMangling/anonymousObjectInFunctionWithMangledName.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -21885,9 +21718,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/inlineClasses/genericUnderlyingValue")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class GenericUnderlyingValue {
                 @Test
                 public void testAllFilesPresentInGenericUnderlyingValue() throws Exception {
@@ -21940,9 +21772,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/inlineClasses/hiddenConstructor")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class HiddenConstructor {
                 public HiddenConstructor() {
                     register("compiler/testData/codegen/box/inlineClasses/hiddenConstructor/constructorReferencedFromOtherFile1.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -22154,9 +21985,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/inlineClasses/inlineClassCollection")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class InlineClassCollection {
                 public InlineClassCollection() {
                     register("compiler/testData/codegen/box/inlineClasses/inlineClassCollection/inlineCollectionOfInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -22226,9 +22056,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/inlineClasses/interfaceDelegation")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class InterfaceDelegation {
                 public InterfaceDelegation() {
                     register("compiler/testData/codegen/box/inlineClasses/interfaceDelegation/interfaceImplementationByDelegation.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -22362,9 +22191,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class InterfaceMethodCalls {
                 public InterfaceMethodCalls() {
                     register("compiler/testData/codegen/box/inlineClasses/interfaceMethodCalls/complexGenericMethodWithInlineClassOverride.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -22554,9 +22382,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/inlineClasses/javaInterop")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class JavaInterop {
                 @Test
                 public void testAllFilesPresentInJavaInterop() throws Exception {
@@ -22567,9 +22394,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/inlineClasses/jvm8DefaultInterfaceMethods")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Jvm8DefaultInterfaceMethods {
                 @Test
                 public void testAllFilesPresentInJvm8DefaultInterfaceMethods() throws Exception {
@@ -22580,9 +22406,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/inlineClasses/propertyDelegation")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class PropertyDelegation {
                 public PropertyDelegation() {
                     register("compiler/testData/codegen/box/inlineClasses/propertyDelegation/captureLocalVarDelegatedToInlineClass.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -22772,9 +22597,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/inlineClasses/result")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Result {
                 @Test
                 public void testAllFilesPresentInResult() throws Exception {
@@ -22833,9 +22657,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/inlineClasses/returnResult")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class ReturnResult {
                 @Test
                 public void testAllFilesPresentInReturnResult() throws Exception {
@@ -22882,9 +22705,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class UnboxGenericParameter {
                 @Test
                 public void testAllFilesPresentInUnboxGenericParameter() throws Exception {
@@ -22894,9 +22716,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class FunInterface {
                     public FunInterface() {
                         register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/funInterface/any.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -23042,9 +22863,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class Lambda {
                     public Lambda() {
                         register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/lambda/any.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -23190,9 +23010,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class ObjectLiteral {
                     public ObjectLiteral() {
                         register("compiler/testData/codegen/box/inlineClasses/unboxGenericParameter/objectLiteral/any.kt", TransformersFunctions.getRemoveOptionalJvmInlineAnnotation());
@@ -23340,9 +23159,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/innerNested")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class InnerNested {
             @Test
             public void testAllFilesPresentInInnerNested() throws Exception {
@@ -23520,9 +23338,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/innerNested/superConstructorCall")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class SuperConstructorCall {
                 @Test
                 public void testAllFilesPresentInSuperConstructorCall() throws Exception {
@@ -23660,9 +23477,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/instructions")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Instructions {
             @Test
             public void testAllFilesPresentInInstructions() throws Exception {
@@ -23672,9 +23488,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/instructions/swap")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Swap {
                 @Test
                 public void testAllFilesPresentInSwap() throws Exception {
@@ -23698,9 +23513,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/intrinsics")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Intrinsics {
             @Test
             public void testAllFilesPresentInIntrinsics() throws Exception {
@@ -23849,9 +23663,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/invokedynamic")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Invokedynamic {
             @Test
             public void testAllFilesPresentInInvokedynamic() throws Exception {
@@ -23861,9 +23674,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/invokedynamic/lambdas")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Lambdas {
                 @Test
                 public void testAllFilesPresentInLambdas() throws Exception {
@@ -23879,9 +23691,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/invokedynamic/lambdas/inlineClassInSignature")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class InlineClassInSignature {
                     @Test
                     public void testAllFilesPresentInInlineClassInSignature() throws Exception {
@@ -23893,9 +23704,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/invokedynamic/sam")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Sam {
                 @Test
                 public void testAllFilesPresentInSam() throws Exception {
@@ -23905,9 +23715,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/invokedynamic/sam/functionExprToJavaInterface")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class FunctionExprToJavaInterface {
                     @Test
                     public void testAllFilesPresentInFunctionExprToJavaInterface() throws Exception {
@@ -23918,9 +23727,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class FunctionRefToJavaInterface {
                     @Test
                     public void testAllFilesPresentInFunctionRefToJavaInterface() throws Exception {
@@ -23930,9 +23738,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     @Nested
                     @TestMetadata("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/specialFunctions")
                     @TestDataPath("$PROJECT_ROOT")
-                    @Tag("codegen")
-                    @Tag("k1Codegen")
                     @UseExtTestCaseGroupProvider()
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                     public class SpecialFunctions {
                         @Test
                         public void testAllFilesPresentInSpecialFunctions() throws Exception {
@@ -23943,9 +23750,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     @Nested
                     @TestMetadata("compiler/testData/codegen/box/invokedynamic/sam/functionRefToJavaInterface/withAccessor")
                     @TestDataPath("$PROJECT_ROOT")
-                    @Tag("codegen")
-                    @Tag("k1Codegen")
                     @UseExtTestCaseGroupProvider()
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                     public class WithAccessor {
                         @Test
                         public void testAllFilesPresentInWithAccessor() throws Exception {
@@ -23957,9 +23763,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/invokedynamic/sam/inlineClassInSignature")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class InlineClassInSignature {
                     @Test
                     public void testAllFilesPresentInInlineClassInSignature() throws Exception {
@@ -23970,9 +23775,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/invokedynamic/sam/specializedGenerics")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class SpecializedGenerics {
                     @Test
                     public void testAllFilesPresentInSpecializedGenerics() throws Exception {
@@ -23984,9 +23788,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/invokedynamic/serializable")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Serializable {
                 @Test
                 public void testAllFilesPresentInSerializable() throws Exception {
@@ -23998,13 +23801,54 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/involvesIrInterpreter")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class InvolvesIrInterpreter {
             @Test
             public void testAllFilesPresentInInvolvesIrInterpreter() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/involvesIrInterpreter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
+
+            @Test
+            @TestMetadata("booleanOperations.kt")
+            public void testBooleanOperations() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/booleanOperations.kt");
+            }
+
+            @Test
+            @TestMetadata("byteOperations.kt")
+            public void testByteOperations() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/byteOperations.kt");
+            }
+
+            @Test
+            @TestMetadata("charOperations.kt")
+            public void testCharOperations() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/charOperations.kt");
+            }
+
+            @Test
+            @TestMetadata("doubleOperations.kt")
+            public void testDoubleOperations() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/doubleOperations.kt");
+            }
+
+            @Test
+            @TestMetadata("floatOperations.kt")
+            public void testFloatOperations() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/floatOperations.kt");
+            }
+
+            @Test
+            @TestMetadata("intOperations.kt")
+            public void testIntOperations() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/intOperations.kt");
+            }
+
+            @Test
+            @TestMetadata("jvmFloatDoubleToString.kt")
+            public void testJvmFloatDoubleToString() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/jvmFloatDoubleToString.kt");
             }
 
             @Test
@@ -24020,9 +23864,39 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             }
 
             @Test
+            @TestMetadata("longOperations.kt")
+            public void testLongOperations() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/longOperations.kt");
+            }
+
+            @Test
+            @TestMetadata("shortOperations.kt")
+            public void testShortOperations() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/shortOperations.kt");
+            }
+
+            @Test
+            @TestMetadata("stdlibConst.kt")
+            public void testStdlibConst() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/stdlibConst.kt");
+            }
+
+            @Test
+            @TestMetadata("stringConcatenation.kt")
+            public void testStringConcatenation() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/stringConcatenation.kt");
+            }
+
+            @Test
             @TestMetadata("stringConcatenationWithObject.kt")
             public void testStringConcatenationWithObject() throws Exception {
                 runTest("compiler/testData/codegen/box/involvesIrInterpreter/stringConcatenationWithObject.kt");
+            }
+
+            @Test
+            @TestMetadata("stringOperations.kt")
+            public void testStringOperations() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/stringOperations.kt");
             }
 
             @Test
@@ -24031,94 +23905,63 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 runTest("compiler/testData/codegen/box/involvesIrInterpreter/thisPlusString.kt");
             }
 
+            @Test
+            @TestMetadata("unsignedConst.kt")
+            public void testUnsignedConst() throws Exception {
+                runTest("compiler/testData/codegen/box/involvesIrInterpreter/unsignedConst.kt");
+            }
+
             @Nested
-            @TestMetadata("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck")
+            @TestMetadata("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
-            public class DumpIrAndCheck {
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
+            public class IntrinsicConst {
                 @Test
-                public void testAllFilesPresentInDumpIrAndCheck() throws Exception {
-                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
-                }
-
-                @Test
-                @TestMetadata("booleanOperations.kt")
-                public void testBooleanOperations() throws Exception {
-                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/booleanOperations.kt");
-                }
-
-                @Test
-                @TestMetadata("byteOperations.kt")
-                public void testByteOperations() throws Exception {
-                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/byteOperations.kt");
-                }
-
-                @Test
-                @TestMetadata("charOperations.kt")
-                public void testCharOperations() throws Exception {
-                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/charOperations.kt");
-                }
-
-                @Test
-                @TestMetadata("doubleOperations.kt")
-                public void testDoubleOperations() throws Exception {
-                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/doubleOperations.kt");
-                }
-
-                @Test
-                @TestMetadata("floatOperations.kt")
-                public void testFloatOperations() throws Exception {
-                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/floatOperations.kt");
+                public void testAllFilesPresentInIntrinsicConst() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
                 }
 
                 @Test
                 @TestMetadata("ifConstVal.kt")
                 public void testIfConstVal() throws Exception {
-                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/ifConstVal.kt");
+                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/intrinsicConst/ifConstVal.kt");
+                }
+            }
+
+            @Nested
+            @TestMetadata("compiler/testData/codegen/box/involvesIrInterpreter/serialization")
+            @TestDataPath("$PROJECT_ROOT")
+            @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
+            public class Serialization {
+                @Test
+                public void testAllFilesPresentInSerialization() throws Exception {
+                    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/involvesIrInterpreter/serialization"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
                 }
 
                 @Test
-                @TestMetadata("intOperations.kt")
-                public void testIntOperations() throws Exception {
-                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/intOperations.kt");
+                @TestMetadata("annotationInArguments.kt")
+                public void testAnnotationInArguments() throws Exception {
+                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/annotationInArguments.kt");
                 }
 
                 @Test
-                @TestMetadata("longOperations.kt")
-                public void testLongOperations() throws Exception {
-                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/longOperations.kt");
+                @TestMetadata("annotationSerialization.kt")
+                public void testAnnotationSerialization() throws Exception {
+                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/annotationSerialization.kt");
                 }
 
                 @Test
-                @TestMetadata("shortOperations.kt")
-                public void testShortOperations() throws Exception {
-                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/shortOperations.kt");
+                @TestMetadata("annotationWithArray.kt")
+                public void testAnnotationWithArray() throws Exception {
+                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/annotationWithArray.kt");
                 }
 
                 @Test
-                @TestMetadata("stdlibConst.kt")
-                public void testStdlibConst() throws Exception {
-                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/stdlibConst.kt");
-                }
-
-                @Test
-                @TestMetadata("stringConcatenation.kt")
-                public void testStringConcatenation() throws Exception {
-                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/stringConcatenation.kt");
-                }
-
-                @Test
-                @TestMetadata("stringOperations.kt")
-                public void testStringOperations() throws Exception {
-                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/stringOperations.kt");
-                }
-
-                @Test
-                @TestMetadata("unsignedConst.kt")
-                public void testUnsignedConst() throws Exception {
-                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/dumpIrAndCheck/unsignedConst.kt");
+                @TestMetadata("annotationWithDefaults.kt")
+                public void testAnnotationWithDefaults() throws Exception {
+                    runTest("compiler/testData/codegen/box/involvesIrInterpreter/serialization/annotationWithDefaults.kt");
                 }
             }
         }
@@ -24126,9 +23969,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ir")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Ir {
             @Test
             public void testAllFilesPresentInIr() throws Exception {
@@ -24264,9 +24106,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ir/closureConversion")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class ClosureConversion {
                 @Test
                 public void testAllFilesPresentInClosureConversion() throws Exception {
@@ -24325,9 +24166,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ir/primitiveNumberComparisons")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class PrimitiveNumberComparisons {
                 @Test
                 public void testAllFilesPresentInPrimitiveNumberComparisons() throws Exception {
@@ -24362,9 +24202,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ir/privateSignatures")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class PrivateSignatures {
                 @Test
                 public void testAllFilesPresentInPrivateSignatures() throws Exception {
@@ -24387,9 +24226,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ir/serializationRegressions")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class SerializationRegressions {
                 @Test
                 public void testAllFilesPresentInSerializationRegressions() throws Exception {
@@ -24455,9 +24293,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/javaFieldAndKotlinProperty")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class JavaFieldAndKotlinProperty {
             @Test
             public void testAllFilesPresentInJavaFieldAndKotlinProperty() throws Exception {
@@ -24468,9 +24305,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/javaInterop")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class JavaInterop {
             @Test
             public void testAllFilesPresentInJavaInterop() throws Exception {
@@ -24480,9 +24316,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/javaInterop/foreignAnnotationsTests")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class ForeignAnnotationsTests {
                 @Test
                 public void testAllFilesPresentInForeignAnnotationsTests() throws Exception {
@@ -24492,9 +24327,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/javaInterop/foreignAnnotationsTests/tests")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class Tests {
                     @Test
                     public void testAllFilesPresentInTests() throws Exception {
@@ -24506,9 +24340,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/javaInterop/generics")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Generics {
                 @Test
                 public void testAllFilesPresentInGenerics() throws Exception {
@@ -24531,9 +24364,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class NotNullAssertions {
                 @Test
                 public void testAllFilesPresentInNotNullAssertions() throws Exception {
@@ -24549,9 +24381,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/enhancedNullability")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class EnhancedNullability {
                     @Test
                     public void testAllFilesPresentInEnhancedNullability() throws Exception {
@@ -24560,11 +24391,22 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 }
 
                 @Nested
+                @TestMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/expressionAssertionMessages")
+                @TestDataPath("$PROJECT_ROOT")
+                @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
+                public class ExpressionAssertionMessages {
+                    @Test
+                    public void testAllFilesPresentInExpressionAssertionMessages() throws Exception {
+                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/javaInterop/notNullAssertions/expressionAssertionMessages"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+                    }
+                }
+
+                @Nested
                 @TestMetadata("compiler/testData/codegen/box/javaInterop/notNullAssertions/nullCheckOnLambdaReturnValue")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class NullCheckOnLambdaReturnValue {
                     @Test
                     public void testAllFilesPresentInNullCheckOnLambdaReturnValue() throws Exception {
@@ -24576,9 +24418,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/javaInterop/objectMethods")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class ObjectMethods {
                 @Test
                 public void testAllFilesPresentInObjectMethods() throws Exception {
@@ -24614,9 +24455,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/javaVisibility")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class JavaVisibility {
             @Test
             public void testAllFilesPresentInJavaVisibility() throws Exception {
@@ -24626,9 +24466,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/javaVisibility/package")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Package {
                 @Test
                 public void testAllFilesPresentInPackage() throws Exception {
@@ -24639,9 +24478,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/javaVisibility/protectedAndPackage")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class ProtectedAndPackage {
                 @Test
                 public void testAllFilesPresentInProtectedAndPackage() throws Exception {
@@ -24652,9 +24490,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/javaVisibility/protectedStatic")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class ProtectedStatic {
                 @Test
                 public void testAllFilesPresentInProtectedStatic() throws Exception {
@@ -24666,9 +24503,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/jdk")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Jdk {
             @Test
             public void testAllFilesPresentInJdk() throws Exception {
@@ -24701,11 +24537,22 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/js")
+        @TestDataPath("$PROJECT_ROOT")
+        @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
+        public class Js {
+            @Test
+            public void testAllFilesPresentInJs() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/js"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/jvm8")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Jvm8 {
             @Test
             public void testAllFilesPresentInJvm8() throws Exception {
@@ -24715,9 +24562,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/jvm8/defaults")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Defaults {
                 @Test
                 public void testAllFilesPresentInDefaults() throws Exception {
@@ -24727,9 +24573,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/allCompatibility")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class AllCompatibility {
                     @Test
                     public void testAllFilesPresentInAllCompatibility() throws Exception {
@@ -24739,9 +24584,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     @Nested
                     @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/allCompatibility/delegationBy")
                     @TestDataPath("$PROJECT_ROOT")
-                    @Tag("codegen")
-                    @Tag("k1Codegen")
                     @UseExtTestCaseGroupProvider()
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                     public class DelegationBy {
                         @Test
                         public void testAllFilesPresentInDelegationBy() throws Exception {
@@ -24751,24 +24595,10 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 }
 
                 @Nested
-                @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/compatibility")
-                @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
-                @UseExtTestCaseGroupProvider()
-                public class Compatibility {
-                    @Test
-                    public void testAllFilesPresentInCompatibility() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/compatibility"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
-                    }
-                }
-
-                @Nested
                 @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/delegationBy")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class DelegationBy {
                     @Test
                     public void testAllFilesPresentInDelegationBy() throws Exception {
@@ -24779,9 +24609,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class NoDefaultImpls {
                     @Test
                     public void testAllFilesPresentInNoDefaultImpls() throws Exception {
@@ -24791,9 +24620,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     @Nested
                     @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/delegationBy")
                     @TestDataPath("$PROJECT_ROOT")
-                    @Tag("codegen")
-                    @Tag("k1Codegen")
                     @UseExtTestCaseGroupProvider()
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                     public class DelegationBy {
                         @Test
                         public void testAllFilesPresentInDelegationBy() throws Exception {
@@ -24804,9 +24632,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     @Nested
                     @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/specialization")
                     @TestDataPath("$PROJECT_ROOT")
-                    @Tag("codegen")
-                    @Tag("k1Codegen")
                     @UseExtTestCaseGroupProvider()
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                     public class Specialization {
                         @Test
                         public void testAllFilesPresentInSpecialization() throws Exception {
@@ -24817,9 +24644,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     @Nested
                     @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noDefaultImpls/withCompatibility")
                     @TestDataPath("$PROJECT_ROOT")
-                    @Tag("codegen")
-                    @Tag("k1Codegen")
                     @UseExtTestCaseGroupProvider()
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                     public class WithCompatibility {
                         @Test
                         public void testAllFilesPresentInWithCompatibility() throws Exception {
@@ -24829,24 +24655,10 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 }
 
                 @Nested
-                @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/noDelegation")
-                @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
-                @UseExtTestCaseGroupProvider()
-                public class NoDelegation {
-                    @Test
-                    public void testAllFilesPresentInNoDelegation() throws Exception {
-                        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/jvm8/defaults/noDelegation"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
-                    }
-                }
-
-                @Nested
                 @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/nonDefaultInheritance")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class NonDefaultInheritance {
                     @Test
                     public void testAllFilesPresentInNonDefaultInheritance() throws Exception {
@@ -24857,9 +24669,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/jvm8/defaults/reflection")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class Reflection {
                     @Test
                     public void testAllFilesPresentInReflection() throws Exception {
@@ -24871,9 +24682,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/jvm8/interfaceFlag")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class InterfaceFlag {
                 @Test
                 public void testAllFilesPresentInInterfaceFlag() throws Exception {
@@ -24884,9 +24694,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/jvm8/javaDefaults")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class JavaDefaults {
                 @Test
                 public void testAllFilesPresentInJavaDefaults() throws Exception {
@@ -24898,9 +24707,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/jvmField")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class JvmField {
             @Test
             public void testAllFilesPresentInJvmField() throws Exception {
@@ -24911,9 +24719,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/jvmName")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class JvmName {
             @Test
             public void testAllFilesPresentInJvmName() throws Exception {
@@ -24923,9 +24730,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/jvmName/fileFacades")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class FileFacades {
                 @Test
                 public void testAllFilesPresentInFileFacades() throws Exception {
@@ -24937,9 +24743,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/jvmOverloads")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class JvmOverloads {
             @Test
             public void testAllFilesPresentInJvmOverloads() throws Exception {
@@ -24950,9 +24755,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/jvmPackageName")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class JvmPackageName {
             @Test
             public void testAllFilesPresentInJvmPackageName() throws Exception {
@@ -24963,9 +24767,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/jvmStatic")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class JvmStatic {
             @Test
             public void testAllFilesPresentInJvmStatic() throws Exception {
@@ -24975,9 +24778,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/jvmStatic/protectedInSuperClass")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class ProtectedInSuperClass {
                 @Test
                 public void testAllFilesPresentInProtectedInSuperClass() throws Exception {
@@ -24989,9 +24791,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/labels")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Labels {
             @Test
             public void testAllFilesPresentInLabels() throws Exception {
@@ -25050,9 +24851,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/lazyCodegen")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class LazyCodegen {
             @Test
             public void testAllFilesPresentInLazyCodegen() throws Exception {
@@ -25116,9 +24916,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/lazyCodegen/optimizations")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Optimizations {
                 @Test
                 public void testAllFilesPresentInOptimizations() throws Exception {
@@ -25184,9 +24983,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/localClasses")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class LocalClasses {
             @Test
             public void testAllFilesPresentInLocalClasses() throws Exception {
@@ -25437,9 +25235,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/mangling")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Mangling {
             @Test
             public void testAllFilesPresentInMangling() throws Exception {
@@ -25486,9 +25283,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/mixedNamedPosition")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class MixedNamedPosition {
             @Test
             public void testAllFilesPresentInMixedNamedPosition() throws Exception {
@@ -25523,9 +25319,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/multiDecl")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class MultiDecl {
             @Test
             public void testAllFilesPresentInMultiDecl() throws Exception {
@@ -25619,9 +25414,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/multiDecl/forIterator")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class ForIterator {
                 @Test
                 public void testAllFilesPresentInForIterator() throws Exception {
@@ -25661,9 +25455,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/multiDecl/forIterator/longIterator")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class LongIterator {
                     @Test
                     public void testAllFilesPresentInLongIterator() throws Exception {
@@ -25699,9 +25492,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class ForRange {
                 @Test
                 public void testAllFilesPresentInForRange() throws Exception {
@@ -25753,9 +25545,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class ExplicitRangeTo {
                     @Test
                     public void testAllFilesPresentInExplicitRangeTo() throws Exception {
@@ -25795,9 +25586,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     @Nested
                     @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/int")
                     @TestDataPath("$PROJECT_ROOT")
-                    @Tag("codegen")
-                    @Tag("k1Codegen")
                     @UseExtTestCaseGroupProvider()
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                     public class Int {
                         @Test
                         public void testAllFilesPresentInInt() throws Exception {
@@ -25832,9 +25622,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     @Nested
                     @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeTo/long")
                     @TestDataPath("$PROJECT_ROOT")
-                    @Tag("codegen")
-                    @Tag("k1Codegen")
                     @UseExtTestCaseGroupProvider()
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                     public class Long {
                         @Test
                         public void testAllFilesPresentInLong() throws Exception {
@@ -25870,9 +25659,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class ExplicitRangeToWithDot {
                     @Test
                     public void testAllFilesPresentInExplicitRangeToWithDot() throws Exception {
@@ -25912,9 +25700,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     @Nested
                     @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/int")
                     @TestDataPath("$PROJECT_ROOT")
-                    @Tag("codegen")
-                    @Tag("k1Codegen")
                     @UseExtTestCaseGroupProvider()
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                     public class Int {
                         @Test
                         public void testAllFilesPresentInInt() throws Exception {
@@ -25949,9 +25736,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     @Nested
                     @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/explicitRangeToWithDot/long")
                     @TestDataPath("$PROJECT_ROOT")
-                    @Tag("codegen")
-                    @Tag("k1Codegen")
                     @UseExtTestCaseGroupProvider()
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                     public class Long {
                         @Test
                         public void testAllFilesPresentInLong() throws Exception {
@@ -25987,9 +25773,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/int")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class Int {
                     @Test
                     public void testAllFilesPresentInInt() throws Exception {
@@ -26024,9 +25809,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/multiDecl/forRange/long")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class Long {
                     @Test
                     public void testAllFilesPresentInLong() throws Exception {
@@ -26063,9 +25847,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/multifileClasses")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class MultifileClasses {
             @Test
             public void testAllFilesPresentInMultifileClasses() throws Exception {
@@ -26075,9 +25858,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/multifileClasses/optimized")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Optimized {
                 @Test
                 public void testAllFilesPresentInOptimized() throws Exception {
@@ -26089,9 +25871,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/multiplatform")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Multiplatform {
             @Test
             public void testAllFilesPresentInMultiplatform() throws Exception {
@@ -26119,9 +25900,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/multiplatform/defaultArguments")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class DefaultArguments {
                 @Test
                 public void testAllFilesPresentInDefaultArguments() throws Exception {
@@ -26276,9 +26056,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/multiplatform/exhaustiveness")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Exhaustiveness {
                 @Test
                 public void testAllFilesPresentInExhaustiveness() throws Exception {
@@ -26289,9 +26068,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/multiplatform/hmpp")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Hmpp {
                 @Test
                 public void testAllFilesPresentInHmpp() throws Exception {
@@ -26302,21 +26080,25 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/multiplatform/k2")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class K2 {
                 @Test
                 public void testAllFilesPresentInK2() throws Exception {
                     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/multiplatform/k2"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
                 }
 
+                @Test
+                @TestMetadata("anonymousObjectAndSpecificImplementationInDeserializedIr.kt")
+                public void testAnonymousObjectAndSpecificImplementationInDeserializedIr() throws Exception {
+                    runTest("compiler/testData/codegen/box/multiplatform/k2/anonymousObjectAndSpecificImplementationInDeserializedIr.kt");
+                }
+
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/annotations")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class Annotations {
                     @Test
                     public void testAllFilesPresentInAnnotations() throws Exception {
@@ -26333,9 +26115,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/basic")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class Basic {
                     @Test
                     @TestMetadata("accessToLocalClassFromBackend.kt")
@@ -26397,6 +26178,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     }
 
                     @Test
+                    @TestMetadata("expectActualNullabilityBasedOverloads.kt")
+                    public void testExpectActualNullabilityBasedOverloads() throws Exception {
+                        runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualNullabilityBasedOverloads.kt");
+                    }
+
+                    @Test
                     @TestMetadata("expectActualOverloads.kt")
                     public void testExpectActualOverloads() throws Exception {
                         runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualOverloads.kt");
@@ -26406,6 +26193,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     @TestMetadata("expectActualSimple.kt")
                     public void testExpectActualSimple() throws Exception {
                         runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualSimple.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("expectActualTypeParameters.kt")
+                    public void testExpectActualTypeParameters() throws Exception {
+                        runTest("compiler/testData/codegen/box/multiplatform/k2/basic/expectActualTypeParameters.kt");
                     }
 
                     @Test
@@ -26460,9 +26253,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/defaultArguments")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class DefaultArguments {
                     @Test
                     public void testAllFilesPresentInDefaultArguments() throws Exception {
@@ -26497,6 +26289,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     @TestMetadata("dispatchReceiverValue.kt")
                     public void testDispatchReceiverValue() throws Exception {
                         runTest("compiler/testData/codegen/box/multiplatform/k2/defaultArguments/dispatchReceiverValue.kt");
+                    }
+
+                    @Test
+                    @TestMetadata("expectPropertyAsDefaultArgument.kt")
+                    public void testExpectPropertyAsDefaultArgument() throws Exception {
+                        runTest("compiler/testData/codegen/box/multiplatform/k2/defaultArguments/expectPropertyAsDefaultArgument.kt");
                     }
 
                     @Test
@@ -26612,9 +26410,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/multiplatform/multiModule")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class MultiModule {
                 @Test
                 public void testAllFilesPresentInMultiModule() throws Exception {
@@ -26650,9 +26447,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/nonLocalReturns")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class NonLocalReturns {
             @Test
             public void testAllFilesPresentInNonLocalReturns() throws Exception {
@@ -26681,9 +26477,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/notNullAssertions")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class NotNullAssertions {
             @Test
             public void testAllFilesPresentInNotNullAssertions() throws Exception {
@@ -26694,9 +26489,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/nothingValue")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class NothingValue {
             @Test
             public void testAllFilesPresentInNothingValue() throws Exception {
@@ -26719,9 +26513,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/nullCheckOptimization")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class NullCheckOptimization {
             @Test
             public void testAllFilesPresentInNullCheckOptimization() throws Exception {
@@ -26768,9 +26561,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/objectIntrinsics")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class ObjectIntrinsics {
             @Test
             public void testAllFilesPresentInObjectIntrinsics() throws Exception {
@@ -26787,13 +26579,18 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/objects")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Objects {
             @Test
             public void testAllFilesPresentInObjects() throws Exception {
                 KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/objects"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
+
+            @Test
+            @TestMetadata("anonymousObjectAndContrvariantProjection.kt")
+            public void testAnonymousObjectAndContrvariantProjection() throws Exception {
+                runTest("compiler/testData/codegen/box/objects/anonymousObjectAndContrvariantProjection.kt");
             }
 
             @Test
@@ -27261,9 +27058,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/objects/companionObjectAccess")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class CompanionObjectAccess {
                 @Test
                 public void testAllFilesPresentInCompanionObjectAccess() throws Exception {
@@ -27369,9 +27165,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/objects/companionObjectAccess/multipleCompanionsWithAccessors")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class MultipleCompanionsWithAccessors {
                     @Test
                     @TestMetadata("accessFromInlineLambda.kt")
@@ -27454,9 +27249,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/objects/companionObjectAccess/primitiveCompanion")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class PrimitiveCompanion {
                     @Test
                     public void testAllFilesPresentInPrimitiveCompanion() throws Exception {
@@ -27511,9 +27305,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/operatorConventions")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class OperatorConventions {
             @Test
             public void testAllFilesPresentInOperatorConventions() throws Exception {
@@ -27673,9 +27466,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/operatorConventions/compareTo")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class CompareTo {
                 @Test
                 public void testAllFilesPresentInCompareTo() throws Exception {
@@ -27753,9 +27545,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/optimizations")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Optimizations {
             @Test
             public void testAllFilesPresentInOptimizations() throws Exception {
@@ -27772,9 +27563,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/package")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Package {
             @Test
             public void testAllFilesPresentInPackage() throws Exception {
@@ -27851,9 +27641,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/parametersMetadata")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class ParametersMetadata {
             @Test
             public void testAllFilesPresentInParametersMetadata() throws Exception {
@@ -27864,9 +27653,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/platformTypes")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class PlatformTypes {
             @Test
             public void testAllFilesPresentInPlatformTypes() throws Exception {
@@ -27876,9 +27664,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/platformTypes/primitives")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Primitives {
                 @Test
                 public void testAllFilesPresentInPrimitives() throws Exception {
@@ -28004,9 +27791,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/polymorphicSignature")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class PolymorphicSignature {
             @Test
             public void testAllFilesPresentInPolymorphicSignature() throws Exception {
@@ -28017,9 +27803,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/primitiveTypes")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class PrimitiveTypes {
             @Test
             public void testAllFilesPresentInPrimitiveTypes() throws Exception {
@@ -28383,9 +28168,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/primitiveTypes/equalityWithObject")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class EqualityWithObject {
                 @Test
                 public void testAllFilesPresentInEqualityWithObject() throws Exception {
@@ -28449,9 +28233,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/primitiveTypes/equalityWithObject/generated")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class Generated {
                     @Test
                     public void testAllFilesPresentInGenerated() throws Exception {
@@ -28571,9 +28354,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/primitiveTypes/numberToChar")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class NumberToChar {
                 @Test
                 @TestMetadata("abstractMethodInSuperinterface.kt")
@@ -28621,9 +28403,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/private")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Private {
             @Test
             public void testAllFilesPresentInPrivate() throws Exception {
@@ -28646,9 +28427,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/privateConstructors")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class PrivateConstructors {
             @Test
             public void testAllFilesPresentInPrivateConstructors() throws Exception {
@@ -28731,9 +28511,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/properties")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Properties {
             @Test
             @TestMetadata("accessToPrivateProperty.kt")
@@ -29211,9 +28990,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/properties/backingField")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class BackingField {
                 @Test
                 public void testAllFilesPresentInBackingField() throws Exception {
@@ -29224,9 +29002,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/properties/const")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Const {
                 @Test
                 public void testAllFilesPresentInConst() throws Exception {
@@ -29261,9 +29038,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/properties/lateinit")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Lateinit {
                 @Test
                 @TestMetadata("accessor.kt")
@@ -29363,9 +29139,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/properties/lateinit/isInitializedAndDeinitialize")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class IsInitializedAndDeinitialize {
                     @Test
                     public void testAllFilesPresentInIsInitializedAndDeinitialize() throws Exception {
@@ -29430,9 +29205,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/properties/lateinit/local")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class Local {
                     @Test
                     public void testAllFilesPresentInLocal() throws Exception {
@@ -29485,9 +29259,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/properties/lateinit/topLevel")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class TopLevel {
                     @Test
                     @TestMetadata("accessorException.kt")
@@ -29530,9 +29303,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/publishedApi")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class PublishedApi {
             @Test
             public void testAllFilesPresentInPublishedApi() throws Exception {
@@ -29555,9 +29327,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/ranges")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Ranges {
             @Test
             public void testAllFilesPresentInRanges() throws Exception {
@@ -29711,9 +29482,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/contains")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Contains {
                 @Test
                 public void testAllFilesPresentInContains() throws Exception {
@@ -30023,9 +29793,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/ranges/contains/generated")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class Generated {
                     @Test
                     public void testAllFilesPresentInGenerated() throws Exception {
@@ -30199,9 +29968,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/evaluationOrder")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class EvaluationOrder {
                 @Test
                 public void testAllFilesPresentInEvaluationOrder() throws Exception {
@@ -30265,9 +30033,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/ranges/evaluationOrder/stepped")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class Stepped {
                     @Test
                     public void testAllFilesPresentInStepped() throws Exception {
@@ -30277,9 +30044,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     @Nested
                     @TestMetadata("compiler/testData/codegen/box/ranges/evaluationOrder/stepped/forInDownTo")
                     @TestDataPath("$PROJECT_ROOT")
-                    @Tag("codegen")
-                    @Tag("k1Codegen")
                     @UseExtTestCaseGroupProvider()
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                     public class ForInDownTo {
                         @Test
                         public void testAllFilesPresentInForInDownTo() throws Exception {
@@ -30338,9 +30104,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     @Nested
                     @TestMetadata("compiler/testData/codegen/box/ranges/evaluationOrder/stepped/forInRangeLiteral")
                     @TestDataPath("$PROJECT_ROOT")
-                    @Tag("codegen")
-                    @Tag("k1Codegen")
                     @UseExtTestCaseGroupProvider()
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                     public class ForInRangeLiteral {
                         @Test
                         public void testAllFilesPresentInForInRangeLiteral() throws Exception {
@@ -30399,9 +30164,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     @Nested
                     @TestMetadata("compiler/testData/codegen/box/ranges/evaluationOrder/stepped/forInUntil")
                     @TestDataPath("$PROJECT_ROOT")
-                    @Tag("codegen")
-                    @Tag("k1Codegen")
                     @UseExtTestCaseGroupProvider()
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                     public class ForInUntil {
                         @Test
                         public void testAllFilesPresentInForInUntil() throws Exception {
@@ -30462,9 +30226,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/expression")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Expression {
                 @Test
                 public void testAllFilesPresentInExpression() throws Exception {
@@ -30661,9 +30424,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/forInDownTo")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class ForInDownTo {
                 @Test
                 public void testAllFilesPresentInForInDownTo() throws Exception {
@@ -30716,9 +30478,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/forInIndices")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class ForInIndices {
                 @Test
                 public void testAllFilesPresentInForInIndices() throws Exception {
@@ -30873,9 +30634,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/forInProgressionWithIndex")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class ForInProgressionWithIndex {
                 @Test
                 public void testAllFilesPresentInForInProgressionWithIndex() throws Exception {
@@ -30976,9 +30736,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/forInReversed")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class ForInReversed {
                 @Test
                 public void testAllFilesPresentInForInReversed() throws Exception {
@@ -31097,9 +30856,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/forInUntil")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class ForInUntil {
                 @Test
                 public void testAllFilesPresentInForInUntil() throws Exception {
@@ -31200,9 +30958,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/forWithPossibleOverflow")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class ForWithPossibleOverflow {
                 @Test
                 public void testAllFilesPresentInForWithPossibleOverflow() throws Exception {
@@ -31291,9 +31048,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/javaInterop")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class JavaInterop {
                 @Test
                 public void testAllFilesPresentInJavaInterop() throws Exception {
@@ -31303,9 +31059,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/ranges/javaInterop/withIndex")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class WithIndex {
                     @Test
                     public void testAllFilesPresentInWithIndex() throws Exception {
@@ -31317,9 +31072,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/literal")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Literal {
                 @Test
                 public void testAllFilesPresentInLiteral() throws Exception {
@@ -31516,9 +31270,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/nullableLoopParameter")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class NullableLoopParameter {
                 @Test
                 public void testAllFilesPresentInNullableLoopParameter() throws Exception {
@@ -31547,9 +31300,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/stepped")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Stepped {
                 @Test
                 public void testAllFilesPresentInStepped() throws Exception {
@@ -31559,9 +31311,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class Expression {
                     @Test
                     public void testAllFilesPresentInExpression() throws Exception {
@@ -31571,9 +31322,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     @Nested
                     @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/downTo")
                     @TestDataPath("$PROJECT_ROOT")
-                    @Tag("codegen")
-                    @Tag("k1Codegen")
                     @UseExtTestCaseGroupProvider()
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                     public class DownTo {
                         @Test
                         public void testAllFilesPresentInDownTo() throws Exception {
@@ -31679,9 +31429,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                         @Nested
                         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/downTo/nestedStep")
                         @TestDataPath("$PROJECT_ROOT")
-                        @Tag("codegen")
-                        @Tag("k1Codegen")
                         @UseExtTestCaseGroupProvider()
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                         public class NestedStep {
                             @Test
                             public void testAllFilesPresentInNestedStep() throws Exception {
@@ -31740,9 +31489,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                         @Nested
                         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/downTo/reversed")
                         @TestDataPath("$PROJECT_ROOT")
-                        @Tag("codegen")
-                        @Tag("k1Codegen")
                         @UseExtTestCaseGroupProvider()
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                         public class Reversed {
                             @Test
                             public void testAllFilesPresentInReversed() throws Exception {
@@ -31790,9 +31538,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     @Nested
                     @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/rangeTo")
                     @TestDataPath("$PROJECT_ROOT")
-                    @Tag("codegen")
-                    @Tag("k1Codegen")
                     @UseExtTestCaseGroupProvider()
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                     public class RangeTo {
                         @Test
                         public void testAllFilesPresentInRangeTo() throws Exception {
@@ -31898,9 +31645,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                         @Nested
                         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/rangeTo/nestedStep")
                         @TestDataPath("$PROJECT_ROOT")
-                        @Tag("codegen")
-                        @Tag("k1Codegen")
                         @UseExtTestCaseGroupProvider()
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                         public class NestedStep {
                             @Test
                             public void testAllFilesPresentInNestedStep() throws Exception {
@@ -31959,9 +31705,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                         @Nested
                         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/rangeTo/reversed")
                         @TestDataPath("$PROJECT_ROOT")
-                        @Tag("codegen")
-                        @Tag("k1Codegen")
                         @UseExtTestCaseGroupProvider()
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                         public class Reversed {
                             @Test
                             public void testAllFilesPresentInReversed() throws Exception {
@@ -32009,9 +31754,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     @Nested
                     @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil")
                     @TestDataPath("$PROJECT_ROOT")
-                    @Tag("codegen")
-                    @Tag("k1Codegen")
                     @UseExtTestCaseGroupProvider()
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                     public class RangeUntil {
                         @Test
                         public void testAllFilesPresentInRangeUntil() throws Exception {
@@ -32081,9 +31825,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                         @Nested
                         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/nestedStep")
                         @TestDataPath("$PROJECT_ROOT")
-                        @Tag("codegen")
-                        @Tag("k1Codegen")
                         @UseExtTestCaseGroupProvider()
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                         public class NestedStep {
                             @Test
                             public void testAllFilesPresentInNestedStep() throws Exception {
@@ -32142,9 +31885,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                         @Nested
                         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/rangeUntil/reversed")
                         @TestDataPath("$PROJECT_ROOT")
-                        @Tag("codegen")
-                        @Tag("k1Codegen")
                         @UseExtTestCaseGroupProvider()
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                         public class Reversed {
                             @Test
                             public void testAllFilesPresentInReversed() throws Exception {
@@ -32192,9 +31934,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     @Nested
                     @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/until")
                     @TestDataPath("$PROJECT_ROOT")
-                    @Tag("codegen")
-                    @Tag("k1Codegen")
                     @UseExtTestCaseGroupProvider()
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                     public class Until {
                         @Test
                         public void testAllFilesPresentInUntil() throws Exception {
@@ -32306,9 +32047,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                         @Nested
                         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/until/nestedStep")
                         @TestDataPath("$PROJECT_ROOT")
-                        @Tag("codegen")
-                        @Tag("k1Codegen")
                         @UseExtTestCaseGroupProvider()
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                         public class NestedStep {
                             @Test
                             public void testAllFilesPresentInNestedStep() throws Exception {
@@ -32367,9 +32107,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                         @Nested
                         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/expression/until/reversed")
                         @TestDataPath("$PROJECT_ROOT")
-                        @Tag("codegen")
-                        @Tag("k1Codegen")
                         @UseExtTestCaseGroupProvider()
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                         public class Reversed {
                             @Test
                             public void testAllFilesPresentInReversed() throws Exception {
@@ -32418,9 +32157,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class Literal {
                     @Test
                     public void testAllFilesPresentInLiteral() throws Exception {
@@ -32430,9 +32168,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     @Nested
                     @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/downTo")
                     @TestDataPath("$PROJECT_ROOT")
-                    @Tag("codegen")
-                    @Tag("k1Codegen")
                     @UseExtTestCaseGroupProvider()
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                     public class DownTo {
                         @Test
                         public void testAllFilesPresentInDownTo() throws Exception {
@@ -32538,9 +32275,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                         @Nested
                         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/downTo/nestedStep")
                         @TestDataPath("$PROJECT_ROOT")
-                        @Tag("codegen")
-                        @Tag("k1Codegen")
                         @UseExtTestCaseGroupProvider()
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                         public class NestedStep {
                             @Test
                             public void testAllFilesPresentInNestedStep() throws Exception {
@@ -32599,9 +32335,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                         @Nested
                         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/downTo/reversed")
                         @TestDataPath("$PROJECT_ROOT")
-                        @Tag("codegen")
-                        @Tag("k1Codegen")
                         @UseExtTestCaseGroupProvider()
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                         public class Reversed {
                             @Test
                             public void testAllFilesPresentInReversed() throws Exception {
@@ -32649,9 +32384,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     @Nested
                     @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/rangeTo")
                     @TestDataPath("$PROJECT_ROOT")
-                    @Tag("codegen")
-                    @Tag("k1Codegen")
                     @UseExtTestCaseGroupProvider()
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                     public class RangeTo {
                         @Test
                         public void testAllFilesPresentInRangeTo() throws Exception {
@@ -32757,9 +32491,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                         @Nested
                         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/rangeTo/nestedStep")
                         @TestDataPath("$PROJECT_ROOT")
-                        @Tag("codegen")
-                        @Tag("k1Codegen")
                         @UseExtTestCaseGroupProvider()
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                         public class NestedStep {
                             @Test
                             public void testAllFilesPresentInNestedStep() throws Exception {
@@ -32818,9 +32551,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                         @Nested
                         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/rangeTo/reversed")
                         @TestDataPath("$PROJECT_ROOT")
-                        @Tag("codegen")
-                        @Tag("k1Codegen")
                         @UseExtTestCaseGroupProvider()
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                         public class Reversed {
                             @Test
                             public void testAllFilesPresentInReversed() throws Exception {
@@ -32868,9 +32600,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     @Nested
                     @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil")
                     @TestDataPath("$PROJECT_ROOT")
-                    @Tag("codegen")
-                    @Tag("k1Codegen")
                     @UseExtTestCaseGroupProvider()
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                     public class RangeUntil {
                         @Test
                         public void testAllFilesPresentInRangeUntil() throws Exception {
@@ -32940,9 +32671,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                         @Nested
                         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/nestedStep")
                         @TestDataPath("$PROJECT_ROOT")
-                        @Tag("codegen")
-                        @Tag("k1Codegen")
                         @UseExtTestCaseGroupProvider()
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                         public class NestedStep {
                             @Test
                             public void testAllFilesPresentInNestedStep() throws Exception {
@@ -33001,9 +32731,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                         @Nested
                         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/rangeUntil/reversed")
                         @TestDataPath("$PROJECT_ROOT")
-                        @Tag("codegen")
-                        @Tag("k1Codegen")
                         @UseExtTestCaseGroupProvider()
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                         public class Reversed {
                             @Test
                             public void testAllFilesPresentInReversed() throws Exception {
@@ -33051,9 +32780,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     @Nested
                     @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/until")
                     @TestDataPath("$PROJECT_ROOT")
-                    @Tag("codegen")
-                    @Tag("k1Codegen")
                     @UseExtTestCaseGroupProvider()
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                     public class Until {
                         @Test
                         public void testAllFilesPresentInUntil() throws Exception {
@@ -33165,9 +32893,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                         @Nested
                         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/until/nestedStep")
                         @TestDataPath("$PROJECT_ROOT")
-                        @Tag("codegen")
-                        @Tag("k1Codegen")
                         @UseExtTestCaseGroupProvider()
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                         public class NestedStep {
                             @Test
                             public void testAllFilesPresentInNestedStep() throws Exception {
@@ -33226,9 +32953,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                         @Nested
                         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/literal/until/reversed")
                         @TestDataPath("$PROJECT_ROOT")
-                        @Tag("codegen")
-                        @Tag("k1Codegen")
                         @UseExtTestCaseGroupProvider()
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                         public class Reversed {
                             @Test
                             public void testAllFilesPresentInReversed() throws Exception {
@@ -33277,9 +33003,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class Unsigned {
                     @Test
                     public void testAllFilesPresentInUnsigned() throws Exception {
@@ -33289,9 +33014,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     @Nested
                     @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression")
                     @TestDataPath("$PROJECT_ROOT")
-                    @Tag("codegen")
-                    @Tag("k1Codegen")
                     @UseExtTestCaseGroupProvider()
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                     public class Expression {
                         @Test
                         public void testAllFilesPresentInExpression() throws Exception {
@@ -33301,9 +33025,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                         @Nested
                         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo")
                         @TestDataPath("$PROJECT_ROOT")
-                        @Tag("codegen")
-                        @Tag("k1Codegen")
                         @UseExtTestCaseGroupProvider()
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                         public class DownTo {
                             @Test
                             public void testAllFilesPresentInDownTo() throws Exception {
@@ -33409,9 +33132,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                             @Nested
                             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/nestedStep")
                             @TestDataPath("$PROJECT_ROOT")
-                            @Tag("codegen")
-                            @Tag("k1Codegen")
                             @UseExtTestCaseGroupProvider()
+                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                             public class NestedStep {
                                 @Test
                                 public void testAllFilesPresentInNestedStep() throws Exception {
@@ -33470,9 +33192,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                             @Nested
                             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/downTo/reversed")
                             @TestDataPath("$PROJECT_ROOT")
-                            @Tag("codegen")
-                            @Tag("k1Codegen")
                             @UseExtTestCaseGroupProvider()
+                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                             public class Reversed {
                                 @Test
                                 public void testAllFilesPresentInReversed() throws Exception {
@@ -33520,9 +33241,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                         @Nested
                         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo")
                         @TestDataPath("$PROJECT_ROOT")
-                        @Tag("codegen")
-                        @Tag("k1Codegen")
                         @UseExtTestCaseGroupProvider()
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                         public class RangeTo {
                             @Test
                             public void testAllFilesPresentInRangeTo() throws Exception {
@@ -33628,9 +33348,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                             @Nested
                             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/nestedStep")
                             @TestDataPath("$PROJECT_ROOT")
-                            @Tag("codegen")
-                            @Tag("k1Codegen")
                             @UseExtTestCaseGroupProvider()
+                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                             public class NestedStep {
                                 @Test
                                 public void testAllFilesPresentInNestedStep() throws Exception {
@@ -33689,9 +33408,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                             @Nested
                             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeTo/reversed")
                             @TestDataPath("$PROJECT_ROOT")
-                            @Tag("codegen")
-                            @Tag("k1Codegen")
                             @UseExtTestCaseGroupProvider()
+                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                             public class Reversed {
                                 @Test
                                 public void testAllFilesPresentInReversed() throws Exception {
@@ -33739,9 +33457,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                         @Nested
                         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil")
                         @TestDataPath("$PROJECT_ROOT")
-                        @Tag("codegen")
-                        @Tag("k1Codegen")
                         @UseExtTestCaseGroupProvider()
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                         public class RangeUntil {
                             @Test
                             public void testAllFilesPresentInRangeUntil() throws Exception {
@@ -33811,9 +33528,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                             @Nested
                             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/nestedStep")
                             @TestDataPath("$PROJECT_ROOT")
-                            @Tag("codegen")
-                            @Tag("k1Codegen")
                             @UseExtTestCaseGroupProvider()
+                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                             public class NestedStep {
                                 @Test
                                 public void testAllFilesPresentInNestedStep() throws Exception {
@@ -33872,9 +33588,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                             @Nested
                             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/rangeUntil/reversed")
                             @TestDataPath("$PROJECT_ROOT")
-                            @Tag("codegen")
-                            @Tag("k1Codegen")
                             @UseExtTestCaseGroupProvider()
+                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                             public class Reversed {
                                 @Test
                                 public void testAllFilesPresentInReversed() throws Exception {
@@ -33922,9 +33637,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                         @Nested
                         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until")
                         @TestDataPath("$PROJECT_ROOT")
-                        @Tag("codegen")
-                        @Tag("k1Codegen")
                         @UseExtTestCaseGroupProvider()
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                         public class Until {
                             @Test
                             public void testAllFilesPresentInUntil() throws Exception {
@@ -34036,9 +33750,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                             @Nested
                             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/nestedStep")
                             @TestDataPath("$PROJECT_ROOT")
-                            @Tag("codegen")
-                            @Tag("k1Codegen")
                             @UseExtTestCaseGroupProvider()
+                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                             public class NestedStep {
                                 @Test
                                 public void testAllFilesPresentInNestedStep() throws Exception {
@@ -34097,9 +33810,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                             @Nested
                             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/expression/until/reversed")
                             @TestDataPath("$PROJECT_ROOT")
-                            @Tag("codegen")
-                            @Tag("k1Codegen")
                             @UseExtTestCaseGroupProvider()
+                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                             public class Reversed {
                                 @Test
                                 public void testAllFilesPresentInReversed() throws Exception {
@@ -34148,9 +33860,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     @Nested
                     @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal")
                     @TestDataPath("$PROJECT_ROOT")
-                    @Tag("codegen")
-                    @Tag("k1Codegen")
                     @UseExtTestCaseGroupProvider()
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                     public class Literal {
                         @Test
                         public void testAllFilesPresentInLiteral() throws Exception {
@@ -34160,9 +33871,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                         @Nested
                         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo")
                         @TestDataPath("$PROJECT_ROOT")
-                        @Tag("codegen")
-                        @Tag("k1Codegen")
                         @UseExtTestCaseGroupProvider()
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                         public class DownTo {
                             @Test
                             public void testAllFilesPresentInDownTo() throws Exception {
@@ -34268,9 +33978,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                             @Nested
                             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/nestedStep")
                             @TestDataPath("$PROJECT_ROOT")
-                            @Tag("codegen")
-                            @Tag("k1Codegen")
                             @UseExtTestCaseGroupProvider()
+                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                             public class NestedStep {
                                 @Test
                                 public void testAllFilesPresentInNestedStep() throws Exception {
@@ -34329,9 +34038,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                             @Nested
                             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/downTo/reversed")
                             @TestDataPath("$PROJECT_ROOT")
-                            @Tag("codegen")
-                            @Tag("k1Codegen")
                             @UseExtTestCaseGroupProvider()
+                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                             public class Reversed {
                                 @Test
                                 public void testAllFilesPresentInReversed() throws Exception {
@@ -34379,9 +34087,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                         @Nested
                         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo")
                         @TestDataPath("$PROJECT_ROOT")
-                        @Tag("codegen")
-                        @Tag("k1Codegen")
                         @UseExtTestCaseGroupProvider()
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                         public class RangeTo {
                             @Test
                             public void testAllFilesPresentInRangeTo() throws Exception {
@@ -34487,9 +34194,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                             @Nested
                             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/nestedStep")
                             @TestDataPath("$PROJECT_ROOT")
-                            @Tag("codegen")
-                            @Tag("k1Codegen")
                             @UseExtTestCaseGroupProvider()
+                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                             public class NestedStep {
                                 @Test
                                 public void testAllFilesPresentInNestedStep() throws Exception {
@@ -34548,9 +34254,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                             @Nested
                             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeTo/reversed")
                             @TestDataPath("$PROJECT_ROOT")
-                            @Tag("codegen")
-                            @Tag("k1Codegen")
                             @UseExtTestCaseGroupProvider()
+                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                             public class Reversed {
                                 @Test
                                 public void testAllFilesPresentInReversed() throws Exception {
@@ -34598,9 +34303,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                         @Nested
                         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil")
                         @TestDataPath("$PROJECT_ROOT")
-                        @Tag("codegen")
-                        @Tag("k1Codegen")
                         @UseExtTestCaseGroupProvider()
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                         public class RangeUntil {
                             @Test
                             public void testAllFilesPresentInRangeUntil() throws Exception {
@@ -34670,9 +34374,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                             @Nested
                             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/nestedStep")
                             @TestDataPath("$PROJECT_ROOT")
-                            @Tag("codegen")
-                            @Tag("k1Codegen")
                             @UseExtTestCaseGroupProvider()
+                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                             public class NestedStep {
                                 @Test
                                 public void testAllFilesPresentInNestedStep() throws Exception {
@@ -34731,9 +34434,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                             @Nested
                             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/rangeUntil/reversed")
                             @TestDataPath("$PROJECT_ROOT")
-                            @Tag("codegen")
-                            @Tag("k1Codegen")
                             @UseExtTestCaseGroupProvider()
+                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                             public class Reversed {
                                 @Test
                                 public void testAllFilesPresentInReversed() throws Exception {
@@ -34781,9 +34483,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                         @Nested
                         @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until")
                         @TestDataPath("$PROJECT_ROOT")
-                        @Tag("codegen")
-                        @Tag("k1Codegen")
                         @UseExtTestCaseGroupProvider()
+                        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                         public class Until {
                             @Test
                             public void testAllFilesPresentInUntil() throws Exception {
@@ -34895,9 +34596,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                             @Nested
                             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/nestedStep")
                             @TestDataPath("$PROJECT_ROOT")
-                            @Tag("codegen")
-                            @Tag("k1Codegen")
                             @UseExtTestCaseGroupProvider()
+                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                             public class NestedStep {
                                 @Test
                                 public void testAllFilesPresentInNestedStep() throws Exception {
@@ -34956,9 +34656,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                             @Nested
                             @TestMetadata("compiler/testData/codegen/box/ranges/stepped/unsigned/literal/until/reversed")
                             @TestDataPath("$PROJECT_ROOT")
-                            @Tag("codegen")
-                            @Tag("k1Codegen")
                             @UseExtTestCaseGroupProvider()
+                            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                             public class Reversed {
                                 @Test
                                 public void testAllFilesPresentInReversed() throws Exception {
@@ -35009,9 +34708,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/ranges/unsigned")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Unsigned {
                 @Test
                 public void testAllFilesPresentInUnsigned() throws Exception {
@@ -35057,9 +34755,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/ranges/unsigned/expression")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class Expression {
                     @Test
                     public void testAllFilesPresentInExpression() throws Exception {
@@ -35256,9 +34953,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/ranges/unsigned/literal")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class Literal {
                     @Test
                     public void testAllFilesPresentInLiteral() throws Exception {
@@ -35455,9 +35151,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/ranges/unsigned/nullableLoopParameter")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class NullableLoopParameter {
                     @Test
                     public void testAllFilesPresentInNullableLoopParameter() throws Exception {
@@ -35488,9 +35183,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/recursiveRawTypes")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class RecursiveRawTypes {
             @Test
             public void testAllFilesPresentInRecursiveRawTypes() throws Exception {
@@ -35501,9 +35195,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reflection")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Reflection {
             @Test
             public void testAllFilesPresentInReflection() throws Exception {
@@ -35513,9 +35206,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/reflection/annotations")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Annotations {
                 @Test
                 public void testAllFilesPresentInAnnotations() throws Exception {
@@ -35597,9 +35289,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/reflection/annotations/onTypes")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class OnTypes {
                     @Test
                     public void testAllFilesPresentInOnTypes() throws Exception {
@@ -35610,9 +35301,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/reflection/annotations/repeatable")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class Repeatable {
                     @Test
                     public void testAllFilesPresentInRepeatable() throws Exception {
@@ -35624,9 +35314,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/reflection/builtins")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Builtins {
                 @Test
                 public void testAllFilesPresentInBuiltins() throws Exception {
@@ -35649,9 +35338,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/reflection/call")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Call {
                 @Test
                 public void testAllFilesPresentInCall() throws Exception {
@@ -35733,9 +35421,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/reflection/call/bound")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class Bound {
                     @Test
                     public void testAllFilesPresentInBound() throws Exception {
@@ -35794,9 +35481,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/reflection/call/inlineClasses")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class InlineClasses {
                     @Test
                     public void testAllFilesPresentInInlineClasses() throws Exception {
@@ -35824,9 +35510,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     @Nested
                     @TestMetadata("compiler/testData/codegen/box/reflection/call/inlineClasses/nonNullObject")
                     @TestDataPath("$PROJECT_ROOT")
-                    @Tag("codegen")
-                    @Tag("k1Codegen")
                     @UseExtTestCaseGroupProvider()
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                     public class NonNullObject {
                         @Test
                         public void testAllFilesPresentInNonNullObject() throws Exception {
@@ -35837,9 +35522,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     @Nested
                     @TestMetadata("compiler/testData/codegen/box/reflection/call/inlineClasses/nullableObject")
                     @TestDataPath("$PROJECT_ROOT")
-                    @Tag("codegen")
-                    @Tag("k1Codegen")
                     @UseExtTestCaseGroupProvider()
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                     public class NullableObject {
                         @Test
                         public void testAllFilesPresentInNullableObject() throws Exception {
@@ -35850,9 +35534,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     @Nested
                     @TestMetadata("compiler/testData/codegen/box/reflection/call/inlineClasses/primitive")
                     @TestDataPath("$PROJECT_ROOT")
-                    @Tag("codegen")
-                    @Tag("k1Codegen")
                     @UseExtTestCaseGroupProvider()
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                     public class Primitive {
                         @Test
                         public void testAllFilesPresentInPrimitive() throws Exception {
@@ -35864,9 +35547,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/reflection/call/valueClasses")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class ValueClasses {
                     @Test
                     public void testAllFilesPresentInValueClasses() throws Exception {
@@ -35878,9 +35560,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/reflection/callBy")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class CallBy {
                 @Test
                 public void testAllFilesPresentInCallBy() throws Exception {
@@ -36023,9 +35704,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/reflection/classLiterals")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class ClassLiterals {
                 @Test
                 public void testAllFilesPresentInClassLiterals() throws Exception {
@@ -36066,9 +35746,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/reflection/classes")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Classes {
                 @Test
                 public void testAllFilesPresentInClasses() throws Exception {
@@ -36109,9 +35788,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/reflection/constructors")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Constructors {
                 @Test
                 public void testAllFilesPresentInConstructors() throws Exception {
@@ -36152,9 +35830,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/reflection/createAnnotation")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class CreateAnnotation {
                 @Test
                 public void testAllFilesPresentInCreateAnnotation() throws Exception {
@@ -36213,9 +35890,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/reflection/enclosing")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Enclosing {
                 @Test
                 public void testAllFilesPresentInEnclosing() throws Exception {
@@ -36226,9 +35902,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/reflection/functions")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Functions {
                 @Test
                 public void testAllFilesPresentInFunctions() throws Exception {
@@ -36263,9 +35938,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/reflection/genericSignature")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class GenericSignature {
                 @Test
                 public void testAllFilesPresentInGenericSignature() throws Exception {
@@ -36282,9 +35956,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/reflection/isInstance")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class IsInstance {
                 @Test
                 public void testAllFilesPresentInIsInstance() throws Exception {
@@ -36295,9 +35968,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/reflection/kClassInAnnotation")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class KClassInAnnotation {
                 @Test
                 public void testAllFilesPresentInKClassInAnnotation() throws Exception {
@@ -36320,9 +35992,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/reflection/lambdaClasses")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class LambdaClasses {
                 @Test
                 public void testAllFilesPresentInLambdaClasses() throws Exception {
@@ -36333,9 +36004,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/reflection/mapping")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Mapping {
                 @Test
                 public void testAllFilesPresentInMapping() throws Exception {
@@ -36345,9 +36015,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/reflection/mapping/fakeOverrides")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class FakeOverrides {
                     @Test
                     public void testAllFilesPresentInFakeOverrides() throws Exception {
@@ -36358,9 +36027,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/reflection/mapping/inlineClasses")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class InlineClasses {
                     @Test
                     public void testAllFilesPresentInInlineClasses() throws Exception {
@@ -36371,9 +36039,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/reflection/mapping/jvmStatic")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class JvmStatic {
                     @Test
                     public void testAllFilesPresentInJvmStatic() throws Exception {
@@ -36384,9 +36051,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/reflection/mapping/types")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class Types {
                     @Test
                     public void testAllFilesPresentInTypes() throws Exception {
@@ -36397,9 +36063,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/reflection/mapping/valueClasses")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class ValueClasses {
                     @Test
                     public void testAllFilesPresentInValueClasses() throws Exception {
@@ -36411,9 +36076,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/reflection/methodsFromAny")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class MethodsFromAny {
                 @Test
                 public void testAllFilesPresentInMethodsFromAny() throws Exception {
@@ -36538,9 +36202,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/reflection/modifiers")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Modifiers {
                 @Test
                 public void testAllFilesPresentInModifiers() throws Exception {
@@ -36593,9 +36256,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/reflection/multifileClasses")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class MultifileClasses {
                 @Test
                 public void testAllFilesPresentInMultifileClasses() throws Exception {
@@ -36606,9 +36268,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/reflection/noReflectAtRuntime")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class NoReflectAtRuntime {
                 @Test
                 public void testAllFilesPresentInNoReflectAtRuntime() throws Exception {
@@ -36636,9 +36297,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/reflection/noReflectAtRuntime/methodsFromAny")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class MethodsFromAny {
                     @Test
                     public void testAllFilesPresentInMethodsFromAny() throws Exception {
@@ -36662,9 +36322,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/reflection/parameters")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Parameters {
                 @Test
                 public void testAllFilesPresentInParameters() throws Exception {
@@ -36729,9 +36388,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/reflection/properties")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Properties {
                 @Test
                 public void testAllFilesPresentInProperties() throws Exception {
@@ -36813,9 +36471,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/reflection/properties/accessors")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class Accessors {
                     @Test
                     @TestMetadata("accessorNames.kt")
@@ -36856,9 +36513,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/reflection/properties/getDelegate")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class GetDelegate {
                     @Test
                     public void testAllFilesPresentInGetDelegate() throws Exception {
@@ -36868,9 +36524,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     @Nested
                     @TestMetadata("compiler/testData/codegen/box/reflection/properties/getDelegate/method")
                     @TestDataPath("$PROJECT_ROOT")
-                    @Tag("codegen")
-                    @Tag("k1Codegen")
                     @UseExtTestCaseGroupProvider()
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                     public class Method {
                         @Test
                         public void testAllFilesPresentInMethod() throws Exception {
@@ -36882,9 +36537,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/reflection/properties/jvmField")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class JvmField {
                     @Test
                     public void testAllFilesPresentInJvmField() throws Exception {
@@ -36895,9 +36549,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/reflection/properties/localDelegated")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class LocalDelegated {
                     @Test
                     public void testAllFilesPresentInLocalDelegated() throws Exception {
@@ -36909,9 +36562,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/reflection/supertypes")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Supertypes {
                 @Test
                 public void testAllFilesPresentInSupertypes() throws Exception {
@@ -36940,9 +36592,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/reflection/typeOf")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class TypeOf {
                 @Test
                 public void testAllFilesPresentInTypeOf() throws Exception {
@@ -37000,9 +36651,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/reflection/typeOf/js")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class Js {
                     @Test
                     public void testAllFilesPresentInJs() throws Exception {
@@ -37013,9 +36663,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/reflection/typeOf/noReflect")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class NoReflect {
                     @Test
                     public void testAllFilesPresentInNoReflect() throws Exception {
@@ -37031,9 +36680,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                     @Nested
                     @TestMetadata("compiler/testData/codegen/box/reflection/typeOf/noReflect/nonReifiedTypeParameters")
                     @TestDataPath("$PROJECT_ROOT")
-                    @Tag("codegen")
-                    @Tag("k1Codegen")
                     @UseExtTestCaseGroupProvider()
+                    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                     public class NonReifiedTypeParameters {
                         @Test
                         public void testAllFilesPresentInNonReifiedTypeParameters() throws Exception {
@@ -37045,9 +36693,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class NonReifiedTypeParameters {
                     @Test
                     public void testAllFilesPresentInNonReifiedTypeParameters() throws Exception {
@@ -37125,9 +36772,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/reflection/typeParameters")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class TypeParameters {
                 @Test
                 public void testAllFilesPresentInTypeParameters() throws Exception {
@@ -37156,9 +36802,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/reflection/types")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Types {
                 @Test
                 public void testAllFilesPresentInTypes() throws Exception {
@@ -37198,9 +36843,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/reflection/types/createType")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class CreateType {
                     @Test
                     public void testAllFilesPresentInCreateType() throws Exception {
@@ -37241,9 +36885,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/reflection/types/subtyping")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class Subtyping {
                     @Test
                     public void testAllFilesPresentInSubtyping() throws Exception {
@@ -37274,9 +36917,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/regressions")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Regressions {
             @Test
             public void testAllFilesPresentInRegressions() throws Exception {
@@ -37707,9 +37349,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/reified")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Reified {
             @Test
             public void testAllFilesPresentInReified() throws Exception {
@@ -37845,9 +37486,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/reified/arraysReification")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class ArraysReification {
                 @Test
                 public void testAllFilesPresentInArraysReification() throws Exception {
@@ -37883,9 +37523,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/safeCall")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class SafeCall {
             @Test
             public void testAllFilesPresentInSafeCall() throws Exception {
@@ -37998,9 +37637,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/sam")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Sam {
             @Test
             public void testAllFilesPresentInSam() throws Exception {
@@ -38028,9 +37666,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/sam/adapters")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Adapters {
                 @Test
                 public void testAllFilesPresentInAdapters() throws Exception {
@@ -38040,9 +37677,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/box/sam/adapters/operators")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class Operators {
                     @Test
                     public void testAllFilesPresentInOperators() throws Exception {
@@ -38054,9 +37690,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/sam/approximation")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Approximation {
                 @Test
                 public void testAllFilesPresentInApproximation() throws Exception {
@@ -38091,9 +37726,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/sam/constructors")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Constructors {
                 @Test
                 public void testAllFilesPresentInConstructors() throws Exception {
@@ -38122,9 +37756,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/sam/equality")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Equality {
                 @Test
                 public void testAllFilesPresentInEquality() throws Exception {
@@ -38135,9 +37768,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/sam/javaSamWithEqualsHashCode")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class JavaSamWithEqualsHashCode {
                 @Test
                 public void testAllFilesPresentInJavaSamWithEqualsHashCode() throws Exception {
@@ -38149,9 +37781,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/sameFileInSourceAndDependencies")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class SameFileInSourceAndDependencies {
             @Test
             public void testAllFilesPresentInSameFileInSourceAndDependencies() throws Exception {
@@ -38216,9 +37847,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/script")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Script {
             @Test
             public void testAllFilesPresentInScript() throws Exception {
@@ -38229,9 +37859,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/sealed")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Sealed {
             @Test
             public void testAllFilesPresentInSealed() throws Exception {
@@ -38248,6 +37877,18 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @TestMetadata("kt49752.kt")
             public void testKt49752() throws Exception {
                 runTest("compiler/testData/codegen/box/sealed/kt49752.kt");
+            }
+
+            @Test
+            @TestMetadata("kt54028.kt")
+            public void testKt54028() throws Exception {
+                runTest("compiler/testData/codegen/box/sealed/kt54028.kt");
+            }
+
+            @Test
+            @TestMetadata("kt54028_cursed.kt")
+            public void testKt54028_cursed() throws Exception {
+                runTest("compiler/testData/codegen/box/sealed/kt54028_cursed.kt");
             }
 
             @Test
@@ -38278,9 +37919,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/secondaryConstructors")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class SecondaryConstructors {
             @Test
             @TestMetadata("accessToCompanion.kt")
@@ -38475,11 +38115,22 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/size")
+        @TestDataPath("$PROJECT_ROOT")
+        @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
+        public class Size {
+            @Test
+            public void testAllFilesPresentInSize() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/size"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/smap")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Smap {
             @Test
             public void testAllFilesPresentInSmap() throws Exception {
@@ -38490,9 +38141,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/smartCasts")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class SmartCasts {
             @Test
             public void testAllFilesPresentInSmartCasts() throws Exception {
@@ -38653,9 +38303,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/specialBuiltins")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class SpecialBuiltins {
             @Test
             public void testAllFilesPresentInSpecialBuiltins() throws Exception {
@@ -38810,9 +38459,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/statics")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Statics {
             @Test
             public void testAllFilesPresentInStatics() throws Exception {
@@ -38871,9 +38519,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/storeStackBeforeInline")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class StoreStackBeforeInline {
             @Test
             public void testAllFilesPresentInStoreStackBeforeInline() throws Exception {
@@ -38914,9 +38561,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/strings")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Strings {
             @Test
             public void testAllFilesPresentInStrings() throws Exception {
@@ -39143,9 +38789,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/super")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Super {
             @Test
             public void testAllFilesPresentInSuper() throws Exception {
@@ -39335,9 +38980,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/super/superConstructor")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class SuperConstructor {
                 @Test
                 public void testAllFilesPresentInSuperConstructor() throws Exception {
@@ -39389,11 +39033,28 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         }
 
         @Nested
+        @TestMetadata("compiler/testData/codegen/box/suppressions")
+        @TestDataPath("$PROJECT_ROOT")
+        @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
+        public class Suppressions {
+            @Test
+            public void testAllFilesPresentInSuppressions() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/suppressions"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+            }
+
+            @Test
+            @TestMetadata("suppressInvisible.kt")
+            public void testSuppressInvisible() throws Exception {
+                runTest("compiler/testData/codegen/box/suppressions/suppressInvisible.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/codegen/box/suspendConversion")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class SuspendConversion {
             @Test
             public void testAllFilesPresentInSuspendConversion() throws Exception {
@@ -39476,9 +39137,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/synchronized")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Synchronized {
             @Test
             public void testAllFilesPresentInSynchronized() throws Exception {
@@ -39489,9 +39149,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/syntheticAccessors")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class SyntheticAccessors {
             @Test
             @TestMetadata("accessorForAbstractProtected.kt")
@@ -39615,9 +39274,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/syntheticAccessors/protectedJavaFieldAccessor")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class ProtectedJavaFieldAccessor {
                 @Test
                 public void testAllFilesPresentInProtectedJavaFieldAccessor() throws Exception {
@@ -39628,9 +39286,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/syntheticAccessors/protectedMemberReferenceAccessor")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class ProtectedMemberReferenceAccessor {
                 @Test
                 public void testAllFilesPresentInProtectedMemberReferenceAccessor() throws Exception {
@@ -39666,9 +39323,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/syntheticExtensions")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class SyntheticExtensions {
             @Test
             public void testAllFilesPresentInSyntheticExtensions() throws Exception {
@@ -39679,9 +39335,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/throws")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Throws {
             @Test
             public void testAllFilesPresentInThrows() throws Exception {
@@ -39692,9 +39347,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/toArray")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class ToArray {
             @Test
             public void testAllFilesPresentInToArray() throws Exception {
@@ -39723,9 +39377,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/topLevelInitializtion")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class TopLevelInitializtion {
             @Test
             public void testAllFilesPresentInTopLevelInitializtion() throws Exception {
@@ -39766,9 +39419,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/topLevelPrivate")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class TopLevelPrivate {
             @Test
             public void testAllFilesPresentInTopLevelPrivate() throws Exception {
@@ -39791,9 +39443,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/trailingComma")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class TrailingComma {
             @Test
             public void testAllFilesPresentInTrailingComma() throws Exception {
@@ -39810,9 +39461,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/traits")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Traits {
             @Test
             @TestMetadata("abstractClassWithFakeOverride.kt")
@@ -40027,9 +39677,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/typeInfo")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class TypeInfo {
             @Test
             public void testAllFilesPresentInTypeInfo() throws Exception {
@@ -40076,9 +39725,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/typeMapping")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class TypeMapping {
             @Test
             public void testAllFilesPresentInTypeMapping() throws Exception {
@@ -40131,9 +39779,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/typealias")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Typealias {
             @Test
             public void testAllFilesPresentInTypealias() throws Exception {
@@ -40288,9 +39935,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/unaryOp")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class UnaryOp {
             @Test
             public void testAllFilesPresentInUnaryOp() throws Exception {
@@ -40337,9 +39983,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/underscoredTypeArguments")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class UnderscoredTypeArguments {
             @Test
             public void testAllFilesPresentInUnderscoredTypeArguments() throws Exception {
@@ -40374,9 +40019,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/unit")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Unit {
             @Test
             public void testAllFilesPresentInUnit() throws Exception {
@@ -40471,9 +40115,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/unsignedTypes")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class UnsignedTypes {
             @Test
             public void testAllFilesPresentInUnsignedTypes() throws Exception {
@@ -40550,6 +40193,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @TestMetadata("forInUnsignedUntil.kt")
             public void testForInUnsignedUntil() throws Exception {
                 runTest("compiler/testData/codegen/box/unsignedTypes/forInUnsignedUntil.kt");
+            }
+
+            @Test
+            @TestMetadata("implicitIntegerCoercionNamedArg.kt")
+            public void testImplicitIntegerCoercionNamedArg() throws Exception {
+                runTest("compiler/testData/codegen/box/unsignedTypes/implicitIntegerCoercionNamedArg.kt");
             }
 
             @Test
@@ -40741,9 +40390,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/unsignedTypes/jvm8Intrinsics")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Jvm8Intrinsics {
                 @Test
                 public void testAllFilesPresentInJvm8Intrinsics() throws Exception {
@@ -40755,9 +40403,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/valueClasses")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class ValueClasses {
             @Test
             public void testAllFilesPresentInValueClasses() throws Exception {
@@ -40768,9 +40415,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/vararg")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Vararg {
             @Test
             public void testAllFilesPresentInVararg() throws Exception {
@@ -40877,9 +40523,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/volatile")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Volatile {
             @Test
             public void testAllFilesPresentInVolatile() throws Exception {
@@ -40968,9 +40613,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/box/when")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class When {
             @Test
             public void testAllFilesPresentInWhen() throws Exception {
@@ -41244,9 +40888,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/when/enumOptimization")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class EnumOptimization {
                 @Test
                 public void testAllFilesPresentInEnumOptimization() throws Exception {
@@ -41383,9 +41026,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/when/stringOptimization")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class StringOptimization {
                 @Test
                 public void testAllFilesPresentInStringOptimization() throws Exception {
@@ -41450,9 +41092,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/box/when/whenSubjectVariable")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class WhenSubjectVariable {
                 @Test
                 public void testAllFilesPresentInWhenSubjectVariable() throws Exception {
@@ -41573,9 +41214,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
     @Nested
     @TestMetadata("compiler/testData/codegen/boxInline")
     @TestDataPath("$PROJECT_ROOT")
-    @Tag("codegen")
-    @Tag("k1Codegen")
     @UseExtTestCaseGroupProvider()
+    @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
     public class BoxInline {
         @Test
         public void testAllFilesPresentInBoxInline() throws Exception {
@@ -41585,9 +41225,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/annotations")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Annotations {
             @Test
             public void testAllFilesPresentInAnnotations() throws Exception {
@@ -41610,9 +41249,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class AnonymousObject {
             @Test
             public void testAllFilesPresentInAnonymousObject() throws Exception {
@@ -42012,9 +41650,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/enumEntries")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class EnumEntries {
                 @Test
                 public void testAllFilesPresentInEnumEntries() throws Exception {
@@ -42025,9 +41662,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/enumWhen")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class EnumWhen {
                 @Test
                 public void testAllFilesPresentInEnumWhen() throws Exception {
@@ -42062,9 +41698,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/properRecapturing")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class ProperRecapturing {
                 @Test
                 public void testAllFilesPresentInProperRecapturing() throws Exception {
@@ -42111,9 +41746,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/properRecapturingInClass")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class ProperRecapturingInClass {
                 @Test
                 public void testAllFilesPresentInProperRecapturingInClass() throws Exception {
@@ -42196,9 +41830,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/sam")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Sam {
                 @Test
                 public void testAllFilesPresentInSam() throws Exception {
@@ -42209,9 +41842,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/boxInline/anonymousObject/twoCapturedReceivers")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class TwoCapturedReceivers {
                 @Test
                 public void testAllFilesPresentInTwoCapturedReceivers() throws Exception {
@@ -42265,9 +41897,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/argumentOrder")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class ArgumentOrder {
             @Test
             public void testAllFilesPresentInArgumentOrder() throws Exception {
@@ -42362,9 +41993,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/arrayConvention")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class ArrayConvention {
             @Test
             public void testAllFilesPresentInArrayConvention() throws Exception {
@@ -42411,9 +42041,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/assert")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Assert {
             @Test
             public void testAllFilesPresentInAssert() throws Exception {
@@ -42424,9 +42053,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/builders")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Builders {
             @Test
             public void testAllFilesPresentInBuilders() throws Exception {
@@ -42437,9 +42065,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/bytecodePreprocessing")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class BytecodePreprocessing {
             @Test
             public void testAllFilesPresentInBytecodePreprocessing() throws Exception {
@@ -42450,9 +42077,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/callableReference")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class CallableReference {
             @Test
             @TestMetadata("adapted.kt")
@@ -42558,9 +42184,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/boxInline/callableReference/adaptedReferences")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class AdaptedReferences {
                 @Test
                 public void testAllFilesPresentInAdaptedReferences() throws Exception {
@@ -42607,9 +42232,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/boxInline/callableReference/bound")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Bound {
                 @Test
                 public void testAllFilesPresentInBound() throws Exception {
@@ -42777,9 +42401,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/capture")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Capture {
             @Test
             public void testAllFilesPresentInCapture() throws Exception {
@@ -42856,9 +42479,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/complex")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Complex {
             @Test
             public void testAllFilesPresentInComplex() throws Exception {
@@ -42905,9 +42527,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/complexStack")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class ComplexStack {
             @Test
             public void testAllFilesPresentInComplexStack() throws Exception {
@@ -42972,9 +42593,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/contracts")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Contracts {
             @Test
             public void testAllFilesPresentInContracts() throws Exception {
@@ -43075,9 +42695,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/defaultValues")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class DefaultValues {
             @Test
             @TestMetadata("33Parameters.kt")
@@ -43207,9 +42826,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class LambdaInlining {
                 @Test
                 public void testAllFilesPresentInLambdaInlining() throws Exception {
@@ -43417,9 +43035,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/boxInline/defaultValues/lambdaInlining/callableReferences")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class CallableReferences {
                     @Test
                     public void testAllFilesPresentInCallableReferences() throws Exception {
@@ -43599,9 +43216,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/boxInline/defaultValues/maskElimination")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class MaskElimination {
                 @Test
                 @TestMetadata("32Parameters.kt")
@@ -43655,9 +43271,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/delegatedProperty")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class DelegatedProperty {
             @Test
             public void testAllFilesPresentInDelegatedProperty() throws Exception {
@@ -43704,9 +43319,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/enclosingInfo")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class EnclosingInfo {
             @Test
             public void testAllFilesPresentInEnclosingInfo() throws Exception {
@@ -43717,9 +43331,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/enum")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Enum {
             @Test
             public void testAllFilesPresentInEnum() throws Exception {
@@ -43808,9 +43421,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/functionExpression")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class FunctionExpression {
             @Test
             public void testAllFilesPresentInFunctionExpression() throws Exception {
@@ -43827,9 +43439,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/inlineArgsInplace")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class InlineArgsInplace {
             @Test
             public void testAllFilesPresentInInlineArgsInplace() throws Exception {
@@ -43846,9 +43457,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/inlineClasses")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class InlineClasses {
             @Test
             public void testAllFilesPresentInInlineClasses() throws Exception {
@@ -43900,9 +43510,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class UnboxGenericParameter {
                 @Test
                 public void testAllFilesPresentInUnboxGenericParameter() throws Exception {
@@ -43912,9 +43521,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/funInterface")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class FunInterface {
                     @Test
                     public void testAllFilesPresentInFunInterface() throws Exception {
@@ -43961,9 +43569,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/lambda")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class Lambda {
                     @Test
                     public void testAllFilesPresentInLambda() throws Exception {
@@ -44010,9 +43617,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/boxInline/inlineClasses/unboxGenericParameter/objectLiteral")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class ObjectLiteral {
                     @Test
                     public void testAllFilesPresentInObjectLiteral() throws Exception {
@@ -44061,9 +43667,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/innerClasses")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class InnerClasses {
             @Test
             public void testAllFilesPresentInInnerClasses() throws Exception {
@@ -44122,9 +43727,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/invokedynamic")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Invokedynamic {
             @Test
             public void testAllFilesPresentInInvokedynamic() throws Exception {
@@ -44134,9 +43738,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/boxInline/invokedynamic/lambdas")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Lambdas {
                 @Test
                 public void testAllFilesPresentInLambdas() throws Exception {
@@ -44147,9 +43750,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/boxInline/invokedynamic/sam")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Sam {
                 @Test
                 public void testAllFilesPresentInSam() throws Exception {
@@ -44161,9 +43763,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/jvmName")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class JvmName {
             @Test
             public void testAllFilesPresentInJvmName() throws Exception {
@@ -44174,9 +43775,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/jvmPackageName")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class JvmPackageName {
             @Test
             public void testAllFilesPresentInJvmPackageName() throws Exception {
@@ -44187,9 +43787,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/lambdaClassClash")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class LambdaClassClash {
             @Test
             public void testAllFilesPresentInLambdaClassClash() throws Exception {
@@ -44212,9 +43811,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/lambdaTransformation")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class LambdaTransformation {
             @Test
             public void testAllFilesPresentInLambdaTransformation() throws Exception {
@@ -44255,9 +43853,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/localFunInLambda")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class LocalFunInLambda {
             @Test
             public void testAllFilesPresentInLocalFunInLambda() throws Exception {
@@ -44292,9 +43889,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/multiModule")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class MultiModule {
             @Test
             public void testAllFilesPresentInMultiModule() throws Exception {
@@ -44311,9 +43907,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/multifileClasses")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class MultifileClasses {
             @Test
             public void testAllFilesPresentInMultifileClasses() throws Exception {
@@ -44324,9 +43919,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/multiplatform")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Multiplatform {
             @Test
             public void testAllFilesPresentInMultiplatform() throws Exception {
@@ -44336,9 +43930,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/boxInline/multiplatform/defaultArguments")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class DefaultArguments {
                 @Test
                 public void testAllFilesPresentInDefaultArguments() throws Exception {
@@ -44356,9 +43949,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/noInline")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class NoInline {
             @Test
             public void testAllFilesPresentInNoInline() throws Exception {
@@ -44411,9 +44003,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class NonLocalReturns {
             @Test
             public void testAllFilesPresentInNonLocalReturns() throws Exception {
@@ -44561,9 +44152,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/deparenthesize")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Deparenthesize {
                 @Test
                 public void testAllFilesPresentInDeparenthesize() throws Exception {
@@ -44586,9 +44176,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class TryFinally {
                 @Test
                 public void testAllFilesPresentInTryFinally() throws Exception {
@@ -44676,9 +44265,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/callSite")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class CallSite {
                     @Test
                     public void testAllFilesPresentInCallSite() throws Exception {
@@ -44725,9 +44313,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/chained")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class Chained {
                     @Test
                     public void testAllFilesPresentInChained() throws Exception {
@@ -44786,9 +44373,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/declSite")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class DeclSite {
                     @Test
                     public void testAllFilesPresentInDeclSite() throws Exception {
@@ -44871,9 +44457,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/exceptionTable")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class ExceptionTable {
                     @Test
                     public void testAllFilesPresentInExceptionTable() throws Exception {
@@ -45004,9 +44589,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
                 @Nested
                 @TestMetadata("compiler/testData/codegen/boxInline/nonLocalReturns/tryFinally/variables")
                 @TestDataPath("$PROJECT_ROOT")
-                @Tag("codegen")
-                @Tag("k1Codegen")
                 @UseExtTestCaseGroupProvider()
+                @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
                 public class Variables {
                     @Test
                     public void testAllFilesPresentInVariables() throws Exception {
@@ -45025,9 +44609,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/optimizations")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Optimizations {
             @Test
             public void testAllFilesPresentInOptimizations() throws Exception {
@@ -45044,9 +44627,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/private")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Private {
             @Test
             @TestMetadata("accessorForConst.kt")
@@ -45129,9 +44711,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/property")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Property {
             @Test
             public void testAllFilesPresentInProperty() throws Exception {
@@ -45226,9 +44807,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/reified")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Reified {
             @Test
             public void testAllFilesPresentInReified() throws Exception {
@@ -45364,9 +44944,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/boxInline/reified/checkCast")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class CheckCast {
                 @Test
                 public void testAllFilesPresentInCheckCast() throws Exception {
@@ -45431,9 +45010,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/boxInline/reified/defaultLambda")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class DefaultLambda {
                 @Test
                 public void testAllFilesPresentInDefaultLambda() throws Exception {
@@ -45444,9 +45022,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/boxInline/reified/isCheck")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class IsCheck {
                 @Test
                 public void testAllFilesPresentInIsCheck() throws Exception {
@@ -45476,9 +45053,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/signature")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Signature {
             @Test
             public void testAllFilesPresentInSignature() throws Exception {
@@ -45489,9 +45065,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/signatureMangling")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class SignatureMangling {
             @Test
             public void testAllFilesPresentInSignatureMangling() throws Exception {
@@ -45502,9 +45077,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/simple")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Simple {
             @Test
             public void testAllFilesPresentInSimple() throws Exception {
@@ -45653,9 +45227,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/smap")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Smap {
             @Test
             public void testAllFilesPresentInSmap() throws Exception {
@@ -45791,9 +45364,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/boxInline/smap/anonymous")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Anonymous {
                 @Test
                 public void testAllFilesPresentInAnonymous() throws Exception {
@@ -45864,9 +45436,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/boxInline/smap/defaultLambda")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class DefaultLambda {
                 @Test
                 public void testAllFilesPresentInDefaultLambda() throws Exception {
@@ -45931,9 +45502,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/boxInline/smap/inlineOnly")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class InlineOnly {
                 @Test
                 public void testAllFilesPresentInInlineOnly() throws Exception {
@@ -45968,9 +45538,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/boxInline/smap/newsmap")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Newsmap {
                 @Test
                 public void testAllFilesPresentInNewsmap() throws Exception {
@@ -46005,9 +45574,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/boxInline/smap/resolve")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Resolve {
                 @Test
                 public void testAllFilesPresentInResolve() throws Exception {
@@ -46031,9 +45599,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/special")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Special {
             @Test
             public void testAllFilesPresentInSpecial() throws Exception {
@@ -46098,9 +45665,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/stackOnReturn")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class StackOnReturn {
             @Test
             public void testAllFilesPresentInStackOnReturn() throws Exception {
@@ -46207,9 +45773,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/suspend")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Suspend {
             @Test
             public void testAllFilesPresentInSuspend() throws Exception {
@@ -46363,9 +45928,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/boxInline/suspend/callableReference")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class CallableReference {
                 @Test
                 public void testAllFilesPresentInCallableReference() throws Exception {
@@ -46406,9 +45970,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/boxInline/suspend/defaultParameter")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class DefaultParameter {
                 @Test
                 public void testAllFilesPresentInDefaultParameter() throws Exception {
@@ -46455,9 +46018,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/boxInline/suspend/inlineClass")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class InlineClass {
                 @Test
                 public void testAllFilesPresentInInlineClass() throws Exception {
@@ -46492,9 +46054,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/boxInline/suspend/inlineUsedAsNoinline")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class InlineUsedAsNoinline {
                 @Test
                 public void testAllFilesPresentInInlineUsedAsNoinline() throws Exception {
@@ -46517,9 +46078,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/boxInline/suspend/receiver")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class Receiver {
                 @Test
                 public void testAllFilesPresentInReceiver() throws Exception {
@@ -46578,9 +46138,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/boxInline/suspend/stateMachine")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class StateMachine {
                 @Test
                 public void testAllFilesPresentInStateMachine() throws Exception {
@@ -46730,9 +46289,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/syntheticAccessors")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class SyntheticAccessors {
             @Test
             public void testAllFilesPresentInSyntheticAccessors() throws Exception {
@@ -46790,9 +46348,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             @Nested
             @TestMetadata("compiler/testData/codegen/boxInline/syntheticAccessors/withinInlineLambda")
             @TestDataPath("$PROJECT_ROOT")
-            @Tag("codegen")
-            @Tag("k1Codegen")
             @UseExtTestCaseGroupProvider()
+            @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
             public class WithinInlineLambda {
                 @Test
                 public void testAllFilesPresentInWithinInlineLambda() throws Exception {
@@ -46858,9 +46415,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/trait")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Trait {
             @Test
             public void testAllFilesPresentInTrait() throws Exception {
@@ -46877,9 +46433,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/tryCatchFinally")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class TryCatchFinally {
             @Test
             public void testAllFilesPresentInTryCatchFinally() throws Exception {
@@ -46914,9 +46469,8 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         @Nested
         @TestMetadata("compiler/testData/codegen/boxInline/varargs")
         @TestDataPath("$PROJECT_ROOT")
-        @Tag("codegen")
-        @Tag("k1Codegen")
         @UseExtTestCaseGroupProvider()
+        @DisabledTestsIfProperty(sourceLocations = { "compiler/testData/codegen/box/coroutines/featureIntersection/defaultExpect.kt", "compiler/testData/codegen/box/multiplatform/defaultArguments/*.kt", "compiler/testData/codegen/boxInline/multiplatform/defaultArguments/receiversAndParametersInLambda.kt" }, property = ClassLevelProperty.TEST_MODE, propertyValue = "ONE_STAGE_MULTI_MODULE")
         public class Varargs {
             @Test
             public void testAllFilesPresentInVarargs() throws Exception {

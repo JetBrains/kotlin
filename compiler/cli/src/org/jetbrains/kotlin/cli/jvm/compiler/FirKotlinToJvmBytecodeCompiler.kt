@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.*
@@ -153,12 +154,17 @@ object FirKotlinToJvmBytecodeCompiler {
         performanceManager?.notifyIRTranslationStarted()
 
         val fir2IrExtensions = JvmFir2IrExtensions(moduleConfiguration, JvmIrDeserializerImpl(), JvmIrMangler)
+        val fir2IrConfiguration = Fir2IrConfiguration(
+            languageVersionSettings = moduleConfiguration.languageVersionSettings,
+            linkViaSignatures = moduleConfiguration.getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES),
+            evaluatedConstTracker = moduleConfiguration
+                .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
+        )
         val fir2IrAndIrActualizerResult = firResult.convertToIrAndActualizeForJvm(
             fir2IrExtensions,
+            fir2IrConfiguration,
             irGenerationExtensions,
-            linkViaSignatures = moduleConfiguration.getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES),
             diagnosticsReporter,
-            moduleConfiguration.languageVersionSettings
         )
 
         performanceManager?.notifyIRTranslationFinished()
@@ -223,7 +229,7 @@ object FirKotlinToJvmBytecodeCompiler {
         extensions: JvmGeneratorExtensions,
         diagnosticsReporter: BaseDiagnosticsCollector
     ): GenerationState {
-        val (moduleFragment, components, pluginContext, irActualizationResult) = fir2IrActualizedResult
+        val (moduleFragment, components, pluginContext, irActualizedResult) = fir2IrActualizedResult
         val dummyBindingContext = NoScopeRecordCliBindingTrace().bindingContext
         val codegenFactory = JvmIrCodegenFactory(
             moduleConfiguration,
@@ -252,7 +258,7 @@ object FirKotlinToJvmBytecodeCompiler {
         generationState.oldBEInitTrace(ktFiles)
         codegenFactory.generateModuleInFrontendIRMode(
             generationState, moduleFragment, components.symbolTable, components.irProviders,
-            extensions, FirJvmBackendExtension(components, irActualizationResult), pluginContext
+            extensions, FirJvmBackendExtension(components, irActualizedResult), pluginContext
         ) {
             performanceManager?.notifyIRLoweringFinished()
             performanceManager?.notifyIRGenerationStarted()

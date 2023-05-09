@@ -1,4 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
 // FILE: ExceptionTracker.kt
 
 interface ExceptionTracker : <!EXPOSED_SUPER_INTERFACE!>LockBasedStorageManager.ExceptionHandlingStrategy<!> {

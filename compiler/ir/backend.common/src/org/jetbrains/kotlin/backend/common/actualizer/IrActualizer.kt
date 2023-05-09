@@ -10,9 +10,9 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.ir.util.DeepCopyTypeRemapper
 
-data class IrActualizationResult(val actualizedExpectDeclarations: List<IrDeclaration>)
+data class IrActualizedResult(val actualizedExpectDeclarations: List<IrDeclaration>)
 
 object IrActualizer {
     fun actualize(
@@ -20,24 +20,42 @@ object IrActualizer {
         dependentFragments: List<IrModuleFragment>,
         diagnosticReporter: DiagnosticReporter,
         languageVersionSettings: LanguageVersionSettings
-    ): IrActualizationResult {
+    ): IrActualizedResult {
         val ktDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter, languageVersionSettings)
-        val (expectActualMap, expectActualTypeAliasMap) = ExpectActualCollector(mainFragment, dependentFragments, ktDiagnosticReporter).collect()
-        FunctionDefaultParametersActualizer(expectActualMap).actualize()
-        val removedExpectDeclarationMetadata = removeExpectDeclarations(dependentFragments, expectActualMap)
-        addMissingFakeOverrides(expectActualMap, dependentFragments, expectActualTypeAliasMap, ktDiagnosticReporter)
-        linkExpectToActual(expectActualMap, dependentFragments)
+
+        val (expectActualMap, expectActualTypeAliasMap) = ExpectActualCollector(
+            mainFragment,
+            dependentFragments,
+            ktDiagnosticReporter
+        ).collect()
+
+        val removedExpectDeclarations = removeExpectDeclarations(dependentFragments, expectActualMap)
+
+        val symbolRemapper = ActualizerSymbolRemapper(expectActualMap)
+        val typeRemapper = DeepCopyTypeRemapper(symbolRemapper)
+        FunctionDefaultParametersActualizer(symbolRemapper, typeRemapper, expectActualMap).actualize()
+
+        MissingFakeOverridesAdder(
+            expectActualMap,
+            expectActualTypeAliasMap,
+            ktDiagnosticReporter
+        ).apply { dependentFragments.forEach { visitModuleFragment(it) } }
+
+        val actualizerVisitor = ActualizerVisitor(symbolRemapper, typeRemapper)
+        dependentFragments.forEach { it.transform(actualizerVisitor, null) }
+
         mergeIrFragments(mainFragment, dependentFragments)
-        return IrActualizationResult(removedExpectDeclarationMetadata)
+
+        return IrActualizedResult(removedExpectDeclarations)
     }
 
     private fun removeExpectDeclarations(dependentFragments: List<IrModuleFragment>, expectActualMap: Map<IrSymbol, IrSymbol>): List<IrDeclaration> {
-        val removedDeclarationMetadata = mutableListOf<IrDeclaration>()
+        val removedExpectDeclarations = mutableListOf<IrDeclaration>()
         for (fragment in dependentFragments) {
             for (file in fragment.files) {
                 file.declarations.removeIf {
                     if (shouldRemoveExpectDeclaration(it, expectActualMap)) {
-                        removedDeclarationMetadata.add(it)
+                        removedExpectDeclarations.add(it)
                         true
                     } else {
                         false
@@ -45,7 +63,7 @@ object IrActualizer {
                 }
             }
         }
-        return removedDeclarationMetadata
+        return removedExpectDeclarations
     }
 
     private fun shouldRemoveExpectDeclaration(irDeclaration: IrDeclaration, expectActualMap: Map<IrSymbol, IrSymbol>): Boolean {
@@ -55,23 +73,6 @@ object IrActualizer {
             is IrFunction -> irDeclaration.isExpect
             else -> false
         }
-    }
-
-    private fun addMissingFakeOverrides(
-        expectActualMap: Map<IrSymbol, IrSymbol>,
-        dependentFragments: List<IrModuleFragment>,
-        expectActualTypeAliasMap: Map<FqName, FqName>,
-        diagnosticsReporter: KtDiagnosticReporterWithImplicitIrBasedContext
-    ) {
-        MissingFakeOverridesAdder(
-            expectActualMap,
-            expectActualTypeAliasMap,
-            diagnosticsReporter
-        ).apply { dependentFragments.forEach { visitModuleFragment(it) } }
-    }
-
-    private fun linkExpectToActual(expectActualMap: Map<IrSymbol, IrSymbol>, dependentFragments: List<IrModuleFragment>) {
-        ExpectActualLinker(expectActualMap).apply { dependentFragments.forEach { actualize(it) } }
     }
 
     private fun mergeIrFragments(mainFragment: IrModuleFragment, dependentFragments: List<IrModuleFragment>) {

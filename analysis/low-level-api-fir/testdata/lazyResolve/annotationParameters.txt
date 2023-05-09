@@ -1,4 +1,3 @@
-
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] annotationParameters.kt
     [ResolvedTo(RAW_FIR)] annotations container
@@ -32,9 +31,9 @@ FILE: [ResolvedTo(RAW_FIR)] annotationParameters.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        @Anno(LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        @Anno(LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -71,9 +70,9 @@ FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        @Anno(LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        @Anno(LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -110,9 +109,9 @@ FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        @Anno(LAZY_EXPRESSION) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        @Anno(LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -149,9 +148,9 @@ FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        @Anno(LAZY_EXPRESSION) public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        @Anno(LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -183,14 +182,14 @@ FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): A.X
 
     }
-    public? final? [ResolvedTo(RAW_FIR)] class B : R|kotlin/Any| {
+    public? final? [ResolvedTo(SUPER_TYPES)] class B : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        @Anno(LAZY_EXPRESSION) public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        @Anno(LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -222,14 +221,14 @@ FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): A.X
 
     }
-    public? final? [ResolvedTo(SUPER_TYPES)] class B : R|kotlin/Any| {
-        public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=B] constructor(): R|B| {
+    public? final? [ResolvedTo(TYPES)] class B : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|Anno|(LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+        @R|Anno|[Types](LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        @Anno(LAZY_EXPRESSION) public? final? [ResolvedTo(SUPER_TYPES)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -261,14 +260,14 @@ FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): A.X
 
     }
-    public final [ResolvedTo(SUPER_TYPES)] class B : R|kotlin/Any| {
-        public [ResolvedTo(TYPES)] [ContainingClassKey=B] constructor(): R|B| {
+    public final [ResolvedTo(STATUS)] class B : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|Anno|(LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+        @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        @R|Anno|(LAZY_EXPRESSION) public final [ResolvedTo(TYPES)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+        @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -300,15 +299,14 @@ FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] get(): A.X
 
     }
-    public final [ResolvedTo(SUPER_TYPES)] class B : R|kotlin/Any| {
-        public [ResolvedTo(TYPES)] [ContainingClassKey=B] constructor(): R|B| {
+    public final [ResolvedTo(STATUS)] class B : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor(): R|B| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|Anno|(X#.A#) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| {
-        }
+        @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        @R|Anno|(LAZY_EXPRESSION) public final [ResolvedTo(TYPES)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+        @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -345,10 +343,9 @@ FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|Anno|(Q|X|.R|/X.A|) public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| {
-        }
+        @R|Anno|[Types](Q|X|.R|/X.A|) public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        @R|Anno|(LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+        @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -385,10 +382,10 @@ FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|Anno|(Q|X|.R|/X.A|) public final [ResolvedTo(CONTRACTS)] fun resolveMe(): R|kotlin/Unit| {
+        @R|Anno|[Types](Q|X|.R|/X.A|) public final [ResolvedTo(CONTRACTS)] fun resolveMe(): R|kotlin/Unit| {
         }
 
-        @R|Anno|(LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+        @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -425,10 +422,10 @@ FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|Anno|(Q|X|.R|/X.A|) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+        @R|Anno|[Types](Q|X|.R|/X.A|) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
         }
 
-        @R|Anno|(LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+        @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -451,13 +448,13 @@ FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
             public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<X>|
 
     }
-    public final [ResolvedTo(SUPER_TYPES)] annotation class Anno : R|kotlin/Annotation| {
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.args] args: <ERROR TYPE REF: Symbol not found for A.X>): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(TYPES)] [IsFromPrimaryConstructor=true] val args: <ERROR TYPE REF: Symbol not found for A.X> = R|<local>/args|
-            public [ResolvedTo(TYPES)] [ContainingClassKey=Anno] get(): <ERROR TYPE REF: Symbol not found for A.X>
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val args: <ERROR TYPE REF: Symbol not found for A.X> = R|<local>/args|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): <ERROR TYPE REF: Symbol not found for A.X>
 
     }
     public final [ResolvedTo(STATUS)] class B : R|kotlin/Any| {
@@ -465,10 +462,10 @@ FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|Anno|(args = Q|X|.R|/X.A|) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun resolveMe(): R|kotlin/Unit| {
+        @R|Anno|[Types](args = Q|X|.R|/X.A|) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] fun resolveMe(): R|kotlin/Unit| {
         }
 
-        @R|Anno|(X#.A#) public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+        @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -491,13 +488,13 @@ FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
             public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<X>|
 
     }
-    public final [ResolvedTo(SUPER_TYPES)] annotation class Anno : R|kotlin/Annotation| {
+    public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {
         public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.args] args: <ERROR TYPE REF: Symbol not found for A.X>): R|Anno| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(TYPES)] [IsFromPrimaryConstructor=true] val args: <ERROR TYPE REF: Symbol not found for A.X> = R|<local>/args|
-            public [ResolvedTo(TYPES)] [ContainingClassKey=Anno] get(): <ERROR TYPE REF: Symbol not found for A.X>
+        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val args: <ERROR TYPE REF: Symbol not found for A.X> = R|<local>/args|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] get(): <ERROR TYPE REF: Symbol not found for A.X>
 
     }
     public final [ResolvedTo(STATUS)] class B : R|kotlin/Any| {
@@ -505,10 +502,10 @@ FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        @R|Anno|(args = Q|X|.R|/X.A|) public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+        @R|Anno|[Types](args = Q|X|.R|/X.A|) public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
         }
 
-        @R|Anno|(X#.A#) public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+        @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -545,10 +542,10 @@ FILE: [ResolvedTo(IMPORTS)] annotationParameters.kt
             super<R|kotlin/Any|>()
         }
 
-        @R|Anno|(args = Q|X|.R|/X.A|) public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+        @R|Anno|[Types](args = Q|X|.R|/X.A|) public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
         }
 
-        @R|Anno|(args = Q|X|.R|/X.A|) public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+        @R|Anno|[Types](args = Q|X|.R|/X.A|) public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
         }
 
     }

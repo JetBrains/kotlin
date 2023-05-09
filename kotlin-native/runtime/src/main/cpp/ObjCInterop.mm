@@ -115,8 +115,18 @@ void releaseImp(id self, SEL _cmd) {
   getBackRef(self)->releaseRef();
 }
 
-void releaseAsAssociatedObjectImp(id self, SEL _cmd, ReleaseMode mode) {
+void releaseAsAssociatedObjectImp(id self, SEL _cmd) {
   auto* classData = GetKotlinClassData(self);
+  if (CurrentMemoryModel == MemoryModel::kExperimental) {
+    // No need for any special handling. Weak reference handling machinery
+    // has already cleaned up the reference to Kotlin object.
+    // [super release]
+    Class clazz = classData->objcClass;
+    struct objc_super s = {self, clazz};
+    auto messenger = reinterpret_cast<void (*) (struct objc_super*, SEL _cmd)>(objc_msgSendSuper2);
+    messenger(&s, @selector(release));
+    return;
+  }
 
   // This function is called by the GC. It made a decision to reclaim Kotlin object, and runs
   // deallocation hooks at the moment, including deallocation of the "associated object" ([self])
@@ -132,24 +142,28 @@ void releaseAsAssociatedObjectImp(id self, SEL _cmd, ReleaseMode mode) {
   // Generally retaining and releasing Kotlin object that is being deallocated would lead to
   // use-after-dispose and double-dispose problems (with unpredictable consequences) or to an assertion failure.
   // To workaround this, detach the back ref from the Kotlin object:
-  if (ReleaseModeHasDetach(mode)) {
-    backRef->detach();
-  } else {
-    // With Mark&Sweep this object should already have been detached earlier.
-    backRef->assertDetached();
-  }
+  backRef->detach();
 
   // So retain/release/etc. on [self] won't affect the Kotlin object, and an attempt to get
   // the reference to it (e.g. when calling Kotlin method on [self]) would crash.
   // The latter is generally ok, because by the time superclass dealloc gets launched, subclass state
   // should already be deinitialized, and Kotlin methods operate on the subclass.
-  if (ReleaseModeHasRelease(mode)) {
-    // [super release]
-    Class clazz = classData->objcClass;
-    struct objc_super s = {self, clazz};
-    auto messenger = reinterpret_cast<void (*) (struct objc_super*, SEL _cmd)>(objc_msgSendSuper2);
-    messenger(&s, @selector(release));
-  }
+  // [super release]
+  Class clazz = classData->objcClass;
+  struct objc_super s = {self, clazz};
+  auto messenger = reinterpret_cast<void (*) (struct objc_super*, SEL _cmd)>(objc_msgSendSuper2);
+  messenger(&s, @selector(release));
+}
+
+void deallocImp(id self, SEL _cmd) {
+  getBackRef(self)->dealloc();
+
+  // [super dealloc]
+  auto* classData = GetKotlinClassData(self);
+  Class clazz = classData->objcClass;
+  struct objc_super s = {self, clazz};
+  auto messenger = reinterpret_cast<void (*) (struct objc_super*, SEL _cmd)>(objc_msgSendSuper2);
+  messenger(&s, @selector(dealloc));
 }
 
 }
@@ -277,6 +291,9 @@ void* CreateKotlinObjCClass(const KotlinObjCClassInfo* info) {
   AddNSObjectOverride(false, newClass, @selector(release), (void*)&releaseImp);
   AddNSObjectOverride(false, newClass, Kotlin_ObjCExport_releaseAsAssociatedObjectSelector,
       (void*)&releaseAsAssociatedObjectImp);
+  if (CurrentMemoryModel == MemoryModel::kExperimental) {
+    AddNSObjectOverride(false, newClass, @selector(dealloc), (void*)&deallocImp);
+  }
 
   AddMethods(newClass, info->instanceMethods, info->instanceMethodsNum);
   AddMethods(newMetaclass, info->classMethods, info->classMethodsNum);

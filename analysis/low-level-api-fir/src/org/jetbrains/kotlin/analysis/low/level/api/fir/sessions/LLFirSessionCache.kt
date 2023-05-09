@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.partitionIsInstance
 import java.util.concurrent.ConcurrentMap
 
@@ -536,15 +537,30 @@ internal class LLFirSessionCache(private val project: Project) {
         session: FirSession,
         destination: MutableList<FirSymbolProvider>,
     ) {
-        val (syntheticFunctionSymbolProviders, remainingSymbolProviders1) =
-            partitionIsInstance<_, FirExtensionSyntheticFunctionInterfaceProvider>()
+        SymbolProviderMerger(this, destination).apply {
+            merge<LLFirProvider.SymbolProvider> { LLFirCombinedKotlinSymbolProvider.merge(session, project, it) }
+            merge<JavaSymbolProvider> { LLFirCombinedJavaSymbolProvider.merge(session, project, it) }
+            merge<FirExtensionSyntheticFunctionInterfaceProvider> { LLFirCombinedSyntheticFunctionSymbolProvider.merge(session, it) }
+            finish()
+        }
+    }
 
-        destination.addAll(remainingSymbolProviders1)
+    private class SymbolProviderMerger(
+        symbolProviders: List<FirSymbolProvider>,
+        private val destination: MutableList<FirSymbolProvider>
+    ) {
+        private var remainingSymbolProviders = symbolProviders
 
-        // Unfortunately, the functions that an extension synthetic function symbol provider might provide differ between sessions because
-        // they depend on compiler plugins. However, only extension providers that are affected by compiler plugins are added in
-        // `createSourcesSession`. We can still combine these, because the `ClassId` heuristics only need to be checked once.
-        destination.add(LLFirCombinedSyntheticFunctionSymbolProvider.merge(session, syntheticFunctionSymbolProviders))
+        inline fun <reified A : FirSymbolProvider> merge(create: (List<A>) -> FirSymbolProvider?) {
+            val (specificSymbolProviders, remainingSymbolProviders) = remainingSymbolProviders.partitionIsInstance<_, A>()
+            destination.addIfNotNull(create(specificSymbolProviders))
+            this.remainingSymbolProviders = remainingSymbolProviders
+        }
+
+        fun finish() {
+            destination.addAll(remainingSymbolProviders)
+            remainingSymbolProviders = emptyList()
+        }
     }
 }
 

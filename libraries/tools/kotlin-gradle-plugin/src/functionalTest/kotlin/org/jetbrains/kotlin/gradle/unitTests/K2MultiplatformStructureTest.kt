@@ -3,27 +3,24 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-@file:Suppress("FunctionName")
+@file:Suppress("FunctionName", "DEPRECATION")
 
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.kotlin.dsl.newInstance
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.CompilerArgumentAware
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.lenient
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.IR
-import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformCompilationTask
-import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure
-import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure.RefinesEdge
+import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure.Fragment
-import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
-import org.jetbrains.kotlin.gradle.tasks.configureK2Multiplatform
+import org.jetbrains.kotlin.gradle.tasks.K2MultiplatformStructure.RefinesEdge
 import org.jetbrains.kotlin.gradle.util.applyMultiplatformPlugin
 import org.jetbrains.kotlin.gradle.util.buildProject
 import org.jetbrains.kotlin.gradle.util.enableDefaultStdlibDependency
@@ -116,7 +113,6 @@ class K2MultiplatformStructureTest {
         /* check dependsOnEdges */
         assertEquals(
             setOf(
-                RefinesEdge(defaultSourceSet.name, "commonMain"),
                 RefinesEdge(defaultSourceSet.name, "intermediateMain"),
                 RefinesEdge("intermediateMain", "commonMain")
             ),
@@ -157,16 +153,13 @@ class K2MultiplatformStructureTest {
 
 private fun K2MultiplatformCompilationTask.buildCompilerArguments(): CommonCompilerArguments {
     /* KotlinNative implements CompilerArgumentAware, but does not adhere to its contract */
-
-    if (this is KotlinNativeCompile) {
-        val arguments = K2NativeCompilerArguments()
-        val argsList = this.buildCompilerArgs()
-        parseCommandLineArguments(argsList, arguments)
-        return arguments
-    }
     @Suppress("UNCHECKED_CAST")
     this as CompilerArgumentAware<CommonCompilerArguments>
-    val args = createCompilerArgs()
-    setupCompilerArgs(args)
-    return args
+    return this.createCompilerArguments(lenient)
+}
+
+internal fun CommonCompilerArguments.configureK2Multiplatform(multiplatformStructure: K2MultiplatformStructure) {
+    fragments = multiplatformStructure.fragmentsCompilerArgs
+    fragmentSources = multiplatformStructure.fragmentSourcesCompilerArgs()
+    fragmentRefines = multiplatformStructure.fragmentRefinesCompilerArgs
 }

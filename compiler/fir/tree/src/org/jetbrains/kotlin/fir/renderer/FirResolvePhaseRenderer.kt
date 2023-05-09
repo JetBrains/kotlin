@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.renderer
 
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.ResolveStateAccess
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 
 class FirResolvePhaseRenderer {
     internal lateinit var components: FirRendererComponents
@@ -15,5 +16,9 @@ class FirResolvePhaseRenderer {
     fun render(element: FirElementWithResolveState) {
         @OptIn(ResolveStateAccess::class)
         printer.print("[${element.resolveState}] ")
+    }
+
+    fun render(element: FirAnnotationCall) {
+        printer.print("[${element.annotationResolvePhase}]")
     }
 }

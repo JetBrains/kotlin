@@ -3,4 +3,4 @@ FIR element: FirTypeParameterImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-T
+[ResolvedTo(BODY_RESOLVE)] T

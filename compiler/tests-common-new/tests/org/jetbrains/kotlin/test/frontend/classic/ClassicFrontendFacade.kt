@@ -65,7 +65,6 @@ import org.jetbrains.kotlin.resolve.TopDownAnalysisMode
 import org.jetbrains.kotlin.resolve.jvm.JavaDescriptorResolver
 import org.jetbrains.kotlin.resolve.lazy.KotlinCodeAnalyzer
 import org.jetbrains.kotlin.resolve.lazy.declarations.FileBasedDeclarationProviderFactory
-import org.jetbrains.kotlin.serialization.deserialization.MetadataPartProvider
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
@@ -426,8 +425,8 @@ class ClassicFrontendFacade(
             compilerEnvironment,
             dependenciesContainer = CommonDependenciesContainerImpl(moduleDescriptor)
         ) {
-            // TODO
-            MetadataPartProvider.Empty
+            val factory = testServices.compilerConfigurationProvider.getPackagePartProviderFactory(module)
+            factory(it.moduleContentScope)
         }
     }
 

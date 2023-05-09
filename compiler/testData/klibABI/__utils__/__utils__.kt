@@ -162,7 +162,7 @@ private class CustomThrowableFailure(private val checker: (Throwable) -> Boolean
             TestFailedWithException(t) // Unexpected type of exception.
 }
 
-@Suppress("PrivatePropertyName")
+@Suppress("PrivatePropertyName", "INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
 private val NoWhenBranchFailure = CustomThrowableFailure { it is NoWhenBranchMatchedException }
 
 private sealed class Test {

@@ -173,7 +173,10 @@ public class DebugSymbolRenderer(
             }
         }
 
-        if (renderSymbolsFully || symbol is KtPropertyGetterSymbol || symbol is KtPropertySetterSymbol || symbol is KtValueParameterSymbol || symbol is KtReceiverParameterSymbol) {
+        if (renderSymbolsFully || symbol is KtBackingFieldSymbol ||
+            symbol is KtPropertyGetterSymbol || symbol is KtPropertySetterSymbol ||
+            symbol is KtValueParameterSymbol || symbol is KtReceiverParameterSymbol
+        ) {
             renderSymbol(symbol)
             return
         }
@@ -263,7 +266,11 @@ public class DebugSymbolRenderer(
 
         withIndent {
             appendLine().append("psi: ")
-            renderValue(call.psi?.javaClass?.simpleName, renderSymbolsFully = false)
+            val psi =
+                if (call.psi?.containingKtFile?.isCompiled == true) {
+                    null
+                } else call.psi
+            renderValue(psi?.javaClass?.simpleName, renderSymbolsFully = false)
         }
     }
 

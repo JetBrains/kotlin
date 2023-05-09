@@ -5,6 +5,7 @@
 
 package kotlin.text
 
+import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.internal.GCUnsafeCall
 
 /**
@@ -20,13 +21,6 @@ external public actual fun Char.isHighSurrogate(): Boolean
 external public actual fun Char.isLowSurrogate(): Boolean
 
 /**
- * Returns `true` if this character (Unicode code point) should be regarded as an ignorable
- * character in a Java identifier or a Unicode identifier.
- */
-@GCUnsafeCall("Kotlin_Char_isIdentifierIgnorable")
-external public fun Char.isIdentifierIgnorable(): Boolean
-
-/**
  * Returns `true` if this character is an ISO control character.
  *
  * A character is considered to be an ISO control character if its [category] is [CharCategory.CONTROL],
@@ -36,6 +30,58 @@ external public fun Char.isIdentifierIgnorable(): Boolean
  */
 @GCUnsafeCall("Kotlin_Char_isISOControl")
 external public actual fun Char.isISOControl(): Boolean
+
+/**
+ * Converts a surrogate pair to a unicode code point. Doesn't validate that the characters are a valid surrogate pair.
+ *
+ * Note that this function is unstable.
+ * In the future it could be deprecated in favour of an overload that would return a `CodePoint` type.
+ */
+@ExperimentalNativeApi
+// TODO: Consider removing from public API
+public fun Char.Companion.toCodePoint(high: Char, low: Char): Int =
+        (((high - MIN_HIGH_SURROGATE) shl 10) or (low - MIN_LOW_SURROGATE)) + 0x10000
+
+/**
+ * Checks if the codepoint specified is a supplementary codepoint or not.
+ *
+ * Note that this function is unstable.
+ * In the future it could be deprecated in favour of an overload that would accept a `CodePoint` type.
+ */
+@ExperimentalNativeApi
+// TODO: Consider removing from public API
+public fun Char.Companion.isSupplementaryCodePoint(codepoint: Int): Boolean =
+        codepoint in MIN_SUPPLEMENTARY_CODE_POINT..MAX_CODE_POINT
+
+/**
+ * Checks if the specified [high] and [low] chars are [Char.isHighSurrogate] and [Char.isLowSurrogate] correspondingly.
+ */
+@ExperimentalNativeApi
+// TODO: Consider removing from public API
+public fun Char.Companion.isSurrogatePair(high: Char, low: Char): Boolean = high.isHighSurrogate() && low.isLowSurrogate()
+
+/**
+ * Converts the codepoint specified to a char array. If the codepoint is not supplementary, the method will
+ * return an array with one element otherwise it will return an array A with a high surrogate in A[0] and
+ * a low surrogate in A[1].
+ *
+ *
+ * Note that this function is unstable.
+ * In the future it could be deprecated in favour of an overload that would accept a `CodePoint` type.
+ */
+@ExperimentalNativeApi
+// TODO: Consider removing from public API
+@Suppress("DEPRECATION")
+public fun Char.Companion.toChars(codePoint: Int): CharArray =
+        when {
+            codePoint in 0 until MIN_SUPPLEMENTARY_CODE_POINT -> charArrayOf(codePoint.toChar())
+            codePoint in MIN_SUPPLEMENTARY_CODE_POINT..MAX_CODE_POINT -> {
+                val low = ((codePoint - 0x10000) and 0x3FF) + MIN_LOW_SURROGATE.toInt()
+                val high = (((codePoint - 0x10000) ushr 10) and 0x3FF) + MIN_HIGH_SURROGATE.toInt()
+                charArrayOf(high.toChar(), low.toChar())
+            }
+            else -> throw IllegalArgumentException()
+        }
 
 @SharedImmutable
 private val digits = intArrayOf(

@@ -109,8 +109,8 @@ public fun kotlin.UShort.coerceIn(minimumValue: kotlin.UShort, maximumValue: kot
 @kotlin.internal.InlineOnly
 public inline operator fun <T : kotlin.Any, R : kotlin.ranges.ClosedRange<T>> R.contains(element: T?): kotlin.Boolean where R : kotlin.collections.Iterable<T>
 
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.9")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 @kotlin.internal.InlineOnly
 public inline operator fun <T : kotlin.Any, R : kotlin.ranges.OpenEndRange<T>> R.contains(element: T?): kotlin.Boolean where R : kotlin.collections.Iterable<T>
 
@@ -267,68 +267,68 @@ public inline operator fun kotlin.ranges.LongRange.contains(element: kotlin.Long
 public inline operator fun kotlin.ranges.LongRange.contains(value: kotlin.Short): kotlin.Boolean
 
 @kotlin.jvm.JvmName(name = "byteRangeContains")
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.9")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public operator fun kotlin.ranges.OpenEndRange<kotlin.Byte>.contains(value: kotlin.Int): kotlin.Boolean
 
 @kotlin.jvm.JvmName(name = "byteRangeContains")
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.9")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public operator fun kotlin.ranges.OpenEndRange<kotlin.Byte>.contains(value: kotlin.Long): kotlin.Boolean
 
 @kotlin.jvm.JvmName(name = "byteRangeContains")
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.9")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public operator fun kotlin.ranges.OpenEndRange<kotlin.Byte>.contains(value: kotlin.Short): kotlin.Boolean
 
 @kotlin.jvm.JvmName(name = "doubleRangeContains")
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.9")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public operator fun kotlin.ranges.OpenEndRange<kotlin.Double>.contains(value: kotlin.Float): kotlin.Boolean
 
 @kotlin.jvm.JvmName(name = "intRangeContains")
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.9")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public operator fun kotlin.ranges.OpenEndRange<kotlin.Int>.contains(value: kotlin.Byte): kotlin.Boolean
 
 @kotlin.jvm.JvmName(name = "intRangeContains")
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.9")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public operator fun kotlin.ranges.OpenEndRange<kotlin.Int>.contains(value: kotlin.Long): kotlin.Boolean
 
 @kotlin.jvm.JvmName(name = "intRangeContains")
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.9")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public operator fun kotlin.ranges.OpenEndRange<kotlin.Int>.contains(value: kotlin.Short): kotlin.Boolean
 
 @kotlin.jvm.JvmName(name = "longRangeContains")
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.9")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public operator fun kotlin.ranges.OpenEndRange<kotlin.Long>.contains(value: kotlin.Byte): kotlin.Boolean
 
 @kotlin.jvm.JvmName(name = "longRangeContains")
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.9")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public operator fun kotlin.ranges.OpenEndRange<kotlin.Long>.contains(value: kotlin.Int): kotlin.Boolean
 
 @kotlin.jvm.JvmName(name = "longRangeContains")
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.9")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public operator fun kotlin.ranges.OpenEndRange<kotlin.Long>.contains(value: kotlin.Short): kotlin.Boolean
 
 @kotlin.jvm.JvmName(name = "shortRangeContains")
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.9")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public operator fun kotlin.ranges.OpenEndRange<kotlin.Short>.contains(value: kotlin.Byte): kotlin.Boolean
 
 @kotlin.jvm.JvmName(name = "shortRangeContains")
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.9")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public operator fun kotlin.ranges.OpenEndRange<kotlin.Short>.contains(value: kotlin.Int): kotlin.Boolean
 
 @kotlin.jvm.JvmName(name = "shortRangeContains")
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.9")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public operator fun kotlin.ranges.OpenEndRange<kotlin.Short>.contains(value: kotlin.Long): kotlin.Boolean
 
 @kotlin.SinceKotlin(version = "1.5")
@@ -567,16 +567,16 @@ public operator fun kotlin.Double.rangeTo(that: kotlin.Double): kotlin.ranges.Cl
 @kotlin.SinceKotlin(version = "1.1")
 public operator fun kotlin.Float.rangeTo(that: kotlin.Float): kotlin.ranges.ClosedFloatingPointRange<kotlin.Float>
 
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.9")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public operator fun <T : kotlin.Comparable<T>> T.rangeUntil(that: T): kotlin.ranges.OpenEndRange<T>
 
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.9")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public operator fun kotlin.Double.rangeUntil(that: kotlin.Double): kotlin.ranges.OpenEndRange<kotlin.Double>
 
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.9")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public operator fun kotlin.Float.rangeUntil(that: kotlin.Float): kotlin.ranges.OpenEndRange<kotlin.Float>
 
 public fun kotlin.ranges.CharProgression.reversed(): kotlin.ranges.CharProgression
@@ -683,8 +683,8 @@ public final class CharRange : kotlin.ranges.CharProgression, kotlin.ranges.Clos
     public constructor CharRange(start: kotlin.Char, endInclusive: kotlin.Char)
 
     @kotlin.Deprecated(message = "Can throw an exception when it's impossible to represent the value with Char type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
-    @kotlin.SinceKotlin(version = "1.7")
-    @kotlin.ExperimentalStdlibApi
+    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
     public open override val endExclusive: kotlin.Char { get; }
 
     public open override val endInclusive: kotlin.Char { get; }
@@ -751,8 +751,8 @@ public final class IntRange : kotlin.ranges.IntProgression, kotlin.ranges.Closed
     public constructor IntRange(start: kotlin.Int, endInclusive: kotlin.Int)
 
     @kotlin.Deprecated(message = "Can throw an exception when it's impossible to represent the value with Int type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
-    @kotlin.SinceKotlin(version = "1.7")
-    @kotlin.ExperimentalStdlibApi
+    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
     public open override val endExclusive: kotlin.Int { get; }
 
     public open override val endInclusive: kotlin.Int { get; }
@@ -800,8 +800,8 @@ public final class LongRange : kotlin.ranges.LongProgression, kotlin.ranges.Clos
     public constructor LongRange(start: kotlin.Long, endInclusive: kotlin.Long)
 
     @kotlin.Deprecated(message = "Can throw an exception when it's impossible to represent the value with Long type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
-    @kotlin.SinceKotlin(version = "1.7")
-    @kotlin.ExperimentalStdlibApi
+    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
     public open override val endExclusive: kotlin.Long { get; }
 
     public open override val endInclusive: kotlin.Long { get; }
@@ -823,8 +823,8 @@ public final class LongRange : kotlin.ranges.LongProgression, kotlin.ranges.Clos
     }
 }
 
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.9")
+@kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
 public interface OpenEndRange<T : kotlin.Comparable<T>> {
     public abstract val endExclusive: T { get; }
 
@@ -864,9 +864,9 @@ public open class UIntProgression : kotlin.collections.Iterable<kotlin.UInt> {
 public final class UIntRange : kotlin.ranges.UIntProgression, kotlin.ranges.ClosedRange<kotlin.UInt>, kotlin.ranges.OpenEndRange<kotlin.UInt> {
     public constructor UIntRange(start: kotlin.UInt, endInclusive: kotlin.UInt)
 
-    @kotlin.SinceKotlin(version = "1.7")
-    @kotlin.ExperimentalStdlibApi
     @kotlin.Deprecated(message = "Can throw an exception when it's impossible to represent the value with UInt type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
+    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
     public open override val endExclusive: kotlin.UInt { get; }
 
     public open override val endInclusive: kotlin.UInt { get; }
@@ -917,9 +917,9 @@ public open class ULongProgression : kotlin.collections.Iterable<kotlin.ULong> {
 public final class ULongRange : kotlin.ranges.ULongProgression, kotlin.ranges.ClosedRange<kotlin.ULong>, kotlin.ranges.OpenEndRange<kotlin.ULong> {
     public constructor ULongRange(start: kotlin.ULong, endInclusive: kotlin.ULong)
 
-    @kotlin.SinceKotlin(version = "1.7")
-    @kotlin.ExperimentalStdlibApi
     @kotlin.Deprecated(message = "Can throw an exception when it's impossible to represent the value with ULong type, for example, when the range includes MAX_VALUE. It's recommended to use 'endInclusive' property that doesn't throw.")
+    @kotlin.SinceKotlin(version = "1.9")
+    @kotlin.WasExperimental(markerClass = {kotlin.ExperimentalStdlibApi::class})
     public open override val endExclusive: kotlin.ULong { get; }
 
     public open override val endInclusive: kotlin.ULong { get; }

@@ -77,6 +77,7 @@ object FirConflictsDeclarationChecker : FirBasicDeclarationChecker() {
             FirPackageMemberScope(file.packageFqName, context.sessionHolder.session)
         }
         for (topLevelDeclaration in file.declarations) {
+            if (topLevelDeclaration is FirErrorProperty || topLevelDeclaration is FirErrorFunction) continue
             inspector.collectWithExternalConflicts(topLevelDeclaration, file, context.session, packageMemberScope)
         }
     }

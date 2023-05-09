@@ -19,7 +19,7 @@ private val presetsProperty = KotlinTargetsContainerWithPresets::presets.name
 
 private fun generateKotlinTargetContainerWithPresetFunctionsInterface() {
     // Generate KotlinMultiplatformExtension subclass with member functions for the presets:
-    val functions = allPresetEntries.map { kotlinPreset ->
+    val functions = nativePresetEntries.map { kotlinPreset ->
         // magic indent is needed to make the result look pretty
         val funPrefix = kotlinPreset.deprecation?.let { "\n    $it\n    @Suppress(\"DEPRECATION\")\n    " } ?: ""
         generatePresetFunctions(kotlinPreset, presetsProperty, "configureOrCreate", funPrefix)
@@ -29,11 +29,11 @@ private fun generateKotlinTargetContainerWithPresetFunctionsInterface() {
         typeName(parentInterface.java.canonicalName)
 
     val className =
-        typeName("org.jetbrains.kotlin.gradle.dsl.KotlinTargetContainerWithPresetFunctions")
+        typeName("org.jetbrains.kotlin.gradle.dsl.KotlinTargetContainerWithNativePresetFunctions")
 
     val deprecatedMessageVal = typeName("org.jetbrains.kotlin.konan.target.DEPRECATED_TARGET_MESSAGE")
 
-    val imports = allPresetEntries
+    val imports = nativePresetEntries
         .flatMap { it.typeNames() }
         .plus(parentInterfaceName)
         .plus(deprecatedMessageVal)

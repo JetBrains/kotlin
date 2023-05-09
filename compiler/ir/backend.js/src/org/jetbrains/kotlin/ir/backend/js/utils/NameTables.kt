@@ -54,7 +54,7 @@ abstract class NameScope {
 class NameTable<T>(
     val parent: NameScope = EmptyScope,
     val reserved: MutableSet<String> = mutableSetOf(),
-    val mappedNames: MutableMap<String, String>? = null
+    val mappedNames: MutableMap<String, String>? = null,
 ) : NameScope() {
     val names = mutableMapOf<T, String>()
 
@@ -153,13 +153,10 @@ fun calculateJsFunctionSignature(declaration: IrFunction, context: JsIrBackendCo
 
     // TODO: Use better hashCode
     val sanitizedName = sanitizeName(declarationName, withHash = false)
-    return "${sanitizedName}_$signature$RESERVED_MEMBER_NAME_SUFFIX".intern()
+    return context.globalInternationService.string("${sanitizedName}_$signature$RESERVED_MEMBER_NAME_SUFFIX")
 }
 
-fun jsFunctionSignature(
-    declaration: IrFunction,
-    context: JsIrBackendContext
-): String {
+fun jsFunctionSignature(declaration: IrFunction, context: JsIrBackendContext): String {
     require(!declaration.isStaticMethodOfClass)
     require(declaration.dispatchReceiverParameter != null)
 

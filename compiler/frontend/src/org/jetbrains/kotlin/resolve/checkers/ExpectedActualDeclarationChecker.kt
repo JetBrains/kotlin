@@ -63,7 +63,8 @@ class ExpectedActualDeclarationChecker(
                 declaration, descriptor, context.trace,
                 checkActualModifier, context.expectActualTracker
             )
-        } else if (descriptor.isActualOrSomeContainerIsActual()) {
+        }
+        if (descriptor.isActualOrSomeContainerIsActual()) {
             val allDependsOnModules = moduleStructureOracle.findAllDependsOnPaths(descriptor.module).flatMap { it.nodes }.toHashSet()
             checkActualDeclarationHasExpected(
                 declaration,

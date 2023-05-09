@@ -206,12 +206,6 @@ public class JvmIrInterpreterAfterPsi2IrTestGenerated extends AbstractJvmIrInter
     }
 
     @Test
-    @TestMetadata("kt53480.kt")
-    public void testKt53480() throws Exception {
-        runTest("compiler/testData/ir/interpreter/kt53480.kt");
-    }
-
-    @Test
     @TestMetadata("lambda.kt")
     public void testLambda() throws Exception {
         runTest("compiler/testData/ir/interpreter/lambda.kt");
@@ -704,6 +698,12 @@ public class JvmIrInterpreterAfterPsi2IrTestGenerated extends AbstractJvmIrInter
         @Test
         public void testAllFilesPresentInReference() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/interpreter/reference"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("functionReference.kt")
+        public void testFunctionReference() throws Exception {
+            runTest("compiler/testData/ir/interpreter/reference/functionReference.kt");
         }
 
         @Test

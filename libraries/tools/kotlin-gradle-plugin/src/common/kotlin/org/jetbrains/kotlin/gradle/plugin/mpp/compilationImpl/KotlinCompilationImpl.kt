@@ -11,15 +11,14 @@ import org.gradle.api.Action
 import org.gradle.api.GradleException
 import org.gradle.api.attributes.AttributeContainer
 import org.gradle.api.file.FileCollection
+import org.gradle.api.file.SourceDirectorySet
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
-import org.jetbrains.kotlin.gradle.dsl.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.HierarchyAttributeContainer
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.InternalKotlinCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.filterModuleName
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
-import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
+import org.jetbrains.kotlin.gradle.plugin.mpp.moduleNameForCompilation
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.utils.ObservableSet
@@ -91,6 +90,7 @@ internal class KotlinCompilationImpl constructor(
     override val kotlinSourceSets: ObservableSet<KotlinSourceSet>
         get() = sourceSets.kotlinSourceSets
 
+    @Deprecated("scheduled for removal with Kotlin 2.0")
     override fun source(sourceSet: KotlinSourceSet) {
         sourceSets.source(sourceSet)
     }
@@ -127,6 +127,7 @@ internal class KotlinCompilationImpl constructor(
 
     override var runtimeDependencyFiles: FileCollection? = configurations.runtimeDependencyConfiguration
 
+    @Deprecated("Scheduled for removal with Kotlin 2.0")
     override val relatedConfigurationNames: List<String> = listOfNotNull(
         apiConfigurationName,
         implementationConfigurationName,
@@ -145,20 +146,6 @@ internal class KotlinCompilationImpl constructor(
     }
 
     //endregion
-
-
-    //region Compiler Module Management
-
-    @Suppress("OVERRIDE_DEPRECATION")
-    override val moduleName: String
-        get() {
-            val baseName = target.project.archivesName.orNull ?: target.project.name
-            val suffix = if (compilationName == KotlinCompilation.MAIN_COMPILATION_NAME) "" else "_$compilationName"
-            return filterModuleName("$baseName$suffix")
-        }
-
-    //endregion
-
 
     //region Compile Tasks
 

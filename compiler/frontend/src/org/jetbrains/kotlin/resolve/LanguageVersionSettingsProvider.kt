@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.resolve
 
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -16,6 +15,6 @@ interface LanguageVersionSettingsProvider {
 
     companion object {
         fun getInstance(project: Project): LanguageVersionSettingsProvider? =
-            ServiceManager.getService(project, LanguageVersionSettingsProvider::class.java)
+            project.getService(LanguageVersionSettingsProvider::class.java)
     }
 }

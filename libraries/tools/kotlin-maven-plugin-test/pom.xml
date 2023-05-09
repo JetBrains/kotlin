@@ -105,7 +105,7 @@
 
                     <plugin>
                         <artifactId>maven-invoker-plugin</artifactId>
-                        <version>2.0.0</version>
+                        <version>3.5.1</version>
                         <configuration>
                             <pomIncludes>
                                 <pomInclude>*/pom.xml</pomInclude>
@@ -117,12 +117,12 @@
                             <!--<settingsFile>src/it/settings.xml</settingsFile>-->
                             <localRepositoryPath>local-repo</localRepositoryPath>
                             <extraArtifacts>
+                                <artifact>org.jetbrains.kotlin:kotlin-annotation-processing:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-maven-plugin:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-maven-allopen:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-maven-noarg:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-maven-lombok:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-maven-sam-with-receiver:${project.version}</artifact>
-                                <artifact>org.jetbrains.kotlin:kotlin-annotation-processing-maven:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-script-runtime:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-stdlib:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-stdlib-common:${project.version}</artifact>
@@ -137,7 +137,6 @@
                                 <artifact>org.jetbrains.kotlin:kotlin-test-junit5:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-test-testng:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-test-js:${project.version}</artifact>
-                                <artifact>org.jetbrains.kotlin:kotlin-script-util:${project.version}</artifact>
                                 <artifact>org.jetbrains.kotlin:kotlin-bom:${project.version}:pom</artifact>
                             </extraArtifacts>
                             <showErrors>true</showErrors>
@@ -154,6 +153,7 @@
                                 <configuration>
                                     <projectsDirectory>src/it</projectsDirectory>
                                     <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+                                    <javaHome>${jdk_1_8}</javaHome>
                                 </configuration>
                                 <!--<phase>package</phase>-->
                                 <goals>
@@ -162,7 +162,19 @@
                                 </goals>
                             </execution>
                             <execution>
-                                <id>integration-test-java9</id>
+                                <id>integration-test-java8-only</id>
+                                <configuration>
+                                    <projectsDirectory>src/it/java8</projectsDirectory>
+                                    <cloneProjectsTo>${project.build.directory}/it/java8</cloneProjectsTo>
+                                    <javaHome>${jdk_1_8}</javaHome>
+                                </configuration>
+                                <goals>
+                                    <goal>install</goal>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>integration-test-java9-only</id>
                                 <configuration>
                                     <projectsDirectory>src/it/java9</projectsDirectory>
                                     <cloneProjectsTo>${project.build.directory}/it/java9</cloneProjectsTo>
@@ -174,7 +186,7 @@
                                 </goals>
                             </execution>
                             <execution>
-                                <id>integration-test-java17</id>
+                                <id>integration-test-java17-only</id>
                                 <configuration>
                                     <projectsDirectory>src/it/java17</projectsDirectory>
                                     <cloneProjectsTo>${project.build.directory}/it/java17</cloneProjectsTo>
@@ -190,6 +202,7 @@
                                 <configuration>
                                     <projectsDirectory>src/it</projectsDirectory>
                                     <cloneProjectsTo>${project.build.directory}/it-k2</cloneProjectsTo>
+                                    <javaHome>${jdk_1_8}</javaHome>
                                     <pomExcludes>
                                         <!-- exclude kapt -->
                                         <pomExclude>test-dagger-maven-example/pom.xml</pomExclude>

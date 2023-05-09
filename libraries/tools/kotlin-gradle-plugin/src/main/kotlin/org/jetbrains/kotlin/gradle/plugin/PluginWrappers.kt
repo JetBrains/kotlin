@@ -139,6 +139,14 @@ open class KotlinPlatformCommonPlugin : KotlinPlatformPluginBase("common") {
     }
 }
 
+open class KotlinApiPlugin : KotlinBaseApiPlugin() {
+
+    override fun apply(project: Project) {
+        project.registerVariantImplementations()
+        super.apply(project)
+    }
+}
+
 private fun Project.registerVariantImplementations() {
     val factories = VariantImplementationFactoriesConfigurator.get(gradle)
     factories[MavenPluginConfigurator.MavenPluginConfiguratorVariantFactory::class] =
@@ -157,4 +165,6 @@ private fun Project.registerVariantImplementations() {
         KotlinTestReportCompatibilityHelperG6.KotlinTestReportCompatibilityHelperVariantFactoryG6()
     factories[ArtifactTypeAttributeAccessor.ArtifactTypeAttributeAccessorVariantFactory::class] =
         ArtifactTypeAttributeAccessorG6.ArtifactTypeAttributeAccessorVariantFactoryG6()
+    factories[ProjectIsolationStartParameterAccessor.Factory::class] =
+        ProjectIsolationStartParameterAccessorG6.Factory()
 }

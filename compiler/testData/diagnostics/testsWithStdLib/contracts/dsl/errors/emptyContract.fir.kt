@@ -5,5 +5,5 @@
 import kotlin.contracts.*
 
 fun emptyContract() {
-    contract { }
+    <!ERROR_IN_CONTRACT_DESCRIPTION!>contract { }<!>
 }

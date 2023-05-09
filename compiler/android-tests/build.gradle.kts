@@ -29,7 +29,7 @@ dependencies {
     testApi(jpsBuildTest())
 
     testRuntimeOnly(intellijCore())
-    testRuntimeOnly(commonDependency("net.java.dev.jna:jna"))
+    testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
 
     testApi("org.junit.platform:junit-platform-launcher:${commonDependencyVersion("org.junit.platform", "")}")
 }
@@ -41,8 +41,10 @@ sourceSets {
 
 projectTest {
     dependsOn(":dist")
+    val jdkHome = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8)
     doFirst {
         environment("kotlin.tests.android.timeout", "45")
+        environment("JAVA_HOME", jdkHome.get())
     }
 
     if (project.hasProperty("teamcity") || project.hasProperty("kotlin.test.android.teamcity")) {

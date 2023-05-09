@@ -1,4 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
 annotation class A() {
     <!ANNOTATION_CLASS_MEMBER!><!PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED!>constructor(s: Nothing?)<!> {}<!>
     <!ANNOTATION_CLASS_MEMBER!>init {}<!>

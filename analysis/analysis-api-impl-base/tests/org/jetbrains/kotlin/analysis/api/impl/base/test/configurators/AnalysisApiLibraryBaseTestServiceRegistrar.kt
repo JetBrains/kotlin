@@ -34,11 +34,6 @@ object AnalysisApiLibraryBaseTestServiceRegistrar : AnalysisApiTestServiceRegist
     }
 
     override fun registerApplicationServices(application: MockApplication, testServices: TestServices) {
-        application.apply {
-            registerService(ClsKotlinBinaryClassCache::class.java)
-            registerService(FileAttributeService::class.java, DummyFileAttributeService)
-        }
-
         FileTypeFileViewProviders.INSTANCE.addExplicitExtension(JavaClassFileType.INSTANCE, ClassFileViewProviderFactory())
 
         ClassFileDecompilers.getInstance().EP_NAME.point.apply {

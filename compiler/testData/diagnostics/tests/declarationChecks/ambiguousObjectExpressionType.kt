@@ -1,4 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
 interface Lazy<T> {
     operator fun getValue(a1: Any, a2: Any): T
 }

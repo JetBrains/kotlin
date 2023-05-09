@@ -11,7 +11,7 @@ import org.junit.jupiter.api.DisplayName
 
 @MppGradlePluginTests
 @DisplayName("Broken task configuration avoidance doesn't lead to build failures at least with simple setups")
-class BrokenLazyConfigurationIT : MPPBaseTest() {
+class BrokenLazyConfigurationIT : KGPBaseTest() {
     @GradleTest
     @DisplayName("works in JVM")
     fun testBrokenTcaInJvm(gradleVersion: GradleVersion) {

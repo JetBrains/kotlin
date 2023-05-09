@@ -67,7 +67,7 @@ class JsIrModuleHeader(
     val hasJsExports: Boolean,
     var associatedModule: JsIrModule?
 ) {
-    val externalNames: Set<String> by lazy { nameBindings.keys - definitions }
+    val externalNames: Set<String> by lazy(LazyThreadSafetyMode.NONE) { nameBindings.keys - definitions }
 }
 
 class JsIrProgram(private var modules: List<JsIrModule>) {

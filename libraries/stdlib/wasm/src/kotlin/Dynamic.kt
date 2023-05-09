@@ -13,6 +13,19 @@ package kotlin.js
 @Deprecated("Use JsAny instead", level = DeprecationLevel.ERROR, replaceWith = ReplaceWith("JsAny"))
 public external interface Dynamic : JsAny
 
+/**
+ * Reinterprets this value as a value of the Dynamic type.
+ */
+@Deprecated("If value is a subtype of JsAny, use JsAny instead. Otherwise, use toJsReference", level = DeprecationLevel.ERROR)
+fun Any.asDynamic(): JsAny = this.toJsReference()
+
+/**
+ * Reinterprets this value as a value of the Dynamic type.
+ */
+@Deprecated("Use toJsString instead", level = DeprecationLevel.ERROR, replaceWith = ReplaceWith("this.toJsString()"))
+@kotlin.internal.InlineOnly
+fun String.asDynamic(): JsString = this.toJsString()
+
 private fun jsThrow(e: JsAny) {
     js("throw e;")
 }

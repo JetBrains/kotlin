@@ -13,6 +13,7 @@ abstract class Base<T : Any?> {
     get
 
   abstract fun <Y : Any?> foo(y: Y): T
+
   abstract var bar: T
     abstract get
     abstract set

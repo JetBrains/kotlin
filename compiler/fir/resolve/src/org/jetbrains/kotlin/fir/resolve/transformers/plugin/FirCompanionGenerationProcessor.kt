@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.fir.resolve.transformers.plugin
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
+import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.FirStatement
@@ -22,7 +25,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
-import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
 
 class FirCompanionGenerationProcessor(
@@ -49,11 +51,15 @@ class FirCompanionGenerationTransformer(val session: FirSession) : FirTransforme
     }
 
     override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): FirStatement {
+        generateAndUpdateCompanion(regularClass)
+        return regularClass.transformDeclarations(this, data)
+    }
+
+    fun generateAndUpdateCompanion(regularClass: FirRegularClass) {
         val companionSymbol = generateCompanion(regularClass)
         if (companionSymbol != null) {
             regularClass.replaceCompanionObjectSymbol(companionSymbol)
         }
-        return regularClass.transformDeclarations(this, data)
     }
 
     private fun generateCompanion(regularClass: FirRegularClass): FirRegularClassSymbol? {
@@ -65,6 +71,7 @@ class FirCompanionGenerationTransformer(val session: FirSession) : FirTransforme
                     result = it
                 }
             }
+
             result
         } else {
             val companionClassId = regularClass.classId.createNestedClassId(DEFAULT_NAME_FOR_COMPANION_OBJECT)

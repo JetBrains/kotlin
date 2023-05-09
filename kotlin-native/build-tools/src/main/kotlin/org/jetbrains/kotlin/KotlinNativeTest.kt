@@ -447,6 +447,9 @@ open class KonanDriverTest : KonanStandaloneTest() {
             addAll(getSources().get())
             addAll(flags)
             addAll(project.globalTestArgs)
+
+            add("-Xpartial-linkage=enable")
+            add("-Xpartial-linkage-loglevel=error")
         }
 
         // run konanc compiler locally

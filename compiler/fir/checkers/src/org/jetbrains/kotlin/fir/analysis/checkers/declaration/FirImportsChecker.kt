@@ -291,6 +291,6 @@ object FirImportsChecker : FirFileChecker() {
         if (importedFqName.isRoot || importedFqName.shortName().asString().isEmpty()) return
         val classId = (import as? FirResolvedImport)?.resolvedParentClassId ?: ClassId.topLevel(importedFqName)
         val classLike: FirRegularClassSymbol = classId.resolveToClass(context) ?: return
-        FirDeprecationChecker.reportApiStatusIfNeeded(import.source, classLike, null, context, reporter)
+        FirDeprecationChecker.reportApiStatusIfNeeded(import.source, classLike, context, reporter)
     }
 }

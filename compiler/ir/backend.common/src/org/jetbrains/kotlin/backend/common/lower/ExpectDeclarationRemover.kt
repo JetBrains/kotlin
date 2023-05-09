@@ -12,9 +12,13 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
+import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.extractTypeParameters
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.multiplatform.OptionalAnnotationUtil
 import org.jetbrains.kotlin.resolve.multiplatform.findCompatibleActualsForExpected
@@ -151,12 +155,28 @@ open class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, priva
         defaultValue.let { originalDefault ->
             declaration.defaultValue = originalDefault.copyAndActualizeDefaultValue(
                 function,
-                declaration,
-                typeParameterSubstitutionMap.getValue(expectToActual),
-                classActualizer = { symbolTable.referenceClass(it.descriptor.findActualForExpect() as ClassDescriptor).owner },
-                functionActualizer = { symbolTable.referenceFunction(it.descriptor.findActualForExpect() as FunctionDescriptor).owner }
+                typeParameterSubstitutionMap.getValue(expectToActual)
             )
         }
+    }
+
+    private fun IrExpressionBody.copyAndActualizeDefaultValue(
+        actualFunction: IrFunction,
+        expectActualTypeParametersMap: Map<IrTypeParameter, IrTypeParameter>
+    ): IrExpressionBody {
+        return this
+            .deepCopyWithSymbols(actualFunction) { symbolRemapper, _ ->
+                DeepCopyIrTreeWithSymbols(symbolRemapper, IrTypeParameterRemapper(expectActualTypeParametersMap))
+            }
+            .transform(object : IrElementTransformerVoid() {
+                override fun visitGetValue(expression: IrGetValue): IrExpression {
+                    expression.transformChildrenVoid()
+                    return expression.actualize(
+                        classActualizer = { symbolTable.referenceClass(it.descriptor.findActualForExpect() as ClassDescriptor).owner },
+                        functionActualizer = { symbolTable.referenceFunction(it.descriptor.findActualForExpect() as FunctionDescriptor).owner }
+                    )
+                }
+            }, data = null)
     }
 
     private fun MemberDescriptor.findExpectForActual(): MemberDescriptor? {

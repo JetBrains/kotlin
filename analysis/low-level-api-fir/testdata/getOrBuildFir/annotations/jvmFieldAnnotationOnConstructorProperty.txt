@@ -1,0 +1,6 @@
+KT element: KtAnnotationEntry
+FIR element: FirAnnotationCallImpl
+FIR source kind: KtRealSourceElementKind
+
+FIR element rendered:
+@R|kotlin/jvm/JvmField|[Types]()

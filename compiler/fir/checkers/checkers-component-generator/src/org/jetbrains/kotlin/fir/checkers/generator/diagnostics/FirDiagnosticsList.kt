@@ -123,6 +123,17 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<String>("message")
         }
 
+        val TYPEALIAS_EXPANSION_DEPRECATION_ERROR by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
+            parameter<Symbol>("alias")
+            parameter<Symbol>("reference")
+            parameter<String>("message")
+        }
+        val TYPEALIAS_EXPANSION_DEPRECATION by warning<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
+            parameter<Symbol>("alias")
+            parameter<Symbol>("reference")
+            parameter<String>("message")
+        }
+
         val API_NOT_AVAILABLE by error<PsiElement>(PositioningStrategy.SELECTOR_BY_QUALIFIED) {
             parameter<ApiVersion>("sinceKotlinVersion")
             parameter<ApiVersion>("currentVersion")
@@ -321,6 +332,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val AMBIGUOUS_ANNOTATION_ARGUMENT by error<PsiElement> {
             parameter<List<FirBasedSymbol<*>>>("symbols")
         }
+
+        val VOLATILE_ON_VALUE by error<KtAnnotationEntry>()
+        val VOLATILE_ON_DELEGATE by error<KtAnnotationEntry>()
     }
 
     val OPT_IN by object : DiagnosticGroup("OptIn") {
@@ -652,6 +666,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val REIFIED_TYPE_FORBIDDEN_SUBSTITUTION by error<PsiElement> {
             parameter<ConeKotlinType>("type")
         }
+        val DEFINITELY_NON_NULLABLE_AS_REIFIED by error<PsiElement>()
 
         val FINAL_UPPER_BOUND by warning<KtTypeReference> {
             parameter<ConeKotlinType>("type")

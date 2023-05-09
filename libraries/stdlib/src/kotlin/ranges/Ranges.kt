@@ -39,7 +39,6 @@ public operator fun <T : Comparable<T>> T.rangeTo(that: T): ClosedRange<T> = Com
 /**
  * Represents a range of [Comparable] values.
  */
-@OptIn(ExperimentalStdlibApi::class)
 private open class ComparableOpenEndRange<T : Comparable<T>>(
     override val start: T,
     override val endExclusive: T
@@ -63,8 +62,8 @@ private open class ComparableOpenEndRange<T : Comparable<T>>(
  * This value needs to be smaller than [that] value, otherwise the returned range will be empty.
  * @sample samples.ranges.Ranges.rangeFromComparable
  */
-@SinceKotlin("1.7")
-@ExperimentalStdlibApi
+@SinceKotlin("1.9")
+@WasExperimental(ExperimentalStdlibApi::class)
 public operator fun <T : Comparable<T>> T.rangeUntil(that: T): OpenEndRange<T> = ComparableOpenEndRange(this, that)
 
 
@@ -132,7 +131,6 @@ public operator fun Double.rangeTo(that: Double): ClosedFloatingPointRange<Doubl
  *
  * Numbers are compared with the ends of this range according to IEEE-754.
  */
-@OptIn(ExperimentalStdlibApi::class)
 private class OpenEndDoubleRange(
     start: Double,
     endExclusive: Double
@@ -164,8 +162,8 @@ private class OpenEndDoubleRange(
  *
  * Numbers are compared with the ends of this range according to IEEE-754.
  */
-@SinceKotlin("1.7")
-@ExperimentalStdlibApi
+@SinceKotlin("1.9")
+@WasExperimental(ExperimentalStdlibApi::class)
 public operator fun Double.rangeUntil(that: Double): OpenEndRange<Double> = OpenEndDoubleRange(this, that)
 
 
@@ -215,7 +213,6 @@ public operator fun Float.rangeTo(that: Float): ClosedFloatingPointRange<Float> 
  *
  * Numbers are compared with the ends of this range according to IEEE-754.
  */
-@OptIn(ExperimentalStdlibApi::class)
 private class OpenEndFloatRange(
     start: Float,
     endExclusive: Float
@@ -247,8 +244,8 @@ private class OpenEndFloatRange(
  *
  * Numbers are compared with the ends of this range according to IEEE-754.
  */
-@SinceKotlin("1.7")
-@ExperimentalStdlibApi
+@SinceKotlin("1.9")
+@WasExperimental(ExperimentalStdlibApi::class)
 public operator fun Float.rangeUntil(that: Float): OpenEndRange<Float> = OpenEndFloatRange(this, that)
 
 
@@ -267,8 +264,8 @@ public inline operator fun <T, R> R.contains(element: T?): Boolean where T : Any
  *
  * Always returns `false` if the [element] is `null`.
  */
-@SinceKotlin("1.7")
-@ExperimentalStdlibApi
+@SinceKotlin("1.9")
+@WasExperimental(ExperimentalStdlibApi::class)
 @kotlin.internal.InlineOnly
 public inline operator fun <T, R> R.contains(element: T?): Boolean where T : Any, R : OpenEndRange<T>, R : Iterable<T> =
     element != null && contains(element)

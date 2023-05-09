@@ -376,7 +376,7 @@ internal class KonanIrLinker(
             mangler = KonanManglerIr,
             typeSystem = IrTypeSystemContextImpl(builtIns),
             friendModules = friendModules,
-            partialLinkageEnabled = partialLinkageSupport.isEnabled,
+            partialLinkageSupport = partialLinkageSupport,
             platformSpecificClassFilter = KonanFakeOverrideClassFilter
     )
 
@@ -407,9 +407,9 @@ internal class KonanIrLinker(
                 }
             }
 
-    override fun postProcess() {
+    override fun postProcess(inOrAfterLinkageStep: Boolean) {
         stubGenerator.unboundSymbolGeneration = true
-        super.postProcess()
+        super.postProcess(inOrAfterLinkageStep)
     }
 
     private val inlineFunctionFiles = mutableMapOf<IrExternalPackageFragment, IrFile>()

@@ -29,6 +29,7 @@ public final annotation class ExperimentalAssociatedObjects : kotlin.Annotation 
 }
 
 public interface KCallable<out R> {
+    @kotlin.internal.IntrinsicConstEvaluation
     public abstract val name: kotlin.String { get; }
 }
 

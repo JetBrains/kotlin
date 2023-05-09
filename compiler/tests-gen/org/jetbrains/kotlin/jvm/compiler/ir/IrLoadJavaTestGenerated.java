@@ -3985,31 +3985,31 @@ public class IrLoadJavaTestGenerated extends AbstractIrLoadJavaTest {
             }
         }
 
-        @TestMetadata("compiler/testData/loadJava/compiledKotlin/nested")
+        @TestMetadata("compiler/testData/loadJava/compiledKotlin/nestedClasses")
         @TestDataPath("$PROJECT_ROOT")
         @RunWith(JUnit3RunnerWithInners.class)
-        public static class Nested extends AbstractIrLoadJavaTest {
+        public static class NestedClasses extends AbstractIrLoadJavaTest {
             private void runTest(String testDataFilePath) throws Exception {
                 KotlinTestUtils.runTest(this::doTestCompiledKotlin, TargetBackend.JVM_IR, testDataFilePath);
             }
 
-            public void testAllFilesPresentInNested() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/nested"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+            public void testAllFilesPresentInNestedClasses() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/loadJava/compiledKotlin/nestedClasses"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
             }
 
             @TestMetadata("deepInnerGeneric.kt")
             public void testDeepInnerGeneric() throws Exception {
-                runTest("compiler/testData/loadJava/compiledKotlin/nested/deepInnerGeneric.kt");
+                runTest("compiler/testData/loadJava/compiledKotlin/nestedClasses/deepInnerGeneric.kt");
             }
 
             @TestMetadata("innerClassReferencesOuterTP.kt")
             public void testInnerClassReferencesOuterTP() throws Exception {
-                runTest("compiler/testData/loadJava/compiledKotlin/nested/innerClassReferencesOuterTP.kt");
+                runTest("compiler/testData/loadJava/compiledKotlin/nestedClasses/innerClassReferencesOuterTP.kt");
             }
 
             @TestMetadata("membersReferenceOuterTP.kt")
             public void testMembersReferenceOuterTP() throws Exception {
-                runTest("compiler/testData/loadJava/compiledKotlin/nested/membersReferenceOuterTP.kt");
+                runTest("compiler/testData/loadJava/compiledKotlin/nestedClasses/membersReferenceOuterTP.kt");
             }
         }
 

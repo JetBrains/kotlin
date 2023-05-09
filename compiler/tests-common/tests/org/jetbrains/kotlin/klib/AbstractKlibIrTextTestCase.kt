@@ -230,7 +230,8 @@ abstract class AbstractKlibIrTextTestCase : CodegenTestCase() {
         val testModule = irLinker.deserializeIrModuleHeader(testDescriptor, klib, { DeserializationStrategy.ALL })
         irLinker.init(null, emptyList())
         ExternalDependenciesGenerator(symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
-        irLinker.postProcess()
+        irLinker.postProcess(inOrAfterLinkageStep = true)
+        irLinker.clear()
         return testModule
     }
 

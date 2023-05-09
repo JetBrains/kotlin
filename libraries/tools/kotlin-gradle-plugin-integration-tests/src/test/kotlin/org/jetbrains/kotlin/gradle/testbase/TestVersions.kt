@@ -10,6 +10,9 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.utils.minSupportedGradleVersion
 
 interface TestVersions {
+
+    // https://gradle.org/nightly/
+    // Gradle nightly releases retention policy is 3 months
     object Gradle {
         const val G_6_8 = "6.8.3"
         const val G_6_9 = "6.9.2"
@@ -20,9 +23,8 @@ interface TestVersions {
         const val G_7_4 = "7.4.2"
         const val G_7_5 = "7.5.1"
         const val G_7_6 = "7.6"
-        // https://gradle.org/nightly/
-        // Retention policy is 3 months
         const val G_8_0 = "8.0.2"
+        const val G_8_1 = "8.1"
         const val MIN_SUPPORTED = minSupportedGradleVersion
         const val MIN_SUPPORTED_KPM = G_7_0
         const val MAX_SUPPORTED = G_7_6
@@ -43,7 +45,8 @@ interface TestVersions {
         const val AGP_72 = "7.2.2"
         const val AGP_73 = "7.3.1"
         const val AGP_74 = "7.4.0"
-        const val AGP_80 = "8.0.0-alpha11"
+        const val AGP_80 = "8.0.0-beta05"
+        const val AGP_81 = "8.1.0-alpha08"
 
         const val MIN_SUPPORTED = AGP_42 // KotlinAndroidPlugin.minimalSupportedAgpVersion
         const val MAX_SUPPORTED = AGP_74 // Update once Gradle MAX_SUPPORTED version will be bumped
@@ -62,6 +65,11 @@ interface TestVersions {
         AGP_73(AGP.AGP_73, GradleVersion.version(Gradle.G_7_4), GradleVersion.version(Gradle.G_7_5), JavaVersion.VERSION_11),
         AGP_74(AGP.AGP_74, GradleVersion.version(Gradle.G_7_5), GradleVersion.version(Gradle.G_7_6), JavaVersion.VERSION_11),
         AGP_80(AGP.AGP_80, GradleVersion.version(Gradle.G_8_0), GradleVersion.version(Gradle.G_8_0), JavaVersion.VERSION_17),
+        AGP_81(AGP.AGP_81, GradleVersion.version(Gradle.G_8_1), GradleVersion.version(Gradle.G_8_1), JavaVersion.VERSION_17),
         ;
+    }
+
+    object AppleGradlePlugin {
+        const val V222_0_21 = "222.4550-0.21"
     }
 }

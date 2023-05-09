@@ -1,0 +1,85 @@
+FILE: classWithWrongSuperCall.kt
+    public? open class A : R|kotlin/Any| {
+        public? [ContainingClassKey=A] constructor(init: ( A.() -> Unit )): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+        public? final? val prop: String = String()
+            public? [ContainingClassKey=A] get(): String
+
+    }
+    public? final? object B : A {
+        private [ContainingClassKey=B] constructor(): R|B| {
+            super<A>(fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                ^ Unit
+            }
+            )
+        }
+
+    }
+    public? final? object C : A {
+        private [ContainingClassKey=C] constructor(): R|C| {
+            super<A>(fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                local final? fun foo(): <implicit> {
+                    ^foo B#.prop#.toString#()
+                }
+
+            }
+            )
+        }
+
+    }
+    public? final? class D : A {
+        public? [ContainingClassKey=D] constructor(): R|D| {
+            super<A>(fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                local final? fun foo(): <implicit> {
+                    ^foo B#.prop#.toString#()
+                }
+
+            }
+            )
+        }
+
+    }
+    public? final? class E : A {
+        public? [ContainingClassKey=E] constructor(): R|E| {
+            super<A>(fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                local final? fun foo(): <implicit> {
+                    ^foo B#.prop#.toString#()
+                }
+
+            }
+            )
+        }
+
+    }
+    public? final? class F : A {
+        public? [ContainingClassKey=F] constructor(): R|F| {
+            super<A>()
+        }
+
+    }
+    public? final? class G : A {
+        public? [ContainingClassKey=G] constructor(): R|G| {
+            super<A>(fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                local final? fun foo(): <implicit> {
+                    ^foo C#.prop#.toString#()
+                }
+
+            }
+            )
+        }
+
+    }
+    public? final? class H : A {
+        public? [ContainingClassKey=H] constructor(): R|H| {
+            super<<implicit>>(fun <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {
+                local final? fun foo(): <implicit> {
+                    ^foo B#.prop#.toString#()
+                }
+
+            }
+            )
+        }
+
+    }

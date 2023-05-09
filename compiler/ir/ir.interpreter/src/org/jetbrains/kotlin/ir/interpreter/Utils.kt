@@ -297,7 +297,8 @@ internal fun IrClass.getSingleAbstractMethod(): IrFunction {
     return declarations.filterIsInstance<IrSimpleFunction>().single { it.modality == Modality.ABSTRACT }
 }
 
-internal fun IrGetValue.isAccessToNotNullableObject(): Boolean {
+internal fun IrExpression?.isAccessToNotNullableObject(): Boolean {
+    if (this !is IrGetValue) return false
     val owner = this.symbol.owner
     val expectedClass = this.type.classOrNull?.owner
     if (expectedClass == null || !expectedClass.isObject || this.type.isNullable()) return false

@@ -1,0 +1,70 @@
+# mkdir
+output/stubs
+output/classes
+output/javaClasses
+output/sources
+output/stubsAlt
+output/classesAlt
+output/javaClassesAlt
+output/sourcesAlt
+
+# kotlinc
+-language-version 2.0
+-cp %KOTLIN_STDLIB%
+-d output/ap.jar
+ap/Processor.kt
+
+# copy
+ap/META-INF/services/javax.annotation.processing.Processor
+output/ap/META-INF/services/javax.annotation.processing.Processor
+
+# kapt
+-Xuse-k2
+-Kapt-stubs=output/stubs
+-Kapt-classes=output/classes
+-Kapt-sources=output/sources
+-Kapt-classpath=output/ap
+-d output/classes
+-cp output/ap.jar:%KOTLIN_STDLIB%
+Test.kt
+
+# javac
+-cp output/ap.jar
+-d output/javaClasses
+-proc:none
+output/sources/generated/Function.java
+output/sources/generated/Property.java
+output/sources/generated/Test.java
+
+# kapt
+-language-version 2.0
+-Kapt-stubs=output/stubsAlt
+-Kapt-classes=output/classesAlt
+-Kapt-sources=output/sourcesAlt
+-Kapt-classpath=output/ap
+-d output/classesAlt
+-cp output/ap.jar:%KOTLIN_STDLIB%
+Test.kt
+
+# output
+warning: kapt currently doesn't support language version 2.0+.
+Falling back to 1.9.
+
+# java
+-cp output/classes:output/javaClasses:output/ap.jar:%KOTLIN_STDLIB%
+test.TestKt
+
+# javac
+-cp output/ap.jar
+-d output/javaClassesAlt
+-proc:none
+output/sourcesAlt/generated/Function.java
+output/sourcesAlt/generated/Property.java
+output/sourcesAlt/generated/Test.java
+
+# java
+-cp output/classes:output/javaClassesAlt:output/ap.jar:%KOTLIN_STDLIB%
+test.TestKt
+
+# after
+Generated class: generated.Test

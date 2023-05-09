@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.types.isArray
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
 val ANNOTATION_IMPLEMENTATION = object : IrDeclarationOriginImpl("ANNOTATION_IMPLEMENTATION", isSynthetic = true) {}
 
@@ -156,7 +157,8 @@ abstract class AnnotationImplementationTransformer(val context: BackendContext, 
         // (although annotations imported from Java do have)
         val props = declarations.filterIsInstance<IrProperty>()
         if (props.isNotEmpty()) return props
-        return declarations.filterIsInstance<IrSimpleFunction>().filter { it.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR }
+        return declarations
+            .filterIsInstanceAnd<IrSimpleFunction> { it.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR }
             .mapNotNull { it.correspondingPropertySymbol?.owner }
     }
 

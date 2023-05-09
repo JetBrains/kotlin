@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.light.classes.symbol.annotations
 
+import com.intellij.psi.JavaElementVisitor
 import com.intellij.psi.PsiAnnotationParameterList
+import com.intellij.psi.PsiElementVisitor
 import org.jetbrains.kotlin.analysis.api.annotations.KtNamedAnnotationValue
 import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
@@ -15,6 +17,14 @@ internal sealed class SymbolLightAbstractAnnotationParameterList(
     parent: SymbolLightAbstractAnnotation,
 ) : KtLightElementBase(parent), PsiAnnotationParameterList {
     override val kotlinOrigin: KtElement? get() = (parent as SymbolLightAbstractAnnotation).kotlinOrigin?.valueArgumentList
+
+    override fun accept(visitor: PsiElementVisitor) {
+        if (visitor is JavaElementVisitor) {
+            visitor.visitAnnotationParameterList(this)
+        } else {
+            visitor.visitElement(this)
+        }
+    }
 }
 
 @Suppress("NOTHING_TO_INLINE")

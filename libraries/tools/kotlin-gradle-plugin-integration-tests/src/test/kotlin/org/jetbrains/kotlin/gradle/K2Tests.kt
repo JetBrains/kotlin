@@ -53,10 +53,33 @@ class CustomK2Tests : KGPBaseTest() {
     }
 
     @GradleTest
-    @DisplayName("HMPP compilation without JS target. KT-57376, KT-57377, KT-57635")
+    @DisplayName("HMPP compilation without JS target. KT-57376, KT-57377, KT-57635, KT-57654")
     fun testHmppCompilationWithoutJsTarget(gradleVersion: GradleVersion) {
         with(project("k2-mpp-without-js", gradleVersion)) {
             val taskToExecute = ":compileIntermediateMainKotlinMetadata"
+            build(taskToExecute) {
+                assertTasksExecuted(taskToExecute)
+            }
+        }
+    }
+
+    @GradleTest
+    @DisplayName("Native metadata of intermediate with reference to internal in common. KT-58219")
+    fun nativeMetadataOfIntermediateWithReferenceToInternalInCommon(gradleVersion: GradleVersion) {
+        with(project("k2-native-intermediate-metadata", gradleVersion, buildOptions = defaultBuildOptions.copy(languageVersion = "2.0"))) {
+            val taskToExecute = ":compileNativeMainKotlinMetadata"
+            build(taskToExecute) {
+                assertTasksExecuted(taskToExecute)
+            }
+        }
+    }
+
+    @Disabled("disable until kotlin/native dependency is updated to include KT-58145")
+    @GradleTest
+    @DisplayName("Compiling shared native source with FirFakeOverrideGenerator referencing a common entity. KT-58145")
+    fun kt581450MppNativeSharedCrash(gradleVersion: GradleVersion) {
+        with(project("kt-581450-mpp-native-shared-crash", gradleVersion, buildOptions = defaultBuildOptions.copy(languageVersion = "2.0"))) {
+            val taskToExecute = ":compileNativeMainKotlinMetadata"
             build(taskToExecute) {
                 assertTasksExecuted(taskToExecute)
             }

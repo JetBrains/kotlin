@@ -1,5 +1,6 @@
 interface IBase<T : Any?> {
   abstract fun foo(x: Int)
+
   abstract val bar: Int
     abstract get
 

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinNativeBinaryContainer
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.*
+import org.jetbrains.kotlin.gradle.plugin.sources.awaitPlatformCompilations
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.metadata.*
 import org.jetbrains.kotlin.gradle.targets.native.KotlinNativeBinaryTestRun
@@ -56,7 +57,7 @@ abstract class KotlinNativeTarget @Inject constructor(
         // NB: another usage context for the host-specific metadata may be added to this set below
         val mutableUsageContexts = createUsageContexts(mainCompilation).toMutableSet()
 
-        project.whenEvaluated {
+        project.launchInStage(KotlinPluginLifecycle.Stage.AfterFinaliseDsl) {
             val hostSpecificSourceSets = getHostSpecificSourceSets(project)
                 .intersect(mainCompilation.allKotlinSourceSets)
 
@@ -70,18 +71,20 @@ abstract class KotlinNativeTarget @Inject constructor(
                     val publishable = this@KotlinNativeTarget.publishable
                     metadataJar.onlyIf { publishable }
 
-                    val metadataCompilations = hostSpecificSourceSets.mapNotNull {
-                        project.getMetadataCompilationForSourceSet(it)
-                    }
-
-                    metadataCompilations.forEach { compilation ->
-                        metadataJar.from(project.filesWithUnpackedArchives(compilation.output.allOutputs, setOf("klib"))) { spec ->
-                            spec.into(compilation.name)
+                    launch {
+                        val metadataCompilations = hostSpecificSourceSets.mapNotNull {
+                            project.findMetadataCompilation(it)
                         }
-                        metadataJar.dependsOn(compilation.output.classesDirs)
 
-                        if (compilation is KotlinSharedNativeCompilation) {
-                            project.includeCommonizedCInteropMetadata(metadataJar, compilation)
+                        metadataCompilations.forEach { compilation ->
+                            metadataJar.from(project.filesWithUnpackedArchives(compilation.output.allOutputs, setOf("klib"))) { spec ->
+                                spec.into(compilation.name)
+                            }
+                            metadataJar.dependsOn(compilation.output.classesDirs)
+
+                            if (compilation is KotlinSharedNativeCompilation) {
+                                project.includeCommonizedCInteropMetadata(metadataJar, compilation)
+                            }
                         }
                     }
                 }
@@ -148,6 +151,10 @@ abstract class KotlinNativeTarget @Inject constructor(
             "org.jetbrains.kotlin.native.build.type",
             String::class.java
         )
+        val kotlinNativeFrameworkNameAttribute = Attribute.of(
+            "org.jetbrains.kotlin.native.framework.name",
+            String::class.java
+        )
     }
 }
 
@@ -163,13 +170,13 @@ private val targetsEnabledOnAllHosts by lazy { hostManager.enabledByHost.values.
 internal fun isHostSpecificKonanTargetsSet(konanTargets: Iterable<KonanTarget>): Boolean =
     konanTargets.none { target -> target in targetsEnabledOnAllHosts }
 
-private fun <T> getHostSpecificElements(
+private suspend fun <T> getHostSpecificElements(
     fragments: Iterable<T>,
-    isNativeShared: (T) -> Boolean,
-    getKonanTargets: (T) -> Set<KonanTarget>
+    isNativeShared: suspend (T) -> Boolean,
+    getKonanTargets: suspend (T) -> Set<KonanTarget>
 ): Set<T> = fragments.filterTo(mutableSetOf()) { isNativeShared(it) && isHostSpecificKonanTargetsSet(getKonanTargets(it)) }
 
-internal fun getHostSpecificFragments(
+internal suspend fun getHostSpecificFragments(
     module: GradleKpmModule
 ): Set<GradleKpmFragment> = getHostSpecificElements<GradleKpmFragment>(
     module.fragments,
@@ -180,12 +187,12 @@ internal fun getHostSpecificFragments(
     }
 )
 
-internal fun getHostSpecificSourceSets(project: Project): Set<KotlinSourceSet> {
+internal suspend fun getHostSpecificSourceSets(project: Project): Set<KotlinSourceSet> {
     return getHostSpecificElements(
-        project.kotlinExtension.sourceSets,
-        isNativeShared = { sourceSet -> isNativeSourceSet(sourceSet) },
+        project.kotlinExtension.awaitSourceSets(),
+        isNativeShared = { sourceSet -> sourceSet.isNativeSourceSet.await() },
         getKonanTargets = { sourceSet ->
-            sourceSet.internal.compilations
+            sourceSet.internal.awaitPlatformCompilations()
                 .filterIsInstance<KotlinNativeCompilation>()
                 .mapTo(mutableSetOf()) { it.konanTarget }
         }
@@ -195,7 +202,7 @@ internal fun getHostSpecificSourceSets(project: Project): Set<KotlinSourceSet> {
 /**
  * Returns all host-specific source sets that will be compiled to two or more targets
  */
-internal fun getHostSpecificMainSharedSourceSets(project: Project): Set<KotlinSourceSet> {
+internal suspend fun getHostSpecificMainSharedSourceSets(project: Project): Set<KotlinSourceSet> {
     fun KotlinSourceSet.testOnly(): Boolean = internal.compilations.all { it.isTest() }
 
     fun KotlinSourceSet.isCompiledToSingleTarget(): Boolean {

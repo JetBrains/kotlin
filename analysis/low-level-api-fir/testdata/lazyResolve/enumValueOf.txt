@@ -1,0 +1,279 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] enumValueOf.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
+            LAZY_super<R|kotlin/Enum<one/MyEnum>|>
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] fun values(): R|kotlin/Array<one/MyEnum>| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|one/MyEnum| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] enumValueOf.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
+            LAZY_super<R|kotlin/Enum<one/MyEnum>|>
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] fun values(): R|kotlin/Array<one/MyEnum>| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(RAW_FIR)] value: R|kotlin/String|): R|one/MyEnum| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] enumValueOf.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
+            LAZY_super<R|kotlin/Enum<one/MyEnum>|>
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] fun values(): R|kotlin/Array<one/MyEnum>| {
+        }
+
+        public final static [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] value: R|kotlin/String|): R|one/MyEnum| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] enumValueOf.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
+            LAZY_super<R|kotlin/Enum<one/MyEnum>|>
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] fun values(): R|kotlin/Array<one/MyEnum>| {
+        }
+
+        public final static [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(COMPANION_GENERATION)] value: R|kotlin/String|): R|one/MyEnum| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] enumValueOf.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(SUPER_TYPES)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+        private [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
+            LAZY_super<R|kotlin/Enum<one/MyEnum>|>
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] fun values(): R|kotlin/Array<one/MyEnum>| {
+        }
+
+        public final static [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(SUPER_TYPES)] value: R|kotlin/String|): R|one/MyEnum| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] enumValueOf.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(TYPES)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+        private [ResolvedTo(TYPES)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
+            LAZY_super<R|kotlin/Enum<one/MyEnum>|>
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] fun values(): R|kotlin/Array<one/MyEnum>| {
+        }
+
+        public final static [ResolvedTo(TYPES)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(TYPES)] value: R|kotlin/String|): R|one/MyEnum| {
+        }
+
+        public final static [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
+            public [ResolvedTo(RAW_FIR)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] enumValueOf.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
+            LAZY_super<R|kotlin/Enum<one/MyEnum>|>
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun values(): R|kotlin/Array<one/MyEnum>| {
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(STATUS)] value: R|kotlin/String|): R|one/MyEnum| {
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
+            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] enumValueOf.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
+            LAZY_super<R|kotlin/Enum<one/MyEnum>|>
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun values(): R|kotlin/Array<one/MyEnum>| {
+        }
+
+        public final static [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(EXPECT_ACTUAL_MATCHING)] value: R|kotlin/String|): R|one/MyEnum| {
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
+            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
+
+    }
+
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] enumValueOf.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
+            LAZY_super<R|kotlin/Enum<one/MyEnum>|>
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun values(): R|kotlin/Array<one/MyEnum>| {
+        }
+
+        public final static [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] value: R|kotlin/String|): R|one/MyEnum| {
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
+            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] enumValueOf.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
+            LAZY_super<R|kotlin/Enum<one/MyEnum>|>
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun values(): R|kotlin/Array<one/MyEnum>| {
+        }
+
+        public final static [ResolvedTo(CONTRACTS)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(CONTRACTS)] value: R|kotlin/String|): R|one/MyEnum| {
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
+            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] enumValueOf.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
+            LAZY_super<R|kotlin/Enum<one/MyEnum>|>
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun values(): R|kotlin/Array<one/MyEnum>| {
+        }
+
+        public final static [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|kotlin/String|): R|one/MyEnum| {
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
+            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
+
+    }
+
+ANNOTATIONS_ARGUMENTS_MAPPING:
+FILE: [ResolvedTo(IMPORTS)] enumValueOf.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
+            LAZY_super<R|kotlin/Enum<one/MyEnum>|>
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun values(): R|kotlin/Array<one/MyEnum>| {
+        }
+
+        public final static [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] value: R|kotlin/String|): R|one/MyEnum| {
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
+            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] enumValueOf.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public final [ResolvedTo(STATUS)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+        private [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
+            LAZY_super<R|kotlin/Enum<one/MyEnum>|>
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] fun values(): R|kotlin/Array<one/MyEnum>| {
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|one/MyEnum| {
+        }
+
+        public final static [ResolvedTo(STATUS)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
+            public [ResolvedTo(STATUS)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(IMPORTS)] enumValueOf.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public final [ResolvedTo(BODY_RESOLVE)] enum class MyEnum : R|kotlin/Enum<one/MyEnum>| {
+        private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyEnum] constructor(): R|one/MyEnum| {
+            super<R|kotlin/Enum<one/MyEnum>|>()
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyEnum] enum entry ENTRY: R|one/MyEnum|
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyEnum] fun values(): R|kotlin/Array<one/MyEnum>| {
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyEnum] fun valueOf([ResolvedTo(BODY_RESOLVE)] value: R|kotlin/String|): R|one/MyEnum| {
+        }
+
+        public final static [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=MyEnum] val entries: R|kotlin/enums/EnumEntries<one/MyEnum>|
+            public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/enums/EnumEntries<one/MyEnum>|
+
+    }

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.builder
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.KtNodeTypes.*
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
@@ -32,10 +33,7 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.lexer.KtTokens.*
-import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.parsing.*
 import org.jetbrains.kotlin.psi.KtPsiUtil
 import org.jetbrains.kotlin.types.ConstantValueKind
@@ -856,29 +854,6 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             // Refer to (IR utils or FIR backend) DataClassMembersGenerator for generating equals, hashCode, and toString
         }
 
-        private fun generateComponentAccess(
-            parameterSource: KtSourceElement?,
-            firProperty: FirProperty,
-            classTypeRefWithCorrectSourceKind: FirTypeRef,
-            firPropertyReturnTypeRefWithCorrectSourceKind: FirTypeRef
-        ) =
-            buildPropertyAccessExpression {
-                source = parameterSource
-                typeRef = firPropertyReturnTypeRefWithCorrectSourceKind
-                dispatchReceiver = buildThisReceiverExpression {
-                    source = parameterSource
-                    calleeReference = buildImplicitThisReference {
-                        boundSymbol = classBuilder.symbol
-                    }
-                    typeRef = classTypeRefWithCorrectSourceKind
-                }
-                calleeReference = buildResolvedNamedReference {
-                    source = parameterSource
-                    this.name = firProperty.name
-                    resolvedSymbol = firProperty.symbol
-                }
-            }
-
         private fun generateComponentFunctions() {
             var componentIndex = 1
             for ((sourceNode, firProperty) in zippedParameters) {
@@ -903,41 +878,16 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
             }
         }
 
-        private val copyName = Name.identifier("copy")
-
         private fun generateCopyFunction() {
             classBuilder.addDeclaration(
-                buildSimpleFunction {
-                    val classTypeRef = createClassTypeRefWithSourceKind(KtFakeSourceElementKind.DataClassGeneratedMembers)
-                    source = this@DataClassMembersGenerator.source.toFirSourceElement(KtFakeSourceElementKind.DataClassGeneratedMembers)
-                    moduleData = baseModuleData
-                    origin = FirDeclarationOrigin.Source
-                    returnTypeRef = classTypeRef
-                    name = copyName
-                    status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
-                    symbol = FirNamedFunctionSymbol(CallableId(packageFqName, classFqName, copyName))
-                    dispatchReceiverType = currentDispatchReceiverType()
-                    for ((ktParameter, firProperty) in zippedParameters) {
-                        val propertyName = firProperty.name
-                        val parameterSource = ktParameter?.toFirSourceElement(KtFakeSourceElementKind.DataClassGeneratedMembers)
-                        val propertyReturnTypeRef =
-                            createParameterTypeRefWithSourceKind(firProperty, KtFakeSourceElementKind.DataClassGeneratedMembers)
-                        valueParameters += buildValueParameter {
-                            source = parameterSource
-                            containingFunctionSymbol = this@buildSimpleFunction.symbol
-                            moduleData = baseModuleData
-                            origin = FirDeclarationOrigin.Source
-                            returnTypeRef = propertyReturnTypeRef
-                            name = propertyName
-                            symbol = FirValueParameterSymbol(propertyName)
-                            defaultValue = generateComponentAccess(parameterSource, firProperty, classTypeRef, propertyReturnTypeRef)
-                            isCrossinline = false
-                            isNoinline = false
-                            isVararg = false
-                        }
-                    }
-                    // Refer to FIR backend ClassMemberGenerator for body generation.
-                }
+                classBuilder.createDataClassCopyFunction(
+                    ClassId(packageFqName, classFqName, false),
+                    source,
+                    currentDispatchReceiverType(),
+                    zippedParameters,
+                    createClassTypeRefWithSourceKind,
+                    createParameterTypeRefWithSourceKind
+                ) { src, kind -> src?.toFirSourceElement(kind) }
             )
         }
     }
@@ -1061,5 +1011,71 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         SETTER(shouldExplicitParameterTypeBePresent = false),
         LAMBDA(shouldExplicitParameterTypeBePresent = false),
         FOR_LOOP(shouldExplicitParameterTypeBePresent = false),
+    }
+}
+
+fun <T> FirRegularClassBuilder.createDataClassCopyFunction(
+    classId: ClassId,
+    sourceElement: T,
+    dispatchReceiver: ConeClassLikeType?,
+    zippedParameters: List<Pair<T, FirProperty>>,
+    createClassTypeRefWithSourceKind: (KtFakeSourceElementKind) -> FirTypeRef,
+    createParameterTypeRefWithSourceKind: (FirProperty, KtFakeSourceElementKind) -> FirTypeRef,
+    toFirSource: (T?, KtFakeSourceElementKind) -> KtSourceElement?
+): FirSimpleFunction {
+    fun generateComponentAccess(
+        parameterSource: KtSourceElement?,
+        firProperty: FirProperty,
+        classTypeRefWithCorrectSourceKind: FirTypeRef,
+        firPropertyReturnTypeRefWithCorrectSourceKind: FirTypeRef
+    ) =
+        buildPropertyAccessExpression {
+            this.source = parameterSource
+            typeRef = firPropertyReturnTypeRefWithCorrectSourceKind
+            this.dispatchReceiver = buildThisReceiverExpression {
+                this.source = parameterSource
+                calleeReference = buildImplicitThisReference {
+                    boundSymbol = this@createDataClassCopyFunction.symbol
+                }
+                typeRef = classTypeRefWithCorrectSourceKind
+            }
+            calleeReference = buildResolvedNamedReference {
+                this.source = parameterSource
+                this.name = firProperty.name
+                resolvedSymbol = firProperty.symbol
+            }
+        }
+
+    return buildSimpleFunction {
+        val classTypeRef = createClassTypeRefWithSourceKind(KtFakeSourceElementKind.DataClassGeneratedMembers)
+        this.source = toFirSource(sourceElement, KtFakeSourceElementKind.DataClassGeneratedMembers)
+        moduleData = this@createDataClassCopyFunction.moduleData
+        origin = this@createDataClassCopyFunction.origin
+        returnTypeRef = classTypeRef
+        name = StandardNames.DATA_CLASS_COPY
+        status = FirDeclarationStatusImpl(Visibilities.Public, Modality.FINAL)
+        symbol = FirNamedFunctionSymbol(CallableId(classId.packageFqName, classId.relativeClassName, StandardNames.DATA_CLASS_COPY))
+        dispatchReceiverType = dispatchReceiver
+        resolvePhase = this@createDataClassCopyFunction.resolvePhase
+        for ((ktParameter, firProperty) in zippedParameters) {
+            val propertyName = firProperty.name
+            val parameterSource = toFirSource(ktParameter, KtFakeSourceElementKind.DataClassGeneratedMembers)
+            val propertyReturnTypeRef =
+                createParameterTypeRefWithSourceKind(firProperty, KtFakeSourceElementKind.DataClassGeneratedMembers)
+            valueParameters += buildValueParameter {
+                source = parameterSource
+                containingFunctionSymbol = this@buildSimpleFunction.symbol
+                moduleData = this@createDataClassCopyFunction.moduleData
+                origin = FirDeclarationOrigin.Source
+                returnTypeRef = propertyReturnTypeRef
+                name = propertyName
+                symbol = FirValueParameterSymbol(propertyName)
+                defaultValue = generateComponentAccess(parameterSource, firProperty, classTypeRef, propertyReturnTypeRef)
+                isCrossinline = false
+                isNoinline = false
+                isVararg = false
+            }
+        }
+        // Refer to FIR backend ClassMemberGenerator for body generation.
     }
 }

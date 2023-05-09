@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-@file:Suppress("unused") // could be used externally in javax.script.ScriptEngineFactory META-INF file
+@file:Suppress("unused", "DEPRECATION") // could be used externally in javax.script.ScriptEngineFactory META-INF file
 
 package org.jetbrains.kotlin.script.jsr223
 
@@ -26,6 +26,7 @@ import javax.script.ScriptEngine
 import kotlin.script.experimental.jvm.util.KotlinJars
 import kotlin.script.experimental.jvm.util.scriptCompilationClasspathFromContext
 
+@Deprecated("Use kotlin-scripting-jsr223 instead")
 class KotlinJsr223JvmLocalScriptEngineFactory : KotlinJsr223JvmScriptEngineFactoryBase() {
 
     override fun getScriptEngine(): ScriptEngine =
@@ -38,6 +39,7 @@ class KotlinJsr223JvmLocalScriptEngineFactory : KotlinJsr223JvmScriptEngineFacto
         )
 }
 
+@Deprecated("Use kotlin-scripting-jsr223 instead")
 class KotlinJsr223JvmDaemonLocalEvalScriptEngineFactory : KotlinJsr223JvmScriptEngineFactoryBase() {
 
     override fun getScriptEngine(): ScriptEngine =

@@ -23,19 +23,29 @@ fun throwExceptionIfCompilationFailed(
         ExitCode.INTERNAL_ERROR -> throw FailedCompilationException("Internal compiler error. See log for more details")
         ExitCode.SCRIPT_EXECUTION_ERROR -> throw FailedCompilationException("Script execution error. See log for more details")
         ExitCode.OOM_ERROR -> {
-            var exceptionMessage = "Not enough memory to run compilation."
-            when (executionStrategy) {
-                KotlinCompilerExecutionStrategy.DAEMON ->
-                    exceptionMessage += " Try to increase it via 'gradle.properties':\nkotlin.daemon.jvmargs=-Xmx<size>"
-                KotlinCompilerExecutionStrategy.IN_PROCESS ->
-                    exceptionMessage += " Try to increase it via 'gradle.properties':\norg.gradle.jvmargs=-Xmx<size>"
-                KotlinCompilerExecutionStrategy.OUT_OF_PROCESS -> Unit
+            val exceptionMessage = when (executionStrategy) {
+                KotlinCompilerExecutionStrategy.DAEMON -> kotlinDaemonOOMHelperMessage
+                KotlinCompilerExecutionStrategy.IN_PROCESS -> kotlinInProcessOOMHelperMessage
+                KotlinCompilerExecutionStrategy.OUT_OF_PROCESS -> kotlinOutOfProcessOOMHelperMessage
             }
             throw OOMErrorException(exceptionMessage)
         }
         ExitCode.OK -> Unit
         else -> throw IllegalStateException("Unexpected exit code: $exitCode")
     }
+}
+
+internal const val kotlinDaemonOOMHelperMessage = "Not enough memory to run compilation. " +
+        "Try to increase it via 'gradle.properties':\nkotlin.daemon.jvmargs=-Xmx<size>"
+
+internal const val kotlinInProcessOOMHelperMessage = "Not enough memory to run compilation. " +
+        " Try to increase it via 'gradle.properties':\norg.gradle.jvmargs=-Xmx<size>"
+
+internal const val kotlinOutOfProcessOOMHelperMessage = "Not enough memory to run compilation."
+
+internal fun Throwable.hasOOMCause(): Boolean = when (cause) {
+    is OutOfMemoryError -> true
+    else -> cause?.hasOOMCause() ?: false
 }
 
 /** Exception thrown when [ExitCode] != [ExitCode.OK]. */

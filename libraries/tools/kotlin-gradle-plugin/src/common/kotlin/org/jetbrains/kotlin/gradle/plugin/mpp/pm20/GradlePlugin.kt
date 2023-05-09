@@ -15,12 +15,14 @@ import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
 import org.jetbrains.kotlin.gradle.dsl.pm20Extension
 import org.jetbrains.kotlin.gradle.internal.customizeKotlinDependencies
 import org.jetbrains.kotlin.gradle.kpm.idea.IdeaKpmProjectModelBuilder
 import org.jetbrains.kotlin.gradle.kpm.idea.default
 import org.jetbrains.kotlin.gradle.kpm.idea.locateOrRegisterIdeaKpmBuildProjectModelTask
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.utils.checkGradleCompatibility
 import javax.inject.Inject
 
@@ -90,7 +92,22 @@ abstract class KotlinPm20GradlePlugin @Inject constructor(
 fun rootPublicationComponentName(module: GradleKpmModule) =
     module.disambiguateName("root")
 
-open class KotlinPm20ProjectExtension(project: Project) : KotlinTopLevelExtension(project) {
+// NB: inheriting `KotlinProjectExtension` is a hack, as well as overriding 'sourceSets'
+// This is done because 'project.kotlinProjectExtension' casts extension to KotlinProjectExtension,
+// resulting in CCE, and some code (like KotlinGradleProjectCheckers) that is launched universally
+// in KPM and TCS actually calls this method, breaking KPM tests.
+//
+// Ideally, respective code should just treat top-level extensions more carefully, but as KPM
+// is not in focus for now, we don't want to complicate the new code with those matters.
+//
+// Inheriting KotlinProjectExtension allows such code to not fail. When KPM work is resumed,
+// this inheritance should be removed
+open class KotlinPm20ProjectExtension(project: Project) : KotlinProjectExtension(project) {
+    override var sourceSets: NamedDomainObjectContainer<KotlinSourceSet>
+        get() = super.sourceSets
+        set(value) {
+            super.sourceSets = value
+        }
 
     internal val kpmModelContainer = GradleKpmDefaultProjectModelContainer.create(project)
 

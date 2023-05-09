@@ -1,0 +1,14 @@
+public abstract interface class org/jetbrains/kotlin/buildtools/api/CompilationService {
+	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/CompilationService$Companion;
+	public abstract fun compile ()V
+	public static fun loadImplementation (Ljava/lang/ClassLoader;)Lorg/jetbrains/kotlin/buildtools/api/CompilationService;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/CompilationService$Companion {
+	public final fun loadImplementation (Ljava/lang/ClassLoader;)Lorg/jetbrains/kotlin/buildtools/api/CompilationService;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/SharedApiClassesClassLoader {
+	public static final fun newInstance ()Ljava/lang/ClassLoader;
+}
+

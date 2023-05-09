@@ -324,7 +324,7 @@ public actual fun <T> Array<out T>?.contentDeepToString(): String {
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual infix fun <T> Array<out T>.contentEquals(other: Array<out T>): Boolean {
+public infix fun <T> Array<out T>.contentEquals(other: Array<out T>): Boolean {
     return this.contentEquals(other)
 }
 
@@ -338,7 +338,7 @@ public actual infix fun <T> Array<out T>.contentEquals(other: Array<out T>): Boo
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual infix fun ByteArray.contentEquals(other: ByteArray): Boolean {
+public infix fun ByteArray.contentEquals(other: ByteArray): Boolean {
     return this.contentEquals(other)
 }
 
@@ -352,7 +352,7 @@ public actual infix fun ByteArray.contentEquals(other: ByteArray): Boolean {
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual infix fun ShortArray.contentEquals(other: ShortArray): Boolean {
+public infix fun ShortArray.contentEquals(other: ShortArray): Boolean {
     return this.contentEquals(other)
 }
 
@@ -366,7 +366,7 @@ public actual infix fun ShortArray.contentEquals(other: ShortArray): Boolean {
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual infix fun IntArray.contentEquals(other: IntArray): Boolean {
+public infix fun IntArray.contentEquals(other: IntArray): Boolean {
     return this.contentEquals(other)
 }
 
@@ -380,7 +380,7 @@ public actual infix fun IntArray.contentEquals(other: IntArray): Boolean {
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual infix fun LongArray.contentEquals(other: LongArray): Boolean {
+public infix fun LongArray.contentEquals(other: LongArray): Boolean {
     return this.contentEquals(other)
 }
 
@@ -394,7 +394,7 @@ public actual infix fun LongArray.contentEquals(other: LongArray): Boolean {
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual infix fun FloatArray.contentEquals(other: FloatArray): Boolean {
+public infix fun FloatArray.contentEquals(other: FloatArray): Boolean {
     return this.contentEquals(other)
 }
 
@@ -408,7 +408,7 @@ public actual infix fun FloatArray.contentEquals(other: FloatArray): Boolean {
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual infix fun DoubleArray.contentEquals(other: DoubleArray): Boolean {
+public infix fun DoubleArray.contentEquals(other: DoubleArray): Boolean {
     return this.contentEquals(other)
 }
 
@@ -422,7 +422,7 @@ public actual infix fun DoubleArray.contentEquals(other: DoubleArray): Boolean {
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual infix fun BooleanArray.contentEquals(other: BooleanArray): Boolean {
+public infix fun BooleanArray.contentEquals(other: BooleanArray): Boolean {
     return this.contentEquals(other)
 }
 
@@ -436,7 +436,7 @@ public actual infix fun BooleanArray.contentEquals(other: BooleanArray): Boolean
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual infix fun CharArray.contentEquals(other: CharArray): Boolean {
+public infix fun CharArray.contentEquals(other: CharArray): Boolean {
     return this.contentEquals(other)
 }
 
@@ -608,7 +608,7 @@ public actual infix fun CharArray?.contentEquals(other: CharArray?): Boolean {
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual fun <T> Array<out T>.contentHashCode(): Int {
+public fun <T> Array<out T>.contentHashCode(): Int {
     return this.contentHashCode()
 }
 
@@ -618,7 +618,7 @@ public actual fun <T> Array<out T>.contentHashCode(): Int {
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual fun ByteArray.contentHashCode(): Int {
+public fun ByteArray.contentHashCode(): Int {
     return this.contentHashCode()
 }
 
@@ -628,7 +628,7 @@ public actual fun ByteArray.contentHashCode(): Int {
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual fun ShortArray.contentHashCode(): Int {
+public fun ShortArray.contentHashCode(): Int {
     return this.contentHashCode()
 }
 
@@ -638,7 +638,7 @@ public actual fun ShortArray.contentHashCode(): Int {
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual fun IntArray.contentHashCode(): Int {
+public fun IntArray.contentHashCode(): Int {
     return this.contentHashCode()
 }
 
@@ -648,7 +648,7 @@ public actual fun IntArray.contentHashCode(): Int {
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual fun LongArray.contentHashCode(): Int {
+public fun LongArray.contentHashCode(): Int {
     return this.contentHashCode()
 }
 
@@ -658,7 +658,7 @@ public actual fun LongArray.contentHashCode(): Int {
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual fun FloatArray.contentHashCode(): Int {
+public fun FloatArray.contentHashCode(): Int {
     return this.contentHashCode()
 }
 
@@ -668,7 +668,7 @@ public actual fun FloatArray.contentHashCode(): Int {
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual fun DoubleArray.contentHashCode(): Int {
+public fun DoubleArray.contentHashCode(): Int {
     return this.contentHashCode()
 }
 
@@ -678,7 +678,7 @@ public actual fun DoubleArray.contentHashCode(): Int {
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual fun BooleanArray.contentHashCode(): Int {
+public fun BooleanArray.contentHashCode(): Int {
     return this.contentHashCode()
 }
 
@@ -688,7 +688,7 @@ public actual fun BooleanArray.contentHashCode(): Int {
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual fun CharArray.contentHashCode(): Int {
+public fun CharArray.contentHashCode(): Int {
     return this.contentHashCode()
 }
 
@@ -808,7 +808,7 @@ public actual fun CharArray?.contentHashCode(): Int {
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual fun <T> Array<out T>.contentToString(): String {
+public fun <T> Array<out T>.contentToString(): String {
     return this.contentToString()
 }
 
@@ -820,7 +820,7 @@ public actual fun <T> Array<out T>.contentToString(): String {
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual fun ByteArray.contentToString(): String {
+public fun ByteArray.contentToString(): String {
     return this.contentToString()
 }
 
@@ -832,7 +832,7 @@ public actual fun ByteArray.contentToString(): String {
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual fun ShortArray.contentToString(): String {
+public fun ShortArray.contentToString(): String {
     return this.contentToString()
 }
 
@@ -844,7 +844,7 @@ public actual fun ShortArray.contentToString(): String {
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual fun IntArray.contentToString(): String {
+public fun IntArray.contentToString(): String {
     return this.contentToString()
 }
 
@@ -856,7 +856,7 @@ public actual fun IntArray.contentToString(): String {
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual fun LongArray.contentToString(): String {
+public fun LongArray.contentToString(): String {
     return this.contentToString()
 }
 
@@ -868,7 +868,7 @@ public actual fun LongArray.contentToString(): String {
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual fun FloatArray.contentToString(): String {
+public fun FloatArray.contentToString(): String {
     return this.contentToString()
 }
 
@@ -880,7 +880,7 @@ public actual fun FloatArray.contentToString(): String {
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual fun DoubleArray.contentToString(): String {
+public fun DoubleArray.contentToString(): String {
     return this.contentToString()
 }
 
@@ -892,7 +892,7 @@ public actual fun DoubleArray.contentToString(): String {
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual fun BooleanArray.contentToString(): String {
+public fun BooleanArray.contentToString(): String {
     return this.contentToString()
 }
 
@@ -904,7 +904,7 @@ public actual fun BooleanArray.contentToString(): String {
 @Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
 @SinceKotlin("1.1")
 @DeprecatedSinceKotlin(hiddenSince = "1.4")
-public actual fun CharArray.contentToString(): String {
+public fun CharArray.contentToString(): String {
     return this.contentToString()
 }
 

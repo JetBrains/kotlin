@@ -188,7 +188,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
         value = "-Xcompiler-plugin",
         valueDescription = "<path1>,<path2>:<optionName>=<value>,<optionName>=<value>",
         description = "Register compiler plugin",
-        delimiter = ""
+        delimiter = Argument.Delimiters.none
     )
     var pluginConfigurations: Array<String>? = null
         set(value) {
@@ -1069,5 +1069,7 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             }
 
     // Used only for serialize and deserialize settings. Don't use in other places!
-    class DummyImpl : CommonCompilerArguments()
+    class DummyImpl : CommonCompilerArguments() {
+        override fun copyOf(): Freezable = copyCommonCompilerArguments(this, DummyImpl())
+    }
 }

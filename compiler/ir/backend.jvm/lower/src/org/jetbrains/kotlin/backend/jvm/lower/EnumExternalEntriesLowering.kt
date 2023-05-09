@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.ir.isInCurrentModule
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.declarations.addField
@@ -111,12 +112,19 @@ class EnumExternalEntriesLowering(private val context: JvmBackendContext) : File
         return IrGetFieldImpl(expression.startOffset, expression.endOffset, field.symbol, field.type)
     }
 
-    private fun IrClass.hasEnumEntriesFunction() = functions.any {
-        it.name.toString() == "<get-entries>"
-                && it.dispatchReceiverParameter == null
-                && it.extensionReceiverParameter == null
-                && it.valueParameters.isEmpty()
+    private fun IrClass.hasEnumEntriesFunction(): Boolean {
+        // Enums from other modules are always loaded with a property `entries` which has a getter `<get-entries>`.
+        // Enums from the current module will have a property `entries` if they are unlowered yet (i.e. enum is declared in another file
+        // which will be lowered after the file with the call site), or a function `<get-entries>` if they are already lowered.
+        return functions.any { it.isGetEntries() }
+                || (properties.any { it.getter?.isGetEntries() == true } && isInCurrentModule())
     }
+
+    private fun IrSimpleFunction.isGetEntries(): Boolean =
+        name.toString() == "<get-entries>"
+                && dispatchReceiverParameter == null
+                && extensionReceiverParameter == null
+                && valueParameters.isEmpty()
 
     override fun visitClassNew(declaration: IrClass): IrStatement {
         val oldState = state

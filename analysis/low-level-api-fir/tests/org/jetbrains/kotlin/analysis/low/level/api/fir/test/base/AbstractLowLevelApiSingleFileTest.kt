@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 abstract class AbstractLowLevelApiSingleFileTest : AbstractAnalysisApiBasedTest() {
     final override fun doTestByModuleStructure(moduleStructure: TestModuleStructure, testServices: TestServices) {
         val singleModule = moduleStructure.modules.single()
-        val singleFile = testServices.ktModuleProvider.getModuleFiles(singleModule).filterIsInstance<KtFile>().single()
+        val singleFile = testServices.ktModuleProvider.getModuleFiles(singleModule).filterIsInstance<KtFile>().first()
         doTestByFileStructure(singleFile, moduleStructure, testServices)
     }
 

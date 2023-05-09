@@ -14,7 +14,10 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
-import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
@@ -227,24 +230,11 @@ class AutoboxingTransformer(context: JsCommonBackendContext) : AbstractValueUsag
     }
 
     override fun visitCall(expression: IrCall): IrExpression {
-        return if (
-            expression.symbol != irBuiltIns.eqeqeqSymbol ||
-            !expression.allArgumentsHaveType(irBuiltIns.charType) &&
-            expression.origin != IrStatementOrigin.SYNTHETIC_NOT_AUTOBOXED_CHECK
-        ) {
-            super.visitCall(expression)
-        } else {
+        return if (expression.origin == IrStatementOrigin.SYNTHETIC_NOT_AUTOBOXED_CHECK) {
             expression.apply { transformChildrenVoid() }
+        } else {
+            super.visitCall(expression)
         }
-    }
-
-    private fun IrCall.allArgumentsHaveType(type: IrType): Boolean {
-        for (i in 0 until valueArgumentsCount) {
-            if (getValueArgument(i)?.type != type) {
-                return false
-            }
-        }
-        return true
     }
 }
 

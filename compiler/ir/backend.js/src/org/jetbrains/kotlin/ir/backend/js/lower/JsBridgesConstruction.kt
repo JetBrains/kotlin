@@ -70,7 +70,7 @@ class JsBridgesConstruction(context: JsIrBackendContext) : BridgesConstruction<J
                 type = context.irBuiltIns.intType
             }
 
-            val firstTrailingParameterIndexVar = lazy {
+            val firstTrailingParameterIndexVar = lazy(LazyThreadSafetyMode.NONE) {
                 irTemporary(
                     if (numberOfTrailingParameters == 0)
                         getTotalNumberOfArguments

@@ -1,13 +1,19 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2023 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
 
+@file:Suppress("DEPRECATION")
+@file:OptIn(ExperimentalForeignApi::class)
 package kotlin.native.concurrent
 
+import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.internal.Frozen
+import kotlin.concurrent.AtomicReference
+import kotlinx.cinterop.ExperimentalForeignApi
 
 @FreezingIsDeprecated
+
 internal class FreezeAwareLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
     private val value_ = FreezableAtomicReference<Any?>(UNINITIALIZED)
     // This cannot be made atomic because of the legacy MM. See https://github.com/JetBrains/kotlin-native/pull/3944
@@ -84,6 +90,7 @@ internal object INITIALIZING {
     }
 }
 
+@OptIn(ExperimentalNativeApi::class)
 @FreezingIsDeprecated
 @Frozen
 internal class AtomicLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
@@ -92,7 +99,7 @@ internal class AtomicLazyImpl<out T>(initializer: () -> T) : Lazy<T> {
 
     override val value: T
         get() {
-            if (value_.compareAndSwap(UNINITIALIZED, INITIALIZING) === UNINITIALIZED) {
+            if (value_.compareAndExchange(UNINITIALIZED, INITIALIZING) === UNINITIALIZED) {
                 // We execute exclusively here.
                 val ctor = initializer_.value
                 if (ctor != null && initializer_.compareAndSet(ctor, null)) {

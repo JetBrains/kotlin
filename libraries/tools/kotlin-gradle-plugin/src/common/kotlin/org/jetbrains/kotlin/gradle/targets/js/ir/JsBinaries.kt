@@ -32,7 +32,7 @@ sealed class JsIrBinary(
     override val mode: KotlinJsBinaryMode
 ) : JsBinary {
     override val distribution: Distribution =
-        createDefaultDistribution(compilation.target.project, name)
+        createDefaultDistribution(compilation.target.project, compilation.target.targetName, name)
 
     val linkTaskName: String = linkTaskName()
 
@@ -95,6 +95,7 @@ class Executable(
     override val distribution: Distribution =
         createDefaultDistribution(
             compilation.target.project,
+            compilation.target.targetName,
             super.distribution.distributionName
         )
 
@@ -131,4 +132,4 @@ internal val JsBinary.executeTaskBaseName: String
         null
     )
 
-internal val COMPILE_SYNC = "compileSync"
+internal const val COMPILE_SYNC = "compileSync"

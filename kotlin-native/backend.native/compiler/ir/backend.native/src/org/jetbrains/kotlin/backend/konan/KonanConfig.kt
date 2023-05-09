@@ -194,6 +194,10 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         configuration.get(BinaryOptions.mimallocUseCompaction) ?: false
     }
 
+    val objcDisposeOnMain: Boolean by lazy {
+        configuration.get(BinaryOptions.objcDisposeOnMain) ?: true
+    }
+
     init {
         if (!platformManager.isEnabled(target)) {
             error("Target ${target.visibleName} is not available on the ${HostManager.hostName} host")

@@ -6,30 +6,36 @@
 package org.jetbrains.kotlin.gradle.report
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.build.report.FileReportSettings
+import org.jetbrains.kotlin.build.report.HttpReportSettings
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTime
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_BUILD_REPORT_SINGLE_FILE
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_BUILD_REPORT_HTTP_URL
-import org.jetbrains.kotlin.gradle.utils.isProjectIsolationEnabled
+import org.jetbrains.kotlin.gradle.plugin.internal.isProjectIsolationEnabled
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
-
 
 private val availableMetrics = BuildTime.values().map { it.name } + BuildPerformanceMetric.values().map { it.name }
 
 internal fun reportingSettings(project: Project): ReportingSettings {
     val properties = PropertiesProvider(project)
-    val buildReportOutputTypes = properties.buildReportOutputs.map {
-        BuildReportType.values().firstOrNull { brt -> brt.name == it.trim().toUpperCaseAsciiOnly() }
-            ?: throw IllegalStateException("Unknown output type: $it")
-    }.toMutableList() //temporary solution. support old property
+    val experimentalTryK2Enabled = properties.kotlinExperimentalTryK2.get()
+    val buildReportOutputTypes = properties.buildReportOutputs
+        .map {
+            BuildReportType.values().firstOrNull { brt -> brt.name == it.trim().toUpperCaseAsciiOnly() }
+                ?: throw IllegalStateException("Unknown output type: $it")
+        }
+        .plus(if (experimentalTryK2Enabled) listOf(BuildReportType.TRY_K2_CONSOLE) else emptyList())
+        .toMutableList() //temporary solution. support old property
+
     val buildReportMode =
         when {
             buildReportOutputTypes.isEmpty() -> BuildReportMode.NONE
             else -> BuildReportMode.VERBOSE
         }
     val fileReportSettings = if (buildReportOutputTypes.contains(BuildReportType.FILE)) {
-        val buildReportDir = properties.buildReportFileOutputDir ?: (if (isProjectIsolationEnabled(project.gradle)) {
+        val buildReportDir = properties.buildReportFileOutputDir ?: (if (project.isProjectIsolationEnabled) {
             // TODO: it's a workaround for KT-52963, should be reworked – KT-55763
             project.rootDir.resolve("build")
         } else {
@@ -81,6 +87,7 @@ internal fun reportingSettings(project: Project): ReportingSettings {
         buildReportOutputs = buildReportOutputTypes,
         singleOutputFile = singleOutputFile ?: oldSingleBuildMetric,
         includeCompilerArguments = properties.buildReportIncludeCompilerArguments,
+        experimentalTryK2ConsoleOutput = experimentalTryK2Enabled
     )
 }
 

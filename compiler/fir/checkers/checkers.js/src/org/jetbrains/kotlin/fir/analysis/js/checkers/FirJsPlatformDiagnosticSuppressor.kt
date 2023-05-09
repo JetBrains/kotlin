@@ -16,7 +16,7 @@ private fun FirDeclaration.isLexicallyInsideJsNative(context: CheckerContext): B
     return JsStandardClassIds.Annotations.nativeAnnotations.any { hasAnnotationOrInsideAnnotatedClass(it, context.session) }
 }
 
-object FirJsPlatformDiagnosticSuppressor : FirPlatformDiagnosticSuppressor {
+class FirJsPlatformDiagnosticSuppressor : FirPlatformDiagnosticSuppressor {
     override fun shouldReportNoBody(declaration: FirCallableDeclaration, context: CheckerContext) =
         !declaration.isLexicallyInsideJsNative(context)
 }

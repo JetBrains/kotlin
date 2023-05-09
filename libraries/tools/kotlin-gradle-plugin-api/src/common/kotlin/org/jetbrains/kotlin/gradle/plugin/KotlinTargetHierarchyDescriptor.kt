@@ -9,23 +9,23 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 @ExperimentalKotlinGradlePluginApi
 interface KotlinTargetHierarchyDescriptor {
-    fun describe(builder: KotlinTargetHierarchyBuilder)
-    fun extend(describe: KotlinTargetHierarchyBuilder.() -> Unit): KotlinTargetHierarchyDescriptor
+    fun describe(builder: KotlinTargetHierarchyBuilder.Root)
+    fun extend(describe: KotlinTargetHierarchyBuilder.Root.() -> Unit): KotlinTargetHierarchyDescriptor
 }
 
 @ExperimentalKotlinGradlePluginApi
 fun KotlinTargetHierarchyDescriptor(
-    describe: KotlinTargetHierarchyBuilder.() -> Unit
+    describe: KotlinTargetHierarchyBuilder.Root.() -> Unit
 ): KotlinTargetHierarchyDescriptor {
     return KotlinTargetHierarchyDescriptorImpl(describe)
 }
 
 @ExperimentalKotlinGradlePluginApi
 private class KotlinTargetHierarchyDescriptorImpl(
-    private val describe: KotlinTargetHierarchyBuilder.() -> Unit
+    private val describe: KotlinTargetHierarchyBuilder.Root.() -> Unit
 ) : KotlinTargetHierarchyDescriptor {
 
-    override fun extend(describe: KotlinTargetHierarchyBuilder.() -> Unit): KotlinTargetHierarchyDescriptor {
+    override fun extend(describe: KotlinTargetHierarchyBuilder.Root.() -> Unit): KotlinTargetHierarchyDescriptor {
         val sourceDescribe = this.describe
         return KotlinTargetHierarchyDescriptor {
             sourceDescribe()
@@ -33,5 +33,5 @@ private class KotlinTargetHierarchyDescriptorImpl(
         }
     }
 
-    override fun describe(builder: KotlinTargetHierarchyBuilder) = builder.describe()
+    override fun describe(builder: KotlinTargetHierarchyBuilder.Root) = builder.describe()
 }

@@ -49,7 +49,7 @@ TEST_F(ExtraObjectDataTest, Install) {
     EXPECT_TRUE(object.header()->has_meta_object());
     EXPECT_THAT(object.header()->meta_object(), extraData.AsMetaObjHeader());
     EXPECT_THAT(object.header()->type_info(), typeInfo);
-    EXPECT_FALSE(extraData.HasWeakReferenceCounter());
+    EXPECT_FALSE(extraData.HasRegularWeakReferenceImpl());
     EXPECT_THAT(extraData.GetBaseObject(), object.header());
 
     extraData.Uninstall();

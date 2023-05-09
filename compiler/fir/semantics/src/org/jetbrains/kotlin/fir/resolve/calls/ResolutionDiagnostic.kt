@@ -141,3 +141,5 @@ class NoApplicableValueForContextReceiver(
 class AmbiguousValuesForContextReceiverParameter(
     val expectedContextReceiverType: ConeKotlinType,
 ) : ResolutionDiagnostic(INAPPLICABLE)
+
+object InaccessibleReceiver : ResolutionDiagnostic(RESOLVED_WITH_ERROR)

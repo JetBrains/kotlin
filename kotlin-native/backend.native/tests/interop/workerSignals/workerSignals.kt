@@ -1,4 +1,4 @@
-@file:OptIn(kotlin.ExperimentalStdlibApi::class)
+@file:OptIn(kotlin.ExperimentalStdlibApi::class, ObsoleteWorkersApi::class)
 
 import kotlin.native.concurrent.*
 import kotlin.test.*

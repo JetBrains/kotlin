@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.DFS
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 val kotlinPackageFqn = FqName.fromSegments(listOf("kotlin"))
 private val kotlinReflectionPackageFqn = kotlinPackageFqn.child(Name.identifier("reflect"))
@@ -92,7 +93,7 @@ fun IrType.substitute(params: List<IrTypeParameter>, arguments: List<IrType>): I
 fun IrType.substitute(substitutionMap: Map<IrTypeParameterSymbol, IrType>): IrType {
     if (this !is IrSimpleType || substitutionMap.isEmpty()) return this
 
-    val newAnnotations = annotations.map { it.deepCopyWithSymbols() }
+    val newAnnotations = annotations.memoryOptimizedMap { it.deepCopyWithSymbols() }
 
     substitutionMap[classifier]?.let { substitutedType ->
         // Add nullability and annotations from original type
@@ -101,7 +102,7 @@ fun IrType.substitute(substitutionMap: Map<IrTypeParameterSymbol, IrType>): IrTy
             .addAnnotations(newAnnotations)
     }
 
-    val newArguments = arguments.map {
+    val newArguments = arguments.memoryOptimizedMap {
         when (it) {
             is IrTypeProjection -> makeTypeProjection(it.type.substitute(substitutionMap), it.variance)
             is IrStarProjection -> it
@@ -127,7 +128,7 @@ private fun getImmediateSupertypes(irType: IrSimpleType): List<IrSimpleType> {
         }
     return originalSupertypes
         .filter { it.classOrNull != null }
-        .map { superType ->
+        .memoryOptimizedMap { superType ->
             superType.substitute(irClass.typeParameters, arguments) as IrSimpleType
         }
 }

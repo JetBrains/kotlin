@@ -5,9 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.android
 
-import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.testbase.TestVersions.AGP.AGP_70
+import org.jetbrains.kotlin.gradle.testbase.TestVersions.AGP.AGP_71
+import org.jetbrains.kotlin.gradle.testbase.TestVersions.Gradle.G_7_1
+import org.jetbrains.kotlin.gradle.testbase.TestVersions.Gradle.G_7_2
 import org.jetbrains.kotlin.gradle.tooling.BuildKotlinToolingMetadataTask
 import org.jetbrains.kotlin.gradle.util.AGPVersion
 import org.jetbrains.kotlin.gradle.util.testResolveAllConfigurations
@@ -26,7 +30,9 @@ import kotlin.test.*
 
 @DisplayName("kotlin-android with mpp")
 @AndroidGradlePluginTests
-class KotlinAndroidMppIT : MPPBaseTest() {
+@GradleTestVersions(minVersion = G_7_1)
+@AndroidTestVersions(minVersion = AGP_70)
+class KotlinAndroidMppIT : KGPBaseTest() {
     @DisplayName("KT-50736: whenEvaluated waits for AGP being applied later")
     @GradleAndroidTest
     fun testAfterEvaluateOrdering(
@@ -128,6 +134,8 @@ class KotlinAndroidMppIT : MPPBaseTest() {
         }
     }
 
+    @AndroidTestVersions(minVersion = AGP_71)
+    @GradleTestVersions(minVersion = G_7_2)
     @DisplayName("mpp source sets are registered in AGP")
     @GradleAndroidTest
     fun testAndroidMppSourceSets(
@@ -159,13 +167,13 @@ class KotlinAndroidMppIT : MPPBaseTest() {
                     assertOutputContainsOsIndependent("JNI libraries: [lib/src/main/jniLibs, lib/src/androidMain/jniLibs]")
                     assertOutputContainsOsIndependent("Java-style resources: [lib/src/main/resources, lib/src/androidMain/resources]")
 
-                    assertOutputContainsOsIndependent("Android resources: [lib/src/androidTestDebug/res, lib/src/androidAndroidTestDebug/res]")
-                    assertOutputContainsOsIndependent("Assets: [lib/src/androidTestDebug/assets, lib/src/androidAndroidTestDebug/assets]")
-                    assertOutputContainsOsIndependent("AIDL sources: [lib/src/androidTestDebug/aidl, lib/src/androidAndroidTestDebug/aidl]")
-                    assertOutputContainsOsIndependent("RenderScript sources: [lib/src/androidTestDebug/rs, lib/src/androidAndroidTestDebug/rs]")
-                    assertOutputContainsOsIndependent("JNI sources: [lib/src/androidTestDebug/jni, lib/src/androidAndroidTestDebug/jni]")
-                    assertOutputContainsOsIndependent("JNI libraries: [lib/src/androidTestDebug/jniLibs, lib/src/androidAndroidTestDebug/jniLibs]")
-                    assertOutputContainsOsIndependent("Java-style resources: [lib/src/androidTestDebug/resources, lib/src/androidAndroidTestDebug/resources]")
+                    assertOutputContainsOsIndependent("Android resources: [lib/src/androidTestDebug/res, lib/src/androidInstrumentedTestDebug/res]")
+                    assertOutputContainsOsIndependent("Assets: [lib/src/androidTestDebug/assets, lib/src/androidInstrumentedTestDebug/assets]")
+                    assertOutputContainsOsIndependent("AIDL sources: [lib/src/androidTestDebug/aidl, lib/src/androidInstrumentedTestDebug/aidl]")
+                    assertOutputContainsOsIndependent("RenderScript sources: [lib/src/androidTestDebug/rs, lib/src/androidInstrumentedTestDebug/rs]")
+                    assertOutputContainsOsIndependent("JNI sources: [lib/src/androidTestDebug/jni, lib/src/androidInstrumentedTestDebug/jni]")
+                    assertOutputContainsOsIndependent("JNI libraries: [lib/src/androidTestDebug/jniLibs, lib/src/androidInstrumentedTestDebug/jniLibs]")
+                    assertOutputContainsOsIndependent("Java-style resources: [lib/src/androidTestDebug/resources, lib/src/androidInstrumentedTestDebug/resources]")
 
                     assertOutputContainsOsIndependent("Java-style resources: [lib/betaSrc/paidBeta/resources, lib/src/androidPaidBeta/resources]")
                     assertOutputContainsOsIndependent("Java-style resources: [lib/betaSrc/paidBetaDebug/resources, lib/src/androidPaidBetaDebug/resources]")
@@ -192,6 +200,8 @@ class KotlinAndroidMppIT : MPPBaseTest() {
         }
     }
 
+    @AndroidTestVersions(minVersion = AGP_70)
+    @GradleTestVersions(minVersion = G_7_2)
     @DisplayName("android mpp lib flavors publication can be configured")
     @GradleAndroidTest
     fun testMppAndroidLibFlavorsPublication(
@@ -324,7 +334,7 @@ class KotlinAndroidMppIT : MPPBaseTest() {
                 listOf("fooBar", "fooBaz").forEach { flavorName ->
                     val flavor = flavorName.lowercase()
 
-                    val flavorAttributes = if (AGPVersion.fromString(agpVersion) >= AGPVersion.v7_0_0) {
+                    val flavorAttributes = if (AGPVersion.fromString(agpVersion) > AGPVersion.v7_0_0) {
                         arrayOf(
                             "foo" to flavorName,
                             "com.android.build.api.attributes.ProductFlavor:foo" to flavorName
@@ -376,7 +386,7 @@ class KotlinAndroidMppIT : MPPBaseTest() {
                 listOf("fooBar", "fooBaz").forEach { flavorName ->
                     val flavor = flavorName.lowercase()
 
-                    val flavorAttributes = if (AGPVersion.fromString(agpVersion) >= AGPVersion.v7_0_0) {
+                    val flavorAttributes = if (AGPVersion.fromString(agpVersion) > AGPVersion.v7_0_0) {
                         arrayOf(
                             "foo" to flavorName,
                             "com.android.build.api.attributes.ProductFlavor:foo" to flavorName
@@ -418,6 +428,7 @@ class KotlinAndroidMppIT : MPPBaseTest() {
             }
         }
     }
+
     @DisplayName("Sources publication can be disabled")
     @GradleAndroidTest
     fun testDisableSourcesPublication(
@@ -643,6 +654,8 @@ class KotlinAndroidMppIT : MPPBaseTest() {
         }
     }
 
+    @AndroidTestVersions(minVersion = AGP_70)
+    @GradleTestVersions(minVersion = G_7_2)
     @DisplayName("KT-27714: custom attributes are copied to android compilation configurations")
     @GradleAndroidTest
     fun testCustomAttributesInAndroidTargets(
@@ -818,11 +831,8 @@ class KotlinAndroidMppIT : MPPBaseTest() {
      */
     @DisplayName("KT-49798: com.android.build.api.attributes.AgpVersionAttr is not published")
     @GradleAndroidTest
-    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_71, additionalVersions = [BETA_AGP])
-    @GradleTestVersions(
-        minVersion = TestVersions.Gradle.G_7_2, maxVersion = BETA_GRADLE,
-        additionalVersions = [TestVersions.Gradle.MAX_SUPPORTED]
-    )// due AGP version limit ^
+    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_71)
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_2) // due AGP version limit ^
     fun testKT49798AgpVersionAttrNotPublished(
         gradleVersion: GradleVersion,
         agpVersion: String,
@@ -855,11 +865,8 @@ class KotlinAndroidMppIT : MPPBaseTest() {
 
     @DisplayName("produced artifacts are consumable by projects with various AGP versions")
     @GradleAndroidTest
-    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_71, additionalVersions = [BETA_AGP])
-    @GradleTestVersions(
-        minVersion = TestVersions.Gradle.G_7_2, maxVersion = BETA_GRADLE,
-        additionalVersions = [TestVersions.Gradle.MAX_SUPPORTED]
-    ) // due AGP version limit ^
+    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_71)
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_2) // due AGP version limit ^
     fun testAndroidMultiplatformPublicationAGPCompatibility(
         gradleVersion: GradleVersion,
         agpVersion: String,
@@ -926,11 +933,8 @@ class KotlinAndroidMppIT : MPPBaseTest() {
 
     @DisplayName("KT-49877, KT-35916: associate compilation dependencies are passed correctly to android test compilations")
     @GradleAndroidTest
-    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_71, additionalVersions = [BETA_AGP])
-    @GradleTestVersions(
-        minVersion = TestVersions.Gradle.G_7_2, maxVersion = BETA_GRADLE,
-        additionalVersions = [TestVersions.Gradle.MAX_SUPPORTED]
-    ) // due AGP version limit ^
+    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_71)
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_2) // due AGP version limit ^
     fun testAssociateCompilationDependenciesArePassedToAndroidTestCompilations(
         gradleVersion: GradleVersion,
         agpVersion: String,
@@ -958,6 +962,60 @@ class KotlinAndroidMppIT : MPPBaseTest() {
                 assertTasksExecuted(
                     ":compileDebugAndroidTestKotlinAndroid",
                 )
+            }
+        }
+    }
+
+    @GradleAndroidTest
+    fun mppAndroidRenameDiagnosticReportedOnKts(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk,
+    ) = testAndroidRenameReported(gradleVersion, agpVersion, jdkVersion, "mppAndroidRenameKts")
+
+    @GradleAndroidTest
+    fun mppAndroidRenameDiagnosticReportedOnGroovy(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk,
+    ) = testAndroidRenameReported(gradleVersion, agpVersion, jdkVersion, "mppAndroidRenameGroovy")
+
+    private fun testAndroidRenameReported(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk,
+        projectName: String
+    ) {
+        project(
+            projectName,
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildJdk = jdkVersion.location
+        ) {
+            build("tasks") {
+                val warnings = output.lines().filter { it.startsWith("w:") }.toSet()
+                assert(
+                    warnings.any { warning -> warning.contains("androidTarget") }
+                )
+            }
+        }
+    }
+
+
+    // https://youtrack.jetbrains.com/issue/KT-48436
+    @GradleAndroidTest
+    fun testUnusedSourceSetsReportAndroid(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdkVersion: JdkVersions.ProvidedJdk
+    ) {
+        project(
+            "new-mpp-android", gradleVersion,
+            defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildJdk = jdkVersion.location
+        ) {
+            build("assembleDebug") {
+                output.assertNoDiagnostic(KotlinToolingDiagnostics.UnusedSourceSetsWarning)
             }
         }
     }

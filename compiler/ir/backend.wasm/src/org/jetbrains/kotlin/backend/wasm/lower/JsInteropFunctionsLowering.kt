@@ -110,7 +110,8 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         val newFun = context.irFactory.createStaticFunctionWithReceivers(
             function.parent,
             name = Name.identifier(function.name.asStringStripSpecialMarkers() + "__externalAdapter"),
-            function
+            function,
+            remapMultiFieldValueClassStructure = context::remapMultiFieldValueClassStructure
         )
 
         function.valueParameters.forEachIndexed { index, newParameter ->
@@ -157,7 +158,8 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         val newFun = context.irFactory.createStaticFunctionWithReceivers(
             function.parent,
             name = Name.identifier(function.name.asStringStripSpecialMarkers() + "__JsExportAdapter"),
-            function
+            function,
+            remapMultiFieldValueClassStructure = context::remapMultiFieldValueClassStructure
         )
 
         newFun.valueParameters.forEachIndexed { index, newParameter ->
@@ -458,6 +460,8 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             }
             +irReturn(info.resultAdapter.adaptIfNeeded(callInvoke, builder))
         }
+
+        // TODO find out a better way to export the such declarations only when it's required. Also, fix building roots for DCE, then.
         result.annotations += builder.irCallConstructor(context.wasmSymbols.jsExportConstructor, typeArguments = emptyList())
         additionalDeclarations += result
         return result

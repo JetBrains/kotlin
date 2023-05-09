@@ -66,6 +66,10 @@ class IrCompileTimeChecker(
         return this.asVisited { !mode.mustCheckBodyOf(this) || (this.body?.accept(this@IrCompileTimeChecker, null) ?: true) }
     }
 
+    private fun IrCall.isGetterToConstVal(): Boolean {
+        return symbol.owner.correspondingPropertySymbol?.owner?.isConst == true
+    }
+
     override fun visitCall(expression: IrCall, data: Nothing?): Boolean {
         val owner = expression.symbol.owner
         if (!mode.canEvaluateFunction(owner, expression)) return false
@@ -78,6 +82,10 @@ class IrCompileTimeChecker(
         }
 
         return expression.saveContext {
+            if (expression.dispatchReceiver.isAccessToNotNullableObject()) {
+                return@saveContext expression.isGetterToConstVal()
+            }
+
             val dispatchReceiverComputable = expression.dispatchReceiver?.accept(this, null) ?: true
             val extensionReceiverComputable = expression.extensionReceiver?.accept(this, null) ?: true
             if (!visitValueArguments(expression, null)) return@saveContext false
@@ -177,7 +185,7 @@ class IrCompileTimeChecker(
     }
 
     override fun visitGetValue(expression: IrGetValue, data: Nothing?): Boolean {
-        return visitedStack.contains(expression.symbol.owner.parent) || expression.isAccessToNotNullableObject()
+        return visitedStack.contains(expression.symbol.owner.parent)
     }
 
     override fun visitSetValue(expression: IrSetValue, data: Nothing?): Boolean {
@@ -199,7 +207,8 @@ class IrCompileTimeChecker(
             isJavaStaticWithPrimitiveOrString() -> owner.initializer?.accept(this, data) == true
             expression.receiver == null -> property?.isConst == true && owner.initializer?.accept(this, null) == true
             owner.origin == IrDeclarationOrigin.PROPERTY_BACKING_FIELD && property?.isConst == true -> {
-                val receiverComputable = expression.receiver?.accept(this, null) ?: true
+                val receiverComputable = (expression.receiver?.accept(this, null) ?: true)
+                        || expression.isAccessToNotNullableObject()
                 val initializerComputable = owner.initializer?.accept(this, null) ?: false
                 receiverComputable && initializerComputable
             }

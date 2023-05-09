@@ -16,8 +16,6 @@ dependencies {
     commonCompileOnly(project(":compiler"))
     commonCompileOnly(project(":kotlin-sam-with-receiver-compiler-plugin"))
 
-    embedded(project(":kotlin-sam-with-receiver-compiler-plugin")) { isTransitive = false }
-
     testImplementation(commonDependency("junit"))
 }
 

@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.isFunction
-import org.jetbrains.kotlin.ir.util.isThrowable
+import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.*
@@ -29,22 +29,22 @@ class ClassReferenceLowering(val context: JsCommonBackendContext) : BodyLowering
 
     private val reflectionSymbols get() = context.reflectionSymbols
 
-    private val primitiveClassProperties by lazy {
+    private val primitiveClassProperties by lazy(LazyThreadSafetyMode.NONE) {
         reflectionSymbols.primitiveClassesObject.owner.declarations.filterIsInstance<IrProperty>()
     }
 
-    private val primitiveClassFunctionClass by lazy {
+    private val primitiveClassFunctionClass by lazy(LazyThreadSafetyMode.NONE) {
         reflectionSymbols.primitiveClassesObject.owner.declarations
-            .filterIsInstance<IrSimpleFunction>()
-            .find { it.name == Name.identifier("functionClass") }!!
+            .findIsInstanceAnd<IrSimpleFunction> { it.name == Name.identifier("functionClass") }!!
     }
 
     private fun primitiveClassProperty(name: String) =
         primitiveClassProperties.singleOrNull { it.name == Name.identifier(name) }?.getter
             ?: reflectionSymbols.primitiveClassesObject.owner.declarations
-                .filterIsInstance<IrSimpleFunction>().single { it.name == Name.special("<get-$name>") }
+                .filterIsInstance<IrSimpleFunction>()
+                .single { it.name == Name.special("<get-$name>") }
 
-    private val finalPrimitiveClasses by lazy {
+    private val finalPrimitiveClasses by lazy(LazyThreadSafetyMode.NONE) {
         mapOf(
             IrType::isBoolean to "booleanClass",
             IrType::isByte to "byteClass",
@@ -67,7 +67,7 @@ class ClassReferenceLowering(val context: JsCommonBackendContext) : BodyLowering
         }
     }
 
-    private val openPrimitiveClasses by lazy {
+    private val openPrimitiveClasses by lazy(LazyThreadSafetyMode.NONE) {
         mapOf(
             IrType::isAny to "anyClass",
             IrType::isNumber to "numberClass",
@@ -179,7 +179,7 @@ class ClassReferenceLowering(val context: JsCommonBackendContext) : BodyLowering
             startOffset = UNDEFINED_OFFSET,
             endOffset = UNDEFINED_OFFSET,
             arrayElementType = context.reflectionSymbols.kTypeClass.defaultType,
-            arrayElements = type.arguments.map { createKTypeProjection(it, visitedTypeParams) }
+            arrayElements = type.arguments.memoryOptimizedMap { createKTypeProjection(it, visitedTypeParams) }
         )
 
         val isMarkedNullable = JsIrBuilder.buildBoolean(context.irBuiltIns.booleanType, type.isMarkedNullable())
@@ -225,7 +225,7 @@ class ClassReferenceLowering(val context: JsCommonBackendContext) : BodyLowering
             startOffset = UNDEFINED_OFFSET,
             endOffset = UNDEFINED_OFFSET,
             arrayElementType = context.reflectionSymbols.kTypeClass.defaultType,
-            arrayElements = typeParameter.superTypes.map { createKType(it, visitedTypeParams) }
+            arrayElements = typeParameter.superTypes.memoryOptimizedMap { createKType(it, visitedTypeParams) }
         )
 
         val variance = when (typeParameter.variance) {

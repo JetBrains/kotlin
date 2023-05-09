@@ -8,6 +8,8 @@
 value class DPoint(/*inline */val x: Double/* = 1.0*/, /*inline */val y: Double/* = 2.0*/) {
     fun f1(a: Int, b: Int = -1, c: DPoint = DPoint(-2.0, -3.0)) = listOf(this, x, y, a, b, c)
     
+    constructor(x: Double, flip: Boolean = false): this(x, if (flip) -x else x)
+    
     companion object {
         inline operator fun invoke(): DPoint = DPoint(0.0, 0.0)
     }
@@ -105,6 +107,10 @@ fun box(): String {
     
     require(RegularObject.pointToString() == "DPoint(x=0.0, y=0.0)") { RegularObject.pointToString() }
     require(getLineIntersectionPoint().toString() == "DPoint(x=0.0, y=0.0)") { getLineIntersectionPoint().toString() }
+    
+    require(DPoint(1.0) == DPoint(1.0, 1.0)) { DPoint(1.0).toString() }
+    require(DPoint(1.0, flip = false) == DPoint(1.0, 1.0)) { DPoint(1.0, flip = false).toString() }
+    require(DPoint(1.0, flip = true) == DPoint(1.0, -1.0)) { DPoint(1.0, flip = true).toString() }
     
     return "OK"
 }

@@ -8,6 +8,7 @@ package org.jetbrains.kotlinx.serialization.compiler.extensions
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.metadata.SerializationPluginMetadataExtensions
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.DescriptorSerializer

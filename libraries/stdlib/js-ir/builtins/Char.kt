@@ -26,14 +26,18 @@ internal constructor(private val value: Int) : Comparable<Char> {
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public override fun compareTo(other: Char): Int = value - other.value
 
     /** Adds the other Int value to this value resulting a Char. */
+    @kotlin.internal.IntrinsicConstEvaluation
     public operator fun plus(other: Int): Char = (value + other).toChar()
 
     /** Subtracts the other Char value from this value resulting an Int. */
+    @kotlin.internal.IntrinsicConstEvaluation
     public operator fun minus(other: Char): Int = value - other.value
     /** Subtracts the other Int value from this value resulting a Char. */
+    @kotlin.internal.IntrinsicConstEvaluation
     public operator fun minus(other: Int): Char = (value - other).toChar()
 
     /**
@@ -58,38 +62,46 @@ internal constructor(private val value: Int) : Comparable<Char> {
      *
      * If the [other] value is less than or equal to `this` value, then the returned range is empty.
      */
-    @SinceKotlin("1.7")
-    @ExperimentalStdlibApi
+    @SinceKotlin("1.9")
+    @WasExperimental(ExperimentalStdlibApi::class)
     public operator fun rangeUntil(other: Char): CharRange = this until other
 
 
     /** Returns the value of this character as a `Byte`. */
     @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toByte()"))
     @DeprecatedSinceKotlin(warningSince = "1.5")
+    @kotlin.internal.IntrinsicConstEvaluation
     public fun toByte(): Byte = value.toByte()
     /** Returns the value of this character as a `Char`. */
+    @kotlin.internal.IntrinsicConstEvaluation
     public fun toChar(): Char = this
     /** Returns the value of this character as a `Short`. */
     @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toShort()"))
     @DeprecatedSinceKotlin(warningSince = "1.5")
+    @kotlin.internal.IntrinsicConstEvaluation
     public fun toShort(): Short = value.toShort()
     /** Returns the value of this character as a `Int`. */
     @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code"))
     @DeprecatedSinceKotlin(warningSince = "1.5")
+    @kotlin.internal.IntrinsicConstEvaluation
     public fun toInt(): Int = value
     /** Returns the value of this character as a `Long`. */
     @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toLong()"))
     @DeprecatedSinceKotlin(warningSince = "1.5")
+    @kotlin.internal.IntrinsicConstEvaluation
     public fun toLong(): Long = value.toLong()
     /** Returns the value of this character as a `Float`. */
     @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toFloat()"))
     @DeprecatedSinceKotlin(warningSince = "1.5")
+    @kotlin.internal.IntrinsicConstEvaluation
     public fun toFloat(): Float = value.toFloat()
     /** Returns the value of this character as a `Double`. */
     @Deprecated("Conversion of Char to Number is deprecated. Use Char.code property instead.", ReplaceWith("this.code.toDouble()"))
     @DeprecatedSinceKotlin(warningSince = "1.5")
+    @kotlin.internal.IntrinsicConstEvaluation
     public fun toDouble(): Double = value.toDouble()
 
+    @kotlin.internal.IntrinsicConstEvaluation
     override fun equals(other: Any?): Boolean {
         if (other !is Char) return false
         return this.value == other.value
@@ -100,6 +112,7 @@ internal constructor(private val value: Int) : Comparable<Char> {
     // TODO implicit usages of toString and valueOf must be covered in DCE
     @Suppress("JS_NAME_PROHIBITED_FOR_OVERRIDE")
     @JsName("toString")
+    @kotlin.internal.IntrinsicConstEvaluation
     public override fun toString(): String {
         return js("String").fromCharCode(value).unsafeCast<String>()
     }

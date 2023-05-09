@@ -27,6 +27,33 @@ public actual fun Char.isHighSurrogate(): Boolean = this in Char.MIN_HIGH_SURROG
  */
 public actual fun Char.isLowSurrogate(): Boolean = this in Char.MIN_LOW_SURROGATE..Char.MAX_LOW_SURROGATE
 
+/** Converts a surrogate pair to a unicode code point. Doesn't validate that the characters are a valid surrogate pair. */
+internal fun Char.Companion.toCodePoint(high: Char, low: Char): Int =
+    (((high - MIN_HIGH_SURROGATE) shl 10) or (low - MIN_LOW_SURROGATE)) + 0x10000
+
+/** Checks if the codepoint specified is a supplementary codepoint or not. */
+internal fun Char.Companion.isSupplementaryCodePoint(codepoint: Int): Boolean =
+    codepoint in MIN_SUPPLEMENTARY_CODE_POINT..MAX_CODE_POINT
+
+internal fun Char.Companion.isSurrogatePair(high: Char, low: Char): Boolean = high.isHighSurrogate() && low.isLowSurrogate()
+
+/**
+ * Converts the codepoint specified to a char array. If the codepoint is not supplementary, the method will
+ * return an array with one element otherwise it will return an array A with a high surrogate in A[0] and
+ * a low surrogate in A[1].
+ */
+@Suppress("DEPRECATION")
+internal fun Char.Companion.toChars(codePoint: Int): CharArray =
+    when {
+        codePoint in 0 until MIN_SUPPLEMENTARY_CODE_POINT -> charArrayOf(codePoint.toChar())
+        codePoint in MIN_SUPPLEMENTARY_CODE_POINT..MAX_CODE_POINT -> {
+            val low = ((codePoint - 0x10000) and 0x3FF) + MIN_LOW_SURROGATE.toInt()
+            val high = (((codePoint - 0x10000) ushr 10) and 0x3FF) + MIN_HIGH_SURROGATE.toInt()
+            charArrayOf(high.toChar(), low.toChar())
+        }
+        else -> throw IllegalArgumentException()
+    }
+
 internal actual fun digitOf(char: Char, radix: Int): Int = when {
     char >= '0' && char <= '9' -> char - '0'
     char >= 'A' && char <= 'Z' -> char - 'A' + 10

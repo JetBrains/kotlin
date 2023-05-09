@@ -109,7 +109,7 @@ class Fir2IrLazyConstructor(
 
             fir.valueParameters.mapIndexedTo(this) { index, valueParameter ->
                 declarationStorage.createIrParameter(
-                    valueParameter, index,
+                    valueParameter, index + contextReceiverParametersCount,
                     useStubForDefaultValueStub = (parent as? IrClass)?.name != Name.identifier("Enum")
                 ).apply {
                     this.parent = this@Fir2IrLazyConstructor

@@ -6,11 +6,12 @@
 object Test {
     fun foo(): String = "foo " + this
 
-    fun bar(): String = "bar $this"
+    fun bar(): String = "<!EVALUATED("bar ")!>bar <!>$this"
 
     fun baz(): String = "baz " + this.toString()
 }
 
+// STOP_EVALUATION_CHECKS
 fun box(): String {
     if (!Test.foo().startsWith("foo ")) return "Fail ${Test.foo()}"
     if (!Test.bar().startsWith("bar ")) return "Fail ${Test.bar()}"

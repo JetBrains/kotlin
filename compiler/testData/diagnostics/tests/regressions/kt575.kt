@@ -1,4 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
 // FIR_IDENTICAL
 // KT-575 Cannot ++ a companion object member
 

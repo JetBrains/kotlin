@@ -28,6 +28,12 @@ class ShadowStack : private Pinned {
 public:
     class Iterator {
     public:
+        using difference_type = ptrdiff_t;
+        using value_type = ObjHeader*;
+        using pointer = value_type*;
+        using reference = value_type&;
+        using iterator_category = std::forward_iterator_tag;
+
         explicit Iterator(FrameOverlay* frame) noexcept : frame_(frame), object_(begin()), end_(end()) { Init(); }
 
         ObjHeader*& operator*() noexcept { return *object_; }

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.arguments
+import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.name.ClassId
@@ -67,13 +68,15 @@ fun FirAnnotationContainer.resolvedCompilerRequiredAnnotations(anchorElement: Fi
 
 @SymbolInternals
 fun FirAnnotationContainer.resolvedAnnotationsWithArguments(anchorElement: FirBasedSymbol<*>): List<FirAnnotation> {
-    return annotations.resolvedAnnotationsWithArguments(anchorElement)
+    if (isDefinitelyEmpty(anchorElement)) return emptyList()
+
+    annotations.resolveAnnotationsWithArguments(anchorElement)
+    // Note: this.annotations reference may be changed by the previous call!
+    return annotations
 }
 
 @SymbolInternals
-fun List<FirAnnotation>.resolvedAnnotationsWithArguments(anchorElement: FirBasedSymbol<*>): List<FirAnnotation> {
-    if (isEmpty()) return emptyList()
-
+fun List<FirAnnotation>.resolveAnnotationsWithArguments(anchorElement: FirBasedSymbol<*>) {
     /**
      * This loop by index is required to avoid possible [ConcurrentModificationException],
      * because the annotations might be in a process of resolve from some other threads
@@ -94,28 +97,35 @@ fun List<FirAnnotation>.resolvedAnnotationsWithArguments(anchorElement: FirBased
     }
 
     anchorElement.lazyResolveToPhase(phase)
-    return this
+}
+
+private fun FirAnnotationContainer.isDefinitelyEmpty(anchorElement: FirBasedSymbol<*>): Boolean {
+    if (annotations.isEmpty()) {
+        if (anchorElement !is FirBackingFieldSymbol) return true
+        if (anchorElement.propertySymbol.annotations.none { it.useSiteTarget == null }) return true
+    }
+    return false
 }
 
 @SymbolInternals
 fun FirAnnotationContainer.resolvedAnnotationsWithClassIds(anchorElement: FirBasedSymbol<*>): List<FirAnnotation> {
-    return annotations.resolvedAnnotationsWithClassIds(anchorElement)
+    if (isDefinitelyEmpty(anchorElement)) return emptyList()
+
+    anchorElement.lazyResolveToPhase(FirResolvePhase.TYPES)
+
+    return annotations
 }
 
 @SymbolInternals
-fun List<FirAnnotation>.resolvedAnnotationsWithClassIds(anchorElement: FirBasedSymbol<*>): List<FirAnnotation> {
-    if (isEmpty()) return emptyList()
-
+fun resolveAnnotationsWithClassIds(anchorElement: FirBasedSymbol<*>) {
     anchorElement.lazyResolveToPhase(FirResolvePhase.TYPES)
-    return this
 }
 
 @SymbolInternals
 fun FirAnnotationContainer.resolvedAnnotationClassIds(anchorElement: FirBasedSymbol<*>): List<ClassId> {
-    if (annotations.isEmpty()) return emptyList()
-
-    anchorElement.lazyResolveToPhase(FirResolvePhase.TYPES)
-    return annotations.mapNotNull { (it.annotationTypeRef.coneType as? ConeClassLikeType)?.lookupTag?.classId }
+    return resolvedAnnotationsWithClassIds(anchorElement).mapNotNull {
+        (it.annotationTypeRef.coneType as? ConeClassLikeType)?.lookupTag?.classId
+    }
 }
 
 @RequiresOptIn

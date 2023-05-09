@@ -3,11 +3,8 @@
 package org.jetbrains.kotlin.analysis.decompiler.psi.file
 
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinDecompiledFileViewProvider
 import org.jetbrains.kotlin.analysis.decompiler.psi.text.DecompiledText
-import org.jetbrains.kotlin.analysis.decompiler.psi.text.DecompiledTextIndexer
-import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.utils.concurrent.block.LockedClearableLazyValue
 
@@ -31,12 +28,4 @@ open class KtDecompiledFile(
         decompiledText.drop()
     }
 
-    fun <T : Any> getDeclaration(indexer: DecompiledTextIndexer<T>, key: T): KtDeclaration? {
-        val range = decompiledText.get().index.getRange(indexer, key) ?: return null
-        return PsiTreeUtil.findElementOfClassAtRange(this@KtDecompiledFile, range.startOffset, range.endOffset, KtDeclaration::class.java)
-    }
-
-    fun <T : Any> hasDeclarationWithKey(indexer: DecompiledTextIndexer<T>, key: T): Boolean {
-        return decompiledText.get().index.getRange(indexer, key) != null
-    }
 }

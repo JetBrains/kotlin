@@ -113,3 +113,15 @@ The following declaration is incompatible because some supertypes are missing in
 
 actual abstract class ExtendsNumber : Any()
                                       ^
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:23:1: error: actual interface 'FunInterface' has no corresponding expected declaration
+The following declaration is incompatible because actual declaration for fun expect interface is not a functional interface:
+    public expect fun interface FunInterface
+
+actual interface FunInterface {
+^
+compiler/testData/multiplatform/incompatibleClasses/jvm.kt:31:1: error: actual typealias 'FunInterface2' has no corresponding expected declaration
+The following declaration is incompatible because actual declaration for fun expect interface is not a functional interface:
+    public expect fun interface FunInterface2
+
+actual typealias FunInterface2 = FunInterface2Typealias
+^

@@ -1,3 +1,6 @@
+@file:Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+@file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class, kotlin.native.internal.InternalForKotlinNative::class)
+
 package codegen.intrinsics.interop_sourceCodeStruct
 
 import kotlinx.cinterop.*
@@ -5,8 +8,8 @@ import kotlinx.cinterop.internal.*
 import kotlin.test.*
 
 // Just making sure this doesn't get accidentally forbidden or otherwise broken.
-// (however defining structs this way is still strongly discouraged, please define
-// structs in C headers or .def files instead).
+// Used by auto-generated code, user-defined structs should be declared via
+// structs in C headers or .def files instead.
 
 @CStruct("struct { int p0; int p1; }")
 class S(rawPtr: NativePtr) : CStructVar(rawPtr) {

@@ -210,6 +210,13 @@ internal class KtFe10ScopeProvider(
         return KtScopeContext(listOf(KtScopeWithKind(compositeScope, scopeKind, token)), collectImplicitReceivers(fileScope), token)
     }
 
+    override fun getImportingScopeContext(file: KtFile): KtScopeContext {
+        val importingScopes = getScopeContextForPosition(originalFile = file, positionInFakeFile = file)
+            .scopes
+            .filter { it.kind is KtScopeKind.ImportingScope }
+        return KtScopeContext(importingScopes, _implicitReceivers = emptyList(), token)
+    }
+
     private inline fun <reified T : DeclarationDescriptor> getDescriptor(symbol: KtSymbol): T? {
         return when (symbol) {
             is KtFe10DescSymbol<*> -> symbol.descriptor as? T

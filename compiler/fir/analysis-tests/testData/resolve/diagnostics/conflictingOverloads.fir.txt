@@ -64,6 +64,8 @@ FILE: conflictingOverloads.kt
         public get(): R|kotlin/Int|
     public final val u: R|kotlin/Int| = Int(20)
         public get(): R|kotlin/Int|
+    <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
+    <ERROR PROPERTY: Destructuring declarations are only allowed for local variables/values>
     public final typealias TA = R|A|
     public final typealias TA = R|B|
     public final typealias BA = R|A|

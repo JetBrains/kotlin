@@ -23,6 +23,9 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.Services
+import org.jetbrains.kotlin.ir.linkage.partial.partialLinkageConfig
+import org.jetbrains.kotlin.ir.linkage.partial.setupPartialLinkageConfig
+import org.jetbrains.kotlin.ir.util.IrMessageLogger
 import org.jetbrains.kotlin.library.metadata.KlibMetadataVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.psi.KtFile
@@ -122,8 +125,10 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
             val spawnedConfiguration = CompilerConfiguration()
 
             spawnedConfiguration.put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, configuration.getNotNull(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY))
+            spawnedConfiguration.put(IrMessageLogger.IR_MESSAGE_LOGGER, configuration.getNotNull(IrMessageLogger.IR_MESSAGE_LOGGER))
             spawnedConfiguration.setupCommonArguments(spawnedArguments, this::createMetadataVersion)
             spawnedConfiguration.setupFromArguments(spawnedArguments)
+            spawnedConfiguration.setupPartialLinkageConfig(configuration.partialLinkageConfig)
             spawnedConfiguration.setupConfiguration()
             val spawnedEnvironment = prepareEnvironment(spawnedArguments, spawnedConfiguration, rootDisposable)
             runKonanDriver(spawnedConfiguration, spawnedEnvironment, rootDisposable)

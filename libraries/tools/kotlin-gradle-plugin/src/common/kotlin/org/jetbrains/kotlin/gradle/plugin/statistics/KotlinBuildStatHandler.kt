@@ -26,6 +26,8 @@ import kotlin.system.measureTimeMillis
 
 class KotlinBuildStatHandler {
     companion object {
+        const val DOKKA_PLUGIN = "org.jetbrains.dokka"
+
         @JvmStatic
         internal fun getLogger() = Logging.getLogger(KotlinBuildStatHandler::class.java)
 
@@ -49,13 +51,24 @@ class KotlinBuildStatHandler {
     }
 
     fun buildFinished(
+        beanName: ObjectName,
+    ) {
+        runSafe("${KotlinBuildStatHandler::class.java}.buildFinished") {
+            val mbs: MBeanServer = ManagementFactory.getPlatformMBeanServer()
+            if (mbs.isRegistered(beanName)) {
+                mbs.unregisterMBean(beanName)
+            }
+        }
+    }
+
+    fun reportGlobalMetricsAndBuildFinished(
         gradle: Gradle?,
         beanName: ObjectName,
         sessionLogger: BuildSessionLogger,
         action: String?,
         failure: Throwable?
     ) {
-        runSafe("${KotlinBuildStatHandler::class.java}.buildFinished") {
+        runSafe("${KotlinBuildStatHandler::class.java}.reportGlobalMetrics") {
             try {
                 try {
                     if (gradle != null) reportGlobalMetrics(gradle, sessionLogger)
@@ -63,10 +76,7 @@ class KotlinBuildStatHandler {
                     sessionLogger.finishBuildSession(action, failure)
                 }
             } finally {
-                val mbs: MBeanServer = ManagementFactory.getPlatformMBeanServer()
-                if (mbs.isRegistered(beanName)) {
-                    mbs.unregisterMBean(beanName)
-                }
+                buildFinished(beanName)
             }
         }
     }
@@ -93,6 +103,9 @@ class KotlinBuildStatHandler {
 
         val statisticOverhead = measureTimeMillis {
             gradle.allprojects { project ->
+                project.plugins.findPlugin(DOKKA_PLUGIN)?.also {
+                    sessionLogger.report(BooleanMetrics.ENABLED_DOKKA, true)
+                }
                 for (configuration in project.configurations) {
                     val configurationName = configuration.name
                     val dependencies = configuration.dependencies
@@ -215,7 +228,7 @@ class KotlinBuildStatHandler {
         weight: Long? = null
     ) = runSafe("report metric ${metric.name}") {
         sessionLogger.report(metric, value, subprojectName, weight)
-    } as? Boolean ?: false
+    } ?: false
 
     internal fun report(
         sessionLogger: BuildSessionLogger,
@@ -224,6 +237,6 @@ class KotlinBuildStatHandler {
         subprojectName: String?,
         weight: Long? = null
     ) = runSafe("report metric ${metric.name}") {
-            sessionLogger.report(metric, value, subprojectName, weight)
-        } as? Boolean ?: false
+        sessionLogger.report(metric, value, subprojectName, weight)
+    } ?: false
 }

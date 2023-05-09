@@ -30,11 +30,13 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.moduleData
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.FirProvider
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.resolve.transformers.resolveSupertypesInTheAir
+import org.jetbrains.kotlin.fir.resolve.transformers.FirSupertypeResolverVisitor
+import org.jetbrains.kotlin.fir.resolve.transformers.SupertypeComputationSession
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.*
@@ -113,7 +115,7 @@ class FirJavaElementFinder(
 
         val superTypeRefs = when {
             firClass.superTypeRefs.all { it is FirResolvedTypeRef } -> firClass.superTypeRefs
-            else -> firClass.resolveSupertypesInTheAir(session)
+            else -> firClass.resolveSupertypesOnAir(session)
         }
 
         stub.addSupertypesReferencesLists(firClass, superTypeRefs, session)
@@ -125,6 +127,13 @@ class FirJavaElementFinder(
         return stub
     }
 
+}
+
+private fun FirRegularClass.resolveSupertypesOnAir(session: FirSession): List<FirTypeRef> {
+    val visitor = FirSupertypeResolverVisitor(session, SupertypeComputationSession(), ScopeSession())
+    return visitor.withFile(session.firProvider.getFirClassifierContainerFile(this.symbol)) {
+        visitor.resolveSpecificClassLikeSupertypes(this, superTypeRefs)
+    }
 }
 
 private fun FirSession.collectAllDependentSourceSessions(): List<FirSession> {

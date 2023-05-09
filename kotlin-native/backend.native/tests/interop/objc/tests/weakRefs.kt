@@ -1,3 +1,5 @@
+@file:OptIn(kotlin.native.runtime.NativeRuntimeApi::class)
+
 import kotlin.native.ref.*
 import kotlinx.cinterop.*
 import kotlin.test.*
@@ -16,7 +18,7 @@ private fun testWeakReference(block: () -> NSObject) {
         createAndTestWeakReference(block)
     }
 
-    kotlin.native.internal.GC.collect()
+    kotlin.native.runtime.GC.collect()
 
     assertNull(ref.get())
 }

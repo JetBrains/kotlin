@@ -1,5 +1,6 @@
 interface IFooBar {
   abstract fun foo()
+
   abstract fun bar()
 
 }

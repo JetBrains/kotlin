@@ -255,14 +255,17 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
         }
 
         fun generateComponentBody(irFunction: IrFunction) {
+            irFunction.origin = origin
             val index = DataClassResolver.getComponentIndex(irFunction.name.asString())
             val valueParameter = irClass.primaryConstructor!!.valueParameters[index - 1]
             val irProperty = irDataClassMembersGenerator.getProperty(null, valueParameter)!!
             irDataClassMembersGenerator.generateComponentFunction(irFunction, irProperty)
         }
 
-        fun generateCopyBody(irFunction: IrFunction) =
+        fun generateCopyBody(irFunction: IrFunction) {
+            irFunction.origin = origin
             irDataClassMembersGenerator.generateCopyFunction(irFunction, irClass.primaryConstructor!!.symbol)
+        }
 
         private fun createSyntheticIrFunction(
             name: Name,
@@ -303,7 +306,7 @@ class DataClassMembersGenerator(val components: Fir2IrComponents) : Fir2IrCompon
                 )
             }
             val signature = if (lookupTag.classId.isLocal) null else components.signatureComposer.composeSignature(firFunction)
-            return components.declarationStorage.declareIrSimpleFunction(signature, null) { symbol ->
+            return components.declarationStorage.declareIrSimpleFunction(signature) { symbol ->
                 components.irFactory.createFunction(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET, origin, symbol, name, DescriptorVisibilities.PUBLIC, Modality.OPEN, returnType,
                     isInline = false, isExternal = false, isTailrec = false, isSuspend = false, isOperator = false,

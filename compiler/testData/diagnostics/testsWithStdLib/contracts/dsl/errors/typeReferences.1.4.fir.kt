@@ -12,9 +12,9 @@ inline fun <reified T> referToReifiedGeneric(x: Any?) {
 
 class Generic<T> {
     fun referToCaptured(x: Any?) {
-        <!WRONG_IMPLIES_CONDITION!>contract {
-            returns() implies (x is T)
-        }<!>
+        contract {
+            <!ERROR_IN_CONTRACT_DESCRIPTION!>returns() implies (x is T)<!>
+        }
     }
 }
 

@@ -1,13 +1,4 @@
     class ClassA constructor() {
-        companion object {
-            val stat: Int = 250
-            class D constructor() {
-                val memberFromD: Int = 275
-            }
-        }
-        object ObjA {
-            val memberFromObjA: Int = 300
-        }
         class classB constructor() {
             fun memberFromB(): Int
             class BC constructor() {
@@ -19,5 +10,18 @@
         }
         inner class classC constructor() {
             val memberFromC: Int = 200
+        }
+    }
+    class E constructor() {
+        companion object {
+            val stat: Int = 250
+            class D constructor() {
+                val memberFromD: Int = 275
+            }
+        }
+    }
+    class F constructor() {
+        object ObjA {
+            val memberFromObjA: Int = 300
         }
     }

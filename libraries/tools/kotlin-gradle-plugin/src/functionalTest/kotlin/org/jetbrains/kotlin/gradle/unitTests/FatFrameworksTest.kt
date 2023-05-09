@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.Configuration
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
 import org.jetbrains.kotlin.gradle.util.kotlin
 import kotlin.test.*
@@ -21,7 +23,6 @@ class FatFrameworksTest {
             }
         }
         project.evaluate()
-        project.configurations.names.also(::println)
         project.assertConfigurationExists("fooDebugFrameworkIosX64")
         project.assertConfigurationExists("fooDebugFrameworkIosArm64")
         project.assertConfigurationExists("fooDebugFrameworkIosFat")
@@ -77,6 +78,28 @@ class FatFrameworksTest {
         iosArm64 { binaries.framework("foo", listOf(DEBUG, RELEASE)) }
     }
 
+    @Test
+    fun `fat framework contains framework name attribute`() {
+        val project = buildProjectWithMPP {
+            kotlin {
+                iosX64 {
+                    binaries.framework("foo", listOf(DEBUG)) { baseName = "f1" }
+                    binaries.framework("bar", listOf(DEBUG)) { baseName = "f2" }
+                }
+
+                iosArm64 {
+                    binaries.framework("foo", listOf(DEBUG)) { baseName = "f1" }
+                    binaries.framework("bar", listOf(DEBUG)) { baseName = "f2" }
+                }
+            }
+        }
+        project.evaluate()
+        val barFat = project.assertConfigurationExists("barDebugFrameworkIosFat")
+        val fooFat = project.assertConfigurationExists("fooDebugFrameworkIosFat")
+        assertEquals("f1", fooFat.attributes.getAttribute(KotlinNativeTarget.kotlinNativeFrameworkNameAttribute))
+        assertEquals("f2", barFat.attributes.getAttribute(KotlinNativeTarget.kotlinNativeFrameworkNameAttribute))
+    }
+
     private fun testFatFrameworkGrouping(
         vararg allExpectedFatFrameworks: String,
         configureTargets: KotlinMultiplatformExtension.() -> Unit,
@@ -96,7 +119,7 @@ class FatFrameworksTest {
         if (configuration != null) fail("'$name' configuration was not expected")
     }
 
-    private fun Project.assertConfigurationExists(name: String) {
-        project.configurations.findByName(name) ?: fail("'$name' configuration was expected to be created")
+    private fun Project.assertConfigurationExists(name: String): Configuration {
+        return project.configurations.findByName(name) ?: fail("'$name' configuration was expected to be created")
     }
 }

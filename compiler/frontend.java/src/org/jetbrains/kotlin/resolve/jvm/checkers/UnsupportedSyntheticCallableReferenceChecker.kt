@@ -27,12 +27,16 @@ import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.calls.util.extractCallableReferenceExpression
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 
+/**
+ * This is K1 implementation.
+ * For K2 implementation see: [org.jetbrains.kotlin.fir.analysis.jvm.checkers.expression.FirUnsupportedSyntheticCallableReferenceChecker]
+ */
 class UnsupportedSyntheticCallableReferenceChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         // TODO: support references to synthetic Java extension properties (KT-8575)
         val callableReferenceExpression = resolvedCall.call.extractCallableReferenceExpression() ?: return
 
-        // We allow resolve of top-level callable reference to synthetic Java extension properties in delegate position
+        // We allow resolution of top-level callable references to synthetic Java extension properties in the delegate position. See KT-47299
         if (callableReferenceExpression.unwrapParenthesesLabelsAndAnnotationsDeeply() is KtPropertyDelegate) return
 
         if (resolvedCall.resultingDescriptor is SyntheticJavaPropertyDescriptor) {

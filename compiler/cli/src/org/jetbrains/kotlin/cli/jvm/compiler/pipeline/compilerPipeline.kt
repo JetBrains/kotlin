@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.cli.jvm.compiler.pipeline
 import com.intellij.core.CoreJavaFileManager
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.Disposable
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFile
@@ -43,9 +42,11 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.languageVersionSettings
+import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.fir.backend.jvm.JvmFir2IrExtensions
@@ -230,11 +231,15 @@ fun convertAnalyzedFirToIr(
         (environment.projectEnvironment as? VfsBasedProjectEnvironment)?.project?.let {
             IrGenerationExtension.getInstances(it)
         } ?: emptyList()
-    val linkViaSignatures = input.configuration.getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES)
-    val (irModuleFragment, components, pluginContext, irActualizationResult) =
+    val fir2IrConfiguration = Fir2IrConfiguration(
+        languageVersionSettings = input.configuration.languageVersionSettings,
+        linkViaSignatures = input.configuration.getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES),
+        evaluatedConstTracker = input.configuration
+            .putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create()),
+    )
+    val (irModuleFragment, components, pluginContext, irActualizedResult) =
         analysisResults.convertToIrAndActualizeForJvm(
-            extensions, irGenerationExtensions, linkViaSignatures,
-            environment.diagnosticsReporter, input.configuration.languageVersionSettings
+            extensions, fir2IrConfiguration, irGenerationExtensions, environment.diagnosticsReporter,
         )
 
     return ModuleCompilerIrBackendInput(
@@ -244,7 +249,7 @@ fun convertAnalyzedFirToIr(
         irModuleFragment,
         components,
         pluginContext,
-        irActualizationResult
+        irActualizedResult
     )
 }
 
@@ -288,7 +293,7 @@ fun generateCodeFromIr(
         input.components.symbolTable,
         input.components.irProviders,
         input.extensions,
-        FirJvmBackendExtension(input.components, input.irActualizationResult),
+        FirJvmBackendExtension(input.components, input.irActualizedResult),
         input.pluginContext
     ) {
         performanceManager?.notifyIRLoweringFinished()
@@ -476,7 +481,7 @@ fun createProjectEnvironment(
     val project = projectEnvironment.project
     val localFileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL)
 
-    val javaFileManager = ServiceManager.getService(project, CoreJavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
+    val javaFileManager = project.getService(CoreJavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
 
     val releaseTarget = configuration.get(JVMConfigurationKeys.JDK_RELEASE)
 

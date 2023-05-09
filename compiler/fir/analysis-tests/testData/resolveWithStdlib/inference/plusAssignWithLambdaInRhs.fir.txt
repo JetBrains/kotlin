@@ -18,7 +18,7 @@ FILE: plusAssignWithLambdaInRhs.kt
     public final fun <T> postpone(computation: R|() -> T|): R|A<T>| {
         lval queue: R|kotlin/collections/MutableList<kotlin/Function0<kotlin/Unit>>| = R|kotlin/collections/mutableListOf|<R|() -> kotlin/Unit|>()
         ^postpone R|/A.A|<R|T|>(<L> = A@fun <anonymous>(resolve: R|(T) -> kotlin/Unit|): R|kotlin/Unit| <inline=NoInline>  {
-            R|<local>/queue|.R|kotlin/collections/plusAssign|<R|() -> kotlin/Unit|>(A@fun <anonymous>(): R|kotlin/Unit| <inline=Inline>  {
+            R|<local>/queue|.R|kotlin/collections/plusAssign|<R|() -> kotlin/Unit|>(fun <anonymous>(): R|kotlin/Unit| <inline=Inline>  {
                 R|<local>/resolve|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|<local>/computation|.R|SubstitutionOverride<kotlin/Function0.invoke: R|T|>|())
             }
             )

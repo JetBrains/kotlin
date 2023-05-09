@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.ir.Ir
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLowerings
+import org.jetbrains.kotlin.backend.common.serialization.IrInterningService
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -48,9 +49,9 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.isNullable
-import org.jetbrains.kotlin.util.collectionUtils.filterIsInstanceMapNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.cast
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
+import org.jetbrains.kotlin.utils.filterIsInstanceMapNotNull
 import java.util.WeakHashMap
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
@@ -73,6 +74,7 @@ class JsIrBackendContext(
 
     val polyfills = JsPolyfills()
     val fieldToInitializer = WeakHashMap<IrField, IrExpression>()
+    val globalInternationService = IrInterningService()
 
     val localClassNames = WeakHashMap<IrClass, String>()
 
@@ -102,17 +104,17 @@ class JsIrBackendContext(
 
     val externalPackageFragment = mutableMapOf<IrFileSymbol, IrFile>()
 
-    val additionalExportedDeclarations = mutableSetOf<IrDeclaration>()
+    val additionalExportedDeclarations = hashSetOf<IrDeclaration>()
 
     val bodilessBuiltInsPackageFragment: IrPackageFragment = IrExternalPackageFragmentImpl(
         DescriptorlessExternalPackageFragmentSymbol(),
         FqName("kotlin")
     )
 
-    val packageLevelJsModules = mutableSetOf<IrFile>()
+    val packageLevelJsModules = hashSetOf<IrFile>()
     val declarationLevelJsModules = mutableListOf<IrDeclarationWithName>()
 
-    val testFunsPerFile = mutableMapOf<IrFile, IrSimpleFunction>()
+    val testFunsPerFile = hashMapOf<IrFile, IrSimpleFunction>()
 
     override fun createTestContainerFun(irFile: IrFile): IrSimpleFunction {
         return testFunsPerFile.getOrPut(irFile) {
@@ -263,13 +265,13 @@ class JsIrBackendContext(
             private val getProgressionLastElementSymbols =
                 irBuiltIns.findFunctions(Name.identifier("getProgressionLastElement"), "kotlin", "internal")
 
-            override val getProgressionLastElementByReturnType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy {
+            override val getProgressionLastElementByReturnType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy(LazyThreadSafetyMode.NONE) {
                 getProgressionLastElementSymbols.associateBy { it.owner.returnType.classifierOrFail }
             }
 
             private val toUIntSymbols = irBuiltIns.findFunctions(Name.identifier("toUInt"), "kotlin")
 
-            override val toUIntByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy {
+            override val toUIntByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy(LazyThreadSafetyMode.NONE) {
                 toUIntSymbols.associateBy {
                     it.owner.extensionReceiverParameter?.type?.classifierOrFail
                         ?: error("Expected extension receiver for ${it.owner.render()}")
@@ -278,16 +280,12 @@ class JsIrBackendContext(
 
             private val toULongSymbols = irBuiltIns.findFunctions(Name.identifier("toULong"), "kotlin")
 
-            override val toULongByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy {
+            override val toULongByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy(LazyThreadSafetyMode.NONE) {
                 toULongSymbols.associateBy {
                     it.owner.extensionReceiverParameter?.type?.classifierOrFail
                         ?: error("Expected extension receiver for ${it.owner.render()}")
                 }
             }
-        }
-
-        override fun unfoldInlineClassType(irType: IrType): IrType? {
-            return inlineClassesUtils.getInlinedClass(irType)?.typeWith()
         }
 
         override fun shouldGenerateHandlerParameterForDefaultBodyFun() = true

@@ -31,10 +31,6 @@ class YarnImportedPackagesVersionResolver(
         modules.groupBy { it.name }.forEach { (name, versions) ->
             val selected: GradleNodeModule = if (versions.size > 1) {
                 val sorted = versions.sortedBy { it.semver }
-                logger.warn(
-                    "There are multiple versions of \"$name\" used in nodejs build: ${sorted.joinToString(", ") { it.version }}. " +
-                            "Only latest version will be used."
-                )
                 val selected = sorted.last()
                 resolvedVersion[name] = ResolvedNpmDependency(
                     version = selected.version,

@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.light.classes.symbol.annotations
 
 import com.intellij.openapi.util.Key
-import com.intellij.openapi.util.NlsSafe
 import com.intellij.psi.*
+import com.intellij.psi.impl.light.LightTypeElement
 import org.jetbrains.kotlin.asJava.elements.KtLightElementBase
 import org.jetbrains.kotlin.light.classes.symbol.toArrayIfNotEmptyOrDefault
 import org.jetbrains.kotlin.psi.KtElement
@@ -61,6 +61,20 @@ internal class SymbolPsiExpression(
 ) : SymbolPsiAnnotationMemberValue(kotlinOrigin, lightParent), PsiExpression {
     override fun getType(): PsiType? = psiExpression.type
     override fun getText(): String = psiExpression.text
+}
+
+internal class SymbolPsiClassObjectAccessExpression(
+    override val kotlinOrigin: KtElement?,
+    lightParent: PsiElement,
+    private val psiType: PsiType,
+) : SymbolPsiAnnotationMemberValue(kotlinOrigin, lightParent), PsiClassObjectAccessExpression {
+    override fun getType(): PsiType = psiType
+    override fun getOperand(): PsiTypeElement = LightTypeElementWithParent(this, type)
+    override fun getText(): String = type.getCanonicalText(false) + ".class"
+}
+
+private class LightTypeElementWithParent(private val lightParent: PsiElement, type: PsiType) : LightTypeElement(lightParent.manager, type) {
+    override fun getParent(): PsiElement = lightParent
 }
 
 internal class SymbolPsiReference(

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
+import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
@@ -72,10 +73,15 @@ fun FirTypeRef.errorTypeFromPrototype(
     }
 }
 
+/**
+ * [shouldExpandTypeAliases] should be set to `false` if this function is called during deserialization of some binary declaration
+ * For details see KT-57876
+ */
 fun List<FirAnnotation>.computeTypeAttributes(
     session: FirSession,
     predefined: List<ConeAttribute<*>> = emptyList(),
     containerDeclaration: FirDeclaration? = null,
+    shouldExpandTypeAliases: Boolean
 ): ConeAttributes {
     if (this.isEmpty()) {
         if (predefined.isEmpty()) return ConeAttributes.Empty
@@ -85,7 +91,11 @@ fun List<FirAnnotation>.computeTypeAttributes(
     attributes += predefined
     val customAnnotations = mutableListOf<FirAnnotation>()
     for (annotation in this) {
-        when (annotation.tryExpandClassId(session)) {
+        val classId = when (shouldExpandTypeAliases) {
+            true -> annotation.tryExpandClassId(session)
+            false -> annotation.typeRef.coneType.classId
+        }
+        when (classId) {
             CompilerConeAttributes.Exact.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.Exact
             CompilerConeAttributes.NoInfer.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.NoInfer
             CompilerConeAttributes.ExtensionFunctionType.ANNOTATION_CLASS_ID -> attributes += CompilerConeAttributes.ExtensionFunctionType

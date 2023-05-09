@@ -388,6 +388,12 @@ private fun processCLib(
                 ForeignExceptionMode.byValue(it).value   // may throw IllegalArgumentException
     }
 
+    cinteropArguments.userSetupHint?.let {
+        def.manifestAddendProperties.put("userSetupHint", it)?.also {
+            warn("User setup hint provided in .def file will be shadowed by command line argument")
+        }
+    }
+
     manifestAddend?.parentFile?.mkdirs()
     manifestAddend?.let { def.manifestAddendProperties.storeProperties(it) }
 

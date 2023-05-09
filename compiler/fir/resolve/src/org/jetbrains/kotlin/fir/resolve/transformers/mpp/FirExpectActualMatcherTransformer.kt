@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.FirAbstractTreeTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveProcessor
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
-import org.jetbrains.kotlin.resolve.multiplatform.compatible
 
 class FirExpectActualMatcherProcessor(
     session: FirSession,
@@ -76,7 +75,7 @@ open class FirExpectActualMatcherTransformer(
 
     // ------------------------------------------------------
 
-    private fun transformMemberDeclaration(memberDeclaration: FirMemberDeclaration) {
+    fun transformMemberDeclaration(memberDeclaration: FirMemberDeclaration) {
         if (!memberDeclaration.isActual) return
         val actualSymbol = memberDeclaration.symbol
 

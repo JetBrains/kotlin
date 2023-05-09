@@ -147,6 +147,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_VARARG
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_CLASS_WITHOUT_PARAMETERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DATA_OBJECT_CUSTOM_EQUALS_OR_HASH_CODE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DECLARATION_CANT_BE_INLINED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEFINITELY_NON_NULLABLE_AS_REIFIED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATED_PROPERTY_INSIDE_VALUE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATED_PROPERTY_IN_INTERFACE
@@ -524,6 +525,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.THROWABLE_TYPE_MI
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TOO_MANY_ARGUMENTS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TOO_MANY_CHARACTERS_IN_CHARACTER_LITERAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TOPLEVEL_TYPEALIASES_ONLY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPEALIAS_EXPANSION_DEPRECATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPEALIAS_EXPANSION_DEPRECATION_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPEALIAS_SHOULD_EXPAND_TO_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED
@@ -608,6 +611,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_OVERRIDDEN_BY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_TYPE_MISMATCH_ON_INHERITANCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_TYPE_MISMATCH_ON_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VIRTUAL_MEMBER_HIDDEN
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VOLATILE_ON_DELEGATE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VOLATILE_ON_VALUE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_ANNOTATION_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_ANNOTATION_TARGET_WITH_USE_SITE_TARGET
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.WRONG_EXTENSION_FUNCTION_TYPE
@@ -658,6 +663,9 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER, "''{0}'' on secondary constructor parameter is not allowed", TO_STRING)
         map.put(DEPRECATION, "''{0}'' is deprecated. {1}", SYMBOL, STRING)
         map.put(DEPRECATION_ERROR, "''{0}'' is deprecated. {1}", SYMBOL, STRING)
+        map.put(TYPEALIAS_EXPANSION_DEPRECATION, "''{0}'' uses ''{1}'', which is deprecated. {2}", SYMBOL, SYMBOL, STRING)
+        map.put(TYPEALIAS_EXPANSION_DEPRECATION_ERROR, "''{0}'' uses ''{1}'', which is an error. {2}", SYMBOL, SYMBOL, STRING)
+
         map.put(
             API_NOT_AVAILABLE,
             "This declaration is only available since Kotlin {0} and cannot be used with the specified API version {1}",
@@ -716,7 +724,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(FUNCTION_CALL_EXPECTED, "Function invocation ''{0}({1})'' expected", TO_STRING, FUNCTION_PARAMETERS)
         map.put(
             FUNCTION_EXPECTED,
-            "Expression ''{0}'' of type {1} cannot be invoked as a function. The function 'invoke()' is not found", TO_STRING, RENDER_TYPE
+            "Expression ''{0}'' of type {1} cannot be invoked as a function. The function ''invoke()'' is not found", TO_STRING, RENDER_TYPE
         )
         map.put(
             RESOLUTION_TO_CLASSIFIER,
@@ -751,7 +759,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(SINGLETON_IN_SUPERTYPE, "Cannot inherit from a singleton")
         map.put(NULLABLE_SUPERTYPE, "A supertype cannot be nullable")
         map.put(REDUNDANT_NULLABLE, "Redundant '?'")
-        map.put(PLATFORM_CLASS_MAPPED_TO_KOTLIN, "This class shouldn't be used in Kotlin. Use {0} instead.", TO_STRING)
+        map.put(PLATFORM_CLASS_MAPPED_TO_KOTLIN, "This class shouldn''t be used in Kotlin. Use {0} instead.", TO_STRING)
         map.put(MANY_CLASSES_IN_SUPERTYPE_LIST, "Only one class may appear in a supertype list")
         map.put(SUPERTYPE_APPEARS_TWICE, "A supertype appears twice")
         map.put(CLASS_IN_SUPERTYPE_FOR_ENUM, "Enum class cannot inherit from classes")
@@ -788,7 +796,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             AMBIGUOUS_SUPER,
-            "Many supertypes available, please specify the one you mean in angle brackets, e.g. 'super<Foo>'",
+            "Many supertypes available, please specify the one you mean in angle brackets, e.g. ''super<Foo>''",
             NOT_RENDERED
         )
 
@@ -891,6 +899,8 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(REPEATED_ANNOTATION, "This annotation is not repeatable")
         map.put(REPEATED_ANNOTATION_WARNING, "This annotation is not repeatable")
         map.put(NON_INTERNAL_PUBLISHED_API, "@PublishedApi annotation is only applicable to internal declaration")
+        map.put(VOLATILE_ON_VALUE, "'@Volatile' annotation cannot be used on immutable properties")
+        map.put(VOLATILE_ON_DELEGATE, "'@Volatile' annotation cannot be used on delegated properties")
 
         // OptIn
         map.put(OPT_IN_USAGE, "{1}", TO_STRING, STRING)
@@ -1067,14 +1077,14 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Intersection types are only supported for definitely non-nullable types: right part should be non-nullable Any"
         )
 
-        map.put(TYPE_MISMATCH, "Type mismatch: inferred type is {1} but {0} was expected", TO_STRING, TO_STRING, NOT_RENDERED)
+        map.put(TYPE_MISMATCH, "Type mismatch: inferred type is {1} but {0} was expected", RENDER_TYPE, RENDER_TYPE, NOT_RENDERED)
         map.put(
             TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR,
             "Type inference failed. The value of the type parameter {0} should be mentioned in input types (argument types, receiver type or expected type). Try to specify it explicitly.",
             SYMBOL
         )
-        map.put(THROWABLE_TYPE_MISMATCH, "Throwable type mismatch: actual type is {0}", TO_STRING, NOT_RENDERED)
-        map.put(CONDITION_TYPE_MISMATCH, "Condition type mismatch: inferred type is {0} but Boolean was expected", TO_STRING, NOT_RENDERED)
+        map.put(THROWABLE_TYPE_MISMATCH, "Throwable type mismatch: actual type is {0}", RENDER_TYPE, NOT_RENDERED)
+        map.put(CONDITION_TYPE_MISMATCH, "Condition type mismatch: inferred type is {0} but Boolean was expected", RENDER_TYPE, NOT_RENDERED)
         map.put(
             ARGUMENT_TYPE_MISMATCH,
             "Argument type mismatch: actual type is {1} but {0} was expected",
@@ -1176,7 +1186,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             CONFLICTING_PROJECTION_IN_TYPEALIAS_EXPANSION,
-            "Conflicting projection in type alias expansion in intermediate type '{0}'",
+            "Conflicting projection in type alias expansion in intermediate type ''{0}''",
             RENDER_TYPE
         )
         map.put(
@@ -1209,6 +1219,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             REIFIED_TYPE_FORBIDDEN_SUBSTITUTION,
             "Cannot use ''{0}'' as reified type parameter",
             RENDER_TYPE
+        )
+        map.put(
+            DEFINITELY_NON_NULLABLE_AS_REIFIED,
+            "Cannot use definitely-non-nullable type as reified type argument",
         )
         map.put(
             FINAL_UPPER_BOUND,
@@ -1436,7 +1450,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             VAR_TYPE_MISMATCH_ON_OVERRIDE,
-            "Type of ''{0}'' doesn't match the type of the overridden var-property ''{1}''",
+            "Type of ''{0}'' doesn''t match the type of the overridden var-property ''{1}''",
             DECLARATION_NAME,
             SYMBOL
         )
@@ -1631,7 +1645,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER,
-            "It's forbidden to use the extension property type parameter ''{0}'' in delegate. See https://youtrack.jetbrains.com/issue/KT-24643",
+            "It''s forbidden to use the extension property type parameter ''{0}'' in delegate. See https://youtrack.jetbrains.com/issue/KT-24643",
             SYMBOL
         )
         map.put(INITIALIZER_TYPE_MISMATCH, "Initializer type mismatch: expected {0}, actual {1}", RENDER_TYPE, RENDER_TYPE, NOT_RENDERED)
@@ -1829,7 +1843,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             WRONG_INVOCATION_KIND,
-            "{2} wrong invocation kind: given {3} case, but {4} case is possible",
+            "{0} has wrong invocation kind: given {1} case, but {2} case is possible",
             SYMBOL,
             TO_STRING,
             TO_STRING

@@ -1,4 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
 // FIR_IDENTICAL
 fun foo(init: A.() -> Unit) { }
 

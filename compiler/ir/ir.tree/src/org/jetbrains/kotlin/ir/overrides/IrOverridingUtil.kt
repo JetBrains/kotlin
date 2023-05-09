@@ -17,6 +17,9 @@ import org.jetbrains.kotlin.resolve.OverridingUtil.OverrideCompatibilityInfo.*
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.filterIsInstanceAnd
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
+import org.jetbrains.kotlin.utils.memoryOptimizedMapNotNull
 
 abstract class FakeOverrideBuilderStrategy(
     private val friendModules: Map<String, Collection<String>>,
@@ -128,13 +131,13 @@ class IrOverridingUtil(
         set(value) {
             when (this) {
                 is IrSimpleFunction -> this.overriddenSymbols =
-                    value.map { it as? IrSimpleFunctionSymbol ?: error("Unexpected function overridden symbol: $it") }
+                    value.memoryOptimizedMap { it as? IrSimpleFunctionSymbol ?: error("Unexpected function overridden symbol: $it") }
                 is IrProperty -> {
-                    val overriddenProperties = value.map { it as? IrPropertySymbol ?: error("Unexpected property overridden symbol: $it") }
+                    val overriddenProperties = value.memoryOptimizedMap { it as? IrPropertySymbol ?: error("Unexpected property overridden symbol: $it") }
                     val getter = this.getter ?: error("Property has no getter: ${render()}")
-                    getter.overriddenSymbols = overriddenProperties.map { it.owner.getter!!.symbol }
+                    getter.overriddenSymbols = overriddenProperties.memoryOptimizedMap { it.owner.getter!!.symbol }
                     this.setter?.let { setter ->
-                        setter.overriddenSymbols = overriddenProperties.mapNotNull { it.owner.setter?.symbol }
+                        setter.overriddenSymbols = overriddenProperties.memoryOptimizedMapNotNull { it.owner.setter?.symbol }
                     }
                     this.overriddenSymbols = overriddenProperties
                 }
@@ -184,9 +187,8 @@ class IrOverridingUtil(
         val unoverriddenSuperMembers = clazz.superTypes.flatMap { superType ->
             val superClass = superType.getClass() ?: error("Unexpected super type: $superType")
             superClass.declarations
-                .filterIsInstance<IrOverridableMember>()
-                .filterNot {
-                    it in overriddenMembers || it.symbol in ignoredParentSymbols || it.isStaticMember || DescriptorVisibilities.isPrivate(it.visibility)
+                .filterIsInstanceAnd<IrOverridableMember> {
+                    it !in overriddenMembers && it.symbol !in ignoredParentSymbols && !it.isStaticMember && !DescriptorVisibilities.isPrivate(it.visibility)
                 }
                 .map { overriddenMember ->
                     val fakeOverride = fakeOverrideBuilder.fakeOverrideMember(superType, overriddenMember, clazz)
@@ -254,7 +256,7 @@ class IrOverridingUtil(
             }
         }
 
-        fromCurrent.overriddenSymbols = overridden.map { it.original.symbol }
+        fromCurrent.overriddenSymbols = overridden.memoryOptimizedMap { it.original.symbol }
 
         return bound
     }
@@ -427,7 +429,7 @@ class IrOverridingUtil(
             }
         }
 
-        fakeOverride.overriddenSymbols = effectiveOverridden.map { it.original.symbol }
+        fakeOverride.overriddenSymbols = effectiveOverridden.memoryOptimizedMap { it.original.symbol }
 
         require(
             fakeOverride.overriddenSymbols.isNotEmpty()

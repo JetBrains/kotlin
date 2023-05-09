@@ -1,5 +1,6 @@
-package codegen.intrinsics.interop_convert
 
+@file:OptIn(ExperimentalForeignApi::class)
+package codegen.intrinsics.interop_convert
 import kotlin.test.*
 import kotlinx.cinterop.*
 

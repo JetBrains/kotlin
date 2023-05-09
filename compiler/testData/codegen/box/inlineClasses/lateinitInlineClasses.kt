@@ -2,6 +2,8 @@
 // WORKS_WHEN_VALUE_CLASS
 // LANGUAGE: +ValueClasses, +InlineLateinit
 
+@file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
+
 OPTIONAL_JVM_INLINE_ANNOTATION
 value class IC1(val x: String)
 

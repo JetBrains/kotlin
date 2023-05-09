@@ -481,6 +481,8 @@ __attribute__((swift_name("DeallocRetainKt")))
 @interface KtDeallocRetainKt : KtBase
 + (void)garbageCollect __attribute__((swift_name("garbageCollect()")));
 + (KtKotlinWeakReference *)createWeakReferenceValue:(id)value __attribute__((swift_name("createWeakReference(value:)")));
++ (void)assertNullValue:(id _Nullable)value __attribute__((swift_name("assertNull(value:)")));
++ (BOOL)isExperimentalMM __attribute__((swift_name("isExperimentalMM()")));
 @end
 
 __attribute__((objc_subclassing_restricted))
@@ -681,6 +683,94 @@ __attribute__((swift_name("TestGH3992.B")))
 @interface KtTestGH3992B : KtTestGH3992A
 - (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
 + (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("ClassNotAvailableInSwift")))
+@interface KtClassNotAvailableInSwift : NSObject
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("ParentClass")))
+@interface KtParentClass : NSObject
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("ParentClass.NestedClass")))
+@interface KtParentClassNestedClass : NSObject
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("ParentClass.NestedClassDeeplyNestedClass")))
+@interface KtParentClassNestedClassDeeplyNestedClass : NSObject
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("ParentClass.InnerClass")))
+@interface KtParentClassInnerClass : NSObject
+@end
+
+__attribute__((swift_name("InterfaceNotAvailableInSwift")))
+@protocol KtInterfaceNotAvailableInSwift
+@required
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("UnavailableEnum")))
+@interface KtUnavailableEnum : NSObject
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("UnavailableObject")))
+@interface KtUnavailableObject : NSObject
+@end
+
+__attribute__((swift_name("SealedClass")))
+@interface KtSealedClass : KtBase
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("SealedClass.A")))
+@interface KtSealedClassA : NSObject
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("SealedClass.B")))
+@interface KtSealedClassB : KtSealedClass
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("SealedClass.C")))
+@interface KtSealedClassC : NSObject
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("WrapperOverUnavailable")))
+@interface KtWrapperOverUnavailable : KtBase
+- (instancetype)initWithArg:(id)arg __attribute__((swift_name("init(arg:)"))) __attribute__((objc_designated_initializer));
+@property (readonly) id arg __attribute__((swift_name("arg")));
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("HiddenfromobjcKt")))
+@interface KtHiddenfromobjcKt : KtBase
++ (id)useOfUnavailableClassParam:(id)param __attribute__((swift_name("useOfUnavailableClass(param:)")));
++ (id _Nullable)useOfNullableUnavailableClassParam:(id _Nullable)param __attribute__((swift_name("useOfNullableUnavailableClass(param:)")));
++ (id)produceUnavailable __attribute__((swift_name("produceUnavailable()")));
++ (NSString *)consumeUnavailableParam:(id)param __attribute__((swift_name("consumeUnavailable(param:)")));
++ (id)createUnavailableInterface __attribute__((swift_name("createUnavailableInterface()")));
++ (NSString * _Nullable)useOfNullableUnavailableInterfaceParam:(id _Nullable)param __attribute__((swift_name("useOfNullableUnavailableInterface(param:)")));
++ (id)createUnavailableEnum __attribute__((swift_name("createUnavailableEnum()")));
++ (NSString *)useOfUnavailableEnumParam:(id)param __attribute__((swift_name("useOfUnavailableEnum(param:)")));
++ (NSString *)useOfNullableUnavailableEnumParam:(id _Nullable)param __attribute__((swift_name("useOfNullableUnavailableEnum(param:)")));
++ (id)getUnavailableObject __attribute__((swift_name("getUnavailableObject()")));
++ (NSString *)useOfUnavailableObjectParam:(id)param __attribute__((swift_name("useOfUnavailableObject(param:)")));
++ (NSString * _Nullable)useOfNullableUnavailableObjectParam:(id _Nullable)param __attribute__((swift_name("useOfNullableUnavailableObject(param:)")));
++ (KtSealedClass *)createSealedClass __attribute__((swift_name("createSealedClass()")));
++ (NSString *)useSealedClassParam:(KtSealedClass *)param __attribute__((swift_name("useSealedClass(param:)")));
++ (NSString *)useUnavailableA:(id)a __attribute__((swift_name("useUnavailable(a:)")));
 @end
 
 __attribute__((swift_name("InterfaceNameManglingI1")))
@@ -1202,6 +1292,27 @@ __attribute__((swift_name("Kt56521Kt")))
 @interface KtKt56521Kt : KtBase
 + (KtKt56521 *)getKt56521 __attribute__((swift_name("getKt56521()")));
 @property (class) int32_t initialized __attribute__((swift_name("initialized")));
+@end
+
+__attribute__((swift_name("IKt57373")))
+@protocol KtIKt57373
+@required
+@property (readonly) int32_t bar __attribute__((swift_name("bar")));
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("DKt57373")))
+@interface KtDKt57373 : KtBase <KtIKt57373>
+- (instancetype)initWithFoo:(id<KtIKt57373>)foo __attribute__((swift_name("init(foo:)"))) __attribute__((objc_designated_initializer));
+@property (readonly) int32_t bar __attribute__((swift_name("bar")));
+@end
+
+__attribute__((objc_subclassing_restricted))
+__attribute__((swift_name("CKt57373")))
+@interface KtCKt57373 : KtBase <KtIKt57373>
+- (instancetype)init __attribute__((swift_name("init()"))) __attribute__((objc_designated_initializer));
++ (instancetype)new __attribute__((availability(swift, unavailable, message="use object initializers instead")));
+@property (readonly) int32_t bar __attribute__((swift_name("bar")));
 @end
 
 __attribute__((objc_subclassing_restricted))

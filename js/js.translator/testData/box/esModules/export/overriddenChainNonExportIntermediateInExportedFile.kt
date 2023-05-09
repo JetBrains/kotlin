@@ -2,7 +2,7 @@
 // DONT_TARGET_EXACT_BACKEND: JS
 // ES_MODULES
 
-// MODULE: overriden_chain_non_export_intermediate
+// MODULE: intermediate
 // FILE: not_exported.kt
 abstract class B : A() {
     abstract fun baz(): String
@@ -29,7 +29,7 @@ class C : B() {
 
 // FILE: main.mjs
 // ENTRY_ES_MODULE
-import { C } from "./overriddenChainNonExportIntermediateInExportedFile-overriden_chain_non_export_intermediate_v5.mjs"
+import { C } from "./overriddenChainNonExportIntermediateInExportedFile-intermediate_v5.mjs"
 
 export function box() {
     var c = new C();

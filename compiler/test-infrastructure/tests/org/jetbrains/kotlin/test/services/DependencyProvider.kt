@@ -12,6 +12,7 @@ abstract class DependencyProvider : TestService {
     abstract fun getTestModule(name: String): TestModule
 
     abstract fun <A : ResultingArtifact<A>> getArtifact(module: TestModule, kind: TestArtifactKind<A>): A
+    abstract fun <A : ResultingArtifact<A>> getArtifactSafe(module: TestModule, kind: TestArtifactKind<A>): A?
 
     abstract fun unregisterAllArtifacts(module: TestModule)
     abstract fun copy(): DependencyProvider
@@ -26,7 +27,7 @@ class DependencyProviderImpl(
     private val assertions: Assertions
         get() = testServices.assertions
 
-    private val testModulesByName = testModules.map { it.name to it }.toMap()
+    private val testModulesByName = testModules.associateBy { it.name }
 
     private val artifactsByModule: MutableMap<TestModule, MutableMap<TestArtifactKind<*>, ResultingArtifact<*>>> = mutableMapOf()
 
@@ -34,11 +35,13 @@ class DependencyProviderImpl(
         return testModulesByName[name] ?: assertions.fail { "Module $name is not defined" }
     }
 
-    override fun <A : ResultingArtifact<A>> getArtifact(module: TestModule, kind: TestArtifactKind<A>): A {
-        val artifact = artifactsByModule.getMap(module)[kind]
-            ?: error("Artifact with kind $kind is not registered for module ${module.name}")
+    override fun <A : ResultingArtifact<A>> getArtifactSafe(module: TestModule, kind: TestArtifactKind<A>): A? {
         @Suppress("UNCHECKED_CAST")
-        return artifact as A
+        return artifactsByModule.getMap(module)[kind] as A?
+    }
+
+    override fun <A : ResultingArtifact<A>> getArtifact(module: TestModule, kind: TestArtifactKind<A>): A {
+        return getArtifactSafe(module, kind) ?: error("Artifact with kind $kind is not registered for module ${module.name}")
     }
 
     fun <A : ResultingArtifact<A>> registerArtifact(module: TestModule, artifact: ResultingArtifact<A>) {

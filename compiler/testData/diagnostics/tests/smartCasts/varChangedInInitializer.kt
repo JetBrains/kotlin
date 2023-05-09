@@ -1,4 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
 class My {
     init {
         var y: Int?

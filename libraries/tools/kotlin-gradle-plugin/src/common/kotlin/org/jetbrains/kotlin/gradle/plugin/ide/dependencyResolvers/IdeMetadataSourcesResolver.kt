@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.ide.asAdditionalArtifactResolver
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
-import org.jetbrains.kotlin.gradle.plugin.sources.project
 import org.jetbrains.kotlin.gradle.utils.named
 
 internal fun IdeMetadataSourcesResolver(): IdeAdditionalArtifactResolver = IdeBinaryDependencyResolver(

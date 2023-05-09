@@ -167,26 +167,26 @@ CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:Int modality:FINAL visibility:publ
     VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Short
   FUN IR_EXTERNAL_DECLARATION_STUB name:rangeUntil visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Byte) returnType:kotlin.ranges.IntRange [operator]
     annotations:
-      SinceKotlin(version = '1.7')
-      ExperimentalStdlibApi
+      SinceKotlin(version = '1.9')
+      WasExperimental(markerClass = [CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:ExperimentalStdlibApi modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.ExperimentalStdlibApi>])
     $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
     VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Byte
   FUN IR_EXTERNAL_DECLARATION_STUB name:rangeUntil visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Int) returnType:kotlin.ranges.IntRange [operator]
     annotations:
-      SinceKotlin(version = '1.7')
-      ExperimentalStdlibApi
+      SinceKotlin(version = '1.9')
+      WasExperimental(markerClass = [CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:ExperimentalStdlibApi modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.ExperimentalStdlibApi>])
     $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
     VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Int
   FUN IR_EXTERNAL_DECLARATION_STUB name:rangeUntil visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Long) returnType:kotlin.ranges.LongRange [operator]
     annotations:
-      SinceKotlin(version = '1.7')
-      ExperimentalStdlibApi
+      SinceKotlin(version = '1.9')
+      WasExperimental(markerClass = [CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:ExperimentalStdlibApi modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.ExperimentalStdlibApi>])
     $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
     VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Long
   FUN IR_EXTERNAL_DECLARATION_STUB name:rangeUntil visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Short) returnType:kotlin.ranges.IntRange [operator]
     annotations:
-      SinceKotlin(version = '1.7')
-      ExperimentalStdlibApi
+      SinceKotlin(version = '1.9')
+      WasExperimental(markerClass = [CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB ANNOTATION_CLASS name:ExperimentalStdlibApi modality:OPEN visibility:public superTypes:[kotlin.Annotation]' type=kotlin.reflect.KClass<kotlin.ExperimentalStdlibApi>])
     $this: VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:<this> type:kotlin.Int
     VALUE_PARAMETER IR_EXTERNAL_DECLARATION_STUB name:other index:0 type:kotlin.Short
   FUN IR_EXTERNAL_DECLARATION_STUB name:rem visibility:public modality:FINAL <> ($this:kotlin.Int, other:kotlin.Byte) returnType:kotlin.Int [operator]

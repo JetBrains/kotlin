@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
-import java.io.PrintStream
 import kotlin.reflect.KAnnotatedElement
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
@@ -145,18 +144,7 @@ fun generateKotlinGradleOptions(withPrinterToFile: (targetFile: File, Printer.()
 }
 
 fun main() {
-    fun getPrinter(file: File, fn: Printer.() -> Unit) {
-        if (!file.exists()) {
-            file.parentFile.mkdirs()
-            file.createNewFile()
-        }
-        PrintStream(file.outputStream()).use {
-            val printer = Printer(it)
-            printer.fn()
-        }
-    }
-
-    generateKotlinGradleOptions(::getPrinter)
+    generateKotlinGradleOptions(::getPrinterToFile)
 }
 
 private fun generateKotlinCommonToolOptions(
@@ -725,29 +713,6 @@ private fun Printer.generateCompilerOptionsHelper(
         println("}")
 
         println()
-        println("internal fun fillDefaultValues(")
-        withIndent {
-            println("args: $argsType,")
-        }
-        println(") {")
-        withIndent {
-            if (parentHelperName != null) println("$parentHelperName.fillDefaultValues(args)")
-            properties
-                .filter { it.name != "freeCompilerArgs" }
-                .forEach {
-                    val defaultValue = it.gradleValues
-                    var value = defaultValue.defaultValue
-                    if (value != "null" && defaultValue.toArgumentConverter != null) {
-                        value = "$value${defaultValue.toArgumentConverter.substringAfter("this")}"
-                    }
-                    println("args.${it.name} = $value")
-                }
-
-            addAdditionalJvmArgs(helperName)
-        }
-        println("}")
-
-        println()
         println("internal fun syncOptionsAsConvention(")
         withIndent {
             println("from: $type,")
@@ -772,6 +737,7 @@ private fun Printer.addAdditionalJvmArgs(implType: FqName) {
         println("// Arguments with always default values when used from build tools")
         println("args.noStdlib = true")
         println("args.noReflect = true")
+        println("args.allowNoSourceFiles = true")
     }
 }
 
@@ -890,14 +856,14 @@ private fun Printer.generateOptionDeprecation(property: KProperty1<*, *>) {
 private fun Printer.generateDoc(property: KProperty1<*, *>) {
     val description = property.findAnnotation<Argument>()!!.description
     val possibleValues = property.gradleValues.possibleValues
-    val defaultValue = property.gradleDefaultValue
+    val defaultValue = property.gradleValues.defaultValue
 
     println("/**")
     println(" * ${description.replace("\n", " ")}")
     if (possibleValues != null) {
         println(" * Possible values: ${possibleValues.joinToString()}")
     }
-    println(" * Default value: $defaultValue")
+    println(" * Default value: ${defaultValue.removePrefix("$OPTIONS_PACKAGE_PREFIX.")}")
     println(" */")
 }
 

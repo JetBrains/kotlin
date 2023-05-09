@@ -2651,27 +2651,15 @@ public final class kotlin/collections/unsigned/UArraysKt {
 	public static synthetic fun binarySearch-WpHrYlw$default ([BBIIILjava/lang/Object;)I
 	public static final fun contentEquals-FGO6Aew ([S[S)Z
 	public static final fun contentEquals-KJPZfPQ ([I[I)Z
-	public static final synthetic fun contentEquals-ctEhBpI ([I[I)Z
 	public static final fun contentEquals-kV0jMPg ([B[B)Z
-	public static final synthetic fun contentEquals-kdPth3s ([B[B)Z
 	public static final fun contentEquals-lec5QzE ([J[J)Z
-	public static final synthetic fun contentEquals-mazbYpA ([S[S)Z
-	public static final synthetic fun contentEquals-us8wMrg ([J[J)Z
-	public static final synthetic fun contentHashCode--ajY-9A ([I)I
 	public static final fun contentHashCode-2csIQuQ ([B)I
-	public static final synthetic fun contentHashCode-GBYM_sE ([B)I
-	public static final synthetic fun contentHashCode-QwZRm1k ([J)I
 	public static final fun contentHashCode-XUkPCBk ([I)I
 	public static final fun contentHashCode-d-6D3K8 ([S)I
-	public static final synthetic fun contentHashCode-rL5Bavg ([S)I
 	public static final fun contentHashCode-uLth9ew ([J)I
-	public static final synthetic fun contentToString--ajY-9A ([I)Ljava/lang/String;
 	public static final fun contentToString-2csIQuQ ([B)Ljava/lang/String;
-	public static final synthetic fun contentToString-GBYM_sE ([B)Ljava/lang/String;
-	public static final synthetic fun contentToString-QwZRm1k ([J)Ljava/lang/String;
 	public static final fun contentToString-XUkPCBk ([I)Ljava/lang/String;
 	public static final fun contentToString-d-6D3K8 ([S)Ljava/lang/String;
-	public static final synthetic fun contentToString-rL5Bavg ([S)Ljava/lang/String;
 	public static final fun contentToString-uLth9ew ([J)Ljava/lang/String;
 	public static final fun drop-PpDY95g ([BI)Ljava/util/List;
 	public static final fun drop-nggk6HY ([SI)Ljava/util/List;
@@ -4426,6 +4414,7 @@ public abstract class kotlin/properties/ObservableProperty : kotlin/properties/R
 	protected fun beforeChange (Lkotlin/reflect/KProperty;Ljava/lang/Object;Ljava/lang/Object;)Z
 	public fun getValue (Ljava/lang/Object;Lkotlin/reflect/KProperty;)Ljava/lang/Object;
 	public fun setValue (Ljava/lang/Object;Lkotlin/reflect/KProperty;Ljava/lang/Object;)V
+	public fun toString ()Ljava/lang/String;
 }
 
 public abstract interface class kotlin/properties/PropertyDelegateProvider {
@@ -5455,6 +5444,94 @@ public final class kotlin/text/Charsets {
 	public final fun UTF32_LE ()Ljava/nio/charset/Charset;
 }
 
+public final class kotlin/text/HexExtensionsKt {
+	public static final fun hexToByte (Ljava/lang/String;Lkotlin/text/HexFormat;)B
+	public static synthetic fun hexToByte$default (Ljava/lang/String;Lkotlin/text/HexFormat;ILjava/lang/Object;)B
+	public static final fun hexToByteArray (Ljava/lang/String;Lkotlin/text/HexFormat;)[B
+	public static synthetic fun hexToByteArray$default (Ljava/lang/String;Lkotlin/text/HexFormat;ILjava/lang/Object;)[B
+	public static final fun hexToInt (Ljava/lang/String;Lkotlin/text/HexFormat;)I
+	public static synthetic fun hexToInt$default (Ljava/lang/String;Lkotlin/text/HexFormat;ILjava/lang/Object;)I
+	public static final fun hexToLong (Ljava/lang/String;Lkotlin/text/HexFormat;)J
+	public static synthetic fun hexToLong$default (Ljava/lang/String;Lkotlin/text/HexFormat;ILjava/lang/Object;)J
+	public static final fun hexToShort (Ljava/lang/String;Lkotlin/text/HexFormat;)S
+	public static synthetic fun hexToShort$default (Ljava/lang/String;Lkotlin/text/HexFormat;ILjava/lang/Object;)S
+	public static final fun toHexString (BLkotlin/text/HexFormat;)Ljava/lang/String;
+	public static final fun toHexString (ILkotlin/text/HexFormat;)Ljava/lang/String;
+	public static final fun toHexString (JLkotlin/text/HexFormat;)Ljava/lang/String;
+	public static final fun toHexString (SLkotlin/text/HexFormat;)Ljava/lang/String;
+	public static final fun toHexString ([BIILkotlin/text/HexFormat;)Ljava/lang/String;
+	public static final fun toHexString ([BLkotlin/text/HexFormat;)Ljava/lang/String;
+	public static synthetic fun toHexString$default (BLkotlin/text/HexFormat;ILjava/lang/Object;)Ljava/lang/String;
+	public static synthetic fun toHexString$default (ILkotlin/text/HexFormat;ILjava/lang/Object;)Ljava/lang/String;
+	public static synthetic fun toHexString$default (JLkotlin/text/HexFormat;ILjava/lang/Object;)Ljava/lang/String;
+	public static synthetic fun toHexString$default (SLkotlin/text/HexFormat;ILjava/lang/Object;)Ljava/lang/String;
+	public static synthetic fun toHexString$default ([BIILkotlin/text/HexFormat;ILjava/lang/Object;)Ljava/lang/String;
+	public static synthetic fun toHexString$default ([BLkotlin/text/HexFormat;ILjava/lang/Object;)Ljava/lang/String;
+}
+
+public final class kotlin/text/HexFormat {
+	public static final field Companion Lkotlin/text/HexFormat$Companion;
+	public final fun getBytes ()Lkotlin/text/HexFormat$BytesHexFormat;
+	public final fun getNumber ()Lkotlin/text/HexFormat$NumberHexFormat;
+	public final fun getUpperCase ()Z
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlin/text/HexFormat$Builder {
+	public fun <init> ()V
+	public final fun build ()Lkotlin/text/HexFormat;
+	public final fun getBytes ()Lkotlin/text/HexFormat$BytesHexFormat$Builder;
+	public final fun getNumber ()Lkotlin/text/HexFormat$NumberHexFormat$Builder;
+	public final fun getUpperCase ()Z
+	public final fun setUpperCase (Z)V
+}
+
+public final class kotlin/text/HexFormat$BytesHexFormat {
+	public final fun getBytePrefix ()Ljava/lang/String;
+	public final fun getByteSeparator ()Ljava/lang/String;
+	public final fun getByteSuffix ()Ljava/lang/String;
+	public final fun getBytesPerGroup ()I
+	public final fun getBytesPerLine ()I
+	public final fun getGroupSeparator ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlin/text/HexFormat$BytesHexFormat$Builder {
+	public final fun getBytePrefix ()Ljava/lang/String;
+	public final fun getByteSeparator ()Ljava/lang/String;
+	public final fun getByteSuffix ()Ljava/lang/String;
+	public final fun getBytesPerGroup ()I
+	public final fun getBytesPerLine ()I
+	public final fun getGroupSeparator ()Ljava/lang/String;
+	public final fun setBytePrefix (Ljava/lang/String;)V
+	public final fun setByteSeparator (Ljava/lang/String;)V
+	public final fun setByteSuffix (Ljava/lang/String;)V
+	public final fun setBytesPerGroup (I)V
+	public final fun setBytesPerLine (I)V
+	public final fun setGroupSeparator (Ljava/lang/String;)V
+}
+
+public final class kotlin/text/HexFormat$Companion {
+	public final fun getDefault ()Lkotlin/text/HexFormat;
+	public final fun getUpperCase ()Lkotlin/text/HexFormat;
+}
+
+public final class kotlin/text/HexFormat$NumberHexFormat {
+	public final fun getPrefix ()Ljava/lang/String;
+	public final fun getRemoveLeadingZeros ()Z
+	public final fun getSuffix ()Ljava/lang/String;
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class kotlin/text/HexFormat$NumberHexFormat$Builder {
+	public final fun getPrefix ()Ljava/lang/String;
+	public final fun getRemoveLeadingZeros ()Z
+	public final fun getSuffix ()Ljava/lang/String;
+	public final fun setPrefix (Ljava/lang/String;)V
+	public final fun setRemoveLeadingZeros (Z)V
+	public final fun setSuffix (Ljava/lang/String;)V
+}
+
 public final class kotlin/text/MatchGroup {
 	public fun <init> (Ljava/lang/String;Lkotlin/ranges/IntRange;)V
 	public final fun component1 ()Ljava/lang/String;
@@ -6006,13 +6083,13 @@ public final class kotlin/time/Duration : java/lang/Comparable {
 	public static final fun equals-impl0 (JJ)Z
 	public static final fun getAbsoluteValue-UwyO8pc (J)J
 	public static final fun getHoursComponent-impl (J)I
-	public static final fun getInDays-impl (J)D
-	public static final fun getInHours-impl (J)D
-	public static final fun getInMicroseconds-impl (J)D
-	public static final fun getInMilliseconds-impl (J)D
-	public static final fun getInMinutes-impl (J)D
-	public static final fun getInNanoseconds-impl (J)D
-	public static final fun getInSeconds-impl (J)D
+	public static final synthetic fun getInDays-impl (J)D
+	public static final synthetic fun getInHours-impl (J)D
+	public static final synthetic fun getInMicroseconds-impl (J)D
+	public static final synthetic fun getInMilliseconds-impl (J)D
+	public static final synthetic fun getInMinutes-impl (J)D
+	public static final synthetic fun getInNanoseconds-impl (J)D
+	public static final synthetic fun getInSeconds-impl (J)D
 	public static final fun getInWholeDays-impl (J)J
 	public static final fun getInWholeHours-impl (J)J
 	public static final fun getInWholeMicroseconds-impl (J)J
@@ -6041,8 +6118,8 @@ public final class kotlin/time/Duration : java/lang/Comparable {
 	public static final fun toInt-impl (JLkotlin/time/DurationUnit;)I
 	public static final fun toIsoString-impl (J)Ljava/lang/String;
 	public static final fun toLong-impl (JLkotlin/time/DurationUnit;)J
-	public static final fun toLongMilliseconds-impl (J)J
-	public static final fun toLongNanoseconds-impl (J)J
+	public static final synthetic fun toLongMilliseconds-impl (J)J
+	public static final synthetic fun toLongNanoseconds-impl (J)J
 	public fun toString ()Ljava/lang/String;
 	public static fun toString-impl (J)Ljava/lang/String;
 	public static final fun toString-impl (JLkotlin/time/DurationUnit;I)Ljava/lang/String;
@@ -6053,57 +6130,57 @@ public final class kotlin/time/Duration : java/lang/Comparable {
 
 public final class kotlin/time/Duration$Companion {
 	public final fun convert (DLkotlin/time/DurationUnit;Lkotlin/time/DurationUnit;)D
-	public final fun days-UwyO8pc (D)J
-	public final fun days-UwyO8pc (I)J
-	public final fun days-UwyO8pc (J)J
+	public final synthetic fun days-UwyO8pc (D)J
+	public final synthetic fun days-UwyO8pc (I)J
+	public final synthetic fun days-UwyO8pc (J)J
 	public final fun getINFINITE-UwyO8pc ()J
 	public final fun getZERO-UwyO8pc ()J
-	public final fun hours-UwyO8pc (D)J
-	public final fun hours-UwyO8pc (I)J
-	public final fun hours-UwyO8pc (J)J
-	public final fun microseconds-UwyO8pc (D)J
-	public final fun microseconds-UwyO8pc (I)J
-	public final fun microseconds-UwyO8pc (J)J
-	public final fun milliseconds-UwyO8pc (D)J
-	public final fun milliseconds-UwyO8pc (I)J
-	public final fun milliseconds-UwyO8pc (J)J
-	public final fun minutes-UwyO8pc (D)J
-	public final fun minutes-UwyO8pc (I)J
-	public final fun minutes-UwyO8pc (J)J
-	public final fun nanoseconds-UwyO8pc (D)J
-	public final fun nanoseconds-UwyO8pc (I)J
-	public final fun nanoseconds-UwyO8pc (J)J
+	public final synthetic fun hours-UwyO8pc (D)J
+	public final synthetic fun hours-UwyO8pc (I)J
+	public final synthetic fun hours-UwyO8pc (J)J
+	public final synthetic fun microseconds-UwyO8pc (D)J
+	public final synthetic fun microseconds-UwyO8pc (I)J
+	public final synthetic fun microseconds-UwyO8pc (J)J
+	public final synthetic fun milliseconds-UwyO8pc (D)J
+	public final synthetic fun milliseconds-UwyO8pc (I)J
+	public final synthetic fun milliseconds-UwyO8pc (J)J
+	public final synthetic fun minutes-UwyO8pc (D)J
+	public final synthetic fun minutes-UwyO8pc (I)J
+	public final synthetic fun minutes-UwyO8pc (J)J
+	public final synthetic fun nanoseconds-UwyO8pc (D)J
+	public final synthetic fun nanoseconds-UwyO8pc (I)J
+	public final synthetic fun nanoseconds-UwyO8pc (J)J
 	public final fun parse-UwyO8pc (Ljava/lang/String;)J
 	public final fun parseIsoString-UwyO8pc (Ljava/lang/String;)J
 	public final fun parseIsoStringOrNull-FghU774 (Ljava/lang/String;)Lkotlin/time/Duration;
 	public final fun parseOrNull-FghU774 (Ljava/lang/String;)Lkotlin/time/Duration;
-	public final fun seconds-UwyO8pc (D)J
-	public final fun seconds-UwyO8pc (I)J
-	public final fun seconds-UwyO8pc (J)J
+	public final synthetic fun seconds-UwyO8pc (D)J
+	public final synthetic fun seconds-UwyO8pc (I)J
+	public final synthetic fun seconds-UwyO8pc (J)J
 }
 
 public final class kotlin/time/DurationKt {
-	public static final fun getDays (D)J
-	public static final fun getDays (I)J
-	public static final fun getDays (J)J
-	public static final fun getHours (D)J
-	public static final fun getHours (I)J
-	public static final fun getHours (J)J
-	public static final fun getMicroseconds (D)J
-	public static final fun getMicroseconds (I)J
-	public static final fun getMicroseconds (J)J
-	public static final fun getMilliseconds (D)J
-	public static final fun getMilliseconds (I)J
-	public static final fun getMilliseconds (J)J
-	public static final fun getMinutes (D)J
-	public static final fun getMinutes (I)J
-	public static final fun getMinutes (J)J
-	public static final fun getNanoseconds (D)J
-	public static final fun getNanoseconds (I)J
-	public static final fun getNanoseconds (J)J
-	public static final fun getSeconds (D)J
-	public static final fun getSeconds (I)J
-	public static final fun getSeconds (J)J
+	public static final synthetic fun getDays (D)J
+	public static final synthetic fun getDays (I)J
+	public static final synthetic fun getDays (J)J
+	public static final synthetic fun getHours (D)J
+	public static final synthetic fun getHours (I)J
+	public static final synthetic fun getHours (J)J
+	public static final synthetic fun getMicroseconds (D)J
+	public static final synthetic fun getMicroseconds (I)J
+	public static final synthetic fun getMicroseconds (J)J
+	public static final synthetic fun getMilliseconds (D)J
+	public static final synthetic fun getMilliseconds (I)J
+	public static final synthetic fun getMilliseconds (J)J
+	public static final synthetic fun getMinutes (D)J
+	public static final synthetic fun getMinutes (I)J
+	public static final synthetic fun getMinutes (J)J
+	public static final synthetic fun getNanoseconds (D)J
+	public static final synthetic fun getNanoseconds (I)J
+	public static final synthetic fun getNanoseconds (J)J
+	public static final synthetic fun getSeconds (D)J
+	public static final synthetic fun getSeconds (I)J
+	public static final synthetic fun getSeconds (J)J
 	public static final fun toDuration (DLkotlin/time/DurationUnit;)J
 	public static final fun toDuration (ILkotlin/time/DurationUnit;)J
 	public static final fun toDuration (JLkotlin/time/DurationUnit;)J

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
 import org.jetbrains.kotlin.diagnostics.rendering.RootDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.diagnostics.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.psi.KtAnonymousInitializer
@@ -78,6 +79,8 @@ object FirJsErrors {
     val CANNOT_CHECK_FOR_EXTERNAL_INTERFACE by error1<KtElement, ConeKotlinType>()
     val UNCHECKED_CAST_TO_EXTERNAL_INTERFACE by warning2<KtElement, ConeKotlinType, ConeKotlinType>()
     val EXTERNAL_INTERFACE_AS_CLASS_LITERAL by error0<KtElement>()
+    val JS_EXTERNAL_INHERITORS_ONLY by error2<KtDeclaration, FirClassLikeSymbol<*>, FirClassLikeSymbol<*>>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
+    val JS_EXTERNAL_ARGUMENT by error1<KtExpression, ConeKotlinType>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT)
 
     // Export
     val NESTED_JS_EXPORT by error0<KtElement>()
@@ -87,6 +90,8 @@ object FirJsErrors {
 
     // Dynamics
     val DELEGATION_BY_DYNAMIC by error0<KtElement>()
+    val SPREAD_OPERATOR_IN_DYNAMIC_CALL by error0<KtElement>(SourceElementPositioningStrategies.SPREAD_OPERATOR)
+    val WRONG_OPERATION_WITH_DYNAMIC by error1<KtElement, String>()
 
     init {
         RootDiagnosticRendererFactory.registerFactory(FirJsErrorsDefaultMessages)

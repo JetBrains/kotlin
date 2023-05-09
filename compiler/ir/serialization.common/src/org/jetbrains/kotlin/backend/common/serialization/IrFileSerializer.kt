@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.library.impl.IrMemoryDeclarationWriter
 import org.jetbrains.kotlin.library.impl.IrMemoryStringWriter
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 import java.io.File
 import org.jetbrains.kotlin.backend.common.serialization.proto.AccessorIdSignature as ProtoAccessorIdSignature
 import org.jetbrains.kotlin.backend.common.serialization.proto.Actual as ProtoActual
@@ -125,7 +126,7 @@ open class IrFileSerializer(
     private val normalizeAbsolutePaths: Boolean = false,
     private val sourceBaseDirs: Collection<String>
 ) {
-    private val loopIndex = mutableMapOf<IrLoop, Int>()
+    private val loopIndex = hashMapOf<IrLoop, Int>()
     private var currentLoopIndex = 0
 
     // For every actual we keep a corresponding expects' uniqIds.
@@ -134,10 +135,10 @@ open class IrFileSerializer(
 
     // The same type can be used multiple times in a file
     // so use this index to store type data only once.
-    private val protoTypeMap = mutableMapOf<IrTypeKey, Int>()
+    private val protoTypeMap = hashMapOf<IrTypeKey, Int>()
     protected val protoTypeArray = arrayListOf<ProtoType>()
 
-    private val protoStringMap = mutableMapOf<String, Int>()
+    private val protoStringMap = hashMapOf<String, Int>()
     protected val protoStringArray = arrayListOf<String>()
 
     // The same signature could be used multiple times in a file
@@ -1444,8 +1445,7 @@ open class IrFileSerializer(
 
         // Make sure that all top level properties are initialized on library's load.
         file.declarations
-            .filterIsInstance<IrProperty>()
-            .filter { it.backingField?.initializer != null && keepOrderOfProperties(it) }
+            .filterIsInstanceAnd<IrProperty> { it.backingField?.initializer != null && keepOrderOfProperties(it) }
             .forEach {
                 val fieldSymbol = it.backingField?.symbol ?: error("Not found ID ${it.render()}")
                 proto.addExplicitlyExportedToCompiler(serializeIrSymbol(fieldSymbol))

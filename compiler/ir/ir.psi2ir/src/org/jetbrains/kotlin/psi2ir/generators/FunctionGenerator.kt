@@ -244,7 +244,8 @@ internal class FunctionGenerator(declarationGenerator: DeclarationGenerator) : D
         ) { irConstructor ->
             if (
                 primaryConstructorDescriptor.isExpect ||
-                primaryConstructorDescriptor.constructedClass.isEffectivelyExternal()
+                primaryConstructorDescriptor.constructedClass.isEffectivelyExternal() ||
+                context.configuration.skipBodies
             )
                 null
             else
@@ -294,7 +295,9 @@ internal class FunctionGenerator(declarationGenerator: DeclarationGenerator) : D
             }
         }.buildWithScope { irConstructor ->
             generateValueParameterDeclarations(irConstructor, ktParametersElement, null, ktContextReceiversElements)
-            irConstructor.body = createBodyGenerator(irConstructor.symbol).generateBody(irConstructor)
+            if (context.configuration.generateBodies) {
+                irConstructor.body = createBodyGenerator(irConstructor.symbol).generateBody(irConstructor)
+            }
             irConstructor.returnType = constructorDescriptor.returnType.toIrType()
         }
     }

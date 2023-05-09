@@ -8,17 +8,18 @@ package org.jetbrains.kotlinx.serialization
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter
+import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.bind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.runners.codegen.configureModernJavaTest
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.RuntimeClasspathProvider
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationComponentRegistrar
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationIntrinsicsState
-import org.jetbrains.kotlinx.serialization.compiler.fir.FirSerializationExtensionRegistrar
 import java.io.File
 
 private val librariesPaths = listOfNotNull(RuntimeLibraryInClasspathTest.coreLibraryPath, RuntimeLibraryInClasspathTest.jsonLibraryPath)
@@ -57,9 +58,14 @@ class SerializationRuntimeClasspathJsProvider(testServices: TestServices) : Runt
 
 fun TestConfigurationBuilder.configureForKotlinxSerialization(
     noLibraries: Boolean = false,
-    target: TargetBackend = TargetBackend.JVM
+    target: TargetBackend = TargetBackend.JVM,
+    useJdk11: Boolean = false
 ) {
     useConfigurators(::SerializationEnvironmentConfigurator.bind(noLibraries))
+
+    if (useJdk11) {
+        configureModernJavaTest(TestJdkKind.FULL_JDK_11, JvmTarget.JVM_11)
+    }
 
     if (!noLibraries) {
         when (target) {

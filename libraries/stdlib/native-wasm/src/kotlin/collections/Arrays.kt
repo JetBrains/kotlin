@@ -18,22 +18,12 @@ internal fun checkCopyOfRangeArguments(fromIndex: Int, toIndex: Int, size: Int) 
         throw IllegalArgumentException("fromIndex ($fromIndex) is greater than toIndex ($toIndex).")
 }
 
-
-// TODO: internal
+@kotlin.internal.InlineOnly
+@PublishedApi
 /**
  * Returns a string representation of the contents of the subarray of the specified array as if it is [List].
  */
-@kotlin.internal.InlineOnly
-@Deprecated("This function will become internal soon.")
-@DeprecatedSinceKotlin(warningSince = "1.4", errorSince = "1.5", hiddenSince = "1.7")
-public inline fun <T> Array<out T>.subarrayContentToString(offset: Int, length: Int): String {
-    return subarrayContentToStringImpl(offset, length)
-}
-
-@kotlin.internal.InlineOnly
-@PublishedApi
-// TODO: Rename back to subarrayContentToString after dropping that public function
-internal inline fun <T> Array<out T>.subarrayContentToStringImpl(offset: Int, length: Int): String {
+internal inline fun <T> Array<out T>.subarrayContentToString(offset: Int, length: Int): String {
     val sb = StringBuilder(2 + length * 3)
     sb.append("[")
     var i = 0

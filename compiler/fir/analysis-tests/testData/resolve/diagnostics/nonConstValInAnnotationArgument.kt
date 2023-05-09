@@ -1,4 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
 annotation class Ann(val a: Array<String>)
 
 val foo = ""

@@ -114,7 +114,7 @@ private:
     size_t maxSize_;
 
     // TODO: Consider replacing mutex + global set with thread local sets sychronized on STW.
-    std::mutex mutex_;
+    SpinLock<MutexThreadStateHandling::kIgnore> mutex_;
     std_support::unordered_set<SafePointID> metSafePoints_;
 };
 
@@ -140,6 +140,7 @@ public:
                 return;
             }
             if (regularIntervalPacer_.NeedsGC()) {
+                RuntimeLogInfo({kTagGC}, "Scheduling GC by timer");
                 scheduleGC_();
             }
         }) {}
@@ -147,6 +148,7 @@ public:
     void UpdateFromThreadData(gc::GCSchedulerThreadData& threadData) noexcept override {
         heapGrowthController_.OnAllocated(threadData.allocatedBytes());
         if (heapGrowthController_.NeedsGC()) {
+            RuntimeLogInfo({kTagGC}, "Scheduling GC by allocation");
             scheduleGC_();
         }
     }

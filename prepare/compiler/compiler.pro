@@ -67,6 +67,11 @@
 -dontwarn org.w3c.dom.Window
 -dontwarn org.slf4j.**
 
+# This class in com.intellij.platform.utils has accidental dependency on Java 11,
+# but it is not used in the production code, so it should be fine to ignore this.
+# The fix commit in platform: cbf405263b98ef2ad0ecb0d5a47dc18e1b325c9f
+-dontwarn com.intellij.util.io.WalRecord$Companion
+
 #-libraryjars '<rtjar>'
 #-libraryjars '<jssejar>'
 #-libraryjars '<bootstrap.runtime>'
@@ -252,6 +257,12 @@
 # For Anvil https://youtrack.jetbrains.com/issue/KT-42103
 -keepclassmembers class com.intellij.openapi.extensions.ExtensionPoint {
     public void registerExtension(...);
+}
+
+# Temporary for klint https://github.com/pinterest/ktlint/blob/c5a81e0d4198fa5cb2cac69967080e01e365b837/ktlint-rule-engine/src/main/kotlin/com/pinterest/ktlint/rule/engine/internal/KotlinPsiFileFactory.kt#L121
+# Should be removed after after 26.04.2024
+-keepclassmembers class com.intellij.openapi.extensions.ExtensionsArea {
+    public void registerExtensionPoint(java.lang.String, java.lang.String, com.intellij.openapi.extensions.ExtensionPoint$Kind);
 }
 
 # Serialization plugin

@@ -14,3 +14,5 @@ fir-hmpp
 -Xfragment-sources=c\:$TESTDATA_DIR$/../jvm/hmpp/src/c.kt
 -Xfragment-refines=b\:a
 -Xfragment-refines=c\:b
+-libraries
+libraries/stdlib/js-ir/build/classes/kotlin/js/main

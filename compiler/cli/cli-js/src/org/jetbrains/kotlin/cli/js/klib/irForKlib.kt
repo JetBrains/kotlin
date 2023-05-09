@@ -84,7 +84,12 @@ fun generateIrForKlibSerialization(
         messageLogger,
         psi2IrContext.irBuiltIns,
         psi2IrContext.symbolTable,
-        partialLinkageSupport = createPartialLinkageSupportForLinker(configuration.partialLinkageConfig, psi2IrContext.irBuiltIns, messageLogger),
+        partialLinkageSupport = createPartialLinkageSupportForLinker(
+            partialLinkageConfig = configuration.partialLinkageConfig,
+            allowErrorTypes = errorPolicy.allowErrors,
+            builtIns = psi2IrContext.irBuiltIns,
+            messageLogger = messageLogger
+        ),
         feContext,
         ICData(icData.map { it.irData }, errorPolicy.allowErrors),
         stubGenerator = stubGenerator

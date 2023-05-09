@@ -17,6 +17,5 @@ fun box(): String {
 // EXPECTATIONS JS_IR
 // test.kt:5 box:
 // test.kt:7 box: p=kotlin.Triple
-// test.kt:7 box: p=kotlin.Triple
 // test.kt:7 box: p=kotlin.Triple, o="O":kotlin.String
 // test.kt:9 box: p=kotlin.Triple, o="O":kotlin.String, k="K":kotlin.String

@@ -347,6 +347,12 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCallTestGenerated extends A
     }
 
     @Test
+    @TestMetadata("defaultValueThatCallsPreviousParameter.kt")
+    public void testDefaultValueThatCallsPreviousParameter() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/defaultValueThatCallsPreviousParameter.kt");
+    }
+
+    @Test
     @TestMetadata("delegatedConstructorCall_super.kt")
     public void testDelegatedConstructorCall_super() throws Exception {
         runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/delegatedConstructorCall_super.kt");
@@ -782,6 +788,18 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCallTestGenerated extends A
     @TestMetadata("smartCastImplicitExtensionReceiver.kt")
     public void testSmartCastImplicitExtensionReceiver() throws Exception {
         runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/smartCastImplicitExtensionReceiver.kt");
+    }
+
+    @Test
+    @TestMetadata("smartCastedArg.kt")
+    public void testSmartCastedArg() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/smartCastedArg.kt");
+    }
+
+    @Test
+    @TestMetadata("smartCastedNonNullArg.kt")
+    public void testSmartCastedNonNullArg() throws Exception {
+        runTest("analysis/analysis-api/testData/components/callResolver/resolveCall/smartCastedNonNullArg.kt");
     }
 
     @Test

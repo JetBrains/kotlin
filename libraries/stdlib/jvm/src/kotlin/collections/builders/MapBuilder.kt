@@ -50,7 +50,8 @@ internal class MapBuilder<K, V> private constructor(
     fun build(): Map<K, V> {
         checkIsMutable()
         isReadOnly = true
-        return this
+        @Suppress("UNCHECKED_CAST")
+        return if (size > 0) this else (Empty as Map<K, V>)
     }
 
     private fun writeReplace(): Any =
@@ -459,11 +460,13 @@ internal class MapBuilder<K, V> private constructor(
     internal fun valuesIterator() = ValuesItr(this)
     internal fun entriesIterator() = EntriesItr(this)
 
-    private companion object {
+    internal companion object {
         private const val MAGIC = -1640531527 // 2654435769L.toInt(), golden ratio
         private const val INITIAL_CAPACITY = 8
         private const val INITIAL_MAX_PROBE_DISTANCE = 2
         private const val TOMBSTONE = -1
+
+        internal val Empty = MapBuilder<Nothing, Nothing>(0).also { it.isReadOnly = true }
 
         private fun computeHashSize(capacity: Int): Int = (capacity.coerceAtLeast(1) * 3).takeHighestOneBit()
 

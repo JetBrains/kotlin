@@ -16,6 +16,10 @@ where advanced options include:
   -Xir-base-class-in-metadata Write base class into metadata
   -Xir-build-cache           Use compiler to build cache
   -Xir-dce                   Perform experimental dead code elimination
+  -Xir-dump-declaration-ir-sizes-to-file=<path>
+                             Dump the IR size of each declaration to a file. The format will be chosen automatically depending on the file extension. Supported output formats include JSON for .json, JS const initialized with a plain object containing information for .js, and plain text for all other file types.
+  -Xir-dce-dump-reachability-info-to-file=<path>
+                             Dump declarations' reachability info collected during performing DCE to a file. The format will be chosen automatically based on the file extension. Supported output formats include JSON for .json, JS const initialized with a plain object containing information for .js, and plain text for all other file types.
   -Xir-dce-print-reachability-info
                              Print declarations' reachability info to stdout during performing DCE
   -Xir-dce-runtime-diagnostic={log|exception}
@@ -40,6 +44,7 @@ where advanced options include:
   -Xir-safe-external-boolean-diagnostic={log|exception}
                              Enable runtime diagnostics when access safely to boolean in external declarations
   -Xmetadata-only            Generate *.meta.js and *.kjsm files only
+  -Xoptimize-generated-js    Perform additional optimizations on the generated JS code
   -Xpartial-linkage-loglevel={info|warning|error}
                              Partial linkage compile-time log level
   -Xpartial-linkage={enable|disable}

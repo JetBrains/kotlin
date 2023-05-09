@@ -7,6 +7,14 @@ package deallocretain
 
 open class DeallocRetainBase
 
-fun garbageCollect() = kotlin.native.internal.GC.collect()
+@OptIn(kotlin.native.runtime.NativeRuntimeApi::class)
+fun garbageCollect() = kotlin.native.runtime.GC.collect()
 
 fun createWeakReference(value: Any) = kotlin.native.ref.WeakReference(value)
+
+fun assertNull(value: Any?) {
+    kotlin.test.assertNull(value)
+}
+
+@OptIn(kotlin.ExperimentalStdlibApi::class)
+fun isExperimentalMM() = kotlin.native.isExperimentalMM()

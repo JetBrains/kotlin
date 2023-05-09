@@ -60,3 +60,34 @@ fun createGradleCommand(wrapperDir: File, tailParameters: List<String>): List<St
 }
 
 val isWindows: Boolean = System.getProperty("os.name")!!.contains("Windows")
+
+/**
+ * Asserts the result of running a process by calling a set of assertions on the result object.
+ * If any of the assertions fail, an [AssertionError] is thrown and the process output information is printed.
+ *
+ * @param result The result of running a process.
+ * @param assertions A lambda expression that performs a set of assertions on it.
+ *
+ * @throws AssertionError If any of the assertions fail.
+ */
+fun assertProcessRunResult(result: ProcessRunResult, assertions: ProcessRunResult.() -> Unit) {
+    try {
+        result.assertions()
+    } catch (e: AssertionError) {
+        println(
+            """
+                |Process info:
+                |#######################
+                |$result
+                |#######################
+                |
+                |Process output:
+                |#######################
+                |${result.output}
+                |#######################
+                |
+                """.trimMargin()
+        )
+        throw e
+    }
+}

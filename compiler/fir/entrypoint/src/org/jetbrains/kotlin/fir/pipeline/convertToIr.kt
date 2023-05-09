@@ -5,13 +5,12 @@
 
 package org.jetbrains.kotlin.fir.pipeline
 
-import org.jetbrains.kotlin.backend.common.actualizer.IrActualizationResult
+import org.jetbrains.kotlin.backend.common.actualizer.IrActualizedResult
 import org.jetbrains.kotlin.backend.common.actualizer.IrActualizer
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.serialization.JvmIdSignatureDescriptor
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
-import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.*
@@ -19,7 +18,6 @@ import org.jetbrains.kotlin.fir.backend.jvm.Fir2IrJvmSpecialAnnotationSymbolProv
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmKotlinMangler
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmVisibilityConverter
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.signaturer.FirMangler
 import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmDescriptorMangler
@@ -41,57 +39,59 @@ data class Fir2IrActualizedResult(
     val irModuleFragment: IrModuleFragment,
     val components: Fir2IrComponents,
     val pluginContext: Fir2IrPluginContext,
-    val irActualizationResult: IrActualizationResult?,
+    val irActualizedResult: IrActualizedResult?,
 )
 
 fun FirResult.convertToIrAndActualizeForJvm(
     fir2IrExtensions: Fir2IrExtensions,
+    fir2IrConfiguration: Fir2IrConfiguration,
     irGeneratorExtensions: Collection<IrGenerationExtension>,
-    linkViaSignatures: Boolean,
     diagnosticReporter: DiagnosticReporter,
-    languageVersionSettings: LanguageVersionSettings,
 ): Fir2IrActualizedResult = this.convertToIrAndActualize(
     fir2IrExtensions,
+    fir2IrConfiguration,
     irGeneratorExtensions,
-    linkViaSignatures = linkViaSignatures,
-    signatureComposerCreator = { JvmIdSignatureDescriptor(JvmDescriptorMangler(null)) },
+    signatureComposer = signatureComposerForJvmFir2Ir(fir2IrConfiguration.linkViaSignatures),
     irMangler = JvmIrMangler,
-    firManglerCreator = { FirJvmKotlinMangler() },
+    firMangler = FirJvmKotlinMangler(),
     visibilityConverter = FirJvmVisibilityConverter,
     diagnosticReporter = diagnosticReporter,
-    languageVersionSettings = languageVersionSettings,
     kotlinBuiltIns = DefaultBuiltIns.Instance,
 )
 
+fun signatureComposerForJvmFir2Ir(generateSignatures: Boolean): IdSignatureComposer {
+    val mangler = JvmDescriptorMangler(null)
+    return if (generateSignatures) {
+        JvmIdSignatureDescriptor(mangler)
+    } else {
+        DescriptorSignatureComposerStub(mangler)
+    }
+}
+
 fun FirResult.convertToIrAndActualize(
     fir2IrExtensions: Fir2IrExtensions,
+    fir2IrConfiguration: Fir2IrConfiguration,
     irGeneratorExtensions: Collection<IrGenerationExtension>,
-    linkViaSignatures: Boolean,
-    signatureComposerCreator: (() -> IdSignatureComposer)?,
+    signatureComposer: IdSignatureComposer,
     irMangler: KotlinMangler.IrMangler,
-    firManglerCreator: () -> FirMangler,
+    firMangler: FirMangler,
     visibilityConverter: Fir2IrVisibilityConverter,
     kotlinBuiltIns: KotlinBuiltIns,
     diagnosticReporter: DiagnosticReporter,
-    languageVersionSettings: LanguageVersionSettings,
     fir2IrResultPostCompute: Fir2IrResult.() -> Unit = {},
 ): Fir2IrActualizedResult {
     val fir2IrResult: Fir2IrResult
-    val actualizationResult: IrActualizationResult?
+    val actualizationResult: IrActualizedResult?
 
-    val commonMemberStorage = Fir2IrCommonMemberStorage(
-        generateSignatures = linkViaSignatures,
-        signatureComposerCreator = signatureComposerCreator,
-        manglerCreator = firManglerCreator
-    )
+    val commonMemberStorage = Fir2IrCommonMemberStorage(signatureComposer, firMangler)
 
     when (outputs.size) {
         0 -> error("No modules found")
         1 -> {
             fir2IrResult = outputs.single().convertToIr(
                 fir2IrExtensions,
+                fir2IrConfiguration,
                 irGeneratorExtensions,
-                linkViaSignatures = linkViaSignatures,
                 commonMemberStorage = commonMemberStorage,
                 irBuiltIns = null,
                 irMangler,
@@ -109,8 +109,8 @@ fun FirResult.convertToIrAndActualize(
             val commonIrOutputs = commonOutputs.map {
                 it.convertToIr(
                     fir2IrExtensions,
+                    fir2IrConfiguration,
                     irGeneratorExtensions,
-                    linkViaSignatures = linkViaSignatures,
                     commonMemberStorage = commonMemberStorage,
                     irBuiltIns = irBuiltIns,
                     irMangler,
@@ -125,8 +125,8 @@ fun FirResult.convertToIrAndActualize(
             }
             fir2IrResult = platformOutput.convertToIr(
                 fir2IrExtensions,
+                fir2IrConfiguration,
                 irGeneratorExtensions,
-                linkViaSignatures = linkViaSignatures,
                 commonMemberStorage = commonMemberStorage,
                 irBuiltIns = irBuiltIns!!,
                 irMangler,
@@ -140,7 +140,7 @@ fun FirResult.convertToIrAndActualize(
                 fir2IrResult.irModuleFragment,
                 commonIrOutputs.map { it.irModuleFragment },
                 diagnosticReporter,
-                languageVersionSettings
+                fir2IrConfiguration.languageVersionSettings
             )
         }
     }
@@ -151,8 +151,8 @@ fun FirResult.convertToIrAndActualize(
 
 private fun ModuleCompilerAnalyzedOutput.convertToIr(
     fir2IrExtensions: Fir2IrExtensions,
+    fir2IrConfiguration: Fir2IrConfiguration,
     irGeneratorExtensions: Collection<IrGenerationExtension>,
-    linkViaSignatures: Boolean,
     commonMemberStorage: Fir2IrCommonMemberStorage,
     irBuiltIns: IrBuiltInsOverFir?,
     irMangler: KotlinMangler.IrMangler,
@@ -161,12 +161,11 @@ private fun ModuleCompilerAnalyzedOutput.convertToIr(
 ): Fir2IrResult {
     return Fir2IrConverter.createModuleFragmentWithSignaturesIfNeeded(
         session, scopeSession, fir,
-        session.languageVersionSettings, fir2IrExtensions,
+        fir2IrExtensions, fir2IrConfiguration,
         irMangler, IrFactoryImpl, visibilityConverter,
         Fir2IrJvmSpecialAnnotationSymbolProvider(), // TODO: replace with appropriate (probably empty) implementation for other backends.
         irGeneratorExtensions,
         kotlinBuiltIns = kotlinBuiltIns,
-        generateSignatures = linkViaSignatures,
         commonMemberStorage = commonMemberStorage,
         initializedIrBuiltIns = irBuiltIns
     )

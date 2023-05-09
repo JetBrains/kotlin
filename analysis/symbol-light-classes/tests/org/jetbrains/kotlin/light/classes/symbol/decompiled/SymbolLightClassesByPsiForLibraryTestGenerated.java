@@ -25,6 +25,12 @@ public class SymbolLightClassesByPsiForLibraryTestGenerated extends AbstractSymb
     }
 
     @Test
+    @TestMetadata("allowedTargets.kt")
+    public void testAllowedTargets() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/allowedTargets.kt");
+    }
+
+    @Test
     @TestMetadata("annotationWithSetParamPropertyModifier.kt")
     public void testAnnotationWithSetParamPropertyModifier() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/annotationWithSetParamPropertyModifier.kt");
@@ -112,6 +118,12 @@ public class SymbolLightClassesByPsiForLibraryTestGenerated extends AbstractSymb
     @TestMetadata("dollarsInNameLocal.kt")
     public void testDollarsInNameLocal() throws Exception {
         runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/dollarsInNameLocal.kt");
+    }
+
+    @Test
+    @TestMetadata("enumMembers.kt")
+    public void testEnumMembers() throws Exception {
+        runTest("compiler/testData/asJava/lightClasses/lightClassByPsi/enumMembers.kt");
     }
 
     @Test

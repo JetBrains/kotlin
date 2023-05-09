@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
 import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
 import org.jetbrains.kotlin.gradle.dsl.topLevelExtension
 import org.jetbrains.kotlin.gradle.incremental.IncrementalModuleInfoBuildService
+import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.KaptGenerateStubsTask
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
@@ -24,7 +25,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.associateWithClosure
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToCompilerOptions
 import org.jetbrains.kotlin.gradle.report.BuildMetricsService
-import org.jetbrains.kotlin.gradle.report.BuildReportsService
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KOTLIN_BUILD_DIR_NAME
 import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.project.model.LanguageSettings
  */
 internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile<*>>(
     project: Project,
-    private val ext: KotlinTopLevelExtension,
+    val ext: KotlinTopLevelExtension,
     private val languageSettings: Provider<LanguageSettings>
 ) : TaskConfigAction<TASK>(project) {
 
@@ -63,12 +63,12 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
 
         val compilerSystemPropertiesService = CompilerSystemPropertiesService.registerIfAbsent(project)
         val buildMetricsService = BuildMetricsService.registerIfAbsent(project)
-        val buildReportsService = buildMetricsService?.let { BuildReportsService.registerIfAbsent(project, buildMetricsService) }
         val incrementalModuleInfoProvider =
             IncrementalModuleInfoBuildService.registerIfAbsent(project, objectFactory.providerWithLazyConvention {
                 GradleCompilerRunner.buildModulesInfo(project.gradle)
             })
         val buildFinishedListenerService = BuildFinishedListenerService.registerIfAbsent(project)
+        val cachedClassLoadersService = ClassLoadersCachingBuildService.registerIfAbsent(project)
         configureTask { task ->
             val propertiesProvider = project.kotlinPropertiesProvider
 
@@ -82,9 +82,6 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
             task.localStateDirectories.from(task.taskBuildLocalStateDirectory).disallowChanges()
             buildMetricsService?.also { metricsService ->
                 task.buildMetricsService.value(metricsService).disallowChanges()
-                buildReportsService?.also { reportsService ->
-                    task.buildReportsService.value(reportsService).disallowChanges()
-                }
             }
             task.systemPropertiesService.value(compilerSystemPropertiesService).disallowChanges()
             task.incrementalModuleInfoProvider.value(incrementalModuleInfoProvider).disallowChanges()
@@ -122,6 +119,12 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
             if (propertiesProvider.useK2 == true) {
                 task.compilerOptions.useK2.value(true)
             }
+            task.runViaBuildToolsApi.convention(propertiesProvider.runKotlinCompilerViaBuildToolsApi).finalizeValueOnRead()
+            task.classLoadersCachingService.value(cachedClassLoadersService).disallowChanges()
+
+            task.explicitApiMode
+                .value(project.providers.provider { ext.explicitApi })
+                .finalizeValueOnRead()
         }
     }
 
@@ -146,7 +149,7 @@ internal abstract class AbstractKotlinCompileConfig<TASK : AbstractKotlinCompile
                     compilation.internal.configurations.pluginConfiguration
                 )
             }
-            task.moduleName.set(providers.provider { compilationInfo.moduleName })
+
             @Suppress("DEPRECATION")
             task.ownModuleName.set(project.provider { compilationInfo.moduleName })
             task.sourceSetName.value(providers.provider { compilationInfo.compilationName })

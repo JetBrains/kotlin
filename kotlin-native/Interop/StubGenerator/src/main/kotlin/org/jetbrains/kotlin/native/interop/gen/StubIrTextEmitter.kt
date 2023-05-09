@@ -4,6 +4,7 @@
  */
 package org.jetbrains.kotlin.native.interop.gen
 
+import kotlinx.cinterop.ExperimentalForeignApi
 import org.jetbrains.kotlin.native.interop.gen.jvm.KotlinPlatform
 import org.jetbrains.kotlin.native.interop.indexer.*
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -114,6 +115,7 @@ class StubIrTextEmitter(
         }
 
         out("@file:Suppress(${suppress.joinToString { it.quoteAsKotlinLiteral() }})")
+        out("@file:OptIn(ExperimentalForeignApi::class)")
         if (pkgName != "") {
             out("package ${context.validPackageName}")
             out("")

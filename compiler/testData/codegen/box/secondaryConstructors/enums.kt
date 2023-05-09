@@ -1,5 +1,3 @@
-// IGNORE_BACKEND_K2: JS_IR, NATIVE
-
 enum class A1(val prop1: String) {
     X("asd"),
     Y() {

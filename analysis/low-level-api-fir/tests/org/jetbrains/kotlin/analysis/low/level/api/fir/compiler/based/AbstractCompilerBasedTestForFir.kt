@@ -31,9 +31,7 @@ import org.jetbrains.kotlin.test.frontend.fir.FirOutputPartForDependsOnModule
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.services.ServiceRegistrationData
-import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.isKtFile
+import org.jetbrains.kotlin.test.services.*
 
 abstract class AbstractCompilerBasedTestForFir : AbstractCompilerBasedTest() {
     final override fun TestConfigurationBuilder.configuration() {

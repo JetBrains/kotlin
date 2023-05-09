@@ -7,9 +7,6 @@ package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.PrivateForInline
-import org.jetbrains.kotlin.fir.expressions.FirLazyBlock
-import org.jetbrains.kotlin.fir.expressions.FirLazyExpression
-import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
 
@@ -37,13 +34,5 @@ abstract class FirPartialBodyResolveTransformer(
 
     override fun <E : FirElement> transformElement(element: E, data: ResolutionMode): E {
         return element.transform(transformer, data)
-    }
-
-    override fun transformLazyExpression(lazyExpression: FirLazyExpression, data: ResolutionMode): FirStatement {
-        error("FirLazyExpression should be calculated before accessing")
-    }
-
-    override fun transformLazyBlock(lazyBlock: FirLazyBlock, data: ResolutionMode): FirStatement {
-        error("FirLazyBlock should be calculated before accessing")
     }
 }

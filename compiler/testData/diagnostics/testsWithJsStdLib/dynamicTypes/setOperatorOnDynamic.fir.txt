@@ -1,0 +1,13 @@
+FILE: setOperatorOnDynamic.fir.kt
+    public final fun foo(): R|kotlin/Unit| {
+        lval x1: R|kotlin/Any| = R|kotlin/arrayOf|<R|kotlin/String|>().R|kotlin/collections/fold|<R|kotlin/String|, R|kotlin/String|>(String(), <L> = fold@fun <anonymous>(res: R|kotlin/String|, key: R|kotlin/String|): R|kotlin/String| <inline=Inline, kind=UNKNOWN>  {
+            R|<local>/res|.R|kotlin/String.length|
+            ^ R|<local>/res|
+        }
+        )
+        lval x3: R|kotlin/Any| = R|kotlin/arrayOf|<R|kotlin/String|>().R|kotlin/collections/fold|<R|kotlin/String|, R|dynamic|>(R|kotlin/js/js|(String(({}))), <L> = fold@fun <anonymous>(res: R|dynamic|, key: R|kotlin/String|): R|dynamic| <inline=Inline, kind=UNKNOWN>  {
+            R|<local>/res|.R|<dynamic>/set|(vararg(R|<local>/key|, String(hello)))
+            ^ R|<local>/res|
+        }
+        )
+    }

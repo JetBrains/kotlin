@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.fileUtils.descendantRelativeTo
 import java.io.File
@@ -43,16 +42,14 @@ import java.io.File
  */
 internal class SpecialBackendChecksTraversal(
         private val context: PhaseContext,
-        private val interop: InteropBuiltIns,
         private val symbols: KonanSymbols,
         private val irBuiltIns: IrBuiltIns,
 ) : FileLoweringPass {
-    override fun lower(irFile: IrFile) = irFile.acceptChildrenVoid(BackendChecker(context, interop, symbols, irBuiltIns, irFile))
+    override fun lower(irFile: IrFile) = irFile.acceptChildrenVoid(BackendChecker(context, symbols, irBuiltIns, irFile))
 }
 
 private class BackendChecker(
         private val context: PhaseContext,
-        val interop: InteropBuiltIns,
         val symbols: KonanSymbols,
         val irBuiltIns: IrBuiltIns,
         private val irFile: IrFile,
@@ -109,7 +106,7 @@ private class BackendChecker(
     }
 
     private fun IrConstructor.isOverrideInit() =
-            this.annotations.hasAnnotation(interop.objCOverrideInit.fqNameSafe)
+            this.annotations.hasAnnotation(InteropFqNames.objCOverrideInit)
 
     private fun checkCanGenerateOverrideInit(irClass: IrClass, constructor: IrConstructor) {
         val superClass = irClass.getSuperClassNotAny()!!
@@ -118,7 +115,7 @@ private class BackendChecker(
         }.toList()
 
         val superConstructor = superConstructors.singleOrNull() ?: run {
-            val annotation = interop.objCOverrideInit.name
+            val annotation = InteropFqNames.objCOverrideInit
             if (superConstructors.isEmpty())
                 reportError(constructor,
                         """
@@ -136,7 +133,7 @@ private class BackendChecker(
         // Remove fake overrides of this init method, also check for explicit overriding:
         irClass.declarations.forEach {
             if (it is IrSimpleFunction && initMethod.symbol in it.overriddenSymbols && it.isReal) {
-                val annotation = interop.objCOverrideInit.name
+                val annotation = InteropFqNames.objCOverrideInit
                 reportError(constructor,
                         "constructor with @$annotation overrides initializer that is already overridden explicitly"
                 )
@@ -152,7 +149,7 @@ private class BackendChecker(
                     }
 
     private fun checkCanGenerateActionImp(function: IrSimpleFunction) {
-        val action = "@${interop.objCAction.name}"
+        val action = "@${InteropFqNames.objCAction}"
 
         function.extensionReceiverParameter?.let {
             reportError(it, "$action method must not have extension receiver")
@@ -161,13 +158,13 @@ private class BackendChecker(
         function.valueParameters.forEach {
             val kotlinType = it.descriptor.type
             if (!kotlinType.isObjCObjectType())
-                reportError(it, "Unexpected $action method parameter type: $kotlinType\n" +
+                reportError(it, "Unexpected $action method parameter type: ${it.type.classFqName}\n" +
                         "Only Objective-C object types are supported here")
         }
 
         val returnType = function.returnType
         if (!returnType.isUnit())
-            reportError(function, "Unexpected $action method return type: ${returnType.toKotlinType()}\n" +
+            reportError(function, "Unexpected $action method return type: ${returnType.classFqName}\n" +
                     "Only 'Unit' is supported here")
 
         checkCanGenerateFunctionImp(function)
@@ -176,7 +173,7 @@ private class BackendChecker(
     private fun checkCanGenerateOutletSetterImp(property: IrProperty) {
         val descriptor = property.descriptor
 
-        val outlet = "@${interop.objCOutlet.name}"
+        val outlet = "@${InteropFqNames.objCOutlet}"
 
         if (!descriptor.isVar)
             reportError(property, "$outlet property must be var")
@@ -187,7 +184,7 @@ private class BackendChecker(
 
         val type = descriptor.type
         if (!type.isObjCObjectType())
-            reportError(property, "Unexpected $outlet type: $type\n" +
+            reportError(property, "Unexpected $outlet type: ${property.getter?.returnType?.classFqName}\n" +
                     "Only Objective-C object types are supported here")
 
         checkCanGenerateFunctionImp(property.setter!!)
@@ -209,9 +206,9 @@ private class BackendChecker(
 
     private fun checkKotlinObjCClass(irClass: IrClass) {
         for (declaration in irClass.declarations) {
-            if (declaration is IrSimpleFunction && declaration.annotations.hasAnnotation(interop.objCAction.fqNameSafe))
+            if (declaration is IrSimpleFunction && declaration.annotations.hasAnnotation(InteropFqNames.objCAction))
                 checkCanGenerateActionImp(declaration)
-            if (declaration is IrProperty && declaration.annotations.hasAnnotation(interop.objCOutlet.fqNameSafe))
+            if (declaration is IrProperty && declaration.annotations.hasAnnotation(InteropFqNames.objCOutlet))
                 checkCanGenerateOutletSetterImp(declaration)
             if (declaration is IrConstructor && declaration.isOverrideInit())
                 checkCanGenerateOverrideInit(irClass, declaration)
@@ -342,8 +339,7 @@ private class BackendChecker(
         val parent = declaration.parent
 
         if (parent is IrClass && parent.defaultType.isNativePointed(symbols) && parent.symbol != symbols.nativePointed) {
-            val nativePointed = symbols.nativePointed.owner.name
-            reportError(declaration, "Subclasses of $nativePointed cannot have properties with backing fields")
+            reportError(declaration, "Subclasses of ${InteropFqNames.nativePointed} cannot have properties with backing fields")
         }
     }
 
@@ -379,7 +375,7 @@ private class BackendChecker(
         }
 
         callee.getExternalObjCMethodInfo()?.let { _ ->
-            val isInteropStubsFile = irFile.annotations.hasAnnotation(FqName("kotlinx.cinterop.InteropStubs"))
+            val isInteropStubsFile = irFile.annotations.hasAnnotation(InteropFqNames.interopStubs)
 
             // Special case: bridge from Objective-C method implementation template to Kotlin method;
             // handled in CodeGeneratorVisitor.callVirtual.
@@ -421,7 +417,8 @@ private class BackendChecker(
                     if (typeArgument.constructor != signatureType.constructor ||
                             typeArgument.isMarkedNullable != signatureType.isMarkedNullable
                     ) {
-                        reportError(expression, "C function signature element mismatch: expected '$signatureType', got '$typeArgument'")
+                        reportError(expression, "C function signature element mismatch: " +
+                                "expected '${signatureTypes[index].classFqName}', got '${expression.getTypeArgument(index)!!.classFqName}'")
                     }
                 }
 
@@ -438,25 +435,22 @@ private class BackendChecker(
 
                 val receiver = expression.extensionReceiver!!
                 val typeOperand = expression.getSingleTypeArgument()
-                val kotlinTypeOperand = typeOperand.toKotlinType()
 
                 val receiverTypeIndex = integerTypePredicates.indexOfFirst { it(receiver.type) }
                 val typeOperandIndex = integerTypePredicates.indexOfFirst { it(typeOperand) }
 
-                val receiverKotlinType = receiver.type.toKotlinType()
-
                 if (receiverTypeIndex == -1)
-                    reportError(receiver, "Receiver's type $receiverKotlinType is not an integer type")
+                    reportError(receiver, "Receiver's type ${receiver.type.classFqName} is not an integer type")
 
                 if (typeOperandIndex == -1)
-                    reportError(expression, "Type argument $kotlinTypeOperand is not an integer type")
+                    reportError(expression, "Type argument ${typeOperand.classFqName} is not an integer type")
 
                 when (intrinsicType) {
                     IntrinsicType.INTEROP_SIGN_EXTEND -> if (receiverTypeIndex > typeOperandIndex)
-                        reportError(expression, "unable to sign extend $receiverKotlinType to $kotlinTypeOperand")
+                        reportError(expression, "unable to sign extend ${receiver.type.classFqName} to ${typeOperand.classFqName}")
 
                     IntrinsicType.INTEROP_NARROW -> if (receiverTypeIndex < typeOperandIndex)
-                        reportError(expression, "unable to narrow $receiverKotlinType to $kotlinTypeOperand")
+                        reportError(expression, "unable to narrow ${receiver.type.classFqName} to ${typeOperand.classFqName}")
 
                     else -> error(intrinsicType)
                 }
@@ -467,7 +461,7 @@ private class BackendChecker(
                 val receiverType = expression.symbol.owner.extensionReceiverParameter!!.type
 
                 if (typeOperand !is IrSimpleType || typeOperand.classifier !in integerClasses || typeOperand.isNullable())
-                    reportError(expression, "unable to convert ${receiverType.toKotlinType()} to ${typeOperand.toKotlinType()}")
+                    reportError(expression, "unable to convert ${receiverType.classFqName} to ${typeOperand.classFqName}")
             }
             IntrinsicType.WORKER_EXECUTE -> {
                 val (function, captures) = getUnboundReferencedFunction(expression.getValueArgument(2)!!)
@@ -602,8 +596,35 @@ private class BackendChecker(
         if (declaration.isKotlinObjCClass()) {
             checkKotlinObjCClass(declaration)
         }
+        checkHiddenFromObjCRestrictions(declaration)
         super.visitClass(declaration)
 
+    }
+
+    private fun IrClass.isHiddenFromObjC(): Boolean {
+        return annotations.any { annotationCall ->
+            val annotationClass = annotationCall.symbol.owner.parentAsClass
+            annotationClass.annotations.hasAnnotation(KonanFqNames.hidesFromObjC)
+        }
+    }
+
+    private fun checkHiddenFromObjCRestrictions(declaration: IrClass) {
+        // If declaration itself. is marked as hidden, we don't need to do anything
+        if (declaration.isHiddenFromObjC()) return
+        // Enum entries inherit from their classes, so if enum class is marked as hidden, there is no need to
+        // produce additional errors.
+        if (declaration.kind == ClassKind.ENUM_ENTRY) return
+        // Private and local classes does not leak to Objective-C API surface, so it is OK for them
+        // to inherit from hidden types.
+        if (DescriptorVisibilities.isPrivate(declaration.visibility) || declaration.isLocal) return
+        if (declaration.superClass?.isHiddenFromObjC() == true) {
+            reportError(declaration, "Only @HiddenFromObjC declaration can inherit from class annotated with @HiddenFromObjC")
+        }
+        declaration.getSuperInterfaces().forEach {
+            if (it.isHiddenFromObjC()) {
+                reportError(declaration, "Only @HiddenFromObjC declaration can implement interface annotated with @HiddenFromObjC")
+            }
+        }
     }
 }
 
@@ -740,8 +761,8 @@ private fun BackendChecker.checkCanMapCalleeFunctionParameter(
 ) {
     val classifier = type.classifierOrNull
     when {
-        classifier == symbols.interopCValues || // Note: this should not be accepted, but is required for compatibility
-                classifier == symbols.interopCValuesRef -> return
+        classifier?.isClassWithFqName(InteropFqNames.cValues.toUnsafe()) == true || // Note: this should not be accepted, but is required for compatibility
+                classifier?.isClassWithFqName(InteropFqNames.cValuesRef.toUnsafe()) == true -> return
 
         classifier == symbols.string && (variadic || parameter?.isCStringParameter() == true) -> {
             if (variadic && isObjCMethod) {

@@ -1,4 +1,4 @@
-open enum class EE : Enum<EE> {
+enum class EE : Enum<EE> {
   private constructor(myName: String = Companion.toString().lowercase()) /* primary */ {
     super/*Enum*/<EE>()
     /* <init>() */

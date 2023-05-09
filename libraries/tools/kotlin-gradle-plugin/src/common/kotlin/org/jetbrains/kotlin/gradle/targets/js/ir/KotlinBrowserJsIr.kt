@@ -6,11 +6,14 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Action
+import org.gradle.api.DomainObjectCollection
+import org.gradle.api.DomainObjectSet
 import org.gradle.api.Task
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Copy
 import org.gradle.language.base.plugins.LifecycleBasePlugin
+import org.jetbrains.kotlin.gradle.dsl.JsModuleKind
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsDce
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinJsCompilation
@@ -42,8 +45,10 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
     private val nodeJs = project.rootProject.kotlinNodeJsExtension
 
-    private val webpackTaskConfigurations: MutableList<Action<KotlinWebpack>> = mutableListOf()
-    private val runTaskConfigurations: MutableList<Action<KotlinWebpack>> = mutableListOf()
+    private val webpackTaskConfigurations: DomainObjectSet<Action<KotlinWebpack>> = project.objects.domainObjectSet(Action::class.java)
+            as DomainObjectSet<Action<KotlinWebpack>>
+    private val runTaskConfigurations: DomainObjectSet<Action<KotlinWebpack>> = project.objects.domainObjectSet(Action::class.java)
+            as DomainObjectSet<Action<KotlinWebpack>>
 
     override val testTaskDescription: String
         get() = "Run all ${target.name} tests inside browser using karma and webpack"
@@ -149,7 +154,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     task.doNotTrackStateCompat("Tracked by external webpack tool")
 
                     task.commonConfigure(
-                        compilation = compilation,
+                        binary = binary,
                         mode = mode,
                         inputFilesDirectory = binary.linkSyncTask.flatMap { it.destinationDirectory },
                         entryModuleName = binary.linkTask.flatMap { it.compilerOptions.moduleName },
@@ -229,7 +234,7 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
                     task.dependsOn(binary.linkSyncTask)
 
                     task.commonConfigure(
-                        compilation = compilation,
+                        binary = binary,
                         mode = mode,
                         inputFilesDirectory = binary.linkSyncTask.flatMap { it.destinationDirectory },
                         entryModuleName = binary.linkTask.flatMap { it.compilerOptions.moduleName },
@@ -263,11 +268,11 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
     }
 
     private fun KotlinWebpack.commonConfigure(
-        compilation: KotlinJsCompilation,
+        binary: JsIrBinary,
         mode: KotlinJsBinaryMode,
         inputFilesDirectory: Provider<File>,
         entryModuleName: Provider<String>,
-        configurationActions: List<Action<KotlinWebpack>>,
+        configurationActions: DomainObjectSet<Action<KotlinWebpack>>,
         nodeJs: NodeJsRootExtension,
         defaultArchivesName: Property<String>,
     ) {
@@ -281,11 +286,19 @@ abstract class KotlinBrowserJsIr @Inject constructor(target: KotlinJsIrTarget) :
 
         this.inputFilesDirectory.fileProvider(inputFilesDirectory)
 
+        val platformType = binary.compilation.platformType
+        val moduleKind = binary.linkTask.flatMap { it.compilerOptions.moduleKind }
+
         this.entryModuleName.set(entryModuleName)
+        this.esModules.convention(
+            project.provider {
+                platformType == KotlinPlatformType.wasm || moduleKind.get() == JsModuleKind.MODULE_ES
+            }
+        ).finalizeValueOnRead()
 
         mainOutputFileName.convention(defaultArchivesName.orElse("main").map { "$it.js" }).finalizeValueOnRead()
 
-        configurationActions.forEach { configure ->
+        configurationActions.all { configure ->
             configure.execute(this)
         }
     }

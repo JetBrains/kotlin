@@ -8,6 +8,7 @@ val K = if (true) "K" else "A" // to avoid const init
 // FILE: main.kt
 
 import kotlin.native.concurrent.*
+import kotlin.concurrent.AtomicInt
 
 val sem = AtomicInt(0)
 
@@ -18,7 +19,7 @@ fun box() : String {
         mode = TransferMode.SAFE,
         { },
         {
-            sem.increment();
+            sem.incrementAndGet();
             while (sem.value != 3) {}
             O
         }
@@ -27,7 +28,7 @@ fun box() : String {
         mode = TransferMode.SAFE,
         { },
         {
-            sem.increment();
+            sem.incrementAndGet();
             while (sem.value != 3) {}
             K
         }

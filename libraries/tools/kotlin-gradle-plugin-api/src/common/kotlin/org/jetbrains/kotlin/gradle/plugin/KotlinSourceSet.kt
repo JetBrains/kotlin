@@ -8,8 +8,9 @@ package org.jetbrains.kotlin.gradle.plugin
 import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.file.SourceDirectorySet
+import org.jetbrains.kotlin.tooling.core.HasMutableExtras
 
-interface KotlinSourceSet : Named, HasKotlinDependencies {
+interface KotlinSourceSet : Named, HasProject, HasMutableExtras, HasKotlinDependencies {
     val kotlin: SourceDirectorySet
 
     fun kotlin(configure: SourceDirectorySet.() -> Unit): SourceDirectorySet
@@ -27,10 +28,13 @@ interface KotlinSourceSet : Named, HasKotlinDependencies {
 
     @Deprecated(message = "KT-55312")
     val apiMetadataConfigurationName: String
+
     @Deprecated(message = "KT-55312")
     val implementationMetadataConfigurationName: String
+
     @Deprecated(message = "KT-55312")
     val compileOnlyMetadataConfigurationName: String
+
     @Deprecated(message = "KT-55230: RuntimeOnly scope is not supported for metadata dependency transformation")
     val runtimeOnlyMetadataConfigurationName: String
 
@@ -39,10 +43,12 @@ interface KotlinSourceSet : Named, HasKotlinDependencies {
         const val COMMON_TEST_SOURCE_SET_NAME = "commonTest"
     }
 
-    val customSourceFilesExtensions: Iterable<String> // lazy iterable expected
-
+    @Deprecated("Scheduled for removal with Kotlin 2.0")
     val requiresVisibilityOf: Set<KotlinSourceSet>
+
+    @Deprecated("Scheduled for removal with Kotlin 2.0")
     fun requiresVisibilityOf(other: KotlinSourceSet)
 
+    val customSourceFilesExtensions: Iterable<String> // lazy iterable expected
     fun addCustomSourceFilesExtensions(extensions: List<String>) {}
 }

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isExternal
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -390,6 +391,13 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     }
 
     override fun transformFunctionCall(functionCall: FirFunctionCall, data: ResolutionMode): FirStatement =
+        transformFunctionCallInternal(functionCall, data, provideDelegate = false)
+
+    internal fun transformFunctionCallInternal(
+        functionCall: FirFunctionCall,
+        data: ResolutionMode,
+        provideDelegate: Boolean,
+    ): FirStatement =
         whileAnalysing(session, functionCall) {
             val calleeReference = functionCall.calleeReference
             if (
@@ -415,7 +423,14 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                     val initialExplicitReceiver = functionCall.explicitReceiver
                     val withTransformedArguments = if (!resolvingAugmentedAssignment) {
                         dataFlowAnalyzer.enterCallArguments(functionCall, functionCall.arguments)
-                        transformExplicitReceiver(functionCall).also {
+                        // In provideDelegate mode the explicitReceiver is already resolved
+                        // E.g. we have val some by someDelegate
+                        // At 1st stage of delegate inference we resolve someDelegate itself,
+                        // at 2nd stage in provideDelegate mode we are trying to resolve someDelegate.provideDelegate(),
+                        // and 'someDelegate' explicit receiver is resolved at 1st stage
+                        // See also FirDeclarationsResolveTransformer.transformWrappedDelegateExpression
+                        val withResolvedExplicitReceiver = if (provideDelegate) functionCall else transformExplicitReceiver(functionCall)
+                        withResolvedExplicitReceiver.also {
                             it.replaceArgumentList(it.argumentList.transform(this, ResolutionMode.ContextDependent))
                             dataFlowAnalyzer.exitCallArguments()
                         }
@@ -939,19 +954,10 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             .transformAnnotations(transformer, ResolutionMode.ContextIndependent)
             .replaceArgumentList(checkNotNullCall.argumentList.transform(transformer, ResolutionMode.ContextDependent))
 
-        var callCompleted = false
-        val result = components.syntheticCallGenerator.generateCalleeForCheckNotNullCall(checkNotNullCall, resolutionContext)?.let {
-            val completionResult = callCompleter.completeCall(it, data)
-            callCompleted = completionResult.callCompleted
-            completionResult.result
-        } ?: run {
-            checkNotNullCall.resultType =
-                buildErrorTypeRef {
-                    diagnostic = ConeSimpleDiagnostic("Can't resolve !! operator call", DiagnosticKind.InferenceError)
-                }
-            callCompleted = true
-            checkNotNullCall
-        }
+        val (result, callCompleted) = callCompleter.completeCall(
+            components.syntheticCallGenerator.generateCalleeForCheckNotNullCall(checkNotNullCall, resolutionContext), data
+        )
+
         dataFlowAnalyzer.exitCheckNotNullCall(result, callCompleted)
         return result
     }
@@ -1265,7 +1271,10 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             val superClass = containingClass.superTypeRefs.firstOrNull {
                 if (it !is FirResolvedTypeRef) return@firstOrNull false
                 val declaration = extractSuperTypeDeclaration(it) ?: return@firstOrNull false
-                declaration.classKind == ClassKind.CLASS
+                val isExternalConstructorWithoutArguments = declaration.isExternal
+                        && delegatedConstructorCall.isCallToDelegatedConstructorWithoutArguments
+                declaration.classKind == ClassKind.CLASS && !isExternalConstructorWithoutArguments
+
             } as FirResolvedTypeRef? ?: session.builtinTypes.anyType
             delegatedConstructorCall.replaceConstructedTypeRef(superClass)
             delegatedConstructorCall.replaceCalleeReference(buildExplicitSuperReference {
@@ -1306,6 +1315,9 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         dataFlowAnalyzer.exitDelegatedConstructorCall(result, callCompleted)
         return result
     }
+
+    private val FirDelegatedConstructorCall.isCallToDelegatedConstructorWithoutArguments
+        get() = source?.kind == KtFakeSourceElementKind.DelegatingConstructorCall
 
     private fun extractSuperTypeDeclaration(typeRef: FirTypeRef): FirRegularClass? {
         if (typeRef !is FirResolvedTypeRef) return null

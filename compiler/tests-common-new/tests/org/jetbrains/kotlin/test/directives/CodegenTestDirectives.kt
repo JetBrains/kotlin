@@ -218,6 +218,18 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
             Ignore FIR2IR exceptions if FIR reported some diagnostics with ERROR severity
         """.trimIndent()
     )
+
+    val IGNORE_FIR_METADATA_LOADING_K1 by directive(
+        description = """
+            Ignore exceptions in AbstractFirLoadK1CompiledKotlin tests
+        """.trimIndent()
+    )
+
+    val IGNORE_FIR_METADATA_LOADING_K2 by directive(
+        description = """
+            Ignore exceptions in AbstractFirLoadK2CompiledKotlin tests
+        """.trimIndent()
+    )
 }
 
 fun extractIgnoredDirectivesForTargetBackend(

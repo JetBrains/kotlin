@@ -37,6 +37,9 @@ enum class <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>B<!>
 val <!REDECLARATION!>u<!> = 10
 val <!REDECLARATION!>u<!> = 20
 
+val <!SYNTAX!>(a,b)<!> = 30 to 40
+val <!SYNTAX!>(c,d)<!> = 50 to 60
+
 typealias <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>TA<!> = A
 typealias <!PACKAGE_OR_CLASSIFIER_REDECLARATION!>TA<!> = B
 

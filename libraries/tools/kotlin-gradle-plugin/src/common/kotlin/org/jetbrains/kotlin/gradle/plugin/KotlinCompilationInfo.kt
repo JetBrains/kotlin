@@ -11,7 +11,7 @@ import org.gradle.api.Project
 import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.SourceDirectorySet
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmAbstractFragmentMetadataCompilationData
@@ -57,9 +57,8 @@ internal sealed class KotlinCompilationInfo {
         override val compilationName: String
             get() = origin.compilationName
 
-        @Suppress("DEPRECATION")
         override val moduleName: String
-            get() = origin.moduleName
+            get() = origin.moduleNameForCompilation().get()
 
         override val compilerOptions: HasCompilerOptions<*>
             get() = origin.compilerOptions

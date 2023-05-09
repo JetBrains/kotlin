@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
-import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.diagnostics.KtDiagnostic
 import org.jetbrains.kotlin.fir.analysis.collectors.FirDiagnosticsCollector
@@ -42,13 +42,13 @@ abstract class AbstractFirAnalyzerFacade {
 
 class FirAnalyzerFacade(
     val session: FirSession,
-    val languageVersionSettings: LanguageVersionSettings,
+    val fir2IrConfiguration: Fir2IrConfiguration,
     val ktFiles: Collection<KtFile> = emptyList(), // may be empty if light tree mode enabled
     val lightTreeFiles: Collection<LightTreeFile> = emptyList(), // may be empty if light tree mode disabled
     val irGeneratorExtensions: Collection<IrGenerationExtension>,
     val parser: FirParser,
     val enablePluginPhases: Boolean = false,
-    val generateSignatures: Boolean = false
+    val diagnosticReporterForLightTree: DiagnosticReporter? = null
 ) : AbstractFirAnalyzerFacade() {
     private var firFiles: List<FirFile>? = null
     private var _scopeSession: ScopeSession? = null
@@ -62,7 +62,7 @@ class FirAnalyzerFacade(
         val firProvider = (session.firProvider as FirProviderImpl)
         firFiles = when (parser) {
             FirParser.LightTree -> {
-                val builder = LightTree2Fir(session, firProvider.kotlinScopeProvider)
+                val builder = LightTree2Fir(session, firProvider.kotlinScopeProvider, diagnosticReporterForLightTree)
                 lightTreeFiles.map {
                     builder.buildFirFile(it.lightTree, it.sourceFile, it.linesMapping).also { firFile ->
                         firProvider.recordFile(firFile)
@@ -114,13 +114,12 @@ class FirAnalyzerFacade(
 
         return Fir2IrConverter.createModuleFragmentWithSignaturesIfNeeded(
             session, _scopeSession!!, firFiles!!,
-            languageVersionSettings,
             fir2IrExtensions,
+            fir2IrConfiguration,
             JvmIrMangler, IrFactoryImpl,
             FirJvmVisibilityConverter,
             Fir2IrJvmSpecialAnnotationSymbolProvider(),
             irGeneratorExtensions,
-            generateSignatures,
             kotlinBuiltIns = DefaultBuiltIns.Instance, // TODO: consider passing externally,
             commonMemberStorage = commonMemberStorage,
             initializedIrBuiltIns = irBuiltIns

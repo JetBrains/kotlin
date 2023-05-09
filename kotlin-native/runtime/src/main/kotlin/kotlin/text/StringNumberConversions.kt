@@ -53,14 +53,6 @@ external internal fun longToString(value: Long, radix: Int): String
 public actual inline fun Long.toString(radix: Int): String = longToString(this, checkRadix(radix))
 
 /**
- * Returns `true` if the content of this string is equal to the word "true", ignoring case, and `false` otherwise.
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-@kotlin.internal.InlineOnly
-public actual inline fun String.toBoolean(): Boolean = this.toBoolean()
-
-/**
  * Returns `true` if this string is not `null` and its content is equal to the word "true", ignoring case, and `false` otherwise.
  *
  * There are also strict versions of the function available on non-nullable String, [toBooleanStrict] and [toBooleanStrictOrNull].
@@ -137,16 +129,14 @@ public actual inline fun String.toLong(radix: Int): Long = toLongOrNull(radix) ?
  * Parses the string as a [Float] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
-@kotlin.internal.InlineOnly
-public actual inline fun String.toFloat(): Float = FloatingPointParser.parseFloat(this)
+public actual fun String.toFloat(): Float = FloatingPointParser.parseFloat(this)
 
 
 /**
  * Parses the string as a [Double] number and returns the result.
  * @throws NumberFormatException if the string is not a valid representation of a number.
  */
-@kotlin.internal.InlineOnly
-public actual inline fun String.toDouble(): Double = FloatingPointParser.parseDouble(this)
+public actual fun String.toDouble(): Double = FloatingPointParser.parseDouble(this)
 
 /**
  * Parses the string as a [Float] number and returns the result

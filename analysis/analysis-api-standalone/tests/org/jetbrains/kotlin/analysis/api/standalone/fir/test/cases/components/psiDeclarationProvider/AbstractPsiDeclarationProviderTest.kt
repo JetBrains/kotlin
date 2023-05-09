@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 
-abstract class AbstractPsiDeclarationProviderTest : AbstractAnalysisApiBasedSingleModuleTest() {
+public abstract class AbstractPsiDeclarationProviderTest : AbstractAnalysisApiBasedSingleModuleTest() {
     override fun doTestByFileStructure(ktFiles: List<KtFile>, module: TestModule, testServices: TestServices) {
         val mainKtFile = ktFiles.singleOrNull() ?: ktFiles.firstOrNull { it.name == "main.kt" } ?: ktFiles.first()
         val caretPosition = testServices.expressionMarkerProvider.getCaretPosition(mainKtFile)

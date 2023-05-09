@@ -176,7 +176,7 @@ internal class UIntProgressionType(symbols: Symbols, allowUnsignedBounds: Boolea
         maxValueAsLong = UInt.MAX_VALUE.toLong(),
         // Uses `getProgressionLastElement(UInt, UInt, Int): UInt`
         getProgressionLastElementFunction = symbols.getProgressionLastElementByReturnType[symbols.uInt!!],
-        unsignedType = symbols.uInt!!.defaultType,
+        unsignedType = symbols.uInt.defaultType,
         unsignedConversionFunction = symbols.toUIntByExtensionReceiver.getValue(symbols.int)
     ) {
 
@@ -192,7 +192,7 @@ internal class ULongProgressionType(symbols: Symbols, allowUnsignedBounds: Boole
         maxValueAsLong = ULong.MAX_VALUE.toLong(),
         // Uses `getProgressionLastElement(ULong, ULong, Long): ULong`
         getProgressionLastElementFunction = symbols.getProgressionLastElementByReturnType[symbols.uLong!!],
-        unsignedType = symbols.uLong!!.defaultType,
+        unsignedType = symbols.uLong.defaultType,
         unsignedConversionFunction = symbols.toULongByExtensionReceiver.getValue(symbols.long)
     ) {
 

@@ -14,7 +14,7 @@ dependencies {
     commonApi(project(":kotlin-gradle-plugin-annotations"))
     commonApi(project(":native:kotlin-native-utils"))
     commonApi(project(":kotlin-project-model"))
-    commonImplementation(project(":kotlin-tooling-core"))
+    commonApi(project(":kotlin-tooling-core"))
 
     commonCompileOnly(project(":kotlin-gradle-compiler-types"))
     commonCompileOnly("com.android.tools.build:gradle-api:4.2.2") {

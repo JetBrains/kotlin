@@ -1,4 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
 // FIR_IDENTICAL
 // !LANGUAGE: +InlineClasses, -JvmInlineValueClasses
 // FILE: kt1.kt

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.descriptors.runtime.structure.ReflectJavaClass
 import org.jetbrains.kotlin.descriptors.runtime.structure.ReflectJavaPackage
+import org.jetbrains.kotlin.name.ClassId
 
 class ReflectJavaClassFinder(private val classLoader: ClassLoader) : JavaClassFinder {
     override fun findClass(request: JavaClassFinder.Request): JavaClass? {
@@ -36,12 +37,15 @@ class ReflectJavaClassFinder(private val classLoader: ClassLoader) : JavaClassFi
         return if (klass != null) ReflectJavaClass(klass) else null
     }
 
+    override fun findClasses(request: JavaClassFinder.Request): List<JavaClass> = listOfNotNull(findClass(request))
+
     override fun findPackage(fqName: FqName, mayHaveAnnotations: Boolean): JavaPackage? {
         // We don't know which packages our class loader has and has not, so we behave as if it contains any package in the world
         return ReflectJavaPackage(fqName)
     }
 
     override fun knownClassNamesInPackage(packageFqName: FqName): Set<String>? = null
+    override fun canComputeKnownClassNamesInPackage(): Boolean = false
 }
 
 fun ClassLoader.tryLoadClass(fqName: String) =

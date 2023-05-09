@@ -100,9 +100,6 @@ sourceSets {
 
 optInToExperimentalCompilerApi()
 
-runtimeJar()
-sourcesJar()
-javadocJar()
 testsJar()
 useD8Plugin()
 
@@ -125,3 +122,6 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
         systemProperty("atomicfuJvm.classpath", localAtomicfuJvmClasspath.asPath)
     }
 }
+
+publish()
+standardPublicJars()

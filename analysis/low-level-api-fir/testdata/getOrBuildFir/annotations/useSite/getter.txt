@@ -1,0 +1,6 @@
+KT element: KtAnnotationEntry
+FIR element: FirAnnotationCallImpl
+FIR source kind: FromUseSiteTarget
+
+FIR element rendered:
+@PROPERTY_GETTER:R|Ann|[Types]()

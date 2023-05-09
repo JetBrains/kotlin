@@ -1,10 +1,13 @@
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
+
 plugins {
     kotlin("jvm")
     id("jps-compatible")
 }
 
 dependencies {
-    implementation(kotlinStdlib())
+    implementation(kotlinStdlib("jdk8"))
     @Suppress("UNCHECKED_CAST")
     rootProject.extra["kotlinJpsPluginEmbeddedDependencies"]
         .let { it as List<String> }
@@ -33,8 +36,16 @@ dependencies {
 }
 
 sourceSets {
-    "main" { projectDefault() }
+    "main" {
+        projectDefault()
+        generatedDir()
+    }
     "test" { projectDefault() }
 }
 
 runtimeJar()
+
+tasks.withType<KotlinCompilationTask<*>>().configureEach {
+    compilerOptions.apiVersion.value(KotlinVersion.KOTLIN_1_8).finalizeValueOnRead()
+    compilerOptions.languageVersion.value(KotlinVersion.KOTLIN_1_8).finalizeValueOnRead()
+}

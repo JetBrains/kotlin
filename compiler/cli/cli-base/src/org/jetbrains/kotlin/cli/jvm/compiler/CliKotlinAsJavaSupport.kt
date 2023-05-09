@@ -63,16 +63,6 @@ class CliKotlinAsJavaSupport(project: Project, private val traceHolder: CliTrace
         }.orEmpty()
     }
 
-    override fun getScriptClasses(scriptFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
-        if (scriptFqName.isRoot) {
-            return emptyList()
-        }
-
-        return findFilesForPackage(scriptFqName.parent(), scope).mapNotNull { file ->
-            file.script?.takeIf { it.fqName == scriptFqName }?.let { getLightClassForScript(it) }
-        }
-    }
-
     override fun getKotlinInternalClasses(fqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> = emptyList()
 
     override fun getFakeLightClass(classOrObject: KtClassOrObject): KtFakeLightClass = KtDescriptorBasedFakeLightClass(classOrObject)
@@ -120,6 +110,13 @@ class CliKotlinAsJavaSupport(project: Project, private val traceHolder: CliTrace
         return traceHolder.bindingContext.get(BindingContext.PACKAGE_TO_FILES, packageFqName)?.filter {
             PsiSearchScopeUtil.isInScope(searchScope, it)
         }.orEmpty()
+    }
+
+    override fun findFilesForScript(scriptFqName: FqName, searchScope: GlobalSearchScope): Collection<KtScript> {
+        return findFilesForPackage(scriptFqName.parent(), searchScope)
+            .mapNotNull { file ->
+                file.script?.takeIf { it.fqName == scriptFqName }
+            }
     }
 
     override fun createFacadeForSyntheticFile(file: KtFile): KtLightClassForFacade = error("Should not be called")

@@ -394,6 +394,7 @@ class AnnotationChecker(
                 is KtFunction -> {
                     when {
                         ExpressionTypingUtils.isFunctionExpression(descriptor) -> TargetLists.T_FUNCTION_EXPRESSION
+                        annotated.name == null -> TargetLists.T_FUNCTION_EXPRESSION
                         annotated.isLocal -> TargetLists.T_LOCAL_FUNCTION
                         annotated.parent is KtClassOrObject || annotated.parent is KtClassBody -> TargetLists.T_MEMBER_FUNCTION
                         else -> TargetLists.T_TOP_LEVEL_FUNCTION

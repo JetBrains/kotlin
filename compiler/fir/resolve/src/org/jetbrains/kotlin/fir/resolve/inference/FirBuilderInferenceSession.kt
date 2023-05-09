@@ -155,9 +155,8 @@ class FirBuilderInferenceSession(
         val commonSystem = components.session.inferenceComponents.createConstraintSystem()
         val nonFixedToVariablesSubstitutor = createNonFixedTypeToVariableSubstitutor()
 
-        integrateConstraints(commonSystem, initialStorage, nonFixedToVariablesSubstitutor, false)
-
-        var effectivelyEmptyCommonSystem = true
+        var effectivelyEmptyCommonSystem =
+            !integrateConstraints(commonSystem, initialStorage, nonFixedToVariablesSubstitutor, false)
 
         for ((_, candidate) in commonCalls) {
             val hasConstraints =
@@ -242,6 +241,7 @@ class FirBuilderInferenceSession(
         val stubTypeSubstitutor = FirStubTypeTransformer(substitutor)
         lambda.transformSingle(stubTypeSubstitutor, null)
 
+        // TODO: Builder inference should not modify implicit receivers. KT-54708
         for (receiver in lambdaImplicitReceivers) {
             @Suppress("DEPRECATION_ERROR")
             receiver.updateTypeInBuilderInference(substitutor.substituteOrSelf(receiver.type))

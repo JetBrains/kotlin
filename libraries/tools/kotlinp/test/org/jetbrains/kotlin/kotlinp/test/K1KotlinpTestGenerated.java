@@ -34,6 +34,11 @@ public class K1KotlinpTestGenerated extends AbstractK1KotlinpTest {
         runTest("libraries/tools/kotlinp/testData/Annotations.kt");
     }
 
+    @TestMetadata("Constants.kt")
+    public void testConstants() throws Exception {
+        runTest("libraries/tools/kotlinp/testData/Constants.kt");
+    }
+
     @TestMetadata("ContextReceivers.kt")
     public void testContextReceivers() throws Exception {
         runTest("libraries/tools/kotlinp/testData/ContextReceivers.kt");

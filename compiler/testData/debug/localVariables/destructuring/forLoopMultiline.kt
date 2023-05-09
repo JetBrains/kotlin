@@ -43,9 +43,6 @@ fun box() {
 // test.kt:5 box:
 // test.kt:15 box: map=kotlin.collections.HashMap
 // test.kt:15 box: map=kotlin.collections.HashMap
-// test.kt:15 box: map=kotlin.collections.HashMap
-// test.kt:10 box: map=kotlin.collections.HashMap
-// test.kt:12 box: map=kotlin.collections.HashMap, a="1":kotlin.String
 // test.kt:18 box: map=kotlin.collections.HashMap, a="1":kotlin.String, b="23":kotlin.String
 // test.kt:15 box: map=kotlin.collections.HashMap, a="1":kotlin.String, b="23":kotlin.String
 // test.kt:20 box: map=kotlin.collections.HashMap, a="1":kotlin.String, b="23":kotlin.String

@@ -1,4 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
 fun test() {
     <!CONFLICTING_OVERLOADS!>fun test1()<!> {}
     <!CONFLICTING_OVERLOADS!>fun test1()<!> {}

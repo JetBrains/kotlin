@@ -177,8 +177,8 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
                 +irInvoke(
                     null,
                     throwMissedFieldExceptionArrayFunc!!,
-                    createPrimitiveArrayOfExpression(compilerContext.irBuiltIns.intType, goldenMaskList.indices.map { irGet(seenVars[it]) }),
-                    createPrimitiveArrayOfExpression(compilerContext.irBuiltIns.intType, goldenMaskList.map { irInt(it) }),
+                    createIntArrayOfExpression(goldenMaskList.indices.map { irGet(seenVars[it]) }),
+                    createIntArrayOfExpression(goldenMaskList.map { irInt(it) }),
                     serialDescriptor,
                     typeHint = compilerContext.irBuiltIns.unitType
                 )
@@ -398,8 +398,8 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
         val kSerializerType = kSerializerClass.typeWith(compilerContext.irBuiltIns.anyType)
         val arrayType = compilerContext.irBuiltIns.arrayClass.typeWith(kSerializerType)
 
-        return addValPropertyWithJvmField(arrayType, SerialEntityNames.CACHED_CHILD_SERIALIZERS_PROPERTY_NAME) {
-            +createArrayOfExpression(kSerializerType, cacheableSerializers.map { it ?: irNull() })
+        return addValPropertyWithJvmFieldInitializer(arrayType, SerialEntityNames.CACHED_CHILD_SERIALIZERS_PROPERTY_NAME) {
+            createArrayOfExpression(kSerializerType, cacheableSerializers.map { it ?: irNull() })
         }
     }
 
@@ -519,7 +519,7 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
                                         compilerContext,
                                         it
                                     )
-                                    instantiate(argSer, it)!!
+                                    instantiate(argSer, it) ?: return null
                                 })
                         )
                     }

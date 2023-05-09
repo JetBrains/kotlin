@@ -105,10 +105,12 @@ sealed class ImplicitReceiverValue<S : FirBasedSymbol<*>>(
     @RequiresOptIn
     annotation class ImplicitReceiverInternals
 
-    @OptIn(ImplicitReceiverInternals::class)
     @Deprecated(level = DeprecationLevel.ERROR, message = "Builder inference should not modify implicit receivers. KT-54708")
     fun updateTypeInBuilderInference(type: ConeKotlinType) {
-        updateTypeFromSmartcast(type)
+        this.type = type
+        receiverExpression = receiverExpression(boundSymbol, type, contextReceiverNumber)
+        implicitScope =
+            type.scope(useSiteSession, scopeSession, FakeOverrideTypeCalculator.DoNothing, requiredPhase = FirResolvePhase.STATUS)
     }
 
     /*

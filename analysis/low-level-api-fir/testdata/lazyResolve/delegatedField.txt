@@ -1,0 +1,336 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] delegatedField.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] class Boo : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Boo] constructor(): R|one/Boo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] b: Boo): R|kotlin/Unit|
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] [DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : Foo {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor([ResolvedTo(RAW_FIR)] prop: Foo): R|one/Usage| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(RAW_FIR)] field $$delegate_0: Foo = prop#
+
+        public? final? [ResolvedTo(RAW_FIR)] fun baz([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] class Boo : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Boo] constructor(): R|one/Boo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] b: Boo): R|kotlin/Unit|
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] [DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : Foo {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor([ResolvedTo(RAW_FIR)] prop: Foo): R|one/Usage| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(RAW_FIR)] field $$delegate_0: Foo = prop#
+
+        public? final? [ResolvedTo(RAW_FIR)] fun baz([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] class Boo : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Boo] constructor(): R|one/Boo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] b: Boo): R|kotlin/Unit|
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] [DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : Foo {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor([ResolvedTo(RAW_FIR)] prop: Foo): R|one/Usage| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] field $$delegate_0: Foo = prop#
+
+        public? final? [ResolvedTo(RAW_FIR)] fun baz([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] class Boo : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Boo] constructor(): R|one/Boo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Foo : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] b: Boo): R|kotlin/Unit|
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] [DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : Foo {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor([ResolvedTo(RAW_FIR)] prop: Foo): R|one/Usage| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(COMPANION_GENERATION)] field $$delegate_0: Foo = prop#
+
+        public? final? [ResolvedTo(RAW_FIR)] fun baz([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] class Boo : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Boo] constructor(): R|one/Boo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] b: Boo): R|kotlin/Unit|
+
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] [DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|one/Foo| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor([ResolvedTo(RAW_FIR)] prop: Foo): R|one/Usage| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(SUPER_TYPES)] field $$delegate_0: Foo = prop#
+
+        public? final? [ResolvedTo(RAW_FIR)] fun baz([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] class Boo : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Boo] constructor(): R|one/Boo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] b: Boo): R|kotlin/Unit|
+
+    }
+    public? final? [ResolvedTo(TYPES)] [DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|one/Foo| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=Usage] constructor([ResolvedTo(TYPES)] prop: R|one/Foo|): R|one/Usage| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(TYPES)] field $$delegate_0: R|one/Foo| = prop#
+
+        public? final? [ResolvedTo(RAW_FIR)] fun baz([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] class Boo : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Boo] constructor(): R|one/Boo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] b: R|one/Boo|): R|kotlin/Unit|
+
+    }
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|one/Foo| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor([ResolvedTo(STATUS)] prop: R|one/Foo|): R|one/Usage| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(STATUS)] field $$delegate_0: R|one/Foo| = prop#
+
+        public final [ResolvedTo(STATUS)] fun baz([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] class Boo : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Boo] constructor(): R|one/Boo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] b: R|one/Boo|): R|kotlin/Unit|
+
+    }
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|one/Foo| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor([ResolvedTo(STATUS)] prop: R|one/Foo|): R|one/Usage| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] field $$delegate_0: R|one/Foo| = prop#
+
+        public final [ResolvedTo(STATUS)] fun baz([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] class Boo : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Boo] constructor(): R|one/Boo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] b: R|one/Boo|): R|kotlin/Unit|
+
+    }
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|one/Foo| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor([ResolvedTo(STATUS)] prop: R|one/Foo|): R|one/Usage| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] field $$delegate_0: R|one/Foo| = prop#
+
+        public final [ResolvedTo(STATUS)] fun baz([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] class Boo : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Boo] constructor(): R|one/Boo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] b: R|one/Boo|): R|kotlin/Unit|
+
+    }
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|one/Foo| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor([ResolvedTo(STATUS)] prop: R|one/Foo|): R|one/Usage| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(CONTRACTS)] field $$delegate_0: R|one/Foo| = prop#
+
+        public final [ResolvedTo(STATUS)] fun baz([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] class Boo : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Boo] constructor(): R|one/Boo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] b: R|one/Boo|): R|kotlin/Unit|
+
+    }
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|one/Foo| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor([ResolvedTo(STATUS)] prop: R|one/Foo|): R|one/Usage| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] field $$delegate_0: R|one/Foo| = prop#
+
+        public final [ResolvedTo(STATUS)] fun baz([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+ANNOTATIONS_ARGUMENTS_MAPPING:
+FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] class Boo : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Boo] constructor(): R|one/Boo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] b: R|one/Boo|): R|kotlin/Unit|
+
+    }
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|one/Foo| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor([ResolvedTo(STATUS)] prop: R|one/Foo|): R|one/Usage| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] field $$delegate_0: R|one/Foo| = prop#
+
+        public final [ResolvedTo(STATUS)] fun baz([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] class Boo : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Boo] constructor(): R|one/Boo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    public abstract [ResolvedTo(STATUS)] interface Foo : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] b: R|one/Boo|): R|kotlin/Unit|
+
+    }
+    public final [ResolvedTo(STATUS)] [DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|one/Foo| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor([ResolvedTo(STATUS)] prop: R|one/Foo|): R|one/Usage| {
+            LAZY_super<<implicit>>
+        }
+
+        private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|one/Foo| = R|<local>/prop|
+
+        public final [ResolvedTo(STATUS)] fun baz([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(IMPORTS)] delegatedField.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public final [ResolvedTo(BODY_RESOLVE)] class Boo : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Boo] constructor(): R|one/Boo| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface Foo : R|kotlin/Any| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] b: R|one/Boo|): R|kotlin/Unit|
+
+    }
+    public final [ResolvedTo(BODY_RESOLVE)] [DelegateFieldsMapKey={0=FirFieldSymbol one/Usage.$$delegate_0}] class Usage : R|one/Foo| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Usage] constructor([ResolvedTo(BODY_RESOLVE)] prop: R|one/Foo|): R|one/Usage| {
+            super<R|kotlin/Any|>()
+        }
+
+        private final [ResolvedTo(BODY_RESOLVE)] field $$delegate_0: R|one/Foo| = R|<local>/prop|
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun baz([ResolvedTo(BODY_RESOLVE)] s: R|kotlin/String|): R|kotlin/Unit| {
+        }
+
+    }

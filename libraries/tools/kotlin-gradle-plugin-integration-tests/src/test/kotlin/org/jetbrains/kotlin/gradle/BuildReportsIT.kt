@@ -12,9 +12,8 @@ import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import java.io.ObjectInputStream
+import java.nio.file.Path
 import kotlin.io.path.*
-import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 @DisplayName("Build reports")
@@ -24,6 +23,9 @@ class BuildReportsIT : KGPBaseTest() {
         get() = super.defaultBuildOptions.copy(
             buildReport = listOf(BuildReportType.FILE)
         )
+
+    private val GradleProject.reportFile: Path
+        get() = projectPath.getSingleFileInDir("build/reports/kotlin-build")
 
     @DisplayName("Build report is created")
     @GradleTest
@@ -56,26 +58,23 @@ class BuildReportsIT : KGPBaseTest() {
             build("assemble") {
                 assertBuildReportPathIsPrinted()
             }
-            val reportFolder = projectPath.resolve("build/reports/kotlin-build").toFile()
-            val reports = reportFolder.listFiles()
-            assertNotNull(reports)
-            assertEquals(1, reports.size)
-            val report = reports[0].readText()
-
             //Should contains build metrics for all compile kotlin tasks
-            assertTrue { report.contains("Time metrics:") }
-            assertTrue { report.contains("Run compilation:") }
-            assertTrue { report.contains("Incremental compilation in daemon:") }
-            assertTrue { report.contains("Size metrics:") }
-            assertTrue { report.contains("Total size of the cache directory:") }
-            assertTrue { report.contains("Total compiler iteration:") }
-            assertTrue { report.contains("ABI snapshot size:") }
-            //for non-incremental builds
-            assertTrue { report.contains("Build attributes:") }
-            assertTrue { report.contains("REBUILD_REASON:") }
-            //gc metrics
-            assertTrue {report.contains("GC count:")}
-            assertTrue {report.contains("GC time:")}
+            assertFileContains(
+                reportFile,
+                "Time metrics:",
+                "Run compilation:",
+                "Incremental compilation in daemon:",
+                "Size metrics:",
+                "Total size of the cache directory:",
+                "Total compiler iteration:",
+                "ABI snapshot size:",
+                //for non-incremental builds
+                "Build attributes:",
+                "REBUILD_REASON:",
+                //gc metrics
+                "GC count:",
+                "GC time:",
+            )
         }
     }
 
@@ -86,14 +85,26 @@ class BuildReportsIT : KGPBaseTest() {
             build("assemble") {
                 assertBuildReportPathIsPrinted()
             }
-            val reportFolder = projectPath.resolve("build/reports/kotlin-build").toFile()
-            val reports = reportFolder.listFiles()
-            assertNotNull(reports)
-            assertEquals(1, reports.size)
-            val report = reports[0].readText()
-            assertTrue { report.contains("Compiler code analysis:") }
-            assertTrue { report.contains("Compiler code generation:") }
-            assertTrue { report.contains("Compiler initialization time:") }
+            assertFileContains(
+                reportFile,
+                "Compiler code analysis:",
+                "Compiler code generation:",
+                "Compiler initialization time:",
+            )
+        }
+    }
+
+    @DisplayName("with no kotlin task executed")
+    @GradleTest
+    fun testFileReportWithoutKotlinTask(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            build("assemble", "--dry-run") {
+                assertBuildReportPathIsPrinted()
+            }
+            assertFileContains(
+                reportFile,
+                "No Kotlin task was run",
+            )
         }
     }
 
@@ -180,18 +191,20 @@ class BuildReportsIT : KGPBaseTest() {
         project("simpleProject", gradleVersion) {
 
             val lookupsTab = projectPath.resolve("build/kotlin/compileKotlin/cacheable/caches-jvm/lookups/lookups.tab")
-            buildGradle.appendText("""
-                tasks.named("compileKotlin") {
-                    doLast {
-                        new File("${lookupsTab.toUri().path}").write("Invalid contents")
+            buildGradle.appendText(
+                """
+                    tasks.named("compileKotlin") {
+                        doLast {
+                            new File("${lookupsTab.toUri().path}").write("Invalid contents")
+                        }
                     }
-                }
-            """.trimIndent())
+                """.trimIndent()
+            )
             build("compileKotlin") {
                 assertTrue { projectPath.resolve(kotlinErrorPath).listDirectoryEntries().isEmpty() }
             }
             val kotlinFile = kotlinSourcesDir().resolve("helloWorld.kt")
-            kotlinFile.modify { it.replace("ArrayList","skjfghsjk") }
+            kotlinFile.modify { it.replace("ArrayList", "skjfghsjk") }
             buildAndFail("compileKotlin") {
                 val buildErrorDir = projectPath.resolve(kotlinErrorPath).toFile()
                 val files = buildErrorDir.listFiles()
@@ -219,7 +232,7 @@ class BuildReportsIT : KGPBaseTest() {
                 assertTrue { projectPath.resolve(kotlinErrorPath).listDirectoryEntries().isEmpty() }
             }
             val kotlinFile = kotlinSourcesDir().resolve("helloWorld.kt")
-            kotlinFile.modify { it.replace("ArrayList","skjfghsjk") }
+            kotlinFile.modify { it.replace("ArrayList", "skjfghsjk") }
             buildAndFail("compileKotlin") {
                 assertTrue { projectPath.resolve(kotlinErrorPath).listDirectoryEntries().isEmpty() }
             }

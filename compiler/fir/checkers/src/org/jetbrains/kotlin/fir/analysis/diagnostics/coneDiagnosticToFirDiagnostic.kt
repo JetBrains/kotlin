@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.EmptyIntersectionTypeKind
 import org.jetbrains.kotlin.utils.addIfNotNull
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 private fun ConeDiagnostic.toKtDiagnostic(
@@ -68,14 +68,12 @@ private fun ConeDiagnostic.toKtDiagnostic(
     is ConeAmbiguityError -> when {
         applicability.isSuccess -> FirErrors.OVERLOAD_RESOLUTION_AMBIGUITY.createOn(source, this.candidates.map { it.symbol })
         applicability == CandidateApplicability.UNSAFE_CALL -> {
-            val candidate = candidates.first { it.applicability == CandidateApplicability.UNSAFE_CALL }
-            val unsafeCall = candidate.diagnostics.firstIsInstance<UnsafeCall>()
+            val (unsafeCall, candidate) = candidates.firstNotNullOf { it.diagnostics.firstIsInstanceOrNull<UnsafeCall>()?.to(it) }
             mapUnsafeCallError(candidate, unsafeCall, source, qualifiedAccessSource)
         }
 
         applicability == CandidateApplicability.UNSTABLE_SMARTCAST -> {
-            val unstableSmartcast =
-                this.candidates.first { it.applicability == CandidateApplicability.UNSTABLE_SMARTCAST }.diagnostics.firstIsInstance<UnstableSmartCast>()
+            val unstableSmartcast = this.candidates.firstNotNullOf { it.diagnostics.firstIsInstanceOrNull<UnstableSmartCast>() }
             FirErrors.SMARTCAST_IMPOSSIBLE.createOn(
                 unstableSmartcast.argument.source,
                 unstableSmartcast.targetType,
@@ -104,10 +102,11 @@ private fun ConeDiagnostic.toKtDiagnostic(
 
     is ConeSimpleDiagnostic -> when {
         source.kind is KtFakeSourceElementKind && source.kind != KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess -> null
+        kind == DiagnosticKind.Syntax -> FirSyntaxErrors.SYNTAX.createOn(qualifiedAccessSource ?: source, reason)
         else -> this.getFactory(source).createOn(qualifiedAccessSource ?: source)
     }
 
-    is ConeDestructuringDeclarationsOnTopLevel -> FirSyntaxErrors.SYNTAX.createOn(source)
+    is ConeDestructuringDeclarationsOnTopLevel -> null // reported as regular syntax error
     is ConeCannotInferTypeParameterType -> FirErrors.CANNOT_INFER_PARAMETER_TYPE.createOn(source)
     is ConeCannotInferValueParameterType -> FirErrors.CANNOT_INFER_PARAMETER_TYPE.createOn(source)
     is ConeTypeVariableTypeIsNotInferred -> FirErrors.INFERENCE_ERROR.createOn(qualifiedAccessSource ?: source)
@@ -302,6 +301,8 @@ private fun mapInapplicableCandidateError(
                 isError = rootCause.isError
             )
 
+            is InaccessibleReceiver -> FirErrors.INSTANCE_ACCESS_BEFORE_SUPER_CALL.createOn(source, "<this>")
+
             else -> genericDiagnostic
         }
     }.distinct()
@@ -488,7 +489,6 @@ private val NewConstraintError.upperConeType: ConeKotlinType get() = upperType a
 
 private fun ConeSimpleDiagnostic.getFactory(source: KtSourceElement): KtDiagnosticFactory0 {
     return when (kind) {
-        DiagnosticKind.Syntax -> FirSyntaxErrors.SYNTAX
         DiagnosticKind.ReturnNotAllowed -> FirErrors.RETURN_NOT_ALLOWED
         DiagnosticKind.NotAFunctionLabel -> FirErrors.NOT_A_FUNCTION_LABEL
         DiagnosticKind.UnresolvedLabel -> FirErrors.UNRESOLVED_LABEL
@@ -534,6 +534,7 @@ private fun ConeSimpleDiagnostic.getFactory(source: KtSourceElement): KtDiagnost
         DiagnosticKind.UnresolvedSupertype,
         DiagnosticKind.UnresolvedExpandedType,
         DiagnosticKind.Other -> FirErrors.OTHER_ERROR
+        DiagnosticKind.Syntax -> error("Must not be called on `Syntax` because a message is required.")
     }
 }
 

@@ -21,6 +21,7 @@ import com.intellij.openapi.application.PathManager
 import org.jetbrains.jps.model.java.impl.JavaSdkUtil
 
 import java.io.File
+import java.nio.file.Paths
 import java.util.regex.Pattern
 
 object PathUtil {
@@ -178,15 +179,15 @@ object PathUtil {
 
     @JvmStatic
     fun getJdkClassesRootsFromJre(javaHome: String): List<File> =
-            JavaSdkUtil.getJdkClassesRoots(File(javaHome), true)
+            JavaSdkUtil.getJdkClassesRoots(Paths.get(javaHome), true).map { it.toFile() }
 
     @JvmStatic
     fun getJdkClassesRoots(jdkHome: File): List<File> =
-            JavaSdkUtil.getJdkClassesRoots(jdkHome, false)
+            JavaSdkUtil.getJdkClassesRoots(jdkHome.toPath(), false).map { it.toFile() }
 
     @JvmStatic
     fun getJdkClassesRootsFromJdkOrJre(javaRoot: File): List<File> {
         val isJdk = File(javaRoot, "jre/lib").exists()
-        return JavaSdkUtil.getJdkClassesRoots(javaRoot, !isJdk)
+        return JavaSdkUtil.getJdkClassesRoots(javaRoot.toPath(), !isJdk).map { it.toFile() }
     }
 }

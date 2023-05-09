@@ -18,29 +18,52 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 
+/**
+ * Instance-specific tree node describing structure of multi-field value class corresponding to the [MfvcNode]
+ */
 interface MfvcNodeInstance {
     val node: MfvcNode
     val typeArguments: TypeArguments
     val type: IrSimpleType
 
+    /**
+     * Make expressions corresponding to the flattened representation of the [MfvcNodeInstance].
+     */
     fun makeFlattenedGetterExpressions(
         scope: IrBlockBuilder, currentClass: IrClass, registerPossibleExtraBoxCreation: () -> Unit
     ): List<IrExpression>
 
+    /**
+     * Make expression that corresponds to read access of the instance
+     */
     fun makeGetterExpression(scope: IrBuilderWithScope, currentClass: IrClass, registerPossibleExtraBoxCreation: () -> Unit): IrExpression
+
+    /**
+     * Get child [MfvcNodeInstance] by [name]
+     */
     operator fun get(name: Name): MfvcNodeInstance?
-    fun makeStatements(scope: IrBuilderWithScope, values: List<IrExpression>): List<IrStatement>
+
+    /**
+     * Make setter statements corresponding assignments to the [values] of the given flattened representation.
+     */
+    fun makeSetterStatements(scope: IrBuilderWithScope, values: List<IrExpression>): List<IrStatement>
 }
 
 private fun makeTypeFromMfvcNodeAndTypeArguments(node: MfvcNode, typeArguments: TypeArguments) =
     node.type.substitute(typeArguments) as IrSimpleType
 
+/**
+ * Make and add setter statements corresponding assignments to the [values] of the given flattened representation.
+ */
 fun MfvcNodeInstance.addSetterStatements(scope: IrBlockBuilder, values: List<IrExpression>) = with(scope) {
-    for (statement in makeStatements(this, values)) {
+    for (statement in makeSetterStatements(this, values)) {
         +statement
     }
 }
 
+/**
+ * Make a block of setter statements corresponding assignments to the [values] of the given flattened representation.
+ */
 fun MfvcNodeInstance.makeSetterExpressions(scope: IrBuilderWithScope, values: List<IrExpression>): IrExpression = scope.irBlock {
     addSetterStatements(this, values)
 }
@@ -49,6 +72,9 @@ private fun MfvcNodeInstance.checkValuesCount(values: List<IrExpression>) {
     require(values.size == node.leavesCount) { "Node $node requires ${node.leavesCount} values but got ${values.map { it.render() }}" }
 }
 
+/**
+ * [MfvcNodeInstance] that stores flattened instance in variables and parameters.
+ */
 class ValueDeclarationMfvcNodeInstance(
     override val node: MfvcNode,
     override val typeArguments: TypeArguments,
@@ -77,7 +103,7 @@ class ValueDeclarationMfvcNodeInstance(
         return ValueDeclarationMfvcNodeInstance(newNode, typeArguments, valueDeclarations.slice(indices))
     }
 
-    override fun makeStatements(scope: IrBuilderWithScope, values: List<IrExpression>): List<IrStatement> {
+    override fun makeSetterStatements(scope: IrBuilderWithScope, values: List<IrExpression>): List<IrStatement> {
         checkValuesCount(values)
         return valueDeclarations.zip(values) { declaration, value -> scope.irSet(declaration, value) }
     }
@@ -143,6 +169,9 @@ fun IrExpression?.isRepeatableAccessor(): Boolean = isRepeatableGetter() || isRe
 
 enum class AccessType { UseFields, ChooseEffective }
 
+/**
+ * [MfvcNodeInstance] that stores boxed instance in variables and parameters.
+ */
 class ReceiverBasedMfvcNodeInstance(
     private val scope: IrBlockBuilder,
     override val node: MfvcNode,
@@ -235,7 +264,7 @@ class ReceiverBasedMfvcNodeInstance(
         return newNode.createInstanceFromBox(scope, typeArguments, makeReceiverCopy(), accessType, saveVariable)
     }
 
-    override fun makeStatements(scope: IrBuilderWithScope, values: List<IrExpression>): List<IrStatement> {
+    override fun makeSetterStatements(scope: IrBuilderWithScope, values: List<IrExpression>): List<IrStatement> {
         checkValuesCount(values)
         require(fields != null) { "$node is immutable as it has custom getter and so no backing fields" }
         return fields.zip(values) { field, expr -> scope.irSetField(makeReceiverCopy(), field, expr) }
@@ -244,8 +273,6 @@ class ReceiverBasedMfvcNodeInstance(
 
 val MfvcNodeInstance.size: Int
     get() = node.leavesCount
-
-fun IrContainerExpression.unwrapBlock(): IrExpression = statements.singleOrNull() as? IrExpression ?: this
 
 /**
  * Creates a variable and doesn't add it to a container. It saves the variable with given saveVariable.

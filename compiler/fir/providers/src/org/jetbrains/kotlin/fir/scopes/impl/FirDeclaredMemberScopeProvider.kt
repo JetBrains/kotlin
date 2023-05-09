@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.caches.getValue
 import org.jetbrains.kotlin.fir.declarations.FirClass
-import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.FirNameAwareCompositeScope
@@ -58,8 +57,9 @@ class FirDeclaredMemberScopeProvider(val useSiteSession: FirSession) : FirSessio
             origin.generated -> {
                 FirGeneratedClassDeclaredMemberScope.create(
                     useSiteSession,
-                    MemberGenerationContext(klass.symbol, declaredScope = null),
-                    needNestedClassifierScope = true
+                    klass.symbol,
+                    regularDeclaredScope = null,
+                    scopeForGeneratedClass = true
                 ) ?: FirTypeScope.Empty
             }
             else -> {
@@ -73,8 +73,9 @@ class FirDeclaredMemberScopeProvider(val useSiteSession: FirSession) : FirSessio
                 val generatedScope = runIf(origin.fromSource || origin.generated) {
                     FirGeneratedClassDeclaredMemberScope.create(
                         useSiteSession,
-                        MemberGenerationContext(klass.symbol, baseScope),
-                        needNestedClassifierScope = false
+                        klass.symbol,
+                        regularDeclaredScope = baseScope,
+                        scopeForGeneratedClass = false
                     )
                 }
                 if (generatedScope != null) {
@@ -93,11 +94,11 @@ class FirDeclaredMemberScopeProvider(val useSiteSession: FirSession) : FirSessio
     private fun createNestedClassifierScope(klass: FirClass): FirNestedClassifierScope? {
         val origin = klass.origin
         return if (origin.generated) {
-            FirGeneratedClassNestedClassifierScope.create(useSiteSession, klass, baseScope = null)
+            FirGeneratedClassNestedClassifierScope.create(useSiteSession, klass.symbol, regularNestedClassifierScope = null)
         } else {
             val baseScope = FirNestedClassifierScopeImpl(klass, useSiteSession)
             val generatedScope = runIf(origin.fromSource) {
-                FirGeneratedClassNestedClassifierScope.create(useSiteSession, klass, baseScope)
+                FirGeneratedClassNestedClassifierScope.create(useSiteSession, klass.symbol, regularNestedClassifierScope = baseScope)
             }
             if (generatedScope != null) {
                 FirCompositeNestedClassifierScope(

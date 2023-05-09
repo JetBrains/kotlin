@@ -23,7 +23,7 @@ internal fun Project.transformMetadataLibrariesForIde(
 ): Map<String /* visibleSourceSetName */, Iterable<File>> {
     return when (val metadataProvider = resolution.metadataProvider) {
         is ProjectMetadataProvider -> resolution.visibleSourceSetNamesExcludingDependsOn.associateWith { visibleSourceSetName ->
-            metadataProvider.getSourceSetCompiledMetadata(visibleSourceSetName)
+            metadataProvider.getSourceSetCompiledMetadata(visibleSourceSetName) ?: emptyList()
         }
 
         is ArtifactMetadataProvider -> transformMetadataLibrariesForIde(

@@ -22,6 +22,7 @@ abstract class Box<T> : IFoo, IBar where T : IFoo, T : IBar {
   }
 
   abstract fun <F> foo(tSerializer: I<F>): I<Box<F>> where F : IFoo, F : IBar
+
   fun bar(vararg serializers: I<*>): I<*> {
     return <this>.foo<IBase>(tSerializer = serializers.get(index = 0))
   }

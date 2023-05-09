@@ -27,13 +27,13 @@ FILE fqName:<root> fileName:/iteratorOperator.kt
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:i type:kotlin.Int visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.Counter declared in <root>.Counter.<set-i>' type=<root>.Counter origin=null
             value: GET_VAR '<set-?>: kotlin.Int declared in <root>.Counter.<set-i>' type=kotlin.Int origin=null
-    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.Counter) returnType:kotlin.Int [operator]
+    FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.Counter) returnType:kotlin.Int [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.Counter
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Int [operator] declared in <root>.Counter'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:i type:kotlin.Int visibility:private' type=kotlin.Int origin=null
             receiver: GET_VAR '<this>: <root>.Counter declared in <root>.Counter.component1' type=<root>.Counter origin=null
-    FUN name:copy visibility:public modality:FINAL <> ($this:<root>.Counter, i:kotlin.Int) returnType:<root>.Counter
+    FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:<root>.Counter, i:kotlin.Int) returnType:<root>.Counter
       $this: VALUE_PARAMETER name:<this> type:<root>.Counter
       VALUE_PARAMETER name:i index:0 type:kotlin.Int
         EXPRESSION_BODY
@@ -117,13 +117,13 @@ FILE fqName:<root> fileName:/iteratorOperator.kt
           RETURN type=kotlin.Nothing from='public final fun <get-max> (): kotlin.Int declared in <root>.CounterConfig'
             GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:max type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
               receiver: GET_VAR '<this>: <root>.CounterConfig declared in <root>.CounterConfig.<get-max>' type=<root>.CounterConfig origin=null
-    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.CounterConfig) returnType:kotlin.Int [operator]
+    FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.CounterConfig) returnType:kotlin.Int [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.CounterConfig
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.Int [operator] declared in <root>.CounterConfig'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:max type:kotlin.Int visibility:private [final]' type=kotlin.Int origin=null
             receiver: GET_VAR '<this>: <root>.CounterConfig declared in <root>.CounterConfig.component1' type=<root>.CounterConfig origin=null
-    FUN name:copy visibility:public modality:FINAL <> ($this:<root>.CounterConfig, max:kotlin.Int) returnType:<root>.CounterConfig
+    FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:<root>.CounterConfig, max:kotlin.Int) returnType:<root>.CounterConfig
       $this: VALUE_PARAMETER name:<this> type:<root>.CounterConfig
       VALUE_PARAMETER name:max index:0 type:kotlin.Int
         EXPRESSION_BODY

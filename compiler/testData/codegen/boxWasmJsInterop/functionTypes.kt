@@ -98,7 +98,7 @@ external fun is123Array(x: EI): Boolean
 external fun create123Array(): EI
 
 data class DC(val x: Int, val y: Int)
-typealias JSDC = JsHandle<DC>
+typealias JSDC = JsReference<DC>
 
 external fun extenalWithLambda(
     x: (Boolean, Byte, Short, Char, Int, Long, Float, Double, String, EI, JSDC) -> Unit,
@@ -179,7 +179,7 @@ fun box(): String {
             test(string == "S")
             test(is123Array(ei))
             test(dc.x == 100 && dc.y == 200)
-         }, DC(100, 200).toJsHandle())
+         }, DC(100, 200).toJsReference())
 
 
     if (extenalWithLambdasCount != 11) return "Fail 1"
@@ -195,7 +195,7 @@ fun box(): String {
         double = { 600.5 },
         string = { "700" },
         ei = { create123Array() },
-        dc = { DC(800, 800).toJsHandle() },
+        dc = { DC(800, 800).toJsReference() },
         dcGetY = { it.get().y }
     )
     if (externalWithLambdas2Count != 11) return "Fail externalWithLambdas2"
@@ -212,7 +212,7 @@ fun box(): String {
         { 600.5 },
         { "700" },
         { create123Array() },
-        { DC(800, 800).toJsHandle() },
+        { DC(800, 800).toJsReference() },
         { it.get().y }
     )
     if (externalWithLambdas2RefCount != 11) return "Fail externalWithLambdas2"
@@ -230,7 +230,7 @@ fun box(): String {
             600.5,
             "700",
             create123Array(),
-            DC(800, 800).toJsHandle(),
+            DC(800, 800).toJsReference(),
             { it.get().y }
         )
         if (jsLambdaCount != 11)

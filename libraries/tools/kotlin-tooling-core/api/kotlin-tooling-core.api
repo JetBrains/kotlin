@@ -145,6 +145,7 @@ public abstract interface class org/jetbrains/kotlin/tooling/core/HasMutableExtr
 }
 
 public abstract interface class org/jetbrains/kotlin/tooling/core/Interner {
+	public abstract fun clear ()V
 	public abstract fun getOrPut (Ljava/lang/Object;)Ljava/lang/Object;
 }
 

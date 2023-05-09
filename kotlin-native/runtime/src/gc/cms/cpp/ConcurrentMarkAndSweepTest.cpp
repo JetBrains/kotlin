@@ -22,6 +22,7 @@
 #include "SingleThreadExecutor.hpp"
 #include "TestSupport.hpp"
 #include "ThreadData.hpp"
+#include "WeakRef.hpp"
 #include "std_support/Vector.hpp"
 
 using namespace kotlin;
@@ -42,20 +43,8 @@ struct Payload {
     };
 };
 
-// TODO: This should go into test support for weak references.
-struct WeakCounterPayload {
-    void* referred;
-    KInt lock;
-    KInt cookie;
-
-    static constexpr std::array<ObjHeader * WeakCounterPayload::*, 0> kFields{};
-};
-
-using WeakCounter = test_support::Object<WeakCounterPayload>;
-
 test_support::TypeInfoHolder typeHolder{test_support::TypeInfoHolder::ObjectBuilder<Payload>()};
 test_support::TypeInfoHolder typeHolderWithFinalizer{test_support::TypeInfoHolder::ObjectBuilder<Payload>().addFlag(TF_HAS_FINALIZER)};
-test_support::TypeInfoHolder typeHolderWeakCounter{test_support::TypeInfoHolder::ObjectBuilder<WeakCounterPayload>()};
 
 // TODO: Clean GlobalObjectHolder after it's gone.
 class GlobalObjectHolder : private Pinned {
@@ -204,14 +193,15 @@ bool IsMarked(ObjHeader* objHeader) {
     return nodeRef.ObjectData().marked();
 }
 
-WeakCounter& InstallWeakCounter(mm::ThreadData& threadData, ObjHeader* objHeader, ObjHeader** location) {
-    mm::AllocateObject(&threadData, typeHolderWeakCounter.typeInfo(), location);
-    auto& weakCounter = WeakCounter::FromObjHeader(*location);
+test_support::RegularWeakReferenceImpl& InstallWeakReference(mm::ThreadData& threadData, ObjHeader* objHeader, ObjHeader** location) {
+    mm::AllocateObject(&threadData, theRegularWeakReferenceImplTypeInfo, location);
+    auto& weakReference = test_support::RegularWeakReferenceImpl::FromObjHeader(*location);
     auto& extraObjectData = mm::ExtraObjectData::GetOrInstall(objHeader);
-    auto *setCounter = extraObjectData.GetOrSetWeakReferenceCounter(objHeader, weakCounter.header());
-    EXPECT_EQ(setCounter, weakCounter.header());
-    weakCounter->referred = objHeader;
-    return weakCounter;
+    weakReference->weakRef = static_cast<mm::RawSpecialRef*>(mm::WeakRef::create(objHeader));
+    weakReference->referred = objHeader;
+    auto* setWeakRef = extraObjectData.GetOrSetRegularWeakReferenceImpl(objHeader, weakReference.header());
+    EXPECT_EQ(setWeakRef, weakReference.header());
+    return weakReference;
 }
 
 class ConcurrentMarkAndSweepTest : public testing::TestWithParam<gc::ConcurrentMarkAndSweep::MarkingBehavior> {
@@ -223,6 +213,7 @@ public:
 
     ~ConcurrentMarkAndSweepTest() {
         mm::GlobalsRegistry::Instance().ClearForTests();
+        mm::SpecialRefRegistry::instance().clearForTests();
         mm::GlobalData::Instance().extraObjectDataFactory().ClearForTests();
         mm::GlobalData::Instance().gc().ClearForTests();
     }
@@ -255,7 +246,7 @@ TEST_P(ConcurrentMarkAndSweepTest, RootSet) {
         ASSERT_THAT(IsMarked(stack2.header()), false);
         ASSERT_THAT(IsMarked(stack3.header()), false);
 
-        threadData.gc().ScheduleAndWaitFullGC();
+        threadData.gc().ScheduleAndWaitFullGCWithFinalizers();
 
         EXPECT_THAT(
                 Alive(threadData),
@@ -301,7 +292,7 @@ TEST_P(ConcurrentMarkAndSweepTest, InterconnectedRootSet) {
         ASSERT_THAT(IsMarked(stack2.header()), false);
         ASSERT_THAT(IsMarked(stack3.header()), false);
 
-        threadData.gc().ScheduleAndWaitFullGC();
+        threadData.gc().ScheduleAndWaitFullGCWithFinalizers();
 
         EXPECT_THAT(
                 Alive(threadData),
@@ -325,7 +316,7 @@ TEST_P(ConcurrentMarkAndSweepTest, FreeObjects) {
         ASSERT_THAT(IsMarked(object1.header()), false);
         ASSERT_THAT(IsMarked(object2.header()), false);
 
-        threadData.gc().ScheduleAndWaitFullGC();
+        threadData.gc().ScheduleAndWaitFullGCWithFinalizers();
 
         EXPECT_THAT(Alive(threadData), testing::UnorderedElementsAre());
     });
@@ -349,18 +340,19 @@ TEST_P(ConcurrentMarkAndSweepTest, FreeObjectsWithFinalizers) {
 }
 
 TEST_P(ConcurrentMarkAndSweepTest, FreeObjectWithFreeWeak) {
-    RunInNewThread([](mm::ThreadData& threadData) {
+    RunInNewThread([this](mm::ThreadData& threadData) {
         auto& object1 = AllocateObject(threadData);
-        auto& weak1 = ([&threadData, &object1]() -> WeakCounter& {
+        auto& weak1 = ([&threadData, &object1]() -> test_support::RegularWeakReferenceImpl& {
             ObjHolder holder;
-            return InstallWeakCounter(threadData, object1.header(), holder.slot());
+            return InstallWeakReference(threadData, object1.header(), holder.slot());
         })();
 
         ASSERT_THAT(Alive(threadData), testing::UnorderedElementsAre(object1.header(), weak1.header()));
         ASSERT_THAT(IsMarked(object1.header()), false);
         ASSERT_THAT(IsMarked(weak1.header()), false);
-        ASSERT_THAT(weak1->referred, object1.header());
+        ASSERT_THAT(weak1.get(), object1.header());
 
+        EXPECT_CALL(finalizerHook(), Call(weak1.header()));
         threadData.gc().ScheduleAndWaitFullGCWithFinalizers();
 
         EXPECT_THAT(Alive(threadData), testing::UnorderedElementsAre());
@@ -371,18 +363,18 @@ TEST_P(ConcurrentMarkAndSweepTest, FreeObjectWithHoldedWeak) {
     RunInNewThread([](mm::ThreadData& threadData) {
         auto& object1 = AllocateObject(threadData);
         StackObjectHolder stack{threadData};
-        auto& weak1 = InstallWeakCounter(threadData, object1.header(), &stack->field1);
+        auto& weak1 = InstallWeakReference(threadData, object1.header(), &stack->field1);
 
         ASSERT_THAT(Alive(threadData), testing::UnorderedElementsAre(object1.header(), weak1.header(), stack.header()));
         ASSERT_THAT(IsMarked(object1.header()), false);
         ASSERT_THAT(IsMarked(weak1.header()), false);
-        ASSERT_THAT(weak1->referred, object1.header());
+        ASSERT_THAT(weak1.get(), object1.header());
 
-        threadData.gc().ScheduleAndWaitFullGC();
+        threadData.gc().ScheduleAndWaitFullGCWithFinalizers();
 
         EXPECT_THAT(Alive(threadData), testing::UnorderedElementsAre(weak1.header(), stack.header()));
         EXPECT_THAT(IsMarked(weak1.header()), false);
-        EXPECT_THAT(weak1->referred, nullptr);
+        EXPECT_THAT(weak1.get(), nullptr);
     });
 }
 
@@ -411,7 +403,7 @@ TEST_P(ConcurrentMarkAndSweepTest, ObjectReferencedFromRootSet) {
         ASSERT_THAT(IsMarked(object3.header()), false);
         ASSERT_THAT(IsMarked(object4.header()), false);
 
-        threadData.gc().ScheduleAndWaitFullGC();
+        threadData.gc().ScheduleAndWaitFullGCWithFinalizers();
 
         EXPECT_THAT(
                 Alive(threadData),
@@ -460,7 +452,7 @@ TEST_P(ConcurrentMarkAndSweepTest, ObjectsWithCycles) {
         ASSERT_THAT(IsMarked(object5.header()), false);
         ASSERT_THAT(IsMarked(object6.header()), false);
 
-        threadData.gc().ScheduleAndWaitFullGC();
+        threadData.gc().ScheduleAndWaitFullGCWithFinalizers();
 
         EXPECT_THAT(
                 Alive(threadData),
@@ -544,7 +536,7 @@ TEST_P(ConcurrentMarkAndSweepTest, ObjectsWithCyclesIntoRootSet) {
         ASSERT_THAT(IsMarked(object1.header()), false);
         ASSERT_THAT(IsMarked(object2.header()), false);
 
-        threadData.gc().ScheduleAndWaitFullGC();
+        threadData.gc().ScheduleAndWaitFullGCWithFinalizers();
 
         EXPECT_THAT(Alive(threadData), testing::UnorderedElementsAre(global.header(), stack.header(), object1.header(), object2.header()));
         EXPECT_THAT(IsMarked(global.header()), false);
@@ -588,8 +580,8 @@ TEST_P(ConcurrentMarkAndSweepTest, RunGCTwice) {
         ASSERT_THAT(IsMarked(object5.header()), false);
         ASSERT_THAT(IsMarked(object6.header()), false);
 
-        threadData.gc().ScheduleAndWaitFullGC();
-        threadData.gc().ScheduleAndWaitFullGC();
+        threadData.gc().ScheduleAndWaitFullGCWithFinalizers();
+        threadData.gc().ScheduleAndWaitFullGCWithFinalizers();
 
         EXPECT_THAT(
                 Alive(threadData),
@@ -619,7 +611,7 @@ TEST_P(ConcurrentMarkAndSweepTest, PermanentObjects) {
         ASSERT_THAT(Alive(threadData), testing::UnorderedElementsAre(global2.header()));
         EXPECT_THAT(IsMarked(global2.header()), false);
 
-        threadData.gc().ScheduleAndWaitFullGC();
+        threadData.gc().ScheduleAndWaitFullGCWithFinalizers();
 
         EXPECT_THAT(Alive(threadData), testing::UnorderedElementsAre(global2.header()));
         EXPECT_THAT(IsMarked(global2.header()), false);
@@ -639,7 +631,7 @@ TEST_P(ConcurrentMarkAndSweepTest, SameObjectInRootSet) {
         EXPECT_THAT(IsMarked(global.header()), false);
         EXPECT_THAT(IsMarked(object.header()), false);
 
-        threadData.gc().ScheduleAndWaitFullGC();
+        threadData.gc().ScheduleAndWaitFullGCWithFinalizers();
 
         EXPECT_THAT(Alive(threadData), testing::UnorderedElementsAre(global.header(), object.header()));
         EXPECT_THAT(IsMarked(global.header()), false);
@@ -737,7 +729,7 @@ TEST_P(ConcurrentMarkAndSweepTest, MultipleMutatorsCollect) {
 
     std_support::vector<std::future<void>> gcFutures(kDefaultThreadCount);
 
-    gcFutures[0] = mutators[0].Execute([](mm::ThreadData& threadData, Mutator& mutator) { threadData.gc().ScheduleAndWaitFullGC(); });
+    gcFutures[0] = mutators[0].Execute([](mm::ThreadData& threadData, Mutator& mutator) { threadData.gc().ScheduleAndWaitFullGCWithFinalizers(); });
 
     // Spin until thread suspension is requested.
     while (!mm::IsThreadSuspensionRequested()) {
@@ -795,7 +787,7 @@ TEST_P(ConcurrentMarkAndSweepTest, MultipleMutatorsAllCollect) {
 
     for (int i = 0; i < kDefaultThreadCount; ++i) {
         gcFutures[i] = mutators[i].Execute([](mm::ThreadData& threadData, Mutator& mutator) {
-            threadData.gc().ScheduleAndWaitFullGC();
+            threadData.gc().ScheduleAndWaitFullGCWithFinalizers();
             // If GC starts before all thread executed line above, two gc will be run
             // So we are temporary switch threads to native state and then return them back after all GC runs are done
             SwitchThreadState(mm::GetMemoryState(), kotlin::ThreadState::kNative);
@@ -869,7 +861,7 @@ TEST_P(ConcurrentMarkAndSweepTest, MultipleMutatorsAddToRootSetAfterCollectionRe
     }
 
     std_support::vector<std::future<void>> gcFutures(kDefaultThreadCount);
-    gcFutures[0] = mutators[0].Execute([](mm::ThreadData& threadData, Mutator& mutator) { threadData.gc().ScheduleAndWaitFullGC(); });
+    gcFutures[0] = mutators[0].Execute([](mm::ThreadData& threadData, Mutator& mutator) { threadData.gc().ScheduleAndWaitFullGCWithFinalizers(); });
 
     // Spin until thread suspension is requested.
     while (!mm::IsThreadSuspensionRequested()) {
@@ -934,7 +926,7 @@ TEST_P(ConcurrentMarkAndSweepTest, CrossThreadReference) {
 
     std_support::vector<std::future<void>> gcFutures(kDefaultThreadCount);
 
-    gcFutures[0] = mutators[0].Execute([](mm::ThreadData& threadData, Mutator& mutator) { threadData.gc().ScheduleAndWaitFullGC(); });
+    gcFutures[0] = mutators[0].Execute([](mm::ThreadData& threadData, Mutator& mutator) { threadData.gc().ScheduleAndWaitFullGCWithFinalizers(); });
 
     // Spin until thread suspension is requested.
     while (!mm::IsThreadSuspensionRequested()) {
@@ -971,16 +963,16 @@ TEST_P(ConcurrentMarkAndSweepTest, CrossThreadReference) {
 TEST_P(ConcurrentMarkAndSweepTest, MultipleMutatorsWeaks) {
     std_support::vector<Mutator> mutators(kDefaultThreadCount);
     ObjHeader* globalRoot = nullptr;
-    WeakCounter* weak = nullptr;
+    test_support::RegularWeakReferenceImpl* weak = nullptr;
 
     mutators[0]
             .Execute([&weak, &globalRoot](mm::ThreadData& threadData, Mutator& mutator) {
                 auto& global = mutator.AddGlobalRoot();
 
                 auto& object = AllocateObject(threadData);
-                auto& objectWeak = ([&threadData, &object]() -> WeakCounter& {
+                auto& objectWeak = ([&threadData, &object]() -> test_support::RegularWeakReferenceImpl& {
                     ObjHolder holder;
-                    return InstallWeakCounter(threadData, object.header(), holder.slot());
+                    return InstallWeakReference(threadData, object.header(), holder.slot());
                 })();
                 global->field1 = objectWeak.header();
                 weak = &objectWeak;
@@ -996,8 +988,8 @@ TEST_P(ConcurrentMarkAndSweepTest, MultipleMutatorsWeaks) {
     std_support::vector<std::future<void>> gcFutures(kDefaultThreadCount);
 
     gcFutures[0] = mutators[0].Execute([weak](mm::ThreadData& threadData, Mutator& mutator) {
-        threadData.gc().ScheduleAndWaitFullGC();
-        EXPECT_THAT((*weak)->referred, nullptr);
+        threadData.gc().ScheduleAndWaitFullGCWithFinalizers();
+        EXPECT_THAT(weak->get(), nullptr);
     });
 
     // Spin until thread suspension is requested.
@@ -1007,7 +999,7 @@ TEST_P(ConcurrentMarkAndSweepTest, MultipleMutatorsWeaks) {
     for (int i = 1; i < kDefaultThreadCount; ++i) {
         gcFutures[i] = mutators[i].Execute([weak](mm::ThreadData& threadData, Mutator& mutator) {
             threadData.gc().SafePointFunctionPrologue();
-            EXPECT_THAT((*weak)->referred, nullptr);
+            EXPECT_THAT(weak->get(), nullptr);
         });
     }
 
@@ -1047,7 +1039,7 @@ TEST_P(ConcurrentMarkAndSweepTest, NewThreadsWhileRequestingCollection) {
 
     std_support::vector<std::future<void>> gcFutures(kDefaultThreadCount);
 
-    gcFutures[0] = mutators[0].Execute([](mm::ThreadData& threadData, Mutator& mutator) { threadData.gc().ScheduleAndWaitFullGC(); });
+    gcFutures[0] = mutators[0].Execute([](mm::ThreadData& threadData, Mutator& mutator) { threadData.gc().ScheduleAndWaitFullGCWithFinalizers(); });
 
     // Spin until thread suspension is requested.
     while (!mm::IsThreadSuspensionRequested()) {
@@ -1105,7 +1097,7 @@ TEST_P(ConcurrentMarkAndSweepTest, NewThreadsWhileRequestingCollection) {
 TEST_P(ConcurrentMarkAndSweepTest, FreeObjectWithFreeWeakReversedOrder) {
     std_support::vector<Mutator> mutators(2);
     std::atomic<test_support::Object<Payload>*> object1 = nullptr;
-    std::atomic<WeakCounter*> weak = nullptr;
+    std::atomic<test_support::RegularWeakReferenceImpl*> weak = nullptr;
     std::atomic<bool> done = false;
     auto f0 = mutators[0].Execute([&](mm::ThreadData& threadData, Mutator &) {
         GlobalObjectHolder global1{threadData};
@@ -1114,17 +1106,18 @@ TEST_P(ConcurrentMarkAndSweepTest, FreeObjectWithFreeWeakReversedOrder) {
         global1->field1 = object1_local.header();
         while (weak.load() == nullptr)
             ;
-        threadData.gc().ScheduleAndWaitFullGC();
+        threadData.gc().ScheduleAndWaitFullGCWithFinalizers();
 
         ASSERT_THAT(Alive(threadData), testing::UnorderedElementsAre(object1_local.header(), weak.load()->header(), global1.header()));
         ASSERT_THAT(IsMarked(global1.header()), false);
         ASSERT_THAT(IsMarked(object1_local.header()), false);
         ASSERT_THAT(IsMarked(weak.load()->header()), false);
-        ASSERT_THAT((*weak.load())->referred, object1_local.header());
+        ASSERT_THAT(weak.load()->get(), object1_local.header());
 
         global1->field1 = nullptr;
 
-        threadData.gc().ScheduleAndWaitFullGC();
+        EXPECT_CALL(finalizerHook(), Call(weak.load()->header()));
+        threadData.gc().ScheduleAndWaitFullGCWithFinalizers();
 
         EXPECT_THAT(Alive(threadData), testing::UnorderedElementsAre(global1.header()));
         done = true;
@@ -1133,7 +1126,7 @@ TEST_P(ConcurrentMarkAndSweepTest, FreeObjectWithFreeWeakReversedOrder) {
     auto f1 = mutators[1].Execute([&](mm::ThreadData& threadData, Mutator &) {
         while (object1.load() == nullptr) {}
         ObjHolder holder;
-        auto &weak_local = InstallWeakCounter(threadData, object1.load()->header(), holder.slot());
+        auto& weak_local = InstallWeakReference(threadData, object1.load()->header(), holder.slot());
         weak = &weak_local;
         *holder.slot() = nullptr;
         while (!done) threadData.gc().SafePointLoopBody();

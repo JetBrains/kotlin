@@ -1,5 +1,3 @@
-// IGNORE K2
-
 import kotlin.reflect.KProperty
 
 class Delegate<T>(val value: T? = null) {

@@ -7,13 +7,6 @@ package kotlin.text
 
 import kotlin.math.abs
 import kotlin.wasm.internal.wasm_f32_demote_f64
-/**
- * Returns `true` if the content of this string is equal to the word "true", ignoring case, and `false` otherwise.
- */
-@Deprecated("Use Kotlin compiler 1.4 to avoid deprecation warning.")
-@DeprecatedSinceKotlin(hiddenSince = "1.4")
-@kotlin.internal.InlineOnly
-actual fun String.toBoolean(): Boolean = this.toBoolean()
 
 /**
  * Returns `true` if the contents of this string is equal to the word "true", ignoring case, and `false` otherwise.

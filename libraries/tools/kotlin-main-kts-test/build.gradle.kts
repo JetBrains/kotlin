@@ -15,7 +15,7 @@ dependencies {
     testApi(commonDependency("junit"))
     testApi(projectTests(":kotlin-scripting-compiler")) { isTransitive = false }
     testImplementation(project(":kotlin-compiler-embeddable"))
-    kotlinxSerializationGradlePluginClasspath(project(":kotlin-serialization")) { isTransitive = false }
+    kotlinxSerializationGradlePluginClasspath(project(":kotlinx-serialization-compiler-plugin.embeddable")) { isTransitive = false }
 }
 
 sourceSets {
@@ -24,7 +24,7 @@ sourceSets {
 }
 
 projectTest(parallel = true) {
-    dependsOn(":dist", ":kotlin-serialization:jar")
+    dependsOn(":dist", ":kotlinx-serialization-compiler-plugin.embeddable:embeddable")
     val localKotlinxSerializationPluginClasspath: FileCollection = kotlinxSerializationGradlePluginClasspath
     doFirst {
         systemProperty("kotlin.script.test.kotlinx.serialization.plugin.classpath", localKotlinxSerializationPluginClasspath.asPath)

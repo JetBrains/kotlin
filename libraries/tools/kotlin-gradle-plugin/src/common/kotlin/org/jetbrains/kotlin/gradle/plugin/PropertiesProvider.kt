@@ -6,18 +6,24 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
+import org.gradle.api.provider.Provider
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
 import org.jetbrains.kotlin.cli.common.toBooleanLenient
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheOrchestration
+import org.jetbrains.kotlin.gradle.dsl.jvm.JvmTargetValidationMode
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessageOutputStreamHandler.Companion.IGNORE_TCSM_OVERFLOW
 import org.jetbrains.kotlin.gradle.plugin.KotlinJsCompilerType.Companion.jsCompilerProperty
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_JS_STDLIB_DOM_API_INCLUDED
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_ABI_SNAPSHOT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_COMPILER_KEEP_INCREMENTAL_COMPILATION_CACHES_IN_MEMORY
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_COMPILER_USE_PRECISE_COMPILATION_RESULTS_BACKUP
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_CREATE_DEFAULT_MULTIPLATFORM_PUBLICATIONS
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_EXPERIMENTAL_TRY_K2
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_INTERNAL_VERBOSE_DIAGNOSTICS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_JS_KARMA_BROWSERS
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ALLOW_LEGACY_DEPENDENCIES
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_GRADLE_PLUGIN_COMPATIBILITY_NO_WARN
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_ANDROID_STYLE_NO_WARN
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ANDROID_SOURCE_SET_LAYOUT_VERSION
@@ -35,6 +41,7 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_IMPORT_ENABLE_SLOW_SOURCES_JAR_RESOLVER
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_DEPENDENCY_PROPAGATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_USE_XCODE_MESSAGE_STYLE
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_RUN_COMPILER_VIA_BUILD_TOOLS_API
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_STDLIB_DEFAULT_DEPENDENCY
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_STDLIB_JDK_VARIANTS_VERSION_ALIGNMENT
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_SUPPRESS_EXPERIMENTAL_IC_OPTIMIZATIONS_WARNING
@@ -476,10 +483,6 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val kotlinOptionsSuppressFreeArgsModificationWarning: Boolean
         get() = booleanProperty(PropertyNames.KOTLIN_OPTIONS_SUPPRESS_FREEARGS_MODIFICATION_WARNING) ?: false
 
-    enum class JvmTargetValidationMode {
-        IGNORE, WARNING, ERROR
-    }
-
     val jvmTargetValidationMode: JvmTargetValidationMode
         get() = enumProperty(
             "kotlin.jvm.target.validation.mode",
@@ -508,6 +511,30 @@ internal class PropertiesProvider private constructor(private val project: Proje
 
     val suppressExperimentalICOptimizationsWarning: Boolean
         get() = booleanProperty(KOTLIN_SUPPRESS_EXPERIMENTAL_IC_OPTIMIZATIONS_WARNING) ?: false
+
+    val createDefaultMultiplatformPublications: Boolean
+        get() = booleanProperty(KOTLIN_CREATE_DEFAULT_MULTIPLATFORM_PUBLICATIONS) ?: true
+
+    val runKotlinCompilerViaBuildToolsApi: Boolean
+        get() = booleanProperty(KOTLIN_RUN_COMPILER_VIA_BUILD_TOOLS_API) ?: false
+
+    val allowLegacyMppDependencies: Boolean
+        get() = booleanProperty(KOTLIN_MPP_ALLOW_LEGACY_DEPENDENCIES) ?: false
+
+    val kotlinExperimentalTryK2: Provider<Boolean> = project.providers
+        .provider<Boolean> {
+            booleanProperty(KOTLIN_EXPERIMENTAL_TRY_K2)
+        }
+        .orElse(false)
+
+    val internalVerboseDiagnostics: Boolean
+        get() = booleanProperty(KOTLIN_INTERNAL_VERBOSE_DIAGNOSTICS) ?: false
+
+    val suppressedGradlePluginWarnings: List<String>
+        get() = property(PropertyNames.KOTLIN_SUPPRESS_GRADLE_PLUGIN_WARNINGS)?.split(",").orEmpty()
+
+    val suppressedGradlePluginErrors: List<String>
+        get() = property(PropertyNames.KOTLIN_SUPPRESS_GRADLE_PLUGIN_ERRORS)?.split(",").orEmpty()
 
     /**
      * Retrieves a comma-separated list of browsers to use when running karma tests for [target]
@@ -594,6 +621,13 @@ internal class PropertiesProvider private constructor(private val project: Proje
         const val KOTLIN_COMPILER_USE_PRECISE_COMPILATION_RESULTS_BACKUP = "kotlin.compiler.preciseCompilationResultsBackup"
         const val KOTLIN_COMPILER_KEEP_INCREMENTAL_COMPILATION_CACHES_IN_MEMORY = "kotlin.compiler.keepIncrementalCompilationCachesInMemory"
         const val KOTLIN_SUPPRESS_EXPERIMENTAL_IC_OPTIMIZATIONS_WARNING = "kotlin.compiler.suppressExperimentalICOptimizationsWarning"
+        const val KOTLIN_CREATE_DEFAULT_MULTIPLATFORM_PUBLICATIONS = "kotlin.internal.mpp.createDefaultMultiplatformPublications"
+        const val KOTLIN_RUN_COMPILER_VIA_BUILD_TOOLS_API = "kotlin.compiler.runViaBuildToolsApi"
+        const val KOTLIN_MPP_ALLOW_LEGACY_DEPENDENCIES = "kotlin.mpp.allow.legacy.dependencies"
+        const val KOTLIN_EXPERIMENTAL_TRY_K2 = "kotlin.experimental.tryK2"
+        const val KOTLIN_INTERNAL_VERBOSE_DIAGNOSTICS = "kotlin.internal.verboseDiagnostics"
+        const val KOTLIN_SUPPRESS_GRADLE_PLUGIN_WARNINGS = "kotlin.suppressGradlePluginWarnings"
+        const val KOTLIN_SUPPRESS_GRADLE_PLUGIN_ERRORS = "kotlin.internal.suppressGradlePluginErrors"
     }
 
     companion object {

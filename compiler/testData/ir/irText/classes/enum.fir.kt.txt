@@ -18,7 +18,7 @@ enum class TestEnum1 : Enum<TestEnum1> {
 
 }
 
-open enum class TestEnum2 : Enum<TestEnum2> {
+enum class TestEnum2 : Enum<TestEnum2> {
   private constructor(x: Int) /* primary */ {
     super/*Enum*/<TestEnum2>()
     /* <init>() */
@@ -66,6 +66,7 @@ abstract enum class TestEnum3 : Enum<TestEnum3> {
   }
 
   abstract fun foo()
+
   fun values(): Array<TestEnum3> /* Synthetic body for ENUM_VALUES */
 
   fun valueOf(value: String): TestEnum3 /* Synthetic body for ENUM_VALUEOF */
@@ -122,6 +123,7 @@ abstract enum class TestEnum4 : Enum<TestEnum4> {
   }
 
   abstract fun foo()
+
   fun values(): Array<TestEnum4> /* Synthetic body for ENUM_VALUES */
 
   fun valueOf(value: String): TestEnum4 /* Synthetic body for ENUM_VALUEOF */
@@ -131,7 +133,7 @@ abstract enum class TestEnum4 : Enum<TestEnum4> {
 
 }
 
-open enum class TestEnum5 : Enum<TestEnum5> {
+enum class TestEnum5 : Enum<TestEnum5> {
   private constructor(x: Int = 0) /* primary */ {
     super/*Enum*/<TestEnum5>()
     /* <init>() */
@@ -161,7 +163,7 @@ fun f(): Int {
   return 1
 }
 
-open enum class TestEnum6 : Enum<TestEnum6> {
+enum class TestEnum6 : Enum<TestEnum6> {
   private constructor(x: Int, y: Int) /* primary */ {
     super/*Enum*/<TestEnum6>()
     /* <init>() */

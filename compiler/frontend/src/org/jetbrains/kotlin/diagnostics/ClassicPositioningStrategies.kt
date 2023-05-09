@@ -90,7 +90,8 @@ object ClassicPositioningStrategies {
                     ExpectActualCompatibility.Incompatible.FunctionModifiersNotSubset,
                     ExpectActualCompatibility.Incompatible.PropertyLateinitModifier,
                     ExpectActualCompatibility.Incompatible.PropertyConstModifier,
-                    ExpectActualCompatibility.Incompatible.ClassModifiers -> {
+                    ExpectActualCompatibility.Incompatible.ClassModifiers,
+                    ExpectActualCompatibility.Incompatible.FunInterfaceModifier -> {
                         element.modifierList
                     }
                     ExpectActualCompatibility.Incompatible.PropertyKind -> {
@@ -104,6 +105,9 @@ object ClassicPositioningStrategies {
                     }
                     ExpectActualCompatibility.Incompatible.Visibility -> {
                         element.visibilityModifier()
+                    }
+                    ExpectActualCompatibility.Incompatible.PropertySetterVisibility -> {
+                        (element as? KtProperty)?.setter?.modifierList
                     }
                 }?.let { markElement(it) } ?: ACTUAL_DECLARATION_NAME.mark(element)
             }

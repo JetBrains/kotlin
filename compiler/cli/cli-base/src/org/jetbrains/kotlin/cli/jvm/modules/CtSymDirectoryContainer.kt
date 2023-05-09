@@ -81,5 +81,5 @@ class CtSymDirectoryContainer(
 
     override fun refresh(p0: Boolean, p1: Boolean, p2: Runnable?) {}
 
-    override fun getInputStream(): InputStream? = error("not supported")
+    override fun getInputStream(): InputStream = error("not supported")
 }

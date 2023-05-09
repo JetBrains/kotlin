@@ -125,13 +125,17 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     @Nullable
     public KtExpression getBodyExpression() {
         KotlinFunctionStub stub = getStub();
-        if (stub != null && !stub.hasBody()) {
-            return null;
+        if (stub != null) {
+            if (!stub.hasBody()) {
+                return null;
+            }
+            if (getContainingKtFile().isCompiled()) {
+                //don't load ast
+                return null;
+            }
         }
 
-        return AstLoadingFilter.forceAllowTreeLoading(this.getContainingFile(), () ->
-                findChildByClass(KtExpression.class)
-        );
+        return findChildByClass(KtExpression.class);
     }
 
     @Nullable

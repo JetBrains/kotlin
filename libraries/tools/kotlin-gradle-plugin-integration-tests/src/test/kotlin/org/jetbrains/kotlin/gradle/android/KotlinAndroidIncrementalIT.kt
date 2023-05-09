@@ -163,7 +163,7 @@ open class KotlinAndroidIncrementalIT : KGPBaseTest() {
             )
 
             build("assembleDebug") {
-                assertFileInProjectExists("libAndroid/build/tmp/kotlin-classes/debug/META-INF/custom_path.kotlin_module")
+                assertFileInProjectExists("libAndroid/build/tmp/kotlin-classes/debug/META-INF/custom_path_debug.kotlin_module")
             }
 
             val libAndroidUtilKt = subProject("libAndroid").kotlinSourcesDir().resolve("com/example/libAndroidUtil.kt")

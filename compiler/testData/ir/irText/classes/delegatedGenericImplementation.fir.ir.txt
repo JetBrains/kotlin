@@ -72,7 +72,7 @@ FILE fqName:<root> fileName:/delegatedGenericImplementation.kt
         $receiver: VALUE_PARAMETER name:<this> type:C of <root>.Test1.<get-id>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun <get-id> <C> (): kotlin.collections.Map<E of <root>.Test1, C of <root>.Test1.<get-id>>? declared in <root>.Test1'
-            CALL 'public abstract fun <get-id> <C> (): kotlin.collections.Map<A of <root>.IBase, C of <root>.IBase.<get-id>>? declared in <root>.IBase' type=kotlin.collections.Map<E of <root>.Test1, C of <root>.Test1.<get-id>>? origin=null
+            CALL 'public abstract fun <get-id> <C> (): kotlin.collections.Map<A of <root>.IBase, C of <root>.IBase.<get-id>>? declared in <root>.IBase' type=kotlin.collections.Map<A of <root>.IBase, C of <root>.IBase.<get-id>>? origin=null
               <C>: C of <root>.Test1.<get-id>
               $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.IBase<E of <root>.Test1> visibility:private [final]' type=<root>.IBase<E of <root>.Test1> origin=null
                 receiver: GET_VAR '<this>: <root>.Test1<E of <root>.Test1> declared in <root>.Test1.<get-id>' type=<root>.Test1<E of <root>.Test1> origin=null
@@ -89,7 +89,7 @@ FILE fqName:<root> fileName:/delegatedGenericImplementation.kt
         $receiver: VALUE_PARAMETER name:<this> type:kotlin.collections.List<D of <root>.Test1.<get-x>>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun <get-x> <D> (): D of <root>.Test1.<get-x>? declared in <root>.Test1'
-            CALL 'public abstract fun <get-x> <D> (): D of <root>.IBase.<get-x>? declared in <root>.IBase' type=D of <root>.Test1.<get-x>? origin=null
+            CALL 'public abstract fun <get-x> <D> (): D of <root>.IBase.<get-x>? declared in <root>.IBase' type=D of <root>.IBase.<get-x>? origin=null
               <D>: D of <root>.Test1.<get-x>
               $this: GET_FIELD 'FIELD DELEGATE name:$$delegate_0 type:<root>.IBase<E of <root>.Test1> visibility:private [final]' type=<root>.IBase<E of <root>.Test1> origin=null
                 receiver: GET_VAR '<this>: <root>.Test1<E of <root>.Test1> declared in <root>.Test1.<get-x>' type=<root>.Test1<E of <root>.Test1> origin=null
@@ -158,7 +158,7 @@ FILE fqName:<root> fileName:/delegatedGenericImplementation.kt
         $receiver: VALUE_PARAMETER name:<this> type:C of <root>.Test2.<get-id>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun <get-id> <C> (): kotlin.collections.Map<kotlin.String, C of <root>.Test2.<get-id>>? declared in <root>.Test2'
-            CALL 'public abstract fun <get-id> <C> (): kotlin.collections.Map<A of <root>.IBase, C of <root>.IBase.<get-id>>? declared in <root>.IBase' type=kotlin.collections.Map<kotlin.String, C of <root>.Test2.<get-id>>? origin=null
+            CALL 'public abstract fun <get-id> <C> (): kotlin.collections.Map<A of <root>.IBase, C of <root>.IBase.<get-id>>? declared in <root>.IBase' type=kotlin.collections.Map<A of <root>.IBase, C of <root>.IBase.<get-id>>? origin=null
               <C>: C of <root>.Test2.<get-id>
               $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:j type:<root>.IBase<kotlin.String> visibility:private' type=<root>.IBase<kotlin.String> origin=null
                 receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.<get-id>' type=<root>.Test2 origin=null
@@ -175,7 +175,7 @@ FILE fqName:<root> fileName:/delegatedGenericImplementation.kt
         $receiver: VALUE_PARAMETER name:<this> type:kotlin.collections.List<D of <root>.Test2.<get-x>>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun <get-x> <D> (): D of <root>.Test2.<get-x>? declared in <root>.Test2'
-            CALL 'public abstract fun <get-x> <D> (): D of <root>.IBase.<get-x>? declared in <root>.IBase' type=D of <root>.Test2.<get-x>? origin=null
+            CALL 'public abstract fun <get-x> <D> (): D of <root>.IBase.<get-x>? declared in <root>.IBase' type=D of <root>.IBase.<get-x>? origin=null
               <D>: D of <root>.Test2.<get-x>
               $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:j type:<root>.IBase<kotlin.String> visibility:private' type=<root>.IBase<kotlin.String> origin=null
                 receiver: GET_VAR '<this>: <root>.Test2 declared in <root>.Test2.<get-x>' type=<root>.Test2 origin=null

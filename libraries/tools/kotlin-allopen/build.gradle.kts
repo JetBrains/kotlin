@@ -15,8 +15,6 @@ dependencies {
 
     commonCompileOnly(project(":kotlin-compiler-embeddable"))
     commonCompileOnly(project(":kotlin-allopen-compiler-plugin"))
-
-    embedded(project(":kotlin-allopen-compiler-plugin")) { isTransitive = false }
 }
 
 gradlePlugin {

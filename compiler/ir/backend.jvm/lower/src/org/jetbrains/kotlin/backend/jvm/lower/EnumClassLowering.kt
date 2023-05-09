@@ -63,15 +63,14 @@ private class EnumClassLowering(private val context: JvmBackendContext) : ClassL
      *     <clinit> {
      *         A = new MyEnum("A", 0);
      *         $VALUES = $values();
-     *         Function0<MyEnum[]> supplier = #invokedynamic ..args.. $entries;
-     *         $ENTRIES = new EnumEntriesList(supplier);
+     *         $ENTRIES = new EnumEntries($VALUES);
      *     }
      *
      *     public static MyEnum[] values() {
      *         return $VALUES.clone();
      *     }
      *
-     *     // Should be RO property from Kotlin standpoint
+     *     // Should be a read-only property from Kotlin's standpoint
      *     public static EnumEntries<MyEnum> getEntries() {
      *         return $ENTRIES;
      *     }

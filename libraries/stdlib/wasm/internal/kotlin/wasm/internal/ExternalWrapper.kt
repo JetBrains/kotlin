@@ -126,8 +126,8 @@ private fun externrefEquals(lhs: ExternalInterfaceType, rhs: ExternalInterfaceTy
 
 private external fun tryGetOrSetExternrefBox(
     ref: ExternalInterfaceType,
-    ifNotCached: JsHandle<JsExternalBox>
-): JsHandle<JsExternalBox>?
+    ifNotCached: JsReference<JsExternalBox>
+): JsReference<JsExternalBox>?
 
 @WasmNoOpCast
 @Suppress("unused")
@@ -174,7 +174,7 @@ internal fun externRefToAny(ref: ExternalInterfaceType): Any? {
     // If we have Null in notNullRef -- return null
     // If we already have a box -- return it,
     // otherwise -- remember new box and return it.
-    return tryGetOrSetExternrefBox(ref, JsExternalBox(ref).toJsHandle())
+    return tryGetOrSetExternrefBox(ref, JsExternalBox(ref).toJsReference())
 }
 
 
@@ -281,9 +281,41 @@ private fun getJsTrue(): JsBoolean =
 private fun getJsFalse(): JsBoolean =
     js("false")
 
-private val jsEmptyString by lazy(::getJsEmptyString)
-private val jsTrue by lazy(::getJsTrue)
-private val jsFalse by lazy(::getJsFalse)
+private var _jsEmptyString: JsString? = null
+private val jsEmptyString: JsString
+    get() {
+        var value = _jsEmptyString
+        if (value == null) {
+            value = getJsEmptyString()
+            _jsEmptyString = value
+        }
+
+        return value
+    }
+
+private var _jsTrue: JsBoolean? = null
+private val jsTrue: JsBoolean
+    get() {
+        var value = _jsTrue
+        if (value == null) {
+            value = getJsTrue()
+            _jsTrue = value
+        }
+
+        return value
+    }
+
+private var _jsFalse: JsBoolean? = null
+private val jsFalse: JsBoolean
+    get() {
+        var value = _jsFalse
+        if (value == null) {
+            value = getJsFalse()
+            _jsFalse = value
+        }
+
+        return value
+    }
 
 internal fun numberToDoubleAdapter(x: Number): Double =
     x.toDouble()

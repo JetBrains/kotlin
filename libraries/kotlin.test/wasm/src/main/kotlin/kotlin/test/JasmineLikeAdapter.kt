@@ -21,13 +21,11 @@ private fun it(name: String, fn: () -> JsAny?): Unit =
 private fun xit(name: String, fn: () -> JsAny?): Unit =
     js("xit(name, fn)")
 
-private fun jsThrow(jsException: JsAny) {
-    js("throw e")
-}
+private fun jsThrow(jsException: JsAny): Nothing =
+    js("{ throw jsException; }")
 
-private fun throwableToJsError(message: String, stack: String): JsAny {
-    js("var e = new Error(); e.message = message; e.stack = stack; return e;")
-}
+private fun throwableToJsError(message: String, stack: String): JsAny =
+    js("{ const e = new Error(); e.message = message; e.stack = stack; return e; }")
 
 private fun Throwable.toJsError(): JsAny =
     throwableToJsError(message ?: "", stackTraceToString())

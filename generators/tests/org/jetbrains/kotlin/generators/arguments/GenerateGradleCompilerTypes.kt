@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.generators.arguments
 
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
-import java.io.PrintStream
 
 fun generateGradleCompilerTypes(withPrinterToFile: (targetFile: File, Printer.() -> Unit) -> Unit) {
     val destDir = File("libraries/tools/kotlin-gradle-compiler-types/src/generated/kotlin")
@@ -27,16 +26,5 @@ fun generateGradleCompilerTypes(withPrinterToFile: (targetFile: File, Printer.()
 }
 
 fun main() {
-    fun getPrinter(file: File, fn: Printer.() -> Unit) {
-        if (!file.exists()) {
-            file.parentFile.mkdirs()
-            file.createNewFile()
-        }
-        PrintStream(file.outputStream().buffered()).use {
-            val printer = Printer(it)
-            printer.fn()
-        }
-    }
-
-    generateGradleCompilerTypes(::getPrinter)
+    generateGradleCompilerTypes(::getPrinterToFile)
 }

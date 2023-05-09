@@ -23,7 +23,6 @@ public class InfrastructureTestGenerated extends AbstractNativeBlackBoxTest {
     @TestMetadata("native/native.tests/testData/samples")
     @TestDataPath("$PROJECT_ROOT")
     @Tag("infrastructure")
-    @Tag("k1Infrastructure")
     @UseStandardTestCaseGroupProvider()
     public class Samples {
         @Test
@@ -245,7 +244,6 @@ public class InfrastructureTestGenerated extends AbstractNativeBlackBoxTest {
         @TestMetadata("native/native.tests/testData/samples/inner")
         @TestDataPath("$PROJECT_ROOT")
         @Tag("infrastructure")
-        @Tag("k1Infrastructure")
         @UseStandardTestCaseGroupProvider()
         public class Inner {
             @Test
@@ -265,7 +263,6 @@ public class InfrastructureTestGenerated extends AbstractNativeBlackBoxTest {
     @TestMetadata("native/native.tests/testData/samples2")
     @TestDataPath("$PROJECT_ROOT")
     @Tag("infrastructure")
-    @Tag("k1Infrastructure")
     @UseStandardTestCaseGroupProvider()
     public class Samples2 {
         @Test

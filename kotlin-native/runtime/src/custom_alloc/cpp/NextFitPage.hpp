@@ -11,6 +11,7 @@
 
 #include "AtomicStack.hpp"
 #include "Cell.hpp"
+#include "GCStatistics.hpp"
 
 namespace kotlin::alloc {
 
@@ -23,7 +24,7 @@ public:
     // Tries to allocate in current page, returns null if no free block in page is big enough
     uint8_t* TryAllocate(uint32_t blockSize) noexcept;
 
-    bool Sweep() noexcept;
+    bool Sweep(gc::GCHandle::GCSweepScope& sweepHandle) noexcept;
 
     // Testing method
     bool CheckInvariants() noexcept;

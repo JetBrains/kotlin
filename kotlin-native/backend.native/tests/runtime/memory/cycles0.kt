@@ -44,11 +44,12 @@ fun createCycles(junk: Node) {
 
 }
 
+@OptIn(kotlin.native.runtime.NativeRuntimeApi::class)
 @Test fun runTest() {
     // Create outer link from cyclic garbage.
     val outer = Node(42, null, null, null)
     createCycles(outer)
-    kotlin.native.internal.GC.collect()
+    kotlin.native.runtime.GC.collect()
     // Ensure outer is not collected.
     println(outer.data)
 }

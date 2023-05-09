@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.native.executors.Executor
 import org.jetbrains.kotlin.native.executors.EmulatorExecutor
 import org.jetbrains.kotlin.native.executors.XcodeSimulatorExecutor
 import org.jetbrains.kotlin.konan.target.*
+import org.jetbrains.kotlin.native.executors.RosettaExecutor
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import java.util.concurrent.ConcurrentHashMap
 
@@ -35,6 +36,7 @@ internal object TestRunners {
                         configurables is ConfigurablesWithEmulator -> EmulatorExecutor(configurables)
                         configurables is AppleConfigurables && configurables.targetTriple.isSimulator ->
                             XcodeSimulatorExecutor(configurables)
+                        configurables is AppleConfigurables && RosettaExecutor.availableFor(configurables) -> RosettaExecutor(configurables)
                         else -> runningOnUnsupportedTarget()
                     }
                 )

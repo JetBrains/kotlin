@@ -23,4 +23,7 @@ private class ThreadLocalDelegate<T>(private val initializer: () -> T) : ReadWri
     override operator fun setValue(thisRef: Any?, property: KProperty<*>, value: T) {
         map[Thread.currentThread()] = value
     }
+
+    override fun toString(): String =
+        "ThreadLocalDelegate(${map.entries.joinToString { "#${it.key.id}=>${it.value}" }})"
 }

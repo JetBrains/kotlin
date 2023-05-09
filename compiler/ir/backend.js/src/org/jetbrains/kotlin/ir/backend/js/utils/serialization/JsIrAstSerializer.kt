@@ -8,14 +8,12 @@ package org.jetbrains.kotlin.ir.backend.js.utils.serialization
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrIcClassModel
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramFragment
 import org.jetbrains.kotlin.js.backend.ast.*
-import org.jetbrains.kotlin.js.backend.ast.JsImportedModule
 import org.jetbrains.kotlin.js.backend.ast.metadata.*
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 import java.io.ByteArrayOutputStream
 import java.io.DataOutputStream
 import java.io.OutputStream
 import java.util.*
-import java.util.ArrayDeque
 
 fun JsIrProgramFragment.serializeTo(output: OutputStream) {
     JsIrAstSerializer().append(this).saveTo(output)
@@ -299,6 +297,46 @@ private class JsIrAstSerializer {
                     writeBlock(c.body)
                 }
                 ifNotNull(x.finallyBlock) { writeBlock(it) }
+            }
+
+            override fun visitExport(export: JsExport) {
+                writeByte(StatementIds.EXPORT)
+
+                when (val subject = export.subject) {
+                    is JsExport.Subject.All -> writeByte(ExportType.ALL)
+                    is JsExport.Subject.Elements -> {
+                        writeByte(ExportType.ITEMS)
+                        writeCollection(subject.elements) {
+                            writeInt(internalizeName(it.name.name!!))
+                            ifNotNull(it.alias) { writeInt(internalizeName(it)) }
+                        }
+                    }
+                }
+
+                ifNotNull(export.fromModule) { writeString(it) }
+            }
+
+            override fun visitImport(import: JsImport) {
+                writeByte(StatementIds.IMPORT)
+                writeString(import.module)
+
+                when (val target = import.target) {
+                    is JsImport.Target.All -> {
+                        writeByte(ImportType.ALL)
+                        writeInt(internalizeName(target.alias.name!!))
+                    }
+                    is JsImport.Target.Default -> {
+                        writeByte(ImportType.DEFAULT)
+                        writeInt(internalizeName(target.name.name!!))
+                    }
+                    is JsImport.Target.Elements -> {
+                        writeByte(ImportType.ITEMS)
+                        writeCollection(target.elements) {
+                            writeInt(internalizeName(it.name))
+                            ifNotNull(it.alias) { writeInt(internalizeName(it.name!!)) }
+                        }
+                    }
+                }
             }
 
             override fun visitEmpty(x: JsEmpty) {

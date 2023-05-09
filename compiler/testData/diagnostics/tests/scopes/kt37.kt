@@ -1,4 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
 //KT-37 Typechecker doesn't complain about accessing non-public property
 package kt37
 

@@ -107,7 +107,7 @@ class Fir2IrClassifierStorage(
             getCachedIrTypeParameter(original)
                 ?: createIrTypeParameterWithoutBounds(original, index, irOwnerSymbol)
             if (owner is FirProperty && owner.isVar) {
-                val context = ConversionTypeContext.DEFAULT.inSetter()
+                val context = ConversionTypeContext.IN_SETTER
                 getCachedIrTypeParameter(original, context)
                     ?: createIrTypeParameterWithoutBounds(original, index, irOwnerSymbol, context)
             }
@@ -193,7 +193,9 @@ class Fir2IrClassifierStorage(
             declarations.any { it is FirCallableDeclaration && it.modality == Modality.ABSTRACT } -> {
                 Modality.ABSTRACT
             }
-            declarations.none { it is FirEnumEntry && it.initializer != null } -> {
+            declarations.none {
+                it is FirEnumEntry && isEnumEntryWhichRequiresSubclass(it)
+            } -> {
                 Modality.FINAL
             }
             hasAbstractMembersInScope() -> {
@@ -341,7 +343,7 @@ class Fir2IrClassifierStorage(
             ClassKind.ANNOTATION_CLASS -> Modality.OPEN
             else -> regularClass.modality ?: Modality.FINAL
         }
-        val signature = runUnless(regularClass.isLocal || !generateSignatures) {
+        val signature = runUnless(regularClass.isLocal || !configuration.linkViaSignatures) {
             signatureComposer.composeSignature(regularClass)
         }
         val irClass = regularClass.convertWithOffsets { startOffset, endOffset ->
@@ -558,15 +560,14 @@ class Fir2IrClassifierStorage(
                     if (irParent != null) {
                         this.parent = irParent
                     }
-                    val initializer = enumEntry.initializer
-                    if (initializer is FirAnonymousObjectExpression) {
-                        // An enum entry with its own members
-                        if (initializer.anonymousObject.declarations.any { it !is FirConstructor }) {
-                            val klass = getIrAnonymousObjectForEnumEntry(initializer.anonymousObject, enumEntry.name, irParent)
-                            this.correspondingClass = klass
-                        }
+                    if (isEnumEntryWhichRequiresSubclass(enumEntry)) {
+                        // An enum entry with its own members requires an anonymous object generated.
                         // Otherwise, this is a default-ish enum entry whose initializer would be a delegating constructor call,
                         // which will be translated via visitor later.
+                        val klass = getIrAnonymousObjectForEnumEntry(
+                            (enumEntry.initializer as FirAnonymousObjectExpression).anonymousObject, enumEntry.name, irParent
+                        )
+                        this.correspondingClass = klass
                     }
                     declarationStorage.leaveScope(this)
                 }
@@ -574,6 +575,11 @@ class Fir2IrClassifierStorage(
             enumEntryCache[enumEntry] = result
             result
         }
+    }
+
+    private fun isEnumEntryWhichRequiresSubclass(enumEntry: FirEnumEntry): Boolean {
+        val initializer = enumEntry.initializer
+        return initializer is FirAnonymousObjectExpression && initializer.anonymousObject.declarations.any { it !is FirConstructor }
     }
 
     fun getIrClassSymbol(firClassSymbol: FirClassSymbol<*>, forceTopLevelPrivate: Boolean = false): IrClassSymbol {
@@ -591,7 +597,7 @@ class Fir2IrClassifierStorage(
         // firClass may be referenced by some parent's type parameters as a bound. In that case, getIrClassSymbol will be called recursively.
         getCachedIrClass(firClass)?.let { return it.symbol }
 
-        val signature = runIf(generateSignatures) {
+        val signature = runIf(configuration.linkViaSignatures) {
             signatureComposer.composeSignature(firClass, forceTopLevelPrivate = forceTopLevelPrivate)
         }
         val irClass = firClass.convertWithOffsets { startOffset, endOffset ->
@@ -618,17 +624,14 @@ class Fir2IrClassifierStorage(
         val parentClass = parentId?.let { getIrClassSymbolForNotFoundClass(it.toLookupTag()) }
         val irParent = parentClass?.owner ?: declarationStorage.getIrExternalPackageFragment(classId.packageFqName)
 
-        val symbol = Fir2IrClassSymbol(signature)
-        symbolTable.declareClass(signature, { symbol }) {
+        return symbolTable.referenceClass(signature, { Fir2IrClassSymbol(signature) }) {
             irFactory.createClass(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB, symbol, classId.shortClassName,
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET, IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB, it, classId.shortClassName,
                 ClassKind.CLASS, DescriptorVisibilities.DEFAULT_VISIBILITY, Modality.FINAL,
             ).apply {
                 parent = irParent
             }
         }
-
-        return symbol
     }
 
     fun getIrTypeParameterSymbol(

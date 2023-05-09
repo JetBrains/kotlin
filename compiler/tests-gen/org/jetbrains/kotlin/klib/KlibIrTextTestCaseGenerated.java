@@ -87,6 +87,11 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
             runTest("compiler/testData/ir/irText/classes/companionObject.kt");
         }
 
+        @TestMetadata("declarationOrder.kt")
+        public void testDeclarationOrder() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/declarationOrder.kt");
+        }
+
         @TestMetadata("delegatedGenericImplementation.kt")
         public void testDelegatedGenericImplementation() throws Exception {
             runTest("compiler/testData/ir/irText/classes/delegatedGenericImplementation.kt");
@@ -1985,11 +1990,6 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
             runTest("compiler/testData/ir/irText/firProblems/SignatureClash.kt");
         }
 
-        @TestMetadata("SignatureComputationComplexJavaGeneric.kt")
-        public void testSignatureComputationComplexJavaGeneric() throws Exception {
-            runTest("compiler/testData/ir/irText/firProblems/SignatureComputationComplexJavaGeneric.kt");
-        }
-
         @TestMetadata("SimpleTypeMarker.kt")
         public void testSimpleTypeMarker() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/SimpleTypeMarker.kt");
@@ -2005,6 +2005,11 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
             runTest("compiler/testData/ir/irText/firProblems/TypeParameterBounds.kt");
         }
 
+        @TestMetadata("TypeParameterInNestedClass.kt")
+        public void testTypeParameterInNestedClass() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/TypeParameterInNestedClass.kt");
+        }
+
         @TestMetadata("typeVariableAfterBuildMap.kt")
         public void testTypeVariableAfterBuildMap() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/typeVariableAfterBuildMap.kt");
@@ -2013,6 +2018,11 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
         @TestMetadata("VarInInit.kt")
         public void testVarInInit() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/VarInInit.kt");
+        }
+
+        @TestMetadata("VarargIntegerLiteral.kt")
+        public void testVarargIntegerLiteral() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/VarargIntegerLiteral.kt");
         }
     }
 

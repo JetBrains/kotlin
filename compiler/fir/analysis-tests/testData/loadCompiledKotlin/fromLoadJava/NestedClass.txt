@@ -1,9 +1,0 @@
-public open class NestedClass : R|kotlin/Any| {
-    public open class Nested : R|kotlin/Any| {
-        public constructor(): R|test/NestedClass.Nested|
-
-    }
-
-    public constructor(): R|test/NestedClass|
-
-}

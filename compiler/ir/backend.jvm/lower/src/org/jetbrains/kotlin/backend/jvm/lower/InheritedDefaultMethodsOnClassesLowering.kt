@@ -12,26 +12,20 @@ import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.makeIrFilePhase
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements.RemappedParameter.MultiFieldValueClassMapping
-import org.jetbrains.kotlin.backend.jvm.MemoizedMultiFieldValueClassReplacements.RemappedParameter.RegularMapping
-import org.jetbrains.kotlin.backend.jvm.fullValueParameterList
 import org.jetbrains.kotlin.backend.jvm.ir.*
-import org.jetbrains.kotlin.backend.jvm.makeBoxedExpression
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.deserialization.PLATFORM_DEPENDENT_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.builders.irBlockBody
-import org.jetbrains.kotlin.ir.builders.irCall
-import org.jetbrains.kotlin.ir.builders.irGet
-import org.jetbrains.kotlin.ir.builders.irReturn
+import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
+import org.jetbrains.kotlin.ir.expressions.putArgument
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.*
@@ -96,59 +90,27 @@ private class InheritedDefaultMethodsOnClassesLowering(val context: JvmBackendCo
         val classStartOffset = classOverride.parentAsClass.startOffset
         val backendContext = context
         context.createIrBuilder(irFunction.symbol, classStartOffset, classStartOffset).apply {
-            irFunction.body = irBlockBody {
-                +irReturn(
-                    irCall(defaultImplFun.symbol, irFunction.returnType).apply {
-                        superMethod.parentAsClass.typeParameters.forEachIndexed { index, _ ->
-                            putTypeArgument(index, createPlaceholderAnyNType(context.irBuiltIns))
-                        }
-                        passTypeArgumentsFrom(irFunction, offset = superMethod.parentAsClass.typeParameters.size)
-
-                        irFunction.dispatchReceiverParameter?.let {
-                            putValueArgument(0, irGet(it).reinterpretAsDispatchReceiverOfType(superClassType))
-                        }
-                        val bindingNewFunctionToParameterTemplateStructure = backendContext.multiFieldValueClassReplacements
-                            .bindingNewFunctionToParameterTemplateStructure
-                        val structure = bindingNewFunctionToParameterTemplateStructure[classOverride]?.let { structure ->
-                            require(structure.sumOf { it.valueParameters.size } == classOverride.explicitParametersCount) {
-                                "Bad parameters structure: $structure"
-                            }
-                            if (defaultImplFun.explicitParametersCount == irFunction.explicitParametersCount) {
-                                null
-                            } else {
-                                require(structure.size == defaultImplFun.explicitParametersCount) { "Bad parameters structure: $structure" }
-                                structure
-                            }
-                        }
-                        require(structure == null || structure.first() is RegularMapping) {
-                            "Dispatch receiver for method replacement cannot be flattened"
-                        }
-                        val sourceFullValueParameterList = irFunction.fullValueParameterList
-                        if (structure == null) {
-                            for ((index, parameter) in sourceFullValueParameterList.withIndex()) {
-                                putValueArgument(1 + index, irGet(parameter))
-                            }
-                        } else {
-                            var flattenedIndex = 0
-                            for (i in 1 until structure.size) {
-                                when (val remappedParameter = structure[i]) {
-                                    is MultiFieldValueClassMapping -> {
-                                        val valueArguments = remappedParameter.valueParameters.indices.map {
-                                            irGet(sourceFullValueParameterList[flattenedIndex++])
-                                        }
-                                        val boxedExpression = remappedParameter.rootMfvcNode.makeBoxedExpression(
-                                            this@irBlockBody, remappedParameter.typeArguments, valueArguments, registerPossibleExtraBoxCreation = {}
-                                        )
-                                        putValueArgument(i, boxedExpression)
-                                    }
-
-                                    is RegularMapping -> putValueArgument(i, irGet(sourceFullValueParameterList[flattenedIndex++]))
-                                }
-                            }
+            irFunction.body = irExprBody(irBlock {
+                val parameter2arguments = backendContext.multiFieldValueClassReplacements
+                    .mapFunctionMfvcStructures(this, defaultImplFun, irFunction) { sourceParameter, _ ->
+                        irGet(sourceParameter).let {
+                            if (sourceParameter != irFunction.dispatchReceiverParameter) it
+                            else it.reinterpretAsDispatchReceiverOfType(superClassType)
                         }
                     }
-                )
-            }
+                +irCall(defaultImplFun.symbol, irFunction.returnType).apply {
+                    for (index in superMethod.parentAsClass.typeParameters.indices) {
+                        putTypeArgument(index, createPlaceholderAnyNType(context.irBuiltIns))
+                    }
+                    passTypeArgumentsFrom(irFunction, offset = superMethod.parentAsClass.typeParameters.size)
+
+                    for ((parameter, argument) in parameter2arguments) {
+                        if (argument != null) {
+                            putArgument(parameter, argument)
+                        }
+                    }
+                }
+            })
         }
 
         return irFunction

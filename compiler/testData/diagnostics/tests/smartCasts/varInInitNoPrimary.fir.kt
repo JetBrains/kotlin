@@ -1,4 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
 class Your {
     init {
         var y: String? = "xyz"

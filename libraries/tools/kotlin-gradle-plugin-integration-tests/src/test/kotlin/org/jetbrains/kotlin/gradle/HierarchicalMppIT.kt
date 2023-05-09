@@ -32,7 +32,7 @@ import kotlin.test.fail
 
 @MppGradlePluginTests
 @DisplayName("Hierarchical multiplatform")
-open class HierarchicalMppIT : MPPBaseTest() {
+open class HierarchicalMppIT : KGPBaseTest() {
 
     private val String.withPrefix get() = "hierarchical-mpp-published-modules/$this"
 
@@ -1149,6 +1149,45 @@ open class HierarchicalMppIT : MPPBaseTest() {
             build("assemble") {
                 assertTasksExecuted(":consumer:linkDebugExecutableLinuxX64")
             }
+        }
+    }
+
+    @GradleTest
+    @DisplayName("It should be possible to disable default publications for stdlib and other kotlin libraries")
+    fun `test disable default publications`(gradleVersion: GradleVersion, @TempDir tempDir: Path) {
+        project("mppCustomPublicationLayout", gradleVersion = gradleVersion, localRepoDir = tempDir) {
+            build(":libWithCustomLayout:publishKotlinPublicationToMavenRepository") {
+                listOf("jvm.jar", "linuxArm64.klib", "linuxX64.klib")
+                    .map { tempDir.resolve("test/libWithCustomLayout/1.0/libWithCustomLayout-1.0-$it") }
+                    .forEach { if (!it.exists()) fail("Artifact $it does not exist") }
+            }
+
+            build(":libWithDefaultLayout:publish") {
+                val pom = tempDir.resolve("test/libWithDefaultLayout-jvm/1.0/libWithDefaultLayout-jvm-1.0.pom").readText()
+                val expectedDependency = """
+                    |    <dependency>
+                    |      <groupId>test</groupId>
+                    |      <artifactId>libWithCustomLayout</artifactId>
+                    |      <version>1.0</version>
+                    |      <scope>compile</scope>
+                    |    </dependency>
+                """.trimMargin()
+
+                fun String.asOneLine() = lines().joinToString(" ") { it.trim() }
+                if (expectedDependency.asOneLine() !in pom.asOneLine()) {
+                    fail("Expected to find:\n$expectedDependency\nin pom file:\n$pom")
+                }
+            }
+
+            build(":app:assemble")
+        }
+    }
+
+    @GradleTest
+    @DisplayName("KT-56380: correct nullability inference in metadata compilations")
+    fun `test correct nullability inference in metadata compilation`(gradleVersion: GradleVersion) {
+        project("kt-56380_correct_nullability_inference", gradleVersion) {
+            build(":b:compileCommonMainKotlinMetadata")
         }
     }
 

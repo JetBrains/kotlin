@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.isEffectivelyExternal
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.utils.filterIsInstanceAnd
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 abstract class IrAbstractDescriptorBasedFunctionFactory {
@@ -332,7 +334,7 @@ class IrDescriptorBasedFunctionFactory(
             classifier =
                 symbolTable.referenceClassifier(kotlinType.constructor.declarationDescriptor ?: error("No classifier for type $kotlinType"))
             nullability = SimpleTypeNullability.fromHasQuestionMark(kotlinType.isMarkedNullable)
-            arguments = kotlinType.arguments.map {
+            arguments = kotlinType.arguments.memoryOptimizedMap {
                 if (it.isStarProjection) IrStarProjectionImpl
                 else makeTypeProjection(toIrType(it.type), it.projectionKind)
             }
@@ -351,8 +353,12 @@ class IrDescriptorBasedFunctionFactory(
 
     private fun IrClass.addFakeOverrides() {
 
-        val fakeOverrideDescriptors = descriptor.unsubstitutedMemberScope.getContributedDescriptors(DescriptorKindFilter.CALLABLES)
-            .filterIsInstance<CallableMemberDescriptor>().filter { it.kind === CallableMemberDescriptor.Kind.FAKE_OVERRIDE }
+        val fakeOverrideDescriptors =
+            descriptor.unsubstitutedMemberScope.getContributedDescriptors(DescriptorKindFilter.CALLABLES)
+                .filterIsInstanceAnd<CallableMemberDescriptor> {
+                    it.kind === CallableMemberDescriptor.Kind.FAKE_OVERRIDE && it.dispatchReceiverParameter != null &&
+                            !DescriptorVisibilities.isPrivate(it.visibility) && it.visibility != DescriptorVisibilities.INVISIBLE_FAKE
+                }
 
         fun createFakeOverrideFunction(descriptor: FunctionDescriptor, property: IrPropertySymbol?): IrSimpleFunction {
             val returnType = descriptor.returnType?.let { toIrType(it) } ?: error("No return type for $descriptor")
@@ -366,11 +372,11 @@ class IrDescriptorBasedFunctionFactory(
             }
 
             newFunction.parent = this
-            newFunction.overriddenSymbols = descriptor.overriddenDescriptors.map { symbolTable.referenceSimpleFunction(it.original) }
+            newFunction.overriddenSymbols = descriptor.overriddenDescriptors.memoryOptimizedMap { symbolTable.referenceSimpleFunction(it.original) }
             newFunction.dispatchReceiverParameter = descriptor.dispatchReceiverParameter?.let { newFunction.createValueParameter(it) }
             newFunction.extensionReceiverParameter = descriptor.extensionReceiverParameter?.let { newFunction.createValueParameter(it) }
             newFunction.contextReceiverParametersCount = descriptor.contextReceiverParameters.size
-            newFunction.valueParameters = descriptor.valueParameters.map { newFunction.createValueParameter(it) }
+            newFunction.valueParameters = descriptor.valueParameters.memoryOptimizedMap { newFunction.createValueParameter(it) }
             newFunction.correspondingPropertySymbol = property
             newFunction.annotations = descriptor.annotations.mapNotNull(
                 typeTranslator.constantValueGenerator::generateAnnotationConstructorCall

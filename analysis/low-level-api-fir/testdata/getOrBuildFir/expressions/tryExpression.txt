@@ -6,7 +6,7 @@ FIR element rendered:
 try {
     Int(1)
 }
-catch (e: R|kotlin/Throwable|) {
+catch ([ResolvedTo(BODY_RESOLVE)] e: R|kotlin/Throwable|) {
 }
 finally {
 }

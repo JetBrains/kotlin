@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrTypeAbbreviationImpl
 import org.jetbrains.kotlin.ir.types.impl.makeTypeProjection
+import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 /**
  * After moving an [org.jetbrains.kotlin.ir.IrElement], some type parameter references within it may become out of scope.
@@ -31,7 +32,7 @@ class IrTypeParameterRemapper(
                 null,
                 type.classifier.remap(),
                 type.nullability,
-                type.arguments.map { it.remap() },
+                type.arguments.memoryOptimizedMap { it.remap() },
                 type.annotations,
                 type.abbreviation?.remap()
             ).apply {
@@ -52,7 +53,7 @@ class IrTypeParameterRemapper(
         IrTypeAbbreviationImpl(
             typeAlias,
             hasQuestionMark,
-            arguments.map { it.remap() },
+            arguments.memoryOptimizedMap { it.remap() },
             annotations
         ).apply {
             annotations.forEach { it.remapTypes(this@IrTypeParameterRemapper) }

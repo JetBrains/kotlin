@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubplugin
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
+import org.jetbrains.kotlin.gradle.tasks.configuration.KaptGenerateStubsConfig
 import org.jetbrains.kotlin.gradle.tasks.configuration.KotlinCompileConfig
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.whenKaptEnabled
@@ -34,7 +35,14 @@ internal class Kotlin2JvmSourceSetProcessor(
             taskName,
             compilationInfo.compilerOptions.options as KotlinJvmCompilerOptions,
             configAction
-        )
+        ).also { kotlinTask ->
+            // Configuring here to not interfere with 'kotlin-android' plugin configuration for 'libraries' input
+            KaptGenerateStubsConfig.configureLibraries(
+                project,
+                kotlinTask,
+                { compilationInfo.compileDependencyFiles }
+            )
+        }
     }
 
     override fun doTargetSpecificProcessing() {
@@ -59,6 +67,12 @@ internal class Kotlin2JvmSourceSetProcessor(
                 kotlinTask.configure { kotlinCompile ->
                     kotlinCompile.javaOutputDir.set(javaTask.flatMap { it.destinationDirectory })
                 }
+
+                KaptGenerateStubsConfig.wireJavaAndKotlinOutputs(
+                    project,
+                    javaTask,
+                    kotlinTask
+                )
             }
 
             if (sourceSetName == SourceSet.MAIN_SOURCE_SET_NAME) {

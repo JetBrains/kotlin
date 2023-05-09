@@ -1,0 +1,21 @@
+implicit receivers:
+scopes:
+  DefaultStarImportingScope, index = 0
+
+  DefaultStarImportingScope, index = 1
+
+  DefaultSimpleImportingScope, index = 2
+
+  ExplicitStarImportingScope, index = 3
+    classifiers: 1
+      class A
+    callables: 1
+      fun b()
+
+  DefaultSimpleImportingScope, index = 4
+
+  DefaultSimpleImportingScope, index = 5
+
+  PackageMemberScope, index = 6
+
+  ExplicitSimpleImportingScope, index = 7, empty

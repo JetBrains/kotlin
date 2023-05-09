@@ -8,9 +8,13 @@ package org.jetbrains.kotlin.analysis.api.fir
 import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.KtDeclarationAndFirDeclarationEqualityChecker
 import org.jetbrains.kotlin.analysis.low.level.api.fir.project.structure.llFirModuleData
 import org.jetbrains.kotlin.analysis.project.structure.KtBuiltinsModule
+import org.jetbrains.kotlin.analysis.project.structure.KtLibraryModule
+import org.jetbrains.kotlin.analysis.project.structure.KtLibrarySourceModule
+import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.analysis.providers.createDeclarationProvider
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirElement
@@ -26,17 +30,19 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFunction
-import org.jetbrains.kotlin.psi.KtNamedFunction
+import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.filterIsInstanceWithChecker
 
 //todo introduce LibraryModificationTracker based cache?
 internal object FirDeserializedDeclarationSourceProvider {
     fun findPsi(fir: FirElement, project: Project): PsiElement? {
         return when (fir) {
-            is FirSimpleFunction -> provideSourceForFunction(fir, project)
+            is FirSimpleFunction -> provideSourceForFunction(fir.delegatedWrapperData?.wrapped ?: fir, project)
             is FirProperty -> provideSourceForProperty(fir, project)
             is FirClass -> provideSourceForClass(fir, project)
             is FirTypeAlias -> provideSourceForTypeAlias(fir, project)
@@ -74,56 +80,81 @@ internal object FirDeserializedDeclarationSourceProvider {
         }
     }
 
-    private fun provideSourceForFunction(
-        function: FirSimpleFunction,
-        project: Project
-    ): PsiElement? {
-        val baseFunction = function.delegatedWrapperData?.wrapped ?: function
-        val candidates = if (function.isTopLevel) {
-            project.createDeclarationProvider(function.scope(project)).getTopLevelFunctions(function.symbol.callableId)
-                .filter(KtNamedFunction::isCompiled)
-        } else {
-            baseFunction.containingKtClass(project)?.body?.functions
-                ?.filter { it.name == baseFunction.name.asString() && it.isCompiled() }
-                .orEmpty()
-        }
-
-        return baseFunction.unwrapFakeOverrides().chooseCorrespondingPsi(candidates)
+    private fun provideSourceForFunction(function: FirSimpleFunction, project: Project): PsiElement? {
+        return provideSourceForCallable(
+            function,
+            project,
+            topLevelSearcher = { declarationProvider -> declarationProvider.getTopLevelFunctions(function.symbol.callableId) },
+            predicate = { it is KtFunction && it.name == function.name.asString() }
+        )
     }
 
     private fun provideSourceForProperty(property: FirProperty, project: Project): PsiElement? {
-        val candidates = if (property.isTopLevel) {
-            project.createDeclarationProvider(property.scope(project)).getTopLevelProperties(property.symbol.callableId)
-        } else {
-            property.containingKtClass(project)?.declarations
-                ?.filter { it.name == property.name.asString() }
-                .orEmpty()
+        return provideSourceForCallable(
+            property,
+            project,
+            topLevelSearcher = { declarationProvider -> declarationProvider.getTopLevelProperties(property.symbol.callableId) },
+            predicate = { it is KtProperty && it.name == property.name.asString() },
+        )
+    }
+
+    private fun <T : KtCallableDeclaration> provideSourceForCallable(
+        callable: FirCallableDeclaration,
+        project: Project,
+        topLevelSearcher: (KotlinDeclarationProvider) -> Collection<T>,
+        predicate: (KtCallableDeclaration) -> Boolean
+    ): PsiElement? {
+        fun chooseCandidate(candidates: Collection<KtCallableDeclaration>): PsiElement? {
+            return callable.unwrapFakeOverrides().chooseCorrespondingPsi(candidates)
         }
 
-        return candidates.firstOrNull(KtElement::isCompiled)
+        if (callable.isTopLevel) {
+            return getTargetScopes(callable, project)
+                .asSequence()
+                .map { scope -> topLevelSearcher(project.createDeclarationProvider(scope)).filter(KtElement::isCompiled) }
+                .filter { it.isNotEmpty() }
+                .firstNotNullOfOrNull { chooseCandidate(it) }
+        }
+
+        val containingKtClass = getContainingKtClassOrObject(callable, getTargetScopes(callable, project), project)
+        val containingKtFile = containingKtClass?.containingKtFile
+
+        if (containingKtFile == null || !containingKtFile.isCompiled) {
+            return null
+        }
+
+        val candidates = containingKtClass.declarations.filterIsInstanceWithChecker<KtCallableDeclaration>(predicate)
+        return chooseCandidate(candidates)
     }
 
-    private fun provideSourceForClass(klass: FirClass, project: Project): PsiElement? =
-        classByClassId(klass.symbol.classId, klass.scope(project), project)
-
-    private fun provideSourceForTypeAlias(alias: FirTypeAlias, project: Project): PsiElement? {
-        val candidates = project.createDeclarationProvider(alias.scope(project)).getAllTypeAliasesByClassId(alias.symbol.classId)
-        return candidates.firstOrNull(KtElement::isCompiled)
+    private fun provideSourceForClass(klass: FirClass, project: Project): PsiElement? {
+        return getTargetScopes(klass, project)
+            .asSequence()
+            .mapNotNull { scope -> classByClassId(klass.symbol.classId, scope, project) }
+            .filter { it.isCompiled() }
+            .firstOrNull()
     }
 
-    private fun provideSourceForConstructor(
-        constructor: FirConstructor,
-        project: Project
-    ): PsiElement? {
-        val containingKtClass = constructor.containingKtClass(project) ?: return null
-        if (constructor.isPrimary) return containingKtClass.primaryConstructor
-
-        return constructor.unwrapFakeOverrides().chooseCorrespondingPsi(containingKtClass.secondaryConstructors)
+    private fun provideSourceForTypeAlias(typeAlias: FirTypeAlias, project: Project): PsiElement? {
+        return getTargetScopes(typeAlias, project)
+            .asSequence()
+            .flatMap { scope -> project.createDeclarationProvider(scope).getAllTypeAliasesByClassId(typeAlias.symbol.classId) }
+            .firstOrNull { it.isCompiled() }
     }
 
-    private fun FirFunction.chooseCorrespondingPsi(
-        candidates: Collection<KtFunction>
-    ): KtFunction? {
+    private fun provideSourceForConstructor(constructor: FirConstructor, project: Project): PsiElement? {
+        val scopes = getTargetScopes(constructor, project)
+        val containingKtClass = getContainingKtClassOrObject(constructor, scopes, project) ?: return null
+
+        return if (constructor.isPrimary) {
+            containingKtClass.primaryConstructor
+        } else {
+            constructor.unwrapFakeOverrides()
+                .chooseCorrespondingPsi(containingKtClass.secondaryConstructors)
+        }
+    }
+
+    private fun FirCallableDeclaration.chooseCorrespondingPsi(candidates: Collection<KtCallableDeclaration>): KtCallableDeclaration? {
         if (candidates.isEmpty()) return null
         for (candidate in candidates) {
             assert(candidate.isCompiled()) {
@@ -136,31 +167,51 @@ internal object FirDeserializedDeclarationSourceProvider {
         return null
     }
 
-    private fun provideSourceForEnumEntry(
-        enumEntry: FirEnumEntry,
+    private fun provideSourceForEnumEntry(enumEntry: FirEnumEntry, project: Project): PsiElement? {
+        val scopes = getTargetScopes(enumEntry, project)
+        val containingKtClass = getContainingKtClassOrObject(enumEntry, scopes, project) ?: return null
+
+        if (containingKtClass.isCompiled()) {
+            return containingKtClass.body?.enumEntries?.firstOrNull { it.name == enumEntry.name.asString() }
+        }
+
+        return null
+    }
+
+    private fun getTargetScopes(declaration: FirDeclaration, project: Project): List<GlobalSearchScope> {
+        val originalDeclaration = when (declaration) {
+            is FirCallableDeclaration -> declaration.unwrapFakeOverrides()
+            else -> declaration
+        }
+
+        val moduleData = originalDeclaration.llFirModuleData
+        val module = moduleData.ktModule
+
+        return buildList {
+            add(module.contentScope)
+
+            when (module) {
+                is KtBuiltinsModule -> {
+                    add(ProjectScope.getLibrariesScope(project))
+                    add(ProjectScope.getContentScope(project))
+                }
+                is KtLibrarySourceModule, is KtLibraryModule -> {
+                    // Search in other libraries (that might be dependencies of this library)
+                    add(ProjectScope.getLibrariesScope(project))
+                }
+                else -> {}
+            }
+        }
+    }
+
+    private fun getContainingKtClassOrObject(
+        firCallable: FirCallableDeclaration,
+        scopes: List<GlobalSearchScope>,
         project: Project
-    ): PsiElement? {
-        val candidates = enumEntry.containingKtClass(project)?.body?.enumEntries
-            ?.filter { it.name == enumEntry.name.asString() }
-            .orEmpty()
-
-        return candidates.firstOrNull(KtElement::isCompiled)
+    ): KtClassOrObject? {
+        val classId = firCallable.unwrapFakeOverrides().containingClassLookupTag()?.classId ?: return null
+        return scopes.firstNotNullOfOrNull { scope -> classByClassId(classId, scope, project) }
     }
-
-    private fun FirDeclaration.scope(project: Project): GlobalSearchScope {
-        val original = when (this) {
-            is FirCallableDeclaration -> unwrapFakeOverrides()
-            else -> this
-        }
-        val moduleData = original.llFirModuleData
-        return when (val ktModule = moduleData.ktModule) {
-            is KtBuiltinsModule -> GlobalSearchScope.allScope(project) // TODO should be some stdlib
-            else -> ktModule.contentScope
-        }
-    }
-
-    private fun FirCallableDeclaration.containingKtClass(project: Project): KtClassOrObject? =
-        unwrapFakeOverrides().containingClassLookupTag()?.classId?.let { classByClassId(it, scope(project), project) }
 
     private fun classByClassId(classId: ClassId, scope: GlobalSearchScope, project: Project): KtClassOrObject? {
         val correctedClassId = classIdMapping[classId] ?: classId

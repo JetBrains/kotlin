@@ -1,4 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
 // FIR_IDENTICAL
 // ISSUE: KT-57198
 // FILE: CustomGdbServerRunConfiguration.java

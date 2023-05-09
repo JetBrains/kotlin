@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.native
 
+import org.gradle.api.logging.configuration.WarningMode
 import org.jetbrains.kotlin.gradle.*
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.DUMMY_FRAMEWORK_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_BUILD_TASK_NAME
@@ -302,7 +303,7 @@ class CocoaPodsIT : BaseGradleIT() {
     @Test
     fun testSyntheticProjectPodfilePostprocessing() {
         project.gradleBuildScript().apply {
-            appendToCocoapodsBlock("""pod("AWSMobileClient", version = "2.30.0")""")
+            appendToCocoapodsBlock("""pod("ChatSDK", version = "5.2.1")""")
 
             appendText("""
                 
@@ -1137,16 +1138,9 @@ class CocoaPodsIT : BaseGradleIT() {
     fun testPodPublishing() {
         //test that manually created frameworks are not included into cocoapods xcframework
         project.gradleBuildScript().appendToKotlinBlock("iosX64(\"iOS\") {binaries.framework{}}")
-
-        val currentGradleVersion = project.chooseWrapperVersionOrFinishTest()
         project.build(
             ":podPublishXCFramework",
             "-Pkotlin.native.cocoapods.generate.wrapper=true",
-            options = defaultBuildOptions().suppressDeprecationWarningsSinceGradleVersion(
-                TestVersions.Gradle.G_7_4,
-                currentGradleVersion,
-                "Workaround for KT-57483",
-            )
         ) {
             assertSuccessful()
 
@@ -1296,6 +1290,47 @@ class CocoaPodsIT : BaseGradleIT() {
             assertSuccessful()
 
             assertContains("Dependency on 'AFNetworking' with option 'linkOnly=true' is unused for building static frameworks")
+        }
+    }
+
+    @Test
+    fun `hierarchy of dependant pods compiles successfully`() = with(getProjectByName("native-cocoapods-dependant-pods")) {
+        build(
+            ":compileKotlinIosX64",
+            "-Pkotlin.native.cocoapods.generate.wrapper=true",
+        ) {
+            assertSuccessful()
+        }
+    }
+
+    @Test
+    fun `configuration fails when trying to depend on non-declared pod`() = with(getProjectByName("native-cocoapods-dependant-pods")) {
+        gradleBuildScript().appendToCocoapodsBlock("""
+            pod("Foo") { useInteropBindingFrom("JBNonExistent") }
+        """.trimIndent())
+
+        build(
+            ":help",
+            "-Pkotlin.native.cocoapods.generate.wrapper=true",
+        ) {
+            assertFailed()
+            assertContains("Couldn't find declaration of pod 'JBNonExistent' (interop-binding dependency of pod 'Foo')")
+        }
+    }
+
+    @Test
+    fun `configuration fails when dependant pods are in the wrong order`() = with(getProjectByName("native-cocoapods-dependant-pods")) {
+        gradleBuildScript().appendToCocoapodsBlock("""
+            pod("Foo") { useInteropBindingFrom("Bar") }
+            pod("Bar")
+        """.trimIndent())
+
+        build(
+            ":help",
+            "-Pkotlin.native.cocoapods.generate.wrapper=true",
+        ) {
+            assertFailed()
+            assertContains("Couldn't find declaration of pod 'Bar' (interop-binding dependency of pod 'Foo')")
         }
     }
 
@@ -1804,8 +1839,13 @@ class CocoaPodsIT : BaseGradleIT() {
             }
 
             if (shouldInstallLocalCocoapods) {
+                val installDir = cocoapodsInstallationRoot.absolutePath
                 println("Installing CocoaPods...")
-                gem("install", "--install-dir", cocoapodsInstallationRoot.absolutePath, "cocoapods", "-v", localCocoapodsVersion)
+
+                //https://github.com/ffi/ffi/issues/864#issuecomment-875242776
+                gem("install", "--install-dir", installDir, "ffi", "-v", "1.15.5", "--", "--enable-libffi-alloc")
+
+                gem("install", "--install-dir", installDir, "cocoapods", "-v", localCocoapodsVersion)
             } else if (!isCocoapodsInstalled()) {
                 fail(
                     """
@@ -1859,8 +1899,6 @@ class CocoaPodsIT : BaseGradleIT() {
         }
 
         private fun gem(vararg args: String): String {
-            // On ARM MacOS, run gem using arch -x86_64 to workaround problems with libffi.
-            // https://stackoverflow.com/questions/64901180/running-cocoapods-on-apple-silicon-m1
             val command = listOf("gem", *args)
             println("Run command: ${command.joinToString(separator = " ")}")
             val result = runProcess(command, File("."), options = BuildOptions(forceOutputToStdout = true))

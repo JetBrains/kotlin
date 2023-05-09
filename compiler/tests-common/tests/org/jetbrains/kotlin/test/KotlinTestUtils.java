@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.test;
 import com.google.common.collect.Lists;
 import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.util.SystemInfo;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.psi.PsiElement;
 import com.intellij.rt.execution.junit.FileComparisonFailure;
 import com.intellij.testFramework.TestDataFile;
+import com.intellij.util.lang.JavaVersion;
 import junit.framework.TestCase;
 import kotlin.Unit;
 import kotlin.collections.CollectionsKt;
@@ -197,7 +197,7 @@ public class KotlinTestUtils {
         else if (jdkKind == TestJdkKind.FULL_JDK_17) {
             configuration.put(JVMConfigurationKeys.JDK_HOME, KtTestUtil.getJdk17Home());
         }
-        else if (SystemInfo.IS_AT_LEAST_JAVA9) {
+        else if (JavaVersion.current().compareTo(JavaVersion.compose(9)) >= 0) {
             configuration.put(JVMConfigurationKeys.JDK_HOME, new File(System.getProperty("java.home")));
         }
 

@@ -220,7 +220,8 @@ class JvmCachedDeclarations(
                 modality = Modality.OPEN,
                 visibility = defaultImplsVisibility,
                 isFakeOverride = false,
-                typeParametersFromContext = parent.typeParameters
+                typeParametersFromContext = parent.typeParameters,
+                remapMultiFieldValueClassStructure = context::remapMultiFieldValueClassStructure
             ).also {
                 it.copyCorrespondingPropertyFrom(interfaceFun)
 
@@ -257,7 +258,6 @@ class JvmCachedDeclarations(
         defaultImplsRedirections.getOrPut(fakeOverride) {
             assert(fakeOverride.isFakeOverride)
             val irClass = fakeOverride.parentAsClass
-            val mfvcReplacementStructure = context.multiFieldValueClassReplacements.bindingNewFunctionToParameterTemplateStructure
             val redirectFunction = context.irFactory.buildFun {
                 origin = JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE
                 name = fakeOverride.name
@@ -282,7 +282,7 @@ class JvmCachedDeclarations(
                 annotations = fakeOverride.annotations
                 copyCorrespondingPropertyFrom(fakeOverride)
             }
-            mfvcReplacementStructure[fakeOverride]?.let { mfvcReplacementStructure[redirectFunction] = it }
+            context.remapMultiFieldValueClassStructure(fakeOverride, redirectFunction, parametersMappingOrNull = null)
             redirectFunction
         }
 

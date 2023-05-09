@@ -16,6 +16,7 @@ open class Base {
 
 interface BaseI {
   abstract fun foo()
+
   abstract val bar: String
     abstract get
 

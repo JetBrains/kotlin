@@ -89,6 +89,12 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
         }
 
         @Test
+        @TestMetadata("declarationOrder.kt")
+        public void testDeclarationOrder() throws Exception {
+            runTest("compiler/testData/ir/irText/classes/declarationOrder.kt");
+        }
+
+        @Test
         @TestMetadata("delegatedGenericImplementation.kt")
         public void testDelegatedGenericImplementation() throws Exception {
             runTest("compiler/testData/ir/irText/classes/delegatedGenericImplementation.kt");
@@ -2835,6 +2841,12 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
         }
 
         @Test
+        @TestMetadata("TypeParameterInNestedClass.kt")
+        public void testTypeParameterInNestedClass() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/TypeParameterInNestedClass.kt");
+        }
+
+        @Test
         @TestMetadata("typeVariableAfterBuildMap.kt")
         public void testTypeVariableAfterBuildMap() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/typeVariableAfterBuildMap.kt");
@@ -2850,6 +2862,12 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
         @TestMetadata("VarInInit.kt")
         public void testVarInInit() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/VarInInit.kt");
+        }
+
+        @Test
+        @TestMetadata("VarargIntegerLiteral.kt")
+        public void testVarargIntegerLiteral() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/VarargIntegerLiteral.kt");
         }
     }
 
@@ -3094,6 +3112,12 @@ public class FirPsiJvmIrTextTestGenerated extends AbstractFirPsiJvmIrTextTest {
         @Test
         public void testAllFilesPresentInStubs() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/stubs"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
+        }
+
+        @Test
+        @TestMetadata("arraysFromBuiltins.kt")
+        public void testArraysFromBuiltins() throws Exception {
+            runTest("compiler/testData/ir/irText/stubs/arraysFromBuiltins.kt");
         }
 
         @Test

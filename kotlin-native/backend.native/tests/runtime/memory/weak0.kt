@@ -3,6 +3,8 @@
  * that can be found in the LICENSE file.
  */
 
+@file:OptIn(kotlin.experimental.ExperimentalNativeApi::class)
+
 package runtime.memory.weak0
 
 import kotlin.test.*
@@ -26,15 +28,16 @@ fun multiWeak(): Array<WeakReference<Data>>  {
     return weaks
 }
 
+@OptIn(kotlin.native.runtime.NativeRuntimeApi::class)
 @Test fun runTest() {
     val weak = localWeak()
-    kotlin.native.internal.GC.collect()
+    kotlin.native.runtime.GC.collect()
     val value = weak.get()
     println(value?.toString())
 
     val weaks = multiWeak()
 
-    kotlin.native.internal.GC.collect()
+    kotlin.native.runtime.GC.collect()
 
     weaks.forEach {
         it -> if (it.get()?.s != null) throw Error("not null")

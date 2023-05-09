@@ -18,9 +18,17 @@ public open class B : A {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final class C {
+public open class C {
     @kotlin.Deprecated(message = "") public constructor C(/*0*/ s: kotlin.String)
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
+
+public final class D : C {
+    public constructor D()
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+

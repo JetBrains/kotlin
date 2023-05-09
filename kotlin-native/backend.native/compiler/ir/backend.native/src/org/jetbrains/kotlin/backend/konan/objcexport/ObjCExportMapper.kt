@@ -108,6 +108,16 @@ private fun CallableMemberDescriptor.isHiddenFromObjC(): Boolean = when {
     }
 }
 
+/**
+ * Check if the given class or its enclosing declaration is marked as @HiddenFromObjC.
+ */
+internal fun ClassDescriptor.isHiddenFromObjC(): Boolean = when {
+    (this.containingDeclaration as? ClassDescriptor)?.isHiddenFromObjC() == true -> true
+    else -> annotations.any { annotation ->
+        annotation.annotationClass?.annotations?.any { it.fqName == KonanFqNames.hidesFromObjC } == true
+    }
+}
+
 internal fun ObjCExportMapper.shouldBeExposed(descriptor: ClassDescriptor): Boolean =
         shouldBeVisible(descriptor) && !isSpecialMapped(descriptor) && !descriptor.defaultType.isObjCObjectType()
 
@@ -175,7 +185,7 @@ internal fun ObjCExportMapper.shouldBeVisible(descriptor: ClassDescriptor): Bool
         descriptor.isEffectivelyPublicApi && when (descriptor.kind) {
         ClassKind.CLASS, ClassKind.INTERFACE, ClassKind.ENUM_CLASS, ClassKind.OBJECT -> true
         ClassKind.ENUM_ENTRY, ClassKind.ANNOTATION_CLASS -> false
-    } && !descriptor.isExpect && !descriptor.isInlined() && !isHiddenByDeprecation(descriptor)
+    } && !descriptor.isExpect && !descriptor.isInlined() && !isHiddenByDeprecation(descriptor) && !descriptor.isHiddenFromObjC()
 
 private fun ObjCExportMapper.isBase(descriptor: CallableMemberDescriptor): Boolean =
         descriptor.overriddenDescriptors.all { !shouldBeExposed(it) }

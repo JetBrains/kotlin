@@ -48,18 +48,13 @@ public class IncrementalFirJvmCompilerRunnerTestGenerated extends AbstractIncrem
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/addFileWithFunctionOverload/");
         }
 
-        @TestMetadata("addMemberTypeAlias")
-        public void testAddMemberTypeAlias() throws Exception {
-            runTest("jps/jps-plugin/testData/incremental/pureKotlin/addMemberTypeAlias/");
-        }
-
         @TestMetadata("addTopLevelTypeAlias")
         public void testAddTopLevelTypeAlias() throws Exception {
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/addTopLevelTypeAlias/");
         }
 
         public void testAllFilesPresentInPureKotlin() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/pureKotlin"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("(^.*Expect.*)"), TargetBackend.JVM_IR, false);
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/pureKotlin"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("((^.*Expect.*)|(^removeMemberTypeAlias)|(^addMemberTypeAlias)|(^companionConstantChanged))"), TargetBackend.JVM_IR, false);
         }
 
         @TestMetadata("annotations")
@@ -120,11 +115,6 @@ public class IncrementalFirJvmCompilerRunnerTestGenerated extends AbstractIncrem
         @TestMetadata("classSignatureUnchanged")
         public void testClassSignatureUnchanged() throws Exception {
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/classSignatureUnchanged/");
-        }
-
-        @TestMetadata("companionConstantChanged")
-        public void testCompanionConstantChanged() throws Exception {
-            runTest("jps/jps-plugin/testData/incremental/pureKotlin/companionConstantChanged/");
         }
 
         @TestMetadata("compilationErrorThenFixedOtherPackage")
@@ -560,11 +550,6 @@ public class IncrementalFirJvmCompilerRunnerTestGenerated extends AbstractIncrem
         @TestMetadata("removeFileWithFunctionOverload")
         public void testRemoveFileWithFunctionOverload() throws Exception {
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/removeFileWithFunctionOverload/");
-        }
-
-        @TestMetadata("removeMemberTypeAlias")
-        public void testRemoveMemberTypeAlias() throws Exception {
-            runTest("jps/jps-plugin/testData/incremental/pureKotlin/removeMemberTypeAlias/");
         }
 
         @TestMetadata("removeTopLevelTypeAlias")

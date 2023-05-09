@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.ir.symbols.IrLocalDelegatedPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.util.initializeParameterArguments
+import org.jetbrains.kotlin.ir.util.initializeTypeArguments
 
 class IrLocalDelegatedPropertyReferenceImpl(
     override val startOffset: Int,
@@ -32,13 +34,9 @@ class IrLocalDelegatedPropertyReferenceImpl(
     override var delegate: IrVariableSymbol,
     override var getter: IrSimpleFunctionSymbol,
     override var setter: IrSimpleFunctionSymbol?,
-    override val origin: IrStatementOrigin? = null,
+    override var origin: IrStatementOrigin? = null,
 ) : IrLocalDelegatedPropertyReference() {
-    override val typeArgumentsByIndex: Array<IrType?> = emptyArray()
+    override val typeArguments: Array<IrType?> = initializeTypeArguments(0)
 
-    override val argumentsByParameterIndex: Array<IrExpression?>
-        get() = throw UnsupportedOperationException("Property reference $symbol has no value arguments")
-
-    override val valueArgumentsCount: Int
-        get() = 0
+    override val valueArguments: Array<IrExpression?> = initializeParameterArguments(0)
 }

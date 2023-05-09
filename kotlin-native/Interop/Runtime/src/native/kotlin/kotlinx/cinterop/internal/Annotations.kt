@@ -1,5 +1,9 @@
+
 package kotlinx.cinterop.internal
 
+import kotlin.native.internal.InternalForKotlinNative
+
+@InternalForKotlinNative
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
 annotation class CStruct(val spelling: String) {
@@ -38,6 +42,7 @@ annotation class CStruct(val spelling: String) {
         AnnotationTarget.PROPERTY_GETTER,
         AnnotationTarget.PROPERTY_SETTER
 )
+@InternalForKotlinNative
 @Retention(AnnotationRetention.BINARY)
 public annotation class CCall(val id: String) {
     @Target(AnnotationTarget.VALUE_PARAMETER)
@@ -77,6 +82,7 @@ public annotation class CCall(val id: String) {
  * Collection of annotations that allow to store
  * constant values.
  */
+@InternalForKotlinNative
 public object ConstantValue {
     @Retention(AnnotationRetention.BINARY)
     annotation class Byte(val value: kotlin.Byte)
@@ -106,6 +112,7 @@ public object ConstantValue {
  * Denotes property that is an alias to some enum entry.
  */
 @Target(AnnotationTarget.CLASS)
+@InternalForKotlinNative
 @Retention(AnnotationRetention.BINARY)
 public annotation class CEnumEntryAlias(val entryName: String)
 
@@ -113,5 +120,6 @@ public annotation class CEnumEntryAlias(val entryName: String)
  * Stores instance size of the type T: CEnumVar.
  */
 @Target(AnnotationTarget.CLASS)
+@InternalForKotlinNative
 @Retention(AnnotationRetention.BINARY)
 public annotation class CEnumVarTypeSize(val size: Int)

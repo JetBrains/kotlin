@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.TO_STRING
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.SYMBOLS
-import org.jetbrains.kotlin.fir.analysis.diagnostics.checkMissingMessages
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.EMPTY_OBJC_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INAPPLICABLE_EXACT_OBJC_NAME
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INAPPLICABLE_OBJC_NAME
@@ -62,7 +61,7 @@ object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             INVALID_OBJC_REFINEMENT_TARGETS,
-            "Refines annotations are only applicable to annotations with targets FUNCTION and/or PROPERTY"
+            "Refines annotations are only applicable to annotations with targets CLASS, FUNCTION and/or PROPERTY"
         )
         map.put(INAPPLICABLE_OBJC_NAME, "@ObjCName is not applicable on overrides")
         map.put(INVALID_OBJC_NAME, "@ObjCName should have a name and/or swiftName")

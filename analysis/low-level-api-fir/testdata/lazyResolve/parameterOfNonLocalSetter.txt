@@ -1,4 +1,3 @@
-
 RAW_FIR:
 FILE: [ResolvedTo(RAW_FIR)] parameterOfNonLocalSetter.kt
     [ResolvedTo(RAW_FIR)] annotations container
@@ -58,7 +57,7 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
 SUPER_TYPES:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
     [ResolvedTo(RAW_FIR)] annotations container
-    public? final? [ResolvedTo(RAW_FIR)] class X : R|kotlin/Any| {
+    public? final? [ResolvedTo(SUPER_TYPES)] class X : R|kotlin/Any| {
         public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
@@ -72,8 +71,8 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
 TYPES:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
     [ResolvedTo(RAW_FIR)] annotations container
-    public? final? [ResolvedTo(SUPER_TYPES)] class X : R|kotlin/Any| {
-        public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=X] constructor(): R|X| {
+    public? final? [ResolvedTo(TYPES)] class X : R|kotlin/Any| {
+        public? [ResolvedTo(TYPES)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -86,8 +85,8 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
     [ResolvedTo(RAW_FIR)] annotations container
-    public final [ResolvedTo(SUPER_TYPES)] class X : R|kotlin/Any| {
-        public [ResolvedTo(TYPES)] [ContainingClassKey=X] constructor(): R|X| {
+    public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -100,16 +99,14 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
     [ResolvedTo(RAW_FIR)] annotations container
-    public final [ResolvedTo(SUPER_TYPES)] class X : R|kotlin/Any| {
-        public [ResolvedTo(TYPES)] [ContainingClassKey=X] constructor(): R|X| {
+    public final [ResolvedTo(STATUS)] class X : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=X] constructor(): R|X| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] var x: R|kotlin/Int| = IntegerLiteral(2)
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] var x: R|kotlin/Int| = LAZY_EXPRESSION
             public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=X] get(): R|kotlin/Int|
-            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=X] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-                ^ Unit#
-            }
+            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=X] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -121,11 +118,9 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] var x: R|kotlin/Int| = IntegerLiteral(2)
+        public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] var x: R|kotlin/Int| = LAZY_EXPRESSION
             public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] [ContainingClassKey=X] get(): R|kotlin/Int|
-            public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] [ContainingClassKey=X] set([ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
-                ^ Unit#
-            }
+            public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] [ContainingClassKey=X] set([ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -153,7 +148,7 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var x: R|kotlin/Int| = IntegerLiteral(2)
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var x: R|kotlin/Int| = Int(2)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=X] get(): R|kotlin/Int|
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=X] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
                 ^ Unit#
@@ -169,7 +164,7 @@ FILE: [ResolvedTo(IMPORTS)] parameterOfNonLocalSetter.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] var x: R|kotlin/Int| = IntegerLiteral(2)
+        public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] var x: R|kotlin/Int| = Int(2)
             public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=X] get(): R|kotlin/Int|
             public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=X] set([ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] resolveMe: R|kotlin/Int|): R|kotlin/Unit| {
                 ^ Unit#

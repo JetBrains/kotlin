@@ -1,5 +1,6 @@
 // IR_DIFFERENCE
 // LOCAL_VARIABLE_TABLE
+// LAMBDAS: CLASS
 
 fun foo() {
     t { (`a b`, `b$c`, `c-d`, `b$$c--d`, `a()§&*&^@あ化`) -> }

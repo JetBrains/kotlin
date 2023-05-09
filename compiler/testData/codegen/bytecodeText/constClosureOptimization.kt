@@ -1,3 +1,5 @@
+// LAMBDAS: CLASS
+
 fun test() {
 
     fun local(){

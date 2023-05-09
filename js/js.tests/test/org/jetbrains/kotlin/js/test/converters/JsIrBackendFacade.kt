@@ -16,10 +16,13 @@ import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.codegen.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.ic.JsExecutableProducer
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
-import org.jetbrains.kotlin.ir.backend.js.SourceMapsInfo
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.*
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImplForJsIC
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageConfig
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageLogLevel
+import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageMode
+import org.jetbrains.kotlin.ir.linkage.partial.setupPartialLinkageConfig
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.ir.util.irMessageLogger
 import org.jetbrains.kotlin.js.backend.ast.ESM_EXTENSION
@@ -36,9 +39,11 @@ import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
 import org.jetbrains.kotlin.test.model.*
-import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator.Companion.getJsArtifactSimpleName
+import org.jetbrains.kotlin.test.services.jsLibraryProvider
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
@@ -57,6 +62,9 @@ class JsIrBackendFacade(
 
     override fun transform(module: TestModule, inputArtifact: BinaryArtifacts.KLib): BinaryArtifacts.Js? {
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+
+        // Enforce PL with the ERROR log level to fail any tests where PL detected any incompatibilities.
+        configuration.setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.ERROR))
 
         val isMainModule = JsEnvironmentConfigurator.isMainModule(module, testServices)
         if (!isMainModule) return null
@@ -163,16 +171,17 @@ class JsIrBackendFacade(
                 module.directives[JsEnvironmentConfigurationDirectives.MODULE_KIND].contains(ModuleKind.ES)
 
         val outputFile =
-            File(JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name, TranslationMode.FULL_DEV) + module.kind.extension)
+            File(
+                JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name, TranslationMode.FULL_DEV)
+                    .finalizePath(module.kind)
+            )
 
         val transformer = IrModuleToJsTransformer(
             loweredIr.context,
             mainArguments,
             moduleToName = runIf(isEsModules) {
                 loweredIr.allModules.associateWith {
-                    "./${getJsArtifactSimpleName(testServices, it.safeName)}_v5.mjs".run {
-                        if (isWindows) minify() else this
-                    }
+                    "./${getJsArtifactSimpleName(testServices, it.safeName)}_v5.mjs".minifyIfNeed()
                 }
             } ?: emptyMap()
         )
@@ -231,14 +240,14 @@ class JsIrBackendFacade(
         if (dontSkipRegularMode) {
             for ((mode, output) in compilerResult.outputs.entries) {
                 val outputFile = if (firstTimeCompilation) {
-                    File(JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name, mode) + moduleKind.extension)
+                    File(JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name, mode).finalizePath(moduleKind))
                 } else {
                     File(
                         JsEnvironmentConfigurator.getRecompiledJsModuleArtifactPath(
                             testServices,
                             module.name,
                             mode
-                        ) + moduleKind.extension
+                        ).finalizePath(moduleKind)
                     )
                 }
                 output.writeTo(outputFile, moduleId, moduleKind)
@@ -272,7 +281,10 @@ class JsIrBackendFacade(
     }
 
     private fun CompilationOutputs.writeTo(outputFile: File, moduleId: String, moduleKind: ModuleKind) {
-        val allJsFiles = writeAll(outputFile.parentFile, outputFile.nameWithoutExtension, false, moduleId, moduleKind).filter {
+        val tmpBuildDir = outputFile.parentFile.resolve("tmp-build")
+        // CompilationOutputs keeps the `outputDir` clean by removing all outdated JS and other unknown files.
+        // To ensure that useful files around `outputFile`, such as irdump, are not removed, use `tmpBuildDir` instead.
+        val allJsFiles = writeAll(tmpBuildDir, outputFile.nameWithoutExtension, false, moduleId, moduleKind).filter {
             it.extension == "js" || it.extension == "mjs"
         }
 
@@ -283,6 +295,7 @@ class JsIrBackendFacade(
             val newFile = outputFile.augmentWithModuleName(depModuleId)
             builtJsFilePath.fixJsFile(newFile, depModuleId, moduleKind)
         }
+        tmpBuildDir.deleteRecursively()
     }
 
     private fun File.write(text: String) {
@@ -303,8 +316,6 @@ val TestModule.kind: ModuleKind
     get() = directives.moduleKind
 
 fun String.augmentWithModuleName(moduleName: String): String {
-    val shouldMinimize = isWindows && moduleName.isPath()
-    val normalizedName = moduleName.run { if (shouldMinimize) minify() else this }
     val suffix = when {
         endsWith(ESM_EXTENSION) -> ESM_EXTENSION
         endsWith(REGULAR_EXTENSION) -> REGULAR_EXTENSION
@@ -312,26 +323,31 @@ fun String.augmentWithModuleName(moduleName: String): String {
     }
 
     return if (suffix == ESM_EXTENSION) {
-        replaceAfterLast(File.separator, normalizedName.replace("./", "")).removeSuffix(suffix) + suffix
+        replaceAfterLast(File.separator, moduleName.minifyIfNeed().replace("./", "")).removeSuffix(suffix) + suffix
     } else {
-        return removeSuffix("_v5$suffix") + "-${normalizedName}_v5$suffix"
+        return removeSuffix("_v5$suffix") + "-${moduleName}_v5$suffix"
     }
+}
+
+fun String.finalizePath(moduleKind: ModuleKind): String {
+    return plus(moduleKind.extension).minifyIfNeed()
 }
 
 // D8 ignores Windows settings related to extending of maximum path symbols count
 // The hack should be deleted when D8 fixes the bug.
 // The issue is here: https://bugs.chromium.org/p/v8/issues/detail?id=13318
-fun String.minify(): String {
-    if (length <= 80) return this
-
-    val directoryPath = substringBeforeLast('/')
-    val fileFullName = substringAfterLast('/')
+fun String.minifyIfNeed(): String {
+    if (!isWindows) return this
+    val delimiter = if (contains('\\')) '\\' else '/'
+    val directoryPath = substringBeforeLast(delimiter)
+    val fileFullName = substringAfterLast(delimiter)
     val fileName = fileFullName.substringBeforeLast('.')
+
+    if (fileName.length <= 80) return this
+
     val fileExtension = fileFullName.substringAfterLast('.')
 
-    return "$directoryPath/${fileName.cityHash64().toULong().toString(16)}.$fileExtension"
+    return "$directoryPath$delimiter${fileName.cityHash64().toULong().toString(16)}.$fileExtension"
 }
-
-private fun String.isPath(): Boolean = contains("/")
 
 fun File.augmentWithModuleName(moduleName: String): File = File(absolutePath.augmentWithModuleName(moduleName))

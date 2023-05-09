@@ -17,6 +17,9 @@ internal class ListBuilder<E> private constructor(
     private val backing: ListBuilder<E>?,
     private val root: ListBuilder<E>?
 ) : MutableList<E>, RandomAccess, AbstractMutableList<E>(), Serializable {
+    private companion object {
+        private val Empty = ListBuilder<Nothing>(0).also { it.isReadOnly = true }
+    }
 
     constructor() : this(10)
 
@@ -27,7 +30,7 @@ internal class ListBuilder<E> private constructor(
         if (backing != null) throw IllegalStateException() // just in case somebody casts subList to ListBuilder
         checkIsMutable()
         isReadOnly = true
-        return this
+        return if (length > 0) this else Empty
     }
 
     private fun writeReplace(): Any =

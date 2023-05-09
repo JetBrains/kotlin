@@ -62,6 +62,7 @@ class RingLauncher : Launcher() {
                     "Singleton.access" to BenchmarkEntryWithInit.create(::SingletonBenchmark, { access() }),
                     "Splay" to BenchmarkEntryWithInitAndValidation.create(::SplayBenchmark, { runSplay() }, { splayTearDown() }),
                     "SplayWithWorkers" to BenchmarkEntryWithInitAndValidation.create(::SplayBenchmarkUsingWorkers, { runSplayWorkers() }, { splayTearDownWorkers() }),
+                    "SplayWithMarkHelpers" to BenchmarkEntryWithInitAndValidation.create(::SplayBenchmarkWithMarkHelpers, { runSplayWithMarkHelpers() }, { splayTearDownMarkHelpers() }),
                     "String.stringConcat" to BenchmarkEntryWithInit.create(::StringBenchmark, { stringConcat() }),
                     "String.stringBuilderConcat" to BenchmarkEntryWithInit.create(::StringBenchmark, { stringBuilderConcat() }),
                     "String.stringBuilderConcatNullable" to BenchmarkEntryWithInit.create(::StringBenchmark, { stringBuilderConcatNullable() }),
@@ -206,6 +207,8 @@ class RingLauncher : Launcher() {
                     "Lambda.mutatingLambda" to BenchmarkEntryWithInit.create(::LambdaBenchmark, { mutatingLambda() }),
                     "Lambda.mutatingLambdaNoInline" to BenchmarkEntryWithInit.create(::LambdaBenchmark, { mutatingLambdaNoInline() }),
                     "Lambda.methodReferenceNoInline" to BenchmarkEntryWithInit.create(::LambdaBenchmark, { methodReferenceNoInline() }),
+                    "Life" to BenchmarkEntryWithInit.create(::LifeBenchmark, { bench() }),
+                    "LifeWithMarkHelpers" to BenchmarkEntryWithInitAndValidation.create(::LifeWithMarkHelpersBenchmark, { bench() }, { terminate() }),
                     "Loop.arrayIndexLoop" to BenchmarkEntryWithInit.create(::LoopBenchmark, { arrayIndexLoop() }),
                     "Loop.arrayListLoop" to BenchmarkEntryWithInit.create(::LoopBenchmark, { arrayListLoop() }),
                     "ParameterNotNull.invokeOneArgWithNullCheck" to BenchmarkEntryWithInit.create(::ParameterNotNullAssertionBenchmark, { invokeOneArgWithNullCheck() }),
@@ -242,6 +245,8 @@ class RingLauncher : Launcher() {
         @OptIn(kotlin.ExperimentalStdlibApi::class)
         if (!isExperimentalMM()) {
             baseBenchmarksSet -= listOf("SplayWithWorkers")
+            baseBenchmarksSet -= listOf("SplayWithMarkHelpers")
+            extendedBenchmarksSet -= listOf("LifeWithMarkHelpers")
         }
     }
 }

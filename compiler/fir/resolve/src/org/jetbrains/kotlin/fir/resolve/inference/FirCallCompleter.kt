@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.buildContextReceiver
 import org.jetbrains.kotlin.fir.declarations.builder.buildValueParameter
 import org.jetbrains.kotlin.fir.expressions.*
@@ -111,9 +112,13 @@ class FirCallCompleter(
 
             ConstraintSystemCompletionMode.PARTIAL -> {
                 runCompletionForCall(candidate, completionMode, call, initialType, analyzer)
-                if (inferenceSession !is FirBuilderInferenceSession) {
+
+                // Add top-level delegate call as partially resolved to inference session
+                if (resolutionMode is ResolutionMode.ContextDependentDelegate) {
+                    require(inferenceSession is FirDelegatedPropertyInferenceSession)
                     inferenceSession.addPartiallyResolvedCall(call)
                 }
+
                 CompletionResult(call, false)
             }
 
@@ -256,6 +261,7 @@ class FirCallCompleter(
                     val name = Name.identifier("it")
                     val itType = parameters.single()
                     buildValueParameter {
+                        resolvePhase = FirResolvePhase.BODY_RESOLVE
                         source = lambdaAtom.atom.source?.fakeElement(KtFakeSourceElementKind.ItLambdaParameter)
                         containingFunctionSymbol = lambdaArgument.symbol
                         moduleData = session.moduleData

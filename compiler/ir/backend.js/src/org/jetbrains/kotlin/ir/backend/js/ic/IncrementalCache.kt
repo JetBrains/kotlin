@@ -32,13 +32,13 @@ internal class IncrementalCache(private val library: KotlinLibraryHeader, val ca
 
     private val signatureToIndexMappingFromMetadata = hashMapOf<KotlinSourceFile, MutableMap<IdSignature, Int>>()
 
-    private val cacheHeaderFromDisk by lazy {
+    private val cacheHeaderFromDisk by lazy(LazyThreadSafetyMode.NONE) {
         cacheHeaderFile.useCodedInputIfExists {
             CacheHeader.fromProtoStream(this)
         }
     }
 
-    val libraryFileFromHeader by lazy { cacheHeaderFromDisk?.libraryFile }
+    val libraryFileFromHeader by lazy(LazyThreadSafetyMode.NONE) { cacheHeaderFromDisk?.libraryFile }
 
     private class CacheHeader(
         val libraryFile: KotlinLibraryFile,
@@ -149,7 +149,7 @@ internal class IncrementalCache(private val library: KotlinLibraryHeader, val ca
     private fun fetchSourceFileMetadata(srcFile: KotlinSourceFile, loadSignatures: Boolean) =
         kotlinLibrarySourceFileMetadata.getOrPut(srcFile) {
             val signatureToIndexMapping = signatureToIndexMappingFromMetadata.getOrPut(srcFile) { hashMapOf() }
-            val deserializer: IdSignatureDeserializer by lazy {
+            val deserializer: IdSignatureDeserializer by lazy(LazyThreadSafetyMode.NONE) {
                 library.sourceFileDeserializers[srcFile] ?: notFoundIcError("signature deserializer", library.libraryFile, srcFile)
             }
 

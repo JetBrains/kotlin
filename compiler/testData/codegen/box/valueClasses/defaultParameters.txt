@@ -17,6 +17,8 @@ public final class DPoint {
     static method <clinit>(): void
     private synthetic method <init>(p0: double, p1: double): void
     public synthetic final static method box-impl(p0: double, p1: double): DPoint
+    public synthetic static method constructor-impl$default(p0: double, p1: boolean, p2: int, p3: kotlin.jvm.internal.DefaultConstructorMarker): DPoint
+    public final static @org.jetbrains.annotations.NotNull method constructor-impl(p0: double, p1: boolean): DPoint
     public final static method constructor-impl(p0: double, p1: double): void
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
     public static method equals-impl(p0: double, p1: double, p2: java.lang.Object): boolean

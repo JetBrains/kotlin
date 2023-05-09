@@ -180,7 +180,8 @@ object FirTreeBuilder : AbstractFirTreeBuilder() {
     val intersectionTypeRef by element(TypeRef, typeRefWithNullability)
     val implicitTypeRef by element(TypeRef, typeRef)
 
-    val effectDeclaration by element(Contracts)
+    val contractElementDeclaration by element(Contracts)
+    val effectDeclaration by element(Contracts, contractElementDeclaration)
 
     val contractDescription by element(Contracts)
     val legacyRawContractDescription by element(Contracts, contractDescription)

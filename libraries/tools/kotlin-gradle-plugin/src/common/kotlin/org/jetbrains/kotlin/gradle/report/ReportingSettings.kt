@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.gradle.report
 
+import org.jetbrains.kotlin.build.report.FileReportSettings
+import org.jetbrains.kotlin.build.report.HttpReportSettings
 import java.io.File
 import java.io.Serializable
 
@@ -16,31 +18,11 @@ data class ReportingSettings(
     val httpReportSettings: HttpReportSettings? = null,
     val buildScanReportSettings: BuildScanSettings? = null,
     val singleOutputFile: File? = null,
+    val experimentalTryK2ConsoleOutput: Boolean = false,
     val includeCompilerArguments: Boolean = false,
 ) : Serializable {
     companion object {
         const val serialVersionUID: Long = 1
-    }
-}
-
-data class FileReportSettings(
-    val buildReportDir: File,
-    val includeMetricsInReport: Boolean = false,
-) : Serializable {
-    companion object {
-        const val serialVersionUID: Long = 0
-    }
-}
-
-data class HttpReportSettings(
-    val url: String,
-    val password: String?,
-    val user: String?,
-    val verboseEnvironment: Boolean,
-    val includeGitBranchName: Boolean
-) : Serializable {
-    companion object {
-        const val serialVersionUID: Long = 0
     }
 }
 

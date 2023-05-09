@@ -42,7 +42,7 @@ suspend fun box() = foo(A()) { (x_param, _, y_param) ->
 // EXPECTATIONS JS_IR
 // test.kt:12 box: $completion=EmptyContinuation
 // test.kt:4 <init>:
-// test.kt:12 box: $completion=EmptyContinuation
+// test.kt:14 box: $completion=EmptyContinuation
 // test.kt:12 box$slambda:
 // test.kt:12 box: $completion=EmptyContinuation
 // test.kt:10 foo: a=A, block=Function2, $completion=EmptyContinuation

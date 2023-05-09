@@ -12,14 +12,10 @@ public actual fun assertTypeEquals(expected: Any?, actual: Any?) {
     assertEquals(expected?.let { it::class }, actual?.let { it::class })
 }
 
-
-public actual fun testOnJvm(action: () -> Unit) { }
-public actual fun testOnJs(action: () -> Unit) { }
+public actual val TestPlatform.Companion.current: TestPlatform get() = TestPlatform.Wasm
 
 // TODO: See KT-24975
 public actual val isFloat32RangeEnforced: Boolean = false
-
-public actual val supportsNamedCapturingGroup: Boolean get() = true
 
 public actual val supportsOctalLiteralInRegex: Boolean get() = true
 

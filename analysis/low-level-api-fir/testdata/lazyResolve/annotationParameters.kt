@@ -6,7 +6,7 @@ annotation class Anno(val args: A.X)
 
 class B {
     @Anno(X.A)
-    fun resolveMe() {
+    fun resolve<caret>Me() {
     }
 
     @Anno(X.A)

@@ -1,0 +1,22 @@
+public final enum class En : R|kotlin/Enum<test/En>| {
+    public final val b: R|kotlin/Boolean|
+        public get(): R|kotlin/Boolean|
+
+    public final val i: R|kotlin/Int|
+        public get(): R|kotlin/Int|
+
+    private constructor(b: R|kotlin/Boolean| = STUB, i: R|kotlin/Int| = STUB): R|test/En|
+
+    public final static enum entry E1: R|test/En|
+    public final static enum entry E2: R|test/En|
+    public final static enum entry E3: R|test/En|
+    public final static fun values(): R|kotlin/Array<test/En>| {
+    }
+
+    public final static fun valueOf(value: R|kotlin/String|): R|test/En| {
+    }
+
+    public final static val entries: R|kotlin/enums/EnumEntries<test/En>|
+        public get(): R|kotlin/enums/EnumEntries<test/En>|
+
+}

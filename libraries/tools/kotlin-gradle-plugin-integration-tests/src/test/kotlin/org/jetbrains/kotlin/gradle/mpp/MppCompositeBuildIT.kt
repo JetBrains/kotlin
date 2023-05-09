@@ -17,7 +17,7 @@ import org.junit.jupiter.api.condition.OS
 
 @MppGradlePluginTests
 @DisplayName("Tests for multiplatform with composite builds")
-class MppCompositeBuildIT : MPPBaseTest() {
+class MppCompositeBuildIT : KGPBaseTest() {
     @GradleTest
     fun `test - sample0 - ide dependencies`(gradleVersion: GradleVersion) {
         val producer = project("mpp-composite-build/sample0/producerBuild", gradleVersion)
@@ -317,6 +317,8 @@ class MppCompositeBuildIT : MPPBaseTest() {
         }
     }
 
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_1)
+    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_70)
     @GradleAndroidTest
     fun `test - sample6-KT-56712-umbrella-composite`(
         gradleVersion: GradleVersion, agpVersion: String, jdkVersion: JdkVersions.ProvidedJdk,

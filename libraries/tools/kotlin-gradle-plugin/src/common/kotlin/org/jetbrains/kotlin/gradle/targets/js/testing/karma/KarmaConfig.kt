@@ -23,7 +23,6 @@ data class KarmaConfig(
     val failOnEmptyTestSuite: Boolean = false,
     val reporters: MutableList<String> = mutableListOf(),
     val preprocessors: MutableMap<String, MutableList<String>> = mutableMapOf(),
-    var coverageReporter: CoverageReporter? = null,
     val proxies: MutableMap<String, String> = mutableMapOf()
 )
 
@@ -42,11 +41,6 @@ class CustomLauncher(var base: String) {
     val flags = mutableListOf<String>()
     var debug: Boolean? = null
 }
-
-data class CoverageReporter(
-    var dir: String,
-    val reporters: MutableList<Reporter> = mutableListOf()
-)
 
 data class Reporter(
     val type: String,

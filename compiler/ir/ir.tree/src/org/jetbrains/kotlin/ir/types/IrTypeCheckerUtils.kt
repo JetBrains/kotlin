@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.ir.types
 
-import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import org.jetbrains.kotlin.utils.newHashMapWithExpectedSize
 
 class IrTypeSystemContextWithAdditionalAxioms(
     typeSystem: IrTypeSystemContext,
@@ -22,7 +22,9 @@ class IrTypeSystemContextWithAdditionalAxioms(
 
     private val firstTypeParameterConstructors = firstParameters.map { it.symbol }
     private val secondTypeParameterConstructors = secondParameters.map { it.symbol }
-    private val matchingTypeConstructors = firstTypeParameterConstructors.zip(secondTypeParameterConstructors).toMap()
+    private val matchingTypeConstructors = firstTypeParameterConstructors
+        .zip(secondTypeParameterConstructors)
+        .toMap(newHashMapWithExpectedSize(firstTypeParameterConstructors.size))
 
     override fun areEqualTypeConstructors(c1: TypeConstructorMarker, c2: TypeConstructorMarker): Boolean {
         if (super.areEqualTypeConstructors(c1, c2)) return true

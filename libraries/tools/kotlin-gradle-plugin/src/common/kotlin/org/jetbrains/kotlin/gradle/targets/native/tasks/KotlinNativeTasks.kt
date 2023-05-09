@@ -16,13 +16,13 @@ import org.gradle.api.artifacts.result.DependencyResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.gradle.api.file.*
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.gradle.work.NormalizeLineEndings
-import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
-import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
+import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.compilerRunner.*
 import org.jetbrains.kotlin.compilerRunner.KotlinNativeCInteropRunner.Companion.run
 import org.jetbrains.kotlin.gradle.dsl.*
@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.GradleKpmMetadataCompilationData
@@ -53,6 +55,7 @@ import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.project.model.LanguageSettings
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.File
 import java.nio.file.Files
 import javax.inject.Inject
@@ -144,6 +147,10 @@ abstract class AbstractKotlinNativeCompile<
     @get:Internal
     abstract val baseName: String
 
+    @get:Input
+    @get:Optional
+    internal abstract val explicitApiMode: Property<ExplicitApiMode>
+
     @get:Internal
     protected val konanTarget by project.provider {
         when (val compilation = compilation) {
@@ -218,15 +225,13 @@ abstract class AbstractKotlinNativeCompile<
         get() = false
 
     @get:Input
-    val kotlinNativeVersion: String
-        get() = project.konanVersion.toString()
+    val kotlinNativeVersion: String = project.konanVersion
 
     @get:Input
     val artifactVersion = project.version.toString()
 
     @get:Input
-    internal val useEmbeddableCompilerJar: Boolean
-        get() = project.nativeUseEmbeddableCompilerJar
+    internal val useEmbeddableCompilerJar: Boolean = project.nativeUseEmbeddableCompilerJar
 
     @get:Internal
     open val outputFile: Provider<File>
@@ -267,22 +272,9 @@ abstract class AbstractKotlinNativeCompile<
     @get:Nested
     var kotlinPluginData: Provider<KotlinCompilerPluginData>? = null
 
-    // Used by IDE via reflection.
-    @get:Internal
-    override val serializedCompilerArguments: List<String>
-        get() = buildCommonArgs()
-
-    // Used by IDE via reflection.
-    @get:Internal
-    override val defaultSerializedCompilerArguments: List<String>
-        get() = buildCommonArgs(true)
-
     private val languageSettingsBuilder by project.provider {
         compilation.languageSettings
     }
-
-    // Args used by both the compiler and IDEA.
-    abstract fun buildCommonArgs(defaultsOnly: Boolean = false): List<String>
 
     @get:Input
     @get:Optional
@@ -300,7 +292,9 @@ abstract class AbstractKotlinNativeCompile<
 }
 
 // Remove it once actual K2NativeCompilerArguments will be available without 'kotlin.native.enabled = true' flag
-class StubK2NativeCompilerArguments : CommonCompilerArguments()
+class StubK2NativeCompilerArguments : CommonCompilerArguments() {
+    override fun copyOf(): Freezable = copyCommonCompilerArguments(this, StubK2NativeCompilerArguments())
+}
 
 /**
  * A task producing a klibrary from a compilation.
@@ -316,7 +310,7 @@ internal constructor(
     private val objectFactory: ObjectFactory,
     private val providerFactory: ProviderFactory,
     private val execOperations: ExecOperations
-) : AbstractKotlinNativeCompile<KotlinCommonOptions, StubK2NativeCompilerArguments>(objectFactory),
+) : AbstractKotlinNativeCompile<KotlinCommonOptions, K2NativeCompilerArguments>(objectFactory),
     KotlinCompile<KotlinCommonOptions>,
     K2MultiplatformCompilationTask,
     KotlinCompilationTask<KotlinNativeCompilerOptions> {
@@ -428,26 +422,76 @@ internal constructor(
     private val isAllowCommonizer: Boolean by lazy { project.isAllowCommonizer() }
     // endregion.
 
-    override fun createCompilerArgs(): StubK2NativeCompilerArguments = StubK2NativeCompilerArguments()
+    @Suppress("DeprecatedCallableAddReplaceWith")
+    @Deprecated("KTIJ-25227: Necessary override for IDEs < 2023.2", level = DeprecationLevel.ERROR)
+    override fun setupCompilerArgs(args: K2NativeCompilerArguments, defaultsOnly: Boolean, ignoreClasspathResolutionErrors: Boolean) {
+        @Suppress("DEPRECATION_ERROR")
+        super.setupCompilerArgs(args, defaultsOnly, ignoreClasspathResolutionErrors)
+    }
 
-    override fun setupCompilerArgs(
-        args: StubK2NativeCompilerArguments,
-        defaultsOnly: Boolean,
-        ignoreClasspathResolutionErrors: Boolean
-    ) = Unit
+    override fun createCompilerArguments(context: CreateCompilerArgumentsContext) = context.create<K2NativeCompilerArguments> {
+        val sharedCompilationData = createSharedCompilationDataOrNull()
 
-    override fun buildCommonArgs(defaultsOnly: Boolean): List<String> {
-        val plugins = listOfNotNull(
+        val compilerPlugins = listOfNotNull(
             compilerPluginClasspath?.let { CompilerPluginData(it, compilerPluginOptions) },
             kotlinPluginData?.orNull?.let { CompilerPluginData(it.classpath, it.options) }
         )
 
-        return buildKotlinNativeCompileCommonArgs(
-            languageSettings,
-            compilerOptions,
-            plugins
-        )
+        primitive { args ->
+            args.moduleName = compilerOptions.moduleName.get()
+            args.shortModuleName = shortModuleName
+            args.multiPlatform = true
+            args.noendorsedlibs = true
+            args.outputName = outputFile.get().absolutePath
+            args.optimization = optimized
+            args.debug = debuggable
+            args.enableAssertions = debuggable
+            args.target = konanTarget.name
+            args.produce = outputKind.name.toLowerCaseAsciiOnly()
+            args.expectActualLinker = sharedCompilationData != null
+            args.metadataKlib = sharedCompilationData != null
+            args.nodefaultlibs = sharedCompilationData != null
+            args.manifestFile = sharedCompilationData?.manifestFile?.absolutePath
+
+            args.pluginOptions = compilerPlugins.flatMap { it.options.arguments }.toTypedArray()
+
+            /* Shared native compilations in K2 still use -Xcommon-sources and klib dependencies */
+            if (compilerOptions.usesK2.get() && sharedCompilationData == null) {
+                args.fragments = multiplatformStructure.fragmentsCompilerArgs
+                args.fragmentRefines = multiplatformStructure.fragmentRefinesCompilerArgs
+            }
+
+            KotlinNativeCompilerOptionsHelper.fillCompilerArguments(compilerOptions, args)
+
+            explicitApiMode.orNull?.run { args.explicitApi = toCompilerValue() }
+        }
+
+        pluginClasspath { args ->
+            args.pluginClasspaths = compilerPlugins.flatMap { classpath -> runSafe { classpath.files } ?: emptySet() }.toPathsArray()
+        }
+
+        dependencyClasspath { args ->
+            args.libraries = runSafe { libraries.files.filterKlibsPassedToCompiler().toPathsArray() }
+            args.friendModules = runSafe {
+                friendModule.files.takeIf { it.isNotEmpty() }?.map { it.absolutePath }?.joinToString(File.pathSeparator)
+            }
+            args.refinesPaths = runSafe {
+                sharedCompilationData?.refinesPaths?.files?.takeIf { it.isNotEmpty() }?.toPathsArray()
+            }
+        }
+
+        sources { args ->
+            /* Shared native compilations in K2 still use -Xcommon-sources and klib dependencies */
+            if (compilerOptions.usesK2.get() && sharedCompilationData == null) {
+                args.fragmentSources = multiplatformStructure.fragmentSourcesCompilerArgs(sourceFileFilter)
+            } else {
+                args.commonSources = commonSourcesTree.files.takeIf { it.isNotEmpty() }?.toPathsArray()
+            }
+
+            args.freeArgs += sources.asFileTree.map { it.absolutePath }
+        }
     }
+
 
     private val isMetadataCompilation: Boolean = when (compilation) {
         is KotlinCompilationInfo.KPM -> compilation.compilationData is GradleKpmMetadataCompilationData<*>
@@ -466,39 +510,19 @@ internal constructor(
         return SharedCompilationData(manifestFile, isAllowCommonizer, refinesModule)
     }
 
-    internal fun buildCompilerArgs(): List<String> = buildKotlinNativeKlibCompilerArgs(
-        outFile = outputFile.get(),
-        optimized = optimized,
-        debuggable = debuggable,
-        target = konanTarget,
-        libraries = libraries.files.filterKlibsPassedToCompiler(),
-        languageSettings = languageSettings,
-        compilerOptions = compilerOptions,
-        compilerPlugins = listOfNotNull(
-            compilerPluginClasspath?.let { CompilerPluginData(it, compilerPluginOptions) },
-            kotlinPluginData?.orNull?.let { CompilerPluginData(it.classpath, it.options) }
-        ),
-        shortModuleName = shortModuleName,
-        friendModule = friendModule,
-        libraryVersion = artifactVersion,
-        sharedCompilationData = createSharedCompilationDataOrNull(),
-        source = sources.asFileTree,
-        commonSourcesTree = commonSourcesTree,
-        k2MultiplatformCompilationData = multiplatformStructure
-    )
-
     @TaskAction
     fun compile() {
         val output = outputFile.get()
         output.parentFile.mkdirs()
 
         collectCommonCompilerStats()
-        val buildArgs = buildCompilerArgs()
+        val arguments = createCompilerArguments()
+        val buildArguments = ArgumentUtils.convertArgumentsToStringList(arguments)
 
         KotlinNativeCompilerRunner(
             settings = runnerSettings,
             executionContext = KotlinToolRunner.GradleExecutionContext.fromTaskContext(objectFactory, execOperations, logger)
-        ).run(buildArgs)
+        ).run(buildArguments)
     }
 
     private fun collectCommonCompilerStats() {

@@ -9,7 +9,9 @@ sealed class ArrayMap<T : Any> : Iterable<T> {
     abstract get
 
   abstract operator fun set(index: Int, value: T)
+
   abstract operator fun get(index: Int): T?
+
   abstract fun copy(): ArrayMap<T>
 
 }

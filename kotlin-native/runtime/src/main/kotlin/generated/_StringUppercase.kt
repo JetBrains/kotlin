@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,6 +10,7 @@ package kotlin.text
 // See: https://github.com/JetBrains/kotlin/tree/master/libraries/stdlib
 //
 
+@OptIn(kotlin.experimental.ExperimentalNativeApi::class)
 internal fun String.codePointAt(index: Int): Int {
     val high = this[index]
     if (high.isHighSurrogate() && index + 1 < this.length) {
@@ -21,10 +22,10 @@ internal fun String.codePointAt(index: Int): Int {
     return high.code
 }
 
-internal fun Int.charCount(): Int = if (this >= Char.MIN_SUPPLEMENTARY_CODE_POINT) 2 else 1 
+internal fun Int.charCount(): Int = if (this > Char.MAX_VALUE.code) 2 else 1 
 
 internal fun StringBuilder.appendCodePoint(codePoint: Int) {
-    if (codePoint < Char.MIN_SUPPLEMENTARY_CODE_POINT) {
+    if (codePoint <= Char.MAX_VALUE.code) {
         append(codePoint.toChar())
     } else {
         append(Char.MIN_HIGH_SURROGATE + ((codePoint - 0x10000) shr 10))

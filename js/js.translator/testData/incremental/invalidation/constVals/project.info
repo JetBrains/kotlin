@@ -6,3 +6,9 @@ STEP 0:
 STEP 1:
     libs: lib1, lib2, main
     dirty js: lib1, lib2
+STEP 2:
+    libs: lib1, lib2, main
+    dirty js: lib1, lib2, main
+STEP 3:
+    libs: lib1, lib2, main
+    dirty js: lib1, lib2

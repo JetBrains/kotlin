@@ -33,9 +33,22 @@ internal class FirDeclarationForCompiledElementSearcher(private val symbolProvid
             is KtConstructor<*> -> findConstructorOfNonLocalClass(ktDeclaration)
             is KtNamedFunction -> findNonLocalFunction(ktDeclaration)
             is KtProperty -> findNonLocalProperty(ktDeclaration)
+            is KtParameter -> findParameter(ktDeclaration)
 
             else -> errorWithFirSpecificEntries("Unsupported compiled declaration of type", psi = ktDeclaration)
         }
+    }
+
+    private fun findParameter(param: KtParameter): FirDeclaration {
+        val ownerFunction = param.ownerFunction ?: errorWithFirSpecificEntries("Unsupported compiled parameter", psi = param)
+        val firDeclaration = findNonLocalDeclaration(ownerFunction)
+        val firFunction = firDeclaration as? FirFunction ?: errorWithFirSpecificEntries(
+            "No fir function found by ktFunction",
+            psi = ownerFunction,
+            fir = firDeclaration
+        )
+        return firFunction.valueParameters.find { it.name == param.nameAsSafeName }
+            ?: errorWithFirSpecificEntries("No fir value parameter found", psi = param, fir = firFunction)
     }
 
     private fun findNonLocalEnumEntry(declaration: KtEnumEntry): FirEnumEntry {

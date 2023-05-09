@@ -88,6 +88,7 @@ object ArrayOps : TemplateGroupBase() {
     }
 
     val f_contentEquals = fn("contentEquals(other: SELF)") {
+        platforms(Platform.Native)
         include(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         since("1.1")
@@ -109,9 +110,6 @@ object ArrayOps : TemplateGroupBase() {
             The elements are compared for equality with the [equals][Any.equals] function.
             For floating point numbers it means that `NaN` is equal to itself and `-0.0` is not equal to `0.0`.
             """
-        }
-        on(Platform.JVM) {
-            inlineOnly()
         }
     }
 
@@ -141,7 +139,6 @@ object ArrayOps : TemplateGroupBase() {
         }
         on(Platform.JVM) {
             inlineOnly()
-            annotation("""@JvmName("contentEqualsNullable")""")
             body { "return java.util.Arrays.equals(this, other)" }
         }
 
@@ -249,6 +246,7 @@ object ArrayOps : TemplateGroupBase() {
     }
 
     val f_contentToString = fn("contentToString()") {
+        platforms(Platform.Native)
         include(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         since("1.1")
@@ -263,9 +261,6 @@ object ArrayOps : TemplateGroupBase() {
         body { "return this.contentToString()" }
         if (f == ArraysOfUnsigned) {
             return@builder
-        }
-        on(Platform.JVM) {
-            inlineOnly()
         }
     }
 
@@ -288,7 +283,6 @@ object ArrayOps : TemplateGroupBase() {
 
         on(Platform.JVM) {
             inlineOnly()
-            annotation("""@JvmName("contentToStringNullable")""")
             body { "return java.util.Arrays.toString(this)" }
         }
         on(Platform.JS) {
@@ -371,6 +365,7 @@ object ArrayOps : TemplateGroupBase() {
     }
 
     val f_contentHashCode = fn("contentHashCode()") {
+        platforms(Platform.Native)
         include(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned)
     } builder {
         since("1.1")
@@ -382,9 +377,6 @@ object ArrayOps : TemplateGroupBase() {
         body { "return this.contentHashCode()" }
         if (f == ArraysOfUnsigned) {
             return@builder
-        }
-        on(Platform.JVM) {
-            inlineOnly()
         }
     }
 
@@ -404,7 +396,6 @@ object ArrayOps : TemplateGroupBase() {
 
         on(Platform.JVM) {
             inlineOnly()
-            annotation("""@JvmName("contentHashCodeNullable")""")
             body { "return java.util.Arrays.hashCode(this)" }
         }
         on(Platform.JS) {

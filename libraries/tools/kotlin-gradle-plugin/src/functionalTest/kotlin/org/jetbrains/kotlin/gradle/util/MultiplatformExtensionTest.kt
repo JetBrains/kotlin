@@ -15,11 +15,13 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
+import org.jetbrains.kotlin.gradle.targets.metadata.findMetadataCompilation
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerDependent
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropIdentifier
 import org.jetbrains.kotlin.gradle.targets.native.internal.from
 import kotlin.test.BeforeTest
 import kotlin.test.assertNotNull
+import kotlin.test.fail
 
 
 abstract class MultiplatformExtensionTest {
@@ -39,29 +41,29 @@ abstract class MultiplatformExtensionTest {
         project.enableCInteropCommonization()
     }
 
-    internal fun expectCInteropCommonizerDependent(compilation: KotlinSharedNativeCompilation): CInteropCommonizerDependent {
+    internal suspend fun expectCInteropCommonizerDependent(compilation: KotlinSharedNativeCompilation): CInteropCommonizerDependent {
         return assertNotNull(
             CInteropCommonizerDependent.from(compilation), "Can't find SharedInterops for ${compilation.name} compilation"
         )
     }
 
-    internal fun expectCInteropCommonizerDependent(sourceSet: KotlinSourceSet): CInteropCommonizerDependent {
+    internal suspend fun expectCInteropCommonizerDependent(sourceSet: KotlinSourceSet): CInteropCommonizerDependent {
         return assertNotNull(
             CInteropCommonizerDependent.from(sourceSet), "Can't find SharedInterops for ${sourceSet.name} source set"
         )
     }
 
-    internal fun findCInteropCommonizerDependent(compilation: KotlinSharedNativeCompilation): CInteropCommonizerDependent? {
+    internal suspend fun findCInteropCommonizerDependent(compilation: KotlinSharedNativeCompilation): CInteropCommonizerDependent? {
         return CInteropCommonizerDependent.from(compilation)
     }
 
-    internal fun findCInteropCommonizerDependent(sourceSet: KotlinSourceSet): CInteropCommonizerDependent? {
+    internal suspend fun findCInteropCommonizerDependent(sourceSet: KotlinSourceSet): CInteropCommonizerDependent? {
         return CInteropCommonizerDependent.from(sourceSet)
     }
 
-    internal fun expectSharedNativeCompilation(sourceSet: KotlinSourceSet): KotlinSharedNativeCompilation {
-        return kotlin.targets.flatMap { it.compilations }.filterIsInstance<KotlinSharedNativeCompilation>()
-            .single { it.defaultSourceSet == sourceSet }
+    internal suspend fun expectSharedNativeCompilation(sourceSet: KotlinSourceSet): KotlinSharedNativeCompilation {
+        val compilation = project.findMetadataCompilation(sourceSet) ?: fail("Missing metadata compilation for $sourceSet")
+        return assertIsInstance<KotlinSharedNativeCompilation>(compilation)
     }
 
     internal fun KotlinNativeTarget.mainCinteropIdentifier(name: String): CInteropIdentifier {

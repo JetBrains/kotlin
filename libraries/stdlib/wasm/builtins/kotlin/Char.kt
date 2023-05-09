@@ -22,9 +22,11 @@ public class Char private constructor(private val value: Char) : Comparable<Char
      * Returns zero if this value is equal to the specified other value, a negative number if it's less than other,
      * or a positive number if it's greater than other.
      */
+    @kotlin.internal.IntrinsicConstEvaluation
     public override fun compareTo(other: Char): Int =
         wasm_i32_compareTo(this.toInt(), other.toInt())
 
+    @kotlin.internal.IntrinsicConstEvaluation
     public override fun equals(other: Any?): Boolean {
         if (other is Char)
             return wasm_i32_eq(this.toInt(), other.toInt())
@@ -32,14 +34,17 @@ public class Char private constructor(private val value: Char) : Comparable<Char
     }
 
     /** Adds the other Int value to this value resulting a Char. */
+    @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun plus(other: Int): Char =
         (this.toInt() + other).toChar()
 
     /** Subtracts the other Char value from this value resulting an Int. */
+    @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun minus(other: Char): Int =
         (this.toInt() - other.toInt())
 
     /** Subtracts the other Int value from this value resulting a Char. */
+    @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun minus(other: Int): Char =
         (this.toInt() - other).toChar()
 
@@ -68,40 +73,48 @@ public class Char private constructor(private val value: Char) : Comparable<Char
      *
      * If the [other] value is less than or equal to `this` value, then the returned range is empty.
      */
-    @SinceKotlin("1.7")
-    @ExperimentalStdlibApi
+    @SinceKotlin("1.9")
+    @WasExperimental(ExperimentalStdlibApi::class)
     public operator fun rangeUntil(other: Char): CharRange =
         this until other
 
     /** Returns the value of this character as a `Byte`. */
+    @kotlin.internal.IntrinsicConstEvaluation
     public inline fun toByte(): Byte =
         this.toInt().toByte()
 
     /** Returns the value of this character as a `Char`. */
+    @kotlin.internal.IntrinsicConstEvaluation
     public inline fun toChar(): Char =
         this
 
     /** Returns the value of this character as a `Short`. */
+    @kotlin.internal.IntrinsicConstEvaluation
     public inline fun toShort(): Short =
         this.toInt().toShort()
 
     /** Returns the value of this character as a `Int`. */
     @WasmNoOpCast
+    @kotlin.internal.IntrinsicConstEvaluation
     public fun toInt(): Int =
         implementedAsIntrinsic
 
     /** Returns the value of this character as a `Long`. */
+    @kotlin.internal.IntrinsicConstEvaluation
     public inline fun toLong(): Long =
         this.toInt().toLong()
 
     /** Returns the value of this character as a `Float`. */
+    @kotlin.internal.IntrinsicConstEvaluation
     public inline fun toFloat(): Float =
         this.toInt().toFloat()
 
     /** Returns the value of this character as a `Double`. */
+    @kotlin.internal.IntrinsicConstEvaluation
     public inline fun toDouble(): Double =
         this.toInt().toDouble()
 
+    @kotlin.internal.IntrinsicConstEvaluation
     override fun toString(): String {
         val array = WasmCharArray(1)
         array.set(0, this)

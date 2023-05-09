@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.backend.konan.descriptors.isFromInteropLibrary
 import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrContext
 import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrInput
 import org.jetbrains.kotlin.backend.konan.driver.phases.PsiToIrOutput
-import org.jetbrains.kotlin.backend.konan.ir.KonanSymbolsOverDescriptors
+import org.jetbrains.kotlin.backend.konan.ir.KonanSymbols
+import org.jetbrains.kotlin.backend.konan.ir.SymbolOverDescriptorsLookupUtils
 import org.jetbrains.kotlin.backend.konan.ir.interop.IrProviderForCEnumAndCStructStubs
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
 import org.jetbrains.kotlin.backend.konan.serialization.*
@@ -92,8 +93,7 @@ internal fun PsiToIrContext.psiToIr(
             else
                 BuiltInFictitiousFunctionIrClassFactory(symbolTable, irBuiltInsOverDescriptors, reflectionTypes)
     irBuiltInsOverDescriptors.functionFactory = functionIrClassFactory
-    val descriptorsLookup = DescriptorsLookup(this.builtIns)
-    val symbols = KonanSymbolsOverDescriptors(this, descriptorsLookup, generatorContext.irBuiltIns, symbolTable, symbolTable.lazyWrapper)
+    val symbols = KonanSymbols(this, SymbolOverDescriptorsLookupUtils(generatorContext.symbolTable), generatorContext.irBuiltIns, symbolTable.lazyWrapper)
 
     val irDeserializer = if (isProducingLibrary && !useLinkerWhenProducingLibrary) {
         // Enable lazy IR generation for newly-created symbols inside BE
@@ -106,11 +106,13 @@ internal fun PsiToIrContext.psiToIr(
             override fun resolveBySignatureInModule(signature: IdSignature, kind: IrDeserializer.TopLevelSymbolKind, moduleName: Name): IrSymbol {
                 error("Should not be called")
             }
+
+            override fun postProcess(inOrAfterLinkageStep: Boolean) = Unit
         }
     } else {
         val exportedDependencies = (moduleDescriptor.getExportedDependencies(config) + libraryToCacheModule?.let { listOf(it) }.orEmpty()).distinct()
         val irProviderForCEnumsAndCStructs =
-                IrProviderForCEnumAndCStructStubs(generatorContext, interopBuiltIns, symbols)
+                IrProviderForCEnumAndCStructStubs(generatorContext, symbols)
 
         val translationContext = object : TranslationPluginContext {
             override val moduleDescriptor: ModuleDescriptor
@@ -143,7 +145,12 @@ internal fun PsiToIrContext.psiToIr(
                 stubGenerator = stubGenerator,
                 cenumsProvider = irProviderForCEnumsAndCStructs,
                 exportedDependencies = exportedDependencies,
-                partialLinkageSupport = createPartialLinkageSupportForLinker(partialLinkageConfig, generatorContext.irBuiltIns, messageLogger),
+                partialLinkageSupport = createPartialLinkageSupportForLinker(
+                        partialLinkageConfig = partialLinkageConfig,
+                        allowErrorTypes = false, // Kotlin/Native does not support error types.
+                        builtIns = generatorContext.irBuiltIns,
+                        messageLogger = messageLogger
+                ),
                 cachedLibraries = config.cachedLibraries,
                 lazyIrForCaches = config.lazyIrForCaches,
                 libraryBeingCached = config.libraryToCache,
@@ -219,7 +226,7 @@ internal fun PsiToIrContext.psiToIr(
             expectDescriptorToSymbol = if (expectActualLinker) expectDescriptorToSymbol else null
     ).toKonanModule()
 
-    irDeserializer.postProcess()
+    irDeserializer.postProcess(inOrAfterLinkageStep = true)
 
     // Enable lazy IR genration for newly-created symbols inside BE
     stubGenerator.unboundSymbolGeneration = true

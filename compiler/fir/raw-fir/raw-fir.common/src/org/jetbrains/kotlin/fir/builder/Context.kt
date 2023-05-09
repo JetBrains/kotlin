@@ -28,7 +28,7 @@ class Context<T> {
     val currentClassId get() = ClassId(packageFqName, className, inLocalContext)
 
     val firFunctionTargets = mutableListOf<FirFunctionTarget>()
-    val calleeNamesForLambda = mutableListOf<Name>()
+    val calleeNamesForLambda = mutableListOf<Name?>()
 
     @PrivateForInline
     val _firLabels = mutableListOf<FirLabel>()

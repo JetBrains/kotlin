@@ -48,6 +48,37 @@ private fun IrFile.shouldSkipDump(): Boolean {
     return entry.lineStartOffsetsAreEmpty
 }
 
+/**
+ * Sorts the declarations in the list using the result of [IrDeclaration.render] as the sorting key.
+ *
+ * The exception is properties with backing fields and [IrAnonymousInitializer]s: their relative order is preserved.
+ */
+internal fun List<IrDeclaration>.stableOrdered(): List<IrDeclaration> {
+    val strictOrder = hashMapOf<IrDeclaration, Int>()
+
+    var idx = 0
+
+    forEach {
+        if (it is IrProperty && it.backingField != null && !it.isConst) {
+            strictOrder[it] = idx++
+        }
+        if (it is IrAnonymousInitializer) {
+            strictOrder[it] = idx++
+        }
+    }
+
+    return sortedWith { a, b ->
+        val strictA = strictOrder[a] ?: Int.MAX_VALUE
+        val strictB = strictOrder[b] ?: Int.MAX_VALUE
+
+        if (strictA == strictB) {
+            val rA = a.render()
+            val rB = b.render()
+            rA.compareTo(rB)
+        } else strictA - strictB
+    }
+}
+
 class DumpIrTreeVisitor(
     out: Appendable,
     normalizeNames: Boolean = false,
@@ -58,33 +89,7 @@ class DumpIrTreeVisitor(
     private val elementRenderer = RenderIrElementVisitor(normalizeNames, !stableOrder)
     private fun IrType.render() = elementRenderer.renderType(this)
 
-    private fun List<IrDeclaration>.ordered(): List<IrDeclaration> {
-        if (!stableOrder) return this
-
-        val strictOrder = mutableMapOf<IrDeclaration, Int>()
-
-        var idx = 0
-
-        forEach {
-            if (it is IrProperty && it.backingField != null && !it.isConst) {
-                strictOrder[it] = idx++
-            }
-            if (it is IrAnonymousInitializer) {
-                strictOrder[it] = idx++
-            }
-        }
-
-        return sortedWith { a, b ->
-            val strictA = strictOrder[a] ?: Int.MAX_VALUE
-            val strictB = strictOrder[b] ?: Int.MAX_VALUE
-
-            if (strictA == strictB) {
-                val rA = a.render()
-                val rB = b.render()
-                rA.compareTo(rB)
-            } else strictA - strictB
-        }
-    }
+    private fun List<IrDeclaration>.ordered(): List<IrDeclaration> = if (stableOrder) stableOrdered() else this
 
     override fun visitElement(element: IrElement, data: String) {
         element.dumpLabeledElementWith(data) {

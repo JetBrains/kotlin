@@ -1,101 +1,93 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.gradle.native
 
-import org.jetbrains.kotlin.gradle.BaseGradleIT
-import org.jetbrains.kotlin.gradle.GradleVersionRequired
-import org.jetbrains.kotlin.gradle.transformProjectWithPluginsDsl
-import org.jetbrains.kotlin.konan.target.HostManager
-import org.junit.Assume
-import org.junit.BeforeClass
-import org.junit.Test
+import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.capitalize
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.OS
 import java.util.*
 
-class CommonNativeIT : BaseGradleIT() {
+@OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
+@DisplayName("K/N tests of apple native common libs")
+@NativeGradlePluginTests
+class CommonNativeIT : KGPBaseTest() {
 
-    override val defaultGradleVersion: GradleVersionRequired
-        get() = GradleVersionRequired.FOR_MPP_SUPPORT
+    // TODO(Dmitrii Krasnov): remove it, when KT-58104 will be fixed
+    override val defaultBuildOptions = super.defaultBuildOptions.copy(statisticsForceValidation = false)
+
+    private val String.withPrefix get() = "native-apple-devices-common/$this"
+
+    @DisplayName("Common ios")
+    @GradleTest
+    fun testCommonIos(gradleVersion: GradleVersion) {
+        doCommonNativeTest(
+            "common-ios",
+            libTargets = listOf("iosLibArm64", "iosLibX64"),
+            appTargets = listOf("iosArm64", "iosX64"),
+            gradleVersion
+        )
+    }
+
+    @DisplayName("Common watchos")
+    @GradleTest
+    fun testCommonWatchos(gradleVersion: GradleVersion) {
+        doCommonNativeTest(
+            "common-watchos",
+            libTargets = listOf("watchosLibArm32", "watchosLibArm64", "watchosLibX64"),
+            appTargets = listOf("watchosArm32", "watchosArm64", "watchosX64"),
+            gradleVersion
+        )
+    }
+
+    @DisplayName("Common tvos")
+    @GradleTest
+    fun testCommonTvos(gradleVersion: GradleVersion) {
+        doCommonNativeTest(
+            "common-tvos",
+            libTargets = listOf("tvosLibArm64", "tvosLibX64"),
+            appTargets = listOf("tvosArm64", "tvosX64"),
+            gradleVersion
+        )
+    }
 
     private fun doCommonNativeTest(
         projectName: String,
         libTargets: List<String>,
-        appTargets: List<String>
-    ) = with(transformProjectWithPluginsDsl(projectName, directoryPrefix = "native-apple-devices-common")) {
-        gradleProperties().apply {
+        appTargets: List<String>,
+        gradleVersion: GradleVersion
+    ) {
+        nativeProject(projectName.withPrefix, gradleVersion) {
+
             configureJvmMemory()
-        }
 
-        val libCompileTasks = libTargets.map { ":lib:compileKotlin${it.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}" }
-        val appCompileTasks = appTargets.map { ":app:compileKotlin${it.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}" }
-        val appLinkFrameworkTasks = appTargets.map {
-            ":app:linkDebugFramework${
-                it.replaceFirstChar {
-                    if (it.isLowerCase()) it.titlecase(
-                        Locale.getDefault()
-                    ) else it.toString()
+            val libCompileTasks = libTargets.map { ":lib:compileKotlin${it.capitalize()}" }
+            val appCompileTasks = appTargets.map { ":app:compileKotlin${it.capitalize()}" }
+            val appLinkFrameworkTasks = appTargets.map { ":app:linkDebugFramework${it.capitalize()}" }
+            val appLinkTestTasks = appTargets.map { ":app:linkDebugTest${it.capitalize()}" }
+            build(":lib:publish") {
+                assertTasksExecuted(libCompileTasks)
+                libTargets.forEach {
+                    assertOutputContains("Configuring $it")
+                    assertFileInProjectExists("lib/build/classes/kotlin/$it/main/klib/lib.klib")
                 }
-            }" }
-        val appLinkTestTasks = appTargets.map { ":app:linkDebugTest${it.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }}" }
-
-        build(":lib:publish") {
-            assertSuccessful()
-            assertTasksExecuted(libCompileTasks)
-            libTargets.forEach {
-                assertContains("Configuring $it")
-                assertFileExists("lib/build/classes/kotlin/$it/main/klib/lib.klib")
             }
-        }
 
-        build(":app:build", *appLinkTestTasks.toTypedArray()) {
-            assertSuccessful()
-            assertTasksExecuted(appCompileTasks)
-            assertTasksExecuted(appLinkFrameworkTasks)
-            assertTasksExecuted(appLinkTestTasks)
+            build(":app:build", *appLinkTestTasks.toTypedArray()) {
+                assertTasksExecuted(appCompileTasks)
+                assertTasksExecuted(appLinkFrameworkTasks)
+                assertTasksExecuted(appLinkTestTasks)
 
-            appTargets.forEach {
-                assertFileExists("app/build/classes/kotlin/$it/main/klib/app.klib")
-                assertFileExists("app/build/bin/$it/debugFramework")
-                assertFileExists("app/build/bin/$it/debugTest")
+                appTargets.forEach {
+                    assertFileInProjectExists("app/build/classes/kotlin/$it/main/klib/app.klib")
+                    assertDirectoryInProjectExists("app/build/bin/$it/debugFramework")
+                    assertDirectoryInProjectExists("app/build/bin/$it/debugTest")
+                }
             }
-        }
-    }
-
-    @Test
-    fun testCommonIos() {
-        doCommonNativeTest(
-            "common-ios",
-            libTargets = listOf("iosLibArm64", "iosLibX64"),
-            appTargets = listOf("iosArm64", "iosX64")
-        )
-    }
-
-    @Test
-    fun testCommonWatchos() {
-        doCommonNativeTest(
-            "common-watchos",
-            libTargets = listOf("watchosLibArm32", "watchosLibArm64", "watchosLibX64"),
-            appTargets = listOf("watchosArm32", "watchosArm64", "watchosX64")
-        )
-    }
-
-    @Test
-    fun testCommonTvos() {
-        doCommonNativeTest(
-            "common-tvos",
-            libTargets = listOf("tvosLibArm64", "tvosLibX64"),
-            appTargets = listOf("tvosArm64", "tvosX64")
-        )
-    }
-
-    companion object {
-        @BeforeClass
-        @JvmStatic
-        fun assumeItsMac() {
-            Assume.assumeTrue(HostManager.hostIsMac)
         }
     }
 }
-

@@ -17,9 +17,8 @@ interface KotlinJvmCompilerOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommo
     /**
      * Target version of the generated JVM bytecode (1.8, 9, 10, ..., 20), default is 1.8
      * Possible values: "1.8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20"
-     * Default value: null
+     * Default value: JvmTarget.DEFAULT
      */
-    @get:org.gradle.api.tasks.Optional
     @get:org.gradle.api.tasks.Input
     val jvmTarget: org.gradle.api.provider.Property<org.jetbrains.kotlin.gradle.dsl.JvmTarget>
 

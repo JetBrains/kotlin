@@ -1,0 +1,46 @@
+@R|test/OptionGroups|(o1 = @R|test/StringOptions|(option = <implicitArrayOf>(String(abc), String(d), String(ef))) , o2 = @R|test/EnumOption|(option = R|test/E.ENTRY|) ) public final class AnnotationInAnnotationArguments : R|kotlin/Any| {
+    public constructor(): R|test/AnnotationInAnnotationArguments|
+
+}
+
+public final enum class E : R|kotlin/Enum<test/E>| {
+    private constructor(): R|test/E|
+
+    public final static enum entry ENTRY: R|test/E|
+    public final static fun values(): R|kotlin/Array<test/E>| {
+    }
+
+    public final static fun valueOf(value: R|kotlin/String|): R|test/E| {
+    }
+
+    public final static val entries: R|kotlin/enums/EnumEntries<test/E>|
+        public get(): R|kotlin/enums/EnumEntries<test/E>|
+
+}
+
+public final annotation class EnumOption : R|kotlin/Annotation| {
+    public final val option: R|test/E|
+        public get(): R|test/E|
+
+    public constructor(option: R|test/E|): R|test/EnumOption|
+
+}
+
+public final annotation class OptionGroups : R|kotlin/Annotation| {
+    public final val o1: R|test/StringOptions|
+        public get(): R|test/StringOptions|
+
+    public final val o2: R|test/EnumOption|
+        public get(): R|test/EnumOption|
+
+    public constructor(o1: R|test/StringOptions|, o2: R|test/EnumOption|): R|test/OptionGroups|
+
+}
+
+public final annotation class StringOptions : R|kotlin/Annotation| {
+    public final val option: R|kotlin/Array<out kotlin/String>|
+        public get(): R|kotlin/Array<out kotlin/String>|
+
+    public constructor(vararg option: R|kotlin/Array<out kotlin/String>|): R|test/StringOptions|
+
+}

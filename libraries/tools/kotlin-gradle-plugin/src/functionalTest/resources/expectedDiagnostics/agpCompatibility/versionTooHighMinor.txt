@@ -1,0 +1,9 @@
+[IncompatibleAgpVersionTooHighWarning | WARNING] Kotlin Multiplatform <-> Android Gradle Plugin compatibility issue:
+The applied Android Gradle Plugin version (8.1.0) is higher
+than the maximum known to the Kotlin Gradle Plugin.
+Tooling stability in such configuration isn't tested, please report encountered issues to https://kotl.in/issue"
+
+Minimum supported Android Gradle Plugin version: 4.2
+Maximum tested Android Gradle Plugin version: 8.0
+
+To suppress this message add 'kotlin.mpp.androidGradlePluginCompatibility.nowarn=true' to your gradle.properties

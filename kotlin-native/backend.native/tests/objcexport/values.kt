@@ -5,7 +5,7 @@
 
 // All classes and methods should be used in tests
 @file:Suppress("UNUSED")
-@file:OptIn(FreezingIsDeprecated::class)
+@file:OptIn(FreezingIsDeprecated::class, kotlin.native.runtime.NativeRuntimeApi::class)
 
 package conversions
 
@@ -807,7 +807,7 @@ open class TestDeprecation() {
 @Deprecated("warning", level = DeprecationLevel.WARNING) var warningVar: Any? = null
 
 fun gc() {
-    kotlin.native.internal.GC.collect()
+    kotlin.native.runtime.GC.collect()
 }
 
 class TestWeakRefs(private val frozen: Boolean) {
@@ -862,7 +862,7 @@ class SharedRefs {
     fun createFrozenCollection() = createCollection().freeze()
 
     fun hasAliveObjects(): Boolean {
-        kotlin.native.internal.GC.collect()
+        kotlin.native.runtime.GC.collect()
         return mustBeRemoved.any { it.get() != null }
     }
 

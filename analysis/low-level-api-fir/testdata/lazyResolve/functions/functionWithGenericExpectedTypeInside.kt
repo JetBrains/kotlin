@@ -4,6 +4,6 @@ class Bar : Foo<String>
 
 fun bar() = Bar()
 
-fun resolveMe() {
+fun resolve<caret>Me() {
     val x: Foo<String> = bar()
 }

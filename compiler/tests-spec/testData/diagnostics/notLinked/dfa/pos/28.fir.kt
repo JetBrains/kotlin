@@ -59,7 +59,7 @@ fun case_7(x: DeepObject.A.B.C.D.E.F.G.J?) {
 
 // TESTCASE NUMBER: 8
 fun case_8(x: Any?) {
-    if (x?.equals(10) === null) else {
+    if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING!>x?.equals(10) === null<!>) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.equals(10)
     }
@@ -67,7 +67,7 @@ fun case_8(x: Any?) {
 
 // TESTCASE NUMBER: 9
 fun case_9(x: Any?) {
-    if (x?.equals(10) !== null) {
+    if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING!>x?.equals(10) !== null<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.equals(10)
     }
@@ -117,7 +117,7 @@ inline fun <reified T>case_13(x: Any?) {
 
 // TESTCASE NUMBER: 14
 inline fun <reified T>case_14(x: Any?) {
-    if (x?.equals(10) === null) else {
+    if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING!>x?.equals(10) === null<!>) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.equals(10)
     }
@@ -125,7 +125,7 @@ inline fun <reified T>case_14(x: Any?) {
 
 // TESTCASE NUMBER: 15
 inline fun <reified T>case_15(x: Any?) {
-    if (x?.equals(10) !== null) {
+    if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING!>x?.equals(10) !== null<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.equals(10)
     }
@@ -137,7 +137,7 @@ inline fun <reified T>case_15(x: Any?) {
  * ISSUES: KT-30369, KT-28262
  */
 inline fun <reified T>case_16(x: Any?) {
-    if (x?.equals(10) === null == true) else {
+    if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING!>x?.equals(10) === null<!> == true) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.equals(10)
     }
@@ -149,7 +149,7 @@ inline fun <reified T>case_16(x: Any?) {
  * ISSUES: KT-30369, KT-28262
  */
 inline fun <reified T>case_17(x: Any?) {
-    if (x?.equals(10) !== null == true) {
+    if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING!>x?.equals(10) !== null<!> == true) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.equals(10)
     }
@@ -161,7 +161,7 @@ inline fun <reified T>case_17(x: Any?) {
  * ISSUES: KT-30369, KT-28262, KT-29878
  */
 inline fun <reified T>case_18(x: Any?) {
-    if (<!DEPRECATED_IDENTITY_EQUALS!>x?.equals(10) === null === true<!>) else {
+    if (<!DEPRECATED_IDENTITY_EQUALS!><!FORBIDDEN_IDENTITY_EQUALS_WARNING!>x?.equals(10) === null<!> === true<!>) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.equals(10)
     }
@@ -173,7 +173,7 @@ inline fun <reified T>case_18(x: Any?) {
  * ISSUES: KT-30369, KT-28262, KT-29878
  */
 inline fun <reified T>case_19(x: Any?) {
-    if (<!DEPRECATED_IDENTITY_EQUALS!>x?.equals(10) !== null === true<!>) {
+    if (<!DEPRECATED_IDENTITY_EQUALS!><!FORBIDDEN_IDENTITY_EQUALS_WARNING!>x?.equals(10) !== null<!> === true<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.equals(10)
     }
@@ -185,7 +185,7 @@ inline fun <reified T>case_19(x: Any?) {
  * ISSUES: KT-30369, KT-28262, KT-29878
  */
 inline fun <reified T>case_20(x: Any?) {
-    if (<!DEPRECATED_IDENTITY_EQUALS!>x?.equals(10) === null !== false<!>) else {
+    if (<!DEPRECATED_IDENTITY_EQUALS!><!FORBIDDEN_IDENTITY_EQUALS_WARNING!>x?.equals(10) === null<!> !== false<!>) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.equals(10)
     }
@@ -197,7 +197,7 @@ inline fun <reified T>case_20(x: Any?) {
  * ISSUES: KT-30369, KT-28262, KT-29878
  */
 inline fun <reified T>case_21(x: Any?) {
-    if (<!DEPRECATED_IDENTITY_EQUALS!>x?.equals(10) !== null !== false<!>) {
+    if (<!DEPRECATED_IDENTITY_EQUALS!><!FORBIDDEN_IDENTITY_EQUALS_WARNING!>x?.equals(10) !== null<!> !== false<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.equals(10)
     }
@@ -209,7 +209,7 @@ inline fun <reified T>case_21(x: Any?) {
  * ISSUES: KT-30369, KT-28262, KT-29878
  */
 inline fun <reified T>case_22(x: Any?) {
-    if (<!DEPRECATED_IDENTITY_EQUALS!>x?.equals(10) !== null !== true<!>) else {
+    if (<!DEPRECATED_IDENTITY_EQUALS!><!FORBIDDEN_IDENTITY_EQUALS_WARNING!>x?.equals(10) !== null<!> !== true<!>) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.equals(10)
     }
@@ -221,7 +221,7 @@ inline fun <reified T>case_22(x: Any?) {
  * ISSUES: KT-30369, KT-28262, KT-29878
  */
 inline fun <reified T>case_23(x: Any?) {
-    if (<!DEPRECATED_IDENTITY_EQUALS!>x?.equals(10) === null === false<!>) {
+    if (<!DEPRECATED_IDENTITY_EQUALS!><!FORBIDDEN_IDENTITY_EQUALS_WARNING!>x?.equals(10) === null<!> === false<!>) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.equals(10)
     }
@@ -233,7 +233,7 @@ inline fun <reified T>case_23(x: Any?) {
  * ISSUES: KT-30369, KT-28262
  */
 inline fun <reified T>case_24(x: Any?) {
-    if (x?.equals(10) !== null != true) else {
+    if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING!>x?.equals(10) !== null<!> != true) else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.equals(10)
     }
@@ -245,7 +245,7 @@ inline fun <reified T>case_24(x: Any?) {
  * ISSUES: KT-30369, KT-28262
  */
 inline fun <reified T>case_25(x: Any?) {
-    if (x?.equals(10) === null == false) {
+    if (<!FORBIDDEN_IDENTITY_EQUALS_WARNING!>x?.equals(10) === null<!> == false) {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Any? & kotlin.Any")!>x<!>.equals(10)
     }

@@ -2,11 +2,29 @@ KtKotlinPropertySymbol:
   annotationsList: [
     ExplicitPropertyAnnotation()
       psi: KtAnnotationEntry
-    DelegateAnnotation()
-      psi: KtAnnotationEntry
     PropertyAnnotation()
       psi: KtAnnotationEntry
   ]
+  backingFieldSymbol: KtBackingFieldSymbol:
+    annotationsList: [
+      DelegateAnnotation()
+        psi: KtAnnotationEntry
+    ]
+    callableIdIfNonLocal: null
+    contextReceivers: []
+    isExtension: false
+    name: field
+    origin: PROPERTY_BACKING_FIELD
+    owningProperty: KtKotlinPropertySymbol(/lazyProperty)
+    receiverParameter: null
+    returnType: KtUsualClassType:
+      annotationsList: []
+      ownTypeArguments: []
+      type: kotlin/Int
+    symbolKind: LOCAL
+    typeParameters: []
+    getContainingModule: KtSourceModule "Sources of main"
+    deprecationStatus: null
   callableIdIfNonLocal: /lazyProperty
   contextReceivers: []
   getter: KtPropertyGetterSymbol:

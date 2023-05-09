@@ -6,18 +6,16 @@
 package org.jetbrains.kotlin.test.services.configuration
 
 import com.intellij.ide.highlighter.JavaFileType
-import com.intellij.openapi.util.SystemInfo
 import com.intellij.psi.PsiJavaModule.MODULE_INFO_FILE
+import com.intellij.util.lang.JavaVersion
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.backend.jvm.jvmPhases
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.jvm.addModularRootIfNotNull
 import org.jetbrains.kotlin.cli.jvm.config.*
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.CompilerConfigurationKey
-import org.jetbrains.kotlin.config.JVMConfigurationKeys
-import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.config.*
+import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.MockLibraryUtil
@@ -137,7 +135,7 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
             TestJdkKind.FULL_JDK_6 -> File(System.getenv("JDK_16") ?: error("Environment variable JDK_16 is not set"))
             TestJdkKind.FULL_JDK_11 -> KtTestUtil.getJdk11Home()
             TestJdkKind.FULL_JDK_17 -> KtTestUtil.getJdk17Home()
-            TestJdkKind.FULL_JDK -> if (SystemInfo.IS_AT_LEAST_JAVA9) File(System.getProperty("java.home")) else null
+            TestJdkKind.FULL_JDK -> if (JavaVersion.current() >= JavaVersion.compose(9)) File(System.getProperty("java.home")) else null
             TestJdkKind.ANDROID_API -> null
         }
 
@@ -223,6 +221,7 @@ class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfig
 
         val isIr = module.targetBackend?.isIR == true
         configuration.put(JVMConfigurationKeys.IR, isIr)
+        configuration.putIfAbsent(CommonConfigurationKeys.EVALUATED_CONST_TRACKER, EvaluatedConstTracker.create())
 
         val javaSourceFiles = module.javaFiles.filter { INCLUDE_JAVA_AS_BINARY !in it.directives }
 

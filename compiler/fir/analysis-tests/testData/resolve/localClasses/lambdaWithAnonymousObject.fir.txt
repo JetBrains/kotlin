@@ -1,0 +1,26 @@
+FILE: lambdaWithAnonymousObject.kt
+    public final fun <R> myRun(block: R|() -> R|): R|R| {
+        ^myRun R|<local>/block|.R|SubstitutionOverride<kotlin/Function0.invoke: R|R|>|()
+    }
+    public abstract interface Bar : R|kotlin/Any| {
+        public abstract val action: R|() -> kotlin/Unit|
+            public get(): R|() -> kotlin/Unit|
+
+    }
+    public final val cardModel: R|Bar| = R|/myRun|<R|<anonymous>|>(<L> = myRun@fun <anonymous>(): R|<anonymous>| <inline=NoInline>  {
+        ^ object : R|Bar| {
+            private constructor(): R|<anonymous>| {
+                super<R|kotlin/Any|>()
+            }
+
+            public open override val action: R|() -> kotlin/Unit| = fun <anonymous>(): R|kotlin/Unit| <inline=Unknown>  {
+                ^ Unit
+            }
+
+                public get(): R|() -> kotlin/Unit|
+
+        }
+
+    }
+    )
+        public get(): R|Bar|

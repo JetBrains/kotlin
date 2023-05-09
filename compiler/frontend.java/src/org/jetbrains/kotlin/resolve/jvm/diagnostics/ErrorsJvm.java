@@ -46,8 +46,6 @@ public interface ErrorsJvm {
 
     DiagnosticFactory0<KtAnnotationEntry> STRICTFP_ON_CLASS = DiagnosticFactory0.create(WARNING);
 
-    DiagnosticFactory0<KtAnnotationEntry> VOLATILE_ON_VALUE = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<KtAnnotationEntry> VOLATILE_ON_DELEGATE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtAnnotationEntry> SYNCHRONIZED_ON_ABSTRACT = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtElement> SYNCHRONIZED_ON_INLINE = DiagnosticFactory0.create(WARNING);
     DiagnosticFactory0<KtElement> SYNCHRONIZED_ON_VALUE_CLASS = DiagnosticFactory0.create(WARNING);
@@ -132,9 +130,7 @@ public interface ErrorsJvm {
 
     DiagnosticFactory0<KtExpression> ASSIGNMENT_TO_ARRAY_LOOP_VARIABLE = DiagnosticFactory0.create(WARNING);
 
-    DiagnosticFactory0<PsiElement> JVM_DEFAULT_NOT_IN_INTERFACE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory1<PsiElement, String> JVM_DEFAULT_IN_JVM6_TARGET = DiagnosticFactory1.create(ERROR);
-    DiagnosticFactory0<KtDeclaration> JVM_DEFAULT_REQUIRED_FOR_OVERRIDE = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
     DiagnosticFactory1<KtElement, String> JVM_DEFAULT_IN_DECLARATION = DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
     DiagnosticFactory0<KtElement> JVM_DEFAULT_WITH_COMPATIBILITY_IN_DECLARATION = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtElement> JVM_DEFAULT_WITH_COMPATIBILITY_NOT_ON_INTERFACE = DiagnosticFactory0.create(ERROR);
@@ -153,8 +149,6 @@ public interface ErrorsJvm {
     DiagnosticFactory0<PsiElement> NON_DATA_CLASS_JVM_RECORD = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> ILLEGAL_JAVA_LANG_RECORD_SUPERTYPE = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<PsiElement> JVM_RECORDS_ILLEGAL_BYTECODE_TARGET = DiagnosticFactory0.create(ERROR);
-
-    DiagnosticFactory0<KtDeclaration> NON_JVM_DEFAULT_OVERRIDES_JAVA_DEFAULT = DiagnosticFactory0.create(WARNING, DECLARATION_SIGNATURE);
 
     DiagnosticFactory0<KtAnnotationEntry> EXPLICIT_METADATA_IS_DISALLOWED = DiagnosticFactory0.create(ERROR);
 
@@ -219,6 +213,8 @@ public interface ErrorsJvm {
     DiagnosticFactory2<PsiElement, String, String> BASE_CLASS_FIELD_MAY_SHADOW_DERIVED_CLASS_PROPERTY = DiagnosticFactory2.create(WARNING);
 
     DiagnosticFactory2<PsiElement, String, String> BACKING_FIELD_ACCESSED_DUE_TO_PROPERTY_FIELD_CONFLICT = DiagnosticFactory2.create(WARNING);
+
+    DiagnosticFactory2<PsiElement, String, String> BASE_CLASS_FIELD_WITH_DIFFERENT_SIGNATURE_THAN_DERIVED_CLASS_PROPERTY = DiagnosticFactory2.create(WARNING);
 
     @SuppressWarnings("UnusedDeclaration")
     Object _initializer = new Object() {

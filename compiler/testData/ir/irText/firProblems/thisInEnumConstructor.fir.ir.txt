@@ -1,5 +1,5 @@
 FILE fqName:<root> fileName:/thisInEnumConstructor.kt
-  CLASS ENUM_CLASS name:EE modality:OPEN visibility:public superTypes:[kotlin.Enum<<root>.EE>]
+  CLASS ENUM_CLASS name:EE modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.EE>]
     $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.EE
     CONSTRUCTOR visibility:private <> (myName:kotlin.String) returnType:<root>.EE [primary]
       VALUE_PARAMETER name:myName index:0 type:kotlin.String
@@ -10,7 +10,7 @@ FILE fqName:<root> fileName:/thisInEnumConstructor.kt
       BLOCK_BODY
         ENUM_CONSTRUCTOR_CALL 'public constructor <init> (name: kotlin.String, ordinal: kotlin.Int) [primary] declared in kotlin.Enum'
           <E>: <root>.EE
-        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:EE modality:OPEN visibility:public superTypes:[kotlin.Enum<<root>.EE>]'
+        INSTANCE_INITIALIZER_CALL classDescriptor='CLASS ENUM_CLASS name:EE modality:FINAL visibility:public superTypes:[kotlin.Enum<<root>.EE>]'
     PROPERTY name:myName visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:myName type:kotlin.String visibility:private [final]
         EXPRESSION_BODY

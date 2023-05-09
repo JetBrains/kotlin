@@ -18,7 +18,7 @@ fun box(): String {
     try {
         val defaultImpls = java.lang.Class.forName(Test::class.java.canonicalName + "\$DefaultImpls")
     } catch (e: ClassNotFoundException) {
-        return "OK"
+        return TestClass().test()
     }
     return "fail: DefaultImpls shouldn't be generated"
 }

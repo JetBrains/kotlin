@@ -93,9 +93,7 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
   RETURN_RESULT_OF(invokeAndAssociate, Kotlin_NSArrayAsKList_create, objc_retain(self));
 }
 
--(void)releaseAsAssociatedObject:(ReleaseMode)mode {
-  if (!ReleaseModeHasRelease(mode))
-    return;
+-(void)releaseAsAssociatedObject {
   objc_release(self);
 }
 @end
@@ -108,9 +106,7 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
   RETURN_RESULT_OF(invokeAndAssociate, Kotlin_NSMutableArrayAsKMutableList_create, objc_retain(self));
 }
 
--(void)releaseAsAssociatedObject:(ReleaseMode)mode {
-  if (!ReleaseModeHasRelease(mode))
-    return;
+-(void)releaseAsAssociatedObject {
   objc_release(self);
 }
 @end
@@ -124,9 +120,7 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
   RETURN_RESULT_OF(invokeAndAssociate, Kotlin_NSSetAsKSet_create, objc_retain(self));
 }
 
--(void)releaseAsAssociatedObject:(ReleaseMode)mode {
-  if (!ReleaseModeHasRelease(mode))
-    return;
+-(void)releaseAsAssociatedObject {
   objc_release(self);
 }
 
@@ -140,9 +134,7 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
   RETURN_RESULT_OF(invokeAndAssociate, Kotlin_NSDictionaryAsKMap_create, objc_retain(self));
 }
 
--(void)releaseAsAssociatedObject:(ReleaseMode)mode {
-  if (!ReleaseModeHasRelease(mode))
-    return;
+-(void)releaseAsAssociatedObject {
   objc_release(self);
 }
 
@@ -156,7 +148,7 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
 }
 
 -(void)dealloc {
-  iteratorHolder.disposeFromNative();
+  iteratorHolder.dispose();
   [super dealloc];
 }
 
@@ -186,7 +178,7 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
 }
 
 -(void)dealloc {
-  listHolder.disposeFromNative();
+  listHolder.dispose();
   [super dealloc];
 }
 
@@ -222,7 +214,7 @@ static inline KInt objCIndexToKotlinOrThrow(NSUInteger index) {
 }
 
 -(void)dealloc {
-  listHolder.disposeFromNative();
+  listHolder.dispose();
   [super dealloc];
 }
 
@@ -302,7 +294,7 @@ static inline id KSet_getElement(KRef set, id object) {
 }
 
 -(void)dealloc {
-  setHolder.disposeFromNative();
+  setHolder.dispose();
   [super dealloc];
 }
 
@@ -390,7 +382,7 @@ static inline id KSet_getElement(KRef set, id object) {
   // Note: since setHolder initialization is not performed directly with alloc,
   // it is possible that it wasn't initialized properly.
   // Fortunately setHolder.dispose() handles the zero-initialized case too.
-  setHolder.disposeFromNative();
+  setHolder.dispose();
   [super dealloc];
 }
 
@@ -464,7 +456,7 @@ static inline id KMap_get(KRef map, id aKey) {
 }
 
 -(void)dealloc {
-  mapHolder.disposeFromNative();
+  mapHolder.dispose();
   [super dealloc];
 }
 
@@ -510,7 +502,7 @@ static inline id KMap_get(KRef map, id aKey) {
   // Note: since mapHolder initialization is not performed directly with alloc,
   // it is possible that it wasn't initialized properly.
   // Fortunately mapHolder.dispose() handles the zero-initialized case too.
-  mapHolder.disposeFromNative();
+  mapHolder.dispose();
   [super dealloc];
 }
 
@@ -599,9 +591,7 @@ static inline id KMap_get(KRef map, id aKey) {
 @end
 
 @implementation NSEnumerator (NSEnumeratorAsAssociatedObject)
--(void)releaseAsAssociatedObject:(ReleaseMode)mode {
-  if (!ReleaseModeHasRelease(mode))
-    return;
+-(void)releaseAsAssociatedObject {
   objc_release(self);
 }
 @end

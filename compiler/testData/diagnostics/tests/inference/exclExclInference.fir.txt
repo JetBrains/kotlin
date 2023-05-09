@@ -1,0 +1,16 @@
+FILE: exclExclInference.fir.kt
+    public final fun foo(): R|kotlin/Unit| {
+        lval x: R|kotlin/String?|
+        R|<local>/x| = R|/materialize|<R|kotlin/String?|>()!!
+        R|<local>/x|.R|kotlin/String.length|
+    }
+    public final fun <E> materialize(): R|E| {
+        ^materialize R|kotlin/TODO|()
+    }
+    public final fun <F> test(f: R|F|): R|F & Any| {
+        ^test R|<local>/f|!!
+    }
+    public final fun main(): R|kotlin/Unit| {
+        R|/test|<R|kotlin/String|>(String()).R|kotlin/String.length|
+        R|/test|<R|kotlin/String?|>(Null(null)).R|kotlin/String.length|
+    }

@@ -30,7 +30,11 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.ir.linkage.partial.PartialLinkageUtils.Module as PLModule
 
-internal class ClassifierExplorer(private val builtIns: IrBuiltIns, private val stubGenerator: MissingDeclarationStubGenerator) {
+internal class ClassifierExplorer(
+    private val builtIns: IrBuiltIns,
+    private val stubGenerator: MissingDeclarationStubGenerator,
+    private val allowErrorTypes: Boolean
+) {
     private val exploredSymbols = ExploredClassifiers()
 
     private val permittedAnnotationArrayParameterSymbols: Set<IrClassSymbol> by lazy {
@@ -72,7 +76,12 @@ internal class ClassifierExplorer(private val builtIns: IrBuiltIns, private val 
                 ?: arguments.firstUnusable { it.typeOrNull?.exploreType(visitedSymbols) }
                 ?: Usable
             is IrDynamicType -> Usable
-            else -> throw IllegalArgumentException("Unsupported IR type: ${this::class.java}, $this")
+            else -> {
+                if (this is IrErrorType && allowErrorTypes)
+                    Usable
+                else
+                    throw IllegalArgumentException("Unsupported IR type: ${this::class.java}, $this")
+            }
         }
     }
 
@@ -194,10 +203,19 @@ internal class ClassifierExplorer(private val builtIns: IrBuiltIns, private val 
 
     private fun IrClass.exploreSuperClasses(superTypeSymbols: Set<IrClassSymbol>): Unusable? {
         if (isInterface) {
-            // Can inherit only from other interfaces.
-            val realSuperClassSymbols = superTypeSymbols.filter { it != builtIns.anyClass && !it.owner.isInterface }
-            if (realSuperClassSymbols.isNotEmpty())
-                return InvalidInheritance(symbol, realSuperClassSymbols) // Interface inherits from a real class(es).
+            // Regular interface can inherit only from other regular interfaces.
+            // External interface can inherit from external interfaces and external class, but not regular ones.
+            val illegalSuperClassSymbols = if (isExternal)
+                superTypeSymbols.filter { superTypeSymbol ->
+                    superTypeSymbol != builtIns.anyClass && superTypeSymbol.owner.let { superClass ->
+                        !superClass.isExternal || !(superClass.isInterface || superClass.isClass)
+                    }
+                }
+            else
+                superTypeSymbols.filter { it != builtIns.anyClass && !it.owner.isInterface }
+
+            if (illegalSuperClassSymbols.isNotEmpty())
+                return InvalidInheritance(symbol, illegalSuperClassSymbols)
         } else {
             // Check the number of non-interface supertypes.
             val superClassSymbols = superTypeSymbols.filter { !it.owner.isInterface }

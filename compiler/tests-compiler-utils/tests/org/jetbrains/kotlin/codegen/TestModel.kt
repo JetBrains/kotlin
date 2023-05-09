@@ -6,10 +6,11 @@
 package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.ir.backend.js.ic.DirtyFileState
+import org.jetbrains.kotlin.serialization.js.ModuleKind
 import java.io.File
 import java.util.regex.Pattern
 
-class ProjectInfo(val name: String, val modules: List<String>, val steps: List<ProjectBuildStep>, val muted: Boolean) {
+class ProjectInfo(val name: String, val modules: List<String>, val steps: List<ProjectBuildStep>, val muted: Boolean, val moduleKind: ModuleKind) {
 
     class ProjectBuildStep(val id: Int, val order: List<String>, val dirtyJS: List<String>, val language: List<String>)
 }
@@ -57,6 +58,7 @@ class ModuleInfo(val moduleName: String) {
 
 const val PROJECT_INFO_FILE = "project.info"
 private const val MODULES_LIST = "MODULES"
+private const val MODULES_KIND = "MODULE_KIND"
 private const val LIBS_LIST = "libs"
 private const val DIRTY_JS_MODULES_LIST = "dirty js"
 private const val LANGUAGE = "language"
@@ -107,7 +109,13 @@ abstract class InfoParser<Info>(protected val infoFile: File) {
 private fun String.splitAndTrim() = split(",").map { it.trim() }.filter { it.isNotBlank() }
 
 class ProjectInfoParser(infoFile: File) : InfoParser<ProjectInfo>(infoFile) {
-
+    private val moduleKindMap = mapOf(
+        "plain" to ModuleKind.PLAIN,
+        "commonjs" to ModuleKind.COMMON_JS,
+        "amd" to ModuleKind.AMD,
+        "umd" to ModuleKind.UMD,
+        "es" to ModuleKind.ES,
+    )
 
     private fun parseSteps(firstId: Int, lastId: Int): List<ProjectInfo.ProjectBuildStep> {
         val order = mutableListOf<String>()
@@ -145,6 +153,7 @@ class ProjectInfoParser(infoFile: File) : InfoParser<ProjectInfo>(infoFile) {
         val libraries = mutableListOf<String>()
         val steps = mutableListOf<ProjectInfo.ProjectBuildStep>()
         var muted = false
+        var moduleKind = ModuleKind.COMMON_JS
 
         loop { line ->
             lineCounter++
@@ -162,6 +171,9 @@ class ProjectInfoParser(infoFile: File) : InfoParser<ProjectInfo>(infoFile) {
 
             when {
                 op == MODULES_LIST -> libraries += split[1].splitAndTrim()
+                op == MODULES_KIND -> moduleKind = split[1].trim()
+                    .ifEmpty { error("Module kind value should be provided if MODULE_KIND pragma was specified") }
+                    .let { moduleKindMap[it] ?: error("Unknown MODULE_KIND value '$it'") }
                 op.matches(STEP_PATTERN.toRegex()) -> {
                     val m = STEP_PATTERN.matcher(op)
                     if (!m.matches()) throwSyntaxError(line)
@@ -188,7 +200,7 @@ class ProjectInfoParser(infoFile: File) : InfoParser<ProjectInfo>(infoFile) {
             false
         }
 
-        return ProjectInfo(entryName, libraries, steps, muted)
+        return ProjectInfo(entryName, libraries, steps, muted, moduleKind)
     }
 }
 

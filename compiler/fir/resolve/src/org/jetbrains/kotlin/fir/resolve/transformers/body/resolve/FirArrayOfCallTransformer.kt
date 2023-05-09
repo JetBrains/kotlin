@@ -23,16 +23,7 @@ import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
  *
  * Note that arrayOf() calls only in [FirAnnotation] or the default value of annotation constructor are transformed.
  */
-internal class FirArrayOfCallTransformer : FirDefaultTransformer<Nothing?>() {
-    private val FirFunctionCall.isArrayOfCall: Boolean
-        get() {
-            val function: FirCallableDeclaration = getOriginalFunction() ?: return false
-            return function is FirSimpleFunction &&
-                    function.returnTypeRef.isArrayType &&
-                    isArrayOf(function, arguments) &&
-                    function.receiverParameter == null
-        }
-
+class FirArrayOfCallTransformer : FirDefaultTransformer<Nothing?>() {
     private fun toArrayOfCall(functionCall: FirFunctionCall): FirArrayOfCall? {
         if (!functionCall.isArrayOfCall) {
             return null
@@ -63,6 +54,15 @@ internal class FirArrayOfCallTransformer : FirDefaultTransformer<Nothing?>() {
     }
 
     companion object {
+        val FirFunctionCall.isArrayOfCall: Boolean
+            get() {
+                val function: FirCallableDeclaration = getOriginalFunction() ?: return false
+                return function is FirSimpleFunction &&
+                        function.returnTypeRef.isArrayType &&
+                        isArrayOf(function, arguments) &&
+                        function.receiverParameter == null
+            }
+
         private val arrayOfNames = hashSetOf("kotlin/arrayOf") +
                 hashSetOf(
                     "boolean", "byte", "char", "double", "float", "int", "long", "short",

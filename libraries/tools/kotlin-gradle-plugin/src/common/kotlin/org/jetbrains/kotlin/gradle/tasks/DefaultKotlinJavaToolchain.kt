@@ -76,7 +76,7 @@ internal abstract class DefaultKotlinJavaToolchain @Inject constructor(
                         else -> jvm.javaVersion.toString()
                     }
                     JvmTarget.fromTarget(normalizedVersion)
-                }
+                }.orElse(JvmTarget.DEFAULT)
             )
         }
     }

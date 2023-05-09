@@ -3,3 +3,8 @@ STEP 0:
     added file: m.kt
 STEP 1:
     dependencies: lib1, lib2
+STEP 2:
+    dependencies: lib1, lib2
+    modified ir: m.kt
+STEP 3:
+    dependencies: lib1, lib2

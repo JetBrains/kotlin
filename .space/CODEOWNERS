@@ -16,6 +16,8 @@
 # OWNER_LIST: Mikhail.Glukhikh
 # OWNER_LIST: Yan.Zhulanow
 # OWNER_LIST: Alexander.Udalov
+# OWNER_LIST: Zalim.Bashorov
+# OWNER_LIST: Ilya.Goncharov
 # OWNER_LIST: Alexander.Shabalin Pavel.Kunyavskiy Svyatoslav.Scherbina
 # Kotlin Libraries
 # OWNER_LIST: A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov Sergey.Shanshin Leonid.Startsev
@@ -28,6 +30,9 @@
 /.space/ "Kotlin Build Infrastructure"
 
 /analysis/ "Kotlin IDE"
+/analysis/analysis-api-fir/src/org/jetbrains/kotlin/analysis/api/fir/diagnostics/KtFirDiagnostics.kt "Kotlin Compiler Core"
+/analysis/analysis-api-fir/src/org/jetbrains/kotlin/analysis/api/fir/diagnostics/KtFirDiagnosticsImpl.kt "Kotlin Compiler Core"
+/analysis/analysis-api-fir/src/org/jetbrains/kotlin/analysis/api/fir/diagnostics/KtFirDataClassConverters.kt "Kotlin Compiler Core"
 
 # UNKNOWN: /annotations/
 
@@ -43,6 +48,7 @@
 /compiler/backend/ "Kotlin JVM"
 /compiler/backend.common.jvm/ "Kotlin JVM"
 /compiler/backend-common/ "Kotlin JVM" "Kotlin JS" "Kotlin Native" "Kotlin Wasm"
+/compiler/build-tools/ "Kotlin Build Tools"
 /compiler/builtins-serializer/ "Kotlin Compiler Core"
 /compiler/cli/ "Kotlin Compiler Core"
 /compiler/cli/cli-js/ "Kotlin JS" "Kotlin Wasm"
@@ -103,6 +109,7 @@
 /compiler/testData/cli/metadata/ "Kotlin Compiler Core"
 /compiler/testData/codegen/asmLike/ "Kotlin JVM"
 /compiler/testData/codegen/box/ "Kotlin Compiler Core" "Kotlin JVM" "Kotlin JS" "Kotlin Native" "Kotlin Wasm"
+/compiler/testData/codegen/box/size/ Zalim.Bashorov
 /compiler/testData/codegen/boxError/ "Kotlin JS"
 /compiler/testData/codegen/boxInline/ "Kotlin JVM" "Kotlin JS" "Kotlin Native" "Kotlin Wasm"
 /compiler/testData/codegen/boxKlib/ "Kotlin JVM"
@@ -254,8 +261,6 @@
 /libraries/examples/annotation-processor-example/ "Kotlin Compiler Core"
 /libraries/examples/kotlin-gradle-subplugin-example/ "Kotlin Compiler Core"
 /libraries/examples/kotlin-java-example/ "Kotlin JVM"
-/libraries/examples/kotlin-jsr223-daemon-local-eval-example/ "Kotlin Compiler Core"
-/libraries/examples/kotlin-jsr223-local-example/ "Kotlin Compiler Core"
 /libraries/examples/scripting/ "Kotlin Compiler Core"
 /libraries/kotlin.test/ A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov
 /libraries/kotlinx-metadata/ Alexander.Udalov A.Qurbonzoda Vsevolod.Tolstopyato Ilya.Gorbunov
@@ -271,10 +276,9 @@
 /libraries/tools/binary-compatibility-validator/ "Kotlin Libraries"
 /libraries/tools/dukat/ "Kotlin JS"
 /libraries/kotlin-dom-api-compat/ "Kotlin JS"
+/libraries/tools/kotlin-build-tools-enum-compat/ "Kotlin Build Tools"
 /libraries/tools/gradle/ "Kotlin Build Tools"
 /libraries/tools/kotlin-allopen/ "Kotlin Build Tools"
-/libraries/tools/kotlin-annotation-processing/ "Kotlin Build Tools"
-/libraries/tools/kotlin-annotation-processing-maven/ "Kotlin Build Tools"
 /libraries/tools/kotlin-annotations-jvm/ "Kotlin Libraries"
 /libraries/tools/kotlin-assignment/ "Kotlin Build Tools"
 /libraries/tools/kotlin-bom/ "Kotlin Build Infrastructure"
@@ -294,7 +298,7 @@
 /libraries/tools/kotlin-gradle-plugin-integration-tests/ "Kotlin Build Tools" "Kotlin Multiplatform"
 /libraries/tools/kotlin-gradle-plugin-kpm-android/ "Kotlin Multiplatform"
 /libraries/tools/kotlin-gradle-plugin-model/ "Kotlin Build Tools"
-/libraries/tools/kotlin-gradle-plugin-npm-versions-codegen/ "Kotlin Build Tools"
+/libraries/tools/kotlin-gradle-plugin-npm-versions-codegen/ Ilya.Goncharov
 /libraries/tools/kotlin-gradle-plugin-test-utils-embeddable/ "Kotlin Build Tools"
 /libraries/tools/kotlin-gradle-plugin-tcs-android/ "Kotlin Multiplatform"
 /libraries/tools/kotlin-gradle-statistics/ "Kotlin Build Tools"
@@ -347,6 +351,9 @@
 /plugins/imports-dumper/ "Kotlin Compiler Core"
 /plugins/jvm-abi-gen/ "Kotlin JVM"
 /plugins/kapt3/ "Kotlin Compiler Core"
+/plugins/kapt3/kapt3-compiler/test/ "Kotlin Compiler Core" "Kotlin JVM"
+/plugins/kapt3/kapt3-compiler/testData/ "Kotlin Compiler Core" "Kotlin JVM"
+/plugins/kapt3/kapt3-compiler/tests-gen/ "Kotlin Compiler Core" "Kotlin JVM"
 /plugins/kotlinx-serialization/ Sergey.Shanshin Leonid.Startsev
 /plugins/lombok/ "Kotlin Compiler Core"
 /plugins/noarg/ "Kotlin Compiler Core"

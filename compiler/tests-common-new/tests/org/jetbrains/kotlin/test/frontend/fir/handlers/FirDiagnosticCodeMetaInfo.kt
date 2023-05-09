@@ -62,7 +62,6 @@ class FirDiagnosticCodeMetaRenderConfiguration(
 
         val diagnostic = codeMetaInfo.diagnostic
 
-        @Suppress("UNCHECKED_CAST")
         val renderer = RootDiagnosticRendererFactory(diagnostic)
         if (renderer is AbstractKtDiagnosticWithParametersRenderer) {
             renderer.renderParameters(diagnostic).mapTo(params, Any?::toString)

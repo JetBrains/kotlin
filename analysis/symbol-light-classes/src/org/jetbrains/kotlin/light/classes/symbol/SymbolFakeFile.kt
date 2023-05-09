@@ -10,16 +10,13 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.ResolveState
 import com.intellij.psi.scope.PsiScopeProcessor
 import org.jetbrains.kotlin.asJava.classes.KtLightClass
-import org.jetbrains.kotlin.asJava.classes.getOutermostClassOrObject
 import org.jetbrains.kotlin.asJava.elements.FakeFileForLightClass
-import org.jetbrains.kotlin.asJava.toLightClass
 import org.jetbrains.kotlin.psi.KtClassOrObject
 
-internal class SymbolFakeFile(private val classOrObject: KtClassOrObject, ktClass: KtLightClass) : FakeFileForLightClass(
+internal class SymbolFakeFile(classOrObject: KtClassOrObject, ktClass: KtLightClass) : FakeFileForLightClass(
     classOrObject.containingKtFile,
-    { if (classOrObject.isTopLevel()) ktClass else getOutermostClassOrObject(classOrObject).toLightClass()!! },
+    ktClass,
 ) {
-
     override fun findReferenceAt(offset: Int) = ktFile.findReferenceAt(offset)
 
     override fun processDeclarations(
@@ -34,8 +31,7 @@ internal class SymbolFakeFile(private val classOrObject: KtClassOrObject, ktClas
         // so that Java resolve can find classes located in that package
         val packageName = packageName
         if (packageName.isNotEmpty()) return true
-
-        val aPackage = JavaPsiFacade.getInstance(classOrObject.project).findPackage(packageName)
+        val aPackage = JavaPsiFacade.getInstance(project).findPackage(packageName)
         if (aPackage != null && !aPackage.processDeclarations(processor, state, null, place)) return false
 
         return true

@@ -25,6 +25,30 @@ public class DiagnosticTraversalCounterTestGenerated extends AbstractDiagnosticT
     }
 
     @Test
+    @TestMetadata("callInsideLambdaInsideSuperCallAndExplicitConstructor.kt")
+    public void testCallInsideLambdaInsideSuperCallAndExplicitConstructor() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/diagnosticTraversalCounter/callInsideLambdaInsideSuperCallAndExplicitConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("callInsideLambdaInsideSuperCallAndImplicitConstructor.kt")
+    public void testCallInsideLambdaInsideSuperCallAndImplicitConstructor() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/diagnosticTraversalCounter/callInsideLambdaInsideSuperCallAndImplicitConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("callInsideLambdaInsideSuperCallFromSecondaryConstructor.kt")
+    public void testCallInsideLambdaInsideSuperCallFromSecondaryConstructor() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/diagnosticTraversalCounter/callInsideLambdaInsideSuperCallFromSecondaryConstructor.kt");
+    }
+
+    @Test
+    @TestMetadata("callInsideLambdaInsideSuperCallFromSingleSecondaryConstructor.kt")
+    public void testCallInsideLambdaInsideSuperCallFromSingleSecondaryConstructor() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/diagnosticTraversalCounter/callInsideLambdaInsideSuperCallFromSingleSecondaryConstructor.kt");
+    }
+
+    @Test
     @TestMetadata("constructor.kt")
     public void testConstructor() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/diagnosticTraversalCounter/constructor.kt");
@@ -145,14 +169,60 @@ public class DiagnosticTraversalCounterTestGenerated extends AbstractDiagnosticT
     }
 
     @Test
+    @TestMetadata("qualifiedCallInsideSuperCall.kt")
+    public void testQualifiedCallInsideSuperCall() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/diagnosticTraversalCounter/qualifiedCallInsideSuperCall.kt");
+    }
+
+    @Test
     @TestMetadata("secondaryConstructor.kt")
     public void testSecondaryConstructor() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/diagnosticTraversalCounter/secondaryConstructor.kt");
     }
 
     @Test
+    @TestMetadata("superCallAnnotation.kt")
+    public void testSuperCallAnnotation() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/diagnosticTraversalCounter/superCallAnnotation.kt");
+    }
+
+    @Test
+    @TestMetadata("superCallAnnotation2.kt")
+    public void testSuperCallAnnotation2() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/diagnosticTraversalCounter/superCallAnnotation2.kt");
+    }
+
+    @Test
+    @TestMetadata("superType.kt")
+    public void testSuperType() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/diagnosticTraversalCounter/superType.kt");
+    }
+
+    @Test
     @TestMetadata("typeAlias.kt")
     public void testTypeAlias() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/diagnosticTraversalCounter/typeAlias.kt");
+    }
+
+    @Nested
+    @TestMetadata("analysis/low-level-api-fir/testdata/diagnosticTraversalCounter/constructorParameters")
+    @TestDataPath("$PROJECT_ROOT")
+    public class ConstructorParameters {
+        @Test
+        public void testAllFilesPresentInConstructorParameters() throws Exception {
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/diagnosticTraversalCounter/constructorParameters"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("constructorParameter.kt")
+        public void testConstructorParameter() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/diagnosticTraversalCounter/constructorParameters/constructorParameter.kt");
+        }
+
+        @Test
+        @TestMetadata("constructorParameterWithAnnotations.kt")
+        public void testConstructorParameterWithAnnotations() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/diagnosticTraversalCounter/constructorParameters/constructorParameterWithAnnotations.kt");
+        }
     }
 }

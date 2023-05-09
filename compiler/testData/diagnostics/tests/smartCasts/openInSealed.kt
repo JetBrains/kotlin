@@ -1,4 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
 sealed class My(open val x: Int?) {
     init {
         if (<!DEBUG_INFO_LEAKING_THIS!>x<!> != null) {

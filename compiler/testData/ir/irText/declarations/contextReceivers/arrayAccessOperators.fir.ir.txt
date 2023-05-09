@@ -25,13 +25,13 @@ FILE fqName:<root> fileName:/arrayAccessOperators.kt
           SET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private' type=kotlin.Unit origin=null
             receiver: GET_VAR '<this>: <root>.MyContainer declared in <root>.MyContainer.<set-s>' type=<root>.MyContainer origin=null
             value: GET_VAR '<set-?>: kotlin.String declared in <root>.MyContainer.<set-s>' type=kotlin.String origin=null
-    FUN name:component1 visibility:public modality:FINAL <> ($this:<root>.MyContainer) returnType:kotlin.String [operator]
+    FUN GENERATED_DATA_CLASS_MEMBER name:component1 visibility:public modality:FINAL <> ($this:<root>.MyContainer) returnType:kotlin.String [operator]
       $this: VALUE_PARAMETER name:<this> type:<root>.MyContainer
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun component1 (): kotlin.String [operator] declared in <root>.MyContainer'
           GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:s type:kotlin.String visibility:private' type=kotlin.String origin=null
             receiver: GET_VAR '<this>: <root>.MyContainer declared in <root>.MyContainer.component1' type=<root>.MyContainer origin=null
-    FUN name:copy visibility:public modality:FINAL <> ($this:<root>.MyContainer, s:kotlin.String) returnType:<root>.MyContainer
+    FUN GENERATED_DATA_CLASS_MEMBER name:copy visibility:public modality:FINAL <> ($this:<root>.MyContainer, s:kotlin.String) returnType:<root>.MyContainer
       $this: VALUE_PARAMETER name:<this> type:<root>.MyContainer
       VALUE_PARAMETER name:s index:0 type:kotlin.String
         EXPRESSION_BODY

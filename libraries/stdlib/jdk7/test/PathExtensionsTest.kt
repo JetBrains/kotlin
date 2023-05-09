@@ -99,6 +99,16 @@ class PathExtensionsTest : AbstractPathTest() {
     }
 
     @Test
+    fun createParentDirectoriesOverExistingSymlink() {
+        val root = createTempDirectory("createParent-root").cleanupRecursively()
+        val dir = (root / "dir").createDirectory()
+        val link = (root / "link").tryCreateSymbolicLinkTo(dir) ?: return
+        val file = (link / "file")
+        file.createParentDirectories().writeText("txt")
+        assertTrue((dir / "file").isRegularFile())
+    }
+
+    @Test
     fun createTempFileDefaultDir() {
         val file1 = createTempFile().cleanup()
         val file2 = createTempFile(directory = null).cleanup()

@@ -27,6 +27,9 @@ internal annotation class EnforcedProperty(val property: ClassLevelProperty, val
 @Target(AnnotationTarget.CLASS)
 internal annotation class EnforcedHostTarget
 
+@Target(AnnotationTarget.CLASS)
+internal annotation class AcceptablePropertyValues(val property: ClassLevelProperty, val acceptableValues: Array<String>)
+
 internal class EnforcedProperties(testClass: Class<*>) {
     private val enforcedAnnotations: Map<ClassLevelProperty, String> = buildMap {
         testClass.annotations.forEach { annotation ->
@@ -38,6 +41,15 @@ internal class EnforcedProperties(testClass: Class<*>) {
     }
 
     operator fun get(propertyType: ClassLevelProperty): String? = enforcedAnnotations[propertyType]
+
+    private val acceptableAnnotations: Map<ClassLevelProperty, Array<String>> = testClass.annotations
+        .filterIsInstance<AcceptablePropertyValues>()
+        .associate {
+            it.property to it.acceptableValues
+        }
+
+    fun isAcceptableValue(propertyType: ClassLevelProperty, value: String?): Boolean =
+        acceptableAnnotations[propertyType]?.contains(value) ?: true
 }
 
 internal enum class ClassLevelProperty(shortName: String) {
@@ -62,7 +74,8 @@ internal enum class ClassLevelProperty(shortName: String) {
 
     fun <T> readValue(enforcedProperties: EnforcedProperties, transform: (String) -> T?, default: T): T {
         val propertyValue = enforcedProperties[this] ?: System.getProperty(propertyName)
-        return if (propertyValue != null) {
+        val acceptable = enforcedProperties.isAcceptableValue(this, propertyValue)
+        return if (propertyValue != null && acceptable) {
             transform(propertyValue) ?: fail { "Invalid value for $propertyName system property: $propertyValue" }
         } else
             default
@@ -75,7 +88,8 @@ internal inline fun <reified E : Enum<E>> ClassLevelProperty.readValue(
     default: E
 ): E {
     val optionName = enforcedProperties[this] ?: System.getProperty(propertyName)
-    return if (optionName != null) {
+    val acceptable = enforcedProperties.isAcceptableValue(this, optionName)
+    return if (optionName != null && acceptable) {
         values.firstOrNull { it.name == optionName } ?: fail {
             buildString {
                 appendLine("Unknown ${E::class.java.simpleName} name $optionName.")

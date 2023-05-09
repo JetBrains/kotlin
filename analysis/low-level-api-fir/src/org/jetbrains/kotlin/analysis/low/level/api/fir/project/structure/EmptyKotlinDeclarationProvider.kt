@@ -24,4 +24,6 @@ internal object EmptyKotlinDeclarationProvider : KotlinDeclarationProvider() {
     override fun findFilesForFacadeByPackage(packageFqName: FqName) = emptyList<KtFile>()
     override fun findFilesForFacade(facadeFqName: FqName) = emptyList<KtFile>()
     override fun findInternalFilesForFacade(facadeFqName: FqName) = emptyList<KtFile>()
+    override fun findFilesForScript(scriptFqName: FqName) = emptyList<KtScript>()
+    override fun computePackageSetWithTopLevelCallableDeclarations(): Set<String> = emptySet()
 }

@@ -14,30 +14,71 @@
  * limitations under the License.
  */
 
+@file:Suppress("DeprecatedCallableAddReplaceWith")
+
 package org.jetbrains.kotlin.gradle.internal
 
 import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
+import org.jetbrains.kotlin.cli.common.arguments.copyBeanTo
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
+import org.jetbrains.kotlin.compilerRunner.ArgumentUtils.convertArgumentsToStringList
+import org.jetbrains.kotlin.gradle.plugin.CreateCompilerArgumentsContext
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.ArgumentType
 
-interface CompilerArgumentAware<T : CommonToolArguments> {
+
+/**
+ * Only relevant for supporting older IDEs (before 2023.2)
+ */
+@Deprecated("Replaced by KotlinCompilerArgumentsProducer")
+interface CompilerArgumentAware<T : CommonToolArguments> : KotlinCompilerArgumentsProducer {
+
+    @Deprecated("Replaced by KotlinCompilerArgumentsProducer", level = DeprecationLevel.ERROR)
     @get:Internal
     val serializedCompilerArguments: List<String>
-        get() = ArgumentUtils.convertArgumentsToStringList(prepareCompilerArguments())
+        get() = convertArgumentsToStringList(prepareCompilerArguments())
 
+    @Deprecated("Replaced by KotlinCompilerArgumentsProducer", level = DeprecationLevel.ERROR)
     @get:Internal
     val serializedCompilerArgumentsIgnoreClasspathIssues: List<String>
-        get() = ArgumentUtils.convertArgumentsToStringList(prepareCompilerArguments(ignoreClasspathResolutionErrors = true))
+        get() = convertArgumentsToStringList(prepareCompilerArguments(ignoreClasspathResolutionErrors = true))
 
+    @Deprecated("Replaced by KotlinCompilerArgumentsProducer", level = DeprecationLevel.ERROR)
     @get:Internal
     val defaultSerializedCompilerArguments: List<String>
-        get() = createCompilerArgs()
-            .also { setupCompilerArgs(it, defaultsOnly = true) }
-            .let(ArgumentUtils::convertArgumentsToStringList)
+        get() = createCompilerArguments(
+            CreateCompilerArgumentsContext(includeArgumentTypes = setOf(ArgumentType.Primitive))
+        ).let(ArgumentUtils::convertArgumentsToStringList)
 
-    fun createCompilerArgs(): T
-    fun setupCompilerArgs(args: T, defaultsOnly: Boolean = false, ignoreClasspathResolutionErrors: Boolean = false)
+    @Deprecated("Replaced by KotlinCompilerArgumentsProducer", level = DeprecationLevel.ERROR)
+    fun createCompilerArgs(): T = createCompilerArguments(CreateCompilerArgumentsContext(includeArgumentTypes = emptySet()))
+
+    @Deprecated("Replaced by KotlinCompilerArgumentsProducer", level = DeprecationLevel.ERROR)
+    fun setupCompilerArgs(args: T, defaultsOnly: Boolean = false, ignoreClasspathResolutionErrors: Boolean = false) {
+        val newArgs = createCompilerArguments(
+            CreateCompilerArgumentsContext(
+                includeArgumentTypes = if (defaultsOnly) setOf(ArgumentType.Primitive) else includedArgumentTypes,
+                isLenient = ignoreClasspathResolutionErrors
+            )
+        )
+        copyBeanTo(from = newArgs, to = args)
+    }
+
+    override fun createCompilerArguments(context: KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext): T
+
+    @Suppress("DEPRECATION")
+    private fun <T : CommonToolArguments> CompilerArgumentAware<T>.prepareCompilerArguments(
+        ignoreClasspathResolutionErrors: Boolean = false
+    ): T = createCompilerArguments(
+        CreateCompilerArgumentsContext(
+            includeArgumentTypes = includedArgumentTypes,
+            isLenient = ignoreClasspathResolutionErrors
+        )
+    )
 }
 
-internal fun <T : CommonToolArguments> CompilerArgumentAware<T>.prepareCompilerArguments(ignoreClasspathResolutionErrors: Boolean = false) =
-    createCompilerArgs().also { setupCompilerArgs(it, ignoreClasspathResolutionErrors = ignoreClasspathResolutionErrors) }
+private val includedArgumentTypes = setOf(
+    ArgumentType.Primitive,
+    ArgumentType.PluginClasspath,
+)

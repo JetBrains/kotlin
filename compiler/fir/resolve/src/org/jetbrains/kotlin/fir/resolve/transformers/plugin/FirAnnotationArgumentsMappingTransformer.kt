@@ -1,34 +1,87 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.fir.resolve.transformers.plugin
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.PrivateForInline
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
+import org.jetbrains.kotlin.fir.expressions.FirErrorAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
-import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.*
+import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
+import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformerDispatcher
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirDeclarationsResolveTransformer
+import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirExpressionsResolveTransformer
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.visitors.transformSingle
 
 open class FirAnnotationArgumentsMappingTransformer(
     session: FirSession,
     scopeSession: ScopeSession,
     resolvePhase: FirResolvePhase,
-    outerBodyResolveContext: BodyResolveContext? = null
+    outerBodyResolveContext: BodyResolveContext? = null,
+    returnTypeCalculator: ReturnTypeCalculator = ReturnTypeCalculatorForFullBodyResolve,
 ) : FirAbstractBodyResolveTransformerDispatcher(
     session,
     resolvePhase,
     implicitTypeOnly = false,
     scopeSession,
-    outerBodyResolveContext = outerBodyResolveContext
+    outerBodyResolveContext = outerBodyResolveContext,
+    returnTypeCalculator = returnTypeCalculator,
 ) {
     final override val expressionsTransformer: FirExpressionsResolveTransformer =
-        FirExpressionsResolveTransformer(this)
+        FirExpressionTransformerForAnnotationArgumentsMapping(this)
 
-    final override val declarationsTransformer: FirDeclarationsResolveTransformer =
+    private val declarationsResolveTransformerForAnnotationArgumentsMapping =
         FirDeclarationsResolveTransformerForAnnotationArgumentsMapping(this)
+
+    private val usualDeclarationTransformer = FirDeclarationsResolveTransformer(this)
+
+    @PrivateForInline
+    var isInsideAnnotationArgument = false
+
+    @OptIn(PrivateForInline::class)
+    inline fun <R> insideAnnotationArgument(action: () -> R): R {
+        val oldValue = this.isInsideAnnotationArgument
+        isInsideAnnotationArgument = true
+        try {
+            return action()
+        } finally {
+            isInsideAnnotationArgument = oldValue
+        }
+    }
+
+    @OptIn(PrivateForInline::class)
+    final override val declarationsTransformer: FirDeclarationsResolveTransformer
+        get() {
+            return if (isInsideAnnotationArgument) usualDeclarationTransformer
+            else declarationsResolveTransformerForAnnotationArgumentsMapping
+        }
+}
+
+private class FirExpressionTransformerForAnnotationArgumentsMapping(
+    private val annotationArgumentsMappingTransformer: FirAnnotationArgumentsMappingTransformer,
+) : FirExpressionsResolveTransformer(annotationArgumentsMappingTransformer) {
+
+    override fun transformAnnotationCall(annotationCall: FirAnnotationCall, data: ResolutionMode): FirStatement {
+        annotationArgumentsMappingTransformer.insideAnnotationArgument {
+            return super.transformAnnotationCall(annotationCall, data)
+        }
+    }
+
+    override fun transformErrorAnnotationCall(errorAnnotationCall: FirErrorAnnotationCall, data: ResolutionMode): FirStatement {
+        annotationArgumentsMappingTransformer.insideAnnotationArgument {
+            return super.transformErrorAnnotationCall(errorAnnotationCall, data)
+        }
+    }
+
 }
 
 private class FirDeclarationsResolveTransformerForAnnotationArgumentsMapping(
@@ -37,14 +90,18 @@ private class FirDeclarationsResolveTransformerForAnnotationArgumentsMapping(
     override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): FirStatement {
         regularClass.transformAnnotations(this, data)
         doTransformTypeParameters(regularClass)
+        regularClass.transformSuperTypeRefs(this, data)
 
-        context.withContainingClass(regularClass) {
+        doTransformRegularClass(regularClass, data)
+        return regularClass
+    }
+
+    override fun withRegularClass(regularClass: FirRegularClass, action: () -> FirRegularClass): FirRegularClass {
+        return context.withContainingClass(regularClass) {
             context.withRegularClass(regularClass, components) {
-                transformDeclarationContent(regularClass, data) as FirRegularClass
+                action()
             }
         }
-
-        return regularClass
     }
 
     override fun transformAnonymousInitializer(
@@ -114,6 +171,7 @@ private class FirDeclarationsResolveTransformerForAnnotationArgumentsMapping(
                 .transformReturnTypeRef(transformer, data)
                 .transformGetter(transformer, data)
                 .transformSetter(transformer, data)
+                .transformBackingField(transformer, data)
         }
 
         return property
@@ -155,9 +213,16 @@ private class FirDeclarationsResolveTransformerForAnnotationArgumentsMapping(
         return field
     }
 
+    override fun transformBackingField(backingField: FirBackingField, data: ResolutionMode): FirStatement {
+        backingField.transformAnnotations(transformer, data)
+        return backingField
+    }
+
     override fun transformTypeAlias(typeAlias: FirTypeAlias, data: ResolutionMode): FirTypeAlias {
         doTransformTypeParameters(typeAlias)
         typeAlias.transformAnnotations(transformer, data)
+        transformer.firTowerDataContextCollector?.addDeclarationContext(typeAlias, context.towerDataContext)
+        typeAlias.expandedTypeRef.transformSingle(transformer, data)
         return typeAlias
     }
 

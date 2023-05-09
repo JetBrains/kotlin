@@ -444,7 +444,6 @@ class ModuleStructureExtractorImpl(
                 moduleDirectivesBuilder = directivesBuilder
             }
             currentFileName = null
-            allowFilesWithSameNames = false
             resetDirectivesBuilder()
             fileDirectivesBuilder = directivesBuilder
         }

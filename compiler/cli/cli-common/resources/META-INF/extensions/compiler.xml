@@ -35,9 +35,6 @@
         <extensionPoint qualifiedName="org.jetbrains.kotlin.simpleNameReferenceExtension"
                         interface="org.jetbrains.kotlin.plugin.references.SimpleNameReferenceExtension"
                         area="IDEA_PROJECT" dynamic="true"/>
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.kotlinIndicesHelperExtension"
-                        interface="org.jetbrains.kotlin.idea.core.extension.KotlinIndicesHelperExtension"
-                        area="IDEA_PROJECT" dynamic="true"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.classBuilderFactoryInterceptorExtension"
                         interface="org.jetbrains.kotlin.codegen.extensions.ClassBuilderInterceptorExtension"
                         area="IDEA_PROJECT" dynamic="true"/>
@@ -47,35 +44,13 @@
         <extensionPoint qualifiedName="org.jetbrains.kotlin.packageFragmentProviderExtension"
                         interface="org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension"
                         area="IDEA_PROJECT" dynamic="true"/>
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.quickFixContributor"
-                        interface="org.jetbrains.kotlin.idea.quickfix.QuickFixContributor"
-                        dynamic="true"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.storageComponentContainerContributor"
                         interface="org.jetbrains.kotlin.extensions.StorageComponentContainerContributor"
                         area="IDEA_PROJECT" dynamic="true"/>
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.scriptDefinitionContributor"
-                        interface="org.jetbrains.kotlin.idea.core.script.ScriptDefinitionContributor"
-                        area="IDEA_PROJECT" dynamic="true"/>
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.scriptTemplatesProvider"
-                        interface="org.jetbrains.kotlin.script.ScriptTemplatesProvider"
-                        area="IDEA_PROJECT"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.extraImportsProviderExtension"
                         interface="org.jetbrains.kotlin.resolve.extensions.ExtraImportsProviderExtension"
                         area="IDEA_PROJECT" dynamic="true"/>
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.facetConfigurationExtension"
-                        interface="org.jetbrains.kotlin.idea.facet.KotlinFacetConfigurationExtension"/>
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.versionInfoProvider"
-                        interface="org.jetbrains.kotlin.idea.facet.KotlinVersionInfoProvider"
-                        dynamic="true"/>
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.completionInformationProvider"
-                        interface="org.jetbrains.kotlin.idea.completion.CompletionInformationProvider"
-                        dynamic="true"/>
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.moduleBuilder"
-                        interface="com.intellij.ide.util.projectWizard.ModuleBuilder" dynamic="true"/>
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.renameHandler"
-                        interface="com.intellij.refactoring.rename.RenameHandler"
-                        dynamic="true"/>
-        <extensionPoint qualifiedName="org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter"
+        <extensionPoint qualifiedName="org.jetbrains.kotlin.fir.extensions.firExtensionRegistrar"
                         interface="org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrarAdapter"/>
         <extensionPoint qualifiedName="org.jetbrains.kotlin.DescriptorSerializerPlugin"
                         interface="org.jetbrains.kotlin.serialization.DescriptorSerializerPlugin"/>

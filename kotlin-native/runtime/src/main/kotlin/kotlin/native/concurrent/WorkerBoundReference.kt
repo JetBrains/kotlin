@@ -1,19 +1,24 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2023 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
+@file:OptIn(ExperimentalForeignApi::class)
 
 package kotlin.native.concurrent
 
 import kotlin.native.internal.*
+import kotlinx.cinterop.ExperimentalForeignApi
 
 @GCUnsafeCall("Kotlin_WorkerBoundReference_create")
+@ObsoleteWorkersApi
 external private fun createWorkerBoundReference(value: Any): NativePtr
 
 @GCUnsafeCall("Kotlin_WorkerBoundReference_deref")
+@ObsoleteWorkersApi
 external private fun derefWorkerBoundReference(ref: NativePtr): Any?
 
 @GCUnsafeCall("Kotlin_WorkerBoundReference_describe")
+@ObsoleteWorkersApi
 external private fun describeWorkerBoundReference(ref: NativePtr): String
 
 /**
@@ -31,6 +36,8 @@ external private fun describeWorkerBoundReference(ref: NativePtr): String
 @HasFinalizer
 @HasFreezeHook
 @FreezingIsDeprecated
+@ObsoleteWorkersApi
+@OptIn(ExperimentalForeignApi::class)
 public class WorkerBoundReference<out T : Any>(value: T) {
 
     private var ptr = NativePtr.NULL

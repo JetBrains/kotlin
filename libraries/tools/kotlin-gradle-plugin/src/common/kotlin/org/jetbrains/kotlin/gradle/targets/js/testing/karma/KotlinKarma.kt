@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import org.jetbrains.kotlin.gradle.tasks.KotlinTest
 import org.jetbrains.kotlin.gradle.testing.internal.reportsDir
 import org.jetbrains.kotlin.gradle.utils.appendLine
-import org.jetbrains.kotlin.gradle.utils.isParentOf
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.slf4j.Logger
@@ -302,44 +301,6 @@ class KotlinKarma(
             it.appendLine()
             it.appendLine("config.set({webpack: createWebpackConfig()});")
             it.appendLine()
-        }
-    }
-
-    fun useCoverage(
-        html: Boolean = true,
-        lcov: Boolean = true,
-        cobertura: Boolean = false,
-        teamcity: Boolean = true,
-        text: Boolean = false,
-        textSummary: Boolean = false,
-        json: Boolean = false,
-        jsonSummary: Boolean = false
-    ) {
-        if (listOf(
-                html, lcov, cobertura,
-                teamcity, text, textSummary,
-                json, jsonSummary
-            ).all { !it }
-        ) return
-
-        requiredDependencies.add(versions.karmaCoverage)
-        config.reporters.add("coverage")
-        addPreprocessor("coverage") { !it.endsWith("_test.js") }
-
-        configurators.add {
-            val reportDir = project.reportsDir.resolve("coverage/${it.name}")
-            reportDir.mkdirs()
-
-            config.coverageReporter = CoverageReporter(reportDir.canonicalPath).also { coverage ->
-                if (html) coverage.reporters.add(Reporter("html"))
-                if (lcov) coverage.reporters.add(Reporter("lcovonly"))
-                if (cobertura) coverage.reporters.add(Reporter("cobertura"))
-                if (teamcity) coverage.reporters.add(Reporter("teamcity"))
-                if (text) coverage.reporters.add(Reporter("text"))
-                if (textSummary) coverage.reporters.add(Reporter("text-summary"))
-                if (json) coverage.reporters.add(Reporter("json"))
-                if (jsonSummary) coverage.reporters.add(Reporter("json-summary"))
-            }
         }
     }
 

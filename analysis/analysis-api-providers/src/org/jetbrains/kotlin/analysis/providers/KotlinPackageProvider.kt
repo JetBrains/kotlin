@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.providers
 
-import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.project.Project
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.name.FqName
@@ -78,5 +77,5 @@ public abstract class KotlinPackageProviderFactory {
 }
 
 public fun Project.createPackageProvider(searchScope: GlobalSearchScope): KotlinPackageProvider =
-    ServiceManager.getService(this, KotlinPackageProviderFactory::class.java)
+    this.getService(KotlinPackageProviderFactory::class.java)
         .createPackageProvider(searchScope)

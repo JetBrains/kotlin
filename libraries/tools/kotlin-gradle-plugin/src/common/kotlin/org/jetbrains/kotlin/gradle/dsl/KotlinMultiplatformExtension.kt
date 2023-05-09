@@ -10,20 +10,31 @@ import org.gradle.api.internal.plugins.DslObject
 import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.*
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle.Stage.AfterFinaliseDsl
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.KotlinTargetHierarchyDslImpl
 import javax.inject.Inject
 
+interface KotlinTargetContainerWithPresetFunctions :
+    KotlinTargetContainerWithJvmPresetFunctions,
+    KotlinTargetContainerWithAndroidPresetFunctions,
+    KotlinTargetContainerWithNativePresetFunctions,
+    KotlinTargetContainerWithJsPresetFunctions,
+    KotlinTargetContainerWithWasmPresetFunctions
+
 abstract class KotlinMultiplatformExtension(project: Project) :
     KotlinProjectExtension(project),
     KotlinTargetContainerWithPresetFunctions,
-    KotlinTargetContainerWithJsPresetFunctions,
-    KotlinTargetContainerWithWasmPresetFunctions,
     KotlinTargetContainerWithNativeShortcuts {
     override val presets: NamedDomainObjectCollection<KotlinTargetPreset<*>> = project.container(KotlinTargetPreset::class.java)
 
     final override val targets: NamedDomainObjectCollection<KotlinTarget> = project.container(KotlinTarget::class.java)
+
+    internal suspend fun awaitTargets(): NamedDomainObjectCollection<KotlinTarget> {
+        AfterFinaliseDsl.await()
+        return targets
+    }
 
     override val compilerTypeFromProperties: KotlinJsCompilerType? = project.kotlinPropertiesProvider.jsCompiler
 
@@ -52,8 +63,12 @@ abstract class KotlinMultiplatformExtension(project: Project) :
         configure(presetExtension)
     }
 
+    internal val internalKotlinTargetHierarchy by lazy {
+        KotlinTargetHierarchyDslImpl(project.kotlinPluginLifecycle, targets, sourceSets)
+    }
+
     @ExperimentalKotlinGradlePluginApi
-    val targetHierarchy: KotlinTargetHierarchyDsl get() = KotlinTargetHierarchyDslImpl(targets, sourceSets)
+    val targetHierarchy: KotlinTargetHierarchyDsl get() = internalKotlinTargetHierarchy
 
     @Suppress("unused") // DSL
     val testableTargets: NamedDomainObjectCollection<KotlinTargetWithTests<*, *>>
@@ -203,4 +218,20 @@ internal fun <T : KotlinTarget> KotlinTargetsContainerWithPresets.configureOrCre
             )
         }
     }
+}
+
+internal fun KotlinTargetsContainerWithPresets.configureOrCreateAndroidTargetAndReportDeprecation(
+    targetName: String,
+    configure: KotlinAndroidTarget.() -> Unit
+): KotlinAndroidTarget {
+    val targetPreset = presets.getByName("android") as KotlinAndroidTargetPreset
+    val result = configureOrCreate(targetName, targetPreset, configure)
+
+    result.project.logger.warn(
+        """
+            w: Please use `androidTarget` function instead of `android` to configure android target inside `kotlin { }` block.
+            See the details here: https://kotl.in/android-target-dsl
+        """.trimIndent()
+    )
+    return result
 }

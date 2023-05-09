@@ -66,7 +66,6 @@ fun box() {
 // test.kt:9 compute: y=42:number, i=0:number, z=32:number
 // test.kt:9 compute: y=42:number, i=0:number, z=32:number
 // test.kt:9 compute: y=42:number, i=0:number, z=32:number, j=0:number
-// test.kt:10 compute: y=42:number, i=0:number, z=32:number, j=0:number
 // test.kt:24 compute: y=42:number, i=0:number, z=32:number, j=0:number
 // test.kt:28 compute: y=42:number, i=0:number, z=32:number, j=0:number
 // test.kt:29 compute: y=42:number, i=0:number, z=32:number, j=0:number, s2="OK":kotlin.String

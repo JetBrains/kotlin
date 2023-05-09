@@ -228,14 +228,14 @@ private fun StringBuilder.appendProjectDependencies(
         return
     }
 
-    val incomingDependencyIdToDependencies: MutableMap<ResolvedDependencyId, MutableCollection<ResolvedDependency>> = mutableMapOf()
+    val incomingDependencyIdToDependencies: MutableMap<ResolvedDependencyId, MutableCollection<ResolvedDependency>> = hashMapOf()
     allModules.values.forEach { module ->
         module.requestedVersionsByIncomingDependencies.keys.forEach { incomingDependencyId ->
             incomingDependencyIdToDependencies.getOrPut(incomingDependencyId) { mutableListOf() } += module
         }
     }
 
-    val renderedModules: MutableSet<ResolvedDependencyId> = mutableSetOf()
+    val renderedModules: MutableSet<ResolvedDependencyId> = hashSetOf()
     var everDependenciesOmitted = false
 
     fun renderModules(modules: Collection<ResolvedDependency>, parentData: Data?) {
@@ -346,7 +346,7 @@ private fun findPotentiallyConflictingOutgoingDependencies(
     )
 
     // Reverse dependency index.
-    val outgoingDependenciesIndex: MutableMap<ResolvedDependencyId, MutableList<OutgoingDependency>> = mutableMapOf()
+    val outgoingDependenciesIndex: MutableMap<ResolvedDependencyId, MutableList<OutgoingDependency>> = hashMapOf()
 
     allModules.values.forEach { module ->
         module.requestedVersionsByIncomingDependencies.forEach { (incomingDependencyId, requestedVersion) ->

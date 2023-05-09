@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -112,6 +112,8 @@ object FirFakeOverrideGenerator {
         newVisibility: Visibility? = null,
         fakeOverrideSubstitution: FakeOverrideSubstitution? = null
     ): FirSimpleFunction {
+        checkStatusIsResolved(baseFunction)
+
         return buildSimpleFunction {
             source = baseFunction.source
             moduleData = session.nullableModuleData ?: baseFunction.moduleData
@@ -147,11 +149,13 @@ object FirFakeOverrideGenerator {
         isExpect: Boolean,
         fakeOverrideSubstitution: FakeOverrideSubstitution?
     ): FirConstructor {
+        checkStatusIsResolved(baseConstructor)
+
         // TODO: consider using here some light-weight functions instead of pseudo-real FirMemberFunctionImpl
         // As second alternative, we can invent some light-weight kind of FirRegularClass
         return buildConstructor {
             annotations += baseConstructor.annotations
-            moduleData = session.moduleData
+            moduleData = session.nullableModuleData ?: baseConstructor.moduleData
             this.origin = origin
             receiverParameter = baseConstructor.receiverParameter?.let { receiverParameter ->
                 buildReceiverParameterCopy(receiverParameter) {
@@ -350,9 +354,11 @@ object FirFakeOverrideGenerator {
         newVisibility: Visibility? = null,
         fakeOverrideSubstitution: FakeOverrideSubstitution? = null
     ): FirProperty {
+        checkStatusIsResolved(baseProperty)
+
         return buildProperty {
             source = baseProperty.source
-            moduleData = session.moduleData
+            moduleData = session.nullableModuleData ?: baseProperty.moduleData
             this.origin = origin
             name = baseProperty.name
             isVar = baseProperty.isVar
@@ -375,7 +381,7 @@ object FirFakeOverrideGenerator {
             deprecationsProvider = baseProperty.deprecationsProvider
 
             getter = baseProperty.getter?.buildCopyIfNeeded(
-                moduleData = session.moduleData,
+                moduleData = session.nullableModuleData ?: baseProperty.moduleData,
                 origin = origin,
                 propertyReturnTypeRef = this@buildProperty.returnTypeRef,
                 propertySymbol = newSymbol,
@@ -385,7 +391,7 @@ object FirFakeOverrideGenerator {
             )
 
             setter = baseProperty.setter?.buildCopyIfNeeded(
-                moduleData = session.moduleData,
+                moduleData = session.nullableModuleData ?: baseProperty.moduleData,
                 origin = origin,
                 propertyReturnTypeRef = this@buildProperty.returnTypeRef,
                 propertySymbol = newSymbol,
@@ -437,6 +443,7 @@ object FirFakeOverrideGenerator {
             propertySymbol = propertySymbol,
             modality = modality ?: Modality.FINAL,
             effectiveVisibility = effectiveVisibility,
+            resolvePhase = resolvePhase,
         ).apply {
             replaceAnnotations(annotations)
         }
@@ -449,6 +456,7 @@ object FirFakeOverrideGenerator {
             propertySymbol = propertySymbol,
             modality = modality ?: Modality.FINAL,
             effectiveVisibility = effectiveVisibility,
+            resolvePhase = resolvePhase,
         ).apply {
             replaceAnnotations(annotations)
         }
@@ -499,7 +507,7 @@ object FirFakeOverrideGenerator {
     ): FirField {
         return buildField {
             source = baseField.source
-            moduleData = session.moduleData
+            moduleData = session.nullableModuleData ?: baseField.moduleData
             this.origin = origin
             name = baseField.name
             isVar = baseField.isVar
@@ -638,7 +646,7 @@ object FirFakeOverrideGenerator {
     ): FirFieldSymbol {
         val symbol = FirFieldSymbol(CallableId(derivedClassLookupTag.classId, baseField.name))
         buildField {
-            moduleData = session.moduleData
+            moduleData = session.nullableModuleData ?: baseField.moduleData
             this.symbol = symbol
             origin = FirDeclarationOrigin.SubstitutionOverride
             returnTypeRef = baseField.returnTypeRef.withReplacedConeType(newReturnType)
@@ -723,5 +731,13 @@ object FirFakeOverrideGenerator {
     private sealed class Maybe<out A> {
         class Value<out A>(val value: A) : Maybe<A>()
         object Nothing : Maybe<kotlin.Nothing>()
+    }
+
+    private fun checkStatusIsResolved(member: FirCallableDeclaration) {
+        check(member.status is FirResolvedDeclarationStatus) {
+            "Status should be resolved for a declaration to create it fake override, " +
+                    "otherwise the status of the fake override will never be resolved." +
+                    "The status was unresolved for ${member::class.java.simpleName}"
+        }
     }
 }

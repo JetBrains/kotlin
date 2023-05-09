@@ -1,4 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
 import kotlin.reflect.KClass
 
 enum class SomeEnum {

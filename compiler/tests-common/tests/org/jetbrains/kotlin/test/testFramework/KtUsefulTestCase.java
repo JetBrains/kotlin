@@ -9,10 +9,9 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.application.Application;
 import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.application.PathManager;
-import com.intellij.openapi.application.impl.ApplicationInfoImpl;
+import com.intellij.openapi.application.ex.ApplicationManagerEx;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.util.Disposer;
-import com.intellij.openapi.util.JDOMUtil;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.registry.Registry;
 import com.intellij.openapi.util.text.StringUtil;
@@ -32,7 +31,6 @@ import gnu.trove.Equality;
 import gnu.trove.THashSet;
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
-import org.jdom.Element;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -78,18 +76,9 @@ public abstract class KtUsefulTestCase extends TestCase {
 
     private String myTempDir;
 
-    private static final String DEFAULT_SETTINGS_EXTERNALIZED;
     static {
         // Radar #5755208: Command line Java applications need a way to launch without a Dock icon.
         System.setProperty("apple.awt.UIElement", "true");
-
-        try {
-            Element oldS = new Element("temp");
-            DEFAULT_SETTINGS_EXTERNALIZED = JDOMUtil.writeElement(oldS);
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
 
         // -- KOTLIN ADDITIONAL START --
 
@@ -159,7 +148,7 @@ public abstract class KtUsefulTestCase extends TestCase {
         }
 
         boolean isStressTest = isStressTest();
-        ApplicationInfoImpl.setInStressTest(isStressTest);
+        ApplicationManagerEx.setInStressTest(isStressTest);
         Registry.getInstance().markAsLoaded();
         // turn off Disposer debugging for performance tests
         Disposer.setDebugMode(!isStressTest);

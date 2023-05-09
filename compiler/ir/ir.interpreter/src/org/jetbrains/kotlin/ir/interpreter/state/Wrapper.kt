@@ -198,6 +198,13 @@ internal class Wrapper(val value: Any, override val irClass: IrClass, environmen
             }
         }
 
+        private fun Int?.getCorrespondingFunction(): Class<*> {
+            return when {
+                this == null || this >= BuiltInFunctionArity.BIG_ARITY -> Class.forName("kotlin.jvm.functions.FunctionN")
+                else -> Class.forName("kotlin.jvm.functions.Function$this")
+            }
+        }
+
         private fun IrType.getClass(asObject: Boolean): Class<out Any> {
             val owner = this.classOrNull?.owner
             val fqName = owner?.fqName
@@ -221,15 +228,12 @@ internal class Wrapper(val value: Any, override val irClass: IrClass, environmen
                 notNullType.isThrowable() -> Throwable::class.java
                 notNullType.isIterable() -> Iterable::class.java
 
-                notNullType.isKFunction() -> Class.forName("kotlin.reflect.KFunction")
+                notNullType.isKFunction() || notNullType.isKSuspendFunction() -> Class.forName("kotlin.reflect.KFunction")
                 notNullType.isFunction() -> {
                     val arity = fqName?.removePrefix("kotlin.Function")?.toIntOrNull()
-                    return when {
-                        arity == null || arity >= BuiltInFunctionArity.BIG_ARITY -> Class.forName("kotlin.jvm.functions.FunctionN")
-                        else -> Class.forName("kotlin.jvm.functions.${fqName.removePrefix("kotlin.")}")
-                    }
+                    return arity.getCorrespondingFunction()
                 }
-                //notNullType.isSuspendFunction() || notNullType.isKSuspendFunction() -> throw AssertionError() //TODO
+                notNullType.isSuspendFunction() -> error("Interpretation of $fqName is not supported")
 
                 fqName == "kotlin.Enum" -> Enum::class.java
                 fqName == "kotlin.collections.Collection" || fqName == "kotlin.collections.MutableCollection" -> Collection::class.java

@@ -73,6 +73,15 @@ public class CompilerConfiguration {
         map.put(key.ideaKey, value);
     }
 
+    public <T> T putIfAbsent(@NotNull CompilerConfigurationKey<T> key, @NotNull T value) {
+        T data = get(key);
+        if (data != null) return data;
+
+        checkReadOnly();
+        put(key, value);
+        return value;
+    }
+
     public <T> void putIfNotNull(@NotNull CompilerConfigurationKey<T> key, @Nullable T value) {
         if (value != null) {
             put(key, value);

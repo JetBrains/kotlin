@@ -732,6 +732,10 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
             +field(varianceType)
         }
 
+        contractElementDeclaration.configure {
+            +field("effect", coneContractElementType)
+        }
+
         effectDeclaration.configure {
             +field("effect", coneEffectDeclarationType)
         }
@@ -742,7 +746,7 @@ object NodeConfigurator : AbstractFieldConfigurator<FirTreeBuilder>(FirTreeBuild
 
         resolvedContractDescription.configure {
             +fieldList("effects", effectDeclaration)
-            +fieldList("unresolvedEffects", coneUnresolvedEffect)
+            +fieldList("unresolvedEffects", contractElementDeclaration)
         }
 
         legacyRawContractDescription.configure {

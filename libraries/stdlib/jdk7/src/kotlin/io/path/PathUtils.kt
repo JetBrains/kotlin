@@ -562,8 +562,16 @@ public inline fun Path.createDirectories(vararg attributes: FileAttribute<*>): P
  */
 @SinceKotlin("1.9")
 @Throws(IOException::class)
-public fun Path.createParentDirectories(vararg attributes: FileAttribute<*>): Path =
-    this.apply { parent?.createDirectories(*attributes) }
+public fun Path.createParentDirectories(vararg attributes: FileAttribute<*>): Path = also {
+    val parent = it.parent
+    if (parent != null && !parent.isDirectory()) {
+        try {
+            parent.createDirectories(*attributes)
+        } catch (e: FileAlreadyExistsException) {
+            if (!parent.isDirectory()) throw e
+        }
+    }
+}
 
 /**
  * Moves or renames the file located by this path to the [target] path.

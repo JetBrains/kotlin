@@ -18,9 +18,9 @@ public final class MFVC1 {
     public synthetic final static method box-impl(p0: java.lang.Number, p1: int): MFVC1
     public final static method constructor-impl(@org.jetbrains.annotations.NotNull p0: java.lang.Number, p1: int): void
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
-    public final static method equals-impl(@org.jetbrains.annotations.NotNull p0: java.lang.Number, p1: int, p2: int, p3: int): boolean
+    public final static method equals-impl(p0: java.lang.Number, p1: int, p2: int, p3: int): boolean
     public static method equals-impl(p0: java.lang.Number, p1: int, p2: java.lang.Object): boolean
-    public final static method equals-impl0(@org.jetbrains.annotations.NotNull p0: java.lang.Number, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.Number, p3: int): boolean
+    public final static method equals-impl0(p0: java.lang.Number, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.Number, p3: int): boolean
     public final method getOther(): int
     public final @org.jetbrains.annotations.NotNull method getX(): java.lang.Number
     public method hashCode(): int
@@ -41,9 +41,9 @@ public final class MFVC2 {
     public synthetic final static method box-impl(p0: Generic, p1: int): MFVC2
     public final static method constructor-impl(@org.jetbrains.annotations.NotNull p0: Generic, p1: int): void
     public method equals(@org.jetbrains.annotations.Nullable p0: java.lang.Object): boolean
-    public final static method equals-7Pc2DFw(@org.jetbrains.annotations.NotNull p0: Generic, p1: int, p2: double, p3: int, p4: int): boolean
+    public final static method equals-7Pc2DFw(p0: Generic, p1: int, p2: double, p3: int, p4: int): boolean
     public static method equals-impl(p0: Generic, p1: int, p2: java.lang.Object): boolean
-    public final static method equals-impl0(@org.jetbrains.annotations.NotNull p0: Generic, p1: int, @org.jetbrains.annotations.NotNull p2: Generic, p3: int): boolean
+    public final static method equals-impl0(p0: Generic, p1: int, @org.jetbrains.annotations.NotNull p2: Generic, p3: int): boolean
     public final method getOther(): int
     public final @org.jetbrains.annotations.NotNull method getValue(): Generic
     public method hashCode(): int

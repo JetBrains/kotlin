@@ -52,6 +52,8 @@ object BinaryOptions : BinaryOptionRegistry() {
     val mimallocUseCompaction by booleanOption()
 
     val compileBitcodeWithXcodeLlvm by booleanOption()
+
+    val objcDisposeOnMain by booleanOption()
 }
 
 open class BinaryOption<T : Any>(

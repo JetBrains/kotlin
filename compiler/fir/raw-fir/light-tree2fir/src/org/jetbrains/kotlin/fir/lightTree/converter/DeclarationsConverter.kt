@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.lightTree.converter
 
 import com.intellij.lang.LighterASTNode
-import com.intellij.lang.impl.PsiBuilderImpl
 import com.intellij.psi.TokenType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.*
@@ -19,9 +18,6 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
-import org.jetbrains.kotlin.diagnostics.DiagnosticContext
-import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
-import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.builder.*
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
@@ -40,7 +36,6 @@ import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
-import org.jetbrains.kotlin.fir.lightTree.LightTree2Fir
 import org.jetbrains.kotlin.fir.lightTree.fir.*
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.Modifier
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.TypeModifier
@@ -69,33 +64,10 @@ class DeclarationsConverter(
     session: FirSession,
     internal val baseScopeProvider: FirScopeProvider,
     tree: FlyweightCapableTreeStructure<LighterASTNode>,
-    @set:PrivateForInline override var offset: Int = 0,
     context: Context<LighterASTNode> = Context(),
-    private val diagnosticsReporter: DiagnosticReporter? = null,
-    private val diagnosticContext: DiagnosticContext? = null
 ) : BaseConverter(session, tree, context) {
 
-    @OptIn(PrivateForInline::class)
-    inline fun <R> withOffset(newOffset: Int, block: () -> R): R {
-        val oldOffset = offset
-        offset = newOffset
-        return try {
-            block()
-        } finally {
-            offset = oldOffset
-        }
-    }
-
     private val expressionConverter = ExpressionsConverter(session, tree, this, context)
-
-    override fun reportSyntaxError(node: LighterASTNode) {
-        val message = PsiBuilderImpl.getErrorMessage(node)
-        if (message == null) {
-            diagnosticsReporter?.reportOn(node.toFirSourceElement(), FirSyntaxErrors.SYNTAX, diagnosticContext!!)
-        } else {
-            diagnosticsReporter?.reportOn(node.toFirSourceElement(), FirSyntaxErrors.SYNTAX_WITH_MESSAGE, message, diagnosticContext!!)
-        }
-    }
 
     /**
      * [org.jetbrains.kotlin.parsing.KotlinParsing.parseFile]
@@ -1186,7 +1158,11 @@ class DeclarationsConverter(
                     accessors += it
                 }
                 BACKING_FIELD -> fieldDeclaration = it
-                else -> if (it.isExpression()) propertyInitializer = expressionConverter.getAsFirExpression(it, "Should have initializer")
+                else -> if (it.isExpression()) {
+                    context.calleeNamesForLambda += null
+                    propertyInitializer = expressionConverter.getAsFirExpression(it, "Should have initializer")
+                    context.calleeNamesForLambda.removeLast()
+                }
             }
         }
 
@@ -1216,7 +1192,12 @@ class DeclarationsConverter(
 
             typeParameterList?.let { firTypeParameters += convertTypeParameters(it, typeConstraints, symbol) }
 
-            backingField = fieldDeclaration.convertBackingField(symbol, modifiers, returnType, isVar)
+            backingField = fieldDeclaration.convertBackingField(
+                symbol, modifiers, returnType, isVar,
+                if (isLocal) emptyList() else modifiers.annotations.filter {
+                    it.useSiteTarget == FIELD || it.useSiteTarget == PROPERTY_DELEGATE_FIELD
+                }
+            )
 
             if (isLocal) {
                 this.isLocal = true
@@ -1314,7 +1295,7 @@ class DeclarationsConverter(
                 }
             }
             annotations += if (isLocal) modifiers.annotations else modifiers.annotations.filter {
-                it.useSiteTarget != PROPERTY_GETTER &&
+                it.useSiteTarget != FIELD && it.useSiteTarget != PROPERTY_DELEGATE_FIELD && it.useSiteTarget != PROPERTY_GETTER &&
                         (!isVar || it.useSiteTarget != SETTER_PARAMETER && it.useSiteTarget != PROPERTY_SETTER)
             }
 
@@ -1499,6 +1480,7 @@ class DeclarationsConverter(
         propertyModifiers: Modifier,
         propertyReturnType: FirTypeRef,
         isVar: Boolean,
+        annotationsFromProperty: List<FirAnnotationCall>,
     ): FirBackingField {
         var modifiers = Modifier()
         var returnType: FirTypeRef = implicitType
@@ -1528,6 +1510,7 @@ class DeclarationsConverter(
                 symbol = FirBackingFieldSymbol(CallableId(name))
                 this.status = status
                 annotations += modifiers.annotations
+                annotations += annotationsFromProperty
                 this.propertySymbol = propertySymbol
                 this.initializer = backingFieldInitializer
                 this.isVar = isVar
@@ -1536,7 +1519,7 @@ class DeclarationsConverter(
         } else {
             FirDefaultPropertyBackingField(
                 moduleData = baseModuleData,
-                annotations = mutableListOf(),
+                annotations = annotationsFromProperty.toMutableList(),
                 returnTypeRef = propertyReturnType.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
                 isVar = isVar,
                 propertySymbol = propertySymbol,
@@ -1797,11 +1780,7 @@ class DeclarationsConverter(
             )
         }
 
-        val blockTree = LightTree2Fir.buildLightTreeBlockExpression(block.asText)
-        return DeclarationsConverter(
-            baseSession, baseScopeProvider, blockTree, offset = offset + tree.getStartOffset(block), context,
-            diagnosticsReporter, diagnosticContext
-        ).convertBlockExpression(blockTree.root)
+        return convertBlockExpression(block)
     }
 
     /**
@@ -1838,7 +1817,7 @@ class DeclarationsConverter(
                     delegatedSuperTypeRef = first
                     superTypeRefs += first
                     superTypeCallEntry += second
-                    delegateConstructorSource = it.toFirSourceElement(KtFakeSourceElementKind.DelegatingConstructorCall)
+                    delegateConstructorSource = it.toFirSourceElement()
                     index++
                 }
                 DELEGATED_SUPER_TYPE_ENTRY -> {

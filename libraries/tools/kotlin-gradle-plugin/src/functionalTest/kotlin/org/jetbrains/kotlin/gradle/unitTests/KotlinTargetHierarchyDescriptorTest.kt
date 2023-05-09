@@ -10,10 +10,11 @@ package org.jetbrains.kotlin.gradle.unitTests
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinTargetHierarchyDescriptor
 import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.CyclicKotlinTargetHierarchyException
-import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.KotlinTargetHierarchy
-import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.KotlinTargetHierarchy.Node
+import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.KotlinTargetHierarchyTree
+import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.KotlinTargetHierarchyTree.Node
 import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.buildKotlinTargetHierarchy
 import org.jetbrains.kotlin.gradle.util.buildProjectWithMPP
+import org.jetbrains.kotlin.gradle.util.runLifecycleAwareTest
 import org.jetbrains.kotlin.gradle.util.main
 import org.junit.Test
 import kotlin.test.*
@@ -24,7 +25,7 @@ class KotlinTargetHierarchyDescriptorTest {
     private val kotlin = project.multiplatformExtension
 
     @Test
-    fun `test - simple descriptor`() {
+    fun `test - simple descriptor`() = project.runLifecycleAwareTest {
         val descriptor = KotlinTargetHierarchyDescriptor {
             common {
                 group("groupA") { withCompilations { it.target.name == "a" } }
@@ -61,7 +62,7 @@ class KotlinTargetHierarchyDescriptorTest {
     }
 
     @Test
-    fun `test - extend`() {
+    fun `test - extend`() = project.runLifecycleAwareTest {
         val descriptor = KotlinTargetHierarchyDescriptor { group("base") }.extend {
             group("base") {
                 group("extension") {
@@ -82,7 +83,7 @@ class KotlinTargetHierarchyDescriptorTest {
 
 
     @Test
-    fun `test - extend - with new root`() {
+    fun `test - extend - with new root`() = project.runLifecycleAwareTest {
         val descriptor = KotlinTargetHierarchyDescriptor { group("base") }.extend {
             group("newRoot") {
                 group("base") {
@@ -107,7 +108,7 @@ class KotlinTargetHierarchyDescriptorTest {
 
 
     @Test
-    fun `test - extend - with two new roots and two extensions`() {
+    fun `test - extend - with two new roots and two extensions`() = project.runLifecycleAwareTest {
         val descriptor = KotlinTargetHierarchyDescriptor { group("base") }
             .extend {
                 group("newRoot1") {
@@ -148,7 +149,7 @@ class KotlinTargetHierarchyDescriptorTest {
             }, hierarchy
         )
 
-        fun KotlinTargetHierarchy.collectChildren(): List<KotlinTargetHierarchy> {
+        fun KotlinTargetHierarchyTree.collectChildren(): List<KotlinTargetHierarchyTree> {
             return children.toList() + children.flatMap { it.collectChildren() }
         }
 
@@ -163,7 +164,7 @@ class KotlinTargetHierarchyDescriptorTest {
     }
 
     @Test
-    fun `test - cycle`() {
+    fun `test - cycle`() = project.runLifecycleAwareTest {
         val descriptor = KotlinTargetHierarchyDescriptor {
             group("x") { // decoy 1
                 group("a") {
@@ -192,8 +193,9 @@ class KotlinTargetHierarchyDescriptorTest {
         )
     }
 
+    @Suppress("DEPRECATION")
     @Test
-    fun `test - filterCompilations`() {
+    fun `test - filterCompilations`() = project.runLifecycleAwareTest {
         val descriptor = KotlinTargetHierarchyDescriptor {
             filterCompilations { it.name in setOf("a", "b") }
             common {
@@ -222,8 +224,9 @@ class KotlinTargetHierarchyDescriptorTest {
         )
     }
 
+    @Suppress("DEPRECATION")
     @Test
-    fun `test - filterCompilations - include them again`() {
+    fun `test - filterCompilations - include them again`() = project.runLifecycleAwareTest {
         val descriptor = KotlinTargetHierarchyDescriptor {
             withCompilations { true }
             filterCompilations { it.name == "a" }
@@ -248,9 +251,9 @@ private class TestHierarchyBuilder(private val node: Node) {
         children.add(TestHierarchyBuilder(Node.Group(name)).also(builder))
     }
 
-    fun build(): KotlinTargetHierarchy = KotlinTargetHierarchy(node, children.map { it.build() }.toSet())
+    fun build(): KotlinTargetHierarchyTree = KotlinTargetHierarchyTree(node, children.map { it.build() }.toSet())
 }
 
-private fun hierarchy(build: TestHierarchyBuilder.() -> Unit): KotlinTargetHierarchy {
+private fun hierarchy(build: TestHierarchyBuilder.() -> Unit): KotlinTargetHierarchyTree {
     return TestHierarchyBuilder(Node.Root).also(build).build()
 }

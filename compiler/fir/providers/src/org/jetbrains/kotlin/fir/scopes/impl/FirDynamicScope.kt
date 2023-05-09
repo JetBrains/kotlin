@@ -128,7 +128,7 @@ class FirDynamicMembersStorage(val session: FirSession) : FirSessionComponent {
     private val anyArrayTypeRef = buildResolvedTypeRef {
         type = ConeClassLikeTypeImpl(
             StandardClassIds.Array.toLookupTag(),
-            arrayOf(session.builtinTypes.nullableAnyType.coneType),
+            arrayOf(dynamicTypeRef.coneType),
             isNullable = false
         )
     }

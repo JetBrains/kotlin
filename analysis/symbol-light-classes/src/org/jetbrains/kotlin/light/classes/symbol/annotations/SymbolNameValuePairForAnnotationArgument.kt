@@ -38,4 +38,12 @@ internal class SymbolNameValuePairForAnnotationArgument(
     override fun getLiteralValue(): String? = (value as? PsiLiteralExpression)?.value?.toString()
 
     override fun getName(): String = constantValue.name.asString()
+
+    override fun accept(visitor: PsiElementVisitor) {
+        if (visitor is JavaElementVisitor) {
+            visitor.visitNameValuePair(this)
+        } else {
+            visitor.visitElement(this)
+        }
+    }
 }

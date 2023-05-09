@@ -621,6 +621,12 @@ public class FirJsBoxTestGenerated extends AbstractFirJsBoxTest {
         }
 
         @Test
+        @TestMetadata("superCallInsideLambda.kt")
+        public void testSuperCallInsideLambda() throws Exception {
+            runTest("js/js.translator/testData/box/closure/superCallInsideLambda.kt");
+        }
+
+        @Test
         @TestMetadata("withManyClosuresInNestedFunctionsAndObjects.kt")
         public void testWithManyClosuresInNestedFunctionsAndObjects() throws Exception {
             runTest("js/js.translator/testData/box/closure/withManyClosuresInNestedFunctionsAndObjects.kt");
@@ -930,6 +936,12 @@ public class FirJsBoxTestGenerated extends AbstractFirJsBoxTest {
         @TestMetadata("suspendFunctionalInterface.kt")
         public void testSuspendFunctionalInterface() throws Exception {
             runTest("js/js.translator/testData/box/coroutines/suspendFunctionalInterface.kt");
+        }
+
+        @Test
+        @TestMetadata("suspendMethodWithSuperCall.kt")
+        public void testSuspendMethodWithSuperCall() throws Exception {
+            runTest("js/js.translator/testData/box/coroutines/suspendMethodWithSuperCall.kt");
         }
     }
 
@@ -2178,6 +2190,12 @@ public class FirJsBoxTestGenerated extends AbstractFirJsBoxTest {
             }
 
             @Test
+            @TestMetadata("exportClassWithInitBlock.kt")
+            public void testExportClassWithInitBlock() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/export/exportClassWithInitBlock.kt");
+            }
+
+            @Test
             @TestMetadata("exportEnumClass.kt")
             public void testExportEnumClass() throws Exception {
                 runTest("js/js.translator/testData/box/esModules/export/exportEnumClass.kt");
@@ -2458,6 +2476,12 @@ public class FirJsBoxTestGenerated extends AbstractFirJsBoxTest {
             }
 
             @Test
+            @TestMetadata("jsExternalInheritorsOnly.kt")
+            public void testJsExternalInheritorsOnly() throws Exception {
+                runTest("js/js.translator/testData/box/esModules/jsModule/jsExternalInheritorsOnly.kt");
+            }
+
+            @Test
             @TestMetadata("topLevelVarargFun.kt")
             public void testTopLevelVarargFun() throws Exception {
                 runTest("js/js.translator/testData/box/esModules/jsModule/topLevelVarargFun.kt");
@@ -2704,6 +2728,12 @@ public class FirJsBoxTestGenerated extends AbstractFirJsBoxTest {
         @TestMetadata("exportClassPropertiesInDifferentCombinations.kt")
         public void testExportClassPropertiesInDifferentCombinations() throws Exception {
             runTest("js/js.translator/testData/box/export/exportClassPropertiesInDifferentCombinations.kt");
+        }
+
+        @Test
+        @TestMetadata("exportClassWithInitBlock.kt")
+        public void testExportClassWithInitBlock() throws Exception {
+            runTest("js/js.translator/testData/box/export/exportClassWithInitBlock.kt");
         }
 
         @Test
@@ -5364,6 +5394,12 @@ public class FirJsBoxTestGenerated extends AbstractFirJsBoxTest {
         @TestMetadata("extensionWithManyArguments.kt")
         public void testExtensionWithManyArguments() throws Exception {
             runTest("js/js.translator/testData/box/inline/extensionWithManyArguments.kt");
+        }
+
+        @Test
+        @TestMetadata("externalInlineWithSuppress.kt")
+        public void testExternalInlineWithSuppress() throws Exception {
+            runTest("js/js.translator/testData/box/inline/externalInlineWithSuppress.kt");
         }
 
         @Test
@@ -10712,6 +10748,12 @@ public class FirJsBoxTestGenerated extends AbstractFirJsBoxTest {
         @TestMetadata("propertySuperAccess.kt")
         public void testPropertySuperAccess() throws Exception {
             runTest("js/js.translator/testData/box/superCall/propertySuperAccess.kt");
+        }
+
+        @Test
+        @TestMetadata("superCallInPrivateMethod.kt")
+        public void testSuperCallInPrivateMethod() throws Exception {
+            runTest("js/js.translator/testData/box/superCall/superCallInPrivateMethod.kt");
         }
 
         @Test

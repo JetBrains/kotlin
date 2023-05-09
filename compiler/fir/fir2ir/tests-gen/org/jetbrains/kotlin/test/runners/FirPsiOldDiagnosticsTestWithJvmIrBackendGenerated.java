@@ -576,6 +576,22 @@ public class FirPsiOldDiagnosticsTestWithJvmIrBackendGenerated extends AbstractF
         }
 
         @Nested
+        @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/inlineClasses")
+        @TestDataPath("$PROJECT_ROOT")
+        public class InlineClasses {
+            @Test
+            public void testAllFilesPresentInInlineClasses() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/inlineClasses"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+            }
+
+            @Test
+            @TestMetadata("declarationClash.kt")
+            public void testDeclarationClash() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/inlineClasses/declarationClash.kt");
+            }
+        }
+
+        @Nested
         @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/specialNames")
         @TestDataPath("$PROJECT_ROOT")
         public class SpecialNames {
@@ -822,6 +838,22 @@ public class FirPsiOldDiagnosticsTestWithJvmIrBackendGenerated extends AbstractF
             @TestMetadata("twoTraits_old.kt")
             public void testTwoTraits_old() throws Exception {
                 runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/traitImpl/twoTraits_old.kt");
+            }
+        }
+
+        @Nested
+        @TestMetadata("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/valueClasses")
+        @TestDataPath("$PROJECT_ROOT")
+        public class ValueClasses {
+            @Test
+            public void testAllFilesPresentInValueClasses() throws Exception {
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/valueClasses"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
+            }
+
+            @Test
+            @TestMetadata("declarationClash.kt")
+            public void testDeclarationClash() throws Exception {
+                runTest("compiler/testData/diagnostics/testsWithJvmBackend/duplicateJvmSignature/valueClasses/declarationClash.kt");
             }
         }
     }

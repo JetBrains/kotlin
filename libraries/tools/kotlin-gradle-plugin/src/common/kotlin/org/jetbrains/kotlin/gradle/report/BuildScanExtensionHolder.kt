@@ -7,6 +7,6 @@ package org.jetbrains.kotlin.gradle.report
 
 import com.gradle.scan.plugin.BuildScanExtension
 
-class BuildScanExtensionHolder(val buildScan: BuildScanExtension?) : java.io.Serializable {
-    constructor(extension: Any?) : this(extension as BuildScanExtension)
+class BuildScanExtensionHolder(val buildScan: BuildScanExtension) : java.io.Serializable {
+    constructor(extension: Any) : this(extension as BuildScanExtension)
 }

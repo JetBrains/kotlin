@@ -75,6 +75,8 @@ internal class GradleNodeModuleBuilder(
             packageJson.main = "${name}.js"
         }
 
+        packageJson.devDependencies.clear()
+
         // yarn requires semver
         packageJson.version = fixSemver(packageJson.version)
 

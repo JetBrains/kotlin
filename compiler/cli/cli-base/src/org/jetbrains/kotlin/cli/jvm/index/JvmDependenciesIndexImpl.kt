@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.cli.jvm.index
@@ -23,13 +12,16 @@ import com.intellij.openapi.vfs.VirtualFile
 import gnu.trove.THashMap
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.utils.IntArrayList
 import java.util.*
+import java.util.concurrent.locks.ReentrantLock
+import kotlin.concurrent.withLock
 
 // speeds up finding files/classes in classpath/java source roots
-// NOT THREADSAFE, needs to be adapted/removed if we want compiler to be multithreaded
+// TODO: KT-58327 needs to be adapted/removed if we want compiler to be multithreaded
 // the main idea of this class is for each package to store roots which contains it to avoid excessive file system traversal
 class JvmDependenciesIndexImpl(_roots: List<JavaRoot>) : JvmDependenciesIndex {
+    private val lock = ReentrantLock()
+
     //these fields are computed based on _roots passed to constructor which are filled in later
     private val roots: List<JavaRoot> by lazy { _roots.toList() }
 
@@ -74,8 +66,10 @@ class JvmDependenciesIndexImpl(_roots: List<JavaRoot>) : JvmDependenciesIndex {
         acceptedRootTypes: Set<JavaRoot.RootType>,
         continueSearch: (VirtualFile, JavaRoot.RootType) -> Boolean
     ) {
-        search(TraverseRequest(packageFqName, acceptedRootTypes)) { dir, rootType ->
-            if (continueSearch(dir, rootType)) null else Unit
+        lock.withLock {
+            search(TraverseRequest(packageFqName, acceptedRootTypes)) { dir, rootType ->
+                if (continueSearch(dir, rootType)) null else Unit
+            }
         }
     }
 
@@ -85,26 +79,29 @@ class JvmDependenciesIndexImpl(_roots: List<JavaRoot>) : JvmDependenciesIndex {
         acceptedRootTypes: Set<JavaRoot.RootType>,
         findClassGivenDirectory: (VirtualFile, JavaRoot.RootType) -> T?
     ): T? {
-        // make a decision based on information saved from last class search
-        if (lastClassSearch?.first?.classId != classId) {
-            return search(FindClassRequest(classId, acceptedRootTypes), findClassGivenDirectory)
-        }
-
-        val (cachedRequest, cachedResult) = lastClassSearch!!
-        return when (cachedResult) {
-            is SearchResult.NotFound -> {
-                val limitedRootTypes = acceptedRootTypes - cachedRequest.acceptedRootTypes
-                if (limitedRootTypes.isEmpty()) {
-                    null
-                } else {
-                    search(FindClassRequest(classId, limitedRootTypes), findClassGivenDirectory)
-                }
+        lock.withLock {
+            // TODO: KT-58327 probably should be changed to thread local to fix fast-path
+            // make a decision based on information saved from last class search
+            if (lastClassSearch?.first?.classId != classId) {
+                return search(FindClassRequest(classId, acceptedRootTypes), findClassGivenDirectory)
             }
-            is SearchResult.Found -> {
-                if (cachedRequest.acceptedRootTypes == acceptedRootTypes) {
-                    findClassGivenDirectory(cachedResult.packageDirectory, cachedResult.root.type)
-                } else {
-                    search(FindClassRequest(classId, acceptedRootTypes), findClassGivenDirectory)
+
+            val (cachedRequest, cachedResult) = lastClassSearch!!
+            return when (cachedResult) {
+                is SearchResult.NotFound -> {
+                    val limitedRootTypes = acceptedRootTypes - cachedRequest.acceptedRootTypes
+                    if (limitedRootTypes.isEmpty()) {
+                        null
+                    } else {
+                        search(FindClassRequest(classId, limitedRootTypes), findClassGivenDirectory)
+                    }
+                }
+                is SearchResult.Found -> {
+                    if (cachedRequest.acceptedRootTypes == acceptedRootTypes) {
+                        findClassGivenDirectory(cachedResult.packageDirectory, cachedResult.root.type)
+                    } else {
+                        search(FindClassRequest(classId, acceptedRootTypes), findClassGivenDirectory)
+                    }
                 }
             }
         }

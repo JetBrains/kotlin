@@ -144,3 +144,5 @@ fun IrFunction.getAdapteeFromAdaptedForReferenceFunction() : IrFunction? {
     if (call !is IrFunctionAccessExpression) unknownStructure()
     return call.symbol.owner
 }
+
+fun IrBranch.isUnconditional(): Boolean = (condition as? IrConst<*>)?.value == true

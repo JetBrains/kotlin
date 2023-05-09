@@ -10,7 +10,7 @@
 #include "GlobalsRegistry.hpp"
 #include "GC.hpp"
 #include "GCScheduler.hpp"
-#include "StableRefRegistry.hpp"
+#include "SpecialRefRegistry.hpp"
 #include "ThreadRegistry.hpp"
 #include "Utils.hpp"
 #include "ExtraObjectDataFactory.hpp"
@@ -26,7 +26,7 @@ public:
 
     ThreadRegistry& threadRegistry() noexcept { return threadRegistry_; }
     GlobalsRegistry& globalsRegistry() noexcept { return globalsRegistry_; }
-    StableRefRegistry& stableRefRegistry() noexcept { return stableRefRegistry_; }
+    SpecialRefRegistry& specialRefRegistry() noexcept { return specialRefRegistry_; }
     ExtraObjectDataFactory& extraObjectDataFactory() noexcept { return extraObjectDataFactory_; }
     gc::GC& gc() noexcept { return gc_; }
     AppStateTracking& appStateTracking() noexcept { return appStateTracking_; }
@@ -41,7 +41,7 @@ private:
     ThreadRegistry threadRegistry_;
     AppStateTracking appStateTracking_;
     GlobalsRegistry globalsRegistry_;
-    StableRefRegistry stableRefRegistry_;
+    SpecialRefRegistry specialRefRegistry_;
     ExtraObjectDataFactory extraObjectDataFactory_;
     gc::GC gc_;
 };

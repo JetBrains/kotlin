@@ -7,6 +7,7 @@
 package org.jetbrains.kotlin.gradle.plugin.cocoapods
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
@@ -326,11 +327,16 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
             }
 
             kotlinExtension.supportedTargets().all { target ->
-                target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).cinterops.create(pod.moduleName) { interop ->
+                val cinterops = target.compilations.getByName(KotlinCompilation.MAIN_COMPILATION_NAME).cinterops
+                cinterops.create(pod.moduleName) { interop ->
 
-                    val interopTask = project.tasks.getByPath(interop.interopProcessingTaskName)
+                    val interopTask = project.tasks.named<CInteropProcess>(interop.interopProcessingTaskName).get()
 
                     interopTask.dependsOn(defTask)
+
+                    pod.interopBindingDependencies.forEach { dependencyName ->
+                        addPodDependencyToInterop(project, cocoapodsExtension, pod, cinterops, interop, dependencyName)
+                    }
 
                     with(interop) {
                         defFileProperty.set(defTask.map { it.outputFile })
@@ -361,6 +367,27 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                     }
                 }
             }
+        }
+    }
+
+    private fun addPodDependencyToInterop(
+        project: Project,
+        cocoapodsExtension: CocoapodsExtension,
+        pod: CocoapodsDependency,
+        cinterops: NamedDomainObjectContainer<DefaultCInteropSettings>,
+        interop: DefaultCInteropSettings,
+        dependencyName: String,
+    ) {
+        val dependencyPod = cocoapodsExtension.pods.findByName(dependencyName)
+            ?: error("Couldn't find declaration of pod '$dependencyName' (interop-binding dependency of pod '${pod.name}')")
+
+        val dependencyTaskName = cinterops.getByName(dependencyPod.moduleName).interopProcessingTaskName
+        val dependencyTask = project.tasks.named<CInteropProcess>(dependencyTaskName)
+
+        interop.dependencyFiles += project.files(dependencyTask.map { it.outputFile }).builtBy(dependencyTask)
+
+        dependencyPod.interopBindingDependencies.forEach { transitiveDependency ->
+            addPodDependencyToInterop(project, cocoapodsExtension, pod, cinterops, interop, transitiveDependency)
         }
     }
 

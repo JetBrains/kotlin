@@ -1,4 +1,3 @@
-// IGNORE_REVERSED_RESOLVE
 // FILE: A.java
 
 public class A {

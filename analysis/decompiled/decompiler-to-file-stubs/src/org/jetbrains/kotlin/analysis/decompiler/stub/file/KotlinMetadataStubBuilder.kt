@@ -44,10 +44,12 @@ open class KotlinMetadataStubBuilder(
                 val packageProto = file.proto.`package`
                 val packageFqName = file.packageFqName
                 val nameResolver = file.nameResolver
+                val protocol = serializerProtocol()
                 val components = ClsStubBuilderComponents(
                     ProtoBasedClassDataFinder(file.proto, nameResolver, file.version),
-                    AnnotationLoaderForStubBuilderImpl(serializerProtocol()),
-                    virtualFile
+                    AnnotationLoaderForStubBuilderImpl(protocol),
+                    virtualFile,
+                    protocol
                 )
                 val context = components.createContext(nameResolver, packageFqName, TypeTable(packageProto.typeTable))
 

@@ -94,20 +94,20 @@ operator fun rangeTo(other: kotlin.Long): kotlin.ranges.LongRange
 
 operator fun rangeTo(other: kotlin.Short): kotlin.ranges.IntRange
 
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.9")
+@kotlin.WasExperimental(markerClass = [UNRESOLVED_CLASS::class])
 operator fun rangeUntil(other: kotlin.Byte): kotlin.ranges.IntRange
 
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.9")
+@kotlin.WasExperimental(markerClass = [UNRESOLVED_CLASS::class])
 operator fun rangeUntil(other: kotlin.Int): kotlin.ranges.IntRange
 
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.9")
+@kotlin.WasExperimental(markerClass = [UNRESOLVED_CLASS::class])
 operator fun rangeUntil(other: kotlin.Long): kotlin.ranges.LongRange
 
-@kotlin.SinceKotlin(version = "1.7")
-@kotlin.ExperimentalStdlibApi
+@kotlin.SinceKotlin(version = "1.9")
+@kotlin.WasExperimental(markerClass = [UNRESOLVED_CLASS::class])
 operator fun rangeUntil(other: kotlin.Short): kotlin.ranges.IntRange
 
 @kotlin.SinceKotlin(version = "1.1")

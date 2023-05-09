@@ -78,7 +78,7 @@ class StateMachineBuilder(
     private val setSuspendResultValue: (IrExpression) -> IrStatement
 ) : IrElementVisitorVoid {
 
-    private val loopMap = mutableMapOf<IrLoop, LoopBounds>()
+    private val loopMap = hashMapOf<IrLoop, LoopBounds>()
     private val unit = context.irBuiltIns.unitType
     private val anyN = context.irBuiltIns.anyNType
     private val nothing = context.irBuiltIns.nothingType
@@ -153,10 +153,8 @@ class StateMachineBuilder(
     private var currentState = entryState
     private var currentBlock = entryState.entryBlock
 
-    private val returnableBlockMap = mutableMapOf<IrReturnableBlockSymbol, Pair<SuspendState, IrVariableSymbol?>>()
-
     private val catchBlockStack = mutableListOf(rootExceptionTrap)
-    private val tryStateMap = mutableMapOf<IrExpression, TryState>()
+    private val tryStateMap = hashMapOf<IrExpression, TryState>()
     private val tryLoopStack = mutableListOf<IrExpression>()
 
     private fun buildExceptionTrapState(): SuspendState {
@@ -650,13 +648,7 @@ class StateMachineBuilder(
     override fun visitReturn(expression: IrReturn) {
         expression.acceptChildrenVoid(this)
         val returnTarget = expression.returnTargetSymbol
-        if (returnTarget is IrReturnableBlockSymbol) {
-            val (exitState, varSymbol) = returnableBlockMap[returnTarget]!!
-            if (varSymbol != null) {
-                transformLastExpression { JsIrBuilder.buildSetVariable(varSymbol, it, it.type) }
-            }
-            maybeDoDispatch(exitState)
-        } else {
+        if (returnTarget !is IrReturnableBlockSymbol) {
             transformLastExpression { expression.apply { value = it } }
         }
     }

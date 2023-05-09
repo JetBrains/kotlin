@@ -11,6 +11,8 @@ FILE fqName:<root> fileName:/delegatedImplementationOfJavaInterface.kt
         public abstract fun takeNotNull (x: @[EnhancedNullability] kotlin.String): kotlin.Unit declared in <root>.J
       $this: VALUE_PARAMETER name:<this> type:<root>.Test
       VALUE_PARAMETER name:x index:0 type:@[EnhancedNullability] kotlin.String
+        annotations:
+          NotNull(value = <null>)
       BLOCK_BODY
         CALL 'public abstract fun takeNotNull (x: @[EnhancedNullability] kotlin.String): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
           $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:j type:<root>.J visibility:private [final]' type=<root>.J origin=null
@@ -21,6 +23,8 @@ FILE fqName:<root> fileName:/delegatedImplementationOfJavaInterface.kt
         public abstract fun takeNullable (x: kotlin.String?): kotlin.Unit declared in <root>.J
       $this: VALUE_PARAMETER name:<this> type:<root>.Test
       VALUE_PARAMETER name:x index:0 type:kotlin.String?
+        annotations:
+          Nullable(value = <null>)
       BLOCK_BODY
         CALL 'public abstract fun takeNullable (x: kotlin.String?): kotlin.Unit declared in <root>.J' type=kotlin.Unit origin=null
           $this: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:j type:<root>.J visibility:private [final]' type=<root>.J origin=null

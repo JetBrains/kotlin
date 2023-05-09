@@ -1,4 +1,5 @@
 // !LANGUAGE: +NoBuilderInferenceWithoutAnnotationRestriction
+// FIR_DUMP
 
 class Foo<T : Any> {
     fun doSmthng(arg: T) {}
@@ -11,11 +12,11 @@ fun main(arg: Any) {
     val x = 57
     val value = myBuilder {
         doSmthng("one ")
-        a = <!ASSIGNMENT_TYPE_MISMATCH!>57<!>
-        a = <!ASSIGNMENT_TYPE_MISMATCH!>x<!>
+        a = 57
+        a = x
         if (arg is String) {
             a = arg
         }
     }
-    println(value.a?.count { it in 'l' .. 'q' })
+    <!OVERLOAD_RESOLUTION_AMBIGUITY!>println<!>(value.a?.<!UNRESOLVED_REFERENCE!>count<!> { <!UNRESOLVED_REFERENCE!>it<!> in 'l' .. 'q' })
 }

@@ -14,6 +14,10 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.runner.UnfilteredProcessO
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.TestOutputFilter
 import org.junit.jupiter.api.Assertions.fail
 import java.io.ByteArrayOutputStream
+import java.io.IOException
+import java.io.InputStream
+import java.io.OutputStream
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.time.*
 
 internal abstract class AbstractLocalProcessRunner<R>(protected val checks: TestRunChecks) : AbstractRunner<R>() {
@@ -35,11 +39,19 @@ internal abstract class AbstractLocalProcessRunner<R>(protected val checks: Test
             val process: Process
             val hasFinishedOnTime: Boolean
 
+            // Don't ignore IO errors that happen just after the process is started.
+            val ignoreIOErrorsInProcessOutput = AtomicBoolean(false)
+
             val duration = measureTime {
                 process = ProcessBuilder(programArgs).directory(executable.executableFile.parentFile).start()
                 customizeProcess(process)
 
-                unfilteredOutputReader = launchReader(unfilteredOutput, process)
+                unfilteredOutputReader = launchReader(
+                    unfilteredOutput,
+                    processStdout = process.inputStream,
+                    processStderr = process.errorStream,
+                    ignoreIOErrorsInProcessOutput
+                )
 
                 hasFinishedOnTime = process.waitFor(
                     executionTimeout.toLong(DurationUnit.MILLISECONDS),
@@ -56,6 +68,7 @@ internal abstract class AbstractLocalProcessRunner<R>(protected val checks: Test
                     unfilteredOutputReader.join() // Wait until all streams are drained.
                     exitCode
                 } catch (_: IllegalThreadStateException) { // Still not destroyed.
+                    ignoreIOErrorsInProcessOutput.set(true) // Ignore IO errors caused by the closed streams of the killed process.
                     unfilteredOutputReader.cancel() // Cancel it. No need to read streams, actually.
                     process.destroyForcibly() // kill -9
                     null
@@ -146,9 +159,27 @@ private class UnfilteredProcessOutput {
     )
 
     companion object {
-        fun CoroutineScope.launchReader(unfilteredOutput: UnfilteredProcessOutput, process: Process): Job = launch {
-            launch { process.inputStream.copyTo(unfilteredOutput.stdOut) }
-            launch { process.errorStream.copyTo(unfilteredOutput.stdErr) }
+        fun CoroutineScope.launchReader(
+            unfilteredOutput: UnfilteredProcessOutput,
+            processStdout: InputStream,
+            processStderr: InputStream,
+            ignoreIOErrors: AtomicBoolean
+        ): Job = launch {
+            fun InputStream.safeCopyTo(output: OutputStream) {
+                try {
+                    copyTo(output)
+                } catch (e: IOException) {
+                    if (ignoreIOErrors.get()) { // Note: Just checking `!process.isAlive` seems to be not reliable in concurrent environment.
+                        // The IO exception might be caused by the closed stream due to process death. Just ignore.
+                    } else {
+                        // The process is still alive. Some I/O error happened, which is better to rethrow.
+                        throw e
+                    }
+                }
+            }
+
+            launch { processStdout.safeCopyTo(unfilteredOutput.stdOut) }
+            launch { processStderr.safeCopyTo(unfilteredOutput.stdErr) }
         }
     }
 }

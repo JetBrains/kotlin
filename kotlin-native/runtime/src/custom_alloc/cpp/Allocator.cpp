@@ -5,6 +5,8 @@
 
 #include "CustomLogging.hpp"
 
+#include "GCApi.hpp"
+
 // These functions are just stubs to make the existing object creation
 // infrastructure link correctly, but if they are ever called, something went
 // wrong.
@@ -16,12 +18,16 @@ void* allocateInObjectPool(size_t size) noexcept {
     return nullptr;
 }
 
-void freeInObjectPool(void* ptr) noexcept {
-    CustomAllocWarning("static freeInObjectPool(%p) not supported", ptr);
+void freeInObjectPool(void* ptr, size_t size) noexcept {
+    CustomAllocWarning("static freeInObjectPool(%p, %zu) not supported", ptr, size);
 }
 
 void initObjectPool() noexcept {}
 void compactObjectPoolInMainThread() noexcept {}
 void compactObjectPoolInCurrentThread() noexcept {}
+
+size_t allocatedBytes() noexcept {
+    return alloc::GetAllocatedBytes();
+}
 
 } // namespace kotlin

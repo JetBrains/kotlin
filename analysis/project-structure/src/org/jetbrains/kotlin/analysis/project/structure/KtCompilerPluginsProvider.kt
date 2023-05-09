@@ -11,8 +11,20 @@ import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
  * A service which can return extensions which are registered for some module
  */
 public abstract class KtCompilerPluginsProvider {
+
+    public enum class CompilerPluginType {
+        ASSIGNMENT
+    }
+
     /**
      * Returns a list of extensions of a base [extensionType] which are registered for [module]
+     *
+     * These extensions are used in addition to those provided by the extension descriptor's [ProjectExtensionDescriptor.getInstances].
      */
     public abstract fun <T : Any> getRegisteredExtensions(module: KtSourceModule, extensionType: ProjectExtensionDescriptor<T>): List<T>
+
+    /**
+     * Returns `true` if at least one plugin with requested `pluginType` is registered, `false` otherwise
+     */
+    public abstract fun isPluginOfTypeRegistered(module: KtSourceModule, pluginType: CompilerPluginType): Boolean
 }

@@ -65,7 +65,7 @@ class FirJsKlibBackendFacade(
         val diagnosticReporter = DiagnosticReporterFactory.createReporter()
 
         if (firstTimeCompilation) {
-            val irActualizationResult =
+            val irActualizedResult =
                 if (module.frontendKind == FrontendKinds.FIR && module.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) {
                     IrActualizer.actualize(
                         inputArtifact.mainModuleFragment,
@@ -93,7 +93,7 @@ class FirJsKlibBackendFacade(
                 abiVersion = KotlinAbiVersion.CURRENT, // TODO get from test file data
                 jsOutputName = null
             ) {
-                inputArtifact.serializeSingleFile(it, irActualizationResult)
+                inputArtifact.serializeSingleFile(it, irActualizedResult)
             }
         }
 

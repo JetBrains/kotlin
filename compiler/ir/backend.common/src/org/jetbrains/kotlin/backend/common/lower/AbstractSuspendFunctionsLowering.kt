@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.name.Name
 
@@ -141,8 +142,8 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
             }.apply {
                 parent = irFunction.parent
                 createParameterDeclarations()
-                typeParameters = irFunction.typeParameters.map { typeParam ->
-                    typeParam.copyToWithoutSuperTypes(this).apply { superTypes += typeParam.superTypes }
+                typeParameters = irFunction.typeParameters.memoryOptimizedMap { typeParam ->
+                    typeParam.copyToWithoutSuperTypes(this).apply { superTypes = superTypes memoryOptimizedPlus typeParam.superTypes }
                 }
             }
 
@@ -186,11 +187,11 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 coroutineClass.declarations += this
                 coroutineConstructors += this
 
-                valueParameters = functionParameters.mapIndexed { index, parameter ->
+                valueParameters = functionParameters.memoryOptimizedMapIndexed { index, parameter ->
                     parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL, index)
                 }
                 val continuationParameter = coroutineBaseClassConstructor.valueParameters[0]
-                valueParameters += continuationParameter.copyTo(
+                valueParameters = valueParameters memoryOptimizedPlus continuationParameter.copyTo(
                     this, DECLARATION_ORIGIN_COROUTINE_IMPL,
                     index = valueParameters.size, type = continuationType
                 )
@@ -235,18 +236,18 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 parent = coroutineClass
                 coroutineClass.declarations += this
 
-                typeParameters = stateMachineFunction.typeParameters.map { parameter ->
+                typeParameters = stateMachineFunction.typeParameters.memoryOptimizedMap { parameter ->
                     parameter.copyToWithoutSuperTypes(this, origin = DECLARATION_ORIGIN_COROUTINE_IMPL)
-                        .apply { superTypes += parameter.superTypes }
+                        .apply { superTypes = superTypes memoryOptimizedPlus parameter.superTypes }
                 }
 
-                valueParameters = stateMachineFunction.valueParameters.mapIndexed { index, parameter ->
+                valueParameters = stateMachineFunction.valueParameters.memoryOptimizedMapIndexed { index, parameter ->
                     parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL, index)
                 }
 
                 this.createDispatchReceiverParameter()
 
-                overriddenSymbols += stateMachineFunction.symbol
+                overriddenSymbols = overriddenSymbols memoryOptimizedPlus stateMachineFunction.symbol
             }
 
             buildStateMachine(function, irFunction, argumentToPropertiesMap)

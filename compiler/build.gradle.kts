@@ -20,6 +20,7 @@ dependencies {
     testCompileOnly(project(":kotlin-test:kotlin-test-jvm"))
     testCompileOnly(project(":kotlin-test:kotlin-test-junit"))
     testApi(projectTests(":compiler:tests-common"))
+    testApi(projectTests(":compiler:tests-common-new"))
     testApi(projectTests(":compiler:fir:raw-fir:psi2fir"))
     testApi(projectTests(":compiler:fir:raw-fir:light-tree2fir"))
     testApi(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
@@ -27,7 +28,6 @@ dependencies {
     testApi(project(":compiler:ir.ir2cfg"))
     testApi(project(":compiler:ir.tree")) // used for deepCopyWithSymbols call that is removed by proguard from the compiler TODO: make it more straightforward
     testApi(project(":kotlin-scripting-compiler"))
-    testApi(project(":kotlin-script-util"))
 
     otherCompilerModules.forEach {
         testCompileOnly(project(it))
@@ -55,6 +55,7 @@ projectTest(
     defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0)
 ) {
     dependsOn(":dist")
+    useJsIrBoxTests(version = version, buildDir = "$buildDir/")
 
     workingDir = rootDir
     systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))

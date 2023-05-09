@@ -35,7 +35,6 @@ object JvmDeclarationCheckers : DeclarationCheckers() {
 
     override val propertyCheckers: Set<FirPropertyChecker>
         get() = setOf(
-            FirVolatileAnnotationChecker,
             FirJvmFieldApplicabilityChecker,
             FirJvmSyntheticApplicabilityChecker,
             FirJvmInlinePropertyChecker,
@@ -51,10 +50,5 @@ object JvmDeclarationCheckers : DeclarationCheckers() {
     override val typeParameterCheckers: Set<FirTypeParameterChecker>
         get() = setOf(
             FirUpperBoundsChecker,
-        )
-
-    override val simpleFunctionCheckers: Set<FirSimpleFunctionChecker>
-        get() = setOf(
-            FirJvmTopLevelFunctionsChecker,
         )
 }

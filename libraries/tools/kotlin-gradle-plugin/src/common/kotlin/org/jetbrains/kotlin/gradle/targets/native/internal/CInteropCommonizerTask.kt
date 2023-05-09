@@ -25,14 +25,16 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.withDependsOnClosure
+import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerTask.CInteropCommonizerDependencies
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerTask.CInteropGist
 import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
-import org.jetbrains.kotlin.gradle.utils.chainedFinalizeValueOnRead
-import org.jetbrains.kotlin.gradle.utils.listProperty
-import org.jetbrains.kotlin.gradle.utils.property
+import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
 import javax.inject.Inject
+
+private typealias GroupedCommonizerDependencies = Map<CInteropCommonizerGroup, List<CInteropCommonizerDependencies>>
+
 
 @CacheableTask
 internal open class CInteropCommonizerTask
@@ -123,14 +125,14 @@ internal open class CInteropCommonizerTask
      * For Gradle Configuration Cache support the Group-to-Dependencies relation should be pre-cached.
      * It is used during execution phase.
      */
-    private val groupedCommonizerDependencies: Map<CInteropCommonizerGroup, List<CInteropCommonizerDependencies>> by lazy {
-        val multiplatformExtension = project.multiplatformExtensionOrNull ?: return@lazy emptyMap()
+    private val groupedCommonizerDependencies: Future<GroupedCommonizerDependencies> = project.lazyFuture {
+        val multiplatformExtension = project.multiplatformExtensionOrNull ?: return@lazyFuture emptyMap()
 
-        val sourceSetsByTarget = multiplatformExtension.sourceSets.groupBy { sourceSet -> getCommonizerTarget(sourceSet) }
+        val sourceSetsByTarget = multiplatformExtension.sourceSets.groupBy { sourceSet -> sourceSet.commonizerTarget.getOrThrow() }
         val sourceSetsByGroup = multiplatformExtension.sourceSets.groupBy { sourceSet ->
             CInteropCommonizerDependent.from(sourceSet)?.let { findInteropsGroup(it) }
         }
-        getAllInteropsGroups().associateWith { group ->
+        allInteropGroups.await().associateWith { group ->
             (group.targets + group.targets.allLeaves()).map { target ->
                 val externalDependencyFiles: List<FileCollection> = when (target) {
                     is LeafCommonizerTarget -> {
@@ -163,10 +165,9 @@ internal open class CInteropCommonizerTask
 
     @Suppress("unused") // Used for UP-TO-DATE check
     @get:Classpath
-    protected val commonizerDependenciesClasspath: FileCollection
-        get() = project.files(
-            groupedCommonizerDependencies.values.flatten().map { it.dependencies }
-        )
+    protected val commonizerDependenciesClasspath: FileCollection = project.filesProvider {
+        groupedCommonizerDependencies.getOrThrow().values.flatten().map { it.dependencies }
+    }
 
     @get:Nested
     internal var cinterops = setOf<CInteropGist>()
@@ -174,7 +175,7 @@ internal open class CInteropCommonizerTask
 
     @get:OutputDirectories
     val allOutputDirectories: Set<File>
-        get() = getAllInteropsGroups().map { outputDirectory(it) }.toSet()
+        get() = allInteropGroups.getOrThrow().map { outputDirectory(it) }.toSet()
 
     fun from(vararg tasks: CInteropProcess) = from(
         tasks.toList()
@@ -192,7 +193,7 @@ internal open class CInteropCommonizerTask
 
     @TaskAction
     protected fun commonizeCInteropLibraries() {
-        getAllInteropsGroups().forEach(::commonize)
+        allInteropGroups.getOrThrow().forEach(::commonize)
     }
 
     private fun commonize(group: CInteropCommonizerGroup) {
@@ -217,7 +218,7 @@ internal open class CInteropCommonizerTask
     }
 
     private fun getCInteropCommonizerGroupDependencies(group: CInteropCommonizerGroup): Set<CommonizerDependency> {
-        val dependencies = groupedCommonizerDependencies[group]
+        val dependencies = groupedCommonizerDependencies.getOrThrow()[group]
             ?.flatMap { (target, dependencies) ->
                 dependencies.files
                     .filter { file -> file.exists() && (file.isDirectory || file.extension == "klib") }
@@ -229,15 +230,15 @@ internal open class CInteropCommonizerTask
         return dependencies
     }
 
-    @Nested
-    internal fun getAllInteropsGroups(): Set<CInteropCommonizerGroup> {
-        val dependents = allDependents
+    @get:Internal
+    internal val allInteropGroups: Future<Set<CInteropCommonizerGroup>> = project.lazyFuture {
+        val dependents = allDependents.await()
         val allScopeSets = dependents.map { it.scopes }.toSet()
         val rootScopeSets = allScopeSets.filter { scopeSet ->
             allScopeSets.none { otherScopeSet -> otherScopeSet != scopeSet && otherScopeSet.containsAll(scopeSet) }
         }
 
-        return rootScopeSets.map { scopeSet ->
+        rootScopeSets.map { scopeSet ->
             val dependentsForScopes = dependents.filter { dependent ->
                 scopeSet.containsAll(dependent.scopes)
             }
@@ -249,8 +250,12 @@ internal open class CInteropCommonizerTask
         }.toSet()
     }
 
-    override fun findInteropsGroup(dependent: CInteropCommonizerDependent): CInteropCommonizerGroup? {
-        val suitableGroups = getAllInteropsGroups().filter { group ->
+    @get:Nested
+    @Suppress("unused") // UP-TO-DATE check
+    protected val allInteropGroupsOrThrow get() = allInteropGroups.getOrThrow()
+
+    override suspend fun findInteropsGroup(dependent: CInteropCommonizerDependent): CInteropCommonizerGroup? {
+        val suitableGroups = allInteropGroups.await().filter { group ->
             group.interops.containsAll(dependent.interops) && group.targets.contains(dependent.target)
         }
 
@@ -261,8 +266,8 @@ internal open class CInteropCommonizerTask
         return suitableGroups.firstOrNull()
     }
 
-    private val allDependents: Set<CInteropCommonizerDependent> by lazy {
-        val multiplatformExtension = project.multiplatformExtensionOrNull ?: return@lazy emptySet()
+    private val allDependents: Future<Set<CInteropCommonizerDependent>> = project.lazyFuture {
+        val multiplatformExtension = project.multiplatformExtensionOrNull ?: return@lazyFuture emptySet()
 
         val fromSharedNativeCompilations = multiplatformExtension
             .targets.flatMap { target -> target.compilations }
@@ -278,7 +283,7 @@ internal open class CInteropCommonizerTask
             .mapNotNull { sourceSet -> CInteropCommonizerDependent.fromAssociateCompilations(sourceSet) }
             .toSet()
 
-        return@lazy (fromSharedNativeCompilations + fromSourceSets + fromSourceSetsAssociateCompilations)
+        (fromSharedNativeCompilations + fromSourceSets + fromSourceSetsAssociateCompilations)
     }
 }
 

@@ -116,6 +116,7 @@ if (!isExperimentalMM) {
 
 tasks.withType(KonanCompileNativeBinary).configureEach {
     extraOpts "-XXLanguage:+ImplicitSignedToUnsignedIntegerConversion"
+    extraOpts "-opt-in=kotlinx.cinterop.ExperimentalForeignApi"
 }
 
 allprojects {
@@ -264,7 +265,7 @@ Task linkTest(String name, Closure<KonanLinkTest> configureClosure) {
                     srcFiles task.lib
                     baseDir  "$testOutputLocal/$name"
                     extraOpts task.flags
-                    extraOpts project.globalTestArgs
+                    extraOpts project.globalTestArgs.findAll { !it.contains("-Xpartial-linkage") }
                 }
                 UtilsKt.dependsOnKonanBuildingTask(task, lib, target)
 
@@ -1165,21 +1166,26 @@ standaloneTest("freeze_disabled") {
     testLogger = KonanTest.Logger.SILENT
 }
 
+task atomicSmokeTest(type: KonanLocalTest) {
+    enabled = isExperimentalMM // do not run the test on the legacy MM
+    source = "runtime/atomics/atomic_smoke.kt"
+}
+
+task atomicStressTest(type: KonanLocalTest) {
+    enabled = isExperimentalMM // do not run the test on the legacy MM
+    source = "runtime/atomics/atomic_stress.kt"
+}
 
 task atomic0(type: KonanLocalTest) {
     enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
     useGoldenData = true
-    source = "runtime/workers/atomic0.kt"
+    source = "runtime/atomics/atomic0.kt"
 }
 
 standaloneTest("atomic1") {
     // Note: This test reproduces a race, so it'll start flaking if problem is reintroduced.
     enabled = false // Needs USE_CYCLIC_GC, which is disabled.
-    source = "runtime/workers/atomic1.kt"
-}
-
-task atomic2(type: KonanLocalTest) {
-    source = "runtime/workers/atomic2.kt"
+    source = "runtime/atomics/atomic1.kt"
 }
 
 task lazy0(type: KonanLocalTest) {
@@ -2749,6 +2755,7 @@ standaloneTest("custom_hook") {
     }
     expectedExitStatusChecker = { it != 0 }
     source = "runtime/exceptions/custom_hook.kt"
+    flags = ['-opt-in=kotlin.native.internal.InternalForKotlinNative']
 }
 
 standaloneTest("custom_hook_memory_leak") {
@@ -3424,7 +3431,8 @@ linkTest("mpp2") {
 }
 
 standaloneTest("mpp_default_args") {
-    disabled = isK2(project) // KT-56071
+    // Disabled in one stage mode because of KT-57747
+    disabled = !twoStageEnabled || isK2(project) // KT-56071
     source = "codegen/mpp/mpp_default_args.kt"
     flags = ['-tr', '-Xmulti-platform']
 }
@@ -4435,6 +4443,14 @@ if (PlatformInfo.isAppleTarget(project)) {
     createInterop("frameworkForwardDeclarations") {
         it.defFile 'framework/forwardDeclarations/clib.def'
     }
+    createInterop("objc_kt56402") {
+        it.defFile 'interop/objc/kt56402/objclib.def'
+        it.headers "$projectDir/interop/objc/kt56402/objclib.h"
+    }
+    createInterop("objCAction") {
+        it.defFile 'interop/objc/objCAction/objclib.def'
+        it.headers "$projectDir/interop/objc/objCAction/objclib.h"
+    }
 }
 
 createInterop("withSpaces") {
@@ -4477,7 +4493,7 @@ Task interopTestBase(String name, boolean multiFile, Closure<KonanInteropTest> c
                         srcFiles task.lib
                         baseDir  "$testOutputLocal/$name"
                         extraOpts task.flags
-                        extraOpts project.globalTestArgs
+                        extraOpts project.globalTestArgs.findAll { !it.contains("-Xpartial-linkage") }
                     }
                     UtilsKt.dependsOnKonanBuildingTask(task, lib, target)
                 }
@@ -4708,6 +4724,7 @@ interopTest("interop_threadStates") {
     disabled = (project.testTarget == 'wasm32') || // No interop for wasm yet.
             !isExperimentalMM // No thread state switching in the legacy MM.
     source = "interop/threadStates/threadStates.kt"
+    flags = ['-opt-in=kotlin.native.internal.InternalForKotlinNative']
     interop = "threadStates"
 }
 
@@ -4716,6 +4733,7 @@ interopTest("interop_threadStates_callbacksWithExceptions") {
             !isExperimentalMM // No thread state switching in the legacy MM.
     source = "interop/threadStates/callbacksWithExceptions.kt"
     interop = "threadStates"
+    flags = ['-opt-in=kotlin.native.internal.InternalForKotlinNative']
 }
 
 interopTest("interop_threadStates_unhandledException") {
@@ -4725,6 +4743,7 @@ interopTest("interop_threadStates_unhandledException") {
     interop = "threadStates"
     outputChecker = { it.contains("Error. Runnable state: true") }
     expectedExitStatusChecker = { it != 0 }
+    flags = ['-opt-in=kotlin.native.internal.InternalForKotlinNative']
 }
 
 interopTest("interop_threadStates_unhandledExceptionInForeignThread") {
@@ -4734,6 +4753,7 @@ interopTest("interop_threadStates_unhandledExceptionInForeignThread") {
     interop = "threadStates"
     outputChecker = { it.contains("Error. Runnable state: true") }
     expectedExitStatusChecker = { it != 0 }
+    flags = ['-opt-in=kotlin.native.internal.InternalForKotlinNative']
 }
 
 interopTest("interop_withSpaces") {
@@ -4846,20 +4866,23 @@ standaloneTest("isExperimentalMM") {
 }
 
 interopTest("interop_cppClass") {
-    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    disabled = (project.testTarget == 'wasm32') || // No interop for wasm yet.
+            isAppleTarget(project) // KT-58422
     source = "interop/cpp/cppClass.kt"
     interop = 'cppClass'
 }
 
 interopTest("interop_cppTypes") {
-    disabled = (project.testTarget == 'wasm32') // No interop for wasm yet.
+    disabled = (project.testTarget == 'wasm32') || // No interop for wasm yet.
+            isAppleTarget(project) // KT-58422
     source = "interop/cpp/types.kt"
     interop = 'cppTypes'
 }
 
 interopTest("interop_cppSkia") {
     disabled = (project.testTarget == 'wasm32' || // No interop for wasm yet.
-                isExperimentalMM)
+                isExperimentalMM) ||
+                isAppleTarget(project) // KT-58422
     source = "interop/cpp/skia.kt"
     interop = 'cppSkia'
     useGoldenData = true
@@ -4868,7 +4891,8 @@ interopTest("interop_cppSkia") {
 
 interopTest("interop_cppSkiaSignature") {
     disabled = (project.testTarget == 'wasm32' || // No interop for wasm yet.
-            isK2(project)) // KT-57484
+            isK2(project)) || // KT-57484
+            isAppleTarget(project) // KT-58422
     source = "interop/cpp/skiaSignature.kt"
     interop = "cppSkiaSignature"
     useGoldenData = true
@@ -4920,6 +4944,7 @@ if (PlatformInfo.isAppleTarget(project)) {
         enabled = !isNoopGC
         source = "interop/objc/smoke.kt"
         interop = 'objcSmoke'
+        verifyIr = false  // KT-57716
         doBeforeBuild {
             mkdir(buildDir)
             project.extensions.execClang.execClangForCompilerTests(project.target) {
@@ -4942,9 +4967,10 @@ if (PlatformInfo.isAppleTarget(project)) {
     }
 
     interopTest("interop_objc_smoke_noopgc") {
-        enabled = isNoopGC && !isK2(project) // KT-56030
+        enabled = isNoopGC
         source = "interop/objc/smoke_noopgc.kt"
         interop = 'objcSmoke'
+        verifyIr = false  // KT-57716
         doBeforeBuild {
             mkdir(buildDir)
             project.extensions.execClang.execClangForCompilerTests(project.target) {
@@ -5069,7 +5095,6 @@ if (PlatformInfo.isAppleTarget(project)) {
     }
 
     interopTest("interop_objc_foreignException") {
-        disabled = isK2(project) // KT-55909
         source = "interop/objc/foreignException/objc_wrap.kt"
         interop = 'foreignException'
         UtilsKt.dependsOnPlatformLibs(it)
@@ -5267,10 +5292,50 @@ if (PlatformInfo.isAppleTarget(project)) {
 
     standaloneTest("interop_kt40426") {
         // Test depends on iOS-specific UIKit
-        enabled = (project.testTarget == 'ios_x64' || project.testTarget == 'ios_simulator_arm64' || project.testTarget == 'ios_arm64') &&
-                !isK2(project) // KT-56030
+        enabled = (project.testTarget == 'ios_x64' || project.testTarget == 'ios_simulator_arm64' || project.testTarget == 'ios_arm64')
         source = "interop/objc/kt40426/main.kt"
         useGoldenData = true
+        UtilsKt.dependsOnPlatformLibs(it)
+    }
+
+    interopTest("interop_objc_kt56402") {
+        // Test depends on macOS-specific AppKit
+        enabled = (project.testTarget == 'macos_x64' || project.testTarget == 'macos_arm64' || project.testTarget == null)
+            && isExperimentalMM
+            && !isNoopGC // requires some GC
+        source = 'interop/objc/kt56402/main.kt'
+        interop = "objc_kt56402"
+        flags = ["-tr", "-e", "runAllTests"] // Generate test suites, but use custom entrypoint.
+
+        doBeforeBuild {
+            mkdir(buildDir)
+            project.extensions.execClang.execClangForCompilerTests(project.target) {
+                args "$projectDir/interop/objc/kt56402/objclib.m"
+                args "-lobjc", '-fobjc-arc'
+                args '-fPIC', '-shared', '-o', "$buildDir/libobjc_kt56402.dylib"
+                args '-framework', 'AppKit'
+            }
+            if (UtilsKt.isSimulatorTarget(project, project.target)) {
+                UtilsKt.codesign(project, "$buildDir/libobjc_kt56402.dylib")
+            }
+        }
+    }
+
+    interopTest("interop_objCAction") {
+        source = 'interop/objc/objCAction/main.kt'
+        interop = "objCAction"
+        flags = ["-tr"]
+        doBeforeBuild {
+            mkdir(buildDir)
+            project.extensions.execClang.execClangForCompilerTests(project.target) {
+                args "$projectDir/interop/objc/objCAction/objclib.m"
+                args "-lobjc", '-fobjc-arc'
+                args '-fPIC', '-shared', '-o', "$buildDir/libobjCAction.dylib"
+            }
+            if (UtilsKt.isSimulatorTarget(project, project.target)) {
+                UtilsKt.codesign(project, "$buildDir/libobjCAction.dylib")
+            }
+        }
         UtilsKt.dependsOnPlatformLibs(it)
     }
 }
@@ -5406,6 +5471,7 @@ dynamicTest("produce_dynamic_unhandledException") {
     clangTool = "clang++"
     expectedExitStatusChecker = { it != 0 }
     outputChecker = { str -> str.startsWith("Kotlin hook: Exception. Runnable state: true") }
+    flags = ['-opt-in=kotlin.native.internal.InternalForKotlinNative']
 }
 
 dynamicTest("interop_concurrentRuntime") {
@@ -5642,12 +5708,14 @@ Task objcExportTest(
         Boolean isStaticFramework,
         Boolean needLazyHeaderCheck
 ) {
+    needLazyHeaderCheck = needLazyHeaderCheck && !isK2(project)  // generating lazy headers is NYI in K2
     final String name = "testObjCExport$suffix"
     final String frameworkName = "Kt$suffix"
     final String expectedLazyHeaderName = "expectedLazy${suffix}.h"
     final Task task = frameworkTest(name) {
         final String dir = "$testOutputFramework/$name"
         final File lazyHeader = file("$dir/$target-lazy.h")
+        lazyHeader.delete()  // Clean up after previous runs
 
         doLast {
             // Check lazy header.
@@ -5710,7 +5778,6 @@ Task objcExportTest(
         }
         codesign = !isStaticFramework
         framework(frameworkName) {
-            enabled = !isK2(project) // KT-56182
             sources = ['objcexport']
             libraries = [libraryName, noEnumEntriesLibraryName]
             artifact = 'Kt'
@@ -5959,6 +6026,23 @@ if (isAppleTarget(project)) {
                 throw new Error("Expected use of Foundation module:\n$moduleMapContent")
             }
         }
+    }
+
+    frameworkTest("testKt56233Framework") {
+        enabled = isExperimentalMM // Fails with legacy MM. It's deprecated, so won't fix.
+        framework("Kt56233") {
+            sources = ['framework/kt56233']
+        }
+        swiftSources = ['framework/kt56233']
+    }
+
+    frameworkTest("testPermanentObjectsFramework") {
+        enabled = isExperimentalMM && !isNoopGC // Requires gc to actually happen.
+        framework("PermanentObjects") {
+            sources = ['framework/permanentObjects']
+            opts = ['-opt-in=kotlin.native.internal.InternalForKotlinNative']
+        }
+        swiftSources = ['framework/permanentObjects']
     }
 }
 
@@ -6428,6 +6512,10 @@ fileCheckTest("filecheck_kt53261_noinline_UShortArray.kt") {
 
 fileCheckTest("filecheck_intrinsics") {
     annotatedSource = project.file('filecheck/intrinsics.kt')
+}
+
+fileCheckTest("filecheck_default_parameters_dont_box") {
+    annotatedSource = project.file('filecheck/default_parameters_dont_box.kt')
 }
 
 task kt53119_side_effect(type: KonanLocalTest) {

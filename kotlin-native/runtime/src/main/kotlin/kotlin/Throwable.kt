@@ -1,16 +1,19 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * Copyright 2010-2023 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
  * that can be found in the LICENSE file.
  */
+@file:OptIn(ExperimentalForeignApi::class)
 
 package kotlin
 
+import kotlin.experimental.ExperimentalNativeApi
 import kotlin.native.concurrent.freeze
 import kotlin.native.concurrent.isFrozen
 import kotlin.native.internal.ExportForCppRuntime
 import kotlin.native.internal.ExportTypeInfo
 import kotlin.native.internal.GCUnsafeCall
 import kotlin.native.internal.NativePtrArray
+import kotlinx.cinterop.ExperimentalForeignApi
 
 /**
  * The base class for all errors and exceptions. Only instances of this class can be thrown or caught.
@@ -39,6 +42,8 @@ public open class Throwable(open val message: String?, open val cause: Throwable
      * Returns an array of stack trace strings representing the stack trace
      * pertaining to this throwable.
      */
+    // Deprecate this function in favour of KT-57164 when it gets implemented
+    @ExperimentalNativeApi
     public fun getStackTrace(): Array<String> = stackTraceStrings
 
     internal fun getStackTraceAddressesInternal(): List<Long> =

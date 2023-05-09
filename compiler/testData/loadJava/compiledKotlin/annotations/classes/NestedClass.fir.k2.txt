@@ -1,0 +1,19 @@
+public final annotation class Anno : R|kotlin/Annotation| {
+    public constructor(): R|test/Anno|
+
+}
+
+public final class Class : R|kotlin/Any| {
+    public constructor(): R|test/Class|
+
+    @R|test/Anno|() public final class Nested : R|kotlin/Any| {
+        public constructor(): R|test/Class.Nested|
+
+    }
+
+    @R|test/Anno|() public final inner class Inner : R|kotlin/Any| {
+        public test/Class.constructor(): R|test/Class.Inner|
+
+    }
+
+}

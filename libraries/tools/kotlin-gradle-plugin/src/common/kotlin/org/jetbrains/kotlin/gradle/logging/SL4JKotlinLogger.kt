@@ -13,8 +13,12 @@ internal class SL4JKotlinLogger(private val log: Logger) : KotlinLogger {
         log.debug(msg)
     }
 
-    override fun error(msg: String) {
-        log.error(msg)
+    override fun lifecycle(msg: String) {
+        log.info(msg)
+    }
+
+    override fun error(msg: String, throwable: Throwable?) {
+        log.error(msg, throwable)
     }
 
     override fun info(msg: String) {
