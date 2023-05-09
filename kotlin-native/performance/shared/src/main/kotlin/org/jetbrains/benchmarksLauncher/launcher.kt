@@ -47,17 +47,18 @@ abstract class Launcher {
         return if (benchmark is BenchmarkEntryWithInit) {
             cleanup()
             val result = measureNanoTime {
-                while (i-- > 0) benchmark.lambda(benchmarkInstance!!)
+                while (i-- > 0) benchmark.benchmark(benchmarkInstance!!)
                 cleanup()
             }
             result
         } else if (benchmark is BenchmarkEntry) {
             cleanup()
             measureNanoTime {
-                while (i-- > 0) benchmark.lambda()
-                cleanup()
+                while (i-- > 0) benchmark.benchmark()
+                cleanup() // FIXME ??
             }
         } else if (benchmark is BenchmarkEntryManual) {
+            // FIXME unreachable
             error("runBenchmark cannot run manual benchmark")
         } else {
             error("Unknown benchmark type $benchmark")
@@ -118,6 +119,28 @@ abstract class Launcher {
                filters: Collection<String>? = null,
                filterRegexes: Collection<String>? = null,
                verbose: Boolean): List<BenchmarkResult> {
+        return launch(numWarmIterations, numberOfAttempts, prefix, filters, filterRegexes, verbose) { logger, numWarmIterations, numberOfAttempts, name, benchmarkResults, benchmark ->
+            val recordMeasurement: (RecordTimeMeasurement) -> Unit = {
+                benchmarkResults.add(BenchmarkResult(
+                        "$prefix$name",
+                        it.status,
+                        it.durationNs / 1000,
+                        BenchmarkResult.Metric.EXECUTION_TIME,
+                        it.durationNs / 1000,
+                        it.iteration + 1,
+                        it.warmupCount))
+            }
+            runBenchmark(logger, numWarmIterations, numberOfAttempts, name, recordMeasurement, benchmark)
+        }
+    }
+
+    fun launch(numWarmIterations: Int,
+               numberOfAttempts: Int,
+               prefix: String = "",
+               filters: Collection<String>? = null,
+               filterRegexes: Collection<String>? = null,
+               verbose: Boolean,
+               run: (Logger, Int, Int, String, MutableList<BenchmarkResult>, AbstractBenchmarkEntry) -> Unit): List<BenchmarkResult> {
         val logger = if (verbose) Logger(LogLevel.DEBUG) else Logger()
         val regexes = filterRegexes?.map { it.toRegex() } ?: listOf()
         val filterSet = filters?.toHashSet() ?: hashSetOf()
@@ -131,18 +154,8 @@ abstract class Launcher {
         }
         val benchmarkResults = mutableListOf<BenchmarkResult>()
         for ((name, benchmark) in runningBenchmarks) {
-            val recordMeasurement : (RecordTimeMeasurement) -> Unit = {
-                benchmarkResults.add(BenchmarkResult(
-                    "$prefix$name",
-                    it.status,
-                    it.durationNs / 1000,
-                    BenchmarkResult.Metric.EXECUTION_TIME,
-                    it.durationNs / 1000,
-                    it.iteration + 1,
-                    it.warmupCount))
-            }
             try {
-                runBenchmark(logger, numWarmIterations, numberOfAttempts, name, recordMeasurement, benchmark)
+                run(logger, numWarmIterations, numberOfAttempts, name, benchmarkResults, benchmark)
             } catch (e: Throwable) {
                 printStderr("Failure while running benchmark $name: $e\n")
                 benchmarkResults.add(BenchmarkResult(
@@ -166,7 +179,7 @@ abstract class BenchmarkArguments(argParser: ArgParser)
 
 class BaseBenchmarkArguments(argParser: ArgParser): BenchmarkArguments(argParser) {
     val warmup by argParser.option(ArgType.Int, shortName = "w", description = "Number of warm up iterations")
-            .default(20)
+            .default(20) // FIXME defaults
     val repeat by argParser.option(ArgType.Int, shortName = "r", description = "Number of each benchmark run").
             default(60)
     val prefix by argParser.option(ArgType.String, shortName = "p", description = "Prefix added to benchmark name")

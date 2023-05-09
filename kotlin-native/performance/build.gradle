@@ -341,6 +341,11 @@ task ring {
     dependsOn 'ring:konanRun'
 }
 
+task memory {
+    dependsOn 'clean'
+    dependsOn 'memory:konanRun'
+}
+
 task numerical {
     dependsOn 'clean'
     dependsOn 'numerical:konanRun'

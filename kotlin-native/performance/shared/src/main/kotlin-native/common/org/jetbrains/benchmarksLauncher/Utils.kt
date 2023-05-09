@@ -21,6 +21,7 @@ import kotlin.native.runtime.GC
 import platform.posix.*
 import kotlinx.cinterop.*
 
+@OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 actual fun writeToFile(fileName: String, text: String) {
     val file = fopen(fileName, "wt") ?: error("Cannot write file '$fileName'")
     try {
@@ -45,6 +46,7 @@ actual fun cleanup() {
     GC.collect()
 }
 
+@OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 actual fun printStderr(message: String) {
     val STDERR = fdopen(2, "w")
     fprintf(STDERR, message)

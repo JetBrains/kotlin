@@ -92,7 +92,7 @@ open class RunKotlinNativeTask @Inject constructor(private val linkTask: Task,
             args("-r", repeatCount.toString())
             standardOutput = output
         }
-        return output.toString().substringAfter("[").removeSuffix("]")
+        return output.toString()//.substringAfter("[").removeSuffix("]")
     }
 
     private fun execBenchmarkRepeatedly(benchmark: String, warmupCount: Int, repeatCount: Int) : List<String> {
@@ -105,12 +105,15 @@ open class RunKotlinNativeTask @Inject constructor(private val linkTask: Task,
         logger.log("Running benchmark $benchmark ")
         for (i in 0.until(repeatCount)) {
             logger.log(".", usePrefix = false)
-            val benchmarkReport = JsonTreeParser.parse(execBenchmarkOnce(benchmark, 0, 1)).jsonObject
-            val modifiedBenchmarkReport = JsonObject(HashMap(benchmarkReport.content).apply {
-                put("repeat", JsonLiteral(i))
-                put("warmup", JsonLiteral(warmupCount))
-            })
-            result.add(modifiedBenchmarkReport.toString())
+            val output = execBenchmarkOnce(benchmark, 0, 1)
+            val benchmarkReports = JsonTreeParser.parse(output).jsonArray
+            val modifiedBenchmarkReports = benchmarkReports.content.map {
+                JsonObject(HashMap(it.jsonObject.content).apply {
+                    put("repeat", JsonLiteral(i))
+                    put("warmup", JsonLiteral(warmupCount))
+                }).toString()
+            }
+            result.addAll(modifiedBenchmarkReports)
         }
         logger.log("\n", usePrefix = false)
         return result
@@ -151,13 +154,13 @@ open class RunKotlinNativeTask @Inject constructor(private val linkTask: Task,
 
         val results = benchmarksToRun.flatMap { benchmark ->
             when (repeatingType) {
-                BenchmarkRepeatingType.INTERNAL -> listOf(execBenchmarkOnce(benchmark, warmupCount, repeatCount))
+                BenchmarkRepeatingType.INTERNAL -> listOf(execBenchmarkOnce(benchmark, warmupCount, repeatCount).substringAfter("[").removeSuffix("]")) // FIXME
                 BenchmarkRepeatingType.EXTERNAL -> execBenchmarkRepeatedly(benchmark, warmupCount, repeatCount)
             }
         }
 
         File(outputFileName).printWriter().use { out ->
-            out.println("[${results.joinToString(",")}]")
+            out.println(results.joinToString(",", "[", "]"))
         }
 
     }

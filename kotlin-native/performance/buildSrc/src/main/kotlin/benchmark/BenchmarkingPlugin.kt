@@ -70,6 +70,8 @@ open class BenchmarkExtension @Inject constructor(val project: Project) {
     var compilerOpts: List<String> = emptyList()
     var buildType: NativeBuildType = project.buildType
     var repeatingType: BenchmarkRepeatingType = BenchmarkRepeatingType.INTERNAL
+    var warmupCount: Int = project.nativeWarmup
+    var repeatCount: Int = project.attempts
     var cleanBeforeRunTask: String? = "konanRun"
 
     val dependencies: BenchmarkDependencies = BenchmarkDependencies()
@@ -187,8 +189,8 @@ abstract class BenchmarkingPlugin: Plugin<Project> {
         afterEvaluate {
             val task = konanRun as RunKotlinNativeTask
             task.args("-p", "${benchmark.applicationName}::")
-            task.warmupCount = nativeWarmup
-            task.repeatCount = attempts
+            task.warmupCount = benchmark.warmupCount
+            task.repeatCount = benchmark.repeatCount
             task.repeatingType = benchmark.repeatingType
         }
         return konanRun

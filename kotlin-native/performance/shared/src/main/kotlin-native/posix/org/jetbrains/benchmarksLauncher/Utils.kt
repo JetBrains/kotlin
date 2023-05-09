@@ -20,6 +20,7 @@ package org.jetbrains.benchmarksLauncher
 import platform.posix.*
 import kotlinx.cinterop.*
 
+@OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 actual fun currentTime() =
         memScoped {
             val timeVal = alloc<timeval>()

@@ -256,7 +256,9 @@ open class BenchmarkResult(val name: String, val status: Status,
         EXECUTION_TIME("", "EXECUTION_TIME"),
         CODE_SIZE(".codeSize", "CODE_SIZE"),
         COMPILE_TIME(".compileTime", "COMPILE_TIME"),
-        BUNDLE_SIZE(".bundleSize", "BUNDLE_SIZE")
+        BUNDLE_SIZE(".bundleSize", "BUNDLE_SIZE"),
+        GC_PAUSE(".gcPause", "GC_PAUSE"),
+        HEAP_SIZE(".heapSize", "HEAP_SIZE"),
     }
 
     constructor(name: String, score: Double) : this(name, Status.PASSED, score, Metric.EXECUTION_TIME, 0.0, 0, 0)
