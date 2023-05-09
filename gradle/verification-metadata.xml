@@ -61,6 +61,8 @@
          <trust group="org.jetbrains.kotlin" name="kotlin-tooling-metadata" version="1.9.2?[0-9](-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-util-io" version="1.9.2?[0-9](-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlin-util-klib" version="1.9.2?[0-9](-.+)?" regex="true"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-serialization-compiler-plugin" version="1.9.2?[0-9](-.+)?" regex="true"/>
+         <trust group="org.jetbrains.kotlin" name="kotlin-serialization-compiler-plugin-embeddable" version="1.9.2?[0-9](-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlinx-serialization-compiler-plugin" version="1.9.2?[0-9](-.+)?" regex="true"/>
          <trust group="org.jetbrains.kotlin" name="kotlinx-serialization-compiler-plugin-embeddable" version="1.9.2?[0-9](-.+)?" regex="true"/>
       </trusted-artifacts>

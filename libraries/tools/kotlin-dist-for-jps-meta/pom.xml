@@ -125,7 +125,7 @@
     <!-- Compiler plugins. They can be added to the JPS process via KOTLIN_BUNDLED Path Variable -->
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>kotlinx-serialization-compiler-plugin</artifactId>
+      <artifactId>kotlin-serialization-compiler-plugin</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
