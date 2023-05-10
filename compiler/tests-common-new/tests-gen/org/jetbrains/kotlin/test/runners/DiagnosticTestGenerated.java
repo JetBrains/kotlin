@@ -2955,6 +2955,18 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("MustBeInitializedEffectivelyFinalOff.kt")
+            public void testMustBeInitializedEffectivelyFinalOff() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/backingField/MustBeInitializedEffectivelyFinalOff.kt");
+            }
+
+            @Test
+            @TestMetadata("MustBeInitializedEffectivelyFinalOn.kt")
+            public void testMustBeInitializedEffectivelyFinalOn() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/backingField/MustBeInitializedEffectivelyFinalOn.kt");
+            }
+
+            @Test
             @TestMetadata("OpenValPartialDeferredInitErrorAnyway.kt")
             public void testOpenValPartialDeferredInitErrorAnyway() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/backingField/OpenValPartialDeferredInitErrorAnyway.kt");
@@ -2979,15 +2991,9 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
-            @TestMetadata("ValDeferredInitInFinalClassOpenValError.kt")
-            public void testValDeferredInitInFinalClassOpenValError() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/backingField/ValDeferredInitInFinalClassOpenValError.kt");
-            }
-
-            @Test
-            @TestMetadata("ValDeferredInitInFinalClassOpenValWarning.kt")
-            public void testValDeferredInitInFinalClassOpenValWarning() throws Exception {
-                runTest("compiler/testData/diagnostics/tests/backingField/ValDeferredInitInFinalClassOpenValWarning.kt");
+            @TestMetadata("ValDeferredInitInFinalClass.kt")
+            public void testValDeferredInitInFinalClass() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/backingField/ValDeferredInitInFinalClass.kt");
             }
 
             @Test

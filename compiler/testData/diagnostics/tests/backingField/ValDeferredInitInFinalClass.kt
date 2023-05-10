@@ -1,6 +1,5 @@
 // FIR_IDENTICAL
 // !DIAGNOSTICS: -DEBUG_INFO_LEAKING_THIS
-// !LANGUAGE:+ProhibitOpenValDeferredInitialization
 // a = final + not initialized in place + deferred init
 // e = final + not initialized in place
 // c = final + initialized in place
@@ -13,7 +12,7 @@ class Foo : I {
                                                                  val a0: Int
                            <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val e0: Int<!>
                                                                  val c0: Int = 1
-            <!MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT!>override val b0: Int<!>
+                                                        override val b0: Int
                   <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>override val f0: Int<!>
                                                         override val d0: Int = 1
 
@@ -21,7 +20,7 @@ class Foo : I {
                                                         val a1: Int; get() = field
                                  <!MUST_BE_INITIALIZED!>val e1: Int<!>; get() = field
                                                         val c1: Int = 1; get() = field
-            <!MUST_BE_INITIALIZED_OR_BE_FINAL!>override val b1: Int<!>; get() = field
+                                               override val b1: Int; get() = field
                         <!MUST_BE_INITIALIZED!>override val f1: Int<!>; get() = field
                                                override val d1: Int = 1; get() = field
 
@@ -29,7 +28,7 @@ class Foo : I {
                                                                  val a2: Int; get
                            <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val e2: Int<!>; get
                                                                  val c2: Int = 1; get
-            <!MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT!>override val b2: Int<!>; get
+                                                        override val b2: Int; get
                   <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>override val f2: Int<!>; get
                                                         override val d2: Int = 1; get
 

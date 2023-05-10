@@ -814,15 +814,17 @@ class DeclarationsChecker(
         languageVersionSettings: LanguageVersionSettings,
         trace: BindingTrace,
     ) {
-        check(propertyDescriptor.modality != Modality.ABSTRACT) { "${::reportMustBeInitialized.name} isn't called for abstract properties" }
+        check(propertyDescriptor.getEffectiveModality(languageVersionSettings) != Modality.ABSTRACT) {
+            "${::reportMustBeInitialized.name} isn't called for abstract properties"
+        }
         val suggestMakingItFinal = containingDeclaration is ClassDescriptor &&
                 !propertyDescriptor.hasSetterAccessorImplementation() &&
-                propertyDescriptor.modality != Modality.FINAL &&
+                propertyDescriptor.getEffectiveModality(languageVersionSettings) != Modality.FINAL &&
                 trace.bindingContext.get(IS_DEFINITELY_ASSIGNED_IN_CONSTRUCTOR, propertyDescriptor) == true
         val suggestMakingItAbstract = containingDeclaration is ClassDescriptor && !hasAnyAccessorImplementation
         val isOpenValDeferredInitDeprecationWarning =
             !languageVersionSettings.supportsFeature(LanguageFeature.ProhibitOpenValDeferredInitialization) &&
-                    propertyDescriptor.modality == Modality.OPEN &&
+                    propertyDescriptor.getEffectiveModality(languageVersionSettings) == Modality.OPEN &&
                     !propertyDescriptor.isVar &&
                     trace.bindingContext.get(IS_DEFINITELY_ASSIGNED_IN_CONSTRUCTOR, propertyDescriptor) == true
 
@@ -1115,3 +1117,10 @@ class DeclarationsChecker(
         fun PropertyDescriptor.hasAnyAccessorImplementation(): Boolean = hasSetterAccessorImplementation() || getter?.hasBody() == true
     }
 }
+
+fun PropertyDescriptor.getEffectiveModality(languageVersionSettings: LanguageVersionSettings): Modality =
+    when (languageVersionSettings.supportsFeature(LanguageFeature.TakeIntoAccountEffectivelyFinalInMustBeInitializedCheck) &&
+            modality == Modality.OPEN && (containingDeclaration as? ClassDescriptor)?.modality == Modality.FINAL) {
+        true -> Modality.FINAL
+        false -> modality
+    }
