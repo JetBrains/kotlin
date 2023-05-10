@@ -1,8 +1,8 @@
 package androidx.compose.compiler.plugins.kotlin.analysis
 
-import androidx.compose.compiler.plugins.kotlin.lower.KeyInfo
 import androidx.compose.compiler.plugins.kotlin.FunctionMetrics
 import androidx.compose.compiler.plugins.kotlin.inference.LazyScheme
+import androidx.compose.compiler.plugins.kotlin.lower.KeyInfo
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.declarations.IrAttributeContainer
 import org.jetbrains.kotlin.ir.expressions.IrExpression
