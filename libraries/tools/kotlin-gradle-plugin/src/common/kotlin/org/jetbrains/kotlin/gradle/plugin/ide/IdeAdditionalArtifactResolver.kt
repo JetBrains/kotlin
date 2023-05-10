@@ -46,8 +46,11 @@ fun interface IdeAdditionalArtifactResolver {
     fun resolve(sourceSet: KotlinSourceSet, dependencies: Set<IdeaKotlinDependency>)
 
     @ExternalKotlinTargetApi
-    object Empty : IdeAdditionalArtifactResolver {
-        override fun resolve(sourceSet: KotlinSourceSet, dependencies: Set<IdeaKotlinDependency>) = Unit
+    companion object {
+        /**
+         * Empty [IdeAdditionalArtifactResolver] that will not resolve any artifact (noop)
+         */
+        val empty = IdeAdditionalArtifactResolver { _, _ -> }
     }
 }
 
