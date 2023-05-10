@@ -61,5 +61,3 @@ internal class ExternalKotlinTargetComponent(
     override fun getCoordinates(): ModuleVersionIdentifier =
         getCoordinatesFromPublicationDelegateAndProject(publicationDelegate, target.project, null)
 }
-
-
