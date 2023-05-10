@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.plugin.types
 
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.extensions.FirFunctionTypeKindExtension
 import org.jetbrains.kotlin.fir.plugin.fqn
@@ -31,6 +32,9 @@ object ComposableFunction : FunctionTypeKind(
     override val prefixForTypeRender: String
         get() = "@MyComposable"
 
+    override val serializeAsFunctionWithAnnotationUntil: String
+        get() = LanguageVersion.KOTLIN_2_1.versionString
+
     override fun reflectKind(): FunctionTypeKind = KComposableFunction
 }
 
@@ -40,5 +44,8 @@ object KComposableFunction : FunctionTypeKind(
     MY_COMPOSABLE_ANNOTATION_CLASS_ID,
     isReflectType = true
 ) {
+    override val serializeAsFunctionWithAnnotationUntil: String
+        get() = LanguageVersion.KOTLIN_2_1.versionString
+
     override fun nonReflectKind(): FunctionTypeKind = ComposableFunction
 }

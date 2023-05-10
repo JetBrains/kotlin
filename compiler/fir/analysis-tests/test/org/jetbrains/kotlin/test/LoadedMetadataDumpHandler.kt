@@ -9,6 +9,7 @@ import com.intellij.openapi.vfs.StandardFileSystems
 import com.intellij.openapi.vfs.VirtualFileManager
 import org.jetbrains.kotlin.cli.common.prepareJvmSessions
 import org.jetbrains.kotlin.cli.jvm.compiler.VfsBasedProjectEnvironment
+import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.BinaryModuleData
 import org.jetbrains.kotlin.fir.DependencyListForCliModule
@@ -26,7 +27,9 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import org.jetbrains.kotlin.test.backend.handlers.JvmBinaryArtifactHandler
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE_VERSION
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
+import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
@@ -42,11 +45,17 @@ class LoadedMetadataDumpHandler(testServices: TestServices) : JvmBinaryArtifactH
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
         if (testServices.loadedMetadataSuppressionDirective in module.directives) return
+        val languageVersion = module.directives.singleOrZeroValue(LANGUAGE_VERSION)
+        val languageVersionSettings = if (languageVersion != null) {
+            LanguageVersionSettingsImpl(languageVersion, ApiVersion.createByLanguageVersion(languageVersion))
+        } else {
+            LanguageVersionSettingsImpl.DEFAULT
+        }
         val emptyModule = TestModule(
             name = "empty", JvmPlatforms.defaultJvmPlatform, TargetBackend.JVM_IR, FrontendKinds.FIR,
             BackendKinds.IrBackend, ArtifactKinds.Jvm, files = emptyList(),
             allDependencies = listOf(DependencyDescription(module.name, DependencyKind.Binary, DependencyRelation.RegularDependency)),
-            RegisteredDirectives.Empty, LanguageVersionSettingsImpl.DEFAULT
+            RegisteredDirectives.Empty, languageVersionSettings
         )
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(emptyModule)
         val environment = VfsBasedProjectEnvironment(

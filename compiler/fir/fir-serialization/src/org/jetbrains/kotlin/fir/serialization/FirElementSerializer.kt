@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.fir.serialization
 
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
+import org.jetbrains.kotlin.builtins.functions.isBuiltin
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.constant.EnumValue
 import org.jetbrains.kotlin.constant.IntValue
@@ -823,13 +825,21 @@ class FirElementSerializer private constructor(
                 return lowerBound
             }
             is ConeClassLikeType -> {
-                if (type.functionTypeKind(session) == FunctionTypeKind.SuspendFunction) {
+                val functionTypeKind = type.functionTypeKind(session)
+                if (functionTypeKind == FunctionTypeKind.SuspendFunction) {
                     val runtimeFunctionType = type.suspendFunctionTypeToFunctionTypeWithContinuation(
                         session, StandardClassIds.Continuation
                     )
                     val functionType = typeProto(runtimeFunctionType)
                     functionType.flags = Flags.getTypeFlags(true, false)
                     return functionType
+                }
+                if (functionTypeKind?.isBuiltin == false) {
+                    val legacySerializationUntil =
+                        LanguageVersion.fromVersionString(functionTypeKind.serializeAsFunctionWithAnnotationUntil)
+                    if (legacySerializationUntil != null && languageVersionSettings.languageVersion < legacySerializationUntil) {
+                        return typeProto(type.customFunctionTypeToSimpleFunctionType(session))
+                    }
                 }
                 fillFromPossiblyInnerType(builder, type)
                 if (type.hasContextReceivers) {
