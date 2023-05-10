@@ -156,6 +156,12 @@ interface IdeMultiplatformImport {
      * When resolving dependencies, only the highest priority resolver will be selected and executed.
      * If there are multiple resolvers with the same [Priority] registered, then all of them will be executed
      * and the result will be merged.
+     *
+     * By 'default' resolvers are registered using [Priority.normal].
+     * The Kotlin Gradle Plugin is not expected to register resolvers outside the [normal] or [high] priorities
+     * External Kotlin Target maintainers _(such as Google)_ can therefore use [veryHigh] to overwrite all resolvers
+     * from the Kotlin Gradle plugin or [veryLow], [low] to only register a resolver if there is nothing available by default
+     * from the Kotlin Gradle plugin.
      */
     @ExternalKotlinTargetApi
     class Priority(val value: Int) : Comparable<Priority> {
@@ -172,11 +178,29 @@ interface IdeMultiplatformImport {
             return this.value.compareTo(other.value)
         }
 
+        @ExternalKotlinTargetApi
         companion object {
-            val veryLow = Priority(-100)
+            /**
+             * Not used by the Kotlin Gradle plugin: Can be used by external Kotlin Target maintainers to
+             * provide resolvers only if KGP does not offer any out of the box.
+             */
             val low = Priority(-10)
+
+            /**
+             * Default [Priority] used to register resolvers.
+             * Used by the Kotlin Gradle plugin.
+             */
             val normal = Priority(0)
+
+            /**
+             * Used by the Kotlin Gradle plugin for special cases (like android, jvmAndAndroid, ...)
+             */
             val high = Priority(10)
+
+            /**
+             * Not used by the Kotlin Gradle plugin: Can be used by external Kotlin Target maintainers to
+             * overwrite the Kotlin Gradle plugin
+             */
             val veryHigh = Priority(100)
         }
     }

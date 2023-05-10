@@ -108,6 +108,13 @@ public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport
 	public fun hashCode ()I
 }
 
+public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$Priority$Companion {
+	public final fun getHigh ()Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$Priority;
+	public final fun getLow ()Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$Priority;
+	public final fun getNormal ()Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$Priority;
+	public final fun getVeryHigh ()Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$Priority;
+}
+
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint$Companion;
 	public abstract fun invoke (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;)Z
