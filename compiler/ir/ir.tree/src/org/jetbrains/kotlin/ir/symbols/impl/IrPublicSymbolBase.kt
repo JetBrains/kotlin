@@ -13,14 +13,14 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.render
 
-abstract class IrPublicSymbolBase<out D : DeclarationDescriptor> constructor(
+abstract class IrPublicSymbolBase<out Descriptor : DeclarationDescriptor>(
     override val signature: IdSignature,
-    private val _descriptor: D?
+    private val _descriptor: Descriptor?
 ) : IrSymbol {
     @ObsoleteDescriptorBasedAPI
     @Suppress("UNCHECKED_CAST")
-    override val descriptor: D
-        get() = _descriptor ?: (owner as IrDeclaration).toIrBasedDescriptor() as D
+    override val descriptor: Descriptor
+        get() = _descriptor ?: (owner as IrDeclaration).toIrBasedDescriptor() as Descriptor
 
     @ObsoleteDescriptorBasedAPI
     override val hasDescriptor: Boolean
@@ -32,8 +32,12 @@ abstract class IrPublicSymbolBase<out D : DeclarationDescriptor> constructor(
     }
 }
 
-abstract class IrBindablePublicSymbolBase<out D : DeclarationDescriptor, B : IrSymbolOwner>(sig: IdSignature, descriptor: D?) :
-    IrBindableSymbol<D, B>, IrPublicSymbolBase<D>(sig, descriptor) {
+abstract class IrBindablePublicSymbolBase<out Descriptor, Owner>(
+    sig: IdSignature,
+    descriptor: Descriptor?,
+) : IrPublicSymbolBase<Descriptor>(sig, descriptor), IrBindableSymbol<Descriptor, Owner>
+        where Descriptor : DeclarationDescriptor,
+              Owner : IrSymbolOwner {
 
     init {
         assert(descriptor == null || isOriginalDescriptor(descriptor)) {
@@ -47,11 +51,11 @@ abstract class IrBindablePublicSymbolBase<out D : DeclarationDescriptor, B : IrS
         descriptor is ValueParameterDescriptor && isOriginalDescriptor(descriptor.containingDeclaration) ||
                 descriptor == descriptor.original
 
-    private var _owner: B? = null
-    override val owner: B
+    private var _owner: Owner? = null
+    override val owner: Owner
         get() = _owner ?: throw IllegalStateException("Symbol for $signature is unbound")
 
-    override fun bind(owner: B) {
+    override fun bind(owner: Owner) {
         if (_owner == null) {
             _owner = owner
         } else {

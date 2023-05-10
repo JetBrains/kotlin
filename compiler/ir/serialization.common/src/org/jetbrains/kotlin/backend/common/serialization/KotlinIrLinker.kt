@@ -286,12 +286,14 @@ abstract class KotlinIrLinker(
         }
     }
 
-    private inline fun <
-            reified D : IrDeclaration,
-            reified ES : IrDelegatingSymbol<AS, D, *>,
-            reified AS : IrBindableSymbol<*, D>
-            > finalizeExpectActual(expectSymbol: ES, actualSymbol: IrSymbol, noinline actualizer: (e: D, a: D) -> Unit) {
-        require(actualSymbol is AS)
+    private inline fun <reified Owner, reified DelegatingSymbol, reified DelegateSymbol> finalizeExpectActual(
+        expectSymbol: DelegatingSymbol,
+        actualSymbol: IrSymbol,
+        noinline actualizer: (e: Owner, a: Owner) -> Unit,
+    ) where Owner : IrDeclaration,
+            DelegatingSymbol : IrDelegatingSymbol<DelegateSymbol, Owner, *>,
+            DelegateSymbol : IrBindableSymbol<*, Owner> {
+        require(actualSymbol is DelegateSymbol)
         val expectDeclaration = expectSymbol.owner
         val actualDeclaration = actualSymbol.owner
         actualizer(expectDeclaration, actualDeclaration)
