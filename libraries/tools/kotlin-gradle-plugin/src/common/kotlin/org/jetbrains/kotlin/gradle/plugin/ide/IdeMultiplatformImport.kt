@@ -160,7 +160,7 @@ interface IdeMultiplatformImport {
      * By 'default' resolvers are registered using [Priority.normal].
      * The Kotlin Gradle Plugin is not expected to register resolvers outside the [normal] or [high] priorities
      * External Kotlin Target maintainers _(such as Google)_ can therefore use [veryHigh] to overwrite all resolvers
-     * from the Kotlin Gradle plugin or [veryLow], [low] to only register a resolver if there is nothing available by default
+     * from the Kotlin Gradle plugin or [low] to only register a resolver if there is nothing available by default
      * from the Kotlin Gradle plugin.
      */
     @ExternalKotlinTargetApi
