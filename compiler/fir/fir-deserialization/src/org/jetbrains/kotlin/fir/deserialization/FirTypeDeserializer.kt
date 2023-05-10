@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.deserialization
 
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.fir.FirModuleData
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.computeTypeAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -202,14 +203,22 @@ class FirTypeDeserializer(
         }
 
         // TODO: Return abbreviated types for type aliases, see KT-58542
-        return simpleType
+        // This condition is true when the type is precompiled for incremental compilation.
+        // Using the expanded type leads to the issue described in KT-28233 so we work around it by using the abbreviated type.
+        // The proper solution would be to mark files that depend on a changed type alias as dirty during IC.
+        return if (moduleData.session.kind == FirSession.Kind.Source) {
+            val abbreviatedTypeProto = proto.abbreviatedType(typeTable) ?: return simpleType
+            simpleType(abbreviatedTypeProto, attributes)
+        } else {
+            simpleType
+        }
     }
 
     private fun createSuspendFunctionTypeForBasicCase(
         functionTypeConstructor: ConeClassLikeLookupTag,
         arguments: Array<ConeTypeProjection>,
         isNullable: Boolean,
-        attributes: ConeAttributes
+        attributes: ConeAttributes,
     ): ConeClassLikeType? {
         fun ConeClassLikeType.isContinuation(): Boolean {
             if (this.typeArguments.size != 1) return false
