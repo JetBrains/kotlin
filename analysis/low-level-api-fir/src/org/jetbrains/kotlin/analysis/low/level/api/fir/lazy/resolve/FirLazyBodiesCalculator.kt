@@ -74,7 +74,9 @@ internal object FirLazyBodiesCalculator {
     fun calculateLazyArgumentsForAnnotation(annotationCall: FirAnnotationCall, session: FirSession) {
         require(needCalculatingAnnotationCall(annotationCall))
         val builder = RawFirBuilder(session, baseScopeProvider = session.kotlinScopeProvider)
-        val newAnnotationCall = builder.buildAnnotationCall(annotationCall.psi as KtAnnotationEntry)
+        val ktAnnotationEntry = annotationCall.psi as KtAnnotationEntry
+        builder.context.packageFqName = ktAnnotationEntry.containingKtFile.packageFqName
+        val newAnnotationCall = builder.buildAnnotationCall(ktAnnotationEntry)
         annotationCall.replaceArgumentList(newAnnotationCall.argumentList)
     }
 
