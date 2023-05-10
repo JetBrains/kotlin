@@ -62,6 +62,19 @@ class LanguageVersionSettingsBuilder {
             val languageVersion = maxOf(LanguageVersion.LATEST_STABLE, LanguageVersion.fromVersionString(apiVersion.versionString)!!)
             this.languageVersion = languageVersion
         }
+        val languageVersionDirective = directives.singleOrZeroValue(LanguageSettingsDirectives.LANGUAGE_VERSION)
+        if (languageVersionDirective != null) {
+            languageVersion = languageVersionDirective
+            if (languageVersion < LanguageVersion.fromVersionString(this.apiVersion.versionString)!!) {
+                error(
+                    """
+                        Language version must be larger than or equal to the API version.
+                        Language version: '$languageVersion'.
+                        API version: '$apiVersion'.
+                    """.trimIndent()
+                )
+            }
+        }
         when {
             useK2 && this.languageVersion < LanguageVersion.KOTLIN_2_0 -> this.languageVersion = LanguageVersion.KOTLIN_2_0
             !useK2 && this.languageVersion > LanguageVersion.KOTLIN_1_9 -> this.languageVersion = LanguageVersion.KOTLIN_1_9

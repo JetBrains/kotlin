@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.test.directives
 
-import org.jetbrains.kotlin.config.ApiVersion
-import org.jetbrains.kotlin.config.ExplicitApiMode
-import org.jetbrains.kotlin.config.JvmDefaultMode
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 
 object LanguageSettingsDirectives : SimpleDirectivesContainer() {
@@ -22,6 +20,12 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
         description = "Version of Kotlin API",
         parser = this::parseApiVersion
     )
+
+    val LANGUAGE_VERSION by valueDirective<LanguageVersion>(
+        description = "Kotlin language version",
+        parser = this::parseLanguageVersion
+    )
+
     // --------------------- Analysis Flags ---------------------
 
     val OPT_IN by stringDirective(
@@ -88,5 +92,10 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
         "LATEST" -> ApiVersion.LATEST
         "LATEST_STABLE" -> ApiVersion.LATEST_STABLE
         else -> ApiVersion.parse(versionString) ?: error("Unknown API version: $versionString")
+    }
+
+    fun parseLanguageVersion(versionString: String): LanguageVersion = when (versionString) {
+        "LATEST_STABLE" -> LanguageVersion.LATEST_STABLE
+        else -> LanguageVersion.fromVersionString(versionString) ?: error("Unknown language version: $versionString")
     }
 }
