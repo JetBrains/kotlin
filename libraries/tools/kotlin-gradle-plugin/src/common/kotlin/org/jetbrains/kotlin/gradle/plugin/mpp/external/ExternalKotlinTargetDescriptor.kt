@@ -104,14 +104,7 @@ class ExternalKotlinTargetDescriptorBuilder<T : DecoratedExternalKotlinTarget> i
         else this.configure = { configure(it); action(it) }
     }
 
-    /**
-     * Main entrance of configuring the ide import:
-     * The [IdeMultiplatformImport] instance passed to this function shall
-     * not be captured and used outside of this block.
-     *
-     * The [IdeMultiplatformImport] instance shall not be retrieved any other way than using this function.
-     */
-    var configureIdeImport: (IdeMultiplatformImport.() -> Unit)? = null
+    internal var configureIdeImport: (IdeMultiplatformImport.() -> Unit)? = null
 
     /**
      * Main entrance of configuring the ide import:
