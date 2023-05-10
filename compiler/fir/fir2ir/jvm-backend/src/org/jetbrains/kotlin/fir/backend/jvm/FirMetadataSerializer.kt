@@ -34,7 +34,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
-import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.metadata.jvm.serialization.JvmStringTable
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.ClassId
@@ -63,7 +62,6 @@ fun makeFirMetadataSerializerForIrClass(
         approximator, context.defaultTypeMapper, components
     )
     return FirMetadataSerializer(
-        (irClass.file.metadata as? FirMetadataSource.File)?.file,
         context.state.globalSerializationBindings,
         serializationBindings,
         approximator,
@@ -76,7 +74,6 @@ fun makeFirMetadataSerializerForIrClass(
 }
 
 fun makeLocalFirMetadataSerializerForMetadataSource(
-    firFile: FirFile,
     metadata: MetadataSource?,
     session: FirSession,
     scopeSession: ScopeSession,
@@ -110,7 +107,6 @@ fun makeLocalFirMetadataSerializerForMetadataSource(
         constValueProvider = null
     )
     return FirMetadataSerializer(
-        firFile,
         globalSerializationBindings,
         serializationBindings,
         approximator,
@@ -123,7 +119,6 @@ fun makeLocalFirMetadataSerializerForMetadataSource(
 }
 
 class FirMetadataSerializer(
-    private val firFile: FirFile?,
     private val globalSerializationBindings: JvmSerializationBindings,
     private val serializationBindings: JvmSerializationBindings,
     private val approximator: AbstractTypeApproximator,
@@ -134,15 +129,15 @@ class FirMetadataSerializer(
 
     override fun serialize(metadata: MetadataSource): Pair<MessageLite, JvmStringTable>? {
         val message = when (metadata) {
-            is FirMetadataSource.Class -> serializer!!.classProto(metadata.fir, firFile!!).build()
+            is FirMetadataSource.Class -> serializer!!.classProto(metadata.fir).build()
             is FirMetadataSource.File ->
-                serializer!!.packagePartProto(metadata.file.packageFqName, metadata.file, actualizedExpectDeclarations).build()
+                serializer!!.packagePartProto(metadata.files.first().packageFqName, metadata.files, actualizedExpectDeclarations).build()
             is FirMetadataSource.Function -> {
                 val withTypeParameters = metadata.fir.copyToFreeAnonymousFunction(approximator)
                 serializationBindings.get(FirJvmSerializerExtension.METHOD_FOR_FIR_FUNCTION, metadata.fir)?.let {
                     serializationBindings.put(FirJvmSerializerExtension.METHOD_FOR_FIR_FUNCTION, withTypeParameters, it)
                 }
-                serializer!!.functionProto(withTypeParameters, firFile!!)?.build()
+                serializer!!.functionProto(withTypeParameters)?.build()
             }
             else -> null
         } ?: return null
