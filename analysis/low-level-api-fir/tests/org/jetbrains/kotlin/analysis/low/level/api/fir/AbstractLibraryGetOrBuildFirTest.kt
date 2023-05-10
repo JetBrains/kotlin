@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirLibraryBinaryTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirDeclarationForCompiledElementSearcher
@@ -39,8 +40,7 @@ abstract class AbstractLibraryGetOrBuildFirTest : AbstractLowLevelApiSingleFileT
 
         val module = ktFile.getKtModule()
         val resolveSession = LLFirResolveSessionService.getInstance(ktFile.project).getFirResolveSessionForBinaryModule(module)
-        val symbolProvider = resolveSession.getSessionFor(module).symbolProvider
-        val fir = FirDeclarationForCompiledElementSearcher(symbolProvider).findNonLocalDeclaration(declaration)
+        val fir = declaration.getOrBuildFir(resolveSession)!!
 
         val renderedFir = FirRenderer(
             fileAnnotationsContainerRenderer = FirFileAnnotationsContainerRenderer(),

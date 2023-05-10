@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.state
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirLibraryOrLibrarySourceResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
+import org.jetbrains.kotlin.analysis.project.structure.KtBinaryModule
 import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 import org.jetbrains.kotlin.psi.KtElement
@@ -25,7 +26,8 @@ internal class LLFirLibraryOrLibrarySourceResolvableResolveSession(
 
     override fun getModuleKind(module: KtModule): ModuleKind {
         LLFirLibraryOrLibrarySourceResolvableModuleSession.checkIsValidKtModule(module)
-        return if (module == useSiteKtModule) ModuleKind.RESOLVABLE_MODULE else ModuleKind.BINARY_MODULE
+        //declarations of binary modules should be always resolved via deserialized fir
+        return if (module is KtBinaryModule) ModuleKind.BINARY_MODULE else ModuleKind.RESOLVABLE_MODULE
     }
 }
 

@@ -11,10 +11,9 @@ import com.intellij.psi.util.CachedValuesManager
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLFirResolveSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.FirTowerContextProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.canBePartOfParentDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.getNonLocalContainingOrThisDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.retryOnInvalidSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FirElementsRecorder
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirLibrarySession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionCache
@@ -40,10 +39,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.*
 
 internal abstract class LLFirResolvableResolveSession(
     final override val useSiteKtModule: KtModule,
@@ -80,7 +76,22 @@ internal abstract class LLFirResolvableResolveSession(
 
     override fun getOrBuildFirFor(element: KtElement): FirElement? {
         retryOnInvalidSession {
-            val moduleComponents = getModuleComponentsForElement(element)
+            val ktModule = element.getKtModule()
+            if (getModuleKind(ktModule) == ModuleKind.BINARY_MODULE) {
+                if (element is KtDeclaration) {
+                    return findFirCompiledSymbol(element).fir
+                }
+                if (element is KtTypeReference) {
+                    val parent = element.parent
+                    if (parent is KtDeclaration) {
+                        val fir = findFirCompiledSymbol(parent).fir
+                        val session =
+                            LLFirSessionCache.getInstance(project).getSession(ktModule, preferBinary = true) as LLFirLibrarySession
+                        return session.getKtToFirMapping(fir)[element]
+                    }
+                }
+            }
+            val moduleComponents = getResolvableSessionFor(ktModule).moduleComponents
             return moduleComponents.elementsBuilder.getOrBuildFirFor(element, this)
         }
     }
@@ -116,7 +127,7 @@ internal abstract class LLFirResolvableResolveSession(
         }
 
         val ktModule = ktDeclaration.getKtModule(project)
-        val firSession = getSessionFor(ktModule)
+        val firSession = LLFirSessionCache.getInstance(project).getSession(ktModule, preferBinary = true)
         val searcher = FirDeclarationForCompiledElementSearcher(firSession.symbolProvider)
         val firDeclaration = searcher.findNonLocalDeclaration(ktDeclaration)
         return firDeclaration.symbol
