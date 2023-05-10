@@ -33,6 +33,9 @@ public:
 
 private:
     friend class AtomicStack<SingleObjectPage>;
+
+    explicit SingleObjectPage(size_t size) noexcept;
+
     SingleObjectPage* next_;
     bool isAllocated_ = false;
     size_t size_;

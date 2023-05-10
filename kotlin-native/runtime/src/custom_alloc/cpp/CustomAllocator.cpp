@@ -9,6 +9,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <cinttypes>
+#include <cstring>
 #include <new>
 
 #include "ConcurrentMarkAndSweep.hpp"
@@ -17,6 +18,7 @@
 #include "ExtraObjectData.hpp"
 #include "ExtraObjectPage.hpp"
 #include "GCScheduler.hpp"
+#include "KAssert.h"
 #include "SingleObjectPage.hpp"
 #include "NextFitPage.hpp"
 #include "Memory.h"
@@ -124,6 +126,7 @@ size_t CustomAllocator::GetAllocatedHeapSize(ObjHeader* object) noexcept {
 }
 
 uint8_t* CustomAllocator::Allocate(uint64_t size) noexcept {
+    RuntimeAssert(size, "CustomAllocator::Allocate cannot allocate 0 bytes");
     gcScheduler_.OnSafePointAllocation(size);
     CustomAllocDebug("CustomAllocator::Allocate(%" PRIu64 ")", size);
     uint64_t cellCount = (size + sizeof(Cell) - 1) / sizeof(Cell);
@@ -135,7 +138,7 @@ uint8_t* CustomAllocator::Allocate(uint64_t size) noexcept {
     } else {
         ptr = AllocateInNextFitPage(cellCount);
     }
-    memset(ptr, 0, size);
+    RuntimeAssert(ptr[0] == 0 && memcmp(ptr, ptr + 1, size - 1) == 0, "CustomAllocator::Allocate: memory not zero!");
     return ptr;
 }
 

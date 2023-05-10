@@ -6,9 +6,15 @@
 #include "GCApi.hpp"
 
 #include <atomic>
+#include <cstdint>
 #include <limits>
 
+#ifndef KONAN_WINDOWS
+#include <sys/mman.h>
+#endif
+
 #include "ConcurrentMarkAndSweep.hpp"
+#include "CompilerConstants.hpp"
 #include "CustomLogging.hpp"
 #include "ExtraObjectData.hpp"
 #include "ExtraObjectPage.hpp"
@@ -63,9 +69,25 @@ bool SweepExtraObject(mm::ExtraObjectData* extraObject, gc::GCHandle::GCSweepExt
 }
 
 void* SafeAlloc(uint64_t size) noexcept {
-    void* memory;
-    if (size > std::numeric_limits<size_t>::max() || !(memory = std_support::malloc(size))) {
+    if (size > std::numeric_limits<size_t>::max()) {
         konan::consoleErrorf("Out of memory trying to allocate %" PRIu64 "bytes. Aborting.\n", size);
+        konan::abort();
+    }
+    void* memory;
+    bool error;
+    if (compiler::disableMmap()) {
+        memory = calloc(size, 1);
+        error = memory == nullptr;
+    } else {
+#if KONAN_WINDOWS
+        RuntimeFail("mmap is not available on mingw");
+#else
+        memory = mmap(nullptr, size, PROT_WRITE | PROT_READ, MAP_ANONYMOUS | MAP_PRIVATE | MAP_NORESERVE, -1, 0);
+        error = memory == MAP_FAILED;
+#endif
+    }
+    if (error) {
+        konan::consoleErrorf("Out of memory trying to allocate %" PRIu64 "bytes: %s. Aborting.\n", size, strerror(errno));
         konan::abort();
     }
     allocatedBytesCounter.fetch_add(static_cast<size_t>(size), std::memory_order_relaxed);
@@ -73,7 +95,16 @@ void* SafeAlloc(uint64_t size) noexcept {
 }
 
 void Free(void* ptr, size_t size) noexcept {
-    std_support::free(ptr);
+    if (compiler::disableMmap()) {
+        free(ptr);
+    } else {
+#if KONAN_WINDOWS
+        RuntimeFail("mmap is not available on mingw");
+#else
+        auto result = munmap(ptr, size);
+        RuntimeAssert(result == 0, "Failed to munmap: %s", strerror(errno));
+#endif
+    }
     allocatedBytesCounter.fetch_sub(static_cast<size_t>(size), std::memory_order_relaxed);
 }
 

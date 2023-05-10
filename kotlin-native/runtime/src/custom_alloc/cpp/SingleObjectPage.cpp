@@ -18,10 +18,10 @@ SingleObjectPage* SingleObjectPage::Create(uint64_t cellCount) noexcept {
     CustomAllocInfo("SingleObjectPage::Create(%" PRIu64 ")", cellCount);
     RuntimeAssert(cellCount > NEXT_FIT_PAGE_MAX_BLOCK_SIZE, "blockSize too small for SingleObjectPage");
     uint64_t size = sizeof(SingleObjectPage) + cellCount * sizeof(uint64_t);
-    auto* page = new (SafeAlloc(size)) SingleObjectPage();
-    page->size_ = size;
-    return page;
+    return new (SafeAlloc(size)) SingleObjectPage(size);
 }
+
+SingleObjectPage::SingleObjectPage(size_t size) noexcept : size_(size) {}
 
 void SingleObjectPage::Destroy() noexcept {
     Free(this, size_);

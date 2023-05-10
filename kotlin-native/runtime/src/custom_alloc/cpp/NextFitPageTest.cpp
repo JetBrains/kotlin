@@ -33,7 +33,7 @@ uint8_t* alloc(NextFitPage* page, uint32_t blockSize) {
         return nullptr;
     }
     if (ptr == nullptr) return nullptr;
-    memset(ptr, 0, 8 * blockSize);
+    EXPECT_TRUE(ptr[0] == 0 && memcmp(ptr, ptr + 1, blockSize * 8 - 1) == 0);
     reinterpret_cast<uint64_t*>(ptr)[1] = reinterpret_cast<uint64_t>(&fakeType);
     if (!page->CheckInvariants()) {
         ADD_FAILURE();

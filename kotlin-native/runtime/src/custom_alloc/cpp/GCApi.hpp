@@ -40,6 +40,7 @@ bool SweepObject(uint8_t* object, FinalizerQueue& finalizerQueue, gc::GCHandle::
 bool SweepExtraObject(mm::ExtraObjectData* extraObject, gc::GCHandle::GCSweepExtraObjectsScope& sweepScope) noexcept;
 
 void* SafeAlloc(uint64_t size) noexcept;
+
 void Free(void* ptr, size_t size) noexcept;
 
 size_t GetAllocatedBytes() noexcept;

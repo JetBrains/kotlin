@@ -68,6 +68,11 @@ extern "C" {
 
 extern const int32_t Kotlin_needDebugInfo = 1;
 extern const int32_t Kotlin_runtimeAssertsMode = static_cast<int32_t>(kotlin::compiler::RuntimeAssertsMode::kPanic);
+#if KONAN_WINDOWS
+extern const int32_t Kotlin_disableMmap = 1;
+#else
+extern const int32_t Kotlin_disableMmap = 0;
+#endif
 extern const char* const Kotlin_runtimeLogs = nullptr;
 extern const int32_t Kotlin_gcSchedulerType = static_cast<int32_t>(kotlin::compiler::GCSchedulerType::kDisabled);
 extern const int32_t Kotlin_freezingChecksEnabled = 1;

@@ -123,6 +123,21 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         realGc
     }
     val runtimeAssertsMode: RuntimeAssertsMode get() = configuration.get(BinaryOptions.runtimeAssertionsMode) ?: RuntimeAssertsMode.IGNORE
+    private val defaultDisableMmap get() = target.family == Family.MINGW
+    val disableMmap: Boolean by lazy {
+        when (configuration.get(BinaryOptions.disableMmap)) {
+            null -> defaultDisableMmap
+            true -> true
+            false -> {
+                if (target.family == Family.MINGW) {
+                    configuration.report(CompilerMessageSeverity.STRONG_WARNING, "MinGW target does not support mmap/munmap")
+                    true
+                } else {
+                    false
+                }
+            }
+        }
+    }
     val workerExceptionHandling: WorkerExceptionHandling get() = configuration.get(KonanConfigKeys.WORKER_EXCEPTION_HANDLING) ?: when (memoryModel) {
             MemoryModel.EXPERIMENTAL -> WorkerExceptionHandling.USE_HOOK
             else -> WorkerExceptionHandling.LEGACY
@@ -434,6 +449,8 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             append("-gc-scheduler=${gcSchedulerType.name}")
         if (runtimeAssertsMode != RuntimeAssertsMode.IGNORE)
             append("-runtime_asserts=${runtimeAssertsMode.name}")
+        if (disableMmap != defaultDisableMmap)
+            append("-disable_mmap=${disableMmap}")
     }
 
     private val userCacheFlavorString = buildString {

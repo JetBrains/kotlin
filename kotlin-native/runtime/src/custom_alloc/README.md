@@ -200,41 +200,56 @@ the OS.
 ```cpp
 class FixedBlockPage {
 public:
-    FixedBlockPage(uint32_t blockSize);
-    uint8_t* TryAllocate();
+    FixedBlockPage(uint32_t blockSize) noexcept;
+
+    uint8_t* TryAllocate() noexcept;
+
     bool Sweep() noexcept;
 
 private:
-    FixedBlockPage* next_; // used by AtomicStack
+    FixedBlockPage* next_;
+    FixedCellRange nextFree_;
     uint32_t blockSize_;
-    FixedBlockCell* nextFree_;
+    uint32_t end_;
     FixedBlockCell cells_[];
+};
 };
 ```
 
 All sufficiently small allocations (currently arbitrary <1KiB) are directed to
 a `FixedBlockPage`, where all blocks have the same fixed size. Most allocations
-are expected to be in this page type. A `FixedBlockPage` has a singly-linked
-free-list of all free blocks. Allocating always happens in the first free block
-in the page.
+are expected to be in this page type. A `FixedBlockPage` consists of a number
+of equally sized blocks, where each allocation will take up exactly one such
+block.
 
 ```cpp
 struct FixedBlockCell {
     union {
         uint8_t data[];
-        FixedBlockCell* nextFree;
+        FixedCellRange nextFree;
     }
+};
+
+struct alignas(8) FixedCellRange {
+    uint32_t first;
+    uint32_t last;
 };
 ```
 
-The important point is that all links in the list point forward in the page, so
-all blocks between two consecutive links are implicitly allocated. Sweeping a
+Consecutive unallocated cells are represented by a `FixedCellRange`, with
+`.first` and `.last` being the inclusive end points of the range of unallocated
+cells. The `FixedBlockCell` at the the `.last` index contains a
+`FixedCellRange` with the next range of unallocated cells. The `FixedCellRange`
+of unallocated ranges thus form a linked list.
+
+The important point is that all links in this list point forward in the page, so
+all blocks between two `FixedCellRanges` are implicitly allocated. Sweeping a
 `FixedBlockPage` consists of walking the free-list forward, and sweeping all
 blocks in between the links, maintaining the free list when blocks are freed.
 
 Each small page takes up the same amount of space, independent of block size,
 so larger block size implies fewer blocks per page.  This size is arbitrarily
-chosen to be 64 KiB, but this might change.
+chosen to be 256 KiB, but this might change.
 
 ## [NextFitPage](cpp/NextFitPage.hpp)
 

@@ -28,51 +28,62 @@ void FixedBlockPage::Destroy() noexcept {
 
 FixedBlockPage::FixedBlockPage(uint32_t blockSize) noexcept : blockSize_(blockSize) {
     CustomAllocInfo("FixedBlockPage(%p)::FixedBlockPage(%u)", this, blockSize);
-    nextFree_ = cells_;
-    FixedBlockCell* end = cells_ + (FIXED_BLOCK_PAGE_CELL_COUNT + 1 - blockSize_);
-    for (FixedBlockCell* cell = cells_; cell < end; cell = cell->nextFree) {
-        cell->nextFree = cell + blockSize;
-    }
+    nextFree_.first = 0;
+    nextFree_.last = FIXED_BLOCK_PAGE_CELL_COUNT / blockSize * blockSize;
+    end_ = FIXED_BLOCK_PAGE_CELL_COUNT / blockSize * blockSize;
 }
 
 uint8_t* FixedBlockPage::TryAllocate() noexcept {
-    FixedBlockCell* end = cells_ + (FIXED_BLOCK_PAGE_CELL_COUNT + 1 - blockSize_);
-    FixedBlockCell* freeBlock = nextFree_;
-    if (freeBlock >= end) {
-        return nullptr;
+    uint32_t next = nextFree_.first;
+    if (next < nextFree_.last) {
+        nextFree_.first += blockSize_;
+        return cells_[next].data;
     }
-    nextFree_ = freeBlock->nextFree;
-    CustomAllocDebug("FixedBlockPage(%p){%u}::TryAllocate() = %p", this, blockSize_, freeBlock->data);
-    return freeBlock->data;
+    if (next >= end_) return nullptr;
+    nextFree_ = cells_[next].nextFree;
+    memset(&cells_[next], 0, sizeof(cells_[next]));
+    return cells_[next].data;
 }
 
 bool FixedBlockPage::Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueue) noexcept {
     CustomAllocInfo("FixedBlockPage(%p)::Sweep()", this);
-    // `end` is after the last legal allocation of a block, but does not
-    // necessarily match an actual block starting point.
-    FixedBlockCell* end = cells_ + (FIXED_BLOCK_PAGE_CELL_COUNT + 1 - blockSize_);
-    bool alive = false;
-    FixedBlockCell** nextFree = &nextFree_;
-    for (FixedBlockCell* cell = cells_; cell < end; cell += blockSize_) {
-        // If the current cell is free, move on.
-        if (cell == *nextFree) {
-            nextFree = &cell->nextFree;
+    FixedCellRange nextFree = nextFree_; // Accessing the previous free list structure.
+    FixedCellRange* prevRange = &nextFree_; // Creating the new free list structure.
+    uint32_t prevLive = -blockSize_;
+    for (uint32_t cell = 0 ; cell < end_ ; cell += blockSize_) {
+        // Go through the occupied cells.
+        for (; cell < nextFree.first ; cell += blockSize_) {
+            if (!SweepObject(cells_[cell].data, finalizerQueue, sweepHandle)) {
+                // We should null this cell out, but we will do so in batch later.
+                continue;
+            }
+            if (prevLive + blockSize_ < cell) {
+                // We found an alive cell that ended a run of swept cells or a known unoccupied range.
+                uint32_t prevCell = cell - blockSize_;
+                // Nulling in batch.
+                memset(&cells_[prevLive + blockSize_], 0, (prevCell - prevLive) * sizeof(FixedBlockCell));
+                // Updating the free list structure.
+                prevRange->first = prevLive + blockSize_;
+                prevRange->last = prevCell;
+                // And the next unoccupied range will be stored in the last unoccupied cell.
+                prevRange = &cells_[prevCell].nextFree;
+            }
+            prevLive = cell;
+        }
+        // `cell` now points to a known unoccupied range.
+        if (nextFree.last < end_) {
+            cell = nextFree.last;
+            nextFree = cells_[cell].nextFree;
             continue;
         }
-        // If the current cell was marked, it's alive, and the whole page is alive.
-        if (SweepObject(cell->data, finalizerQueue, sweepHandle)) {
-            alive = true;
-            sweepHandle.addKeptObject();
-            continue;
-        }
-        CustomAllocInfo("FixedBlockPage(%p)::Sweep: reclaim %p", this, cell);
-        // Free the current block and insert it into the free list.
-        cell->nextFree = *nextFree;
-        *nextFree = cell;
-        nextFree = &cell->nextFree;
-        sweepHandle.addSweptObject();
+        prevRange->first = prevLive + blockSize_;
+        memset(&cells_[prevLive + blockSize_], 0, (cell - prevLive - blockSize_) * sizeof(FixedBlockCell));
+        prevRange->last = end_;
+        // And we're done.
+        break;
     }
-    return alive;
+    // The page is alive iff a range stored in the page header covers the entire page.
+    return nextFree_.first > 0 || nextFree_.last < end_;
 }
 
 } // namespace kotlin::alloc

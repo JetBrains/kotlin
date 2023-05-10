@@ -44,16 +44,16 @@ public:
 
     T* GetPage(uint32_t cellCount, FinalizerQueue& finalizerQueue) noexcept {
         T* page;
+        if ((page = ready_.Pop())) {
+            used_.Push(page);
+            return page;
+        }
         if ((page = unswept_.Pop())) {
             // If there're unswept_ pages, the GC is in progress.
             GCSweepScope sweepHandle = T::currentGCSweepScope();
             if ((page = SweepSingle(sweepHandle, page, unswept_, used_, finalizerQueue))) {
                 return page;
             }
-        }
-        if ((page = ready_.Pop())) {
-            used_.Push(page);
-            return page;
         }
         if ((page = empty_.Pop())) {
             used_.Push(page);

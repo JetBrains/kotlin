@@ -35,7 +35,7 @@ public:
     bool CheckInvariants() noexcept;
 
 private:
-    NextFitPage(uint32_t cellCount) noexcept;
+    explicit NextFitPage(uint32_t cellCount) noexcept;
 
     // Looks for a block big enough to hold cellsNeeded. If none big enough is
     // found, update to the largest one.

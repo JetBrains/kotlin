@@ -54,6 +54,8 @@ object BinaryOptions : BinaryOptionRegistry() {
     val compileBitcodeWithXcodeLlvm by booleanOption()
 
     val objcDisposeOnMain by booleanOption()
+
+    val disableMmap by booleanOption()
 }
 
 open class BinaryOption<T : Any>(
