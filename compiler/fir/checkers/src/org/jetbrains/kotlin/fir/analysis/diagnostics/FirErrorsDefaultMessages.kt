@@ -1710,7 +1710,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             REDUNDANT_EXPLICIT_BACKING_FIELD,
             "There's no need for an explicit backing field declaration if it has the same type as the property"
         )
-        map.put(ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS, "This property cannot be declared abstract")
+        map.put(ABSTRACT_PROPERTY_IN_PRIMARY_CONSTRUCTOR_PARAMETERS, "Property in primary constructor cannot be declared abstract")
         map.put(LOCAL_VARIABLE_WITH_TYPE_PARAMETERS_WARNING, "Type parameters for local variables are deprecated")
         map.put(LOCAL_VARIABLE_WITH_TYPE_PARAMETERS, "Local variables are not allowed to have type parameters")
         map.put(EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS, "A property access cannot have explicit type arguments")
