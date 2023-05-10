@@ -39,13 +39,13 @@ import com.sun.jdi.request.MethodExitRequest
 import com.sun.jdi.request.StepRequest
 import com.sun.tools.jdi.SocketAttachingConnector
 import java.io.File
+import java.net.URL
+import java.net.URLClassLoader
+import kotlin.properties.Delegates
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.backend.common.output.SimpleOutputFileCollection
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
 import org.jetbrains.kotlin.codegen.GeneratedClassLoader
-import java.net.URL
-import java.net.URLClassLoader
-import kotlin.properties.Delegates
 import org.junit.After
 import org.junit.AfterClass
 import org.junit.Before

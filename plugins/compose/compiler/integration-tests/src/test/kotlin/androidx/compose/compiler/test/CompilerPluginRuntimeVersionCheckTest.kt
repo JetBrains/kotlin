@@ -17,6 +17,10 @@
 package androidx.compose.compiler.test
 
 import androidx.testutils.gradle.ProjectSetupRule
+import java.io.File
+import javax.xml.parsers.DocumentBuilderFactory
+import javax.xml.xpath.XPathConstants
+import javax.xml.xpath.XPathFactory
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome
 import org.junit.Assert.assertEquals
@@ -26,10 +30,6 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.JUnit4
-import java.io.File
-import javax.xml.parsers.DocumentBuilderFactory
-import javax.xml.xpath.XPathConstants
-import javax.xml.xpath.XPathFactory
 
 @RunWith(JUnit4::class)
 class CompilerPluginRuntimeVersionCheckTest {
