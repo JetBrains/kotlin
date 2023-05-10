@@ -25,6 +25,8 @@ open class ConeTypeRenderer {
             return
         }
 
+        type.renderNonCompilerAttributes()
+
         if (type.isMarkedNullable) {
             builder.append("(")
         }
@@ -178,6 +180,13 @@ open class ConeTypeRenderer {
     private fun ConeKotlinType.renderAttributes() {
         if (!attributes.any()) return
         builder.append(attributeRenderer.render(attributes))
+    }
+
+    private fun ConeKotlinType.renderNonCompilerAttributes() {
+        val compilerAttributes = CompilerConeAttributes.classIdByCompilerAttributeKey
+        if (attributes.any { it.key !in compilerAttributes }) {
+            builder.append(attributeRenderer.render(attributes))
+        }
     }
 
     private fun ConeTypeProjection.render() {
