@@ -16,9 +16,6 @@
 
 package androidx.compose.compiler.daemon
 
-import org.jetbrains.kotlin.cli.common.ExitCode
-import org.junit.Assert.assertEquals
-import org.junit.Test
 import java.io.ByteArrayOutputStream
 import java.io.OutputStreamWriter
 import java.io.PipedReader
@@ -26,6 +23,9 @@ import java.io.PipedWriter
 import java.io.PrintWriter
 import java.util.concurrent.CountDownLatch
 import kotlin.concurrent.thread
+import org.jetbrains.kotlin.cli.common.ExitCode
+import org.junit.Assert.assertEquals
+import org.junit.Test
 
 class DaemonProtocolTest {
 
