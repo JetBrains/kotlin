@@ -183,6 +183,20 @@ internal object FirLazyBodiesCalculator {
         }
     }
 
+    fun calculateLazyBodiesForField(designation: FirDesignation) {
+        val field = designation.target as FirField
+        require(field.initializer is FirLazyExpression)
+        val newField = RawFirNonLocalDeclarationBuilder.buildWithFunctionSymbolRebind(
+            session = field.moduleData.session,
+            scopeProvider = field.moduleData.session.kotlinScopeProvider,
+            designation = designation,
+            rootNonLocalDeclaration = designation.path.last().psi as KtClassOrObject,
+        ) as FirField
+        field.apply {
+            replaceInitializer(newField.initializer)
+        }
+    }
+
     fun needCalculatingLazyBodyForConstructor(firConstructor: FirConstructor): Boolean =
         needCalculatingLazyBodyForFunction(firConstructor) || firConstructor.delegatedConstructor is FirLazyDelegatedConstructorCall
 
@@ -299,6 +313,14 @@ private object FirLazyBodiesCalculatorTransformer : FirTransformer<PersistentLis
             element.transformChildren(this, newList)
         }
         return element
+    }
+
+    override fun transformField(field: FirField, data: PersistentList<FirRegularClass>): FirStatement {
+        if (field.initializer is FirLazyExpression) {
+            val designation = FirDesignation(data, field)
+            FirLazyBodiesCalculator.calculateLazyBodiesForField(designation)
+        }
+        return field
     }
 
     override fun transformSimpleFunction(

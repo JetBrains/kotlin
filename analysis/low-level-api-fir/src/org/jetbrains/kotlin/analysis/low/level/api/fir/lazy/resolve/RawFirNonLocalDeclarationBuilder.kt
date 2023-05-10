@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
@@ -276,6 +277,22 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             val selfType = classOrObject.toDelegatedSelfType(typeParameters, owner.symbol)
             return enumEntry.toFirEnumEntry(selfType, ownerClassHasDefaultConstructor)
         }
+
+        fun processField(classOrObject: KtClassOrObject, originalDeclaration: FirField): FirField? {
+            var index = 0
+            classOrObject.superTypeListEntries.forEach { superTypeListEntry ->
+                if (superTypeListEntry is KtDelegatedSuperTypeEntry) {
+                    val expectedName = NameUtils.delegateFieldName(index)
+                    if (originalDeclaration.name == expectedName) {
+                        return buildFieldForSupertypeDelegate(
+                            superTypeListEntry, superTypeListEntry.typeReference.toFirOrErrorType(), index
+                        )
+                    }
+                    index++
+                }
+            }
+            return null
+        }
     }
 
     private fun moveNext(iterator: Iterator<FirDeclaration>, containingClass: FirRegularClass?): FirDeclaration {
@@ -296,10 +313,10 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
                     }
                 }
                 is KtClassOrObject -> {
-                    if (originalDeclaration is FirConstructor) {
-                        visitor.processPrimaryConstructor(declarationToBuild, null)
-                    } else {
-                        visitor.convertElement(declarationToBuild)
+                    when {
+                        originalDeclaration is FirConstructor -> visitor.processPrimaryConstructor(declarationToBuild, null)
+                        originalDeclaration is FirField -> visitor.processField(declarationToBuild, originalDeclaration)
+                        else -> visitor.convertElement(declarationToBuild)
                     }
                 }
                 else -> visitor.convertElement(declarationToBuild)

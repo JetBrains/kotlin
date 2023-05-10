@@ -1881,7 +1881,7 @@ class DeclarationsConverter(
         delegateFieldsMap.put(
             index,
             buildField {
-                source = calculatedFirExpression.source?.fakeElement(KtFakeSourceElementKind.ClassDelegationField)
+                source = explicitDelegation.toFirSourceElement().fakeElement(KtFakeSourceElementKind.ClassDelegationField)
                 moduleData = baseModuleData
                 origin = FirDeclarationOrigin.Synthetic
                 name = NameUtils.delegateFieldName(delegateFieldsMap.size)

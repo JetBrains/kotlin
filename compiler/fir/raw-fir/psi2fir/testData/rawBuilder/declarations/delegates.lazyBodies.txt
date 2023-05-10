@@ -16,3 +16,13 @@ FILE: delegates.kt
         public? set(<set-?>: <implicit>): R|kotlin/Unit| {
             D|/variable|.setValue#(Null(null), ::R|/variable|, R|<local>/variable|)
         }
+    public? final? interface Base : R|kotlin/Any| {
+    }
+    public? final? class Derived : Base {
+        public? constructor(b: Base): R|Derived| {
+            LAZY_super<<implicit>>
+        }
+
+        private final field $$delegate_0: Base = LAZY_EXPRESSION
+
+    }

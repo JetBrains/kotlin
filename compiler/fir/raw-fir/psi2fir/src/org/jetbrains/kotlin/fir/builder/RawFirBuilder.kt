@@ -65,16 +65,6 @@ open class RawFirBuilder(
     var mode: BodyBuildingMode = bodyBuildingMode
         private set
 
-    private inline fun <T> disabledLazyMode(body: () -> T): T {
-        if (mode != BodyBuildingMode.LAZY_BODIES) return body()
-        return try {
-            mode = BodyBuildingMode.NORMAL
-            body()
-        } finally {
-            mode = BodyBuildingMode.LAZY_BODIES
-        }
-    }
-
     private inline fun <T> runOnStubs(crossinline body: () -> T): T {
         return when (mode) {
             BodyBuildingMode.NORMAL -> body()
@@ -85,7 +75,7 @@ open class RawFirBuilder(
     }
 
     fun buildFirFile(file: KtFile): FirFile {
-        return file.accept(Visitor(), Unit) as FirFile
+        return runOnStubs { file.accept(Visitor(), Unit) as FirFile }
     }
 
     fun buildAnnotationCall(annotation: KtAnnotationEntry): FirAnnotationCall {
@@ -250,7 +240,7 @@ open class RawFirBuilder(
         private fun KtTypeReference?.toFirOrUnitType(): FirTypeRef =
             convertSafe() ?: implicitUnitType
 
-        private fun KtTypeReference?.toFirOrErrorType(): FirTypeRef =
+        protected fun KtTypeReference?.toFirOrErrorType(): FirTypeRef =
             convertSafe() ?: buildErrorTypeRef {
                 source = this@toFirOrErrorType?.toFirSourceElement()
                 diagnostic = ConeSyntaxDiagnostic(
@@ -848,6 +838,27 @@ open class RawFirBuilder(
             container.argumentList = argumentList
         }
 
+        protected fun buildFieldForSupertypeDelegate(entry: KtDelegatedSuperTypeEntry, type: FirTypeRef, fieldOrd: Int): FirField {
+            val delegateSource = entry.toFirSourceElement(KtFakeSourceElementKind.ClassDelegationField)
+
+            val delegateExpression = buildOrLazyExpression(delegateSource) {
+                { entry.delegateExpression }
+                    .toFirExpression("Should have delegate")
+            }
+            return buildField {
+                source = delegateSource
+                moduleData = baseModuleData
+                origin = FirDeclarationOrigin.Synthetic
+                name = NameUtils.delegateFieldName(fieldOrd)
+                returnTypeRef = type
+                symbol = FirFieldSymbol(CallableId(this@RawFirBuilder.context.currentClassId, name))
+                isVar = false
+                status = FirDeclarationStatusImpl(Visibilities.Private, Modality.FINAL)
+                initializer = delegateExpression
+                dispatchReceiverType = currentDispatchReceiverType()
+            }
+        }
+
         private fun KtClassOrObject.extractSuperTypeListEntriesTo(
             container: FirClassBuilder,
             delegatedSelfTypeRef: FirTypeRef?,
@@ -871,23 +882,8 @@ open class RawFirBuilder(
                     }
                     is KtDelegatedSuperTypeEntry -> {
                         val type = superTypeListEntry.typeReference.toFirOrErrorType()
-                        val delegateExpression =
-                            disabledLazyMode { { superTypeListEntry.delegateExpression }.toFirExpression("Should have delegate") }
                         container.superTypeRefs += type
-                        val delegateSource =
-                            superTypeListEntry.delegateExpression?.toFirSourceElement(KtFakeSourceElementKind.ClassDelegationField)
-                        val delegateField = buildField {
-                            source = delegateSource
-                            moduleData = baseModuleData
-                            origin = FirDeclarationOrigin.Synthetic
-                            name = NameUtils.delegateFieldName(delegateFieldsMap.size)
-                            returnTypeRef = type
-                            symbol = FirFieldSymbol(CallableId(this@RawFirBuilder.context.currentClassId, name))
-                            isVar = false
-                            status = FirDeclarationStatusImpl(Visibilities.Private, Modality.FINAL)
-                            initializer = delegateExpression
-                            dispatchReceiverType = currentDispatchReceiverType()
-                        }
+                        val delegateField = buildFieldForSupertypeDelegate(superTypeListEntry, type, delegateFieldsMap.size)
                         delegateFieldsMap[index] = delegateField.symbol
                     }
                 }
@@ -983,7 +979,7 @@ open class RawFirBuilder(
                                     ?: this@buildDelegatedConstructorCall.source?.fakeElement(KtFakeSourceElementKind.DelegatingConstructorCall)
                             superTypeRef = this@buildDelegatedConstructorCall.constructedTypeRef
                         }
-                        disabledLazyMode { superTypeCallEntry?.extractArgumentsTo(this) }
+                        superTypeCallEntry?.extractArgumentsTo(this)
                     }
                 }
             }
@@ -1726,7 +1722,7 @@ open class RawFirBuilder(
                         this.superTypeRef = this@buildDelegatedConstructorCall.constructedTypeRef
                     }
                 }
-                disabledLazyMode { extractArgumentsTo(this) }
+                extractArgumentsTo(this)
             }
         }
 
