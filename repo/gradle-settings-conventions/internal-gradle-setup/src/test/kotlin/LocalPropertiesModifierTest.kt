@@ -87,8 +87,8 @@ class LocalPropertiesModifierTest {
     @DisplayName("sync shouldn't remove any existing properties not managed by the sync")
     fun testSyncingIntoNonEmptyFile() {
         val initialContent = mapOf(
-            "oldProperty1" to PropertyValue("oldValue1"),
-            "oldProperty2" to PropertyValue("oldValue2"),
+            "oldProperty1" to PropertyValue.Configured("oldValue1"),
+            "oldProperty2" to PropertyValue.Configured("oldValue2"),
         )
         fillInitialLocalPropertiesFile(initialContent)
 
@@ -125,9 +125,9 @@ class LocalPropertiesModifierTest {
     @DisplayName("sync shouldn't override properties if they already manually set")
     fun testSyncingDoesNotOverrideValues() {
         val initialContent = mapOf(
-            "oldProperty1" to PropertyValue("oldValue1"),
-            "oldProperty2" to PropertyValue("oldValue2"),
-            "alreadySetProperty" to PropertyValue("oldValue3"),
+            "oldProperty1" to PropertyValue.Configured("oldValue1"),
+            "oldProperty2" to PropertyValue.Configured("oldValue2"),
+            "alreadySetProperty" to PropertyValue.Configured("oldValue3"),
         )
         fillInitialLocalPropertiesFile(initialContent)
 
@@ -140,6 +140,7 @@ class LocalPropertiesModifierTest {
             for ((key, value) in expectedProperties) {
                 assertEquals(value, properties[key])
             }
+            assertContainsExactTimes(fileContents, "#alreadySetProperty=newValue the property is overridden by 'oldValue3'", 1)
         }
     }
 
@@ -169,17 +170,17 @@ class LocalPropertiesModifierTest {
     @DisplayName("sync should override automatically set properties")
     fun testSyncingOverrideAutomaticallySetValues() {
         val initialContent = mapOf(
-            "oldProperty1" to PropertyValue("oldValue1"),
-            "oldProperty2" to PropertyValue("oldValue2"),
-            "alreadySetProperty" to PropertyValue("oldValue3"),
+            "oldProperty1" to PropertyValue.Configured("oldValue1"),
+            "oldProperty2" to PropertyValue.Configured("oldValue2"),
+            "alreadySetProperty" to PropertyValue.Configured("oldValue3"),
         )
         fillInitialLocalPropertiesFile(initialContent)
 
         modifier.applySetup(setupFile)
 
         val newProperties = mapOf(
-            "newManualProperty" to PropertyValue("5"),
-            "otherAlreadySetProperty" to PropertyValue("5"),
+            "newManualProperty" to PropertyValue.Configured("5"),
+            "otherAlreadySetProperty" to PropertyValue.Configured("5"),
         )
         fillInitialLocalPropertiesFile(newProperties)
 

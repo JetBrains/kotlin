@@ -53,7 +53,14 @@ internal class LocalPropertiesModifier(private val localProperties: File) {
                 load(it)
             }
         }
-        val propertiesToSetup = setupFile.properties.mapValues { PropertyValue(it.value, manuallyConfiguredProperties.containsKey(it.key)) }
+        val propertiesToSetup = setupFile.properties.mapValues {
+            val overridingValue = manuallyConfiguredProperties[it.key]
+            if (overridingValue != null) {
+                PropertyValue.Overridden(it.value, overridingValue.toString())
+            } else {
+                PropertyValue.Configured(it.value)
+            }
+        }
         localProperties.writeText(
             """
             |${content.addSuffix("\n")}
@@ -75,17 +82,18 @@ private fun String.addSuffix(suffix: String): String {
     return "$this$suffix"
 }
 
-internal data class PropertyValue(
+internal sealed class PropertyValue(
     val value: String,
-    val isOverridden: Boolean = false,
-)
+) {
+    class Configured(value: String) : PropertyValue(value)
+
+    class Overridden(value: String, val overridingValue: String) : PropertyValue(value)
+}
 
 internal val Map<String, PropertyValue>.asPropertiesLines: String
-    get() = map { (key, value) ->
-        when (value.isOverridden) {
-            true -> """
-                #$key=${value.value} the property is overridden
-            """.trimIndent()
-            false -> "$key=${value.value}"
+    get() = map { (key, valueWrapper) ->
+        when (valueWrapper) {
+            is PropertyValue.Overridden -> "#$key=${valueWrapper.value} the property is overridden by '${valueWrapper.overridingValue}'"
+            is PropertyValue.Configured -> "$key=${valueWrapper.value}"
         }
     }.joinToString("\n")
