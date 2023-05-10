@@ -21,27 +21,39 @@ import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
+import org.jetbrains.kotlin.ir.types.IrErrorType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitor
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.utils.Printer
 
-fun IrElement.dump(normalizeNames: Boolean = false, stableOrder: Boolean = false): String =
+fun IrElement.dump(options: DumpIrTreeOptions = DumpIrTreeOptions()): String =
     try {
         StringBuilder().also { sb ->
-            accept(DumpIrTreeVisitor(sb, normalizeNames, stableOrder), "")
+            accept(DumpIrTreeVisitor(sb, options), "")
         }.toString()
     } catch (e: Exception) {
-        "(Full dump is not available: ${e.message})\n" + render()
+        "(Full dump is not available: ${e.message})\n" + render(options)
     }
 
-fun IrFile.dumpTreesFromLineNumber(lineNumber: Int, normalizeNames: Boolean = false): String {
+fun IrFile.dumpTreesFromLineNumber(lineNumber: Int, options: DumpIrTreeOptions = DumpIrTreeOptions()): String {
     if (shouldSkipDump()) return ""
     val sb = StringBuilder()
-    accept(DumpTreeFromSourceLineVisitor(fileEntry, lineNumber, sb, normalizeNames), null)
+    accept(DumpTreeFromSourceLineVisitor(fileEntry, lineNumber, sb, options), null)
     return sb.toString()
 }
+
+/**
+ * @property normalizeNames Rename temporary local variables using a stable naming scheme
+ * @property stableOrder Print declarations in a sorted order
+ * @property verboseErrorTypes Whether to dump the value of [IrErrorType.kotlinType] for [IrErrorType] nodes
+ */
+data class DumpIrTreeOptions(
+    val normalizeNames: Boolean = false,
+    val stableOrder: Boolean = false,
+    val verboseErrorTypes: Boolean = true,
+)
 
 private fun IrFile.shouldSkipDump(): Boolean {
     val entry = fileEntry as? NaiveSourceBasedFileEntryImpl ?: return false
@@ -81,15 +93,14 @@ internal fun List<IrDeclaration>.stableOrdered(): List<IrDeclaration> {
 
 class DumpIrTreeVisitor(
     out: Appendable,
-    normalizeNames: Boolean = false,
-    private val stableOrder: Boolean = false
+    private val options: DumpIrTreeOptions = DumpIrTreeOptions(),
 ) : IrElementVisitor<Unit, String> {
 
     private val printer = Printer(out, "  ")
-    private val elementRenderer = RenderIrElementVisitor(normalizeNames, !stableOrder)
+    private val elementRenderer = RenderIrElementVisitor(options)
     private fun IrType.render() = elementRenderer.renderType(this)
 
-    private fun List<IrDeclaration>.ordered(): List<IrDeclaration> = if (stableOrder) stableOrdered() else this
+    private fun List<IrDeclaration>.ordered(): List<IrDeclaration> = if (options.stableOrder) stableOrdered() else this
 
     override fun visitElement(element: IrElement, data: String) {
         element.dumpLabeledElementWith(data) {
@@ -434,9 +445,9 @@ class DumpTreeFromSourceLineVisitor(
     val fileEntry: IrFileEntry,
     private val lineNumber: Int,
     out: Appendable,
-    normalizeNames: Boolean = false
+    options: DumpIrTreeOptions,
 ) : IrElementVisitorVoid {
-    private val dumper = DumpIrTreeVisitor(out, normalizeNames)
+    private val dumper = DumpIrTreeVisitor(out, options)
 
     override fun visitElement(element: IrElement) {
         if (fileEntry.getLineNumber(element.startOffset) == lineNumber) {

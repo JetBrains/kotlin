@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.backend.handlers
 
 import org.jetbrains.kotlin.ir.IrVerifier
+import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.ir.util.dumpTreesFromLineNumber
 import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler.Companion.groupWithTestFiles
@@ -32,10 +33,10 @@ class IrTreeVerifierHandler(testServices: TestServices) : AbstractIrHandler(test
 
                 IrVerifier(assertions, module.frontendKind == FrontendKinds.FIR).verifyWithAssert(irFile)
 
-                val actualDump = irFile.dumpTreesFromLineNumber(lineNumber = 0, normalizeNames = true)
+                val actualDump = irFile.dumpTreesFromLineNumber(lineNumber = 0, DumpIrTreeOptions(normalizeNames = true))
 
                 val irFileCopy = irFile.deepCopyWithSymbols()
-                val dumpOfCopy = irFileCopy.dumpTreesFromLineNumber(lineNumber = 0, normalizeNames = true)
+                val dumpOfCopy = irFileCopy.dumpTreesFromLineNumber(lineNumber = 0, DumpIrTreeOptions(normalizeNames = true))
                 assertions.assertEquals(actualDump, dumpOfCopy) { "IR dump mismatch after deep copy with symbols" }
             }
         }

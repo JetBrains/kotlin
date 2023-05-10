@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions
 import org.jetbrains.kotlin.ir.util.dump
 import org.jetbrains.kotlin.ir.util.dumpTreesFromLineNumber
 import org.jetbrains.kotlin.name.ClassId
@@ -67,9 +68,9 @@ class IrTextDumpHandler(testServices: TestServices) : AbstractIrHandler(testServ
 
             for ((testFile, irFile) in testFileToIrFile) {
                 if (testFile?.directives?.contains(EXTERNAL_FILE) == true) continue
-                var actualDump = irFile.dumpTreesFromLineNumber(lineNumber = 0, normalizeNames = true)
+                var actualDump = irFile.dumpTreesFromLineNumber(lineNumber = 0, DumpIrTreeOptions(normalizeNames = true))
                 if (actualDump.isEmpty()) {
-                    actualDump = irFile.dumpTreesFromLineNumber(lineNumber = UNDEFINED_OFFSET, normalizeNames = true)
+                    actualDump = irFile.dumpTreesFromLineNumber(lineNumber = UNDEFINED_OFFSET, DumpIrTreeOptions(normalizeNames = true))
                 }
                 builder.append(actualDump)
             }

@@ -96,14 +96,14 @@ abstract class AbstractKlibIrTextTestCase : CodegenTestCase() {
         val ignoreErrors = AbstractIrGeneratorTestCase.shouldIgnoreErrors(wholeFile)
         val stdlib = loadKlibFromPath(listOf(runtimeKlibPath)).single()
         val (irModule, bindingContext) = buildFragmentAndLinkIt(stdlib, ignoreErrors, expectActualSymbols)
-        val expected = irModule.dump(stableOrder = true)
+        val expected = irModule.dump(DumpIrTreeOptions(stableOrder = true, verboseErrorTypes = false))
         val mppProject =
             myEnvironment.configuration.languageVersionSettings.getFeatureSupport(LanguageFeature.MultiPlatformProjects) == LanguageFeature.State.ENABLED
         val klibPath = serializeModule(irModule, bindingContext, stdlib, ignoreErrors, expectActualSymbols, !mppProject)
         val libs = loadKlibFromPath(listOf(runtimeKlibPath, klibPath))
         val (stdlib2, klib) = libs
         val deserializedIrModule = deserializeModule(stdlib2, klib)
-        val actual = deserializedIrModule.dump(stableOrder = true)
+        val actual = deserializedIrModule.dump(DumpIrTreeOptions(stableOrder = true, verboseErrorTypes = false))
 
         try {
             TestCase.assertEquals(wholeFile.name, expected, actual)
