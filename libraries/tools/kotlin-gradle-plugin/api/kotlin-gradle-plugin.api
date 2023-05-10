@@ -321,9 +321,3 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotli
 	public static final fun ExternalKotlinTargetDescriptor (Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetDescriptor;
 }
 
-public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalTargetApiExtensionsKt {
-	public static final fun getExtras (Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilation;)Lorg/jetbrains/kotlin/tooling/core/MutableExtras;
-	public static final fun getExtras (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;)Lorg/jetbrains/kotlin/tooling/core/MutableExtras;
-	public static final fun getExtras (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;)Lorg/jetbrains/kotlin/tooling/core/MutableExtras;
-}
-
