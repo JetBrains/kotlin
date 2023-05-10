@@ -14,6 +14,11 @@ import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.render
 
+/**
+ * The base class for all non-public (wrt linkage) symbols.
+ *
+ * Its [signature] is always `null`.
+ */
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 abstract class IrSymbolBase<out Descriptor : DeclarationDescriptor>(
     private val _descriptor: Descriptor?
