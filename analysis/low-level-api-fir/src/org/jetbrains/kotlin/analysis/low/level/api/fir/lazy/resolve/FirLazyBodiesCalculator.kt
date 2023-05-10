@@ -34,14 +34,14 @@ internal object FirLazyBodiesCalculator {
     fun calculateLazyBodiesInside(designation: FirDesignation) {
         calculateAnnotations(designation.target)
         designation.target.transform<FirElement, PersistentList<FirRegularClass>>(
-            FirLazyBodiesCalculatorTransformer,
+            FirTargetLazyBodiesCalculatorTransformer,
             designation.path.toPersistentList(),
         )
     }
 
-    fun calculateLazyBodies(firFile: FirFile) {
+    fun calculateAllLazyExpressionsInFile(firFile: FirFile) {
         calculateAnnotations(firFile)
-        firFile.transform<FirElement, PersistentList<FirRegularClass>>(FirLazyBodiesCalculatorTransformer, persistentListOf())
+        firFile.transform<FirElement, PersistentList<FirRegularClass>>(FirAllLazyBodiesCalculatorTransformer, persistentListOf())
     }
 
     fun calculateAnnotations(firElement: FirElementWithResolveState) {
@@ -295,12 +295,12 @@ private object FirLazyAnnotationTransformer : FirTransformer<FirLazyAnnotationTr
     }
 }
 
-private object FirLazyBodiesCalculatorTransformer : FirTransformer<PersistentList<FirRegularClass>>() {
-
+private object FirAllLazyBodiesCalculatorTransformer : FirLazyBodiesCalculatorTransformer() {
     override fun transformFile(file: FirFile, data: PersistentList<FirRegularClass>): FirFile {
         file.declarations.forEach {
             it.transformSingle(this, data)
         }
+
         return file
     }
 
@@ -312,8 +312,15 @@ private object FirLazyBodiesCalculatorTransformer : FirTransformer<PersistentLis
             }
             element.transformChildren(this, newList)
         }
+
         return element
     }
+}
+
+private object FirTargetLazyBodiesCalculatorTransformer : FirLazyBodiesCalculatorTransformer()
+
+private abstract class FirLazyBodiesCalculatorTransformer : FirTransformer<PersistentList<FirRegularClass>>() {
+    override fun <E : FirElement> transformElement(element: E, data: PersistentList<FirRegularClass>): E = element
 
     override fun transformField(field: FirField, data: PersistentList<FirRegularClass>): FirStatement {
         if (field.initializer is FirLazyExpression) {
@@ -331,6 +338,7 @@ private object FirLazyBodiesCalculatorTransformer : FirTransformer<PersistentLis
             val designation = FirDesignation(data, simpleFunction)
             FirLazyBodiesCalculator.calculateLazyBodiesForFunction(designation)
         }
+
         return simpleFunction
     }
 
@@ -342,6 +350,7 @@ private object FirLazyBodiesCalculatorTransformer : FirTransformer<PersistentLis
             val designation = FirDesignation(data, constructor)
             FirLazyBodiesCalculator.calculateLazyBodyForConstructor(designation)
         }
+
         return constructor
     }
 
@@ -350,6 +359,7 @@ private object FirLazyBodiesCalculatorTransformer : FirTransformer<PersistentLis
             val designation = FirDesignation(data, property)
             FirLazyBodiesCalculator.calculateLazyBodyForProperty(designation)
         }
+
         return property
     }
 
@@ -362,6 +372,7 @@ private object FirLazyBodiesCalculatorTransformer : FirTransformer<PersistentLis
             val designation = FirDesignation(data, enumEntry)
             FirLazyBodiesCalculator.calculateLazyInitializerForEnumEntry(designation)
         }
+
         return enumEntry
     }
 
@@ -372,6 +383,7 @@ private object FirLazyBodiesCalculatorTransformer : FirTransformer<PersistentLis
             val designation = FirDesignation(data, anonymousInitializer)
             FirLazyBodiesCalculator.calculateLazyBodyForAnonymousInitializer(designation)
         }
+
         return anonymousInitializer
     }
 }

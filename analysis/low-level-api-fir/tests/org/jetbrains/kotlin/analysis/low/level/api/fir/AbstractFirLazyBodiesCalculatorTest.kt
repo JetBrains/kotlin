@@ -42,7 +42,7 @@ abstract class AbstractFirLazyBodiesCalculatorTest : AbstractLowLevelApiSingleFi
                 bodyBuildingMode = BodyBuildingMode.LAZY_BODIES
             ).buildFirFile(ktFile)
 
-            FirLazyBodiesCalculator.calculateLazyBodies(laziedFirFile)
+            FirLazyBodiesCalculator.calculateAllLazyExpressionsInFile(laziedFirFile)
             laziedFirFile.accept(lazyChecker)
 
             val fullFirFile = RawFirBuilder(
