@@ -49,6 +49,14 @@ fun interface IdeDependencyResolver {
     interface WithBuildDependencies {
         /**
          * return anything accepted to be passed to [org.gradle.api.Task.dependsOn]
+         *
+         * #### Example: Resolver relying on a single task to be executed:
+         * ```kotlin
+         * object MyResolver : IdeDependencyResolver, WithBuildDependencies {
+         *     fun resolve(sourceSet: KotlinSourceSet) = // ...
+         *     fun dependencies(project: Project) = listOf(project.tasks.named("myTask"))
+         * }
+         * ```
          */
         fun dependencies(project: Project): Iterable<Any>
     }
