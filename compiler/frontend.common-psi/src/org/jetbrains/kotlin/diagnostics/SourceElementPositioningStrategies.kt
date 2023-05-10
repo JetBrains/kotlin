@@ -123,6 +123,11 @@ object SourceElementPositioningStrategies {
         PositioningStrategies.DATA_MODIFIER
     )
 
+    val EXPECT_ACTUAL_MODIFIER = SourceElementPositioningStrategy(
+        LightTreePositioningStrategies.EXPECT_ACTUAL_MODIFIER,
+        PositioningStrategies.EXPECT_ACTUAL_MODIFIER
+    )
+
     val OBJECT_KEYWORD = SourceElementPositioningStrategy(
         LightTreePositioningStrategies.OBJECT_KEYWORD,
         PositioningStrategies.OBJECT_KEYWORD

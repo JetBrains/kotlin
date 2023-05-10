@@ -314,6 +314,10 @@ object PositioningStrategies {
         ModifierSetBasedPositioningStrategy(KtTokens.EXTERNAL_KEYWORD)
 
     @JvmField
+    val EXPECT_ACTUAL_MODIFIER: PositioningStrategy<KtModifierListOwner> =
+        ModifierSetBasedPositioningStrategy(KtTokens.EXPECT_KEYWORD, KtTokens.ACTUAL_KEYWORD)
+
+    @JvmField
     val OBJECT_KEYWORD: PositioningStrategy<KtObjectDeclaration> = object : PositioningStrategy<KtObjectDeclaration>() {
         override fun mark(element: KtObjectDeclaration): List<TextRange> {
             return markElement(element.getObjectKeyword() ?: element)
