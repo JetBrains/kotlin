@@ -17,11 +17,11 @@
 package androidx.compose.compiler.daemon
 
 import java.io.File
-import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import java.io.PrintWriter
 import java.lang.IllegalArgumentException
 import java.net.URLDecoder
 import java.nio.charset.Charset
+import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 
 private data class CliOptions(
     val disableEmbeddedPlugin: Boolean = false,

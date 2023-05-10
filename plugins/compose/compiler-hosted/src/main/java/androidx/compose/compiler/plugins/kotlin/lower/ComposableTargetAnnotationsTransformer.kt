@@ -23,7 +23,6 @@ import androidx.compose.compiler.plugins.kotlin.ModuleMetrics
 import androidx.compose.compiler.plugins.kotlin.analysis.ComposeWritableSlices
 import androidx.compose.compiler.plugins.kotlin.inference.ApplierInferencer
 import androidx.compose.compiler.plugins.kotlin.inference.ErrorReporter
-import androidx.compose.compiler.plugins.kotlin.inference.TypeAdapter
 import androidx.compose.compiler.plugins.kotlin.inference.Item
 import androidx.compose.compiler.plugins.kotlin.inference.LazyScheme
 import androidx.compose.compiler.plugins.kotlin.inference.LazySchemeStorage
@@ -32,6 +31,7 @@ import androidx.compose.compiler.plugins.kotlin.inference.NodeKind
 import androidx.compose.compiler.plugins.kotlin.inference.Open
 import androidx.compose.compiler.plugins.kotlin.inference.Scheme
 import androidx.compose.compiler.plugins.kotlin.inference.Token
+import androidx.compose.compiler.plugins.kotlin.inference.TypeAdapter
 import androidx.compose.compiler.plugins.kotlin.inference.deserializeScheme
 import androidx.compose.compiler.plugins.kotlin.irTrace
 import androidx.compose.compiler.plugins.kotlin.mergeWith
