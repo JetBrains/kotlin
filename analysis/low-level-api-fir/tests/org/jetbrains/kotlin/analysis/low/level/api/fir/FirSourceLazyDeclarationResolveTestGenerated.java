@@ -229,6 +229,24 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
     }
 
     @Test
+    @TestMetadata("nestedCompilerRequiredAnnotations.kt")
+    public void testNestedCompilerRequiredAnnotations() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/nestedCompilerRequiredAnnotations.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedCompilerRequiredAnnotationsForMember.kt")
+    public void testNestedCompilerRequiredAnnotationsForMember() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/nestedCompilerRequiredAnnotationsForMember.kt");
+    }
+
+    @Test
+    @TestMetadata("nestedCompilerRequiredAnnotationsInsideBody.kt")
+    public void testNestedCompilerRequiredAnnotationsInsideBody() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/nestedCompilerRequiredAnnotationsInsideBody.kt");
+    }
+
+    @Test
     @TestMetadata("nestedTypeAlias.kt")
     public void testNestedTypeAlias() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/lazyResolve/nestedTypeAlias.kt");
