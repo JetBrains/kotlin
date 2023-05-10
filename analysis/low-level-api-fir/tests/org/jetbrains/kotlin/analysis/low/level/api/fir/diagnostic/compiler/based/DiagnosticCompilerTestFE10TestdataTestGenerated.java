@@ -904,6 +904,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
         }
 
         @Test
+        @TestMetadata("resolutionToTypealiasInsteadOfProperty.kt")
+        public void testResolutionToTypealiasInsteadOfProperty() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/resolutionToTypealiasInsteadOfProperty.kt");
+        }
+
+        @Test
         @TestMetadata("ResolveOfJavaGenerics.kt")
         public void testResolveOfJavaGenerics() throws Exception {
             runTest("compiler/testData/diagnostics/tests/ResolveOfJavaGenerics.kt");
