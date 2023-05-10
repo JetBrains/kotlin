@@ -18,6 +18,10 @@ internal data class SetupFile(
     val properties: Map<String, String>,
 )
 
+private val json = Json { ignoreUnknownKeys = true }
+
 // can't use decodeFromStream: https://github.com/Kotlin/kotlinx.serialization/issues/2218
 internal fun parseSetupFile(inputStream: InputStream): SetupFile =
-    Json.decodeFromString(BufferedReader(InputStreamReader(inputStream)).lines().asSequence().joinToString("\n"))
+    json.decodeFromString(
+        BufferedReader(InputStreamReader(inputStream)).lines().asSequence().joinToString("\n")
+    )

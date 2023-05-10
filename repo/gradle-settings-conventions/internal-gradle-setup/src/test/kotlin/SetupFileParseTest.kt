@@ -8,15 +8,11 @@ package org.jetbrains.kotlin.build
 import kotlin.test.*
 
 class SetupFileParseTest {
-    private fun openPropertiesJsonStream() =
-        SetupFileParseTest::class.java.classLoader.getResourceAsStream("properties.json")
+    private fun openPropertiesJsonStream(name: String) =
+        SetupFileParseTest::class.java.classLoader.getResourceAsStream("$name.json")
             ?: error("No properties.json file found in test resources")
 
-    @Test
-    fun testSimpleParsing() {
-        val setupFile = openPropertiesJsonStream().use {
-            parseSetupFile(it)
-        }
+    private fun assertSampleSetupFileIsParsedCorrectly(setupFile: SetupFile) {
         assertEquals(
             mapOf(
                 "newProperty1" to "someValue",
@@ -25,5 +21,21 @@ class SetupFileParseTest {
             ),
             setupFile.properties
         )
+    }
+
+    @Test
+    fun testSimpleParsing() {
+        val setupFile = openPropertiesJsonStream("properties").use {
+            parseSetupFile(it)
+        }
+        assertSampleSetupFileIsParsedCorrectly(setupFile)
+    }
+
+    @Test
+    fun testUnknownFieldsDoNotBreakParsing() {
+        val setupFile = openPropertiesJsonStream("properties-with-unknown-fields").use {
+            parseSetupFile(it)
+        }
+        assertSampleSetupFileIsParsedCorrectly(setupFile)
     }
 }
