@@ -98,7 +98,7 @@ fun KotlinMultiplatformExtension.androidTargetPrototype(): PrototypeAndroidTarge
                 AndroidBootClasspathIdeDependencyResolver(project),
                 constraint = IdeMultiplatformImport.SourceSetConstraint { sourceSet -> sourceSet.android != null },
                 phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
-                level = IdeMultiplatformImport.DependencyResolutionLevel.Default
+                priority = IdeMultiplatformImport.Priority.normal
             )
         }
     }

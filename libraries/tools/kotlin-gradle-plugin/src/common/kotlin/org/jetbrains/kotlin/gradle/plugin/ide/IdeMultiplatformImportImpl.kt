@@ -63,10 +63,10 @@ internal class IdeMultiplatformImportImpl(
         resolver: IdeDependencyResolver,
         constraint: SourceSetConstraint,
         phase: DependencyResolutionPhase,
-        level: DependencyResolutionLevel
+        priority: Priority,
     ) {
         registeredDependencyResolvers.add(
-            RegisteredDependencyResolver(extension.project.kotlinIdeMultiplatformImportStatistics, resolver, constraint, phase, level)
+            RegisteredDependencyResolver(extension.project.kotlinIdeMultiplatformImportStatistics, resolver, constraint, phase, priority)
         )
 
         if (resolver is IdeDependencyResolver.WithBuildDependencies) {
@@ -91,11 +91,11 @@ internal class IdeMultiplatformImportImpl(
         resolver: IdeAdditionalArtifactResolver,
         constraint: SourceSetConstraint,
         phase: AdditionalArtifactResolutionPhase,
-        level: AdditionalArtifactResolutionLevel
+        priority: Priority
     ) {
         registeredAdditionalArtifactResolvers.add(
             RegisteredAdditionalArtifactResolver(
-                extension.project.kotlinIdeMultiplatformImportStatistics, resolver, constraint, phase, level
+                extension.project.kotlinIdeMultiplatformImportStatistics, resolver, constraint, phase, priority
             )
         )
     }
@@ -123,11 +123,11 @@ internal class IdeMultiplatformImportImpl(
         val applicableResolvers = registeredDependencyResolvers
             .filter { it.phase == phase }
             .filter { it.constraint(sourceSet) }
-            .groupBy { it.level }
+            .groupBy { it.priority }
 
         /* Find resolvers in the highest resolution level and only consider those */
-        DependencyResolutionLevel.values().reversed().forEach { level ->
-            val resolvers = applicableResolvers[level].orEmpty()
+        applicableResolvers.keys.sortedDescending().forEach { priority ->
+            val resolvers = applicableResolvers[priority].orEmpty()
             if (resolvers.isNotEmpty()) {
                 return@resolve IdeDependencyResolver(resolvers).resolve(sourceSet)
             }
@@ -145,10 +145,10 @@ internal class IdeMultiplatformImportImpl(
             val applicableResolvers = registeredAdditionalArtifactResolvers
                 .filter { it.phase == phase }
                 .filter { it.constraint(sourceSet) }
-                .groupBy { it.level }
+                .groupBy { it.priority }
 
-            AdditionalArtifactResolutionLevel.values().reversed().forEach { level ->
-                val resolvers = applicableResolvers[level].orEmpty()
+            applicableResolvers.keys.sortedDescending().forEach { priority ->
+                val resolvers = applicableResolvers[priority].orEmpty()
                 if (resolvers.isNotEmpty()) {
                     resolvers.forEach { resolver -> resolver.resolve(sourceSet, dependencies) }
                     return@resolve
@@ -202,7 +202,7 @@ internal class IdeMultiplatformImportImpl(
         private val resolver: IdeDependencyResolver,
         val constraint: SourceSetConstraint,
         val phase: DependencyResolutionPhase,
-        val level: DependencyResolutionLevel,
+        val priority: Priority,
     ) : IdeDependencyResolver {
 
         private class TimeMeasuredResult(val timeInMillis: Long, val dependencies: Set<IdeaKotlinDependency>)
@@ -245,7 +245,7 @@ internal class IdeMultiplatformImportImpl(
         private val resolver: IdeAdditionalArtifactResolver,
         val constraint: SourceSetConstraint,
         val phase: AdditionalArtifactResolutionPhase,
-        val level: AdditionalArtifactResolutionLevel
+        val priority: Priority,
     ) : IdeAdditionalArtifactResolver {
         override fun resolve(sourceSet: KotlinSourceSet, dependencies: Set<IdeaKotlinDependency>) {
             runCatching { measureTimeMillis { resolver.resolve(sourceSet, dependencies) } }

@@ -54,9 +54,9 @@ public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyTransform
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$Companion;
 	public static fun instance (Lorg/gradle/api/Project;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport;
-	public abstract fun registerAdditionalArtifactResolver (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeAdditionalArtifactResolver;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$AdditionalArtifactResolutionPhase;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$AdditionalArtifactResolutionLevel;)V
+	public abstract fun registerAdditionalArtifactResolver (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeAdditionalArtifactResolver;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$AdditionalArtifactResolutionPhase;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$Priority;)V
 	public abstract fun registerDependencyEffect (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyEffect;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;)V
-	public abstract fun registerDependencyResolver (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyResolutionPhase;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyResolutionLevel;)V
+	public abstract fun registerDependencyResolver (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyResolutionPhase;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$Priority;)V
 	public abstract fun registerDependencyTransformer (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyTransformer;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyTransformationPhase;)V
 	public abstract fun registerExtrasSerializationExtension (Lorg/jetbrains/kotlin/gradle/idea/serialize/IdeaKotlinExtrasSerializationExtension;)V
 	public abstract fun resolveDependencies (Ljava/lang/String;)Ljava/util/Set;
@@ -65,13 +65,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultip
 	public abstract fun resolveExtrasSerialized (Ljava/lang/Object;)[B
 	public abstract fun serialize (Ljava/lang/Iterable;)Ljava/util/List;
 	public abstract fun serialize (Lorg/jetbrains/kotlin/tooling/core/Extras$Key;Ljava/lang/Object;)[B
-}
-
-public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$AdditionalArtifactResolutionLevel : java/lang/Enum {
-	public static final field Default Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$AdditionalArtifactResolutionLevel;
-	public static final field Overwrite Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$AdditionalArtifactResolutionLevel;
-	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$AdditionalArtifactResolutionLevel;
-	public static fun values ()[Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$AdditionalArtifactResolutionLevel;
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$AdditionalArtifactResolutionPhase : java/lang/Enum {
@@ -84,13 +77,6 @@ public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport
 
 public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$Companion {
 	public final fun instance (Lorg/gradle/api/Project;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport;
-}
-
-public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyResolutionLevel : java/lang/Enum {
-	public static final field Default Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyResolutionLevel;
-	public static final field Overwrite Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyResolutionLevel;
-	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyResolutionLevel;
-	public static fun values ()[Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyResolutionLevel;
 }
 
 public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyResolutionPhase : java/lang/Enum {
@@ -110,6 +96,16 @@ public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport
 	public static final field PreDependencyTransformationPhase Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyTransformationPhase;
 	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyTransformationPhase;
 	public static fun values ()[Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$DependencyTransformationPhase;
+}
+
+public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$Priority : java/lang/Comparable {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$Priority$Companion;
+	public fun <init> (I)V
+	public synthetic fun compareTo (Ljava/lang/Object;)I
+	public fun compareTo (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$Priority;)I
+	public fun equals (Ljava/lang/Object;)Z
+	public final fun getValue ()I
+	public fun hashCode ()I
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/ide/IdeMultiplatformImport$SourceSetConstraint {
