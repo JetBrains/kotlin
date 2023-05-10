@@ -129,12 +129,14 @@ fun Project.samWithReceiver(configure: org.jetbrains.kotlin.samWithReceiver.grad
     extensions.configure("samWithReceiver", configure)
 
 tasks.withType<KotlinCompile>().configureEach {
-    kotlinOptions {
-        allWarningsAsErrors = true
-        freeCompilerArgs += listOf(
-            "-opt-in=kotlin.RequiresOptIn",
-            "-Xsuppress-version-warnings",
-            "-opt-in=kotlin.ExperimentalStdlibApi"
+    compilerOptions {
+        allWarningsAsErrors.set(true)
+        freeCompilerArgs.addAll(
+            listOf(
+                "-opt-in=kotlin.RequiresOptIn",
+                "-Xsuppress-version-warnings",
+                "-opt-in=kotlin.ExperimentalStdlibApi"
+            )
         )
     }
 }

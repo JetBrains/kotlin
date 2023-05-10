@@ -22,10 +22,12 @@ addBomCheckTask()
 extensions.extraProperties["kotlin.stdlib.default.dependency"] = "false"
 
 // common plugin bundle configuration
-configure<PluginBundleExtension> {
-    website = "https://kotlinlang.org/"
-    vcsUrl = "https://github.com/jetbrains/kotlin"
-    tags = listOf("kotlin")
+gradlePlugin {
+    website.set("https://kotlinlang.org/")
+    vcsUrl.set("https://github.com/jetbrains/kotlin")
+    plugins.configureEach {
+        tags.add("kotlin")
+    }
 }
 
 publishing {

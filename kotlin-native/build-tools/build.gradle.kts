@@ -73,12 +73,14 @@ val compileKotlin: KotlinCompile by tasks
 val compileGroovy: GroovyCompile by tasks
 
 compileKotlin.apply {
-    kotlinOptions {
-        freeCompilerArgs += listOf(
+    compilerOptions {
+        freeCompilerArgs.addAll(
+            listOf(
                 "-Xskip-prerelease-check",
                 "-Xsuppress-version-warnings",
                 "-opt-in=kotlin.ExperimentalStdlibApi",
                 "-opt-in=kotlin.RequiresOptIn"
+            )
         )
     }
 }

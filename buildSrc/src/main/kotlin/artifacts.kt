@@ -8,8 +8,6 @@ import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
-import org.gradle.api.attributes.LibraryElements
-import org.gradle.api.attributes.Usage
 import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.DuplicatesStrategy
@@ -359,6 +357,12 @@ fun Project.publishProjectJars(projects: List<String>, libraryDependencies: List
     }
 
     sourcesJar {
+        for (projectPath in projects) {
+            val projectTasks = project(projectPath).tasks
+            if (projectTasks.names.any { it == "compileKotlin" }) {
+                dependsOn(projectTasks.getByName("compileKotlin").dependsOn) // this is needed in order to declare explicit dependency on code generation tasks
+            }
+        }
         from {
             projects.map {
                 project(it).mainSourceSet.allSource

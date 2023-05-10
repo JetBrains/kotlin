@@ -87,26 +87,6 @@ internal fun Path.copyRecursively(dest: Path) {
     })
 }
 
-internal fun Path.deleteRecursively() {
-    Files.walkFileTree(this, object : SimpleFileVisitor<Path>() {
-        override fun visitFile(
-            file: Path,
-            fileAttributes: BasicFileAttributes
-        ): FileVisitResult {
-            file.deleteIfExists()
-            return FileVisitResult.CONTINUE
-        }
-
-        override fun postVisitDirectory(
-            dir: Path,
-            exception: IOException?
-        ): FileVisitResult {
-            dir.deleteIfExists()
-            return FileVisitResult.CONTINUE
-        }
-    })
-}
-
 internal fun Iterable<String>.toPaths(): List<Path> = map { Paths.get(it) }
 
 /**

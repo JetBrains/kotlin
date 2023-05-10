@@ -356,7 +356,10 @@ fun Project.reconfigureMainSourcesSetForGradlePlugin(
                             tasks.named<JavaCompile>(compileJavaTaskName).get().apply {
                                 attribute(
                                     TargetJvmVersion.TARGET_JVM_VERSION_ATTRIBUTE,
-                                    targetCompatibility.toInt()
+                                    when (targetCompatibility) {
+                                        "1.8" -> 8
+                                        else -> targetCompatibility.toInt()
+                                    }
                                 )
                             }
                         }

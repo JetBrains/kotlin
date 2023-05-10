@@ -25,7 +25,7 @@ sourceSets {
 }
 
 fun runPillTask(taskName: String) {
-    val jarFile = configurations.archives.artifacts.single { it.type == "jar" }.file
+    val jarFile = configurations.archives.get().artifacts.single { it.type == "jar" }.file
     val cl = URLClassLoader(arrayOf(jarFile.toURI().toURL()), (object {}).javaClass.classLoader)
 
     val pillImporterClass = Class.forName("org.jetbrains.kotlin.pill.PillImporter", true, cl)

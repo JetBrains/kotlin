@@ -10,6 +10,7 @@ import java.nio.file.Path
 import java.util.*
 import kotlin.io.path.createDirectories
 import kotlin.io.path.deleteIfExists
+import kotlin.io.path.deleteRecursively
 import kotlin.io.path.writeText
 import kotlin.test.assertEquals
 
