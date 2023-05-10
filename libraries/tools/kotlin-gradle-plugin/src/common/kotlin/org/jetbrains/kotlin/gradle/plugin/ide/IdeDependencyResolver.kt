@@ -125,27 +125,6 @@ fun IdeDependencyResolver(
     vararg resolvers: IdeDependencyResolver?,
 ): IdeDependencyResolver = IdeDependencyResolver(resolvers.toList())
 
-
-/**
- * Builds a composite [IdeDependencyResolver] by combining the receiver and the parameter resolver.
- * The resulting composite resolver will be flat, so if either the receiver or the parameter resolver already
- * is a composite, the resulting composite will aggregate the children in a flat manner.
- */
-@ExternalKotlinTargetApi
-operator fun IdeDependencyResolver.plus(other: IdeDependencyResolver): IdeDependencyResolver {
-    if (this is IdeCompositeDependencyResolver && other is IdeCompositeDependencyResolver)
-        return IdeCompositeDependencyResolver(this.children + other.children)
-
-    if (this is IdeCompositeDependencyResolver) {
-        return IdeCompositeDependencyResolver(this.children + other)
-    }
-
-    if (other is IdeCompositeDependencyResolver) {
-        return IdeCompositeDependencyResolver(listOf(this) + other.children)
-    }
-    return IdeCompositeDependencyResolver(listOf(this, other))
-}
-
 private class IdeCompositeDependencyResolver(
     val children: List<IdeDependencyResolver>,
 ) : IdeDependencyResolver, IdeDependencyResolver.WithBuildDependencies {

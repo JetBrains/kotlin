@@ -39,7 +39,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/ide/IdeDepend
 public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolverKt {
 	public static final fun IdeDependencyResolver (Ljava/lang/Iterable;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;
 	public static final fun IdeDependencyResolver ([Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;
-	public static final fun plus (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyTransformer {
@@ -49,7 +48,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/ide/IdeDepend
 public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyTransformerKt {
 	public static final fun IdeDependencyTransformer (Ljava/util/List;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyTransformer;
 	public static final fun IdeDependencyTransformer ([Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyTransformer;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyTransformer;
-	public static final fun plus (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyTransformer;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyTransformer;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyTransformer;
 	public static final fun withTransformer (Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyTransformer;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;
 }
 
