@@ -51,27 +51,6 @@ fun IdeDependencyTransformer(
     vararg transformers: IdeDependencyTransformer?
 ): IdeDependencyTransformer = IdeDependencyTransformer(transformers.toList())
 
-/**
- * Combines two [IdeDependencyResolver] into a single instance:
- * This function will flatten the composite if either receiver or [other] transformer are already composite instances
- */
-@ExternalKotlinTargetApi
-operator fun IdeDependencyTransformer.plus(other: IdeDependencyTransformer): IdeDependencyTransformer {
-    if (this is IdeCompositeDependencyTransformer && other is IdeCompositeDependencyTransformer) {
-        return IdeCompositeDependencyTransformer(this.transformers + other.transformers)
-    }
-
-    if (this is IdeCompositeDependencyTransformer) {
-        return IdeCompositeDependencyTransformer(this.transformers + other)
-    }
-
-    if (other is IdeCompositeDependencyTransformer) {
-        return IdeCompositeDependencyTransformer(listOf(this) + other.transformers)
-    }
-
-    return IdeCompositeDependencyTransformer(listOf(this, other))
-}
-
 private class IdeCompositeDependencyTransformer(
     val transformers: List<IdeDependencyTransformer>
 ) : IdeDependencyTransformer {
