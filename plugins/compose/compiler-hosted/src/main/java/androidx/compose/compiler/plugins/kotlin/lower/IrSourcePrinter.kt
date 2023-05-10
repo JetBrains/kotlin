@@ -520,7 +520,9 @@ class IrSourcePrinterVisitor(
             if (arg != null) {
                 val param = symbol.owner.valueParameters[i]
                 val isLambda = arg is IrFunctionExpression ||
-                    (arg is IrBlock && arg.origin == IrStatementOrigin.LAMBDA)
+                    (arg is IrBlock &&
+                        (arg.origin == IrStatementOrigin.LAMBDA ||
+                            arg.origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE))
                 if (isLambda) {
                     arg.unwrapLambda()?.let {
                         returnTargetToCall[it] = this
