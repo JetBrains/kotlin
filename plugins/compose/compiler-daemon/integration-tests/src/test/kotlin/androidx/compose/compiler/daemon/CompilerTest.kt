@@ -16,14 +16,14 @@
 
 package androidx.compose.compiler.daemon
 
+import java.io.File
+import java.nio.file.Files
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
-import java.io.File
-import java.nio.file.Files
 
 @RunWith(Parameterized::class)
 class CompilerTest(

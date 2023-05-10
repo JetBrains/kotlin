@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composer
 import androidx.compose.runtime.Composition
 import androidx.compose.runtime.MonotonicFrameClock
 import androidx.compose.runtime.Recomposer
+import java.net.URLClassLoader
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Dispatchers
@@ -31,9 +32,8 @@ import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.setupLanguageVersionSettings
 import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.junit.Test
-import java.net.URLClassLoader
 import org.junit.Assert.assertEquals
+import org.junit.Test
 
 class RunComposableTests : AbstractCodegenTest() {
     override fun CompilerConfiguration.updateConfiguration() {

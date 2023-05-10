@@ -16,8 +16,11 @@
 
 package androidx.compose.compiler.daemon
 
+import java.io.File
+import java.nio.file.Files
 import org.jetbrains.kotlin.build.DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS
 import org.jetbrains.kotlin.build.report.BuildReporter
+import org.jetbrains.kotlin.build.report.DoNothingICReporter
 import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
@@ -26,13 +29,10 @@ import org.jetbrains.kotlin.cli.common.messages.PrintingMessageCollector
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.ClasspathChanges.ClasspathSnapshotEnabled
-import org.jetbrains.kotlin.build.report.DoNothingICReporter
+import org.jetbrains.kotlin.incremental.ClasspathSnapshotFiles
 import org.jetbrains.kotlin.incremental.IncrementalJvmCompilerRunner
 import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
 import org.jetbrains.kotlin.incremental.withIC
-import java.io.File
-import java.nio.file.Files
-import org.jetbrains.kotlin.incremental.ClasspathSnapshotFiles
 
 internal fun parseArgs(
     args: Array<String>,
