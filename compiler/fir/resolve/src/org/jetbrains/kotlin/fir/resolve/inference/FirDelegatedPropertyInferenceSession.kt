@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.inference
 
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.calls.*
@@ -108,7 +109,8 @@ class FirDelegatedPropertyInferenceSession(
     override fun inferPostponedVariables(
         lambda: ResolvedLambdaAtom,
         constraintSystemBuilder: ConstraintSystemBuilder,
-        completionMode: ConstraintSystemCompletionMode
+        completionMode: ConstraintSystemCompletionMode,
+        returnArguments: Collection<FirExpression>
     ): Map<ConeTypeVariableTypeConstructor, ConeKotlinType>? = null
 
     private fun createNonFixedTypeToVariableSubstitutor(): NotFixedTypeToVariableSubstitutorForDelegateInference {

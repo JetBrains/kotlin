@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.resolve.inference
 
+import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvable
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
@@ -44,6 +45,7 @@ abstract class FirInferenceSession {
         lambda: ResolvedLambdaAtom,
         constraintSystemBuilder: ConstraintSystemBuilder,
         completionMode: ConstraintSystemCompletionMode,
+        returnArguments: Collection<FirExpression>
         // TODO: diagnostic holder
     ): Map<ConeTypeVariableTypeConstructor, ConeKotlinType>?
 
@@ -63,7 +65,8 @@ abstract class FirStubInferenceSession : FirInferenceSession() {
     override fun inferPostponedVariables(
         lambda: ResolvedLambdaAtom,
         constraintSystemBuilder: ConstraintSystemBuilder,
-        completionMode: ConstraintSystemCompletionMode
+        completionMode: ConstraintSystemCompletionMode,
+        returnArguments: Collection<FirExpression>
     ): Map<ConeTypeVariableTypeConstructor, ConeKotlinType>? = null
 
     override fun registerStubTypes(map: Map<TypeVariableMarker, StubTypeMarker>) {}

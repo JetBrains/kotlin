@@ -168,54 +168,27 @@ class PostponedArgumentsAnalyzer(
 
         val checkerSink: CheckerSink = CheckerSinkImpl(candidate)
         val builder = c.getBuilder()
-
-        val lastExpression = lambda.atom.body?.statements?.lastOrNull() as? FirExpression
-        var hasExpressionInReturnArguments = false
-        val returnTypeRef = lambda.atom.returnTypeRef.let {
-            it as? FirResolvedTypeRef ?: it.resolvedTypeFromPrototype(substitute(lambda.returnType))
-        }
-        returnArguments.forEach {
-            val haveSubsystem = c.addSubsystemFromExpression(it)
-            // If the lambda returns Unit, the last expression is not returned and should not be constrained.
-            // TODO (KT-55837) questionable moment inherited from FE1.0 (the `haveSubsystem` case):
-            //    fun <T> foo(): T
-            //    run {
-            //      if (p) return@run
-            //      foo() // T = Unit, even though there is no implicit return
-            //    }
-            //  Things get even weirder if T has an upper bound incompatible with Unit.
-            if (it == lastExpression && !haveSubsystem &&
-                (returnTypeRef.type.isUnitOrFlexibleUnit || lambda.atom.shouldReturnUnit(returnArguments))
-            ) return@forEach
-
-            hasExpressionInReturnArguments = true
-            if (!builder.hasContradiction) {
-                candidate.resolveArgumentExpression(
-                    builder,
-                    it,
-                    returnTypeRef.type,
-                    checkerSink,
-                    context = resolutionContext,
-                    isReceiver = false,
-                    isDispatch = false
-                )
-            }
-        }
-
-        if (!hasExpressionInReturnArguments && !returnTypeRef.type.isUnitOrFlexibleUnit) {
-            builder.addSubtypeConstraint(
-                components.session.builtinTypes.unitType.type,
-                returnTypeRef.type,
-                ConeLambdaArgumentConstraintPosition(lambda.atom)
-            )
-        }
-
-        lambda.analyzed = true
-        lambda.returnStatements = returnArguments
-        c.resolveForkPointsConstraints()
-
         if (inferenceSession != null) {
-            val postponedVariables = inferenceSession.inferPostponedVariables(lambda, builder, completionMode)
+            // TODO: Can we avoid creating two systems here?
+            val integrationConstraintSystem = this.components.createConstraintSystem()
+            // clone the constraint system of the outer call
+            integrationConstraintSystem.addOtherSystem(builder.currentStorage())
+
+            val returnTypeRef = lambda.atom.returnTypeRef.let {
+                it as? FirResolvedTypeRef ?: it.resolvedTypeFromPrototype(substitute(lambda.returnType))
+            }
+            // TODO: This causes same postponed arguments to be registered twice
+            applyReturnArgumentsToSystem(
+                candidate,
+                integrationConstraintSystem.asPostponedArgumentsAnalyzerContext(),
+                lambda,
+                returnArguments,
+                returnTypeRef,
+                checkerSink
+            )
+
+            val postponedVariables =
+                inferenceSession.inferPostponedVariables(lambda, integrationConstraintSystem.getBuilder(), completionMode, returnArguments)
 
             if (postponedVariables == null) {
                 builder.removePostponedVariables()
@@ -231,6 +204,74 @@ class PostponedArgumentsAnalyzer(
             }
 
             c.removePostponedTypeVariablesFromConstraints(postponedVariables.keys)
+        }
+
+        // We create new substitutor here since builder inference is completed
+        // and we no longer want to substitute postponed type variables
+        val current = c.buildCurrentSubstitutor(emptyMap())
+        // TODO: We can reuse substitutor if there are no inferenceSession
+        val returnTypeRef = lambda.atom.returnTypeRef.let {
+            it as? FirResolvedTypeRef ?: it.resolvedTypeFromPrototype(
+                current.safeSubstitute(
+                    components.session.typeContext,
+                    lambda.returnType
+                ) as ConeKotlinType
+            )
+        }
+        applyReturnArgumentsToSystem(candidate, c, lambda, returnArguments, returnTypeRef, checkerSink)
+
+        lambda.analyzed = true
+        lambda.returnStatements = returnArguments
+        c.resolveForkPointsConstraints()
+    }
+
+    private fun applyReturnArgumentsToSystem(
+        candidate: Candidate,
+        c: PostponedArgumentsAnalyzerContext,
+        lambda: ResolvedLambdaAtom,
+        returnArguments: Collection<FirExpression>,
+        expectedTypeRef: FirResolvedTypeRef,
+        checkerSink: CheckerSink
+    ) {
+        val builder = c.getBuilder()
+        var hasExpressionInReturnArguments = false
+        val lastExpression = lambda.atom.body?.statements?.lastOrNull() as? FirExpression
+        returnArguments.forEach {
+            val haveSubsystem = c.addSubsystemFromExpression(it)
+            // If the lambda returns Unit, the last expression is not returned and should not be constrained.
+            // TODO (KT-55837) questionable moment inherited from FE1.0 (the `haveSubsystem` case):
+            //    fun <T> foo(): T
+            //    run {
+            //      if (p) return@run
+            //      foo() // T = Unit, even though there is no implicit return
+            //    }
+            //  Things get even weirder if T has an upper bound incompatible with Unit.
+            if (it == lastExpression && !haveSubsystem &&
+                (expectedTypeRef.type.isUnitOrFlexibleUnit || lambda.atom.shouldReturnUnit(returnArguments))
+            ) return@forEach
+
+            hasExpressionInReturnArguments = true
+            if (!builder.hasContradiction) {
+                // TODO: Get rid of candidate here, its only usage is to register postponed arguments, which can be fixed differently.
+                //  in case of builder inference we register postponed arguments twice
+                candidate.resolveArgumentExpression(
+                    builder,
+                    it,
+                    expectedTypeRef.type,
+                    checkerSink,
+                    context = resolutionContext,
+                    isReceiver = false,
+                    isDispatch = false
+                )
+            }
+        }
+
+        if (!hasExpressionInReturnArguments && !expectedTypeRef.type.isUnitOrFlexibleUnit) {
+            builder.addSubtypeConstraint(
+                components.session.builtinTypes.unitType.type,
+                expectedTypeRef.type,
+                ConeLambdaArgumentConstraintPosition(lambda.atom)
+            )
         }
     }
 
