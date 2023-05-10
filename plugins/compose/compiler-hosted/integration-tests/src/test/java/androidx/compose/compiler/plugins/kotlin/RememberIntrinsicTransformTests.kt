@@ -1167,10 +1167,10 @@ class RememberIntrinsicTransformTests : AbstractIrTransformTest() {
                 if (isTraceInProgress()) {
                   traceEventStart(<>, %dirty, -1, <>)
                 }
-                used(%composer.cache(%dirty and 0b1110 === 0b0100, {
+                used(%composer.cache(%dirty and 0b1110 === 0b0100) {
                   effect()
                 }
-                ))
+                )
                 if (isTraceInProgress()) {
                   traceEventEnd()
                 }
