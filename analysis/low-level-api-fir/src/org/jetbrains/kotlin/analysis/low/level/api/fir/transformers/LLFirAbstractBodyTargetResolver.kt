@@ -63,6 +63,6 @@ internal abstract class LLFirAbstractBodyTargetResolver(
 
     protected fun calculateLazyBodies(declaration: FirElementWithResolveState) {
         val firDesignation = FirDesignationWithFile(nestedClassesStack, declaration, resolveTarget.firFile)
-        FirLazyBodiesCalculator.calculateLazyBodiesInside(firDesignation)
+        FirLazyBodiesCalculator.calculateBodies(firDesignation)
     }
 }
