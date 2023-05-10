@@ -65,6 +65,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
             FirNamedVarargChecker,
             FirUnderscoredTypeArgumentSyntaxChecker,
             FirContractNotFirstStatementChecker,
+            FirSynchronizedByPrimitiveOrValueClassChecker,
         )
 
     override val propertyAccessExpressionCheckers: Set<FirPropertyAccessExpressionChecker>

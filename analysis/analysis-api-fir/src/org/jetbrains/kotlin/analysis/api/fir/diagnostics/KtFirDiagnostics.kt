@@ -2728,6 +2728,11 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val rightType: KtType
     }
 
+    abstract class ForbiddenSynchronizedByValueClassesOrPrimitives : KtFirDiagnostic<KtElement>() {
+        override val diagnosticClass get() = ForbiddenSynchronizedByValueClassesOrPrimitives::class
+        abstract val lock: KtType
+    }
+
     abstract class DeprecatedIdentityEquals : KtFirDiagnostic<KtElement>() {
         override val diagnosticClass get() = DeprecatedIdentityEquals::class
         abstract val leftType: KtType
@@ -3102,6 +3107,10 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
 
     abstract class SynchronizedOnInline : KtFirDiagnostic<KtAnnotationEntry>() {
         override val diagnosticClass get() = SynchronizedOnInline::class
+    }
+
+    abstract class SynchronizedOnValueClass : KtFirDiagnostic<KtAnnotationEntry>() {
+        override val diagnosticClass get() = SynchronizedOnValueClass::class
     }
 
     abstract class SynchronizedOnSuspendError : KtFirDiagnostic<KtAnnotationEntry>() {

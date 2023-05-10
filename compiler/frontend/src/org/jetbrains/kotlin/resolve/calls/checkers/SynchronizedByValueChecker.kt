@@ -25,7 +25,7 @@ class SynchronizedByValueChecker : CallChecker {
         val argument = resolvedCall.valueArgumentsByIndex?.get(0)?.arguments?.firstOrNull() ?: return
         val type = argument.getArgumentExpression()?.getType(context.trace.bindingContext) ?: return
         if (type.isValueOrPrimitive()) {
-            context.trace.report(Errors.FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES.on(reportOn, type))
+            context.trace.report(Errors.FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES.on(argument.asElement(), type))
         }
     }
 }

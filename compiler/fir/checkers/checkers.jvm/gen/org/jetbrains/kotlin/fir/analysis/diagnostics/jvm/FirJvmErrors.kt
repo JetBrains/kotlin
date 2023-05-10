@@ -57,6 +57,7 @@ object FirJvmErrors {
     val SYNCHRONIZED_ON_ABSTRACT by error0<KtAnnotationEntry>()
     val SYNCHRONIZED_IN_INTERFACE by error0<KtAnnotationEntry>()
     val SYNCHRONIZED_ON_INLINE by warning0<KtAnnotationEntry>()
+    val SYNCHRONIZED_ON_VALUE_CLASS by warning0<KtAnnotationEntry>()
     val SYNCHRONIZED_ON_SUSPEND by deprecationError0<KtAnnotationEntry>(SynchronizedSuspendError)
     val OVERLOADS_WITHOUT_DEFAULT_ARGUMENTS by warning0<KtAnnotationEntry>()
     val OVERLOADS_ABSTRACT by error0<KtAnnotationEntry>()

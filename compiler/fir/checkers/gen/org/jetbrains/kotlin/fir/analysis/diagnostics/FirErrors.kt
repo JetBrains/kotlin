@@ -701,6 +701,7 @@ object FirErrors {
     val INCOMPATIBLE_ENUM_COMPARISON by warning2<KtElement, ConeKotlinType, ConeKotlinType>()
     val FORBIDDEN_IDENTITY_EQUALS by error2<KtElement, ConeKotlinType, ConeKotlinType>()
     val FORBIDDEN_IDENTITY_EQUALS_WARNING by warning2<KtElement, ConeKotlinType, ConeKotlinType>()
+    val FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES by warning1<KtElement, ConeKotlinType>()
     val DEPRECATED_IDENTITY_EQUALS by warning2<KtElement, ConeKotlinType, ConeKotlinType>()
     val IMPLICIT_BOXING_IN_IDENTITY_EQUALS by warning2<KtElement, ConeKotlinType, ConeKotlinType>()
     val INC_DEC_SHOULD_NOT_RETURN_UNIT by error0<KtExpression>(SourceElementPositioningStrategies.OPERATOR)

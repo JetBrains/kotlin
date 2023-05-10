@@ -1365,6 +1365,9 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("leftType")
             parameter<ConeKotlinType>("rightType")
         }
+        val FORBIDDEN_SYNCHRONIZED_BY_VALUE_CLASSES_OR_PRIMITIVES by warning<KtElement> {
+            parameter<ConeKotlinType>("lock")
+        }
         val DEPRECATED_IDENTITY_EQUALS by warning<KtElement> {
             parameter<ConeKotlinType>("leftType")
             parameter<ConeKotlinType>("rightType")

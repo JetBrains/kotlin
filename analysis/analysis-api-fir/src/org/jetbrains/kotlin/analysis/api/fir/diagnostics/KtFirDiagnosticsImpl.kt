@@ -3287,6 +3287,12 @@ internal class ForbiddenIdentityEqualsWarningImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.ForbiddenIdentityEqualsWarning(), KtAbstractFirDiagnostic<KtElement>
 
+internal class ForbiddenSynchronizedByValueClassesOrPrimitivesImpl(
+    override val lock: KtType,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.ForbiddenSynchronizedByValueClassesOrPrimitives(), KtAbstractFirDiagnostic<KtElement>
+
 internal class DeprecatedIdentityEqualsImpl(
     override val leftType: KtType,
     override val rightType: KtType,
@@ -3747,6 +3753,11 @@ internal class SynchronizedOnInlineImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.SynchronizedOnInline(), KtAbstractFirDiagnostic<KtAnnotationEntry>
+
+internal class SynchronizedOnValueClassImpl(
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.SynchronizedOnValueClass(), KtAbstractFirDiagnostic<KtAnnotationEntry>
 
 internal class SynchronizedOnSuspendErrorImpl(
     override val firDiagnostic: KtPsiDiagnostic,
