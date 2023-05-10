@@ -52,7 +52,8 @@ internal open class JvmStubBasedFirDeserializedSymbolProvider(
     scope: GlobalSearchScope,
     private val initialOrigin: FirDeclarationOrigin
 ) : LLFirKotlinSymbolProvider(session) {
-    private val declarationProvider by lazy(LazyThreadSafetyMode.PUBLICATION) { project.createDeclarationProvider(scope, module = null) }
+    private val declarationProvider = project.createDeclarationProvider(scope, module = null)
+
     private val moduleData = moduleDataProvider.getModuleData(null)
 
     override val symbolNamesProvider: FirSymbolNamesProvider = LLFirKotlinSymbolNamesProvider.cached(session, declarationProvider)

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirBuiltinsAn
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirBuiltinsAndCloneableSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.stubBased.deserialization.JvmStubBasedFirDeserializedSymbolProvider
 import org.jetbrains.kotlin.analysis.project.structure.KtBuiltinsModule
+import org.jetbrains.kotlin.analysis.project.structure.KtModule
 import org.jetbrains.kotlin.analyzer.common.CommonPlatformAnalyzerServices
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
 import org.jetbrains.kotlin.fir.BuiltinTypes
@@ -49,19 +50,30 @@ import java.util.concurrent.ConcurrentHashMap
 @OptIn(PrivateSessionConstructor::class, SessionConfiguration::class)
 class LLFirBuiltinsSessionFactory(private val project: Project) {
     private val builtInTypes = BuiltinTypes() // TODO should be platform-specific
-    private val builtinsAndCloneableSession = ConcurrentHashMap<TargetPlatform, LLFirBuiltinsAndCloneableSession>()
 
-    fun getBuiltinsSession(platform: TargetPlatform): LLFirBuiltinsAndCloneableSession {
-        return builtinsAndCloneableSession.getOrPut(platform) { createBuiltinsAndCloneableSession(platform) }
-    }
+    private val builtinsModules = ConcurrentHashMap<TargetPlatform, KtBuiltinsModule>()
+
+    private val builtinsAndCloneableSessions = ConcurrentHashMap<TargetPlatform, LLFirBuiltinsAndCloneableSession>()
+
+    /**
+     * Returns the [platform]'s [KtBuiltinsModule]. [getBuiltinsModule] should be used instead of [getBuiltinsSession] when a
+     * [KtBuiltinsModule] is needed as a dependency for other [KtModule]s. This is because during project structure creation, we have to
+     * avoid the creation of the builtins *session*, as not all services might have been registered at that point.
+     */
+    fun getBuiltinsModule(platform: TargetPlatform): KtBuiltinsModule =
+        builtinsModules.getOrPut(platform) { KtBuiltinsModule(platform, platform.getAnalyzerServices(), project) }
+
+    fun getBuiltinsSession(platform: TargetPlatform): LLFirBuiltinsAndCloneableSession =
+        builtinsAndCloneableSessions.getOrPut(platform) { createBuiltinsAndCloneableSession(platform) }
 
     @TestOnly
     fun clearForTheNextTest() {
-        builtinsAndCloneableSession.clear()
+        builtinsModules.clear()
+        builtinsAndCloneableSessions.clear()
     }
 
     private fun createBuiltinsAndCloneableSession(platform: TargetPlatform): LLFirBuiltinsAndCloneableSession {
-        val builtinsModule = KtBuiltinsModule(platform, platform.getAnalyzerServices(), project)
+        val builtinsModule = getBuiltinsModule(platform)
 
         val session = LLFirBuiltinsAndCloneableSession(builtinsModule, ModificationTracker.NEVER_CHANGED, builtInTypes)
         val moduleData = LLFirModuleData(builtinsModule).apply { bindSession(session) }

@@ -72,8 +72,7 @@ private class KtNotUnderContentRootModuleForTest(
     override val platform: TargetPlatform
 ) : KtNotUnderContentRootModule {
     override val directRegularDependencies: List<KtModule> by lazy {
-        val builtinsModule = LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsSession(platform).ktModule as KtBuiltinsModule
-        listOf(builtinsModule)
+        listOf(LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsModule(platform))
     }
 
     override val directDependsOnDependencies: List<KtModule>
