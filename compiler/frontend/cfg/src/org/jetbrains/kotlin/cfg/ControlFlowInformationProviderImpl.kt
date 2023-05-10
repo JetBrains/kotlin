@@ -628,7 +628,7 @@ class ControlFlowInformationProviderImpl private constructor(
         val property = DescriptorToSourceUtils.descriptorToDeclaration(variableDescriptor) as? KtProperty
             ?: throw AssertionError("$variableDescriptor is not related to KtProperty")
         val setter = property.setter
-        if (variableDescriptor.modality == Modality.FINAL && (setter == null || !setter.hasBody())) {
+        if (variableDescriptor.getEffectiveModality(languageVersionSettings) == Modality.FINAL && (setter == null || !setter.hasBody())) {
             return false
         }
 
@@ -1472,3 +1472,10 @@ class ControlFlowInformationProviderImpl private constructor(
             return result
         }
 }
+
+private fun PropertyDescriptor.getEffectiveModality(languageVersionSettings: LanguageVersionSettings): Modality =
+    when (languageVersionSettings.supportsFeature(LanguageFeature.TakeIntoAccountEffectivelyFinalInMustBeInitializedCheck) &&
+            modality == Modality.OPEN && (containingDeclaration as? ClassDescriptor)?.modality == Modality.FINAL) {
+        true -> Modality.FINAL
+        false -> modality
+    }
