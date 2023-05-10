@@ -128,7 +128,7 @@ class ComposableDeclarationCheckerTests : AbstractComposeDiagnosticsTest() {
                 acceptSuspend <!TYPE_MISMATCH!>@Composable {}<!>
                 acceptComposableSuspend @Composable {}
                 acceptComposableSuspend(composableLambda)
-                acceptSuspend(<!COMPOSABLE_SUSPEND_FUN, TYPE_MISMATCH!>@Composable suspend fun() { }<!>)
+                acceptSuspend(<!COMPOSABLE_SUSPEND_FUN,TYPE_MISMATCH!>@Composable suspend fun() { }<!>)
             }
         """
         )
