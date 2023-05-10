@@ -118,27 +118,27 @@ FILE fqName:<root> fileName:/signedToUnsignedConversions_test.kt
   FUN name:test visibility:public modality:FINAL <> () returnType:kotlin.Unit
     BLOCK_BODY
       CALL 'public final fun takeUByte (u: kotlin.UByte): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        u: CALL 'public final fun toUByte (): kotlin.UByte [inline] declared in kotlin.UByteKt' type=kotlin.UByte origin=null
+        u: CALL 'public final fun toUByte (): kotlin.UByte [inline] declared in kotlin' type=kotlin.UByte origin=null
           $receiver: CALL 'public final fun <get-IMPLICIT_INT> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
       CALL 'public final fun takeUByte (u: kotlin.UByte): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        u: CALL 'public final fun toUByte (): kotlin.UByte [inline] declared in kotlin.UByteKt' type=kotlin.UByte origin=null
+        u: CALL 'public final fun toUByte (): kotlin.UByte [inline] declared in kotlin' type=kotlin.UByte origin=null
           $receiver: CALL 'public final fun <get-EXPLICIT_INT> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
       CALL 'public final fun takeUShort (u: kotlin.UShort): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        u: CALL 'public final fun toUShort (): kotlin.UShort [inline] declared in kotlin.UShortKt' type=kotlin.UShort origin=null
+        u: CALL 'public final fun toUShort (): kotlin.UShort [inline] declared in kotlin' type=kotlin.UShort origin=null
           $receiver: CALL 'public final fun <get-IMPLICIT_INT> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
       CALL 'public final fun takeUShort (u: kotlin.UShort): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        u: CALL 'public final fun toUShort (): kotlin.UShort [inline] declared in kotlin.UShortKt' type=kotlin.UShort origin=null
+        u: CALL 'public final fun toUShort (): kotlin.UShort [inline] declared in kotlin' type=kotlin.UShort origin=null
           $receiver: CALL 'public final fun <get-BIGGER_THAN_UBYTE> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
       CALL 'public final fun takeUInt (u: kotlin.UInt): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        u: CALL 'public final fun toUInt (): kotlin.UInt [inline] declared in kotlin.UIntKt' type=kotlin.UInt origin=null
+        u: CALL 'public final fun toUInt (): kotlin.UInt [inline] declared in kotlin' type=kotlin.UInt origin=null
           $receiver: CALL 'public final fun <get-IMPLICIT_INT> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
       CALL 'public final fun takeULong (u: kotlin.ULong): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
-        u: CALL 'public final fun toULong (): kotlin.ULong [inline] declared in kotlin.ULongKt' type=kotlin.ULong origin=null
+        u: CALL 'public final fun toULong (): kotlin.ULong [inline] declared in kotlin' type=kotlin.ULong origin=null
           $receiver: CALL 'public final fun <get-IMPLICIT_INT> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
       CALL 'public final fun takeUBytes (vararg u: kotlin.UByte): kotlin.Unit declared in <root>' type=kotlin.Unit origin=null
         u: VARARG type=kotlin.UByteArray varargElementType=kotlin.UByte
-          CALL 'public final fun toUByte (): kotlin.UByte [inline] declared in kotlin.UByteKt' type=kotlin.UByte origin=null
+          CALL 'public final fun toUByte (): kotlin.UByte [inline] declared in kotlin' type=kotlin.UByte origin=null
             $receiver: CALL 'public final fun <get-IMPLICIT_INT> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
-          CALL 'public final fun toUByte (): kotlin.UByte [inline] declared in kotlin.UByteKt' type=kotlin.UByte origin=null
+          CALL 'public final fun toUByte (): kotlin.UByte [inline] declared in kotlin' type=kotlin.UByte origin=null
             $receiver: CALL 'public final fun <get-EXPLICIT_INT> (): kotlin.Int declared in <root>' type=kotlin.Int origin=GET_PROPERTY
           CONST Byte type=kotlin.UByte value=42

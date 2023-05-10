@@ -67,7 +67,7 @@ FILE fqName:<root> fileName:/delegatedProperties.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.C
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-test3> (): kotlin.Any declared in <root>.C'
-            CALL 'public final fun getValue <V, V1> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): V1 of kotlin.collections.MapAccessorsKt.getValue [inline,operator] declared in kotlin.collections.MapAccessorsKt' type=kotlin.Any origin=null
+            CALL 'public final fun getValue <V, V1> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): V1 of kotlin.collections.getValue [inline,operator] declared in kotlin.collections' type=kotlin.Any origin=null
               <V>: kotlin.Any
               <V1>: kotlin.Any
               $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:test3$delegate type:kotlin.collections.MutableMap<kotlin.String, kotlin.Any> visibility:private [final]' type=kotlin.collections.MutableMap<kotlin.String, kotlin.Any> origin=null
@@ -79,7 +79,7 @@ FILE fqName:<root> fileName:/delegatedProperties.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.C
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Any
         BLOCK_BODY
-          CALL 'public final fun setValue <V> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: V of kotlin.collections.MapAccessorsKt.setValue): kotlin.Unit [inline,operator] declared in kotlin.collections.MapAccessorsKt' type=kotlin.Unit origin=null
+          CALL 'public final fun setValue <V> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: V of kotlin.collections.setValue): kotlin.Unit [inline,operator] declared in kotlin.collections' type=kotlin.Unit origin=null
             <V>: kotlin.Any
             $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:test3$delegate type:kotlin.collections.MutableMap<kotlin.String, kotlin.Any> visibility:private [final]' type=kotlin.collections.MutableMap<kotlin.String, kotlin.Any> origin=null
               receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<set-test3>' type=<root>.C origin=null
@@ -109,7 +109,7 @@ FILE fqName:<root> fileName:/delegatedProperties.kt
       correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL [delegated,var]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-test4> (): kotlin.Any declared in <root>'
-          CALL 'public final fun getValue <V, V1> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): V1 of kotlin.collections.MapAccessorsKt.getValue [inline,operator] declared in kotlin.collections.MapAccessorsKt' type=kotlin.Any origin=null
+          CALL 'public final fun getValue <V, V1> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): V1 of kotlin.collections.getValue [inline,operator] declared in kotlin.collections' type=kotlin.Any origin=null
             <V>: kotlin.Any
             <V1>: kotlin.Any
             $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:test4$delegate type:java.util.HashMap<kotlin.String, kotlin.Any> visibility:private [final,static]' type=java.util.HashMap<kotlin.String, kotlin.Any> origin=null
@@ -119,7 +119,7 @@ FILE fqName:<root> fileName:/delegatedProperties.kt
       correspondingProperty: PROPERTY name:test4 visibility:public modality:FINAL [delegated,var]
       VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Any
       BLOCK_BODY
-        CALL 'public final fun setValue <V> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: V of kotlin.collections.MapAccessorsKt.setValue): kotlin.Unit [inline,operator] declared in kotlin.collections.MapAccessorsKt' type=kotlin.Unit origin=null
+        CALL 'public final fun setValue <V> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: V of kotlin.collections.setValue): kotlin.Unit [inline,operator] declared in kotlin.collections' type=kotlin.Unit origin=null
           <V>: kotlin.Any
           $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:test4$delegate type:java.util.HashMap<kotlin.String, kotlin.Any> visibility:private [final,static]' type=java.util.HashMap<kotlin.String, kotlin.Any> origin=null
           thisRef: CONST Null type=kotlin.Nothing? value=null

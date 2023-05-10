@@ -186,7 +186,7 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
             public abstract fun foo (): kotlin.Unit declared in <root>.Test2
           $this: VALUE_PARAMETER name:<this> type:<root>.Test2.ZERO
           BLOCK_BODY
-            CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io.ConsoleKt' type=kotlin.Unit origin=null
+            CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
               message: CONST String type=kotlin.String value="ZERO"
         PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
           overridden:
@@ -251,7 +251,7 @@ FILE fqName:<root> fileName:/enumWithSecondaryCtor.kt
             public abstract fun foo (): kotlin.Unit declared in <root>.Test2
           $this: VALUE_PARAMETER name:<this> type:<root>.Test2.ONE
           BLOCK_BODY
-            CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io.ConsoleKt' type=kotlin.Unit origin=null
+            CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
               message: CONST String type=kotlin.String value="ONE"
         PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
           overridden:

@@ -26,11 +26,11 @@ FILE fqName:<root> fileName:/classReference.kt
         GET_CLASS type=kotlin.reflect.KClass<out <root>.A>
           CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A' type=<root>.A origin=null
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public final fun <get-java> <T> (): java.lang.Class<T of kotlin.jvm.JvmClassMappingKt.<get-java>> declared in kotlin.jvm.JvmClassMappingKt' type=java.lang.Class<<root>.A> origin=GET_PROPERTY
+        CALL 'public final fun <get-java> <T> (): java.lang.Class<T of kotlin.jvm.<get-java>> declared in kotlin.jvm' type=java.lang.Class<<root>.A> origin=GET_PROPERTY
           <T>: <root>.A
           $receiver: CLASS_REFERENCE 'CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.reflect.KClass<<root>.A>
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public final fun <get-java> <T> (): java.lang.Class<T of kotlin.jvm.JvmClassMappingKt.<get-java>> declared in kotlin.jvm.JvmClassMappingKt' type=java.lang.Class<out <root>.A> origin=GET_PROPERTY
+        CALL 'public final fun <get-java> <T> (): java.lang.Class<T of kotlin.jvm.<get-java>> declared in kotlin.jvm' type=java.lang.Class<out <root>.A> origin=GET_PROPERTY
           <T>: <root>.A
           $receiver: GET_CLASS type=kotlin.reflect.KClass<out <root>.A>
             CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.A' type=<root>.A origin=null

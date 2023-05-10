@@ -119,5 +119,5 @@ FILE fqName:<root> fileName:/forWithImplicitReceivers.kt
               CALL 'public open fun next (): kotlin.Int [operator] declared in <root>.IReceiver' type=kotlin.Int origin=null
                 $this: GET_VAR '<this>: <root>.IReceiver declared in <root>.test' type=<root>.IReceiver origin=null
                 $receiver: GET_VAR 'val tmp_1: <root>.IntCell [val] declared in <root>.test' type=<root>.IntCell origin=null
-            CALL 'public final fun println (message: kotlin.Int): kotlin.Unit [inline] declared in kotlin.io.ConsoleKt' type=kotlin.Unit origin=null
+            CALL 'public final fun println (message: kotlin.Int): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
               message: GET_VAR 'val i: kotlin.Int [val] declared in <root>.test' type=kotlin.Int origin=null

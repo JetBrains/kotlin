@@ -83,13 +83,13 @@ FILE fqName:<root> fileName:/classMembers.kt
     FUN name:function visibility:public modality:FINAL <> ($this:<root>.C) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.C
       BLOCK_BODY
-        CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io.ConsoleKt' type=kotlin.Unit origin=null
+        CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
           message: CONST String type=kotlin.String value="1"
     FUN name:memberExtensionFunction visibility:public modality:FINAL <> ($this:<root>.C, $receiver:kotlin.Int) returnType:kotlin.Unit
       $this: VALUE_PARAMETER name:<this> type:<root>.C
       $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int
       BLOCK_BODY
-        CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io.ConsoleKt' type=kotlin.Unit origin=null
+        CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
           message: CONST String type=kotlin.String value="2"
     CLASS CLASS name:NestedClass modality:FINAL visibility:public superTypes:[kotlin.Any]
       $this: VALUE_PARAMETER INSTANCE_RECEIVER name:<this> type:<root>.C.NestedClass
@@ -100,13 +100,13 @@ FILE fqName:<root> fileName:/classMembers.kt
       FUN name:function visibility:public modality:FINAL <> ($this:<root>.C.NestedClass) returnType:kotlin.Unit
         $this: VALUE_PARAMETER name:<this> type:<root>.C.NestedClass
         BLOCK_BODY
-          CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io.ConsoleKt' type=kotlin.Unit origin=null
+          CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
             message: CONST String type=kotlin.String value="3"
       FUN name:memberExtensionFunction visibility:public modality:FINAL <> ($this:<root>.C.NestedClass, $receiver:kotlin.Int) returnType:kotlin.Unit
         $this: VALUE_PARAMETER name:<this> type:<root>.C.NestedClass
         $receiver: VALUE_PARAMETER name:<this> type:kotlin.Int
         BLOCK_BODY
-          CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io.ConsoleKt' type=kotlin.Unit origin=null
+          CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
             message: CONST String type=kotlin.String value="4"
       FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
         overridden:

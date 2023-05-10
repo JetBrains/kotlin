@@ -70,7 +70,7 @@ FILE fqName:<root> fileName:/test.kt
                     BLOCK type=kotlin.String origin=ELVIS
                       VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:kotlin.String? [val]
                         CALL 'public abstract fun <get-simpleName> (): kotlin.String? declared in kotlin.reflect.KClass' type=kotlin.String? origin=GET_PROPERTY
-                          $this: CALL 'public final fun <get-annotationClass> <T> (): kotlin.reflect.KClass<out T of kotlin.jvm.JvmClassMappingKt.<get-annotationClass>> declared in kotlin.jvm.JvmClassMappingKt' type=kotlin.reflect.KClass<out kotlin.Annotation> origin=GET_PROPERTY
+                          $this: CALL 'public final fun <get-annotationClass> <T> (): kotlin.reflect.KClass<out T of kotlin.jvm.<get-annotationClass>> declared in kotlin.jvm' type=kotlin.reflect.KClass<out kotlin.Annotation> origin=GET_PROPERTY
                             <T>: kotlin.Annotation
                             $receiver: GET_VAR 'it: kotlin.Annotation declared in <root>.box.<anonymous>' type=kotlin.Annotation origin=null
                       WHEN type=kotlin.String origin=ELVIS
@@ -91,7 +91,7 @@ FILE fqName:<root> fileName:/test.kt
             $receiver: TYPE_OP type=kotlin.Array<out @[FlexibleNullability] kotlin.Annotation?> origin=IMPLICIT_NOTNULL typeOperand=kotlin.Array<out @[FlexibleNullability] kotlin.Annotation?>
               CALL 'public open fun getAnnotations (): @[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.Annotation?>? [fake_override] declared in java.lang.reflect.Field' type=@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] kotlin.Annotation?>? origin=GET_PROPERTY
                 $this: CALL 'public open fun getDeclaredField (p0: @[FlexibleNullability] kotlin.String?): @[FlexibleNullability] java.lang.reflect.Field? declared in java.lang.Class' type=@[FlexibleNullability] java.lang.reflect.Field? origin=null
-                  $this: CALL 'public final fun <get-java> <T> (): java.lang.Class<T of kotlin.jvm.JvmClassMappingKt.<get-java>> declared in kotlin.jvm.JvmClassMappingKt' type=java.lang.Class<<root>.Foo> origin=GET_PROPERTY
+                  $this: CALL 'public final fun <get-java> <T> (): java.lang.Class<T of kotlin.jvm.<get-java>> declared in kotlin.jvm' type=java.lang.Class<<root>.Foo> origin=GET_PROPERTY
                     <T>: <root>.Foo
                     $receiver: CLASS_REFERENCE 'CLASS CLASS name:Foo modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.reflect.KClass<<root>.Foo>
                   p0: CONST String type=kotlin.String value="param"
@@ -103,7 +103,7 @@ FILE fqName:<root> fileName:/test.kt
                     BLOCK type=kotlin.String origin=ELVIS
                       VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:kotlin.String? [val]
                         CALL 'public abstract fun <get-simpleName> (): kotlin.String? declared in kotlin.reflect.KClass' type=kotlin.String? origin=GET_PROPERTY
-                          $this: CALL 'public final fun <get-annotationClass> <T> (): kotlin.reflect.KClass<out T of kotlin.jvm.JvmClassMappingKt.<get-annotationClass>> declared in kotlin.jvm.JvmClassMappingKt' type=kotlin.reflect.KClass<out @[FlexibleNullability] kotlin.Annotation?> origin=GET_PROPERTY
+                          $this: CALL 'public final fun <get-annotationClass> <T> (): kotlin.reflect.KClass<out T of kotlin.jvm.<get-annotationClass>> declared in kotlin.jvm' type=kotlin.reflect.KClass<out @[FlexibleNullability] kotlin.Annotation?> origin=GET_PROPERTY
                             <T>: @[FlexibleNullability] kotlin.Annotation?
                             $receiver: TYPE_OP type=kotlin.Annotation origin=IMPLICIT_NOTNULL typeOperand=kotlin.Annotation
                               GET_VAR 'it: @[FlexibleNullability] kotlin.Annotation? declared in <root>.box.<anonymous>' type=@[FlexibleNullability] kotlin.Annotation? origin=null

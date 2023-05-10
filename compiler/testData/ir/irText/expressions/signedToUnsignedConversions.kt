@@ -1,7 +1,8 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
 // !LANGUAGE: +ImplicitSignedToUnsignedIntegerConversion
+
+// MUTE_SIGNATURE_COMPARISON_K2: JS_IR
+// ^ KT-57818
 
 // FILE: signedToUnsignedConversions_annotation.kt
 

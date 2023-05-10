@@ -208,7 +208,7 @@ FILE fqName:<root> fileName:/main.kt
       VAR name:constructor type:java.lang.reflect.Constructor<<root>.Derived> [val]
         CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=java.lang.reflect.Constructor<<root>.Derived> origin=EXCLEXCL
           <T0>: java.lang.reflect.Constructor<<root>.Derived>
-          arg0: CALL 'public final fun <get-javaConstructor> <T> (): java.lang.reflect.Constructor<T of kotlin.reflect.jvm.ReflectJvmMapping.<get-javaConstructor>>? declared in kotlin.reflect.jvm.ReflectJvmMapping' type=java.lang.reflect.Constructor<<root>.Derived>? origin=GET_PROPERTY
+          arg0: CALL 'public final fun <get-javaConstructor> <T> (): java.lang.reflect.Constructor<T of kotlin.reflect.jvm.<get-javaConstructor>>? declared in kotlin.reflect.jvm' type=java.lang.reflect.Constructor<<root>.Derived>? origin=GET_PROPERTY
             <T>: <root>.Derived
             $receiver: CALL 'public final fun first <T> (predicate: kotlin.Function1<T of kotlin.collections.CollectionsKt.first, kotlin.Boolean>): T of kotlin.collections.CollectionsKt.first [inline] declared in kotlin.collections.CollectionsKt' type=kotlin.reflect.KFunction<<root>.Derived> origin=null
               <T>: kotlin.reflect.KFunction<<root>.Derived>
@@ -221,7 +221,7 @@ FILE fqName:<root> fileName:/main.kt
                     RETURN type=kotlin.Nothing from='local final fun <anonymous> (it: kotlin.reflect.KFunction<<root>.Derived>): kotlin.Boolean declared in <root>.box'
                       CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                         arg0: CALL 'public abstract fun <get-size> (): kotlin.Int declared in kotlin.collections.List' type=kotlin.Int origin=GET_PROPERTY
-                          $this: CALL 'public final fun <get-valueParameters> (): kotlin.collections.List<kotlin.reflect.KParameter> declared in kotlin.reflect.full.KCallables' type=kotlin.collections.List<kotlin.reflect.KParameter> origin=GET_PROPERTY
+                          $this: CALL 'public final fun <get-valueParameters> (): kotlin.collections.List<kotlin.reflect.KParameter> declared in kotlin.reflect.full' type=kotlin.collections.List<kotlin.reflect.KParameter> origin=GET_PROPERTY
                             $receiver: GET_VAR 'it: kotlin.reflect.KFunction<<root>.Derived> declared in <root>.box.<anonymous>' type=kotlin.reflect.KFunction<<root>.Derived> origin=null
                         arg1: CONST Int type=kotlin.Int value=3
       VAR name:derived type:@[FlexibleNullability] <root>.Derived? [val]

@@ -48,7 +48,7 @@ FILE fqName:<root> fileName:/lambdaInEnumEntryConstructorCall.kt
               VALUE_PARAMETER name:value index:0 type:kotlin.String
               VALUE_PARAMETER name:nc index:1 type:<root>.Wrapper
               BLOCK_BODY
-                CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io.ConsoleKt' type=kotlin.Unit origin=null
+                CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
                   message: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=PLUS
                     $this: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=PLUS
                       $this: CALL 'public final fun plus (other: kotlin.Any?): kotlin.String [operator] declared in kotlin.String' type=kotlin.String origin=PLUS

@@ -162,7 +162,7 @@ FILE fqName:<root> fileName:/enum.kt
             public abstract fun foo (): kotlin.Unit declared in <root>.TestEnum3
           $this: VALUE_PARAMETER name:<this> type:<root>.TestEnum3.TEST
           BLOCK_BODY
-            CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io.ConsoleKt' type=kotlin.Unit origin=null
+            CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
               message: CONST String type=kotlin.String value="Hello, world!"
         FUN FAKE_OVERRIDE name:clone visibility:protected modality:FINAL <> ($this:kotlin.Enum<E of kotlin.Enum>) returnType:kotlin.Any [fake_override]
           overridden:
@@ -289,7 +289,7 @@ FILE fqName:<root> fileName:/enum.kt
             public abstract fun foo (): kotlin.Unit declared in <root>.TestEnum4
           $this: VALUE_PARAMETER name:<this> type:<root>.TestEnum4.TEST1
           BLOCK_BODY
-            CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io.ConsoleKt' type=kotlin.Unit origin=null
+            CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
               message: GET_ENUM 'ENUM_ENTRY name:TEST1' type=<root>.TestEnum4
         PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
           overridden:
@@ -369,7 +369,7 @@ FILE fqName:<root> fileName:/enum.kt
             public abstract fun foo (): kotlin.Unit declared in <root>.TestEnum4
           $this: VALUE_PARAMETER name:<this> type:<root>.TestEnum4.TEST2
           BLOCK_BODY
-            CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io.ConsoleKt' type=kotlin.Unit origin=null
+            CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
               message: GET_ENUM 'ENUM_ENTRY name:TEST2' type=<root>.TestEnum4
         PROPERTY FAKE_OVERRIDE name:x visibility:public modality:FINAL [fake_override,val]
           overridden:

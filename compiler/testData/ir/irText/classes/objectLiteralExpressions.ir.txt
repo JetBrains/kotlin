@@ -60,7 +60,7 @@ FILE fqName:<root> fileName:/objectLiteralExpressions.kt
                 public abstract fun foo (): kotlin.Unit declared in <root>.IFoo
               $this: VALUE_PARAMETER name:<this> type:<root>.test2.<no name provided>
               BLOCK_BODY
-                CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io.ConsoleKt' type=kotlin.Unit origin=null
+                CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
                   message: CONST String type=kotlin.String value="foo"
             FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
               overridden:
@@ -128,7 +128,7 @@ FILE fqName:<root> fileName:/objectLiteralExpressions.kt
                   public abstract fun foo (): kotlin.Unit [fake_override] declared in <root>.Outer.Inner
                 $this: VALUE_PARAMETER name:<this> type:<root>.Outer.test3.<no name provided>
                 BLOCK_BODY
-                  CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io.ConsoleKt' type=kotlin.Unit origin=null
+                  CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
                     message: CONST String type=kotlin.String value="foo"
               FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
                 overridden:
@@ -174,7 +174,7 @@ FILE fqName:<root> fileName:/objectLiteralExpressions.kt
                 public abstract fun foo (): kotlin.Unit [fake_override] declared in <root>.Outer.Inner
               $this: VALUE_PARAMETER name:<this> type:<root>.test4.<no name provided>
               BLOCK_BODY
-                CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io.ConsoleKt' type=kotlin.Unit origin=null
+                CALL 'public final fun println (message: kotlin.Any?): kotlin.Unit [inline] declared in kotlin.io' type=kotlin.Unit origin=null
                   message: CONST String type=kotlin.String value="foo"
             FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN <> ($this:kotlin.Any, other:kotlin.Any?) returnType:kotlin.Boolean [fake_override,operator]
               overridden:

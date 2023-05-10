@@ -43,36 +43,36 @@ FILE fqName:<root> fileName:/test.kt
             if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
               $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
                 arg0: CALL 'public final fun testInt (x: kotlin.UInt): kotlin.UInt declared in <root>' type=kotlin.UInt origin=null
-                  x: CALL 'public final fun toUInt (): kotlin.UInt [inline] declared in kotlin.UIntKt' type=kotlin.UInt origin=null
+                  x: CALL 'public final fun toUInt (): kotlin.UInt [inline] declared in kotlin' type=kotlin.UInt origin=null
                     $receiver: CONST Int type=kotlin.Int value=5
-                arg1: CALL 'public final fun toUInt (): kotlin.UInt [inline] declared in kotlin.UIntKt' type=kotlin.UInt origin=null
+                arg1: CALL 'public final fun toUInt (): kotlin.UInt [inline] declared in kotlin' type=kotlin.UInt origin=null
                   $receiver: CONST Int type=kotlin.Int value=5
             then: CONST String type=kotlin.String value="Fail: testInt(5)"
           BRANCH
             if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
               $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
                 arg0: CALL 'public final fun testInt (x: kotlin.UInt): kotlin.UInt declared in <root>' type=kotlin.UInt origin=null
-                  x: CALL 'public final fun toUInt (): kotlin.UInt [inline] declared in kotlin.UIntKt' type=kotlin.UInt origin=null
+                  x: CALL 'public final fun toUInt (): kotlin.UInt [inline] declared in kotlin' type=kotlin.UInt origin=null
                     $receiver: CONST Int type=kotlin.Int value=5
-                arg1: CALL 'public final fun toUInt (): kotlin.UInt [inline] declared in kotlin.UIntKt' type=kotlin.UInt origin=null
+                arg1: CALL 'public final fun toUInt (): kotlin.UInt [inline] declared in kotlin' type=kotlin.UInt origin=null
                   $receiver: CONST Int type=kotlin.Int value=5
             then: CONST String type=kotlin.String value="Fail: testInt(x = 5)"
           BRANCH
             if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
               $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
                 arg0: CALL 'public final fun testLong (x: kotlin.ULong): kotlin.ULong declared in <root>' type=kotlin.ULong origin=null
-                  x: CALL 'public final fun toULong (): kotlin.ULong [inline] declared in kotlin.ULongKt' type=kotlin.ULong origin=null
+                  x: CALL 'public final fun toULong (): kotlin.ULong [inline] declared in kotlin' type=kotlin.ULong origin=null
                     $receiver: CONST Int type=kotlin.Int value=5
-                arg1: CALL 'public final fun toULong (): kotlin.ULong [inline] declared in kotlin.ULongKt' type=kotlin.ULong origin=null
+                arg1: CALL 'public final fun toULong (): kotlin.ULong [inline] declared in kotlin' type=kotlin.ULong origin=null
                   $receiver: CONST Long type=kotlin.Long value=5
             then: CONST String type=kotlin.String value="Fail: testLong(5L)"
           BRANCH
             if: CALL 'public final fun not (): kotlin.Boolean [operator] declared in kotlin.Boolean' type=kotlin.Boolean origin=EXCLEQ
               $this: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EXCLEQ
                 arg0: CALL 'public final fun testLong (x: kotlin.ULong): kotlin.ULong declared in <root>' type=kotlin.ULong origin=null
-                  x: CALL 'public final fun toULong (): kotlin.ULong [inline] declared in kotlin.ULongKt' type=kotlin.ULong origin=null
+                  x: CALL 'public final fun toULong (): kotlin.ULong [inline] declared in kotlin' type=kotlin.ULong origin=null
                     $receiver: CONST Int type=kotlin.Int value=5
-                arg1: CALL 'public final fun toULong (): kotlin.ULong [inline] declared in kotlin.ULongKt' type=kotlin.ULong origin=null
+                arg1: CALL 'public final fun toULong (): kotlin.ULong [inline] declared in kotlin' type=kotlin.ULong origin=null
                   $receiver: CONST Long type=kotlin.Long value=5
             then: CONST String type=kotlin.String value="Fail: testLong(x = 5L)"
           BRANCH

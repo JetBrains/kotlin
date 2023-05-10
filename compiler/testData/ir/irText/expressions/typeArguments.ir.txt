@@ -7,7 +7,7 @@ FILE fqName:<root> fileName:/typeArguments.kt
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=INSTANCEOF typeOperand=kotlin.Array<*>
               GET_VAR 'x: kotlin.Any declared in <root>.test1' type=kotlin.Any origin=null
-            then: CALL 'public final fun isArrayOf <T> (): kotlin.Boolean declared in kotlin.jvm.JvmClassMappingKt' type=kotlin.Boolean origin=null
+            then: CALL 'public final fun isArrayOf <T> (): kotlin.Boolean declared in kotlin.jvm' type=kotlin.Boolean origin=null
               <T>: kotlin.String
               $receiver: TYPE_OP type=kotlin.Array<*> origin=IMPLICIT_CAST typeOperand=kotlin.Array<*>
                 GET_VAR 'x: kotlin.Any declared in <root>.test1' type=kotlin.Any origin=null

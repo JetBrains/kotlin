@@ -32,12 +32,12 @@ FILE fqName:<root> fileName:/reflectFindAnnotationOnDefaultMethodParameter.kt
           CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in <root>.box.<no name provided>' type=<root>.box.<no name provided> origin=OBJECT_LITERAL
       VAR name:method type:@[FlexibleNullability] java.lang.reflect.Method? [val]
         CALL 'public open fun getMethod (p0: @[FlexibleNullability] kotlin.String?, vararg p1: @[FlexibleNullability] java.lang.Class<*>?): @[FlexibleNullability] java.lang.reflect.Method? declared in java.lang.Class' type=@[FlexibleNullability] java.lang.reflect.Method? origin=null
-          $this: CALL 'public final fun <get-javaClass> <T> (): java.lang.Class<T of kotlin.jvm.JvmClassMappingKt.<get-javaClass>> [inline] declared in kotlin.jvm.JvmClassMappingKt' type=java.lang.Class<<root>.box.<no name provided>> origin=GET_PROPERTY
+          $this: CALL 'public final fun <get-javaClass> <T> (): java.lang.Class<T of kotlin.jvm.<get-javaClass>> [inline] declared in kotlin.jvm' type=java.lang.Class<<root>.box.<no name provided>> origin=GET_PROPERTY
             <T>: <root>.box.<no name provided>
             $receiver: GET_VAR 'val impl: <root>.box.<no name provided> [val] declared in <root>.box' type=<root>.box.<no name provided> origin=null
           p0: CONST String type=kotlin.String value="m"
           p1: VARARG type=@[FlexibleNullability] kotlin.Array<out @[FlexibleNullability] java.lang.Class<*>?>? varargElementType=@[FlexibleNullability] java.lang.Class<*>?
-            CALL 'public final fun <get-java> <T> (): java.lang.Class<T of kotlin.jvm.JvmClassMappingKt.<get-java>> declared in kotlin.jvm.JvmClassMappingKt' type=java.lang.Class<kotlin.String> origin=GET_PROPERTY
+            CALL 'public final fun <get-java> <T> (): java.lang.Class<T of kotlin.jvm.<get-java>> declared in kotlin.jvm' type=java.lang.Class<kotlin.String> origin=GET_PROPERTY
               <T>: kotlin.String
               $receiver: CLASS_REFERENCE 'CLASS IR_EXTERNAL_DECLARATION_STUB CLASS name:String modality:FINAL visibility:public superTypes:[kotlin.Comparable<kotlin.String>; kotlin.CharSequence; java.io.Serializable]' type=kotlin.reflect.KClass<kotlin.String>
       VAR name:parameter type:@[FlexibleNullability] java.lang.reflect.Parameter? [val]

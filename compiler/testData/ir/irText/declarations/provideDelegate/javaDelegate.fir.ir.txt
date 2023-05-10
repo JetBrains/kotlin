@@ -8,7 +8,7 @@ FILE fqName:k fileName:/box.kt
       correspondingProperty: PROPERTY name:p1 visibility:public modality:FINAL [delegated,var]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-p1> (): @[FlexibleNullability] kotlin.String? declared in k'
-          CALL 'public final fun getValue <V> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): V of kotlin.PropertyReferenceDelegatesKt.getValue [inline,operator] declared in kotlin.PropertyReferenceDelegatesKt' type=@[FlexibleNullability] kotlin.String? origin=null
+          CALL 'public final fun getValue <V> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): V of kotlin.getValue [inline,operator] declared in kotlin' type=@[FlexibleNullability] kotlin.String? origin=null
             <V>: @[FlexibleNullability] kotlin.String?
             $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:p1$delegate type:kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> visibility:private [final,static]' type=kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> origin=null
             thisRef: CONST Null type=kotlin.Nothing? value=null
@@ -17,7 +17,7 @@ FILE fqName:k fileName:/box.kt
       correspondingProperty: PROPERTY name:p1 visibility:public modality:FINAL [delegated,var]
       VALUE_PARAMETER name:<set-?> index:0 type:@[FlexibleNullability] kotlin.String?
       BLOCK_BODY
-        CALL 'public final fun setValue <V> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: V of kotlin.PropertyReferenceDelegatesKt.setValue): kotlin.Unit [inline,operator] declared in kotlin.PropertyReferenceDelegatesKt' type=kotlin.Unit origin=null
+        CALL 'public final fun setValue <V> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: V of kotlin.setValue): kotlin.Unit [inline,operator] declared in kotlin' type=kotlin.Unit origin=null
           <V>: @[FlexibleNullability] kotlin.String?
           $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:p1$delegate type:kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> visibility:private [final,static]' type=kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> origin=null
           thisRef: CONST Null type=kotlin.Nothing? value=null
@@ -32,7 +32,7 @@ FILE fqName:k fileName:/box.kt
       correspondingProperty: PROPERTY name:p2 visibility:public modality:FINAL [delegated,var]
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public final fun <get-p2> (): @[FlexibleNullability] kotlin.String? declared in k'
-          CALL 'public final fun getValue <V> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): V of kotlin.PropertyReferenceDelegatesKt.getValue [inline,operator] declared in kotlin.PropertyReferenceDelegatesKt' type=@[FlexibleNullability] kotlin.String? origin=null
+          CALL 'public final fun getValue <V> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): V of kotlin.getValue [inline,operator] declared in kotlin' type=@[FlexibleNullability] kotlin.String? origin=null
             <V>: @[FlexibleNullability] kotlin.String?
             $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:p2$delegate type:kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> visibility:private [final,static]' type=kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> origin=null
             thisRef: CONST Null type=kotlin.Nothing? value=null
@@ -41,7 +41,7 @@ FILE fqName:k fileName:/box.kt
       correspondingProperty: PROPERTY name:p2 visibility:public modality:FINAL [delegated,var]
       VALUE_PARAMETER name:<set-?> index:0 type:@[FlexibleNullability] kotlin.String?
       BLOCK_BODY
-        CALL 'public final fun setValue <V> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: V of kotlin.PropertyReferenceDelegatesKt.setValue): kotlin.Unit [inline,operator] declared in kotlin.PropertyReferenceDelegatesKt' type=kotlin.Unit origin=null
+        CALL 'public final fun setValue <V> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: V of kotlin.setValue): kotlin.Unit [inline,operator] declared in kotlin' type=kotlin.Unit origin=null
           <V>: @[FlexibleNullability] kotlin.String?
           $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:p2$delegate type:kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> visibility:private [final,static]' type=kotlin.reflect.KMutableProperty0<@[FlexibleNullability] kotlin.String?> origin=null
           thisRef: CONST Null type=kotlin.Nothing? value=null

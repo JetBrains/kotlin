@@ -48,11 +48,14 @@ fun IrFile.dumpTreesFromLineNumber(lineNumber: Int, options: DumpIrTreeOptions =
  * @property normalizeNames Rename temporary local variables using a stable naming scheme
  * @property stableOrder Print declarations in a sorted order
  * @property verboseErrorTypes Whether to dump the value of [IrErrorType.kotlinType] for [IrErrorType] nodes
+ * @property printFacadeClassInFqNames Whether printed fully-qualified names of top-level declarations should include the name of
+ * the file facade class (see [IrDeclarationOrigin.FILE_CLASS])
  */
 data class DumpIrTreeOptions(
     val normalizeNames: Boolean = false,
     val stableOrder: Boolean = false,
     val verboseErrorTypes: Boolean = true,
+    val printFacadeClassInFqNames: Boolean = true,
 )
 
 private fun IrFile.shouldSkipDump(): Boolean {

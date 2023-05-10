@@ -211,10 +211,7 @@ class RenderIrElementVisitor(private val options: DumpIrTreeOptions = DumpIrTree
                 }
                 is IrDeclaration -> {
                     renderParentOfReferencedDeclaration(parent)
-                    append('.')
-                    if (parent is IrDeclarationWithName) {
-                        append(parent.name)
-                    } else {
+                    appendDeclarationNameToFqName(parent, options) {
                         renderElementNameFallback(parent)
                     }
                 }
@@ -538,51 +535,63 @@ internal fun DescriptorRenderer.renderDescriptor(descriptor: DeclarationDescript
 internal fun IrDeclaration.renderOriginIfNonTrivial(): String =
     if (origin != IrDeclarationOrigin.DEFINED) "$origin " else ""
 
-internal fun IrClassifierSymbol.renderClassifierFqn(): String =
+internal fun IrClassifierSymbol.renderClassifierFqn(options: DumpIrTreeOptions): String =
     if (isBound)
         when (val owner = owner) {
-            is IrClass -> owner.renderClassFqn()
-            is IrScript -> owner.renderScriptFqn()
-            is IrTypeParameter -> owner.renderTypeParameterFqn()
-            else -> "`unexpected classifier: ${owner.render()}`"
+            is IrClass -> owner.renderClassFqn(options)
+            is IrScript -> owner.renderScriptFqn(options)
+            is IrTypeParameter -> owner.renderTypeParameterFqn(options)
+            else -> "`unexpected classifier: ${owner.render(options)}`"
         }
     else
         "<unbound ${this.javaClass.simpleName}>"
 
-internal fun IrTypeAliasSymbol.renderTypeAliasFqn(): String =
+internal fun IrTypeAliasSymbol.renderTypeAliasFqn(options: DumpIrTreeOptions): String =
     if (isBound)
-        StringBuilder().also { owner.renderDeclarationFqn(it) }.toString()
+        StringBuilder().also { owner.renderDeclarationFqn(it, options) }.toString()
     else
         "<unbound $this>"
 
-internal fun IrClass.renderClassFqn(): String =
-    StringBuilder().also { renderDeclarationFqn(it) }.toString()
+internal fun IrClass.renderClassFqn(options: DumpIrTreeOptions): String =
+    StringBuilder().also { renderDeclarationFqn(it, options) }.toString()
 
-internal fun IrScript.renderScriptFqn(): String =
-    StringBuilder().also { renderDeclarationFqn(it) }.toString()
+internal fun IrScript.renderScriptFqn(options: DumpIrTreeOptions): String =
+    StringBuilder().also { renderDeclarationFqn(it, options) }.toString()
 
-internal fun IrTypeParameter.renderTypeParameterFqn(): String =
+internal fun IrTypeParameter.renderTypeParameterFqn(options: DumpIrTreeOptions): String =
     StringBuilder().also { sb ->
         sb.append(name.asString())
         sb.append(" of ")
-        renderDeclarationParentFqn(sb)
+        renderDeclarationParentFqn(sb, options)
     }.toString()
 
-private fun IrDeclaration.renderDeclarationFqn(sb: StringBuilder) {
-    renderDeclarationParentFqn(sb)
-    sb.append('.')
-    if (this is IrDeclarationWithName) {
-        sb.append(name.asString())
-    } else {
+private inline fun StringBuilder.appendDeclarationNameToFqName(
+    declaration: IrDeclaration,
+    options: DumpIrTreeOptions,
+    fallback: () -> Unit
+) {
+    if (declaration.origin != IrDeclarationOrigin.FILE_CLASS || options.printFacadeClassInFqNames) {
+        append('.')
+        if (declaration is IrDeclarationWithName) {
+            append(declaration.name)
+        } else {
+            fallback()
+        }
+    }
+}
+
+private fun IrDeclaration.renderDeclarationFqn(sb: StringBuilder, options: DumpIrTreeOptions) {
+    renderDeclarationParentFqn(sb, options)
+    sb.appendDeclarationNameToFqName(this, options) {
         sb.append(this)
     }
 }
 
-private fun IrDeclaration.renderDeclarationParentFqn(sb: StringBuilder) {
+private fun IrDeclaration.renderDeclarationParentFqn(sb: StringBuilder, options: DumpIrTreeOptions) {
     try {
         val parent = this.parent
         if (parent is IrDeclaration) {
-            parent.renderDeclarationFqn(sb)
+            parent.renderDeclarationFqn(sb, options)
         } else if (parent is IrPackageFragment) {
             sb.append(parent.fqName.toString())
         }
@@ -743,7 +752,7 @@ private fun IrType.renderTypeInner(renderer: RenderIrElementVisitor?, options: D
             val isDefinitelyNotNullType =
                 classifier is IrTypeParameterSymbol && nullability == SimpleTypeNullability.DEFINITELY_NOT_NULL
             if (isDefinitelyNotNullType) append("{")
-            append(classifier.renderClassifierFqn())
+            append(classifier.renderClassifierFqn(options))
             if (arguments.isNotEmpty()) {
                 append(
                     arguments.joinToString(prefix = "<", postfix = ">", separator = ", ") {
@@ -768,7 +777,7 @@ private fun IrTypeAbbreviation.renderTypeAbbreviation(renderer: RenderIrElementV
     buildString {
         append("{ ")
         append(renderTypeAnnotations(annotations, renderer, options))
-        append(typeAlias.renderTypeAliasFqn())
+        append(typeAlias.renderTypeAliasFqn(options))
         if (arguments.isNotEmpty()) {
             append(
                 arguments.joinToString(prefix = "<", postfix = ">", separator = ", ") {

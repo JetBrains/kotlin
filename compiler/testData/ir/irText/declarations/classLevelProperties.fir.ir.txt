@@ -123,7 +123,7 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.C
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-test8> (): kotlin.Int declared in <root>.C'
-            CALL 'public final fun getValue <V, V1> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): V1 of kotlin.collections.MapAccessorsKt.getValue [inline,operator] declared in kotlin.collections.MapAccessorsKt' type=kotlin.Int origin=null
+            CALL 'public final fun getValue <V, V1> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>): V1 of kotlin.collections.getValue [inline,operator] declared in kotlin.collections' type=kotlin.Int origin=null
               <V>: kotlin.Int
               <V1>: kotlin.Int
               $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:test8$delegate type:java.util.HashMap<kotlin.String, kotlin.Int> visibility:private [final]' type=java.util.HashMap<kotlin.String, kotlin.Int> origin=null
@@ -135,7 +135,7 @@ FILE fqName:<root> fileName:/classLevelProperties.kt
         $this: VALUE_PARAMETER name:<this> type:<root>.C
         VALUE_PARAMETER name:<set-?> index:0 type:kotlin.Int
         BLOCK_BODY
-          CALL 'public final fun setValue <V> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: V of kotlin.collections.MapAccessorsKt.setValue): kotlin.Unit [inline,operator] declared in kotlin.collections.MapAccessorsKt' type=kotlin.Unit origin=null
+          CALL 'public final fun setValue <V> (thisRef: kotlin.Any?, property: kotlin.reflect.KProperty<*>, value: V of kotlin.collections.setValue): kotlin.Unit [inline,operator] declared in kotlin.collections' type=kotlin.Unit origin=null
             <V>: kotlin.Int
             $receiver: GET_FIELD 'FIELD PROPERTY_DELEGATE name:test8$delegate type:java.util.HashMap<kotlin.String, kotlin.Int> visibility:private [final]' type=java.util.HashMap<kotlin.String, kotlin.Int> origin=null
               receiver: GET_VAR '<this>: <root>.C declared in <root>.C.<set-test8>' type=<root>.C origin=null

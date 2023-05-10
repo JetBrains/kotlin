@@ -23,6 +23,6 @@ FILE fqName:<root> fileName:/objectClassReference.kt
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
         CLASS_REFERENCE 'CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.reflect.KClass<<root>.A>
       TYPE_OP type=kotlin.Unit origin=IMPLICIT_COERCION_TO_UNIT typeOperand=kotlin.Unit
-        CALL 'public final fun <get-java> <T> (): java.lang.Class<T of kotlin.jvm.JvmClassMappingKt.<get-java>> declared in kotlin.jvm.JvmClassMappingKt' type=java.lang.Class<<root>.A> origin=GET_PROPERTY
+        CALL 'public final fun <get-java> <T> (): java.lang.Class<T of kotlin.jvm.<get-java>> declared in kotlin.jvm' type=java.lang.Class<<root>.A> origin=GET_PROPERTY
           <T>: <root>.A
           $receiver: CLASS_REFERENCE 'CLASS OBJECT name:A modality:FINAL visibility:public superTypes:[kotlin.Any]' type=kotlin.reflect.KClass<<root>.A>
