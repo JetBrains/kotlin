@@ -38,7 +38,7 @@ class FcsTypeResolutionTests : AbstractComposeDiagnosticsTest() {
 
             @Composable
             fun Int.Foo(content: @Composable Int.(foo: String) -> Unit) {
-                content<!NO_VALUE_FOR_PARAMETER, NO_VALUE_FOR_PARAMETER!>()<!>
+                content<!NO_VALUE_FOR_PARAMETER!>()<!>
             }
 
             @Composable
