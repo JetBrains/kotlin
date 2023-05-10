@@ -54,12 +54,13 @@ fun interface IdeDependencyResolver {
     }
 
     @ExternalKotlinTargetApi
-    object Empty : IdeDependencyResolver {
-        override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> = emptySet()
-    }
-
-    @ExternalKotlinTargetApi
     companion object {
+
+        /**
+         * [IdeDependencyResolver] that will just return an empty Set of dependencies (noop)
+         */
+        val empty = IdeDependencyResolver { emptySet() }
+
         /**
          * Special binaryType String that indicates that a certain dependency is only a sources.jar and
          * therefore should be attached as extra to the binary dependency.
@@ -98,10 +99,10 @@ fun interface IdeDependencyResolver {
  */
 @ExternalKotlinTargetApi
 fun IdeDependencyResolver(
-    resolvers: Iterable<IdeDependencyResolver?>
+    resolvers: Iterable<IdeDependencyResolver?>,
 ): IdeDependencyResolver {
     val resolversList = resolvers.filterNotNull()
-    if (resolversList.isEmpty()) return IdeDependencyResolver.Empty
+    if (resolversList.isEmpty()) return IdeDependencyResolver.empty
     return IdeCompositeDependencyResolver(resolversList)
 }
 
@@ -113,7 +114,7 @@ fun IdeDependencyResolver(
  */
 @ExternalKotlinTargetApi
 fun IdeDependencyResolver(
-    vararg resolvers: IdeDependencyResolver?
+    vararg resolvers: IdeDependencyResolver?,
 ): IdeDependencyResolver = IdeDependencyResolver(resolvers.toList())
 
 
@@ -138,7 +139,7 @@ operator fun IdeDependencyResolver.plus(other: IdeDependencyResolver): IdeDepend
 }
 
 private class IdeCompositeDependencyResolver(
-    val children: List<IdeDependencyResolver>
+    val children: List<IdeDependencyResolver>,
 ) : IdeDependencyResolver, IdeDependencyResolver.WithBuildDependencies {
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
         return children.flatMap { child -> child.resolve(sourceSet) }.toSet()
