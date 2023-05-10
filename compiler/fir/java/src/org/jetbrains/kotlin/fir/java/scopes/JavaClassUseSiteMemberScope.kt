@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.java.scopes
 
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.buildSimpleFunctionCopy
@@ -549,6 +550,8 @@ class JavaClassUseSiteMemberScope(
     }
 
     private fun FirPropertySymbol.isOverriddenInClassBy(functionSymbol: FirNamedFunctionSymbol): Boolean {
+        if (rawStatus.visibility == Visibilities.Private) return false
+
         val accessorDescriptors = when (val fir = fir) {
             is FirSyntheticProperty -> {
                 if (fir.getter.delegate.symbol == functionSymbol || fir.setter?.delegate?.symbol == functionSymbol) return true

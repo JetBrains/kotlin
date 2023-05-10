@@ -19739,6 +19739,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             }
 
             @Test
+            @TestMetadata("privatePropertyAndSetterMultiModule.kt")
+            public void testPrivatePropertyAndSetterMultiModule() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/j+k/privatePropertyAndSetterMultiModule.kt");
+            }
+
+            @Test
             @TestMetadata("protectedStaticSamePackage.kt")
             public void testProtectedStaticSamePackage() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/j+k/protectedStaticSamePackage.kt");
