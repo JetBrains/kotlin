@@ -61,7 +61,7 @@ class ComposeInlineLambdaLocator(private val context: IrPluginContext) {
                 val parent = declaration.parent as? IrFunction
                 if (parent?.isInlineFunctionCall(context) == true &&
                     declaration.isInlineParameter()) {
-                    declaration.defaultValue?.expression?.unwrapInlineLambda()?.let {
+                    declaration.defaultValue?.expression?.unwrapLambda()?.let {
                         inlineLambdaToParameter[it] = declaration
                     }
                 }
@@ -74,7 +74,7 @@ class ComposeInlineLambdaLocator(private val context: IrPluginContext) {
                     for (parameter in function.valueParameters) {
                         if (parameter.isInlineParameter()) {
                             expression.getValueArgument(parameter.index)
-                                ?.unwrapInlineLambda()
+                                ?.unwrapLambda()
                                 ?.let { inlineLambdaToParameter[it] = parameter }
                         }
                     }
@@ -96,8 +96,8 @@ private fun IrFunction.isInlineArrayConstructor(context: IrPluginContext): Boole
             it in context.irBuiltIns.primitiveArraysToPrimitiveTypes
     }
 
-private fun IrExpression.unwrapInlineLambda(): IrFunctionSymbol? = when {
-    this is IrBlock && origin.isInlinable ->
+fun IrExpression.unwrapLambda(): IrFunctionSymbol? = when {
+    this is IrBlock && origin.isLambdaBlockOrigin ->
         (statements.lastOrNull() as? IrFunctionReference)?.symbol
 
     this is IrFunctionExpression ->
@@ -107,6 +107,6 @@ private fun IrExpression.unwrapInlineLambda(): IrFunctionSymbol? = when {
         null
 }
 
-private val IrStatementOrigin?.isInlinable: Boolean
+private val IrStatementOrigin?.isLambdaBlockOrigin: Boolean
     get() = isLambda || this == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE ||
         this == IrStatementOrigin.SUSPEND_CONVERSION

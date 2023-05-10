@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -89,6 +90,7 @@ import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.expressions.IrWhen
 import org.jetbrains.kotlin.ir.expressions.IrWhileLoop
 import org.jetbrains.kotlin.ir.expressions.impl.IrIfThenElseImpl
+import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
 import org.jetbrains.kotlin.ir.types.IrDynamicType
 import org.jetbrains.kotlin.ir.types.IrErrorType
@@ -115,6 +117,7 @@ import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.ir.visitors.IrElementVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.Printer
 
@@ -516,11 +519,14 @@ class IrSourcePrinterVisitor(
             val arg = getValueArgument(i)
             if (arg != null) {
                 val param = symbol.owner.valueParameters[i]
-                val isTrailingLambda = i == symbol.owner.valueParameters.size - 1 &&
-                    (
-                        arg is IrFunctionExpression ||
-                            (arg is IrBlock && arg.origin == IrStatementOrigin.LAMBDA)
-                        )
+                val isLambda = arg is IrFunctionExpression ||
+                    (arg is IrBlock && arg.origin == IrStatementOrigin.LAMBDA)
+                if (isLambda) {
+                    arg.unwrapLambda()?.let {
+                        returnTargetToCall[it] = this
+                    }
+                }
+                val isTrailingLambda = i == symbol.owner.valueParameters.size - 1 && isLambda
                 if (isTrailingLambda) {
                     trailingLambda = arg
                 } else {
@@ -801,33 +807,42 @@ class IrSourcePrinterVisitor(
         println("}")
     }
 
+    // Map local return targets to the corresponding function call.
+    // This is used to print qualified returns.
+    private val returnTargetToCall =
+        mutableMapOf<IrReturnTargetSymbol, IrFunctionAccessExpression>()
+
+    private val IrFunction.isLambda: Boolean
+        get() = name.asString() == SpecialNames.ANONYMOUS_STRING ||
+            origin == IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE
+
+    private fun IrExpression.isLastStatementIn(statements: List<IrStatement>): Boolean {
+        val lastStatement = statements.lastOrNull()
+        return when {
+            lastStatement === this -> true
+            lastStatement is IrBlock -> isLastStatementIn(lastStatement.statements)
+            else -> false
+        }
+    }
+
+    private fun IrExpression.isLastStatementIn(function: IrFunction): Boolean =
+        function.body?.let { isLastStatementIn(it.statements) } ?: false
+
     override fun visitReturn(expression: IrReturn) {
         val value = expression.value
-        // only print the return statement directly if it is not a lambda
+        // Only print the return statement directly if it is not the last statement in a lambda
         val returnTarget = expression.returnTargetSymbol.owner
-        if (returnTarget !is IrFunction ||
-            returnTarget.origin != IrDeclarationOrigin.ADAPTER_FOR_CALLABLE_REFERENCE) {
-
-            val isLastStatementInLambda =
-                returnTarget is IrFunction &&
-                    returnTarget.name.asString() == "<anonymous>" &&
-                    returnTarget.body?.statements?.last().let {
-                        it == expression || (it is IrBlock && it.statements.last() == expression)
-                    }
-
-            if (!isLastStatementInLambda) {
-                print("return ")
-            }
+        if (returnTarget !is IrFunction || !returnTarget.isLambda ||
+            !expression.isLastStatementIn(returnTarget)) {
+            val suffix = returnTargetToCall[returnTarget.symbol]?.let {
+                "@${it.symbol.owner.name}"
+            } ?: ""
+            print("return$suffix ")
         }
-        if (expression.type.isUnit() || value.type.isUnit()) {
-            if (value is IrGetObjectValue) {
-                return
-            } else {
-                value.print()
-            }
-        } else {
-            value.print()
+        if (value.type.isUnit() && value is IrGetObjectValue) {
+            return
         }
+        value.print()
     }
 
     override fun visitBlock(expression: IrBlock) {

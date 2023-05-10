@@ -455,7 +455,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                   A(%composer, 0)
                   if (condition) {
                     sourceInformationMarkerEnd(%composer)
-                    return
+                    return@M3
                   }
                   A(%composer, 0)
                   sourceInformationMarkerEnd(%composer)
@@ -504,7 +504,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                         if (isTraceInProgress()) {
                           traceEventEnd()
                         }
-                        return
+                        return@composableLambdaInstance
                       }
                       sourceInformationMarkerEnd(%composer)
                     }, %composer, 0)
@@ -575,7 +575,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                     sourceInformationMarkerStart(%composer, <>, "C:Test.kt")
                     if (condition) {
                       sourceInformationMarkerEnd(%composer)
-                      return
+                      return@M1
                     }
                     sourceInformationMarkerEnd(%composer)
                   }, %composer, 0)
@@ -636,7 +636,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                     sourceInformationMarkerStart(%composer, <>, "C:Test.kt")
                     if (condition) {
                       %composer.endToMarker(tmp0_marker)
-                      return
+                      return@M3
                     }
                     sourceInformationMarkerEnd(%composer)
                   }, %composer, 0)
@@ -773,7 +773,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                   A(%composer, 0)
                   if (condition) {
                     sourceInformationMarkerEnd(%composer)
-                    return
+                    return@M3
                   }
                   A(%composer, 0)
                   sourceInformationMarkerEnd(%composer)
@@ -783,7 +783,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                   A(%composer, 0)
                   if (condition) {
                     sourceInformationMarkerEnd(%composer)
-                    return
+                    return@M3
                   }
                   A(%composer, 0)
                   sourceInformationMarkerEnd(%composer)
@@ -908,7 +908,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 sourceInformationMarkerStart(%composer, <>, "C<A()>:Test.kt")
                 if (condition) {
                   sourceInformationMarkerEnd(%composer)
-                  return
+                  return@FakeBox
                 }
                 A(%composer, 0)
                 sourceInformationMarkerEnd(%composer)
@@ -1081,7 +1081,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                   sourceInformationMarkerStart(%composer, <>, "C<A()>:Test.kt")
                   if (condition) {
                     sourceInformationMarkerEnd(%composer)
-                    return
+                    return@IW
                   }
                   A(%composer, 0)
                   sourceInformationMarkerEnd(%composer)
@@ -1242,7 +1242,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                   Identity {
                     if (condition) {
                       sourceInformationMarkerEnd(%composer)
-                      return
+                      return@M1
                     }
                   }
                   sourceInformationMarkerEnd(%composer)
@@ -6175,7 +6175,7 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                     sourceInformationMarkerStart(%composer, <>, "C:Test.kt")
                     if (true) {
                       %composer.endToMarker(tmp0_marker)
-                      return
+                      return@Inline1
                     }
                     sourceInformationMarkerEnd(%composer)
                   }, %composer, 0)
