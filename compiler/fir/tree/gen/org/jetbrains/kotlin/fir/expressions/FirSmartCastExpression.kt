@@ -38,6 +38,8 @@ abstract class FirSmartCastExpression : FirExpression() {
 
     abstract override fun replaceTypeRef(newTypeRef: FirTypeRef)
 
+    abstract fun replaceOriginalExpression(newOriginalExpression: FirExpression)
+
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirSmartCastExpression
 
     abstract fun <D> transformOriginalExpression(transformer: FirTransformer<D>, data: D): FirSmartCastExpression

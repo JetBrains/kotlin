@@ -5,8 +5,12 @@
 
 package org.jetbrains.kotlin.fir.resolve.calls
 
+import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.fakeElement
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.builder.buildThisReceiverExpressionCopy
 import org.jetbrains.kotlin.fir.expressions.impl.FirExpressionStub
 import org.jetbrains.kotlin.fir.expressions.impl.FirNoReceiverExpression
 import org.jetbrains.kotlin.fir.resolve.inference.InferenceComponents
@@ -16,6 +20,7 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariable
+import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemOperation
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
@@ -103,16 +108,46 @@ class Candidate(
 
     var passedStages: Int = 0
 
-    // FirExpressionStub can be located here in case of callable reference resolution
-    fun dispatchReceiverExpression(): FirExpression =
-        dispatchReceiver?.takeIf { it !is FirExpressionStub } ?: FirNoReceiverExpression
+    private var sourcesWereUpdated = false
 
     // FirExpressionStub can be located here in case of callable reference resolution
-    fun chosenExtensionReceiverExpression(): FirExpression =
-        chosenExtensionReceiver?.takeIf { it !is FirExpressionStub } ?: FirNoReceiverExpression
+    fun dispatchReceiverExpression(): FirExpression {
+        return dispatchReceiver?.takeIf { it !is FirExpressionStub } ?: FirNoReceiverExpression
+    }
 
-    fun contextReceiverArguments(): List<FirExpression> =
-        contextReceiverArguments ?: emptyList()
+    // FirExpressionStub can be located here in case of callable reference resolution
+    fun chosenExtensionReceiverExpression(): FirExpression {
+        return chosenExtensionReceiver?.takeIf { it !is FirExpressionStub } ?: FirNoReceiverExpression
+    }
+
+    fun contextReceiverArguments(): List<FirExpression> {
+        return contextReceiverArguments ?: emptyList()
+    }
+
+    // In case of implicit receivers we want to update corresponding sources to generate correct offset. This method must be called only
+    // once when candidate was selected and confirmed to be correct one.
+    fun updateSourcesOfReceivers() {
+        require(!sourcesWereUpdated)
+        sourcesWereUpdated = true
+
+        dispatchReceiver = dispatchReceiver?.tryToSetSourceForImplicitReceiver()
+        chosenExtensionReceiver = chosenExtensionReceiver?.tryToSetSourceForImplicitReceiver()
+        contextReceiverArguments = contextReceiverArguments?.map { it.tryToSetSourceForImplicitReceiver() }
+    }
+
+    private fun FirExpression.tryToSetSourceForImplicitReceiver(): FirExpression {
+        return when {
+            this is FirSmartCastExpression -> {
+                this.apply { replaceOriginalExpression(this.originalExpression.tryToSetSourceForImplicitReceiver()) }
+            }
+            this is FirThisReceiverExpression && isImplicit -> {
+                buildThisReceiverExpressionCopy(this) {
+                    source = callInfo.callSite.source?.fakeElement(KtFakeSourceElementKind.ImplicitReceiver)
+                }
+            }
+            else -> this
+        }
+    }
 
     var hasVisibleBackingField = false
 

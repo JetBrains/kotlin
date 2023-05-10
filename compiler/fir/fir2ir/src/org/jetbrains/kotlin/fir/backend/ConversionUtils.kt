@@ -92,6 +92,12 @@ internal fun <T : IrElement> FirQualifiedAccessExpression.convertWithOffsets(
     return convertWithOffsets(this.calleeReference, f)
 }
 
+internal fun <T : IrElement> FirThisReceiverExpression.convertWithOffsets(
+    f: (startOffset: Int, endOffset: Int) -> T
+): T {
+    return source.convertWithOffsets(f)
+}
+
 internal fun <T : IrElement> FirStatement.convertWithOffsets(
     calleeReference: FirReference,
     f: (startOffset: Int, endOffset: Int) -> T

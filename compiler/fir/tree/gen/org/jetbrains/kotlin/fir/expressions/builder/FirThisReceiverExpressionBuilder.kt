@@ -84,3 +84,19 @@ inline fun buildThisReceiverExpression(init: FirThisReceiverExpressionBuilder.()
     }
     return FirThisReceiverExpressionBuilder().apply(init).build()
 }
+
+@OptIn(ExperimentalContracts::class)
+inline fun buildThisReceiverExpressionCopy(original: FirThisReceiverExpression, init: FirThisReceiverExpressionBuilder.() -> Unit): FirThisReceiverExpression {
+    contract {
+        callsInPlace(init, kotlin.contracts.InvocationKind.EXACTLY_ONCE)
+    }
+    val copyBuilder = FirThisReceiverExpressionBuilder()
+    copyBuilder.typeRef = original.typeRef
+    copyBuilder.annotations.addAll(original.annotations)
+    copyBuilder.contextReceiverArguments.addAll(original.contextReceiverArguments)
+    copyBuilder.typeArguments.addAll(original.typeArguments)
+    copyBuilder.source = original.source
+    copyBuilder.calleeReference = original.calleeReference
+    copyBuilder.isImplicit = original.isImplicit
+    return copyBuilder.apply(init).build()
+}

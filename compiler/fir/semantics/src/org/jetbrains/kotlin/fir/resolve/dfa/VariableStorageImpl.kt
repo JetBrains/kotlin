@@ -144,13 +144,13 @@ class VariableStorageImpl(private val session: FirSession) : VariableStorage() {
     }
 
     private fun FirBasedSymbol<*>.getStability(originalFir: FirElement): PropertyStability? {
+        if (originalFir is FirThisReceiverExpression) return PropertyStability.STABLE_VALUE
         when (this) {
             is FirAnonymousObjectSymbol -> return null
             is FirFunctionSymbol<*>,
             is FirClassSymbol<*>,
             is FirBackingFieldSymbol -> return PropertyStability.STABLE_VALUE
         }
-        if (originalFir is FirThisReceiverExpression) return PropertyStability.STABLE_VALUE
         if (this !is FirVariableSymbol<*>) return null
         if (this is FirFieldSymbol && !this.isFinal) return PropertyStability.MUTABLE_PROPERTY
 

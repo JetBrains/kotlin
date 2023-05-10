@@ -48,7 +48,6 @@ import org.jetbrains.kotlin.fir.references.*
 import org.jetbrains.kotlin.fir.resolve.calls.AbstractCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.Candidate
 import org.jetbrains.kotlin.fir.resolve.createConeDiagnosticForCandidateWithError
-import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithCandidates
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeHiddenCandidateError
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
@@ -790,9 +789,8 @@ internal class KtFirCallResolver(
     }
 
     private fun FirExpression.toKtReceiverValue(): KtReceiverValue? {
-        val psi = psi
-        return when (this) {
-            is FirSmartCastExpression -> {
+        return when {
+            this is FirSmartCastExpression -> {
                 val result = originalExpression.toKtReceiverValue()
                 if (result != null && isStable) {
                     KtSmartCastedReceiverValue(result, smartcastType.coneType.asKtType())
@@ -800,21 +798,17 @@ internal class KtFirCallResolver(
                     result
                 }
             }
-            is FirThisReceiverExpression -> {
-                if (psi == null) {
-                    val implicitPartiallyAppliedSymbol = when (val partiallyAppliedSymbol = calleeReference.boundSymbol) {
-                        is FirClassSymbol<*> -> partiallyAppliedSymbol.toKtSymbol()
-                        is FirCallableSymbol<*> -> firSymbolBuilder.callableBuilder.buildExtensionReceiverSymbol(partiallyAppliedSymbol)
-                            ?: return null
-                        else -> return null
-                    }
-                    KtImplicitReceiverValue(implicitPartiallyAppliedSymbol, typeRef.coneType.asKtType())
-                } else {
-                    if (psi !is KtExpression) return null
-                    psi.toExplicitReceiverValue(typeRef.coneType.asKtType())
+            this is FirThisReceiverExpression && this.isImplicit -> {
+                val implicitPartiallyAppliedSymbol = when (val partiallyAppliedSymbol = calleeReference.boundSymbol) {
+                    is FirClassSymbol<*> -> partiallyAppliedSymbol.toKtSymbol()
+                    is FirCallableSymbol<*> -> firSymbolBuilder.callableBuilder.buildExtensionReceiverSymbol(partiallyAppliedSymbol)
+                        ?: return null
+                    else -> return null
                 }
+                KtImplicitReceiverValue(implicitPartiallyAppliedSymbol, typeRef.coneType.asKtType())
             }
             else -> {
+                val psi = psi
                 if (psi !is KtExpression) return null
                 psi.toExplicitReceiverValue(typeRef.coneType.asKtType())
             }

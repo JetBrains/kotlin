@@ -69,4 +69,8 @@ internal class FirSmartCastExpressionImpl(
     override fun replaceTypeRef(newTypeRef: FirTypeRef) {
         typeRef = newTypeRef
     }
+
+    override fun replaceOriginalExpression(newOriginalExpression: FirExpression) {
+        originalExpression = newOriginalExpression
+    }
 }

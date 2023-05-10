@@ -99,6 +99,11 @@ class FirCallResolver(
 
         // We need desugaring
         val resultFunctionCall = if (candidate != null && candidate.callInfo != result.info) {
+            // This branch support case for the call of the type `a.invoke()`
+            // 1. Handle candidate for `a`
+            (resolvedReceiver?.calleeReference as? FirNamedReferenceWithCandidate)?.candidate?.updateSourcesOfReceivers()
+            // 2. Handle candidate for `invoke`
+            candidate.updateSourcesOfReceivers()
             functionCall.copyAsImplicitInvokeCall {
                 explicitReceiver = candidate.callInfo.explicitReceiver
                 dispatchReceiver = candidate.dispatchReceiverExpression()
@@ -107,6 +112,7 @@ class FirCallResolver(
                 contextReceiverArguments.addAll(candidate.contextReceiverArguments())
             }
         } else {
+            candidate?.updateSourcesOfReceivers()
             functionCall
         }
         val typeRef = components.typeFromCallee(resultFunctionCall)
@@ -344,6 +350,7 @@ class FirCallResolver(
         qualifiedAccess.replaceCalleeReference(nameReference)
         if (reducedCandidates.size == 1) {
             val candidate = reducedCandidates.single()
+            candidate.updateSourcesOfReceivers()
             qualifiedAccess.apply {
                 replaceDispatchReceiver(candidate.dispatchReceiverExpression())
                 replaceExtensionReceiver(candidate.chosenExtensionReceiverExpression())
@@ -419,6 +426,7 @@ class FirCallResolver(
         }
 
         val chosenCandidate = reducedCandidates.single()
+        chosenCandidate.updateSourcesOfReceivers()
 
         constraintSystemBuilder.runTransaction {
             chosenCandidate.outerConstraintBuilderEffect!!(this)
@@ -596,6 +604,7 @@ class FirCallResolver(
         return call.apply {
             call.replaceCalleeReference(nameReference)
             val singleCandidate = reducedCandidates.singleOrNull()
+            singleCandidate?.updateSourcesOfReceivers()
             if (singleCandidate != null) {
                 val symbol = singleCandidate.symbol
                 if (symbol is FirConstructorSymbol && symbol.fir.isInner) {

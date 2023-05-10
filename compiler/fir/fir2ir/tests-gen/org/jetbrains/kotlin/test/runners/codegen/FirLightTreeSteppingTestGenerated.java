@@ -248,6 +248,18 @@ public class FirLightTreeSteppingTestGenerated extends AbstractFirLightTreeStepp
     }
 
     @Test
+    @TestMetadata("implicitThis.kt")
+    public void testImplicitThis() throws Exception {
+        runTest("compiler/testData/debug/stepping/implicitThis.kt");
+    }
+
+    @Test
+    @TestMetadata("implicitThisOnInvoke.kt")
+    public void testImplicitThisOnInvoke() throws Exception {
+        runTest("compiler/testData/debug/stepping/implicitThisOnInvoke.kt");
+    }
+
+    @Test
     @TestMetadata("inTheEndOfLambdaArgumentOfInlineCall.kt")
     public void testInTheEndOfLambdaArgumentOfInlineCall() throws Exception {
         runTest("compiler/testData/debug/stepping/inTheEndOfLambdaArgumentOfInlineCall.kt");

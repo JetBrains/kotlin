@@ -257,6 +257,7 @@ object BuilderConfigurator : AbstractBuilderConfigurator<FirTreeBuilder>(FirTree
         builder(thisReceiverExpression) {
             parents += qualifiedAccessExpressionBuilder
             default("isImplicit", "false")
+            withCopy()
         }
 
         builder(thisReference, "FirExplicitThisReference") {

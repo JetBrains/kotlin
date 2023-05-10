@@ -20,5 +20,3 @@ suspend fun SequenceScope<Int>.awaitSeq(): Int = 42
 // JVM_TEMPLATES
 // 1 LINENUMBER 9 L18
 // 1 LOCALVARIABLE a I L[0-9]+ L18
-
-// IGNORE_BACKEND_K2: JVM_IR
