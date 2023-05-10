@@ -84,7 +84,7 @@ class ExternalKotlinCompilationDescriptorBuilder<T : DecoratedExternalKotlinComp
     var compilationFactory: CompilationFactory<T> by Delegates.notNull()
     var friendArtifactResolver: FriendArtifactResolver<T>? = null
     var compilationAssociator: CompilationAssociator<T>? = null
-    var configure: ((T) -> Unit)? = null
+    internal var configure: ((T) -> Unit)? = null
 
     fun configure(action: (T) -> Unit) = apply {
         val configure = this.configure
