@@ -9501,6 +9501,12 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
             }
 
             @Test
+            @TestMetadata("deprecatedConstructorProperty.kt")
+            public void testDeprecatedConstructorProperty() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedConstructorProperty.kt");
+            }
+
+            @Test
             @TestMetadata("deprecatedEnumEntry.kt")
             public void testDeprecatedEnumEntry() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedEnumEntry.kt");

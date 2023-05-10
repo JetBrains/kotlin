@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -67,17 +67,9 @@ abstract class FirCallableSymbol<D : FirCallableDeclaration> : FirBasedSymbol<D>
         get() = callableId.callableName
 
     fun getDeprecation(apiVersion: ApiVersion): DeprecationsPerUseSite? {
-        if (!canBeDeprecated()) return null
-
-        lazyResolveToPhase(FirResolvePhase.TYPES)
+        lazyResolveToPhase(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS)
         return fir.deprecationsProvider.getDeprecationsInfo(apiVersion)
     }
-
-    /**
-     * Checks if symbol can be deprecated by syntax
-     * @return `true` if symbol might have some deprecation status, or `false` if it's definitely not deprecated
-     */
-    internal open fun canBeDeprecated(): Boolean = true
 
     private fun ensureType(typeRef: FirTypeRef?) {
         when (typeRef) {

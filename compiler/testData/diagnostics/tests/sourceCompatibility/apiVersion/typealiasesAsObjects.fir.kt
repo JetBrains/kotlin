@@ -5,7 +5,7 @@ object Since_1_1 {
     val x = 42
 }
 
-typealias Since_1_1_Alias = Since_1_1
+typealias Since_1_1_Alias = <!API_NOT_AVAILABLE!>Since_1_1<!>
 
 val test1 = Since_1_1_Alias
 val test2 = Since_1_1_Alias.x

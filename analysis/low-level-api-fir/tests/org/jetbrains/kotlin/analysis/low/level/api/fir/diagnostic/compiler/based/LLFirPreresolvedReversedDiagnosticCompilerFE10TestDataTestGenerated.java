@@ -9501,6 +9501,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
             }
 
             @Test
+            @TestMetadata("deprecatedConstructorProperty.kt")
+            public void testDeprecatedConstructorProperty() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedConstructorProperty.kt");
+            }
+
+            @Test
             @TestMetadata("deprecatedEnumEntry.kt")
             public void testDeprecatedEnumEntry() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/deprecated/deprecatedEnumEntry.kt");

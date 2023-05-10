@@ -32,7 +32,10 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractImportingScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.types.*
-import org.jetbrains.kotlin.fir.types.builder.*
+import org.jetbrains.kotlin.fir.types.builder.buildPlaceholderProjection
+import org.jetbrains.kotlin.fir.types.builder.buildStarProjection
+import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
+import org.jetbrains.kotlin.fir.types.builder.buildUserTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitUnitTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirQualifierPartImpl
@@ -41,12 +44,13 @@ import org.jetbrains.kotlin.fir.visitors.FirDefaultTransformer
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.Deprecated
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.DeprecatedSinceKotlin
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations.Java
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.JvmRecord
-import org.jetbrains.kotlin.name.StandardClassIds.Annotations.WasExperimental
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations.SinceKotlin
 import org.jetbrains.kotlin.name.StandardClassIds.Annotations.Target
+import org.jetbrains.kotlin.name.StandardClassIds.Annotations.WasExperimental
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 /**
@@ -56,11 +60,13 @@ object CompilerRequiredAnnotationsHelper {
     internal val REQUIRED_ANNOTATIONS_WITH_ARGUMENTS: Set<ClassId> = setOf(
         Deprecated,
         Target,
-        StandardClassIds.Annotations.Java.Target,
+        Java.Target,
     )
 
     val REQUIRED_ANNOTATIONS: Set<ClassId> = REQUIRED_ANNOTATIONS_WITH_ARGUMENTS + setOf(
+        Java.Deprecated,
         DeprecatedSinceKotlin,
+        SinceKotlin,
         WasExperimental,
         JvmRecord,
     )
@@ -361,10 +367,25 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
 
     fun calculateDeprecations(classLikeDeclaration: FirClassLikeDeclaration) {
         if (classLikeDeclaration.deprecationsProvider == UnresolvedDeprecationProvider) {
-            classLikeDeclaration.replaceDeprecationsProvider(
-                classLikeDeclaration.getDeprecationsProvider(session)
-            )
+            classLikeDeclaration.replaceDeprecationsProvider(classLikeDeclaration.getDeprecationsProvider(session))
         }
+    }
+
+    private fun calculateDeprecations(callableDeclaration: FirCallableDeclaration) {
+        if (callableDeclaration.deprecationsProvider == UnresolvedDeprecationProvider) {
+            callableDeclaration.replaceDeprecationsProvider(callableDeclaration.getDeprecationsProvider(session))
+        }
+    }
+
+    private fun <T> transformCallableDeclarationForDeprecations(
+        callableDeclaration: T,
+        data: Nothing?,
+    ): FirStatement where T : FirCallableDeclaration, T : FirStatement {
+        if (!shouldTransformDeclaration(callableDeclaration)) return callableDeclaration
+        computationSession.recordThatAnnotationsAreResolved(callableDeclaration)
+        return transformDeclaration(callableDeclaration, data).also {
+            calculateDeprecations(callableDeclaration)
+        } as FirStatement
     }
 
     lateinit var scopes: List<FirScope>
@@ -376,10 +397,43 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
 
     abstract fun shouldTransformDeclaration(declaration: FirDeclaration): Boolean
 
-    override fun transformProperty(property: FirProperty, data: Nothing?): FirProperty {
+    override fun transformBackingField(backingField: FirBackingField, data: Nothing?): FirStatement {
+        return transformCallableDeclarationForDeprecations(backingField, data)
+    }
+
+    override fun transformPropertyAccessor(propertyAccessor: FirPropertyAccessor, data: Nothing?): FirStatement {
+        return transformCallableDeclarationForDeprecations(propertyAccessor, data)
+    }
+
+    override fun transformProperty(property: FirProperty, data: Nothing?): FirStatement {
         if (!shouldTransformDeclaration(property)) return property
         computationSession.recordThatAnnotationsAreResolved(property)
-        return transformDeclaration(property, data) as FirProperty
+        return transformDeclaration(property, data).also {
+            property.moveJavaDeprecatedAnnotationToBackingField()
+
+            transformChildren(property) {
+                property.transformSetter(this, data)
+                property.transformGetter(this, data)
+                property.transformBackingField(this, data)
+            }
+
+            calculateDeprecations(property)
+        } as FirStatement
+    }
+
+    private fun FirProperty.moveJavaDeprecatedAnnotationToBackingField() {
+        val annotations = this.annotations
+        val backingField = this.backingField
+        if (annotations.isNotEmpty() && backingField != null) {
+            val (backingFieldAnnotations, propertyAnnotations) = annotations.partition {
+                it.toAnnotationClassIdSafe(session) == Java.Deprecated
+            }
+
+            if (backingFieldAnnotations.isNotEmpty()) {
+                this.replaceAnnotations(propertyAnnotations)
+                backingField.replaceAnnotations(backingField.annotations + backingFieldAnnotations)
+            }
+        }
     }
 
     override fun transformSimpleFunction(
@@ -392,6 +446,8 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
             transformChildren(simpleFunction) {
                 simpleFunction.transformValueParameters(this, data)
             }
+
+            calculateDeprecations(simpleFunction)
         } as FirSimpleFunction
     }
 
@@ -405,16 +461,21 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
             transformChildren(constructor) {
                 constructor.transformValueParameters(this, data)
             }
+
+            calculateDeprecations(constructor)
         } as FirConstructor
     }
 
-    override fun transformValueParameter(
-        valueParameter: FirValueParameter,
-        data: Nothing?
-    ): FirStatement {
-        if (!shouldTransformDeclaration(valueParameter)) return valueParameter
-        computationSession.recordThatAnnotationsAreResolved(valueParameter)
-        return transformDeclaration(valueParameter, data) as FirStatement
+    override fun transformEnumEntry(enumEntry: FirEnumEntry, data: Nothing?): FirStatement {
+        return transformCallableDeclarationForDeprecations(enumEntry, data)
+    }
+
+    override fun transformField(field: FirField, data: Nothing?): FirStatement {
+        return transformCallableDeclarationForDeprecations(field, data)
+    }
+
+    override fun transformValueParameter(valueParameter: FirValueParameter, data: Nothing?): FirStatement {
+        return transformCallableDeclarationForDeprecations(valueParameter, data)
     }
 
     override fun transformTypeRef(typeRef: FirTypeRef, data: Nothing?): FirTypeRef {

@@ -45,7 +45,6 @@ internal class KtFirSymbolInfoProvider(
         return when (val firSymbol = symbol.firSymbol) {
             is FirPropertySymbol -> {
                 firSymbol.getDeprecationForCallSite(apiVersion, AnnotationUseSiteTarget.PROPERTY)
-                    ?: firSymbol.backingFieldSymbol?.getDeprecationForCallSite(apiVersion, AnnotationUseSiteTarget.FIELD)
             }
             is FirBackingFieldSymbol -> {
                 firSymbol.getDeprecationForCallSite(apiVersion, AnnotationUseSiteTarget.FIELD)
@@ -77,13 +76,21 @@ internal class KtFirSymbolInfoProvider(
 
     override fun getGetterDeprecation(symbol: KtPropertySymbol): DeprecationInfo? {
         require(symbol is KtFirSymbol<*>)
-        return symbol.firSymbol.getDeprecationForCallSite(apiVersion, AnnotationUseSiteTarget.PROPERTY_GETTER, AnnotationUseSiteTarget.PROPERTY)
+        return symbol.firSymbol.getDeprecationForCallSite(
+            apiVersion,
+            AnnotationUseSiteTarget.PROPERTY_GETTER,
+            AnnotationUseSiteTarget.PROPERTY,
+        )
 
     }
 
     override fun getSetterDeprecation(symbol: KtPropertySymbol): DeprecationInfo? {
         require(symbol is KtFirSymbol<*>)
-        return symbol.firSymbol.getDeprecationForCallSite(apiVersion, AnnotationUseSiteTarget.PROPERTY_SETTER, AnnotationUseSiteTarget.PROPERTY)
+        return symbol.firSymbol.getDeprecationForCallSite(
+            apiVersion,
+            AnnotationUseSiteTarget.PROPERTY_SETTER,
+            AnnotationUseSiteTarget.PROPERTY,
+        )
     }
 
     override fun getJavaGetterName(symbol: KtPropertySymbol): Name {

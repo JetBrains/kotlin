@@ -262,7 +262,6 @@ private abstract class FirLazyAnnotationTransformer : FirTransformer<FirLazyAnno
     }
 
     private val COMPILER_ANNOTATION_NAMES: Set<Name> = CompilerRequiredAnnotationsHelper.REQUIRED_ANNOTATIONS
-        .plus(SinceKotlin)
         .mapTo(mutableSetOf()) { it.shortClassName }
 
     private fun canBeCompilerAnnotation(annotationCall: FirAnnotationCall, session: FirSession): Boolean {

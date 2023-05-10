@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
-import kotlinx.collections.immutable.*
+import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.PrivateForInline
-import org.jetbrains.kotlin.fir.correspondingProperty
-import org.jetbrains.kotlin.fir.copyWithNewSourceKind
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isFromVararg
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
@@ -31,7 +29,6 @@ import org.jetbrains.kotlin.fir.scopes.impl.wrapNestedClassifierScopeWithSubstit
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.visitors.transformSingle
-import org.jetbrains.kotlin.fir.whileAnalysing
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class FirTypeResolveProcessor(
@@ -153,7 +150,6 @@ open class FirTypeResolveTransformer(
                 }
             }
 
-            calculateDeprecations(result)
             result
         }
     }
@@ -169,7 +165,6 @@ open class FirTypeResolveTransformer(
         enumEntry.transformReturnTypeRef(this, data)
         enumEntry.transformTypeParameters(this, data)
         enumEntry.transformAnnotations(this, data)
-        calculateDeprecations(enumEntry)
         enumEntry
     }
 
@@ -220,7 +215,6 @@ open class FirTypeResolveTransformer(
                 unboundCyclesInTypeParametersSupertypes(property)
 
                 property.moveOrDeleteIrrelevantAnnotations()
-                calculateDeprecations(property)
                 property
             }
         }
@@ -234,14 +228,12 @@ open class FirTypeResolveTransformer(
     override fun transformField(field: FirField, data: Any?): FirField = whileAnalysing(session, field) {
         withScopeCleanup {
             field.transformReturnTypeRef(this, data).transformAnnotations(this, data)
-            calculateDeprecations(field)
             field
         }
     }
 
     override fun transformBackingField(backingField: FirBackingField, data: Any?): FirStatement = whileAnalysing(session, backingField) {
         backingField.transformAnnotations(this, data)
-        calculateDeprecations(backingField)
         super.transformBackingField(backingField, data)
     }
 
@@ -254,7 +246,6 @@ open class FirTypeResolveTransformer(
                 addTypeParametersScope(simpleFunction)
                 transformDeclaration(simpleFunction, data).also {
                     unboundCyclesInTypeParametersSupertypes(it as FirTypeParametersOwner)
-                    calculateDeprecations(simpleFunction)
                 }
             }
         } as FirSimpleFunction
@@ -319,7 +310,6 @@ open class FirTypeResolveTransformer(
             valueParameter.transformReturnTypeRef(this, data)
             valueParameter.transformAnnotations(this, data)
             valueParameter.transformVarargTypeToArrayType()
-            calculateDeprecations(valueParameter)
             valueParameter
         }
     }
@@ -522,11 +512,4 @@ open class FirTypeResolveTransformer(
 
     private fun annotationShouldBeMovedToField(allowedTargets: Set<AnnotationUseSiteTarget>): Boolean =
         (FIELD in allowedTargets || PROPERTY_DELEGATE_FIELD in allowedTargets) && PROPERTY !in allowedTargets
-
-    private fun calculateDeprecations(callableDeclaration: FirCallableDeclaration) {
-        if (callableDeclaration.deprecationsProvider is UnresolvedDeprecationProvider) {
-            callableDeclaration.replaceDeprecationsProvider(callableDeclaration.getDeprecationsProvider(session))
-        }
-    }
-
 }
