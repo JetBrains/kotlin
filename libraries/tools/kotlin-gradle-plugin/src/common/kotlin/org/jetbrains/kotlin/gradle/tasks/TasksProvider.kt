@@ -65,12 +65,7 @@ internal inline fun <reified S : Task> TaskCollection<in S>.withType(): TaskColl
 /**
  * Locates a task by [name] and [type], without triggering its creation or configuration.
  */
-internal inline fun <reified T : Task> Project.locateTask(name: String): TaskProvider<T>? =
-    try {
-        tasks.withType(T::class.java).named(name)
-    } catch (e: UnknownTaskException) {
-        null
-    }
+internal inline fun <reified T : Task> Project.locateTask(name: String): TaskProvider<T>? = tasks.locateTask(name)
 
 /**
  * Locates a task by [name] and [type], without triggering its creation or configuration.
