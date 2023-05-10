@@ -46,6 +46,9 @@ fun box() = abiTest {
     success("ContainerImpl.newInternalPAFunction") { ci.newInternalPAFunctionAccess() }
     success("ContainerImpl.newOpenInternalPAFunction") { ci.newOpenInternalPAFunctionAccess() }
     success("ContainerImpl.newPrivateFunction") { ci.newPrivateFunctionAccess() }
+
+    success("publicTopLevelFunWithPrivateDefaultArgument.v2(privateTopLevelFun.v2)") { publicTopLevelFunWithPrivateDefaultArgument() }
+    success("publicNestedFunWithPrivateDefaultArgument.v2(privateNestedFun.v2)") { TopLevel.publicNestedFunWithPrivateDefaultArgument() }
 }
 
 // Shortcuts:

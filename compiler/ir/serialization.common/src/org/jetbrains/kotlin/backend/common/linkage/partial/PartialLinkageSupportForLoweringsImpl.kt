@@ -34,6 +34,13 @@ internal class PartialLinkageSupportForLoweringsImpl(
 ) : PartialLinkageSupportForLowerings {
     override val isEnabled get() = true
 
+    // N.B. errorMessagesRendered is always >= than throwExpressionsGenerated.
+    var throwExpressionsGenerated = 0 // Track each generate `throw` expression.
+        private set
+
+    var errorMessagesRendered = 0 // Track each rendered error message.
+        private set
+
     private val irLoggerSeverity = when (logLevel) {
         PartialLinkageLogLevel.INFO -> IrMessageLogger.Severity.INFO
         PartialLinkageLogLevel.WARNING -> IrMessageLogger.Severity.WARNING
@@ -47,9 +54,11 @@ internal class PartialLinkageSupportForLoweringsImpl(
         doNotLog: Boolean
     ): IrCall {
         val errorMessage = if (doNotLog)
-            partialLinkageCase.renderLinkageError() // Just render a message.
+            renderLinkageError(partialLinkageCase) // Just render a message.
         else
             renderAndLogLinkageError(partialLinkageCase, element, file) // Render + log with the appropriate severity.
+
+        throwExpressionsGenerated++ // Track each generate `throw` expression.
 
         return IrCallImpl(
             startOffset = element.startOffset,
@@ -65,12 +74,17 @@ internal class PartialLinkageSupportForLoweringsImpl(
     }
 
     fun renderAndLogLinkageError(partialLinkageCase: PartialLinkageCase, element: IrElement, file: PLFile): String {
-        val errorMessage = partialLinkageCase.renderLinkageError()
+        val errorMessage = renderLinkageError(partialLinkageCase)
         val locationInSourceCode = file.computeLocationForOffset(element.startOffsetOfFirstDenotableIrElement())
 
         messageLogger.report(irLoggerSeverity, errorMessage, locationInSourceCode) // It's OK. We log it as a warning.
 
         return errorMessage
+    }
+
+    private fun renderLinkageError(partialLinkageCase: PartialLinkageCase): String {
+        errorMessagesRendered++ // Track each rendered error message.
+        return partialLinkageCase.renderLinkageError()
     }
 
     companion object {

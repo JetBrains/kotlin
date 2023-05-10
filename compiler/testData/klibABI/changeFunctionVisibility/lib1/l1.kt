@@ -33,3 +33,11 @@ open class Container {
 //    @PublishedApi internal open fun newOpenInternalPAFunction() = "Container.newOpenInternalPAFunction.v1"
 //    private fun newPrivateFunction() = "Container.newPrivateFunction.v1"
 }
+
+private fun privateTopLevelFun() = "privateTopLevelFun.v1"
+fun publicTopLevelFunWithPrivateDefaultArgument(value: String = privateTopLevelFun()) = "publicTopLevelFunWithPrivateDefaultArgument.v1($value)"
+
+object TopLevel {
+    private fun privateNestedFun() = "privateNestedFun.v1"
+    fun publicNestedFunWithPrivateDefaultArgument(value: String = privateNestedFun()) = "publicNestedFunWithPrivateDefaultArgument.v1($value)"
+}
