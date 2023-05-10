@@ -53,8 +53,8 @@ touchFunction(FreezeSubgraph)
 touchFunction(CheckGlobalsAccessible)
 
 touchFunction(LookupInterfaceTableRecord)
-touchFunction(IsInstance)
-touchFunction(IsInstanceOfClassFast)
+touchFunction(IsSubtype)
+touchFunction(IsSubclassFast)
 
 touchFunction(ThrowException)
 touchFunction(Kotlin_getExceptionObject)

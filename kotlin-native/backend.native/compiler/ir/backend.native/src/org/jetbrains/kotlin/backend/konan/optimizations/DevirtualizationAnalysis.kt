@@ -1361,8 +1361,8 @@ internal object DevirtualizationAnalysis {
     fun devirtualize(irModule: IrModuleFragment, context: Context, externalModulesDFG: ExternalModulesDFG,
                      devirtualizedCallSites: Map<IrCall, DevirtualizedCallSite>) {
         val symbols = context.ir.symbols
-        val irBuiltIns = context.irBuiltIns
         val nativePtrEqualityOperatorSymbol = symbols.areEqualByValue[PrimitiveBinaryType.POINTER]!!
+        val isSubtype = symbols.isSubtype
         val optimize = context.shouldOptimize()
 
         fun DataFlowIR.Type.resolved(): DataFlowIR.Type.Declared {
@@ -1582,14 +1582,9 @@ internal object DevirtualizationAnalysis {
                                                         }
                                                     } else {
                                                         val receiverType = actualCallee.irFunction!!.parentAsClass
-                                                        IrTypeOperatorCallImpl(
-                                                                startOffset = startOffset,
-                                                                endOffset = endOffset,
-                                                                type = irBuiltIns.booleanType,
-                                                                operator = IrTypeOperator.INSTANCEOF,
-                                                                typeOperand = receiverType.defaultType,
-                                                                argument = irGet(receiver)
-                                                        )
+                                                        irCall(isSubtype, listOf(receiverType.defaultType)).apply {
+                                                            putValueArgument(0, irGet(typeInfo))
+                                                        }
                                                     }
                                                 }
                                         IrBranchImpl(

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.findAnnotation
 
@@ -65,6 +66,7 @@ internal enum class IntrinsicType {
     IDENTITY,
     IMMUTABLE_BLOB,
     INIT_INSTANCE,
+    IS_SUBTYPE,
     IS_EXPERIMENTAL_MM,
     THE_UNIT_INSTANCE,
     // Enums
@@ -247,6 +249,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
                 IntrinsicType.INTEROP_WRITE_PRIMITIVE -> emitWritePrimitive(callSite, args)
                 IntrinsicType.INTEROP_GET_POINTER_SIZE -> emitGetPointerSize()
                 IntrinsicType.CREATE_UNINITIALIZED_INSTANCE -> emitCreateUninitializedInstance(callSite, resultSlot)
+                IntrinsicType.IS_SUBTYPE -> emitIsSubtype(callSite, args)
                 IntrinsicType.INTEROP_NATIVE_PTR_TO_LONG -> emitNativePtrToLong(callSite, args)
                 IntrinsicType.INTEROP_NATIVE_PTR_PLUS_LONG -> emitNativePtrPlusLong(args)
                 IntrinsicType.INTEROP_GET_NATIVE_NULL_PTR -> emitGetNativeNullPtr()
@@ -418,6 +421,14 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
         val enumIrClass = enumClass.getClass()!!
         return allocInstance(enumIrClass, environment.calculateLifetime(callSite), resultSlot)
     }
+
+    private fun FunctionGenerationContext.emitIsSubtype(callSite: IrCall, args: List<LLVMValueRef>) =
+            with(VirtualTablesLookup) {
+                checkIsSubtype(
+                        objTypeInfo = bitcast(pointerType(llvm.kTypeInfo), args.single()),
+                        dstClass = callSite.getTypeArgument(0)!!.classOrNull!!.owner
+                )
+            }
 
     private fun FunctionGenerationContext.emitGetPointerSize(): LLVMValueRef =
             llvm.int32(LLVMPointerSize(codegen.llvmTargetData))

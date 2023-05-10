@@ -1585,30 +1585,14 @@ internal class CodeGeneratorVisitor(
 
     //-------------------------------------------------------------------------//
 
-    private fun genInstanceOf(obj: LLVMValueRef, dstClass: IrClass): LLVMValueRef {
+    private fun genInstanceOf(obj: LLVMValueRef, dstClass: IrClass) = with(functionGenerationContext) {
         if (dstClass.defaultType.isObjCObjectType()) {
-            return genInstanceOfObjC(obj, dstClass)
-        }
-
-        val srcObjInfoPtr = functionGenerationContext.bitcast(codegen.kObjHeaderPtr, obj)
-
-        return if (!context.ghaEnabled()) {
-            call(llvm.isInstanceFunction, listOf(srcObjInfoPtr, codegen.typeInfoValue(dstClass)))
-        } else {
-            val dstHierarchyInfo = context.getLayoutBuilder(dstClass).hierarchyInfo
-            if (!dstClass.isInterface) {
-                call(llvm.isInstanceOfClassFastFunction,
-                        listOf(srcObjInfoPtr, llvm.int32(dstHierarchyInfo.classIdLo), llvm.int32(dstHierarchyInfo.classIdHi)))
-            } else {
-                // Essentially: typeInfo.itable[place(interfaceId)].id == interfaceId
-                val interfaceId = dstHierarchyInfo.interfaceId
-                val typeInfo = functionGenerationContext.loadTypeInfo(srcObjInfoPtr)
-                with(functionGenerationContext) {
-
-                    val interfaceTableRecord = with(VirtualTablesLookup) { getInterfaceTableRecord(typeInfo, interfaceId) }
-                    icmpEq(load(structGep(interfaceTableRecord, 0 /* id */)), llvm.int32(interfaceId))
-                }
-            }
+            genInstanceOfObjC(obj, dstClass)
+        } else with(VirtualTablesLookup) {
+            checkIsSubtype(
+                    objTypeInfo = loadTypeInfo(bitcast(codegen.kObjHeaderPtr, obj)),
+                    dstClass
+            )
         }
     }
 

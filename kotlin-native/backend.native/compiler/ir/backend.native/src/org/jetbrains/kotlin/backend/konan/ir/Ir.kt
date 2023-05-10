@@ -354,6 +354,8 @@ internal class KonanSymbols(
 
     val initInstance = internalFunction("initInstance")
 
+    val isSubtype = internalFunction("isSubtype")
+
     val println = irBuiltIns.findFunctions(Name.identifier("println"), "kotlin", "io")
             .single { lookup.getValueParametersCount(it) == 1 && lookup.isValueParameterClass(it, 0, string) }
 

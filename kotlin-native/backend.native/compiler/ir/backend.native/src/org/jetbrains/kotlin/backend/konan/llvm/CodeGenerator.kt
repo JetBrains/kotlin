@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.backend.konan.llvm.ThreadState.Runnable
 import org.jetbrains.kotlin.backend.konan.llvm.objc.*
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.konan.ForeignExceptionMode
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -213,7 +212,7 @@ private fun IrSimpleFunction.findOverriddenMethodOfAny(): IrSimpleFunction? {
 }
 
 internal object VirtualTablesLookup {
-    fun FunctionGenerationContext.getInterfaceTableRecord(typeInfo: LLVMValueRef, interfaceId: Int): LLVMValueRef {
+    private fun FunctionGenerationContext.getInterfaceTableRecord(typeInfo: LLVMValueRef, interfaceId: Int): LLVMValueRef {
         val interfaceTableSize = load(structGep(typeInfo, 9 /* interfaceTableSize_ */))
         val interfaceTable = load(structGep(typeInfo, 10 /* interfaceTable_ */))
 
@@ -251,6 +250,21 @@ internal object VirtualTablesLookup {
                 addPhiIncoming(resultPhi, currentBlock to slowValue)
             }
             resultPhi
+        }
+    }
+
+    fun FunctionGenerationContext.checkIsSubtype(objTypeInfo: LLVMValueRef, dstClass: IrClass) = if (!context.ghaEnabled()) {
+        call(llvm.isSubtypeFunction, listOf(objTypeInfo, codegen.typeInfoValue(dstClass)))
+    } else {
+        val dstHierarchyInfo = context.getLayoutBuilder(dstClass).hierarchyInfo
+        if (!dstClass.isInterface) {
+            call(llvm.isSubclassFastFunction,
+                    listOf(objTypeInfo, llvm.int32(dstHierarchyInfo.classIdLo), llvm.int32(dstHierarchyInfo.classIdHi)))
+        } else {
+            // Essentially: typeInfo.itable[place(interfaceId)].id == interfaceId
+            val interfaceId = dstHierarchyInfo.interfaceId
+            val interfaceTableRecord = getInterfaceTableRecord(objTypeInfo, interfaceId)
+            icmpEq(load(structGep(interfaceTableRecord, 0 /* id */)), llvm.int32(interfaceId))
         }
     }
 

@@ -227,6 +227,10 @@ internal external fun <T> createUninitializedInstance(): T
 internal external fun initInstance(thiz: Any, constructorCall: Any): Unit
 
 @PublishedApi
+@TypedIntrinsic(IntrinsicType.IS_SUBTYPE)
+internal external fun <T> isSubtype(objTypeInfo: NativePtr): Boolean
+
+@PublishedApi
 internal fun checkProgressionStep(step: Int)  =
         if (step > 0) step else throw IllegalArgumentException("Step must be positive, was: $step.")
 @PublishedApi
