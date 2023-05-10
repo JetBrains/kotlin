@@ -105,9 +105,17 @@ public class PropertyBuildingContext(
             } else {
                 require(setterVisibility == null) { "isVar = false but setterVisibility is specified. Did you forget to set isVar = true?" }
             }
+
             if (hasBackingField) {
                 backingField = FirDefaultPropertyBackingField(
-                    session.moduleData, mutableListOf(), returnTypeRef, isVar, symbol, status,
+                    session.moduleData,
+                    key.origin,
+                    source = null,
+                    mutableListOf(),
+                    returnTypeRef,
+                    isVar,
+                    symbol,
+                    status,
                     resolvePhase = FirResolvePhase.BODY_RESOLVE,
                 )
             }

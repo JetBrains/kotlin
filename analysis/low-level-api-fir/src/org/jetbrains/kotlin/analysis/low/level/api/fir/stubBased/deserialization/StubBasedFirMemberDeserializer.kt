@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
+import org.jetbrains.kotlin.toKtPsiSourceElement
 
 internal class StubBasedFirDeserializationContext(
     val moduleData: FirModuleData,
@@ -313,12 +314,15 @@ internal class StubBasedFirMemberDeserializer(
                 allAnnotations.filter { it.useSiteTarget == AnnotationUseSiteTarget.FIELD || it.useSiteTarget == AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD }
             backingField = FirDefaultPropertyBackingField(
                 c.moduleData,
+                initialOrigin,
+                source = property.toKtPsiSourceElement(KtFakeSourceElementKind.DefaultAccessor),
                 backingFieldAnnotations.toMutableList(),
                 returnTypeRef,
                 isVar,
                 symbol,
-                status
+                status,
             )
+
             if (getter != null) {
                 this.getter = loadPropertyGetter(
                     getter,

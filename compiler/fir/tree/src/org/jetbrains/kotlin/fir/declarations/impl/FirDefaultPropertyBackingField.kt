@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.declarations.impl
 
+import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.StandardNames.BACKING_FIELD
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
@@ -20,6 +21,8 @@ import org.jetbrains.kotlin.name.CallableId
 @OptIn(FirImplementationDetail::class)
 class FirDefaultPropertyBackingField(
     moduleData: FirModuleData,
+    origin: FirDeclarationOrigin,
+    source: KtSourceElement?,
     annotations: MutableList<FirAnnotation>,
     returnTypeRef: FirTypeRef,
     isVar: Boolean,
@@ -27,10 +30,10 @@ class FirDefaultPropertyBackingField(
     status: FirDeclarationStatus,
     resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,
 ) : FirBackingFieldImpl(
-    source = null,
+    source = source,
     moduleData = moduleData,
     resolvePhase = resolvePhase,
-    origin = FirDeclarationOrigin.Synthetic,
+    origin = origin,
     attributes = FirDeclarationAttributes(),
     returnTypeRef = returnTypeRef,
     receiverParameter = null,

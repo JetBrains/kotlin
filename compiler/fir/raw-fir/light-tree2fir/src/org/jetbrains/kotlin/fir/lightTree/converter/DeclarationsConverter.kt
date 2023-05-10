@@ -1196,7 +1196,8 @@ class DeclarationsConverter(
                 symbol, modifiers, returnType, isVar,
                 if (isLocal) emptyList() else modifiers.annotations.filter {
                     it.useSiteTarget == FIELD || it.useSiteTarget == PROPERTY_DELEGATE_FIELD
-                }
+                },
+                property,
             )
 
             if (isLocal) {
@@ -1481,6 +1482,7 @@ class DeclarationsConverter(
         propertyReturnType: FirTypeRef,
         isVar: Boolean,
         annotationsFromProperty: List<FirAnnotationCall>,
+        property: LighterASTNode,
     ): FirBackingField {
         var modifiers = Modifier()
         var returnType: FirTypeRef = implicitType
@@ -1519,6 +1521,8 @@ class DeclarationsConverter(
         } else {
             FirDefaultPropertyBackingField(
                 moduleData = baseModuleData,
+                origin = FirDeclarationOrigin.Source,
+                source = property.toFirSourceElement(KtFakeSourceElementKind.DefaultAccessor),
                 annotations = annotationsFromProperty.toMutableList(),
                 returnTypeRef = propertyReturnType.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
                 isVar = isVar,

@@ -134,8 +134,12 @@ class ValueParameter(
                 isOverride = modifiers.hasOverride()
                 isConst = modifiers.hasConst()
             }
+
+            val defaultAccessorSource = propertySource?.fakeElement(KtFakeSourceElementKind.DefaultAccessor)
             backingField = FirDefaultPropertyBackingField(
                 moduleData = moduleData,
+                origin = FirDeclarationOrigin.Source,
+                source = defaultAccessorSource,
                 annotations = modifiers.annotations.filter {
                     it.useSiteTarget == FIELD || it.useSiteTarget == PROPERTY_DELEGATE_FIELD
                 }.toMutableList(),
@@ -144,10 +148,11 @@ class ValueParameter(
                 propertySymbol = symbol,
                 status = status.copy(),
             )
+
             annotations += modifiers.annotations.filter {
                 it.useSiteTarget == null || it.useSiteTarget == PROPERTY
             }
-            val defaultAccessorSource = propertySource?.fakeElement(KtFakeSourceElementKind.DefaultAccessor)
+
             getter = FirDefaultPropertyGetter(
                 defaultAccessorSource,
                 moduleData,

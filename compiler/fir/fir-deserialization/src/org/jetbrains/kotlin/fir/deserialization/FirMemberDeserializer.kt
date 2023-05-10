@@ -415,12 +415,15 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 )
             backingField = FirDefaultPropertyBackingField(
                 c.moduleData,
+                FirDeclarationOrigin.Library,
+                source = null,
                 backingFieldAnnotations,
                 returnTypeRef,
                 isVar,
                 symbol,
-                status
+                status,
             )
+
             if (hasGetter) {
                 this.getter = loadPropertyGetter(
                     proto,
