@@ -50,6 +50,12 @@ interface IdeMultiplatformImport {
 
     fun serialize(dependencies: Iterable<IdeaKotlinDependency>): List<ByteArray>
 
+    /**
+     * Will try to serialise the [value] for IDE import.
+     * Returns `null` if there is no [IdeaKotlinExtrasSerializationExtension] provided that can handle the particular [key],
+     * or if the registered serializer fails with an exception.
+     * See [registerExtrasSerializationExtension] for 'how to register a serializer for extra values'
+     */
     fun <T : Any> serialize(key: Extras.Key<T>, value: T): ByteArray?
 
     /**
@@ -75,7 +81,7 @@ interface IdeMultiplatformImport {
         resolver: IdeAdditionalArtifactResolver,
         constraint: SourceSetConstraint,
         phase: AdditionalArtifactResolutionPhase,
-        level: AdditionalArtifactResolutionLevel = AdditionalArtifactResolutionLevel.Default
+        level: AdditionalArtifactResolutionLevel = AdditionalArtifactResolutionLevel.Default,
     )
 
     /**
@@ -86,7 +92,7 @@ interface IdeMultiplatformImport {
     fun registerDependencyTransformer(
         transformer: IdeDependencyTransformer,
         constraint: SourceSetConstraint,
-        phase: DependencyTransformationPhase
+        phase: DependencyTransformationPhase,
     )
 
     /**
@@ -96,7 +102,7 @@ interface IdeMultiplatformImport {
     @ExternalKotlinTargetApi
     fun registerDependencyEffect(
         effect: IdeDependencyEffect,
-        constraint: SourceSetConstraint
+        constraint: SourceSetConstraint,
     )
 
     /**
@@ -113,7 +119,7 @@ interface IdeMultiplatformImport {
      */
     @ExternalKotlinTargetApi
     fun registerExtrasSerializationExtension(
-        extension: IdeaKotlinExtrasSerializationExtension
+        extension: IdeaKotlinExtrasSerializationExtension,
     )
 
     /**
@@ -295,7 +301,7 @@ internal val Project.kotlinIdeMultiplatformImport: IdeMultiplatformImport get() 
 @Suppress("unused")
 @ExternalKotlinTargetApi
 fun IdeMultiplatformImport.registerExtrasSerializationExtension(
-    builder: IdeaKotlinExtrasSerializationExtensionBuilder.() -> Unit
+    builder: IdeaKotlinExtrasSerializationExtensionBuilder.() -> Unit,
 ) {
     registerExtrasSerializationExtension(IdeaKotlinExtrasSerializationExtension(builder))
 }
@@ -306,7 +312,7 @@ fun IdeMultiplatformImport.registerExtrasSerializationExtension(
  */
 @ExternalKotlinTargetApi
 infix fun SourceSetConstraint.or(
-    other: SourceSetConstraint
+    other: SourceSetConstraint,
 ) = SourceSetConstraint { sourceSet ->
     this@or(sourceSet) || other(sourceSet)
 }
@@ -317,7 +323,7 @@ infix fun SourceSetConstraint.or(
  */
 @ExternalKotlinTargetApi
 infix fun SourceSetConstraint.and(
-    other: SourceSetConstraint
+    other: SourceSetConstraint,
 ) = SourceSetConstraint { sourceSet ->
     this@and(sourceSet) && other(sourceSet)
 }
