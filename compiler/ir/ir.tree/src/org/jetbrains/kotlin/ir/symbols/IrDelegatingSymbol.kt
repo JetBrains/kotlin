@@ -10,6 +10,22 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 
+/**
+ * Used to handle `expect` declarations.
+ *
+ * Before actualization, [delegate] refers to the symbol of the `expect` declaration. After actualization,
+ * [delegate] is replaced with the symbol of the corresponding `actual` declaration.
+ *
+ * A delegating symbol behaves exactly the same as its [delegate].
+ *
+ * [About `expect` and `actual` declarations.](https://kotlinlang.org/docs/multiplatform-connect-to-apis.html)
+ *
+ * @property delegate Before actualization — the symbol of the `expect` declaration,
+ * after actualization — the symbol of the corresponding `actual` declaration.
+ *
+ * @see org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker.handleExpectActualMapping
+ * @see org.jetbrains.kotlin.backend.common.serialization.KotlinIrLinker.finalizeExpectActual
+ */
 abstract class IrDelegatingSymbol<DelegateSymbol, Owner, Descriptor>(var delegate: DelegateSymbol) : IrBindableSymbol<Descriptor, Owner>
         where DelegateSymbol : IrBindableSymbol<Descriptor, Owner>,
               Owner : IrSymbolOwner,
