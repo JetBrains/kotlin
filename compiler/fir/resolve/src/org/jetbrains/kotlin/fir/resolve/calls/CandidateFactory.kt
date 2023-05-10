@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.buildErrorFunction
 import org.jetbrains.kotlin.fir.declarations.builder.buildErrorProperty
+import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.moduleData
@@ -86,11 +88,7 @@ class CandidateFactory private constructor(
             if (symbol is FirValueParameterSymbol || symbol is FirPropertySymbol && symbol.isLocal || symbol is FirBackingFieldSymbol) {
                 result.addDiagnostic(Unsupported("References to variables aren't supported yet", callSite.calleeReference.source))
             }
-        } else if (objectsByName &&
-            symbol is FirRegularClassSymbol &&
-            symbol.classKind != ClassKind.OBJECT &&
-            symbol.companionObjectSymbol == null
-        ) {
+        } else if (objectsByName && symbol.isRegularClassWithoutCompanion(callInfo.session)) {
             result.addDiagnostic(NoCompanionObject)
         }
         if (callInfo.origin == FirFunctionCallOrigin.Operator && symbol is FirPropertySymbol) {
@@ -98,6 +96,11 @@ class CandidateFactory private constructor(
             result.addDiagnostic(PropertyAsOperator)
         }
         return result
+    }
+
+    private fun FirBasedSymbol<*>.isRegularClassWithoutCompanion(session: FirSession): Boolean {
+        val referencedClass = (this as? FirClassLikeSymbol<*>)?.fullyExpandedClass(session) ?: return false
+        return referencedClass.classKind != ClassKind.OBJECT && referencedClass.companionObjectSymbol == null
     }
 
     private fun FirBasedSymbol<*>.unwrapIntegerOperatorSymbolIfNeeded(callInfo: CallInfo): FirBasedSymbol<*> {

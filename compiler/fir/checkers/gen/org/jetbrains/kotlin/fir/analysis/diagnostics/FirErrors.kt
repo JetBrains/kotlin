@@ -671,7 +671,7 @@ object FirErrors {
     // Context tracking
     val TYPE_PARAMETER_IS_NOT_AN_EXPRESSION by error1<KtSimpleNameExpression, FirTypeParameterSymbol>()
     val TYPE_PARAMETER_ON_LHS_OF_DOT by error1<KtSimpleNameExpression, FirTypeParameterSymbol>()
-    val NO_COMPANION_OBJECT by error1<KtExpression, FirRegularClassSymbol>(SourceElementPositioningStrategies.SELECTOR_BY_QUALIFIED)
+    val NO_COMPANION_OBJECT by error1<KtExpression, FirClassLikeSymbol<*>>(SourceElementPositioningStrategies.SELECTOR_BY_QUALIFIED)
     val EXPRESSION_EXPECTED_PACKAGE_FOUND by error0<KtExpression>(SourceElementPositioningStrategies.SELECTOR_BY_QUALIFIED)
 
     // Function contracts
