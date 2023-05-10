@@ -74,6 +74,8 @@ internal class KtFirReferenceShortener(
         classShortenOption: (KtClassLikeSymbol) -> ShortenOption,
         callableShortenOption: (KtCallableSymbol) -> ShortenOption
     ): ShortenCommand {
+        require(!file.isCompiled) { "No sense to collect references for shortening in compiled file $file" }
+
         val declarationToVisit = file.findSmallestDeclarationContainingSelection(selection)
             ?: file
 
