@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-58523
 
 // FILE: pkg.kt

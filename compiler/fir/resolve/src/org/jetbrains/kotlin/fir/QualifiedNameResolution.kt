@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.ApiVersion
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
@@ -21,6 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.resultType
 import org.jetbrains.kotlin.fir.resolve.typeForQualifier
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -47,35 +50,36 @@ fun BodyResolveComponents.resolveRootPartOfQualifier(
 
     for (scope in createCurrentScopeList()) {
         scope.getSingleVisibleClassifier(session, this, name)?.let {
-            if (it is FirRegularClassSymbol) {
-                val isVisible = session.visibilityChecker.isClassLikeVisible(
-                    it.fir,
-                    session,
-                    file,
-                    containingDeclarations,
-                )
-                if (!isVisible) {
-                    return@let
-                }
-                val classId = it.classId
-                return buildResolvedQualifier {
-                    this.source = source
-                    packageFqName = classId.packageFqName
-                    relativeClassFqName = classId.relativeClassName
-                    symbol = it
-                    this.typeArguments.addAll(typeArguments)
-                    this.nonFatalDiagnostics.addAll(
-                        extractNonFatalDiagnostics(
-                            source,
-                            explicitReceiver = null,
-                            it,
-                            extraNotFatalDiagnostics = nonFatalDiagnosticsFromExpression,
-                            session.languageVersionSettings.apiVersion
-                        )
+            val klass = (it as? FirClassLikeSymbol<*>)?.fullyExpandedClass(session)
+                ?: return@let
+
+            val isVisible = session.visibilityChecker.isClassLikeVisible(
+                klass.fir,
+                session,
+                file,
+                containingDeclarations,
+            )
+            if (!isVisible) {
+                return@let
+            }
+            val classId = it.classId
+            return buildResolvedQualifier {
+                this.source = source
+                packageFqName = classId.packageFqName
+                relativeClassFqName = classId.relativeClassName
+                symbol = it
+                this.typeArguments.addAll(typeArguments)
+                this.nonFatalDiagnostics.addAll(
+                    extractNonFatalDiagnostics(
+                        source,
+                        explicitReceiver = null,
+                        it,
+                        extraNotFatalDiagnostics = nonFatalDiagnosticsFromExpression,
+                        session.languageVersionSettings.apiVersion
                     )
-                }.apply {
-                    resultType = typeForQualifier(this)
-                }
+                )
+            }.apply {
+                resultType = typeForQualifier(this)
             }
         }
     }
