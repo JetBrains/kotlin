@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.plugin.CompilerRequiredAnno
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.FirCompilerRequiredAnnotationsResolveTransformer
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.visitors.transformSingle
 
 internal object LLFirCompilerAnnotationsLazyResolver : LLFirLazyResolver(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS) {
     override fun resolve(
@@ -96,10 +97,6 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
         FirLazyBodiesCalculator.calculateCompilerAnnotations(target)
 
         when {
-            target is FirTypeAlias -> {
-                transformer.transformTypeAlias(target, null)
-            }
-
             target is FirRegularClass -> {
                 transformer.annotationTransformer.resolveRegularClass(
                     target,
@@ -113,7 +110,7 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
             }
 
             target.isRegularDeclarationWithAnnotation -> {
-
+                target.transformSingle(transformer.annotationTransformer, null)
             }
 
             else -> throwUnexpectedFirElementError(target)
