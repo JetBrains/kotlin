@@ -2937,6 +2937,18 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
             }
 
             @Test
+            @TestMetadata("MustBeInitializedEffectivelyFinalOff.kt")
+            public void testMustBeInitializedEffectivelyFinalOff() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/backingField/MustBeInitializedEffectivelyFinalOff.kt");
+            }
+
+            @Test
+            @TestMetadata("MustBeInitializedEffectivelyFinalOn.kt")
+            public void testMustBeInitializedEffectivelyFinalOn() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/backingField/MustBeInitializedEffectivelyFinalOn.kt");
+            }
+
+            @Test
             @TestMetadata("SetterWithExplicitType.kt")
             public void testSetterWithExplicitType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/backingField/SetterWithExplicitType.kt");

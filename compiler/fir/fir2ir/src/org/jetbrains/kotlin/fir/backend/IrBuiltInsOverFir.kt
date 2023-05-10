@@ -372,18 +372,29 @@ class IrBuiltInsOverFir(
     override val ieee754equalsFunByOperandType: MutableMap<IrClassifierSymbol, IrSimpleFunctionSymbol>
         get() = _ieee754equalsFunByOperandType
 
-    override lateinit var eqeqeqSymbol: IrSimpleFunctionSymbol private set
-    override lateinit var eqeqSymbol: IrSimpleFunctionSymbol private set
-    override lateinit var throwCceSymbol: IrSimpleFunctionSymbol private set
-    override lateinit var throwIseSymbol: IrSimpleFunctionSymbol private set
-    override lateinit var andandSymbol: IrSimpleFunctionSymbol private set
-    override lateinit var ororSymbol: IrSimpleFunctionSymbol private set
-    override lateinit var noWhenBranchMatchedExceptionSymbol: IrSimpleFunctionSymbol private set
-    override lateinit var illegalArgumentExceptionSymbol: IrSimpleFunctionSymbol private set
-    override lateinit var dataClassArrayMemberHashCodeSymbol: IrSimpleFunctionSymbol private set
-    override lateinit var dataClassArrayMemberToStringSymbol: IrSimpleFunctionSymbol private set
+    @Suppress("RedundantModalityModifier") // Explicit `final` keyword can be dropped after bootstrap update
+    final override var eqeqeqSymbol: IrSimpleFunctionSymbol private set
+    @Suppress("RedundantModalityModifier") // Explicit `final` keyword can be dropped after bootstrap update
+    final override var eqeqSymbol: IrSimpleFunctionSymbol private set
+    @Suppress("RedundantModalityModifier") // Explicit `final` keyword can be dropped after bootstrap update
+    final override var throwCceSymbol: IrSimpleFunctionSymbol private set
+    @Suppress("RedundantModalityModifier") // Explicit `final` keyword can be dropped after bootstrap update
+    final override var throwIseSymbol: IrSimpleFunctionSymbol private set
+    @Suppress("RedundantModalityModifier") // Explicit `final` keyword can be dropped after bootstrap update
+    final override var andandSymbol: IrSimpleFunctionSymbol private set
+    @Suppress("RedundantModalityModifier") // Explicit `final` keyword can be dropped after bootstrap update
+    final override var ororSymbol: IrSimpleFunctionSymbol private set
+    @Suppress("RedundantModalityModifier") // Explicit `final` keyword can be dropped after bootstrap update
+    final override var noWhenBranchMatchedExceptionSymbol: IrSimpleFunctionSymbol private set
+    @Suppress("RedundantModalityModifier") // Explicit `final` keyword can be dropped after bootstrap update
+    final override var illegalArgumentExceptionSymbol: IrSimpleFunctionSymbol private set
+    @Suppress("RedundantModalityModifier") // Explicit `final` keyword can be dropped after bootstrap update
+    final override var dataClassArrayMemberHashCodeSymbol: IrSimpleFunctionSymbol private set
+    @Suppress("RedundantModalityModifier") // Explicit `final` keyword can be dropped after bootstrap update
+    final override var dataClassArrayMemberToStringSymbol: IrSimpleFunctionSymbol private set
 
-    override lateinit var checkNotNullSymbol: IrSimpleFunctionSymbol private set
+    @Suppress("RedundantModalityModifier") // Explicit `final` keyword can be dropped after bootstrap update
+    final override var checkNotNullSymbol: IrSimpleFunctionSymbol private set
     override val arrayOfNulls: IrSimpleFunctionSymbol by lazy {
         findFunctions(kotlinPackage, Name.identifier("arrayOfNulls")).first {
             it.owner.dispatchReceiverParameter == null && it.owner.valueParameters.size == 1 &&
@@ -394,10 +405,14 @@ class IrBuiltInsOverFir(
     override val linkageErrorSymbol: IrSimpleFunctionSymbol
         get() = TODO("Not yet implemented")
 
-    override lateinit var lessFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> private set
-    override lateinit var lessOrEqualFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> private set
-    override lateinit var greaterOrEqualFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> private set
-    override lateinit var greaterFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> private set
+    @Suppress("RedundantModalityModifier") // Explicit `final` keyword can be dropped after bootstrap update
+    final override var lessFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> private set
+    @Suppress("RedundantModalityModifier") // Explicit `final` keyword can be dropped after bootstrap update
+    final override var lessOrEqualFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> private set
+    @Suppress("RedundantModalityModifier") // Explicit `final` keyword can be dropped after bootstrap update
+    final override var greaterOrEqualFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> private set
+    @Suppress("RedundantModalityModifier") // Explicit `final` keyword can be dropped after bootstrap update
+    final override var greaterFunByOperandType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> private set
 
     init {
         with(this.operatorsPackageFragment) {
