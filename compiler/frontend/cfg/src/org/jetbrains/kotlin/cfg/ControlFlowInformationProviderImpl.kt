@@ -654,8 +654,14 @@ class ControlFlowInformationProviderImpl private constructor(
         val declaredVariables = pseudocodeVariablesData.getDeclaredVariables(pseudocode, false)
         for (variable in declaredVariables) {
             if (variable is PropertyDescriptor) {
-                if (initializers.incoming.getOrNull(variable)?.definitelyInitialized() == true) continue
-                trace.record(IS_UNINITIALIZED, variable)
+                if (initializers.incoming.getOrNull(variable)?.definitelyInitialized() == true) {
+                    if (trace.bindingContext.get(IS_DEFINITELY_ASSIGNED_IN_CONSTRUCTOR, variable) == null) {
+                        trace.record(IS_DEFINITELY_ASSIGNED_IN_CONSTRUCTOR, variable)
+                    }
+                } else {
+                    trace.record(IS_DEFINITELY_ASSIGNED_IN_CONSTRUCTOR, variable, false)
+                    trace.record(IS_UNINITIALIZED, variable)
+                }
             }
         }
     }

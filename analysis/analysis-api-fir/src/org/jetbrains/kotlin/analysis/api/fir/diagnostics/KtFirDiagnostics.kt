@@ -2005,8 +2005,16 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = MustBeInitialized::class
     }
 
+    abstract class MustBeInitializedOrBeFinal : KtFirDiagnostic<KtProperty>() {
+        override val diagnosticClass get() = MustBeInitializedOrBeFinal::class
+    }
+
     abstract class MustBeInitializedOrBeAbstract : KtFirDiagnostic<KtProperty>() {
         override val diagnosticClass get() = MustBeInitializedOrBeAbstract::class
+    }
+
+    abstract class MustBeInitializedOrFinalOrAbstract : KtFirDiagnostic<KtProperty>() {
+        override val diagnosticClass get() = MustBeInitializedOrFinalOrAbstract::class
     }
 
     abstract class ExtensionPropertyMustHaveAccessorsOrBeAbstract : KtFirDiagnostic<KtProperty>() {

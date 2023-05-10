@@ -694,7 +694,7 @@ class DeclarationsChecker(
     }
 
     private fun checkPropertyInitializer(property: KtProperty, propertyDescriptor: PropertyDescriptor) {
-        val hasAccessorImplementation = propertyDescriptor.hasAccessorImplementation()
+        val hasAnyAccessorImplementation = propertyDescriptor.hasAnyAccessorImplementation()
 
         val containingDeclaration = propertyDescriptor.containingDeclaration
         val inInterface = DescriptorUtils.isInterface(containingDeclaration)
@@ -709,7 +709,7 @@ class DeclarationsChecker(
         }
 
         val backingFieldRequired = trace.bindingContext.get(BACKING_FIELD_REQUIRED, propertyDescriptor) ?: false
-        if (inInterface && backingFieldRequired && hasAccessorImplementation) {
+        if (inInterface && backingFieldRequired && hasAnyAccessorImplementation) {
             trace.report(BACKING_FIELD_IN_INTERFACE.on(property))
         }
 
@@ -772,14 +772,10 @@ class DeclarationsChecker(
             val isUninitialized = trace.bindingContext.get(IS_UNINITIALIZED, propertyDescriptor) ?: false
             val isExternal = propertyDescriptor.isEffectivelyExternal()
             if (backingFieldRequired && !inInterface && !propertyDescriptor.isLateInit && !isExpect && isUninitialized && !isExternal) {
-                if (propertyDescriptor.extensionReceiverParameter != null && !hasAccessorImplementation) {
+                if (propertyDescriptor.extensionReceiverParameter != null && !hasAnyAccessorImplementation) {
                     trace.report(EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT.on(property))
                 } else if (diagnosticSuppressor.shouldReportNoBody(propertyDescriptor)) {
-                    if (containingDeclaration !is ClassDescriptor || hasAccessorImplementation) {
-                        trace.report(MUST_BE_INITIALIZED.on(property))
-                    } else {
-                        trace.report(MUST_BE_INITIALIZED_OR_BE_ABSTRACT.on(property))
-                    }
+                    reportMustBeInitialized(propertyDescriptor, containingDeclaration, hasAnyAccessorImplementation, property, trace)
                 }
             } else if (property.typeReference == null && !languageVersionSettings.supportsFeature(LanguageFeature.ShortSyntaxForPropertyGetters)) {
                 trace.report(
@@ -800,6 +796,28 @@ class DeclarationsChecker(
                     trace.report(UNNECESSARY_LATEINIT.on(property))
                 }
             }
+        }
+    }
+
+    private fun reportMustBeInitialized(
+        propertyDescriptor: PropertyDescriptor,
+        containingDeclaration: DeclarationDescriptor,
+        hasAnyAccessorImplementation: Boolean,
+        property: KtProperty,
+        trace: BindingTrace,
+    ) {
+        check(propertyDescriptor.modality != Modality.ABSTRACT) { "${::reportMustBeInitialized.name} isn't called for abstract properties" }
+        val suggestMakingItFinal = containingDeclaration is ClassDescriptor &&
+                !propertyDescriptor.hasSetterAccessorImplementation() &&
+                propertyDescriptor.modality != Modality.FINAL &&
+                trace.bindingContext.get(IS_DEFINITELY_ASSIGNED_IN_CONSTRUCTOR, propertyDescriptor) == true
+        val suggestMakingItAbstract = containingDeclaration is ClassDescriptor && !hasAnyAccessorImplementation
+
+        when {
+            suggestMakingItFinal && suggestMakingItAbstract -> trace.report(MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT.on(property))
+            suggestMakingItFinal -> trace.report(MUST_BE_INITIALIZED_OR_BE_FINAL.on(property))
+            suggestMakingItAbstract -> trace.report(MUST_BE_INITIALIZED_OR_BE_ABSTRACT.on(property))
+            else -> trace.report(MUST_BE_INITIALIZED.on(property))
         }
     }
 
@@ -1067,10 +1085,7 @@ class DeclarationsChecker(
             return !modifierList.hasModifier(KtTokens.OVERRIDE_KEYWORD)
         }
 
-        fun PropertyDescriptor.hasAccessorImplementation(): Boolean {
-            getter?.let { if (it.hasBody()) return true }
-            setter?.let { if (it.hasBody()) return true }
-            return false
-        }
+        private fun PropertyDescriptor.hasSetterAccessorImplementation(): Boolean = setter?.hasBody() == true
+        fun PropertyDescriptor.hasAnyAccessorImplementation(): Boolean = hasSetterAccessorImplementation() || getter?.hasBody() == true
     }
 }
