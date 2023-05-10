@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.fir.types.forEachType
 
 internal object FirLazyBodiesCalculator {
     fun calculateBodies(designation: FirDesignation) {
-        calculateAnnotations(designation.target)
         designation.target.transform<FirElement, PersistentList<FirRegularClass>>(
             FirTargetLazyBodiesCalculatorTransformer,
             designation.path.toPersistentList(),
