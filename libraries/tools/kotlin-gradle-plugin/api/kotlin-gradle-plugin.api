@@ -1,10 +1,10 @@
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/ide/IdeAdditionalArtifactResolver {
+	public static final field Companion Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeAdditionalArtifactResolver$Companion;
 	public abstract fun resolve (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;Ljava/util/Set;)V
 }
 
-public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeAdditionalArtifactResolver$Empty : org/jetbrains/kotlin/gradle/plugin/ide/IdeAdditionalArtifactResolver {
-	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeAdditionalArtifactResolver$Empty;
-	public fun resolve (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;Ljava/util/Set;)V
+public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeAdditionalArtifactResolver$Companion {
+	public final fun getEmpty ()Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeAdditionalArtifactResolver;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyEffect {
@@ -25,15 +25,11 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/ide/IdeDepend
 public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver$Companion {
 	public static final field DOCUMENTATION_BINARY_TYPE Ljava/lang/String;
 	public static final field SOURCES_BINARY_TYPE Ljava/lang/String;
+	public final fun getEmpty ()Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;
 	public final fun getGradleArtifact (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinDependency;)Lorg/gradle/api/artifacts/result/ResolvedArtifactResult;
 	public final fun getResolvedBy (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinDependency;)Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;
 	public final fun setGradleArtifact (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinDependency;Lorg/gradle/api/artifacts/result/ResolvedArtifactResult;)V
 	public final fun setResolvedBy (Lorg/jetbrains/kotlin/gradle/idea/tcs/IdeaKotlinDependency;Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver;)V
-}
-
-public final class org/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver$Empty : org/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver {
-	public static final field INSTANCE Lorg/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver$Empty;
-	public fun resolve (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;)Ljava/util/Set;
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/ide/IdeDependencyResolver$WithBuildDependencies {
