@@ -16,7 +16,7 @@ interface ExternalKotlinTargetConfigurationDescriptor<T : DecoratedExternalKotli
 @ExternalKotlinTargetApi
 class ExternalKotlinTargetConfigurationDescriptorBuilder<T : DecoratedExternalKotlinTarget> internal constructor() {
 
-    var configure: ((target: T, configuration: Configuration) -> Unit)? = null
+    internal var configure: ((target: T, configuration: Configuration) -> Unit)? = null
 
     fun configure(action: (target: T, configuration: Configuration) -> Unit) = apply {
         val configure = this.configure
