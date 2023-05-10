@@ -60,17 +60,6 @@ class TCServiceMessagesTestExecutor(
                 val exec = execHandleFactory.newExec()
                 spec.forkOptions.copyTo(exec)
                 exec.args = spec.dryRunArgs
-                // We do not need output by dry run of tests
-                exec.standardOutput = object : OutputStream() {
-                    override fun write(b: Int) {
-                        // do nothing
-                    }
-                }
-                exec.errorOutput = object : OutputStream() {
-                    override fun write(b: Int) {
-                        // do nothing
-                    }
-                }
                 execHandle = exec.build()
 
                 execHandle.start()
