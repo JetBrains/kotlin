@@ -45,6 +45,13 @@ interface ExternalKotlinTargetDescriptor<T : DecoratedExternalKotlinTarget> {
  * Creates a new [ExternalKotlinTargetDescriptor] using the builder pattern.
  * There are some required properties that have to be set.
  * Check [ExternalKotlinTargetDescriptorBuilder] for further details.
+ *
+ *  * The following properties have to be specified:
+ *  * - [ExternalKotlinTargetDescriptorBuilder.targetName]
+ *  * - [ExternalKotlinTargetDescriptorBuilder.platformType]
+ *  * - [ExternalKotlinTargetDescriptorBuilder.targetFactory]
+ *
+ *  Not providing a required/necessary property will throw [IllegalStateException]
  */
 @ExternalKotlinTargetApi
 fun <T : DecoratedExternalKotlinTarget> ExternalKotlinTargetDescriptor(
