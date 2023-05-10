@@ -72,16 +72,6 @@ private class LLFirAnnotationArgumentsMappingTargetResolver(
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
         FirLazyBodiesCalculator.calculateAnnotations(target)
-        when (target) {
-            is FirRegularClass -> {
-                target.transformAnnotations(transformer.declarationsTransformer, ResolutionMode.ContextIndependent)
-                target.transformTypeParameters(transformer.declarationsTransformer, ResolutionMode.ContextIndependent)
-                target.transformSuperTypeRefs(transformer.declarationsTransformer, ResolutionMode.ContextIndependent)
-            }
-            is FirCallableDeclaration, is FirAnonymousInitializer, is FirDanglingModifierList, is FirFileAnnotationsContainer, is FirTypeAlias, is FirScript -> {
-                target.transformSingle(transformer, ResolutionMode.ContextIndependent)
-            }
-            else -> throwUnexpectedFirElementError(target)
-        }
+        transformer.transformAnnotations(target)
     }
 }

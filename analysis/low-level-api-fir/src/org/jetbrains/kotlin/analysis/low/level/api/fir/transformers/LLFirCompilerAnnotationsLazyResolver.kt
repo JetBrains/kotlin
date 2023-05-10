@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.transformers
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.LLFirResolveTarget
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.asResolveTarget
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirElementError
 import org.jetbrains.kotlin.analysis.low.level.api.fir.file.builder.LLFirLockProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
@@ -15,11 +16,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkPhase
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
-import org.jetbrains.kotlin.fir.declarations.resolvePhase
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirTowerDataContextCollector
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.CompilerRequiredAnnotationsComputationSession
@@ -97,11 +94,13 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
 
     override fun doLazyResolveUnderLock(target: FirElementWithResolveState) {
         FirLazyBodiesCalculator.calculateCompilerAnnotations(target)
-        when (target) {
-            is FirTypeAlias -> {
+
+        when {
+            target is FirTypeAlias -> {
                 transformer.transformTypeAlias(target, null)
             }
-            is FirRegularClass -> {
+
+            target is FirRegularClass -> {
                 transformer.annotationTransformer.resolveRegularClass(
                     target,
                     transformChildren = {
@@ -112,6 +111,12 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
                     }
                 )
             }
+
+            target.isRegularDeclarationWithAnnotation -> {
+
+            }
+
+            else -> throwUnexpectedFirElementError(target)
         }
     }
 }
