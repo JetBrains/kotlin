@@ -88,7 +88,6 @@ class ResolvedLambdaAtom(
 class LambdaWithTypeVariableAsExpectedTypeAtom(
     override val atom: FirAnonymousFunctionExpression,
     private val initialExpectedTypeType: ConeKotlinType,
-    val expectedTypeRef: FirTypeRef,
     val candidateOfOuterCall: Candidate,
 ) : PostponedResolvedAtom(), LambdaWithTypeVariableAsExpectedTypeMarker {
     init {

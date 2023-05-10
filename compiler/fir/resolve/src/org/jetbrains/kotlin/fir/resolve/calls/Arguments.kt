@@ -48,7 +48,6 @@ fun Candidate.resolveArgumentExpression(
     csBuilder: ConstraintSystemBuilder,
     argument: FirExpression,
     expectedType: ConeKotlinType?,
-    expectedTypeRef: FirTypeRef?,
     sink: CheckerSink,
     context: ResolutionContext,
     isReceiver: Boolean,
@@ -112,14 +111,13 @@ fun Candidate.resolveArgumentExpression(
             else
                 preprocessCallableReference(argument, expectedType, context)
         // TODO:!
-        is FirAnonymousFunctionExpression -> preprocessLambdaArgument(csBuilder, argument, expectedType, expectedTypeRef, context, sink)
+        is FirAnonymousFunctionExpression -> preprocessLambdaArgument(csBuilder, argument, expectedType, context, sink)
         // TODO:!
         //TODO: Collection literal
         is FirWrappedArgumentExpression -> resolveArgumentExpression(
             csBuilder,
             argument.expression,
             expectedType,
-            expectedTypeRef,
             sink,
             context,
             isReceiver,
@@ -129,7 +127,6 @@ fun Candidate.resolveArgumentExpression(
             csBuilder,
             argument,
             expectedType,
-            expectedTypeRef,
             sink,
             context,
             isReceiver,
@@ -143,7 +140,6 @@ private fun Candidate.resolveBlockArgument(
     csBuilder: ConstraintSystemBuilder,
     block: FirBlock,
     expectedType: ConeKotlinType?,
-    expectedTypeRef: FirTypeRef?,
     sink: CheckerSink,
     context: ResolutionContext,
     isReceiver: Boolean,
@@ -169,7 +165,6 @@ private fun Candidate.resolveBlockArgument(
             csBuilder,
             argument,
             expectedType,
-            expectedTypeRef,
             sink,
             context,
             isReceiver,
@@ -450,7 +445,6 @@ internal fun Candidate.resolveArgument(
         this.system.getBuilder(),
         argument,
         expectedType,
-        parameter?.returnTypeRef,
         sink,
         context,
         isReceiver,

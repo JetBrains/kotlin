@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.fir.resolve.inference
 
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
-import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.diagnostics.ConeCannotInferValueParameterType
 import org.jetbrains.kotlin.fir.expressions.FirReturnExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
@@ -21,7 +20,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
  */
 fun extractLambdaInfoFromFunctionType(
     expectedType: ConeKotlinType?,
-    expectedTypeRef: FirTypeRef?,
     argument: FirAnonymousFunction,
     returnTypeVariable: ConeTypeVariableForLambdaReturnType?,
     components: BodyResolveComponents,
@@ -33,7 +31,6 @@ fun extractLambdaInfoFromFunctionType(
     if (expectedType is ConeFlexibleType) {
         return extractLambdaInfoFromFunctionType(
             expectedType.lowerBound,
-            expectedTypeRef,
             argument,
             returnTypeVariable,
             components,

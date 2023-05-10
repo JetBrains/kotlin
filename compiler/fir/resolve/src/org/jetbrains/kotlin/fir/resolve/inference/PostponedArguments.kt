@@ -28,13 +28,12 @@ fun Candidate.preprocessLambdaArgument(
     csBuilder: ConstraintSystemBuilder,
     argument: FirAnonymousFunctionExpression,
     expectedType: ConeKotlinType?,
-    expectedTypeRef: FirTypeRef?,
     context: ResolutionContext,
     sink: CheckerSink?,
     duringCompletion: Boolean = false,
     returnTypeVariable: ConeTypeVariableForLambdaReturnType? = null
 ): PostponedResolvedAtom {
-    if (expectedType != null && expectedTypeRef != null && !duringCompletion && csBuilder.isTypeVariable(expectedType)) {
+    if (expectedType != null && !duringCompletion && csBuilder.isTypeVariable(expectedType)) {
         val expectedTypeVariableWithConstraints = csBuilder.currentStorage().notFixedTypeVariables[expectedType.typeConstructor(context.typeContext)]
 
         if (expectedTypeVariableWithConstraints != null) {
@@ -43,7 +42,7 @@ fun Candidate.preprocessLambdaArgument(
             }?.type as ConeKotlinType?
 
             if (explicitTypeArgument == null || explicitTypeArgument.typeArguments.isNotEmpty()) {
-                return LambdaWithTypeVariableAsExpectedTypeAtom(argument, expectedType, expectedTypeRef, this)
+                return LambdaWithTypeVariableAsExpectedTypeAtom(argument, expectedType, this)
             }
         }
     }
@@ -53,7 +52,6 @@ fun Candidate.preprocessLambdaArgument(
     val resolvedArgument =
         extractLambdaInfoFromFunctionType(
             expectedType,
-            expectedTypeRef,
             anonymousFunction,
             returnTypeVariable,
             context.bodyResolveComponents,
