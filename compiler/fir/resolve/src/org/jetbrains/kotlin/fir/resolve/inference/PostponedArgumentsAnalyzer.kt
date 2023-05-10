@@ -175,8 +175,14 @@ class PostponedArgumentsAnalyzer(
             it as? FirResolvedTypeRef ?: it.resolvedTypeFromPrototype(substitute(lambda.returnType))
         }
         returnArguments.forEach {
-            val haveSubsystem = c.addSubsystemFromExpression(it)
             // If the lambda returns Unit, the last expression is not returned and should not be constrained.
+            val isLastExpression = it == lastExpression
+
+            // Don't add last call for builder-inference
+            // Note, that we don't use the same condition "(returnTypeRef.type.isUnitOrFlexibleUnit || lambda.atom.shouldReturnUnit(returnArguments))"
+            // as in the if below, because "lambda.atom.shouldReturnUnit(returnArguments)" might mean that the last statement is not completed
+            if (isLastExpression && returnTypeRef.type.isUnitOrFlexibleUnit && inferenceSession is FirBuilderInferenceSession) return@forEach
+
             // TODO (KT-55837) questionable moment inherited from FE1.0 (the `haveSubsystem` case):
             //    fun <T> foo(): T
             //    run {
@@ -184,7 +190,9 @@ class PostponedArgumentsAnalyzer(
             //      foo() // T = Unit, even though there is no implicit return
             //    }
             //  Things get even weirder if T has an upper bound incompatible with Unit.
-            if (it == lastExpression && !haveSubsystem &&
+            // Not calling `addSubsystemFromExpression` for builder-inference is crucial
+            val haveSubsystem = c.addSubsystemFromExpression(it)
+            if (isLastExpression && !haveSubsystem &&
                 (returnTypeRef.type.isUnitOrFlexibleUnit || lambda.atom.shouldReturnUnit(returnArguments))
             ) return@forEach
 

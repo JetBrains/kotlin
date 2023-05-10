@@ -20705,6 +20705,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
             }
 
             @Test
+            @TestMetadata("partiallyResolvedCallInReturnArgument.kt")
+            public void testPartiallyResolvedCallInReturnArgument() throws Exception {
+                runTest("compiler/testData/codegen/box/inference/builderInference/partiallyResolvedCallInReturnArgument.kt");
+            }
+
+            @Test
             @TestMetadata("propagateInferenceSessionIntoDeclarationAnalyzers.kt")
             public void testPropagateInferenceSessionIntoDeclarationAnalyzers() throws Exception {
                 runTest("compiler/testData/codegen/box/inference/builderInference/propagateInferenceSessionIntoDeclarationAnalyzers.kt");

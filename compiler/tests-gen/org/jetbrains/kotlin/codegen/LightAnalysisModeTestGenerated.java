@@ -16484,6 +16484,11 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
                 runTest("compiler/testData/codegen/box/inference/builderInference/nullability.kt");
             }
 
+            @TestMetadata("partiallyResolvedCallInReturnArgument.kt")
+            public void testPartiallyResolvedCallInReturnArgument() throws Exception {
+                runTest("compiler/testData/codegen/box/inference/builderInference/partiallyResolvedCallInReturnArgument.kt");
+            }
+
             @TestMetadata("propagateInferenceSessionIntoDeclarationAnalyzers.kt")
             public void testPropagateInferenceSessionIntoDeclarationAnalyzers() throws Exception {
                 runTest("compiler/testData/codegen/box/inference/builderInference/propagateInferenceSessionIntoDeclarationAnalyzers.kt");
