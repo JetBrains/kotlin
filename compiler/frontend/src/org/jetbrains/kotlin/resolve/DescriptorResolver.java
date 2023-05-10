@@ -1241,7 +1241,6 @@ public class DescriptorResolver {
             getterType = determineGetterReturnType(
                     scopeForDeclarationResolution, trace, getterDescriptor, getter, propertyTypeIfKnown, inferenceSession
             );
-            trace.record(BindingContext.PROPERTY_ACCESSOR, getter, getterDescriptor);
         }
         else {
             getterDescriptor = DescriptorFactory.createGetter(
@@ -1253,6 +1252,10 @@ public class DescriptorResolver {
         }
 
         getterDescriptor.initialize(getterType != null ? getterType : VariableTypeAndInitializerResolver.getTypeForPropertyWithoutReturnType(propertyDescriptor.getName().asString()));
+
+        if (getter != null) {
+            trace.record(BindingContext.PROPERTY_ACCESSOR, getter, getterDescriptor);
+        }
 
         return getterDescriptor;
     }

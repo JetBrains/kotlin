@@ -444,8 +444,6 @@ class FunctionDescriptorResolver(
         constructorDescriptor.isActual = modifierList?.hasActualModifier() == true ||
                 // We don't require 'actual' for constructors of actual annotations
                 classDescriptor.kind == ClassKind.ANNOTATION_CLASS && classDescriptor.isActual
-        if (declarationToTrace is PsiElement)
-            trace.record(BindingContext.CONSTRUCTOR, declarationToTrace, constructorDescriptor)
         val parameterScope = LexicalWritableScope(
             scope,
             constructorDescriptor,
@@ -466,6 +464,8 @@ class FunctionDescriptorResolver(
         if (DescriptorUtils.isAnnotationClass(classDescriptor)) {
             CompileTimeConstantUtils.checkConstructorParametersType(valueParameters, trace)
         }
+        if (declarationToTrace is PsiElement)
+            trace.record(BindingContext.CONSTRUCTOR, declarationToTrace, constructorDescriptor)
         return constructor
     }
 
