@@ -40,8 +40,8 @@ internal object FirLazyBodiesCalculator {
     }
 
     fun calculateAllLazyExpressionsInFile(firFile: FirFile) {
-        calculateAnnotations(firFile)
-        firFile.transform<FirElement, PersistentList<FirRegularClass>>(FirAllLazyBodiesCalculatorTransformer, persistentListOf())
+        firFile.transformSingle(FirAllLazyAnnotationCalculatorTransformer, FirLazyAnnotationTransformerData(firFile.moduleData.session))
+        firFile.transformSingle(FirAllLazyBodiesCalculatorTransformer, persistentListOf())
     }
 
     fun calculateAnnotations(firElement: FirElementWithResolveState) {
@@ -49,15 +49,12 @@ internal object FirLazyBodiesCalculator {
     }
 
     fun calculateAnnotations(firElement: FirElement, session: FirSession) {
-        firElement.transform<FirElement, FirLazyAnnotationTransformerData>(
-            FirLazyAnnotationTransformer,
-            FirLazyAnnotationTransformerData(session)
-        )
+        firElement.transformSingle(FirTargetLazyAnnotationCalculatorTransformer, FirLazyAnnotationTransformerData(session))
     }
 
     fun calculateCompilerAnnotations(firElement: FirElementWithResolveState) {
-        firElement.transform<FirElement, FirLazyAnnotationTransformerData>(
-            FirLazyAnnotationTransformer,
+        firElement.transformSingle(
+            FirTargetLazyAnnotationCalculatorTransformer,
             FirLazyAnnotationTransformerData(firElement.moduleData.session, FirLazyAnnotationTransformerScope.COMPILER_ONLY)
         )
     }
@@ -229,7 +226,42 @@ private data class FirLazyAnnotationTransformerData(
     val compilerAnnotationsOnly: FirLazyAnnotationTransformerScope = FirLazyAnnotationTransformerScope.ALL_ANNOTATIONS,
 )
 
-private object FirLazyAnnotationTransformer : FirTransformer<FirLazyAnnotationTransformerData>() {
+private object FirAllLazyAnnotationCalculatorTransformer : FirLazyAnnotationTransformer() {
+    override fun <E : FirElement> transformElement(element: E, data: FirLazyAnnotationTransformerData): E {
+        element.transformChildren(this, data)
+        return element
+    }
+}
+
+private object FirTargetLazyAnnotationCalculatorTransformer : FirLazyAnnotationTransformer() {
+    override fun <E : FirElement> transformElement(element: E, data: FirLazyAnnotationTransformerData): E {
+        element.transformChildren(this, data)
+        return element
+    }
+
+    override fun transformRegularClass(regularClass: FirRegularClass, data: FirLazyAnnotationTransformerData): FirStatement {
+        regularClass.transformAnnotations(this, data)
+        regularClass.transformTypeParameters(this, data)
+        regularClass.transformSuperTypeRefs(this, data)
+        regularClass.contextReceivers.forEach {
+            it.transformSingle(this, data)
+        }
+
+        return regularClass
+    }
+
+    override fun transformBlock(block: FirBlock, data: FirLazyAnnotationTransformerData): FirStatement {
+        // We shouldn't process blocks because there are no lazy annotations
+        return block
+    }
+}
+
+private abstract class FirLazyAnnotationTransformer : FirTransformer<FirLazyAnnotationTransformerData>() {
+    override fun <E : FirElement> transformElement(element: E, data: FirLazyAnnotationTransformerData): E {
+        element.transformChildren(this, data)
+        return element
+    }
+
     private val COMPILER_ANNOTATION_NAMES: Set<Name> = CompilerRequiredAnnotationsHelper.REQUIRED_ANNOTATIONS
         .plus(SinceKotlin)
         .mapTo(mutableSetOf()) { it.shortClassName }
@@ -240,11 +272,6 @@ private object FirLazyAnnotationTransformer : FirTransformer<FirLazyAnnotationTr
         if (session.registeredPluginAnnotations.annotations.isNotEmpty()) return true
         val name = annotationTypeRef.qualifier.last().name
         return name in COMPILER_ANNOTATION_NAMES
-    }
-
-    override fun <E : FirElement> transformElement(element: E, data: FirLazyAnnotationTransformerData): E {
-        element.transformChildren(this, data)
-        return element
     }
 
     override fun transformResolvedTypeRef(resolvedTypeRef: FirResolvedTypeRef, data: FirLazyAnnotationTransformerData): FirTypeRef {

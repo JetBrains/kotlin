@@ -259,41 +259,41 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsForMember.kt
 
     }
     @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(FirstClass)) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(SUPER_TYPES)] class FirstClass : R|kotlin/Any| {
-        @Deprecated[Unresolved](String(constructor)) @Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/FirstClass.a] @Deprecated[Unresolved](String(constructorProperty)) @Anno[Unresolved](LAZY_EXPRESSION) a: Int): R|FirstClass| {
+        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/FirstClass.a] @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) a: Int): R|FirstClass| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        @Deprecated[Unresolved](String(constructorProperty)) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): Int
 
-        @Deprecated[Unresolved](String(memberFunction)) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| { LAZY_BLOCK }
+        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        @Deprecated[Unresolved](String(memberProperty)) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] val memberProperty: <implicit> = LAZY_EXPRESSION
+        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] val memberProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): <implicit>
 
         @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(NestedClass)) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(SUPER_TYPES)] class NestedClass : R|kotlin/Any| {
-            @Deprecated[Unresolved](String(constructor)) @Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/FirstClass.NestedClass.a] @Deprecated[Unresolved](String(constructorProperty)) @Anno[Unresolved](LAZY_EXPRESSION) a: Int): R|FirstClass.NestedClass| {
+            @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/FirstClass.NestedClass.a] @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) a: Int): R|FirstClass.NestedClass| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            @Deprecated[Unresolved](String(constructorProperty)) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+            @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] get(): Int
 
             @Deprecated[Unresolved](String(memberFunction)) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(SUPER_TYPES)] fun memberFunction(): R|kotlin/Unit| { LAZY_BLOCK }
 
-            @Deprecated[Unresolved](String(memberProperty)) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] val memberProperty: <implicit> = LAZY_EXPRESSION
+            @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] val memberProperty: <implicit> = LAZY_EXPRESSION
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] get(): <implicit>
 
         }
 
-        @Deprecated[Unresolved](String(companion)) @Anno[Unresolved](LAZY_EXPRESSION) public? final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public? final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|FirstClass.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            @Deprecated[Unresolved](String(memberFunction)) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| { LAZY_BLOCK }
+            @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| { LAZY_BLOCK }
 
-            @Deprecated[Unresolved](String(memberProperty)) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] val memberProperty: <implicit> = LAZY_EXPRESSION
+            @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] val memberProperty: <implicit> = LAZY_EXPRESSION
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
 
         }
@@ -325,12 +325,12 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsForMember.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        @Deprecated[Unresolved](String(constructorProperty)) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): Int
 
-        @Deprecated[Unresolved](String(memberFunction)) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| { LAZY_BLOCK }
+        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        @Deprecated[Unresolved](String(memberProperty)) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] val memberProperty: <implicit> = LAZY_EXPRESSION
+        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] val memberProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=FirstClass] get(): <implicit>
 
         @R|kotlin/Deprecated|[Types](String(NestedClass)) @R|Anno|[Types](LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] class NestedClass : R|kotlin/Any| {
@@ -338,24 +338,24 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsForMember.kt
                 LAZY_super<R|kotlin/Any|>
             }
 
-            @Deprecated[Unresolved](String(constructorProperty)) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
+            @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val a: Int = R|<local>/a|
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] get(): Int
 
             @R|kotlin/Deprecated|[Types](String(memberFunction)) @R|Anno|[Types](LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] fun memberFunction(): R|kotlin/Unit| { LAZY_BLOCK }
 
-            @Deprecated[Unresolved](String(memberProperty)) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] val memberProperty: <implicit> = LAZY_EXPRESSION
+            @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] val memberProperty: <implicit> = LAZY_EXPRESSION
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedClass] get(): <implicit>
 
         }
 
-        @Deprecated[Unresolved](String(companion)) @Anno[Unresolved](LAZY_EXPRESSION) public? final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public? final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|FirstClass.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            @Deprecated[Unresolved](String(memberFunction)) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| { LAZY_BLOCK }
+            @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| { LAZY_BLOCK }
 
-            @Deprecated[Unresolved](String(memberProperty)) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] val memberProperty: <implicit> = LAZY_EXPRESSION
+            @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] val memberProperty: <implicit> = LAZY_EXPRESSION
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
 
         }
@@ -410,14 +410,14 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsForMember.kt
 
         }
 
-        @Deprecated[Unresolved](String(companion)) @Anno[Unresolved](LAZY_EXPRESSION) public? final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public? final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|FirstClass.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            @Deprecated[Unresolved](String(memberFunction)) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| { LAZY_BLOCK }
+            @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| { LAZY_BLOCK }
 
-            @Deprecated[Unresolved](String(memberProperty)) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] val memberProperty: <implicit> = LAZY_EXPRESSION
+            @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] val memberProperty: <implicit> = LAZY_EXPRESSION
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
 
         }
@@ -472,14 +472,14 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsForMember.kt
 
         }
 
-        @Deprecated[Unresolved](String(companion)) @Anno[Unresolved](LAZY_EXPRESSION) public? final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
+        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public? final? companion [ResolvedTo(RAW_FIR)] object Companion : R|kotlin/Any| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] constructor(): R|FirstClass.Companion| {
                 LAZY_super<R|kotlin/Any|>
             }
 
-            @Deprecated[Unresolved](String(memberFunction)) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| { LAZY_BLOCK }
+            @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun memberFunction(): R|kotlin/Unit| { LAZY_BLOCK }
 
-            @Deprecated[Unresolved](String(memberProperty)) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] val memberProperty: <implicit> = LAZY_EXPRESSION
+            @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] val memberProperty: <implicit> = LAZY_EXPRESSION
                 public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): <implicit>
 
         }
