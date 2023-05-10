@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.gradle.utils.getByType
+import org.junit.Assume
 import org.junit.Test
 import kotlin.test.BeforeTest
 import kotlin.test.assertEquals
@@ -28,6 +29,7 @@ class ExternalAndroidTargetPrototypeSmokeTest {
 
     @BeforeTest
     fun checkSdk() {
+        Assume.assumeFalse("Mute tests on Windows, KT-58608", org.gradle.internal.os.OperatingSystem.current().isWindows)
         assumeAndroidSdkAvailable()
     }
 
