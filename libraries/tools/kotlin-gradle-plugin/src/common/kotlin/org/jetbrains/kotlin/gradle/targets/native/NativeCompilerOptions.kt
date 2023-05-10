@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.applyLanguageSettingsToCompile
 import org.jetbrains.kotlin.gradle.utils.configureExperimentalTryK2
 import org.jetbrains.kotlin.project.model.LanguageSettings
 
-class NativeCompilerOptions(project: Project) : HasCompilerOptions<KotlinCommonCompilerOptions> {
+class NativeCompilerOptions(project: Project) : HasCompilerOptions<KotlinNativeCompilerOptions> {
 
     override val options: KotlinNativeCompilerOptions = project.objects
         .newInstance(KotlinNativeCompilerOptionsDefault::class.java)
