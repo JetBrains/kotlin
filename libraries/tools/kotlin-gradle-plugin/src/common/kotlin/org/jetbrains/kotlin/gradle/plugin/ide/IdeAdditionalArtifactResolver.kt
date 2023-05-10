@@ -28,6 +28,21 @@ import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver.Companion.SO
  */
 @ExternalKotlinTargetApi
 fun interface IdeAdditionalArtifactResolver {
+    /**
+     * This function is intended to resolve 'additional' artifacts:
+     * This means 'artifacts' that can be attached to some existing/already resolved dependency.
+     * One good example of such an 'additional artifact' would be a -sources.jar file:
+     * It is not a dependency on its own: It shares the coordinates with some [IdeaKotlinBinaryDependency] and can be
+     * attached to this dependency to provide extra functionality.
+     *
+     * Contract:
+     * - This function is allowed to attach data to a given [IdeaKotlinDependency]
+     * - This function is not allowed to remove data from a given [IdeaKotlinBinaryDependency]
+     * - This function is not supposed to modify the [sourceSet]
+     *
+     * @param sourceSet: The current SourceSet which shall resolve additional dependencies
+     * @param dependencies: The already resolved dependencies from prior stages
+     */
     fun resolve(sourceSet: KotlinSourceSet, dependencies: Set<IdeaKotlinDependency>)
 
     @ExternalKotlinTargetApi
