@@ -20,98 +20,98 @@ internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMulti
             resolver = IdeDependsOnDependencyResolver,
             constraint = SourceSetConstraint.unconstrained,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.SourceDependencyResolution,
-            level = IdeMultiplatformImport.DependencyResolutionLevel.Default
+            priority = IdeMultiplatformImport.Priority.normal
         )
 
         registerDependencyResolver(
             resolver = IdeFriendSourceDependencyResolver,
             constraint = SourceSetConstraint.unconstrained,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.SourceDependencyResolution,
-            level = IdeMultiplatformImport.DependencyResolutionLevel.Default
+            priority = IdeMultiplatformImport.Priority.normal
         )
 
         registerDependencyResolver(
             resolver = IdeVisibleMultiplatformSourceDependencyResolver,
             constraint = !SourceSetConstraint.isLeaf,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.SourceDependencyResolution,
-            level = IdeMultiplatformImport.DependencyResolutionLevel.Default
+            priority = IdeMultiplatformImport.Priority.normal
         )
 
         registerDependencyResolver(
             resolver = IdeJvmAndAndroidSourceDependencyResolver,
             constraint = SourceSetConstraint.isJvmAndAndroid,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.SourceDependencyResolution,
-            level = IdeMultiplatformImport.DependencyResolutionLevel.Default
+            priority = IdeMultiplatformImport.Priority.normal
         )
 
         registerDependencyResolver(
             resolver = IdeNativeStdlibDependencyResolver,
             constraint = SourceSetConstraint.isNative,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
-            level = IdeMultiplatformImport.DependencyResolutionLevel.Default,
+            priority = IdeMultiplatformImport.Priority.normal
         )
 
         registerDependencyResolver(
             resolver = IdeNativePlatformDependencyResolver,
             constraint = SourceSetConstraint.isNative,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
-            level = IdeMultiplatformImport.DependencyResolutionLevel.Default
+            priority = IdeMultiplatformImport.Priority.normal
         )
 
         registerDependencyResolver(
             resolver = IdeCommonizedNativePlatformDependencyResolver,
             constraint = SourceSetConstraint.isNative,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
-            level = IdeMultiplatformImport.DependencyResolutionLevel.Default
+            priority = IdeMultiplatformImport.Priority.normal
         )
 
         registerDependencyResolver(
             resolver = IdeTransformedMetadataDependencyResolver,
             constraint = !SourceSetConstraint.isLeaf and !SourceSetConstraint.isJvmAndAndroid,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
-            level = IdeMultiplatformImport.DependencyResolutionLevel.Default
+            priority = IdeMultiplatformImport.Priority.normal
         )
 
         registerDependencyResolver(
             resolver = IdeOriginalMetadataDependencyResolver,
             constraint = !SourceSetConstraint.isLeaf,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
-            level = IdeMultiplatformImport.DependencyResolutionLevel.Default,
+            priority = IdeMultiplatformImport.Priority.normal
         )
 
         registerDependencyResolver(
             resolver = IdeBinaryDependencyResolver(),
             constraint = SourceSetConstraint.isSinglePlatformType,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
-            level = IdeMultiplatformImport.DependencyResolutionLevel.Default
+            priority = IdeMultiplatformImport.Priority.normal
         )
 
         registerDependencyResolver(
             resolver = IdePlatformCinteropDependencyResolver,
             constraint = SourceSetConstraint.isSingleKotlinTarget and SourceSetConstraint.isNative,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
-            level = IdeMultiplatformImport.DependencyResolutionLevel.Default,
+            priority = IdeMultiplatformImport.Priority.normal
         )
 
         registerDependencyResolver(
             resolver = IdeCommonizedCinteropDependencyResolver,
             constraint = { sourceSet -> sourceSet.commonizerTarget.getOrThrow() is SharedCommonizerTarget },
             phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
-            level = IdeMultiplatformImport.DependencyResolutionLevel.Default,
+            priority = IdeMultiplatformImport.Priority.normal
         )
 
         registerDependencyResolver(
             resolver = IdeCInteropMetadataDependencyClasspathResolver,
             constraint = SourceSetConstraint.isNative and !SourceSetConstraint.isSingleKotlinTarget,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
-            level = IdeMultiplatformImport.DependencyResolutionLevel.Default,
+            priority = IdeMultiplatformImport.Priority.normal
         )
 
         registerDependencyResolver(
             resolver = IdeProjectToProjectCInteropDependencyResolver,
             constraint = SourceSetConstraint.isNative and SourceSetConstraint.isSingleKotlinTarget,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
-            level = IdeMultiplatformImport.DependencyResolutionLevel.Default,
+            priority = IdeMultiplatformImport.Priority.normal
         )
 
         /*
@@ -122,21 +122,21 @@ internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMulti
             resolver = IdeJvmAndAndroidPlatformBinaryDependencyResolver(extension.project),
             constraint = SourceSetConstraint.isJvmAndAndroid,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
-            level = IdeMultiplatformImport.DependencyResolutionLevel.Default
+            priority = IdeMultiplatformImport.Priority.normal
         )
 
         registerDependencyResolver(
             resolver = IdePlatformSourcesResolver(),
             constraint = SourceSetConstraint.isSinglePlatformType,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.SourcesAndDocumentationResolution,
-            level = IdeMultiplatformImport.DependencyResolutionLevel.Default
+            priority = IdeMultiplatformImport.Priority.normal
         )
 
         registerAdditionalArtifactResolver(
             resolver = IdeMetadataSourcesResolver(),
             constraint = !SourceSetConstraint.isSinglePlatformType,
             phase = IdeMultiplatformImport.AdditionalArtifactResolutionPhase.SourcesAndDocumentationResolution,
-            level = IdeMultiplatformImport.AdditionalArtifactResolutionLevel.Default
+            priority = IdeMultiplatformImport.Priority.normal
         )
 
         if (extension.project.kotlinPropertiesProvider.enableSlowIdeSourcesJarResolver) {
@@ -144,7 +144,7 @@ internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMulti
                 resolver = IdeArtifactResolutionQuerySourcesAndDocumentationResolver,
                 constraint = SourceSetConstraint.unconstrained,
                 phase = IdeMultiplatformImport.AdditionalArtifactResolutionPhase.SourcesAndDocumentationResolution,
-                level = IdeMultiplatformImport.AdditionalArtifactResolutionLevel.Default
+                priority = IdeMultiplatformImport.Priority.normal
             )
         }
 
@@ -167,21 +167,21 @@ internal fun IdeMultiplatformImport(extension: KotlinProjectExtension): IdeMulti
             resolver = IdeDependencyResolver.empty,
             constraint = SourceSetConstraint.isAndroid,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.BinaryDependencyResolution,
-            level = IdeMultiplatformImport.DependencyResolutionLevel.Overwrite
+            priority = IdeMultiplatformImport.Priority.high
         )
 
         registerDependencyResolver(
             resolver = IdeDependencyResolver.empty,
             constraint = SourceSetConstraint.isAndroid,
             phase = IdeMultiplatformImport.DependencyResolutionPhase.SourcesAndDocumentationResolution,
-            level = IdeMultiplatformImport.DependencyResolutionLevel.Overwrite
+            priority = IdeMultiplatformImport.Priority.high
         )
 
         registerAdditionalArtifactResolver(
             resolver = IdeAdditionalArtifactResolver.empty,
             constraint = SourceSetConstraint.isAndroid,
             phase = IdeMultiplatformImport.AdditionalArtifactResolutionPhase.SourcesAndDocumentationResolution,
-            level = IdeMultiplatformImport.AdditionalArtifactResolutionLevel.Overwrite
+            priority = IdeMultiplatformImport.Priority.high
         )
     }
 }

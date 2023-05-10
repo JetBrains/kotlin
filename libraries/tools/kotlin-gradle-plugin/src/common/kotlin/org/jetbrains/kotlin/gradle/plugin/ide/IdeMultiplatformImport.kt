@@ -10,7 +10,6 @@ import org.gradle.api.Project
 import org.gradle.api.logging.Logger
 import org.gradle.api.logging.Logging
 import org.jetbrains.kotlin.gradle.ExternalKotlinTargetApi
-import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
 import org.jetbrains.kotlin.gradle.idea.serialize.IdeaKotlinExtrasSerializationExtension
@@ -21,8 +20,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
-import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.DependencyResolutionLevel.Default
-import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.DependencyResolutionLevel.Overwrite
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport.SourceSetConstraint
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
@@ -60,28 +57,28 @@ interface IdeMultiplatformImport {
 
     /**
      * Registers a given [resolver] to run during Gradle import:
-     * The given resolver will only run if [constraint] matches and if not overwritten by another
-     * resolver registered in the same [phase] and level=[DependencyResolutionLevel.Overwrite]
+     * The given resolver will only run if the [constraint] matches a given SourceSet and if not overwritten by another
+     * resolver registered in the same [phase] and higher [Priority]
      */
     @ExternalKotlinTargetApi
     fun registerDependencyResolver(
         resolver: IdeDependencyResolver,
         constraint: SourceSetConstraint,
         phase: DependencyResolutionPhase,
-        level: DependencyResolutionLevel = Default,
+        priority: Priority = Priority.normal,
     )
 
     /**
      * Registers a given [resolver] to run during Gradle import:
-     * The given resolver will only run if [constraint] matches and if not overwritten by another
-     * resolver registered in the same [phase] and level [AdditionalArtifactResolutionLevel.Overwrite]
+     * The given resolver will only run if the [constraint] matches a given SourceSet and if not overwritten by another
+     * resolver registered in the same [phase] and higher [Priority]
      */
     @ExternalKotlinTargetApi
     fun registerAdditionalArtifactResolver(
         resolver: IdeAdditionalArtifactResolver,
         constraint: SourceSetConstraint,
         phase: AdditionalArtifactResolutionPhase,
-        level: AdditionalArtifactResolutionLevel = AdditionalArtifactResolutionLevel.Default,
+        priority: Priority = Priority.normal,
     )
 
     /**
@@ -155,29 +152,65 @@ interface IdeMultiplatformImport {
     }
 
     /**
-     * Any [IdeDependencyResolver] has to be registered specifying a certain resolution level.
-     * Generally, all resolvers registered in a given resolution level will work collaboratively, meaning the dependency resolution
-     * result is the aggregation of all resolvers running.
+     * Indicating the 'priority' of a given [IdeDependencyResolver] or [IdeAdditionalArtifactResolver]:
+     * When resolving dependencies, only the highest priority resolver will be selected and executed.
+     * If there are multiple resolvers with the same [Priority] registered, then all of them will be executed
+     * and the result will be merged.
      *
-     * However, only the resolvers in the highest resolution result will run e.g.
-     * If resolvers with level [Overwrite] are found, then only those will contribute to the dependency resolution.
-     * Otherwise, all [Default] resolvers will run.
+     * By 'default' resolvers are registered using [Priority.normal].
+     * The Kotlin Gradle Plugin is not expected to register resolvers outside the [normal] or [high] priorities
+     * External Kotlin Target maintainers _(such as Google)_ can therefore use [veryHigh] to overwrite all resolvers
+     * from the Kotlin Gradle plugin or [low] to only register a resolver if there is nothing available by default
+     * from the Kotlin Gradle plugin.
      */
     @ExternalKotlinTargetApi
-    enum class DependencyResolutionLevel {
-        Default, Overwrite
+    class Priority(val value: Int) : Comparable<Priority> {
+        override fun equals(other: Any?): Boolean {
+            if (other !is Priority) return false
+            return other.value == value
+        }
+
+        override fun hashCode(): Int {
+            return value.hashCode()
+        }
+
+        override fun compareTo(other: Priority): Int {
+            return this.value.compareTo(other.value)
+        }
+
+        @ExternalKotlinTargetApi
+        companion object {
+            /**
+             * Not used by the Kotlin Gradle plugin: Can be used by external Kotlin Target maintainers to
+             * provide resolvers only if KGP does not offer any out of the box.
+             */
+            val low = Priority(-10)
+
+            /**
+             * Default [Priority] used to register resolvers.
+             * Used by the Kotlin Gradle plugin.
+             */
+            val normal = Priority(0)
+
+            /**
+             * Used by the Kotlin Gradle plugin for special cases (like android, jvmAndAndroid, ...)
+             */
+            val high = Priority(10)
+
+            /**
+             * Not used by the Kotlin Gradle plugin: Can be used by external Kotlin Target maintainers to
+             * overwrite the Kotlin Gradle plugin
+             */
+            val veryHigh = Priority(100)
+        }
     }
+
 
     @ExternalKotlinTargetApi
     enum class AdditionalArtifactResolutionPhase {
         PreAdditionalArtifactResolution,
         SourcesAndDocumentationResolution,
         PostAdditionalArtifactResolution
-    }
-
-    @ExternalKotlinTargetApi
-    enum class AdditionalArtifactResolutionLevel {
-        Default, Overwrite
     }
 
     /**
