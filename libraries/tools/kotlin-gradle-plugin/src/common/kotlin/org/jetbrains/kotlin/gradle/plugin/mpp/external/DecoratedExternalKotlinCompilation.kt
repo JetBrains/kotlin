@@ -20,22 +20,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationI
  * Creating an instance will require an instance of [Delegate] which can only be retrieved by calling into the
  * [DecoratedExternalKotlinTarget.createCompilation] functions and providing a [ExternalKotlinCompilationDescriptor.compilationFactory]
  */
-@Suppress("deprecation_error")
 @ExternalKotlinTargetApi
-abstract class DecoratedExternalKotlinCompilation(delegate: Delegate) : ExternalDecoratedKotlinCompilation(delegate) {
-    class Delegate internal constructor(compilation: KotlinCompilationImpl) : ExternalDecoratedKotlinCompilation.Delegate(compilation)
-}
-
-/**
- * Renamed DecoratedExternalKotlinCompilation:
- * Scheduled for removal with Kotlin 2.0
- */
-@Deprecated(
-    "Renamed to 'DecoratedExternalKotlinCompilation'", level = DeprecationLevel.ERROR,
-    replaceWith = ReplaceWith("DecoratedExternalKotlinCompilation")
-)
-@ExternalKotlinTargetApi
-abstract class ExternalDecoratedKotlinCompilation(delegate: Delegate) :
+abstract class DecoratedExternalKotlinCompilation(delegate: Delegate) :
     DecoratedKotlinCompilation<KotlinCommonOptions>(delegate.compilation) {
     open class Delegate internal constructor(internal open val compilation: KotlinCompilationImpl)
 }

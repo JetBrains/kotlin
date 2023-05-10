@@ -175,7 +175,7 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/CreateExterna
 	public static final fun createExternalKotlinTarget (Lorg/jetbrains/kotlin/gradle/dsl/KotlinMultiplatformExtension;Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetDescriptor;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinTarget;
 }
 
-public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinCompilation : org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalDecoratedKotlinCompilation {
+public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinCompilation : org/jetbrains/kotlin/gradle/plugin/mpp/DecoratedKotlinCompilation {
 	public fun <init> (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinCompilation$Delegate;)V
 }
 
@@ -215,10 +215,6 @@ public class org/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKo
 	public fun withSourcesJar (Z)V
 }
 
-public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalDecoratedKotlinCompilation : org/jetbrains/kotlin/gradle/plugin/mpp/DecoratedKotlinCompilation {
-	public fun <init> (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalDecoratedKotlinCompilation$Delegate;)V
-}
-
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor {
 	public abstract fun getCompilationAssociator ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$CompilationAssociator;
 	public abstract fun getCompilationFactory ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$CompilationFactory;
@@ -226,7 +222,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/external/
 	public abstract fun getCompileAllTaskName ()Ljava/lang/String;
 	public abstract fun getCompileTaskName ()Ljava/lang/String;
 	public abstract fun getConfigure ()Lkotlin/jvm/functions/Function1;
-	public abstract fun getDecoratedKotlinCompilationFactory ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$DecoratedKotlinCompilationFactory;
 	public abstract fun getDefaultSourceSet ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;
 	public abstract fun getFriendArtifactResolver ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$FriendArtifactResolver;
 }
@@ -237,9 +232,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/external/
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$CompilationFactory {
 	public abstract fun create (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/DecoratedExternalKotlinCompilation$Delegate;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/DecoratedKotlinCompilation;
-}
-
-public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$DecoratedKotlinCompilationFactory : org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$CompilationFactory {
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$FriendArtifactResolver {
@@ -254,7 +246,6 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotli
 	public final fun getCompileAllTaskName ()Ljava/lang/String;
 	public final fun getCompileTaskName ()Ljava/lang/String;
 	public final fun getConfigure ()Lkotlin/jvm/functions/Function1;
-	public final fun getDecoratedKotlinCompilationFactory ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$DecoratedKotlinCompilationFactory;
 	public final fun getDefaultSourceSet ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;
 	public final fun getFriendArtifactResolver ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$FriendArtifactResolver;
 	public final fun setCompilationAssociator (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$CompilationAssociator;)V
@@ -263,7 +254,6 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotli
 	public final fun setCompileAllTaskName (Ljava/lang/String;)V
 	public final fun setCompileTaskName (Ljava/lang/String;)V
 	public final fun setConfigure (Lkotlin/jvm/functions/Function1;)V
-	public final fun setDecoratedKotlinCompilationFactory (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$DecoratedKotlinCompilationFactory;)V
 	public final fun setDefaultSourceSet (Lorg/jetbrains/kotlin/gradle/plugin/KotlinSourceSet;)V
 	public final fun setFriendArtifactResolver (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinCompilationDescriptor$FriendArtifactResolver;)V
 }
