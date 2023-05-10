@@ -151,4 +151,14 @@ sealed interface PartialLinkageCase {
      * Applicable to: Declarations (functions, properties).
      */
     class UnimplementedAbstractCallable(val callable: IrOverridableDeclaration<*>) : PartialLinkageCase
+
+    /**
+     * Unusable instance of annotation. The annotation itself is removed from the holder [IrDeclaration].
+     *
+     * Applicable to: Declarations.
+     */
+    class UnusableAnnotation(
+        val annotationConstructorSymbol: IrConstructorSymbol,
+        val holderDeclarationSymbol: IrSymbol
+    ) : PartialLinkageCase
 }

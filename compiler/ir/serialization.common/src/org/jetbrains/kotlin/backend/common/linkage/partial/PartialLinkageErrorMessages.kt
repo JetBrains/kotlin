@@ -73,6 +73,7 @@ internal fun PartialLinkageCase.renderLinkageError(): String = buildString {
         is AbstractClassInstantiation -> expression(constructorCall) { cantInstantiateAbstractClass(classSymbol) }
 
         is UnimplementedAbstractCallable -> unimplementedAbstractCallable(callable)
+        is UnusableAnnotation -> unusableAnnotation(annotationConstructorSymbol, holderDeclarationSymbol)
     }
 }
 
@@ -551,6 +552,10 @@ private fun Appendable.cantInstantiateAbstractClass(classSymbol: IrClassSymbol):
 private fun Appendable.unimplementedAbstractCallable(callable: IrOverridableDeclaration<*>): Appendable =
     append("Abstract ").declarationKindName(callable.symbol, capitalized = false)
         .append(" is not implemented in non-abstract ").declarationKindName(callable.parentAsClass.symbol, capitalized = false)
+
+private fun Appendable.unusableAnnotation(annotationConstructorSymbol: IrConstructorSymbol, holderDeclarationSymbol: IrSymbol): Appendable =
+    append("Unusable annotation ").declarationName(annotationConstructorSymbol)
+        .append(" has been removed from ").declarationKindName(holderDeclarationSymbol, capitalized = false)
 
 private fun Appendable.appendCapitalized(text: String, capitalized: Boolean): Appendable {
     if (capitalized && text.isNotEmpty()) {

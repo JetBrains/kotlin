@@ -109,33 +109,43 @@ abstract class ConstantValueGenerator(
                 //  TODO: in `annotationWithKotlinProperty`, `@Foo(KotlinClass.FOO_INT)` is parsed as if `KotlinClass.FOO_INT`
                 //    is an EnumValue when it's a read of a `const val` with an Int type. Not using `expectedType` somewhat masks
                 //    that - we silently fail to translate the argument because `enumEntryDescriptor` is an error class.
-                val enumEntryDescriptor =
-                    constantValueType.memberScope.getContributedClassifier(constantValue.enumEntryName, NoLookupLocation.FROM_BACKEND)
-                        ?: throw AssertionError("No such enum entry ${constantValue.enumEntryName} in $constantType")
-                if (enumEntryDescriptor !is ClassDescriptor) {
-                    throw AssertionError("Enum entry $enumEntryDescriptor should be a ClassDescriptor")
-                }
-                if (!DescriptorUtils.isEnumEntry(enumEntryDescriptor)) {
-                    // Error class descriptor for an unresolved entry.
-                    // TODO this `null` may actually reach codegen if the annotation is on an interface member's default implementation,
-                    //      as any bridge generated in an implementation of that interface will have a copy of the annotation. See
-                    //      `missingEnumReferencedInAnnotationArgumentIr` in `testData/compileKotlinAgainstCustomBinaries`: replace
-                    //      `open class B` with `interface B` and watch things break. (`KClassValue` below likely has a similar problem.)
-                    return null
-                }
-                IrGetEnumValueImpl(
-                    startOffset, endOffset,
-                    constantType,
-                    symbolTable.referenceEnumEntry(enumEntryDescriptor)
+                val enumEntryDescriptor = constantValueType.memberScope.getContributedClassifier(
+                    constantValue.enumEntryName,
+                    NoLookupLocation.FROM_BACKEND
                 )
+
+                when {
+                    enumEntryDescriptor == null -> {
+                        // Missing enum entry. Probably it's gone in newer version of the library.
+                        return null
+                    }
+                    enumEntryDescriptor !is ClassDescriptor -> {
+                        throw AssertionError("Enum entry $enumEntryDescriptor should be a ClassDescriptor")
+                    }
+                    !DescriptorUtils.isEnumEntry(enumEntryDescriptor) -> {
+                        // Error class descriptor for an unresolved entry.
+                        // TODO this `null` may actually reach codegen if the annotation is on an interface member's default implementation,
+                        //      as any bridge generated in an implementation of that interface will have a copy of the annotation. See
+                        //      `missingEnumReferencedInAnnotationArgumentIr` in `testData/compileKotlinAgainstCustomBinaries`: replace
+                        //      `open class B` with `interface B` and watch things break. (`KClassValue` below likely has a similar problem.)
+                        return null
+                    }
+                    else -> IrGetEnumValueImpl(
+                        startOffset, endOffset,
+                        constantType,
+                        symbolTable.referenceEnumEntry(enumEntryDescriptor)
+                    )
+                }
             }
 
             is AnnotationValue -> generateAnnotationConstructorCall(constantValue.value, constantKtType)
 
             is KClassValue -> {
                 val classifierKtType = constantValue.getArgumentType(moduleDescriptor)
-                if (classifierKtType.isError) null
-                else {
+                if (classifierKtType.isError) {
+                    // The classifier type contains error class descriptor. Probably the classifier is gone in newer version of the library.
+                    null
+                } else {
                     val classifierDescriptor = classifierKtType.constructor.declarationDescriptor
                         ?: throw AssertionError("Unexpected KClassValue: $classifierKtType")
 

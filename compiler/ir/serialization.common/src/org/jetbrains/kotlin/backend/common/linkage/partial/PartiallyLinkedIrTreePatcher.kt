@@ -446,7 +446,7 @@ internal class PartiallyLinkedIrTreePatcher(
             supportForLowerings.throwLinkageError(this, declaration, currentFile, doNotLog)
     }
 
-    private inner class ExpressionTransformer(startingFile: PLFile?) : FileAwareIrElementTransformerVoid(startingFile) {
+    private open inner class ExpressionTransformer(startingFile: PLFile?) : FileAwareIrElementTransformerVoid(startingFile) {
         override fun visitPackageFragment(declaration: IrPackageFragment): IrPackageFragment {
             (declaration as? IrFile)?.filterUnusableAnnotations()
             return super.visitPackageFragment(declaration)
@@ -503,40 +503,37 @@ internal class PartiallyLinkedIrTreePatcher(
             checkReferencedDeclaration(symbol)
                 ?: checkReferencedDeclaration(superQualifierSymbol)
                 ?: checkExpressionTypeArguments()
-                ?: checkArgumentsAndValueParameters(symbol.owner)
+                ?: checkArgumentsAndValueParameters()
         }
 
         override fun visitConstructorCall(expression: IrConstructorCall) = expression.maybeThrowLinkageError {
             checkReferencedDeclaration(symbol)
                 ?: checkNotAbstractClass()
                 ?: checkExpressionTypeArguments()
-                ?: checkReferencedDeclarationType(expression.symbol.owner.parentAsClass, "regular class") { constructedClass ->
-                    constructedClass.kind == ClassKind.CLASS || constructedClass.kind == ClassKind.ANNOTATION_CLASS
-                }
-                ?: checkArgumentsAndValueParameters(symbol.owner)
+                ?: customConstructorCallChecks()
         }
 
         override fun visitEnumConstructorCall(expression: IrEnumConstructorCall) = expression.maybeThrowLinkageError {
             checkReferencedDeclaration(symbol)
                 ?: checkExpressionTypeArguments()
-                ?: checkReferencedDeclarationType(expression.symbol.owner.parentAsClass, "enum class") { constructedClass ->
+                ?: checkReferencedDeclarationType(symbol.owner.parentAsClass, "enum class") { constructedClass ->
                     constructedClass.kind == ClassKind.ENUM_CLASS || constructedClass.kind == ClassKind.ENUM_ENTRY
                             || constructedClass.symbol == builtIns.enumClass
                 }
-                ?: checkArgumentsAndValueParameters(symbol.owner)
+                ?: checkArgumentsAndValueParameters()
         }
 
         override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) = expression.maybeThrowLinkageError {
             checkReferencedDeclaration(symbol)
                 ?: checkExpressionTypeArguments()
-                ?: checkArgumentsAndValueParameters(symbol.owner)
+                ?: checkArgumentsAndValueParameters()
         }
 
         override fun visitFunctionReference(expression: IrFunctionReference) = expression.maybeThrowLinkageError {
             checkReferencedDeclaration(symbol)
                 ?: checkReferencedDeclaration(reflectionTarget)
                 ?: checkExpressionTypeArguments()
-                ?: checkArgumentsAndValueParameters(symbol.owner)
+                ?: checkArgumentsAndValueParameters()
         }
 
         override fun visitPropertyReference(expression: IrPropertyReference) = expression.maybeThrowLinkageError {
@@ -547,7 +544,7 @@ internal class PartiallyLinkedIrTreePatcher(
                 ?: checkExpressionTypeArguments()
         }
 
-        // Never patch instance initializers. Otherwise this will break a lot of lowerings.
+        // Never patch instance initializers. Otherwise, this will break a lot of lowerings.
         override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall) = expression
 
         override fun visitExpression(expression: IrExpression) = expression.maybeThrowLinkageError { null }
@@ -555,7 +552,10 @@ internal class PartiallyLinkedIrTreePatcher(
         private inline fun <T : IrExpression> T.maybeThrowLinkageError(computePartialLinkageCase: T.() -> PartialLinkageCase?): IrExpression =
             maybeThrowLinkageError(transformer = this@ExpressionTransformer) {
                 computePartialLinkageCase() ?: checkExpressionType(type) // Check something that is always present in every expression.
-            }
+            }.also { onAfterMaybeThrowLinkageError() }
+
+        // Custom post-check. Can be overridden.
+        protected open fun IrExpression.onAfterMaybeThrowLinkageError() = Unit
 
         private fun IrExpression.checkExpressionType(type: IrType): PartialLinkageCase? {
             return ExpressionWithUnusableClassifier(this, type.explore() ?: return null)
@@ -635,7 +635,11 @@ internal class PartiallyLinkedIrTreePatcher(
                 return null
             }
 
-            val declaration = symbol.owner as? IrDeclarationWithVisibility ?: return null
+            val declaration: IrDeclarationWithVisibility = when (val symbolOwner = symbol.owner) {
+                is IrDeclarationWithVisibility -> symbolOwner
+                is IrEnumEntry -> symbolOwner.parent as? IrClass ?: return null
+                else -> return null
+            }
             val containingModule = PLModule.determineModuleFor(declaration)
 
             return when {
@@ -672,7 +676,7 @@ internal class PartiallyLinkedIrTreePatcher(
         private fun List<IrType>.precalculatedUnusableClassifier(): ExploredClassifier.Unusable? =
             firstNotNullOfOrNull { it.precalculatedUnusableClassifier() }
 
-        private fun <D : IrDeclaration> IrExpression.checkReferencedDeclarationType(
+        protected fun <D : IrDeclaration> IrExpression.checkReferencedDeclarationType(
             declaration: D,
             expectedDeclarationDescription: String,
             checkDeclarationType: (D) -> Boolean
@@ -682,7 +686,11 @@ internal class PartiallyLinkedIrTreePatcher(
             else null
         }
 
-        private fun <D : IrFunction> IrMemberAccessExpression<IrFunctionSymbol>.checkArgumentsAndValueParameters(function: D): PartialLinkageCase? {
+        protected inline fun IrMemberAccessExpression<IrFunctionSymbol>.checkArgumentsAndValueParameters(
+            usedDefaultArgumentsConsumer: (IrExpressionBody) -> Unit = {}
+        ): PartialLinkageCase? {
+            val function = symbol.owner
+
             val expressionEffectivelyHasDispatchReceiver = when {
                 dispatchReceiver != null -> true
                 this is IrFunctionReference -> run {
@@ -780,9 +788,15 @@ internal class PartiallyLinkedIrTreePatcher(
             }
 
             val expressionValueArgumentCount = (0 until valueArgumentsCount).count { index ->
-                getValueArgument(index) != null
-                        || function.valueParameters.getOrNull(index)?.isVararg == true
-                        || functionsToCheckDefaultValues.any { it.valueParameters.getOrNull(index)?.defaultValue != null }
+                if (getValueArgument(index) != null)
+                    return@count true
+
+                val defaultArgumentExpressionBody = functionsToCheckDefaultValues.firstNotNullOfOrNull {
+                    it.valueParameters.getOrNull(index)?.defaultValue
+                }
+                defaultArgumentExpressionBody?.let(usedDefaultArgumentsConsumer)
+
+                return@count defaultArgumentExpressionBody != null || function.valueParameters.getOrNull(index)?.isVararg == true
             }
             val functionValueParameterCount = function.valueParameters.size
 
@@ -806,24 +820,82 @@ internal class PartiallyLinkedIrTreePatcher(
                 null
         }
 
-        private fun <T> T.filterUnusableAnnotations() where T : IrMutableAnnotationContainer, T : IrElement {
+        // Custom checks for constructor call. Can be overridden.
+        protected open fun IrConstructorCall.customConstructorCallChecks(): PartialLinkageCase? =
+            checkReferencedDeclarationType(symbol.owner.parentAsClass, "class") { constructedClass ->
+                constructedClass.kind == ClassKind.CLASS || constructedClass.kind == ClassKind.ANNOTATION_CLASS
+            } ?: checkArgumentsAndValueParameters()
+
+        private fun <T> T.filterUnusableAnnotations() where T : IrMutableAnnotationContainer, T : IrSymbolOwner {
             if (annotations.isNotEmpty()) {
                 annotations = annotations.filterTo(ArrayList(annotations.size)) { annotation ->
-                    val partialLinkageCase = with(annotation) {
-                        checkReferencedDeclaration(symbol)
-                            ?: checkExpressionTypeArguments()
-                            ?: checkReferencedDeclarationType(symbol.owner.parentAsClass, "annotation class") { constructedClass ->
-                                constructedClass.kind == ClassKind.ANNOTATION_CLASS
-                            }
-                    } ?: return@filterTo true
+                    // Visit the annotation as an expression.
+                    val checker = AnnotationChecker(currentFile)
+                    annotation.transformVoid(checker)
 
-                    // Just log a warning. Do not throw a linkage error as this would produce broken IR.
-                    supportForLowerings.renderAndLogLinkageError(partialLinkageCase, this, currentFile)
+                    if (checker.isUsableAnnotation) {
+                        true // No PL errors have been found.
+                    } else {
+                        // Just log a warning. Do not throw a linkage error as this would produce broken IR.
+                        supportForLowerings.renderAndLogLinkageError(
+                            partialLinkageCase = UnusableAnnotation(annotation.symbol, holderDeclarationSymbol = symbol),
+                            element = this,
+                            file = currentFile
+                        )
 
-                    false // Drop it.
+                        false // Drop the annotation.
+                    }
                 }.compact()
             }
         }
+    }
+
+    private inner class AnnotationChecker(currentFile: PLFile) : ExpressionTransformer(currentFile) {
+        private val currentErrorMessagesCount get() = supportForLowerings.errorMessagesRendered
+        private val initialErrorMessagesCount = currentErrorMessagesCount // Memoize the number of PL errors generated to this moment.
+
+        var isUsableAnnotation = true
+            private set
+
+        override fun IrExpression.onAfterMaybeThrowLinkageError() {
+            if (isUsableAnnotation)
+                isUsableAnnotation = initialErrorMessagesCount == currentErrorMessagesCount && !isPartialLinkageRuntimeError()
+        }
+
+        override fun visitConst(expression: IrConst<*>): IrExpression = expression // Nothing can be unlinked here.
+
+        override fun IrConstructorCall.customConstructorCallChecks(): PartialLinkageCase? =
+            checkReferencedDeclarationType(symbol.owner.parentAsClass, "annotation class") { constructedClass ->
+                constructedClass.kind == ClassKind.ANNOTATION_CLASS
+            } ?: run {
+                val annotationFile by lazy { PLFile.determineFileFor(symbol.owner) }
+
+                checkArgumentsAndValueParameters { defaultArgumentExpressionBody ->
+                    val defaultArgument = defaultArgumentExpressionBody.expression
+                    when {
+                        defaultArgument is IrConst<*> -> {
+                            // Nothing can be unlinked here.
+                        }
+                        defaultArgument is IrErrorExpression -> {
+                            // Such expression is used as a placeholder for a real default value in Lazy IR.
+                            // Nothing to check here specifically.
+                        }
+                        defaultArgument.isPartialLinkageRuntimeError() -> {
+                            // Default arg has already been processed by ExpressionsTransformer, and it is known to be a PL error.
+                            isUsableAnnotation = false
+                        }
+                        annotationFile.module.shouldBeSkipped -> {
+                            // It does not make sense to check the default arguments in annotation classes from stdlib.
+                        }
+                        else -> {
+                            // WARNING: Jump to (probably) another file and patch the default argument expression right there.
+                            runInFile(annotationFile) {
+                                defaultArgumentExpressionBody.transformVoid(this@AnnotationChecker)
+                            }
+                        }
+                    }
+                }
+            }
     }
 
     private fun IrClassifierSymbol.explore(): ExploredClassifier.Unusable? = classifierExplorer.exploreSymbol(this)

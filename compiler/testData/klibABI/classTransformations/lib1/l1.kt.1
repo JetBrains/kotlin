@@ -141,3 +141,12 @@ abstract class ClassToAbstractClass {
     abstract var name: String
     fun getGreeting() = "Hello, $name!"
 }
+
+//class RemovedClass
+enum class EnumClassWithDisappearingEntry { UNCHANGED, /*REMOVED*/ }
+
+object PublicTopLevelLib1 {
+    private annotation class AnnotationClassThatBecomesPrivate
+    private class ClassThatBecomesPrivate
+    private enum class EnumClassThatBecomesPrivate { ENTRY }
+}

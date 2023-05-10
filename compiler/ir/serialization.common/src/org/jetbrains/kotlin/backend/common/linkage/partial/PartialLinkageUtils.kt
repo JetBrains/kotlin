@@ -83,12 +83,17 @@ internal abstract class FileAwareIrElementTransformerVoid(startingFile: PLFile?)
     private var _currentFile: PLFile? = startingFile
     val currentFile: PLFile get() = _currentFile ?: error("No information about current file")
 
-    final override fun visitFile(declaration: IrFile): IrFile {
-        _currentFile = PLFile.IrBased(declaration)
-        return try {
-            super.visitFile(declaration)
+    protected fun <T> runInFile(file: PLFile, block: () -> T): T {
+        val previousFile = _currentFile
+        _currentFile = file
+        try {
+            return block()
         } finally {
-            _currentFile = null
+            _currentFile = previousFile
         }
+    }
+
+    final override fun visitFile(declaration: IrFile) = runInFile(PLFile.IrBased(declaration)) {
+        super.visitFile(declaration)
     }
 }

@@ -17,7 +17,10 @@ fun box() = abiTest {
      *
      * The [adjustForLazyIr] function is used to adjust tested error messages depending on whether lazy IR is used or not.
      */
-    fun adjustForLazyIr(declaration: String) = if (testMode == NATIVE_CACHE_STATIC_EVERYWHERE) "Expression" else declaration
+    fun adjustForLazyIr(declaration: String) =
+        if (testMode == NATIVE_CACHE_STATIC_EVERYWHERE) "Expression" else declaration
+    fun adjustNoClassFoundForLazyIr(signature: String) =
+        if (testMode == NATIVE_CACHE_STATIC_EVERYWHERE) "Expression uses unlinked class symbol '$signature'" else "No class found for symbol '$signature'"
 
     expectFailure(linkage("Function 'getClassToEnumFoo' can not be called: ${adjustForLazyIr("Function")} uses unlinked class symbol '/ClassToEnum.Foo'")) { getClassToEnumFoo() }
     expectFailure(linkage("Function 'getClassToEnumFooInline' can not be called: ${adjustForLazyIr("Function")} uses unlinked class symbol '/ClassToEnum.Foo'")) { getClassToEnumFooInline() }
@@ -169,6 +172,90 @@ fun box() = abiTest {
     expectFailure(linkage("Constructor 'AnnotationClassWithNewParameter.<init>' can not be called: No constructor found for symbol '/AnnotationClassWithNewParameter.<init>'")) { getAnnotationClassWithNewParameterInline() }
     expectFailure(linkage("Constructor 'AnnotationClassWithNewParameter.<init>' can not be called: No constructor found for symbol '/AnnotationClassWithNewParameter.<init>'")) { getAnnotationClassWithNewParameterAsAny() }
     expectFailure(linkage("Constructor 'AnnotationClassWithNewParameter.<init>' can not be called: No constructor found for symbol '/AnnotationClassWithNewParameter.<init>'")) { getAnnotationClassWithNewParameterAsAnyInline() }
+    expectFailure(linkage("Function 'getAnnotationClassWithClassReferenceParameterThatDisappears1' can not be called: Function uses unlinked class symbol '/RemovedClass' (via annotation class 'AnnotationClassWithClassReferenceParameterThatDisappears1')")) { getAnnotationClassWithClassReferenceParameterThatDisappears1() }
+    expectFailure(linkage("Function 'getAnnotationClassWithClassReferenceParameterThatDisappears1Inline' can not be called: Function uses unlinked class symbol '/RemovedClass' (via annotation class 'AnnotationClassWithClassReferenceParameterThatDisappears1')")) { getAnnotationClassWithClassReferenceParameterThatDisappears1Inline() }
+    expectFailure(linkage("Reference to class 'RemovedClass' can not be evaluated: No class found for symbol '/RemovedClass'")) { getAnnotationClassWithClassReferenceParameterThatDisappears1AsAny() }
+    expectFailure(linkage("Reference to class 'RemovedClass' can not be evaluated: ${adjustNoClassFoundForLazyIr("/RemovedClass")}")) { getAnnotationClassWithClassReferenceParameterThatDisappears1AsAnyInline() }
+    expectFailure(linkage("Function 'getAnnotationClassWithDefaultClassReferenceParameterThatDisappears1' can not be called: Function uses unlinked class symbol '/RemovedClass' (via annotation class 'AnnotationClassWithClassReferenceParameterThatDisappears1')")) { getAnnotationClassWithDefaultClassReferenceParameterThatDisappears1() }
+    expectFailure(linkage("Function 'getAnnotationClassWithDefaultClassReferenceParameterThatDisappears1Inline' can not be called: Function uses unlinked class symbol '/RemovedClass' (via annotation class 'AnnotationClassWithClassReferenceParameterThatDisappears1')")) { getAnnotationClassWithDefaultClassReferenceParameterThatDisappears1Inline() }
+    expectFailure(linkage("Constructor 'AnnotationClassWithClassReferenceParameterThatDisappears1.<init>' can not be called: Constructor uses unlinked class symbol '/RemovedClass'")) { getAnnotationClassWithDefaultClassReferenceParameterThatDisappears1AsAny() }
+    expectFailure(linkage("Constructor 'AnnotationClassWithClassReferenceParameterThatDisappears1.<init>' can not be called: Constructor uses unlinked class symbol '/RemovedClass'")) { getAnnotationClassWithDefaultClassReferenceParameterThatDisappears1AsAnyInline() }
+    expectFailure(linkage("Reference to class 'RemovedClass' can not be evaluated: No class found for symbol '/RemovedClass'")) { getAnnotationClassWithClassReferenceParameterThatDisappears2() }
+    expectFailure(linkage("Reference to class 'RemovedClass' can not be evaluated: ${adjustNoClassFoundForLazyIr("/RemovedClass")}")) { getAnnotationClassWithClassReferenceParameterThatDisappears2Inline() }
+    expectFailure(linkage("Reference to class 'RemovedClass' can not be evaluated: No class found for symbol '/RemovedClass'")) { getAnnotationClassWithClassReferenceParameterThatDisappears2AsAny() }
+    expectFailure(linkage("Reference to class 'RemovedClass' can not be evaluated: ${adjustNoClassFoundForLazyIr("/RemovedClass")}")) { getAnnotationClassWithClassReferenceParameterThatDisappears2AsAnyInline() }
+    expectFailure(linkage("Reference to class 'RemovedClass' can not be evaluated: No class found for symbol '/RemovedClass'")) { getAnnotationClassWithDefaultClassReferenceParameterThatDisappears2() }
+    expectFailure(linkage("Reference to class 'RemovedClass' can not be evaluated: No class found for symbol '/RemovedClass'")) { getAnnotationClassWithDefaultClassReferenceParameterThatDisappears2Inline() }
+    expectFailure(linkage("Reference to class 'RemovedClass' can not be evaluated: No class found for symbol '/RemovedClass'")) { getAnnotationClassWithDefaultClassReferenceParameterThatDisappears2AsAny() }
+    expectFailure(linkage("Reference to class 'RemovedClass' can not be evaluated: No class found for symbol '/RemovedClass'")) { getAnnotationClassWithDefaultClassReferenceParameterThatDisappears2AsAnyInline() }
+    expectFailure(linkage("Function 'getAnnotationClassWithClassReferenceParameterOfParameterThatDisappears1' can not be called: Function uses unlinked class symbol '/RemovedClass' (via annotation class 'AnnotationClassWithClassReferenceParameterOfParameterThatDisappears1')")) { getAnnotationClassWithClassReferenceParameterOfParameterThatDisappears1() }
+    expectFailure(linkage("Function 'getAnnotationClassWithClassReferenceParameterOfParameterThatDisappears1Inline' can not be called: Function uses unlinked class symbol '/RemovedClass' (via annotation class 'AnnotationClassWithClassReferenceParameterOfParameterThatDisappears1')")) { getAnnotationClassWithClassReferenceParameterOfParameterThatDisappears1Inline() }
+    expectFailure(linkage("Reference to class 'RemovedClass' can not be evaluated: No class found for symbol '/RemovedClass'")) { getAnnotationClassWithClassReferenceParameterOfParameterThatDisappears1AsAny() }
+    expectFailure(linkage("Reference to class 'RemovedClass' can not be evaluated: ${adjustNoClassFoundForLazyIr("/RemovedClass")}")) { getAnnotationClassWithClassReferenceParameterOfParameterThatDisappears1AsAnyInline() }
+    expectFailure(linkage("Function 'getAnnotationClassWithDefaultClassReferenceParameterOfParameterThatDisappears1' can not be called: Function uses unlinked class symbol '/RemovedClass' (via annotation class 'AnnotationClassWithClassReferenceParameterOfParameterThatDisappears1')")) { getAnnotationClassWithDefaultClassReferenceParameterOfParameterThatDisappears1() }
+    expectFailure(linkage("Function 'getAnnotationClassWithDefaultClassReferenceParameterOfParameterThatDisappears1Inline' can not be called: Function uses unlinked class symbol '/RemovedClass' (via annotation class 'AnnotationClassWithClassReferenceParameterOfParameterThatDisappears1')")) { getAnnotationClassWithDefaultClassReferenceParameterOfParameterThatDisappears1Inline() }
+    expectFailure(linkage("Constructor 'AnnotationClassWithClassReferenceParameterOfParameterThatDisappears1.<init>' can not be called: Constructor uses unlinked class symbol '/RemovedClass' (via annotation class 'AnnotationClassWithClassReferenceParameterThatDisappears1')")) { getAnnotationClassWithDefaultClassReferenceParameterOfParameterThatDisappears1AsAny() }
+    expectFailure(linkage("Constructor 'AnnotationClassWithClassReferenceParameterOfParameterThatDisappears1.<init>' can not be called: Constructor uses unlinked class symbol '/RemovedClass' (via annotation class 'AnnotationClassWithClassReferenceParameterThatDisappears1')")) { getAnnotationClassWithDefaultClassReferenceParameterOfParameterThatDisappears1AsAnyInline() }
+    expectFailure(linkage("Reference to class 'RemovedClass' can not be evaluated: No class found for symbol '/RemovedClass'")) { getAnnotationClassWithClassReferenceParameterOfParameterThatDisappears2() }
+    expectFailure(linkage("Reference to class 'RemovedClass' can not be evaluated: ${adjustNoClassFoundForLazyIr("/RemovedClass")}")) { getAnnotationClassWithClassReferenceParameterOfParameterThatDisappears2Inline() }
+    expectFailure(linkage("Reference to class 'RemovedClass' can not be evaluated: No class found for symbol '/RemovedClass'")) { getAnnotationClassWithClassReferenceParameterOfParameterThatDisappears2AsAny() }
+    expectFailure(linkage("Reference to class 'RemovedClass' can not be evaluated: ${adjustNoClassFoundForLazyIr("/RemovedClass")}")) { getAnnotationClassWithClassReferenceParameterOfParameterThatDisappears2AsAnyInline() }
+    expectFailure(linkage("Reference to class 'RemovedClass' can not be evaluated: No class found for symbol '/RemovedClass'")) { getAnnotationClassWithDefaultClassReferenceParameterOfParameterThatDisappears2() }
+    expectFailure(linkage("Reference to class 'RemovedClass' can not be evaluated: No class found for symbol '/RemovedClass'")) { getAnnotationClassWithDefaultClassReferenceParameterOfParameterThatDisappears2Inline() }
+    expectFailure(linkage("Reference to class 'RemovedClass' can not be evaluated: No class found for symbol '/RemovedClass'")) { getAnnotationClassWithDefaultClassReferenceParameterOfParameterThatDisappears2AsAny() }
+    expectFailure(linkage("Reference to class 'RemovedClass' can not be evaluated: No class found for symbol '/RemovedClass'")) { getAnnotationClassWithDefaultClassReferenceParameterOfParameterThatDisappears2AsAnyInline() }
+    expectFailure(linkage("Can not get instance of singleton 'EnumClassWithDisappearingEntry.REMOVED': No enum entry found for symbol '/EnumClassWithDisappearingEntry.REMOVED'")) { getAnnotationClassWithRemovedEnumEntryParameter() }
+    expectFailure(linkage("Can not get instance of singleton 'EnumClassWithDisappearingEntry.REMOVED': No enum entry found for symbol '/EnumClassWithDisappearingEntry.REMOVED'")) { getAnnotationClassWithRemovedEnumEntryParameterInline() }
+    expectFailure(linkage("Can not get instance of singleton 'EnumClassWithDisappearingEntry.REMOVED': No enum entry found for symbol '/EnumClassWithDisappearingEntry.REMOVED'")) { getAnnotationClassWithRemovedEnumEntryParameterAsAny() }
+    expectFailure(linkage("Can not get instance of singleton 'EnumClassWithDisappearingEntry.REMOVED': No enum entry found for symbol '/EnumClassWithDisappearingEntry.REMOVED'")) { getAnnotationClassWithRemovedEnumEntryParameterAsAnyInline() }
+    expectFailure(linkage("Can not get instance of singleton 'EnumClassWithDisappearingEntry.REMOVED': No enum entry found for symbol '/EnumClassWithDisappearingEntry.REMOVED'")) { getAnnotationClassWithDefaultRemovedEnumEntryParameter() }
+    expectFailure(linkage("Can not get instance of singleton 'EnumClassWithDisappearingEntry.REMOVED': No enum entry found for symbol '/EnumClassWithDisappearingEntry.REMOVED'")) { getAnnotationClassWithDefaultRemovedEnumEntryParameterInline() }
+    expectFailure(linkage("Can not get instance of singleton 'EnumClassWithDisappearingEntry.REMOVED': No enum entry found for symbol '/EnumClassWithDisappearingEntry.REMOVED'")) { getAnnotationClassWithDefaultRemovedEnumEntryParameterAsAny() }
+    expectFailure(linkage("Can not get instance of singleton 'EnumClassWithDisappearingEntry.REMOVED': No enum entry found for symbol '/EnumClassWithDisappearingEntry.REMOVED'")) { getAnnotationClassWithDefaultRemovedEnumEntryParameterAsAnyInline() }
+    expectFailure(linkage("Can not get instance of singleton 'EnumClassWithDisappearingEntry.REMOVED': No enum entry found for symbol '/EnumClassWithDisappearingEntry.REMOVED'")) { getAnnotationClassWithRemovedEnumEntryParameterOfParameter() }
+    expectFailure(linkage("Can not get instance of singleton 'EnumClassWithDisappearingEntry.REMOVED': No enum entry found for symbol '/EnumClassWithDisappearingEntry.REMOVED'")) { getAnnotationClassWithRemovedEnumEntryParameterOfParameterInline() }
+    expectFailure(linkage("Can not get instance of singleton 'EnumClassWithDisappearingEntry.REMOVED': No enum entry found for symbol '/EnumClassWithDisappearingEntry.REMOVED'")) { getAnnotationClassWithRemovedEnumEntryParameterOfParameterAsAny() }
+    expectFailure(linkage("Can not get instance of singleton 'EnumClassWithDisappearingEntry.REMOVED': No enum entry found for symbol '/EnumClassWithDisappearingEntry.REMOVED'")) { getAnnotationClassWithRemovedEnumEntryParameterOfParameterAsAnyInline() }
+    expectFailure(linkage("Can not get instance of singleton 'EnumClassWithDisappearingEntry.REMOVED': No enum entry found for symbol '/EnumClassWithDisappearingEntry.REMOVED'")) { getAnnotationClassWithDefaultRemovedEnumEntryParameterOfParameter() }
+    expectFailure(linkage("Can not get instance of singleton 'EnumClassWithDisappearingEntry.REMOVED': No enum entry found for symbol '/EnumClassWithDisappearingEntry.REMOVED'")) { getAnnotationClassWithDefaultRemovedEnumEntryParameterOfParameterInline() }
+    expectFailure(linkage("Can not get instance of singleton 'EnumClassWithDisappearingEntry.REMOVED': No enum entry found for symbol '/EnumClassWithDisappearingEntry.REMOVED'")) { getAnnotationClassWithDefaultRemovedEnumEntryParameterOfParameterAsAny() }
+    expectFailure(linkage("Can not get instance of singleton 'EnumClassWithDisappearingEntry.REMOVED': No enum entry found for symbol '/EnumClassWithDisappearingEntry.REMOVED'")) { getAnnotationClassWithDefaultRemovedEnumEntryParameterOfParameterAsAnyInline() }
+    expectFailure(linkage("Constructor 'AnnotationClassThatBecomesPrivate.<init>' can not be called: Private constructor declared in module <lib1> can not be accessed in module <lib2>")) { getAnnotationClassWithParameterThatBecomesPrivate1() }
+    expectFailure(linkage("Constructor 'AnnotationClassThatBecomesPrivate.<init>' can not be called: Private constructor declared in module <lib1> can not be accessed in module <lib2>")) { getAnnotationClassWithParameterThatBecomesPrivate1Inline() }
+    expectFailure(linkage("Constructor 'AnnotationClassThatBecomesPrivate.<init>' can not be called: Private constructor declared in module <lib1> can not be accessed in module <lib2>")) { getAnnotationClassWithParameterThatBecomesPrivate1AsAny() }
+    expectFailure(linkage("Constructor 'AnnotationClassThatBecomesPrivate.<init>' can not be called: Private constructor declared in module <lib1> can not be accessed in module <lib2>")) { getAnnotationClassWithParameterThatBecomesPrivate1AsAnyInline() }
+    expectFailure(linkage("Reference to class 'ClassThatBecomesPrivate' can not be evaluated: Private class declared in module <lib1> can not be accessed in module <lib2>")) { getAnnotationClassWithParameterThatBecomesPrivate2() }
+    expectFailure(linkage("Reference to class 'ClassThatBecomesPrivate' can not be evaluated: Private class declared in module <lib1> can not be accessed in module <lib2>")) { getAnnotationClassWithParameterThatBecomesPrivate2Inline() }
+    expectFailure(linkage("Reference to class 'ClassThatBecomesPrivate' can not be evaluated: Private class declared in module <lib1> can not be accessed in module <lib2>")) { getAnnotationClassWithParameterThatBecomesPrivate2AsAny() }
+    expectFailure(linkage("Reference to class 'ClassThatBecomesPrivate' can not be evaluated: Private class declared in module <lib1> can not be accessed in module <lib2>")) { getAnnotationClassWithParameterThatBecomesPrivate2AsAnyInline() }
+    expectFailure(linkage("Reference to class 'ClassThatBecomesPrivate' can not be evaluated: Private class declared in module <lib1> can not be accessed in module <lib2>")) { getAnnotationClassWithParameterOfParameterThatBecomesPrivate2() }
+    expectFailure(linkage("Reference to class 'ClassThatBecomesPrivate' can not be evaluated: Private class declared in module <lib1> can not be accessed in module <lib2>")) { getAnnotationClassWithParameterOfParameterThatBecomesPrivate2Inline() }
+    expectFailure(linkage("Reference to class 'ClassThatBecomesPrivate' can not be evaluated: Private class declared in module <lib1> can not be accessed in module <lib2>")) { getAnnotationClassWithParameterOfParameterThatBecomesPrivate2AsAny() }
+    expectFailure(linkage("Reference to class 'ClassThatBecomesPrivate' can not be evaluated: Private class declared in module <lib1> can not be accessed in module <lib2>")) { getAnnotationClassWithParameterOfParameterThatBecomesPrivate2AsAnyInline() }
+    expectFailure(linkage("Reference to class 'ClassThatBecomesPrivate' can not be evaluated: Private class declared in module <lib1> can not be accessed in module <lib2>")) { getAnnotationClassWithParameterThatBecomesPrivate3() }
+    expectFailure(linkage("Reference to class 'ClassThatBecomesPrivate' can not be evaluated: Private class declared in module <lib1> can not be accessed in module <lib2>")) { getAnnotationClassWithParameterThatBecomesPrivate3Inline() }
+    expectFailure(linkage("Reference to class 'ClassThatBecomesPrivate' can not be evaluated: Private class declared in module <lib1> can not be accessed in module <lib2>")) { getAnnotationClassWithParameterThatBecomesPrivate3AsAny() }
+    expectFailure(linkage("Reference to class 'ClassThatBecomesPrivate' can not be evaluated: Private class declared in module <lib1> can not be accessed in module <lib2>")) { getAnnotationClassWithParameterThatBecomesPrivate3AsAnyInline() }
+    expectFailure(linkage("Reference to class 'ClassThatBecomesPrivate' can not be evaluated: Private class declared in module <lib1> can not be accessed in module <lib2>")) { getAnnotationClassWithParameterOfParameterThatBecomesPrivate3() }
+    expectFailure(linkage("Reference to class 'ClassThatBecomesPrivate' can not be evaluated: Private class declared in module <lib1> can not be accessed in module <lib2>")) { getAnnotationClassWithParameterOfParameterThatBecomesPrivate3Inline() }
+    expectFailure(linkage("Reference to class 'ClassThatBecomesPrivate' can not be evaluated: Private class declared in module <lib1> can not be accessed in module <lib2>")) { getAnnotationClassWithParameterOfParameterThatBecomesPrivate3AsAny() }
+    expectFailure(linkage("Reference to class 'ClassThatBecomesPrivate' can not be evaluated: Private class declared in module <lib1> can not be accessed in module <lib2>")) { getAnnotationClassWithParameterOfParameterThatBecomesPrivate3AsAnyInline() }
+    expectFailure(linkage("Can not get instance of singleton 'EnumClassThatBecomesPrivate.ENTRY': Private enum entry declared in module <lib1> can not be accessed in module <lib2>")) { getAnnotationClassWithParameterThatBecomesPrivate4().toString() }
+    expectFailure(linkage("Can not get instance of singleton 'EnumClassThatBecomesPrivate.ENTRY': Private enum entry declared in module <lib1> can not be accessed in module <lib2>")) { getAnnotationClassWithParameterThatBecomesPrivate4Inline().toString() }
+    expectFailure(linkage("Can not get instance of singleton 'EnumClassThatBecomesPrivate.ENTRY': Private enum entry declared in module <lib1> can not be accessed in module <lib2>")) { getAnnotationClassWithParameterThatBecomesPrivate4AsAny().toString() }
+    expectFailure(linkage("Can not get instance of singleton 'EnumClassThatBecomesPrivate.ENTRY': Private enum entry declared in module <lib1> can not be accessed in module <lib2>")) { getAnnotationClassWithParameterThatBecomesPrivate4AsAnyInline().toString() }
+    expectFailure(linkage("Can not get instance of singleton 'EnumClassThatBecomesPrivate.ENTRY': Private enum entry declared in module <lib1> can not be accessed in module <lib2>")) { getAnnotationClassWithParameterOfParameterThatBecomesPrivate4().toString() }
+    expectFailure(linkage("Can not get instance of singleton 'EnumClassThatBecomesPrivate.ENTRY': Private enum entry declared in module <lib1> can not be accessed in module <lib2>")) { getAnnotationClassWithParameterOfParameterThatBecomesPrivate4Inline().toString() }
+    expectFailure(linkage("Can not get instance of singleton 'EnumClassThatBecomesPrivate.ENTRY': Private enum entry declared in module <lib1> can not be accessed in module <lib2>")) { getAnnotationClassWithParameterOfParameterThatBecomesPrivate4AsAny().toString() }
+    expectFailure(linkage("Can not get instance of singleton 'EnumClassThatBecomesPrivate.ENTRY': Private enum entry declared in module <lib1> can not be accessed in module <lib2>")) { getAnnotationClassWithParameterOfParameterThatBecomesPrivate4AsAnyInline().toString() }
+    expectSuccess { getAnnotationClassWithParameterWithPrivateDefaultValue(); "OK" }
+    expectSuccess { getAnnotationClassWithParameterWithPrivateDefaultValueInline(); "OK" }
+    expectSuccess { getAnnotationClassWithParameterWithPrivateDefaultValueAsAny(); "OK" }
+    expectSuccess { getAnnotationClassWithParameterWithPrivateDefaultValueInlineAsAny(); "OK" }
+    expectSuccess { getAnnotationClassWithParameterOfParameterWithPrivateDefaultValue(); "OK" }
+    expectSuccess { getAnnotationClassWithParameterOfParameterWithPrivateDefaultValueInline(); "OK" }
+    expectSuccess { getAnnotationClassWithParameterOfParameterWithPrivateDefaultValueAsAny(); "OK" }
+    expectSuccess { getAnnotationClassWithParameterOfParameterWithPrivateDefaultValueInlineAsAny(); "OK" }
 
     // Handle unlinked constructor call in annotation & non-annotation class appearing in annotation:
     expectSuccess("HolderOfAnnotationClassWithChangedParameterType") { getHolderOfAnnotationClassWithChangedParameterType().toString() }
@@ -191,6 +278,48 @@ fun box() = abiTest {
     expectSuccess("HolderOfAnnotationClassWithReorderedParameters") { getHolderOfAnnotationClassWithReorderedParametersInline().toString() }
     expectSuccess("HolderOfAnnotationClassWithNewParameter") { getHolderOfAnnotationClassWithNewParameter().toString() }
     expectSuccess("HolderOfAnnotationClassWithNewParameter") { getHolderOfAnnotationClassWithNewParameterInline().toString() }
+    expectSuccess("HolderOfAnnotationClassWithClassReferenceParameterThatDisappears1") { getHolderOfAnnotationClassWithClassReferenceParameterThatDisappears1().toString() }
+    expectSuccess("HolderOfAnnotationClassWithClassReferenceParameterThatDisappears1") { getHolderOfAnnotationClassWithClassReferenceParameterThatDisappears1Inline().toString() }
+    expectSuccess("HolderOfAnnotationClassWithDefaultClassReferenceParameterThatDisappears1") { getHolderOfAnnotationClassWithDefaultClassReferenceParameterThatDisappears1().toString() }
+    expectSuccess("HolderOfAnnotationClassWithDefaultClassReferenceParameterThatDisappears1") { getHolderOfAnnotationClassWithDefaultClassReferenceParameterThatDisappears1Inline().toString() }
+    expectSuccess("HolderOfAnnotationClassWithClassReferenceParameterThatDisappears2") { getHolderOfAnnotationClassWithClassReferenceParameterThatDisappears2().toString() }
+    expectSuccess("HolderOfAnnotationClassWithClassReferenceParameterThatDisappears2") { getHolderOfAnnotationClassWithClassReferenceParameterThatDisappears2Inline().toString() }
+    expectSuccess("HolderOfAnnotationClassWithDefaultClassReferenceParameterThatDisappears2") { getHolderOfAnnotationClassWithDefaultClassReferenceParameterThatDisappears2().toString() }
+    expectSuccess("HolderOfAnnotationClassWithDefaultClassReferenceParameterThatDisappears2") { getHolderOfAnnotationClassWithDefaultClassReferenceParameterThatDisappears2Inline().toString() }
+    expectSuccess("HolderOfAnnotationClassWithClassReferenceParameterOfParameterThatDisappears1") { getHolderOfAnnotationClassWithClassReferenceParameterOfParameterThatDisappears1().toString() }
+    expectSuccess("HolderOfAnnotationClassWithClassReferenceParameterOfParameterThatDisappears1") { getHolderOfAnnotationClassWithClassReferenceParameterOfParameterThatDisappears1Inline().toString() }
+    expectSuccess("HolderOfAnnotationClassWithDefaultClassReferenceParameterOfParameterThatDisappears1") { getHolderOfAnnotationClassWithDefaultClassReferenceParameterOfParameterThatDisappears1().toString() }
+    expectSuccess("HolderOfAnnotationClassWithDefaultClassReferenceParameterOfParameterThatDisappears1") { getHolderOfAnnotationClassWithDefaultClassReferenceParameterOfParameterThatDisappears1Inline().toString() }
+    expectSuccess("HolderOfAnnotationClassWithClassReferenceParameterOfParameterThatDisappears2") { getHolderOfAnnotationClassWithClassReferenceParameterOfParameterThatDisappears2().toString() }
+    expectSuccess("HolderOfAnnotationClassWithClassReferenceParameterOfParameterThatDisappears2") { getHolderOfAnnotationClassWithClassReferenceParameterOfParameterThatDisappears2Inline().toString() }
+    expectSuccess("HolderOfAnnotationClassWithDefaultClassReferenceParameterOfParameterThatDisappears2") { getHolderOfAnnotationClassWithDefaultClassReferenceParameterOfParameterThatDisappears2().toString() }
+    expectSuccess("HolderOfAnnotationClassWithDefaultClassReferenceParameterOfParameterThatDisappears2") { getHolderOfAnnotationClassWithDefaultClassReferenceParameterOfParameterThatDisappears2Inline().toString() }
+    expectSuccess("HolderOfAnnotationClassWithRemovedEnumEntryParameter") { getHolderOfAnnotationClassWithRemovedEnumEntryParameter().toString() }
+    expectSuccess("HolderOfAnnotationClassWithRemovedEnumEntryParameter") { getHolderOfAnnotationClassWithRemovedEnumEntryParameterInline().toString() }
+    expectSuccess("HolderOfAnnotationClassWithDefaultRemovedEnumEntryParameter") { getHolderOfAnnotationClassWithDefaultRemovedEnumEntryParameter().toString() }
+    expectSuccess("HolderOfAnnotationClassWithDefaultRemovedEnumEntryParameter") { getHolderOfAnnotationClassWithDefaultRemovedEnumEntryParameterInline().toString() }
+    expectSuccess("HolderOfAnnotationClassWithRemovedEnumEntryParameterOfParameter") { getHolderOfAnnotationClassWithRemovedEnumEntryParameterOfParameter().toString() }
+    expectSuccess("HolderOfAnnotationClassWithRemovedEnumEntryParameterOfParameter") { getHolderOfAnnotationClassWithRemovedEnumEntryParameterOfParameterInline().toString() }
+    expectSuccess("HolderOfAnnotationClassWithDefaultRemovedEnumEntryParameterOfParameter") { getHolderOfAnnotationClassWithDefaultRemovedEnumEntryParameterOfParameter().toString() }
+    expectSuccess("HolderOfAnnotationClassWithDefaultRemovedEnumEntryParameterOfParameter") { getHolderOfAnnotationClassWithDefaultRemovedEnumEntryParameterOfParameterInline().toString() }
+    expectSuccess("HolderOfAnnotationClassWithParameterThatBecomesPrivate1") { getHolderOfAnnotationClassWithParameterThatBecomesPrivate1().toString() }
+    expectSuccess("HolderOfAnnotationClassWithParameterThatBecomesPrivate1") { getHolderOfAnnotationClassWithParameterThatBecomesPrivate1Inline().toString() }
+    expectSuccess("HolderOfAnnotationClassWithParameterThatBecomesPrivate2") { getHolderOfAnnotationClassWithParameterThatBecomesPrivate2().toString() }
+    expectSuccess("HolderOfAnnotationClassWithParameterThatBecomesPrivate2") { getHolderOfAnnotationClassWithParameterThatBecomesPrivate2Inline().toString() }
+    expectSuccess("HolderOfAnnotationClassWithParameterOfParameterThatBecomesPrivate2") { getHolderOfAnnotationClassWithParameterOfParameterThatBecomesPrivate2().toString() }
+    expectSuccess("HolderOfAnnotationClassWithParameterOfParameterThatBecomesPrivate2") { getHolderOfAnnotationClassWithParameterOfParameterThatBecomesPrivate2Inline().toString() }
+    expectSuccess("HolderOfAnnotationClassWithParameterThatBecomesPrivate3") { getHolderOfAnnotationClassWithParameterThatBecomesPrivate3().toString() }
+    expectSuccess("HolderOfAnnotationClassWithParameterThatBecomesPrivate3") { getHolderOfAnnotationClassWithParameterThatBecomesPrivate3Inline().toString() }
+    expectSuccess("HolderOfAnnotationClassWithParameterOfParameterThatBecomesPrivate3") { getHolderOfAnnotationClassWithParameterOfParameterThatBecomesPrivate3().toString() }
+    expectSuccess("HolderOfAnnotationClassWithParameterOfParameterThatBecomesPrivate3") { getHolderOfAnnotationClassWithParameterOfParameterThatBecomesPrivate3Inline().toString() }
+    expectSuccess("HolderOfAnnotationClassWithParameterThatBecomesPrivate4") { getHolderOfAnnotationClassWithParameterThatBecomesPrivate4().toString() }
+    expectSuccess("HolderOfAnnotationClassWithParameterThatBecomesPrivate4") { getHolderOfAnnotationClassWithParameterThatBecomesPrivate4Inline().toString() }
+    expectSuccess("HolderOfAnnotationClassWithParameterOfParameterThatBecomesPrivate4") { getHolderOfAnnotationClassWithParameterOfParameterThatBecomesPrivate4().toString() }
+    expectSuccess("HolderOfAnnotationClassWithParameterOfParameterThatBecomesPrivate4") { getHolderOfAnnotationClassWithParameterOfParameterThatBecomesPrivate4Inline().toString() }
+    expectSuccess("HolderOfAnnotationClassWithParameterWithPrivateDefaultValue") { getHolderOfAnnotationClassWithParameterWithPrivateDefaultValue().toString() }
+    expectSuccess("HolderOfAnnotationClassWithParameterWithPrivateDefaultValue") { getHolderOfAnnotationClassWithParameterWithPrivateDefaultValueInline().toString() }
+    expectSuccess("HolderOfAnnotationClassWithParameterOfParameterWithPrivateDefaultValue") { getHolderOfAnnotationClassWithParameterOfParameterWithPrivateDefaultValue().toString() }
+    expectSuccess("HolderOfAnnotationClassWithParameterOfParameterWithPrivateDefaultValue") { getHolderOfAnnotationClassWithParameterOfParameterWithPrivateDefaultValueInline().toString() }
 
     expectSuccess { getValueToClass(); "OK" }
     expectSuccess { getValueToClassInline(); "OK" }
