@@ -70,7 +70,9 @@ enum class EvaluationMode(protected val mustCheckBody: Boolean) {
         ).map { IrBuiltIns.KOTLIN_INTERNAL_IR_FQN.child(Name.identifier(it)).asString() }.toSet()
 
         override fun canEvaluateFunction(function: IrFunction, context: IrCall?): Boolean {
-            if (function.property?.isConst == true) return true
+            if (function.property?.isConst == true) {
+                return function.property?.backingField?.initializer != null
+            }
 
             val returnType = function.returnType
             if (!returnType.isPrimitiveType() && !returnType.isString() && !returnType.isUnsignedType()) return false
