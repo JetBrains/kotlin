@@ -45,13 +45,13 @@ interface IrSymbol {
 val IrSymbol.isPublicApi: Boolean
     get() = signature != null
 
-interface IrBindableSymbol<out D : DeclarationDescriptor, B : IrSymbolOwner> : IrSymbol {
-    override val owner: B
+interface IrBindableSymbol<out Descriptor : DeclarationDescriptor, Owner : IrSymbolOwner> : IrSymbol {
+    override val owner: Owner
 
     @ObsoleteDescriptorBasedAPI
-    override val descriptor: D
+    override val descriptor: Descriptor
 
-    fun bind(owner: B)
+    fun bind(owner: Owner)
 }
 
 sealed interface IrPackageFragmentSymbol : IrSymbol {

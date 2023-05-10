@@ -10,12 +10,14 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 
-abstract class IrDelegatingSymbol<S : IrBindableSymbol<D, B>, B : IrSymbolOwner, D : DeclarationDescriptor>(var delegate: S) :
-    IrBindableSymbol<D, B> {
-    override val owner: B get() = delegate.owner
+abstract class IrDelegatingSymbol<DelegateSymbol, Owner, Descriptor>(var delegate: DelegateSymbol) : IrBindableSymbol<Descriptor, Owner>
+        where DelegateSymbol : IrBindableSymbol<Descriptor, Owner>,
+              Owner : IrSymbolOwner,
+              Descriptor : DeclarationDescriptor {
+    override val owner: Owner get() = delegate.owner
 
     @ObsoleteDescriptorBasedAPI
-    override val descriptor: D get() = delegate.descriptor
+    override val descriptor: Descriptor get() = delegate.descriptor
 
     @ObsoleteDescriptorBasedAPI
     override val hasDescriptor: Boolean
@@ -26,7 +28,7 @@ abstract class IrDelegatingSymbol<S : IrBindableSymbol<D, B>, B : IrSymbolOwner,
     override val signature: IdSignature?
         get() = delegate.signature
 
-    override fun bind(owner: B) = delegate.bind(owner)
+    override fun bind(owner: Owner) = delegate.bind(owner)
     override fun hashCode() = delegate.hashCode()
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -59,7 +61,7 @@ class IrDelegatingPropertySymbolImpl(delegate: IrPropertySymbol) :
 class IrDelegatingTypeAliasSymbolImpl(delegate: IrTypeAliasSymbol) :
     IrTypeAliasSymbol, IrDelegatingSymbol<IrTypeAliasSymbol, IrTypeAlias, TypeAliasDescriptor>(delegate)
 
-fun wrapInDelegatedSymbol(delegate: IrSymbol) = when(delegate) {
+fun wrapInDelegatedSymbol(delegate: IrSymbol) = when (delegate) {
     is IrClassSymbol -> IrDelegatingClassSymbolImpl(delegate)
     is IrEnumEntrySymbol -> IrDelegatingEnumEntrySymbolImpl(delegate)
     is IrSimpleFunctionSymbol -> IrDelegatingSimpleFunctionSymbolImpl(delegate)
