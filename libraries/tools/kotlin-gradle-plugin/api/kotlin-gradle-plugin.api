@@ -304,7 +304,6 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotli
 	public final fun configureIdeImport (Lkotlin/jvm/functions/Function1;)V
 	public final fun getApiElements ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetConfigurationDescriptorBuilder;
 	public final fun getApiElementsPublished ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetConfigurationDescriptorBuilder;
-	public final fun getConfigure ()Lkotlin/jvm/functions/Function1;
 	public final fun getConfigureIdeImport ()Lkotlin/jvm/functions/Function1;
 	public final fun getPlatformType ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinPlatformType;
 	public final fun getRuntimeElements ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetConfigurationDescriptorBuilder;
@@ -312,7 +311,6 @@ public final class org/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotli
 	public final fun getSourcesElements ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetConfigurationDescriptorBuilder;
 	public final fun getTargetFactory ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetDescriptor$TargetFactory;
 	public final fun getTargetName ()Ljava/lang/String;
-	public final fun setConfigure (Lkotlin/jvm/functions/Function1;)V
 	public final fun setConfigureIdeImport (Lkotlin/jvm/functions/Function1;)V
 	public final fun setPlatformType (Lorg/jetbrains/kotlin/gradle/plugin/KotlinPlatformType;)V
 	public final fun setTargetFactory (Lorg/jetbrains/kotlin/gradle/plugin/mpp/external/ExternalKotlinTargetDescriptor$TargetFactory;)V

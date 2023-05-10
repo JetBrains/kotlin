@@ -48,13 +48,13 @@ interface ExternalKotlinTargetDescriptor<T : DecoratedExternalKotlinTarget> {
  */
 @ExternalKotlinTargetApi
 fun <T : DecoratedExternalKotlinTarget> ExternalKotlinTargetDescriptor(
-    configure: ExternalKotlinTargetDescriptorBuilder<T>.() -> Unit
+    configure: ExternalKotlinTargetDescriptorBuilder<T>.() -> Unit,
 ): ExternalKotlinTargetDescriptor<T> {
     return ExternalKotlinTargetDescriptorBuilder<T>().also(configure).build()
 }
 
 /**
- * Mutable version of [ExternalKotlinTargetDescriptor]
+ * Builder for [ExternalKotlinTargetDescriptor]
  * The following properties have to be specified:
  * - [targetName]
  * - [platformType]
@@ -84,12 +84,7 @@ class ExternalKotlinTargetDescriptorBuilder<T : DecoratedExternalKotlinTarget> i
     val runtimeElementsPublished: ExternalKotlinTargetConfigurationDescriptorBuilder<T> =
         ExternalKotlinTargetConfigurationDescriptorBuilder()
 
-    /**
-     * Generic configuration that will be invoked when building the target.
-     * This configuration is called right after creating the instance and before
-     * publishing the target to all subscribers of `kotlin.targets.all {}`
-     */
-    var configure: ((T) -> Unit)? = null
+    private var configure: ((T) -> Unit)? = null
 
     /**
      * Generic configuration that will be invoked when building the target.
