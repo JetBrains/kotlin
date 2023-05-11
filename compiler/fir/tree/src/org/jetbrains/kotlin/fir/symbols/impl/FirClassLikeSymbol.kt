@@ -15,13 +15,16 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.toLookupTag
+import org.jetbrains.kotlin.mpp.ClassLikeSymbolMarker
+import org.jetbrains.kotlin.mpp.RegularClassSymbolMarker
+import org.jetbrains.kotlin.mpp.TypeAliasSymbolMarker
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.SpecialNames
 
 sealed class FirClassLikeSymbol<D : FirClassLikeDeclaration>(
     val classId: ClassId,
-) : FirClassifierSymbol<D>() {
+) : FirClassifierSymbol<D>(), ClassLikeSymbolMarker {
     abstract override fun toLookupTag(): ConeClassLikeLookupTag
 
     val name get() = classId.shortClassName
@@ -68,7 +71,7 @@ sealed class FirClassSymbol<C : FirClass>(classId: ClassId) : FirClassLikeSymbol
         get() = fir.classKind
 }
 
-class FirRegularClassSymbol(classId: ClassId) : FirClassSymbol<FirRegularClass>(classId) {
+class FirRegularClassSymbol(classId: ClassId) : FirClassSymbol<FirRegularClass>(classId), RegularClassSymbolMarker {
     val companionObjectSymbol: FirRegularClassSymbol?
         get() = fir.companionObjectSymbol
 
@@ -84,7 +87,7 @@ val ANONYMOUS_CLASS_ID = ClassId(FqName.ROOT, FqName.topLevel(SpecialNames.ANONY
 
 class FirAnonymousObjectSymbol : FirClassSymbol<FirAnonymousObject>(ANONYMOUS_CLASS_ID)
 
-class FirTypeAliasSymbol(classId: ClassId) : FirClassLikeSymbol<FirTypeAlias>(classId) {
+class FirTypeAliasSymbol(classId: ClassId) : FirClassLikeSymbol<FirTypeAlias>(classId), TypeAliasSymbolMarker {
     override fun toLookupTag(): ConeClassLikeLookupTag = classId.toLookupTag()
 
     val resolvedExpandedTypeRef: FirResolvedTypeRef

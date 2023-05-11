@@ -10,10 +10,11 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.mpp.CallableSymbolMarker
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 
-abstract class FirCallableSymbol<D : FirCallableDeclaration> : FirBasedSymbol<D>() {
+abstract class FirCallableSymbol<D : FirCallableDeclaration> : FirBasedSymbol<D>(), CallableSymbolMarker {
     abstract val callableId: CallableId
 
     val resolvedReturnTypeRef: FirResolvedTypeRef

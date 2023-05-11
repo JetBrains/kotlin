@@ -9,7 +9,7 @@ expect class Foo {
 // MODULE: m2-jvm()()(m1-common)
 // FILE: jvm.kt
 
-actual class Foo {
+actual class <!NO_ACTUAL_CLASS_MEMBER_FOR_EXPECTED_CLASS!>Foo<!> {
     fun bar(): String = "bar"
     fun bas(g: Int) {}
 }

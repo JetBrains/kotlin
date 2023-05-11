@@ -17,9 +17,10 @@ import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.mpp.DeclarationSymbolMarker
 import org.jetbrains.kotlin.name.ClassId
 
-abstract class FirBasedSymbol<E : FirDeclaration> {
+abstract class FirBasedSymbol<E : FirDeclaration> : DeclarationSymbolMarker {
     private var _fir: E? = null
 
     @SymbolInternals

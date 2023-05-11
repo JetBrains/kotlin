@@ -11,10 +11,11 @@ import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
+import org.jetbrains.kotlin.mpp.TypeParameterSymbolMarker
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
-class FirTypeParameterSymbol : FirClassifierSymbol<FirTypeParameter>() {
+class FirTypeParameterSymbol : FirClassifierSymbol<FirTypeParameter>(), TypeParameterSymbolMarker {
     val name: Name
         get() = fir.name
 

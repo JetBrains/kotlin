@@ -12,9 +12,12 @@ import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.toResolvedConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.mpp.ConstructorSymbolMarker
+import org.jetbrains.kotlin.mpp.FunctionSymbolMarker
+import org.jetbrains.kotlin.mpp.SimpleFunctionSymbolMarker
 import org.jetbrains.kotlin.name.*
 
-sealed class FirFunctionSymbol<D : FirFunction>(override val callableId: CallableId) : FirCallableSymbol<D>() {
+sealed class FirFunctionSymbol<D : FirFunction>(override val callableId: CallableId) : FirCallableSymbol<D>(), FunctionSymbolMarker {
     val valueParameterSymbols: List<FirValueParameterSymbol>
         get() = fir.valueParameters.map { it.symbol }
 
@@ -37,7 +40,7 @@ sealed class FirFunctionSymbol<D : FirFunction>(override val callableId: Callabl
 
 // ------------------------ named ------------------------
 
-open class FirNamedFunctionSymbol(callableId: CallableId) : FirFunctionSymbol<FirSimpleFunction>(callableId)
+open class FirNamedFunctionSymbol(callableId: CallableId) : FirFunctionSymbol<FirSimpleFunction>(callableId), SimpleFunctionSymbolMarker
 
 interface FirIntersectionCallableSymbol {
     val intersections: Collection<FirCallableSymbol<*>>
@@ -48,7 +51,7 @@ class FirIntersectionOverrideFunctionSymbol(
     override val intersections: Collection<FirCallableSymbol<*>>,
 ) : FirNamedFunctionSymbol(callableId), FirIntersectionCallableSymbol
 
-class FirConstructorSymbol(callableId: CallableId) : FirFunctionSymbol<FirConstructor>(callableId) {
+class FirConstructorSymbol(callableId: CallableId) : FirFunctionSymbol<FirConstructor>(callableId), ConstructorSymbolMarker {
     constructor(classId: ClassId) : this(classId.callableIdForConstructor())
 
     val isPrimary: Boolean
