@@ -77,7 +77,7 @@ internal abstract class LLFirResolvableResolveSession(
     override fun getOrBuildFirFor(element: KtElement): FirElement? {
         retryOnInvalidSession {
             val ktModule = element.getKtModule()
-            if (getModuleKind(ktModule) == ModuleKind.BINARY_MODULE) {
+            if (getModuleKind(ktModule) == ModuleKind.BINARY_MODULE && !element.containingKtFile.isContentsLoaded) {
                 if (element is KtDeclaration) {
                     return findFirCompiledSymbol(element).fir
                 }

@@ -25,7 +25,7 @@ internal class LLFirLibrarySession @PrivateSessionConstructor constructor(
 ) : LLFirLibraryLikeSession(ktModule, dependencyTracker, builtinTypes) {
     private val cache = ConcurrentHashMap<FirDeclaration, Map<KtElement, FirElement>>()
 
-    fun getKtToFirMapping(firElement: FirDeclaration): Map<KtElement, FirElement> = cache.computeIfAbsent(firElement) {
-        FirElementsRecorder.recordElementsFrom(it, FirElementsRecorder())
+    fun getKtToFirMapping(firElement: FirDeclaration): Map<KtElement, FirElement> = cache.getOrPut(firElement) {
+        FirElementsRecorder.recordElementsFrom(firElement, FirElementsRecorder())
     }
 }
