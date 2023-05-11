@@ -20,15 +20,6 @@ import com.intellij.psi.tree.TokenSet;
 import org.jetbrains.kotlin.psi.*;
 
 public interface KtStubElementTypes {
-    /**
-     * @deprecated use {@link KtFileElementType#INSTANCE}.
-     * Field is provided for the sake of binary compatibility with external usages.
-     *
-     * It will be deleted in 1.9.0.
-     */
-    @Deprecated
-    KtFileElementType FILE = KtFileElementType.INSTANCE;
-
     KtClassElementType CLASS = new KtClassElementType("CLASS");
     KtFunctionElementType FUNCTION = new KtFunctionElementType("FUN");
     KtPropertyElementType PROPERTY = new KtPropertyElementType("PROPERTY");
