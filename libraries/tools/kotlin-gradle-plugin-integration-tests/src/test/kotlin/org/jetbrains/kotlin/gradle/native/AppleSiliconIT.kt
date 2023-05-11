@@ -10,11 +10,10 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.condition.EnabledOnOs
 import org.junit.jupiter.api.condition.OS
 import kotlin.test.fail
 
-@EnabledOnOs(OS.MAC, disabledReason = "Test requires MacOS host")
+@OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @DisplayName("Tests for Apple Silicon builds")
 @NativeGradlePluginTests
 class AppleSiliconIT : KGPBaseTest() {

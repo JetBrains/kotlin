@@ -17,7 +17,6 @@ import java.lang.annotation.Target;
 // Workaround for https://youtrack.jetbrains.com/issue/IDEA-265284
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-@OsCondition
 @GradleTestVersions
 @ParameterizedTest(name = "{0}: {displayName}")
 @ArgumentsSource(GradleArgumentsProvider.class)

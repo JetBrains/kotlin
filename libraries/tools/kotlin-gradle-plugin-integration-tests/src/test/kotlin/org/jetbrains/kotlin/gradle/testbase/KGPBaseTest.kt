@@ -28,6 +28,7 @@ import java.nio.file.Path
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @WithMuteInDatabase
 @TestDataPath("\$CONTENT_ROOT/resources/testProject")
+@OsCondition
 abstract class KGPBaseTest {
     open val defaultBuildOptions = BuildOptions()
 

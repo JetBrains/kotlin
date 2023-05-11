@@ -23,6 +23,35 @@ annotation class GradleTestVersions(
     val additionalVersions: Array<String> = []
 )
 
+inline fun <reified T : Annotation> findAnnotation(context: ExtensionContext): T {
+    var nextSuperclass: Class<*>? = context.testClass.get().superclass
+    val superClassSequence = if (nextSuperclass != null) {
+        generateSequence {
+            val currentSuperclass = nextSuperclass
+            nextSuperclass = nextSuperclass?.superclass
+            currentSuperclass
+        }
+    } else {
+        emptySequence()
+    }
+
+    return sequenceOf(
+        context.testMethod.orElse(null),
+        context.testClass.orElse(null)
+    )
+        .filterNotNull()
+        .plus(superClassSequence)
+        .mapNotNull { declaration ->
+            declaration.annotations.firstOrNull { it is T }
+        }
+        .firstOrNull() as T?
+        ?: context.testMethod.get().annotations
+            .mapNotNull { annotation ->
+                annotation.annotationClass.annotations.firstOrNull { it is T }
+            }
+            .first() as T
+}
+
 open class GradleArgumentsProvider : ArgumentsProvider {
     override fun provideArguments(
         context: ExtensionContext
@@ -47,34 +76,6 @@ open class GradleArgumentsProvider : ArgumentsProvider {
             .asSequence()
             .map { Arguments.of(it) }
             .asStream()
-    }
-
-    inline fun <reified T : Annotation> findAnnotation(context: ExtensionContext): T {
-        var nextSuperclass: Class<*>? = context.testClass.get().superclass
-        val superClassSequence = if (nextSuperclass != null) {
-            generateSequence {
-                val currentSuperclass = nextSuperclass
-                nextSuperclass = nextSuperclass?.superclass
-                currentSuperclass
-            }
-        } else {
-            emptySequence()
-        }
-
-        return sequenceOf(
-            context.testMethod.get(),
-            context.testClass.get()
-        )
-            .plus(superClassSequence)
-            .mapNotNull { declaration ->
-                declaration.annotations.firstOrNull { it is T }
-            }
-            .firstOrNull() as T?
-            ?: context.testMethod.get().annotations
-                .mapNotNull { annotation ->
-                    annotation.annotationClass.annotations.firstOrNull { it is T }
-                }
-                .first() as T
     }
 }
 

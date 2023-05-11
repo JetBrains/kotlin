@@ -8,11 +8,10 @@ package org.jetbrains.kotlin.gradle.native
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.condition.EnabledOnOs
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.appendText
 
-@EnabledOnOs(OS.MAC)
+@OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @DisplayName("Tests for K/N with cocoapods")
 @NativeGradlePluginTests
 class NativeLibraryDslWithCocoapodsIT : KGPBaseTest() {

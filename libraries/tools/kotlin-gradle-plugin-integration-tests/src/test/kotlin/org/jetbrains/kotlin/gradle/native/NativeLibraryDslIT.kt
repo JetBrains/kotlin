@@ -9,7 +9,6 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.condition.EnabledOnOs
 import org.junit.jupiter.api.condition.OS
 import kotlin.io.path.appendText
 
@@ -98,7 +97,7 @@ class NativeLibraryDslIT : KGPBaseTest() {
         }
     }
 
-    @EnabledOnOs(OS.MAC)
+    @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
     @DisplayName("Links release XCFramework from two gradle modules")
     @GradleTest
     fun shouldLinkXCFrameworkFromTwoModules(gradleVersion: GradleVersion) {

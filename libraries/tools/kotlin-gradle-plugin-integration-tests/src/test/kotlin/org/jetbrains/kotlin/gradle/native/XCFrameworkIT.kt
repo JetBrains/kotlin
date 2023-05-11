@@ -10,10 +10,9 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceFirst
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.condition.EnabledOnOs
 import org.junit.jupiter.api.condition.OS
 
-@EnabledOnOs(OS.MAC)
+@OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @DisplayName("Tests for K/N with apple XCFramework")
 @NativeGradlePluginTests
 class XCFrameworkIT : KGPBaseTest() {

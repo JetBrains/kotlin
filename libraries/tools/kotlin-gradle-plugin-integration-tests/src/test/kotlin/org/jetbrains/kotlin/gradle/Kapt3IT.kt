@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.JavaVersion
 import org.gradle.api.logging.LogLevel
-import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.tasks.USING_JVM_INCREMENTAL_COMPILATION_MESSAGE
@@ -28,7 +27,6 @@ import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.jetbrains.kotlin.gradle.util.testResolveAllConfigurations
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.condition.EnabledOnOs
 import org.junit.jupiter.api.condition.OS
 import java.nio.file.Files
 import java.util.zip.ZipFile
@@ -1030,7 +1028,7 @@ open class Kapt3IT : Kapt3BaseIT() {
 
     @DisplayName("KT-52392: Setup with different windows disks does not fail configuration")
     @GradleTest
-    @EnabledOnOs(OS.WINDOWS)
+    @OsCondition(supportedOn = [OS.WINDOWS], enabledOnCI = [OS.WINDOWS])
     fun testDifferentDisksSetupDoesNotFailConfiguration(gradleVersion: GradleVersion) {
         project("simple".withPrefix, gradleVersion) {
             fun findAnotherRoot() = ('A'..'Z').first { !projectPath.root.startsWith(it.toString()) }

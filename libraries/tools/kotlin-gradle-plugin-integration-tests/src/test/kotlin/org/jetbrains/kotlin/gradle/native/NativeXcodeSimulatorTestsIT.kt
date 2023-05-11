@@ -12,14 +12,13 @@ import org.jetbrains.kotlin.gradle.utils.Xcode
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.DisplayName
-import org.junit.jupiter.api.condition.EnabledOnOs
 import org.junit.jupiter.api.condition.OS
 import java.io.File
 import kotlin.test.assertEquals
 
 @DisplayName("tests for the K/N XCode simulator test infrastructure")
 @NativeGradlePluginTests
-@EnabledOnOs(OS.MAC)
+@OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 class NativeXcodeSimulatorTestsIT : KGPBaseTest() {
     private val defaultIosSimulator by lazy {
         val xcode = Xcode ?: error("XCode is expected to be defined")
