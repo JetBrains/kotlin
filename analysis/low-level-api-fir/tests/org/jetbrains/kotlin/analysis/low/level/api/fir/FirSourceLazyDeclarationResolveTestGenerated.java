@@ -524,6 +524,12 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
         }
 
         @Test
+        @TestMetadata("annotationWithNamedFunctionArgument.kt")
+        public void testAnnotationWithNamedFunctionArgument() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/errors/annotationWithNamedFunctionArgument.kt");
+        }
+
+        @Test
         @TestMetadata("anonymousObjectInInvalidPosition.kt")
         public void testAnonymousObjectInInvalidPosition() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/lazyResolve/errors/anonymousObjectInInvalidPosition.kt");
