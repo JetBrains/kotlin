@@ -17,6 +17,7 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
+import androidx.compose.compiler.plugins.kotlin.k1.isComposableInvocation
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.psi.KtBlockExpression
 import org.jetbrains.kotlin.psi.KtDeclaration

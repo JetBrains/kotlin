@@ -1,5 +1,5 @@
 /*
- * Copyright 2020 The Android Open Source Project
+ * Copyright 2023 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,8 @@
  * limitations under the License.
  */
 
-package androidx.compose.compiler.plugins.kotlin
+package androidx.compose.compiler.plugins.kotlin.k1
 
-import androidx.compose.compiler.plugins.kotlin.ComposeErrors.ABSTRACT_COMPOSABLE_DEFAULT_PARAMETER_VALUE
-import androidx.compose.compiler.plugins.kotlin.ComposeErrors.COMPOSABLE_FUN_MAIN
-import androidx.compose.compiler.plugins.kotlin.ComposeErrors.COMPOSABLE_PROPERTY_BACKING_FIELD
-import androidx.compose.compiler.plugins.kotlin.ComposeErrors.COMPOSABLE_SUSPEND_FUN
-import androidx.compose.compiler.plugins.kotlin.ComposeErrors.COMPOSABLE_VAR
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.builtins.isSuspendFunctionType
@@ -127,7 +122,9 @@ class ComposableDeclarationChecker : DeclarationChecker, StorageComponentContain
         }
         if (descriptor.isSuspend && hasComposableAnnotation) {
             context.trace.report(
-                COMPOSABLE_SUSPEND_FUN.on(declaration.nameIdentifier ?: declaration)
+                ComposeErrors.COMPOSABLE_SUSPEND_FUN.on(
+                    declaration.nameIdentifier ?: declaration
+                )
             )
         }
 
@@ -136,7 +133,7 @@ class ComposableDeclarationChecker : DeclarationChecker, StorageComponentContain
                 val defaultValue = it.defaultValue
                 if (defaultValue != null) {
                     context.trace.report(
-                        ABSTRACT_COMPOSABLE_DEFAULT_PARAMETER_VALUE.on(defaultValue)
+                        ComposeErrors.ABSTRACT_COMPOSABLE_DEFAULT_PARAMETER_VALUE.on(defaultValue)
                     )
                 }
             }
@@ -161,7 +158,9 @@ class ComposableDeclarationChecker : DeclarationChecker, StorageComponentContain
                 ).isMain(descriptor)
         ) {
             context.trace.report(
-                COMPOSABLE_FUN_MAIN.on(declaration.nameIdentifier ?: declaration)
+                ComposeErrors.COMPOSABLE_FUN_MAIN.on(
+                    declaration.nameIdentifier ?: declaration
+                )
             )
         }
 
@@ -185,7 +184,7 @@ class ComposableDeclarationChecker : DeclarationChecker, StorageComponentContain
     ) {
         if (type.hasComposableAnnotation() && type.isSuspendFunctionType) {
             context.trace.report(
-                COMPOSABLE_SUSPEND_FUN.on(element)
+                ComposeErrors.COMPOSABLE_SUSPEND_FUN.on(element)
             )
         }
     }
@@ -215,10 +214,10 @@ class ComposableDeclarationChecker : DeclarationChecker, StorageComponentContain
         val initializer = declaration.initializer
         val name = declaration.nameIdentifier
         if (initializer != null && name != null) {
-            context.trace.report(COMPOSABLE_PROPERTY_BACKING_FIELD.on(name))
+            context.trace.report(ComposeErrors.COMPOSABLE_PROPERTY_BACKING_FIELD.on(name))
         }
         if (descriptor.isVar && name != null) {
-            context.trace.report(COMPOSABLE_VAR.on(name))
+            context.trace.report(ComposeErrors.COMPOSABLE_VAR.on(name))
         }
     }
 
@@ -246,10 +245,10 @@ class ComposableDeclarationChecker : DeclarationChecker, StorageComponentContain
         }
         if (!hasComposableAnnotation) return
         if (initializer != null && name != null) {
-            context.trace.report(COMPOSABLE_PROPERTY_BACKING_FIELD.on(name))
+            context.trace.report(ComposeErrors.COMPOSABLE_PROPERTY_BACKING_FIELD.on(name))
         }
         if (propertyDescriptor.isVar && name != null) {
-            context.trace.report(COMPOSABLE_VAR.on(name))
+            context.trace.report(ComposeErrors.COMPOSABLE_VAR.on(name))
         }
     }
 

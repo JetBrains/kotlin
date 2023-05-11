@@ -76,8 +76,7 @@ import org.jetbrains.kotlin.resolve.multiplatform.findCompatibleActualsForExpect
  * only for functions marked with @Composable annotation or
  * for functions with @Composable lambdas in parameters.
  *
- * TODO(karpovich): When adding support for FIR we'll need to use different API.
- * Likely: fun FirBasedSymbol<*>.getSingleCompatibleExpectForActualOrNull(): FirBasedSymbol<*>?
+ * This lowering is K1 specific and should not be run in K2.
  */
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 class CopyDefaultValuesFromExpectLowering(
