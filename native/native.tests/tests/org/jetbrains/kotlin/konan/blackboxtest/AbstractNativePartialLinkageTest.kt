@@ -213,7 +213,7 @@ abstract class AbstractNativePartialLinkageTest : AbstractNativeSimpleTest() {
         klib = this
     )
 
-    private val buildDir: File get() = testRunSettings.get<SimpleTestDirectories>().testBuildDir
+    private val buildDir: File get() = testRunSettings.get<Binaries>().testBinariesDir
     private val stdlibFile: File get() = testRunSettings.get<KotlinNativeHome>().stdlibFile
     private val useStaticCacheForUserLibraries: Boolean get() = testRunSettings.get<CacheMode>().useStaticCacheForUserLibraries
 

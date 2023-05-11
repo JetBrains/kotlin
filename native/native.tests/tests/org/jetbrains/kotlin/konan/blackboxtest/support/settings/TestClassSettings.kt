@@ -26,7 +26,10 @@ internal class GeneratedSources(val testSourcesDir: File, val sharedSourcesDir: 
  * [sharedBinariesDir] - The directory with compiled shared modules (klibs).
  * [givenBinariesDir] - The directory with the given (external) modules (klibs).
  */
-internal class Binaries(val testBinariesDir: File, val sharedBinariesDir: File, val givenBinariesDir: File)
+internal class Binaries(val testBinariesDir: File, lazySharedBinariesDir: () -> File, lazyGivenBinariesDir: () -> File) {
+    val sharedBinariesDir: File by lazy { lazySharedBinariesDir() }
+    val givenBinariesDir: File by lazy { lazyGivenBinariesDir() }
+}
 
 /**
  * The [TestConfiguration] of the current test class and the [Annotation] with specific parameters.

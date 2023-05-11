@@ -17,9 +17,9 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilati
 import org.jetbrains.kotlin.konan.blackboxtest.support.group.UsePartialLinkage
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunChecks
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Binaries
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.CacheMode
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.KotlinNativeTargets
-import org.jetbrains.kotlin.konan.blackboxtest.support.settings.SimpleTestDirectories
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.*
 import org.jetbrains.kotlin.test.Directives
@@ -284,7 +284,7 @@ abstract class AbstractNativeKlibEvolutionTest : AbstractNativeSimpleTest() {
         initialize(null, null)
     }
 
-    private val buildDir: File get() = testRunSettings.get<SimpleTestDirectories>().testBuildDir
+    private val buildDir: File get() = testRunSettings.get<Binaries>().testBinariesDir
     private val useStaticCacheForUserLibraries: Boolean get() = testRunSettings.get<CacheMode>().useStaticCacheForUserLibraries
 
     companion object {

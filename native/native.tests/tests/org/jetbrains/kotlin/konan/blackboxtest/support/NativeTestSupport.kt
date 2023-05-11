@@ -207,7 +207,6 @@ private object NativeTestSupport {
         output += computePipelineType(testClass.get())
         output += computeUsedPartialLinkageConfig(enclosingTestClass)
         output += computeCompilerOutputInterceptor(enforcedProperties)
-        output += computeBinariesDirs(getOrCreateTestProcessSettings().get(), nativeTargets, enclosingTestClass)
 
         return nativeTargets
     }
@@ -338,6 +337,7 @@ private object NativeTestSupport {
 
                 // Put settings that are always required:
                 this += computedTestConfiguration
+                this += computeBinariesForBlackBoxTests(testProcessSettings.get(), nativeTargets, enclosingTestClass)
 
                 // Add custom settings:
                 computedTestConfiguration.configuration.requiredSettings.forEach { clazz ->
@@ -435,21 +435,22 @@ private object NativeTestSupport {
         return GeneratedSources(testSourcesDir, sharedSourcesDir)
     }
 
-    private fun computeBinariesDirs(baseDirs: BaseDirs, targets: KotlinNativeTargets, enclosingTestClass: Class<*>): Binaries {
+    /** See also [computeBinariesForSimpleTests] */
+    private fun computeBinariesForBlackBoxTests(
+        baseDirs: BaseDirs,
+        targets: KotlinNativeTargets,
+        enclosingTestClass: Class<*>
+    ): Binaries {
         val testBinariesDir = baseDirs.testBuildDir
             .resolve("bb.out") // "bb" for black box
             .resolve("${targets.testTarget.compressedName}_${enclosingTestClass.compressedSimpleName}")
             .ensureExistsAndIsEmptyDirectory() // Clean-up the directory with all potentially stale artifacts.
 
-        val sharedBinariesDir = testBinariesDir
-            .resolve(SHARED_MODULES_DIR_NAME)
-            .ensureExistsAndIsEmptyDirectory()
-
-        val givenBinariesDir = testBinariesDir
-            .resolve(GIVEN_MODULES_DIR_NAME)
-            .ensureExistsAndIsEmptyDirectory()
-
-        return Binaries(testBinariesDir, sharedBinariesDir, givenBinariesDir)
+        return Binaries(
+            testBinariesDir = testBinariesDir,
+            lazySharedBinariesDir = { testBinariesDir.resolve(SHARED_MODULES_DIR_NAME).ensureExistsAndIsEmptyDirectory() },
+            lazyGivenBinariesDir = { testBinariesDir.resolve(GIVEN_MODULES_DIR_NAME).ensureExistsAndIsEmptyDirectory() }
+        )
     }
 
     private fun computePipelineType(testClass: Class<*>): PipelineType {
@@ -515,23 +516,28 @@ private object NativeTestSupport {
             parent = testClassSettings,
             listOf(
                 computeSimpleTestInstances(),
-                computeSimpleTestDirectories(testClassSettings.get(), testClassSettings.get())
+                computeBinariesForSimpleTests(testClassSettings.get(), testClassSettings.get())
             )
         )
     }
 
     private fun ExtensionContext.computeSimpleTestInstances(): SimpleTestInstances = SimpleTestInstances(requiredTestInstances.allInstances)
 
-    private fun ExtensionContext.computeSimpleTestDirectories(baseDirs: BaseDirs, targets: KotlinNativeTargets): SimpleTestDirectories {
+    /** See also [computeBinariesForBlackBoxTests] */
+    private fun ExtensionContext.computeBinariesForSimpleTests(baseDirs: BaseDirs, targets: KotlinNativeTargets): Binaries {
         val compressedClassNames = testClasses.map(Class<*>::compressedSimpleName).joinToString(separator = "_")
 
-        val testBuildDir = baseDirs.testBuildDir
+        val testBinariesDir = baseDirs.testBuildDir
             .resolve("s") // "s" for simple
             .resolve("${targets.testTarget.compressedName}_$compressedClassNames")
             .resolve(requiredTestMethod.name)
             .ensureExistsAndIsEmptyDirectory() // Clean-up the directory with all potentially stale artifacts.
 
-        return SimpleTestDirectories(testBuildDir)
+        return Binaries(
+            testBinariesDir = testBinariesDir,
+            lazySharedBinariesDir = { testBinariesDir.resolve(SHARED_MODULES_DIR_NAME).ensureExistsAndIsEmptyDirectory() },
+            lazyGivenBinariesDir = { testBinariesDir.resolve(GIVEN_MODULES_DIR_NAME).ensureExistsAndIsEmptyDirectory() }
+        )
     }
 
     /*************** Test run provider (for black box tests only) ***************/

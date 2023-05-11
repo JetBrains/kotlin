@@ -6,29 +6,14 @@
 package org.jetbrains.kotlin.konan.blackboxtest
 
 import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.konan.blackboxtest.support.PackageName
-import org.jetbrains.kotlin.konan.blackboxtest.support.TestCase
-import org.jetbrains.kotlin.konan.blackboxtest.support.TestCaseId
-import org.jetbrains.kotlin.konan.blackboxtest.support.TestCompilerArgs
-import org.jetbrains.kotlin.konan.blackboxtest.support.TestDirectives
-import org.jetbrains.kotlin.konan.blackboxtest.support.TestFile
-import org.jetbrains.kotlin.konan.blackboxtest.support.TestKind
-import org.jetbrains.kotlin.konan.blackboxtest.support.TestModule
-import org.jetbrains.kotlin.konan.blackboxtest.support.TestRunnerType
-import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.ExecutableCompilation
-import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.ExistingDependency
-import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.LibraryCompilation
-import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.StaticCacheCompilation
-import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationArtifact
-import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationDependency
-import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationDependencyType
-import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationResult
+import org.jetbrains.kotlin.konan.blackboxtest.support.*
+import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.TestRunChecks
+import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Binaries
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.PipelineType
-import org.jetbrains.kotlin.konan.blackboxtest.support.settings.SimpleTestDirectories
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.LAUNCHER_MODULE_NAME
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
@@ -114,7 +99,7 @@ internal class ExecutableBuilder(
         )
 }
 
-internal val AbstractNativeSimpleTest.buildDir: File get() = testRunSettings.get<SimpleTestDirectories>().testBuildDir
+internal val AbstractNativeSimpleTest.buildDir: File get() = testRunSettings.get<Binaries>().testBinariesDir
 
 internal fun TestCompilationArtifact.KLIB.asLibraryDependency() =
     ExistingDependency(this, TestCompilationDependencyType.Library)

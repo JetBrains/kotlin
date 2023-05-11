@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.konan.blackboxtest.support.settings
 
 import org.jetbrains.kotlin.konan.blackboxtest.AbstractNativeSimpleTest
-import java.io.File
 
 /**
  * All instances of test classes.
@@ -18,10 +17,3 @@ internal class SimpleTestInstances(val allInstances: List<Any>) {
     val enclosingTestInstance: AbstractNativeSimpleTest
         get() = allInstances.firstOrNull() as AbstractNativeSimpleTest
 }
-
-/**
- * The build directory specifically for the current test function.
- */
-internal class SimpleTestDirectories(val testBuildDir: File)
-
-
