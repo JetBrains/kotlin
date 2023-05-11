@@ -32,6 +32,6 @@ value class Z {
 }
 
 val equals: KFunction2<Z, Any?, Boolean>
-  field = Any::equals
+  field = Z::equals
   get
 

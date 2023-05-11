@@ -69,7 +69,7 @@ FILE fqName:<root> fileName:/valueClassEquals.kt
   PROPERTY name:equals visibility:public modality:FINAL [val]
     FIELD PROPERTY_BACKING_FIELD name:equals type:kotlin.reflect.KFunction2<<root>.Z, kotlin.Any?, kotlin.Boolean> visibility:private [final,static]
       EXPRESSION_BODY
-        FUNCTION_REFERENCE 'public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.Any' type=kotlin.reflect.KFunction2<<root>.Z, kotlin.Any?, kotlin.Boolean> origin=null reflectionTarget=<same>
+        FUNCTION_REFERENCE 'public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Z' type=kotlin.reflect.KFunction2<<root>.Z, kotlin.Any?, kotlin.Boolean> origin=null reflectionTarget=<same>
     FUN DEFAULT_PROPERTY_ACCESSOR name:<get-equals> visibility:public modality:FINAL <> () returnType:kotlin.reflect.KFunction2<<root>.Z, kotlin.Any?, kotlin.Boolean>
       correspondingProperty: PROPERTY name:equals visibility:public modality:FINAL [val]
       BLOCK_BODY
