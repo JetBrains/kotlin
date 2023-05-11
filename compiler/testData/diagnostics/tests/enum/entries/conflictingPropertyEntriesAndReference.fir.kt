@@ -8,8 +8,8 @@ enum class E {
 }
 
 fun test() {
-    E::<!OPT_IN_USAGE_ERROR!>entries<!>
-    val ref = E::<!OPT_IN_USAGE_ERROR!>entries<!>
+    E::entries
+    val ref = E::entries
     val refType: (E) -> Int = E::entries
-    val refTypeWithAnyExpectedType: Any = E::<!OPT_IN_USAGE_ERROR!>entries<!>
+    val refTypeWithAnyExpectedType: Any = E::entries
 }

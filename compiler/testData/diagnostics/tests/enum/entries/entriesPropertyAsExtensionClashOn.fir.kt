@@ -12,7 +12,7 @@ enum class A {
 val A.Companion.entries: Int get() = 0
 
 fun test() {
-    A.<!OPT_IN_USAGE_ERROR!>entries<!>
+    A.entries
     A.Companion.entries
 
     with(A) {

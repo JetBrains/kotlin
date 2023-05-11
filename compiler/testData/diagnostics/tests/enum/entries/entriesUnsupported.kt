@@ -7,5 +7,5 @@ enum class Foo {
 }
 
 fun main() {
-    Foo.<!OPT_IN_USAGE_ERROR, UNSUPPORTED_FEATURE!>entries<!>
+    Foo.<!UNSUPPORTED_FEATURE!>entries<!>
 }
