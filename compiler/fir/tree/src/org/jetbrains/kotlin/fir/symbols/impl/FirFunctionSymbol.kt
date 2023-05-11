@@ -14,9 +14,7 @@ import org.jetbrains.kotlin.fir.references.toResolvedConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.name.*
 
-sealed class FirFunctionSymbol<D : FirFunction>(
-    override val callableId: CallableId,
-) : FirCallableSymbol<D>() {
+sealed class FirFunctionSymbol<D : FirFunction>(override val callableId: CallableId) : FirCallableSymbol<D>() {
     val valueParameterSymbols: List<FirValueParameterSymbol>
         get() = fir.valueParameters.map { it.symbol }
 
@@ -39,9 +37,7 @@ sealed class FirFunctionSymbol<D : FirFunction>(
 
 // ------------------------ named ------------------------
 
-open class FirNamedFunctionSymbol(
-    callableId: CallableId,
-) : FirFunctionSymbol<FirSimpleFunction>(callableId)
+open class FirNamedFunctionSymbol(callableId: CallableId) : FirFunctionSymbol<FirSimpleFunction>(callableId)
 
 interface FirIntersectionCallableSymbol {
     val intersections: Collection<FirCallableSymbol<*>>
@@ -52,9 +48,7 @@ class FirIntersectionOverrideFunctionSymbol(
     override val intersections: Collection<FirCallableSymbol<*>>,
 ) : FirNamedFunctionSymbol(callableId), FirIntersectionCallableSymbol
 
-class FirConstructorSymbol(
-    callableId: CallableId,
-) : FirFunctionSymbol<FirConstructor>(callableId) {
+class FirConstructorSymbol(callableId: CallableId) : FirFunctionSymbol<FirConstructor>(callableId) {
     constructor(classId: ClassId) : this(classId.callableIdForConstructor())
 
     val isPrimary: Boolean
@@ -84,18 +78,13 @@ class FirConstructorSymbol(
  * a property (which never exists in sources) and
  * a getter which exists in sources and is either from Java or overrides another getter from Java.
  */
-abstract class FirSyntheticPropertySymbol(
-    propertyId: CallableId,
-    val getterId: CallableId,
-) : FirPropertySymbol(propertyId) {
+abstract class FirSyntheticPropertySymbol(propertyId: CallableId, val getterId: CallableId) : FirPropertySymbol(propertyId) {
     abstract fun copy(): FirSyntheticPropertySymbol
 }
 
 // ------------------------ unnamed ------------------------
 
-sealed class FirFunctionWithoutNameSymbol<F : FirFunction>(
-    stubName: Name,
-) : FirFunctionSymbol<F>(CallableId(FqName("special"), stubName))
+sealed class FirFunctionWithoutNameSymbol<F : FirFunction>(stubName: Name) : FirFunctionSymbol<F>(CallableId(FqName("special"), stubName))
 
 class FirAnonymousFunctionSymbol : FirFunctionWithoutNameSymbol<FirAnonymousFunction>(Name.identifier("anonymous")) {
     val label: FirLabel? get() = fir.label
