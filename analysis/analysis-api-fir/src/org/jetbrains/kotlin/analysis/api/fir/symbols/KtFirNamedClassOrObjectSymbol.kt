@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.declarations.utils.*
+import org.jetbrains.kotlin.fir.extensions.extensionService
+import org.jetbrains.kotlin.fir.extensions.statusTransformerExtensions
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -39,7 +41,14 @@ internal class KtFirNamedClassOrObjectSymbol(
 
     override val modality: Modality
         get() = withValidityAssertion {
-            firSymbol.modality
+            val statusTransformerExtensions = analysisSession.useSiteSession.extensionService.statusTransformerExtensions
+            val status = if (statusTransformerExtensions.isNotEmpty()) {
+                firSymbol.resolvedStatus
+            } else {
+                firSymbol.rawStatus
+            }
+
+            status.modality
                 ?: when (classKind) { // default modality
                     KtClassKind.INTERFACE -> Modality.ABSTRACT
                     else -> Modality.FINAL
