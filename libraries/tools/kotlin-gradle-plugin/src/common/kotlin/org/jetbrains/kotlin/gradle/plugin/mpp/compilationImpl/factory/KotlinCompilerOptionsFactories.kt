@@ -8,8 +8,11 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.factory
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.HasCompilerOptions
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.baseModuleName
+import org.jetbrains.kotlin.gradle.plugin.mpp.moduleNameForCompilation
 import org.jetbrains.kotlin.gradle.targets.native.NativeCompilerOptions
 import org.jetbrains.kotlin.gradle.utils.configureExperimentalTryK2
+import org.jetbrains.kotlin.gradle.utils.klibModuleName
 
 internal object KotlinMultiplatformCommonCompilerOptionsFactory : KotlinCompilationImplFactory.KotlinCompilerOptionsFactory {
     override fun create(target: KotlinTarget, compilationName: String): KotlinCompilationImplFactory.KotlinCompilerOptionsFactory.Options {
@@ -32,6 +35,14 @@ internal object KotlinNativeCompilerOptionsFactory : KotlinCompilationImplFactor
 
     override fun create(target: KotlinTarget, compilationName: String): KotlinCompilationImplFactory.KotlinCompilerOptionsFactory.Options {
         val compilerOptions = NativeCompilerOptions(target.project)
+        compilerOptions.options.moduleName.convention(
+            target.project.klibModuleName(
+                moduleNameForCompilation(
+                    compilationName,
+                    target.project.baseModuleName()
+                )
+            )
+        )
 
         val kotlinOptions = object : KotlinCommonOptions {
             override val options get() = compilerOptions.options

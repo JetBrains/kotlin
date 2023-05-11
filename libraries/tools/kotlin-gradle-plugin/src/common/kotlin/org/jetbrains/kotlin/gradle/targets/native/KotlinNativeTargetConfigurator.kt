@@ -47,7 +47,6 @@ import org.jetbrains.kotlin.gradle.testing.internal.configureConventions
 import org.jetbrains.kotlin.gradle.testing.internal.kotlinTestRegistry
 import org.jetbrains.kotlin.gradle.testing.testTaskName
 import org.jetbrains.kotlin.gradle.utils.Xcode
-import org.jetbrains.kotlin.gradle.utils.klibModuleName
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -396,7 +395,6 @@ open class KotlinNativeTargetConfigurator<T : KotlinNativeTarget> : AbstractKotl
                 it.enabled = konanTarget.enabledOnCurrentHost
 
                 it.destinationDirectory.set(project.klibOutputDirectory(compilationInfo).resolve("klib"))
-                it.compilerOptions.moduleName.set(project.klibModuleName(it.baseName))
                 val propertiesProvider = PropertiesProvider(project)
                 if (propertiesProvider.useK2 == true) {
                     it.compilerOptions.useK2.set(true)

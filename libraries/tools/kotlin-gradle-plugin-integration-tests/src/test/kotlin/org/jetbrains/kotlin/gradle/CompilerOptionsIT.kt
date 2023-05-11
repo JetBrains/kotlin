@@ -420,7 +420,7 @@ internal class CompilerOptionsIT : KGPBaseTest() {
                 """.trimMargin()
             )
 
-            build("compileKotlinHost", forceOutput = true) {
+            build("compileKotlinHost") {
                 val expectedArg = "-progressive"
                 val compilerArgs = output
                     .substringAfter("Arguments = [")
@@ -431,6 +431,96 @@ internal class CompilerOptionsIT : KGPBaseTest() {
                 assert(progressiveArg != null) {
                     printBuildOutput()
                     "compiler arguments does not contain '$expectedArg': ${compilerArgs.joinToString()}"
+                }
+            }
+        }
+    }
+
+    @DisplayName("KT-57823: should be possible to configure native module name via compilation")
+    @NativeGradlePluginTests
+    @GradleTest
+    fun passesModuleNameFromNativeCompilation(gradleVersion: GradleVersion) {
+        project(
+            projectName = "new-mpp-lib-and-app/sample-lib",
+            gradleVersion = gradleVersion,
+            // We need to get specific task output as commonizer may run first producing
+            // arguments as well in output
+            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+        ) {
+            buildGradle.appendText(
+                //language=Groovy
+                """
+                |
+                |kotlin {
+                |    targets {
+                |        named("linux64", org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget.class) {
+                |            compilations.all {
+                |                compilerOptions.options.moduleName.set("i-am-your-module-name")
+                |            }
+                |        }
+                |    }
+                |}
+                |
+                """.trimMargin()
+            )
+
+            build(":compileNativeMainKotlinMetadata") {
+                assertTasksExecuted(":compileNativeMainKotlinMetadata")
+
+                extractNativeTasksCommandLineArgumentsFromOutput(":compileNativeMainKotlinMetadata") {
+                    assertCommandLineArgumentsContain("-module-name", "com.example:sample-lib_nativeMain")
+                }
+            }
+
+            build(":compileKotlinLinux64") {
+                assertTasksExecuted(":compileKotlinLinux64")
+
+                extractNativeTasksCommandLineArgumentsFromOutput(":compileKotlinLinux64") {
+                    assertCommandLineArgumentsContain("-module-name", "i-am-your-module-name")
+                }
+            }
+        }
+    }
+
+    @DisplayName("KT-57823: uses archivesName value for native compilation module name convention")
+    @NativeGradlePluginTests
+    @GradleTest
+    fun nativeCompilationModuleNameConvention(gradleVersion: GradleVersion) {
+        project(
+            projectName = "new-mpp-lib-and-app/sample-lib",
+            gradleVersion = gradleVersion,
+            // We need to get specific task output as commonizer may run first producing
+            // arguments as well in output
+            // TODO Yahor: remove 'configurationCache = false' once it will be merged into `master` - issue due to the build reports error
+            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG, configurationCache = false)
+        ) {
+            buildGradle.modify {
+                val buildScript = """
+                |${it.substringBefore("apply plugin:")}
+                |apply plugin: 'base'
+                |apply plugin: ${it.substringAfter("apply plugin:")}
+                |
+                """.trimMargin()
+                if (gradleVersion < GradleVersion.version("7.1")) {
+                    "$buildScript\narchivesBaseName = \"myNativeLib\""
+                } else {
+                    "$buildScript\nbase.archivesName.set(\"myNativeLib\")"
+                }
+            }
+
+            build(":compileNativeMainKotlinMetadata") {
+                assertTasksExecuted(":compileNativeMainKotlinMetadata")
+
+                extractNativeTasksCommandLineArgumentsFromOutput(":compileNativeMainKotlinMetadata") {
+                    assertCommandLineArgumentsContain("-module-name", "com.example:myNativeLib_nativeMain")
+                }
+            }
+
+            build(":compileKotlinLinux64") {
+                assertTasksExecuted(":compileKotlinLinux64")
+
+                extractNativeTasksCommandLineArgumentsFromOutput(":compileKotlinLinux64") {
+                    assertCommandLineArgumentsContain("-module-name", "com.example:myNativeLib")
                 }
             }
         }
