@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.configurators
 
-import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.mock.MockApplication
 import com.intellij.mock.MockProject
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.impl.base.references.HLApiReferenceProviderService
 import org.jetbrains.kotlin.analysis.api.lifetime.KtDefaultLifetimeTokenProvider
 import org.jetbrains.kotlin.analysis.api.lifetime.KtReadActionConfinementDefaultLifetimeTokenProvider
-import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionProvider
 import org.jetbrains.kotlin.analysis.api.standalone.base.project.structure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltInDefinitionFile
 import org.jetbrains.kotlin.analysis.project.structure.KtModuleScopeProvider
@@ -27,14 +25,7 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.services.TestServices
 
 object AnalysisApiBaseTestServiceRegistrar: AnalysisApiTestServiceRegistrar()  {
-    override fun registerProjectExtensionPoints(project: MockProject, testServices: TestServices) {
-        @Suppress("UnstableApiUsage")
-        CoreApplicationEnvironment.registerExtensionPoint(
-            project.extensionArea,
-            KtResolveExtensionProvider.EP_NAME.name,
-            KtResolveExtensionProvider::class.java
-        )
-    }
+    override fun registerProjectExtensionPoints(project: MockProject, testServices: TestServices) {}
 
     @OptIn(KtAnalysisApiInternals::class)
     override fun registerProjectServices(project: MockProject, testServices: TestServices) {

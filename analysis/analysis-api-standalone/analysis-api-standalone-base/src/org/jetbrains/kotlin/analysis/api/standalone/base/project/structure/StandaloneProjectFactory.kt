@@ -26,6 +26,7 @@ import com.intellij.psi.search.ProjectScope
 import com.intellij.util.io.URLUtil.JAR_PROTOCOL
 import com.intellij.util.io.URLUtil.JAR_SEPARATOR
 import org.jetbrains.kotlin.analysis.api.impl.base.java.source.JavaElementSourceWithSmartPointerFactory
+import org.jetbrains.kotlin.analysis.api.resolve.extensions.KtResolveExtensionProvider
 import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.*
@@ -59,8 +60,18 @@ object StandaloneProjectFactory {
         registerApplicationExtensionPoints(applicationEnvironment, applicationDisposable)
 
         return KotlinCoreProjectEnvironment(projectDisposable, applicationEnvironment).apply {
+            registerProjectServices(project)
             registerJavaPsiFacade(project)
         }
+    }
+
+    private fun registerProjectServices(project: MockProject) {
+        @Suppress("UnstableApiUsage")
+        CoreApplicationEnvironment.registerExtensionPoint(
+            project.extensionArea,
+            KtResolveExtensionProvider.EP_NAME.name,
+            KtResolveExtensionProvider::class.java
+        )
     }
 
     private fun registerApplicationExtensionPoints(
