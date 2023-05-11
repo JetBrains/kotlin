@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.name.Name
 /**
  * A [FirSymbolNamesProvider] that fetches top-level names from a Kotlin [declarationProvider].
  */
-internal class LLFirKotlinSymbolNamesProvider(
+internal open class LLFirKotlinSymbolNamesProvider(
     private val declarationProvider: KotlinDeclarationProvider,
 ) : FirSymbolNamesProvider() {
     override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<String> =
@@ -24,7 +24,7 @@ internal class LLFirKotlinSymbolNamesProvider(
             .getTopLevelKotlinClassLikeDeclarationNamesInPackage(packageFqName)
             .mapTo(mutableSetOf()) { it.asString() }
 
-    override fun getPackageNamesWithTopLevelCallables(): Set<String> =
+    override fun getPackageNamesWithTopLevelCallables(): Set<String>? =
         declarationProvider.computePackageSetWithTopLevelCallableDeclarations()
 
     override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> =

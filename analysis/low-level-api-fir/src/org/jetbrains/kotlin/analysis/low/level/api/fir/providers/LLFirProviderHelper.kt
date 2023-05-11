@@ -83,7 +83,10 @@ internal class LLFirProviderHelper(
     val symbolNameCache = FirCompositeCachedSymbolNamesProvider.create(
         firSession,
         listOfNotNull(
-            LLFirKotlinSymbolNamesProvider(declarationProvider),
+            object : LLFirKotlinSymbolNamesProvider(declarationProvider) {
+                // This is a temporary workaround for KTIJ-25536.
+                override fun getPackageNamesWithTopLevelCallables(): Set<String>? = null
+            },
             extensionTool?.symbolNamesProvider,
         )
     )
