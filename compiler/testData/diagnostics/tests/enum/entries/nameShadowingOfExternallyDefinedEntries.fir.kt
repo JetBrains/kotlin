@@ -9,7 +9,7 @@ enum class E {
     ;
 
     fun foo() {
-        <!OPT_IN_USAGE_ERROR!>entries<!>
+        entries
         pckg.entries
     }
 }
@@ -20,7 +20,7 @@ class A {
 
         class B {
             fun foo() {
-                <!OPT_IN_USAGE_ERROR!>entries<!>
+                entries
                 pckg.entries
             }
         }

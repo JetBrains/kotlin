@@ -9,7 +9,7 @@ enum class E {
     ;
 
     fun foo() {
-        <!OPT_IN_USAGE_ERROR!>entries<!>.<!UNRESOLVED_REFERENCE!>length<!>
+        entries.<!UNRESOLVED_REFERENCE!>length<!>
         pckg.entries.length
     }
 }
@@ -20,7 +20,7 @@ class A {
 
         class B {
             fun foo() {
-                <!OPT_IN_USAGE_ERROR!>entries<!>.<!UNRESOLVED_REFERENCE!>length<!>
+                entries.<!UNRESOLVED_REFERENCE!>length<!>
                 pckg.entries.length
             }
         }

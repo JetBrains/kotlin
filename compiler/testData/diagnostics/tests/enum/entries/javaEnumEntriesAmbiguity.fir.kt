@@ -29,5 +29,5 @@ fun test() {
     JEnumEntry.entries
     JEnumStaticField.entries
 
-    JEnumField::<!OPT_IN_USAGE_ERROR!>entries<!>
+    JEnumField::entries
 }

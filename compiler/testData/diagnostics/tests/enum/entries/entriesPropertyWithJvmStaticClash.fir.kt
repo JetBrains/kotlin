@@ -11,7 +11,7 @@ enum class A {
 }
 
 fun test() {
-    A.<!OPT_IN_USAGE_ERROR!>entries<!>
+    A.entries
 
     with(A) {
         entries

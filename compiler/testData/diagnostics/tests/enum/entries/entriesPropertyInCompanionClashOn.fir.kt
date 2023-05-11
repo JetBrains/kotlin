@@ -10,7 +10,7 @@ enum class A {
 }
 
 fun test() {
-    A.<!OPT_IN_USAGE_ERROR!>entries<!>
+    A.entries
     A.Companion.entries
 
     with(A) {

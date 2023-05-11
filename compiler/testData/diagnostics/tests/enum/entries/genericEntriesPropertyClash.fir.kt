@@ -12,6 +12,6 @@ enum class A {
 val <T> T.entries: Int get() = 0
 
 fun test() {
-    A.<!OPT_IN_USAGE_ERROR!>entries<!>
+    A.entries
     A.Companion.entries
 }

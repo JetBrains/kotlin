@@ -14,23 +14,24 @@ package kotlin.enums
  * consistently with the corresponding [Enum.ordinal] values.
  *
  * An instance of this interface can only be obtained from `EnumClass.entries` property.
+ *
+ * #### Implementation note
+ * All basic operations, such as `contains` and `indexOf`, are executed in constant time and are likely to be
+ * faster than regular `ArrayList<E>` counterparts.
  */
-@ExperimentalStdlibApi
-@SinceKotlin("1.8")
+@SinceKotlin("1.9")
+@WasExperimental(ExperimentalStdlibApi::class)
 public sealed interface EnumEntries<E : Enum<E>> : List<E>
 
 @PublishedApi
-@ExperimentalStdlibApi
 @SinceKotlin("1.8") // Used by pre-1.9.0 JVM compiler for the feature in preview mode. Can be safely removed around 2.1
 internal fun <E : Enum<E>> enumEntries(entriesProvider: () -> Array<E>): EnumEntries<E> = EnumEntriesList(entriesProvider())
 
 @PublishedApi
-@ExperimentalStdlibApi
 @SinceKotlin("1.8")
 internal fun <E : Enum<E>> enumEntries(entries: Array<E>): EnumEntries<E> = EnumEntriesList(entries)
 
 @SinceKotlin("1.8")
-@ExperimentalStdlibApi
 private class EnumEntriesList<T : Enum<T>>(private val entries: Array<T>) : EnumEntries<T>, AbstractList<T>(), Serializable {
 // WA for JS IR bug:
 //  class type parameter name MUST be different from E (AbstractList<E> type parameter),
