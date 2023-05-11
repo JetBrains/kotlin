@@ -53,6 +53,7 @@ public final class Derived /* Derived*/ extends Base implements IntfWithProp {
   private final int x = 3 /* initializer type: int */;
 
   @java.lang.Override()
+  @org.jetbrains.annotations.NotNull()
   public error.NonExistentClass v();//  v()
 
   @java.lang.Override()

@@ -149,7 +149,7 @@ public final class Foo /* Foo*/ {
   private java.lang.String x = null /* initializer type: null */;
 
   @Anno()
-  public  Foo(MyDependency);//  .ctor(MyDependency)
+  public  Foo(@org.jetbrains.annotations.NotNull() MyDependency);//  .ctor(MyDependency)
 
   @Anno()
   public final void f4(@org.jetbrains.annotations.NotNull() java.lang.String);//  f4(java.lang.String)

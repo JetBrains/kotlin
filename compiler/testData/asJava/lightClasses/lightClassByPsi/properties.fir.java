@@ -26,6 +26,9 @@ public final class Foo /* Foo*/ {
   private final MyProperty<Foo> delegatedProp2$delegate;
 
   @org.jetbrains.annotations.NotNull()
+  private final error.NonExistentClass d;
+
+  @org.jetbrains.annotations.NotNull()
   private final error.NonExistentClass delegatedProp$delegate;
 
   @org.jetbrains.annotations.NotNull()
@@ -53,6 +56,9 @@ public final class Foo /* Foo*/ {
   private java.lang.String protectedWithPrivateSet = "" /* initializer type: java.lang.String */;
 
   @org.jetbrains.annotations.NotNull()
+  private static final error.NonExistentClass contextBean;
+
+  @org.jetbrains.annotations.NotNull()
   public final java.lang.String CONSTANT_WITH_ESCAPES = "A\tB\nC\rD'E\"F\\G$H" /* initializer type: java.lang.String */ /* constant value A	B
   C
 D'E"F\G$H */;
@@ -77,8 +83,6 @@ D'E"F\G$H */;
 
   private boolean c;
 
-  private final error.NonExistentClass d;
-
   private final error.NonExistentClass intConst = 30 /* initializer type: int */;
 
   private final int f1 = 2 /* initializer type: int */;
@@ -94,8 +98,6 @@ D'E"F\G$H */;
   private int privateVarWithPrivateSet;
 
   private java.lang.String internalVarPrivateSet;
-
-  private static final error.NonExistentClass contextBean;
 
   private static final int f1 = 4 /* initializer type: int */;
 
@@ -169,7 +171,7 @@ D'E"F\G$H */;
 
   protected final void setProtectedLateinitVar(@org.jetbrains.annotations.NotNull() java.lang.String);//  setProtectedLateinitVar(java.lang.String)
 
-  public  Foo(int, @org.jetbrains.annotations.NotNull() Foo, boolean, error.NonExistentClass, long);//  .ctor(int, Foo, boolean, error.NonExistentClass, long)
+  public  Foo(int, @org.jetbrains.annotations.NotNull() Foo, boolean, @org.jetbrains.annotations.NotNull() error.NonExistentClass, long);//  .ctor(int, Foo, boolean, error.NonExistentClass, long)
 
   public final boolean getC();//  getC()
 

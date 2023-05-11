@@ -16,7 +16,7 @@ public final class Foo /* Foo*/ {
 
   public final int bar4();//  bar4()
 
-  public final void bar2$light_idea_test_case(error.NonExistentClass, Unresolved);//  bar2$light_idea_test_case(error.NonExistentClass, Unresolved)
+  public final void bar2$light_idea_test_case(@org.jetbrains.annotations.NotNull() error.NonExistentClass, @org.jetbrains.annotations.NotNull() Unresolved);//  bar2$light_idea_test_case(error.NonExistentClass, Unresolved)
 
   public void bar(int, @org.jetbrains.annotations.NotNull() java.lang.Object, @org.jetbrains.annotations.NotNull() Foo);//  bar(int, java.lang.Object, Foo)
 
