@@ -223,7 +223,7 @@ class IrModuleToJsTransformer(
     private val optimizeGeneratedJs = backendContext.configuration.get(JSConfigurationKeys.OPTIMIZE_GENERATED_JS, true)
 
     private fun generateProgramFragment(fileExports: IrFileExports, minimizedMemberNames: Boolean): JsIrProgramFragment {
-        val nameGenerator = JsNameLinkingNamer(backendContext, minimizedMemberNames)
+        val nameGenerator = JsNameLinkingNamer(backendContext, minimizedMemberNames, isEsModules)
 
         val globalNameScope = NameTable<IrDeclaration>()
 
@@ -329,9 +329,9 @@ class IrModuleToJsTransformer(
             }
         }
 
-        nameGenerator.imports.entries.forEach { (declaration, importExpression) ->
+        nameGenerator.imports.entries.forEach { (declaration, importStatement) ->
             val tag = computeTag(declaration) ?: error("No tag for imported declaration ${declaration.render()}")
-            result.imports[tag] = importExpression
+            result.imports[tag] = importStatement
             result.optionalCrossModuleImports += tag
         }
 

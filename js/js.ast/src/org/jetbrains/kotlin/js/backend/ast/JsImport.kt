@@ -27,7 +27,7 @@ class JsImport(
 
     class Element(
         val name: JsName,
-        val alias: JsNameRef?
+        val alias: JsNameRef? = null
     )
 
     override fun accept(visitor: JsVisitor) {

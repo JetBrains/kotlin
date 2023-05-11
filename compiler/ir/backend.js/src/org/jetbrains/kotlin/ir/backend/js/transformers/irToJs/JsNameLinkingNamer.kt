@@ -19,7 +19,11 @@ import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
 
-class JsNameLinkingNamer(private val context: JsIrBackendContext, private val minimizedMemberNames: Boolean) : IrNamerBase() {
+class JsNameLinkingNamer(
+    private val context: JsIrBackendContext,
+    private val minimizedMemberNames: Boolean,
+    private val isEsModules: Boolean
+) : IrNamerBase() {
 
     val nameMap = mutableMapOf<IrDeclaration, JsName>()
 
@@ -33,50 +37,19 @@ class JsNameLinkingNamer(private val context: JsIrBackendContext, private val mi
     }
 
     val importedModules = mutableListOf<JsImportedModule>()
-    val imports = mutableMapOf<IrDeclaration, JsExpression>()
+    val imports = mutableMapOf<IrDeclaration, JsStatement>()
 
     override fun getNameForStaticDeclaration(declaration: IrDeclarationWithName): JsName {
-
         if (declaration.isEffectivelyExternal()) {
             val jsModule: String? = declaration.getJsModule()
             val maybeParentFile: IrFile? = declaration.parent as? IrFile
             val fileJsModule: String? = maybeParentFile?.getJsModule()
             val jsQualifier: List<JsName>? = maybeParentFile?.getJsQualifier()?.split('.')?.map { JsName(it, false) }
 
-            when {
-                jsModule != null -> {
-                    val nameString = if (declaration.isJsNonModule()) {
-                        declaration.getJsNameOrKotlinName().asString()
-                    } else {
-                        val parent = declaration.fqNameWhenAvailable!!.parent()
-                        parent.child(declaration.getJsNameOrKotlinName()).asString()
-                    }
-                    val name = JsName(sanitizeName(nameString), false)
-                    importedModules += JsImportedModule(jsModule, name, name.makeRef())
-                    return name
-                }
-
-                fileJsModule != null -> {
-                    if (declaration !in nameMap) {
-                        val moduleName = JsName(sanitizeName("\$module\$$fileJsModule"), true)
-                        importedModules += JsImportedModule(fileJsModule, moduleName, null)
-                        val qualifiedReference =
-                            if (jsQualifier == null) moduleName.makeRef() else (listOf(moduleName) + jsQualifier).makeRef()
-                        imports[declaration] = jsElementAccess(declaration.getJsNameOrKotlinName().identifier, qualifiedReference)
-                        return declaration.getName()
-                    }
-                }
-
-                else -> {
-                    val name = declaration.getJsNameOrKotlinName().identifier
-
-                    if (jsQualifier != null) {
-                        imports[declaration] = jsElementAccess(name, jsQualifier.makeRef())
-                        return declaration.getName()
-                    }
-
-                    return name.toJsName(temporary = false)
-                }
+            return when {
+                jsModule != null -> declaration.generateImportForDeclarationWithJsModule(jsModule)
+                fileJsModule != null -> declaration.generateImportForDeclarationInFileWithJsModule(fileJsModule, jsQualifier)
+                else -> declaration.generateRegularQualifiedImport(jsQualifier)
             }
         }
 
@@ -103,6 +76,70 @@ class JsNameLinkingNamer(private val context: JsIrBackendContext, private val mi
         // TODO this looks funny. Rethink.
         return JsName(field.parentAsClass.fieldData()[field]!!, false)
     }
+
+    private fun IrDeclarationWithName.generateImportForDeclarationWithJsModule(jsModule: String): JsName {
+        val nameString = if (isJsNonModule()) {
+            getJsNameOrKotlinName().asString()
+        } else {
+            val parent = fqNameWhenAvailable!!.parent()
+            parent.child(getJsNameOrKotlinName()).asString()
+        }
+        val name = JsName(sanitizeName(nameString), true)
+
+        if (isEsModules) {
+            imports[this] = JsImport(jsModule, JsImport.Target.Default(name.makeRef()))
+        } else {
+            importedModules += JsImportedModule(jsModule, name, name.makeRef())
+        }
+        return name
+    }
+
+    private fun IrDeclarationWithName.generateImportForDeclarationInFileWithJsModule(
+        fileJsModule: String,
+        jsQualifier: List<JsName>?
+    ): JsName {
+        if (this in nameMap) return getName()
+
+        val declarationStableName = getJsNameOrKotlinName().identifier
+
+        if (isEsModules) {
+            val importedName = jsQualifier?.firstOrNull() ?: declarationStableName.toJsName(temporary = false)
+            val importStatement = JsImport(fileJsModule, JsImport.Element(importedName))
+            imports[this] = when (val qualifiedReference = jsQualifier?.makeRef()) {
+                null -> importStatement
+                else -> JsCompositeBlock(
+                    listOf(
+                        importStatement,
+                        jsElementAccess(declarationStableName, qualifiedReference).putIntoVariableWitName(
+                            declarationStableName.toJsName()
+                        )
+                    )
+                )
+            }
+
+        } else {
+            val moduleName = JsName(sanitizeName("\$module\$$fileJsModule"), true)
+            importedModules += JsImportedModule(fileJsModule, moduleName, null)
+            val qualifiedReference =
+                if (jsQualifier == null) moduleName.makeRef() else (listOf(moduleName) + jsQualifier).makeRef()
+            imports[this] =
+                jsElementAccess(declarationStableName, qualifiedReference).putIntoVariableWitName(declarationStableName.toJsName())
+        }
+
+        return getName()
+    }
+
+    private fun IrDeclarationWithName.generateRegularQualifiedImport(jsQualifier: List<JsName>?): JsName {
+        val name = getJsNameOrKotlinName().identifier
+
+        if (jsQualifier != null) {
+            imports[this] = jsElementAccess(name, jsQualifier.makeRef()).putIntoVariableWitName(name.toJsName())
+            return getName()
+        }
+
+        return name.toJsName(temporary = false)
+    }
+
 
     private fun IrClass.fieldData(): Map<IrField, String> {
         return context.fieldDataCache.getOrPut(this) {

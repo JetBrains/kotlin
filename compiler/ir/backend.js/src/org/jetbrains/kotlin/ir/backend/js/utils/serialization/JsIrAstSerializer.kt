@@ -118,9 +118,9 @@ private class JsIrAstSerializer {
             }
         }
 
-        writeCollection(fragment.imports.entries) { (signatureId, expression) ->
+        writeCollection(fragment.imports.entries) { (signatureId, statement) ->
             writeInt(internalizeString(signatureId))
-            writeExpression(expression)
+            writeStatement(statement)
         }
 
         writeCompositeBlock(fragment.declarations)

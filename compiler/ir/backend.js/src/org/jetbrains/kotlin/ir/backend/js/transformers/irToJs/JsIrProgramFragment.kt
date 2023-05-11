@@ -17,7 +17,7 @@ class JsIrProgramFragment(val packageFqn: String) {
     val declarations = JsCompositeBlock()
     val exports = JsCompositeBlock()
     val importedModules = mutableListOf<JsImportedModule>()
-    val imports = mutableMapOf<String, JsExpression>()
+    val imports = mutableMapOf<String, JsStatement>()
     var dts: TypeScriptFragment? = null
     val classes = mutableMapOf<JsName, JsIrIcClassModel>()
     val initializers = JsCompositeBlock()

@@ -53,7 +53,7 @@ object ModuleWrapperTranslation {
             ModuleKind.COMMON_JS -> wrapCommonJs(function, importedModules, program)
             ModuleKind.UMD -> wrapUmd(moduleId, function, importedModules, program)
             ModuleKind.PLAIN -> wrapPlain(moduleId, function, importedModules, program)
-            ModuleKind.ES -> wrapEsModule(function, importedModules)
+            ModuleKind.ES -> wrapEsModule(function)
         }
     }
 
@@ -128,27 +128,19 @@ object ModuleWrapperTranslation {
         return listOf(invocation.makeStmt())
     }
 
-    private fun wrapEsModule(function: JsFunction, importedModules: List<JsImportedModule>): List<JsStatement> {
-        val (alreadyPresentedImportStatements, restStatements) = function.body.statements.partitionIsInstance<JsStatement, JsImport>()
+    private fun wrapEsModule(function: JsFunction): List<JsStatement> {
+        val (alreadyPresentedImportStatements, restStatements) = function.body.statements
+            .flatMap { if (it is JsCompositeBlock) it.statements else listOf(it) }
+            .partitionIsInstance<JsStatement, JsImport>()
+        val (multipleElementsImport, defaultImports) = alreadyPresentedImportStatements.partition { it.target is JsImport.Target.Elements }
 
-        val importStatements = importedModules.zip(function.parameters.drop(1)).map {
-            JsImport(
-                it.first.getRequireName(true),
-                if (it.first.plainReference == null) {
-                    JsImport.Target.All(alias = it.second.name.makeRef())
-                } else {
-                    JsImport.Target.Default(name = it.second.name.makeRef())
-                }
-            )
-        }
-
-        val alreadyPresentedImportStatementsWithoutDuplicates = alreadyPresentedImportStatements
+        val mergedImports = multipleElementsImport
             .groupBy { it.module }
             .map { (module, import) ->
-                JsImport(module, *import.flatMap { it.elements }.toTypedArray())
+                JsImport(module, *import.flatMap { it.elements }.distinctBy { it.name.ident }.toTypedArray())
             }
 
-       return  importStatements + alreadyPresentedImportStatementsWithoutDuplicates + restStatements.dropLast(1)
+        return mergedImports + defaultImports + restStatements.dropLast(1)
     }
 
 

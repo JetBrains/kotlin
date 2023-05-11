@@ -86,7 +86,7 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
                 )
             }
 
-            readRepeated { imports[stringTable[readInt()]] = readExpression() }
+            readRepeated { imports[stringTable[readInt()]] = readStatement() }
 
             readRepeated { declarations.statements += readStatement() }
             readRepeated { initializers.statements += readStatement() }

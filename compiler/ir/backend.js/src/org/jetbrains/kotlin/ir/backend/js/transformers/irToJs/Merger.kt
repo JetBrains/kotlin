@@ -34,9 +34,14 @@ class Merger(
                 rename(f.declarations)
                 rename(f.exports)
 
-                f.imports.entries.forEach { (declaration, importExpression) ->
-                    val importName = nameMap[declaration] ?: error("Missing name for declaration '${declaration}'")
-                    importStatements.putIfAbsent(declaration, JsVars(JsVars.JsVar(importName, rename(importExpression))))
+                f.imports.entries.forEach { (declaration, importStatement) ->
+                    val importName = nameMap[declaration]
+
+                    if (importName == null && !isEsModules) {
+                        error("Missing name for declaration '${declaration}'")
+                    }
+
+                    importStatements.putIfAbsent(declaration, rename(importStatement).importStatementWithName(importName))
                 }
 
                 val classModels = (mutableMapOf<JsName, JsIrIcClassModel>() + f.classes)
@@ -60,7 +65,6 @@ class Merger(
 
         for ((tag, crossModuleJsImport) in crossModuleReferences.jsImports) {
             val importName = nameMap[tag] ?: error("Missing name for declaration '$tag'")
-
             importStatements.putIfAbsent(tag, crossModuleJsImport.renameImportedSymbolInternalName(importName))
         }
 
@@ -329,5 +333,30 @@ class Merger(
         startRegion(regionDescription)
         this += statements
         endRegion()
+    }
+
+    private fun JsStatement.importStatementWithName(name: JsName?): JsStatement {
+        if (name == null) return this
+
+        return when (this) {
+            is JsVars -> JsVars(JsVars.JsVar(name, vars.single().initExpression))
+            is JsImport -> JsImport(
+                module,
+                when (target) {
+                    is JsImport.Target.All -> JsImport.Target.All(alias = name.makeRef())
+                    is JsImport.Target.Default -> JsImport.Target.Default(name = name.makeRef())
+                    is JsImport.Target.Elements -> JsImport.Target.Elements(
+                        mutableListOf(
+                            JsImport.Element(
+                                elements.single().name,
+                                name.makeRef()
+                            )
+                        )
+                    )
+                }
+            )
+            is JsCompositeBlock -> JsCompositeBlock(statements.dropLast(1) + statements.last().importStatementWithName(name))
+            else -> error("Unexpected import statement ${this::class.qualifiedName}")
+        }
     }
 }

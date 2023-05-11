@@ -120,12 +120,8 @@ private fun JsNode.computeScopes(): Scope {
             when (val target = import.target) {
                 is JsImport.Target.All -> target.alias.name?.let { currentScope.declaredNames += it }
                 is JsImport.Target.Default -> target.name.name?.let { currentScope.declaredNames += it }
-                is JsImport.Target.Elements -> target.elements.forEach { element ->
-                    if (element.alias != null) {
-                        element.alias?.name?.let { currentScope.declaredNames += it }
-                    } else {
-                        currentScope.declaredNames += element.name
-                    }
+                is JsImport.Target.Elements -> target.elements.forEach {
+                    currentScope.declaredNames += it.alias?.name ?: it.name
                 }
             }
             super.visitImport(import)

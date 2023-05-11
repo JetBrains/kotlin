@@ -63,6 +63,10 @@ fun <T : JsNode> IrWhen.toJsNode(
 fun jsElementAccess(name: String, receiver: JsExpression?): JsExpression =
     jsElementAccess(JsName(name, false), receiver)
 
+fun JsExpression.putIntoVariableWitName(name: JsName): JsVars {
+    return JsVars(JsVars.JsVar(name, this))
+}
+
 fun jsElementAccess(name: JsName, receiver: JsExpression?): JsExpression =
     if (receiver == null || name.ident.isValidES5Identifier()) {
         JsNameRef(name, receiver)
