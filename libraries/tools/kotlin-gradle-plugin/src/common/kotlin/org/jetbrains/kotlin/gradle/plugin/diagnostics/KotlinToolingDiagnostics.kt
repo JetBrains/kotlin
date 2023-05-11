@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.diagnostics
 
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.ERROR
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.WARNING
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV1
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV2
@@ -160,5 +161,21 @@ object KotlinToolingDiagnostics {
 
     object FailedToGetAgpVersionWarning : ToolingDiagnosticFactory(WARNING) {
         operator fun invoke() = build("Failed to get AndroidGradlePluginVersion")
+    }
+
+    object AndroidSourceSetLayoutV1SourceSetsNotFoundError : ToolingDiagnosticFactory(ERROR) {
+        operator fun invoke(nameOfRequestedSourceSet: String) = build(
+            """
+                KotlinSourceSet with name '$nameOfRequestedSourceSet' not found:
+                The SourceSet requested ('$nameOfRequestedSourceSet') was renamed in Kotlin 1.9.0
+                
+                In order to migrate you might want to replace: 
+                sourceSets.getByName("androidTest") -> sourceSets.getByName("androidUnitTest")
+                sourceSets.getByName("androidAndroidTest") -> sourceSets.getByName("androidInstrumentedTest")
+                
+                Learn more about the new Kotlin/Android SourceSet Layout: 
+                https://kotlinlang.org/docs/whatsnew18.html#kotlin-multiplatform-a-new-android-source-set-layout
+            """.trimIndent()
+        )
     }
 }
