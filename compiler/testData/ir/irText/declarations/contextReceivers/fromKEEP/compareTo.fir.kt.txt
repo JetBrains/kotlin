@@ -25,7 +25,7 @@ data class Pair<A : Any?, B : Any?> {
     return Pair<Any, Any>(first = first, second = second)
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }

@@ -37,24 +37,24 @@ FILE fqName:<root> fileName:/typeAliasWithUnsafeVariance.kt
           CONSTRUCTOR_CALL 'public constructor <init> (action: kotlin.Function1<RenderingT of <root>.Tag, kotlin.Unit>) [primary] declared in <root>.Tag' type=<root>.Tag<RenderingT of <root>.Tag> origin=null
             <class: RenderingT>: kotlin.Any
             action: GET_VAR 'action: kotlin.Function1<RenderingT of <root>.Tag, kotlin.Unit> declared in <root>.Tag.copy' type=kotlin.Function1<RenderingT of <root>.Tag, kotlin.Unit> origin=null
-    FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.Tag<RenderingT of <root>.Tag>, other:kotlin.Any?) returnType:kotlin.Boolean
+    FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.Tag<RenderingT of <root>.Tag>, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
-      $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.Tag<RenderingT of <root>.Tag>
-      VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:other index:0 type:kotlin.Any?
+      $this: VALUE_PARAMETER name:<this> type:<root>.Tag<RenderingT of <root>.Tag>
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
       BLOCK_BODY
         WHEN type=kotlin.Unit origin=null
           BRANCH
             if: CALL 'public final fun EQEQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQEQ
               arg0: GET_VAR '<this>: <root>.Tag<RenderingT of <root>.Tag> declared in <root>.Tag.equals' type=<root>.Tag<RenderingT of <root>.Tag> origin=null
               arg1: GET_VAR 'other: kotlin.Any? declared in <root>.Tag.equals' type=kotlin.Any? origin=null
-            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Tag'
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.Tag'
               CONST Boolean type=kotlin.Boolean value=true
         WHEN type=kotlin.Unit origin=null
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=<root>.Tag<RenderingT of <root>.Tag>
               GET_VAR 'other: kotlin.Any? declared in <root>.Tag.equals' type=kotlin.Any? origin=null
-            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Tag'
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.Tag'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.Tag<RenderingT of <root>.Tag> [val]
           TYPE_OP type=<root>.Tag<RenderingT of <root>.Tag> origin=CAST typeOperand=<root>.Tag<RenderingT of <root>.Tag>
@@ -67,14 +67,14 @@ FILE fqName:<root> fileName:/typeAliasWithUnsafeVariance.kt
                   receiver: GET_VAR '<this>: <root>.Tag<RenderingT of <root>.Tag> declared in <root>.Tag.equals' type=<root>.Tag<RenderingT of <root>.Tag> origin=null
                 arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:action type:kotlin.Function1<RenderingT of <root>.Tag, kotlin.Unit> visibility:private [final]' type=kotlin.Function1<RenderingT of <root>.Tag, kotlin.Unit> origin=null
                   receiver: GET_VAR 'val tmp_0: <root>.Tag<RenderingT of <root>.Tag> [val] declared in <root>.Tag.equals' type=<root>.Tag<RenderingT of <root>.Tag> origin=null
-            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Tag'
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.Tag'
               CONST Boolean type=kotlin.Boolean value=false
-        RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Tag'
+        RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.Tag'
           CONST Boolean type=kotlin.Boolean value=true
     FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.Tag<RenderingT of <root>.Tag>) returnType:kotlin.Int
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.Tag<RenderingT of <root>.Tag>
+      $this: VALUE_PARAMETER name:<this> type:<root>.Tag<RenderingT of <root>.Tag>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.Tag'
           CALL 'public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.Function1' type=kotlin.Int origin=null
@@ -83,7 +83,7 @@ FILE fqName:<root> fileName:/typeAliasWithUnsafeVariance.kt
     FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.Tag<RenderingT of <root>.Tag>) returnType:kotlin.String
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.Tag<RenderingT of <root>.Tag>
+      $this: VALUE_PARAMETER name:<this> type:<root>.Tag<RenderingT of <root>.Tag>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.Tag'
           STRING_CONCATENATION type=kotlin.String

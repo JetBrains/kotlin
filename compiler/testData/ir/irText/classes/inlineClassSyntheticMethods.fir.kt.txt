@@ -30,7 +30,7 @@ value class IC<TT : Any?> {
     return <this>.<get-c>().hashCode()
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       other !is IC<TT> -> return false
     }

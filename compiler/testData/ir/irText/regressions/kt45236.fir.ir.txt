@@ -78,24 +78,24 @@ FILE fqName:<root> fileName:/kt45236.kt
               <class: T>: kotlin.Any
               error: GET_VAR 'error: kotlin.Throwable declared in <root>.NetRequestStatus.Error.copy' type=kotlin.Throwable origin=null
               value: GET_VAR 'value: T of <root>.NetRequestStatus.Error? declared in <root>.NetRequestStatus.Error.copy' type=T of <root>.NetRequestStatus.Error? origin=null
-      FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.NetRequestStatus.Error<T of <root>.NetRequestStatus.Error>, other:kotlin.Any?) returnType:kotlin.Boolean
+      FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.NetRequestStatus.Error<T of <root>.NetRequestStatus.Error>, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
         overridden:
           public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
-        $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.NetRequestStatus.Error<T of <root>.NetRequestStatus.Error>
-        VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:other index:0 type:kotlin.Any?
+        $this: VALUE_PARAMETER name:<this> type:<root>.NetRequestStatus.Error<T of <root>.NetRequestStatus.Error>
+        VALUE_PARAMETER name:other index:0 type:kotlin.Any?
         BLOCK_BODY
           WHEN type=kotlin.Unit origin=null
             BRANCH
               if: CALL 'public final fun EQEQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQEQ
                 arg0: GET_VAR '<this>: <root>.NetRequestStatus.Error<T of <root>.NetRequestStatus.Error> declared in <root>.NetRequestStatus.Error.equals' type=<root>.NetRequestStatus.Error<T of <root>.NetRequestStatus.Error> origin=null
                 arg1: GET_VAR 'other: kotlin.Any? declared in <root>.NetRequestStatus.Error.equals' type=kotlin.Any? origin=null
-              then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.NetRequestStatus.Error'
+              then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.NetRequestStatus.Error'
                 CONST Boolean type=kotlin.Boolean value=true
           WHEN type=kotlin.Unit origin=null
             BRANCH
               if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=<root>.NetRequestStatus.Error<T of <root>.NetRequestStatus.Error>
                 GET_VAR 'other: kotlin.Any? declared in <root>.NetRequestStatus.Error.equals' type=kotlin.Any? origin=null
-              then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.NetRequestStatus.Error'
+              then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.NetRequestStatus.Error'
                 CONST Boolean type=kotlin.Boolean value=false
           VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.NetRequestStatus.Error<T of <root>.NetRequestStatus.Error> [val]
             TYPE_OP type=<root>.NetRequestStatus.Error<T of <root>.NetRequestStatus.Error> origin=CAST typeOperand=<root>.NetRequestStatus.Error<T of <root>.NetRequestStatus.Error>
@@ -108,7 +108,7 @@ FILE fqName:<root> fileName:/kt45236.kt
                     receiver: GET_VAR '<this>: <root>.NetRequestStatus.Error<T of <root>.NetRequestStatus.Error> declared in <root>.NetRequestStatus.Error.equals' type=<root>.NetRequestStatus.Error<T of <root>.NetRequestStatus.Error> origin=null
                   arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:error type:kotlin.Throwable visibility:private [final]' type=kotlin.Throwable origin=null
                     receiver: GET_VAR 'val tmp_0: <root>.NetRequestStatus.Error<T of <root>.NetRequestStatus.Error> [val] declared in <root>.NetRequestStatus.Error.equals' type=<root>.NetRequestStatus.Error<T of <root>.NetRequestStatus.Error> origin=null
-              then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.NetRequestStatus.Error'
+              then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.NetRequestStatus.Error'
                 CONST Boolean type=kotlin.Boolean value=false
           WHEN type=kotlin.Unit origin=null
             BRANCH
@@ -118,14 +118,14 @@ FILE fqName:<root> fileName:/kt45236.kt
                     receiver: GET_VAR '<this>: <root>.NetRequestStatus.Error<T of <root>.NetRequestStatus.Error> declared in <root>.NetRequestStatus.Error.equals' type=<root>.NetRequestStatus.Error<T of <root>.NetRequestStatus.Error> origin=null
                   arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.NetRequestStatus.Error? visibility:private [final]' type=T of <root>.NetRequestStatus.Error? origin=null
                     receiver: GET_VAR 'val tmp_0: <root>.NetRequestStatus.Error<T of <root>.NetRequestStatus.Error> [val] declared in <root>.NetRequestStatus.Error.equals' type=<root>.NetRequestStatus.Error<T of <root>.NetRequestStatus.Error> origin=null
-              then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.NetRequestStatus.Error'
+              then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.NetRequestStatus.Error'
                 CONST Boolean type=kotlin.Boolean value=false
-          RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.NetRequestStatus.Error'
+          RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.NetRequestStatus.Error'
             CONST Boolean type=kotlin.Boolean value=true
       FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.NetRequestStatus.Error<T of <root>.NetRequestStatus.Error>) returnType:kotlin.Int
         overridden:
           public open fun hashCode (): kotlin.Int declared in kotlin.Any
-        $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.NetRequestStatus.Error<T of <root>.NetRequestStatus.Error>
+        $this: VALUE_PARAMETER name:<this> type:<root>.NetRequestStatus.Error<T of <root>.NetRequestStatus.Error>
         BLOCK_BODY
           VAR name:result type:kotlin.Int [var]
             CALL 'public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.Throwable' type=kotlin.Int origin=null
@@ -153,7 +153,7 @@ FILE fqName:<root> fileName:/kt45236.kt
       FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.NetRequestStatus.Error<T of <root>.NetRequestStatus.Error>) returnType:kotlin.String
         overridden:
           public open fun toString (): kotlin.String declared in kotlin.Any
-        $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.NetRequestStatus.Error<T of <root>.NetRequestStatus.Error>
+        $this: VALUE_PARAMETER name:<this> type:<root>.NetRequestStatus.Error<T of <root>.NetRequestStatus.Error>
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.NetRequestStatus.Error'
             STRING_CONCATENATION type=kotlin.String

@@ -35,24 +35,24 @@ FILE fqName:<root> fileName:/MultiList.kt
           CONSTRUCTOR_CALL 'public constructor <init> (value: T of <root>.Some) [primary] declared in <root>.Some' type=<root>.Some<T of <root>.Some> origin=null
             <class: T>: kotlin.Any
             value: GET_VAR 'value: T of <root>.Some declared in <root>.Some.copy' type=T of <root>.Some origin=null
-    FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.Some<T of <root>.Some>, other:kotlin.Any?) returnType:kotlin.Boolean
+    FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.Some<T of <root>.Some>, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
-      $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.Some<T of <root>.Some>
-      VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:other index:0 type:kotlin.Any?
+      $this: VALUE_PARAMETER name:<this> type:<root>.Some<T of <root>.Some>
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
       BLOCK_BODY
         WHEN type=kotlin.Unit origin=null
           BRANCH
             if: CALL 'public final fun EQEQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQEQ
               arg0: GET_VAR '<this>: <root>.Some<T of <root>.Some> declared in <root>.Some.equals' type=<root>.Some<T of <root>.Some> origin=null
               arg1: GET_VAR 'other: kotlin.Any? declared in <root>.Some.equals' type=kotlin.Any? origin=null
-            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Some'
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.Some'
               CONST Boolean type=kotlin.Boolean value=true
         WHEN type=kotlin.Unit origin=null
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=<root>.Some<T of <root>.Some>
               GET_VAR 'other: kotlin.Any? declared in <root>.Some.equals' type=kotlin.Any? origin=null
-            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Some'
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.Some'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.Some<T of <root>.Some> [val]
           TYPE_OP type=<root>.Some<T of <root>.Some> origin=CAST typeOperand=<root>.Some<T of <root>.Some>
@@ -65,14 +65,14 @@ FILE fqName:<root> fileName:/MultiList.kt
                   receiver: GET_VAR '<this>: <root>.Some<T of <root>.Some> declared in <root>.Some.equals' type=<root>.Some<T of <root>.Some> origin=null
                 arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:value type:T of <root>.Some visibility:private [final]' type=T of <root>.Some origin=null
                   receiver: GET_VAR 'val tmp_0: <root>.Some<T of <root>.Some> [val] declared in <root>.Some.equals' type=<root>.Some<T of <root>.Some> origin=null
-            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Some'
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.Some'
               CONST Boolean type=kotlin.Boolean value=false
-        RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Some'
+        RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.Some'
           CONST Boolean type=kotlin.Boolean value=true
     FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.Some<T of <root>.Some>) returnType:kotlin.Int
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.Some<T of <root>.Some>
+      $this: VALUE_PARAMETER name:<this> type:<root>.Some<T of <root>.Some>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.Some'
           WHEN type=kotlin.Int origin=null
@@ -90,7 +90,7 @@ FILE fqName:<root> fileName:/MultiList.kt
     FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.Some<T of <root>.Some>) returnType:kotlin.String
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.Some<T of <root>.Some>
+      $this: VALUE_PARAMETER name:<this> type:<root>.Some<T of <root>.Some>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.Some'
           STRING_CONCATENATION type=kotlin.String

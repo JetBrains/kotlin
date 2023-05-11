@@ -17,7 +17,7 @@ data class Some<T : Any?> {
     return Some<Any>(value = value)
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }

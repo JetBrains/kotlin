@@ -82,24 +82,24 @@ FILE fqName:<root> fileName:/delegationInSealed.kt
           RETURN type=kotlin.Nothing from='public final fun copy (c: kotlin.CharSequence): <root>.A.B declared in <root>.A.B'
             CONSTRUCTOR_CALL 'public constructor <init> (c: kotlin.CharSequence) [primary] declared in <root>.A.B' type=<root>.A.B origin=null
               c: GET_VAR 'c: kotlin.CharSequence declared in <root>.A.B.copy' type=kotlin.CharSequence origin=null
-      FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.A.B, other:kotlin.Any?) returnType:kotlin.Boolean
+      FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.A.B, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
         overridden:
           public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
-        $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.A.B
-        VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:other index:0 type:kotlin.Any?
+        $this: VALUE_PARAMETER name:<this> type:<root>.A.B
+        VALUE_PARAMETER name:other index:0 type:kotlin.Any?
         BLOCK_BODY
           WHEN type=kotlin.Unit origin=null
             BRANCH
               if: CALL 'public final fun EQEQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQEQ
                 arg0: GET_VAR '<this>: <root>.A.B declared in <root>.A.B.equals' type=<root>.A.B origin=null
                 arg1: GET_VAR 'other: kotlin.Any? declared in <root>.A.B.equals' type=kotlin.Any? origin=null
-              then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.A.B'
+              then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.A.B'
                 CONST Boolean type=kotlin.Boolean value=true
           WHEN type=kotlin.Unit origin=null
             BRANCH
               if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=<root>.A.B
                 GET_VAR 'other: kotlin.Any? declared in <root>.A.B.equals' type=kotlin.Any? origin=null
-              then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.A.B'
+              then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.A.B'
                 CONST Boolean type=kotlin.Boolean value=false
           VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.A.B [val]
             TYPE_OP type=<root>.A.B origin=CAST typeOperand=<root>.A.B
@@ -112,14 +112,14 @@ FILE fqName:<root> fileName:/delegationInSealed.kt
                     receiver: GET_VAR '<this>: <root>.A.B declared in <root>.A.B.equals' type=<root>.A.B origin=null
                   arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:c type:kotlin.CharSequence visibility:private [final]' type=kotlin.CharSequence origin=null
                     receiver: GET_VAR 'val tmp_0: <root>.A.B [val] declared in <root>.A.B.equals' type=<root>.A.B origin=null
-              then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.A.B'
+              then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.A.B'
                 CONST Boolean type=kotlin.Boolean value=false
-          RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.A.B'
+          RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.A.B'
             CONST Boolean type=kotlin.Boolean value=true
       FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.A.B) returnType:kotlin.Int
         overridden:
           public open fun hashCode (): kotlin.Int declared in kotlin.Any
-        $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.A.B
+        $this: VALUE_PARAMETER name:<this> type:<root>.A.B
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.A.B'
             CALL 'public open fun hashCode (): kotlin.Int [fake_override] declared in kotlin.CharSequence' type=kotlin.Int origin=null
@@ -128,7 +128,7 @@ FILE fqName:<root> fileName:/delegationInSealed.kt
       FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.A.B) returnType:kotlin.String
         overridden:
           public open fun toString (): kotlin.String declared in kotlin.Any
-        $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.A.B
+        $this: VALUE_PARAMETER name:<this> type:<root>.A.B
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.A.B'
             STRING_CONCATENATION type=kotlin.String

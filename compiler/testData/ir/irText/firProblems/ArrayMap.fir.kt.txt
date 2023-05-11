@@ -295,7 +295,7 @@ internal class ArrayMapImpl<T : Any> : ArrayMap<T> {
       return Entry<Any>(key = key, value = value)
     }
 
-    override fun equals(other: Any?): Boolean {
+    override operator fun equals(other: Any?): Boolean {
       when {
         EQEQEQ(arg0 = <this>, arg1 = other) -> return true
       }

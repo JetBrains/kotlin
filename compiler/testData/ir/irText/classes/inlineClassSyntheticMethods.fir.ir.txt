@@ -62,17 +62,17 @@ FILE fqName:<root> fileName:/inlineClassSyntheticMethods.kt
           CALL 'public open fun hashCode (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=null
             $this: CALL 'public final fun <get-c> (): <root>.C<TT of <root>.IC> declared in <root>.IC' type=<root>.C<TT of <root>.IC> origin=GET_PROPERTY
               $this: GET_VAR '<this>: <root>.IC<TT of <root>.IC> declared in <root>.IC.foo' type=<root>.IC<TT of <root>.IC> origin=null
-    FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.IC<TT of <root>.IC>, other:kotlin.Any?) returnType:kotlin.Boolean
+    FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.IC<TT of <root>.IC>, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
-      $this: VALUE_PARAMETER GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:<this> type:<root>.IC<TT of <root>.IC>
-      VALUE_PARAMETER GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:other index:0 type:kotlin.Any?
+      $this: VALUE_PARAMETER name:<this> type:<root>.IC<TT of <root>.IC>
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
       BLOCK_BODY
         WHEN type=kotlin.Unit origin=null
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=<root>.IC<TT of <root>.IC>
               GET_VAR 'other: kotlin.Any? declared in <root>.IC.equals' type=kotlin.Any? origin=null
-            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.IC'
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.IC'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.IC<TT of <root>.IC> [val]
           TYPE_OP type=<root>.IC<TT of <root>.IC> origin=CAST typeOperand=<root>.IC<TT of <root>.IC>
@@ -85,14 +85,14 @@ FILE fqName:<root> fileName:/inlineClassSyntheticMethods.kt
                   receiver: GET_VAR '<this>: <root>.IC<TT of <root>.IC> declared in <root>.IC.equals' type=<root>.IC<TT of <root>.IC> origin=null
                 arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:c type:<root>.C<TT of <root>.IC> visibility:private [final]' type=<root>.C<TT of <root>.IC> origin=null
                   receiver: GET_VAR 'val tmp_0: <root>.IC<TT of <root>.IC> [val] declared in <root>.IC.equals' type=<root>.IC<TT of <root>.IC> origin=null
-            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.IC'
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.IC'
               CONST Boolean type=kotlin.Boolean value=false
-        RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.IC'
+        RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.IC'
           CONST Boolean type=kotlin.Boolean value=true
     FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.IC<TT of <root>.IC>) returnType:kotlin.Int
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:<this> type:<root>.IC<TT of <root>.IC>
+      $this: VALUE_PARAMETER name:<this> type:<root>.IC<TT of <root>.IC>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.IC'
           CALL 'public open fun hashCode (): kotlin.Int declared in <root>.C' type=kotlin.Int origin=null
@@ -101,7 +101,7 @@ FILE fqName:<root> fileName:/inlineClassSyntheticMethods.kt
     FUN GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.IC<TT of <root>.IC>) returnType:kotlin.String
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER name:<this> type:<root>.IC<TT of <root>.IC>
+      $this: VALUE_PARAMETER name:<this> type:<root>.IC<TT of <root>.IC>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.IC'
           STRING_CONCATENATION type=kotlin.String

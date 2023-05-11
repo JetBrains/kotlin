@@ -126,24 +126,24 @@ FILE fqName:<root> fileName:/SignatureClash.kt
         RETURN type=kotlin.Nothing from='public final fun copy (delegate: <root>.Delegate): <root>.DataClass declared in <root>.DataClass'
           CONSTRUCTOR_CALL 'public constructor <init> (delegate: <root>.Delegate) [primary] declared in <root>.DataClass' type=<root>.DataClass origin=null
             delegate: GET_VAR 'delegate: <root>.Delegate declared in <root>.DataClass.copy' type=<root>.Delegate origin=null
-    FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.DataClass, other:kotlin.Any?) returnType:kotlin.Boolean
+    FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.DataClass, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
-      $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.DataClass
-      VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:other index:0 type:kotlin.Any?
+      $this: VALUE_PARAMETER name:<this> type:<root>.DataClass
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
       BLOCK_BODY
         WHEN type=kotlin.Unit origin=null
           BRANCH
             if: CALL 'public final fun EQEQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQEQ
               arg0: GET_VAR '<this>: <root>.DataClass declared in <root>.DataClass.equals' type=<root>.DataClass origin=null
               arg1: GET_VAR 'other: kotlin.Any? declared in <root>.DataClass.equals' type=kotlin.Any? origin=null
-            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.DataClass'
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.DataClass'
               CONST Boolean type=kotlin.Boolean value=true
         WHEN type=kotlin.Unit origin=null
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=<root>.DataClass
               GET_VAR 'other: kotlin.Any? declared in <root>.DataClass.equals' type=kotlin.Any? origin=null
-            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.DataClass'
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.DataClass'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.DataClass [val]
           TYPE_OP type=<root>.DataClass origin=CAST typeOperand=<root>.DataClass
@@ -156,14 +156,14 @@ FILE fqName:<root> fileName:/SignatureClash.kt
                   receiver: GET_VAR '<this>: <root>.DataClass declared in <root>.DataClass.equals' type=<root>.DataClass origin=null
                 arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:delegate type:<root>.Delegate visibility:private [final]' type=<root>.Delegate origin=null
                   receiver: GET_VAR 'val tmp_0: <root>.DataClass [val] declared in <root>.DataClass.equals' type=<root>.DataClass origin=null
-            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.DataClass'
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.DataClass'
               CONST Boolean type=kotlin.Boolean value=false
-        RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.DataClass'
+        RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.DataClass'
           CONST Boolean type=kotlin.Boolean value=true
     FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.DataClass) returnType:kotlin.Int
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.DataClass
+      $this: VALUE_PARAMETER name:<this> type:<root>.DataClass
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.DataClass'
           CALL 'public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.Delegate' type=kotlin.Int origin=null
@@ -172,7 +172,7 @@ FILE fqName:<root> fileName:/SignatureClash.kt
     FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.DataClass) returnType:kotlin.String
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.DataClass
+      $this: VALUE_PARAMETER name:<this> type:<root>.DataClass
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.DataClass'
           STRING_CONCATENATION type=kotlin.String

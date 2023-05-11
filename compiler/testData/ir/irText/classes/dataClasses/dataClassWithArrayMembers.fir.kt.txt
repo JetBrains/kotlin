@@ -81,7 +81,7 @@ data class Test1 {
     return Test1(stringArray = stringArray, charArray = charArray, booleanArray = booleanArray, byteArray = byteArray, shortArray = shortArray, intArray = intArray, longArray = longArray, floatArray = floatArray, doubleArray = doubleArray)
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }
@@ -157,7 +157,7 @@ data class Test2<T : Any?> {
     return Test2<Any>(genericArray = genericArray)
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }
@@ -200,7 +200,7 @@ data class Test3 {
     return Test3(anyArrayN = anyArrayN)
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }

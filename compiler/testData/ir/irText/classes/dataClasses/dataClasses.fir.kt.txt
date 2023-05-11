@@ -33,7 +33,7 @@ data class Test1 {
     return Test1(x = x, y = y, z = z)
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }
@@ -85,7 +85,7 @@ data class Test2 {
     return Test2(x = x)
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }
@@ -155,7 +155,7 @@ data class Test3 {
     return Test3(d = d, dn = dn, f = f, df = df)
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }

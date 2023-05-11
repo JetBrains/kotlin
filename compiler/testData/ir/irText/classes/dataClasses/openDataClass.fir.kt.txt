@@ -26,7 +26,7 @@ open data class ValidatedProperties {
     return ValidatedProperties(test1 = test1, test2 = test2)
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }

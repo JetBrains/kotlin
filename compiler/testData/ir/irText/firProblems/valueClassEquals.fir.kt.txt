@@ -10,7 +10,7 @@ value class Z {
     field = s
     get
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       other !is Z -> return false
     }

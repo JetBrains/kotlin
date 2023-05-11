@@ -67,24 +67,24 @@ FILE fqName:<root> fileName:/kt52677.kt
         RETURN type=kotlin.Nothing from='public final fun copy (id: @[MySerializable(c = ...)] <root>.Uuid1): <root>.LoginSuccessPacket declared in <root>.LoginSuccessPacket'
           CONSTRUCTOR_CALL 'public constructor <init> (id: @[MySerializable(c = ...)] <root>.Uuid1) [primary] declared in <root>.LoginSuccessPacket' type=<root>.LoginSuccessPacket origin=null
             id: GET_VAR 'id: @[MySerializable(c = ...)] <root>.Uuid1 declared in <root>.LoginSuccessPacket.copy' type=@[MySerializable(c = CLASS_REFERENCE 'CLASS OBJECT name:UuidSerializer modality:FINAL visibility:public superTypes:[<root>.MySerializer<@[MySerializable(c = ...)] <root>.Uuid1>]' type=kotlin.reflect.KClass<<root>.UuidSerializer>)] <root>.Uuid1 origin=null
-    FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.LoginSuccessPacket, other:kotlin.Any?) returnType:kotlin.Boolean
+    FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.LoginSuccessPacket, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
-      $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.LoginSuccessPacket
-      VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:other index:0 type:kotlin.Any?
+      $this: VALUE_PARAMETER name:<this> type:<root>.LoginSuccessPacket
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
       BLOCK_BODY
         WHEN type=kotlin.Unit origin=null
           BRANCH
             if: CALL 'public final fun EQEQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQEQ
               arg0: GET_VAR '<this>: <root>.LoginSuccessPacket declared in <root>.LoginSuccessPacket.equals' type=<root>.LoginSuccessPacket origin=null
               arg1: GET_VAR 'other: kotlin.Any? declared in <root>.LoginSuccessPacket.equals' type=kotlin.Any? origin=null
-            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.LoginSuccessPacket'
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.LoginSuccessPacket'
               CONST Boolean type=kotlin.Boolean value=true
         WHEN type=kotlin.Unit origin=null
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=<root>.LoginSuccessPacket
               GET_VAR 'other: kotlin.Any? declared in <root>.LoginSuccessPacket.equals' type=kotlin.Any? origin=null
-            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.LoginSuccessPacket'
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.LoginSuccessPacket'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.LoginSuccessPacket [val]
           TYPE_OP type=<root>.LoginSuccessPacket origin=CAST typeOperand=<root>.LoginSuccessPacket
@@ -97,14 +97,14 @@ FILE fqName:<root> fileName:/kt52677.kt
                   receiver: GET_VAR '<this>: <root>.LoginSuccessPacket declared in <root>.LoginSuccessPacket.equals' type=<root>.LoginSuccessPacket origin=null
                 arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:id type:@[MySerializable(c = ...)] <root>.Uuid1 visibility:private [final]' type=@[MySerializable(c = CLASS_REFERENCE 'CLASS OBJECT name:UuidSerializer modality:FINAL visibility:public superTypes:[<root>.MySerializer<@[MySerializable(c = ...)] <root>.Uuid1>]' type=kotlin.reflect.KClass<<root>.UuidSerializer>)] <root>.Uuid1 origin=null
                   receiver: GET_VAR 'val tmp_0: <root>.LoginSuccessPacket [val] declared in <root>.LoginSuccessPacket.equals' type=<root>.LoginSuccessPacket origin=null
-            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.LoginSuccessPacket'
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.LoginSuccessPacket'
               CONST Boolean type=kotlin.Boolean value=false
-        RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.LoginSuccessPacket'
+        RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.LoginSuccessPacket'
           CONST Boolean type=kotlin.Boolean value=true
     FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.LoginSuccessPacket) returnType:kotlin.Int
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.LoginSuccessPacket
+      $this: VALUE_PARAMETER name:<this> type:<root>.LoginSuccessPacket
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun hashCode (): kotlin.Int declared in <root>.LoginSuccessPacket'
           CALL 'public open fun hashCode (): kotlin.Int declared in kotlin.Any' type=kotlin.Int origin=null
@@ -113,7 +113,7 @@ FILE fqName:<root> fileName:/kt52677.kt
     FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.LoginSuccessPacket) returnType:kotlin.String
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.LoginSuccessPacket
+      $this: VALUE_PARAMETER name:<this> type:<root>.LoginSuccessPacket
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.LoginSuccessPacket'
           STRING_CONCATENATION type=kotlin.String

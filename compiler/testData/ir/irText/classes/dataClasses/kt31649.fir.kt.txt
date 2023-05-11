@@ -17,7 +17,7 @@ data class TestData {
     return TestData(nn = nn)
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       EQEQEQ(arg0 = <this>, arg1 = other) -> return true
     }
@@ -55,7 +55,7 @@ value class TestInline {
     field = nn
     get
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       other !is TestInline -> return false
     }

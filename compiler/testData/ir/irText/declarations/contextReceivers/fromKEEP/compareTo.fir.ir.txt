@@ -60,24 +60,24 @@ FILE fqName:<root> fileName:/compareTo.kt
             <class: B>: kotlin.Any
             first: GET_VAR 'first: A of <root>.Pair declared in <root>.Pair.copy' type=A of <root>.Pair origin=null
             second: GET_VAR 'second: B of <root>.Pair declared in <root>.Pair.copy' type=B of <root>.Pair origin=null
-    FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.Pair<A of <root>.Pair, B of <root>.Pair>, other:kotlin.Any?) returnType:kotlin.Boolean
+    FUN GENERATED_DATA_CLASS_MEMBER name:equals visibility:public modality:OPEN <> ($this:<root>.Pair<A of <root>.Pair, B of <root>.Pair>, other:kotlin.Any?) returnType:kotlin.Boolean [operator]
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in kotlin.Any
-      $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.Pair<A of <root>.Pair, B of <root>.Pair>
-      VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:other index:0 type:kotlin.Any?
+      $this: VALUE_PARAMETER name:<this> type:<root>.Pair<A of <root>.Pair, B of <root>.Pair>
+      VALUE_PARAMETER name:other index:0 type:kotlin.Any?
       BLOCK_BODY
         WHEN type=kotlin.Unit origin=null
           BRANCH
             if: CALL 'public final fun EQEQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQEQ
               arg0: GET_VAR '<this>: <root>.Pair<A of <root>.Pair, B of <root>.Pair> declared in <root>.Pair.equals' type=<root>.Pair<A of <root>.Pair, B of <root>.Pair> origin=null
               arg1: GET_VAR 'other: kotlin.Any? declared in <root>.Pair.equals' type=kotlin.Any? origin=null
-            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Pair'
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.Pair'
               CONST Boolean type=kotlin.Boolean value=true
         WHEN type=kotlin.Unit origin=null
           BRANCH
             if: TYPE_OP type=kotlin.Boolean origin=NOT_INSTANCEOF typeOperand=<root>.Pair<A of <root>.Pair, B of <root>.Pair>
               GET_VAR 'other: kotlin.Any? declared in <root>.Pair.equals' type=kotlin.Any? origin=null
-            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Pair'
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.Pair'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.Pair<A of <root>.Pair, B of <root>.Pair> [val]
           TYPE_OP type=<root>.Pair<A of <root>.Pair, B of <root>.Pair> origin=CAST typeOperand=<root>.Pair<A of <root>.Pair, B of <root>.Pair>
@@ -90,7 +90,7 @@ FILE fqName:<root> fileName:/compareTo.kt
                   receiver: GET_VAR '<this>: <root>.Pair<A of <root>.Pair, B of <root>.Pair> declared in <root>.Pair.equals' type=<root>.Pair<A of <root>.Pair, B of <root>.Pair> origin=null
                 arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:first type:A of <root>.Pair visibility:private [final]' type=A of <root>.Pair origin=null
                   receiver: GET_VAR 'val tmp_0: <root>.Pair<A of <root>.Pair, B of <root>.Pair> [val] declared in <root>.Pair.equals' type=<root>.Pair<A of <root>.Pair, B of <root>.Pair> origin=null
-            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Pair'
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.Pair'
               CONST Boolean type=kotlin.Boolean value=false
         WHEN type=kotlin.Unit origin=null
           BRANCH
@@ -100,14 +100,14 @@ FILE fqName:<root> fileName:/compareTo.kt
                   receiver: GET_VAR '<this>: <root>.Pair<A of <root>.Pair, B of <root>.Pair> declared in <root>.Pair.equals' type=<root>.Pair<A of <root>.Pair, B of <root>.Pair> origin=null
                 arg1: GET_FIELD 'FIELD PROPERTY_BACKING_FIELD name:second type:B of <root>.Pair visibility:private [final]' type=B of <root>.Pair origin=null
                   receiver: GET_VAR 'val tmp_0: <root>.Pair<A of <root>.Pair, B of <root>.Pair> [val] declared in <root>.Pair.equals' type=<root>.Pair<A of <root>.Pair, B of <root>.Pair> origin=null
-            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Pair'
+            then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.Pair'
               CONST Boolean type=kotlin.Boolean value=false
-        RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.Pair'
+        RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean [operator] declared in <root>.Pair'
           CONST Boolean type=kotlin.Boolean value=true
     FUN GENERATED_DATA_CLASS_MEMBER name:hashCode visibility:public modality:OPEN <> ($this:<root>.Pair<A of <root>.Pair, B of <root>.Pair>) returnType:kotlin.Int
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.Any
-      $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.Pair<A of <root>.Pair, B of <root>.Pair>
+      $this: VALUE_PARAMETER name:<this> type:<root>.Pair<A of <root>.Pair, B of <root>.Pair>
       BLOCK_BODY
         VAR name:result type:kotlin.Int [var]
           WHEN type=kotlin.Int origin=null
@@ -144,7 +144,7 @@ FILE fqName:<root> fileName:/compareTo.kt
     FUN GENERATED_DATA_CLASS_MEMBER name:toString visibility:public modality:OPEN <> ($this:<root>.Pair<A of <root>.Pair, B of <root>.Pair>) returnType:kotlin.String
       overridden:
         public open fun toString (): kotlin.String declared in kotlin.Any
-      $this: VALUE_PARAMETER GENERATED_DATA_CLASS_MEMBER name:<this> type:<root>.Pair<A of <root>.Pair, B of <root>.Pair>
+      $this: VALUE_PARAMETER name:<this> type:<root>.Pair<A of <root>.Pair, B of <root>.Pair>
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun toString (): kotlin.String declared in <root>.Pair'
           STRING_CONCATENATION type=kotlin.String

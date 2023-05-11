@@ -9,7 +9,7 @@ value class IT {
     field = x
     get
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       other !is IT -> return false
     }
@@ -86,7 +86,7 @@ value class InlineMutableSet : MutableSet<IT> {
     return <this>.<get-ms>().retainAll(elements = elements)
   }
 
-  override fun equals(other: Any?): Boolean {
+  override operator fun equals(other: Any?): Boolean {
     when {
       other !is InlineMutableSet -> return false
     }
