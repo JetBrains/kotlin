@@ -884,8 +884,7 @@ standaloneTest("cleaner_in_tls_worker") {
 }
 
 standaloneTest("worker_bound_reference0") {
-    enabled = (project.testTarget != 'wasm32') && // Workers need pthreads.
-            !isK2(project) // KT-56272
+    enabled = (project.testTarget != 'wasm32') // Workers need pthreads.
     source = "runtime/concurrent/worker_bound_reference0.kt"
     flags = ['-tr']
 
