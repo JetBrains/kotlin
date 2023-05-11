@@ -339,9 +339,9 @@ internal class TestCompilationFactory {
             return artifactDirForPackageName(commonPackageName).resolve(artifactFileName)
         }
 
-        private fun Settings.artifactDirForPackageName(packageName: PackageName?): File {
+        private fun Settings.artifactDirForPackageName(packageName: PackageName): File {
             val baseDir = get<Binaries>().testBinariesDir
-            val outputDir = if (packageName != null) baseDir.resolve(packageName.compressedPackageName) else baseDir
+            val outputDir = if (!packageName.isEmpty()) baseDir.resolve(packageName.compressedPackageName) else baseDir
 
             outputDir.mkdirs()
 
