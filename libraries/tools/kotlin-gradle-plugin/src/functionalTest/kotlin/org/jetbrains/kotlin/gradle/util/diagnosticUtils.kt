@@ -6,12 +6,14 @@
 package org.jetbrains.kotlin.gradle.util
 
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.test.KotlinTestUtils
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic
 import java.io.File
 import java.nio.file.Path
 import kotlin.test.assertTrue
+import kotlin.test.fail
 
 internal fun checkDiagnosticsWithMppProject(projectName: String, projectConfiguration: Project.() -> Unit) {
     val project = buildProjectWithMPP(projectBuilder = { withName(projectName) })
@@ -66,9 +68,36 @@ internal fun Project.assertNoDiagnostics() {
     )
 }
 
+internal fun Project.assertContainsDiagnostic(diagnostic: ToolingDiagnostic) {
+    kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this).assertContainsDiagnostic(diagnostic)
+}
+
+internal fun Collection<ToolingDiagnostic>.assertContainsDiagnostic(diagnostic: ToolingDiagnostic) {
+    fun Any.withIndent() = this.toString().prependIndent("    ")
+    if (diagnostic !in this) {
+        fail("Missing diagnostic\n${diagnostic.withIndent()} \nin:\n${this.render().withIndent()}")
+    }
+}
+
+internal fun Project.assertNoDiagnostics(id: String) {
+    kotlinToolingDiagnosticsCollector.getDiagnosticsForProject(this).assertNoDiagnostics(id)
+}
+
+internal fun Collection<ToolingDiagnostic>.assertNoDiagnostics(id: String) {
+    val unexpectedDiagnostics = filter { it.id == id }
+    if (unexpectedDiagnostics.isNotEmpty()) {
+        fail("Expected to have no diagnostics with id '$id', but some were reported:\n${unexpectedDiagnostics.render()}")
+    }
+}
+
+internal fun Collection<ToolingDiagnostic>.assertNoDiagnostics(factory: ToolingDiagnosticFactory) {
+    assertNoDiagnostics(factory.id)
+}
+
 private fun Collection<ToolingDiagnostic>.render(): String = joinToString(separator = "\n----\n")
 
 private val expectedDiagnosticsRoot: Path
     get() = resourcesRoot.resolve("expectedDiagnostics")
 
 private fun expectedDiagnosticsFile(projectName: String): File = expectedDiagnosticsRoot.resolve("$projectName.txt").toFile()
+
