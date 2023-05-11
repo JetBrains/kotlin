@@ -39,7 +39,8 @@ internal class KtFirNamedClassOrObjectSymbol(
 
     override val modality: Modality
         get() = withValidityAssertion {
-            firSymbol.modality
+            val rawStatus = firSymbol.rawStatus
+            rawStatus.modality
                 ?: when (classKind) { // default modality
                     KtClassKind.INTERFACE -> Modality.ABSTRACT
                     else -> Modality.FINAL
