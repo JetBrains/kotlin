@@ -3,14 +3,14 @@ import java.util.*
 fun use(v: Optional<String>) {
     v.ifPresent { value ->  }
         // SUCCESS
-        // ORIGINAL:    fun ifPresent(Consumer<in T>): Unit defined in java.util.Optional
+        // ORIGINAL:    fun ifPresent(Consumer<in T & Any>): Unit defined in java.util.Optional
         // SUBSTITUTED: fun ifPresent(Consumer<in String>): Unit defined in java.util.Optional
 }
 
 fun use2(v: Optional<String?>) {
     v.ifPresent { value ->  }
         // SUCCESS
-        // ORIGINAL:    fun ifPresent(Consumer<in T>): Unit defined in java.util.Optional
+        // ORIGINAL:    fun ifPresent(Consumer<in T & Any>): Unit defined in java.util.Optional
         // SUBSTITUTED: fun ifPresent(Consumer<in String>): Unit defined in java.util.Optional
 }
 

@@ -16,10 +16,10 @@ public open class L</*0*/ T : kotlin.collections.(Mutable)Map<kotlin.String!, S!
     public constructor L</*0*/ T : kotlin.collections.(Mutable)Map<kotlin.String!, S!>!, /*1*/ S : kotlin.Any!>()
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-    public open fun s(): S
-    public open fun setS(/*0*/ s: S): kotlin.Unit
+    public open fun s(): S & Any
+    public open fun setS(/*0*/ s: S & Any): kotlin.Unit
     public open fun setT(/*0*/ @spr.Nullable t: @spr.Nullable T?): kotlin.Unit
-    public open fun t(): T
+    public open fun t(): T & Any
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
@@ -62,10 +62,10 @@ package test {
         public constructor L</*0*/ T : kotlin.collections.(Mutable)Map<kotlin.String!, S!>!, /*1*/ S : kotlin.Any!>()
         public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
         public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
-        public open fun s(): S
-        public open fun setS(/*0*/ s: S): kotlin.Unit
+        public open fun s(): S & Any
+        public open fun setS(/*0*/ s: S & Any): kotlin.Unit
         public open fun setT(/*0*/ @spr.Nullable t: @spr.Nullable T?): kotlin.Unit
-        public open fun t(): T
+        public open fun t(): T & Any
         public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
     }
 }

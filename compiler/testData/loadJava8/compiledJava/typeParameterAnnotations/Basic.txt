@@ -2,7 +2,7 @@ package test
 
 public open class Basic {
     public constructor Basic()
-    public/*package*/ open fun </*0*/ R : kotlin.Any!, /*1*/ @org.jetbrains.annotations.NotNull _A : R, /*2*/ @org.jetbrains.annotations.Nullable K> foo(/*0*/ p0: R!): kotlin.Unit
+    public/*package*/ open fun </*0*/ R : kotlin.Any!, /*1*/ @org.jetbrains.annotations.NotNull _A : R & Any, /*2*/ @org.jetbrains.annotations.Nullable K> foo(/*0*/ p0: R!): kotlin.Unit
 
     public interface G</*0*/ @org.jetbrains.annotations.NotNull T : kotlin.Any> {
         public abstract fun </*0*/ @org.jetbrains.annotations.NotNull R : kotlin.Any> foo(/*0*/ p0: R): kotlin.Unit
