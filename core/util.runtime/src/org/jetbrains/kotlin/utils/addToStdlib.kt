@@ -81,10 +81,12 @@ inline fun <T, reified R> Iterable<T>.partitionIsInstance(): Pair<List<R>, List<
     return Pair(first, second)
 }
 
-inline fun <reified T> Iterable<*>.castAll(): Iterable<T> {
+@Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER")
+@UnsafeCastFunction
+inline fun <reified T> List<*>.castAll(): List<@kotlin.internal.NoInfer T> {
     for (element in this) element as T
     @Suppress("UNCHECKED_CAST")
-    return this as Iterable<T>
+    return this as List<T>
 }
 
 fun <T> sequenceOfLazyValues(vararg elements: () -> T): Sequence<T> = elements.asSequence().map { it() }
