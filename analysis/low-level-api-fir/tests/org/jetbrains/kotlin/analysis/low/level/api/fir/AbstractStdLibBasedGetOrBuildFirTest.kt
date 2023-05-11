@@ -32,18 +32,6 @@ abstract class AbstractStdLibBasedGetOrBuildFirTest : AbstractLowLevelApiSingleF
 
         val resolveSession = LLFirResolveSessionService.getInstance(ktFile.project).getFirResolveSession(ktFile.getKtModule())
         val fir = resolveSession.resolveToFirSymbol(declaration, FirResolvePhase.BODY_RESOLVE).fir
-
-        val renderedFir = FirRenderer(
-            fileAnnotationsContainerRenderer = FirFileAnnotationsContainerRenderer(),
-            packageDirectiveRenderer = FirPackageDirectiveRenderer(),
-            resolvePhaseRenderer = FirResolvePhaseRenderer(),
-        ).renderElementAsString(fir).trimEnd()
-        val actual = """|KT element: ${declaration::class.simpleName}
-               |FIR element: ${fir::class.simpleName}
-               |FIR source kind: ${fir.source?.kind?.let { it::class.simpleName }}
-               |
-               |FIR element rendered:
-               |$renderedFir""".trimMargin()
-        testServices.assertions.assertEqualsToTestDataFileSibling(actual)
+        testServices.assertions.assertEqualsToTestDataFileSibling(renderActualFir(fir, declaration))
     }
 }

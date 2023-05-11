@@ -37,14 +37,8 @@ abstract class AbstractGetOrBuildFirTest : AbstractLowLevelApiSingleFileTest() {
     override fun doTestByFileStructure(ktFile: KtFile, moduleStructure: TestModuleStructure, testServices: TestServices) {
         val selectedElement = getElementOfType(ktFile, moduleStructure, testServices) as KtElement
 
-        val actual = resolveWithClearCaches(ktFile) { state ->
-            val fir = selectedElement.getOrBuildFir(state)
-            """|KT element: ${selectedElement::class.simpleName}
-               |FIR element: ${fir?.let { it::class.simpleName }}
-               |FIR source kind: ${fir?.source?.kind?.let { it::class.simpleName }}
-               |
-               |FIR element rendered:
-               |${render(fir).trimEnd()}""".trimMargin()
+        val actual = resolveWithClearCaches(ktFile) { session ->
+            renderActualFir(selectedElement.getOrBuildFir(session), selectedElement)
         }
         testServices.assertions.assertEqualsToTestDataFileSibling(actual)
     }
@@ -60,19 +54,28 @@ abstract class AbstractGetOrBuildFirTest : AbstractLowLevelApiSingleFileTest() {
         }.single { it.textRange == selectedElement.textRange }
     }
 
-    private fun render(firElement: FirElement?): String = when (firElement) {
-        null -> "null"
-        is FirImport -> "import ${firElement.importedFqName}"
-        else -> FirRenderer(
-            fileAnnotationsContainerRenderer = FirFileAnnotationsContainerRenderer(),
-            packageDirectiveRenderer = FirPackageDirectiveRenderer(),
-            resolvePhaseRenderer = FirResolvePhaseRenderer(),
-        ).renderElementAsString(firElement)
-    }
-
     private object Directives : SimpleDirectivesContainer() {
         val LOOK_UP_FOR_ELEMENT_OF_TYPE by stringDirective("LOOK_UP_FOR_ELEMENT_OF_TYPE")
     }
+}
+
+fun renderActualFir(fir: FirElement?, ktElement: KtElement): String {
+    return """|KT element: ${ktElement::class.simpleName}
+               |FIR element: ${fir?.let { it::class.simpleName }}
+               |FIR source kind: ${fir?.source?.kind?.let { it::class.simpleName }}
+               |
+               |FIR element rendered:
+               |${render(fir).trimEnd()}""".trimMargin()
+}
+
+private fun render(firElement: FirElement?): String = when (firElement) {
+    null -> "null"
+    is FirImport -> "import ${firElement.importedFqName}"
+    else -> FirRenderer(
+        fileAnnotationsContainerRenderer = FirFileAnnotationsContainerRenderer(),
+        packageDirectiveRenderer = FirPackageDirectiveRenderer(),
+        resolvePhaseRenderer = FirResolvePhaseRenderer(),
+    ).renderElementAsString(firElement)
 }
 
 abstract class AbstractSourceGetOrBuildFirTest : AbstractGetOrBuildFirTest() {

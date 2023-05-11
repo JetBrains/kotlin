@@ -68,7 +68,7 @@ object AnalysisApiBaseTestServiceRegistrar: AnalysisApiTestServiceRegistrar()  {
                     return arrayOf(it)
                 }
             }
-            return emptyArray()
+            return PsiClass.EMPTY_ARRAY
         }
     }
 

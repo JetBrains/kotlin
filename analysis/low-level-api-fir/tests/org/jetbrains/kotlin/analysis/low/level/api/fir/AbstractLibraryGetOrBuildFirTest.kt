@@ -9,14 +9,12 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirLibraryBinaryTestConfigurator
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.FirDeclarationForCompiledElementSearcher
 import org.jetbrains.kotlin.analysis.project.structure.getKtModule
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.CompiledLibraryProvider
 import org.jetbrains.kotlin.fir.renderer.FirFileAnnotationsContainerRenderer
 import org.jetbrains.kotlin.fir.renderer.FirPackageDirectiveRenderer
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.renderer.FirResolvePhaseRenderer
-import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
@@ -42,18 +40,7 @@ abstract class AbstractLibraryGetOrBuildFirTest : AbstractLowLevelApiSingleFileT
         val resolveSession = LLFirResolveSessionService.getInstance(ktFile.project).getFirResolveSessionForBinaryModule(module)
         val fir = declaration.getOrBuildFir(resolveSession)!!
 
-        val renderedFir = FirRenderer(
-            fileAnnotationsContainerRenderer = FirFileAnnotationsContainerRenderer(),
-            packageDirectiveRenderer = FirPackageDirectiveRenderer(),
-            resolvePhaseRenderer = FirResolvePhaseRenderer(),
-        ).renderElementAsString(fir).trimEnd()
-        val actual = """|KT element: ${declaration::class.simpleName}
-               |FIR element: ${fir::class.simpleName}
-               |FIR source kind: ${fir.source?.kind?.let { it::class.simpleName }}
-               |
-               |FIR element rendered:
-               |$renderedFir""".trimMargin()
-        testServices.assertions.assertEqualsToTestDataFileSibling(actual)
+        testServices.assertions.assertEqualsToTestDataFileSibling(renderActualFir(fir, declaration))
     }
 
     private fun getElementToSearch(ktFile: KtFile, moduleStructure: TestModuleStructure): KtDeclaration {
