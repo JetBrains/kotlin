@@ -104,7 +104,7 @@ open class IrIntrinsicFunction(
     }
 
     private val IrFunctionAccessExpression.typeArguments: List<IrType>
-        get() = (0 until typeArgumentsCount).map { getTypeArgument(it)!! }
+        get() = (0..<typeArgumentsCount).map { getTypeArgument(it)!! }
 
     companion object {
         fun create(

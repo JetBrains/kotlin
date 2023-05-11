@@ -132,7 +132,7 @@ internal abstract class KCallableImpl<out R> : KCallable<R>, KTypeParameterOwner
             }
         }
 
-        for (i in 0 until maskSize) {
+        for (i in 0..<maskSize) {
             arguments[parameterSize + i] = 0
         }
 
@@ -173,7 +173,7 @@ internal abstract class KCallableImpl<out R> : KCallable<R>, KTypeParameterOwner
                 }
                 parameter.isOptional -> {
                     if (hasMfvcParameters) {
-                        for (valueSubParameterIndex in valueParameterIndex until (valueParameterIndex + parameterTypeSize)) {
+                        for (valueSubParameterIndex in valueParameterIndex..<(valueParameterIndex + parameterTypeSize)) {
                             val maskIndex = parameterSize + (valueSubParameterIndex / Integer.SIZE)
                             arguments[maskIndex] = (arguments[maskIndex] as Int) or (1 shl (valueSubParameterIndex % Integer.SIZE))
                         }

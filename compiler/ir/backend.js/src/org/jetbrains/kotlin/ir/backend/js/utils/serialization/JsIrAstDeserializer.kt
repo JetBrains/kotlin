@@ -66,7 +66,7 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
     private inline fun <T> readList(readElement: () -> T): List<T> {
         val length = readInt()
         val result = ArrayList<T>(length)
-        for (i in 0 until length) {
+        for (i in 0..<length) {
             result.add(readElement())
         }
         return result

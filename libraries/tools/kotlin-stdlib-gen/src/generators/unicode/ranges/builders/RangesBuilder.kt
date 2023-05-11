@@ -100,7 +100,7 @@ internal abstract class RangesBuilder {
      * Chars between last appended char and the [charCode] are considered to be unassigned.
      */
     private fun append(charCode: Int, categoryId: String) {
-        for (code in lastAppendedCharCode + 1 until charCode) {
+        for (code in lastAppendedCharCode + 1..<charCode) {
             appendSingleChar(code, unassignedCategoryId)
         }
         appendSingleChar(charCode, categoryId)
@@ -156,7 +156,7 @@ internal abstract class RangesBuilder {
 
         val rangeStart = range.rangeStart()
         var result = createRange(rangeStart, range.categoryIdOf(rangeStart))
-        for (code in rangeStart + 1 until range.rangeEnd()) {
+        for (code in rangeStart + 1..<range.rangeEnd()) {
             val categoryId = range.categoryIdOf(code)
             if (!shouldSkip(categoryId)) {
                 result = if (result.append(code, categoryId)) result else evolveLastRange(result, code, categoryId)!!

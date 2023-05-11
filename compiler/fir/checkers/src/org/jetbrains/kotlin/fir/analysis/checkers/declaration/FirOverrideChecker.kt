@@ -87,7 +87,7 @@ object FirOverrideChecker : FirClassChecker() {
         val map = mutableMapOf<FirTypeParameterSymbol, ConeKotlinType>()
         val size = minOf(overrideTypeParameters.size, baseTypeParameters.size)
 
-        for (it in 0 until size) {
+        for (it in 0..<size) {
             val to = overrideTypeParameters[it]
             val from = baseTypeParameters[it]
 

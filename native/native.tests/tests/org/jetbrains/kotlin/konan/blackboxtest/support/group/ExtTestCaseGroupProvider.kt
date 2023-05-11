@@ -424,7 +424,7 @@ private class ExtTestDataFile(
 
                     if (names.first() in accessibleDeclarationNames) return null
 
-                    for (index in 1 until names.size) {
+                    for (index in 1..<names.size) {
                         val subPackageName = names.fqNameBeforeIndex(index)
                         val newPackageName = oldToNewPackageNameMapping[subPackageName]
                         if (newPackageName != null)

@@ -232,7 +232,7 @@ internal fun IrFunctionAccessExpression.getFunctionThatContainsDefaults(): IrFun
                 ?.firstNotNullOfOrNull { it.lookup() }
     }
 
-    return (0 until this.valueArgumentsCount)
+    return (0..<this.valueArgumentsCount)
         .first { this.getValueArgument(it) == null }
         .let { irFunction.valueParameters[it].lookup() ?: irFunction }
 }

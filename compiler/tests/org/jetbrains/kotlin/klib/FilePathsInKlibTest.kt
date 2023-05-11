@@ -110,7 +110,7 @@ class FilePathsInKlibTest : CodegenTestCase() {
 
         val result = ArrayList<String>(fileSize)
 
-        for (i in 0 until fileSize) {
+        for (i in 0..<fileSize) {
             val fileStream = lib.file(i).codedInputStream
             val fileProto = IrFile.parseFrom(fileStream, extReg)
             val fileName = fileProto.fileEntry.name

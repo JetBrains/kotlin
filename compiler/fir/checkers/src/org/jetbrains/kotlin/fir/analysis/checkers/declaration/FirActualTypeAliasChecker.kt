@@ -45,7 +45,7 @@ object FirActualTypeAliasChecker : FirTypeAliasChecker() {
         if (declaration.typeParameters.size != expandedTypeRef.coneType.typeArguments.size) {
             reportActualTypeAliasWithComplexSubstitution = true
         } else {
-            for (i in 0 until declaration.typeParameters.size) {
+            for (i in 0..<declaration.typeParameters.size) {
                 val typeArgument = expandedTypeRef.coneType.typeArguments[i]
                 if (typeArgument is ConeTypeParameterType) {
                     if (declaration.typeParameters[i].symbol != typeArgument.lookupTag.typeParameterSymbol) {

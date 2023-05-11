@@ -83,7 +83,7 @@ interface UnreachableCode {
             val childrenToRemove = HashSet<PsiElement>()
             fun collectSiblingsIfMeaningless(elementIndex: Int, direction: Int) {
                 val index = elementIndex + direction
-                if (index !in 0 until size) return
+                if (index !in 0..<size) return
 
                 val element = this[index]
                 if (element.isMeaningless()) {

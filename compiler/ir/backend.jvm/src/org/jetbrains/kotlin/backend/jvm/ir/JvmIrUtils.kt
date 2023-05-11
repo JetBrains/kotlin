@@ -195,7 +195,7 @@ fun IrMemberAccessExpression<IrFunctionSymbol>.copyFromWithPlaceholderTypeArgume
     existingCall.symbol.owner.parentAsClass.typeParameters.forEach { _ ->
         putTypeArgument(offset++, createPlaceholderAnyNType(irBuiltIns))
     }
-    for (i in 0 until existingCall.typeArgumentsCount) {
+    for (i in 0..<existingCall.typeArgumentsCount) {
         putTypeArgument(i + offset, existingCall.getTypeArgument(i))
     }
 }

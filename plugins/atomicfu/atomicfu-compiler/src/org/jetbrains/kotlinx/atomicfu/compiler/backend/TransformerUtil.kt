@@ -128,7 +128,7 @@ internal fun String.getFieldName() = "<get-(\\w+)>".toRegex().find(this)?.groupV
     ?: error("Getter name $this does not match special name pattern <get-fieldName>")
 
 internal fun IrFunctionAccessExpression.getValueArguments() =
-    (0 until valueArgumentsCount).map { i ->
+    (0..<valueArgumentsCount).map { i ->
         getValueArgument(i)
     }
 

@@ -99,7 +99,7 @@ class IrCompileTimeChecker(
     }
 
     private fun visitValueArguments(expression: IrFunctionAccessExpression, data: Nothing?): Boolean {
-        return (0 until expression.valueArgumentsCount)
+        return (0..<expression.valueArgumentsCount)
             .map { expression.getValueArgument(it) }
             .none { it?.accept(this, data) == false }
     }

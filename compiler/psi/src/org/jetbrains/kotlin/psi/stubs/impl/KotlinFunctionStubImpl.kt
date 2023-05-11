@@ -68,7 +68,7 @@ class KotlinFunctionStubImpl(
         fun deserializeContract(dataStream: StubInputStream): List<KtContractDescriptionElement<KotlinTypeBean, Nothing?>> {
             val effects = mutableListOf<KtContractDescriptionElement<KotlinTypeBean, Nothing?>>()
             val count: Int = dataStream.readInt()
-            for (i in 0 until count) {
+            for (i in 0..<count) {
                 val effectType: KotlinContractEffectType = KotlinContractEffectType.values()[dataStream.readInt()]
                 effects.add(effectType.deserialize(dataStream))
             }

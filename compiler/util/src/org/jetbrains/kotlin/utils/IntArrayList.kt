@@ -34,5 +34,5 @@ class IntArrayList(initialCapacity: Int) {
     }
 
     override fun toString(): String =
-        (0 until size).joinToString(", ", "[", "]") { this[it].toString() }
+        (0..<size).joinToString(", ", "[", "]") { this[it].toString() }
 }

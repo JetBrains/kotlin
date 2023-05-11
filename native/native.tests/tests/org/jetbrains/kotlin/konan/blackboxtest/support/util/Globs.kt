@@ -17,7 +17,7 @@ internal fun expandGlobTo(unexpandedPath: File, output: MutableCollection<File>)
     assertTrue(unexpandedPath.isAbsolute) { "Path must be absolute: $unexpandedPath" }
 
     val paths: List<File> = generateSequence(unexpandedPath) { it.parentFile }.toMutableList().apply { reverse() }
-    for (index in 1 until paths.size) {
+    for (index in 1..<paths.size) {
         val path: File = paths[index]
 
         val isGlob = '*' in path.name

@@ -310,7 +310,7 @@ private class UpdateFunctionCallSites(
             IrCallImpl.fromSymbolOwner(startOffset, endOffset, type, newFunction.symbol).apply {
                 copyTypeArgumentsFrom(expression)
                 extensionReceiver = expression.extensionReceiver?.transform(this@UpdateFunctionCallSites, null)
-                for (i in 0 until valueArgumentsCount) {
+                for (i in 0..<valueArgumentsCount) {
                     putValueArgument(i, expression.getValueArgument(i)?.transform(this@UpdateFunctionCallSites, null))
                 }
             }

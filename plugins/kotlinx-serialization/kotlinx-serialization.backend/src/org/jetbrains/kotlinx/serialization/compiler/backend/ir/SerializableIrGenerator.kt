@@ -105,7 +105,7 @@ class SerializableIrGenerator(
             val exceptionType = exceptionCtorRef.owner.returnType
 
             val seenVarsOffset = serializableProperties.bitMaskSlotCount()
-            val seenVars = (0 until seenVarsOffset).map { ctor.valueParameters[it] }
+            val seenVars = (0..<seenVarsOffset).map { ctor.valueParameters[it] }
 
 
             val superClass = irClass.getSuperClassOrAny()
@@ -134,7 +134,7 @@ class SerializableIrGenerator(
             }
 
             statementsAfterSerializableProperty[null]?.forEach { +it }
-            for (index in startPropOffset until serializableProperties.size) {
+            for (index in startPropOffset..<serializableProperties.size) {
                 val prop = serializableProperties[index]
                 val paramRef = ctor.valueParameters[index + seenVarsOffset]
                 // Assign this.a = a in else branch

@@ -140,7 +140,7 @@ private class InlineCallableReferenceToLambdaVisitor(val context: JvmBackendCont
                                 irGet(addValueParameter("p$next", argumentTypes[next]))
                             parameter.isVararg && (next < argumentTypes.size || !parameter.hasDefaultValue()) ->
                                 irArray(parameter.type) {
-                                    for (i in next until argumentTypes.size) {
+                                    for (i in next..<argumentTypes.size) {
                                         +irGet(addValueParameter("p$i", argumentTypes[i]))
                                     }
                                 }

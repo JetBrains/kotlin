@@ -26,7 +26,7 @@ object FirReifiedChecker : FirQualifiedAccessExpressionChecker() {
         val typeParameters = calleeReference.toResolvedCallableSymbol()?.typeParameterSymbols ?: return
 
         val count = minOf(typeArguments.size, typeParameters.size)
-        for (index in 0 until count) {
+        for (index in 0..<count) {
             val typeArgumentProjection = typeArguments.elementAt(index)
             val source = typeArgumentProjection.source ?: calleeReference.source ?: continue
 

@@ -23,7 +23,7 @@ class ReflectionCallsTransformer(private val context: JsIrBackendContext) : Call
 
         return IrDynamicOperatorExpressionImpl(call.startOffset, call.endOffset, call.type, IrDynamicOperator.INVOKE).apply {
             receiver = reference
-            for (i in 0 until call.valueArgumentsCount) {
+            for (i in 0..<call.valueArgumentsCount) {
                 arguments += call.getValueArgument(i)!!
             }
         }

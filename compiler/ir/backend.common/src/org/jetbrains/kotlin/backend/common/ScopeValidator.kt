@@ -135,7 +135,7 @@ class ScopeValidator(
         }
 
         override fun visitMemberAccess(expression: IrMemberAccessExpression<*>, data: Visibles) {
-            for (i in 0 until expression.typeArgumentsCount) {
+            for (i in 0..<expression.typeArgumentsCount) {
                 expression.getTypeArgument(i)?.let { data.visitTypeAccess(expression, it) }
             }
             super.visitMemberAccess(expression, data)

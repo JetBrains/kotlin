@@ -39,7 +39,7 @@ private inline fun InstructionAdapter.unrollArrayIfFewerThan(n: Int, limit: Int,
     }
     iconst(n)
     newarray(type)
-    for (i in 0 until n) {
+    for (i in 0..<n) {
         dup()
         iconst(i)
         element(i)
@@ -141,12 +141,12 @@ private fun TypeSystemCommonBackendContext.typeReferencesParameterWithRecursiveB
     val typeParameter = type.typeConstructor().getTypeParameterClassifier()
     if (typeParameter != null) {
         if (!used.add(typeParameter)) return true
-        for (i in 0 until typeParameter.upperBoundCount()) {
+        for (i in 0..<typeParameter.upperBoundCount()) {
             if (typeReferencesParameterWithRecursiveBound(typeParameter.getUpperBound(i), used)) return true
         }
         used.remove(typeParameter)
     } else {
-        for (i in 0 until type.argumentsCount()) {
+        for (i in 0..<type.argumentsCount()) {
             val argument = type.getArgument(i)
             if (!argument.isStarProjection() && typeReferencesParameterWithRecursiveBound(argument.getType(), used)) return true
         }

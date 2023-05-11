@@ -687,7 +687,7 @@ class ControlFlowProcessor(
                 builder.bindLabel(onException)
                 val catchLabels = LinkedList<Label>()
                 val catchClausesSize = catchClauses.size
-                for (i in 0 until catchClausesSize - 1) {
+                for (i in 0..<catchClausesSize - 1) {
                     catchLabels.add(builder.createUnboundLabel("catch $i"))
                 }
                 if (!catchLabels.isEmpty()) {

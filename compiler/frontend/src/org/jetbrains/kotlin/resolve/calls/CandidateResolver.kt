@@ -117,7 +117,7 @@ class CandidateResolver(
             }
 
             val expectedTypeArgumentCount = candidateDescriptor.typeParameters.size
-            for (index in ktTypeArguments.size until expectedTypeArgumentCount) {
+            for (index in ktTypeArguments.size..<expectedTypeArgumentCount) {
                 typeArguments.add(
                     ErrorUtils.createErrorType(
                         ErrorTypeKind.MISSED_TYPE_ARGUMENT_FOR_TYPE_PARAMETER,

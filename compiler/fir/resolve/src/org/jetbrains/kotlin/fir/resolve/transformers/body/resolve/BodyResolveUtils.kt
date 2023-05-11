@@ -69,7 +69,7 @@ internal fun remapArgumentsWithVararg(
     newArgumentMapping[varargArgument] = varargParameter
 
     // Add mapping for arguments after the vararg arguments, if any.
-    for (i in indexAfterVarargs until argumentList.size) {
+    for (i in indexAfterVarargs..<argumentList.size) {
         val arg = argumentList[i]
         newArgumentMapping[arg] = argumentMapping.getValue(arg)
     }

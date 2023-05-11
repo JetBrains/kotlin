@@ -66,7 +66,7 @@ sealed class NewAbstractResolvedCall<D : CallableDescriptor> : ResolvedCall<D> {
 
     override fun getValueArgumentsByIndex(): List<ResolvedValueArgument>? {
         val arguments = ArrayList<ResolvedValueArgument?>(candidateDescriptor.valueParameters.size)
-        for (i in 0 until candidateDescriptor.valueParameters.size) {
+        for (i in 0..<candidateDescriptor.valueParameters.size) {
             arguments.add(null)
         }
 

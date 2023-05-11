@@ -383,7 +383,7 @@ object AbstractTypeChecker {
             else -> { // at least 2 supertypes with same constructors. Such case is rare
                 val newArguments = ArgumentList(superConstructor.parametersCount())
                 var anyNonOutParameter = false
-                for (index in 0 until superConstructor.parametersCount()) {
+                for (index in 0..<superConstructor.parametersCount()) {
                     anyNonOutParameter = anyNonOutParameter || superConstructor.getParameter(index).getVariance() != TypeVariance.OUT
                     if (anyNonOutParameter) continue
                     val allProjections = supertypesWithSameConstructor.map {
@@ -443,7 +443,7 @@ object AbstractTypeChecker {
             return false
         }
 
-        for (index in 0 until parametersCount) {
+        for (index in 0..<parametersCount) {
             val superProjection = superType.getArgument(index) // todo error index
 
             if (superProjection.isStarProjection()) continue // A<B> <: A<*>
@@ -584,7 +584,7 @@ object AbstractTypeChecker {
         baseType: KotlinTypeMarker,
         targetType: KotlinTypeMarker
     ): TypeParameterMarker? {
-        for (i in 0 until baseType.argumentsCount()) {
+        for (i in 0..<baseType.argumentsCount()) {
             val typeArgument = baseType.getArgument(i).takeIf { !it.isStarProjection() }?.getType() ?: continue
             val areBothTypesCaptured = typeArgument.lowerBoundIfFlexible().originalIfDefinitelyNotNullable().isCapturedType() &&
                     targetType.lowerBoundIfFlexible().originalIfDefinitelyNotNullable().isCapturedType()
@@ -814,7 +814,7 @@ object AbstractFlexibilityChecker {
         if (types.isEmpty()) return false
         if (hasDifferentFlexibility(types)) return true
 
-        for (i in 0 until types.first().argumentsCount()) {
+        for (i in 0..<types.first().argumentsCount()) {
             val typeArgumentForOtherTypes = types.mapNotNull {
                 if (it.argumentsCount() > i && !it.getArgument(i).isStarProjection()) it.getArgument(i).getType() else null
             }

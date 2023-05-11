@@ -148,7 +148,7 @@ class NonFirResolveModularizedTotalKotlinTest : AbstractFrontendModularizedTest(
 
         writeMessageToLog("use_ni: $USE_NI")
 
-        for (i in 0 until PASSES) {
+        for (i in 0..<PASSES) {
             runTestOnce(i)
             times += totalTime
             dumpTime("Pass $i", totalTime)

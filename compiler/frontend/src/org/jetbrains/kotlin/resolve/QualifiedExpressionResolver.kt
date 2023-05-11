@@ -527,7 +527,7 @@ class QualifiedExpressionResolver(val languageVersionSettings: LanguageVersionSe
                 moduleDescriptor.quickResolveToPackage(path, trace, position)
 
         var currentDescriptor: DeclarationDescriptor? = prefixDescriptor
-        for (qualifierPartIndex in nextIndexAfterPrefix until path.size) {
+        for (qualifierPartIndex in nextIndexAfterPrefix..<path.size) {
             val qualifierPart = path[qualifierPartIndex]
 
             val nextPackageOrClassDescriptor =

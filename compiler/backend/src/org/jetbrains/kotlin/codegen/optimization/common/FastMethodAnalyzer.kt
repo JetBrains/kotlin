@@ -224,7 +224,7 @@ open class FastMethodAnalyzer<V : Value>
         for (tcb in m.tryCatchBlocks) {
             val begin = tcb.start.indexOf()
             val end = tcb.end.indexOf()
-            for (j in begin until end) {
+            for (j in begin..<end) {
                 if (!insnsArray[j].isMeaningful) continue
                 var insnHandlers: MutableList<TryCatchBlockNode>? = handlers[j]
                 if (insnHandlers == null) {
@@ -273,7 +273,7 @@ open class FastMethodAnalyzer<V : Value>
         return buildString {
             append("{\n")
             append("  locals: [\n")
-            for (i in 0 until method.maxLocals) {
+            for (i in 0..<method.maxLocals) {
                 append("    #$i: ${this@dump.getLocal(i)}\n")
             }
             append("  ]\n")
@@ -284,7 +284,7 @@ open class FastMethodAnalyzer<V : Value>
                 append(" []\n")
             } else {
                 append(" [\n")
-                for (i in 0 until stackSize) {
+                for (i in 0..<stackSize) {
                     append("    #$i: ${this@dump.getStack(i)}\n")
                 }
                 append("  ]\n")

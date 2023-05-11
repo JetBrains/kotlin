@@ -499,7 +499,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         val builtInFunctionType = getFunctionTypeFromSupertypes() as ConeKotlinType
         return buildList {
             // excluding return type
-            for (index in 0 until builtInFunctionType.argumentsCount() - 1) {
+            for (index in 0..<builtInFunctionType.argumentsCount() - 1) {
                 add(builtInFunctionType.getArgument(index).getType())
             }
         }

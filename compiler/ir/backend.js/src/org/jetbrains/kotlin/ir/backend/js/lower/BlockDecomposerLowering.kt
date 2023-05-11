@@ -588,7 +588,7 @@ class BlockDecomposerTransformer(
             expression.transformChildrenVoid(expressionTransformer)
 
             val oldArguments = mutableListOf(expression.dispatchReceiver, expression.extensionReceiver)
-            for (i in 0 until expression.valueArgumentsCount) oldArguments += expression.getValueArgument(i)
+            for (i in 0..<expression.valueArgumentsCount) oldArguments += expression.getValueArgument(i)
             val compositeCount = oldArguments.count { it is IrComposite }
 
             if (compositeCount == 0) return expression
@@ -599,7 +599,7 @@ class BlockDecomposerTransformer(
             expression.dispatchReceiver = newArguments[0]
             expression.extensionReceiver = newArguments[1]
 
-            for (i in 0 until expression.valueArgumentsCount) {
+            for (i in 0..<expression.valueArgumentsCount) {
                 expression.putValueArgument(i, newArguments[i + 2])
             }
 
@@ -675,7 +675,7 @@ class BlockDecomposerTransformer(
 
             val newStatements = mutableListOf<IrStatement>()
 
-            for (i in 0 until expression.statements.lastIndex) {
+            for (i in 0..<expression.statements.lastIndex) {
                 newStatements += destructureComposite(expression.statements[i].transformStatement(statementTransformer))
             }
 

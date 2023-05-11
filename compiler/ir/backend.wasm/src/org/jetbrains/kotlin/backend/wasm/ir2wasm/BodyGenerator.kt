@@ -295,7 +295,7 @@ class BodyGenerator(
 
         if (expression.symbol.owner.hasWasmPrimitiveConstructorAnnotation()) {
             generateAnyParameters(klassSymbol, location)
-            for (i in 0 until expression.valueArgumentsCount) {
+            for (i in 0..<expression.valueArgumentsCount) {
                 generateExpression(expression.getValueArgument(i)!!)
             }
             body.buildStructNew(wasmGcType, location)
@@ -402,7 +402,7 @@ class BodyGenerator(
 
         call.dispatchReceiver?.let { generateExpression(it) }
         call.extensionReceiver?.let { generateExpression(it) }
-        for (i in 0 until call.valueArgumentsCount) {
+        for (i in 0..<call.valueArgumentsCount) {
             val valueArgument = call.getValueArgument(i)
             if (valueArgument == null) {
                 generateDefaultInitializerForType(context.transformType(function.valueParameters[i].type), body)

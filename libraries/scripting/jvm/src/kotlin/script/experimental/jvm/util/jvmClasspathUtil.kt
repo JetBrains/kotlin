@@ -127,7 +127,7 @@ internal class ClassLoaderResourceRootFIlePathCalculator(private val keyResource
             keyResourcePathDepth = if (keyResourcePath.isBlank()) 0 else (keyResourcePath.trim('/').count { it == '/' } + 1)
         }
         var root = resourceFile
-        for (i in 0 until keyResourcePathDepth) {
+        for (i in 0..<keyResourcePathDepth) {
             root = root.parentFile
         }
         return root

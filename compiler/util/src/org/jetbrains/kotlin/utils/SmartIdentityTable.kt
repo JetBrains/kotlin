@@ -43,7 +43,7 @@ class SmartIdentityTable<K, V> {
         if (ka != null) {
             val va = valuesArray!!
             // scan for existing keys in array
-            for (i in 0 until ka.size) {
+            for (i in 0..<ka.size) {
                 if (ka[i] === key) {
                     val tmp = va[i]
                     va[i] = value
@@ -66,7 +66,7 @@ class SmartIdentityTable<K, V> {
         val map = IdentityHashMap<K, V>()
         val ka = keysArray!!
         val va = valuesArray!!
-        for (i in 0 until ka.size) {
+        for (i in 0..<ka.size) {
             map[ka[i]] = va[i]
         }
         largeMap = map

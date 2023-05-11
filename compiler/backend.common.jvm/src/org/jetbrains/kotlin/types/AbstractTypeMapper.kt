@@ -133,7 +133,7 @@ object AbstractTypeMapper {
         val argumentsCount = type.argumentsCount()
         val argumentsList = type.asArgumentList()
         val arguments = buildList {
-            for (i in 0 until (argumentsCount - 1)) {
+            for (i in 0..<(argumentsCount - 1)) {
                 this += argumentsList[i].adjustedType()
             }
             this += continuationTypeConstructor().typeWithArguments(argumentsList[argumentsCount - 1].adjustedType())

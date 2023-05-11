@@ -23,13 +23,13 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformer
 
 inline fun <reified T : IrElement> MutableList<T>.transformInPlace(transformation: (T) -> IrElement) {
-    for (i in 0 until size) {
+    for (i in 0..<size) {
         set(i, transformation(get(i)) as T)
     }
 }
 
 fun <T : IrElement, D> MutableList<T>.transformInPlace(transformer: IrElementTransformer<D>, data: D) {
-    for (i in 0 until size) {
+    for (i in 0..<size) {
         // Cast to IrElementBase to avoid casting to interface and invokeinterface, both of which are slow.
         @Suppress("UNCHECKED_CAST")
         set(i, (get(i) as IrElementBase).transform(transformer, data) as T)

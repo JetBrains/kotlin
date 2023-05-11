@@ -32,7 +32,7 @@ internal abstract class IrConstAnnotationTransformer(
     }
 
     private fun transformAnnotation(annotation: IrConstructorCall) {
-        for (i in 0 until annotation.valueArgumentsCount) {
+        for (i in 0..<annotation.valueArgumentsCount) {
             val arg = annotation.getValueArgument(i) ?: continue
             when (arg) {
                 is IrVararg -> annotation.putValueArgument(i, arg.transformVarArg())

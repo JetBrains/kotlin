@@ -153,7 +153,7 @@ fun checkUpperBoundViolated(
     val count = minOf(typeParameters.size, arguments.size)
     val typeSystemContext = context.session.typeContext
 
-    for (index in 0 until count) {
+    for (index in 0..<count) {
         val argument = arguments.getOrNull(index) ?: continue
         val argumentType: ConeKotlinType? = argument.coneTypeProjection.type
         val argumentTypeRef = argument.typeRef

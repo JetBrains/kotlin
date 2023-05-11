@@ -256,7 +256,7 @@ internal class WasmVarargExpressionLowering(
         val builder by lazy { context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol) }
 
         // Replace empty vararg arguments with empty array construction
-        for (argumentIdx in 0 until expression.valueArgumentsCount) {
+        for (argumentIdx in 0..<expression.valueArgumentsCount) {
             val argument = expression.getValueArgument(argumentIdx)
             val parameter = expression.symbol.owner.valueParameters[argumentIdx]
             val varargElementType = parameter.varargElementType

@@ -66,7 +66,7 @@ object FirOuterClassArgumentsRequiredChecker : FirRegularClassChecker() {
                 val typeArguments = delegatedTypeRef.qualifier.toTypeProjections()
                 val typeParameters = symbol.typeParameterSymbols
 
-                for (index in typeArguments.size until typeParameters.size) {
+                for (index in typeArguments.size..<typeParameters.size) {
                     val typeParameter = typeParameters[index]
                     if (!isValidTypeParameterFromOuterDeclaration(typeParameter, declaration, context.session)) {
                         val outerClass = typeParameter.containingDeclarationSymbol as? FirRegularClassSymbol ?: break

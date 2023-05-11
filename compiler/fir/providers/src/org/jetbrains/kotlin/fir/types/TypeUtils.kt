@@ -379,12 +379,12 @@ fun ConeTypeContext.captureArguments(type: ConeKotlinType, status: CaptureStatus
         ConeCapturedType(status, lowerType, argument, typeConstructor.getParameter(index))
     }
 
-    val substitution = (0 until argumentsCount).associate { index ->
+    val substitution = (0..<argumentsCount).associate { index ->
         (typeConstructor.getParameter(index) as ConeTypeParameterLookupTag).symbol to (newArguments[index])
     }
     val substitutor = substitutorByMap(substitution, session)
 
-    for (index in 0 until argumentsCount) {
+    for (index in 0..<argumentsCount) {
         val oldArgument = type.typeArguments[index]
         val newArgument = newArguments[index]
 
@@ -392,7 +392,7 @@ fun ConeTypeContext.captureArguments(type: ConeKotlinType, status: CaptureStatus
 
         val parameter = typeConstructor.getParameter(index)
         (parameter as? ConeTypeParameterLookupTag)?.typeParameterSymbol?.lazyResolveToPhase(FirResolvePhase.TYPES)
-        val upperBounds = (0 until parameter.upperBoundCount()).mapTo(mutableListOf()) { paramIndex ->
+        val upperBounds = (0..<parameter.upperBoundCount()).mapTo(mutableListOf()) { paramIndex ->
             substitutor.safeSubstitute(
                 this as TypeSystemInferenceExtensionContext, parameter.getUpperBound(paramIndex)
             )

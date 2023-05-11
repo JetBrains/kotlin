@@ -44,7 +44,7 @@ class VariableLivenessFrame(val maxLocals: Int) : VarFrame<VariableLivenessFrame
     override fun hashCode() = bitSet.hashCode() * 31 + controlFlowMerge.hashCode()
 
     override fun toString(): String =
-        (if (controlFlowMerge) "*" else " ") + (0 until maxLocals).map { if (bitSet[it]) '@' else '_' }.joinToString(separator = "")
+        (if (controlFlowMerge) "*" else " ") + (0..<maxLocals).map { if (bitSet[it]) '@' else '_' }.joinToString(separator = "")
 }
 
 fun analyzeLiveness(method: MethodNode): List<VariableLivenessFrame> =

@@ -137,7 +137,7 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
             val root = doc.documentElement
             val testCases = root.getElementsByTagName("testcase")
 
-            return (0 until testCases.length).map { i ->
+            return (0..<testCases.length).map { i ->
                 val item = testCases.item(i) as Element
                 val failure = item.getElementsByTagName("failure").takeIf { it.length != 0 }?.item(0)
                 val name = item.getAttribute("name")

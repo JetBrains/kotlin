@@ -506,13 +506,13 @@ class WasmBinaryToIR(val b: MyByteReader) {
 
     private inline fun forEachVectorElement(block: (index: UInt) -> Unit) {
         val size = b.readVarUInt32()
-        for (index in 0u until size) {
+        for (index in 0u..<size) {
             block(index)
         }
     }
 
     private inline fun <T> mapVector(block: (index: UInt) -> T): List<T> {
-        return (0u until b.readVarUInt32()).map { block(it) }
+        return (0u..<b.readVarUInt32()).map { block(it) }
     }
 
     private fun MyByteReader.readVarUInt32AsInt() =

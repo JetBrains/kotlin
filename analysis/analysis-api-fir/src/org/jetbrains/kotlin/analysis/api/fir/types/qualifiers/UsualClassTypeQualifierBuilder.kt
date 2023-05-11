@@ -69,7 +69,7 @@ internal object UsualClassTypeQualifierBuilder {
                 val end = typeParametersLeft
                 check(begin >= 0)
                 typeParametersLeft -= typeParametersCount
-                coneType.typeArguments.slice(begin until end).map { builder.typeBuilder.buildTypeProjection(it) }
+                coneType.typeArguments.slice(begin..<end).map { builder.typeBuilder.buildTypeProjection(it) }
             } else emptyList()
             result += KtClassTypeQualifier.KtResolvedClassTypeQualifier(
                 builder.classifierBuilder.buildClassifierSymbol(currentClass.symbol),

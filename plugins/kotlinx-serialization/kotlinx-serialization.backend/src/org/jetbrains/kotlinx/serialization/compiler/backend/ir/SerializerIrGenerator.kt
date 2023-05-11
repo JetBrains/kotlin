@@ -96,7 +96,7 @@ open class SerializerIrGenerator(
     private fun findLocalSerializersFieldDescriptors(): List<IrProperty?> {
         val count = serializableIrClass.typeParameters.size
         if (count == 0) return emptyList()
-        val propNames = (0 until count).map { "${SerialEntityNames.typeArgPrefix}$it" }
+        val propNames = (0..<count).map { "${SerialEntityNames.typeArgPrefix}$it" }
         return propNames.map { name ->
             getProperty(name) { it.getter!!.returnType.isKSerializer() }
         }
@@ -398,7 +398,7 @@ open class SerializerIrGenerator(
             .filter { it.backingField != null }
 
         // var bitMask0 = 0, bitMask1 = 0...
-        val bitMasks = (0 until blocksCnt).map { irTemporary(irInt(0), "bitMask$it", isMutable = true) }
+        val bitMasks = (0..<blocksCnt).map { irTemporary(irInt(0), "bitMask$it", isMutable = true) }
         // var local0 = null, local1 = null ...
         val serialPropertiesMap = serializableProperties.mapIndexed { i, prop -> i to prop.ir }.associate { (i, descriptor) ->
             val (expr, type) = defaultValueAndType(descriptor)

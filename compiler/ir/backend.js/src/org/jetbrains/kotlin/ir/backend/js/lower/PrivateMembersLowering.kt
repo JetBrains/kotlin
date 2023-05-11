@@ -196,7 +196,7 @@ class PrivateMemberBodiesLowering(val context: JsIrBackendContext) : BodyLowerin
                 newExpression.extensionReceiver = expression.extensionReceiver
                 expression.dispatchReceiver?.let { newExpression.putValueArgument(0, it) }
 
-                for (i in 0 until expression.valueArgumentsCount) {
+                for (i in 0..<expression.valueArgumentsCount) {
                     newExpression.putValueArgument(i + 1, expression.getValueArgument(i))
                 }
                 newExpression.copyTypeArgumentsFrom(expression)
@@ -214,7 +214,7 @@ class PrivateMemberBodiesLowering(val context: JsIrBackendContext) : BodyLowerin
                 newExpression.extensionReceiver = expression.extensionReceiver
 
                 newExpression.dispatchReceiver = expression.dispatchReceiver
-                for (i in 0 until expression.valueArgumentsCount) {
+                for (i in 0..<expression.valueArgumentsCount) {
                     newExpression.putValueArgument(i, expression.getValueArgument(i))
                 }
                 newExpression.copyTypeArgumentsFrom(expression)

@@ -54,7 +54,7 @@ object FirProjectionRelationChecker : FirBasicDeclarationChecker() {
         val size = minOf(typeParameters.size, typeArguments.size)
 
         val typeRefAndSourcesForArguments = extractArgumentsTypeRefAndSource(typeRef) ?: return
-        for (it in 0 until size) {
+        for (it in 0..<size) {
             val proto = typeParameters[it]
             val actual = typeArguments[it]
             val fullyExpandedProjection = fullyExpandedType.typeArguments[it]

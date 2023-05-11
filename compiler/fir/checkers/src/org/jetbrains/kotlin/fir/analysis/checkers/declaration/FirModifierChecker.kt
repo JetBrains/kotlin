@@ -75,7 +75,7 @@ object FirModifierChecker : FirBasicDeclarationChecker() {
 
         val modifiers = list.modifiers
         for ((secondIndex, secondModifier) in modifiers.withIndex()) {
-            for (firstIndex in 0 until secondIndex) {
+            for (firstIndex in 0..<secondIndex) {
                 checkCompatibilityType(modifiers[firstIndex], secondModifier, reporter, reportedNodes, owner, context)
             }
             if (secondModifier !in reportedNodes) {

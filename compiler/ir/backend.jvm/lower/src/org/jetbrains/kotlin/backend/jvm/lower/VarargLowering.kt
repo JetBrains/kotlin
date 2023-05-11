@@ -49,7 +49,7 @@ internal class VarargLowering(val context: JvmBackendContext) : FileLoweringPass
         val function = expression.symbol
 
         // Replace empty varargs with empty arrays
-        for (i in 0 until expression.valueArgumentsCount) {
+        for (i in 0..<expression.valueArgumentsCount) {
             if (expression.getValueArgument(i) != null)
                 continue
 

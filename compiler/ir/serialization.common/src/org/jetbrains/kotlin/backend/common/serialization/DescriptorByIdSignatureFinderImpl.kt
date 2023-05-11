@@ -138,7 +138,7 @@ class DescriptorByIdSignatureFinderImpl(
         // The code bellow could look tricky because of it is bottle neck so here is put some attempt including
         // 1. Minimize amount of descriptors is loaded on each step
         // 2. Reduce memory pollution
-        for (i in 1 until nameSegments.size) {
+        for (i in 1..<nameSegments.size) {
             val current = Name.guessByFirstCharacter(nameSegments[i])
             acc = acc.flatMap { container ->
                 val classDescriptor = container as? ClassDescriptor ?: return@flatMap emptyList<DeclarationDescriptor>()

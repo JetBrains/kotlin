@@ -299,7 +299,7 @@ abstract class KotlinIrLinker(
     }
 
     private fun actualizeIrFunction(e: IrFunction, a: IrFunction) {
-        for (i in 0 until e.valueParameters.size) {
+        for (i in 0..<e.valueParameters.size) {
             val evp = e.valueParameters[i]
             val avp = a.valueParameters[i]
             val defaultValue = evp.defaultValue

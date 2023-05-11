@@ -214,7 +214,7 @@ class IrDescriptorBasedFunctionFactory(
 
         val typeParametersArray = ArrayList<IrTypeParameter>(n + 1)
 
-        for (i in 1 until (n + 1)) {
+        for (i in 1..<(n + 1)) {
             val pName = Name.identifier("P$i")
 
             val pSymbol = descriptorFactory.typeParameterDescriptor(index) {
@@ -301,7 +301,7 @@ class IrDescriptorBasedFunctionFactory(
             fDeclaration.dispatchReceiverParameter = createThisReceiver(descriptorFactory).also { it.parent = fDeclaration }
 
             val typeBuilder = IrSimpleTypeBuilder()
-            for (i in 1 until typeParameters.size) {
+            for (i in 1..<typeParameters.size) {
                 val vTypeParam = typeParameters[i - 1]
                 val vDescriptor = with(descriptorFactory) { invokeSymbol.descriptor.valueParameterDescriptor(i - 1) }
                 val vSymbol = IrValueParameterSymbolImpl(vDescriptor)

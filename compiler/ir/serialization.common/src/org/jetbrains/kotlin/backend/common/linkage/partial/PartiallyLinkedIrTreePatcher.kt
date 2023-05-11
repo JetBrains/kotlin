@@ -565,7 +565,7 @@ internal class PartiallyLinkedIrTreePatcher(
             // TODO: is it necessary to check that the number of type parameters matches the number of type arguments?
             return ExpressionWithUnusableClassifier(
                 this,
-                (0 until typeArgumentsCount).firstNotNullOfOrNull { index -> getTypeArgument(index)?.explore() } ?: return null
+                (0..<typeArgumentsCount).firstNotNullOfOrNull { index -> getTypeArgument(index)?.explore() } ?: return null
             )
         }
 
@@ -779,7 +779,7 @@ internal class PartiallyLinkedIrTreePatcher(
                         .filterNot { it.isFakeOverride || it.origin == IrDeclarationOrigin.DELEGATED_MEMBER }
             }
 
-            val expressionValueArgumentCount = (0 until valueArgumentsCount).count { index ->
+            val expressionValueArgumentCount = (0..<valueArgumentsCount).count { index ->
                 getValueArgument(index) != null
                         || function.valueParameters.getOrNull(index)?.isVararg == true
                         || functionsToCheckDefaultValues.any { it.valueParameters.getOrNull(index)?.defaultValue != null }

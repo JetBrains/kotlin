@@ -170,7 +170,7 @@ class FunctionInlining(
                     callee.parentAsClass.typeParameters
                 else callee.typeParameters
             val typeArguments =
-                (0 until callSite.typeArgumentsCount).associate {
+                (0..<callSite.typeArgumentsCount).associate {
                     typeParameters[it].symbol to callSite.getTypeArgument(it)
                 }
             DeepCopyIrTreeWithSymbolsForInliner(typeArguments, parent)
@@ -478,7 +478,7 @@ class FunctionInlining(
                         }
                     }
                     assert(unboundIndex == valueParameters.size) { "Not all arguments of the callee are used" }
-                    for (index in 0 until irFunctionReference.typeArgumentsCount)
+                    for (index in 0..<irFunctionReference.typeArgumentsCount)
                         putTypeArgument(index, irFunctionReference.getTypeArgument(index))
                 }
 

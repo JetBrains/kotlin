@@ -157,7 +157,7 @@ class FileMapping(val name: String, val path: String) {
     }
 
     private fun RangeMapping.canReuseFor(newSource: Int, globalMaxDest: Int, newCallSite: SourcePosition?): Boolean =
-        callSite == newCallSite && (newSource - source) in 0 until range + (if (globalMaxDest in this) 10 else 0)
+        callSite == newCallSite && (newSource - source) in 0..<range + (if (globalMaxDest in this) 10 else 0)
 
     fun mapNewInterval(source: Int, dest: Int, range: Int, callSite: SourcePosition? = null): RangeMapping =
         RangeMapping(source, dest, range, callSite, parent = this).also { lineMappings.add(it) }
@@ -178,4 +178,4 @@ data class RangeMapping(val source: Int, val dest: Int, var range: Int, val call
 }
 
 val RangeMapping.toRange: IntRange
-    get() = dest until dest + range
+    get() = dest..<dest + range

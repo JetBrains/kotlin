@@ -418,7 +418,7 @@ private class ShallowSubSequence(private val underlying: CharSequence, private v
     override val length: Int = end - start
 
     override fun get(index: Int): Char {
-        if (index !in 0 until length) throw IndexOutOfBoundsException("$index is out of bounds 0..$length")
+        if (index !in 0..<length) throw IndexOutOfBoundsException("$index is out of bounds 0..$length")
         return underlying[index + start]
     }
 

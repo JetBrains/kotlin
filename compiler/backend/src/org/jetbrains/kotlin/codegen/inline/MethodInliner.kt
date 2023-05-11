@@ -546,7 +546,7 @@ class MethodInliner(
 
                             var offset = 0
                             var capturesAnonymousObjectThatMustBeRegenerated = false
-                            for (i in 0 until paramCount) {
+                            for (i in 0..<paramCount) {
                                 val sourceValue = frame.getStack(firstParameterIndex + i)
                                 val functionalArgument = sourceValue.functionalArgument
                                 if (functionalArgument != null) {

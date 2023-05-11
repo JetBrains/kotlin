@@ -288,7 +288,7 @@ class CallableReferencesCandidateFactory(
         var afterVararg = false
         var varargComponentType: UnwrappedType? = null
         var vararg = false
-        return (0 until expectedArgumentCount).map { index ->
+        return (0..<expectedArgumentCount).map { index ->
             val inputType = inputOutputTypes.inputTypes.getOrNull(index + unboundReceiverCount)
             if (vararg && varargComponentType != inputType) {
                 afterVararg = true

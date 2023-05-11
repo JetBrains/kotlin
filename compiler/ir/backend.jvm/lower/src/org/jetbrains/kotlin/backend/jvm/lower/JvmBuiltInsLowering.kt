@@ -105,7 +105,7 @@ class JvmBuiltInsLowering(val context: JvmBackendContext) : FileLoweringPass {
 
             this.extensionReceiver?.let { if (!tryToAddCoercedArgument(it)) return this@replaceWithCallTo }
             this.dispatchReceiver?.let { if (!tryToAddCoercedArgument(it)) return this@replaceWithCallTo }
-            for (index in 0 until valueArgumentsCount) {
+            for (index in 0..<valueArgumentsCount) {
                 if (!tryToAddCoercedArgument(getValueArgument(index)!!)) return this@replaceWithCallTo
             }
         }

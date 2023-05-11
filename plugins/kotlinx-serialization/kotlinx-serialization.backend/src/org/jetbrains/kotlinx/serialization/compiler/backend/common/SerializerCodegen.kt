@@ -81,7 +81,7 @@ abstract class SerializerCodegen(
     protected fun findLocalSerializersFieldDescriptors(): List<PropertyDescriptor> {
         val count = serializableDescriptor.declaredTypeParameters.size
         if (count == 0) return emptyList()
-        val propNames = (0 until count).map { "${SerialEntityNames.typeArgPrefix}$it" }
+        val propNames = (0..<count).map { "${SerialEntityNames.typeArgPrefix}$it" }
         return propNames.mapNotNull { name ->
             getPropertyToGenerate(serializerDescriptor, name) { isKSerializer(it.returnType) }
         }

@@ -488,7 +488,7 @@ private fun <T : IrMemberAccessExpression<IrFunctionSymbol>> T.retargetToSuspend
         it.dispatchReceiver = dispatchReceiver
         it.extensionReceiver = extensionReceiver
         val continuationParameter = view.continuationParameter()!!
-        for (i in 0 until valueArgumentsCount) {
+        for (i in 0..<valueArgumentsCount) {
             it.putValueArgument(i + if (i >= continuationParameter.index) 1 else 0, getValueArgument(i))
         }
         if (caller != null) {

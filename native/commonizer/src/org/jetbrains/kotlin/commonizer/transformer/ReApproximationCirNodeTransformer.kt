@@ -37,7 +37,7 @@ internal class ReApproximationCirNodeTransformer(
     }
 
     override fun invoke(root: CirRootNode) {
-        for (index in 0 until root.targetDeclarations.size) {
+        for (index in 0..<root.targetDeclarations.size) {
             root.modules.forEach { (_, module) -> this(module, index) }
         }
     }

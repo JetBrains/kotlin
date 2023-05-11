@@ -133,7 +133,7 @@ internal fun IrFunctionAccessExpression.shallowCopy(copyTypeArguments: Boolean =
         else -> TODO("Expression $this cannot be copied")
     }.apply {
         if (copyTypeArguments) {
-            (0 until this@shallowCopy.typeArgumentsCount).forEach { this.putTypeArgument(it, this@shallowCopy.getTypeArgument(it)) }
+            (0..<this@shallowCopy.typeArgumentsCount).forEach { this.putTypeArgument(it, this@shallowCopy.getTypeArgument(it)) }
         }
     }
 }
@@ -141,7 +141,7 @@ internal fun IrFunctionAccessExpression.shallowCopy(copyTypeArguments: Boolean =
 internal fun IrBuiltIns.copyArgs(from: IrFunctionAccessExpression, into: IrFunctionAccessExpression) {
     into.dispatchReceiver = from.dispatchReceiver
     into.extensionReceiver = from.extensionReceiver
-    (0 until from.valueArgumentsCount)
+    (0..<from.valueArgumentsCount)
         .map { from.getValueArgument(it) }
         .forEachIndexed { i, arg ->
             into.putValueArgument(i, arg ?: IrConstImpl.constNull(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, this.anyNType))

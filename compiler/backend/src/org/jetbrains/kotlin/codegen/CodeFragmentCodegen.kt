@@ -207,7 +207,7 @@ class CodeFragmentCodegen private constructor(
             var stackIndex = 0
             val parameters = mutableListOf<CalculatedParameter>()
 
-            for (parameterIndex in 0 until info.parameters.size) {
+            for (parameterIndex in 0..<info.parameters.size) {
                 val parameter = info.parameters[parameterIndex]
                 val asmParameter = methodSignature.valueParameters[parameterIndex]
                 val parameterDescriptor = info.methodDescriptor.valueParameters[parameterIndex]

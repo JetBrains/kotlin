@@ -55,7 +55,7 @@ abstract class BasicIrModuleDeserializer(
 
         val fileDeserializationStates = mutableListOf<FileDeserializationState>()
 
-        for (i in 0 until fileCount) {
+        for (i in 0..<fileCount) {
             val fileStream = klib.file(i).codedInputStream
             val fileProto = ProtoFile.parseFrom(fileStream, ExtensionRegistryLite.newInstance())
             val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(klib, i))

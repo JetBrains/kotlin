@@ -72,7 +72,7 @@ fun IrExpression?.isPure(
                                 operator == IrTypeOperator.NOT_INSTANCEOF
                         ) && argument.isPure(anyVariable, checkFields, context)
             is IrCall -> if (context?.isSideEffectFree(this) == true) {
-                for (i in 0 until valueArgumentsCount) {
+                for (i in 0..<valueArgumentsCount) {
                     val valueArgument = getValueArgument(i)
                     if (!valueArgument.isPure(anyVariable, checkFields, context)) return false
                 }

@@ -171,7 +171,7 @@ open class SerializerCodegenImpl(
             val size = serializableProperties.size
             iconst(size)
             newarray(kSerializerType)
-            for (i in 0 until size) {
+            for (i in 0..<size) {
                 dup() // array
                 iconst(i) // index
                 val prop = serializableProperties[i]
@@ -253,7 +253,7 @@ open class SerializerCodegenImpl(
         val size = serializableDescriptor.declaredTypeParameters.size
         iconst(size)
         newarray(kSerializerType) // todo: use some predefined empty array, if size is 0
-        for (i in 0 until size) {
+        for (i in 0..<size) {
             dup() // array
             iconst(i) // index
             load(0, kSerializerType) // this.serialTypeI
@@ -276,7 +276,7 @@ open class SerializerCodegenImpl(
             val propsStartVar = bitMaskBase + blocksCnt
             stackSerialClassDesc(descVar)
             // initialize bit mask
-            for (i in 0 until blocksCnt) {
+            for (i in 0..<blocksCnt) {
                 //int bitMaskN = 0
                 iconst(0)
                 store(bitMaskBase + i * OPT_MASK_TYPE.size, OPT_MASK_TYPE)
@@ -315,7 +315,7 @@ open class SerializerCodegenImpl(
                 propVar += propertyType.size
             }
             // set all bit masks to true
-            for (maskVar in bitMaskBase until propsStartVar) {
+            for (maskVar in bitMaskBase..<propsStartVar) {
                 iconst(Int.MAX_VALUE)
                 store(maskVar, OPT_MASK_TYPE)
             }

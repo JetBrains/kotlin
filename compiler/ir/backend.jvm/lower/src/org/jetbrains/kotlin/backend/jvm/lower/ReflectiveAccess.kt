@@ -300,7 +300,7 @@ internal class ReflectiveAccessLowering(
         }
 
     private fun IrFunctionAccessExpression.getValueArguments(): List<IrExpression> =
-        (0 until valueArgumentsCount).map { getValueArgument(it)!! }
+        (0..<valueArgumentsCount).map { getValueArgument(it)!! }
 
     private fun IrFunctionAccessExpression.valueParameterTypes(): List<IrType> =
         symbol.owner.valueParameters.map { it.type }

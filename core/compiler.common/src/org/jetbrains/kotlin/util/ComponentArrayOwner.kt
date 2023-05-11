@@ -38,7 +38,7 @@ abstract class ComponentArrayOwner<K : Any, V : Any> : AbstractArrayMapOwner<K, 
             appendLine("  $x: $kClass")
         }
         appendLine("Array map:")
-        for (i in 0 until arrayMap.size) {
+        for (i in 0..<arrayMap.size) {
             var element: Any? = arrayMap[i]
             if (element != null) {
                 element = element::class

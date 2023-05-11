@@ -28,7 +28,7 @@ object Annotator {
             val startReplace = max(comment.length, ann.range.startOffset - lineStart)
             annotationLines[lastLevel].replace(startReplace, startReplace + ann.text.length, ann.text)
 
-            for (i in 0 until lastLevel) {
+            for (i in 0..<lastLevel) {
                 if (annotationLines[i].getOrNull(startReplace) == ' ') { //to avoid char replacement for a multilevel annotation
                     annotationLines[i].replace(startReplace, startReplace + 1, verticalLine)
                 }
@@ -49,7 +49,7 @@ object Annotator {
         for (line in lines) {
             val lineEndOffset = lineStartOffset + line.length
             val annotations = annotation
-                .filter { it.range.startOffset in lineStartOffset until lineEndOffset }
+                .filter { it.range.startOffset in lineStartOffset..<lineEndOffset }
                 .sortedByDescending { it.range.startOffset }
 
             if (annotations.isNotEmpty()) {

@@ -55,7 +55,7 @@ private fun TypeSystemCommonBackendContext.canHaveSubtypesIgnoringNullability(ko
 
     if (!constructor.isClassTypeConstructor() || !constructor.isFinalClassOrEnumEntryOrAnnotationClassConstructor()) return true
 
-    for (i in 0 until constructor.parametersCount()) {
+    for (i in 0..<constructor.parametersCount()) {
         val parameter = constructor.getParameter(i)
         val argument = kotlinType.getArgument(i)
         if (argument.isStarProjection()) return true

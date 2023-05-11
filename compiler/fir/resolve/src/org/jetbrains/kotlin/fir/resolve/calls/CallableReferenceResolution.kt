@@ -362,7 +362,7 @@ private fun createFakeArgumentsForReference(
     var afterVararg = false
     var varargComponentType: ConeKotlinType? = null
     var vararg = false
-    return (0 until expectedArgumentCount).map { index ->
+    return (0..<expectedArgumentCount).map { index ->
         val inputType = inputTypes.getOrNull(index + unboundReceiverCount)
         if (vararg && varargComponentType != inputType) {
             afterVararg = true

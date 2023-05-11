@@ -120,7 +120,7 @@ private class AnonymousObjectSuperConstructorLowering(val context: JvmBackendCon
                     objectConstructorCall.startOffset, objectConstructorCall.endOffset, objectConstructorCall.type,
                     objectConstructorCall.symbol, classTypeParametersCount, objectConstructorCall.origin
                 ).apply {
-                    for (i in 0 until objectConstructorCall.valueArgumentsCount)
+                    for (i in 0..<objectConstructorCall.valueArgumentsCount)
                         putValueArgument(i, objectConstructorCall.getValueArgument(i))
                     // Avoid complex expressions between `new` and `<init>`, as the inliner gets confused if
                     // an argument to `<init>` is an anonymous object. Put them in variables instead.

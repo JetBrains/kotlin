@@ -190,7 +190,7 @@ private class SyntheticAccessorTransformer(
         if (implFun.extensionReceiverParameter != null) {
             accessorRef.putValueArgument(accessorArgIndex++, implFunRef.extensionReceiver)
         }
-        for (implArgIndex in 0 until implFunRef.valueArgumentsCount) {
+        for (implArgIndex in 0..<implFunRef.valueArgumentsCount) {
             accessorRef.putValueArgument(accessorArgIndex++, implFunRef.getValueArgument(implArgIndex))
         }
         if (accessorFun is IrConstructor) {

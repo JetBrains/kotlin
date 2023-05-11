@@ -162,7 +162,7 @@ class BinaryJavaAnnotation private constructor(
 
         @OptIn(ExperimentalStdlibApi::class)
         private fun translatePath(path: TypePath) = buildList {
-            for (i in 0 until path.length) {
+            for (i in 0..<path.length) {
                 when (val step = path.getStep(i)) {
                     // TODO: process inner types and apply an annotation to the corresponding type component
                     TypePath.INNER_TYPE -> continue
@@ -300,7 +300,7 @@ class BinaryJavaAnnotationVisitor(
                 PlainJavaLiteralAnnotationArgument(name, value)
             is Type -> PlainJavaClassObjectAnnotationArgument(name, value, signatureParser, context)
             else -> value?.takeIf { it.javaClass.isArray }?.let { array ->
-                val arguments = (0 until Array.getLength(array)).mapNotNull { index ->
+                val arguments = (0..<Array.getLength(array)).mapNotNull { index ->
                     convertConstValue(name = null, value = Array.get(array, index))
                 }
 

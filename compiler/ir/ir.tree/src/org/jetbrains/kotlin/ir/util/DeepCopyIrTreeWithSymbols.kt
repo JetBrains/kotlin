@@ -569,7 +569,7 @@ open class DeepCopyIrTreeWithSymbols(
         assert(typeArgumentsCount == other.typeArgumentsCount) {
             "Mismatching type arguments: $typeArgumentsCount vs ${other.typeArgumentsCount} "
         }
-        for (i in 0 until typeArgumentsCount) {
+        for (i in 0..<typeArgumentsCount) {
             putTypeArgument(i, other.getTypeArgument(i)?.remapType())
         }
     }
@@ -597,7 +597,7 @@ open class DeepCopyIrTreeWithSymbols(
 
     private fun <T : IrMemberAccessExpression<*>> T.transformValueArguments(original: T) {
         transformReceiverArguments(original)
-        for (i in 0 until original.valueArgumentsCount) {
+        for (i in 0..<original.valueArgumentsCount) {
             putValueArgument(i, original.getValueArgument(i)?.transform())
         }
     }

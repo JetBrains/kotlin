@@ -47,7 +47,7 @@ class LocalClassesInInlineLambdasLowering(val context: CommonBackendContext) : B
                 expression.extensionReceiver = expression.extensionReceiver?.transform(this, data)
                 expression.dispatchReceiver = expression.dispatchReceiver?.transform(this, data)
                 val inlineLambdas = mutableListOf<IrFunction>()
-                for (index in 0 until expression.valueArgumentsCount) {
+                for (index in 0..<expression.valueArgumentsCount) {
                     val argument = expression.getValueArgument(index)
                     val inlineLambda = (argument as? IrFunctionExpression)?.function
                         ?.takeIf { rootCallee.valueParameters[index].isInlineParameter() }
@@ -90,7 +90,7 @@ class LocalClassesInInlineLambdasLowering(val context: CommonBackendContext) : B
 
                             expression.extensionReceiver?.acceptVoid(this)
                             expression.dispatchReceiver?.acceptVoid(this)
-                            (0 until expression.valueArgumentsCount).forEach { index ->
+                            (0..<expression.valueArgumentsCount).forEach { index ->
                                 val argument = expression.getValueArgument(index)
                                 val parameter = callee.valueParameters[index]
                                 // Skip adapted function references - they will be inlined later.

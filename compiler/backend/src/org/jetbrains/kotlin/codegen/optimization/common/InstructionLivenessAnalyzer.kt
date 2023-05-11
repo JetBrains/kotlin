@@ -160,7 +160,7 @@ class InstructionLivenessAnalyzer(
         for (tcb in m.tryCatchBlocks) {
             val begin = tcb.start.indexOf
             val end = tcb.end.indexOf
-            for (j in begin until end) {
+            for (j in begin..<end) {
                 if (!instructions[j].isMeaningful) continue
                 var insnHandlers = handlers[j]
                 if (insnHandlers == null) {

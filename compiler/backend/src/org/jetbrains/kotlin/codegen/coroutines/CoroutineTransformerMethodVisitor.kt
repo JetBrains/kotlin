@@ -666,7 +666,7 @@ class CoroutineTransformerMethodVisitor(
             // k - continuation
             // k + 1 - data
             // k + 2 - exception
-            for (slot in 0 until localsCount) {
+            for (slot in 0..<localsCount) {
                 if (slot == continuationIndex || slot == dataIndex) continue
                 val value = frame.getLocal(slot)
                 if (value.type == null || (shouldOptimiseUnusedVariables && !livenessFrame.isAlive(slot))) continue
@@ -881,7 +881,7 @@ class CoroutineTransformerMethodVisitor(
             if (shouldOptimiseUnusedVariables) {
                 val (currentSpilledCount, predSpilledCount) = referencesToCleanBySuspensionPointIndex[suspensionPointIndex]
                 if (predSpilledCount > currentSpilledCount) {
-                    for (fieldIndex in currentSpilledCount until predSpilledCount) {
+                    for (fieldIndex in currentSpilledCount..<predSpilledCount) {
                         cleanUpField(suspension, fieldIndex)
                     }
                 }
@@ -1282,10 +1282,10 @@ private fun updateLvtAccordingToLiveness(method: MethodNode, isForNamedFunction:
     val oldLvtNodeToLatestNewLvtNode = mutableMapOf<LocalVariableNode, LocalVariableNode>()
     // Skip `this` for suspend lambda
     val start = if (isForNamedFunction) 0 else 1
-    for (variableIndex in start until method.maxLocals) {
+    for (variableIndex in start..<method.maxLocals) {
         if (oldLvt.none { it.index == variableIndex }) continue
         var startLabel: LabelNode? = null
-        for (insnIndex in 0 until (method.instructions.size() - 1)) {
+        for (insnIndex in 0..<(method.instructions.size() - 1)) {
             val insn = method.instructions[insnIndex]
             if (!isAlive(insnIndex, variableIndex) && isAlive(insnIndex + 1, variableIndex)) {
                 startLabel = insn as? LabelNode ?: insn.findNextOrNull { it is LabelNode } as? LabelNode

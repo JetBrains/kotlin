@@ -57,7 +57,7 @@ fun normalizePath(path: String): String {
         }
     }
 
-    for (i in start until path.length) {
+    for (i in start..<path.length) {
         val c = path[i]
         if (c == '/') {
             if (separator) {
@@ -87,7 +87,7 @@ private fun normalizeTail(prefixEnd: Int, path: String, separator: Boolean): Str
         separator = true
     }
 
-    for (i in start until path.length) {
+    for (i in start..<path.length) {
         val c = path[i]
         if (c == '/' || c == '\\') {
             if (!separator) result.append('/')

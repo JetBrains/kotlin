@@ -268,7 +268,7 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
     fun StubTypeMarker.getOriginalTypeVariable(): TypeVariableTypeConstructorMarker
 
     private fun <T> KotlinTypeMarker.extractTypeOf(to: MutableSet<T>, getIfApplicable: (TypeConstructorMarker) -> T?) {
-        for (i in 0 until argumentsCount()) {
+        for (i in 0..<argumentsCount()) {
             val argument = getArgument(i)
 
             if (argument.isStarProjection()) continue
@@ -395,7 +395,7 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun KotlinTypeMarker.getArguments(): List<TypeArgumentMarker>
 
     fun SimpleTypeMarker.getArgumentOrNull(index: Int): TypeArgumentMarker? {
-        if (index in 0 until argumentsCount()) return getArgument(index)
+        if (index in 0..<argumentsCount()) return getArgument(index)
         return null
     }
 

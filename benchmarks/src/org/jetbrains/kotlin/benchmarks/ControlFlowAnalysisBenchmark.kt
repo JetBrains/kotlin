@@ -24,10 +24,10 @@ open class ControlFlowAnalysisBenchmark : AbstractSimpleFileBenchmark() {
     override fun buildText() =
         buildString {
             appendLine("fun test() {")
-            for (i in 0 until size) {
+            for (i in 0..<size) {
                 appendLine("for (i$i in 0..10) { ")
             }
-            for (i in 0 until size) {
+            for (i in 0..<size) {
                 appendLine("}")
             }
             appendLine("}")

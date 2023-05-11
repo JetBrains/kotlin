@@ -958,7 +958,7 @@ class FirElementSerializer private constructor(
         } else {
             builder.className = classifierId
         }
-        for (i in 0 until classifier.typeParameters.size) {
+        for (i in 0..<classifier.typeParameters.size) {
             // Next type parameter is not for this type but for an outer type.
             if (classifier.typeParameters[i] !is FirTypeParameter) break
             // No explicit type argument provided. For example: `Map.Entry<K, V>` when we get to `Map`

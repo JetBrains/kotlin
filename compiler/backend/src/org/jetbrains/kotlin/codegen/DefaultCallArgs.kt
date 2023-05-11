@@ -28,7 +28,7 @@ class DefaultCallArgs(val size: Int) {
         val masks = ArrayList<Int>(1)
 
         var mask = 0
-        for (i in 0 until size) {
+        for (i in 0..<size) {
             if (i != 0 && i % Integer.SIZE == 0) {
                 masks.add(mask)
                 mask = 0

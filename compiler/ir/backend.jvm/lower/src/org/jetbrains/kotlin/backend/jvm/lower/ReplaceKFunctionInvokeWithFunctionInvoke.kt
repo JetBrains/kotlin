@@ -60,7 +60,7 @@ private class ReplaceKFunctionInvokeWithFunctionInvoke : FileLoweringPass, IrEle
                     IrTypeOperatorCallImpl(startOffset, endOffset, newType, IrTypeOperator.IMPLICIT_CAST, newType, it)
                 }
                 extensionReceiver = expression.extensionReceiver?.transform(this@ReplaceKFunctionInvokeWithFunctionInvoke, null)
-                for (i in 0 until valueArgumentsCount) {
+                for (i in 0..<valueArgumentsCount) {
                     putValueArgument(i, expression.getValueArgument(i)?.transform(this@ReplaceKFunctionInvokeWithFunctionInvoke, null))
                 }
             }

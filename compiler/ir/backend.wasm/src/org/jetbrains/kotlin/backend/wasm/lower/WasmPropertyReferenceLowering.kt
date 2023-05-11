@@ -226,7 +226,7 @@ internal class WasmPropertyReferenceLowering(val context: WasmBackendContext) : 
                 ).apply {
                     this.dispatchReceiver = dispatchReceiver?.let { irGet(it) }
                     this.extensionReceiver = extensionReceiver?.let { irGet(it) }
-                    for (index in 0 until expression.typeArgumentsCount)
+                    for (index in 0..<expression.typeArgumentsCount)
                         putTypeArgument(index, expression.getTypeArgument(index))
                 }
             }
@@ -249,7 +249,7 @@ internal class WasmPropertyReferenceLowering(val context: WasmBackendContext) : 
                     ).apply {
                         this.dispatchReceiver = dispatchReceiver?.let { irGet(it) }
                         this.extensionReceiver = extensionReceiver?.let { irGet(it) }
-                        for (index in 0 until expression.typeArgumentsCount)
+                        for (index in 0..<expression.typeArgumentsCount)
                             putTypeArgument(index, expression.getTypeArgument(index))
                     }
                 }

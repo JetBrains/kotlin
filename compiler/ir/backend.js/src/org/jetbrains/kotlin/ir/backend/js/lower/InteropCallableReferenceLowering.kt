@@ -176,11 +176,11 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
         newCall.dispatchReceiver = expression.dispatchReceiver
         newCall.extensionReceiver = expression.extensionReceiver
 
-        for (i in 0 until expression.typeArgumentsCount) {
+        for (i in 0..<expression.typeArgumentsCount) {
             newCall.putTypeArgument(i, expression.getTypeArgument(i))
         }
 
-        for (i in 0 until expression.valueArgumentsCount) {
+        for (i in 0..<expression.valueArgumentsCount) {
             newCall.putValueArgument(i, expression.getValueArgument(i))
         }
 
@@ -260,7 +260,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
         }
 
         private fun IrConstructorCall.referencesVariablesDeclaredInLoops(): Boolean =
-            (0 until valueArgumentsCount).any { i ->
+            (0..<valueArgumentsCount).any { i ->
                 getValueArgument(i)!!.referencesVariablesDeclaredInLoops()
             }
 

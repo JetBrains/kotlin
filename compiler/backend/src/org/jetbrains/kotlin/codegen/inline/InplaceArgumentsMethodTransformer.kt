@@ -173,7 +173,7 @@ class InplaceArgumentsMethodTransformer : MethodTransformer() {
         for (lv in methodContext.methodNode.localVariables) {
             val lvStartIndex = insnList.indexOf(lv.start)
             val lvEndIndex = insnList.indexOf(lv.end)
-            for (i in lvStartIndex until lvEndIndex) {
+            for (i in lvStartIndex..<lvEndIndex) {
                 val insn = insnArray[i]
                 if (insn.opcode in Opcodes.ILOAD..Opcodes.ALOAD || insn.opcode in Opcodes.ISTORE..Opcodes.ASTORE) {
                     if ((insn as VarInsnNode).`var` == lv.index) {

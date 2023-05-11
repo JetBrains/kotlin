@@ -128,7 +128,7 @@ private class DirectInvokeLowering(private val context: JvmBackendContext) : Fil
         if (invokeArgIndex + valueArgumentsCount != irInvokeCall.valueArgumentsCount) {
             throw AssertionError("Mismatching value arguments: $invokeArgIndex arguments used for receivers\n${irInvokeCall.dump()}")
         }
-        for (i in 0 until valueArgumentsCount) {
+        for (i in 0..<valueArgumentsCount) {
             putValueArgument(i, irInvokeCall.getValueArgument(invokeArgIndex++))
         }
     }

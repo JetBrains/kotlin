@@ -87,7 +87,7 @@ fun getFunctionTypeForAbstractMethod(
         startIndex = 1
     }
 
-    for (i in startIndex until valueParameters.size) {
+    for (i in startIndex..<valueParameters.size) {
         val parameter = valueParameters[i]
         parameterTypes.add(parameter.type)
         parameterNames.add(if (function.hasSynthesizedParameterNames()) SpecialNames.NO_NAME_PROVIDED else parameter.name)

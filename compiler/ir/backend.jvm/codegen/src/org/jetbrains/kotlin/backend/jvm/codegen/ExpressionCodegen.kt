@@ -734,7 +734,7 @@ class ExpressionCodegen(
         // In this case the receiver is `this` (not specified in IR) and the return value is discarded anyway.
         mv.load(0, OBJECT_TYPE)
 
-        for (argumentIndex in 0 until expression.typeArgumentsCount) {
+        for (argumentIndex in 0..<expression.typeArgumentsCount) {
             val classifier = expression.getTypeArgument(argumentIndex)?.classifierOrNull
             if (classifier is IrTypeParameterSymbol && classifier.owner.isReified) {
                 consumeReifiedOperationMarker(classifier)

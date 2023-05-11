@@ -106,7 +106,7 @@ internal class ValueClassAwareCaller<out M : Member?>(
 
         // maxOf is needed because in case of a bound top level extension, shift can be -1 (see above). But in that case, we need not unbox
         // the extension receiver argument, since it has already been unboxed at compile time and generated into the reference
-        val argumentRange = maxOf(shift, 0) until (kotlinParameterTypes.size + shift)
+        val argumentRange = maxOf(shift, 0)..<(kotlinParameterTypes.size + shift)
 
         val unbox = Array(expectedArgsSize) { i ->
             if (i in argumentRange)
@@ -124,11 +124,11 @@ internal class ValueClassAwareCaller<out M : Member?>(
             else -> 0
         }
         if (currentOffset > 0) {
-            add(0 until currentOffset)
+            add(0..<currentOffset)
         }
         for (parameterUnboxMethods in data.unboxParameters) {
             val length = parameterUnboxMethods?.size ?: 1
-            add(currentOffset until (currentOffset + length))
+            add(currentOffset..<(currentOffset + length))
             currentOffset += length
         }
     }.toTypedArray()
@@ -152,7 +152,7 @@ internal class ValueClassAwareCaller<out M : Member?>(
         val unboxedArguments = when {
             range.isEmpty() -> args
             hasMfvcParameters -> buildList(args.size) {
-                for (index in 0 until range.first) {
+                for (index in 0..<range.first) {
                     add(args[index])
                 }
                 for (index in range) {

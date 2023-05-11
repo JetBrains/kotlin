@@ -147,7 +147,7 @@ private class VarargTransformer(
         expression.transformChildrenVoid()
 
         if (expression.symbol.owner.isExternal) {
-            for (i in 0 until expression.valueArgumentsCount) {
+            for (i in 0..<expression.valueArgumentsCount) {
                 val parameter = expression.symbol.owner.valueParameters[i]
                 val varargElementType = parameter.varargElementType
                 if (varargElementType != null) {
@@ -160,7 +160,7 @@ private class VarargTransformer(
 
         val size = expression.valueArgumentsCount
 
-        for (i in 0 until size) {
+        for (i in 0..<size) {
             val argument = expression.getValueArgument(i)
             val parameter = expression.symbol.owner.valueParameters[i]
             val varargElementType = parameter.varargElementType

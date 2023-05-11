@@ -115,7 +115,7 @@ fun resolveToPackageOrClass(symbolProvider: FirSymbolProvider, fqName: FqName): 
     }
 
     if (currentPackage == fqName) return PackageResolutionResult.PackageOrClass(currentPackage, null, null)
-    val relativeClassFqName = FqName.fromSegments((prefixSize until pathSegments.size).map { pathSegments[it].asString() })
+    val relativeClassFqName = FqName.fromSegments((prefixSize..<pathSegments.size).map { pathSegments[it].asString() })
 
     val classId = ClassId(currentPackage, relativeClassFqName, false)
     val symbol = symbolProvider.getClassLikeSymbolByClassId(classId) ?: return PackageResolutionResult.Error(

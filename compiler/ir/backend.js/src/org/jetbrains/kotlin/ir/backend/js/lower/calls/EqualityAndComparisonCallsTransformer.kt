@@ -130,7 +130,7 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
     }
 
     private fun IrFunctionAccessExpression.allValueArgumentsAreNullable() =
-        (0 until valueArgumentsCount).all { getValueArgument(it)!!.type.isNullable() }
+        (0..<valueArgumentsCount).all { getValueArgument(it)!!.type.isNullable() }
 
     private fun transformCompareToMethodCall(call: IrFunctionAccessExpression): IrExpression {
         val function = call.symbol.owner as IrSimpleFunction

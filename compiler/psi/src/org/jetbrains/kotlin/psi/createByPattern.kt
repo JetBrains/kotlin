@@ -254,7 +254,7 @@ private fun processPattern(pattern: String, args: List<Any>): PatternData {
                 } else {
                     check(nextChar?.isDigit() ?: false, "unclosed '$'")
 
-                    val lastIndex = (i until pattern.length).firstOrNull { !pattern[it].isDigit() } ?: pattern.length
+                    val lastIndex = (i..<pattern.length).firstOrNull { !pattern[it].isDigit() } ?: pattern.length
                     val n = pattern.substring(i, lastIndex).toInt()
                     check(n >= 0, "invalid placeholder number: $n")
                     i = lastIndex

@@ -1165,7 +1165,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
         assert(params >= args) { "Incorrect number of mapped parameters vs arguments: $params < $args for $descriptor" }
 
         // Include all captured values, i.e. those parameters for which there are no resolved value arguments
-        for (i in 0 until params - args) {
+        for (i in 0..<params - args) {
             val parameter = parameters[i]
             val kind = parameter.kind
             if (kind == JvmMethodParameterKind.ENUM_NAME_OR_ORDINAL) continue
@@ -1428,7 +1428,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
         fun TypeSystemContext.hasNothingInNonContravariantPosition(type: KotlinTypeMarker): Boolean {
             val typeConstructor = type.typeConstructor()
 
-            for (i in 0 until type.argumentsCount()) {
+            for (i in 0..<type.argumentsCount()) {
                 val projection = type.getArgument(i)
                 if (projection.isStarProjection()) continue
 
@@ -1652,7 +1652,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
 
             sw.writeClassBound()
 
-            for (i in 0 until typeParameter.upperBoundCount()) {
+            for (i in 0..<typeParameter.upperBoundCount()) {
                 val type = typeParameter.getUpperBound(i)
                 if (type.typeConstructor().getTypeParameterClassifier() == null && !type.isInterfaceOrAnnotationClass()) {
                     mapType(type, TypeMappingMode.GENERIC_ARGUMENT)
@@ -1667,7 +1667,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
 
             sw.writeClassBoundEnd()
 
-            for (i in 0 until typeParameter.upperBoundCount()) {
+            for (i in 0..<typeParameter.upperBoundCount()) {
                 val type = typeParameter.getUpperBound(i)
                 if (type.typeConstructor().getTypeParameterClassifier() != null || type.isInterfaceOrAnnotationClass()) {
                     sw.writeInterfaceBound()

@@ -561,13 +561,13 @@ open class IrFileSerializer(
             proto.dispatchReceiver = serializeExpression(call.dispatchReceiver!!)
         }
 
-        for (index in 0 until call.typeArgumentsCount) {
+        for (index in 0..<call.typeArgumentsCount) {
             // See `ForbidUsingExtensionPropertyTypeParameterInDelegate` language feature
             val typeArgumentIndex = call.getTypeArgument(index)?.let { serializeIrType(it) } ?: -1
             proto.addTypeArgument(typeArgumentIndex)
         }
 
-        for (index in 0 until call.valueArgumentsCount) {
+        for (index in 0..<call.valueArgumentsCount) {
             val actual = call.getValueArgument(index)
             val argOrNull = ProtoNullableIrExpression.newBuilder()
             if (actual == null) {

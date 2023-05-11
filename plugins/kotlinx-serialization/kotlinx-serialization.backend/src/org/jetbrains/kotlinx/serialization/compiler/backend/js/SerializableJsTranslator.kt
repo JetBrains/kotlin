@@ -60,7 +60,7 @@ class SerializableJsTranslator(
             )
             val serializableProperties = properties.serializableProperties
             val seenVarsOffset = serializableProperties.bitMaskSlotCount()
-            val seenVars = (0 until seenVarsOffset).map { jsFun.parameters[it].name.makeRef() }
+            val seenVars = (0..<seenVarsOffset).map { jsFun.parameters[it].name.makeRef() }
             val superClass = serializableDescriptor.getSuperClassOrAny()
             var startPropOffset: Int = 0
             when {
@@ -76,7 +76,7 @@ class SerializableJsTranslator(
                 else -> generateSuperNonSerializableCall(superClass, thiz)
             }
 
-            for (index in startPropOffset until serializableProperties.size) {
+            for (index in startPropOffset..<serializableProperties.size) {
                 val prop = serializableProperties[index]
                 val paramRef = jsFun.parameters[index + seenVarsOffset].name.makeRef()
                 // assign this.a = a in else branch

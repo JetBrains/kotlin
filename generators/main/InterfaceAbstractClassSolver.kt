@@ -118,7 +118,7 @@ private fun solve2sat(elements: Collection<Node>, elementsToVar: ElementMapping)
 
     val res = (1..elements.size).mapTo(mutableListOf()) { false }
 
-    for (i in 0 until n step 2) {
+    for (i in 0..<n step 2) {
         if (comp[i] == comp[i + 1]) {
             throw IllegalStateException("Somehow there is no solution. Please contact with @dmitriy.novozhilov")
         }
@@ -145,8 +145,8 @@ private fun buildGraphs(elements: Collection<Node>, elementMapping: ElementMappi
             g[parentVar.direct()] += elementVar.direct()
             g[elementVar.invert()] += parentVar.invert()
         }
-        for (i in 0 until element.parents.size) {
-            for (j in i + 1 until element.parents.size) {
+        for (i in 0..<element.parents.size) {
+            for (j in i + 1..<element.parents.size) {
                 val firstParentVar = extractIndex(element.parents[i].origin)
                 val secondParentVar = extractIndex(element.parents[j].origin)
                 // firstParent -> !secondParent

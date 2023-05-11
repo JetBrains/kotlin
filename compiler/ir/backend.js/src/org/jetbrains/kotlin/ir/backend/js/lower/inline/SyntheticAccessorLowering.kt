@@ -165,7 +165,7 @@ class SyntheticAccessorLowering(private val context: CommonBackendContext) : Bod
 
                 newExpression.copyTypeArgumentsFrom(expression)
                 newExpression.extensionReceiver = expression.extensionReceiver
-                for (i in 0 until expression.valueArgumentsCount) {
+                for (i in 0..<expression.valueArgumentsCount) {
                     newExpression.putValueArgument(i, expression.getValueArgument(i))
                 }
 
@@ -188,7 +188,7 @@ class SyntheticAccessorLowering(private val context: CommonBackendContext) : Bod
 
                 newExpression.copyTypeArgumentsFrom(expression)
                 newExpression.extensionReceiver = expression.extensionReceiver
-                for (i in 0 until expression.valueArgumentsCount) {
+                for (i in 0..<expression.valueArgumentsCount) {
                     newExpression.putValueArgument(i, expression.getValueArgument(i))
                 }
 

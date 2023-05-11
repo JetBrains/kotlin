@@ -97,7 +97,7 @@ abstract class AbstractValueUsageTransformer(
         with(expression) {
             dispatchReceiver = dispatchReceiver?.useAsDispatchReceiver(expression)
             extensionReceiver = extensionReceiver?.useAsExtensionReceiver(expression)
-            for (index in 0 until valueArgumentsCount) {
+            for (index in 0..<valueArgumentsCount) {
                 val argument = getValueArgument(index) ?: continue
                 val parameter = symbol.owner.valueParameters[index]
                 putValueArgument(index, argument.useAsValueArgument(expression, parameter))

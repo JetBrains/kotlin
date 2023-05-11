@@ -79,7 +79,7 @@ abstract class TransformationMethodVisitor(
                 val localVariables = methodNode.localVariables
                 // visits local variables
                 val n = localVariables?.size ?: 0
-                for (i in 0 until n) {
+                for (i in 0..<n) {
                     localVariables!![i].accept(delegate)
                 }
             }

@@ -853,7 +853,7 @@ class CallAndReferenceGenerator(
 
         val contextReceiverCount = statement.contextReceiverArguments.size
         if (contextReceiverCount > 0) {
-            for (index in 0 until contextReceiverCount) {
+            for (index in 0..<contextReceiverCount) {
                 putValueArgument(
                     index,
                     visitor.convertToIrExpression(statement.contextReceiverArguments[index]),

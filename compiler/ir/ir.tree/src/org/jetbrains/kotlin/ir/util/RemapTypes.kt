@@ -71,7 +71,7 @@ private class RemapTypesHelper(private val typeRemapper: TypeRemapper) : IrEleme
     }
 
     override fun visitMemberAccess(expression: IrMemberAccessExpression<*>) {
-        for (i in 0 until expression.typeArgumentsCount) {
+        for (i in 0..<expression.typeArgumentsCount) {
             expression.getTypeArgument(i)?.let { expression.putTypeArgument(i, typeRemapper.remapType(it)) }
         }
         super.visitMemberAccess(expression)

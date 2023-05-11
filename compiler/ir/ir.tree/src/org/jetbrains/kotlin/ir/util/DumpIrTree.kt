@@ -226,7 +226,7 @@ class DumpIrTreeVisitor(
             expression.dispatchReceiver?.accept(this, "\$this")
             expression.extensionReceiver?.accept(this, "\$receiver")
             val valueParameterNames = expression.getValueParameterNamesForDebug()
-            for (index in 0 until expression.valueArgumentsCount) {
+            for (index in 0..<expression.valueArgumentsCount) {
                 expression.getValueArgument(index)?.accept(this, valueParameterNames[index])
             }
         }
@@ -242,21 +242,21 @@ class DumpIrTreeVisitor(
 
     private fun dumpConstructorValueArguments(expression: IrConstructorCall) {
         val valueParameterNames = expression.getValueParameterNamesForDebug()
-        for (index in 0 until expression.valueArgumentsCount) {
+        for (index in 0..<expression.valueArgumentsCount) {
             expression.getValueArgument(index)?.accept(this, valueParameterNames[index])
         }
     }
 
     private fun dumpTypeArguments(expression: IrMemberAccessExpression<*>) {
         val typeParameterNames = expression.getTypeParameterNames(expression.typeArgumentsCount)
-        for (index in 0 until expression.typeArgumentsCount) {
+        for (index in 0..<expression.typeArgumentsCount) {
             printer.println("<${typeParameterNames[index]}>: ${expression.renderTypeArgument(index)}")
         }
     }
 
     private fun dumpTypeArguments(expression: IrConstructorCall) {
         val typeParameterNames = expression.getTypeParameterNames(expression.typeArgumentsCount)
-        for (index in 0 until expression.typeArgumentsCount) {
+        for (index in 0..<expression.typeArgumentsCount) {
             val typeParameterName = typeParameterNames[index]
             val parameterLabel =
                 if (index < expression.classTypeArgumentsCount)
@@ -276,7 +276,7 @@ class DumpIrTreeVisitor(
     private fun IrSymbolOwner.getTypeParameterNames(expectedCount: Int): List<String> =
         if (this is IrTypeParametersContainer) {
             val typeParameters = if (this is IrConstructor) getFullTypeParametersList() else this.typeParameters
-            (0 until expectedCount).map {
+            (0..<expectedCount).map {
                 if (it < typeParameters.size)
                     typeParameters[it].name.asString()
                 else
@@ -453,7 +453,7 @@ internal fun IrMemberAccessExpression<*>.getValueParameterNamesForDebug(): List<
     if (symbol.isBound) {
         val owner = symbol.owner
         if (owner is IrFunction) {
-            return (0 until expectedCount).map {
+            return (0..<expectedCount).map {
                 if (it < owner.valueParameters.size)
                     owner.valueParameters[it].name.asString()
                 else

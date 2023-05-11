@@ -498,7 +498,7 @@ class StateMachineBuilder(
 
         val newArguments = transformArguments(expression.arguments.toTypedArray())
 
-        for (i in 0 until expression.arguments.size) {
+        for (i in 0..<expression.arguments.size) {
             expression.arguments[i] = newArguments[i]!!
         }
 
@@ -586,7 +586,7 @@ class StateMachineBuilder(
         arguments[0] = expression.dispatchReceiver
         arguments[1] = expression.extensionReceiver
 
-        for (i in 0 until expression.valueArgumentsCount) {
+        for (i in 0..<expression.valueArgumentsCount) {
             arguments[i + 2] = expression.getValueArgument(i)
         }
 
@@ -594,7 +594,7 @@ class StateMachineBuilder(
 
         expression.dispatchReceiver = newArguments[0]
         expression.extensionReceiver = newArguments[1]
-        for (i in 0 until expression.valueArgumentsCount) {
+        for (i in 0..<expression.valueArgumentsCount) {
             expression.putValueArgument(i, newArguments[i + 2])
         }
 

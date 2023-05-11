@@ -138,7 +138,7 @@ class CompletionModeCalculator {
             val typeArgumentsCount = type.argumentsCount()
             val typeConstructor = type.typeConstructor()
             if (typeArgumentsCount > 0 && typeArgumentsCount == typeConstructor.parametersCount()) {
-                for (position in 0 until typeArgumentsCount) {
+                for (position in 0..<typeArgumentsCount) {
                     val argument = type.getArgument(position)
                     val parameter = typeConstructor.getParameter(position)
 

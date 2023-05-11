@@ -70,7 +70,7 @@ private class JvmArgumentNullabilityAssertionsLowering(context: JvmBackendContex
 
         val parameterAssertionScope =
             if (isCallToMethodWithTypeCheckBarrier(expression)) AssertionScope.Disabled else AssertionScope.Enabled
-        for (i in 0 until expression.valueArgumentsCount) {
+        for (i in 0..<expression.valueArgumentsCount) {
             expression.getValueArgument(i)?.let { irArgument ->
                 expression.putValueArgument(i, irArgument.transform(this, parameterAssertionScope))
             }

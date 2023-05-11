@@ -283,7 +283,7 @@ class CallArgumentTranslator private constructor(
         var lastArrayContent = mutableListOf<JsExpression>()
 
         val size = arguments.size
-        for (index in 0 until size) {
+        for (index in 0..<size) {
             val valueArgument = arguments[index]
             val expressionArgument = list[index]
 

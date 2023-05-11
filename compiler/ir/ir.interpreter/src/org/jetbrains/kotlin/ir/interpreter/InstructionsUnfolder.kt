@@ -127,7 +127,7 @@ private fun unfoldValueParameters(expression: IrFunctionAccessExpression, enviro
     }
     // TODO do the same thing but for "KCallable.name" with "this" as receiver
 
-    val hasDefaults = (0 until expression.valueArgumentsCount).any { expression.getValueArgument(it) == null }
+    val hasDefaults = (0..<expression.valueArgumentsCount).any { expression.getValueArgument(it) == null }
     if (hasDefaults) {
         environment.getCachedFunction(expression.symbol, fromDelegatingCall = expression is IrDelegatingConstructorCall)?.let {
             val callToDefault = it.owner.createCall().apply { environment.irBuiltIns.copyArgs(expression, this) }
@@ -150,7 +150,7 @@ private fun unfoldValueParameters(expression: IrFunctionAccessExpression, enviro
             this.parent = ownerWithDefaults.parent
             this.dispatchReceiverParameter = ownerWithDefaults.dispatchReceiverParameter?.deepCopyWithSymbols(this)
             this.extensionReceiverParameter = ownerWithDefaults.extensionReceiverParameter?.deepCopyWithSymbols(this)
-            (0 until expression.valueArgumentsCount).forEach { index ->
+            (0..<expression.valueArgumentsCount).forEach { index ->
                 val originalParameter = ownerWithDefaults.valueParameters[index]
                 val copiedParameter = originalParameter.deepCopyWithSymbols(this)
                 this.valueParameters += copiedParameter
@@ -173,7 +173,7 @@ private fun unfoldValueParameters(expression: IrFunctionAccessExpression, enviro
         val callWithAllArgs = expression.shallowCopy() // just a copy of given call, but with all arguments in place
         expression.dispatchReceiver?.let { callWithAllArgs.dispatchReceiver = defaultFun.dispatchReceiverParameter!!.createGetValue() }
         expression.extensionReceiver?.let { callWithAllArgs.extensionReceiver = defaultFun.extensionReceiverParameter!!.createGetValue() }
-        (0 until expression.valueArgumentsCount).forEach { callWithAllArgs.putValueArgument(it, actualParameters[it]?.createGetValue()) }
+        (0..<expression.valueArgumentsCount).forEach { callWithAllArgs.putValueArgument(it, actualParameters[it]?.createGetValue()) }
         defaultFun.body = (actualParameters.filterIsInstance<IrVariable>() + defaultFun.createReturn(callWithAllArgs)).wrapWithBlockBody()
 
         val callToDefault = environment.setCachedFunction(

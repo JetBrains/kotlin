@@ -83,7 +83,7 @@ class RedundantCheckCastEliminationMethodTransformer : MethodTransformer() {
         for (lv in methodNode.localVariables) {
             val startIndex = methodNode.instructions.indexOf(lv.start)
             val endIndex = methodNode.instructions.indexOf(lv.end)
-            for (i in startIndex until endIndex) {
+            for (i in startIndex..<endIndex) {
                 val insn = insns[i]
                 // If we are in exception handler (or in dead code, but it really doesn't matter here, since dead code should not be seen
                 // by data flow analyzer), treat ALOAD instructions as producing a value of declared local variable type.

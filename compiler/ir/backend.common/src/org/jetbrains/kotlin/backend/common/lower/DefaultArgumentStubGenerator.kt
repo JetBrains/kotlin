@@ -271,7 +271,7 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
     }
 
     protected open fun shouldReplaceWithSyntheticFunction(functionAccess: IrFunctionAccessExpression): Boolean {
-        return (0 until functionAccess.valueArgumentsCount).count { functionAccess.getValueArgument(it) != null } != functionAccess.symbol.owner.valueParameters.size
+        return (0..<functionAccess.valueArgumentsCount).count { functionAccess.getValueArgument(it) != null } != functionAccess.symbol.owner.valueParameters.size
     }
 
     private fun <T : IrFunctionAccessExpression> visitFunctionAccessExpression(expression: T, builder: (IrFunctionSymbol) -> T): IrExpression {
@@ -279,7 +279,7 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
             return expression
 
         val symbol = createStubFunction(expression) ?: return expression
-        for (i in 0 until expression.typeArgumentsCount) {
+        for (i in 0..<expression.typeArgumentsCount) {
             log { "$symbol[$i]: ${expression.getTypeArgument(i)}" }
         }
         val stubFunction = symbol.owner
@@ -292,7 +292,7 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
         ).irBlock {
             val newCall = builder(symbol).apply {
                 val offset = if (needsTypeArgumentOffset(declaration)) declaration.parentAsClass.typeParameters.size else 0
-                for (i in 0 until typeArgumentsCount) {
+                for (i in 0..<typeArgumentsCount) {
                     putTypeArgument(i, expression.getTypeArgument(i + offset))
                 }
                 val parameter2arguments = argumentsForCall(expression, stubFunction)
@@ -528,7 +528,7 @@ open class MaskedDefaultArgumentFunctionFactory(context: CommonBackendContext) :
         copyReceiversFrom(original)
         copyValueParametersFrom(original)
 
-        for (i in 0 until (original.valueParameters.size + 31) / 32) {
+        for (i in 0..<(original.valueParameters.size + 31) / 32) {
             addValueParameter(
                 "mask$i".synthesizedString,
                 context.irBuiltIns.intType,

@@ -649,7 +649,7 @@ private class ScriptToClassTransformer(
         }
 
     override fun visitMemberAccess(expression: IrMemberAccessExpression<*>, data: ScriptToClassTransformerContext): IrExpression {
-        for (i in 0 until expression.typeArgumentsCount) {
+        for (i in 0..<expression.typeArgumentsCount) {
             expression.putTypeArgument(i, expression.getTypeArgument(i)?.remapType())
         }
         if (expression.dispatchReceiver == null && (expression.symbol.owner as? IrDeclaration)?.needsScriptReceiver() == true) {

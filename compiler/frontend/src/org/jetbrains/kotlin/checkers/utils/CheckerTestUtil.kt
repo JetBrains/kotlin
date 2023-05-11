@@ -505,7 +505,7 @@ object CheckerTestUtil {
         val iterator = diagnosticDescriptors.listIterator()
         var currentDescriptor: AbstractDiagnosticDescriptor? = iterator.next()
 
-        for (i in 0 until text.length) {
+        for (i in 0..<text.length) {
             val c = text[i]
             while (!opened.isEmpty() && i == opened.peek().end) {
                 closeDiagnosticString(result)

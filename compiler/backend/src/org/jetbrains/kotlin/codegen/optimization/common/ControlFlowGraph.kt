@@ -127,7 +127,7 @@ class ControlFlowGraph private constructor(private val insns: InsnList) {
             for (tcb in method.tryCatchBlocks) {
                 val begin = tcb.start.indexOf
                 val end = tcb.end.indexOf
-                for (j in begin until end) {
+                for (j in begin..<end) {
                     val insnHandlers = handlers[j]
                         ?: ArrayList<TryCatchBlockNode>().also { handlers[j] = it }
                     insnHandlers.add(tcb)

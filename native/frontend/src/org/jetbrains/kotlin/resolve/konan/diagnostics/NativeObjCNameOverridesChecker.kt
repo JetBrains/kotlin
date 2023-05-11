@@ -41,7 +41,7 @@ object NativeObjCNameOverridesChecker : DeclarationChecker {
 
     private fun List<List<NativeObjCNameChecker.ObjCName?>>.allNamesEquals(): Boolean {
         val first = this[0]
-        for (i in 1 until size) {
+        for (i in 1..<size) {
             if (first != this[i]) return false
         }
         return true

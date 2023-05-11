@@ -216,7 +216,7 @@ class RedundantBoxingMethodTransformer(private val generationState: GenerationSt
             }
         }
 
-        for (i in localVariableStart until localVariableEnd) {
+        for (i in localVariableStart..<localVariableEnd) {
             if (i < 0 || i >= insnList.size()) continue
             val frame = frames[i] ?: continue
             val insn = insnList[i]

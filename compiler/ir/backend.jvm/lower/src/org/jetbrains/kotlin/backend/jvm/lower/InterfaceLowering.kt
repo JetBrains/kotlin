@@ -247,7 +247,7 @@ internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTran
                     call.extensionReceiver = IrGetValueImpl(startOffset, endOffset, valueParameters[offset].symbol)
                     offset += 1
                 }
-                for (i in offset until valueParameters.size) {
+                for (i in offset..<valueParameters.size) {
                     call.putValueArgument(i - offset, IrGetValueImpl(startOffset, endOffset, valueParameters[i].symbol))
                 }
             })

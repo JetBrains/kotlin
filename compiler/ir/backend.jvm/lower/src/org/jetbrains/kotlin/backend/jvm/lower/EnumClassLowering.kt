@@ -313,7 +313,7 @@ private class EnumClassLowering(private val context: JvmBackendContext) : ClassL
                     call.putValueArgument(0, irGet(constructor.owner.valueParameters[0]))
                     call.putValueArgument(1, irGet(constructor.owner.valueParameters[1]))
                 }
-                for (index in 0 until original.valueArgumentsCount) {
+                for (index in 0..<original.valueArgumentsCount) {
                     original.getValueArgument(index)?.let { call.putValueArgument(index + 2, it) }
                 }
             }

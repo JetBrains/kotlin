@@ -116,7 +116,7 @@ class ConstantDataStruct(val name: String, val elements: List<ConstantDataElemen
 }
 
 fun Long.toLittleEndianBytesTo(to: ByteArray, offset: Int, size: Int) {
-    for (i in 0 until size) {
+    for (i in 0..<size) {
         to[offset + i] = (this ushr (i * 8)).toByte()
     }
 }

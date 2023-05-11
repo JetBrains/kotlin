@@ -42,7 +42,7 @@ class FullPipelineModularizedTest : AbstractFullPipelineModularizedTest() {
 
     fun testTotalKotlin() {
         isolate()
-        for (i in 0 until PASSES) {
+        for (i in 0..<PASSES) {
             println("Pass $i")
             runTestOnce(i)
         }

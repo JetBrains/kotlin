@@ -51,7 +51,7 @@ class FirMetaModularizedTest {
         JarOutputStream(file.outputStream(), manifest).close()
 
 
-        for (i in 0 until runCount) {
+        for (i in 0..<runCount) {
             val pb = ProcessBuilder()
                 .inheritIO()
                 .command(

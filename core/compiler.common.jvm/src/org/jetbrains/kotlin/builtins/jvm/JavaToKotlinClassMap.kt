@@ -92,11 +92,11 @@ object JavaToKotlinClassMap {
             )
         }
 
-        for (i in 0 until BuiltInFunctionArity.BIG_ARITY) {
+        for (i in 0..<BuiltInFunctionArity.BIG_ARITY) {
             add(ClassId.topLevel(FqName("kotlin.jvm.functions.Function$i")), StandardNames.getFunctionClassId(i))
             addKotlinToJava(FqName(NUMBERED_K_FUNCTION_PREFIX + i), K_FUNCTION_CLASS_ID)
         }
-        for (i in 0 until BuiltInFunctionArity.BIG_ARITY - 1) {
+        for (i in 0..<BuiltInFunctionArity.BIG_ARITY - 1) {
             val kSuspendFunction = FunctionTypeKind.KSuspendFunction
             val kSuspendFun = kSuspendFunction.packageFqName.toString() + "." + kSuspendFunction.classNamePrefix
             addKotlinToJava(FqName(kSuspendFun + i), K_FUNCTION_CLASS_ID)

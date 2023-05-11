@@ -113,7 +113,7 @@ class UninitializedStoresProcessor(private val methodNode: MethodNode) {
             val storedTypes = arrayListOf<Type>()
             var nextVarIndex = methodNode.maxLocals
 
-            for (i in 0 until indexOfConstructorArgumentFromTopOfStack) {
+            for (i in 0..<indexOfConstructorArgumentFromTopOfStack) {
                 val value = frame.getStack(frame.stackSize - 1 - i)
                 val type = value.type
                 methodNode.instructions.insertBefore(insn, VarInsnNode(type.getOpcode(Opcodes.ISTORE), nextVarIndex))

@@ -617,7 +617,7 @@ internal class JvmMultiFieldValueClassLowering(
                 putTypeArgument(index, typeParameter.defaultType)
             }
         }
-        for (i in 0 until passedTypeParametersSize) {
+        for (i in 0..<passedTypeParametersSize) {
             putTypeArgument(i + targetOffset, forCommonTypeParameters(i + sourceOffset))
         }
     }
@@ -632,7 +632,7 @@ internal class JvmMultiFieldValueClassLowering(
         }
         val old2newList = original.explicitParameters.zip(
             parametersStructure.scan(0) { partial: Int, templates: RemappedParameter -> partial + templates.valueParameters.size }
-                .zipWithNext { start: Int, finish: Int -> replacement.explicitParameters.slice(start until finish) }
+                .zipWithNext { start: Int, finish: Int -> replacement.explicitParameters.slice(start..<finish) }
         )
         for (i in old2newList.indices) {
             val (oldParameter, newParamList) = old2newList[i]

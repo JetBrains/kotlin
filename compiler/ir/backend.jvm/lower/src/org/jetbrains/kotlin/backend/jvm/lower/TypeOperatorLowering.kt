@@ -424,7 +424,7 @@ private class TypeOperatorLowering(private val backendContext: JvmBackendContext
     private fun JvmIrBuilder.irAndAnd(vararg args: IrExpression): IrExpression {
         if (args.isEmpty()) throw AssertionError("At least one argument expected")
         var result = args[0]
-        for (i in 1 until args.size) {
+        for (i in 1..<args.size) {
             result = irCall(backendContext.irBuiltIns.andandSymbol).apply {
                 putValueArgument(0, result)
                 putValueArgument(1, args[i])
@@ -653,7 +653,7 @@ private class TypeOperatorLowering(private val backendContext: JvmBackendContext
             val samMethodValueParametersCount = samMethod.valueParameters.size +
                     if (samMethod.extensionReceiverParameter != null && refExtensionReceiver == null) 1 else 0
             val targetFunValueParametersCount = targetFun.valueParameters.size
-            for (i in argumentStart until targetFunValueParametersCount - samMethodValueParametersCount) {
+            for (i in argumentStart..<targetFunValueParametersCount - samMethodValueParametersCount) {
                 val targetFunValueParameter = targetFun.valueParameters[i]
                 addValueParameter("p${syntheticParameterIndex++}", targetFunValueParameter.type)
                 val capturedValueArgument = targetRef.getValueArgument(i)
@@ -794,7 +794,7 @@ private class TypeOperatorLowering(private val backendContext: JvmBackendContext
                 origin == IrDeclarationOrigin.DELEGATED_MEMBER
 
     private fun CharSequence.validSourcePosition(startOffset: Int, endOffset: Int): Boolean =
-        startOffset in 0 until endOffset && endOffset < length
+        startOffset in 0..<endOffset && endOffset < length
 
     private fun IrElement.extents(): Pair<Int, Int> {
         var startOffset = Int.MAX_VALUE
@@ -802,7 +802,7 @@ private class TypeOperatorLowering(private val backendContext: JvmBackendContext
         acceptVoid(object : IrElementVisitorVoid {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
-                if (element.startOffset in 0 until startOffset)
+                if (element.startOffset in 0..<startOffset)
                     startOffset = element.startOffset
                 if (endOffset < element.endOffset)
                     endOffset = element.endOffset

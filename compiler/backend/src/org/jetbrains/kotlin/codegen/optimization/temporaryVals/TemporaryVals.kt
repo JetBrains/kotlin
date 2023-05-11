@@ -37,7 +37,7 @@ class TemporaryValsAnalyzer {
 
         for (lv in methodNode.localVariables) {
             // Exclude stores within LVT entry liveness ranges.
-            for (i in insnList.indexOf(lv.start) until insnList.indexOf(lv.end)) {
+            for (i in insnList.indexOf(lv.start)..<insnList.indexOf(lv.end)) {
                 val insn = insnArray[i]
                 if (insn.isStoreOperation() && (insn as VarInsnNode).`var` == lv.index) {
                     potentiallyTemporaryStores.remove(insn)

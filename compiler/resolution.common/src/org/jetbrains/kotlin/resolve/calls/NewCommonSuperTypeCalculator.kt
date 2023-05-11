@@ -321,7 +321,7 @@ object NewCommonSuperTypeCalculator {
         }
 
         val arguments = ArrayList<TypeArgumentMarker>(constructor.parametersCount())
-        for (index in 0 until constructor.parametersCount()) {
+        for (index in 0..<constructor.parametersCount()) {
             val parameter = constructor.getParameter(index)
             var thereIsStar = false
             val typeProjections = correspondingSuperTypes.mapNotNull {

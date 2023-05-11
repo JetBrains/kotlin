@@ -191,7 +191,7 @@ class SerializableCompanionIrGenerator(
             val arrayGet = compilerContext.irBuiltIns.arrayClass.owner.declarations.filterIsInstance<IrSimpleFunction>()
                 .single { it.name.asString() == "get" }
 
-            val serializers: List<IrExpression> = (0 until argsSize).map {
+            val serializers: List<IrExpression> = (0..<argsSize).map {
                 irInvoke(irGet(array), arrayGet.symbol, irInt(it), typeHint = kSerializerStarType)
             }
             val serializerCall = getterDescriptor.symbol

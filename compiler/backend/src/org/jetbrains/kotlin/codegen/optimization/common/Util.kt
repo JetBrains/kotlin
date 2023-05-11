@@ -130,7 +130,7 @@ fun MethodNode.removeUnusedLocalVariables() {
         used[argumentIndex++] = true
     }
     for (argumentType in Type.getArgumentTypes(desc)) {
-        for (i in 0 until argumentType.size) {
+        for (i in 0..<argumentType.size) {
             used[argumentIndex++] = true
         }
     }

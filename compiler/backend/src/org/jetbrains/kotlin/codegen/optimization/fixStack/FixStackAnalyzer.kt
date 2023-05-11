@@ -141,7 +141,7 @@ internal class FixStackAnalyzer(
 
             fun getStackContent(): List<FixStackValue> {
                 val savedStack = ArrayList<FixStackValue>()
-                for (i in 0 until super.getStackSize()) {
+                for (i in 0..<super.getStackSize()) {
                     savedStack.add(super.getStack(i))
                 }
                 savedStack.addAll(extraStack)

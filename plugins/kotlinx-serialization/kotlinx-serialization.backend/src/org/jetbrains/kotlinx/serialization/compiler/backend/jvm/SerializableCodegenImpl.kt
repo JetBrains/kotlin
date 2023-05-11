@@ -143,7 +143,7 @@ class SerializableCodegenImpl(
             )
         }
 
-        for (i in myPropsStart until properties.serializableProperties.size) {
+        for (i in myPropsStart..<properties.serializableProperties.size) {
             val property = properties[i]
             if (!property.optional) {
                 emitEncoderCall(property, i)
@@ -195,7 +195,7 @@ class SerializableCodegenImpl(
         }
 
         var (propIndex, propOffset) = generateSuperSerializableCall(seenMaskVar, bitMaskEnd)
-        for (i in propIndex until properties.serializableProperties.size) {
+        for (i in propIndex..<properties.serializableProperties.size) {
             val prop = properties[i]
             val propType = prop.asmType
             if (!prop.optional) {

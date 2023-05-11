@@ -45,7 +45,7 @@ fun Char.isES5IdentifierPart(): Boolean {
 
 fun String.isValidES5Identifier(): Boolean {
     if (isEmpty() || !this[0].isES5IdentifierStart()) return false
-    for (idx in 1 until length) {
+    for (idx in 1..<length) {
         if (!get(idx).isES5IdentifierPart()) return false
     }
     return true

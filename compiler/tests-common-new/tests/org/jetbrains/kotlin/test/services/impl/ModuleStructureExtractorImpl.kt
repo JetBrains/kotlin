@@ -399,7 +399,7 @@ class ModuleStructureExtractorImpl(
             }
             val directives = fileDirectivesBuilder?.build()?.onEach { it.checkDirectiveApplicability(contextIsFile = true) }
             val fileContent = buildString {
-                for (i in 0 until endLineNumberOfLastFile) {
+                for (i in 0..<endLineNumberOfLastFile) {
                     appendLine()
                 }
                 appendLine(linesOfCurrentFile.joinToString("\n"))

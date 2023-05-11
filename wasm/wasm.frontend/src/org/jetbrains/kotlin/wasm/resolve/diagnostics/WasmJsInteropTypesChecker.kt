@@ -132,7 +132,7 @@ private fun isTypeSupportedInJsInterop(
 
     if (type.isFunctionType) {
         val arguments = type.arguments
-        for (i in 0 until arguments.lastIndex) {
+        for (i in 0..<arguments.lastIndex) {
             val isArgumentSupported = isTypeSupportedInJsInterop(
                 arguments[i].type,
                 isInFunctionReturnPosition = false,

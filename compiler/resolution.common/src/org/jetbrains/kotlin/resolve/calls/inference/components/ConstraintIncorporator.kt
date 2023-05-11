@@ -292,7 +292,7 @@ private fun TypeSystemInferenceExtensionContext.getNestedArguments(type: KotlinT
     stack.push(createTypeArgument(type, TypeVariance.INV))
 
     val addArgumentsToStack = { projectedType: KotlinTypeMarker ->
-        for (argumentIndex in 0 until projectedType.argumentsCount()) {
+        for (argumentIndex in 0..<projectedType.argumentsCount()) {
             stack.add(projectedType.getArgument(argumentIndex))
         }
     }

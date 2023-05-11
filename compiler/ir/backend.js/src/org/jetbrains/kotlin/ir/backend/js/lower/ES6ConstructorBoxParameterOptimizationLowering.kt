@@ -74,7 +74,7 @@ class ES6ConstructorBoxParameterOptimizationLowering(private val context: JsIrBa
                             dispatchReceiver = expression.dispatchReceiver
                             extensionReceiver = expression.extensionReceiver
 
-                            for (i in 0 until newArgumentsSize) {
+                            for (i in 0..<newArgumentsSize) {
                                 putValueArgument(i, expression.getValueArgument(i))
                             }
                         })

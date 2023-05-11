@@ -52,7 +52,7 @@ class NotFoundClasses(private val storageManager: StorageManager, private val mo
             private val isInner: Boolean,
             numberOfDeclaredTypeParameters: Int
     ) : ClassDescriptorBase(storageManager, container, name, SourceElement.NO_SOURCE, /* isExternal = */ false) {
-        private val declaredTypeParameters = (0 until numberOfDeclaredTypeParameters).map { index ->
+        private val declaredTypeParameters = (0..<numberOfDeclaredTypeParameters).map { index ->
             TypeParameterDescriptorImpl.createWithDefaultBound(
                     this, Annotations.EMPTY, false, Variance.INVARIANT, Name.identifier("T$index"), index, storageManager
             )

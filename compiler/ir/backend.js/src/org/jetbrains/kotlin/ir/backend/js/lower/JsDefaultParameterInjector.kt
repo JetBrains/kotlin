@@ -54,7 +54,7 @@ class JsDefaultParameterInjector(context: JsIrBackendContext) :
         return buildMap {
             stubFunction.dispatchReceiverParameter?.let { put(it, expression.dispatchReceiver) }
             stubFunction.extensionReceiverParameter?.let { put(it, expression.extensionReceiver) }
-            for (i in 0 until expression.valueArgumentsCount) {
+            for (i in 0..<expression.valueArgumentsCount) {
                 val declaredParameter = stubFunction.valueParameters[i]
                 val actualArgument = expression.getValueArgument(i)
                 put(declaredParameter, actualArgument ?: nullConst(startOffset, endOffset, declaredParameter))

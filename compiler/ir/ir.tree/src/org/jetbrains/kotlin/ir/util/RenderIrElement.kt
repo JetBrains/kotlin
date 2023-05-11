@@ -813,7 +813,7 @@ private fun StringBuilder.renderAsAnnotation(
     append(annotationClassName)
 
     if (irAnnotation.typeArgumentsCount != 0) {
-        (0 until irAnnotation.typeArgumentsCount).joinTo(this, ", ", "<", ">") { i ->
+        (0..<irAnnotation.typeArgumentsCount).joinTo(this, ", ", "<", ">") { i ->
             irAnnotation.getTypeArgument(i)?.renderTypeWithRenderer(renderer, verboseErrorTypes) ?: "null"
         }
     }
@@ -822,7 +822,7 @@ private fun StringBuilder.renderAsAnnotation(
 
     val valueParameterNames = irAnnotation.getValueParameterNamesForDebug()
 
-    appendIterableWith(0 until irAnnotation.valueArgumentsCount, separator = ", ", prefix = "(", postfix = ")") {
+    appendIterableWith(0..<irAnnotation.valueArgumentsCount, separator = ", ", prefix = "(", postfix = ")") {
         append(valueParameterNames[it])
         append(" = ")
         renderAsAnnotationArgument(irAnnotation.getValueArgument(it), renderer, verboseErrorTypes)

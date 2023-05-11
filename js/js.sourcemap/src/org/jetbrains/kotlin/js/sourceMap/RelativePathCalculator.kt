@@ -19,10 +19,10 @@ class RelativePathCalculator(baseDir: File) {
         val commonLength = baseDirPath.zip(parents).count { (first, second) -> first == second }
 
         val sb = StringBuilder()
-        for (i in commonLength until baseDirPath.size) {
+        for (i in commonLength..<baseDirPath.size) {
             sb.append("../")
         }
-        for (i in commonLength until parents.size) {
+        for (i in commonLength..<parents.size) {
             sb.append(parents[i].name).append('/')
         }
         sb.setLength(sb.lastIndex)

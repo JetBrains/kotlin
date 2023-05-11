@@ -182,7 +182,7 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
                 if (realOverrideTarget?.parentClassOrNull?.isInterface == true) {
                     irCall(realOverrideTarget).apply {
                         extensionReceiver = wrappedFunctionCall.extensionReceiver?.deepCopyWithSymbols()
-                        (0 until wrappedFunctionCall.valueArgumentsCount).forEach {
+                        (0..<wrappedFunctionCall.valueArgumentsCount).forEach {
                             putValueArgument(it, wrappedFunctionCall.getValueArgument(it)?.deepCopyWithSymbols())
                         }
                     }
@@ -198,7 +198,7 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
                         )
                         putValueArgument(2, irVararg(ctx.dynamicType, buildList {
                             addIfNotNull(wrappedFunctionCall.extensionReceiver?.deepCopyWithSymbols())
-                            (0 until wrappedFunctionCall.valueArgumentsCount).forEach {
+                            (0..<wrappedFunctionCall.valueArgumentsCount).forEach {
                                 addIfNotNull(wrappedFunctionCall.getValueArgument(it)?.deepCopyWithSymbols())
                             }
                         }))

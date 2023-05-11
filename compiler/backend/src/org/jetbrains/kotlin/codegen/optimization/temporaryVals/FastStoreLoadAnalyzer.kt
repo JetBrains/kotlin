@@ -211,7 +211,7 @@ class FastStoreLoadAnalyzer<V : StoreLoadValue>(
         for (tcb in m.tryCatchBlocks) {
             val begin = tcb.start.indexOf()
             val end = tcb.end.indexOf()
-            for (j in begin until end) {
+            for (j in begin..<end) {
                 if (!insnsArray[j].isMeaningful) continue
                 var insnHandlers: MutableList<TryCatchBlockNode>? = handlers[j]
                 if (insnHandlers == null) {

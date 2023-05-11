@@ -241,7 +241,7 @@ fun TypeSystemInferenceExtensionContext.extractProjectionsForAllCapturedTypes(ba
         } else baseType
         val argumentsCount = projectionType.argumentsCount().takeIf { it != 0 } ?: return@buildSet
 
-        for (i in 0 until argumentsCount) {
+        for (i in 0..<argumentsCount) {
             val typeArgument = projectionType.getArgument(i).takeIf { !it.isStarProjection() } ?: continue
             addAll(extractProjectionsForAllCapturedTypes(typeArgument.getType()))
         }

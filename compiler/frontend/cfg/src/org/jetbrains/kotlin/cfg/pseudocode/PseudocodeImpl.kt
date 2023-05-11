@@ -393,7 +393,7 @@ class PseudocodeImpl(override val correspondingElement: KtElement, override val 
         for (label in originalToCopy.values) {
             labels.add(label)
         }
-        for (index in startIndex until finishIndex) {
+        for (index in startIndex..<finishIndex) {
             val originalInstruction = originalPseudocode.mutableInstructionList[index]
             repeatLabelsBindingForInstruction(originalInstruction, originalToCopy, originalLabelsForInstruction)
             val copy = copyInstruction(originalInstruction, originalToCopy)

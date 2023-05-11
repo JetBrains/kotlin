@@ -100,7 +100,7 @@ class ModulesApiHistoryAndroidTest {
 
         val classesRoot = appRoot.resolve("build/intermediates/classes/com/example/")
         classesRoot.mkdirs()
-        val changed = 1.until(10).map { classesRoot.resolve("MyClass_$it.class") }.toSet()
+        val changed = (1..<10).map { classesRoot.resolve("MyClass_$it.class") }.toSet()
 
         val changedFiles = androidHistory.historyFilesForChangedFiles(changed)
         changedFiles as Either.Success<Set<File>>

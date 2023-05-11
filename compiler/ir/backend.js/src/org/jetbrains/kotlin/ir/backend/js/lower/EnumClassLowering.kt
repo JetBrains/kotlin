@@ -210,7 +210,7 @@ class EnumClassConstructorBodyTransformer(val context: JsCommonBackendContext) :
                 for (i in 0..1) {
                     putValueArgument(i, builder.irGet(constructor.valueParameters[i]))
                 }
-                for (i in 0 until expression.typeArgumentsCount) {
+                for (i in 0..<expression.typeArgumentsCount) {
                     putTypeArgument(i, expression.getTypeArgument(i))
                 }
             }
@@ -223,10 +223,10 @@ class EnumClassConstructorBodyTransformer(val context: JsCommonBackendContext) :
                 for (i in 0..1) {
                     putValueArgument(valueArgIdx++, builder.irGet(constructor.valueParameters[i]))
                 }
-                for (i in 0 until expression.valueArgumentsCount) {
+                for (i in 0..<expression.valueArgumentsCount) {
                     putValueArgument(valueArgIdx++, expression.getValueArgument(i))
                 }
-                for (i in 0 until expression.typeArgumentsCount) {
+                for (i in 0..<expression.typeArgumentsCount) {
                     putTypeArgument(i, expression.getTypeArgument(i))
                 }
             }
@@ -274,7 +274,7 @@ class EnumClassConstructorBodyTransformer(val context: JsCommonBackendContext) :
                     putValueArgument(valueArgIdx++, entry.getNameExpression())
                     putValueArgument(valueArgIdx++, entry.getOrdinalExpression())
                 }
-                for (i in 0 until expression.valueArgumentsCount) {
+                for (i in 0..<expression.valueArgumentsCount) {
                     putValueArgument(valueArgIdx++, expression.getValueArgument(i))
                 }
             }

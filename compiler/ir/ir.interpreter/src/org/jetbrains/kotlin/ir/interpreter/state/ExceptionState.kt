@@ -127,7 +127,7 @@ internal class ExceptionState private constructor(
             if (e.stackTrace.any { it.className == "java.lang.invoke.MethodHandle" }) {
                 for ((index, stackTraceElement) in e.stackTrace.withIndex()) {
                     if (stackTraceElement.methodName == "invokeWithArguments") {
-                        additionalStack.addAll(e.stackTrace.slice(0 until index).reversed().map { "at $it" })
+                        additionalStack.addAll(e.stackTrace.slice(0..<index).reversed().map { "at $it" })
                         break
                     }
                 }
@@ -138,7 +138,7 @@ internal class ExceptionState private constructor(
                     for ((causeStackIndex, causeStackTraceElement) in cause.stackTrace.withIndex()) {
                         val currentStackTraceValue = causeStackTraceElement.let { it.className + "." + it.methodName }
                         if (currentStackTraceValue == lastNeededValue) {
-                            cause.stackTrace = cause.stackTrace.sliceArray(0 until causeStackIndex).reversedArray()
+                            cause.stackTrace = cause.stackTrace.sliceArray(0..<causeStackIndex).reversedArray()
                             break
                         }
                     }

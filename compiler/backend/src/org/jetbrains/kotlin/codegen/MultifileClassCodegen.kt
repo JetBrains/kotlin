@@ -100,7 +100,7 @@ class MultifileClassCodegenImpl(
 
     private val superClassForInheritedPart = run {
         val result = hashMapOf<String, String>()
-        for (i in 1 until partInternalNamesSorted.size) {
+        for (i in 1..<partInternalNamesSorted.size) {
             result[partInternalNamesSorted[i]] = partInternalNamesSorted[i - 1]
         }
         result

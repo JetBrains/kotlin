@@ -183,7 +183,7 @@ private fun IrField.safeName(): String {
 
 private fun List<JsName>.makeRef(): JsNameRef {
     var result = this[0].makeRef()
-    for (i in 1 until this.size) {
+    for (i in 1..<this.size) {
         result = JsNameRef(this[i], result)
     }
     return result

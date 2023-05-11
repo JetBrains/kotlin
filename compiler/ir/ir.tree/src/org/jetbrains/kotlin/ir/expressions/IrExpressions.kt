@@ -81,7 +81,7 @@ fun IrMemberAccessExpression<*>.copyTypeArgumentsFrom(other: IrMemberAccessExpre
     assert(typeArgumentsCount == other.typeArgumentsCount + shift) {
         "Mismatching type arguments: $typeArgumentsCount vs ${other.typeArgumentsCount} + $shift"
     }
-    for (i in 0 until other.typeArgumentsCount) {
+    for (i in 0..<other.typeArgumentsCount) {
         putTypeArgument(i + shift, other.getTypeArgument(i))
     }
 }

@@ -197,7 +197,7 @@ class MarkNecessaryInlinedClassesAsRegeneratedLowering(val context: JvmBackendCo
             }
 
             override fun visitCall(expression: IrCall) {
-                (0 until expression.typeArgumentsCount).forEach {
+                (0..<expression.typeArgumentsCount).forEach {
                     expression.getTypeArgument(it)?.recursiveWalkDown(this)
                 }
                 super.visitCall(expression)

@@ -28,7 +28,7 @@ internal object EmptyIntersectionTypeChecker {
 
             val firstSubstitutedType by lazy { firstType.eraseContainingTypeParameters() }
 
-            for (j in i + 1 until types.size) {
+            for (j in i + 1..<types.size) {
                 val secondType = types[j]
 
                 if (!mayCauseEmptyIntersection(secondType)) continue
@@ -71,7 +71,7 @@ internal object EmptyIntersectionTypeChecker {
             if (!mayCauseEmptyIntersection(firstType))
                 continue
 
-            for (j in i + 1 until expandedTypes.size) {
+            for (j in i + 1..<expandedTypes.size) {
                 val secondType = expandedTypes[j].withNullability(false)
                 val secondTypeConstructor = secondType.typeConstructor()
 

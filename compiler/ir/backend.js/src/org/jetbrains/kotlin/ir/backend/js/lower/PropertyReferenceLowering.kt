@@ -212,7 +212,7 @@ class PropertyReferenceLowering(private val context: JsIrBackendContext) : BodyL
                 expression.typeArgumentsCount,
                 factoryFunction.valueParameters.size
             ).apply {
-                for (ti in 0 until typeArgumentsCount) {
+                for (ti in 0..<typeArgumentsCount) {
                     putTypeArgument(ti, expression.getTypeArgument(ti))
                 }
 

@@ -275,7 +275,7 @@ val List<NameableMfvcNode>.subnodeIndices: Map<NameableMfvcNode, IntRange>
             when (node) {
                 is IntermediateMfvcNode -> {
                     val nodeSize = node.leavesCount
-                    put(node, offset until offset + nodeSize)
+                    put(node, offset..<offset + nodeSize)
                     putAll(node.subnodeIndices.mapValues { (_, v) -> (v.first + offset)..(v.last + offset) })
                     offset += nodeSize
                 }

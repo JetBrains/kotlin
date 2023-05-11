@@ -128,7 +128,7 @@ class TypeVariableDirectionCalculator(
 
         if (constructor.parametersCount() != argumentsCount()) return // incorrect type
 
-        for (index in 0 until constructor.parametersCount()) {
+        for (index in 0..<constructor.parametersCount()) {
             val parameter = constructor.getParameter(index)
             val argument = getArgument(index)
             if (argument.isStarProjection()) continue

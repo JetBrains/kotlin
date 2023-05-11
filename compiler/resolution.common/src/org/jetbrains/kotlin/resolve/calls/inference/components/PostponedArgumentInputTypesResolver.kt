@@ -297,7 +297,7 @@ class PostponedArgumentInputTypesResolver(
         if (typeConstructor == targetVariable)
             return emptyList()
 
-        for (i in 0 until type.argumentsCount()) {
+        for (i in 0..<type.argumentsCount()) {
             val argumentType = type.getArgument(i).getType()
 
             if (argumentType.typeConstructor() == targetVariable) {

@@ -744,7 +744,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
 
         private fun hasVarargMappedToElement(): Boolean {
             if (adapteeCall == null) return false
-            for (i in 0 until adapteeCall.valueArgumentsCount) {
+            for (i in 0..<adapteeCall.valueArgumentsCount) {
                 val arg = adapteeCall.getValueArgument(i) ?: continue
                 if (arg !is IrVararg) continue
                 for (varargElement in arg.elements) {

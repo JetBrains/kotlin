@@ -348,7 +348,7 @@ class CallableReferenceLowering(private val context: CommonBackendContext) : Bod
             var i = 0
             val valueParameters = valueParameters
 
-            for (ti in 0 until funRef.typeArgumentsCount) {
+            for (ti in 0..<funRef.typeArgumentsCount) {
                 irCall.putTypeArgument(ti, funRef.getTypeArgument(ti))
             }
 

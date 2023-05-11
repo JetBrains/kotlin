@@ -244,7 +244,7 @@ open class SerializerJsTranslator(
         fun bitMaskOff(i: Int) = bitMaskSlotAt(i)
 
         // var bitMask0 = 0, bitMask1 = 0...
-        val bitMasks = (0 until blocksCnt).map { JsNameRef(jsFun.scope.declareFreshName("bitMask$it")) }
+        val bitMasks = (0..<blocksCnt).map { JsNameRef(jsFun.scope.declareFreshName("bitMask$it")) }
         +JsVars(bitMasks.map { JsVars.JsVar(it.name, JsIntLiteral(0)) }, false)
 
         // var localProp0, localProp1, ...

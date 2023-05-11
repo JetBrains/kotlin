@@ -287,7 +287,7 @@ class InnerClassConstructorCallsLowering(val context: BackendContext, val innerC
                     //       but changing it breaks JS IR in CallableReferenceLowering.
                     it.dispatchReceiver = expression.dispatchReceiver
                     it.extensionReceiver = expression.extensionReceiver
-                    for (v in 0 until expression.valueArgumentsCount) {
+                    for (v in 0..<expression.valueArgumentsCount) {
                         it.putValueArgument(v, expression.getValueArgument(v))
                     }
                 }

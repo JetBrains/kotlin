@@ -160,7 +160,7 @@ object JsExportDeclarationChecker : DeclarationChecker {
         currentlyProcessed.add(this)
 
         if (isFunctionType) {
-            for (i in 0 until arguments.lastIndex) {
+            for (i in 0..<arguments.lastIndex) {
                 if (!arguments[i].type.isExportable(bindingContext, currentlyProcessed)) {
                     currentlyProcessed.remove(this)
                     return false

@@ -33,7 +33,7 @@ object CanBeValChecker : AbstractFirPropertyInitializationChecker() {
                     it.tokenType == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY
                 }
                 // Weird way of writing `and { ... }` that will always call `next()` N times.
-                (0 until count).fold(true) { acc, _ -> iterator.hasNext() && collector.canBeVal(iterator.next()) && acc }
+                (0..<count).fold(true) { acc, _ -> iterator.hasNext() && collector.canBeVal(iterator.next()) && acc }
             } else {
                 collector.canBeVal(symbol)
             }

@@ -258,7 +258,7 @@ class FunctionDescriptorResolver(
                     labelNameToReceiverMap.put(it, extensionReceiver)
                 }
             }
-            contextReceiverDescriptors.zip(0 until contextReceivers.size).reversed()
+            contextReceiverDescriptors.zip(0..<contextReceivers.size).reversed()
                 .forEach { (contextReceiverDescriptor, i) ->
                     contextReceivers[i].name()?.let {
                         labelNameToReceiverMap.put(it, contextReceiverDescriptor)

@@ -397,7 +397,7 @@ fun translateCallArguments(
     val validWithNullArgs = expression.validWithNullArgs()
     val jsUndefined by lazy(LazyThreadSafetyMode.NONE) { jsUndefined(context, context.staticContext.backendContext) }
 
-    val arguments = (0 until size)
+    val arguments = (0..<size)
         .mapIndexedTo(ArrayList(size)) { i, _ ->
             expression.getValueArgument(i).checkOnNullability(validWithNullArgs || function.valueParameters[i].isBoxParameter)
         }

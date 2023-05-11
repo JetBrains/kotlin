@@ -193,7 +193,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     private fun KotlinTypeMarker.containsTypeConstructor(constructor: TypeConstructorMarker): Boolean {
         if (this.typeConstructor() == constructor) return true
 
-        for (i in 0 until this.argumentsCount()) {
+        for (i in 0..<this.argumentsCount()) {
             val typeArgument = this.getArgument(i).takeIf { !it.isStarProjection() } ?: continue
             if (typeArgument.getType().containsTypeConstructor(constructor)) return true
         }
@@ -202,7 +202,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     }
 
     override fun TypeParameterMarker.hasRecursiveBounds(selfConstructor: TypeConstructorMarker?): Boolean {
-        for (i in 0 until this.upperBoundCount()) {
+        for (i in 0..<this.upperBoundCount()) {
             val upperBound = this.getUpperBound(i)
             if (upperBound.containsTypeConstructor(this.getTypeConstructor()) && (selfConstructor == null || upperBound.typeConstructor() == selfConstructor)) {
                 return true

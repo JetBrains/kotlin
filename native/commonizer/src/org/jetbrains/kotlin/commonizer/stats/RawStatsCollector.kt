@@ -103,7 +103,7 @@ class RawStatsCollector(private val targets: List<CommonizerTarget>) : StatsColl
                 var isLiftedUp = !commonIsMissing
                 val platform = ArrayList<PlatformDeclarationStatus>(platformDeclarationsCount)
 
-                for (index in 0 until platformDeclarationsCount) {
+                for (index in 0..<platformDeclarationsCount) {
                     platform += when {
                         !statsValue[index] -> PlatformDeclarationStatus.MISSING
                         commonIsMissing -> PlatformDeclarationStatus.ORIGINAL

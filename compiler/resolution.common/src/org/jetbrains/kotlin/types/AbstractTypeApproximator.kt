@@ -441,7 +441,7 @@ abstract class AbstractTypeApproximator(
 
         val newArguments = arrayOfNulls<TypeArgumentMarker?>(type.argumentsCount())
 
-        loop@ for (index in 0 until type.argumentsCount()) {
+        loop@ for (index in 0..<type.argumentsCount()) {
             val parameter = typeConstructor.getParameter(index)
             val argument = type.getArgument(index)
 
@@ -520,7 +520,7 @@ abstract class AbstractTypeApproximator(
                         argumentType.typeConstructor().isIntersection()
                     ) {
                         var shouldReplaceWithStar = false
-                        for (upperBoundIndex in 0 until parameter.upperBoundCount()) {
+                        for (upperBoundIndex in 0..<parameter.upperBoundCount()) {
                             if (!AbstractTypeChecker.isSubtypeOf(ctx, approximatedArgument, parameter.getUpperBound(upperBoundIndex))) {
                                 shouldReplaceWithStar = true
                                 break

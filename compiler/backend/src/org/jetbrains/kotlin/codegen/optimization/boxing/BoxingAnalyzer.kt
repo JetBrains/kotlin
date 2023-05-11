@@ -27,7 +27,7 @@ class BoxingAnalyzer(
             }
 
             var changed = false
-            for (i in 0 until locals) {
+            for (i in 0..<locals) {
                 val local = getLocal(i)
                 val merged = boxingInterpreter.mergeLocalVariableValues(local, frame.getLocal(i))
                 if (local != merged) {
@@ -35,7 +35,7 @@ class BoxingAnalyzer(
                     changed = true
                 }
             }
-            for (i in 0 until stackSize) {
+            for (i in 0..<stackSize) {
                 val onStack = getStack(i)
                 val merged = boxingInterpreter.mergeStackValues(onStack, frame.getStack(i))
                 if (onStack != merged) {

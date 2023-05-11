@@ -532,21 +532,21 @@ class JvmSymbols(
                 // To avoid hassle with generic type parameters, we pretend that PropertyReferenceN.get takes and returns `Any?`
                 // (similarly with set). This should be enough for the JVM IR backend to generate correct calls and bridges.
                 klass.addFunction("get", irBuiltIns.anyNType, Modality.ABSTRACT).apply {
-                    for (i in 0 until parameterCount) {
+                    for (i in 0..<parameterCount) {
                         addValueParameter("receiver$i", irBuiltIns.anyNType)
                     }
                 }
 
                 // invoke redirects to get
                 klass.addFunction("invoke", irBuiltIns.anyNType, Modality.FINAL).apply {
-                    for (i in 0 until parameterCount) {
+                    for (i in 0..<parameterCount) {
                         addValueParameter("receiver$i", irBuiltIns.anyNType)
                     }
                 }
 
                 if (mutable) {
                     klass.addFunction("set", irBuiltIns.unitType, Modality.ABSTRACT).apply {
-                        for (i in 0 until parameterCount) {
+                        for (i in 0..<parameterCount) {
                             addValueParameter("receiver$i", irBuiltIns.anyNType)
                         }
                         addValueParameter("value", irBuiltIns.anyNType)

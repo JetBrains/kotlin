@@ -22,7 +22,7 @@ private fun compareStringsAsVersions(version1: String, version2: String): Int {
     val splitVersion1 = version1.split('.').map { it.toInt() }
     val splitVersion2 = version2.split('.').map { it.toInt() }
     val minimalLength = min(splitVersion1.size, splitVersion2.size)
-    for (index in 0 until minimalLength) {
+    for (index in 0..<minimalLength) {
         if (splitVersion1[index] < splitVersion2[index]) return -1
         if (splitVersion1[index] > splitVersion2[index]) return 1
     }
