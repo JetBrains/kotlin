@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 The Android Open Source Project
+ * Copyright 2023 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package androidx.compose.compiler.plugins.kotlin
+package androidx.compose.compiler.plugins.kotlin.k1
 
-import androidx.compose.compiler.plugins.kotlin.analysis.ComposeWritableSlices
+import androidx.compose.compiler.plugins.kotlin.ComposeFqNames
 import androidx.compose.compiler.plugins.kotlin.inference.ApplierInferencer
 import androidx.compose.compiler.plugins.kotlin.inference.ErrorReporter
 import androidx.compose.compiler.plugins.kotlin.inference.Item
@@ -29,6 +29,7 @@ import androidx.compose.compiler.plugins.kotlin.inference.Scheme
 import androidx.compose.compiler.plugins.kotlin.inference.Token
 import androidx.compose.compiler.plugins.kotlin.inference.TypeAdapter
 import androidx.compose.compiler.plugins.kotlin.inference.deserializeScheme
+import androidx.compose.compiler.plugins.kotlin.inference.mergeWith
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.backend.jvm.ir.psiElement
 import org.jetbrains.kotlin.builtins.isFunctionType
@@ -263,13 +264,13 @@ class ComposableTargetChecker : CallChecker, StorageComponentContainerContributo
         lazySchemeStorage = object : LazySchemeStorage<InferenceNode> {
             override fun getLazyScheme(node: InferenceNode): LazyScheme? =
                 callContext.trace.bindingContext.get(
-                    ComposeWritableSlices.COMPOSE_LAZY_SCHEME,
+                    FrontendWritableSlices.COMPOSE_LAZY_SCHEME,
                     node.type
                 )
 
             override fun storeLazyScheme(node: InferenceNode, value: LazyScheme) {
                 callContext.trace.record(
-                    ComposeWritableSlices.COMPOSE_LAZY_SCHEME,
+                    FrontendWritableSlices.COMPOSE_LAZY_SCHEME,
                     node.type,
                     value
                 )
@@ -470,24 +471,3 @@ private fun ValueParameterDescriptor.samComposableOrNull() =
 
 private fun ValueParameterDescriptor.isSamComposable() =
     samComposableOrNull()?.hasComposableAnnotation() == true
-
-internal fun Scheme.mergeWith(schemes: List<Scheme>): Scheme {
-    if (schemes.isEmpty()) return this
-
-    val lazyScheme = LazyScheme(this)
-    val bindings = lazyScheme.bindings
-
-    fun unifySchemes(a: LazyScheme, b: LazyScheme) {
-        bindings.unify(a.target, b.target)
-        for ((ap, bp) in a.parameters.zip(b.parameters)) {
-            unifySchemes(ap, bp)
-        }
-    }
-
-    schemes.forEach {
-        val overrideScheme = LazyScheme(it, bindings = lazyScheme.bindings)
-        unifySchemes(lazyScheme, overrideScheme)
-    }
-
-    return lazyScheme.toScheme()
-}

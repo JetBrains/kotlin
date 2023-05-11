@@ -16,7 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin.lower
 
-import androidx.compose.compiler.plugins.kotlin.hasComposableAnnotation
+import androidx.compose.compiler.plugins.kotlin.k1.hasComposableAnnotation
 import org.jetbrains.kotlin.descriptors.ClassConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
@@ -43,6 +43,9 @@ import org.jetbrains.kotlin.types.KotlinType
  *
  * This conversion is only required with decoys, but can be applied to the JVM as well for
  * consistency.
+ *
+ * This is K1 specific. In K2, descriptors are only there for backwards compatibility and
+ * always reflect the IR.
  */
 class ComposableSymbolRemapper : DeepCopySymbolRemapper(
     object : DescriptorsRemapper {
