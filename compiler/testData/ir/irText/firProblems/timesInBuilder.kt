@@ -1,5 +1,6 @@
-// TARGET_BACKEND: JVM
 // WITH_STDLIB
+// IGNORE_BACKEND: JS_IR
+
 private fun test(x: Long) =
     countIssues {
         +(spentTime lessEq 2 * 60)

@@ -2325,6 +2325,12 @@ public class FirPsiJsIrTextTestGenerated extends AbstractFirPsiJsIrTextTest {
         }
 
         @Test
+        @TestMetadata("timesInBuilder.kt")
+        public void testTimesInBuilder() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/timesInBuilder.kt");
+        }
+
+        @Test
         @TestMetadata("TypeParameterBounds.kt")
         public void testTypeParameterBounds() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/TypeParameterBounds.kt");

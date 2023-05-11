@@ -2025,6 +2025,11 @@ public class KlibIrTextTestCaseGenerated extends AbstractKlibIrTextTestCase {
             runTest("compiler/testData/ir/irText/firProblems/thisInEnumConstructor.kt");
         }
 
+        @TestMetadata("timesInBuilder.kt")
+        public void testTimesInBuilder() throws Exception {
+            runTest("compiler/testData/ir/irText/firProblems/timesInBuilder.kt");
+        }
+
         @TestMetadata("TypeParameterBounds.kt")
         public void testTypeParameterBounds() throws Exception {
             runTest("compiler/testData/ir/irText/firProblems/TypeParameterBounds.kt");
