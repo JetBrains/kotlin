@@ -15,5 +15,12 @@ public interface InitializableDescriptor {
      */
     void addInitFinalizationAction(@NotNull Runnable action);
 
+    /**
+     * @param dependency is a descriptor that depends on this descriptor.
+     */
+    void addDependency(@NotNull InitializableDescriptor dependency);
+
     boolean isInitFinalized();
+
+    void finalizeInit();
 }

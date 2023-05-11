@@ -338,8 +338,8 @@ class FunctionDescriptorResolver(
                     valueParameterDescriptor.isCrossinline, valueParameterDescriptor.isNoinline,
                     valueParameterDescriptor.varargElementType, SourceElement.NO_SOURCE
                 )
+                functionDescriptor.addDependency(it)
                 functionDescriptor.addInitFinalizationAction {
-                    it.finalizeInit()
                     trace.record(BindingContext.AUTO_CREATED_IT, it)
                 }
                 return listOf(it)

@@ -75,8 +75,8 @@ public class PropertySetterDescriptorImpl extends PropertyAccessorDescriptorImpl
                 /* isNoinline = */ false,
                 null, SourceElement.NO_SOURCE
         );
-        if (setterDescriptor instanceof DeclarationDescriptorNonRootImpl) {
-            ((DeclarationDescriptorNonRootImpl) setterDescriptor).addInitFinalizationAction(descriptor::finalizeInit);
+        if (setterDescriptor instanceof InitializableDescriptor) {
+            ((InitializableDescriptor) setterDescriptor).addDependency(descriptor);
         } else {
             descriptor.finalizeInit();
         }

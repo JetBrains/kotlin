@@ -7,7 +7,10 @@ package org.jetbrains.kotlin.serialization.deserialization
 
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.*
+import org.jetbrains.kotlin.descriptors.impl.FieldDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.PropertyGetterDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.PropertySetterDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
 import org.jetbrains.kotlin.protobuf.MessageLite
@@ -341,8 +344,8 @@ class MemberDeserializer(private val c: DeserializationContext) {
                 proto.varargElementType(c.typeTable)?.let { c.typeDeserializer.type(it) },
                 SourceElement.NO_SOURCE
             )
-            if (callableDescriptor is DeclarationDescriptorNonRootImpl) {
-                callableDescriptor.addInitFinalizationAction(valueParameterDescriptor::finalizeInit)
+            if (callableDescriptor is InitializableDescriptor) {
+                callableDescriptor.addDependency(valueParameterDescriptor)
             } else {
                 valueParameterDescriptor.finalizeInit()
             }

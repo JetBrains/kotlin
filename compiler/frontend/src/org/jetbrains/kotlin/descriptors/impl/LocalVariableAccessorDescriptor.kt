@@ -42,7 +42,7 @@ sealed class LocalVariableAccessorDescriptor(
                 emptyList()
             } else {
                 val valueParameterDescriptorImpl = createValueParameter(Name.identifier("value"), correspondingVariable.type)
-                this.addInitFinalizationAction(valueParameterDescriptorImpl::finalizeInit)
+                addDependency(valueParameterDescriptorImpl)
                 listOf(valueParameterDescriptorImpl)
             }
         val returnType =

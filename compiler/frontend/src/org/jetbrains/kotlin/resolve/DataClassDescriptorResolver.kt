@@ -20,10 +20,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
-import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object DataClassDescriptorResolver {
     val COPY_METHOD_NAME = Name.identifier("copy")
@@ -88,6 +85,7 @@ object DataClassDescriptorResolver {
                 functionDescriptor, null, parameter.index, parameter.annotations, parameter.name, parameter.type, declaresDefaultValue,
                 parameter.isCrossinline, parameter.isNoinline, parameter.varargElementType, parameter.source
             )
+            functionDescriptor.addDependency(parameterDescriptor)
             parameterDescriptors.add(parameterDescriptor)
             if (declaresDefaultValue) {
                 trace.record(BindingContext.VALUE_PARAMETER_AS_PROPERTY, parameterDescriptor, propertyDescriptor)

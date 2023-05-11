@@ -20,7 +20,10 @@ import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames.CONTINUATION_INTERFACE_FQ_NAME
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.*
+import org.jetbrains.kotlin.descriptors.impl.ClassConstructorDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.EnumEntrySyntheticClassDescriptor
+import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
+import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.incremental.record
@@ -792,8 +795,8 @@ class LazyJavaClassMemberScope(
             varargElementType?.let { TypeUtils.makeNotNullable(it) },
             c.components.sourceElementFactory.source(method)
         )
-        if (constructor is DeclarationDescriptorNonRootImpl) {
-            constructor.addInitFinalizationAction(valueParameterDescriptor::finalizeInit)
+        if (constructor is InitializableDescriptor) {
+            constructor.addDependency(valueParameterDescriptor)
         } else {
             valueParameterDescriptor.finalizeInit()
         }

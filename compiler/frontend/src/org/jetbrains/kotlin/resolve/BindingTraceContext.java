@@ -22,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.TestOnly;
 import org.jetbrains.kotlin.descriptors.InitializableDescriptor;
+import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorNonRootImpl;
 import org.jetbrains.kotlin.diagnostics.Diagnostic;
 import org.jetbrains.kotlin.psi.KtExpression;
 import org.jetbrains.kotlin.resolve.diagnostics.BindingContextSuppressCache;
@@ -169,7 +170,11 @@ public class BindingTraceContext implements BindingTrace {
         if (isValidationEnabled && value instanceof InitializableDescriptor) {
             boolean initialized = ((InitializableDescriptor) value).isInitFinalized();
             if (!initialized) {
-                throw new IllegalStateException(value + " is not fully initialized");
+                if (value instanceof DeclarationDescriptorNonRootImpl) {
+                    throw new IllegalStateException(value + " is not fully initialized", ((DeclarationDescriptorNonRootImpl) value).created);
+                } else {
+                    throw new IllegalStateException(value + " is not fully initialized");
+                }
             }
         }
     }

@@ -34,10 +34,11 @@ public abstract class DeclarationDescriptorNonRootImpl
     @NotNull
     private final SourceElement source;
 
+    public final Exception created = new Exception();
+    private final Object initLock = new Object();
+    private volatile boolean initFinalized;
     private List<Runnable> initFinalizationActions;
-
-    private final Exception created = new Exception();
-    private boolean initFinalized;
+    private List<InitializableDescriptor> dependencies;
 
     protected DeclarationDescriptorNonRootImpl(
             @NotNull DeclarationDescriptor containingDeclaration,
@@ -81,24 +82,51 @@ public abstract class DeclarationDescriptorNonRootImpl
         return source;
     }
 
+    @Override
     public final void finalizeInit() {
         if (containingDeclaration instanceof InitializableDescriptor && !((InitializableDescriptor)containingDeclaration).isInitFinalized()) {
-            throw new IllegalStateException("Initialization of " + containingDeclaration + " descriptor is finalized.");
+            throw new IllegalStateException(uninitializedMessage((InitializableDescriptor) containingDeclaration));
         }
-        if (initFinalized && allowReInitialization()) {
-            if (initFinalizationActions != null && !initFinalizationActions.isEmpty()) {
-                throw new IllegalStateException();
+        List<Runnable> finalizationActions;
+        List<InitializableDescriptor> dependencyList;
+        synchronized (initLock) {
+            finalizationActions = initFinalizationActions != null ? new ArrayList<>(initFinalizationActions) : null;
+            if (initFinalized && allowReInitialization()) {
+                if (finalizationActions != null && !finalizationActions.isEmpty()) {
+                    throw new IllegalStateException();
+                }
+                return;
             }
-            return;
-        }
 
-        checkInitNotFinalized();
-        initFinalized = true;
-        if (initFinalizationActions != null) {
-            for (Runnable action : initFinalizationActions) {
+            checkInitNotFinalized();
+            dependencyList = dependencies != null ? new ArrayList<>(dependencies) : null;
+
+            initFinalized = true;
+        }
+        if (dependencyList != null) {
+            for (InitializableDescriptor descriptor : dependencyList) {
+                descriptor.finalizeInit();
+            }
+        }
+        if (finalizationActions != null) {
+            for (Runnable action : finalizationActions) {
                 action.run();
             }
-            initFinalizationActions.clear();
+            finalizationActions.clear();
+        }
+    }
+
+    @Override
+    public void addDependency(@NotNull InitializableDescriptor dependency) {
+        if (initFinalized) {
+            dependency.finalizeInit();
+        } else {
+            synchronized (initLock) {
+                if (dependencies == null) {
+                    dependencies = new ArrayList<>();
+                }
+                dependencies.add(dependency);
+            }
         }
     }
 
@@ -107,10 +135,12 @@ public abstract class DeclarationDescriptorNonRootImpl
         if (initFinalized) {
             action.run();
         } else {
-            if (initFinalizationActions == null) {
-                initFinalizationActions = new ArrayList<>();
+            synchronized (initLock) {
+                if (initFinalizationActions == null) {
+                    initFinalizationActions = new ArrayList<>();
+                }
+                initFinalizationActions.add(action);
             }
-            initFinalizationActions.add(action);
         }
     }
 
@@ -120,22 +150,22 @@ public abstract class DeclarationDescriptorNonRootImpl
 
     protected void checkInitNotFinalized() {
         if (initFinalized) {
-            throw new IllegalStateException(initializedMessage(), created);
+            throw new IllegalStateException(initializedMessage(this), created);
         }
     }
 
     protected void checkInitFinalized() {
         if (!initFinalized) {
-            throw new IllegalStateException(uninitializedMessage());
+            throw new IllegalStateException(uninitializedMessage(this));
         }
     }
 
-    protected String initializedMessage() {
-        return "Initialization of " + this + " descriptor is finalized.";
+    private static String initializedMessage(InitializableDescriptor descriptor) {
+        return "Initialization of " + descriptor + " descriptor is finalized.";
     }
 
-    protected String uninitializedMessage() {
-        return "Initialization of " + this + " descriptor is not finalized.";
+    private static String uninitializedMessage(InitializableDescriptor descriptor) {
+        return "Initialization of " + descriptor + " descriptor is not finalized.";
     }
 
     @Override

@@ -490,12 +490,11 @@ public class DescriptorResolver {
                 supertypeLoopsResolver,
                 storageManager
         );
-        if (containingDescriptor instanceof DeclarationDescriptorNonRootImpl) {
-            ((DeclarationDescriptorNonRootImpl) containingDescriptor).addInitFinalizationAction(
-                    () -> {
-                        typeParameterDescriptor.finalizeInit();
-                        trace.record(BindingContext.TYPE_PARAMETER, typeParameter, typeParameterDescriptor);
-                    }
+        if (containingDescriptor instanceof InitializableDescriptor) {
+            InitializableDescriptor initializableDescriptor = (InitializableDescriptor) containingDescriptor;
+            initializableDescriptor.addDependency(typeParameterDescriptor);
+            initializableDescriptor.addInitFinalizationAction(
+                    () -> trace.record(BindingContext.TYPE_PARAMETER, typeParameter, typeParameterDescriptor)
             );
         } else {
             typeParameterDescriptor.finalizeInit();
@@ -945,6 +944,11 @@ public class DescriptorResolver {
                 modifierList != null && modifierList.hasModifier(KtTokens.EXTERNAL_KEYWORD),
                 propertyInfo.getHasDelegate()
         );
+        //if (container instanceof InitializableDescriptor) {
+        //    ((InitializableDescriptor) container).addDependency(propertyDescriptor);
+        //} else {
+        //    propertyDescriptor.finalizeInit();
+        //}
 
         List<TypeParameterDescriptorImpl> typeParameterDescriptors;
         LexicalScope scopeForDeclarationResolutionWithTypeParameters;

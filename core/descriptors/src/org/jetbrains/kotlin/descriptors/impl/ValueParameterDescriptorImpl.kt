@@ -65,8 +65,8 @@ open class ValueParameterDescriptorImpl(
                     declaresDefaultValue, isCrossinline, isNoinline, varargElementType, source,
                     destructuringVariables
                 )
-            if (containingDeclaration is DeclarationDescriptorNonRootImpl) {
-                containingDeclaration.addInitFinalizationAction(valueParameterDescriptor::finalizeInit)
+            if (containingDeclaration is InitializableDescriptor) {
+                containingDeclaration.addDependency(valueParameterDescriptor)
             } else {
                 valueParameterDescriptor.finalizeInit()
             }

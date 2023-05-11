@@ -439,7 +439,8 @@ class TypeResolver(
                 ) : VariableDescriptorImpl(containingDeclaration, annotations, name, type, source) {
                     init {
                         if (containingDeclaration is InitializableDescriptor) {
-                            containingDeclaration.addInitFinalizationAction(::finalizeInit)
+                            // TODO [VD]?
+                            containingDeclaration.addDependency(this)
                         } else {
                             finalizeInit()
                         }

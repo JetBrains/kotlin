@@ -177,8 +177,8 @@ class DynamicCallableDescriptors(private val storageManager: StorageManager, bui
                 varargElementType,
                 SourceElement.NO_SOURCE
             )
-            if (owner is DeclarationDescriptorNonRootImpl) {
-                owner.addInitFinalizationAction(valueParameterDescriptorImpl::finalizeInit)
+            if (owner is InitializableDescriptor) {
+                owner.addDependency(valueParameterDescriptorImpl)
             } else {
                 valueParameterDescriptorImpl.finalizeInit()
             }

@@ -19,7 +19,6 @@ package org.jetbrains.kotlin.load.java.lazy.descriptors
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
-import org.jetbrains.kotlin.descriptors.impl.DeclarationDescriptorNonRootImpl
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
 import org.jetbrains.kotlin.descriptors.impl.ValueParameterDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupLocation
@@ -254,8 +253,8 @@ abstract class LazyJavaScope(
                 varargElementType,
                 c.components.sourceElementFactory.source(javaParameter)
             )
-            if (function is DeclarationDescriptorNonRootImpl) {
-                function.addInitFinalizationAction(valueParameterDescriptorImpl::finalizeInit)
+            if (function is InitializableDescriptor) {
+                function.addDependency(valueParameterDescriptorImpl)
             } else {
                 valueParameterDescriptorImpl.finalizeInit()
             }
