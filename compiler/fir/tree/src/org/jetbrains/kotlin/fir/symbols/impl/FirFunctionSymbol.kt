@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.name.*
 
 sealed class FirFunctionSymbol<D : FirFunction>(
-    override val callableId: CallableId
+    override val callableId: CallableId,
 ) : FirCallableSymbol<D>() {
     val valueParameterSymbols: List<FirValueParameterSymbol>
         get() = fir.valueParameters.map { it.symbol }
@@ -49,11 +49,11 @@ interface FirIntersectionCallableSymbol {
 
 class FirIntersectionOverrideFunctionSymbol(
     callableId: CallableId,
-    override val intersections: Collection<FirCallableSymbol<*>>
+    override val intersections: Collection<FirCallableSymbol<*>>,
 ) : FirNamedFunctionSymbol(callableId), FirIntersectionCallableSymbol
 
 class FirConstructorSymbol(
-    callableId: CallableId
+    callableId: CallableId,
 ) : FirFunctionSymbol<FirConstructor>(callableId) {
     constructor(classId: ClassId) : this(classId.callableIdForConstructor())
 
@@ -71,10 +71,10 @@ class FirConstructorSymbol(
         }
 
     val delegatedConstructorCallIsThis: Boolean
-        get() = fir.delegatedConstructor?.isThis ?: false
+        get() = fir.delegatedConstructor?.isThis == true
 
     val delegatedConstructorCallIsSuper: Boolean
-        get() = fir.delegatedConstructor?.isSuper ?: false
+        get() = fir.delegatedConstructor?.isSuper == true
 }
 
 /**
@@ -86,7 +86,7 @@ class FirConstructorSymbol(
  */
 abstract class FirSyntheticPropertySymbol(
     propertyId: CallableId,
-    val getterId: CallableId
+    val getterId: CallableId,
 ) : FirPropertySymbol(propertyId) {
     abstract fun copy(): FirSyntheticPropertySymbol
 }
@@ -94,7 +94,7 @@ abstract class FirSyntheticPropertySymbol(
 // ------------------------ unnamed ------------------------
 
 sealed class FirFunctionWithoutNameSymbol<F : FirFunction>(
-    stubName: Name
+    stubName: Name,
 ) : FirFunctionSymbol<F>(CallableId(FqName("special"), stubName))
 
 class FirAnonymousFunctionSymbol : FirFunctionWithoutNameSymbol<FirAnonymousFunction>(Name.identifier("anonymous")) {

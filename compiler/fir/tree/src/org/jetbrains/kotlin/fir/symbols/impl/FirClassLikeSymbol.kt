@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,13 +20,13 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.SpecialNames
 
 sealed class FirClassLikeSymbol<D : FirClassLikeDeclaration>(
-    val classId: ClassId
+    val classId: ClassId,
 ) : FirClassifierSymbol<D>() {
     abstract override fun toLookupTag(): ConeClassLikeLookupTag
 
     val name get() = classId.shortClassName
 
-     fun getDeprecation(apiVersion: ApiVersion): DeprecationsPerUseSite? {
+    fun getDeprecation(apiVersion: ApiVersion): DeprecationsPerUseSite? {
         if (annotations.isEmpty()) return null
         lazyResolveToPhase(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS)
         return fir.deprecationsProvider.getDeprecationsInfo(apiVersion)
@@ -36,15 +36,10 @@ sealed class FirClassLikeSymbol<D : FirClassLikeDeclaration>(
         get() = fir.status
 
     val resolvedStatus: FirResolvedDeclarationStatus
-        get() {
-            lazyResolveToPhase(FirResolvePhase.STATUS)
-            return fir.status as FirResolvedDeclarationStatus
-        }
+        get() = fir.resolvedStatus()
 
     val typeParameterSymbols: List<FirTypeParameterSymbol>
-        get() {
-            return fir.typeParameters.map { it.symbol }
-        }
+        get() = fir.typeParameters.map { it.symbol }
 
     override fun toString(): String = "${this::class.simpleName} ${classId.asString()}"
 }
@@ -67,9 +62,7 @@ sealed class FirClassSymbol<C : FirClass>(classId: ClassId) : FirClassLikeSymbol
         get() = resolvedSuperTypeRefs.map { it.coneType }
 
     val declarationSymbols: List<FirBasedSymbol<*>>
-        get() {
-            return fir.declarations.map { it.symbol }
-        }
+        get() = fir.declarations.map { it.symbol }
 
     val classKind: ClassKind
         get() = fir.classKind
