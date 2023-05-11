@@ -27,6 +27,7 @@ dependencies {
     implementation(project(":analysis:analysis-api-providers"))
     implementation(project(":analysis:analysis-api"))
     implementation(project(":analysis:analysis-internal-utils"))
+    implementation(project(":analysis:analysis-api-standalone:analysis-api-standalone-base"))
     implementation(project(":kotlin-scripting-compiler"))
     implementation(project(":kotlin-scripting-common"))
 
@@ -40,6 +41,7 @@ dependencies {
     testApi(projectTests(":compiler:tests-common-new"))
 
     testImplementation("org.opentest4j:opentest4j:1.2.0")
+    testImplementation(project(":analysis:analysis-api-standalone:analysis-api-fir-standalone-base"))
     testApi(toolsJar())
     testApi(projectTests(":compiler:tests-common"))
     testApi(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
@@ -73,6 +75,7 @@ allprojects {
     tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinCompile<*>> {
         kotlinOptions {
             freeCompilerArgs += "-opt-in=org.jetbrains.kotlin.fir.symbols.SymbolInternals"
+            freeCompilerArgs += "-opt-in=org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals"
         }
     }
 }

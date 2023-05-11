@@ -133,7 +133,6 @@ internal fun configureProjectEnvironment(
         KotlinFirReferenceContributor::class.java
     )
 
-    RegisterComponentService.registerLLFirResolveSessionService(project)
     project.registerService(
         FirSealedClassInheritorsProcessorFactory::class.java,
         object : FirSealedClassInheritorsProcessorFactory() {

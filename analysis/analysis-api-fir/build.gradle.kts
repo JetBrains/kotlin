@@ -34,6 +34,7 @@ dependencies {
     testApi(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
     testApi(projectTests(":analysis:analysis-api-impl-base"))
     testApi(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
+    testApi(project(":analysis:analysis-api-standalone:analysis-api-fir-standalone-base"))
     testApi(project(":analysis:decompiled:decompiler-to-file-stubs"))
     testApi(project(":analysis:decompiled:decompiler-to-psi"))
     testApi(project(":kotlin-test:kotlin-test-junit"))

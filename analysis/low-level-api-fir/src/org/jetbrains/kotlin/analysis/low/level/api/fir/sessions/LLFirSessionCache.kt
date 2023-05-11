@@ -10,12 +10,13 @@ import com.intellij.psi.util.CachedValue
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
 import com.intellij.util.containers.CollectionFactory
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.project.structure.*
 import org.jetbrains.kotlin.fir.FirModuleDataImpl
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.PrivateSessionConstructor
-import org.jetbrains.kotlin.fir.session.*
+import org.jetbrains.kotlin.fir.session.registerModuleData
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.JsPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatform
@@ -24,7 +25,8 @@ import org.jetbrains.kotlin.platform.konan.NativePlatform
 import org.jetbrains.kotlin.resolve.jvm.platform.JvmPlatformAnalyzerServices
 import java.util.concurrent.ConcurrentMap
 
-internal class LLFirSessionCache(private val project: Project) {
+@LLFirInternals
+class LLFirSessionCache(private val project: Project) {
     companion object {
         fun getInstance(project: Project): LLFirSessionCache {
             return project.getService(LLFirSessionCache::class.java)
