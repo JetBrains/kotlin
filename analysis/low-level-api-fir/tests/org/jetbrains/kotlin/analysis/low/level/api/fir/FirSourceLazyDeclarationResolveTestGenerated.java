@@ -460,6 +460,36 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
         }
 
         @Test
+        @TestMetadata("hierarchyWithOverride.kt")
+        public void testHierarchyWithOverride() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/classes/hierarchyWithOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("hierarchyWithOverrideAndNestedClass.kt")
+        public void testHierarchyWithOverrideAndNestedClass() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/classes/hierarchyWithOverrideAndNestedClass.kt");
+        }
+
+        @Test
+        @TestMetadata("hierarchyWithOverrideAndNestedClass2.kt")
+        public void testHierarchyWithOverrideAndNestedClass2() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/classes/hierarchyWithOverrideAndNestedClass2.kt");
+        }
+
+        @Test
+        @TestMetadata("hierarchyWithOverrideAndNestedClass3.kt")
+        public void testHierarchyWithOverrideAndNestedClass3() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/classes/hierarchyWithOverrideAndNestedClass3.kt");
+        }
+
+        @Test
+        @TestMetadata("hierarchyWithOverrideAndNestedClass4.kt")
+        public void testHierarchyWithOverrideAndNestedClass4() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/classes/hierarchyWithOverrideAndNestedClass4.kt");
+        }
+
+        @Test
         @TestMetadata("nestedClass.kt")
         public void testNestedClass() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/lazyResolve/classes/nestedClass.kt");
@@ -469,6 +499,18 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
         @TestMetadata("nestedClassWithPropertiesOverrides.kt")
         public void testNestedClassWithPropertiesOverrides() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/lazyResolve/classes/nestedClassWithPropertiesOverrides.kt");
+        }
+
+        @Test
+        @TestMetadata("simpleLoopInOverride.kt")
+        public void testSimpleLoopInOverride() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/classes/simpleLoopInOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("simpleLoopInOverride2.kt")
+        public void testSimpleLoopInOverride2() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/classes/simpleLoopInOverride2.kt");
         }
     }
 
@@ -520,6 +562,42 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
         public void testFunctionWithTypeParameters() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/lazyResolve/functions/functionWithTypeParameters.kt");
         }
+
+        @Test
+        @TestMetadata("hierarchyWithOverride.kt")
+        public void testHierarchyWithOverride() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/functions/hierarchyWithOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("hierarchyWithOverrideAndNestedClass.kt")
+        public void testHierarchyWithOverrideAndNestedClass() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/functions/hierarchyWithOverrideAndNestedClass.kt");
+        }
+
+        @Test
+        @TestMetadata("hierarchyWithOverrideAndNestedClass2.kt")
+        public void testHierarchyWithOverrideAndNestedClass2() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/functions/hierarchyWithOverrideAndNestedClass2.kt");
+        }
+
+        @Test
+        @TestMetadata("hierarchyWithOverrideAndNestedClass3.kt")
+        public void testHierarchyWithOverrideAndNestedClass3() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/functions/hierarchyWithOverrideAndNestedClass3.kt");
+        }
+
+        @Test
+        @TestMetadata("simpleLoopInOverride.kt")
+        public void testSimpleLoopInOverride() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/functions/simpleLoopInOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("simpleLoopInOverride2.kt")
+        public void testSimpleLoopInOverride2() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/functions/simpleLoopInOverride2.kt");
+        }
     }
 
     @Nested
@@ -529,6 +607,36 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
         @Test
         public void testAllFilesPresentInProperties() throws Exception {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/low-level-api-fir/testdata/lazyResolve/properties"), Pattern.compile("^(.+)\\.kt$"), null, true);
+        }
+
+        @Test
+        @TestMetadata("hierarchyWithOverride.kt")
+        public void testHierarchyWithOverride() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/properties/hierarchyWithOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("hierarchyWithOverrideAndNestedClass.kt")
+        public void testHierarchyWithOverrideAndNestedClass() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/properties/hierarchyWithOverrideAndNestedClass.kt");
+        }
+
+        @Test
+        @TestMetadata("hierarchyWithOverrideAndNestedClass2.kt")
+        public void testHierarchyWithOverrideAndNestedClass2() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/properties/hierarchyWithOverrideAndNestedClass2.kt");
+        }
+
+        @Test
+        @TestMetadata("hierarchyWithOverrideAndNestedClass3.kt")
+        public void testHierarchyWithOverrideAndNestedClass3() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/properties/hierarchyWithOverrideAndNestedClass3.kt");
+        }
+
+        @Test
+        @TestMetadata("hierarchyWithOverrideAndNestedClass4.kt")
+        public void testHierarchyWithOverrideAndNestedClass4() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/properties/hierarchyWithOverrideAndNestedClass4.kt");
         }
 
         @Test
@@ -559,6 +667,18 @@ public class FirSourceLazyDeclarationResolveTestGenerated extends AbstractFirSou
         @TestMetadata("propertyWithTypeParameters.kt")
         public void testPropertyWithTypeParameters() throws Exception {
             runTest("analysis/low-level-api-fir/testdata/lazyResolve/properties/propertyWithTypeParameters.kt");
+        }
+
+        @Test
+        @TestMetadata("simpleLoopInOverride.kt")
+        public void testSimpleLoopInOverride() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/properties/simpleLoopInOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("simpleLoopInOverride2.kt")
+        public void testSimpleLoopInOverride2() throws Exception {
+            runTest("analysis/low-level-api-fir/testdata/lazyResolve/properties/simpleLoopInOverride2.kt");
         }
     }
 

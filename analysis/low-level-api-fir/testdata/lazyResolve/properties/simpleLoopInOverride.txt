@@ -1,0 +1,349 @@
+RAW_FIR:
+FILE: [ResolvedTo(RAW_FIR)] simpleLoopInOverride.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] interface Foo1 : Foo2 {
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] val str: String
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo1] get(): String
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Foo2 : Foo3 {
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] val str: String
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo2] get(): String
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Foo3 : Foo1 {
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] val str: String
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo3] get(): String
+
+    }
+
+IMPORTS:
+FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] interface Foo1 : Foo2 {
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] val str: String
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo1] get(): String
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Foo2 : Foo3 {
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] val str: String
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo2] get(): String
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Foo3 : Foo1 {
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] val str: String
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo3] get(): String
+
+    }
+
+COMPILER_REQUIRED_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] interface Foo1 : Foo2 {
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val str: String
+            public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingClassKey=Foo1] get(): String
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Foo2 : Foo3 {
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] val str: String
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo2] get(): String
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Foo3 : Foo1 {
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] val str: String
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo3] get(): String
+
+    }
+
+COMPANION_GENERATION:
+FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(RAW_FIR)] interface Foo1 : Foo2 {
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(COMPANION_GENERATION)] val str: String
+            public? [ResolvedTo(COMPANION_GENERATION)] [ContainingClassKey=Foo1] get(): String
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Foo2 : Foo3 {
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] val str: String
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo2] get(): String
+
+    }
+    public? final? [ResolvedTo(RAW_FIR)] interface Foo3 : Foo1 {
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] val str: String
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo3] get(): String
+
+    }
+
+SUPER_TYPES:
+FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(SUPER_TYPES)] val str: String
+            public? [ResolvedTo(SUPER_TYPES)] [ContainingClassKey=Foo1] get(): String
+
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] val str: String
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo2] get(): String
+
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo3 : <ERROR TYPE REF: Loop in supertype: /Foo3 -> /Foo1> {
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] val str: String
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo3] get(): String
+
+    }
+
+TYPES:
+FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public? final? [ResolvedTo(TYPES)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(TYPES)] val str: R|kotlin/String|
+            public? [ResolvedTo(TYPES)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
+
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] val str: String
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo2] get(): String
+
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo3 : <ERROR TYPE REF: Loop in supertype: /Foo3 -> /Foo1> {
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] val str: String
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo3] get(): String
+
+    }
+
+STATUS:
+FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public abstract [ResolvedTo(STATUS)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
+        public abstract override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
+
+        public abstract override [ResolvedTo(STATUS)] val str: R|kotlin/String|
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
+
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] val str: String
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo2] get(): String
+
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo3 : <ERROR TYPE REF: Loop in supertype: /Foo3 -> /Foo1> {
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] val str: String
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo3] get(): String
+
+    }
+
+EXPECT_ACTUAL_MATCHING:
+FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public abstract [ResolvedTo(STATUS)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
+        public abstract override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
+
+        public abstract override [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val str: R|kotlin/String|
+            public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
+
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] val str: String
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo2] get(): String
+
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo3 : <ERROR TYPE REF: Loop in supertype: /Foo3 -> /Foo1> {
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] val str: String
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo3] get(): String
+
+    }
+
+ARGUMENTS_OF_ANNOTATIONS:
+FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public abstract [ResolvedTo(STATUS)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
+        public abstract override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
+
+        public abstract override [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] val str: R|kotlin/String|
+            public [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
+
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] val str: String
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo2] get(): String
+
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo3 : <ERROR TYPE REF: Loop in supertype: /Foo3 -> /Foo1> {
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] val str: String
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo3] get(): String
+
+    }
+
+CONTRACTS:
+FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public abstract [ResolvedTo(STATUS)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
+        public abstract override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
+
+        public abstract override [ResolvedTo(CONTRACTS)] val str: R|kotlin/String|
+            public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
+
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] val str: String
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo2] get(): String
+
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo3 : <ERROR TYPE REF: Loop in supertype: /Foo3 -> /Foo1> {
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] val str: String
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo3] get(): String
+
+    }
+
+IMPLICIT_TYPES_BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public abstract [ResolvedTo(STATUS)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
+        public abstract override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
+
+        public abstract override [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val str: R|kotlin/String|
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
+
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] val str: String
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo2] get(): String
+
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo3 : <ERROR TYPE REF: Loop in supertype: /Foo3 -> /Foo1> {
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] val str: String
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo3] get(): String
+
+    }
+
+ANNOTATIONS_ARGUMENTS_MAPPING:
+FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public abstract [ResolvedTo(STATUS)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
+        public abstract override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
+
+        public abstract override [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] val str: R|kotlin/String|
+            public [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
+
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] val str: String
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo2] get(): String
+
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo3 : <ERROR TYPE REF: Loop in supertype: /Foo3 -> /Foo1> {
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] val str: String
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo3] get(): String
+
+    }
+
+BODY_RESOLVE:
+FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
+    [ResolvedTo(RAW_FIR)] annotations container
+    public abstract [ResolvedTo(STATUS)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
+        public abstract override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
+
+        public abstract override [ResolvedTo(BODY_RESOLVE)] val str: R|kotlin/String|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
+
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] val str: String
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo2] get(): String
+
+    }
+    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo3 : <ERROR TYPE REF: Loop in supertype: /Foo3 -> /Foo1> {
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
+
+        public? open? override [ResolvedTo(RAW_FIR)] val str: String
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo3] get(): String
+
+    }
+
+FILE RAW TO BODY:
+FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride.kt
+    [ResolvedTo(BODY_RESOLVE)] annotations container
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
+        public abstract override [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit|
+
+        public abstract override [ResolvedTo(BODY_RESOLVE)] val str: R|kotlin/String|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
+
+    }
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {
+        public abstract override [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit|
+
+        public abstract override [ResolvedTo(BODY_RESOLVE)] val str: R|kotlin/String|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo2] get(): R|kotlin/String|
+
+    }
+    public abstract [ResolvedTo(BODY_RESOLVE)] interface Foo3 : <ERROR TYPE REF: Loop in supertype: /Foo3 -> /Foo1> {
+        public abstract override [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit|
+
+        public abstract override [ResolvedTo(BODY_RESOLVE)] val str: R|kotlin/String|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Foo3] get(): R|kotlin/String|
+
+    }
