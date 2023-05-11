@@ -168,7 +168,7 @@ class IrOverridingUtil(
         allFromSuperByName.forEach { group ->
             generateOverridesInFunctionGroup(
                 group.value,
-                fromCurrent.filter { it.name == group.key },
+                fromCurrent.filter { it.name == group.key && !it.isStaticMember },
                 clazz, oldSignatures
             )
         }
