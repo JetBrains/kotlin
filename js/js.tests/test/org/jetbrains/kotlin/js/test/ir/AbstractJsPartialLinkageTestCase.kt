@@ -10,6 +10,7 @@ import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.openapi.vfs.local.CoreLocalFileSystem
 import com.intellij.psi.PsiManager
 import com.intellij.psi.SingleRootFileViewProvider
+import com.intellij.testFramework.TestDataFile
 import org.jetbrains.kotlin.backend.common.phaser.PhaseConfig
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
@@ -49,7 +50,8 @@ import org.jetbrains.kotlin.konan.file.ZipFileSystemCacheableAccessor
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.serialization.js.ModuleKind
-import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
+import org.jetbrains.kotlin.test.utils.TestDisposable
+import org.junit.jupiter.api.AfterEach
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
@@ -57,36 +59,28 @@ import java.nio.charset.Charset
 import kotlin.io.path.createTempDirectory
 
 abstract class AbstractJsPartialLinkageNoICTestCase : AbstractJsPartialLinkageTestCase(CompilerType.K1_NO_IC)
+abstract class AbstractJsPartialLinkageNoICES6TestCase : AbstractJsPartialLinkageTestCase(CompilerType.K1_NO_IC_WITH_ES6)
 abstract class AbstractJsPartialLinkageWithICTestCase : AbstractJsPartialLinkageTestCase(CompilerType.K1_WITH_IC)
 abstract class AbstractFirJsPartialLinkageNoICTestCase : AbstractJsPartialLinkageTestCase(CompilerType.K2_NO_IC)
 
-abstract class AbstractJsPartialLinkageTestCase(val compilerType: CompilerType) : KtUsefulTestCase() {
-    enum class CompilerType(val testModeName: String) {
-        K1_NO_IC("JS_NO_IC"),
-        K1_WITH_IC("JS_WITH_IC"),
-        K2_NO_IC("JS_NO_IC")
+abstract class AbstractJsPartialLinkageTestCase(val compilerType: CompilerType) {
+    enum class CompilerType(val testModeName: String, val es6Mode: Boolean) {
+        K1_NO_IC("JS_NO_IC", false),
+        K1_NO_IC_WITH_ES6("JS_NO_IC", true),
+        K1_WITH_IC("JS_WITH_IC", false),
+        K2_NO_IC("JS_NO_IC", false)
     }
-
-    private lateinit var buildDir: File
-    private lateinit var environment: KotlinCoreEnvironment
 
     private val zipAccessor = ZipFileSystemCacheableAccessor(2)
+    private val buildDir = createTempDirectory().toFile().also { it.mkdirs() }
+    private val environment =
+        KotlinCoreEnvironment.createForParallelTests(TestDisposable(), CompilerConfiguration(), EnvironmentConfigFiles.JS_CONFIG_FILES)
 
-    override fun setUp() {
-        super.setUp()
-        buildDir = createTempDirectory().toFile().also { it.mkdirs() }
 
-        environment = KotlinCoreEnvironment.createForTests(
-            testRootDisposable,
-            CompilerConfiguration(),
-            EnvironmentConfigFiles.JS_CONFIG_FILES
-        )
-    }
-
-    override fun tearDown() {
+    @AfterEach
+    fun clearArtifacts() {
         zipAccessor.reset()
         buildDir.deleteRecursively()
-        super.tearDown()
     }
 
     private fun createConfig(moduleName: String): CompilerConfiguration {
@@ -128,7 +122,7 @@ abstract class AbstractJsPartialLinkageTestCase(val compilerType: CompilerType) 
     }
 
     // The entry point to generated test classes.
-    fun doTest(testPath: String) = PartialLinkageTestUtils.runTest(JsTestConfiguration(testPath))
+    fun runTest(@TestDataFile testPath: String) = PartialLinkageTestUtils.runTest(JsTestConfiguration(testPath))
 
     private fun buildKlib(moduleName: String, buildDirs: ModuleBuildDirs, dependencies: Dependencies, klibFile: File) {
         buildDirs.sourceDir.walkTopDown()
@@ -136,7 +130,8 @@ abstract class AbstractJsPartialLinkageTestCase(val compilerType: CompilerType) 
             .forEach { file -> file.copyTo(buildDirs.outputDir.resolve(file.relativeTo(buildDirs.sourceDir)), overwrite = true) }
 
         when (compilerType) {
-            CompilerType.K1_NO_IC, CompilerType.K1_WITH_IC -> buildKlibWithK1(moduleName, buildDirs.sourceDir, dependencies, klibFile)
+            CompilerType.K1_NO_IC, CompilerType.K1_NO_IC_WITH_ES6, CompilerType.K1_WITH_IC ->
+                buildKlibWithK1(moduleName, buildDirs.sourceDir, dependencies, klibFile)
             CompilerType.K2_NO_IC -> buildKlibWithK2(moduleName, buildDirs.sourceDir, dependencies, klibFile)
         }
     }
@@ -247,7 +242,8 @@ abstract class AbstractJsPartialLinkageTestCase(val compilerType: CompilerType) 
         configuration.setupPartialLinkageConfig(PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.WARNING))
 
         val compilationOutputs = when (compilerType) {
-            CompilerType.K1_NO_IC, CompilerType.K2_NO_IC -> buildBinaryNoIC(configuration, mainModuleKlibFile, allDependencies)
+            CompilerType.K1_NO_IC, CompilerType.K1_NO_IC_WITH_ES6, CompilerType.K2_NO_IC ->
+                buildBinaryNoIC(configuration, mainModuleKlibFile, allDependencies, compilerType.es6Mode)
             CompilerType.K1_WITH_IC -> buildBinaryWithIC(configuration, mainModuleKlibFile, allDependencies)
         }
 
@@ -288,7 +284,8 @@ abstract class AbstractJsPartialLinkageTestCase(val compilerType: CompilerType) 
     private fun buildBinaryNoIC(
         configuration: CompilerConfiguration,
         mainModuleKlibFile: File,
-        allDependencies: Dependencies
+        allDependencies: Dependencies,
+        es6mode: Boolean
     ): CompilationOutputs {
         val klib = MainModule.Klib(mainModuleKlibFile.path)
         val moduleStructure = ModulesStructure(
@@ -304,7 +301,8 @@ abstract class AbstractJsPartialLinkageTestCase(val compilerType: CompilerType) 
             PhaseConfig(jsPhases),
             IrFactoryImplForJsIC(WholeWorldStageController()),
             exportedDeclarations = setOf(BOX_FUN_FQN),
-            granularity = JsGenerationGranularity.PER_MODULE
+            granularity = JsGenerationGranularity.PER_MODULE,
+            es6mode = es6mode
         )
 
         val transformer = IrModuleToJsTransformer(

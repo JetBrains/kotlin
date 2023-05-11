@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 import org.jetbrains.kotlin.utils.memoryOptimizedFilterNot
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
@@ -137,8 +138,12 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
             factory.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
                 val bodyCopy = constructor.body?.deepCopyWithSymbols(factory) ?: return@createBlockBody
                 val self = bodyCopy.replaceSuperCallsAndThisUsages(irClass, factory, constructor)
+
                 statements.addAll(bodyCopy.statements)
-                statements.add(JsIrBuilder.buildReturn(factory.symbol, JsIrBuilder.buildGetValue(self), irClass.defaultType))
+
+                if (self != null) {
+                    statements.add(JsIrBuilder.buildReturn(factory.symbol, JsIrBuilder.buildGetValue(self), irClass.defaultType))
+                }
             }
 
             constructorFactory = factory
@@ -169,8 +174,9 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
         irClass: IrClass,
         constructorReplacement: IrSimpleFunction,
         currentConstructor: IrConstructor,
-    ): IrValueSymbol {
+    ): IrValueSymbol? {
         var generatedThisValueSymbol: IrValueSymbol? = null
+        var gotLinkageErrorInsteadOfSuperCall = false
         val selfParameterSymbol = irClass.thisReceiver!!.symbol
         val boxParameterSymbol = constructorReplacement.boxParameter
 
@@ -192,6 +198,13 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
                 } else {
                     super.visitReturn(expression)
                 }
+            }
+
+            override fun visitCall(expression: IrCall): IrExpression {
+                if (expression.symbol == context.irBuiltIns.linkageErrorSymbol) {
+                    gotLinkageErrorInsteadOfSuperCall = true
+                }
+                return super.visitCall(expression)
             }
 
             override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
@@ -244,7 +257,9 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
             }
         })
 
-        return generatedThisValueSymbol!!
+        return generatedThisValueSymbol ?: runUnless<IrValueSymbol?>(gotLinkageErrorInsteadOfSuperCall) {
+            error("Expect to have either super call or partial linkage stub inside constructor")
+        }
     }
 
     private fun IrClass.getCurrentConstructorReference(currentFactoryFunction: IrSimpleFunction): IrExpression {

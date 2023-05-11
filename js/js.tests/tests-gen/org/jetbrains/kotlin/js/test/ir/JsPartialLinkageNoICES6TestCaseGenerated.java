@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/klibABI")
 @TestDataPath("$PROJECT_ROOT")
-public class FirJsPartialLinkageNoICTestCaseGenerated extends AbstractFirJsPartialLinkageNoICTestCase {
+public class JsPartialLinkageNoICES6TestCaseGenerated extends AbstractJsPartialLinkageNoICES6TestCase {
     @Test
     @TestMetadata("addEnumEntry")
     public void testAddEnumEntry() throws Exception {
@@ -34,7 +34,7 @@ public class FirJsPartialLinkageNoICTestCaseGenerated extends AbstractFirJsParti
 
     @Test
     public void testAllFilesPresentInKlibABI() throws Exception {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klibABI"), Pattern.compile("^([^_](.+))$"), null, TargetBackend.JS_IR, false);
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klibABI"), Pattern.compile("^([^_](.+))$"), null, TargetBackend.JS_IR_ES6, false);
     }
 
     @Test
