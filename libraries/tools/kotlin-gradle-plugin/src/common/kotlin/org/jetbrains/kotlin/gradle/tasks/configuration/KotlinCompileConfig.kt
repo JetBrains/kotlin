@@ -89,8 +89,7 @@ internal open class BaseKotlinCompileConfig<TASK : KotlinCompile> : AbstractKotl
 
                 // In case of 'org.jetbrains.kotlin.jvm' and 'org.jetbrains.kotlin.android' plugins module name will be pre-configured
                 if (ext !is KotlinJvmProjectExtension && ext !is KotlinAndroidProjectExtension) {
-                    @Suppress("DEPRECATION")
-                    task.moduleName.set(providers.provider { compilationInfo.moduleName })
+                    task.compilerOptions.moduleName.convention(providers.provider { compilationInfo.moduleName })
                 } else {
                     task.nagTaskModuleNameUsage.set(true)
                 }
