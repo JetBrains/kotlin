@@ -163,6 +163,8 @@ private object NativeTestSupport {
 
         val gcScheduler = computeGCScheduler(enforcedProperties)
 
+        val allocator = computeAllocator(enforcedProperties)
+
         val nativeHome = getOrCreateTestProcessSettings().get<KotlinNativeHome>()
 
         val distribution = Distribution(nativeHome.dir.path)
@@ -183,6 +185,7 @@ private object NativeTestSupport {
         output += threadStateChecker
         output += gcType
         output += gcScheduler
+        output += allocator
         output += nativeTargets
         output += sanitizer
         output += CacheMode::class to cacheMode
@@ -227,6 +230,9 @@ private object NativeTestSupport {
 
     private fun computeGCScheduler(enforcedProperties: EnforcedProperties): GCScheduler =
         ClassLevelProperty.GC_SCHEDULER.readValue(enforcedProperties, GCScheduler.values(), default = GCScheduler.UNSPECIFIED)
+
+    private fun computeAllocator(enforcedProperties: EnforcedProperties): Allocator =
+        ClassLevelProperty.ALLOCATOR.readValue(enforcedProperties, Allocator.values(), default = Allocator.UNSPECIFIED)
 
     private fun computeNativeTargets(enforcedProperties: EnforcedProperties, hostManager: HostManager): KotlinNativeTargets {
         val hostTarget = HostManager.host

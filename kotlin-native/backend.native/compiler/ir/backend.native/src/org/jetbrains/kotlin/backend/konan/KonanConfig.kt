@@ -229,6 +229,9 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     private val shouldCoverLibraries = !configuration.getList(KonanConfigKeys.LIBRARIES_TO_COVER).isNullOrEmpty()
 
     private val defaultAllocationMode get() = when {
+        gc == GC.PARALLEL_MARK_CONCURRENT_SWEEP && sanitizer == null -> {
+            AllocationMode.CUSTOM
+        }
         target.supportsMimallocAllocator() && sanitizer == null -> {
             AllocationMode.MIMALLOC
         }
@@ -240,6 +243,9 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             null -> defaultAllocationMode
             AllocationMode.STD -> AllocationMode.STD
             AllocationMode.MIMALLOC -> {
+                if (sanitizer != null) {
+                    configuration.report(CompilerMessageSeverity.STRONG_WARNING, "Sanitizers are useful only with the std allocator")
+                }
                 if (target.supportsMimallocAllocator()) {
                     AllocationMode.MIMALLOC
                 } else {
@@ -249,6 +255,9 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
                 }
             }
             AllocationMode.CUSTOM -> {
+                if (sanitizer != null) {
+                    configuration.report(CompilerMessageSeverity.STRONG_WARNING, "Sanitizers are useful only with the std allocator")
+                }
                 if (gc == GC.PARALLEL_MARK_CONCURRENT_SWEEP) {
                     AllocationMode.CUSTOM
                 } else {

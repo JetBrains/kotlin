@@ -3135,6 +3135,7 @@ standaloneTest("stress_gc_allocations") {
         (project.testTarget != "watchos_simulator_arm64") &&
         !isNoopGC &&
         !isAggressiveGC && // TODO: Investigate why too slow
+        !runtimeAssertionsPanic && // New allocator with assertions makes this test very slow
         (project.testTarget != "mingw_x64") // TODO: Fix on mingw.
     source = "runtime/memory/stress_gc_allocations.kt"
     flags = ['-tr', '-opt-in=kotlin.native.internal.InternalForKotlinNative']

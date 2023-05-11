@@ -166,6 +166,15 @@ internal enum class GCScheduler(val compilerFlag: String?) {
     override fun toString() = compilerFlag?.let { "($it)" }.orEmpty()
 }
 
+internal enum class Allocator(val compilerFlag: String?) {
+    UNSPECIFIED(null),
+    STD("-Xallocator=std"),
+    MIMALLOC("-Xallocator=mimalloc"),
+    CUSTOM("-Xallocator=custom");
+
+    override fun toString() = compilerFlag?.let { "($it)" }.orEmpty()
+}
+
 /**
  * Current project's directories.
  */

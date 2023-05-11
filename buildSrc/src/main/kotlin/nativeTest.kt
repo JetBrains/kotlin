@@ -21,6 +21,7 @@ private enum class TestProperty(shortName: String) {
     USE_THREAD_STATE_CHECKER("useThreadStateChecker"),
     GC_TYPE("gcType"),
     GC_SCHEDULER("gcScheduler"),
+    ALLOCATOR("alloc"),
     CACHE_MODE("cacheMode"),
     EXECUTION_TIMEOUT("executionTimeout"),
     SANITIZER("sanitizer"),
@@ -168,6 +169,7 @@ fun Project.nativeTest(
             compute(USE_THREAD_STATE_CHECKER)
             compute(GC_TYPE)
             compute(GC_SCHEDULER)
+            compute(ALLOCATOR)
             compute(CACHE_MODE)
             compute(EXECUTION_TIMEOUT)
             compute(SANITIZER)
