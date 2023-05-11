@@ -460,7 +460,7 @@ private fun makePrimaryConstructorImpl(
     leaves: List<LeafMfvcNode>,
     subnodes: List<NameableMfvcNode>,
 ) = context.irFactory.buildFun {
-    name = InlineClassAbi.mangledNameFor(oldPrimaryConstructor, false, false)
+    name = InlineClassAbi.mangledNameFor(context, oldPrimaryConstructor, false, false)
     visibility = oldPrimaryConstructor.visibility
     origin = JvmLoweredDeclarationOrigin.STATIC_MULTI_FIELD_VALUE_CLASS_CONSTRUCTOR
     returnType = context.irBuiltIns.unitType
