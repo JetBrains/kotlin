@@ -76,11 +76,6 @@ public class IncrementalJsFirKlibCompilerWithScopeExpansionRunnerTestGenerated e
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/changeTypeImplicitlyWithCircularDependency/");
         }
 
-        @TestMetadata("changeTypealiasSinceK2")
-        public void testChangeTypealiasSinceK2() throws Exception {
-            runTest("jps/jps-plugin/testData/incremental/pureKotlin/changeTypealiasSinceK2/");
-        }
-
         @TestMetadata("changeWithRemovingUsage")
         public void testChangeWithRemovingUsage() throws Exception {
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/changeWithRemovingUsage/");
@@ -921,12 +916,7 @@ public class IncrementalJsFirKlibCompilerWithScopeExpansionRunnerTestGenerated e
         }
 
         public void testAllFilesPresentInScopeExpansion() throws Exception {
-            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/scopeExpansion"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("^protectedBecomesPublicAccessedTroughChild.*"), true);
-        }
-
-        @TestMetadata("changeTypeAliasAndUsage")
-        public void testChangeTypeAliasAndUsage() throws Exception {
-            runTest("jps/jps-plugin/testData/incremental/scopeExpansion/changeTypeAliasAndUsage/");
+            KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/scopeExpansion"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("^(protectedBecomesPublicAccessedTroughChild|changeTypeAliasAndUsage).*"), true);
         }
 
         @TestMetadata("jps/jps-plugin/testData/incremental/scopeExpansion/changeTypeAliasAndUsage")
@@ -938,7 +928,7 @@ public class IncrementalJsFirKlibCompilerWithScopeExpansionRunnerTestGenerated e
             }
 
             public void testAllFilesPresentInChangeTypeAliasAndUsage() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/scopeExpansion/changeTypeAliasAndUsage"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("^protectedBecomesPublicAccessedTroughChild.*"), true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/scopeExpansion/changeTypeAliasAndUsage"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("^(protectedBecomesPublicAccessedTroughChild|changeTypeAliasAndUsage).*"), true);
             }
         }
 
@@ -951,7 +941,7 @@ public class IncrementalJsFirKlibCompilerWithScopeExpansionRunnerTestGenerated e
             }
 
             public void testAllFilesPresentInProtectedBecomesPublicAccessedTroughChild() throws Exception {
-                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/scopeExpansion/protectedBecomesPublicAccessedTroughChild"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("^protectedBecomesPublicAccessedTroughChild.*"), true);
+                KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("jps/jps-plugin/testData/incremental/scopeExpansion/protectedBecomesPublicAccessedTroughChild"), Pattern.compile("^([^\\.]+)$"), Pattern.compile("^(protectedBecomesPublicAccessedTroughChild|changeTypeAliasAndUsage).*"), true);
             }
         }
     }

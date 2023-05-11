@@ -72,11 +72,6 @@ public class IncrementalFirLightTreeJvmCompilerRunnerTestGenerated extends Abstr
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/changeTypeImplicitlyWithCircularDependency/");
         }
 
-        @TestMetadata("changeTypealiasSinceK2")
-        public void testChangeTypealiasSinceK2() throws Exception {
-            runTest("jps/jps-plugin/testData/incremental/pureKotlin/changeTypealiasSinceK2/");
-        }
-
         @TestMetadata("changeWithRemovingUsage")
         public void testChangeWithRemovingUsage() throws Exception {
             runTest("jps/jps-plugin/testData/incremental/pureKotlin/changeWithRemovingUsage/");

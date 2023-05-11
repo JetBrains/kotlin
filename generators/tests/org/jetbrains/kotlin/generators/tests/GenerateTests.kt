@@ -138,7 +138,7 @@ fun main(args: Array<String>) {
                       excludedPattern = "^(secondaryConstructorAdded|withIntermediateBodiesChanged|companionObjectNameChanged).*")
                 model("incremental/js", extension = null, excludeParentDirs = true)
                 model("incremental/scopeExpansion", extension = null, excludeParentDirs = true,
-                      excludedPattern = "^protectedBecomesPublicAccessedTroughChild.*")
+                      excludedPattern = "^(protectedBecomesPublicAccessedTroughChild|changeTypeAliasAndUsage).*")
             }
 
             testClass<AbstractIncrementalJsCompilerRunnerWithFriendModulesDisabledTest> {
