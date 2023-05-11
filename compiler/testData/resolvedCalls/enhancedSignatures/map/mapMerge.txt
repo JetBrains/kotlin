@@ -1,42 +1,42 @@
 fun valuesNotNull(map: MutableMap<Int, String>) {
     map.merge(1, "x") { old, new -> old + new }
         // SUCCESS
-        // ORIGINAL:    fun merge(K, V, BiFunction<in V, in V, out V?>): V? defined in kotlin.collections.MutableMap
+        // ORIGINAL:    fun merge(K, V & Any, BiFunction<in V & Any, in V & Any, out V?>): V? defined in kotlin.collections.MutableMap
         // SUBSTITUTED: fun merge(Int, String, BiFunction<in String, in String, out String?>): String? defined in kotlin.collections.MutableMap
 }
 
 fun valuesNullable(map: MutableMap<Int, String?>) {
     map.merge(1, "x") { old, new -> old + new }
         // SUCCESS
-        // ORIGINAL:    fun merge(K, V, BiFunction<in V, in V, out V?>): V? defined in kotlin.collections.MutableMap
+        // ORIGINAL:    fun merge(K, V & Any, BiFunction<in V & Any, in V & Any, out V?>): V? defined in kotlin.collections.MutableMap
         // SUBSTITUTED: fun merge(Int, String, BiFunction<in String, in String, out String?>): String? defined in kotlin.collections.MutableMap
     map.merge(1, null) { old, new -> old + new }
         // UNSAFE_CALL_ERROR
-        // ORIGINAL:    fun merge(K, V, BiFunction<in V, in V, out V?>): V? defined in kotlin.collections.MutableMap
+        // ORIGINAL:    fun merge(K, V & Any, BiFunction<in V & Any, in V & Any, out V?>): V? defined in kotlin.collections.MutableMap
         // SUBSTITUTED: fun merge(Int, String, BiFunction<in String, in String, out String?>): String? defined in kotlin.collections.MutableMap
 }
 
 fun <T> valuesT(map: MutableMap<Int, T>, newValue: T) {
     map.merge(1, newValue) { old, new -> null }
-        // SUCCESS
-        // ORIGINAL:    fun merge(K, V, BiFunction<in V, in V, out V?>): V? defined in kotlin.collections.MutableMap
-        // SUBSTITUTED: fun merge(Int, T, BiFunction<in T, in T, out T?>): T? defined in kotlin.collections.MutableMap
+        // OTHER_ERROR
+        // ORIGINAL:    fun merge(K, V & Any, BiFunction<in V & Any, in V & Any, out V?>): V? defined in kotlin.collections.MutableMap
+        // SUBSTITUTED: fun merge(Int, T & Any, BiFunction<in T & Any, in T & Any, out T?>): T? defined in kotlin.collections.MutableMap
 }
 
 fun <T : Any> valuesTNotNull(map: MutableMap<Int, T>, newValue: T) {
     map.merge(1, newValue) { old, new -> null }
         // SUCCESS
-        // ORIGINAL:    fun merge(K, V, BiFunction<in V, in V, out V?>): V? defined in kotlin.collections.MutableMap
+        // ORIGINAL:    fun merge(K, V & Any, BiFunction<in V & Any, in V & Any, out V?>): V? defined in kotlin.collections.MutableMap
         // SUBSTITUTED: fun merge(Int, T, BiFunction<in T, in T, out T?>): T? defined in kotlin.collections.MutableMap
 }
 
 fun <T : Any> valuesTNullable(map: MutableMap<Int, T?>, newValue: T?) {
     map.merge(1, newValue) { old, new -> new }
         // UNSAFE_CALL_ERROR
-        // ORIGINAL:    fun merge(K, V, BiFunction<in V, in V, out V?>): V? defined in kotlin.collections.MutableMap
-        // SUBSTITUTED: fun merge(Int, T, BiFunction<in T, in T, out T?>): T? defined in kotlin.collections.MutableMap
+        // ORIGINAL:    fun merge(K, V & Any, BiFunction<in V & Any, in V & Any, out V?>): V? defined in kotlin.collections.MutableMap
+        // SUBSTITUTED: fun merge(Int, T & Any, BiFunction<in T & Any, in T & Any, out T?>): T? defined in kotlin.collections.MutableMap
     map.merge(1, newValue!!) { old, new -> new }
         // SUCCESS
-        // ORIGINAL:    fun merge(K, V, BiFunction<in V, in V, out V?>): V? defined in kotlin.collections.MutableMap
-        // SUBSTITUTED: fun merge(Int, T, BiFunction<in T, in T, out T?>): T? defined in kotlin.collections.MutableMap
+        // ORIGINAL:    fun merge(K, V & Any, BiFunction<in V & Any, in V & Any, out V?>): V? defined in kotlin.collections.MutableMap
+        // SUBSTITUTED: fun merge(Int, T & Any, BiFunction<in T & Any, in T & Any, out T?>): T? defined in kotlin.collections.MutableMap
 }

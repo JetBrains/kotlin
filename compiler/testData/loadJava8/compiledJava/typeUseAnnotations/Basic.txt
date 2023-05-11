@@ -3,7 +3,7 @@ package test
 public open class Basic</*0*/ T : @org.jetbrains.annotations.NotNull kotlin.Any> {
     public constructor Basic</*0*/ T : @org.jetbrains.annotations.NotNull kotlin.Any>()
 
-    public/*package*/ interface G</*0*/ T : kotlin.Any!> : test.Basic.G2<@org.jetbrains.annotations.NotNull T, @org.jetbrains.annotations.NotNull kotlin.String> {
+    public/*package*/ interface G</*0*/ T : kotlin.Any!> : test.Basic.G2<@org.jetbrains.annotations.NotNull T & Any, @org.jetbrains.annotations.NotNull kotlin.String> {
     }
 
     public/*package*/ interface G2</*0*/ A : kotlin.Any!, /*1*/ B : kotlin.Any!> {

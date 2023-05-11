@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // JSPECIFY_STATE: strict
 
 // FILE: NullnessUnspecifiedTypeParameter.java
@@ -21,7 +22,7 @@ fun main(a1: NullnessUnspecifiedTypeParameter<Any>, a2: NullnessUnspecifiedTypeP
     a1.foo(1)
 
     // jspecify_nullness_mismatch
-    a2.foo(<!NULL_FOR_NONNULL_TYPE!>null<!>)
+    a2.foo(null)
     a2.foo(1)
 
     // jspecify_nullness_mismatch, jspecify_nullness_mismatch
@@ -31,8 +32,8 @@ fun main(a1: NullnessUnspecifiedTypeParameter<Any>, a2: NullnessUnspecifiedTypeP
     a1.bar(x, 1)
 
     // jspecify_nullness_mismatch, jspecify_nullness_mismatch
-    a2.bar(<!NULL_FOR_NONNULL_TYPE!>null<!>, <!NULL_FOR_NONNULL_TYPE!>null<!>)
+    a2.bar(<!NULL_FOR_NONNULL_TYPE!>null<!>, null)
     // jspecify_nullness_mismatch
-    a2.bar(x, <!NULL_FOR_NONNULL_TYPE!>null<!>)
+    a2.bar(x, null)
     a2.bar(x, 1)
 }

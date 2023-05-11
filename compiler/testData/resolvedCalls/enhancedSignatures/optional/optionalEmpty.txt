@@ -3,11 +3,11 @@ import java.util.*
 fun use() {
     Optional.empty<String>()
         // SUCCESS
-        // ORIGINAL:    fun <T : Any!> empty(): Optional<T> defined in java.util.Optional
+        // ORIGINAL:    fun <T : Any!> empty(): Optional<T & Any> defined in java.util.Optional
         // SUBSTITUTED: fun <T : Any!> empty(): Optional<String> defined in java.util.Optional
     Optional.empty<String?>()
         // SUCCESS
-        // ORIGINAL:    fun <T : Any!> empty(): Optional<T> defined in java.util.Optional
+        // ORIGINAL:    fun <T : Any!> empty(): Optional<T & Any> defined in java.util.Optional
         // SUBSTITUTED: fun <T : Any!> empty(): Optional<String> defined in java.util.Optional
 }
 

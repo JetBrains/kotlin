@@ -6,7 +6,7 @@ public open class A</*0*/ T : kotlin.Any!> {
     public constructor A</*0*/ T : kotlin.Any!>()
     @org.eclipse.jdt.annotation.Nullable public final var field: @org.eclipse.jdt.annotation.Nullable kotlin.String?
     @org.eclipse.jdt.annotation.NonNull public open fun bar(): @org.eclipse.jdt.annotation.NonNull kotlin.String
-    @org.eclipse.jdt.annotation.Nullable public open fun baz(/*0*/ @org.eclipse.jdt.annotation.NonNull x: @org.eclipse.jdt.annotation.NonNull T): @org.eclipse.jdt.annotation.Nullable T?
+    @org.eclipse.jdt.annotation.Nullable public open fun baz(/*0*/ @org.eclipse.jdt.annotation.NonNull x: @org.eclipse.jdt.annotation.NonNull T & Any): @org.eclipse.jdt.annotation.Nullable T?
     public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     @org.eclipse.jdt.annotation.Nullable public open fun foo(/*0*/ @org.eclipse.jdt.annotation.NonNull x: @org.eclipse.jdt.annotation.NonNull kotlin.String, /*1*/ @org.eclipse.jdt.annotation.Nullable y: @org.eclipse.jdt.annotation.Nullable kotlin.CharSequence?): @org.eclipse.jdt.annotation.Nullable kotlin.String?
     public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int

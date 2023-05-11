@@ -21,7 +21,7 @@ class A<T> {
     }
 
     fun checkJavaInv(element: T, action: JavaAction<T>) {
-        action.execute(<!NULLABLE_TYPE_PARAMETER_AGAINST_NOT_NULL_TYPE_PARAMETER!>element<!>) // type mismatch in K1 and K2
+        action.execute(<!TYPE_MISMATCH!>element<!>) // type mismatch in K1 and K2
     }
 
     fun checkKotlinInv(element: T, action: KotlinAction<T>) {

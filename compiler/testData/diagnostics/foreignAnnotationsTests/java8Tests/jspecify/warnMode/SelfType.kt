@@ -43,7 +43,8 @@ fun main(ak: AK, akn: AKN, bk: BK, ck: CK, ckn: CKN): Unit {
     // jspecify_nullness_mismatch
     ak.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
 
-    akn.foo(null) // the corresponding warning/error is present on the Java side
+    // jspecify_nullness_mismatch
+    akn.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>) // the corresponding warning/error is present on the Java side
 
     bk.foo(bk)
     // jspecify_nullness_mismatch
@@ -53,5 +54,6 @@ fun main(ak: AK, akn: AKN, bk: BK, ck: CK, ckn: CKN): Unit {
     // jspecify_nullness_mismatch
     ck.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>)
 
-    ckn.foo(null) // the corresponding warning/error is present on the Java side
+    // jspecify_nullness_mismatch
+    ckn.foo(<!NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS!>null<!>) // the corresponding warning/error is present on the Java side
 }
