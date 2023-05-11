@@ -5,11 +5,7 @@
 
 package org.jetbrains.kotlin.fir.scopes.impl
 
-import org.jetbrains.kotlin.fir.PrivateForInline
-import org.jetbrains.kotlin.fir.scopes.FirTypeScope
-import org.jetbrains.kotlin.fir.scopes.MemberWithBaseScope
-import org.jetbrains.kotlin.fir.scopes.ProcessOverriddenWithBaseScope
-import org.jetbrains.kotlin.fir.scopes.ProcessorAction
+import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
@@ -22,8 +18,7 @@ fun filterOutOverriddenProperties(extractedOverridden: Collection<MemberWithBase
     return filterOutOverridden(extractedOverridden, FirTypeScope::processDirectOverriddenPropertiesWithBaseScope)
 }
 
-@OptIn(PrivateForInline::class)
-inline fun <D : FirCallableSymbol<*>> filterOutOverridden(
+fun <D : FirCallableSymbol<*>> filterOutOverridden(
     extractedOverridden: Collection<MemberWithBaseScope<D>>,
     processAllOverridden: ProcessOverriddenWithBaseScope<D>,
 ): Collection<MemberWithBaseScope<D>> {
@@ -31,26 +26,25 @@ inline fun <D : FirCallableSymbol<*>> filterOutOverridden(
         extractedOverridden.none { overridden2 ->
             overridden1 !== overridden2 && overrides(
                 overridden2,
-                overridden1,
-                processAllOverridden
-            )
+                overridden1.member,
+            ) { symbol: D, processor: (D) -> ProcessorAction ->
+                processAllOverriddenCallables(symbol, processor, processAllOverridden)
+            }
         }
     }
 }
 
 // Whether f overrides g
-@PrivateForInline
-inline fun <D : FirCallableSymbol<*>> overrides(
+private fun <D : FirCallableSymbol<*>> overrides(
     f: MemberWithBaseScope<D>,
-    g: MemberWithBaseScope<D>,
-    processAllOverridden: ProcessOverriddenWithBaseScope<D>,
+    gMember: D,
+    processAllOverridden: ProcessAllOverridden<D>,
 ): Boolean {
     val (fMember, fScope) = f
-    val (gMember) = g
 
     var result = false
 
-    fScope.processAllOverridden(fMember) { overridden, _ ->
+    fScope.processAllOverridden(fMember) { overridden ->
         if (overridden == gMember) {
             result = true
             ProcessorAction.STOP
