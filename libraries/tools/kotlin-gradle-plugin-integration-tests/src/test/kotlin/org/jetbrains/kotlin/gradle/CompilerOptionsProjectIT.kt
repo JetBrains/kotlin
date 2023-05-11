@@ -309,4 +309,42 @@ class CompilerOptionsProjectIT : KGPBaseTest() {
             }
         }
     }
+
+    @DisplayName("KT-57959: should be possible to configure module name in MPP/android")
+    @GradleAndroidTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
+    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_70)
+    @AndroidGradlePluginTests
+    fun mppAndroidModuleName(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        jdk: JdkVersions.ProvidedJdk
+    ) {
+        project(
+            "multiplatformAndroidSourceSetLayout2",
+            gradleVersion,
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion, logLevel = LogLevel.DEBUG),
+            buildJdk = jdk.location
+        ) {
+            buildGradleKts.appendText(
+                //language=kotlin
+                """
+                |
+                |kotlin {
+                |    android {
+                |        compilations.all {
+                |            compilerOptions.options.moduleName.set("last-chance")
+                |        }
+                |    }
+                |}
+                """.trimMargin()
+            )
+
+            build(":compileGermanFreeDebugKotlinAndroid") {
+                assertTasksExecuted(":compileGermanFreeDebugKotlinAndroid")
+
+                assertCompilerArgument(":compileGermanFreeDebugKotlinAndroid", "-module-name last-chance")
+            }
+        }
+    }
 }
