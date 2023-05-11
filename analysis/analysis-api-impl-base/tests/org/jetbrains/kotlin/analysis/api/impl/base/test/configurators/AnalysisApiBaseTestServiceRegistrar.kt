@@ -64,6 +64,5 @@ object AnalysisApiBaseTestServiceRegistrar: AnalysisApiTestServiceRegistrar()  {
     }
 
     override fun registerApplicationServices(application: MockApplication, testServices: TestServices) {
-        application.registerService(KotlinFakeClsStubsCache::class.java, KotlinFakeClsStubsCache())
     }
 }
