@@ -276,6 +276,7 @@ enum class LanguageFeature(
     ValueClassesSecondaryConstructorWithBody(sinceVersion = KOTLIN_1_9, kind = UNSTABLE_FEATURE), // KT-55333
     NativeJsProhibitLateinitIsInitializedIntrinsicWithoutPrivateAccess(KOTLIN_1_9, kind = BUG_FIX), // KT-27002
     TakeIntoAccountEffectivelyFinalInMustBeInitializedCheck(KOTLIN_1_9, kind = OTHER), // KT-58587
+    ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated(sinceVersion = KOTLIN_1_9), // KT-36770
 
     // End of 1.* language features --------------------------------------------------
 
@@ -294,11 +295,6 @@ enum class LanguageFeature(
     ReferencesToSyntheticJavaProperties(KOTLIN_2_1), // KT-8575
 
     // End of 2.* language features --------------------------------------------------
-
-    // This feature effectively might be removed because we decided to disable it until K2 and there it will be unconditionally enabled.
-    // But we leave it here just to minimize the changes in K1 and also to allow use the feature once somebody needs it.
-    // The reason for it's being disabled is described at KT-55357
-    ProhibitUsingNullableTypeParameterAgainstNotNullAnnotated(sinceVersion = null), // KT-36770
 
     // Disabled for indefinite time. See KT-53751
     IgnoreNullabilityForErasedValueParameters(sinceVersion = null, kind = BUG_FIX),
