@@ -1,8 +1,11 @@
 package
 
 @kotlin.jvm.JvmOverloads public fun testTopLevelFunction1(/*0*/ z: Z, /*1*/ x: kotlin.Int = ...): kotlin.Unit
+@kotlin.jvm.JvmOverloads public fun testTopLevelFunction1(/*0*/ ZZ: ZZ, /*1*/ x: kotlin.Int = ...): kotlin.Unit
 @kotlin.jvm.JvmOverloads public fun testTopLevelFunction2(/*0*/ x: kotlin.Int, /*1*/ z: Z = ...): kotlin.Unit
+@kotlin.jvm.JvmOverloads public fun testTopLevelFunction2(/*0*/ x: kotlin.Int, /*1*/ ZZ: ZZ = ...): kotlin.Unit
 @kotlin.jvm.JvmOverloads public fun testTopLevelFunction3(/*0*/ x: kotlin.Int = ...): Z
+@kotlin.jvm.JvmOverloads public fun testTopLevelFunction3ZZ(/*0*/ x: kotlin.Int = ...): ZZ
 
 public final class C {
     @kotlin.jvm.JvmOverloads public constructor C(/*0*/ i: kotlin.Int, /*1*/ z: Z = ...)
@@ -15,10 +18,31 @@ public final class C {
     public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
 }
 
-public final inline class Z {
+public final class C1 {
+    @kotlin.jvm.JvmOverloads public constructor C1(/*0*/ i: kotlin.Int, /*1*/ ZZ: ZZ = ...)
+    @kotlin.jvm.JvmOverloads public constructor C1(/*0*/ s: kotlin.String, /*1*/ ZZ: ZZ, /*2*/ i: kotlin.Int = ...)
+    public open override /*1*/ /*fake_override*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*fake_override*/ fun hashCode(): kotlin.Int
+    @kotlin.jvm.JvmOverloads public final fun testMemberFunction1(/*0*/ ZZ: ZZ, /*1*/ x: kotlin.Int = ...): kotlin.Unit
+    @kotlin.jvm.JvmOverloads public final fun testMemberFunction2(/*0*/ x: kotlin.Int, /*1*/ ZZ: ZZ = ...): kotlin.Unit
+    @kotlin.jvm.JvmOverloads public final fun testMemberFunction3(/*0*/ x: kotlin.Int = ...): ZZ
+    public open override /*1*/ /*fake_override*/ fun toString(): kotlin.String
+}
+
+@kotlin.jvm.JvmInline public final value class Z {
     public constructor Z(/*0*/ x: kotlin.Int)
     public final val x: kotlin.Int
     public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
     public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
     public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
 }
+
+@kotlin.jvm.JvmInline public final value class ZZ {
+    public constructor ZZ(/*0*/ x: kotlin.Int, /*1*/ y: kotlin.Int)
+    public final val x: kotlin.Int
+    public final val y: kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun equals(/*0*/ other: kotlin.Any?): kotlin.Boolean
+    public open override /*1*/ /*synthesized*/ fun hashCode(): kotlin.Int
+    public open override /*1*/ /*synthesized*/ fun toString(): kotlin.String
+}
+
