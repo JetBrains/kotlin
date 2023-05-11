@@ -1,0 +1,36 @@
+@JvmInline
+value class Z {
+  constructor(s: String) /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  val s: String
+    field = s
+    get
+
+  override fun toString(): String {
+    return "Z(" + "s=" + <this>.#s + ")"
+  }
+
+  override fun hashCode(): Int {
+    return <this>.#s.hashCode()
+  }
+
+  override operator fun equals(other: Any?): Boolean {
+    when {
+      other !is Z -> return false
+    }
+    val tmp0_other_with_cast: Z = other as Z
+    when {
+      EQEQ(arg0 = <this>.#s, arg1 = tmp0_other_with_cast.#s).not() -> return false
+    }
+    return true
+  }
+
+}
+
+val equals: KFunction2<Z, @ParameterName(name = "other") Any?, Boolean>
+  field = Z::equals
+  get
