@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilati
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationResult.Companion.assertSuccess
 import org.jetbrains.kotlin.konan.blackboxtest.support.runner.*
 import org.jetbrains.kotlin.konan.blackboxtest.support.settings.*
+import org.jetbrains.kotlin.konan.blackboxtest.support.util.DEFAULT_MODULE_NAME
 import org.jetbrains.kotlin.konan.blackboxtest.support.util.getAbsoluteFile
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.junit.jupiter.api.Assumptions
@@ -27,7 +28,7 @@ abstract class AbstractNativeObjCExportTest : AbstractNativeSimpleTest() {
         Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
         val testPathFull = getAbsoluteFile(testDir)
         val ktSources = testPathFull.list()!!
-            .filter { it.endsWith(".kt")}
+            .filter { it.endsWith(".kt") }
             .map { testPathFull.resolve(it) }
         ktSources.forEach { muteTestIfNecessary(it) }
 
@@ -58,7 +59,7 @@ abstract class AbstractNativeObjCExportTest : AbstractNativeSimpleTest() {
 
     private fun generateObjCFrameworkTestCase(testPathFull: File, sources: List<File>): TestCase {
         val moduleName: String = testPathFull.name
-        val module = TestModule.Exclusive(moduleName, emptySet(), emptySet(), emptySet())
+        val module = TestModule.Exclusive(DEFAULT_MODULE_NAME, emptySet(), emptySet(), emptySet())
         sources.forEach { module.files += TestFile.createCommitted(it, module) }
 
         return TestCase(
