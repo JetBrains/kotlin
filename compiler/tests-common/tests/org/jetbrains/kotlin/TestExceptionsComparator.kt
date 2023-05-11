@@ -61,7 +61,7 @@ class TestExceptionsComparator(wholeFile: File) {
     }
 
     private fun validateExistingExceptionFiles(e: TestsError?) {
-        val postfixesOfFilesToCheck = TestsExceptionType.values().toMutableSet().filter { it != e?.type }
+        val postfixesOfFilesToCheck = TestsExceptionType.entries.toTypedArray().toMutableSet().filter { it != e?.type }
 
         postfixesOfFilesToCheck.forEach {
             if (File("$filePathPrefix.${it.postfix}.txt").exists())

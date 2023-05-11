@@ -45,7 +45,7 @@ fun getBuildReporter(
     val requestedResults = compilationOptions
         .requestedCompilationResults
         .mapNotNullTo(HashSet()) { resultCode ->
-            CompilationResultCategory.values().getOrNull(resultCode)
+            CompilationResultCategory.entries.getOrNull(resultCode)
         }
     for (requestedResult in requestedResults) {
         when (requestedResult) {

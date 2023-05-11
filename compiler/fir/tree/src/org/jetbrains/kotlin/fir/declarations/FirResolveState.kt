@@ -38,7 +38,7 @@ class FirResolvedToPhaseState private constructor(
     override val resolvePhase: FirResolvePhase
 ) : FirResolveState() {
     companion object {
-        private val phases: List<FirResolvedToPhaseState> = FirResolvePhase.values().map(::FirResolvedToPhaseState)
+        private val phases: List<FirResolvedToPhaseState> = FirResolvePhase.entries.map(::FirResolvedToPhaseState)
 
         operator fun invoke(phase: FirResolvePhase) = phases[phase.ordinal]
     }
@@ -75,7 +75,7 @@ class FirInProcessOfResolvingToPhaseStateWithoutBarrier private constructor(
     override val resolvingTo: FirResolvePhase
 ) : FirInProcessOfResolvingToPhaseState() {
     companion object {
-        private val phases: List<FirInProcessOfResolvingToPhaseState> = FirResolvePhase.values()
+        private val phases: List<FirInProcessOfResolvingToPhaseState> = FirResolvePhase.entries.toTypedArray()
             .drop(1) // drop FirResolvePhase.RAW_FIR phase
             .map(::FirInProcessOfResolvingToPhaseStateWithoutBarrier)
 

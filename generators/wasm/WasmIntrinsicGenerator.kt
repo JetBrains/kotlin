@@ -39,7 +39,7 @@ private fun generateWasmOps(targetDir: File) {
                 companion object {
             """.trimIndent()
         )
-        WasmOp.values().forEach { op ->
+        WasmOp.entries.forEach { op ->
             writer.appendLine("        const val $op = \"$op\"")
         }
         writer.appendLine(

@@ -12,6 +12,6 @@ enum class JvmAbiStability(val description: String) {
 
     companion object {
         fun fromStringOrNull(string: String?): JvmAbiStability? =
-            values().find { it.description == string }
+            entries.find { it.description == string }
     }
 }

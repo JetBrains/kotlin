@@ -21,7 +21,7 @@ internal fun generateKotlinVersion(
     val kotlinVersionFqName = FqName("org.jetbrains.kotlin.gradle.dsl.KotlinVersion")
     filePrinter(fileFromFqName(apiDir, kotlinVersionFqName)) {
         generateDeclaration("enum class", kotlinVersionFqName, afterType = "(val version: String)") {
-            for (languageVersion in LanguageVersion.values()) {
+            for (languageVersion in LanguageVersion.entries) {
                 val prefix = when {
                     languageVersion.isUnsupported -> "@Deprecated(\"Unsupported\", level = DeprecationLevel.ERROR) "
                     languageVersion.isDeprecated -> "@Deprecated(\"Will be removed soon\") "

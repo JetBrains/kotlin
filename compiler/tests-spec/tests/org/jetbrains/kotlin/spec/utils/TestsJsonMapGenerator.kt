@@ -66,7 +66,7 @@ object TestsJsonMapGenerator {
         testOrigin: TestOrigin,
     ) {
         val isImplementationTest = testOrigin == TestOrigin.IMPLEMENTATION
-        TestArea.values().forEach { testArea ->
+        TestArea.entries.forEach { testArea ->
             File(testOrigin.getFilePath(testArea)).walkTopDown()
                 .forEach testFiles@{ file ->
                     if (!file.isFile || file.extension != "kt" || file.isCustomTestData) return@testFiles

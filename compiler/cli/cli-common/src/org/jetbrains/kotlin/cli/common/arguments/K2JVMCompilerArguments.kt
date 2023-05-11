@@ -867,7 +867,7 @@ Also sets `-jvm-target` value equal to the selected JDK version"""
         } ?: collector.report(
             CompilerMessageSeverity.ERROR,
             "Unknown -Xjvm-default mode: $jvmDefault, supported modes: ${
-                JvmDefaultMode.values().mapNotNull { mode ->
+                JvmDefaultMode.entries.mapNotNull { mode ->
                     mode.description.takeIf { JvmDefaultMode.fromStringOrNull(it) != null }
                 }
             }"

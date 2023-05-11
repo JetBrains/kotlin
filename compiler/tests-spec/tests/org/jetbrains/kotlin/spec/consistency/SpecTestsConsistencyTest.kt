@@ -26,7 +26,7 @@ class SpecTestsConsistencyTest : TestCase() {
         fun getTestFiles(): Stream<String> {
             val testFiles = mutableListOf<String>()
 
-            TestArea.values().forEach { testArea ->
+            TestArea.entries.forEach { testArea ->
                 val testDataPath =
                     "${GeneralConfiguration.SPEC_TESTDATA_PATH}/${testArea.testDataPath}/${SpecTestLinkedType.LINKED.testDataPath}"
 

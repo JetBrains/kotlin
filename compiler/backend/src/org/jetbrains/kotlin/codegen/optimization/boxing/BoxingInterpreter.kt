@@ -265,7 +265,7 @@ fun AbstractInsnNode.isPrimitiveBoxing() =
 private val BOXING_CLASS_INTERNAL_NAME =
     StandardNames.COROUTINES_JVM_INTERNAL_PACKAGE_FQ_NAME.child(Name.identifier("Boxing")).topLevelClassInternalName()
 
-private fun isJvmPrimitiveName(name: String) = JvmPrimitiveType.values().any { it.javaKeywordName == name }
+private fun isJvmPrimitiveName(name: String) = JvmPrimitiveType.entries.any { it.javaKeywordName == name }
 
 fun AbstractInsnNode.isCoroutinePrimitiveBoxing(): Boolean {
     return isMethodInsnWith(Opcodes.INVOKESTATIC) {

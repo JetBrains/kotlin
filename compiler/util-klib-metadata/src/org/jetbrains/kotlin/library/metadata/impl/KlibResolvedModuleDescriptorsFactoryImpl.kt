@@ -132,7 +132,7 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
             )
 
         val packageFragmentProvider = PackageFragmentProviderImpl(
-            ForwardDeclarationKind.values().map { createPackage(it) }
+            ForwardDeclarationKind.entries.map { createPackage(it) }
         )
 
         module.initialize(packageFragmentProvider)
@@ -243,6 +243,6 @@ enum class ForwardDeclarationKind(val packageFqName: FqName, val superClassName:
     val superClassId = ClassId.topLevel(ForwardDeclarationsFqNames.cInterop.child(Name.identifier(superClassName)))
 
     companion object {
-        val packageFqNameToKind: Map<FqName, ForwardDeclarationKind> = ForwardDeclarationKind.values().associateBy { it.packageFqName }
+        val packageFqNameToKind: Map<FqName, ForwardDeclarationKind> = entries.associateBy { it.packageFqName }
     }
 }

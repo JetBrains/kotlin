@@ -31,7 +31,7 @@ class KotlinClassHeader(
         MULTIFILE_CLASS_PART(5);
 
         companion object {
-            private val entryById = values().associateBy(Kind::id)
+            private val entryById = entries.associateBy(Kind::id)
 
             @JvmStatic
             fun getById(id: Int) = entryById[id] ?: UNKNOWN

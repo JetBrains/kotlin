@@ -60,6 +60,6 @@ internal enum class TaskType(
     ;
 
     companion object {
-        fun getByAlias(alias: String) = values().firstOrNull { it.alias == alias }
+        fun getByAlias(alias: String) = entries.firstOrNull { it.alias == alias }
     }
 }

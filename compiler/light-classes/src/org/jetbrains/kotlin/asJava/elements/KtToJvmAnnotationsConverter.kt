@@ -73,7 +73,7 @@ private val targetMappings = EnumMap<JvmTarget, Map<String, EnumValue>>(JvmTarge
         put("kotlin.annotation.AnnotationTarget.TYPE_PARAMETER", EnumValue(javaAnnotationElementTypeId, Name.identifier("TYPE_PARAMETER")))
         put("kotlin.annotation.AnnotationTarget.TYPE", EnumValue(javaAnnotationElementTypeId, Name.identifier("TYPE_USE")))
     }
-    for (target in JvmTarget.values()) {
+    for (target in JvmTarget.entries) {
         result[target] = if (target >= JvmTarget.JVM_1_8) jdk8AndLater else jdk6
     }
 }

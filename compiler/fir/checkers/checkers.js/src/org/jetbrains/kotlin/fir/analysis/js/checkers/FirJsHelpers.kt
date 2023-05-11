@@ -107,7 +107,7 @@ fun FirBasedSymbol<*>.isPredefinedObject(session: FirSession): Boolean {
     if (fir is FirMemberDeclaration && isExpect) return true
     if (isEffectivelyExternalMember(session)) return true
 
-    for (annotation in PredefinedAnnotation.values()) {
+    for (annotation in PredefinedAnnotation.entries) {
         if (hasAnnotationOrInsideAnnotatedClass(annotation.classId, session)) {
             return true
         }

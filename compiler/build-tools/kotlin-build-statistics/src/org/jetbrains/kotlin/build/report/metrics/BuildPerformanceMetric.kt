@@ -54,7 +54,7 @@ enum class BuildPerformanceMetric(val parent: BuildPerformanceMetric? = null, va
         const val serialVersionUID = 0L
 
         val children by lazy {
-            values().filter { it.parent != null }.groupBy { it.parent }
+            entries.filter { it.parent != null }.groupBy { it.parent }
         }
     }
 }

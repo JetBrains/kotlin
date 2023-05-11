@@ -12,7 +12,7 @@ enum class JvmSerializeIrMode(val description: String) {
 
     companion object {
         @JvmStatic
-        fun fromStringOrNull(string: String) = values().find { it.description == string }
+        fun fromStringOrNull(string: String) = entries.find { it.description == string }
 
         @JvmStatic
         fun fromString(string: String) = fromStringOrNull(string) ?: NONE

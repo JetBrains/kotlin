@@ -84,7 +84,7 @@ open class KlibMetadataDeserializedPackageFragmentsFactoryImpl : KlibMetadataDes
         val aliasedPackageFragments = deserializedPackageFragments.filter { it.fqName == mainPackageFqName }
 
         val result = mutableListOf<PackageFragmentDescriptor>()
-        ExportedForwardDeclarationChecker.values().mapTo(result) { checker ->
+        ExportedForwardDeclarationChecker.entries.mapTo(result) { checker ->
             ClassifierAliasingPackageFragmentDescriptor(aliasedPackageFragments, moduleDescriptor, checker)
         }
 

@@ -28,7 +28,7 @@ private val LANGUAGE_TO_METADATA_VERSION = EnumMap<LanguageVersion, JvmMetadataV
     this[LanguageVersion.KOTLIN_2_0] = JvmMetadataVersion(2, 0, 0)
     this[LanguageVersion.KOTLIN_2_1] = JvmMetadataVersion(2, 1, 0)
 
-    check(size == LanguageVersion.values().size) {
+    check(size == LanguageVersion.entries.size) {
         "Please add mappings from the missing LanguageVersion instances to the corresponding JvmMetadataVersion " +
                 "in `LANGUAGE_TO_METADATA_VERSION`"
     }

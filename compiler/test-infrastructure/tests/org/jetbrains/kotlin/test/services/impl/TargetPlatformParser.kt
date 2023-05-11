@@ -34,8 +34,8 @@ object TargetPlatformParser {
         val target = when {
             platformString == JVM -> JvmTarget.DEFAULT
             !platformString.startsWith(JDK) -> return null
-            else -> JvmTarget.values().find { it.name == platformString }
-                ?: error("JvmTarget \"$platformString\" not found.\nAvailable targets: ${JvmTarget.values().joinToArrayString()}")
+            else -> JvmTarget.entries.find { it.name == platformString }
+                ?: error("JvmTarget \"$platformString\" not found.\nAvailable targets: ${JvmTarget.entries.toTypedArray().joinToArrayString()}")
         }
         return JdkPlatform(target)
     }

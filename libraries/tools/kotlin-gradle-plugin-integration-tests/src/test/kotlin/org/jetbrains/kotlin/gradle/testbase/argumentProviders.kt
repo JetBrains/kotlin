@@ -166,7 +166,7 @@ class GradleAndAgpArgumentsProvider : GradleArgumentsProvider() {
 
         return agpVersions
             .flatMap { version ->
-                val agpVersion = TestVersions.AgpCompatibilityMatrix.values().find { it.version == version }
+                val agpVersion = TestVersions.AgpCompatibilityMatrix.entries.find { it.version == version }
                     ?: throw IllegalArgumentException("AGP version $version is not defined in TestVersions.AGP!")
 
                 val providedJdk = JdkVersions.ProvidedJdk(

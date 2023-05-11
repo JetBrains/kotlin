@@ -72,7 +72,7 @@ fun parseTestCases(testFiles: TestFiles): SpecTestCasesSet {
 
         while (matcher.find(startFind)) {
             val caseInfoElements = CommonParser.parseTestInfoElements(
-                arrayOf(*CommonInfoElementType.values(), *SpecTestCaseInfoElementType.values()),
+                arrayOf(*CommonInfoElementType.entries.toTypedArray(), *SpecTestCaseInfoElementType.entries.toTypedArray()),
                 matcher.group("infoElementsSL") ?: matcher.group("infoElementsML")
             )
             val nextDirective = matcher.group("nextDirectiveSL") ?: matcher.group("nextDirectiveML")

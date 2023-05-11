@@ -11,8 +11,8 @@ enum class ExplicitApiMode(val state: String) {
     WARNING("warning");
 
     companion object {
-        fun fromString(string: String): ExplicitApiMode? = values().find { it.state == string }
+        fun fromString(string: String): ExplicitApiMode? = entries.find { it.state == string }
 
-        fun availableValues() = values().joinToString(prefix = "{", postfix = "}") { it.state }
+        fun availableValues() = entries.joinToString(prefix = "{", postfix = "}") { it.state }
     }
 }

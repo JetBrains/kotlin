@@ -187,7 +187,7 @@ private class DeprecatedAnnotationCommonizer : Commonizer<CirAnnotation, CirAnno
         private val DEPRECATION_LEVEL_CLASS_ID = CirEntityId.create("kotlin/DeprecationLevel")
 
         // Optimization: Keep DeprecationLevel enum constants.
-        private val DEPRECATION_LEVEL_ENUM_ENTRY_VALUES: Map<String, EnumValue> = DeprecationLevel.values().associate {
+        private val DEPRECATION_LEVEL_ENUM_ENTRY_VALUES: Map<String, EnumValue> = DeprecationLevel.entries.associate {
             it.name to EnumValue(DEPRECATION_LEVEL_CLASS_ID, CirName.create(it.name))
         }
 
@@ -208,7 +208,7 @@ private class DeprecatedAnnotationCommonizer : Commonizer<CirAnnotation, CirAnno
 
         private fun CirAnnotation.getDeprecationLevel(): DeprecationLevel? {
             val enumEntryName = constantValueArguments.getEnumEntryName(PROPERTY_NAME_LEVEL) ?: return null
-            return DeprecationLevel.values().firstOrNull { it.name == enumEntryName }
+            return DeprecationLevel.entries.firstOrNull { it.name == enumEntryName }
         }
 
         private fun DeprecationLevel.toDeprecationLevelValue(): EnumValue =

@@ -56,7 +56,7 @@ object SectionsJsonMapGenerator {
     ) {
         companion object {
             private fun identifyTestArea(path: String): TestArea {
-                TestArea.values().forEach {
+                TestArea.entries.forEach {
                     if (path.startsWith(it.testDataPath)) return it
                 }
                 throw IllegalArgumentException("testsMap path doesn't contain test area path")

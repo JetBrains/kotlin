@@ -281,7 +281,7 @@ private fun createInitialCompilerConfiguration(
 
         val definedTarget = scriptCompilationConfiguration[ScriptCompilationConfiguration.jvm.jvmTarget]
         if (definedTarget != null) {
-            val target = JvmTarget.values().find { it.description == definedTarget }
+            val target = JvmTarget.entries.find { it.description == definedTarget }
             if (target == null) {
                 messageCollector.report(
                     CompilerMessageSeverity.STRONG_WARNING, "Unknown JVM target \"$definedTarget\", using default"

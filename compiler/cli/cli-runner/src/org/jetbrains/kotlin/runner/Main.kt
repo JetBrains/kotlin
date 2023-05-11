@@ -45,7 +45,7 @@ object Main {
             val validValues = "${GUESS.argName} (default), ${CLASSFILE.argName}, ${JAR.argName}, ${SCRIPT.argName} (or .<script filename extension>)"
 
             fun fromArg(name: String): HowToRun? =
-                HowToRun.values().find { it.argName == name }
+                entries.find { it.argName == name }
         }
     }
 

@@ -73,7 +73,7 @@ private fun transformKaptToolArgs(args: List<String>, messageCollector: MessageC
 
     data class Option(val cliToolOption: CliToolOption, val pluginOption: KaptCliOption)
 
-    val cliOptions = KaptCliOption.values().mapNotNull { Option(it.cliToolOption ?: return@mapNotNull null, it) }
+    val cliOptions = KaptCliOption.entries.mapNotNull { Option(it.cliToolOption ?: return@mapNotNull null, it) }
 
     val iterator = args.asIterable().iterator()
     loop@ while (iterator.hasNext()) {

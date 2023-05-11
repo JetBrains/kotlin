@@ -230,7 +230,7 @@ abstract class CompileServiceImplBase(
 
     protected fun Int.toAlivenessName(): String =
         try {
-            Aliveness.values()[this].name
+            Aliveness.entries[this].name
         } catch (_: Throwable) {
             "invalid($this)"
         }

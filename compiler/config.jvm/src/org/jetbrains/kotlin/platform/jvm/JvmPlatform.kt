@@ -20,7 +20,7 @@ abstract class JvmPlatform : SimplePlatform("JVM") {
 object JvmPlatforms {
     private val UNSPECIFIED_SIMPLE_JVM_PLATFORM = JdkPlatform(JvmTarget.DEFAULT)
     private val jvmTargetToJdkPlatform: Map<JvmTarget, TargetPlatform> =
-        JvmTarget.values().map { it to JdkPlatform(it).toTargetPlatform() }.toMap()
+        JvmTarget.entries.map { it to JdkPlatform(it).toTargetPlatform() }.toMap()
 
     // This platform is needed mostly for compatibility and migration of code base,
     // as previously some clients used TargetPlatform just as platform-marker

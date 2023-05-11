@@ -24,7 +24,7 @@ enum class KotlinConstantValueKind {
 fun createConstantValue(dataStream: StubInputStream): ConstantValue<*>? {
     val kind = dataStream.readInt()
     if (kind == -1) return null
-    return when (KotlinConstantValueKind.values()[kind]) {
+    return when (KotlinConstantValueKind.entries[kind]) {
         KotlinConstantValueKind.NULL -> NullValue
         KotlinConstantValueKind.BOOLEAN -> BooleanValue(dataStream.readBoolean())
         KotlinConstantValueKind.CHAR -> CharValue(dataStream.readChar())

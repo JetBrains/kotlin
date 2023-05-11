@@ -175,7 +175,7 @@ private fun FirAnnotation.getDeprecationLevel(): DeprecationLevelValue? {
     } ?: return null
     val targetExpression = argument as? FirQualifiedAccessExpression ?: return null
     val targetName = (targetExpression.calleeReference as? FirNamedReference)?.name?.asString() ?: return null
-    return DeprecationLevelValue.values().find { it.name == targetName }
+    return DeprecationLevelValue.entries.find { it.name == targetName }
 }
 
 val deprecationAnnotationSimpleNames: Set<String> = setOf(

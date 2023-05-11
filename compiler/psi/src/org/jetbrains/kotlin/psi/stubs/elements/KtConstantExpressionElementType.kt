@@ -53,7 +53,7 @@ class KtConstantExpressionElementType(@NonNls debugName: String) :
         val kindOrdinal = dataStream.readInt()
         val value = dataStream.readName() ?: StringRef.fromString("")
 
-        val valueKind = ConstantValueKind.values()[kindOrdinal]
+        val valueKind = ConstantValueKind.entries[kindOrdinal]
 
         return KotlinConstantExpressionStubImpl(
             parentStub,

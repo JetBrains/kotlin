@@ -43,7 +43,7 @@ class CompilerOutputTest : AbstractNativeSimpleTest() {
     }
 
     private fun doTestPreReleaseKotlinLibrary(rootDir: File, additionalOptions: List<String>) {
-        val someNonStableVersion = LanguageVersion.values().firstOrNull { it > LanguageVersion.LATEST_STABLE } ?: return
+        val someNonStableVersion = LanguageVersion.entries.firstOrNull { it > LanguageVersion.LATEST_STABLE } ?: return
 
         val libraryOptions = listOf(
             "-language-version", someNonStableVersion.versionString,

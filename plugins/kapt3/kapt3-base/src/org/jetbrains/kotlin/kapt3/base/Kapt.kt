@@ -19,7 +19,7 @@ object Kapt {
     @JvmStatic
     @Suppress("unused")
     fun kaptFlags(rawFlags: Set<String>): KaptFlags {
-        return KaptFlags.fromSet(KaptFlag.values().filterTo(mutableSetOf()) { it.name in rawFlags })
+        return KaptFlags.fromSet(KaptFlag.entries.toTypedArray().filterTo(mutableSetOf()) { it.name in rawFlags })
     }
 
     @JvmStatic

@@ -12,7 +12,7 @@ enum class ReportLevel(val description: String) {
     ;
 
     companion object {
-        fun findByDescription(description: String?): ReportLevel? = values().firstOrNull { it.description == description }
+        fun findByDescription(description: String?): ReportLevel? = entries.firstOrNull { it.description == description }
     }
 
     val isWarning: Boolean get() = this == WARN

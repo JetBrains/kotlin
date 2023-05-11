@@ -78,7 +78,7 @@ object JavaToKotlinClassMap {
             addMapping(platformCollection)
         }
 
-        for (jvmType in JvmPrimitiveType.values()) {
+        for (jvmType in JvmPrimitiveType.entries) {
             add(
                 ClassId.topLevel(jvmType.wrapperFqName),
                 ClassId.topLevel(StandardNames.getPrimitiveFqName(jvmType.primitiveType))

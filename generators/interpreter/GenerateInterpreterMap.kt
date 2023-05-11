@@ -196,8 +196,8 @@ private data class Operation(
 private fun getOperationMap(argumentsCount: Int): MutableList<Operation> {
     val builtIns = DefaultBuiltIns.Instance
     val operationMap = mutableListOf<Operation>()
-    val allPrimitiveTypes = PrimitiveType.values().map { builtIns.getBuiltInClassByFqName(it.typeFqName) }
-    val arrays = PrimitiveType.values().map { builtIns.getPrimitiveArrayClassDescriptor(it) } + builtIns.array
+    val allPrimitiveTypes = PrimitiveType.entries.map { builtIns.getBuiltInClassByFqName(it.typeFqName) }
+    val arrays = PrimitiveType.entries.map { builtIns.getPrimitiveArrayClassDescriptor(it) } + builtIns.array
     val additionalBuiltIns = listOf(
         builtIns.string, builtIns.any, builtIns.charSequence, builtIns.number, builtIns.comparable, builtIns.throwable
     )
@@ -282,7 +282,7 @@ private fun getExtensionOperationMap(): List<Operation> {
 // Probably can be dropped after KT-57344 fix
 private fun getAdditionalEqualsOperationMap(): List<Operation> {
     val builtIns = DefaultBuiltIns.Instance
-    return PrimitiveType.values().map { builtIns.getBuiltInClassByFqName(it.typeFqName) }.map {
+    return PrimitiveType.entries.map { builtIns.getBuiltInClassByFqName(it.typeFqName) }.map {
         val type = it.defaultType.constructor.toString()
         Operation("equals", listOf(type, type), isFunction = true)
     }

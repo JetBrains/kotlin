@@ -226,7 +226,7 @@ fun AnnotationDescriptor.getAnnotationRetention(): KotlinRetention? {
     val retentionArgumentValue = allValueArguments[RETENTION_PARAMETER_NAME] as? EnumValue ?: return null
 
     val retentionArgumentValueName = retentionArgumentValue.enumEntryName.asString()
-    return KotlinRetention.values().firstOrNull { it.name == retentionArgumentValueName }
+    return KotlinRetention.entries.firstOrNull { it.name == retentionArgumentValueName }
 }
 
 val Annotated.nonSourceAnnotations: List<AnnotationDescriptor>

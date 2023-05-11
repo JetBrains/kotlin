@@ -49,7 +49,7 @@ enum class ModifierFlag(val value: Long) {
     REIFICATION_REIFIED(1L shl 36);
 
     companion object {
-        val Values = values()
+        val Values = entries.toTypedArray()
         val ElementTypeToModifierFlagMap: Map<IElementType, ModifierFlag> = mutableMapOf(
             // Class
             KtTokens.ENUM_KEYWORD to CLASS_ENUM,

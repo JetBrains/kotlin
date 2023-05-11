@@ -74,23 +74,23 @@ private fun classFqNameEquals(symbol: IrClassSymbol, fqName: FqNameUnsafe): Bool
 }
 
 private val idSignatureToPrimitiveType: Map<IdSignature.CommonSignature, PrimitiveType> =
-    PrimitiveType.values().associateBy {
+    PrimitiveType.entries.associateBy {
         getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, it.typeName.asString())
     }
 
 private val shortNameToPrimitiveType: Map<Name, PrimitiveType> =
-    PrimitiveType.values().associateBy(PrimitiveType::typeName)
+    PrimitiveType.entries.associateBy(PrimitiveType::typeName)
 
 private val idSignatureToUnsignedType: Map<IdSignature.CommonSignature, UnsignedType> =
-    UnsignedType.values().associateBy {
+    UnsignedType.entries.associateBy {
         getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, it.typeName.asString())
     }
 
 private val shortNameToUnsignedType: Map<Name, UnsignedType> =
-    UnsignedType.values().associateBy(UnsignedType::typeName)
+    UnsignedType.entries.associateBy(UnsignedType::typeName)
 
 val primitiveArrayTypesSignatures: Map<PrimitiveType, IdSignature.CommonSignature> =
-    PrimitiveType.values().associateWith {
+    PrimitiveType.entries.associateWith {
         getPublicSignature(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, "${it.typeName.asString()}Array")
     }
 

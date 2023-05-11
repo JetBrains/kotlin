@@ -40,10 +40,10 @@ object AnalysisApiConfiguratorFactoryProvider {
     }
 
     val allPossibleFactoryDataList: List<AnalysisApiTestConfiguratorFactoryData> = buildList {
-        FrontendKind.values().forEach { frontend ->
-            TestModuleKind.values().forEach { moduleKind ->
-                AnalysisSessionMode.values().forEach { analysisSessionMode ->
-                    AnalysisApiMode.values().forEach { analysisApiMode ->
+        FrontendKind.entries.forEach { frontend ->
+            TestModuleKind.entries.forEach { moduleKind ->
+                AnalysisSessionMode.entries.forEach { analysisSessionMode ->
+                    AnalysisApiMode.entries.forEach { analysisApiMode ->
                         add(AnalysisApiTestConfiguratorFactoryData(frontend, moduleKind, analysisSessionMode, analysisApiMode))
                     }
                 }

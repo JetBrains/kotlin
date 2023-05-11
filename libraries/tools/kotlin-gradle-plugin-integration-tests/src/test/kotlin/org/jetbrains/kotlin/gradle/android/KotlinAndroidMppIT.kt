@@ -895,7 +895,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             .map { it.toString() }
 
         checkedConsumerAGPVersions.forEach { consumerAgpVersion ->
-            val agpTestVersion = TestVersions.AgpCompatibilityMatrix.values().find { it.version == consumerAgpVersion }
+            val agpTestVersion = TestVersions.AgpCompatibilityMatrix.entries.find { it.version == consumerAgpVersion }
                 ?: fail("AGP version $consumerAgpVersion is not defined in TestVersions.AGP!")
             val consumerGradleVersion = when {
                 gradleVersion < agpTestVersion.minSupportedGradleVersion -> agpTestVersion.minSupportedGradleVersion

@@ -72,7 +72,7 @@ class AndroidCommandLineProcessor : CommandLineProcessor {
                 "defaultCacheImplementation", "hashMap/sparseArray/none", "Default cache implementation for module", required = false)
 
         val FEATURES_OPTION = CliOption(
-                "features", AndroidExtensionsFeature.values().joinToString(" | "), "Enabled features", required = false)
+            "features", AndroidExtensionsFeature.entries.joinToString(" | "), "Enabled features", required = false)
 
         /* This option is just for saving Android Extensions status in Kotlin facet. It should not be supported from CLI. */
         val ENABLED_OPTION: CliOption = CliOption("enabled", "true/false", "Enable Android Extensions", required = false)
@@ -92,7 +92,7 @@ class AndroidCommandLineProcessor : CommandLineProcessor {
             CONFIGURATION -> configuration.applyOptionsFrom(decodePluginOptions(value), pluginOptions)
             FEATURES_OPTION -> {
                 val features = value.split(',').mapNotNullTo(mutableSetOf()) {
-                    name -> AndroidExtensionsFeature.values().firstOrNull { it.featureName == name }
+                    name -> AndroidExtensionsFeature.entries.firstOrNull { it.featureName == name }
                 }
                 configuration.put(AndroidConfigurationKeys.FEATURES, features)
             }
@@ -171,7 +171,7 @@ class AndroidComponentRegistrar : ComponentRegistrar {
     override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
         reportRemovedError(configuration)
 
-        val features = configuration.get(AndroidConfigurationKeys.FEATURES) ?: AndroidExtensionsFeature.values().toSet()
+        val features = configuration.get(AndroidConfigurationKeys.FEATURES) ?: AndroidExtensionsFeature.entries.toSet()
         val isExperimental = configuration.get(AndroidConfigurationKeys.EXPERIMENTAL) == "true"
 
         if (AndroidExtensionsFeature.PARCELIZE in features) {

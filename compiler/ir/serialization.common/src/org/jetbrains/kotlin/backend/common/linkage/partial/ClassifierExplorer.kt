@@ -48,12 +48,12 @@ internal class ClassifierExplorer(
         buildSet {
             this += permittedAnnotationArrayParameterSymbols
 
-            PrimitiveType.values().forEach {
+            PrimitiveType.entries.forEach {
                 addIfNotNull(builtIns.findClass(it.typeName, BUILT_INS_PACKAGE_FQ_NAME)) // kotlin.<primitive>
                 addIfNotNull(builtIns.findClass(it.arrayTypeName, BUILT_INS_PACKAGE_FQ_NAME)) // kotlin.<primitive>Array
             }
 
-            UnsignedType.values().forEach {
+            UnsignedType.entries.forEach {
                 addIfNotNull(builtIns.findClass(it.typeName, BUILT_INS_PACKAGE_FQ_NAME)) // kotlin.U<signed>
                 addIfNotNull(builtIns.findClass(it.arrayClassId.shortClassName, BUILT_INS_PACKAGE_FQ_NAME)) // kotlin.U<signed>Array
             }

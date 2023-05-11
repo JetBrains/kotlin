@@ -141,7 +141,7 @@ private object JvmTypeFactoryImpl : JvmTypeFactory<JvmType> {
         assert(representation.isNotEmpty()) { "empty string as JvmType" }
         val firstChar = representation[0]
 
-        JvmPrimitiveType.values().firstOrNull { it.desc[0] == firstChar }?.let {
+        JvmPrimitiveType.entries.firstOrNull { it.desc[0] == firstChar }?.let {
             return JvmType.Primitive(it)
         }
 

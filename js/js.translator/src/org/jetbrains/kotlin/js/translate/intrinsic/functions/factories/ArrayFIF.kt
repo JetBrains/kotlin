@@ -144,14 +144,14 @@ object ArrayFIF : CompositeFIF() {
         val arrayName = StandardNames.FqNames.array.shortName()
 
         val arrayTypeNames = mutableListOf(arrayName)
-        PrimitiveType.values().mapTo(arrayTypeNames) { it.arrayTypeName }
+        entries.mapTo(arrayTypeNames) { it.arrayTypeName }
 
         val arrays = NamePredicate(arrayTypeNames)
         add(pattern(arrays, "get"), GET_INTRINSIC)
         add(pattern(arrays, "set"), SET_INTRINSIC)
         add(pattern(arrays, "<get-size>"), LENGTH_PROPERTY_INTRINSIC)
 
-        for (type in PrimitiveType.values()) {
+        for (type in entries) {
             add(pattern(NamePredicate(type.arrayTypeName), "<init>(Int)"), intrinsify { _, arguments, context ->
                 assert(arguments.size == 1) { "Array <init>(Int) expression must have one argument." }
                 val (size) = arguments
