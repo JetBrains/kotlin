@@ -17,10 +17,11 @@
 package org.jetbrains.kotlin.descriptors;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.kotlin.mpp.ClassifierSymbolMarker;
 import org.jetbrains.kotlin.types.SimpleType;
 import org.jetbrains.kotlin.types.TypeConstructor;
 
-public interface ClassifierDescriptor extends DeclarationDescriptorNonRoot {
+public interface ClassifierDescriptor extends DeclarationDescriptorNonRoot, ClassifierSymbolMarker {
     @NotNull
     TypeConstructor getTypeConstructor();
 
