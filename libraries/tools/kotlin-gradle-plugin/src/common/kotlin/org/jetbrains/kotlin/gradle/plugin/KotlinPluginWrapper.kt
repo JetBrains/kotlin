@@ -348,6 +348,7 @@ abstract class AbstractKotlinMultiplatformPluginWrapper : KotlinBasePluginWrappe
     override fun apply(project: Project) {
         super.apply(project)
         project.runMultiplatformAndroidGradlePluginCompatibilityHealthCheckWhenAndroidIsApplied()
+        project.runAndroidSourceSetLayoutV1SourceSetsNotFoundDiagnostic()
     }
 
     override val projectExtensionClass: KClass<out KotlinMultiplatformExtension>

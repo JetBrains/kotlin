@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
+import org.gradle.api.UnknownDomainObjectException
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
@@ -13,13 +14,17 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_MPP_ENABLE_CINTEROP_COMMONIZATION
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinSharedNativeCompilation
+import org.jetbrains.kotlin.gradle.plugin.sources.android.kotlinAndroidSourceSetLayout
+import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV2
 import org.jetbrains.kotlin.gradle.targets.android.findAndroidTarget
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropCommonizerDependent
 import org.jetbrains.kotlin.gradle.targets.native.internal.from
 import org.jetbrains.kotlin.gradle.targets.native.internal.isAllowCommonizer
 import org.jetbrains.kotlin.gradle.utils.findAppliedAndroidPluginIdOrNull
 import org.jetbrains.kotlin.gradle.utils.future
+import org.jetbrains.kotlin.gradle.utils.getOrPut
 import org.jetbrains.kotlin.gradle.utils.runProjectConfigurationHealthCheck
+import org.jetbrains.kotlin.tooling.core.withLinearClosure
 
 private class KotlinMultiplatformProjectConfigurationException(message: String) : Exception(message)
 
@@ -113,3 +118,38 @@ internal fun Project.runDisabledCInteropCommonizationOnHmppProjectConfigurationH
         )
     }
 }
+
+internal fun Project.runAndroidSourceSetLayoutV1SourceSetsNotFoundDiagnostic(
+    warningLogger: (warningMessage: String) -> Unit = project.logger::warn
+) = whenEvaluated check@{
+    val failure = project.state.failure ?: return@check
+
+    /* Checker is only relevant if multiplatformAndroidSourceSetLayoutV2 is applied */
+    if (project.kotlinAndroidSourceSetLayout != multiplatformAndroidSourceSetLayoutV2) return@check
+    val androidSourceSetRegex by lazy { Regex("""(androidTest|androidAndroidTest)\w*""") }
+
+    val allReasons = failure.withLinearClosure { it.cause }
+
+    val unknownAndroidSourceSetNames = allReasons.filterIsInstance<UnknownDomainObjectException>()
+        .filter { it.message.orEmpty().contains("KotlinSourceSet") }
+        .mapNotNull { androidSourceSetRegex.find(it.message.orEmpty()) }
+        .map { it.value }
+        .toSet()
+
+    unknownAndroidSourceSetNames.forEach { unknownAndroidSourceSetName ->
+        warningLogger(createAndroidSourceSetLayoutV1SourceSetsNotFoundWarning(unknownAndroidSourceSetName))
+    }
+}
+
+internal fun createAndroidSourceSetLayoutV1SourceSetsNotFoundWarning(sourceSetName: String): String =
+    """
+    e: KotlinSourceSet with name '$sourceSetName' not found:
+    The SourceSet requested ('$sourceSetName') was renamed in Kotlin 1.9.0
+    
+    In order to migrate you might want to replace: 
+    sourceSets.getByName("androidTest") -> sourceSets.getByName("androidUnitTest")
+    sourceSets.getByName("androidAndroidTest") -> sourceSets.getByName("androidInstrumentedTest")
+    
+    Learn more about the new Kotlin/Android SourceSet Layout: 
+    https://kotlinlang.org/docs/whatsnew18.html#kotlin-multiplatform-a-new-android-source-set-layout
+    """.trimIndent()
