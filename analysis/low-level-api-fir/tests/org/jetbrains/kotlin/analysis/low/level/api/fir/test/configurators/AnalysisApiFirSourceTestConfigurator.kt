@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtModuleFa
 import org.jetbrains.kotlin.analysis.test.framework.project.structure.KtSourceModuleFactory
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 
-class AnalysisApiFirSourceTestConfigurator(
+open class AnalysisApiFirSourceTestConfigurator(
     analyseInDependentSession: Boolean
 ) : AnalysisApiFirSourceLikeTestConfigurator(analyseInDependentSession) {
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
