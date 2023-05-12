@@ -35,7 +35,7 @@ import org.robolectric.annotation.Config
     minSdk = 23,
     maxSdk = 23
 )
-class ComposeCallLoweringTests : AbstractLoweringTests() {
+class ComposeCallLoweringTests : AbstractLoweringTests(useFir = false) {
     @Test
     @Ignore("b/173733968")
     fun testInlineGroups() {
