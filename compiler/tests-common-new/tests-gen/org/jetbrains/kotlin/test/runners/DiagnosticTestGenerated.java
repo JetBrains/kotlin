@@ -226,6 +226,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("delegationTypeMismatch.kt")
+        public void testDelegationTypeMismatch() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/delegationTypeMismatch.kt");
+        }
+
+        @Test
         @TestMetadata("DeprecatedGetSetPropertyDelegateConvention.kt")
         public void testDeprecatedGetSetPropertyDelegateConvention() throws Exception {
             runTest("compiler/testData/diagnostics/tests/DeprecatedGetSetPropertyDelegateConvention.kt");
