@@ -33,7 +33,7 @@ import org.robolectric.annotation.Config
     minSdk = 23,
     maxSdk = 23
 )
-class LiveLiteralCodegenTests : AbstractLoweringTests() {
+class LiveLiteralCodegenTests : AbstractLoweringTests(useFir = false) {
     override fun CompilerConfiguration.updateConfiguration() {
         put(ComposeConfiguration.LIVE_LITERALS_ENABLED_KEY, true)
     }

@@ -29,8 +29,11 @@ import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.statements
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.JUnit4
 
-class ClassStabilityTransformTests : AbstractIrTransformTest() {
+@RunWith(JUnit4::class)
+class ClassStabilityTransformTests : AbstractIrTransformTest(useFir = false) {
     @Test
     fun testEmptyClassIsStable() = assertStability(
         "class Foo",
