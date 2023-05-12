@@ -5,7 +5,7 @@ package pod1 {
         var __ap: COpaquePointer? /* = CPointer<out CPointed>? */
             @CStruct.MemberAt(offset = 0.toLong()) get
             @CStruct.MemberAt(offset = 0.toLong()) set
-        @CStruct.VarType(align = 4, size = 4.toLong()) @Deprecated(level = DeprecationLevel.WARNING, message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = ReplaceWith(imports = {})) companion object : CStructVar.Type
+        @CStruct.VarType(align = 4, size = 4.toLong()) @Deprecated(level = DeprecationLevel.WARNING, message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = ReplaceWith(expression = "", imports = {})) companion object : CStructVar.Type
     }
 
 }

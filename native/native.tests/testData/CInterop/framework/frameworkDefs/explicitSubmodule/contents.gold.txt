@@ -5,7 +5,7 @@ package pod1 {
         var x: Int
             @CStruct.MemberAt(offset = 0.toLong()) get
             @CStruct.MemberAt(offset = 0.toLong()) set
-        @CStruct.VarType(align = 4, size = 4.toLong()) @Deprecated(level = DeprecationLevel.WARNING, message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = ReplaceWith(imports = {})) companion object : CStructVar.Type
+        @CStruct.VarType(align = 4, size = 4.toLong()) @Deprecated(level = DeprecationLevel.WARNING, message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = ReplaceWith(expression = "", imports = {})) companion object : CStructVar.Type
     }
 
     enum class NXMouseButton private constructor(value: UInt) : Enum<NXMouseButton>, CEnum {
@@ -14,11 +14,11 @@ package pod1 {
 
         class Var constructor(rawPtr: NativePtr /* = NativePtr */) : CEnumVar {
             var value: NXMouseButton
-            @CEnumVarTypeSize(size = 4) @Deprecated(level = DeprecationLevel.WARNING, message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = ReplaceWith(imports = {})) companion object : CPrimitiveVar.Type
+            @CEnumVarTypeSize(size = 4) @Deprecated(level = DeprecationLevel.WARNING, message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = ReplaceWith(expression = "", imports = {})) companion object : CPrimitiveVar.Type
         }
 
         companion object {
-            @Deprecated(level = DeprecationLevel.WARNING, message = "Will be removed.", replaceWith = ReplaceWith(imports = {})) fun byValue(value: UInt): NXMouseButton
+            @Deprecated(level = DeprecationLevel.WARNING, message = "Will be removed.", replaceWith = ReplaceWith(expression = "", imports = {})) fun byValue(value: UInt): NXMouseButton
         }
 
     }

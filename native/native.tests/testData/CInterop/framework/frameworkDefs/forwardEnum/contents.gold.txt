@@ -6,11 +6,11 @@ package pod1 {
 
         class Var constructor(rawPtr: NativePtr /* = NativePtr */) : CEnumVar {
             var value: EnumWithoutConstant
-            @CEnumVarTypeSize(size = 8) @Deprecated(level = DeprecationLevel.WARNING, message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = ReplaceWith(imports = {})) companion object : CPrimitiveVar.Type
+            @CEnumVarTypeSize(size = 8) @Deprecated(level = DeprecationLevel.WARNING, message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = ReplaceWith(expression = "", imports = {})) companion object : CPrimitiveVar.Type
         }
 
         companion object {
-            @Deprecated(level = DeprecationLevel.WARNING, message = "Will be removed.", replaceWith = ReplaceWith(imports = {})) fun byValue(value: Long): EnumWithoutConstant
+            @Deprecated(level = DeprecationLevel.WARNING, message = "Will be removed.", replaceWith = ReplaceWith(expression = "", imports = {})) fun byValue(value: Long): EnumWithoutConstant
         }
 
     }
@@ -22,11 +22,11 @@ package pod1 {
 
         class Var constructor(rawPtr: NativePtr /* = NativePtr */) : CEnumVar {
             var value: ForwardEnum
-            @CEnumVarTypeSize(size = 8) @Deprecated(level = DeprecationLevel.WARNING, message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = ReplaceWith(imports = {})) companion object : CPrimitiveVar.Type
+            @CEnumVarTypeSize(size = 8) @Deprecated(level = DeprecationLevel.WARNING, message = "Use sizeOf<T>() or alignOf<T>() instead.", replaceWith = ReplaceWith(expression = "", imports = {})) companion object : CPrimitiveVar.Type
         }
 
         companion object {
-            @Deprecated(level = DeprecationLevel.WARNING, message = "Will be removed.", replaceWith = ReplaceWith(imports = {})) fun byValue(value: Long): ForwardEnum
+            @Deprecated(level = DeprecationLevel.WARNING, message = "Will be removed.", replaceWith = ReplaceWith(expression = "", imports = {})) fun byValue(value: Long): ForwardEnum
         }
 
     }
