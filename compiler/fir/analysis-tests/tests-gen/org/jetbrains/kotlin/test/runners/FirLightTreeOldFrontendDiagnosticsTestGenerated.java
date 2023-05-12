@@ -628,6 +628,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         }
 
         @Test
+        @TestMetadata("missingIteratorMissing.kt")
+        public void testMissingIteratorMissing() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/missingIteratorMissing.kt");
+        }
+
+        @Test
         @TestMetadata("MultilineStringTemplates.kt")
         public void testMultilineStringTemplates() throws Exception {
             runTest("compiler/testData/diagnostics/tests/MultilineStringTemplates.kt");
