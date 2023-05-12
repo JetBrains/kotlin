@@ -66,7 +66,7 @@ internal class SymbolLightClassForInlineClass : SymbolLightClassForClassOrObject
                 ?.singleOrNull()
 
             if (inlineClassParameterSymbol != null) {
-                val propertySymbol = declaredMemberScope.getCallableSymbols { it == inlineClassParameterSymbol.name }
+                val propertySymbol = declaredMemberScope.getCallableSymbols(inlineClassParameterSymbol.name)
                     .singleOrNull { it is KtPropertySymbol && it.isFromPrimaryConstructor } as? KtPropertySymbol
 
                 if (propertySymbol != null) {

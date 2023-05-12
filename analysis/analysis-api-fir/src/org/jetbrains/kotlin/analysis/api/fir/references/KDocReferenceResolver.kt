@@ -56,15 +56,15 @@ internal object KDocReferenceResolver {
             .dropLast(1)
             .fold(initialScope) { currentScope, fqNamePart ->
                 currentScope
-                    .getClassifierSymbols { it == fqNamePart }
+                    .getClassifierSymbols(fqNamePart)
                     .mapNotNull { (it as? KtSymbolWithMembers)?.getDeclaredMemberScope() }
                     .toList()
                     .asCompositeScope()
             }
 
         val shortName = fqName.shortName()
-        addAll(scope.getCallableSymbols { it == shortName })
-        addAll(scope.getClassifierSymbols { it == shortName })
+        addAll(scope.getCallableSymbols(shortName))
+        addAll(scope.getClassifierSymbols(shortName))
     }
 
     context(KtAnalysisSession)
@@ -122,7 +122,7 @@ internal object KDocReferenceResolver {
             else -> {
                 getClassOrObjectSymbolByClassId(classId)
                     ?.getDeclaredMemberScope()
-                    ?.getCallableSymbols { it == callableId.callableName }
+                    ?.getCallableSymbols(callableId.callableName)
                     ?.let(::addAll)
             }
         }

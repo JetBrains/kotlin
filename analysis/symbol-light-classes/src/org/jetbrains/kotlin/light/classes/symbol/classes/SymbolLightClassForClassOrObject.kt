@@ -197,7 +197,7 @@ internal open class SymbolLightClassForClassOrObject : SymbolLightClassForNamedC
         // Compiler will generate 'equals/hashCode/toString' for data class if they are not final.
         // We want to mimic that.
         val nonFinalFunctionsFromAny = classOrObjectSymbol.getMemberScope()
-            .getCallableSymbols { name -> name.isFromAny }
+            .getCallableSymbols(EQUALS, HASHCODE_NAME, TO_STRING)
             .filterIsInstance<KtFunctionSymbol>()
             .filterNot {
                 it.modality == Modality.FINAL || (it.getContainingSymbol() as? KtNamedClassOrObjectSymbol)?.modality == Modality.FINAL

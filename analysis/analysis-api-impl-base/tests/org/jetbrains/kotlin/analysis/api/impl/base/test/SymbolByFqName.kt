@@ -66,8 +66,7 @@ sealed class SymbolData {
                 val classSymbol =
                     getClassOrObjectSymbolByClassId(classId)
                         ?: error("Class $classId is not found")
-                classSymbol.getDeclaredMemberScope().getCallableSymbols()
-                    .filter { (it as? KtNamedSymbol)?.name == callableId.callableName }
+                classSymbol.getDeclaredMemberScope().getCallableSymbols(callableId.callableName)
                     .toList()
             }
             if (symbols.isEmpty()) {
