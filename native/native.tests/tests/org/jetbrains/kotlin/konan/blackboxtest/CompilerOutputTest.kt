@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.LibraryCompil
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationResult
 import org.jetbrains.kotlin.konan.blackboxtest.support.compilation.TestCompilationResult.Companion.assertSuccess
-import org.jetbrains.kotlin.konan.blackboxtest.support.settings.MemoryModel
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.jupiter.api.Test
 import java.io.File
@@ -89,14 +88,10 @@ class CompilerOutputTest : AbstractNativeSimpleTest() {
     }
 
     private fun normalizeOutput(output: String, exitCode: ExitCode): String {
-        var normalizedOutput = AbstractCliTest.getNormalizedCompilerOutput(
+        return AbstractCliTest.getNormalizedCompilerOutput(
             output,
             exitCode,
             "compiler/testData/compileKotlinAgainstCustomBinaries/"
         )
-        if (testRunSettings.get<MemoryModel>() != MemoryModel.EXPERIMENTAL) {
-            normalizedOutput = normalizedOutput.replace("warning: legacy MM is deprecated and will be removed in version 1.9.20\n", "")
-        }
-        return normalizedOutput
     }
 }

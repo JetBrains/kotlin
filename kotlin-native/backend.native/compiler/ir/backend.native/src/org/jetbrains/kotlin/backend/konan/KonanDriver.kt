@@ -23,11 +23,14 @@ import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 private val deprecatedTargets = setOf(
         KonanTarget.WATCHOS_X86,
         KonanTarget.IOS_ARM32,
-        KonanTarget.LINUX_ARM32_HFP,
         KonanTarget.MINGW_X86,
         KonanTarget.LINUX_MIPS32,
         KonanTarget.LINUX_MIPSEL32,
         KonanTarget.WASM32
+)
+
+private val softDeprecatedTargets = setOf(
+        KonanTarget.LINUX_ARM32_HFP,
 )
 
 private const val DEPRECATION_LINK = "https://kotl.in/native-targets-tiers"
@@ -64,8 +67,13 @@ class KonanDriver(
         }
         if (konanConfig.infoArgsOnly) return
 
+        if (konanConfig.target in deprecatedTargets || konanConfig.target is KonanTarget.ZEPHYR) {
+            configuration.report(CompilerMessageSeverity.ERROR,
+                    "target ${konanConfig.target} is no longer available. See: $DEPRECATION_LINK")
+        }
+
         // Avoid showing warning twice in 2-phase compilation.
-        if (konanConfig.produce != CompilerOutputKind.LIBRARY && konanConfig.target in deprecatedTargets) {
+        if (konanConfig.produce != CompilerOutputKind.LIBRARY && konanConfig.target in softDeprecatedTargets) {
             configuration.report(CompilerMessageSeverity.STRONG_WARNING,
                     "target ${konanConfig.target} is deprecated and will be removed soon. See: $DEPRECATION_LINK")
         }

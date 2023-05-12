@@ -1,4 +1,4 @@
-// IGNORE_BACKEND: JS, JS_IR, JS_IR_ES6, WASM, NATIVE_WITH_LEGACY_MM
+// IGNORE_BACKEND: JS, JS_IR, JS_IR_ES6, WASM
 // FILE: lib.kt
 val x: String = computeX()
 

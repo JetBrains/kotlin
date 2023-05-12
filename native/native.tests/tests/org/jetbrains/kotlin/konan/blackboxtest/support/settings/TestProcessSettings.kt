@@ -117,20 +117,7 @@ internal enum class OptimizationMode(private val description: String, val compil
 }
 
 /**
- * The Kotlin/Native memory model.
- */
-internal enum class MemoryModel(val compilerFlags: List<String>?) {
-    /**
-     * but it should be done at some point.
-     */
-    LEGACY(listOf("-memory-model", "strict")),
-    EXPERIMENTAL(listOf("-memory-model", "experimental"));
-
-    override fun toString() = compilerFlags?.joinToString(prefix = "(", separator = " ", postfix = ")").orEmpty()
-}
-
-/**
- * Thread state checked. Can be applied only with [MemoryModel.EXPERIMENTAL], [OptimizationMode.DEBUG], [CacheMode.WithoutCache].
+ * Thread state checked. Can be applied only with [OptimizationMode.DEBUG], [CacheMode.WithoutCache].
  */
 internal enum class ThreadStateChecker(val compilerFlag: String?) {
     DISABLED(null),
@@ -150,7 +137,7 @@ internal enum class Sanitizer(val compilerFlag: String?) {
 }
 
 /**
- * Garbage collector type. Can be applied only with [MemoryModel.EXPERIMENTAL].
+ * Garbage collector type.
  */
 internal enum class GCType(val compilerFlag: String?) {
     UNSPECIFIED(null),

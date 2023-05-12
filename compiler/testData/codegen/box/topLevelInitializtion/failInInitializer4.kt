@@ -1,5 +1,4 @@
 // TARGET_BACKEND: NATIVE
-// IGNORE_BACKEND: NATIVE_WITH_LEGACY_MM
 // FILE: lib.kt
 import kotlin.native.concurrent.*
 

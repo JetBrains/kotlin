@@ -4,8 +4,7 @@ plugins {
     kotlin("multiplatform")
 }
 
-// Add two additional presets for Raspberry Pi and Linux/ARM64.
-val raspberryPiPresets: List<KotlinNativeTargetPreset> = listOf("linuxArm32Hfp", "linuxArm64").map {
+val additionalPresets: List<KotlinNativeTargetPreset> = listOf("linuxArm64").map {
     kotlin.presets[it] as KotlinNativeTargetPreset
 }
 
@@ -22,13 +21,13 @@ kotlin {
     }
 
     // Create cross-targets.
-    val raspberryPiTargets = raspberryPiPresets.map { preset ->
+    val additionalTargets = additionalPresets.map { preset ->
         val targetName = "echoServer${preset.name.capitalize()}"
         targetFromPreset(preset, targetName) {}
     }
 
     // Configure executables for all targets.
-    configure(raspberryPiTargets + listOf(hostTarget)) {
+    configure(additionalTargets + listOf(hostTarget)) {
         binaries {
             executable {
                 entryPoint = "sample.echoserver.main"
@@ -39,7 +38,7 @@ kotlin {
 
     sourceSets {
         val echoServerMain by getting
-        raspberryPiPresets.forEach { preset ->
+        additionalPresets.forEach { preset ->
             val mainSourceSetName = "echoServer${preset.name.capitalize()}Main"
             getByName(mainSourceSetName).dependsOn(echoServerMain)
         }

@@ -75,7 +75,6 @@ internal class ExtTestCaseGroupProvider : TestCaseGroupProvider, TestDisposable(
                     customKlibs = settings.get(),
                     pipelineType = settings.get(),
                     timeouts = settings.get(),
-                    memoryModel = settings.get(),
                 )
 
                 if (extTestDataFile.isRelevant)
@@ -101,7 +100,6 @@ private class ExtTestDataFile(
     private val customKlibs: CustomKlibs,
     private val pipelineType: PipelineType,
     private val timeouts: Timeouts,
-    private val memoryModel: MemoryModel
 ) {
     private val structure by lazy {
         val allSourceTransformers: ExternalSourceTransformers = if (customSourceTransformers.isNullOrEmpty())
@@ -141,7 +139,6 @@ private class ExtTestDataFile(
     val isRelevant: Boolean =
         isCompatibleTarget(TargetBackend.NATIVE, testDataFile) // Checks TARGET_BACKEND/DONT_TARGET_EXACT_BACKEND directives.
                 && !isIgnoredTarget(pipelineType, testDataFile, TargetBackend.NATIVE) // Checks IGNORE_BACKEND directives.
-                && (memoryModel != MemoryModel.LEGACY || !isIgnoredTarget(pipelineType, testDataFile, TargetBackend.NATIVE_WITH_LEGACY_MM)) // Checks IGNORE_BACKEND directives.
                 && testDataFileSettings.languageSettings.none { it in INCOMPATIBLE_LANGUAGE_SETTINGS }
                 && INCOMPATIBLE_DIRECTIVES.none { it in structure.directives }
                 && structure.directives[API_VERSION_DIRECTIVE] !in INCOMPATIBLE_API_VERSIONS
@@ -180,10 +177,6 @@ private class ExtTestDataFile(
     fun createTestCase(settings: Settings, sharedModules: ThreadSafeCache<String, TestModule.Shared?>): TestCase {
         assertTrue(isRelevant)
 
-        if (settings.get<MemoryModel>() == MemoryModel.LEGACY) {
-            makeObjectsMutable()
-        }
-
         val definitelyStandaloneTest = settings.get<ForcedStandaloneTestKind>().value
         val isStandaloneTest = definitelyStandaloneTest || determineIfStandaloneTest()
         patchPackageNames(isStandaloneTest)
@@ -219,25 +212,6 @@ private class ExtTestDataFile(
         }
 
         isStandaloneTest
-    }
-
-    /** Annotate all objects and companion objects with [THREAD_LOCAL_ANNOTATION] to make them mutable. */
-    private fun makeObjectsMutable() = with(structure) {
-        filesToTransform.forEach { handler ->
-            handler.accept(object : KtTreeVisitorVoid() {
-                override fun visitObjectDeclaration(objectDeclaration: KtObjectDeclaration) {
-                    if (!objectDeclaration.isObjectLiteral()) {
-                        // FIXME: find only those that have vars inside
-                        addAnnotationEntry(
-                            objectDeclaration,
-                            handler.psiFactory.createAnnotationEntry(THREAD_LOCAL_ANNOTATION)
-                        ).ensureSurroundedByWhiteSpace()
-                    }
-
-                    super.visitObjectDeclaration(objectDeclaration)
-                }
-            })
-        }
     }
 
     /**
@@ -580,8 +554,6 @@ private class ExtTestDataFile(
 
         private fun Directives.multiValues(key: String, predicate: (String) -> Boolean = { true }): Set<String> =
             listValues(key)?.flatMap { it.split(' ') }?.filter(predicate)?.toSet().orEmpty()
-
-        private const val THREAD_LOCAL_ANNOTATION = "@kotlin.native.ThreadLocal"
 
         private val BOX_FUNCTION_NAME = Name.identifier("box")
         private val OPT_IN_ANNOTATION_NAME = Name.identifier("OptIn")

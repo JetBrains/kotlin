@@ -46,7 +46,6 @@ val buildSamplesWithPlatformLibs by tasks.creating {
     }
     dependsOn(":echoServer:assemble")
     dependsOn(":globalState:assemble")
-    dependsOn(":html5Canvas:assemble")
     dependsOn(":workers:assemble")
 
     if (isMacos || isLinux) {

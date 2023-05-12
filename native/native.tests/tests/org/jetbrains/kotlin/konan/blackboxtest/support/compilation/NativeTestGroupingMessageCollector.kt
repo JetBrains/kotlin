@@ -68,7 +68,6 @@ internal class NativeTestGroupingMessageCollector(
                     || isUnsafeCompilerArgumentsWarning(message)
                     || isLibraryIncludedMoreThanOnceWarning(message)
                     || isK2Experimental(message)
-                    || isLegacyMMWarning(message)
                     || isPartialLinkageWarning(message) -> {
                 // These warnings are known and should not be reported as errors.
                 severity
@@ -110,9 +109,6 @@ internal class NativeTestGroupingMessageCollector(
 
     private fun isK2Experimental(message: String): Boolean = message.startsWith(K2_NATIVE_EXPERIMENTAL_WARNING_PREFIX)
 
-    // Legacy MM is deprecated and will be removed in 1.9.20. Until that moment we still need to run tests with it.
-    private fun isLegacyMMWarning(message: String): Boolean = message.startsWith(LEGACY_MM_WARNING_PREFIX)
-
     private fun isPartialLinkageWarning(message: String): Boolean = message.matches(PARTIAL_LINKAGE_WARNING_REGEX)
 
     override fun hasErrors() = hasWarningsWithRaisedSeverity || super.hasErrors()
@@ -122,7 +118,6 @@ internal class NativeTestGroupingMessageCollector(
         private const val UNSAFE_COMPILER_ARGS_WARNING_PREFIX = "ATTENTION!\nThis build uses unsafe internal compiler arguments:\n\n"
         private const val LIBRARY_INCLUDED_MORE_THAN_ONCE_WARNING_PREFIX = "library included more than once: "
         private const val K2_NATIVE_EXPERIMENTAL_WARNING_PREFIX = "Language version 2.0 is experimental"
-        private const val LEGACY_MM_WARNING_PREFIX = "Legacy MM is deprecated and will be removed"
 
         private val PARTIAL_LINKAGE_WARNING_REGEX = Regex("^<[^<>]+>( @ (?:(?!: ).)+)?: .*")
 

@@ -1,4 +1,0 @@
-frozen bit is true
-Worker: SharedData(string=Hello, int=10, member=SharedDataMember(double=0.1))
-Main: SharedData(string=Hello, int=10, member=SharedDataMember(double=0.1))
-OK

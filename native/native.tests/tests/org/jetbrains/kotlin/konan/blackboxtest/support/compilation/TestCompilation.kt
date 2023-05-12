@@ -128,7 +128,6 @@ internal abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
     classLoader: KotlinNativeClassLoader,
     optimizationMode: OptimizationMode,
     compilerOutputInterceptor: CompilerOutputInterceptor,
-    private val memoryModel: MemoryModel,
     private val threadStateChecker: ThreadStateChecker,
     private val sanitizer: Sanitizer,
     private val gcType: GCType,
@@ -150,7 +149,6 @@ internal abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
 ) {
     override fun applySpecificArgs(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
         add("-repo", home.librariesDir.path)
-        memoryModel.compilerFlags?.let { compilerFlags -> add(compilerFlags) }
         threadStateChecker.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
         sanitizer.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
         gcType.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
@@ -191,7 +189,6 @@ internal class LibraryCompilation(
     classLoader = settings.get(),
     optimizationMode = settings.get(),
     compilerOutputInterceptor = settings.get(),
-    memoryModel = settings.get(),
     threadStateChecker = settings.get(),
     sanitizer = settings.get(),
     gcType = settings.get(),
@@ -225,7 +222,6 @@ internal class ObjCFrameworkCompilation(
     classLoader = settings.get(),
     optimizationMode = settings.get(),
     compilerOutputInterceptor = settings.get(),
-    memoryModel = settings.get(),
     threadStateChecker = settings.get(),
     sanitizer = settings.get(),
     gcType = settings.get(),
@@ -310,7 +306,6 @@ internal class ExecutableCompilation(
     classLoader = settings.get(),
     optimizationMode = settings.get(),
     compilerOutputInterceptor = settings.get(),
-    memoryModel = settings.get(),
     threadStateChecker = settings.get(),
     sanitizer = settings.get(),
     gcType = settings.get(),
