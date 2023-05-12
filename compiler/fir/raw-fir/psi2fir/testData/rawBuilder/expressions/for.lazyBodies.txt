@@ -13,9 +13,9 @@ FILE: for.kt
         public? final? val y: Int = R|<local>/y|
             public? get(): Int
 
-        public final operator fun component1(): Int
+        public? final operator fun component1(): Int
 
-        public final operator fun component2(): Int
+        public? final operator fun component2(): Int
 
         public final fun copy(x: Int = this@R|/Some|.R|/Some.x|, y: Int = this@R|/Some|.R|/Some.y|): R|Some|
 

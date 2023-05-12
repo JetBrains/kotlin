@@ -25,15 +25,15 @@ FILE: annotated.kt
             super<R|kotlin/Any|>()
         }
 
-        public? final? [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+        public? final? [ComponentFunctionSymbolKey=/Two.component1, IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
             public? [ContainingClassKey=Two] get(): Int
 
-        public? final? [IsFromPrimaryConstructor=true] val y: Int = R|<local>/y|
+        public? final? [ComponentFunctionSymbolKey=/Two.component2, IsFromPrimaryConstructor=true] val y: Int = R|<local>/y|
             public? [ContainingClassKey=Two] get(): Int
 
-        public final operator fun component1(): Int
+        public? final operator fun component1(): Int
 
-        public final operator fun component2(): Int
+        public? final operator fun component2(): Int
 
         public final fun copy(x: Int = this@R|/Two|.R|/Two.x|, y: Int = this@R|/Two|.R|/Two.y|): R|Two|
 

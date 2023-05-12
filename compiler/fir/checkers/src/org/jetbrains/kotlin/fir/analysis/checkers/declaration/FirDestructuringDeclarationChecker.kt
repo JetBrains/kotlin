@@ -175,6 +175,15 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker() {
                     )
                 }
             }
+            is ConeVisibilityError -> {
+                reporter.reportOn(
+                    property.source,
+                    FirErrors.INVISIBLE_REFERENCE,
+                    diagnostic.symbol,
+                    context,
+                )
+            }
+            else -> error("Unhandled error during a component function call")
         }
     }
 

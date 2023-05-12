@@ -454,6 +454,12 @@ public class FirLightTreeOldFrontendDiagnosticsTestGenerated extends AbstractFir
         }
 
         @Test
+        @TestMetadata("invisibleMemberDestructuring.kt")
+        public void testInvisibleMemberDestructuring() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/invisibleMemberDestructuring.kt");
+        }
+
+        @Test
         @TestMetadata("InvokeAndRecursiveResolve.kt")
         public void testInvokeAndRecursiveResolve() throws Exception {
             runTest("compiler/testData/diagnostics/tests/InvokeAndRecursiveResolve.kt");
