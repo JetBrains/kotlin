@@ -1,4 +1,5 @@
-import plugins.signLibraryPublication
+import plugins.configureDefaultPublishing
+import plugins.configureKotlinPomAttributes
 
 description = "Runtime library for the Atomicfu compiler plugin"
 
@@ -28,15 +29,23 @@ kotlin {
     }
 }
 
-configureCommonPublicationSettingsForGradle(signLibraryPublication)
+val emptyJavadocJar by tasks.creating(Jar::class) {
+    archiveClassifier.set("javadoc")
+}
 
 publishing {
     publications {
         create<MavenPublication>("maven") {
             from(components["kotlin"])
+            configureKotlinPomAttributes(project, "Runtime library for the Atomicfu compiler plugin", packaging = "klib")
+        }
+        withType<MavenPublication> {
+            artifact(emptyJavadocJar)
         }
     }
 }
+
+configureDefaultPublishing()
 
 tasks.withType<org.jetbrains.kotlin.gradle.dsl.KotlinJsCompile> {
     kotlinOptions.freeCompilerArgs += "-Xforce-deprecated-legacy-compiler-usage"
