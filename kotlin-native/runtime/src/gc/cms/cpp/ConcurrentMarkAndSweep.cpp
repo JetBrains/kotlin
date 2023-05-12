@@ -232,10 +232,6 @@ bool gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch, mark::MarkDispatch
     std::unique_lock mainGCLock(gcMutex);
     auto gcHandle = GCHandle::create(epoch);
 
-    auto& scheduler = gcScheduler_;
-    scheduler.gcData().OnPerformFullGC();
-
-    state_.start(epoch);
     markDispatcher_.beginMarkingEpoch(gcHandle);
     GCLogDebug(epoch, "Main GC requested marking in mutators");
 
@@ -253,6 +249,11 @@ bool gc::ConcurrentMarkAndSweep::PerformFullGC(int64_t epoch, mark::MarkDispatch
 #ifdef CUSTOM_ALLOCATOR
     heap_.PrepareForGC();
 #endif
+
+    auto& scheduler = gcScheduler_;
+    scheduler.gcData().OnPerformFullGC();
+
+    state_.start(epoch);
 
     markContext.runMainInSTW();
 
