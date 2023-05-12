@@ -47,10 +47,8 @@ bool NextFitPage::Sweep(GCSweepScope& sweepHandle, FinalizerQueue& finalizerQueu
         if (block->isAllocated_) {
             if (SweepObject(block->data_, finalizerQueue, sweepHandle)) {
                 alive = true;
-                sweepHandle.addKeptObject();
             } else {
                 block->Deallocate();
-                sweepHandle.addSweptObject();
             }
         }
     }
