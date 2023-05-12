@@ -21,7 +21,7 @@ import java.io.File
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.codegen.GeneratedClassLoader
 
-abstract class AbstractCodegenTest : AbstractCompilerTest() {
+abstract class AbstractCodegenTest(useFir: Boolean) : AbstractCompilerTest(useFir) {
     private fun dumpClasses(loader: GeneratedClassLoader) {
         for (
             file in loader.allGeneratedFiles.filter {
