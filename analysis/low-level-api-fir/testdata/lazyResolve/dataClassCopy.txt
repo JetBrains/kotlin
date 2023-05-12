@@ -6,15 +6,15 @@ FILE: [ResolvedTo(RAW_FIR)] dataClassCopy.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] get(): Int
 
-        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val b: Boolean = R|<local>/b|
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/DataClass.component2, IsFromPrimaryConstructor=true] val b: Boolean = R|<local>/b|
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] get(): Boolean
 
-        public final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+        public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
 
-        public final operator [ResolvedTo(RAW_FIR)] fun component2(): Boolean
+        public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Boolean
 
         public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(RAW_FIR)] b: Boolean = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
 
@@ -28,15 +28,15 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] get(): Int
 
-        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val b: Boolean = R|<local>/b|
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/DataClass.component2, IsFromPrimaryConstructor=true] val b: Boolean = R|<local>/b|
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] get(): Boolean
 
-        public final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+        public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
 
-        public final operator [ResolvedTo(RAW_FIR)] fun component2(): Boolean
+        public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Boolean
 
         public final [ResolvedTo(RAW_FIR)] fun copy([ResolvedTo(RAW_FIR)] i: Int = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(RAW_FIR)] b: Boolean = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
 
@@ -50,15 +50,15 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] get(): Int
 
-        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val b: Boolean = R|<local>/b|
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/DataClass.component2, IsFromPrimaryConstructor=true] val b: Boolean = R|<local>/b|
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] get(): Boolean
 
-        public final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+        public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
 
-        public final operator [ResolvedTo(RAW_FIR)] fun component2(): Boolean
+        public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Boolean
 
         public final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun copy([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] i: Int = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] b: Boolean = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
 
@@ -72,15 +72,15 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] get(): Int
 
-        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val b: Boolean = R|<local>/b|
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/DataClass.component2, IsFromPrimaryConstructor=true] val b: Boolean = R|<local>/b|
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] get(): Boolean
 
-        public final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+        public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
 
-        public final operator [ResolvedTo(RAW_FIR)] fun component2(): Boolean
+        public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Boolean
 
         public final [ResolvedTo(COMPANION_GENERATION)] fun copy([ResolvedTo(COMPANION_GENERATION)] i: Int = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(COMPANION_GENERATION)] b: Boolean = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
 
@@ -94,15 +94,15 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] get(): Int
 
-        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val b: Boolean = R|<local>/b|
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/DataClass.component2, IsFromPrimaryConstructor=true] val b: Boolean = R|<local>/b|
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] get(): Boolean
 
-        public final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+        public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
 
-        public final operator [ResolvedTo(RAW_FIR)] fun component2(): Boolean
+        public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Boolean
 
         public final [ResolvedTo(SUPER_TYPES)] fun copy([ResolvedTo(SUPER_TYPES)] i: Int = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(SUPER_TYPES)] b: Boolean = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
 
@@ -116,15 +116,15 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: Int = R|<local>/i|
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] get(): Int
 
-        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val b: Boolean = R|<local>/b|
+        public? final? [ResolvedTo(RAW_FIR)] [ComponentFunctionSymbolKey=one/DataClass.component2, IsFromPrimaryConstructor=true] val b: Boolean = R|<local>/b|
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=DataClass] get(): Boolean
 
-        public final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
+        public? final operator [ResolvedTo(RAW_FIR)] fun component1(): Int
 
-        public final operator [ResolvedTo(RAW_FIR)] fun component2(): Boolean
+        public? final operator [ResolvedTo(RAW_FIR)] fun component2(): Boolean
 
         public final [ResolvedTo(TYPES)] fun copy([ResolvedTo(TYPES)] i: R|kotlin/Int| = this@R|one/DataClass|.R|one/DataClass.i|, [ResolvedTo(TYPES)] b: R|kotlin/Boolean| = this@R|one/DataClass|.R|one/DataClass.b|): R|one/DataClass|
 
@@ -138,10 +138,10 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+        public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
             public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] get(): R|kotlin/Int|
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val b: R|kotlin/Boolean| = R|<local>/b|
+        public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/DataClass.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Boolean| = R|<local>/b|
             public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] get(): R|kotlin/Boolean|
 
         public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int|
@@ -160,10 +160,10 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+        public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
             public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] get(): R|kotlin/Int|
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val b: R|kotlin/Boolean| = R|<local>/b|
+        public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/DataClass.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Boolean| = R|<local>/b|
             public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] get(): R|kotlin/Boolean|
 
         public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int|
@@ -182,10 +182,10 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+        public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
             public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] get(): R|kotlin/Int|
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val b: R|kotlin/Boolean| = R|<local>/b|
+        public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/DataClass.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Boolean| = R|<local>/b|
             public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] get(): R|kotlin/Boolean|
 
         public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int|
@@ -204,10 +204,10 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+        public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
             public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] get(): R|kotlin/Int|
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val b: R|kotlin/Boolean| = R|<local>/b|
+        public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/DataClass.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Boolean| = R|<local>/b|
             public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] get(): R|kotlin/Boolean|
 
         public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int|
@@ -226,10 +226,10 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+        public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
             public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] get(): R|kotlin/Int|
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val b: R|kotlin/Boolean| = R|<local>/b|
+        public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/DataClass.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Boolean| = R|<local>/b|
             public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] get(): R|kotlin/Boolean|
 
         public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int|
@@ -248,10 +248,10 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+        public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
             public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] get(): R|kotlin/Int|
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val b: R|kotlin/Boolean| = R|<local>/b|
+        public final [ResolvedTo(STATUS)] [ComponentFunctionSymbolKey=one/DataClass.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Boolean| = R|<local>/b|
             public [ResolvedTo(STATUS)] [ContainingClassKey=DataClass] get(): R|kotlin/Boolean|
 
         public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int|
@@ -270,10 +270,10 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(CONTRACTS)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+        public final [ResolvedTo(CONTRACTS)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=DataClass] get(): R|kotlin/Int|
 
-        public final [ResolvedTo(CONTRACTS)] [IsFromPrimaryConstructor=true] val b: R|kotlin/Boolean| = R|<local>/b|
+        public final [ResolvedTo(CONTRACTS)] [ComponentFunctionSymbolKey=one/DataClass.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Boolean| = R|<local>/b|
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=DataClass] get(): R|kotlin/Boolean|
 
         public final operator [ResolvedTo(STATUS)] fun component1(): R|kotlin/Int|
@@ -292,10 +292,10 @@ FILE: [ResolvedTo(IMPORTS)] dataClassCopy.kt
             super<R|kotlin/Any|>()
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
+        public final [ResolvedTo(BODY_RESOLVE)] [ComponentFunctionSymbolKey=one/DataClass.component1, IsFromPrimaryConstructor=true] val i: R|kotlin/Int| = R|<local>/i|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=DataClass] get(): R|kotlin/Int|
 
-        public final [ResolvedTo(BODY_RESOLVE)] [IsFromPrimaryConstructor=true] val b: R|kotlin/Boolean| = R|<local>/b|
+        public final [ResolvedTo(BODY_RESOLVE)] [ComponentFunctionSymbolKey=one/DataClass.component2, IsFromPrimaryConstructor=true] val b: R|kotlin/Boolean| = R|<local>/b|
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=DataClass] get(): R|kotlin/Boolean|
 
         public final operator [ResolvedTo(BODY_RESOLVE)] fun component1(): R|kotlin/Int|

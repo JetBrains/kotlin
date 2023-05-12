@@ -4,15 +4,15 @@ FILE: lambda.kt
             super<R|kotlin/Any|>()
         }
 
-        public? final? [IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
+        public? final? [ComponentFunctionSymbolKey=/Tuple.component1, IsFromPrimaryConstructor=true] val x: Int = R|<local>/x|
             public? [ContainingClassKey=Tuple] get(): Int
 
-        public? final? [IsFromPrimaryConstructor=true] val y: Int = R|<local>/y|
+        public? final? [ComponentFunctionSymbolKey=/Tuple.component2, IsFromPrimaryConstructor=true] val y: Int = R|<local>/y|
             public? [ContainingClassKey=Tuple] get(): Int
 
-        public final operator fun component1(): Int
+        public? final operator fun component1(): Int
 
-        public final operator fun component2(): Int
+        public? final operator fun component2(): Int
 
         public final fun copy(x: Int = this@R|/Tuple|.R|/Tuple.x|, y: Int = this@R|/Tuple|.R|/Tuple.y|): R|Tuple|
 

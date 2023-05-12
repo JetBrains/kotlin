@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers
 
-import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.PrivateForInline
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.componentFunctionSymbol
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -26,8 +28,6 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.toSymbol
 import org.jetbrains.kotlin.fir.visitors.transformSingle
-import org.jetbrains.kotlin.fir.whileAnalysing
-import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
 
 class FirStatusResolveProcessor(
     session: FirSession,
@@ -471,6 +471,12 @@ abstract class AbstractFirStatusResolveTransformer(
                 this,
                 statusResolver.resolveStatus(it, containingClass, property, isLocal = false)
             )
+        }
+
+        property.componentFunctionSymbol?.let { componentFunction ->
+            if (componentFunction.fir.status.visibility == Visibilities.Unknown) {
+                componentFunction.fir.replaceStatus(componentFunction.fir.status.copy(visibility = property.visibility))
+            }
         }
     }
 
