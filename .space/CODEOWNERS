@@ -15,6 +15,7 @@
 # OWNER_LIST: "Kotlin Language Evolution"
 # OWNER_LIST: Mikhail.Glukhikh
 # OWNER_LIST: Yan.Zhulanow
+# OWNER_LIST: Dmitry.Gridin
 # OWNER_LIST: Alexander.Udalov
 # OWNER_LIST: Zalim.Bashorov
 # OWNER_LIST: Ilya.Goncharov
@@ -30,6 +31,8 @@
 /.space/ "Kotlin Build Infrastructure"
 
 /analysis/ "Kotlin IDE"
+/analysis/light-classes-base/ Dmitry.Gridin
+/analysis/symbol-light-classes/ Dmitry.Gridin
 /analysis/analysis-api-fir/src/org/jetbrains/kotlin/analysis/api/fir/diagnostics/KtFirDiagnostics.kt "Kotlin Compiler Core"
 /analysis/analysis-api-fir/src/org/jetbrains/kotlin/analysis/api/fir/diagnostics/KtFirDiagnosticsImpl.kt "Kotlin Compiler Core"
 /analysis/analysis-api-fir/src/org/jetbrains/kotlin/analysis/api/fir/diagnostics/KtFirDataClassConverters.kt "Kotlin Compiler Core"
