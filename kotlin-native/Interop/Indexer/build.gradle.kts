@@ -169,6 +169,8 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach 
                 "-Xskip-prerelease-check",
                 "-opt-in=kotlinx.cinterop.BetaInteropApi",
                 "-opt-in=kotlinx.cinterop.ExperimentalForeignApi",
+                // staticCFunction uses kotlin.reflect.jvm.reflect on its lambda parameter.
+                "-Xlambdas=class",
         )
 
     }
