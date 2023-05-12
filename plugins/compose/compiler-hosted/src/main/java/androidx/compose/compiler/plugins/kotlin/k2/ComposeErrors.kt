@@ -87,6 +87,10 @@ object ComposeErrors {
         ComposeSourceElementPositioningStrategies.DECLARATION_NAME_OR_DEFAULT
     )
 
+    val MISMATCHED_COMPOSABLE_IN_EXPECT_ACTUAL by error0<PsiElement>(
+        SourceElementPositioningStrategies.DECLARATION_NAME
+    )
+
     init {
         RootDiagnosticRendererFactory.registerFactory(ComposeErrorMessages)
     }

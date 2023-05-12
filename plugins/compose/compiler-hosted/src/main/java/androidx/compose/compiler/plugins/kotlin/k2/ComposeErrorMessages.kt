@@ -94,5 +94,10 @@ object ComposeErrorMessages : BaseDiagnosticRendererFactory() {
             ComposeErrors.COMPOSE_INVALID_DELEGATE,
             "Composable setValue operator is not currently supported."
         )
+
+        map.put(
+            ComposeErrors.MISMATCHED_COMPOSABLE_IN_EXPECT_ACTUAL,
+            "Mismatched @Composable annotation between expect and actual declaration"
+        )
     }
 }

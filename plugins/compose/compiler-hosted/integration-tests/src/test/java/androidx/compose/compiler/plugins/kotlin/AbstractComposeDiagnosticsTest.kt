@@ -16,46 +16,70 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
+import androidx.compose.compiler.plugins.kotlin.facade.AnalysisResult
 import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
-import org.jetbrains.kotlin.checkers.DiagnosedRange
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil
 import org.jetbrains.kotlin.utils.addToStdlib.flatGroupBy
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
 
 abstract class AbstractComposeDiagnosticsTest(useFir: Boolean) : AbstractCompilerTest(useFir) {
-    protected fun check(expectedText: String, ignoreParseErrors: Boolean = false) {
-        val diagnosedRanges: MutableList<DiagnosedRange> = ArrayList()
-        val clearText = CheckerTestUtil.parseDiagnosedRanges(expectedText, diagnosedRanges)
+    protected fun check(
+        expectedText: String,
+        commonText: String? = null,
+        ignoreParseErrors: Boolean = false
+    ) {
+        val clearText = CheckerTestUtil.parseDiagnosedRanges(expectedText, mutableListOf())
+        val clearCommonText = commonText?.let {
+            CheckerTestUtil.parseDiagnosedRanges(commonText, mutableListOf())
+        }
 
         val errors = analyze(
-            listOf(SourceFile("test.kt", clearText, ignoreParseErrors))
+            listOf(SourceFile("test.kt", clearText, ignoreParseErrors)),
+            listOfNotNull(clearCommonText?.let { SourceFile("common.kt", it, ignoreParseErrors) }),
         ).diagnostics
 
-        val rangeToDiagnostics = errors.flatGroupBy { it.textRanges }.mapValues { entry ->
-            entry.value.map { it.factoryName }.toSet()
+        checkDiagnostics(expectedText, clearText, errors["test.kt"])
+        if (clearCommonText != null) {
+            checkDiagnostics(commonText, clearCommonText, errors["common.kt"])
         }
-        val startOffsetToGroups = rangeToDiagnostics.entries.groupBy(
-            keySelector = { it.key.startOffset },
-            valueTransform = { it.value }
-        )
-        val endOffsetsToGroups = rangeToDiagnostics.entries.groupBy(
-            keySelector = { it.key.endOffset },
-            valueTransform = { it.value }
-        )
+    }
 
-        val annotatedText = buildString {
-            for ((i, c) in clearText.withIndex()) {
-                endOffsetsToGroups[i]?.let { groups ->
-                    repeat(groups.size) { append("<!>") }
+    private fun checkDiagnostics(
+        expectedText: String,
+        clearText: String,
+        allDiagnostics: List<AnalysisResult.Diagnostic>?
+    ) {
+        val annotatedText = if (allDiagnostics != null) {
+            val rangeToDiagnostics = allDiagnostics
+                .flatGroupBy { it.textRanges }
+                .mapValues { entry ->
+                    entry.value.map { it.factoryName }.toSet()
                 }
-                startOffsetToGroups[i]?.let { groups ->
-                    for (diagnostics in groups) {
-                        append("<!${diagnostics.joinToString(",")}!>")
+            val startOffsetToGroups = rangeToDiagnostics.entries.groupBy(
+                keySelector = { it.key.startOffset },
+                valueTransform = { it.value }
+            )
+            val endOffsetsToGroups = rangeToDiagnostics.entries.groupBy(
+                keySelector = { it.key.endOffset },
+                valueTransform = { it.value }
+            )
+
+            buildString {
+                for ((i, c) in clearText.withIndex()) {
+                    endOffsetsToGroups[i]?.let { groups ->
+                        repeat(groups.size) { append("<!>") }
                     }
+                    startOffsetToGroups[i]?.let { groups ->
+                        for (diagnostics in groups) {
+                            append("<!${diagnostics.joinToString(",")}!>")
+                        }
+                    }
+                    append(c)
                 }
-                append(c)
             }
+        } else {
+            clearText
         }
 
         assertEquals(expectedText, annotatedText)
