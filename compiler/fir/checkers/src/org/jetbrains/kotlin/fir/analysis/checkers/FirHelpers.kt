@@ -12,7 +12,9 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
-import org.jetbrains.kotlin.diagnostics.*
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.isExpression
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.primaryConstructorSymbol
@@ -26,8 +28,11 @@ import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.scopes.*
+import org.jetbrains.kotlin.fir.scopes.FirTypeScope
+import org.jetbrains.kotlin.fir.scopes.getDirectOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.impl.multipleDelegatesWithTheSameSignature
+import org.jetbrains.kotlin.fir.scopes.overriddenFunctions
+import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -325,23 +330,48 @@ fun FirCallableSymbol<*>.getImplementationStatus(
         if (containingClassSymbol === parentClassSymbol && symbol.subjectToManyNotImplemented(sessionHolder)) {
             return ImplementationStatus.AMBIGUOUSLY_INHERITED
         }
+
+        var hasAbstractFromClass = false
+        var hasInterfaceDelegation = false
+        var hasAbstractVar = false
+        var hasImplementation = false
+        var hasImplementationVar = false
+
+        for (intersection in symbol.intersections) {
+            @OptIn(SymbolInternals::class)
+            val fir = intersection.fir
+            val unwrappedFir = fir.unwrapFakeOverrides()
+            val isVar = unwrappedFir is FirProperty && unwrappedFir.isVar
+            val isFromClass = unwrappedFir.getContainingClassSymbol(sessionHolder.session)?.classKind == ClassKind.CLASS
+
+            if (fir.isAbstract) {
+                if (isFromClass) {
+                    hasAbstractFromClass = true
+                }
+                if (isVar) {
+                    hasAbstractVar = true
+                }
+            } else {
+                if (fir.origin == FirDeclarationOrigin.Delegated) {
+                    hasInterfaceDelegation = true
+                }
+                if (isFromClass) {
+                    hasImplementation = true
+                    if (isVar) {
+                        hasImplementationVar = true
+                    }
+                }
+            }
+        }
+
         // In Java 8, non-abstract intersection overrides having abstract symbol from base class
         // still should be implemented in current class (even when they have default interface implementation)
-        if (symbol.intersections.any {
-                @OptIn(SymbolInternals::class)
-                val fir = it.fir.unwrapFakeOverrides()
-                fir.isAbstract && (fir.getContainingClassSymbol(sessionHolder.session) as? FirRegularClassSymbol)?.classKind == ClassKind.CLASS
-            }
-        ) {
-            // Exception from the rule above: interface implementation via delegation
-            if (symbol.intersections.none {
-                    @OptIn(SymbolInternals::class)
-                    val fir = it.fir
-                    fir.origin == FirDeclarationOrigin.Delegated && !fir.isAbstract
-                }
-            ) {
-                return ImplementationStatus.NOT_IMPLEMENTED
-            }
+        // Exception to the rule above: interface implementation via delegation
+        if (hasAbstractFromClass && !hasInterfaceDelegation) {
+            return ImplementationStatus.NOT_IMPLEMENTED
+        }
+        if (hasAbstractVar && hasImplementation && !hasImplementationVar) {
+            return ImplementationStatus.VAR_IMPLEMENTED_BY_VAL
         }
     }
 
@@ -371,7 +401,6 @@ fun FirCallableSymbol<*>.getImplementationStatus(
         else -> ImplementationStatus.INHERITED_OR_SYNTHESIZED
     }
 }
-
 
 private fun FirIntersectionCallableSymbol.subjectToManyNotImplemented(sessionHolder: SessionHolder): Boolean {
     var nonAbstractCountInClass = 0

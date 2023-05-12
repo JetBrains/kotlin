@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MANY_IMPL_MEMBER_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OVERRIDING_FINAL_MEMBER_BY_DELEGATION
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MANY_INTERFACES_MEMBER_NOT_IMPLEMENTED
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_IMPLEMENTED_BY_INHERITED_VAL
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -54,6 +55,7 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
         val delegationOverrideOfFinal = mutableListOf<Pair<FirCallableSymbol<*>, FirCallableSymbol<*>>>()
         val delegationOverrideOfOpen = mutableListOf<Pair<FirCallableSymbol<*>, FirCallableSymbol<*>>>()
         val invisibleSymbols = mutableListOf<FirCallableSymbol<*>>()
+        val varsImplementedByInheritedVal = mutableListOf<FirIntersectionCallableSymbol>()
 
         fun collectSymbol(symbol: FirCallableSymbol<*>) {
             val delegatedWrapperData = symbol.delegatedWrapperData
@@ -99,7 +101,7 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
                     symbol.isVisibleInClass(classSymbol) -> notImplementedSymbols.add(symbol)
                     else -> invisibleSymbols.add(symbol)
                 }
-
+                ImplementationStatus.VAR_IMPLEMENTED_BY_VAL -> varsImplementedByInheritedVal.add(symbol as FirIntersectionCallableSymbol)
                 else -> {
                     // nothing to do
                 }
@@ -111,6 +113,17 @@ object FirNotImplementedOverrideChecker : FirClassChecker() {
             classScope.processPropertiesByName(name, ::collectSymbol)
         }
 
+        varsImplementedByInheritedVal.firstOrNull()?.let { symbol ->
+            val implementationVal = symbol.intersections.first { it is FirPropertySymbol && it.isVal && !it.isAbstract }
+            reporter.reportOn(
+                source,
+                VAR_IMPLEMENTED_BY_INHERITED_VAL,
+                classSymbol,
+                symbol as FirCallableSymbol<*>,
+                implementationVal,
+                context,
+            )
+        }
         if (!canHaveAbstractDeclarations && notImplementedSymbols.isNotEmpty()) {
             val notImplemented = (notImplementedSymbols.firstOrNull { !it.isFromInterfaceOrEnum(context) } ?: notImplementedSymbols.first())
                 .unwrapFakeOverrides()

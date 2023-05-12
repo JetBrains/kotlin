@@ -292,6 +292,7 @@ enum class LanguageFeature(
     // 2.1
 
     ReferencesToSyntheticJavaProperties(KOTLIN_2_1), // KT-8575
+    ProhibitImplementingVarByInheritedVal(KOTLIN_2_1, kind = BUG_FIX), // KT-56779
 
     // End of 2.* language features --------------------------------------------------
 

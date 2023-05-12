@@ -2193,6 +2193,22 @@ internal class VarOverriddenByValImpl(
     override val token: KtLifetimeToken,
 ) : KtFirDiagnostic.VarOverriddenByVal(), KtAbstractFirDiagnostic<KtNamedDeclaration>
 
+internal class VarImplementedByInheritedValErrorImpl(
+    override val classOrObject: KtClassLikeSymbol,
+    override val overridingDeclaration: KtCallableSymbol,
+    override val overriddenDeclaration: KtCallableSymbol,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.VarImplementedByInheritedValError(), KtAbstractFirDiagnostic<KtNamedDeclaration>
+
+internal class VarImplementedByInheritedValWarningImpl(
+    override val classOrObject: KtClassLikeSymbol,
+    override val overridingDeclaration: KtCallableSymbol,
+    override val overriddenDeclaration: KtCallableSymbol,
+    override val firDiagnostic: KtPsiDiagnostic,
+    override val token: KtLifetimeToken,
+) : KtFirDiagnostic.VarImplementedByInheritedValWarning(), KtAbstractFirDiagnostic<KtNamedDeclaration>
+
 internal class NonFinalMemberInFinalClassImpl(
     override val firDiagnostic: KtPsiDiagnostic,
     override val token: KtLifetimeToken,

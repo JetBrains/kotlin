@@ -23756,6 +23756,18 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
                 runTest("compiler/testData/diagnostics/tests/override/ToAbstractMembersFromSuper-kt1996.kt");
             }
 
+            @Test
+            @TestMetadata("varImplementedByInheritedVal.kt")
+            public void testVarImplementedByInheritedVal() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/override/varImplementedByInheritedVal.kt");
+            }
+
+            @Test
+            @TestMetadata("varImplementedByInheritedValError.kt")
+            public void testVarImplementedByInheritedValError() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/override/varImplementedByInheritedValError.kt");
+            }
+
             @Nested
             @TestMetadata("compiler/testData/diagnostics/tests/override/clashesOnInheritance")
             @TestDataPath("$PROJECT_ROOT")

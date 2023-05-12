@@ -1829,6 +1829,20 @@ sealed class KtFirDiagnostic<PSI : PsiElement> : KtDiagnosticWithPsi<PSI> {
         abstract val overriddenDeclaration: KtCallableSymbol
     }
 
+    abstract class VarImplementedByInheritedValError : KtFirDiagnostic<KtNamedDeclaration>() {
+        override val diagnosticClass get() = VarImplementedByInheritedValError::class
+        abstract val classOrObject: KtClassLikeSymbol
+        abstract val overridingDeclaration: KtCallableSymbol
+        abstract val overriddenDeclaration: KtCallableSymbol
+    }
+
+    abstract class VarImplementedByInheritedValWarning : KtFirDiagnostic<KtNamedDeclaration>() {
+        override val diagnosticClass get() = VarImplementedByInheritedValWarning::class
+        abstract val classOrObject: KtClassLikeSymbol
+        abstract val overridingDeclaration: KtCallableSymbol
+        abstract val overriddenDeclaration: KtCallableSymbol
+    }
+
     abstract class NonFinalMemberInFinalClass : KtFirDiagnostic<KtNamedDeclaration>() {
         override val diagnosticClass get() = NonFinalMemberInFinalClass::class
     }
