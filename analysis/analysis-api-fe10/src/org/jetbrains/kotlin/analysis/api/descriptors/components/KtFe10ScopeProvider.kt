@@ -181,7 +181,7 @@ internal class KtFe10ScopeProvider(
     }
 
     override fun getCompositeScope(subScopes: List<KtScope>): KtScope {
-        return KtCompositeScope(subScopes, token)
+        return KtCompositeScope.create(subScopes, token)
     }
 
     override fun getTypeScope(type: KtType): KtTypeScope {
@@ -201,12 +201,12 @@ internal class KtFe10ScopeProvider(
         val scopeKind = KtScopeKind.LocalScope(0) // TODO
         val lexicalScope = positionInFakeFile.getResolutionScope(bindingContext)
         if (lexicalScope != null) {
-            val compositeScope = KtCompositeScope(listOf(KtFe10ScopeLexical(lexicalScope, analysisContext)), token)
+            val compositeScope = KtCompositeScope.create(listOf(KtFe10ScopeLexical(lexicalScope, analysisContext)), token)
             return KtScopeContext(listOf(KtScopeWithKind(compositeScope, scopeKind, token)), collectImplicitReceivers(lexicalScope), token)
         }
 
         val fileScope = analysisContext.resolveSession.fileScopeProvider.getFileResolutionScope(originalFile)
-        val compositeScope = KtCompositeScope(listOf(KtFe10ScopeLexical(fileScope, analysisContext)), token)
+        val compositeScope = KtCompositeScope.create(listOf(KtFe10ScopeLexical(fileScope, analysisContext)), token)
         return KtScopeContext(listOf(KtScopeWithKind(compositeScope, scopeKind, token)), collectImplicitReceivers(fileScope), token)
     }
 

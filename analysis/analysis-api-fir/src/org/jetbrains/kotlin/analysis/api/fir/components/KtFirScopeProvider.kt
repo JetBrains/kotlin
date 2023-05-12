@@ -156,7 +156,7 @@ internal class KtFirScopeProvider(
 
 
     override fun getCompositeScope(subScopes: List<KtScope>): KtScope {
-        return KtCompositeScope(subScopes, token)
+        return KtCompositeScope.create(subScopes, token)
     }
 
     override fun getTypeScope(type: KtType): KtTypeScope? = getFirTypeScope(type)?.let { convertToKtTypeScope(it) }

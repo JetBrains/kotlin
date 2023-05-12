@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.scopes
 
+import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KtScope
@@ -12,10 +13,18 @@ import org.jetbrains.kotlin.analysis.api.scopes.KtScopeNameFilter
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.name.Name
 
-class KtCompositeScope(
+@KtAnalysisApiInternals
+class KtCompositeScope private constructor(
     private val subScopes: List<KtScope>,
-    override val token: KtLifetimeToken
+    override val token: KtLifetimeToken,
 ) : KtScope {
+
+    init {
+        require(subScopes.size > 1) {
+            "Required `subScopes.size > 1` but `subScopes.size = ${subScopes.size}`"
+        }
+    }
+
     override fun getAllPossibleNames(): Set<Name> = withValidityAssertion {
         buildSet {
             subScopes.flatMapTo(this) { it.getAllPossibleNames() }
@@ -80,5 +89,14 @@ class KtCompositeScope(
 
     override fun mayContainName(name: Name): Boolean = withValidityAssertion {
         subScopes.any { it.mayContainName(name) }
+    }
+
+    companion object {
+        fun create(subScopes: List<KtScope>, token: KtLifetimeToken): KtScope =
+            when (subScopes.size) {
+                0 -> KtEmptyScope(token)
+                1 -> subScopes.single()
+                else -> KtCompositeScope(subScopes, token)
+            }
     }
 }
