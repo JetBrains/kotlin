@@ -8,9 +8,7 @@ package org.jetbrains.kotlin.asJava.elements
 import com.intellij.psi.*
 import com.intellij.psi.CommonClassNames.*
 import org.jetbrains.kotlin.asJava.classes.KtUltraLightSimpleAnnotation
-import org.jetbrains.kotlin.asJava.classes.KtUltraLightSupport
 import org.jetbrains.kotlin.builtins.StandardNames.FqNames
-import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
 import org.jetbrains.kotlin.name.ClassId
@@ -24,7 +22,6 @@ import org.jetbrains.kotlin.resolve.constants.ConstantValue
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.constants.KClassValue
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import java.util.*
 
 internal const val KOTLIN_JVM_INTERNAL_REPEATABLE_CONTAINER = "kotlin.jvm.internal.RepeatableContainer"
 
@@ -56,9 +53,9 @@ private fun PsiAnnotation.extractArrayAnnotationFqNames(attributeName: String): 
                 .map { "${it.first.asSingleFqName().asString()}.${it.second.identifier}" }
         }
 
-private val targetMappings = EnumMap<JvmTarget, Map<String, EnumValue>>(JvmTarget::class.java).also { result ->
+private val targetMapping = run {
     val javaAnnotationElementTypeId = ClassId.fromString(JvmAnnotationNames.ELEMENT_TYPE_ENUM.asString())
-    val jdk6 = hashMapOf(
+    hashMapOf(
         "kotlin.annotation.AnnotationTarget.CLASS" to EnumValue(javaAnnotationElementTypeId, Name.identifier("TYPE")),
         "kotlin.annotation.AnnotationTarget.ANNOTATION_CLASS" to EnumValue(javaAnnotationElementTypeId, Name.identifier("ANNOTATION_TYPE")),
         "kotlin.annotation.AnnotationTarget.FIELD" to EnumValue(javaAnnotationElementTypeId, Name.identifier("FIELD")),
@@ -67,18 +64,13 @@ private val targetMappings = EnumMap<JvmTarget, Map<String, EnumValue>>(JvmTarge
         "kotlin.annotation.AnnotationTarget.CONSTRUCTOR" to EnumValue(javaAnnotationElementTypeId, Name.identifier("CONSTRUCTOR")),
         "kotlin.annotation.AnnotationTarget.FUNCTION" to EnumValue(javaAnnotationElementTypeId, Name.identifier("METHOD")),
         "kotlin.annotation.AnnotationTarget.PROPERTY_GETTER" to EnumValue(javaAnnotationElementTypeId, Name.identifier("METHOD")),
-        "kotlin.annotation.AnnotationTarget.PROPERTY_SETTER" to EnumValue(javaAnnotationElementTypeId, Name.identifier("METHOD"))
+        "kotlin.annotation.AnnotationTarget.PROPERTY_SETTER" to EnumValue(javaAnnotationElementTypeId, Name.identifier("METHOD")),
+        "kotlin.annotation.AnnotationTarget.TYPE_PARAMETER" to EnumValue(javaAnnotationElementTypeId, Name.identifier("TYPE_PARAMETER")),
+        "kotlin.annotation.AnnotationTarget.TYPE" to EnumValue(javaAnnotationElementTypeId, Name.identifier("TYPE_USE")),
     )
-    val jdk8AndLater = HashMap(jdk6).apply {
-        put("kotlin.annotation.AnnotationTarget.TYPE_PARAMETER", EnumValue(javaAnnotationElementTypeId, Name.identifier("TYPE_PARAMETER")))
-        put("kotlin.annotation.AnnotationTarget.TYPE", EnumValue(javaAnnotationElementTypeId, Name.identifier("TYPE_USE")))
-    }
-    for (target in JvmTarget.values()) {
-        result[target] = if (target >= JvmTarget.JVM_1_8) jdk8AndLater else jdk6
-    }
 }
 
-internal fun PsiAnnotation.tryConvertAsTarget(support: KtUltraLightSupport): KtLightAbstractAnnotation? {
+internal fun PsiAnnotation.tryConvertAsTarget(): KtLightAbstractAnnotation? {
 
     if (FqNames.target.asString() != qualifiedName) return null
 
@@ -87,7 +79,6 @@ internal fun PsiAnnotation.tryConvertAsTarget(support: KtUltraLightSupport): KtL
 
     attributeValues ?: return null
 
-    val targetMapping = targetMappings.getValue(support.jvmTarget)
     val convertedValues = attributeValues.mapNotNull { targetMapping[it] }.distinct()
 
     val targetAttributes = "value" to ArrayValue(convertedValues) { module -> module.builtIns.array.defaultType }

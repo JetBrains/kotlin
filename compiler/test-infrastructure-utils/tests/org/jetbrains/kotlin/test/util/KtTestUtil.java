@@ -145,11 +145,6 @@ public class KtTestUtil {
     }
 
     @NotNull
-    public static File getJdk6Home() {
-        return getJdkHome("JDK_1_6", "JDK_6", "JDK_16");
-    }
-
-    @NotNull
     public static File getJdk8Home() {
         return getJdkHome("JDK_1_8", "JDK_8", "JDK_18");
     }

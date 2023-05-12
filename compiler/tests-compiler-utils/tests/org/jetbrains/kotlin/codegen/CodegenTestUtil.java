@@ -188,7 +188,7 @@ public class CodegenTestUtil {
     public static String computeJavaTarget(@NotNull List<String> javacOptions, @Nullable JvmTarget kotlinTarget) {
         if (JAVA_COMPILATION_TARGET != null && !javacOptions.contains("-target"))
             return JAVA_COMPILATION_TARGET;
-        if (kotlinTarget != null && kotlinTarget.compareTo(JvmTarget.JVM_1_6) > 0)
+        if (kotlinTarget != null)
             return kotlinTarget.getDescription();
         if (IS_SOURCE_6_STILL_SUPPORTED)
             return "1.6";

@@ -37,7 +37,10 @@ import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtCodeFragment
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
-import org.jetbrains.kotlin.resolve.*
+import org.jetbrains.kotlin.resolve.BindingContext
+import org.jetbrains.kotlin.resolve.BindingTrace
+import org.jetbrains.kotlin.resolve.BindingTraceFilter
+import org.jetbrains.kotlin.resolve.DelegatingBindingTrace
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationResolver
 import org.jetbrains.kotlin.resolve.diagnostics.Diagnostics
 import org.jetbrains.kotlin.resolve.diagnostics.OnDemandSuppressCache
@@ -241,26 +244,18 @@ class GenerationState private constructor(
             configuration.get(JVMConfigurationKeys.STRING_CONCAT) ?: JvmStringConcat.INDY_WITH_CONSTANTS
         else JvmStringConcat.INLINE
 
-    val samConversionsScheme = run {
-        val fromConfig = configuration.get(JVMConfigurationKeys.SAM_CONVERSIONS)
-        if (fromConfig != null && target >= fromConfig.minJvmTarget)
-            fromConfig
-        else if (
-            target >= JvmClosureGenerationScheme.INDY.minJvmTarget &&
-            languageVersionSettings.supportsFeature(LanguageFeature.SamWrapperClassesAreSynthetic)
-        )
-            JvmClosureGenerationScheme.INDY
-        else
-            JvmClosureGenerationScheme.CLASS
-    }
+    val samConversionsScheme: JvmClosureGenerationScheme =
+        configuration.get(JVMConfigurationKeys.SAM_CONVERSIONS)
+            ?: if (languageVersionSettings.supportsFeature(LanguageFeature.SamWrapperClassesAreSynthetic))
+                JvmClosureGenerationScheme.INDY
+            else
+                JvmClosureGenerationScheme.CLASS
 
-    val lambdasScheme = configuration.get(JVMConfigurationKeys.LAMBDAS).let { fromConfig ->
-        if (fromConfig == null || target < fromConfig.minJvmTarget) {
-            if (languageVersionSettings.supportsFeature(LanguageFeature.LightweightLambdas) && target >= JvmClosureGenerationScheme.INDY.minJvmTarget)
+    val lambdasScheme: JvmClosureGenerationScheme =
+        configuration.get(JVMConfigurationKeys.LAMBDAS)
+            ?: if (languageVersionSettings.supportsFeature(LanguageFeature.LightweightLambdas))
                 JvmClosureGenerationScheme.INDY
             else JvmClosureGenerationScheme.CLASS
-        } else fromConfig
-    }
 
     val moduleName: String = moduleName ?: JvmCodegenUtil.getModuleName(module)
     val classBuilderMode: ClassBuilderMode = builderFactory.classBuilderMode
@@ -280,7 +275,7 @@ class GenerationState private constructor(
         isIrBackend
     )
     val canReplaceStdlibRuntimeApiBehavior = languageVersionSettings.apiVersion <= ApiVersion.parse(KotlinVersion.CURRENT.toString())!!
-    val intrinsics: IntrinsicMethods = IntrinsicMethods(target, canReplaceStdlibRuntimeApiBehavior)
+    val intrinsics: IntrinsicMethods = IntrinsicMethods(canReplaceStdlibRuntimeApiBehavior)
     val generateOptimizedCallableReferenceSuperClasses =
         languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_1_4 &&
                 !configuration.getBoolean(JVMConfigurationKeys.NO_OPTIMIZED_CALLABLE_REFERENCES)

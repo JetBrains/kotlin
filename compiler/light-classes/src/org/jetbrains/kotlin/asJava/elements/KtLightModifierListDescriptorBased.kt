@@ -89,7 +89,7 @@ abstract class KtUltraLightModifierList<out T : KtLightElement<KtModifierListOwn
 
             sourceAnnotations.mapNotNullTo(result) { sourceAnnotation ->
                 sourceAnnotation.additionalConverter()
-                    ?: sourceAnnotation.tryConvertAsTarget(support)
+                    ?: sourceAnnotation.tryConvertAsTarget()
                     ?: sourceAnnotation.tryConvertAsRetention()
                     ?: sourceAnnotation.tryConvertAsRepeatable(owner)
                     ?: sourceAnnotation.tryConvertAsMustBeDocumented()

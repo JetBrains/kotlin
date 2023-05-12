@@ -574,8 +574,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
             mapDefaultCallback(baseMethodDescriptor, getKindForDefaultImplCall(baseMethodDescriptor)),
             signature, invokeOpcode, thisClass, dispatchReceiverKotlinType, receiverParameterType, extensionReceiverKotlinType,
             calleeType, returnKotlinType,
-            if (jvmTarget >= JvmTarget.JVM_1_8) isInterfaceMember else invokeOpcode == INVOKEINTERFACE,
-            isDefaultMethodInInterface, boxInlineClassBeforeInvoke
+            isInterfaceMember, isDefaultMethodInInterface, boxInlineClassBeforeInvoke
         )
     }
 

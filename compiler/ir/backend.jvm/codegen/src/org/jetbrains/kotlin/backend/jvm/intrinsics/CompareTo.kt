@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.codegen.AsmUtil.comparisonOperandType
 import org.jetbrains.kotlin.codegen.BranchedValue
 import org.jetbrains.kotlin.codegen.NumberCompare
 import org.jetbrains.kotlin.codegen.ObjectCompare
-import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.lexer.KtSingleValueToken
@@ -39,21 +38,14 @@ import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 
 object CompareTo : IntrinsicMethod() {
-    private fun genInvoke(type: Type?, v: InstructionAdapter, classCodegen: ClassCodegen) {
+    private fun genInvoke(type: Type?, v: InstructionAdapter) {
         when (type) {
             Type.CHAR_TYPE, Type.BYTE_TYPE, Type.SHORT_TYPE, Type.INT_TYPE ->
                 v.invokestatic(JvmSymbols.INTRINSICS_CLASS_NAME, "compare", "(II)I", false)
             Type.LONG_TYPE -> v.invokestatic(JvmSymbols.INTRINSICS_CLASS_NAME, "compare", "(JJ)I", false)
             Type.FLOAT_TYPE -> v.invokestatic("java/lang/Float", "compare", "(FF)I", false)
             Type.DOUBLE_TYPE -> v.invokestatic("java/lang/Double", "compare", "(DD)I", false)
-            Type.BOOLEAN_TYPE -> {
-                // We could support it for JVM target 1.6, but it's prohibited now anyway (except for stdlib, which doesn't have such code),
-                // so throwing an exception instead.
-                check(classCodegen.context.state.target >= JvmTarget.JVM_1_8) {
-                    "Cannot generate boolean comparison for JVM target 1.6"
-                }
-                v.invokestatic("java/lang/Boolean", "compare", "(ZZ)I", false)
-            }
+            Type.BOOLEAN_TYPE -> v.invokestatic("java/lang/Boolean", "compare", "(ZZ)I", false)
             else -> throw UnsupportedOperationException()
         }
     }
@@ -70,7 +62,7 @@ object CompareTo : IntrinsicMethod() {
             signature.valueParameters.single().asmType,
         )
         return IrIntrinsicFunction.create(expression, signature, classCodegen, listOf(parameterType, parameterType)) {
-            genInvoke(parameterType, it, classCodegen)
+            genInvoke(parameterType, it)
         }
     }
 }

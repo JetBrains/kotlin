@@ -63,11 +63,11 @@ public class IntrinsicMethods {
     private static final IntrinsicMethod ARRAY_ITERATOR = new ArrayIterator();
     private final IntrinsicsMap intrinsicsMap = new IntrinsicsMap();
 
-    public IntrinsicMethods(JvmTarget jvmTarget) {
-        this(jvmTarget, false);
+    public IntrinsicMethods(@SuppressWarnings("unused") JvmTarget jvmTarget) {
+        this(false);
     }
 
-    public IntrinsicMethods(JvmTarget jvmTarget, boolean canReplaceStdlibRuntimeApiBehavior) {
+    public IntrinsicMethods(boolean canReplaceStdlibRuntimeApiBehavior) {
         intrinsicsMap.registerIntrinsic(KOTLIN_JVM, RECEIVER_PARAMETER_FQ_NAME, "javaClass", -1, JavaClassProperty.INSTANCE);
         intrinsicsMap.registerIntrinsic(KOTLIN_JVM, StandardNames.FqNames.kClass, "java", -1, new KClassJavaProperty());
         intrinsicsMap.registerIntrinsic(KOTLIN_JVM, StandardNames.FqNames.kClass, "javaObjectType", -1, new KClassJavaObjectTypeProperty());
@@ -104,7 +104,7 @@ public class IntrinsicMethods {
             declareIntrinsicFunction(typeFqName, "dec", 0, DEC);
         }
 
-        IntrinsicMethod hashCode = new HashCode(jvmTarget);
+        IntrinsicMethod hashCode = new HashCode();
         for (PrimitiveType type : PrimitiveType.values()) {
             FqName typeFqName = type.getTypeFqName();
             Type wrapperType = AsmUtil.asmTypeByFqNameWithoutInnerClasses(JvmPrimitiveType.get(type).getWrapperFqName());
@@ -149,41 +149,39 @@ public class IntrinsicMethods {
         intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, null, "arrayOfNulls", 1, new NewArray());
 
         for (PrimitiveType type : PrimitiveType.values()) {
-            declareIntrinsicFunction(type.getTypeFqName(), "compareTo", 1, new CompareTo(jvmTarget));
+            declareIntrinsicFunction(type.getTypeFqName(), "compareTo", 1, new CompareTo());
             declareIntrinsicFunction(COLLECTIONS_PACKAGE_FQ_NAME.child(Name.identifier(type.getTypeName().asString() + "Iterator")), "next", 0, ITERATOR_NEXT);
         }
 
         declareArrayMethods();
 
-        if (jvmTarget.compareTo(JvmTarget.JVM_1_8) >= 0) {
-            Java8UIntDivide java8UIntDivide = new Java8UIntDivide();
-            intrinsicsMap.registerIntrinsic(KOTLIN_UINT.toSafe(), null, "div", 1, java8UIntDivide);
-            intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, null, "uintDivide", 2, java8UIntDivide);
+        Java8UIntDivide java8UIntDivide = new Java8UIntDivide();
+        intrinsicsMap.registerIntrinsic(KOTLIN_UINT.toSafe(), null, "div", 1, java8UIntDivide);
+        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, null, "uintDivide", 2, java8UIntDivide);
 
-            Java8UIntRemainder java8UIntRemainder = new Java8UIntRemainder();
-            intrinsicsMap.registerIntrinsic(KOTLIN_UINT.toSafe(), null, "rem", 1, java8UIntRemainder);
-            intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, null, "uintRemainder", 2, java8UIntRemainder);
+        Java8UIntRemainder java8UIntRemainder = new Java8UIntRemainder();
+        intrinsicsMap.registerIntrinsic(KOTLIN_UINT.toSafe(), null, "rem", 1, java8UIntRemainder);
+        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, null, "uintRemainder", 2, java8UIntRemainder);
 
-            Java8UIntCompare java8UIntCompare = new Java8UIntCompare();
-            intrinsicsMap.registerIntrinsic(KOTLIN_UINT.toSafe(), null, "compareTo", 1, java8UIntCompare);
-            intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, null, "uintCompare", 2, java8UIntCompare);
+        Java8UIntCompare java8UIntCompare = new Java8UIntCompare();
+        intrinsicsMap.registerIntrinsic(KOTLIN_UINT.toSafe(), null, "compareTo", 1, java8UIntCompare);
+        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, null, "uintCompare", 2, java8UIntCompare);
 
-            intrinsicsMap.registerIntrinsic(KOTLIN_UINT.toSafe(), null, "toString", 0, new Java8UIntToString());
+        intrinsicsMap.registerIntrinsic(KOTLIN_UINT.toSafe(), null, "toString", 0, new Java8UIntToString());
 
-            Java8ULongDivide java8ULongDivide = new Java8ULongDivide();
-            intrinsicsMap.registerIntrinsic(KOTLIN_ULONG.toSafe(), null, "div", 1, java8ULongDivide);
-            intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, null, "ulongDivide", 2, java8ULongDivide);
+        Java8ULongDivide java8ULongDivide = new Java8ULongDivide();
+        intrinsicsMap.registerIntrinsic(KOTLIN_ULONG.toSafe(), null, "div", 1, java8ULongDivide);
+        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, null, "ulongDivide", 2, java8ULongDivide);
 
-            Java8ULongRemainder java8ULongRemainder = new Java8ULongRemainder();
-            intrinsicsMap.registerIntrinsic(KOTLIN_ULONG.toSafe(), null, "rem", 1, java8ULongRemainder);
-            intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, null, "ulongRemainder", 2, java8ULongRemainder);
+        Java8ULongRemainder java8ULongRemainder = new Java8ULongRemainder();
+        intrinsicsMap.registerIntrinsic(KOTLIN_ULONG.toSafe(), null, "rem", 1, java8ULongRemainder);
+        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, null, "ulongRemainder", 2, java8ULongRemainder);
 
-            Java8ULongCompare java8ULongCompare = new Java8ULongCompare();
-            intrinsicsMap.registerIntrinsic(KOTLIN_ULONG.toSafe(), null, "compareTo", 1, java8ULongCompare);
-            intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, null, "ulongCompare", 2, java8ULongCompare);
+        Java8ULongCompare java8ULongCompare = new Java8ULongCompare();
+        intrinsicsMap.registerIntrinsic(KOTLIN_ULONG.toSafe(), null, "compareTo", 1, java8ULongCompare);
+        intrinsicsMap.registerIntrinsic(BUILT_INS_PACKAGE_FQ_NAME, null, "ulongCompare", 2, java8ULongCompare);
 
-            intrinsicsMap.registerIntrinsic(KOTLIN_ULONG.toSafe(), null, "toString", 0, new Java8ULongToString());
-        }
+        intrinsicsMap.registerIntrinsic(KOTLIN_ULONG.toSafe(), null, "toString", 0, new Java8ULongToString());
     }
 
     private void declareArrayMethods() {

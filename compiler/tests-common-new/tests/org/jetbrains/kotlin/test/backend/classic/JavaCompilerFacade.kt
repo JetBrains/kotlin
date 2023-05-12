@@ -65,8 +65,7 @@ class JavaCompilerFacade(private val testServices: TestServices) {
     }
 
     private fun compileJavaFiles(module: TestModule, jvmTarget: JvmTarget, files: List<File>, javacOptions: List<String>, ignoreErrors: Boolean) {
-        val targetIsJava8OrLower = System.getProperty("java.version").startsWith("1.") && jvmTarget <= JvmTarget.JVM_1_6
-        if (USE_JAVAC_BASED_ON_JVM_TARGET !in module.directives || targetIsJava8OrLower) {
+        if (USE_JAVAC_BASED_ON_JVM_TARGET !in module.directives) {
             org.jetbrains.kotlin.test.compileJavaFiles(
                 files,
                 javacOptions,
@@ -76,7 +75,6 @@ class JavaCompilerFacade(private val testServices: TestServices) {
             return
         }
         val jdkHome = when (jvmTarget) {
-            JvmTarget.JVM_1_6 -> KtTestUtil.getJdk6Home()
             JvmTarget.JVM_1_8 -> KtTestUtil.getJdk8Home()
             JvmTarget.JVM_9,
             JvmTarget.JVM_11 -> KtTestUtil.getJdk11Home()

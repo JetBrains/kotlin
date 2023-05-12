@@ -43,7 +43,6 @@ class JvmVersionRequirementTest : AbstractVersionRequirementTest() {
             KotlinCoreEnvironment.createForTests(
                 testRootDisposable,
                 KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, outputDirectory).apply {
-                    put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_1_8)
                     languageVersionSettings = LanguageVersionSettingsImpl(
                         languageVersion,
                         ApiVersion.createByLanguageVersion(languageVersion),

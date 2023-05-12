@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.DescriptorAsmUtil
-import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.util.render
@@ -43,7 +42,7 @@ object HashCode : IntrinsicMethod() {
                 // TODO generate or lower IR for data class / value class 'hashCode'?
                 DescriptorAsmUtil.genHashCode(mv, mv, receiverType, target)
             }
-            target >= JvmTarget.JVM_1_8 && AsmUtil.isPrimitive(receiverJvmType) -> {
+            AsmUtil.isPrimitive(receiverJvmType) -> {
                 val boxedType = AsmUtil.boxPrimitiveType(receiverJvmType)
                     ?: throw AssertionError("Primitive type expected: $receiverJvmType")
                 receiverValue.materializeAt(receiverJvmType, receiverIrType)

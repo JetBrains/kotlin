@@ -52,7 +52,6 @@ import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.jetbrains.kotlin.builtins.KotlinBuiltIns.isBoolean;
 import static org.jetbrains.kotlin.codegen.AsmUtil.*;
 import static org.jetbrains.kotlin.codegen.CodegenUtilKt.isToArrayFromCollection;
 import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.isConstOrHasJvmFieldAnnotation;
@@ -598,32 +597,8 @@ public class DescriptorAsmUtil {
             iv.mark(end);
         }
         else {
-            if (JvmTarget.JVM_1_6 == jvmTarget) {
-                if (type.getSort() == Type.LONG) {
-                    genLongHashCode(mv, iv);
-                }
-                else if (type.getSort() == Type.DOUBLE) {
-                    iv.invokestatic("java/lang/Double", "doubleToLongBits", "(D)J", false);
-                    genLongHashCode(mv, iv);
-                }
-                else if (type.getSort() == Type.FLOAT) {
-                    iv.invokestatic("java/lang/Float", "floatToIntBits", "(F)I", false);
-                }
-                else { // byte short char int
-                    // do nothing
-                }
-            } else {
-                HashCode.Companion.invokeHashCode(iv, type);
-            }
+            HashCode.Companion.invokeHashCode(iv, type);
         }
-    }
-
-    private static void genLongHashCode(MethodVisitor mv, InstructionAdapter iv) {
-        iv.dup2();
-        iv.iconst(32);
-        iv.ushr(Type.LONG_TYPE);
-        iv.xor(Type.LONG_TYPE);
-        mv.visitInsn(L2I);
     }
 
     @NotNull

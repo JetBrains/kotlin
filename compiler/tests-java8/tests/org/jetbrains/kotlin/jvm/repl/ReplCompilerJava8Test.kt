@@ -56,7 +56,6 @@ class ReplCompilerJava8Test : KtUsefulTestCase() {
             put(CLIConfigurationKeys.MESSAGE_COLLECTOR_KEY, PrintingMessageCollector(System.out, MessageRenderer.WITHOUT_PATHS, false))
             addKotlinSourceRoot(tmpdir.absolutePath)
             put(JVMConfigurationKeys.OUTPUT_DIRECTORY, tmpdir)
-            put(JVMConfigurationKeys.JVM_TARGET, JvmTarget.JVM_1_8)
             loadScriptingPlugin(this)
         }
 
