@@ -8,14 +8,14 @@ package org.jetbrains.kotlin.analysis.api.descriptors.scopes
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.toKtClassifierSymbol
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KtScope
 import org.jetbrains.kotlin.analysis.api.scopes.KtScopeNameFilter
 import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.name.Name
@@ -51,6 +51,12 @@ internal class KtFe10FileScope(
         }
     }
 
+    override fun getCallableSymbols(names: Collection<Name>): Sequence<KtCallableSymbol> {
+        if (names.isEmpty()) return emptySequence()
+        val namesSet = names.toSet()
+        return getCallableSymbols { it in namesSet }
+    }
+
     override fun getClassifierSymbols(nameFilter: KtScopeNameFilter): Sequence<KtClassifierSymbol> = withValidityAssertion {
         val context = analysisContext.analyze(ktFile)
 
@@ -63,6 +69,12 @@ internal class KtFe10FileScope(
                 }
             }
         }
+    }
+
+    override fun getClassifierSymbols(names: Collection<Name>): Sequence<KtClassifierSymbol> {
+        if (names.isEmpty()) return emptySequence()
+        val namesSet = names.toSet()
+        return getClassifierSymbols { it in namesSet }
     }
 
     override fun getConstructors(): Sequence<KtConstructorSymbol> = withValidityAssertion {

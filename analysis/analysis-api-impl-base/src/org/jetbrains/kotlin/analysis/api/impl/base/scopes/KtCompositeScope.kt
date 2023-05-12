@@ -5,11 +5,11 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.scopes
 
+import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KtScope
 import org.jetbrains.kotlin.analysis.api.scopes.KtScopeNameFilter
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.analysis.api.lifetime.KtLifetimeToken
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.name.Name
 
 class KtCompositeScope(
@@ -46,9 +46,23 @@ class KtCompositeScope(
         }
     }
 
+    override fun getCallableSymbols(names: Collection<Name>): Sequence<KtCallableSymbol> = withValidityAssertion {
+        if (names.isEmpty()) return emptySequence()
+        sequence {
+            subScopes.forEach { yieldAll(it.getCallableSymbols(names)) }
+        }
+    }
+
     override fun getClassifierSymbols(nameFilter: KtScopeNameFilter): Sequence<KtClassifierSymbol> = withValidityAssertion {
         sequence {
             subScopes.forEach { yieldAll(it.getClassifierSymbols(nameFilter)) }
+        }
+    }
+
+    override fun getClassifierSymbols(names: Collection<Name>): Sequence<KtClassifierSymbol> = withValidityAssertion {
+        if (names.isEmpty()) return emptySequence()
+        sequence {
+            subScopes.forEach { yieldAll(it.getClassifierSymbols(names)) }
         }
     }
 

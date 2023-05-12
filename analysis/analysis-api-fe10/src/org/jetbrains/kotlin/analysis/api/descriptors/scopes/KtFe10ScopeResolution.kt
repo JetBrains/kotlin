@@ -34,12 +34,24 @@ internal abstract class KtFe10ScopeResolution : KtScope, KtLifetimeOwner {
             .mapNotNull { it.toKtSymbol(analysisContext) as? KtCallableSymbol }
     }
 
+    override fun getCallableSymbols(names: Collection<Name>): Sequence<KtCallableSymbol> {
+        if (names.isEmpty()) return emptySequence()
+        val namesSet = names.toSet()
+        return getCallableSymbols { it in namesSet }
+    }
+
     override fun getClassifierSymbols(nameFilter: KtScopeNameFilter): Sequence<KtClassifierSymbol> = withValidityAssertion {
         return scope
             .getContributedDescriptors(kindFilter = DescriptorKindFilter.CLASSIFIERS, nameFilter)
             .asSequence()
             .filter { nameFilter(it.name) }
             .mapNotNull { it.toKtSymbol(analysisContext) as? KtClassifierSymbol }
+    }
+
+    override fun getClassifierSymbols(names: Collection<Name>): Sequence<KtClassifierSymbol> {
+        if (names.isEmpty()) return emptySequence()
+        val namesSet = names.toSet()
+        return getClassifierSymbols { it in namesSet }
     }
 
     override fun getPackageSymbols(nameFilter: KtScopeNameFilter): Sequence<KtPackageSymbol> = withValidityAssertion {

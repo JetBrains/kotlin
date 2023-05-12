@@ -89,8 +89,16 @@ internal class KtFirPackageScope(
         firScope.getCallableSymbols(getPossibleCallableNames().filter(nameFilter), analysisSession.firSymbolBuilder)
     }
 
+    override fun getCallableSymbols(names: Collection<Name>): Sequence<KtCallableSymbol> = withValidityAssertion {
+        firScope.getCallableSymbols(names, analysisSession.firSymbolBuilder)
+    }
+
     override fun getClassifierSymbols(nameFilter: KtScopeNameFilter): Sequence<KtClassifierSymbol> = withValidityAssertion {
         firScope.getClassifierSymbols(getPossibleClassifierNames().filter(nameFilter), analysisSession.firSymbolBuilder)
+    }
+
+    override fun getClassifierSymbols(names: Collection<Name>): Sequence<KtClassifierSymbol> = withValidityAssertion {
+        firScope.getClassifierSymbols(names, analysisSession.firSymbolBuilder)
     }
 
     override fun getConstructors(): Sequence<KtConstructorSymbol> = withValidityAssertion {

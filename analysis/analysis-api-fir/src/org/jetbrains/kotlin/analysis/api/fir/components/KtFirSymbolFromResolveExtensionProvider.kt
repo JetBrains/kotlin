@@ -46,8 +46,20 @@ private class KtFirResolveExtensionScope(
         gelTopLevelDeclarations(nameFilter) { it.getTopLevelCallables() }
     }
 
+    override fun getCallableSymbols(names: Collection<Name>): Sequence<KtCallableSymbol> = withValidityAssertion {
+        if (names.isEmpty()) return emptySequence()
+        val namesSet = names.toSet()
+        return getCallableSymbols { it in namesSet }
+    }
+
     override fun getClassifierSymbols(nameFilter: KtScopeNameFilter): Sequence<KtClassifierSymbol> = withValidityAssertion {
         gelTopLevelDeclarations(nameFilter) { it.getTopLevelClassifiers() }
+    }
+
+    override fun getClassifierSymbols(names: Collection<Name>): Sequence<KtClassifierSymbol> {
+        if (names.isEmpty()) return emptySequence()
+        val namesSet = names.toSet()
+        return getClassifierSymbols { it in namesSet }
     }
 
     private inline fun <D : KtNamedDeclaration, reified S : KtDeclaration> gelTopLevelDeclarations(
