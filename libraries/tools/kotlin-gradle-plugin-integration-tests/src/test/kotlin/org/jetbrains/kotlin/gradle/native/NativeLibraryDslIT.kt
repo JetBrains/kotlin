@@ -66,9 +66,9 @@ class NativeLibraryDslIT : KGPBaseTest() {
                 assertTasksNotExecuted(
                     ":lib:compileKotlinLinuxX64"
                 )
-                assertNativeTasksCommandLineArguments(":shared:assembleMylibDebugSharedLibraryLinuxX64") {
-                    assertCommandLineArgumentsDoNotContain("-Xfoo=bar", "-Xbaz=qux", commandLineArguments = it)
-                    assertCommandLineArgumentsContain("-Xmen=pool", commandLineArguments = it)
+                extractNativeTasksCommandLineArgumentsFromOutput(":shared:assembleMylibDebugSharedLibraryLinuxX64") {
+                    assertCommandLineArgumentsDoNotContain("-Xfoo=bar", "-Xbaz=qux")
+                    assertCommandLineArgumentsContain("-Xmen=pool")
                 }
                 assertFileInProjectExists("shared/build/out/dynamic/linux_x64/debug/libmylib.so")
                 assertFileInProjectExists("shared/build/out/dynamic/linux_x64/debug/libmylib_api.h")
@@ -89,8 +89,8 @@ class NativeLibraryDslIT : KGPBaseTest() {
                 assertTasksNotExecuted(
                     ":lib:compileKotlinLinuxX64"
                 )
-                assertNativeTasksCommandLineArguments(":shared:assembleMylibDebugSharedLibraryLinuxX64") {
-                    assertCommandLineArgumentsContain("-Xfoo=bar", "-Xbaz=qux", "-Xmen=pool", commandLineArguments = it)
+                extractNativeTasksCommandLineArgumentsFromOutput(":shared:assembleMylibDebugSharedLibraryLinuxX64") {
+                    assertCommandLineArgumentsContain("-Xfoo=bar", "-Xbaz=qux", "-Xmen=pool")
                 }
                 assertFileInProjectExists("shared/build/out/dynamic/linux_x64/debug/libmylib.so")
                 assertFileInProjectExists("shared/build/out/dynamic/linux_x64/debug/libmylib_api.h")

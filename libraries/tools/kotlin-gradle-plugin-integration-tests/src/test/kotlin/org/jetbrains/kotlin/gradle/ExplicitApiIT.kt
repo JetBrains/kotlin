@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.util.AGPVersion
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.junit.jupiter.api.DisplayName
@@ -142,8 +141,8 @@ class ExplicitApiIT : KGPBaseTest() {
             if (nativeTaskName != null) {
                 build(nativeTaskName) {
                     assertTasksExecuted(nativeTaskName)
-                    assertNativeTasksCommandLineArguments(nativeTaskName) {
-                        assertCommandLineArgumentsContain("-Xexplicit-api=warning", commandLineArguments = it)
+                    extractNativeTasksCommandLineArgumentsFromOutput(nativeTaskName) {
+                        assertCommandLineArgumentsContain("-Xexplicit-api=warning")
                     }
                 }
             }
@@ -156,7 +155,7 @@ class ExplicitApiIT : KGPBaseTest() {
     fun explicitApiAndroid(
         gradleVersion: GradleVersion,
         agpVersion: String,
-        jdkVersion: JdkVersions.ProvidedJdk
+        jdkVersion: JdkVersions.ProvidedJdk,
     ) {
         project(
             "AndroidSimpleApp",
