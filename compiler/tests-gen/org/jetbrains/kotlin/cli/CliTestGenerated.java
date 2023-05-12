@@ -835,11 +835,6 @@ public class CliTestGenerated extends AbstractCliTest {
             runTest("compiler/testData/cli/jvm/jvm8Target.args");
         }
 
-        @TestMetadata("jvmDefaultAll.args")
-        public void testJvmDefaultAll() throws Exception {
-            runTest("compiler/testData/cli/jvm/jvmDefaultAll.args");
-        }
-
         @TestMetadata("jvmDefaultIncorrectValue.args")
         public void testJvmDefaultIncorrectValue() throws Exception {
             runTest("compiler/testData/cli/jvm/jvmDefaultIncorrectValue.args");

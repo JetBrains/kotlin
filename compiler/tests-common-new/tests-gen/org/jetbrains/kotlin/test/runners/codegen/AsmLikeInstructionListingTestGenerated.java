@@ -211,11 +211,5 @@ public class AsmLikeInstructionListingTestGenerated extends AbstractAsmLikeInstr
         public void testSyntheticAccessors() throws Exception {
             runTest("compiler/testData/codegen/asmLike/typeAnnotations/syntheticAccessors.kt");
         }
-
-        @Test
-        @TestMetadata("typeParameter16.kt")
-        public void testTypeParameter16() throws Exception {
-            runTest("compiler/testData/codegen/asmLike/typeAnnotations/typeParameter16.kt");
-        }
     }
 }

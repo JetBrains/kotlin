@@ -414,12 +414,6 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
         }
 
         @Test
-        @TestMetadata("typeAnnotationOnJdk6.kt")
-        public void testTypeAnnotationOnJdk6() throws Exception {
-            runTest("compiler/testData/codegen/box/annotations/typeAnnotationOnJdk6.kt");
-        }
-
-        @Test
         @TestMetadata("useTypeParameterAnnotationFromJava.kt")
         public void testUseTypeParameterAnnotationFromJava() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/useTypeParameterAnnotationFromJava.kt");

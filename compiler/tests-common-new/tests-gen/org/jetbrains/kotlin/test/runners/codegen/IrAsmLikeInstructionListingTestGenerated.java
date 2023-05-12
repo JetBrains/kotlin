@@ -235,11 +235,5 @@ public class IrAsmLikeInstructionListingTestGenerated extends AbstractIrAsmLikeI
         public void testTypeParameter() throws Exception {
             runTest("compiler/testData/codegen/asmLike/typeAnnotations/typeParameter.kt");
         }
-
-        @Test
-        @TestMetadata("typeParameter16.kt")
-        public void testTypeParameter16() throws Exception {
-            runTest("compiler/testData/codegen/asmLike/typeAnnotations/typeParameter16.kt");
-        }
     }
 }

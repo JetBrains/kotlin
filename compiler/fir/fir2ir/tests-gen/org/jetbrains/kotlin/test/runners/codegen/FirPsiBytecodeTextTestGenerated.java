@@ -3423,12 +3423,6 @@ public class FirPsiBytecodeTextTestGenerated extends AbstractFirPsiBytecodeTextT
         }
 
         @Test
-        @TestMetadata("hashCode_1_6.kt")
-        public void testHashCode_1_6() throws Exception {
-            runTest("compiler/testData/codegen/bytecodeText/hashCode/hashCode_1_6.kt");
-        }
-
-        @Test
         @TestMetadata("interfaceHashCode.kt")
         public void testInterfaceHashCode() throws Exception {
             runTest("compiler/testData/codegen/bytecodeText/hashCode/interfaceHashCode.kt");

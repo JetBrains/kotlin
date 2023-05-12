@@ -2570,12 +2570,6 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
                 }
 
                 @Test
-                @TestMetadata("javaRepeatableJvmTarget6.kt")
-                public void testJavaRepeatableJvmTarget6() throws Exception {
-                    runTest("compiler/testData/diagnostics/tests/annotations/repeatable/javaRepeatableJvmTarget6.kt");
-                }
-
-                @Test
                 @TestMetadata("javaRepeatable_1_5.kt")
                 public void testJavaRepeatable_1_5() throws Exception {
                     runTest("compiler/testData/diagnostics/tests/annotations/repeatable/javaRepeatable_1_5.kt");
@@ -36479,12 +36473,6 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
                     }
 
                     @Test
-                    @TestMetadata("target6.kt")
-                    public void testTarget6() throws Exception {
-                        runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/jvmDefaultWithCompatibility/target6.kt");
-                    }
-
-                    @Test
                     @TestMetadata("target8.kt")
                     public void testTarget8() throws Exception {
                         runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/jvmDefaultWithCompatibility/target8.kt");
@@ -36504,12 +36492,6 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
                     @Test
                     public void testAllFilesPresentInJvmDefaultWithoutCompatibility() throws Exception {
                         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/jvmDefaultWithoutCompatibility"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|fir|ll)\\.kts?$"), true);
-                    }
-
-                    @Test
-                    @TestMetadata("target6.kt")
-                    public void testTarget6() throws Exception {
-                        runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmDefault/jvmDefaultWithoutCompatibility/target6.kt");
                     }
 
                     @Test
@@ -36705,12 +36687,6 @@ public class DiagnosticCompilerTestFE10TestdataTestGenerated extends AbstractDia
                 @TestMetadata("interfaceCompanion_LL12.kt")
                 public void testInterfaceCompanion_LL12() throws Exception {
                     runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmStatic/interfaceCompanion_LL12.kt");
-                }
-
-                @Test
-                @TestMetadata("interfaceCompanion_LL13_16.kt")
-                public void testInterfaceCompanion_LL13_16() throws Exception {
-                    runTest("compiler/testData/diagnostics/testsWithStdLib/annotations/jvmStatic/interfaceCompanion_LL13_16.kt");
                 }
 
                 @Test

@@ -303,11 +303,6 @@ public class LightAnalysisModeTestGenerated extends AbstractLightAnalysisModeTes
             runTest("compiler/testData/codegen/box/annotations/syntheticMethodForProperty.kt");
         }
 
-        @TestMetadata("typeAnnotationOnJdk6.kt")
-        public void testTypeAnnotationOnJdk6() throws Exception {
-            runTest("compiler/testData/codegen/box/annotations/typeAnnotationOnJdk6.kt");
-        }
-
         @TestMetadata("useTypeParameterAnnotationFromJava.kt")
         public void testUseTypeParameterAnnotationFromJava() throws Exception {
             runTest("compiler/testData/codegen/box/annotations/useTypeParameterAnnotationFromJava.kt");
