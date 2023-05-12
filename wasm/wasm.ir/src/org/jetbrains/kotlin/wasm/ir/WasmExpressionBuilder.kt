@@ -98,7 +98,7 @@ abstract class WasmExpressionBuilder {
     fun buildBrInstr(brOp: WasmOp, absoluteBlockLevel: Int, symbol: WasmSymbolReadOnly<WasmTypeDeclaration>, location: SourceLocation) {
         val relativeLevel = numberOfNestedBlocks - absoluteBlockLevel
         assert(relativeLevel >= 0) { "Negative relative block index" }
-        buildInstr(brOp, location, WasmImmediate.LabelIdx(relativeLevel), WasmImmediate.TypeIdx(symbol))
+        buildInstr(brOp, location, WasmImmediate.LabelIdx(relativeLevel), WasmImmediate.HeapType(WasmHeapType.Type(symbol)))
     }
 
     fun buildBr(absoluteBlockLevel: Int, location: SourceLocation) {
@@ -179,11 +179,15 @@ abstract class WasmExpressionBuilder {
     }
 
     fun buildRefCastNullStatic(toType: WasmSymbolReadOnly<WasmTypeDeclaration>, location: SourceLocation) {
-        buildInstr(WasmOp.REF_CAST_DEPRECATED, location, WasmImmediate.TypeIdx(toType))
+        buildInstr(WasmOp.REF_CAST_NULL, location, WasmImmediate.HeapType(WasmHeapType.Type(toType)))
+    }
+
+    fun buildRefCastStatic(toType: WasmSymbolReadOnly<WasmTypeDeclaration>, location: SourceLocation) {
+        buildInstr(WasmOp.REF_CAST, location, WasmImmediate.HeapType(WasmHeapType.Type(toType)))
     }
 
     fun buildRefTestStatic(toType: WasmSymbolReadOnly<WasmTypeDeclaration>, location: SourceLocation) {
-        buildInstr(WasmOp.REF_TEST_DEPRECATED, location, WasmImmediate.TypeIdx(toType))
+        buildInstr(WasmOp.REF_TEST, location, WasmImmediate.HeapType(WasmHeapType.Type(toType)))
     }
 
     fun buildRefNull(type: WasmHeapType, location: SourceLocation) {

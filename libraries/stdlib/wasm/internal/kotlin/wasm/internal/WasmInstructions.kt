@@ -20,11 +20,16 @@ internal fun wasm_unreachable(): Nothing =
     implementedAsIntrinsic
 
 @Suppress("REIFIED_TYPE_PARAMETER_NO_INLINE")
-internal fun <reified To> wasm_ref_cast_deprecated(a: Any?): To =
+internal fun <reified To> wasm_ref_cast_null(a: Any?): To =
     implementedAsIntrinsic
 
 @Suppress("REIFIED_TYPE_PARAMETER_NO_INLINE")
-internal fun <reified To> wasm_ref_test_deprecated(a: Any?): Boolean =
+internal fun <reified To> wasm_ref_test(a: Any?): Boolean =
+    implementedAsIntrinsic
+
+@Suppress("REIFIED_TYPE_PARAMETER_NO_INLINE")
+@WasmOp(WasmOp.REF_TEST_NULL)
+internal fun <reified To> wasm_ref_test_null(a: Any?): Boolean =
     implementedAsIntrinsic
 
 internal fun <T> wasm_array_copy(destination: T, destinationIndex: Int, source: T, sourceIndex: Int, length: Int): Unit =

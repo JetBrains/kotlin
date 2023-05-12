@@ -24,6 +24,6 @@ public fun <T : Any> T.toJsReference(): JsReference<T> =
 
 /** Retrieve original Kotlin value from JsReference */
 public fun <T : Any> JsReference<T>.get(): T {
-    returnArgumentIfItIsKotlinAny(this)
+    returnArgumentIfItIsKotlinAny()
     throw ClassCastException("JsReference doesn't contain a Kotlin type")
 }
