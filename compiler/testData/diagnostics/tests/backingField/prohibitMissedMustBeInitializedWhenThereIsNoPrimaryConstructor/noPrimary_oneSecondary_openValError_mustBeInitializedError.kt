@@ -1,6 +1,6 @@
 // FIR_IDENTICAL
-// !LANGUAGE:+ProhibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor, +ProhibitOpenValDeferredInitialization
-// !DIAGNOSTICS: -DEBUG_INFO_LEAKING_THIS
+// LANGUAGE:+ProhibitMissedMustBeInitializedWhenThereIsNoPrimaryConstructor, +ProhibitOpenValDeferredInitialization
+// DIAGNOSTICS: -DEBUG_INFO_LEAKING_THIS
 open class Foo {
     constructor()
 
