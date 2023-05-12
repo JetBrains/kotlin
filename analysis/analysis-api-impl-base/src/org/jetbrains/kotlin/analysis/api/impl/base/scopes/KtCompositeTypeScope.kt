@@ -11,7 +11,8 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KtScopeNameFilter
 import org.jetbrains.kotlin.analysis.api.scopes.KtTypeScope
 import org.jetbrains.kotlin.analysis.api.signatures.KtCallableSignature
-import org.jetbrains.kotlin.analysis.api.symbols.*
+import org.jetbrains.kotlin.analysis.api.symbols.KtClassifierSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.name.Name
 
 @KtAnalysisApiInternals
@@ -44,9 +45,21 @@ class KtCompositeTypeScope(
         }
     }
 
+    override fun getCallableSignatures(names: Collection<Name>): Sequence<KtCallableSignature<*>>  = withValidityAssertion {
+        sequence {
+            subScopes.forEach { yieldAll(it.getCallableSignatures(names)) }
+        }
+    }
+
     override fun getClassifierSymbols(nameFilter: KtScopeNameFilter): Sequence<KtClassifierSymbol> = withValidityAssertion {
         sequence {
             subScopes.forEach { yieldAll(it.getClassifierSymbols(nameFilter)) }
+        }
+    }
+
+    override fun getClassifierSymbols(names: Collection<Name>): Sequence<KtClassifierSymbol> = withValidityAssertion {
+        sequence {
+            subScopes.forEach { yieldAll(it.getClassifierSymbols(names)) }
         }
     }
 

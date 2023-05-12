@@ -41,8 +41,16 @@ internal open class KtFirDelegatingTypeScope(
         firScope.getCallableSignatures(getPossibleCallableNames().filter(nameFilter), builder)
     }
 
+    override fun getCallableSignatures(names: Collection<Name>): Sequence<KtCallableSignature<*>> = withValidityAssertion {
+        firScope.getCallableSignatures(names, builder)
+    }
+
     override fun getClassifierSymbols(nameFilter: KtScopeNameFilter): Sequence<KtClassifierSymbol> = withValidityAssertion {
         firScope.getClassifierSymbols(getPossibleClassifierNames().filter(nameFilter), builder)
+    }
+
+    override fun getClassifierSymbols(names: Collection<Name>): Sequence<KtClassifierSymbol> = withValidityAssertion {
+        firScope.getClassifierSymbols(names, builder)
     }
 
     override fun getConstructors(): Sequence<KtConstructorSymbol> = withValidityAssertion {
