@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.resolve.jvm.modules.JavaModule
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleFinder
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleInfo
 import java.io.File
+import java.util.*
 
 class CliJavaModuleFinder(
     private val jdkHome: File?,
@@ -176,7 +177,7 @@ class CliJavaModuleFinder(
         )
     }
 
-    private fun codeFor(release: Int): String = release.toString(36).toUpperCase()
+    private fun codeFor(release: Int): String = release.toString(36).uppercase(Locale.getDefault())
 
     private fun matchesRelease(fileName: String, release: Int) =
         !fileName.contains("-") && fileName.contains(codeFor(release)) // skip `*-modules`
