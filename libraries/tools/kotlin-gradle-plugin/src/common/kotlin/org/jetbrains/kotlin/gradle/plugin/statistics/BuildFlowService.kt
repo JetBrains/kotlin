@@ -50,7 +50,7 @@ abstract class BuildFlowService : BuildService<BuildFlowService.Parameters>, Aut
                         }
                     )
                 } else {
-                    FlowParameterHolder.getInstance(project).subscribeForBuildResult()
+                    FlowParameterHolder.getInstance(project).subscribeForBuildResult(project)
                 }
             }
 

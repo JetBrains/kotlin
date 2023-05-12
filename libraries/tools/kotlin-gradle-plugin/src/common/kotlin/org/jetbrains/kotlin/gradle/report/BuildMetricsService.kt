@@ -241,9 +241,9 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
                     buildMetricService.map { it.buildReportService }.get().initBuildScanTags(
                         it, buildMetricService.get().parameters.label.orNull
                     )
+                    //works befo Gradle 8.0
                     it.buildScan.buildFinished {
-                        val buildReportService = buildMetricService.map { it.buildReportService }
-                        buildReportService.get().addCollectedTags(buildScan)
+                        buildMetricService.map { it.addCollectedTagsToBuildScan(buildScan) }
                     }
                 }
             }
@@ -272,6 +272,11 @@ abstract class BuildMetricsService : BuildService<BuildMetricsService.Parameters
             }
             return additionalTags
         }
+    }
+
+    internal fun addCollectedTagsToBuildScan(buildScan: BuildScanExtensionHolder?) {
+        if (buildScan == null) return
+        buildReportService.addCollectedTags(buildScan)
     }
 
 }
