@@ -5,17 +5,14 @@
 
 package org.jetbrains.kotlin.backend.konan.optimizations
 
-import org.jetbrains.kotlin.backend.common.atMostOne
+import org.jetbrains.kotlin.backend.common.*
+import org.jetbrains.kotlin.backend.common.ir.isUnconditional
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
-import org.jetbrains.kotlin.backend.common.peek
-import org.jetbrains.kotlin.backend.common.pop
-import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.DirectedGraphCondensationBuilder
 import org.jetbrains.kotlin.backend.konan.DirectedGraphMultiNode
 import org.jetbrains.kotlin.backend.konan.ir.actualCallee
-import org.jetbrains.kotlin.backend.konan.ir.isUnconditional
 import org.jetbrains.kotlin.backend.konan.ir.isVirtualCall
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
 import org.jetbrains.kotlin.backend.konan.logMultiple
@@ -135,17 +132,19 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 val currentLifetimes = mutableMapOf<IrFunctionAccessExpression, Lifetime>()
                 val allocationToFunction = mutableMapOf<IrFunctionAccessExpression, IrFunction>()
                 analyze(multiNode, escapeAnalysisResults, currentLifetimes, allocationToFunction)
-//                currentLifetimes.forEach { (ir, lifetime) ->
+                currentLifetimes.forEach { (ir, lifetime) ->
+                    lifetimes[ir] = lifetime
 //                    val expectedLifetime = lifetimes[ir]
 //                    if (expectedLifetime == Lifetime.STACK && lifetime == Lifetime.GLOBAL) {
-//                        println("BUGBUGBUG: ${allocationToFunction[ir]!!.render()}\n${ir.dump()}")
-//                        println()
+//                        error("BUGBUGBUG: ${allocationToFunction[ir]!!.render()}\n${ir.dump()}")
+//                        //println("BUGBUGBUG: ${allocationToFunction[ir]!!.render()}\n${ir.dump()}")
+//                        //println()
 //                    }
-//                    if (expectedLifetime == Lifetime.GLOBAL && lifetime == Lifetime.STACK) {
-//                        println("YEAH, BABY: ${allocationToFunction[ir]!!.render()}\n${ir.dump()}")
-//                        println()
-//                    }
-//                }
+////                    if (expectedLifetime == Lifetime.GLOBAL && lifetime == Lifetime.STACK) {
+////                        println("YEAH, BABY: ${allocationToFunction[ir]!!.render()}\n${ir.dump()}")
+////                        println()
+////                    }
+                }
             }
         }
 
@@ -1994,6 +1993,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
             val createUninitializedInstanceSymbol = context.ir.symbols.createUninitializedInstance
             val initInstanceSymbol = context.ir.symbols.initInstance
             val reinterpretSymbol = context.ir.symbols.reinterpret
+            val executeImplSymbol = context.ir.symbols.executeImpl
 
             // TODO: What about staticInitializer, executeImpl, getContinuation?
             override fun visitCall(expression: IrCall, data: BuilderState) = when (expression.symbol) {
@@ -2010,6 +2010,9 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 reinterpretSymbol -> {
                     expression.extensionReceiver!!.accept(this, data)
                 }
+//                executeImplSymbol -> {
+//                    TODO()
+//                }
                 else -> {
                     val arguments = expression.getArgumentsWithIr()
                     val argumentNodeIds = arguments.map { it.second.accept(this, data).id }
