@@ -192,6 +192,8 @@ internal class NativeIrLinkerIssuesIT : KGPBaseTest() {
 
     @DisplayName("KT-47285: symbol type mismatch - with cache")
     @GradleTest
+    @OsCondition(supportedOn = [OS.MAC, OS.LINUX], enabledOnCI = [OS.LINUX])
+    // Don't run it on Windows. Caches are not supported there yet.
     fun shouldBuildIrLinkerSymbolTypeMismatchWithCache(
         gradleVersion: GradleVersion,
         @TempDir tempDir: Path,
