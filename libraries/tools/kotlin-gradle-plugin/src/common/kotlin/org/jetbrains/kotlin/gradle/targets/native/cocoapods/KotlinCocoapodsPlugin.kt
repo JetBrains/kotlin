@@ -25,10 +25,9 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.Cocoapods
 import org.jetbrains.kotlin.gradle.plugin.ide.Idea222Api
 import org.jetbrains.kotlin.gradle.plugin.ide.ideaImportDependsOn
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleSdk
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.FrameworkCopy
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.XCFrameworkTask
 import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.native.cocoapods.KotlinArtifactsPodspecExtension
 import org.jetbrains.kotlin.gradle.targets.native.cocoapods.kotlinArtifactsPodspecExtension
@@ -37,7 +36,6 @@ import org.jetbrains.kotlin.gradle.targets.native.tasks.artifact.kotlinArtifacts
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.gradle.utils.asValidTaskName
-import org.jetbrains.kotlin.gradle.utils.filesProvider
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.konan.target.Family
@@ -150,6 +148,7 @@ private val PodBuildSettingsProperties.frameworkHeadersSearchPaths: List<String>
  * Ignores whitespaces in quotes and drops quotes, e.g. a string
  * `foo "bar baz" qux="quux"` will be split into ["foo", "bar baz", "qux=quux"].
  */
+@Suppress("RegExpUnnecessaryNonCapturingGroup")
 internal fun String.splitQuotedArgs(): List<String> =
     Regex("""(?:[^\s"]|(?:"[^"]*"))+""").findAll(this).map {
         it.value.replace("\"", "")
@@ -174,15 +173,15 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
     }
 
     private fun Project.createCopyFrameworkTask(
-        originalDirectory: Provider<File>,
+        frameworkFile: Provider<File>,
         buildingTask: TaskProvider<*>
     ) = registerTask<FrameworkCopy>(SYNC_TASK_NAME) {
         it.group = TASK_GROUP
         it.description = "Copies a framework for given platform and build type into the CocoaPods build directory"
 
+        it.sourceFramework.fileProvider(frameworkFile)
         it.dependsOn(buildingTask)
-        it.files = filesProvider { originalDirectory.map { dir -> dir.listFiles().orEmpty() } }
-        it.destDir = layout.cocoapodsBuildDirs.framework.getAsFile()
+        it.destinationDirectory.set(layout.cocoapodsBuildDirs.framework)
     }
 
     private fun createSyncForFatFramework(
@@ -217,7 +216,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
             }
         }
 
-        project.createCopyFrameworkTask(fatFrameworkTask.map { it.destinationDir }, fatFrameworkTask)
+        project.createCopyFrameworkTask(fatFrameworkTask.map { it.fatFramework }, fatFrameworkTask)
     }
 
     private fun createSyncForRegularFramework(
@@ -232,7 +231,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         check(targets.size == 1) { "The project has more than one target for the requested platform: `${requestedPlatform.visibleName}`" }
 
         val frameworkLinkTask = targets.single().binaries.getFramework(POD_FRAMEWORK_PREFIX, requestedBuildType).linkTaskProvider
-        project.createCopyFrameworkTask(frameworkLinkTask.flatMap { it.destinationDirectory.map { dir -> dir.asFile } }, frameworkLinkTask)
+        project.createCopyFrameworkTask(frameworkLinkTask.flatMap { it.outputFile }, frameworkLinkTask)
     }
 
     private fun createSyncTask(

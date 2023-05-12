@@ -11,18 +11,20 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
+import org.junit.jupiter.api.io.TempDir
+import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.appendText
 
 @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
 @DisplayName("Tests for K/N with Apple Framework")
+@GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
 @NativeGradlePluginTests
 class AppleFrameworkIT : KGPBaseTest() {
 
     @DisplayName("Assembling AppleFrameworkForXcode tasks for IosArm64")
     @OptIn(EnvironmentalVariablesOverride::class)
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
     fun shouldAssembleAppleFrameworkForXcodeForIosArm64(
         gradleVersion: GradleVersion,
     ) {
@@ -31,35 +33,25 @@ class AppleFrameworkIT : KGPBaseTest() {
             "sharedAppleFramework",
             gradleVersion,
             buildOptions = defaultBuildOptions,
+            environmentVariables = EnvironmentalVariables(
+                "CONFIGURATION" to "debug",
+                "SDK_NAME" to "iphoneos123",
+                "ARCHS" to "arm64",
+                "TARGET_BUILD_DIR" to "no use",
+                "FRAMEWORKS_FOLDER_PATH" to "no use"
+            ),
         ) {
-            val environmentVariables = EnvironmentalVariables(
-                mapOf(
-                    "CONFIGURATION" to "debug",
-                    "SDK_NAME" to "iphoneos123",
-                    "ARCHS" to "arm64",
-                    "TARGET_BUILD_DIR" to "no use",
-                    "FRAMEWORKS_FOLDER_PATH" to "no use"
-                )
-            )
 
-            build(
-                "assembleDebugAppleFrameworkForXcodeIosArm64",
-                environmentVariables = environmentVariables,
-            ) {
+            build("assembleDebugAppleFrameworkForXcodeIosArm64") {
                 assertTasksExecuted(":shared:assembleDebugAppleFrameworkForXcodeIosArm64")
                 assertDirectoryInProjectExists("shared/build/xcode-frameworks/debug/iphoneos123/sdk.framework")
-                // TODO Discuss with Kostya if that's ok
-                // assertDirectoryInProjectExists("shared/build/xcode-frameworks/debug/iphoneos123/sdk.framework.dSYM")
+                assertDirectoryInProjectExists("shared/build/xcode-frameworks/debug/iphoneos123/sdk.framework.dSYM")
             }
 
-            build(
-                "assembleCustomDebugAppleFrameworkForXcodeIosArm64",
-                environmentVariables = environmentVariables
-            ) {
+            build("assembleCustomDebugAppleFrameworkForXcodeIosArm64") {
                 assertTasksExecuted(":shared:assembleCustomDebugAppleFrameworkForXcodeIosArm64")
                 assertDirectoryInProjectExists("shared/build/xcode-frameworks/debug/iphoneos123/lib.framework")
-                // TODO Discuss with Kostya if that's ok
-                // assertDirectoryInProjectExists("shared/build/xcode-frameworks/debug/iphoneos123/lib.framework.dSYM")
+                assertDirectoryInProjectExists("shared/build/xcode-frameworks/debug/iphoneos123/lib.framework.dSYM")
             }
         }
     }
@@ -67,7 +59,6 @@ class AppleFrameworkIT : KGPBaseTest() {
     @DisplayName("Assembling fat AppleFrameworkForXcode tasks for Arm64 and X64 simulators")
     @OptIn(EnvironmentalVariablesOverride::class)
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
     fun shouldAssembleAppleFrameworkForXcodeForArm64AndX64Simulators(
         gradleVersion: GradleVersion,
     ) {
@@ -96,52 +87,42 @@ class AppleFrameworkIT : KGPBaseTest() {
 
     @DisplayName("MacOS framework has symlinks")
     @OptIn(EnvironmentalVariablesOverride::class)
-    // We need to use Gradle 7.2 here because of the issue https://github.com/gradle/gradle/issues/13957
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_2)
     @GradleTest
     fun shouldCheckThatMacOSFrameworkHasSymlinks(
         gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
     ) {
 
         nativeProject(
             "sharedAppleFramework",
             gradleVersion,
-            buildOptions = defaultBuildOptions
         ) {
             val environmentVariables = mapOf(
                 "CONFIGURATION" to "debug",
                 "SDK_NAME" to "macosx",
                 "ARCHS" to "x86_64",
                 "EXPANDED_CODE_SIGN_IDENTITY" to "-",
-                "TARGET_BUILD_DIR" to projectPath.absolutePathString(),
+                "TARGET_BUILD_DIR" to testBuildDir.toString(),
                 "FRAMEWORKS_FOLDER_PATH" to "build/xcode-derived"
             )
             build(":shared:embedAndSignAppleFrameworkForXcode", environmentVariables = EnvironmentalVariables(environmentVariables)) {
                 assertTasksExecuted(":shared:assembleDebugAppleFrameworkForXcodeMacosX64")
                 assertSymlinkInProjectExists("shared/build/xcode-frameworks/debug/macosx/sdk.framework/Headers")
-                assertSymlinkInProjectExists("build/xcode-derived/sdk.framework/Headers")
+                assertSymlinkExists(testBuildDir.resolve("build/xcode-derived/sdk.framework/Headers"))
             }
         }
     }
 
-    @DisplayName("EmbedAnsSign executes normally when signing is disabled")
+    @DisplayName("embedAndSign executes normally when signing is disabled")
     @OptIn(EnvironmentalVariablesOverride::class)
-    // We need to use Gradle 7.2 here because of the issue https://github.com/gradle/gradle/issues/13957
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_2)
-    @GradleAndroidTest
+    @GradleTest
     fun testEmbedAnsSignExecutionWithoutSigning(
         gradleVersion: GradleVersion,
-        agpVersion: String,
-        jdkProvider: JdkVersions.ProvidedJdk,
     ) {
 
         nativeProject(
             "sharedAppleFramework",
             gradleVersion,
-            buildJdk = jdkProvider.location,
-            buildOptions = defaultBuildOptions.copy(
-                androidVersion = agpVersion
-            )
         ) {
             val environmentVariables = mapOf(
                 "CONFIGURATION" to "debug",
@@ -158,8 +139,6 @@ class AppleFrameworkIT : KGPBaseTest() {
 
     @DisplayName("embedAndSignAppleFrameworkForXcode fail")
     @GradleTest
-    // We need to use Gradle 7.2 here because of the issue https://github.com/gradle/gradle/issues/13957
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_2)
     fun shouldFailWithExecutingEmbedAndSignAppleFrameworkForXcode(
         gradleVersion: GradleVersion,
     ) {
@@ -173,9 +152,9 @@ class AppleFrameworkIT : KGPBaseTest() {
     @DisplayName("Registered tasks with Xcode environment for Debug IosArm64 configuration")
     @OptIn(EnvironmentalVariablesOverride::class)
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
     fun shouldCheckAllRegisteredTasksWithXcodeEnvironmentForDebugIosArm64(
         gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
     ) {
         nativeProject(
             "sharedAppleFramework",
@@ -186,7 +165,7 @@ class AppleFrameworkIT : KGPBaseTest() {
                 "SDK_NAME" to "iphoneos",
                 "ARCHS" to "arm64",
                 "EXPANDED_CODE_SIGN_IDENTITY" to "-",
-                "TARGET_BUILD_DIR" to "testBuildDir",
+                "TARGET_BUILD_DIR" to testBuildDir.toString(),
                 "FRAMEWORKS_FOLDER_PATH" to "testFrameworksDir"
             )
             buildAndAssertAllTasks(
@@ -210,8 +189,6 @@ class AppleFrameworkIT : KGPBaseTest() {
     @DisplayName("embedAndSignAppleFrameworkForXcode was registered without required Xcode environments")
     @OptIn(EnvironmentalVariablesOverride::class)
     @GradleTest
-    // We need to use Gradle 7.2 here because of the issue https://github.com/gradle/gradle/issues/13957
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_2)
     fun shouldCheckEmbedAndSignAppleFrameworkForXcodeDoesNotRequireXcodeEnv(
         gradleVersion: GradleVersion,
     ) {
@@ -256,7 +233,6 @@ class AppleFrameworkIT : KGPBaseTest() {
     @DisplayName("Static framework for Arm64 is built but is not embedded")
     @OptIn(EnvironmentalVariablesOverride::class)
     @GradleTest
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_0)
     fun shouldCheckThatStaticFrameworkForArm64IsBuildAndNotEmbedded(
         gradleVersion: GradleVersion,
     ) {
@@ -287,16 +263,13 @@ class AppleFrameworkIT : KGPBaseTest() {
                 assertTasksExecuted(":shared:assembleDebugAppleFrameworkForXcodeIosArm64")
                 assertTasksSkipped(":shared:embedAndSignAppleFrameworkForXcode")
                 assertDirectoryInProjectExists("shared/build/xcode-frameworks/debug/iphoneos123/sdk.framework")
-                // TODO Discuss with Kostya if that's ok
-                // assertFileInProjectNotExists("shared/build/xcode-frameworks/debug/iphoneos123/sdk.framework.dSYM")
+                assertFileInProjectNotExists("shared/build/xcode-frameworks/debug/iphoneos123/sdk.framework.dSYM")
             }
         }
     }
 
     @DisplayName("Configuration errors reported to Xcode when embedAndSign task requested")
     @OptIn(EnvironmentalVariablesOverride::class)
-    // We need to use Gradle 7.2 here because of the issue https://github.com/gradle/gradle/issues/13957
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_2)
     @GradleTest
     fun shouldReportConfErrorsToXcodeWhenRequestedByEmbedAndSign(
         gradleVersion: GradleVersion,
@@ -334,8 +307,6 @@ class AppleFrameworkIT : KGPBaseTest() {
     @DisplayName("Compilation errors reported to Xcode when embedAndSign task requested")
     @OptIn(EnvironmentalVariablesOverride::class)
     @GradleTest
-    // We need to use Gradle 7.2 here because of the issue https://github.com/gradle/gradle/issues/13957
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_2)
     fun shouldReportCompilationErrorsToXcodeWhenRequestedByEmbedAndSign(
         gradleVersion: GradleVersion,
     ) {
@@ -366,8 +337,6 @@ class AppleFrameworkIT : KGPBaseTest() {
     @DisplayName("Compilation errors printed with Gradle-style when any other task requested")
     @OptIn(EnvironmentalVariablesOverride::class)
     @GradleTest
-    // We need to use Gradle 7.2 here because of the issue https://github.com/gradle/gradle/issues/13957
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_2)
     fun shouldPrintCompilationErrorsWithGradleStyle(
         gradleVersion: GradleVersion,
     ) {
@@ -398,8 +367,6 @@ class AppleFrameworkIT : KGPBaseTest() {
     @DisplayName("Compilation errors printed with Xcode-style with explicit option")
     @OptIn(EnvironmentalVariablesOverride::class)
     @GradleTest
-    // We need to use Gradle 7.2 here because of the issue https://github.com/gradle/gradle/issues/13957
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_2)
     fun shouldPrintCompilationErrorsWithXcodeStyle(
         gradleVersion: GradleVersion,
     ) {
@@ -434,8 +401,6 @@ class AppleFrameworkIT : KGPBaseTest() {
     @DisplayName("Compilation errors reported to Xcode when embedAndSign task requested and compiler runs in a separate process")
     @OptIn(EnvironmentalVariablesOverride::class)
     @GradleTest
-    // We need to use Gradle 7.2 here because of the issue https://github.com/gradle/gradle/issues/13957
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_2)
     fun shouldReportErrorsToXcodeWhenEmbedAndSignRequestedAndDisableCompilerDaemon(
         gradleVersion: GradleVersion,
     ) {

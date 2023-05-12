@@ -87,19 +87,19 @@ constructor(
     )
 
     @get:Input
-    val outputKind: CompilerOutputKind by lazy { binary.outputKind.compilerOutputKind }
+    val outputKind: CompilerOutputKind by lazyConvention { binary.outputKind.compilerOutputKind }
 
     @get:Input
-    val optimized: Boolean by lazy { binary.optimized }
+    val optimized: Boolean by lazyConvention { binary.optimized }
 
     @get:Input
-    val debuggable: Boolean by lazy { binary.debuggable }
+    val debuggable: Boolean by lazyConvention { binary.debuggable }
 
     @get:Input
-    val baseName: String by lazy { binary.baseName }
+    val baseName: String by lazyConvention { binary.baseName }
 
     @get:Input
-    internal val binaryName: String by lazy { binary.name }
+    internal val binaryName: String by lazyConvention { binary.name }
 
     @Suppress("DEPRECATION")
     private val konanTarget = compilation.konanTarget
@@ -137,18 +137,20 @@ constructor(
     }
 
     fun kotlinOptions(fn: Closure<*>) {
-        @Suppress("DEPRECATION")
         fn.delegate = kotlinOptions
         fn.call()
     }
 
     // Binary-specific options.
-    @get:Input
-    @get:Optional
-    val entryPoint: String? by lazy { (binary as? Executable)?.entryPoint }
+    private val entryPoint_: String by lazyConvention { (binary as? Executable)?.entryPoint.orEmpty() }
 
     @get:Input
-    val linkerOpts: List<String> by lazy { binary.linkerOpts }
+    @get:Optional
+    val entryPoint: String?
+        get() = entryPoint_.ifEmpty { null }
+
+    @get:Input
+    val linkerOpts: List<String> by lazyConvention { binary.linkerOpts }
 
     @get:Input
     internal val additionalLinkerOpts: MutableList<String> = mutableListOf()
@@ -157,7 +159,7 @@ constructor(
     val binaryOptions: Map<String, String> by lazy { PropertiesProvider(project).nativeBinaryOptions + binary.binaryOptions }
 
     @get:Input
-    val processTests: Boolean by lazy { binary is TestExecutable }
+    val processTests: Boolean by lazyConvention { binary is TestExecutable }
 
     @get:Classpath
     val exportLibraries: FileCollection get() = exportLibrariesResolvedConfiguration?.files ?: objectFactory.fileCollection()
@@ -169,7 +171,7 @@ constructor(
     }
 
     @get:Input
-    val isStaticFramework: Boolean by lazy { binary.let { it is Framework && it.isStatic } }
+    val isStaticFramework: Boolean by lazyConvention { binary.let { it is Framework && it.isStatic } }
 
     @Suppress("DEPRECATION")
     @get:Input
@@ -384,5 +386,9 @@ constructor(
             settings = runnerSettings,
             executionContext = executionContext
         ).run(buildArguments)
+    }
+
+    private inline fun <reified T : Any> lazyConvention(noinline lazyConventionValue: () -> T): Provider<T> {
+        return objectFactory.providerWithLazyConvention(lazyConventionValue)
     }
 }

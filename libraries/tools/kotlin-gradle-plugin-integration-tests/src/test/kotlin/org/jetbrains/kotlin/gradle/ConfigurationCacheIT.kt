@@ -160,9 +160,13 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @NativeGradlePluginTests
     @DisplayName("works with apple framework embedding and signing")
     @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
-    @GradleTestVersions(minVersion = TestVersions.Gradle.G_7_4)
+    @GradleTestVersions(
+        minVersion = TestVersions.Gradle.G_7_4,
+        additionalVersions = [TestVersions.Gradle.G_7_6],
+        maxVersion = TestVersions.Gradle.G_8_1,
+    )
     @GradleTest
-    fun testAppleFrameworkTasks(gradleVersion: GradleVersion) {
+    fun testAppleFrameworkTasks(gradleVersion: GradleVersion, @TempDir targetBuildDir: Path) {
         project(
             projectName = "sharedAppleFramework",
             gradleVersion = gradleVersion,
@@ -171,7 +175,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
                 "SDK_NAME" to "iphoneos",
                 "ARCHS" to "arm64",
                 "EXPANDED_CODE_SIGN_IDENTITY" to "-",
-                "TARGET_BUILD_DIR" to "testBuildDir",
+                "TARGET_BUILD_DIR" to targetBuildDir.toString(),
                 "FRAMEWORKS_FOLDER_PATH" to "testFrameworksDir"
             ),
         ) {

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.CocoapodsExtension.Cocoapods
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.POD_FRAMEWORK_PREFIX
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
+import org.jetbrains.kotlin.gradle.utils.getAsFile
 import java.io.File
 import java.net.URI
 import javax.inject.Inject
@@ -135,7 +136,7 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
     /**
      * Configure output directory for pod publishing
      */
-    var publishDir: File = CocoapodsBuildDirs(project.layout).publish.get().asFile
+    var publishDir: File = CocoapodsBuildDirs(project.layout).publish.getAsFile()
 
     internal val specRepos = SpecRepos()
 

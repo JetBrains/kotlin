@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.GENERATE_WRAPPER_PROPERTY
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.SYNC_TASK_NAME
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.cocoapodsBuildDirs
+import org.jetbrains.kotlin.gradle.utils.getAsFile
 import java.io.File
 import javax.inject.Inject
 
@@ -127,7 +128,7 @@ abstract class PodspecTask @Inject constructor(private val projectLayout: Projec
             "|    spec.dependency '${pod.name}'$versionSuffix"
         }.joinToString(separator = "\n")
 
-        val frameworkDir = projectLayout.cocoapodsBuildDirs.framework.get().asFile.relativeTo(outputFile.parentFile)
+        val frameworkDir = projectLayout.cocoapodsBuildDirs.framework.getAsFile().relativeTo(outputFile.parentFile)
         val vendoredFramework = if (publishing.get()) "${frameworkName.get()}.xcframework" else frameworkDir.resolve("${frameworkName.get()}.framework").invariantSeparatorsPath
         val vendoredFrameworks = if (extraSpecAttributes.get().containsKey("vendored_frameworks")) "" else "|    spec.vendored_frameworks      = '$vendoredFramework'"
 
