@@ -120,6 +120,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
             FirValueClassDeclarationChecker,
             FirOuterClassArgumentsRequiredChecker,
             FirPropertyInitializationChecker,
+            FirDelegateFieldTypeMismatchChecker,
         )
 
     override val constructorCheckers: Set<FirConstructorChecker>

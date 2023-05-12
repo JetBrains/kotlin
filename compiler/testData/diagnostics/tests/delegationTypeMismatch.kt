@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // ISSUE: KT-55552
 
 interface B2 {

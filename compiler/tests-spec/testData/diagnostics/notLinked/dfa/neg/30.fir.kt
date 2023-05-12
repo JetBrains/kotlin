@@ -25,7 +25,7 @@ class Case4(val y: Any?): ClassWithCostructorParam(y!!) {
 }
 
 // TESTCASE NUMBER: 5
-class Case5(val y: Any?): ClassWithCostructorParam(y as Interface1), Interface1 by y {}
+class Case5(val y: Any?): ClassWithCostructorParam(y as Interface1), Interface1 by <!TYPE_MISMATCH!>y<!> {}
 
 // TESTCASE NUMBER: 6
 fun case_6(a: Int?) = object : ClassWithCostructorParam(a!!) {
