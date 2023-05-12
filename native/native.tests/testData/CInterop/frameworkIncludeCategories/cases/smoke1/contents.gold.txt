@@ -30,11 +30,11 @@ package dependency {
 }
 
 package dependency {
-    @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "categoryClassMethod") @Deprecated(level = DeprecationLevel.WARNING, message = "Use class method instead", replaceWith = ReplaceWith(imports = {})) external fun MyClassMeta.categoryClassMethod()
+    @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "categoryClassMethod") @Deprecated(level = DeprecationLevel.WARNING, message = "Use class method instead", replaceWith = ReplaceWith(expression = "", imports = {})) external fun MyClassMeta.categoryClassMethod()
     @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "categoryClassMethod") external fun SkipClassMeta.categoryClassMethod()
-    @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "categoryClassMethod2") @Deprecated(level = DeprecationLevel.WARNING, message = "Use class method instead", replaceWith = ReplaceWith(imports = {})) external fun MyClassMeta.categoryClassMethod2()
-    @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "categoryInstanceMethod") @Deprecated(level = DeprecationLevel.WARNING, message = "Use instance method instead", replaceWith = ReplaceWith(imports = {})) external fun MyClass.categoryInstanceMethod()
+    @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "categoryClassMethod2") @Deprecated(level = DeprecationLevel.WARNING, message = "Use class method instead", replaceWith = ReplaceWith(expression = "", imports = {})) external fun MyClassMeta.categoryClassMethod2()
+    @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "categoryInstanceMethod") @Deprecated(level = DeprecationLevel.WARNING, message = "Use instance method instead", replaceWith = ReplaceWith(expression = "", imports = {})) external fun MyClass.categoryInstanceMethod()
     @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "categoryInstanceMethod") external fun SkipClass.categoryInstanceMethod()
-    @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "categoryInstanceMethod2") @Deprecated(level = DeprecationLevel.WARNING, message = "Use instance method instead", replaceWith = ReplaceWith(imports = {})) external fun MyClass.categoryInstanceMethod2()
+    @ObjCMethod(encoding = "v16@0:8", isStret = false, selector = "categoryInstanceMethod2") @Deprecated(level = DeprecationLevel.WARNING, message = "Use instance method instead", replaceWith = ReplaceWith(expression = "", imports = {})) external fun MyClass.categoryInstanceMethod2()
 }
 

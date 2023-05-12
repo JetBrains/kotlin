@@ -1,6 +1,6 @@
     enum class ForwardEnumPOD private constructor(value: Int) : Enum<ForwardEnumPOD>, CEnum {
             var value: ForwardEnumPOD
-            @Deprecated(level = DeprecationLevel.WARNING, message = "Will be removed.", replaceWith = ReplaceWith(imports = {})) fun byValue(value: Int): ForwardEnumPOD
+            @Deprecated(level = DeprecationLevel.WARNING, message = "Will be removed.", replaceWith = ReplaceWith(expression = "", imports = {})) fun byValue(value: Int): ForwardEnumPOD
     var varPOD: ForwardEnumPOD
         @CCall(id = "knifunptr_pod10_varPOD_getter") get
         @CCall(id = "knifunptr_pod11_varPOD_setter") set
