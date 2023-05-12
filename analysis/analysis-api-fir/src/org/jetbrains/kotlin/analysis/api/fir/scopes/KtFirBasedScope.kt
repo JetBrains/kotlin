@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.name.Name
 
 internal abstract class KtFirBasedScope<S : FirScope>(
-    protected val firScope: S,
+    internal val firScope: S,
     protected val builder: KtSymbolByFirBuilder,
 ) : KtScope {
     final override val token: KtLifetimeToken get() = builder.token
