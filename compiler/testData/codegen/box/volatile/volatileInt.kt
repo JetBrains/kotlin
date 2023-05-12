@@ -1,8 +1,7 @@
 // WITH_STDLIB
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6, WASM
 // API_VERSION: 1.9
-// IGNORE_IR_DESERIALIZATION_TEST: JS_IR
-// ^^^ Source code is not compiled in JS.
+// DONT_TARGET_EXACT_BACKEND: WASM
+// DONT_TARGET_EXACT_BACKEND: JS_IR, JS_IR_ES6
 
 import kotlin.concurrent.*
 
