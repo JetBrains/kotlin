@@ -360,14 +360,10 @@ abstract class AbstractFirStatusResolveTransformer(
 
             return
         }
+
         if (regularClass.origin != FirDeclarationOrigin.Source) return
         val statusComputationStatus = statusComputationSession[regularClass]
         if (!statusComputationStatus.requiresComputation) return
-
-        if (regularClass.status is FirResolvedDeclarationStatus && statusComputationStatus == StatusComputationSession.StatusComputationStatus.Computed) {
-            statusComputationSession.endComputing(regularClass)
-            return
-        }
         if (!resolveClassForSuperType(regularClass)) return
         statusComputationSession.endComputing(regularClass)
     }
