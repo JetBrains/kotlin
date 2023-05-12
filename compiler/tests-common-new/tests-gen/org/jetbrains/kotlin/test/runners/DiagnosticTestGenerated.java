@@ -2985,6 +2985,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("semiValSemiVar.kt")
+            public void testSemiValSemiVar() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/backingField/semiValSemiVar.kt");
+            }
+
+            @Test
             @TestMetadata("SetterWithExplicitType.kt")
             public void testSetterWithExplicitType() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/backingField/SetterWithExplicitType.kt");
