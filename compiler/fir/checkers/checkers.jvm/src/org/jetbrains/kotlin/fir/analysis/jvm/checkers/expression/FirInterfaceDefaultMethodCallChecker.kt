@@ -13,13 +13,11 @@ import org.jetbrains.kotlin.fir.analysis.checkers.explicitReceiverIsNotSuperRefe
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirQualifiedAccessExpressionChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.isCompiledToJvmDefault
-import org.jetbrains.kotlin.fir.analysis.jvm.checkers.isJvm6
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
-import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.java.jvmDefaultModeState
+import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.ANONYMOUS_CLASS_ID
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -30,25 +28,12 @@ object FirInterfaceDefaultMethodCallChecker : FirQualifiedAccessExpressionChecke
         val classId = symbol?.callableId?.classId ?: return
         if (classId.isLocal) return
 
-        val session = context.session
-        fun getTypeSymbol(): FirRegularClassSymbol? {
-            return session.symbolProvider.getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol
-        }
-
-        val supportsDefaults = !context.isJvm6()
-        var typeSymbol: FirRegularClassSymbol? = null
-        if (!supportsDefaults && symbol.isStatic) {
-            typeSymbol = getTypeSymbol() ?: return
-            if (typeSymbol.isInterface && typeSymbol.origin is FirDeclarationOrigin.Java) {
-                reporter.reportOn(expression.source, FirJvmErrors.INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET, context)
-            }
-        }
-
         if (expression.explicitReceiverIsNotSuperReference()) return
 
         val containingDeclaration = context.findClosest<FirRegularClass>() ?: return
 
-        if (typeSymbol == null) typeSymbol = getTypeSymbol() ?: return
+        val session = context.session
+        val typeSymbol = session.symbolProvider.getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol ?: return
 
         val jvmDefaultMode = session.jvmDefaultModeState
         if (typeSymbol.isInterface &&
@@ -60,10 +45,6 @@ object FirInterfaceDefaultMethodCallChecker : FirQualifiedAccessExpressionChecke
                     reporter.reportOn(expression.source, FirJvmErrors.INTERFACE_CANT_CALL_DEFAULT_METHOD_VIA_SUPER, context)
                     return
                 }
-            }
-
-            if (!supportsDefaults) {
-                reporter.reportOn(expression.source, FirJvmErrors.DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET, context)
             }
         }
     }

@@ -109,10 +109,7 @@ class JvmDefaultChecker(private val jvmTarget: JvmTarget, project: Project) : De
     ): Boolean {
         descriptor.annotations.findAnnotation(JVM_DEFAULT_NO_COMPATIBILITY_FQ_NAME)?.let { annotationDescriptor ->
             val reportOn = DescriptorToSourceUtils.getSourceFromAnnotation(annotationDescriptor) ?: declaration
-            if (jvmTarget == JvmTarget.JVM_1_6) {
-                context.trace.report(ErrorsJvm.JVM_DEFAULT_IN_JVM6_TARGET.on(reportOn, "JvmDefaultWithoutCompatibility"))
-                return true
-            } else if (!jvmDefaultMode.isEnabled) {
+            if (!jvmDefaultMode.isEnabled) {
                 context.trace.report(ErrorsJvm.JVM_DEFAULT_IN_DECLARATION.on(reportOn, "JvmDefaultWithoutCompatibility"))
                 return true
             }
@@ -120,10 +117,7 @@ class JvmDefaultChecker(private val jvmTarget: JvmTarget, project: Project) : De
 
         descriptor.annotations.findAnnotation(JVM_DEFAULT_WITH_COMPATIBILITY_FQ_NAME)?.let { annotationDescriptor ->
             val reportOn = DescriptorToSourceUtils.getSourceFromAnnotation(annotationDescriptor) ?: declaration
-            if (jvmTarget == JvmTarget.JVM_1_6) {
-                context.trace.report(ErrorsJvm.JVM_DEFAULT_IN_JVM6_TARGET.on(reportOn, "JvmDefaultWithCompatibility"))
-                return true
-            } else if (jvmDefaultMode != JvmDefaultMode.ALL_INCOMPATIBLE) {
+            if (jvmDefaultMode != JvmDefaultMode.ALL_INCOMPATIBLE) {
                 context.trace.report(ErrorsJvm.JVM_DEFAULT_WITH_COMPATIBILITY_IN_DECLARATION.on(reportOn))
                 return true
             } else if (!isInterface(descriptor)) {

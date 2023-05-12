@@ -108,9 +108,6 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
     }
 
     val JVM_DEFAULT by object : DiagnosticGroup("JVM Default") {
-        val JVM_DEFAULT_IN_JVM6_TARGET by error<PsiElement> {
-            parameter<String>("annotation")
-        }
         val JVM_DEFAULT_IN_DECLARATION by error<KtElement>(PositioningStrategy.DECLARATION_SIGNATURE_OR_DEFAULT) {
             parameter<String>("annotation")
         }
@@ -127,7 +124,6 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
 
     val REPEATABLE by object : DiagnosticGroup("Repeatable Annotations") {
         val NON_SOURCE_REPEATED_ANNOTATION by error<KtAnnotationEntry>()
-        val REPEATED_ANNOTATION_TARGET6 by error<KtAnnotationEntry>()
         val REPEATED_ANNOTATION_WITH_CONTAINER by error<KtAnnotationEntry> {
             parameter<ClassId>("name")
             parameter<ClassId>("explicitContainerName")
@@ -170,14 +166,6 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
             parameter<String>("message")
         }
         val JVM_SYNTHETIC_ON_DELEGATE by error<KtAnnotationEntry>()
-        val DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET by deprecationError<PsiElement>(
-            DefaultMethodsCallFromJava6TargetError,
-            PositioningStrategy.REFERENCE_BY_QUALIFIED
-        )
-        val INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET by deprecationError<PsiElement>(
-            DefaultMethodsCallFromJava6TargetError,
-            PositioningStrategy.REFERENCE_BY_QUALIFIED
-        )
         val SUBCLASS_CANT_CALL_COMPANION_PROTECTED_NON_STATIC by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED)
         val CONCURRENT_HASH_MAP_CONTAINS_OPERATOR by deprecationError<PsiElement>(ProhibitConcurrentHashMapContains)
         val SPREAD_ON_SIGNATURE_POLYMORPHIC_CALL by deprecationError<PsiElement>(

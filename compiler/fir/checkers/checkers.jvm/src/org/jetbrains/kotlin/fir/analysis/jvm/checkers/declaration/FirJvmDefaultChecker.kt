@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclarationChecker
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
-import org.jetbrains.kotlin.fir.analysis.jvm.checkers.isJvm6
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
@@ -27,40 +26,15 @@ object FirJvmDefaultChecker : FirBasicDeclarationChecker() {
         val annotationNoCompatibility = declaration.getAnnotationByClassId(JVM_DEFAULT_NO_COMPATIBILITY_CLASS_ID, session)
         if (annotationNoCompatibility != null) {
             val source = annotationNoCompatibility.source
-            when {
-                context.isJvm6() -> {
-                    reporter.reportOn(
-                        source,
-                        FirJvmErrors.JVM_DEFAULT_IN_JVM6_TARGET,
-                        "JvmDefaultWithoutCompatibility",
-                        context
-                    )
-                    return
-                }
-                jvmDefaultMode?.isEnabled != true -> {
-                    reporter.reportOn(
-                        source,
-                        FirJvmErrors.JVM_DEFAULT_IN_DECLARATION,
-                        "JvmDefaultWithoutCompatibility",
-                        context
-                    )
-                    return
-                }
+            if (jvmDefaultMode?.isEnabled != true) {
+                reporter.reportOn(source, FirJvmErrors.JVM_DEFAULT_IN_DECLARATION, "JvmDefaultWithoutCompatibility", context)
+                return
             }
         }
         val annotationWithCompatibility = declaration.getAnnotationByClassId(JVM_DEFAULT_WITH_COMPATIBILITY_CLASS_ID, session)
         if (annotationWithCompatibility != null) {
             val source = annotationWithCompatibility.source
             when {
-                context.isJvm6() -> {
-                    reporter.reportOn(
-                        source,
-                        FirJvmErrors.JVM_DEFAULT_IN_JVM6_TARGET,
-                        "JvmDefaultWithCompatibility",
-                        context
-                    )
-                    return
-                }
                 jvmDefaultMode != JvmDefaultMode.ALL_INCOMPATIBLE -> {
                     reporter.reportOn(source, FirJvmErrors.JVM_DEFAULT_WITH_COMPATIBILITY_IN_DECLARATION, context)
                     return

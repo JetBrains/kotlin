@@ -42,7 +42,6 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION, "Only members in named objects and companion objects of classes can be annotated with '@JvmStatic'");
         MAP.put(JVM_STATIC_NOT_IN_OBJECT_OR_COMPANION, "Only members in named objects and companion objects can be annotated with '@JvmStatic'");
         MAP.put(JVM_STATIC_ON_NON_PUBLIC_MEMBER, "Only public members in interface companion objects can be annotated with '@JvmStatic'");
-        MAP.put(JVM_STATIC_IN_INTERFACE_1_6, "'@JvmStatic' annotation in interface supported only with JVM target 1.8 and above. Recompile with '-jvm-target 1.8'\"");
         MAP.put(JVM_STATIC_ON_CONST_OR_JVM_FIELD, "'@JvmStatic' annotation is useless for const or '@JvmField' properties");
         MAP.put(JVM_STATIC_ON_EXTERNAL_IN_INTERFACE, "'@JvmStatic' annotation cannot be used on 'external' members of interface companions");
         MAP.put(OVERRIDE_CANNOT_BE_STATIC, "Override member cannot be '@JvmStatic' in object");
@@ -69,7 +68,6 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(POSITIONED_VALUE_ARGUMENT_FOR_JAVA_ANNOTATION, "Only named arguments are available for Java annotations");
         MAP.put(DEPRECATED_JAVA_ANNOTATION, "This annotation is deprecated in Kotlin. Use ''@{0}'' instead", TO_STRING);
         MAP.put(NON_SOURCE_REPEATED_ANNOTATION, "Repeatable annotations with non-SOURCE retention are only supported starting from Kotlin 1.6");
-        MAP.put(REPEATED_ANNOTATION_TARGET6, "Repeatable annotations with non-SOURCE retention are not supported with JVM target 1.6. Use -jvm-target 1.8");
         MAP.put(REPEATED_ANNOTATION_WITH_CONTAINER, "Repeated annotation ''@{0}'' cannot be used on a declaration which is annotated with its container annotation ''@{1}''", TO_STRING, TO_STRING);
         MAP.put(ANNOTATION_IS_NOT_APPLICABLE_TO_MULTIFILE_CLASSES, "Annotation ''@{0}'' is not applicable to the multi-file classes", TO_STRING);
 
@@ -153,9 +151,6 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
                 "Please make explicit overrides (abstract or concrete) for the following non-abstract members of ''{1}'': {2}",
                 NAME, NAME, STRING);
 
-        MAP.put(DEFAULT_METHOD_CALL_FROM_JAVA6_TARGET, "Super calls to Java default methods are prohibited in JVM target 1.6. Recompile with '-jvm-target 1.8'");
-        MAP.put(INTERFACE_STATIC_METHOD_CALL_FROM_JAVA6_TARGET, "Calls to static methods in Java interfaces are prohibited in JVM target 1.6. Recompile with '-jvm-target 1.8'");
-
         MAP.put(INLINE_FROM_HIGHER_PLATFORM, "Cannot inline bytecode built with {0} into bytecode that is being built with {1}. Please specify proper ''-jvm-target'' option", STRING, STRING);
         MAP.put(INLINE_FROM_HIGHER_PLATFORM_WARNING, "Cannot inline bytecode built with {0} into bytecode that is being built with {1}. Please specify proper ''-jvm-target'' option", STRING, STRING);
 
@@ -168,7 +163,6 @@ public class DefaultErrorMessagesJvm implements DefaultErrorMessages.Extension {
         MAP.put(ASSIGNMENT_TO_ARRAY_LOOP_VARIABLE, "Assignment to a for-in-array loop range variable. Behavior may change in Kotlin 1.3. " +
                                                    "See https://youtrack.jetbrains.com/issue/KT-21354 for more details");
 
-        MAP.put(JVM_DEFAULT_IN_JVM6_TARGET,"''@{0}'' is only supported since JVM target 1.8. Recompile with ''-jvm-target 1.8''", STRING);
         MAP.put(JVM_DEFAULT_IN_DECLARATION, "Usage of ''@{0}'' is only allowed with -Xjvm-default option", STRING);
         MAP.put(JVM_DEFAULT_WITH_COMPATIBILITY_IN_DECLARATION, "Usage of '@JvmDefaultWithCompatibility' is only allowed with '-Xjvm-default=all' option");
         MAP.put(JVM_DEFAULT_WITH_COMPATIBILITY_NOT_ON_INTERFACE, "'@JvmDefaultWithCompatibility' annotation is only allowed on interfaces");

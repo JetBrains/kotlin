@@ -30,7 +30,6 @@ public interface ErrorsJvm {
     DiagnosticFactory0<KtDeclaration> JVM_STATIC_NOT_IN_OBJECT_OR_CLASS_COMPANION = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
     DiagnosticFactory0<KtDeclaration> JVM_STATIC_NOT_IN_OBJECT_OR_COMPANION = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
     DiagnosticFactory0<KtDeclaration> JVM_STATIC_ON_NON_PUBLIC_MEMBER = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
-    DiagnosticFactory0<KtDeclaration> JVM_STATIC_IN_INTERFACE_1_6 = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
     DiagnosticFactory0<KtDeclaration> JVM_STATIC_ON_CONST_OR_JVM_FIELD = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
     DiagnosticFactory0<KtDeclaration> JVM_STATIC_ON_EXTERNAL_IN_INTERFACE = DiagnosticFactory0.create(ERROR, DECLARATION_SIGNATURE);
 
@@ -72,7 +71,6 @@ public interface ErrorsJvm {
     DiagnosticFactory1<KtAnnotationEntry, FqName> DEPRECATED_JAVA_ANNOTATION = DiagnosticFactory1.create(WARNING);
 
     DiagnosticFactory0<KtAnnotationEntry> NON_SOURCE_REPEATED_ANNOTATION = DiagnosticFactory0.create(ERROR);
-    DiagnosticFactory0<KtAnnotationEntry> REPEATED_ANNOTATION_TARGET6 = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory2<KtAnnotationEntry, FqName, FqName> REPEATED_ANNOTATION_WITH_CONTAINER = DiagnosticFactory2.create(ERROR);
 
     DiagnosticFactoryForDeprecation2<KtAnnotationEntry, FqName, FqName> REPEATABLE_CONTAINER_MUST_HAVE_VALUE_ARRAY =
@@ -130,7 +128,6 @@ public interface ErrorsJvm {
 
     DiagnosticFactory0<KtExpression> ASSIGNMENT_TO_ARRAY_LOOP_VARIABLE = DiagnosticFactory0.create(WARNING);
 
-    DiagnosticFactory1<PsiElement, String> JVM_DEFAULT_IN_JVM6_TARGET = DiagnosticFactory1.create(ERROR);
     DiagnosticFactory1<KtElement, String> JVM_DEFAULT_IN_DECLARATION = DiagnosticFactory1.create(ERROR, DECLARATION_SIGNATURE_OR_DEFAULT);
     DiagnosticFactory0<KtElement> JVM_DEFAULT_WITH_COMPATIBILITY_IN_DECLARATION = DiagnosticFactory0.create(ERROR);
     DiagnosticFactory0<KtElement> JVM_DEFAULT_WITH_COMPATIBILITY_NOT_ON_INTERFACE = DiagnosticFactory0.create(ERROR);
