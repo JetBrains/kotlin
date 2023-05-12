@@ -26,12 +26,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NEXT_NONE_APPLICA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPERATOR_MODIFIER_REQUIRED
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
-import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
 import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirWhileLoop
-import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
-import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.resolve.calls.UnsafeCall
@@ -42,6 +39,7 @@ import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object FirForLoopChecker : FirBlockChecker() {
     override fun check(expression: FirBlock, context: CheckerContext, reporter: DiagnosticReporter) {
@@ -118,8 +116,16 @@ object FirForLoopChecker : FirBlockChecker() {
                     is ConeUnresolvedNameError -> {
                         reporter.reportOn(reportSource, missingFactory, context)
                     }
-                    is ConeInapplicableWrongReceiver -> noneApplicableFactory?.let {
-                        reporter.reportOn(reportSource, it, diagnostic.candidateSymbols, context)
+                    is ConeInapplicableWrongReceiver -> when {
+                        noneApplicableFactory != null -> {
+                            reporter.reportOn(reportSource, noneApplicableFactory, diagnostic.candidateSymbols, context)
+                        }
+                        calleeReference.name == OperatorNameConventions.ITERATOR -> {
+                            reporter.reportOn(reportSource, missingFactory, context)
+                        }
+                        else -> {
+                            error("ConeInapplicableWrongReceiver, but no diagnostic reported")
+                        }
                     }
                     is ConeInapplicableCandidateError -> {
                         if (unsafeCallFactory != null || noneApplicableFactory != null) {
