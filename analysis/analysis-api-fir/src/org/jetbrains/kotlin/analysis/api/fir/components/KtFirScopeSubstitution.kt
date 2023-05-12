@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 import org.jetbrains.kotlin.analysis.api.KtAnalysisApiInternals
 import org.jetbrains.kotlin.analysis.api.components.KtScopeSubstitution
 import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
-import org.jetbrains.kotlin.analysis.api.fir.scopes.KtFirDelegatingScope
+import org.jetbrains.kotlin.analysis.api.fir.scopes.KtFirDelegatingNamesAwareScope
 import org.jetbrains.kotlin.analysis.api.fir.scopes.KtFirDelegatingTypeScope
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KtCompositeScope
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KtCompositeTypeScope
@@ -23,7 +23,7 @@ internal class KtFirScopeSubstitution(
     @OptIn(KtAnalysisApiInternals::class)
     override fun getDeclarationScope(scope: KtTypeScope): KtScope {
         return when (scope) {
-            is KtFirDelegatingTypeScope -> KtFirDelegatingScope(scope.firScope, analysisSession.firSymbolBuilder)
+            is KtFirDelegatingTypeScope -> KtFirDelegatingNamesAwareScope(scope.firScope, analysisSession.firSymbolBuilder)
             is KtCompositeTypeScope -> KtCompositeScope(scope.subScopes.map(::getDeclarationScope), token)
             else -> unexpectedElementError<KtTypeScope>(scope)
         }
