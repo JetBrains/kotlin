@@ -30,8 +30,14 @@ class KtSecondaryConstructor : KtConstructor<KtSecondaryConstructor> {
     override fun getContainingClassOrObject() = parent.parent as KtClassOrObject
 
     override fun getBodyExpression(): KtBlockExpression? {
-        if (stub?.hasBody() == false) {
-            return null
+        val stub = stub
+        if (stub != null) {
+            if (stub.hasBody() == false) {
+                return null
+            }
+            if (containingKtFile.isCompiled) {
+                return null
+            }
         }
         return findChildByClass(KtBlockExpression::class.java)
     }
