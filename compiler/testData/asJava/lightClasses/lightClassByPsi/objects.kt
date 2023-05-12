@@ -1,4 +1,4 @@
-
+// !GENERATE_PROPERTY_ANNOTATIONS_METHODS
 class C {
     companion object {
         @JvmStatic fun foo() {}

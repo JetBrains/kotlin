@@ -77,6 +77,10 @@ object LanguageSettingsDirectives : SimpleDirectivesContainer() {
     val OLD_INNER_CLASSES_LOGIC by directive("Use old logic for generation of InnerClasses attributes")
     val LINK_VIA_SIGNATURES by directive("Use linkage via signatures instead of descriptors / FIR")
     val ENABLE_JVM_IR_INLINER by directive("Enable inlining on IR, instead of inlining on bytecode")
+    val GENERATE_PROPERTY_ANNOTATIONS_METHODS by directive(
+        description = "Enables corresponding analysis flag (JvmAnalysisFlags.generatePropertyAnnotationsMethods)"
+    )
+
 
     // --------------------- Utils ---------------------
 

@@ -1,3 +1,4 @@
+// !GENERATE_PROPERTY_ANNOTATIONS_METHODS
 @Target(AnnotationTarget.PROPERTY)
 annotation class PropertyAnnotation
 

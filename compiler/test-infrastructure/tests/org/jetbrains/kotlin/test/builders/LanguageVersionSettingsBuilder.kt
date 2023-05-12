@@ -81,6 +81,8 @@ class LanguageVersionSettingsBuilder {
             analysisFlag(JvmAnalysisFlags.useIR, targetBackend?.isIR != false),
 
             analysisFlag(AnalysisFlags.explicitApiVersion, trueOrNull(apiVersion != null)),
+
+            analysisFlag(JvmAnalysisFlags.generatePropertyAnnotationsMethods, trueOrNull(LanguageSettingsDirectives.GENERATE_PROPERTY_ANNOTATIONS_METHODS in directives)),
         )
 
         analysisFlags.forEach { withFlag(it.first, it.second) }
