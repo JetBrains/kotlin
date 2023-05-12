@@ -16,6 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
+import androidx.compose.compiler.plugins.kotlin.facade.K1AnalysisResult
 import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
 import androidx.compose.compiler.plugins.kotlin.k1.allowsComposableCalls
 import com.intellij.psi.PsiElement
@@ -28,8 +29,12 @@ import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.JUnit4
 
-class ScopeComposabilityTests : AbstractCodegenTest() {
+// TODO(b/282189431): run this test with K2
+@RunWith(JUnit4::class)
+class ScopeComposabilityTests : AbstractCodegenTest(useFir = false) {
     @Test
     fun testNormalFunctions() = assertComposability(
         """
@@ -157,8 +162,8 @@ class ScopeComposabilityTests : AbstractCodegenTest() {
     private fun assertComposability(srcText: String) {
         val (text, carets) = extractCarets(srcText)
 
-        val analysisResult = analyze(listOf(SourceFile("test.kt", text)))
-        val bindingContext = analysisResult.bindingContext!!
+        val analysisResult = analyze(listOf(SourceFile("test.kt", text))) as K1AnalysisResult
+        val bindingContext = analysisResult.bindingContext
         val ktFile = analysisResult.files.single()
 
         carets.forEachIndexed { index, (offset, marking) ->

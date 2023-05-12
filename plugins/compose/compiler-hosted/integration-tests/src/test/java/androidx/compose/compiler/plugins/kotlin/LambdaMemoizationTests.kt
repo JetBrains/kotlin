@@ -32,7 +32,7 @@ import org.robolectric.annotation.Config
     minSdk = 23,
     maxSdk = 23
 )
-class LambdaMemoizationTests : AbstractLoweringTests() {
+class LambdaMemoizationTests : AbstractLoweringTests(useFir = false) {
     @Test
     @Ignore("b/179279455")
     fun nonCapturingEventLambda() = skipping(

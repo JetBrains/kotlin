@@ -21,7 +21,7 @@ import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.junit.Assert.assertEquals
 
-abstract class AbstractMetricsTransformTest : AbstractIrTransformTest() {
+abstract class AbstractMetricsTransformTest(useFir: Boolean) : AbstractIrTransformTest(useFir) {
     private fun verifyMetrics(
         source: String,
         verify: ModuleMetrics.() -> Unit

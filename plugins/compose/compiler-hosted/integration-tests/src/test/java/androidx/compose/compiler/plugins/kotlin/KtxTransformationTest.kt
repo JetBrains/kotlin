@@ -17,8 +17,11 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.JUnit4
 
-class KtxTransformationTest : AbstractCodegenTest() {
+@RunWith(JUnit4::class)
+class KtxTransformationTest : AbstractCodegenTest(useFir = false) {
 //    b/179279455
 //    @Test
 //    fun testObserveLowering() {

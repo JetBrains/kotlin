@@ -19,8 +19,11 @@ package androidx.compose.compiler.plugins.kotlin
 import org.intellij.lang.annotations.Language
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.runners.JUnit4
 
-abstract class FunctionBodySkippingTransformTestsBase : AbstractIrTransformTest() {
+@RunWith(JUnit4::class)
+abstract class FunctionBodySkippingTransformTestsBase : AbstractIrTransformTest(useFir = false) {
     protected fun comparisonPropagation(
         @Language("kotlin")
         unchecked: String,

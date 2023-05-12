@@ -28,17 +28,22 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 import org.jetbrains.kotlin.codegen.GeneratedClassLoader
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.junit.After
 import org.junit.BeforeClass
 import org.junit.runner.RunWith
-import org.junit.runners.JUnit4
+import org.junit.runners.Parameterized
 
-@RunWith(JUnit4::class)
-abstract class AbstractCompilerTest {
+@RunWith(Parameterized::class)
+abstract class AbstractCompilerTest(val useFir: Boolean) {
     companion object {
+        @JvmStatic
+        @Parameterized.Parameters(name = "useFir = {0}")
+        fun data() = arrayOf<Any>(false, true)
+
         private fun File.applyExistenceCheck(): File = apply {
             if (!exists()) throw NoSuchFileException(this)
         }
@@ -106,6 +111,7 @@ abstract class AbstractCompilerTest {
         testRootDisposable,
         updateConfiguration = {
             updateConfiguration()
+            put(CommonConfigurationKeys.USE_FIR, useFir)
             addJvmClasspathRoots(additionalPaths)
             addJvmClasspathRoots(defaultClassPathRoots)
             if (!getBoolean(JVMConfigurationKeys.NO_JDK) &&
