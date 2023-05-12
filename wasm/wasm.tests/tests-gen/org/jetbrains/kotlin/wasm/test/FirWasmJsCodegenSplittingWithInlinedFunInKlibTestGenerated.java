@@ -44496,60 +44496,6 @@ public class FirWasmJsCodegenSplittingWithInlinedFunInKlibTestGenerated extends 
       public void testAllFilesPresentInVolatile() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/volatile"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
       }
-
-      @Test
-      @TestMetadata("volatileBool.kt")
-      public void testVolatileBool() {
-        runTest("compiler/testData/codegen/box/volatile/volatileBool.kt");
-      }
-
-      @Test
-      @TestMetadata("volatileByte.kt")
-      public void testVolatileByte() {
-        runTest("compiler/testData/codegen/box/volatile/volatileByte.kt");
-      }
-
-      @Test
-      @TestMetadata("volatileDouble.kt")
-      public void testVolatileDouble() {
-        runTest("compiler/testData/codegen/box/volatile/volatileDouble.kt");
-      }
-
-      @Test
-      @TestMetadata("volatileFloat.kt")
-      public void testVolatileFloat() {
-        runTest("compiler/testData/codegen/box/volatile/volatileFloat.kt");
-      }
-
-      @Test
-      @TestMetadata("volatileGeneric.kt")
-      public void testVolatileGeneric() {
-        runTest("compiler/testData/codegen/box/volatile/volatileGeneric.kt");
-      }
-
-      @Test
-      @TestMetadata("volatileInt.kt")
-      public void testVolatileInt() {
-        runTest("compiler/testData/codegen/box/volatile/volatileInt.kt");
-      }
-
-      @Test
-      @TestMetadata("volatileLong.kt")
-      public void testVolatileLong() {
-        runTest("compiler/testData/codegen/box/volatile/volatileLong.kt");
-      }
-
-      @Test
-      @TestMetadata("volatileShort.kt")
-      public void testVolatileShort() {
-        runTest("compiler/testData/codegen/box/volatile/volatileShort.kt");
-      }
-
-      @Test
-      @TestMetadata("volatileString.kt")
-      public void testVolatileString() {
-        runTest("compiler/testData/codegen/box/volatile/volatileString.kt");
-      }
     }
 
     @Nested
