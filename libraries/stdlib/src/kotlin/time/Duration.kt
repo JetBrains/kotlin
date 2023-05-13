@@ -454,6 +454,9 @@ public value class Duration internal constructor(private val rawValue: Long) : C
 
     // arithmetic operators
 
+    /** Returns this value. */
+    public operator fun unaryPlus(): Duration = this
+
     /** Returns the negative of this value. */
     public operator fun unaryMinus(): Duration = durationOf(-value, unitDiscriminator)
 

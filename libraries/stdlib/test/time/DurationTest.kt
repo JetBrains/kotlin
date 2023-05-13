@@ -788,4 +788,10 @@ class DurationTest {
         }
     }
 
+    @Test
+    fun unary() {
+        assertEquals((-1).seconds, -(1.seconds))
+        assertEquals((+1).seconds, +(1.seconds))
+    }
+
 }
