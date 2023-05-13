@@ -185,6 +185,13 @@ internal abstract class AbstractKotlinPlugin(
                 if (duplicateJavaSourceSetsAsKotlinSourceSets) {
                     val kotlinSourceSet = project.kotlinExtension.sourceSets.maybeCreate(kotlinCompilation.name)
                     kotlinSourceSet.kotlin.source(javaSourceSet.java)
+                    // Registering resources from KotlinSourceSet as Java SourceSet resources. In case of KotlinPlugin
+                    // Java Sources set will create ProcessResources task to process all resources into output
+                    // 'kotlinSourceSet.resources' should contain Java SourceSet default resource directories and to avoid
+                    // duplication error we are replacing here already configured default one.
+                    javaSourceSet.resources.setSrcDirs(
+                        listOf { kotlinSourceSet.resources.sourceDirectories }
+                    )
                     @Suppress("DEPRECATION")
                     kotlinCompilation.source(kotlinSourceSet)
                     project.compatibilityConventionRegistrar.addConvention(javaSourceSet, kotlinSourceSetDslName, kotlinSourceSet)
