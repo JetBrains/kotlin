@@ -6,10 +6,8 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
-import kotlin.io.path.appendText
-import kotlin.io.path.createDirectories
-import kotlin.io.path.createFile
 import java.util.zip.ZipFile
+import kotlin.io.path.*
 
 @JvmGradlePluginTests
 @DisplayName("KGP simple tests")
@@ -314,6 +312,43 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
                 ZipFile(projectPath.resolve("build/libs/simpleProject.jar").toFile()).use { jar ->
                     assert(jar.entries().asSequence().count { it.name == "demo/KotlinGreetingJoiner.class" } == 1) {
                         "The jar should contain one entry `demo/KotlinGreetingJoiner.class` with no duplicates\n" +
+                                jar.entries().asSequence().map { it.name }.joinToString()
+                    }
+                }
+            }
+        }
+    }
+
+    @DisplayName("KT-36904: Adding resources to Kotlin source set should work")
+    @GradleTest
+    internal fun addResourcesKotlinSourceSet(gradleVersion: GradleVersion) {
+        project("simpleProject", gradleVersion) {
+            val mainResDir = projectPath.resolve("src/main/resources").apply { createDirectories() }
+            val mainResFile = mainResDir.resolve("main.txt").apply { writeText("Yay, Kotlin!") }
+
+            val additionalResDir = projectPath.resolve("additionalRes").apply { createDirectory() }
+            val additionalResFile = additionalResDir.resolve("test.txt").apply { writeText("Kotlin!") }
+
+            buildGradle.appendText(
+                //language=groovy
+                """
+                |
+                |kotlin {
+                |    sourceSets.main.resources.srcDir("additionalRes")
+                |}
+                """.trimMargin()
+            )
+
+            build("jar") {
+                assertFileInProjectExists("build/libs/simpleProject.jar")
+                ZipFile(projectPath.resolve("build/libs/simpleProject.jar").toFile()).use { jar ->
+                    assert(jar.entries().asSequence().count { it.name == mainResFile.name } == 1) {
+                        "The jar should contain one entry `${mainResFile.name}` with no duplicates\n" +
+                                jar.entries().asSequence().map { it.name }.joinToString()
+                    }
+
+                    assert(jar.entries().asSequence().count { it.name == additionalResFile.name } == 1) {
+                        "The jar should contain one entry `${additionalResFile.name}` with no duplicates\n" +
                                 jar.entries().asSequence().map { it.name }.joinToString()
                     }
                 }
