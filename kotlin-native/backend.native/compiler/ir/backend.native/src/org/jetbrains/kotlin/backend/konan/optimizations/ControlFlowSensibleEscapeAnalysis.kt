@@ -901,7 +901,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
             //            *-*-*-*-*-*-*-*-*-*-*
             //
             // Nodes naming: u -> v -> w
-            fun bypass(v: Node.Reference, nodeContext: InterproceduralAnalysis.NodeContext, anchorNodeId: Int = 0) {
+            fun bypass(v: Node.Reference, nodeContext: NodeContext, anchorNodeId: Int = 0) {
                 require(v.assignedTo.isNotEmpty())
                 val assignedWith = v.assignedWith.ifEmpty { listOf(at(nodeContext, anchorNodeId).newObject()) }
                 for (u in v.assignedTo) {
@@ -1770,7 +1770,7 @@ internal object ControlFlowSensibleEscapeAnalysis {
                                 "The node $fieldValue should've been optimized away"
                             }
 
-                        val hasIncomingEdges = fieldValue.assignedTo.isNotEmpty()
+                        val hasIncomingEdges = fieldValue.assignedTo.isNotEmpty() || fieldValue == calleeEscapeAnalysisResult.returnValue
                         val canOmitFictitiousObject = fieldPointee is Node.Object
                                 && fieldPointee.isFictitious
                                 && inMirroredNodes[fieldPointee.id] == null // Skip cycles.
@@ -1859,6 +1859,9 @@ internal object ControlFlowSensibleEscapeAnalysis {
                 reflectNode(Node.Null, Node.Null)
                 reflectNode(Node.Unit, Node.Unit)
                 reflectNode(calleeEscapeAnalysisResult.graph.globalNode, state.graph.globalNode)
+                calleeEscapeAnalysisResult.graph.globalNode.fields.forEach { (field, fieldValue) ->
+                    reflectNode(fieldValue, with(state.graph) { globalNode.getField(field) })
+                }
                 for (parameter in calleeEscapeAnalysisResult.graph.parameterNodes.values)
                     reflectNode(parameter, arguments[parameter.index])
                 for (parameter in calleeEscapeAnalysisResult.graph.parameterNodes.values)
