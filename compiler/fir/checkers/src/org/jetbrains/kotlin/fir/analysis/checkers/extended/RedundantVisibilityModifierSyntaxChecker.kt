@@ -247,7 +247,7 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
             context.sessionHolder.session,
             context.sessionHolder.scopeSession,
             withForcedTypeCalculator = false,
-            memberRequiredPhase = null,
+            memberRequiredPhase = FirResolvePhase.STATUS,
         )
 
         return findBiggestVisibility { checkVisibility ->
@@ -266,7 +266,7 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
             context.sessionHolder.session,
             context.sessionHolder.scopeSession,
             withForcedTypeCalculator = false,
-            memberRequiredPhase = null,
+            memberRequiredPhase = FirResolvePhase.STATUS,
         )
 
         return findBiggestVisibility {
@@ -282,7 +282,7 @@ object RedundantVisibilityModifierSyntaxChecker : FirDeclarationSyntaxChecker<Fi
             context.sessionHolder.session,
             context.sessionHolder.scopeSession,
             withForcedTypeCalculator = false,
-            memberRequiredPhase = null,
+            memberRequiredPhase = FirResolvePhase.STATUS,
         )
 
         return findBiggestVisibility {

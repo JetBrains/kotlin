@@ -78,16 +78,15 @@ internal class KtFirScopeProvider(
 
     override fun getMemberScope(classSymbol: KtSymbolWithMembers): KtScope {
         val firScope = classSymbol.withFirForScope { fir ->
-            fir.lazyResolveToPhase(FirResolvePhase.STATUS)
             val firSession = analysisSession.useSiteSession
             fir.unsubstitutedScope(
                 firSession,
                 getScopeSession(),
                 withForcedTypeCalculator = false,
-                memberRequiredPhase = null,
+                memberRequiredPhase = FirResolvePhase.STATUS,
             )
-        }?.applyIf(classSymbol is KtEnumEntrySymbol, ::EnumEntryContainingNamesAwareScope)
-            ?: return getEmptyScope()
+        }?.applyIf(classSymbol is KtEnumEntrySymbol, ::EnumEntryContainingNamesAwareScope) ?: return getEmptyScope()
+
         return KtFirDelegatingNamesAwareScope(firScope, builder)
     }
 

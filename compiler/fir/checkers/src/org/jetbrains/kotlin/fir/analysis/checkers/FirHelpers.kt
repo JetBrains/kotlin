@@ -52,7 +52,7 @@ fun FirClass.unsubstitutedScope(context: CheckerContext): FirTypeScope =
         context.sessionHolder.session,
         context.sessionHolder.scopeSession,
         withForcedTypeCalculator = false,
-        memberRequiredPhase = null,
+        memberRequiredPhase = FirResolvePhase.STATUS,
     )
 
 fun FirClassSymbol<*>.unsubstitutedScope(context: CheckerContext): FirTypeScope =
@@ -60,7 +60,7 @@ fun FirClassSymbol<*>.unsubstitutedScope(context: CheckerContext): FirTypeScope 
         context.sessionHolder.session,
         context.sessionHolder.scopeSession,
         withForcedTypeCalculator = false,
-        memberRequiredPhase = null,
+        memberRequiredPhase = FirResolvePhase.STATUS,
     )
 
 fun FirTypeRef.toClassLikeSymbol(session: FirSession): FirClassLikeSymbol<*>? {

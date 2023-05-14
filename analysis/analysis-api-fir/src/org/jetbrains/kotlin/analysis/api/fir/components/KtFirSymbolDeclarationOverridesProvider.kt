@@ -121,7 +121,7 @@ internal class KtFirSymbolDeclarationOverridesProvider(
             firSession,
             analysisSession.getScopeSessionFor(firSession),
             withForcedTypeCalculator = false,
-            memberRequiredPhase = null,
+            memberRequiredPhase = FirResolvePhase.STATUS,
         )
 
         firTypeScope.processCallableByName(firCallableDeclaration)

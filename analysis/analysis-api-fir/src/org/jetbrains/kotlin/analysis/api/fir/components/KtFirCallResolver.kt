@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
 import org.jetbrains.kotlin.fir.diagnostics.FirDiagnosticHolder
@@ -1202,7 +1203,7 @@ internal class KtFirCallResolver(
             analysisSession.useSiteSession,
             analysisSession.getScopeSessionFor(analysisSession.useSiteSession),
             false,
-            memberRequiredPhase = null,
+            memberRequiredPhase = FirResolvePhase.STATUS,
         )
 
         var equalsSymbol: FirNamedFunctionSymbol? = null
