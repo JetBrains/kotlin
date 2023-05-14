@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -35,8 +35,13 @@ class FirIntegerConstantOperatorScope(
             true -> session.builtinTypes.uIntType
             false -> session.builtinTypes.intType
         }.type
-        baseType.scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing, requiredPhase = null)
-            ?: error("Scope for $baseType not found")
+
+        baseType.scope(
+            session,
+            scopeSession,
+            FakeOverrideTypeCalculator.DoNothing,
+            requiredMembersPhase = null,
+        ) ?: error("Scope for $baseType not found")
     }
 
     private val mappedFunctions = mutableMapOf<Name, FirNamedFunctionSymbol>()

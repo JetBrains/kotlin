@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.descriptors.isEnumClass
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.isSubstitutionOrIntersectionOverride
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
@@ -143,13 +142,19 @@ class FirExpectActualMatchingContext(
             true -> actualSession
             false -> symbol.moduleData.session
         }
-        val scope = symbol.defaultType()
-            .scope(useSiteSession = session, scopeSession, FakeOverrideTypeCalculator.DoNothing, requiredPhase = FirResolvePhase.STATUS)
-            ?: return emptyList()
+
+        val scope = symbol.defaultType().scope(
+            useSiteSession = session,
+            scopeSession,
+            FakeOverrideTypeCalculator.DoNothing,
+            requiredMembersPhase = FirResolvePhase.STATUS,
+        ) ?: return emptyList()
+
         return mutableListOf<FirBasedSymbol<*>>().apply {
             for (name in scope.getCallableNames()) {
                 scope.getMembersTo(this, name)
             }
+
             // TODO: replace with scope lookup
             for (name in symbol.declarationSymbols.mapNotNull { (it as? FirRegularClassSymbol)?.classId?.shortClassName }) {
                 addIfNotNull(scope.getSingleClassifier(name) as? FirRegularClassSymbol)
@@ -160,14 +165,13 @@ class FirExpectActualMatchingContext(
 
     override fun RegularClassSymbolMarker.getMembersForExpectClass(name: Name): List<FirCallableSymbol<*>> {
         val symbol = asSymbol()
-        val scope = symbol.defaultType()
-            .scope(
-                useSiteSession = symbol.moduleData.session,
-                scopeSession,
-                FakeOverrideTypeCalculator.DoNothing,
-                requiredPhase = FirResolvePhase.STATUS
-            )
-            ?: return emptyList()
+        val scope = symbol.defaultType().scope(
+            useSiteSession = symbol.moduleData.session,
+            scopeSession,
+            FakeOverrideTypeCalculator.DoNothing,
+            requiredMembersPhase = FirResolvePhase.STATUS,
+        ) ?: return emptyList()
+
         return mutableListOf<FirCallableSymbol<*>>().apply {
             scope.getMembersTo(this, name)
         }

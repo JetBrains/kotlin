@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -62,7 +62,12 @@ class FirDynamicScope @FirDynamicScopeConstructor constructor(
     override fun getClassifierNames(): Set<Name> = emptySet()
 
     private val anyTypeScope by lazy {
-        session.builtinTypes.anyType.type.scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing, requiredPhase = null)
+        session.builtinTypes.anyType.type.scope(
+            session,
+            scopeSession,
+            FakeOverrideTypeCalculator.DoNothing,
+            requiredMembersPhase = null,
+        )
     }
 
     override fun processFunctionsByName(

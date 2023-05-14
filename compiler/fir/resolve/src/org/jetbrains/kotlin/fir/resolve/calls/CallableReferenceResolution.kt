@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -176,8 +176,13 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
     if (expectedArgumentsCount < 0) return null
 
     val fakeArguments = createFakeArgumentsForReference(function, expectedArgumentsCount, inputTypes, unboundReceiverCount)
-    val originScope = function.dispatchReceiverType
-        ?.scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing, requiredPhase = FirResolvePhase.STATUS)
+    val originScope = function.dispatchReceiverType?.scope(
+        useSiteSession = session,
+        scopeSession = scopeSession,
+        fakeOverrideTypeCalculator = FakeOverrideTypeCalculator.DoNothing,
+        requiredMembersPhase = FirResolvePhase.STATUS,
+    )
+
     val argumentMapping = mapArguments(fakeArguments, function, originScope = originScope, callSiteIsOperatorCall = false)
     if (argumentMapping.diagnostics.any { !it.applicability.isSuccess }) return null
 

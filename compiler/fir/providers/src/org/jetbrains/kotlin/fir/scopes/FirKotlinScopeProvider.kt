@@ -39,6 +39,10 @@ class FirKotlinScopeProvider(
         scopeSession: ScopeSession,
         memberRequiredPhase: FirResolvePhase?,
     ): FirTypeScope {
+        memberRequiredPhase?.let {
+            klass.lazyResolveToPhaseWithCallableMembers(it)
+        }
+
         return scopeSession.getOrBuild(klass.symbol, USE_SITE) {
             val declaredScope = useSiteSession.declaredMemberScope(klass)
 
@@ -173,10 +177,6 @@ private fun FirClass.scopeForClassImpl(
     memberOwnerLookupTag: ConeClassLikeLookupTag?,
     memberRequiredPhase: FirResolvePhase?,
 ): FirTypeScope {
-    memberRequiredPhase?.let {
-        lazyResolveToPhaseWithCallableMembers(it)
-    }
-
     val basicScope = unsubstitutedScope(useSiteSession, scopeSession, withForcedTypeCalculator = false, memberRequiredPhase)
     if (substitutor == ConeSubstitutor.Empty) return basicScope
 

@@ -279,7 +279,7 @@ internal class KtFirScopeProvider(
             firResolveSession.useSiteFirSession,
             getScopeSession(),
             FakeOverrideTypeCalculator.Forced,
-            requiredPhase = FirResolvePhase.STATUS,
+            requiredMembersPhase = FirResolvePhase.STATUS,
         )
     }
 

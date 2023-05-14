@@ -180,7 +180,7 @@ private fun processConstructors(
                     session,
                     bodyResolveComponents.scopeSession,
                     FakeOverrideTypeCalculator.DoNothing,
-                    requiredPhase = FirResolvePhase.STATUS
+                    requiredMembersPhase = FirResolvePhase.STATUS,
                 )
 
                 val outerType = bodyResolveComponents.outerClassManager.outerType(type)

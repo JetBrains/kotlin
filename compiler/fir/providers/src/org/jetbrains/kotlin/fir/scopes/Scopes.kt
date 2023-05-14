@@ -29,8 +29,9 @@ fun debugCollectOverrides(symbol: FirCallableSymbol<*>, session: FirSession, sco
         session,
         scopeSession,
         FakeOverrideTypeCalculator.DoNothing,
-        requiredPhase = FirResolvePhase.STATUS
+        requiredMembersPhase = FirResolvePhase.STATUS,
     ) ?: return emptyMap()
+
     return debugCollectOverrides(symbol, scope)
 }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -93,8 +93,9 @@ class MemberScopeTowerLevel(
                 session,
                 scopeSession,
                 bodyResolveComponents.returnTypeCalculator.fakeOverrideTypeCalculator,
-                requiredPhase = FirResolvePhase.STATUS
+                requiredMembersPhase = FirResolvePhase.STATUS,
             )
+
         if (scopeWithoutSmartcast == null) {
             consumeCandidates(output, candidates)
         } else {
@@ -133,14 +134,12 @@ class MemberScopeTowerLevel(
             // So, here we decide to preserve the K1 behavior just by converting the type to its non-raw version
             if (dispatchReceiverType.isRaw()) {
                 typeForSyntheticScope = dispatchReceiverType.convertToNonRawVersion()
-                useSiteForSyntheticScope =
-                    typeForSyntheticScope.scope(
-                        session,
-                        scopeSession,
-                        FakeOverrideTypeCalculator.DoNothing,
-                        requiredPhase = FirResolvePhase.STATUS
-                    )
-                        ?: error("No scope for flexible type scope, while it's not null for $dispatchReceiverType")
+                useSiteForSyntheticScope = typeForSyntheticScope.scope(
+                    session,
+                    scopeSession,
+                    FakeOverrideTypeCalculator.DoNothing,
+                    requiredMembersPhase = FirResolvePhase.STATUS,
+                ) ?: error("No scope for flexible type scope, while it's not null for $dispatchReceiverType")
             } else {
                 typeForSyntheticScope = dispatchReceiverType
                 useSiteForSyntheticScope = scope

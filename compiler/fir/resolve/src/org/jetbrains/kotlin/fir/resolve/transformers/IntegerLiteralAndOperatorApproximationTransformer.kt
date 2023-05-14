@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -48,12 +48,16 @@ class IntegerLiteralAndOperatorApproximationTransformer(
         private val TO_U_LONG = Name.identifier("toULong")
     }
 
-    private val toLongSymbol by lazy { findConversionFunction(session.builtinTypes.intType, TO_LONG)}
-    private val toULongSymbol by lazy { findConversionFunction(session.builtinTypes.uIntType, TO_U_LONG)}
+    private val toLongSymbol by lazy { findConversionFunction(session.builtinTypes.intType, TO_LONG) }
+    private val toULongSymbol by lazy { findConversionFunction(session.builtinTypes.uIntType, TO_U_LONG) }
 
     private fun findConversionFunction(receiverType: FirImplicitBuiltinTypeRef, name: Name): FirNamedFunctionSymbol {
-        return receiverType.type.scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing, requiredPhase = FirResolvePhase.STATUS)!!
-            .getFunctions(name).single()
+        return receiverType.type.scope(
+            useSiteSession = session,
+            scopeSession = scopeSession,
+            fakeOverrideTypeCalculator = FakeOverrideTypeCalculator.DoNothing,
+            requiredMembersPhase = FirResolvePhase.STATUS,
+        )!!.getFunctions(name).single()
     }
 
     override fun <E : FirElement> transformElement(element: E, data: ConeKotlinType?): E {

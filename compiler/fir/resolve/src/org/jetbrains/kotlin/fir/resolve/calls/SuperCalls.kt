@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -129,14 +129,22 @@ private inline fun BodyResolveComponents.resolveSupertypesByMembers(
 
 private fun BodyResolveComponents.getFunctionMembers(type: ConeKotlinType, name: Name): Collection<FirCallableDeclaration> =
     buildList {
-        type.scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing, requiredPhase = FirResolvePhase.STATUS)
-            ?.processFunctionsByName(name) { add(it.fir) }
+        type.scope(
+            useSiteSession = session,
+            scopeSession = scopeSession,
+            fakeOverrideTypeCalculator = FakeOverrideTypeCalculator.DoNothing,
+            requiredMembersPhase = FirResolvePhase.STATUS,
+        )?.processFunctionsByName(name) { add(it.fir) }
     }
 
 private fun BodyResolveComponents.getPropertyMembers(type: ConeKotlinType, name: Name): Collection<FirCallableDeclaration> =
     buildList {
-        type.scope(session, scopeSession, FakeOverrideTypeCalculator.DoNothing, requiredPhase = FirResolvePhase.STATUS)
-            ?.processPropertiesByName(name) { addIfNotNull(it.fir as? FirVariable) }
+        type.scope(
+            useSiteSession = session,
+            scopeSession = scopeSession,
+            fakeOverrideTypeCalculator = FakeOverrideTypeCalculator.DoNothing,
+            requiredMembersPhase = FirResolvePhase.STATUS,
+        )?.processPropertiesByName(name) { addIfNotNull(it.fir as? FirVariable) }
     }
 
 

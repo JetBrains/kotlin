@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -212,13 +212,17 @@ abstract class AbstractAnnotationDeserializer(
                 val symbol = lookupTag.toSymbol(session)
                 val firAnnotationClass = (symbol as? FirRegularClassSymbol)?.fir ?: return@lazy null
 
-                val classScope =
-                    firAnnotationClass.defaultType()
-                        .scope(session, ScopeSession(), FakeOverrideTypeCalculator.DoNothing, requiredPhase = null)
-                        ?: error("Null scope for $classId")
+                val classScope = firAnnotationClass.defaultType().scope(
+                    useSiteSession = session,
+                    scopeSession = ScopeSession(),
+                    fakeOverrideTypeCalculator = FakeOverrideTypeCalculator.DoNothing,
+                    requiredMembersPhase = null,
+                ) ?: error("Null scope for $classId")
 
-                val constructor =
-                    classScope.getDeclaredConstructors().singleOrNull()?.fir ?: error("No single constructor found for $classId")
+                val constructor = classScope.getDeclaredConstructors()
+                    .singleOrNull()
+                    ?.fir
+                    ?: error("No single constructor found for $classId")
 
                 constructor.valueParameters.associateBy { it.name }
             }

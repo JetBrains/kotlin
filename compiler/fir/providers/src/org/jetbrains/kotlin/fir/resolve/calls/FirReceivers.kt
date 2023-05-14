@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -39,8 +39,12 @@ interface ReceiverValue : Receiver {
 
     val receiverExpression: FirExpression
 
-    fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope? =
-        type.scope(useSiteSession, scopeSession, FakeOverrideTypeCalculator.DoNothing, requiredPhase = FirResolvePhase.STATUS)
+    fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope? = type.scope(
+        useSiteSession = useSiteSession,
+        scopeSession = scopeSession,
+        fakeOverrideTypeCalculator = FakeOverrideTypeCalculator.DoNothing,
+        requiredMembersPhase = FirResolvePhase.STATUS,
+    )
 }
 
 // TODO: should inherit just Receiver, not ReceiverValue
@@ -68,10 +72,21 @@ open class ExpressionReceiverValue(
         if (receiverExpr is FirCheckNotNullCall) {
             receiverExpr = receiverExpr.arguments.firstOrNull()
         }
+
         if (receiverExpr is FirSmartCastExpression) {
-            return receiverExpr.smartcastScope(useSiteSession, scopeSession, requiredPhase = FirResolvePhase.STATUS)
+            return receiverExpr.smartcastScope(
+                useSiteSession,
+                scopeSession,
+                requiredMembersPhase = FirResolvePhase.STATUS,
+            )
         }
-        return type.scope(useSiteSession, scopeSession, FakeOverrideTypeCalculator.DoNothing, requiredPhase = FirResolvePhase.STATUS)
+
+        return type.scope(
+            useSiteSession,
+            scopeSession,
+            FakeOverrideTypeCalculator.DoNothing,
+            requiredMembersPhase = FirResolvePhase.STATUS,
+        )
     }
 }
 
@@ -93,7 +108,12 @@ sealed class ImplicitReceiverValue<S : FirBasedSymbol<*>>(
     val expandedType: ConeKotlinType = type.applyIf(type is ConeClassLikeType) { fullyExpandedType(useSiteSession) }
 
     var implicitScope: FirTypeScope? =
-        type.scope(useSiteSession, scopeSession, FakeOverrideTypeCalculator.DoNothing, requiredPhase = FirResolvePhase.STATUS)
+        type.scope(
+            useSiteSession,
+            scopeSession,
+            FakeOverrideTypeCalculator.DoNothing,
+            requiredMembersPhase = FirResolvePhase.STATUS
+        )
         private set
 
     override fun scope(useSiteSession: FirSession, scopeSession: ScopeSession): FirTypeScope? = implicitScope
@@ -109,8 +129,12 @@ sealed class ImplicitReceiverValue<S : FirBasedSymbol<*>>(
     fun updateTypeInBuilderInference(type: ConeKotlinType) {
         this.type = type
         receiverExpression = receiverExpression(boundSymbol, type, contextReceiverNumber)
-        implicitScope =
-            type.scope(useSiteSession, scopeSession, FakeOverrideTypeCalculator.DoNothing, requiredPhase = FirResolvePhase.STATUS)
+        implicitScope = type.scope(
+            useSiteSession = useSiteSession,
+            scopeSession = scopeSession,
+            fakeOverrideTypeCalculator = FakeOverrideTypeCalculator.DoNothing,
+            requiredMembersPhase = FirResolvePhase.STATUS,
+        )
     }
 
     /*
@@ -136,8 +160,13 @@ sealed class ImplicitReceiverValue<S : FirBasedSymbol<*>>(
                 typeRef = smartcastType.copyWithNewSourceKind(KtFakeSourceElementKind.ImplicitTypeRef)
             }
         }
-        implicitScope =
-            type.scope(useSiteSession, scopeSession, FakeOverrideTypeCalculator.DoNothing, requiredPhase = FirResolvePhase.STATUS)
+
+        implicitScope = type.scope(
+            useSiteSession = useSiteSession,
+            scopeSession = scopeSession,
+            fakeOverrideTypeCalculator = FakeOverrideTypeCalculator.DoNothing,
+            requiredMembersPhase = FirResolvePhase.STATUS,
+        )
     }
 
     abstract fun createSnapshot(): ImplicitReceiverValue<S>

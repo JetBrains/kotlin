@@ -54,7 +54,7 @@ class FirDelegatedMemberScope(
         session,
         scopeSession,
         FakeOverrideTypeCalculator.DoNothing,
-        requiredPhase = null,
+        requiredMembersPhase = null,
     )
 
     private fun collectFunctionsFromSpecificField(
