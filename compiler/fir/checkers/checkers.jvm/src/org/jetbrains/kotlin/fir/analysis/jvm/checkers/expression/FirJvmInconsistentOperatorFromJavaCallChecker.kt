@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -62,7 +62,7 @@ object FirJvmInconsistentOperatorFromJavaCallChecker : FirFunctionCallChecker() 
 
         // Check explicitly overridden contains
         val containingClass = containingClassLookupTag()?.toFirRegularClassSymbol(context.session) ?: return false
-        val overriddenFunctions = overriddenFunctions(containingClass, context, memberRequiredPhase = null)
+        val overriddenFunctions = overriddenFunctions(containingClass, context)
         for (overriddenFunction in overriddenFunctions) {
             if (overriddenFunction is FirNamedFunctionSymbol && overriddenFunction.check(source, context, reporter)) {
                 return true

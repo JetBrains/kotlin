@@ -191,17 +191,15 @@ fun CheckerContext.findClosestClassOrObject(): FirClass? {
 fun FirSimpleFunction.overriddenFunctions(
     containingClass: FirClassSymbol<*>,
     context: CheckerContext,
-    memberRequiredPhase: FirResolvePhase?,
 ): List<FirFunctionSymbol<*>> {
-    return symbol.overriddenFunctions(containingClass, context, memberRequiredPhase)
+    return symbol.overriddenFunctions(containingClass, context)
 }
 
 fun FirNamedFunctionSymbol.overriddenFunctions(
     containingClass: FirClassSymbol<*>,
     context: CheckerContext,
-    memberRequiredPhase: FirResolvePhase?,
 ): List<FirFunctionSymbol<*>> {
-    return overriddenFunctions(containingClass, context.session, context.scopeSession, memberRequiredPhase)
+    return overriddenFunctions(containingClass, context.session, context.scopeSession)
 }
 
 fun FirClass.collectSupertypesWithDelegates(): Map<FirTypeRef, FirFieldSymbol?> {

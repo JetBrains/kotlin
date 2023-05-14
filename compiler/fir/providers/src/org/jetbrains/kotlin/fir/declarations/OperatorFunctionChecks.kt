@@ -92,7 +92,7 @@ object OperatorFunctionChecks {
                     val containingClassSymbol = function.containingClassLookupTag()?.toFirRegularClassSymbol(session) ?: return null
                     val customEqualsSupported = session.languageVersionSettings.supportsFeature(LanguageFeature.CustomEqualsInValueClasses)
 
-                    if (function.symbol.overriddenFunctions(containingClassSymbol, session, scopeSession, memberRequiredPhase = null)
+                    if (function.symbol.overriddenFunctions(containingClassSymbol, session, scopeSession)
                             .any { it.containingClassLookupTag()?.classId == StandardClassIds.Any }
                         || (customEqualsSupported && function.isTypedEqualsInValueClass(session))
                     ) {

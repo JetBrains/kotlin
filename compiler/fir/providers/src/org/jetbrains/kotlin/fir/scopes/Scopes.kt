@@ -60,13 +60,12 @@ fun FirNamedFunctionSymbol.overriddenFunctions(
     containingClass: FirClassSymbol<*>,
     session: FirSession,
     scopeSession: ScopeSession,
-    memberRequiredPhase: FirResolvePhase?,
 ): List<FirFunctionSymbol<*>> {
     val firTypeScope = containingClass.unsubstitutedScope(
         session,
         scopeSession,
         withForcedTypeCalculator = true,
-        memberRequiredPhase = memberRequiredPhase,
+        memberRequiredPhase = FirResolvePhase.STATUS,
     )
 
     val overriddenFunctions = mutableListOf<FirFunctionSymbol<*>>()
