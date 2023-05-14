@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 
 internal abstract class KtFirMemberSymbolPointer<S : KtSymbol>(
     private val ownerPointer: KtSymbolPointer<KtSymbolWithMembers>,
@@ -30,7 +29,6 @@ internal abstract class KtFirMemberSymbolPointer<S : KtSymbol>(
         val scope = with(analysisSession) {
             val ownerSymbol = ownerPointer.restoreSymbol() ?: return null
             val owner = ownerSymbol.firSymbol as? FirClassSymbol ?: return null
-            owner.lazyResolveToPhase(FirResolvePhase.STATUS)
             getSearchScope(owner)
         } ?: return null
 
@@ -51,7 +49,7 @@ internal abstract class KtFirMemberSymbolPointer<S : KtSymbol>(
                 useSiteSession = firSession,
                 scopeSession = scopeSession,
                 withForcedTypeCalculator = false,
-                memberRequiredPhase = null,
+                memberRequiredPhase = FirResolvePhase.STATUS,
             )
         }
     }
