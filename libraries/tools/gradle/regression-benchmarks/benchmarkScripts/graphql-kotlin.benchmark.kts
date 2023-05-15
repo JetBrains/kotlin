@@ -9,8 +9,8 @@
 @file:BenchmarkProject(
     name = "graphql-kotlin",
     gitUrl = "https://github.com/ExpediaGroup/graphql-kotlin.git",
-    gitCommitSha = "46a7c7704c31ee3aaf514d764f6101056c340b0a",
-    stableKotlinVersion = "1.8.0",
+    gitCommitSha = "7d1e5a3114e95a4e0d63a8c515e9e8e37d5c504c",
+    stableKotlinVersion = "1.8.21",
 )
 
 import java.io.File
