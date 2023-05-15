@@ -855,6 +855,7 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
         private val classFqName: FqName,
         private val createClassTypeRefWithSourceKind: (KtFakeSourceElementKind) -> FirTypeRef,
         private val createParameterTypeRefWithSourceKind: (FirProperty, KtFakeSourceElementKind) -> FirTypeRef,
+        private val addValueParameterAnnotations: FirValueParameterBuilder.(T) -> Unit,
     ) {
         fun generate() {
             if (classBuilder.classKind != ClassKind.OBJECT) {
@@ -870,9 +871,8 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                 if (!firProperty.isVal && !firProperty.isVar) continue
                 val name = Name.identifier("component$componentIndex")
                 componentIndex++
-                val parameterSource = sourceNode?.toFirSourceElement()
                 val componentFunction = buildSimpleFunction {
-                    source = parameterSource?.fakeElement(KtFakeSourceElementKind.DataClassGeneratedMembers)
+                    source = sourceNode?.toFirSourceElement(KtFakeSourceElementKind.DataClassGeneratedMembers)
                     moduleData = baseModuleData
                     origin = FirDeclarationOrigin.Source
                     returnTypeRef = firProperty.returnTypeRef.copyWithNewSourceKind(KtFakeSourceElementKind.DataClassGeneratedMembers)
@@ -898,8 +898,10 @@ abstract class BaseFirBuilder<T>(val baseSession: FirSession, val context: Conte
                     currentDispatchReceiverType(),
                     zippedParameters,
                     createClassTypeRefWithSourceKind,
-                    createParameterTypeRefWithSourceKind
-                ) { src, kind -> src?.toFirSourceElement(kind) }
+                    createParameterTypeRefWithSourceKind,
+                    { src, kind -> src?.toFirSourceElement(kind) },
+                    addValueParameterAnnotations,
+                )
             )
         }
     }
@@ -1033,7 +1035,8 @@ fun <T> FirRegularClassBuilder.createDataClassCopyFunction(
     zippedParameters: List<Pair<T, FirProperty>>,
     createClassTypeRefWithSourceKind: (KtFakeSourceElementKind) -> FirTypeRef,
     createParameterTypeRefWithSourceKind: (FirProperty, KtFakeSourceElementKind) -> FirTypeRef,
-    toFirSource: (T?, KtFakeSourceElementKind) -> KtSourceElement?
+    toFirSource: (T?, KtFakeSourceElementKind) -> KtSourceElement?,
+    addValueParameterAnnotations: FirValueParameterBuilder.(T) -> Unit,
 ): FirSimpleFunction {
     fun generateComponentAccess(
         parameterSource: KtSourceElement?,
@@ -1086,6 +1089,10 @@ fun <T> FirRegularClassBuilder.createDataClassCopyFunction(
                 isCrossinline = false
                 isNoinline = false
                 isVararg = false
+                addValueParameterAnnotations(ktParameter)
+                for (annotation in annotations) {
+                    annotation.replaceUseSiteTarget(null)
+                }
             }
         }
         // Refer to FIR backend ClassMemberGenerator for body generation.

@@ -164,18 +164,21 @@ internal fun deserializeClassToSymbol(
 
         if (classOrObject.isData() && firPrimaryConstructor != null) {
             val zippedParameters =
-                classOrObject.primaryConstructorParameters.filter { it.hasValOrVar() } zip declarations.filterIsInstance<FirProperty>()
-            addDeclaration(createDataClassCopyFunction(classId, classOrObject, context.dispatchReceiver, zippedParameters,
-                                                       createClassTypeRefWithSourceKind = {
-                                                           firPrimaryConstructor.returnTypeRef.copyWithNewSourceKind(
-                                                               it
-                                                           )
-                                                       },
-                                                       createParameterTypeRefWithSourceKind = { property, newKind ->
-                                                           property.returnTypeRef.copyWithNewSourceKind(newKind)
-                                                       }) { src, kind ->
-                KtFakeSourceElement(src as PsiElement, kind)
-            })
+                classOrObject.primaryConstructorParameters zip declarations.filterIsInstance<FirProperty>()
+            addDeclaration(
+                createDataClassCopyFunction(
+                    classId,
+                    classOrObject,
+                    context.dispatchReceiver,
+                    zippedParameters,
+                    createClassTypeRefWithSourceKind = { firPrimaryConstructor.returnTypeRef.copyWithNewSourceKind(it) },
+                    createParameterTypeRefWithSourceKind = { property, newKind ->
+                        property.returnTypeRef.copyWithNewSourceKind(newKind)
+                    },
+                    toFirSource = { src, kind -> KtFakeSourceElement(src as PsiElement, kind) },
+                    addValueParameterAnnotations = { annotations += context.annotationDeserializer.loadAnnotations(it) },
+                )
+            )
         }
 
         addCloneForArrayIfNeeded(classId, context.dispatchReceiver)

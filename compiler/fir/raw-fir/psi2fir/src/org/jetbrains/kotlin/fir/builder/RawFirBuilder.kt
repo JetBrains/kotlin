@@ -604,18 +604,21 @@ open class RawFirBuilder(
                 isNoinline = hasModifier(NOINLINE_KEYWORD)
                 isVararg = isVarArg
                 containingFunctionSymbol = functionSymbol
-                val isFromPrimaryConstructor = valueParameterDeclaration == ValueParameterDeclaration.PRIMARY_CONSTRUCTOR
-                for (annotationEntry in annotationEntries) {
-                    annotationEntry.convert<FirAnnotation>().takeIf {
-                        !isFromPrimaryConstructor || it.useSiteTarget == null ||
-                                it.useSiteTarget == CONSTRUCTOR_PARAMETER ||
-                                it.useSiteTarget == RECEIVER ||
-                                it.useSiteTarget == FILE
-                    }?.let {
-                        this.annotations += it
-                    }
-                }
+                addAnnotationsFrom(
+                    this@toFirValueParameter,
+                    isFromPrimaryConstructor = valueParameterDeclaration == ValueParameterDeclaration.PRIMARY_CONSTRUCTOR
+                )
                 annotations += additionalAnnotations
+            }
+        }
+
+        private fun FirValueParameterBuilder.addAnnotationsFrom(ktParameter: KtParameter, isFromPrimaryConstructor: Boolean) {
+            for (annotationEntry in ktParameter.annotationEntries) {
+                annotationEntry.convert<FirAnnotation>().takeIf {
+                    !isFromPrimaryConstructor || it.useSiteTarget.appliesToPrimaryConstructorParameter()
+                }?.let {
+                    annotations += it
+                }
             }
         }
 
@@ -1323,6 +1326,7 @@ open class RawFirBuilder(
                                         (property.returnTypeRef.psi as KtTypeReference?).toFirOrImplicitType()
                                     }
                                 },
+                                addValueParameterAnnotations = { addAnnotationsFrom(it as KtParameter, isFromPrimaryConstructor = true) },
                             ).generate()
                         }
 

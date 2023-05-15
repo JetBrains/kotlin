@@ -659,3 +659,8 @@ fun buildBalancedOrExpressionTree(conditions: List<FirExpression>, lower: Int = 
         (leftNode.source ?: rightNode.source)?.fakeElement(KtFakeSourceElementKind.WhenCondition)
     )
 }
+
+fun AnnotationUseSiteTarget?.appliesToPrimaryConstructorParameter() = this == null ||
+        this == AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER ||
+        this == AnnotationUseSiteTarget.RECEIVER ||
+        this == AnnotationUseSiteTarget.FILE

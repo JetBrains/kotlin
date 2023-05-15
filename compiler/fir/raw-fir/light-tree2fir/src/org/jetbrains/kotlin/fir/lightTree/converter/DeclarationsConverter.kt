@@ -599,6 +599,13 @@ class DeclarationsConverter(
                             context.className,
                             createClassTypeRefWithSourceKind = { firPrimaryConstructor.returnTypeRef },
                             createParameterTypeRefWithSourceKind = { property, _ -> property.returnTypeRef },
+                            addValueParameterAnnotations = { valueParam ->
+                                valueParam.forEachChildren {
+                                    if (it.tokenType == MODIFIER_LIST) convertModifierList(it).annotations.filterTo(annotations) {
+                                        it.useSiteTarget.appliesToPrimaryConstructorParameter()
+                                    }
+                                }
+                            },
                         ).generate()
                     }
 

@@ -36,6 +36,8 @@ abstract class FirAnnotation : FirExpression() {
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
 
+    abstract fun replaceUseSiteTarget(newUseSiteTarget: AnnotationUseSiteTarget?)
+
     abstract fun replaceAnnotationTypeRef(newAnnotationTypeRef: FirTypeRef)
 
     abstract fun replaceArgumentMapping(newArgumentMapping: FirAnnotationArgumentMapping)

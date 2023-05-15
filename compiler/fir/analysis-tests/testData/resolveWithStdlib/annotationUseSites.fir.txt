@@ -15,7 +15,7 @@ FILE: test.kt
 
         public final operator fun component1(): R|kotlin/String|
 
-        public final fun copy(message: R|kotlin/String| = this@R|/KotlinResult|.R|/KotlinResult.message|): R|KotlinResult|
+        public final fun copy(@R|KotlinMessage|() message: R|kotlin/String| = this@R|/KotlinResult|.R|/KotlinResult.message|): R|KotlinResult|
 
     }
     public open class Some : R|kotlin/Any| {

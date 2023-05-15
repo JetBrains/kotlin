@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.fir.lightTree.fir
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
-import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.builder.Context
+import org.jetbrains.kotlin.fir.builder.appliesToPrimaryConstructorParameter
 import org.jetbrains.kotlin.fir.builder.filterUseSiteTarget
 import org.jetbrains.kotlin.fir.builder.initContainingClassAttr
 import org.jetbrains.kotlin.fir.copy
@@ -67,10 +67,7 @@ class ValueParameter(
             if (!isFromPrimaryConstructor)
                 addAll(modifiers.annotations)
             else
-                modifiers.annotations.filterTo(this) {
-                    val useSiteTarget = it.useSiteTarget
-                    useSiteTarget == null || useSiteTarget == AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER || useSiteTarget == AnnotationUseSiteTarget.RECEIVER || useSiteTarget == AnnotationUseSiteTarget.FILE
-                }
+                modifiers.annotations.filterTo(this) { it.useSiteTarget.appliesToPrimaryConstructorParameter() }
             addAll(additionalAnnotations)
         }
     }
@@ -162,7 +159,7 @@ class ValueParameter(
                 symbol,
             ).also {
                 it.initContainingClassAttr(context)
-                it.replaceAnnotations(modifiers.annotations.filterUseSiteTarget(AnnotationUseSiteTarget.PROPERTY_GETTER))
+                it.replaceAnnotations(modifiers.annotations.filterUseSiteTarget(PROPERTY_GETTER))
             }
             setter = if (this.isVar) FirDefaultPropertySetter(
                 defaultAccessorSource,
@@ -171,10 +168,10 @@ class ValueParameter(
                 type.copyWithNewSourceKind(KtFakeSourceElementKind.DefaultAccessor),
                 modifiers.getVisibility(),
                 symbol,
-                parameterAnnotations = modifiers.annotations.filterUseSiteTarget(AnnotationUseSiteTarget.SETTER_PARAMETER)
+                parameterAnnotations = modifiers.annotations.filterUseSiteTarget(SETTER_PARAMETER)
             ).also {
                 it.initContainingClassAttr(context)
-                it.replaceAnnotations(modifiers.annotations.filterUseSiteTarget(AnnotationUseSiteTarget.PROPERTY_SETTER))
+                it.replaceAnnotations(modifiers.annotations.filterUseSiteTarget(PROPERTY_SETTER))
             } else null
         }.apply {
             if (firValueParameter.isVararg) {

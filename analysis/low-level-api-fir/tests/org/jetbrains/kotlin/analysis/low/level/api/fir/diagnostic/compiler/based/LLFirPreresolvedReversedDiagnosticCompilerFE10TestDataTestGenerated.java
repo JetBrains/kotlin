@@ -1447,6 +1447,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
             }
 
             @Test
+            @TestMetadata("annotationsOnDataClassCopy.kt")
+            public void testAnnotationsOnDataClassCopy() throws Exception {
+                runTest("compiler/testData/diagnostics/tests/annotations/annotationsOnDataClassCopy.kt");
+            }
+
+            @Test
             @TestMetadata("annotationsOnLambdaAsCallArgument.kt")
             public void testAnnotationsOnLambdaAsCallArgument() throws Exception {
                 runTest("compiler/testData/diagnostics/tests/annotations/annotationsOnLambdaAsCallArgument.kt");

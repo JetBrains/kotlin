@@ -9,6 +9,7 @@ import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.fir.*
@@ -248,9 +249,20 @@ open class FirTypeResolveTransformer(
         withScopeCleanup {
             withDeclaration(simpleFunction) {
                 addTypeParametersScope(simpleFunction)
-                transformDeclaration(simpleFunction, data).also {
+                val result = transformDeclaration(simpleFunction, data).also {
                     unboundCyclesInTypeParametersSupertypes(it as FirTypeParametersOwner)
                 }
+
+                if (result.source?.kind == KtFakeSourceElementKind.DataClassGeneratedMembers &&
+                    result is FirSimpleFunction &&
+                    result.name == StandardNames.DATA_CLASS_COPY
+                ) {
+                    for (valueParameter in result.valueParameters) {
+                        valueParameter.moveOrDeleteIrrelevantAnnotations()
+                    }
+                }
+
+                result
             }
         } as FirSimpleFunction
     }
@@ -521,3 +533,20 @@ open class FirTypeResolveTransformer(
     private fun annotationShouldBeMovedToField(allowedTargets: Set<AnnotationUseSiteTarget>): Boolean =
         (FIELD in allowedTargets || PROPERTY_DELEGATE_FIELD in allowedTargets) && PROPERTY !in allowedTargets
 }
+
+annotation class NoTarget
+
+@Target(AnnotationTarget.VALUE_PARAMETER)
+annotation class Param
+
+@Target(AnnotationTarget.PROPERTY)
+annotation class Prop
+
+@Target(AnnotationTarget.PROPERTY, AnnotationTarget.VALUE_PARAMETER)
+annotation class Both
+
+data class Foo(
+    @NoTarget @Param @Prop @Both val p1: Int,
+    @param:NoTarget @param:Both val p2: String,
+    @property:NoTarget @property:Both val p3: Boolean,
+)
