@@ -224,6 +224,7 @@ public interface BindingContext {
         }
     };
     WritableSlice<PropertyDescriptor, Boolean> IS_UNINITIALIZED = Slices.createSimpleSetSlice();
+    WritableSlice<PropertyDescriptor, Boolean> IS_DEFINITELY_NOT_ASSIGNED_IN_CONSTRUCTOR = Slices.createSimpleSetSlice();
     WritableSlice<PropertyDescriptor, Boolean> MUST_BE_LATEINIT = Slices.createSimpleSetSlice();
 
     WritableSlice<KtLambdaExpression, EventOccurrencesRange> LAMBDA_INVOCATIONS = Slices.createSimpleSlice();
