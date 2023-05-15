@@ -14,9 +14,15 @@ configurations {
     nodeModules {
         extendsFrom api
         attributes {
+            attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category, Category.LIBRARY))
             attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage, KotlinUsages.KOTLIN_RUNTIME))
             attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
             attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.legacy)
+        }
+    }
+    [compileClasspath, testCompileClasspath, testRuntimeClasspath].forEach {
+        it.attributes {
+            attribute(org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute.jsCompilerAttribute, org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute.legacy)
         }
     }
 }
