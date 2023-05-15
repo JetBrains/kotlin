@@ -14,14 +14,9 @@ import org.jetbrains.kotlin.analysis.api.symbols.KtCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
-import org.jetbrains.kotlin.analysis.providers.impl.forEachNonKotlinPsiElementFinder
-import org.jetbrains.kotlin.fir.extensions.FirExtensionService
-import org.jetbrains.kotlin.fir.extensions.declarationGenerators
-import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.platform.jvm.isJvm
 
 internal class KtFirPackageScope(
     private val fqName: FqName,
@@ -33,62 +28,12 @@ internal class KtFirPackageScope(
         FirPackageMemberScope(fqName, analysisSession.useSiteSession)
     }
 
-    private val firExtensionService: FirExtensionService
-        get() = firScope.session.extensionService
-
     override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
-        hashSetOf<Name>().apply {
-            addAll(analysisSession.useSiteScopeDeclarationProvider.getTopLevelCallableNamesInPackage(fqName))
-            addAll(collectGeneratedTopLevelCallables())
-        }
+        DeclarationsInPackageProvider.getTopLevelCallableNamesInPackageProvider(fqName, analysisSession)
     }
 
     override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion {
-        hashSetOf<Name>().apply {
-            addAll(analysisSession.useSiteScopeDeclarationProvider.getTopLevelKotlinClassLikeDeclarationNamesInPackage(fqName))
-
-            when {
-                analysisSession.targetPlatform.isJvm() -> {
-                    forEachNonKotlinPsiElementFinder(analysisSession.project) { finder ->
-                        finder.findPackage(fqName.asString())
-                            ?.getClasses(analysisSession.useSiteAnalysisScope)
-                            ?.mapNotNullTo(this) { it.name?.let(Name::identifier) }
-                    }
-                }
-            }
-
-            addAll(collectGeneratedTopLevelClassifiers())
-        }
-    }
-
-    private fun collectGeneratedTopLevelCallables(): Set<Name> {
-        val generators = firExtensionService.declarationGenerators
-
-        val generatedTopLevelDeclarations = generators
-            .asSequence()
-            .flatMap {
-                // FIXME this function should be called only once during plugin's lifetime, so this usage is not really correct (1)
-                it.getTopLevelCallableIds()
-            }
-            .filter { it.packageName == fqName }
-            .map { it.callableName }
-
-        return generatedTopLevelDeclarations.toSet()
-    }
-
-    private fun collectGeneratedTopLevelClassifiers(): Set<Name> {
-        val declarationGenerators = firExtensionService.declarationGenerators
-
-        val generatedTopLevelClassifiers = declarationGenerators
-            .asSequence()
-            .flatMap {
-                // FIXME this function should be called only once during plugin's lifetime, so this usage is not really correct (2)
-                it.getTopLevelClassIds()
-            }
-            .filter { it.packageFqName == fqName }
-            .map { it.shortClassName }
-
-        return generatedTopLevelClassifiers.toSet()
+        DeclarationsInPackageProvider.getTopLevelClassifierNamesInPackageProvider(fqName, analysisSession)
     }
 
     override fun getCallableSymbols(nameFilter: KtScopeNameFilter): Sequence<KtCallableSymbol> = withValidityAssertion {
