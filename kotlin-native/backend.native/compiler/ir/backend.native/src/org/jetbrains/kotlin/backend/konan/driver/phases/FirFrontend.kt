@@ -24,7 +24,7 @@ internal val FIRPhase = createSimpleNamedCompilerPhase(
         outputIfNotEnabled = { _, _, _, _ -> FirOutput.ShouldNotGenerateCode }
 ) { context: PhaseContext, input: KotlinCoreEnvironment ->
     if (input.configuration.getBoolean(CommonConfigurationKeys.USE_LIGHT_TREE)) {
-        context.firFrontendWithLightTree(input)
+        context.firFrontendWithLightTree(input) // should be default
     } else {
         context.firFrontendWithPsi(input)
     }
