@@ -79,6 +79,8 @@ internal fun PartialLinkageCase.renderLinkageError(): String = buildString {
 
         is UnimplementedAbstractCallable -> unimplementedAbstractCallable(callable)
         is UnusableAnnotation -> unusableAnnotation(annotationConstructorSymbol, holderDeclarationSymbol)
+
+        is AmbiguousNonOverriddenCallable -> ambiguousNonOverriddenCallable(callable)
     }
 }
 
@@ -587,6 +589,13 @@ private fun Appendable.unimplementedAbstractCallable(callable: IrOverridableDecl
 private fun Appendable.unusableAnnotation(annotationConstructorSymbol: IrConstructorSymbol, holderDeclarationSymbol: IrSymbol): Appendable =
     append("Unusable annotation ").declarationName(annotationConstructorSymbol)
         .append(" has been removed from ").declarationKindName(holderDeclarationSymbol, capitalized = false)
+
+private fun Appendable.ambiguousNonOverriddenCallable(callable: IrOverridableDeclaration<*>): Appendable =
+    declarationKindName(callable.symbol, capitalized = true)
+        .append(" in ")
+        .declarationKindName(callable.parentAsClass.symbol, capitalized = false)
+        .append(" inherits more than one default implementation")
+
 
 private fun Appendable.appendCapitalized(text: String, capitalized: Boolean): Appendable {
     if (capitalized && text.isNotEmpty()) {

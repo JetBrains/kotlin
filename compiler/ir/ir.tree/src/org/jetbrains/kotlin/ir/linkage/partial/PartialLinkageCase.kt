@@ -172,4 +172,11 @@ sealed interface PartialLinkageCase {
         val annotationConstructorSymbol: IrConstructorSymbol,
         val holderDeclarationSymbol: IrSymbol
     ) : PartialLinkageCase
+
+    /**
+     * Callable, which is not implemented, but inherited several implementations from super interfaces.
+     *
+     * Applicable to: Declarations (functions, properties).
+     */
+    class AmbiguousNonOverriddenCallable(val callable: IrOverridableDeclaration<*>) : PartialLinkageCase
 }

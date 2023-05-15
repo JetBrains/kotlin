@@ -25,8 +25,12 @@ abstract class FakeOverrideBuilderStrategy(
     private val friendModules: Map<String, Collection<String>>,
     private val unimplementedOverridesStrategy: IrUnimplementedOverridesStrategy
 ) {
-    open fun fakeOverrideMember(superType: IrType, member: IrOverridableMember, clazz: IrClass): IrOverridableMember =
+    fun fakeOverrideMember(superType: IrType, member: IrOverridableMember, clazz: IrClass): IrOverridableMember =
         buildFakeOverrideMember(superType, member, clazz, friendModules, unimplementedOverridesStrategy)
+
+    fun postProcessGeneratedFakeOverride(fakeOverride: IrOverridableMember, clazz: IrClass) {
+        unimplementedOverridesStrategy.postProcessGeneratedFakeOverride(fakeOverride as IrOverridableDeclaration<*>, clazz)
+    }
 
     fun linkFakeOverride(fakeOverride: IrOverridableMember, compatibilityMode: Boolean) {
         when (fakeOverride) {
@@ -437,6 +441,7 @@ class IrOverridingUtil(
 
         addedFakeOverrides.add(fakeOverride)
         fakeOverrideBuilder.linkFakeOverride(fakeOverride, compatibilityMode)
+        fakeOverrideBuilder.postProcessGeneratedFakeOverride(fakeOverride, currentClass)
     }
 
     private fun isVisibilityMoreSpecific(

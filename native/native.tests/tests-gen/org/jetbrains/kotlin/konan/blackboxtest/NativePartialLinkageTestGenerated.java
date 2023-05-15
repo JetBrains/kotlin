@@ -145,6 +145,12 @@ public class NativePartialLinkageTestGenerated extends AbstractNativePartialLink
     }
 
     @Test
+    @TestMetadata("severalInheritedImplementations")
+    public void testSeveralInheritedImplementations() throws Exception {
+        runTest("compiler/testData/klibABI/severalInheritedImplementations/");
+    }
+
+    @Test
     @TestMetadata("typeAliasChanges")
     public void testTypeAliasChanges() throws Exception {
         runTest("compiler/testData/klibABI/typeAliasChanges/");
