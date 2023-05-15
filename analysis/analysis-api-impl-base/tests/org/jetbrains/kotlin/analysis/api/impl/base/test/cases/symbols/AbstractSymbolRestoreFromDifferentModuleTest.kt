@@ -32,8 +32,9 @@ abstract class AbstractSymbolRestoreFromDifferentModuleTest : AbstractAnalysisAp
                 caretTag = "restoreAt"
             ).single().first
 
-        val declarationModule = ProjectStructureProvider.getModule(declaration, contextualModule = null)
-        val restoreAtModule = ProjectStructureProvider.getModule(restoreAt, contextualModule = null)
+        val project = declaration.project
+        val declarationModule = ProjectStructureProvider.getModule(project, declaration, contextualModule = null)
+        val restoreAtModule = ProjectStructureProvider.getModule(project, restoreAt, contextualModule = null)
 
         val (debugRendered, prettyRendered, pointer) = analyseForTest(declaration) {
             val symbol = declaration.getSymbol()

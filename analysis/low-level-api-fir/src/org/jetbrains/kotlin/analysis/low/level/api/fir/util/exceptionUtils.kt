@@ -66,7 +66,7 @@ fun errorWithFirSpecificEntries(
         }
 
         if (psi != null) {
-            withPsiEntry("psi", psi, ProjectStructureProvider.getModule(psi, contextualModule = null))
+            withPsiEntry("psi", psi, ProjectStructureProvider.getModule(psi.project, psi, contextualModule = null))
         }
 
         if (coneType != null) {

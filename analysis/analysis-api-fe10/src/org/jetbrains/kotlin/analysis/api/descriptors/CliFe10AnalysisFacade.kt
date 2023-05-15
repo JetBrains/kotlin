@@ -68,8 +68,9 @@ class CliFe10AnalysisFacade : Fe10AnalysisFacade {
     }
 
     private fun getHandler(useSiteElement: KtElement): KtFe10AnalysisHandlerExtension {
-        val ktModule = ProjectStructureProvider.getModule(useSiteElement, contextualModule = null)
-        return KtFe10AnalysisHandlerExtension.getInstance(ktModule.project, ktModule)
+        val project = useSiteElement.project
+        val ktModule = ProjectStructureProvider.getModule(project, useSiteElement, contextualModule = null)
+        return KtFe10AnalysisHandlerExtension.getInstance(project, ktModule)
     }
 }
 

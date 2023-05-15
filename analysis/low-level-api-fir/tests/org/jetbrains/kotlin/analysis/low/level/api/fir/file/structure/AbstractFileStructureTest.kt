@@ -102,7 +102,7 @@ abstract class AbstractFileStructureTest : AbstractLowLevelApiSingleFileTest() {
     }
 
     private fun KtFile.getFileStructure(): FileStructure {
-        val module = ProjectStructureProvider.getModule(this, contextualModule = null)
+        val module = ProjectStructureProvider.getModule(project, this, contextualModule = null)
         val moduleFirResolveSession = module.getFirResolveSession(project)
         check(moduleFirResolveSession.isSourceSession)
         val session = moduleFirResolveSession.getSessionFor(module) as LLFirResolvableModuleSession

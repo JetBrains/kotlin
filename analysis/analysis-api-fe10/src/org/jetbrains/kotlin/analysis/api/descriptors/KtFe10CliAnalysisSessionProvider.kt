@@ -18,7 +18,7 @@ import java.lang.UnsupportedOperationException
 @OptIn(KtAnalysisApiInternals::class)
 class KtFe10AnalysisSessionProvider(project: Project) : KtAnalysisSessionProvider(project) {
     override fun getAnalysisSession(useSiteKtElement: KtElement, factory: KtLifetimeTokenFactory): KtAnalysisSession {
-        return KtFe10AnalysisSession(useSiteKtElement, factory.create(project))
+        return KtFe10AnalysisSession(project, useSiteKtElement, factory.create(project))
     }
 
     override fun getAnalysisSessionByUseSiteKtModule(useSiteKtModule: KtModule, factory: KtLifetimeTokenFactory): KtAnalysisSession {

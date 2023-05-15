@@ -94,7 +94,11 @@ abstract class KtSimpleNameReference(expression: KtSimpleNameExpression) : KtSim
     abstract fun getImportAlias(): KtImportAlias?
 
     private fun isAssignmentResolved(project: Project, binaryExpression: KtBinaryExpression): Boolean {
-        val sourceModule = ProjectStructureProvider.getModule(binaryExpression, contextualModule = null) as? KtSourceModule ?: return false
+        val sourceModule = ProjectStructureProvider.getModule(project, binaryExpression, contextualModule = null)
+        if (sourceModule !is KtSourceModule) {
+            return false
+        }
+
         val reference = binaryExpression.operationReference.reference ?: return false
         val pluginPresenceService = project.getService(KtCompilerPluginsProvider::class.java)
             ?: error("KtAssignResolutionPresenceService is not available as a service")

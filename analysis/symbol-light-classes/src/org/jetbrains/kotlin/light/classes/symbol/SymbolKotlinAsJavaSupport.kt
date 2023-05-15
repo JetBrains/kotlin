@@ -94,7 +94,7 @@ class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupportBase<KtMo
             .map { fqn.child(it) }
 
     override fun createInstanceOfLightScript(script: KtScript): KtLightClass {
-        val module = ProjectStructureProvider.getModule(script, contextualModule = null)
+        val module = ProjectStructureProvider.getModule(project, script, contextualModule = null)
         return SymbolLightClassForScript(script, module)
     }
 

@@ -29,8 +29,8 @@ public abstract class ProjectStructureProvider {
             return project.getService(ProjectStructureProvider::class.java)
         }
 
-        public fun getModule(element: PsiElement, contextualModule: KtModule?): KtModule {
-            return getInstance(element.project).getModule(element, contextualModule)
+        public fun getModule(project: Project, element: PsiElement, contextualModule: KtModule?): KtModule {
+            return getInstance(project).getModule(element, contextualModule)
         }
     }
 }

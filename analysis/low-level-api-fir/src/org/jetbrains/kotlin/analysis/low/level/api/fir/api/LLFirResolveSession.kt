@@ -61,5 +61,5 @@ abstract class LLFirResolveSession {
 }
 
 fun LLFirResolveSession.getModule(element: PsiElement): KtModule {
-    return ProjectStructureProvider.getModule(element, useSiteKtModule)
+    return ProjectStructureProvider.getModule(project, element, useSiteKtModule)
 }

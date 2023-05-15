@@ -40,7 +40,7 @@ internal fun FirDeclaration.name(): String = symbol.name()
 
 internal inline fun <R> resolveWithClearCaches(context: KtElement, action: (LLFirResolveSession) -> R): R {
     val project = context.project
-    val module = ProjectStructureProvider.getModule(context, contextualModule = null)
+    val module = ProjectStructureProvider.getModule(project, context, contextualModule = null)
     val resolveSession = LLFirResolveSessionService.getInstance(project).getFirResolveSessionNoCaching(module)
     return action(resolveSession)
 }

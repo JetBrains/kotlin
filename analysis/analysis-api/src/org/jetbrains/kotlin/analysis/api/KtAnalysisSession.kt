@@ -182,5 +182,5 @@ public abstract class KtAnalysisSession(final override val token: KtLifetimeToke
 }
 
 public fun KtAnalysisSession.getModule(element: PsiElement): KtModule {
-    return ProjectStructureProvider.getModule(element, useSiteModule)
+    return ProjectStructureProvider.getModule(useSiteModule.project, element, useSiteModule)
 }

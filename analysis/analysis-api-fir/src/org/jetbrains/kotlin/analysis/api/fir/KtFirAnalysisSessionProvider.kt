@@ -36,7 +36,7 @@ class KtFirAnalysisSessionProvider(project: Project) : KtAnalysisSessionProvider
     }
 
     override fun getAnalysisSession(useSiteKtElement: KtElement, factory: KtLifetimeTokenFactory): KtAnalysisSession {
-        val module = ProjectStructureProvider.getModule(useSiteKtElement, contextualModule = null)
+        val module = ProjectStructureProvider.getModule(project, useSiteKtElement, contextualModule = null)
         return getAnalysisSessionByUseSiteKtModule(module, factory)
     }
 
