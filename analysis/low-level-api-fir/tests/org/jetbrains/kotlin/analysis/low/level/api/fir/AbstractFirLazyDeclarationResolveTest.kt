@@ -5,10 +5,14 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.collectDesignationWithFile
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.asResolveTarget
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirResolvableModuleSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.base.AbstractLowLevelApiSingleFileTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyResolverRunner
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -50,13 +54,28 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractLowLevelApiSingle
 
         resolveWithClearCaches(ktFile) { firResolveSession ->
             check(firResolveSession.isSourceSession)
-            val ktDeclaration = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtDeclaration>(ktFile)
-            val declarationSymbol = ktDeclaration.resolveToFirSymbol(firResolveSession)
-            val declarationToResolve = chooseMemberDeclarationIfNeeded(declarationSymbol, moduleStructure)
+            val resolver = if (Directives.RESOLVE_FILE_ANNOTATIONS in moduleStructure.allDirectives) {
+                val annotationContainer = firResolveSession.getOrBuildFirFile(ktFile).annotationsContainer
+                val session = annotationContainer.moduleData.session as LLFirResolvableModuleSession
+                fun(phase: FirResolvePhase) {
+                    session.moduleComponents.firModuleLazyDeclarationResolver.lazyResolve(
+                        annotationContainer,
+                        session.getScopeSession(),
+                        phase,
+                    )
+                }
+            } else {
+                val ktDeclaration = testServices.expressionMarkerProvider.getElementOfTypeAtCaret<KtDeclaration>(ktFile)
+                val declarationSymbol = ktDeclaration.resolveToFirSymbol(firResolveSession)
+                val firDeclaration = chooseMemberDeclarationIfNeeded(declarationSymbol, moduleStructure)
+                fun(phase: FirResolvePhase) {
+                    firDeclaration.lazyResolveToPhase(phase)
+                }
+            }
 
             for (currentPhase in FirResolvePhase.values()) {
                 if (currentPhase == FirResolvePhase.SEALED_CLASS_INHERITORS) continue
-                declarationToResolve.lazyResolveToPhase(currentPhase)
+                resolver(currentPhase)
 
                 val firFile = firResolveSession.getOrBuildFirFile(ktFile)
                 if (resultBuilder.isNotEmpty()) {
@@ -124,6 +143,8 @@ abstract class AbstractFirLazyDeclarationResolveTest : AbstractLowLevelApiSingle
                 symbol.name() == value
             }
         }
+
+        val RESOLVE_FILE_ANNOTATIONS by directive("Resolve file annotations instead of declaration at caret")
     }
 }
 

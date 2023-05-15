@@ -181,6 +181,12 @@ public class FirOutOfContentRootLazyDeclarationResolveTestGenerated extends Abst
     }
 
     @Test
+    @TestMetadata("fileAnnotations.kt")
+    public void testFileAnnotations() throws Exception {
+        runTest("analysis/low-level-api-fir/testdata/lazyResolve/fileAnnotations.kt");
+    }
+
+    @Test
     @TestMetadata("fromLocalHierarchyToOuter.kt")
     public void testFromLocalHierarchyToOuter() throws Exception {
         runTest("analysis/low-level-api-fir/testdata/lazyResolve/fromLocalHierarchyToOuter.kt");
