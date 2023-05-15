@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.providers.impl
 
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.providers.KotlinPackageProvider
 import org.jetbrains.kotlin.name.FqName
@@ -29,7 +28,7 @@ public abstract class KotlinPackageProviderBase(
         when {
             platform.isJvm() -> {
                 val fqNameString = packageFqName.asString()
-                forEachNonKotlinPsiElementFinder { finder ->
+                forEachNonKotlinPsiElementFinder(project) { finder ->
                     val psiPackage = finder.findPackage(fqNameString)
                     if (psiPackage != null) {
                         // we cannot easily check if some PsiPackage is in GlobalSearchScope or not
@@ -60,7 +59,7 @@ public abstract class KotlinPackageProviderBase(
         platform.isJvm() -> {
             val fqNameString = packageFqName.asString()
             buildSet {
-                forEachNonKotlinPsiElementFinder { finder ->
+                forEachNonKotlinPsiElementFinder(project) { finder ->
                     val psiPackage = finder.findPackage(fqNameString) ?: return@forEachNonKotlinPsiElementFinder
                     for (subPackage in finder.getSubPackages(psiPackage, searchScope)) {
                         val name = subPackage.name?.let(Name::identifierIfValid) ?: continue
@@ -74,21 +73,6 @@ public abstract class KotlinPackageProviderBase(
             // non-JVM platforms are not supported yet
             emptySet()
         }
-    }
-
-    private inline fun forEachNonKotlinPsiElementFinder(action: (PsiElementFinder) -> Unit) {
-        for (finder in PsiElementFinder.EP.getPoint(project).extensionList) {
-            if (finder::class.java.name == KOTLIN_JAVA_ELEMENT_FINDER_CLASS_NAME) {
-                // ignore kotlin package finder
-                // kotlin packages will be handled by KotlinPackageProvider.doesKotlinOnlyPackageExist/getKotlinOnlySubPackagesFqNames
-                continue
-            }
-            action(finder)
-        }
-    }
-
-    private companion object {
-        private const val KOTLIN_JAVA_ELEMENT_FINDER_CLASS_NAME = "org.jetbrains.kotlin.asJava.finder.JavaElementFinder"
     }
 }
 
