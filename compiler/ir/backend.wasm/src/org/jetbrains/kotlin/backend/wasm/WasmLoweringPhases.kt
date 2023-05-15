@@ -466,12 +466,6 @@ private val autoboxingTransformerPhase = makeWasmModulePhase(
     description = "Insert box/unbox intrinsics"
 )
 
-private val wasmNullSpecializationLowering = makeWasmModulePhase(
-    { context -> WasmNullCoercingLowering(context) },
-    name = "WasmNullCoercingLowering",
-    description = "Specialize assigning Nothing? values to other types."
-)
-
 private val staticMembersLoweringPhase = makeWasmModulePhase(
     ::StaticMembersLowering,
     name = "StaticMembersLowering",
@@ -715,6 +709,5 @@ val wasmPhases = SameTypeNamedCompilerPhase(
 
             virtualDispatchReceiverExtractionPhase then
             staticMembersLoweringPhase then
-            wasmNullSpecializationLowering then
             validateIrAfterLowering
 )
