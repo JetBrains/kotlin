@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseWithCallableMembers
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtElement
@@ -110,22 +111,23 @@ internal class KtFirScopeProvider(
                 builder
             )
         }
+
         val firScope = classSymbol.withFirForScope {
             when (val regularClass = classSymbol.firSymbol.fir) {
                 is FirJavaClass -> buildJavaEnhancementDeclaredMemberScope(useSiteSession, regularClass.symbol, getScopeSession())
                 else -> useSiteSession.declaredMemberScope(it)
             }
         } ?: return getEmptyScope()
+
         return KtFirDelegatingNamesAwareScope(firScope, builder)
     }
 
     override fun getDelegatedMemberScope(classSymbol: KtSymbolWithMembers): KtScope {
-        val declaredScope = (getDeclaredMemberScope(classSymbol) as? KtFirDelegatingNamesAwareScope)?.firScope
-            ?: return getEmptyScope()
+        val declaredScope = (getDeclaredMemberScope(classSymbol) as? KtFirDelegatingNamesAwareScope)?.firScope ?: return getEmptyScope()
         val firScope = classSymbol.withFirForScope { fir ->
-            fir.lazyResolveToPhase(FirResolvePhase.STATUS)
             val delegateFields = fir.delegateFields
             if (delegateFields.isNotEmpty()) {
+                fir.lazyResolveToPhaseWithCallableMembers(FirResolvePhase.STATUS)
                 val firSession = analysisSession.useSiteSession
                 FirDelegatedMemberScope(
                     firSession,
