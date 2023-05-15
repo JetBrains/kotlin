@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.FirResult
 import org.jetbrains.kotlin.fir.pipeline.ModuleCompilerAnalyzedOutput
-import org.jetbrains.kotlin.fir.pipeline.buildResolveAndCheckFir
+import org.jetbrains.kotlin.fir.pipeline.buildResolveAndCheckFirViaLightTree
+import org.jetbrains.kotlin.fir.pipeline.buildResolveAndCheckFirFromKtFiles
 import org.jetbrains.kotlin.fir.resolve.ImplicitIntegerCoercionModuleCapability
 import org.jetbrains.kotlin.fir.scopes.FirOverrideChecker
 import org.jetbrains.kotlin.library.isInterop
@@ -105,7 +106,7 @@ internal fun PhaseContext.firFrontendWithPsi(input: KotlinCoreEnvironment): FirO
             isCommonSource = isCommonSourceForPsi,
             fileBelongsToModule = fileBelongsToModuleForPsi,
             buildResolveAndCheckFir = { session, files ->
-                buildResolveAndCheckFir(session, files, diagnosticsReporter)
+                buildResolveAndCheckFirFromKtFiles(session, files, diagnosticsReporter)
             },
     )
 }
@@ -130,7 +131,7 @@ internal fun PhaseContext.firFrontendWithLightTree(input: KotlinCoreEnvironment)
             isCommonSource = { groupedSources.isCommonSourceForLt(it) },
             fileBelongsToModule = { file, it -> groupedSources.fileBelongsToModuleForLt(file, it) },
             buildResolveAndCheckFir = { session, files ->
-                buildResolveAndCheckFir(session, files, diagnosticsReporter, null)
+                buildResolveAndCheckFirViaLightTree(session, files, diagnosticsReporter, null)
             },
     )
 }
