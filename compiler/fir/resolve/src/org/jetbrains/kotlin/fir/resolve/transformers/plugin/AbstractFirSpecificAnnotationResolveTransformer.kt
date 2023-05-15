@@ -347,7 +347,6 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
     fun withFileAndFileScopes(file: FirFile, action: () -> Unit) {
         withFile(file) {
             withFileScopes(file) {
-                scopes = createImportingScopes(file, session, scopeSession, useCaching = false)
                 transformChildren(file) {
                     action()
                 }
