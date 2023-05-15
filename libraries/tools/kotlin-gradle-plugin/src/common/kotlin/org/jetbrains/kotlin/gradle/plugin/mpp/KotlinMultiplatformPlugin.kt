@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin.Companio
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.addBuildListenerForXcode
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal.runDeprecationDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.copyAttributes
+import org.jetbrains.kotlin.gradle.plugin.mpp.targetHierarchy.setupDefaultKotlinTargetHierarchy
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultLanguageSettingsBuilder
 import org.jetbrains.kotlin.gradle.plugin.sources.checkSourceSetVisibilityRequirements
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
@@ -56,6 +57,7 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
         setupDefaultPresets(project)
         customizeKotlinDependencies(project)
         configureSourceSets(project)
+        setupTargetsBuildStatsReport(project)
 
         // set up metadata publishing
         kotlinMultiplatformExtension.targetFromPreset(
@@ -85,7 +87,7 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
     }
 
     private fun exportProjectStructureMetadataForOtherBuilds(
-        extension: KotlinMultiplatformExtension
+        extension: KotlinMultiplatformExtension,
     ) {
         GlobalProjectStructureMetadataStorage.registerProjectStructureMetadata(extension.project) {
             extension.kotlinProjectStructureMetadata
@@ -167,34 +169,26 @@ class KotlinMultiplatformPlugin : Plugin<Project> {
     }
 
 
-    private fun configureSourceSets(project: Project) = with(project.multiplatformExtension) {
-        val production = sourceSets.create(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME)
-        val test = sourceSets.create(KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME)
-        targets.all { target ->
-            project.launchInStage(KotlinPluginLifecycle.Stage.FinaliseRefinesEdges) {
-                /* Only setup default refines edges when no KotlinTargetHierarchy was applied */
-                if (project.multiplatformExtension.internalKotlinTargetHierarchy.appliedDescriptors.isNotEmpty()) return@launchInStage
+    private fun configureSourceSets(project: Project) {
+        project.multiplatformExtension.sourceSets.create(KotlinSourceSet.COMMON_MAIN_SOURCE_SET_NAME)
+        project.multiplatformExtension.sourceSets.create(KotlinSourceSet.COMMON_TEST_SOURCE_SET_NAME)
 
-                target.compilations.findByName(KotlinCompilation.MAIN_COMPILATION_NAME)?.let { mainCompilation ->
-                    mainCompilation.defaultSourceSet.takeIf { it != production }?.dependsOn(production)
-                }
-
-                target.compilations.findByName(KotlinCompilation.TEST_COMPILATION_NAME)?.let { testCompilation ->
-                    testCompilation.defaultSourceSet.takeIf { it != test }?.dependsOn(test)
-                }
-            }
-
-            val targetName = if (target is KotlinNativeTarget)
-                target.konanTarget.name
-            else
-                target.platformType.name
-            KotlinBuildStatsService.getInstance()?.report(StringMetrics.MPP_PLATFORMS, targetName)
+        project.launch {
+            project.setupDefaultKotlinTargetHierarchy()
         }
 
         project.launchInStage(KotlinPluginLifecycle.Stage.ReadyForExecution) {
             project.runProjectConfigurationHealthCheck {
                 checkSourceSetVisibilityRequirements(project)
             }
+        }
+    }
+
+    private fun setupTargetsBuildStatsReport(project: Project) {
+        project.project.multiplatformExtension.targets.all { target ->
+            val targetName = if (target is KotlinNativeTarget) target.konanTarget.name
+            else target.platformType.name
+            KotlinBuildStatsService.getInstance()?.report(StringMetrics.MPP_PLATFORMS, targetName)
         }
     }
 
@@ -277,7 +271,7 @@ private fun sourcesJarTask(
     project: Project,
     sourceSets: Future<Map<String, Iterable<File>>>,
     taskNamePrefix: String,
-    artifactNameAppendix: String
+    artifactNameAppendix: String,
 ): TaskProvider<Jar> =
     sourcesJarTaskNamed(lowerCamelCaseName(taskNamePrefix, "sourcesJar"), taskNamePrefix, project, sourceSets, artifactNameAppendix)
 
