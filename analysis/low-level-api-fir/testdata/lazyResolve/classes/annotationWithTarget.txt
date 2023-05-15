@@ -134,12 +134,12 @@ STATUS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithTarget.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] annotation class ResolveMe : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/ResolveMe.value] value: R|kotlin/Int|): R|ResolveMe| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/ResolveMe.value] value: Int): R|ResolveMe| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] get(): R|kotlin/Int|
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] get(): Int
 
     }
     public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -156,12 +156,12 @@ EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] annotationWithTarget.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] annotation class ResolveMe : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/ResolveMe.value] value: R|kotlin/Int|): R|ResolveMe| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/ResolveMe.value] value: Int): R|ResolveMe| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] get(): R|kotlin/Int|
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] get(): Int
 
     }
     public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -178,12 +178,12 @@ ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithTarget.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|) @R|Anno|[Types](String(string)) public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] annotation class ResolveMe : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/ResolveMe.value] value: R|kotlin/Int|): R|ResolveMe| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/ResolveMe.value] value: Int): R|ResolveMe| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] get(): R|kotlin/Int|
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] get(): Int
 
     }
     public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -200,12 +200,12 @@ CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] annotationWithTarget.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|) @R|Anno|[Types](String(string)) public final [ResolvedTo(CONTRACTS)] annotation class ResolveMe : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/ResolveMe.value] value: R|kotlin/Int|): R|ResolveMe| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/ResolveMe.value] value: Int): R|ResolveMe| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] get(): R|kotlin/Int|
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] get(): Int
 
     }
     public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -222,12 +222,12 @@ IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] annotationWithTarget.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|) @R|Anno|[Types](String(string)) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] annotation class ResolveMe : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/ResolveMe.value] value: R|kotlin/Int|): R|ResolveMe| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/ResolveMe.value] value: Int): R|ResolveMe| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] get(): R|kotlin/Int|
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] get(): Int
 
     }
     public? final? [ResolvedTo(RAW_FIR)] annotation class Anno : R|kotlin/Annotation| {
@@ -244,12 +244,12 @@ ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] annotationWithTarget.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.CLASS|)) @R|Anno|[Types](s = String(string)) public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] annotation class ResolveMe : R|kotlin/Annotation| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/ResolveMe.value] value: R|kotlin/Int|): R|ResolveMe| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/ResolveMe.value] value: Int): R|ResolveMe| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] val value: R|kotlin/Int| = R|<local>/value|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] get(): R|kotlin/Int|
+        public? final? [ResolvedTo(RAW_FIR)] [IsFromPrimaryConstructor=true] val value: Int = R|<local>/value|
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] get(): Int
 
     }
     public final [ResolvedTo(STATUS)] annotation class Anno : R|kotlin/Annotation| {

@@ -181,180 +181,180 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
 STATUS:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
-    public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
-        public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
+    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo1 : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
-        public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
+        public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
 
-        public abstract [ResolvedTo(STATUS)] val str: R|kotlin/String|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
+        public? final? [ResolvedTo(RAW_FIR)] val str: String
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo1] get(): String
 
     }
-    public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
-        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
+    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : R|Foo1| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
 
-        public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
+        public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
 
-        public abstract [ResolvedTo(STATUS)] val isBoo: R|kotlin/Boolean|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
+        public? final? [ResolvedTo(RAW_FIR)] val isBoo: Boolean
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo2] get(): Boolean
 
     }
     public abstract [ResolvedTo(STATUS)] class Usage : R|Foo2| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor(): R|Usage| {
             LAZY_super<<implicit>>
         }
 
-        public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
 EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
-    public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
-        public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
+    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo1 : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
-        public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
+        public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
 
-        public abstract [ResolvedTo(STATUS)] val str: R|kotlin/String|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
+        public? final? [ResolvedTo(RAW_FIR)] val str: String
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo1] get(): String
 
     }
-    public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
-        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
+    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : R|Foo1| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
 
-        public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
+        public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
 
-        public abstract [ResolvedTo(STATUS)] val isBoo: R|kotlin/Boolean|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
+        public? final? [ResolvedTo(RAW_FIR)] val isBoo: Boolean
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo2] get(): Boolean
 
     }
     public abstract [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class Usage : R|Foo2| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor(): R|Usage| {
             LAZY_super<<implicit>>
         }
 
-        public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
 ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
-    public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
-        public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
+    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo1 : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
-        public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
+        public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
 
-        public abstract [ResolvedTo(STATUS)] val str: R|kotlin/String|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
+        public? final? [ResolvedTo(RAW_FIR)] val str: String
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo1] get(): String
 
     }
-    public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
-        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
+    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : R|Foo1| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
 
-        public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
+        public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
 
-        public abstract [ResolvedTo(STATUS)] val isBoo: R|kotlin/Boolean|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
+        public? final? [ResolvedTo(RAW_FIR)] val isBoo: Boolean
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo2] get(): Boolean
 
     }
     public abstract [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] class Usage : R|Foo2| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor(): R|Usage| {
             LAZY_super<<implicit>>
         }
 
-        public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
 CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
-    public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
-        public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
+    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo1 : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
-        public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
+        public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
 
-        public abstract [ResolvedTo(STATUS)] val str: R|kotlin/String|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
+        public? final? [ResolvedTo(RAW_FIR)] val str: String
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo1] get(): String
 
     }
-    public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
-        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
+    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : R|Foo1| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
 
-        public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
+        public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
 
-        public abstract [ResolvedTo(STATUS)] val isBoo: R|kotlin/Boolean|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
+        public? final? [ResolvedTo(RAW_FIR)] val isBoo: Boolean
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo2] get(): Boolean
 
     }
     public abstract [ResolvedTo(CONTRACTS)] class Usage : R|Foo2| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor(): R|Usage| {
             LAZY_super<<implicit>>
         }
 
-        public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
 IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
-    public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
-        public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
+    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo1 : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
-        public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
+        public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
 
-        public abstract [ResolvedTo(STATUS)] val str: R|kotlin/String|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
+        public? final? [ResolvedTo(RAW_FIR)] val str: String
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo1] get(): String
 
     }
-    public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
-        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
+    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : R|Foo1| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
 
-        public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
+        public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
 
-        public abstract [ResolvedTo(STATUS)] val isBoo: R|kotlin/Boolean|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
+        public? final? [ResolvedTo(RAW_FIR)] val isBoo: Boolean
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo2] get(): Boolean
 
     }
     public abstract [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class Usage : R|Foo2| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor(): R|Usage| {
             LAZY_super<<implicit>>
         }
 
-        public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
 ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverride.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
-    public abstract [ResolvedTo(STATUS)] interface Foo1 : R|kotlin/Any| {
-        public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
+    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo1 : R|kotlin/Any| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
-        public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
+        public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
 
-        public abstract [ResolvedTo(STATUS)] val str: R|kotlin/String|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo1] get(): R|kotlin/String|
+        public? final? [ResolvedTo(RAW_FIR)] val str: String
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo1] get(): String
 
     }
-    public abstract [ResolvedTo(STATUS)] interface Foo2 : R|Foo1| {
-        public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
+    public? final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : R|Foo1| {
+        public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
 
-        public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
+        public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
 
-        public abstract [ResolvedTo(STATUS)] val isBoo: R|kotlin/Boolean|
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Foo2] get(): R|kotlin/Boolean|
+        public? final? [ResolvedTo(RAW_FIR)] val isBoo: Boolean
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Foo2] get(): Boolean
 
     }
     public abstract [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class Usage : R|Foo2| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Usage] constructor(): R|Usage| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Usage] constructor(): R|Usage| {
             LAZY_super<<implicit>>
         }
 
-        public open override [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+        public? open? override [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 

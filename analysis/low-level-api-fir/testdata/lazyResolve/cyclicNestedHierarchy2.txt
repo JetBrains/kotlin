@@ -153,8 +153,8 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2.kt
 
     }
     public open [ResolvedTo(STATUS)] class D : <ERROR TYPE REF: Loop in supertype: /D -> /C.CC> {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=D] constructor(): R|D| {
-            LAZY_super<R|C.CC|>
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor(): R|D| {
+            LAZY_super<C.CC>
         }
 
     }
@@ -176,8 +176,8 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2.kt
 
     }
     public open [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class D : <ERROR TYPE REF: Loop in supertype: /D -> /C.CC> {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=D] constructor(): R|D| {
-            LAZY_super<R|C.CC|>
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor(): R|D| {
+            LAZY_super<C.CC>
         }
 
     }
@@ -199,8 +199,8 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2.kt
 
     }
     public open [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] class D : <ERROR TYPE REF: Loop in supertype: /D -> /C.CC> {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=D] constructor(): R|D| {
-            LAZY_super<R|C.CC|>
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor(): R|D| {
+            LAZY_super<C.CC>
         }
 
     }
@@ -222,8 +222,8 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2.kt
 
     }
     public open [ResolvedTo(CONTRACTS)] class D : <ERROR TYPE REF: Loop in supertype: /D -> /C.CC> {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=D] constructor(): R|D| {
-            LAZY_super<R|C.CC|>
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor(): R|D| {
+            LAZY_super<C.CC>
         }
 
     }
@@ -245,8 +245,8 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2.kt
 
     }
     public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class D : <ERROR TYPE REF: Loop in supertype: /D -> /C.CC> {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=D] constructor(): R|D| {
-            LAZY_super<R|C.CC|>
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor(): R|D| {
+            LAZY_super<C.CC>
         }
 
     }
@@ -268,8 +268,8 @@ FILE: [ResolvedTo(IMPORTS)] cyclicNestedHierarchy2.kt
 
     }
     public open [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class D : <ERROR TYPE REF: Loop in supertype: /D -> /C.CC> {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=D] constructor(): R|D| {
-            LAZY_super<R|C.CC|>
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=D] constructor(): R|D| {
+            LAZY_super<C.CC>
         }
 
     }

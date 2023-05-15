@@ -188,8 +188,8 @@ STATUS:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] class OuterClass<[ResolvedTo(STATUS)] T1> : R|SuperForOuter| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(STATUS)] T1>(): R|OuterClass<T1>| {
-            LAZY_super<R|SuperForOuter|>
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(STATUS)] T1>(): R|OuterClass<T1>| {
+            LAZY_super<SuperForOuter>
         }
 
         public? final? [ResolvedTo(SUPER_TYPES)] class NestedClass<[ResolvedTo(SUPER_TYPES)] T2> : R|Another| {
@@ -208,8 +208,8 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias.kt
         }
 
     }
-    public open [ResolvedTo(STATUS)] class SuperForOuter : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=SuperForOuter] constructor(): R|SuperForOuter| {
+    public? open [ResolvedTo(SUPER_TYPES)] class SuperForOuter : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=SuperForOuter] constructor(): R|SuperForOuter| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -219,8 +219,8 @@ EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] class OuterClass<[ResolvedTo(STATUS)] T1> : R|SuperForOuter| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(STATUS)] T1>(): R|OuterClass<T1>| {
-            LAZY_super<R|SuperForOuter|>
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor<[ResolvedTo(STATUS)] T1>(): R|OuterClass<T1>| {
+            LAZY_super<SuperForOuter>
         }
 
         public? final? [ResolvedTo(SUPER_TYPES)] class NestedClass<[ResolvedTo(SUPER_TYPES)] T2> : R|Another| {
@@ -239,8 +239,8 @@ FILE: [ResolvedTo(IMPORTS)] nestedTypeAlias.kt
         }
 
     }
-    public open [ResolvedTo(STATUS)] class SuperForOuter : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=SuperForOuter] constructor(): R|SuperForOuter| {
+    public? open [ResolvedTo(SUPER_TYPES)] class SuperForOuter : R|kotlin/Any| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=SuperForOuter] constructor(): R|SuperForOuter| {
             LAZY_super<R|kotlin/Any|>
         }
 

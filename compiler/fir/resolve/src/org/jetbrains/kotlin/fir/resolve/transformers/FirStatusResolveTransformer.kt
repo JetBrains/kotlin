@@ -16,10 +16,12 @@ import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.LocalClassesNa
 import org.jetbrains.kotlin.fir.scopes.FirCompositeScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousObjectSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseWithCallableMembers
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.toSymbol
@@ -197,7 +199,7 @@ abstract class AbstractFirStatusResolveTransformer(
     val statusResolver = FirStatusResolver(session, scopeSession)
 
     @OptIn(PrivateForInline::class)
-    protected val containingClass: FirClass? get() = classes.lastOrNull()
+    val containingClass: FirClass? get() = classes.lastOrNull()
 
     protected abstract fun FirDeclaration.needResolveMembers(): Boolean
     protected abstract fun FirDeclaration.needResolveNestedClassifiers(): Boolean
@@ -332,7 +334,11 @@ abstract class AbstractFirStatusResolveTransformer(
     private fun forceResolveStatusOfCorrespondingClass(typeRef: FirTypeRef) {
         val superClassSymbol = typeRef.coneType.toSymbol(session)
         if (isTransformerForLocalDeclarations) {
-            superClassSymbol?.lazyResolveToPhase(FirResolvePhase.STATUS)
+            if (superClassSymbol is FirClassSymbol) {
+                superClassSymbol.lazyResolveToPhaseWithCallableMembers(FirResolvePhase.STATUS)
+            } else {
+                superClassSymbol?.lazyResolveToPhase(FirResolvePhase.STATUS)
+            }
         } else {
             superClassSymbol?.lazyResolveToPhase(FirResolvePhase.STATUS.previous)
         }
@@ -413,11 +419,27 @@ abstract class AbstractFirStatusResolveTransformer(
 
     override fun transformSimpleFunction(
         simpleFunction: FirSimpleFunction,
-        data: FirResolvedDeclarationStatus?
+        data: FirResolvedDeclarationStatus?,
     ): FirStatement = whileAnalysing(session, simpleFunction) {
-        val resolvedStatus = statusResolver.resolveStatus(simpleFunction, containingClass, isLocal = false)
+        val overriddenFunctions = statusResolver.getOverriddenFunctions(simpleFunction, containingClass)
+        transformSimpleFunction(simpleFunction, overriddenFunctions, data)
+        return simpleFunction
+    }
+
+    fun transformSimpleFunction(
+        simpleFunction: FirSimpleFunction,
+        overriddenFunctions: List<FirSimpleFunction>,
+        data: FirResolvedDeclarationStatus? = null,
+    ) {
+        val resolvedStatus = statusResolver.resolveStatus(
+            simpleFunction,
+            containingClass,
+            isLocal = false,
+            overriddenFunctions.map { it.status as FirResolvedDeclarationStatus },
+        )
+
         simpleFunction.transformStatus(this, resolvedStatus)
-        return transformDeclaration(simpleFunction, data) as FirStatement
+        transformDeclaration(simpleFunction, data) as FirStatement
     }
 
     override fun transformProperty(
@@ -425,17 +447,20 @@ abstract class AbstractFirStatusResolveTransformer(
         data: FirResolvedDeclarationStatus?
     ): FirStatement = whileAnalysing(session, property) {
         val overridden = statusResolver.getOverriddenProperties(property, containingClass)
+        transformProperty(property, overridden)
+        return property
+    }
 
-        val overriddenProperties = overridden.map { it.status as FirResolvedDeclarationStatus }
-
-        val overriddenSetters = overridden.mapNotNull {
+    fun transformProperty(property: FirProperty, overriddenProperties: List<FirProperty>) {
+        val overriddenStatuses = overriddenProperties.map { it.status as FirResolvedDeclarationStatus }
+        val overriddenSetters = overriddenProperties.mapNotNull {
             val setter = it.setter ?: return@mapNotNull null
             setter.status as FirResolvedDeclarationStatus
         }
 
         property.transformStatus(
             this,
-            statusResolver.resolveStatus(property, containingClass, false, overriddenProperties)
+            statusResolver.resolveStatus(property, containingClass, false, overriddenStatuses)
         )
 
         property.getter?.let { transformPropertyAccessor(it, property) }
@@ -447,8 +472,6 @@ abstract class AbstractFirStatusResolveTransformer(
                 statusResolver.resolveStatus(it, containingClass, property, isLocal = false)
             )
         }
-
-        return property
     }
 
     override fun transformField(

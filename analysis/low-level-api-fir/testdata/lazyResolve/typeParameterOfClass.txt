@@ -74,11 +74,11 @@ STATUS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] class MyClass<[ResolvedTo(STATUS)] Type> : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] Type>(): R|MyClass<Type>| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(STATUS)] Type>(): R|MyClass<Type>| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] t: R|Type|): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] t: Type): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -86,11 +86,11 @@ EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class MyClass<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] Type> : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] Type>(): R|MyClass<Type>| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] Type>(): R|MyClass<Type>| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] t: R|Type|): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] t: Type): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -98,11 +98,11 @@ ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] class MyClass<[ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] Type> : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] Type>(): R|MyClass<Type>| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] Type>(): R|MyClass<Type>| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] t: R|Type|): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] t: Type): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -110,11 +110,11 @@ CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(CONTRACTS)] class MyClass<[ResolvedTo(CONTRACTS)] Type> : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(CONTRACTS)] Type>(): R|MyClass<Type>| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(CONTRACTS)] Type>(): R|MyClass<Type>| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] t: R|Type|): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] t: Type): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -122,11 +122,11 @@ IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class MyClass<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] Type> : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] Type>(): R|MyClass<Type>| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] Type>(): R|MyClass<Type>| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] t: R|Type|): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] t: Type): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 
@@ -134,11 +134,11 @@ ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] typeParameterOfClass.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class MyClass<[ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] Type> : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] Type>(): R|MyClass<Type>| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=MyClass] constructor<[ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] Type>(): R|MyClass<Type>| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] t: R|Type|): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] t: Type): R|kotlin/Unit| { LAZY_BLOCK }
 
     }
 

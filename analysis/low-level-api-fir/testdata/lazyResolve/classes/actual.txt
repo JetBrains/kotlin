@@ -146,14 +146,14 @@ STATUS:
 FILE: [ResolvedTo(IMPORTS)] actual.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public final actual [ResolvedTo(STATUS)] class Actual : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Actual] constructor(): R|Actual| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Actual] constructor(): R|Actual| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(STATUS)] fun memberFun(): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] fun memberFun(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public final [ResolvedTo(STATUS)] val a: <implicit> = LAZY_EXPRESSION
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Actual] get(): <implicit>
+        public? final? [ResolvedTo(RAW_FIR)] val a: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Actual] get(): <implicit>
 
         public? final? actual [ResolvedTo(RAW_FIR)] class NestedActual : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedActual] constructor(): R|Actual.NestedActual| {
@@ -170,14 +170,14 @@ EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] actual.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public final actual [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ExpectForActualAttributeKey={}] class Actual : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Actual] constructor(): R|Actual| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Actual] constructor(): R|Actual| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(STATUS)] fun memberFun(): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] fun memberFun(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public final [ResolvedTo(STATUS)] val a: <implicit> = LAZY_EXPRESSION
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Actual] get(): <implicit>
+        public? final? [ResolvedTo(RAW_FIR)] val a: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Actual] get(): <implicit>
 
         public? final? actual [ResolvedTo(RAW_FIR)] class NestedActual : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedActual] constructor(): R|Actual.NestedActual| {
@@ -194,14 +194,14 @@ ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] actual.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public final actual [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] [ExpectForActualAttributeKey={}] class Actual : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Actual] constructor(): R|Actual| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Actual] constructor(): R|Actual| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(STATUS)] fun memberFun(): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] fun memberFun(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public final [ResolvedTo(STATUS)] val a: <implicit> = LAZY_EXPRESSION
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Actual] get(): <implicit>
+        public? final? [ResolvedTo(RAW_FIR)] val a: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Actual] get(): <implicit>
 
         public? final? actual [ResolvedTo(RAW_FIR)] class NestedActual : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedActual] constructor(): R|Actual.NestedActual| {
@@ -218,14 +218,14 @@ CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] actual.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public final actual [ResolvedTo(CONTRACTS)] [ExpectForActualAttributeKey={}] class Actual : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Actual] constructor(): R|Actual| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Actual] constructor(): R|Actual| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(STATUS)] fun memberFun(): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] fun memberFun(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public final [ResolvedTo(STATUS)] val a: <implicit> = LAZY_EXPRESSION
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Actual] get(): <implicit>
+        public? final? [ResolvedTo(RAW_FIR)] val a: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Actual] get(): <implicit>
 
         public? final? actual [ResolvedTo(RAW_FIR)] class NestedActual : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedActual] constructor(): R|Actual.NestedActual| {
@@ -242,14 +242,14 @@ IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] actual.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public final actual [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ExpectForActualAttributeKey={}] class Actual : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Actual] constructor(): R|Actual| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Actual] constructor(): R|Actual| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(STATUS)] fun memberFun(): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] fun memberFun(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public final [ResolvedTo(STATUS)] val a: <implicit> = LAZY_EXPRESSION
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Actual] get(): <implicit>
+        public? final? [ResolvedTo(RAW_FIR)] val a: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Actual] get(): <implicit>
 
         public? final? actual [ResolvedTo(RAW_FIR)] class NestedActual : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedActual] constructor(): R|Actual.NestedActual| {
@@ -266,14 +266,14 @@ ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] actual.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public final actual [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] [ExpectForActualAttributeKey={}] class Actual : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=Actual] constructor(): R|Actual| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Actual] constructor(): R|Actual| {
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final [ResolvedTo(STATUS)] fun memberFun(): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] fun memberFun(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        public final [ResolvedTo(STATUS)] val a: <implicit> = LAZY_EXPRESSION
-            public [ResolvedTo(STATUS)] [ContainingClassKey=Actual] get(): <implicit>
+        public? final? [ResolvedTo(RAW_FIR)] val a: <implicit> = LAZY_EXPRESSION
+            public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Actual] get(): <implicit>
 
         public? final? actual [ResolvedTo(RAW_FIR)] class NestedActual : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=NestedActual] constructor(): R|Actual.NestedActual| {

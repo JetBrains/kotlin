@@ -62,7 +62,7 @@ STATUS:
 FILE: [ResolvedTo(IMPORTS)] classWithTypeParameters.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(STATUS)] class ResolveMe<[ResolvedTo(STATUS)] T : R|kotlin/Int|, [ResolvedTo(STATUS)] K> : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor<[ResolvedTo(STATUS)] T : R|kotlin/Int|, [ResolvedTo(STATUS)] K>(): R|ResolveMe<T, K>| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor<[ResolvedTo(STATUS)] T : R|kotlin/Int|, [ResolvedTo(STATUS)] K>(): R|ResolveMe<T, K>| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -72,7 +72,7 @@ EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] classWithTypeParameters.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class ResolveMe<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T : R|kotlin/Int|, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] K> : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T : R|kotlin/Int|, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] K>(): R|ResolveMe<T, K>| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] T : R|kotlin/Int|, [ResolvedTo(EXPECT_ACTUAL_MATCHING)] K>(): R|ResolveMe<T, K>| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -82,7 +82,7 @@ ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] classWithTypeParameters.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] class ResolveMe<[ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] T : R|kotlin/Int|, [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] K> : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor<[ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] T : R|kotlin/Int|, [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] K>(): R|ResolveMe<T, K>| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor<[ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] T : R|kotlin/Int|, [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] K>(): R|ResolveMe<T, K>| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -92,7 +92,7 @@ CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] classWithTypeParameters.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(CONTRACTS)] class ResolveMe<[ResolvedTo(CONTRACTS)] T : R|kotlin/Int|, [ResolvedTo(CONTRACTS)] K> : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor<[ResolvedTo(CONTRACTS)] T : R|kotlin/Int|, [ResolvedTo(CONTRACTS)] K>(): R|ResolveMe<T, K>| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor<[ResolvedTo(CONTRACTS)] T : R|kotlin/Int|, [ResolvedTo(CONTRACTS)] K>(): R|ResolveMe<T, K>| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -102,7 +102,7 @@ IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] classWithTypeParameters.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class ResolveMe<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T : R|kotlin/Int|, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] K> : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T : R|kotlin/Int|, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] K>(): R|ResolveMe<T, K>| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] T : R|kotlin/Int|, [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] K>(): R|ResolveMe<T, K>| {
             LAZY_super<R|kotlin/Any|>
         }
 
@@ -112,7 +112,7 @@ ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] classWithTypeParameters.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public final [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] class ResolveMe<[ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] T : R|kotlin/Int|, [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] K> : R|kotlin/Any| {
-        public [ResolvedTo(STATUS)] [ContainingClassKey=ResolveMe] constructor<[ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] T : R|kotlin/Int|, [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] K>(): R|ResolveMe<T, K>| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ResolveMe] constructor<[ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] T : R|kotlin/Int|, [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] K>(): R|ResolveMe<T, K>| {
             LAZY_super<R|kotlin/Any|>
         }
 

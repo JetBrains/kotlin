@@ -98,7 +98,7 @@ STATUS:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride2.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(STATUS)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
-        public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
     }
     public? final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {
@@ -114,7 +114,7 @@ EXPECT_ACTUAL_MATCHING:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride2.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(EXPECT_ACTUAL_MATCHING)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
-        public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
     }
     public? final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {
@@ -130,7 +130,7 @@ ARGUMENTS_OF_ANNOTATIONS:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride2.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(ARGUMENTS_OF_ANNOTATIONS)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
-        public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
     }
     public? final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {
@@ -146,7 +146,7 @@ CONTRACTS:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride2.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(CONTRACTS)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
-        public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
     }
     public? final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {
@@ -162,7 +162,7 @@ IMPLICIT_TYPES_BODY_RESOLVE:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride2.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
-        public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
     }
     public? final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {
@@ -178,7 +178,7 @@ ANNOTATIONS_ARGUMENTS_MAPPING:
 FILE: [ResolvedTo(IMPORTS)] simpleLoopInOverride2.kt
     [ResolvedTo(BODY_RESOLVE)] annotations container
     public abstract [ResolvedTo(ANNOTATIONS_ARGUMENTS_MAPPING)] interface Foo1 : <ERROR TYPE REF: Loop in supertype: /Foo1 -> /Foo2> {
-        public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
+        public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
     }
     public? final? [ResolvedTo(SUPER_TYPES)] interface Foo2 : <ERROR TYPE REF: Loop in supertype: /Foo2 -> /Foo3> {

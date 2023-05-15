@@ -120,15 +120,15 @@ class FirStatusResolver(
         return resolveStatus(property, status, containingClass, null, isLocal, statuses)
     }
 
-    private fun getOverriddenStatuses(
+    fun getOverriddenFunctions(
         function: FirSimpleFunction,
         containingClass: FirClass?
-    ): List<FirResolvedDeclarationStatus> {
+    ): List<FirSimpleFunction> {
         if (containingClass == null) {
             return emptyList()
         }
 
-        return buildList<FirCallableDeclaration> {
+        return buildList {
             val scope = containingClass.unsubstitutedScope(
                 session,
                 scopeSession,
@@ -147,17 +147,23 @@ class FirStatusResolver(
                 }
                 ProcessorAction.NEXT
             }
-        }.map {
-            it.status as FirResolvedDeclarationStatus
         }
     }
 
-    fun resolveStatus(function: FirSimpleFunction, containingClass: FirClass?, isLocal: Boolean): FirResolvedDeclarationStatus {
+    fun resolveStatus(
+        function: FirSimpleFunction,
+        containingClass: FirClass?,
+        isLocal: Boolean,
+        overriddenStatuses: List<FirResolvedDeclarationStatus>? = null,
+    ): FirResolvedDeclarationStatus {
         val status = function.applyExtensionTransformers {
             transformStatus(it, function, containingClass?.symbol, isLocal)
         }
-        val overriddenStatuses = getOverriddenStatuses(function, containingClass)
-        return resolveStatus(function, status, containingClass, null, isLocal, overriddenStatuses)
+
+        val statuses = overriddenStatuses
+            ?: getOverriddenFunctions(function, containingClass).map { it.status as FirResolvedDeclarationStatus }
+
+        return resolveStatus(function, status, containingClass, null, isLocal, statuses)
     }
 
     fun resolveStatus(
