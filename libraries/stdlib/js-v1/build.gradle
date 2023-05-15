@@ -71,7 +71,9 @@ sourceSets {
 dependencies {
     expectedBy project(":kotlin-stdlib-common")
     commonSources project(path: ":kotlin-stdlib-common", configuration: "sources")
-    testApi project(':kotlin-test:kotlin-test-js')
+    testApi(project(':kotlin-test:kotlin-test-js')) {
+        exclude(group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib')
+    }
 }
 
 tasks.register("prepareComparableSource", Copy) {
