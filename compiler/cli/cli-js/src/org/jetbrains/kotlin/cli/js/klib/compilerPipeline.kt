@@ -91,7 +91,7 @@ inline fun <F> compileModuleToAnalyzedFir(
         isCommonSource = isCommonSource,
         fileBelongsToModule = fileBelongsToModule,
         lookupTracker,
-        icData = incrementalDataProvider?.let { KlibIcData(it) },
+        icData = incrementalDataProvider?.let(::KlibIcData),
     )
 
     val outputs = sessionsWithSources.map {

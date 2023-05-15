@@ -497,15 +497,13 @@ class K2JsIrCompiler : CLICompiler<K2JSCompilerArguments>() {
         ) {
             val groupedSources = collectSources(configuration, environmentForJS.project, messageCollector)
 
-            val ktSourceFiles = mutableListOf<KtSourceFile>().apply {
-                addAll(groupedSources.commonSources)
-                addAll(groupedSources.platformSources)
-            }
-
             compileModulesToAnalyzedFirWithLightTree(
                 moduleStructure = moduleStructure,
                 groupedSources = groupedSources,
-                ktSourceFiles = ktSourceFiles,
+                // TODO: Only pass groupedSources, because
+                //  we will need to have them separated again
+                //  in createSessionsForLegacyMppProject anyway
+                ktSourceFiles = groupedSources.commonSources + groupedSources.platformSources,
                 libraries = libraries,
                 friendLibraries = friendLibraries,
                 messageCollector = messageCollector,
