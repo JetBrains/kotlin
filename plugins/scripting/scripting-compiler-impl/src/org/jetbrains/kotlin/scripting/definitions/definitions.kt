@@ -75,11 +75,15 @@ fun VirtualFile.isNonScript(): Boolean = when (this) {
         !this.isKotlinFileType()
     }
     else -> {
-        isDirectory ||
-                extension == KotlinFileType.EXTENSION ||
-                extension == JavaFileType.INSTANCE.defaultExtension ||
-                extension == JavaClassFileType.INSTANCE.defaultExtension ||
-                !this.isKotlinFileType()
+        if (isDirectory) {
+            true
+        } else {
+            val ext = extension
+            ext == KotlinFileType.EXTENSION ||
+                    ext == JavaFileType.DEFAULT_EXTENSION ||
+                    ext == JavaClassFileType.INSTANCE.defaultExtension ||
+                    !this.isKotlinFileType()
+        }
     }
 }
 
