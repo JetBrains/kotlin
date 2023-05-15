@@ -223,10 +223,12 @@ private val KtDiagnosticFactory0.deprecationWarning
         else -> error("Only MUST_BE_INITIALIZED is supported")
     }
 
+private val FirPropertyAccessor?.hasImplementation: Boolean
+    get() = (this !is FirDefaultPropertyAccessor && this?.hasBody == true)
 private val FirProperty.hasSetterAccessorImplementation: Boolean
-    get() = (setter !is FirDefaultPropertyAccessor && setter?.hasBody == true)
+    get() = setter.hasImplementation
 private val FirProperty.hasAnyAccessorImplementation: Boolean
-    get() = (getter !is FirDefaultPropertyAccessor && getter?.hasBody == true) || hasSetterAccessorImplementation
+    get() = getter.hasImplementation || setter.hasImplementation
 
 private fun FirProperty.getEffectiveModality(containingClass: FirClass?, languageVersionSettings: LanguageVersionSettings): Modality? =
     when (languageVersionSettings.supportsFeature(LanguageFeature.TakeIntoAccountEffectivelyFinalInMustBeInitializedCheck) &&
