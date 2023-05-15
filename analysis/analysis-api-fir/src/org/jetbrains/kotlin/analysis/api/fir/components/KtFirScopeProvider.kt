@@ -231,7 +231,7 @@ internal class KtFirScopeProvider(
     private fun convertToKtScope(firScope: FirScope): KtScope {
         return when (firScope) {
             is FirAbstractSimpleImportingScope -> KtFirNonStarImportingScope(firScope, builder)
-            is FirAbstractStarImportingScope -> KtFirStarImportingScope(firScope, builder, analysisSession.useSiteScopeDeclarationProvider)
+            is FirAbstractStarImportingScope -> KtFirStarImportingScope(firScope, analysisSession)
             is FirPackageMemberScope -> createPackageScope(firScope.fqName)
             is FirContainingNamesAwareScope -> KtFirDelegatingNamesAwareScope(firScope, builder)
             else -> TODO(firScope::class.toString())

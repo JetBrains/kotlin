@@ -5,21 +5,19 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.scopes
 
-import org.jetbrains.kotlin.analysis.api.fir.KtSymbolByFirBuilder
+import org.jetbrains.kotlin.analysis.api.fir.KtFirAnalysisSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.cached
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KtScopeNameFilter
 import org.jetbrains.kotlin.analysis.api.symbols.KtConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KtPackageSymbol
-import org.jetbrains.kotlin.analysis.providers.KotlinDeclarationProvider
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractStarImportingScope
 import org.jetbrains.kotlin.name.Name
 
 internal class KtFirStarImportingScope(
     firScope: FirAbstractStarImportingScope,
-    builder: KtSymbolByFirBuilder,
-    private val declarationProvider: KotlinDeclarationProvider,
-) : KtFirBasedScope<FirAbstractStarImportingScope>(firScope, builder) {
+    private val analysisSession: KtFirAnalysisSession,
+) : KtFirBasedScope<FirAbstractStarImportingScope>(firScope, analysisSession.firSymbolBuilder) {
 
     private val imports: List<StarImport> by cached {
         firScope.starImports.map { import ->
@@ -37,7 +35,7 @@ internal class KtFirStarImportingScope(
     override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
         imports.flatMapTo(hashSetOf()) { import: Import ->
             if (import.relativeClassName == null) { // top level callable
-                declarationProvider.getTopLevelCallableNamesInPackage(import.packageFqName)
+                analysisSession.useSiteScopeDeclarationProvider.getTopLevelCallableNamesInPackage(import.packageFqName)
             } else { //member
                 val classId = import.resolvedClassId ?: error("Class id should not be null as relativeClassName is not null")
                 firScope.getStaticsScope(classId)?.getCallableNames().orEmpty()
@@ -52,7 +50,7 @@ internal class KtFirStarImportingScope(
     override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion {
         imports.flatMapTo(hashSetOf()) { import ->
             if (import.relativeClassName == null) {
-                declarationProvider.getTopLevelKotlinClassLikeDeclarationNamesInPackage(import.packageFqName)
+                analysisSession.useSiteScopeDeclarationProvider.getTopLevelKotlinClassLikeDeclarationNamesInPackage(import.packageFqName)
             } else {
                 val classId = import.resolvedClassId ?: error("Class id should not be null as relativeClassName is not null")
                 firScope.getStaticsScope(classId)?.getClassifierNames().orEmpty()
