@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.*
 import org.jetbrains.kotlin.backend.jvm.lower.SyntheticAccessorLowering.Companion.isAccessible
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
@@ -305,22 +306,34 @@ internal class ReflectiveAccessLowering(
     private fun IrFunctionAccessExpression.valueParameterTypes(): List<IrType> =
         symbol.owner.valueParameters.map { it.type }
 
-    private fun generateReflectiveMethodInvocation(call: IrCall): IrExpression =
-        generateReflectiveMethodInvocation(
+    private fun generateReflectiveMethodInvocation(call: IrCall): IrExpression {
+        val parameterTypes = mutableListOf<IrType>()
+        val arguments = mutableListOf<IrExpression>()
+
+        when {
+            call.extensionReceiver != null -> {
+                call.symbol.owner.extensionReceiverParameter?.let { parameterTypes.add(it.type) }
+                call.extensionReceiver?.let { arguments.add(it) }
+            }
+            call.dispatchReceiver != null && call.symbol.owner.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER -> {
+                call.symbol.owner.dispatchReceiverParameter?.let { parameterTypes.add(it.type) }
+                call.dispatchReceiver?.let { arguments.add(it) }
+            }
+        }
+
+        parameterTypes.addAll(call.valueParameterTypes())
+        arguments.addAll(call.getValueArguments())
+
+        return generateReflectiveMethodInvocation(
             call.superQualifierSymbol?.defaultType ?: call.dispatchReceiver?.type ?: call.symbol.owner.parentAsClass.defaultType,
             call.symbol.owner.name.asString(),
-            mutableListOf<IrType>().apply {
-                call.symbol.owner.extensionReceiverParameter?.let { add(it.type) }
-                addAll(call.valueParameterTypes())
-            },
+            parameterTypes,
             call.dispatchReceiver,
-            mutableListOf<IrExpression>().apply {
-                call.extensionReceiver?.let { add(it) }
-                addAll(call.getValueArguments())
-            },
+            arguments,
             call.type,
             call.symbol
         )
+    }
 
     private fun generateReflectiveStaticCall(call: IrCall): IrExpression {
         assert(call.dispatchReceiver == null) { "Assumed-to-be static call with a dispatch receiver" }
