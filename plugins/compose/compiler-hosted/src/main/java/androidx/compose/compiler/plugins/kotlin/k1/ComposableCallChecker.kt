@@ -16,6 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin.k1
 
+import androidx.compose.compiler.plugins.kotlin.ComposeFqNames
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.isBuiltinFunctionalType
 import org.jetbrains.kotlin.container.StorageComponentContainer
@@ -61,6 +62,7 @@ import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 import org.jetbrains.kotlin.resolve.calls.util.getValueArgumentForExpression
 import org.jetbrains.kotlin.resolve.inline.InlineUtil.isInlinedArgument
 import org.jetbrains.kotlin.resolve.sam.getSingleAbstractMethodOrNull
+import org.jetbrains.kotlin.resolve.source.PsiSourceElement
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.lowerIfFlexible
@@ -376,7 +378,19 @@ open class ComposableCallChecker :
                     c.trace.bindingContext,
                     true
                 )
-                if (isInlineable) return
+                if (isInlineable) {
+                    if (!expectedComposable && descriptor.isMarkedAsComposable()) {
+                        val reportOn = (descriptor
+                            .annotations
+                            .findAnnotation(ComposeFqNames.Composable)
+                            ?.source as? PsiSourceElement)
+                            ?.psi ?: expression
+                        c.trace.report(
+                            ComposeErrors.REDUNDANT_COMPOSABLE_ANNOTATION.on(reportOn)
+                        )
+                    }
+                    return
+                }
 
                 if (!expectedComposable && isComposable) {
                     val inferred = c.trace.bindingContext[
