@@ -200,9 +200,6 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
     }
 
     open fun whenBuildEvaluated(project: Project) {
-        KotlinBuildStatsService.applyIfInitialised {
-            it.projectsEvaluated(project.gradle)
-        }
     }
 }
 

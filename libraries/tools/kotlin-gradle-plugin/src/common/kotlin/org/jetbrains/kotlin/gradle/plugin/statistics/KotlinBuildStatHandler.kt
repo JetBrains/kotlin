@@ -9,6 +9,8 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.DependencySet
 import org.gradle.api.invocation.Gradle
 import org.gradle.api.logging.Logging
+import org.gradle.api.provider.Provider
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.utils.API
 import org.jetbrains.kotlin.gradle.utils.COMPILE
 import org.jetbrains.kotlin.gradle.utils.IMPLEMENTATION
@@ -80,6 +82,13 @@ class KotlinBuildStatHandler {
         }
     }
 
+    private fun <T : Any> Provider<T>.forUseAtConfigurationTimeCompat(): Provider<T> =
+        if (GradleVersion.current() < GradleVersion.version("7.4")) {
+            forUseAtConfigurationTime()
+        } else {
+            this
+        }
+
     private fun reportGlobalMetricsImpl(gradle: Gradle, sessionLogger: BuildSessionLogger) {
         sessionLogger.report(StringMetrics.PROJECT_PATH, gradle.rootProject.projectDir.absolutePath)
         System.getProperty("os.name")?.also { sessionLogger.report(StringMetrics.OS_TYPE, System.getProperty("os.name")) }
@@ -89,7 +98,7 @@ class KotlinBuildStatHandler {
         sessionLogger.report(NumericalMetrics.GRADLE_DAEMON_HEAP_SIZE, Runtime.getRuntime().maxMemory())
         sessionLogger.report(
             BooleanMetrics.KOTLIN_OFFICIAL_CODESTYLE,
-            gradle.rootProject.providers.gradleProperty("kotlin.code.style").orNull == "official"
+            gradle.rootProject.providers.gradleProperty("kotlin.code.style").forUseAtConfigurationTimeCompat().orNull == "official"
         ) // constants are saved in IDEA plugin and could not be accessed directly
 
         gradle.taskGraph.whenReady() { taskExecutionGraph ->

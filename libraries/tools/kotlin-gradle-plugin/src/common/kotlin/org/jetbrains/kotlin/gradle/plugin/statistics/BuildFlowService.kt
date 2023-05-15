@@ -10,45 +10,29 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
+import org.gradle.tooling.events.FinishEvent
 import org.gradle.tooling.events.OperationCompletionListener
 import org.gradle.tooling.events.task.TaskFailureResult
 import org.gradle.tooling.events.task.TaskFinishEvent
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.BuildEventsListenerRegistryHolder
 import org.jetbrains.kotlin.gradle.plugin.FlowParameterHolder
+import org.jetbrains.kotlin.gradle.utils.registerClassLoaderScopedBuildService
 
-abstract class BuildFlowService : BuildService<BuildFlowService.Parameters>, AutoCloseable {
-    interface Parameters: BuildServiceParameters {
-        val useFlowParameters: Property<Boolean>
-    }
+abstract class BuildFlowService : BuildService<BuildServiceParameters.None>, AutoCloseable, OperationCompletionListener {
+    private var buildFailed: Boolean = false
     companion object {
-        private val serviceClass = BuildFlowService::class.java
-        private val serviceName = "${serviceClass.name}_${serviceClass.classLoader.hashCode()}"
-        private var buildFailed: Boolean = false
         fun registerIfAbsentImpl(
             project: Project,
-        ): Provider<BuildFlowService>? {
-            // Return early if the service was already registered to avoid the overhead of reading the reporting settings below
-            project.gradle.sharedServices.registrations.findByName(serviceName)?.let {
-                @Suppress("UNCHECKED_CAST")
-                return it.service as Provider<BuildFlowService>
-            }
-            return project.gradle.sharedServices.registerIfAbsent(serviceName, serviceClass) {
-                it.parameters.useFlowParameters.set(GradleVersion.current().baseVersion >= GradleVersion.version("8.1"))
+        ): Provider<BuildFlowService> {
+            return project.gradle.registerClassLoaderScopedBuildService(BuildFlowService::class) {
+            }.also {
                 KotlinBuildStatsService.applyIfInitialised {
+                    it.projectsEvaluated(project.gradle)
                     it.buildStarted(project.gradle)
                 }
-            }.also {
                 if (GradleVersion.current().baseVersion < GradleVersion.version("8.1")) {
-                    BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(
-                        project.provider {
-                            OperationCompletionListener { event ->
-                                if ((event is TaskFinishEvent) && (event.result is TaskFailureResult)) {
-                                    buildFailed = true
-                                }
-                            }
-                        }
-                    )
+                    BuildEventsListenerRegistryHolder.getInstance(project).listenerRegistry.onTaskCompletion(it)
                 } else {
                     FlowParameterHolder.getInstance(project).subscribeForBuildResult(project)
                 }
@@ -57,10 +41,14 @@ abstract class BuildFlowService : BuildService<BuildFlowService.Parameters>, Aut
         }
     }
 
-    override fun close() {
-        if (!parameters.useFlowParameters.get()) {
-            buildFinished(null, buildFailed)
+    override fun onFinish(event: FinishEvent?) {
+        if ((event is TaskFinishEvent) && (event.result is TaskFailureResult)) {
+            buildFailed = true
         }
+    }
+
+    override fun close() {
+        buildFinished(null, buildFailed)
     }
 
     internal fun buildFinished(action: String?, buildFailed: Boolean) {
