@@ -1257,6 +1257,12 @@ public class FirPsiOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiDia
             runTest("compiler/testData/diagnostics/tests/Variance.kt");
         }
 
+        @Test
+        @TestMetadata("whileConditionExpectedType.kt")
+        public void testWhileConditionExpectedType() throws Exception {
+            runTest("compiler/testData/diagnostics/tests/whileConditionExpectedType.kt");
+        }
+
         @Nested
         @TestMetadata("compiler/testData/diagnostics/tests/annotations")
         @TestDataPath("$PROJECT_ROOT")
