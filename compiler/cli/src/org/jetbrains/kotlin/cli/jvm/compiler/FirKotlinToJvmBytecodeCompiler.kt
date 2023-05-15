@@ -217,7 +217,7 @@ object FirKotlinToJvmBytecodeCompiler {
         )
 
         val outputs = sessionsWithSources.map { (session, sources) ->
-            buildResolveAndCheckFir(session, sources, diagnosticsReporter)
+            buildResolveAndCheckFirFromKtFiles(session, sources, diagnosticsReporter)
         }
 
         return runUnless(syntaxErrors || diagnosticsReporter.hasErrors) { FirResult(outputs) }

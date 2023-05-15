@@ -55,7 +55,7 @@ fun FirSession.buildFirFromKtFiles(ktFiles: Collection<KtFile>): List<FirFile> {
     }
 }
 
-fun buildResolveAndCheckFir(
+fun buildResolveAndCheckFirFromKtFiles(
     session: FirSession,
     ktFiles: List<KtFile>,
     diagnosticsReporter: BaseDiagnosticsCollector
@@ -73,7 +73,7 @@ fun resolveAndCheckFir(
     return ModuleCompilerAnalyzedOutput(session, scopeSession, fir)
 }
 
-fun buildResolveAndCheckFir(
+fun buildResolveAndCheckFirViaLightTree(
     session: FirSession,
     ktFiles: Collection<KtSourceFile>,
     diagnosticsReporter: DiagnosticReporter,

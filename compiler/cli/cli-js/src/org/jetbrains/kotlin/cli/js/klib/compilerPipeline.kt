@@ -129,7 +129,7 @@ fun compileModuleToAnalyzedFirWithPsi(
         isCommonSource = isCommonSourceForPsi,
         fileBelongsToModule = fileBelongsToModuleForPsi,
         buildResolveAndCheckFir = { session, files ->
-            buildResolveAndCheckFir(session, files, diagnosticsReporter)
+            buildResolveAndCheckFirFromKtFiles(session, files, diagnosticsReporter)
         },
     )
 }
@@ -158,7 +158,7 @@ fun compileModulesToAnalyzedFirWithLightTree(
         isCommonSource = { groupedSources.isCommonSourceForLt(it) },
         fileBelongsToModule = { file, it -> groupedSources.fileBelongsToModuleForLt(file, it) },
         buildResolveAndCheckFir = { session, files ->
-            buildResolveAndCheckFir(session, files, diagnosticsReporter, null)
+            buildResolveAndCheckFirViaLightTree(session, files, diagnosticsReporter, null)
         },
     )
 }
