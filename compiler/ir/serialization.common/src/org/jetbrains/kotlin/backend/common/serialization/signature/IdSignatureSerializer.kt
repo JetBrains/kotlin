@@ -99,7 +99,7 @@ class PublicIdSignatureComputer(val mangler: KotlinMangler.IrMangler) : IdSignat
         }
 
         override fun visitPackageFragment(declaration: IrPackageFragment) {
-            packageFqn = declaration.fqName
+            packageFqn = declaration.packageFqName
         }
 
         private val IrDeclarationWithVisibility.isTopLevelPrivate: Boolean
@@ -231,7 +231,7 @@ class IdSignatureSerializer(
 
     private fun composeContainerIdSignature(container: IrDeclarationParent, compatibleMode: Boolean): IdSignature =
         when (container) {
-            is IrPackageFragment -> IdSignature.CommonSignature(container.fqName.asString(), "", null, 0)
+            is IrPackageFragment -> IdSignature.CommonSignature(container.packageFqName.asString(), "", null, 0)
             is IrDeclaration -> table.signatureByDeclaration(container, compatibleMode)
             else -> error("Unexpected container ${container.render()}")
         }

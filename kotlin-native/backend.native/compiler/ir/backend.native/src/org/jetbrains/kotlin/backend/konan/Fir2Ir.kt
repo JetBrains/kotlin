@@ -104,7 +104,7 @@ internal fun PhaseContext.fir2Ir(
         components.symbolTable.forEachDeclarationSymbol {
             val p = it.owner as? IrDeclaration ?: return@forEachDeclarationSymbol
             val fragment = (p.getPackageFragment() as? IrExternalPackageFragment) ?: return@forEachDeclarationSymbol
-            add(fragment.fqName)
+            add(fragment.packageFqName)
         }
         // This packages exists in all platform libraries, but can contain only synthetic declarations.
         // These declarations are not really located in klib, so we don't need to depend on klib to use them.

@@ -322,7 +322,7 @@ val IrClass.isNonCompanionObject: Boolean get() = isObject && !isCompanion
 val IrDeclarationWithName.fqNameWhenAvailable: FqName?
     get() = when (val parent = parent) {
         is IrDeclarationWithName -> parent.fqNameWhenAvailable?.child(name)
-        is IrPackageFragment -> parent.fqName.child(name)
+        is IrPackageFragment -> parent.packageFqName.child(name)
         else -> null
     }
 

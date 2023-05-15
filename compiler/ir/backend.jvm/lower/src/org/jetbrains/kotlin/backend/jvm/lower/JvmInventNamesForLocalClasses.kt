@@ -50,7 +50,7 @@ open class JvmInventNamesForLocalClasses(
             ) {
                 file.getFileClassInfo().fileClassFqName
             } else {
-                file.fqName.child(clazz.name)
+                file.packageFqName.child(clazz.name)
             }
         return JvmClassName.byFqNameWithoutInnerClasses(classFqn).internalName
     }

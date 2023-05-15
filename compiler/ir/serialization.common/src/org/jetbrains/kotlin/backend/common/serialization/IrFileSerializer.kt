@@ -1418,7 +1418,7 @@ open class IrFileSerializer(
 
         val proto = ProtoFile.newBuilder()
             .setFileEntry(serializeFileEntry(file.fileEntry))
-            .addAllFqName(serializeFqName(file.fqName.asString()))
+            .addAllFqName(serializeFqName(file.packageFqName.asString()))
             .addAllAnnotation(serializeAnnotations(file.annotations))
 
         file.declarations.forEach {
@@ -1455,7 +1455,7 @@ open class IrFileSerializer(
 
         return SerializedIrFile(
             proto.build().toByteArray(),
-            file.fqName.asString(),
+            file.packageFqName.asString(),
             file.path,
             IrMemoryArrayWriter(protoTypeArray.map { it.toByteArray() }).writeIntoMemory(),
             IrMemoryArrayWriter(protoIdSignatureArray.map { it.toByteArray() }).writeIntoMemory(),

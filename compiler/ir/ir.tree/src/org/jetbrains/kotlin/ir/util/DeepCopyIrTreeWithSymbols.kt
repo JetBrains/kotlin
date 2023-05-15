@@ -39,8 +39,8 @@ interface SymbolRenamer {
     fun getClassName(symbol: IrClassSymbol): Name = symbol.owner.name
     fun getFunctionName(symbol: IrSimpleFunctionSymbol): Name = symbol.owner.name
     fun getFieldName(symbol: IrFieldSymbol): Name = symbol.owner.name
-    fun getFileName(symbol: IrFileSymbol): FqName = symbol.owner.fqName
-    fun getExternalPackageFragmentName(symbol: IrExternalPackageFragmentSymbol): FqName = symbol.owner.fqName
+    fun getFileName(symbol: IrFileSymbol): FqName = symbol.owner.packageFqName
+    fun getExternalPackageFragmentName(symbol: IrExternalPackageFragmentSymbol): FqName = symbol.owner.packageFqName
     fun getEnumEntryName(symbol: IrEnumEntrySymbol): Name = symbol.owner.name
     fun getVariableName(symbol: IrVariableSymbol): Name = symbol.owner.name
     fun getTypeParameterName(symbol: IrTypeParameterSymbol): Name = symbol.owner.name

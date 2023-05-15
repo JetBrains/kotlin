@@ -535,7 +535,7 @@ object IrTree : AbstractTreeBuilder() {
 
         +symbol(packageFragmentSymbolType)
         +field("packageFragmentDescriptor", type(Packages.descriptors, "PackageFragmentDescriptor"), mutable = false)
-        +field("fqName", type<FqName>())
+        +field("packageFqName", type<FqName>())
     }
     val externalPackageFragment: ElementConfig by element(Declaration) {
         visitorParent = packageFragment

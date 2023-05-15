@@ -34,7 +34,7 @@ fun IrFunction.isInlineArrayConstructor(builtIns: IrBuiltIns): Boolean =
 
 val IrDeclarationParent.fqNameForIrSerialization: FqName
     get() = when (this) {
-        is IrPackageFragment -> this.fqName
+        is IrPackageFragment -> this.packageFqName
         is IrDeclarationWithName -> this.parent.fqNameForIrSerialization.child(this.name)
         else -> error(this)
     }
@@ -44,7 +44,7 @@ val IrDeclarationParent.fqNameForIrSerialization: FqName
  */
 val IrDeclarationParent.kotlinFqName: FqName
     get() = when (this) {
-        is IrPackageFragment -> this.fqName
+        is IrPackageFragment -> this.packageFqName
         is IrClass -> {
             if (isFileClass) {
                 parent.kotlinFqName
@@ -59,7 +59,7 @@ val IrDeclarationParent.kotlinFqName: FqName
 val IrClass.classId: ClassId?
     get() = when (val parent = this.parent) {
         is IrClass -> parent.classId?.createNestedClassId(this.name)
-        is IrPackageFragment -> ClassId.topLevel(parent.fqName.child(this.name))
+        is IrPackageFragment -> ClassId.topLevel(parent.packageFqName.child(this.name))
         else -> null
     }
 
@@ -106,11 +106,11 @@ fun IrConstructorCall.isAnnotationWithEqualFqName(fqName: FqName): Boolean =
     annotationClass.hasEqualFqName(fqName)
 
 val IrClass.packageFqName: FqName?
-    get() = symbol.signature?.packageFqName() ?: parent.getPackageFragment()?.fqName
+    get() = symbol.signature?.packageFqName() ?: parent.getPackageFragment()?.packageFqName
 
 fun IrDeclarationWithName.hasEqualFqName(fqName: FqName): Boolean =
     symbol.hasEqualFqName(fqName) || name == fqName.shortName() && when (val parent = parent) {
-        is IrPackageFragment -> parent.fqName == fqName.parent()
+        is IrPackageFragment -> parent.packageFqName == fqName.parent()
         is IrDeclarationWithName -> parent.hasEqualFqName(fqName.parent())
         else -> false
     }

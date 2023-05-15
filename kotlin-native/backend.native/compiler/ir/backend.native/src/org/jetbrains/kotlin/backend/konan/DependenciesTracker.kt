@@ -86,9 +86,9 @@ internal class DependenciesTrackerImpl(
                 ?: error("Can't find stdlib")
         val stdlibDeserializer = context.irLinker.moduleDeserializers[context.stdlibModule]
                 ?: error("No deserializer for stdlib")
-        val file = stdlibDeserializer.files.atMostOne { it.fqName == fqName && it.name == fileName }
+        val file = stdlibDeserializer.files.atMostOne { it.packageFqName == fqName && it.name == fileName }
                 ?: error("Can't find $fqName:$fileName in stdlib")
-        return LibraryFile(stdlib, file.fqName.asString(), file.path)
+        return LibraryFile(stdlib, file.packageFqName.asString(), file.path)
     }
 
     private val stdlibRuntime by lazy { findStdlibFile(KonanFqNames.internalPackageName, "Runtime.kt") }
@@ -124,7 +124,7 @@ internal class DependenciesTrackerImpl(
                 library == null -> FileOrigin.CurrentFile
                 packageFragment.packageFragmentDescriptor.containingDeclaration.isFromInteropLibrary() ->
                     FileOrigin.EntireModule(library)
-                else -> FileOrigin.CertainFile(library, packageFragment.fqName.asString(), filePathGetter())
+                else -> FileOrigin.CertainFile(library, packageFragment.packageFqName.asString(), filePathGetter())
             }
         }
     }
@@ -188,7 +188,7 @@ internal class DependenciesTrackerImpl(
                             require(library.isInteropLibrary()) { "No module deserializer for cached library ${library.uniqueName}" }
                         } else {
                             moduleDeserializer.eagerInitializedFiles.forEach {
-                                add(CacheSupport.cacheFileId(it.fqName.asString(), it.path))
+                                add(CacheSupport.cacheFileId(it.packageFqName.asString(), it.path))
                             }
                         }
                     }

@@ -38,7 +38,7 @@ fun excludeDeclarationsFromCodegen(context: WasmBackendContext, module: IrModule
             if (isExcluded(d)) {
                 it.remove()
                 // Move to "excluded" package fragment preserving fq-name
-                context.getExcludedPackageFragment(file.fqName).addChild(d)
+                context.getExcludedPackageFragment(file.packageFqName).addChild(d)
             }
         }
     }

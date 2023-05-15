@@ -731,7 +731,7 @@ private class InteropLoweringPart1(val generationState: NativeGenerationState) :
 
     private fun IrFunction.isAutoreleasepool(): Boolean {
         return this.name.asString() == "autoreleasepool" && this.parent.let { parent ->
-            parent is IrPackageFragment && parent.fqName == InteropFqNames.packageName
+            parent is IrPackageFragment && parent.packageFqName == InteropFqNames.packageName
         }
     }
 

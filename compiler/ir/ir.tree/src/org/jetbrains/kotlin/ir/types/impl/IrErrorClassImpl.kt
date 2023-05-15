@@ -50,7 +50,7 @@ object IrErrorClassImpl : IrClassImpl(
             @ObsoleteDescriptorBasedAPI
             override val packageFragmentDescriptor: PackageFragmentDescriptor
                 get() = TODO("Not yet implemented")
-            override var fqName: FqName
+            override var packageFqName: FqName
                 get() = FqName.ROOT
                 set(_) = TODO("Not yet implemented")
         }

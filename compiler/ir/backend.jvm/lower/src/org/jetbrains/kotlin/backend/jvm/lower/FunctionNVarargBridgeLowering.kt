@@ -154,7 +154,7 @@ private class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
         get() {
             val clazz = classOrNull?.owner ?: return false
             val name = clazz.name.asString()
-            val fqName = (clazz.parent as? IrPackageFragment)?.fqName ?: return false
+            val fqName = (clazz.parent as? IrPackageFragment)?.packageFqName ?: return false
             return when {
                 name.startsWith("Function") ->
                     fqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME || fqName == FUNCTIONS_PACKAGE_FQ_NAME

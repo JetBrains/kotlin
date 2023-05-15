@@ -233,7 +233,7 @@ class IrModuleToJsTransformer(
             globalNameScope = globalNameScope
         )
 
-        val result = JsIrProgramFragment(fileExports.file.fqName.asString()).apply {
+        val result = JsIrProgramFragment(fileExports.file.packageFqName.asString()).apply {
             if (shouldGeneratePolyfills) {
                 polyfills.statements += backendContext.polyfills.getAllPolyfillsFor(fileExports.file)
             }

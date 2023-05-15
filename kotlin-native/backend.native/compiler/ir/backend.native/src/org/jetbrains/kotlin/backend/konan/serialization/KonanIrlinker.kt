@@ -132,7 +132,7 @@ internal class ByteArrayStream(val buf: ByteArray) {
 }
 
 data class SerializedFileReference(val fqName: String, val path: String) {
-    constructor(irFile: IrFile) : this(irFile.fqName.asString(), irFile.path)
+    constructor(irFile: IrFile) : this(irFile.packageFqName.asString(), irFile.path)
 }
 
 private class StringTableBuilder {
@@ -597,7 +597,7 @@ internal class KonanIrLinker(
         }
 
         private val fileReferenceToFileDeserializationState by lazy {
-            fileDeserializationStates.associateBy { SerializedFileReference(it.file.fqName.asString(), it.file.path) }
+            fileDeserializationStates.associateBy { SerializedFileReference(it.file.packageFqName.asString(), it.file.path) }
         }
 
         private val SerializedFileReference.deserializationState
@@ -1011,7 +1011,7 @@ internal class KonanIrLinker(
         val sortedFileIds by lazy {
             fileDeserializationStates
                     .sortedBy { it.file.fileEntry.name }
-                    .map { CacheSupport.cacheFileId(it.file.fqName.asString(), it.file.fileEntry.name) }
+                    .map { CacheSupport.cacheFileId(it.file.packageFqName.asString(), it.file.fileEntry.name) }
         }
     }
 

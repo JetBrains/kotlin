@@ -160,7 +160,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
     private fun getFqName(declaration: IrDeclaration): FqName {
         val parent = declaration.parent
         val parentFqName = when (parent) {
-            is IrPackageFragment -> parent.fqName
+            is IrPackageFragment -> parent.packageFqName
             is IrDeclaration -> getFqName(parent)
             else -> error(parent)
         }

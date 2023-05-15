@@ -29,7 +29,7 @@ internal class CodeGenerator(override val generationState: NativeGenerationState
 
     fun llvmFunction(function: IrFunction): LlvmCallable =
             llvmFunctionOrNull(function)
-                    ?: error("no function ${function.name} in ${function.file.fqName}")
+                    ?: error("no function ${function.name} in ${function.file.packageFqName}")
 
     fun llvmFunctionOrNull(function: IrFunction): LlvmCallable? =
             function.llvmFunctionOrNull

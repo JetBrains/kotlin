@@ -191,7 +191,7 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
         val containsStdlib = config.libraryToCache!!.klib == context.stdlibModule.konanLibrary
 
         files.asSequence().filter { !it.isFunctionInterfaceFile }.map { file ->
-            val cacheDeserializationStrategy = CacheDeserializationStrategy.SingleFile(file.path, file.fqName.asString())
+            val cacheDeserializationStrategy = CacheDeserializationStrategy.SingleFile(file.path, file.packageFqName.asString())
             val llvmModuleSpecification = CacheLlvmModuleSpecification(
                     config.cachedLibraries,
                     PartialCacheInfo(config.libraryToCache!!.klib, cacheDeserializationStrategy),

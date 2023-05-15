@@ -475,7 +475,7 @@ val IrMemberWithContainerSource.parentClassId: ClassId?
 // Translated into IR-based terms from classifierDescriptor?.classId
 private val IrClass.classId: ClassId?
     get() = when (val parent = parent) {
-        is IrExternalPackageFragment -> ClassId(parent.fqName, name)
+        is IrExternalPackageFragment -> ClassId(parent.packageFqName, name)
         // TODO: there's `context.classNameOverride`; theoretically it's only relevant for top-level members,
         //       where `containerSource` is a `JvmPackagePartSource` anyway, but I'm not 100% sure.
         is IrClass -> parent.classId?.createNestedClassId(name)

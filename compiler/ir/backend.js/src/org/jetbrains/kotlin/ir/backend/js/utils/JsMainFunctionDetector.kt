@@ -56,7 +56,7 @@ class JsMainFunctionDetector(val context: JsCommonBackendContext) {
         var resultPair: Pair<String, IrSimpleFunction>? = null
 
         module.files.forEach { f ->
-            val fqn = f.fqName.asString()
+            val fqn = f.packageFqName.asString()
             getMainFunctionOrNull(f)?.let {
                 val result = resultPair
                 if (result == null) {

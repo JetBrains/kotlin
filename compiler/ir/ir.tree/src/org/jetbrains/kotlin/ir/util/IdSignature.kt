@@ -410,7 +410,7 @@ sealed class IdSignature {
     ) : IdSignature() {
 
         constructor(fileSymbol: IrFileSymbol) : this(
-            fileSymbol, fileSymbol.owner.fqName, fileSymbol.owner.fileEntry.name
+            fileSymbol, fileSymbol.owner.packageFqName, fileSymbol.owner.fileEntry.name
         )
 
         override fun equals(other: Any?): Boolean = other is FileSignature && id == other.id

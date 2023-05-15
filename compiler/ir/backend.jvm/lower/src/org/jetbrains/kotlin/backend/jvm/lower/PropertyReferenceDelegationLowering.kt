@@ -86,7 +86,7 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
         }
 
     private val IrStatement.isStdlibCall: Boolean
-        get() = this is IrCall && symbol.owner.getPackageFragment().fqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME
+        get() = this is IrCall && symbol.owner.getPackageFragment().packageFqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME
 
     // Some receivers don't need to be stored in fields and can be reevaluated every time an accessor is called:
     private fun IrExpression.canInline(visibleScopes: Set<IrDeclarationParent>): Boolean = when (this) {
