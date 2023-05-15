@@ -337,6 +337,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTIPLE_VARARG_P
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MULTI_FIELD_VALUE_CLASS_PRIMARY_CONSTRUCTOR_DEFAULT_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MUST_BE_INITIALIZED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MUST_BE_INITIALIZED_OR_BE_ABSTRACT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MUST_BE_INITIALIZED_OR_BE_FINAL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NAMED_ARGUMENTS_NOT_ALLOWED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NAMED_PARAMETER_NOT_FOUND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NAME_FOR_AMBIGUOUS_PARAMETER
@@ -1621,7 +1623,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM, "Type checking has run into a recursive problem. Easiest workaround: specify types of your declarations explicitly")
 
         map.put(MUST_BE_INITIALIZED, "Property must be initialized")
+        map.put(MUST_BE_INITIALIZED_OR_BE_FINAL, "Property must be initialized or be final")
         map.put(MUST_BE_INITIALIZED_OR_BE_ABSTRACT, "Property must be initialized or be abstract")
+        map.put(MUST_BE_INITIALIZED_OR_FINAL_OR_ABSTRACT, "Property must be initialized, be final, or be abstract");
+
         map.put(EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT, "Extension property must have accessors or be abstract")
         map.put(UNNECESSARY_LATEINIT, "Lateinit is unnecessary: definitely initialized in constructors")
 
