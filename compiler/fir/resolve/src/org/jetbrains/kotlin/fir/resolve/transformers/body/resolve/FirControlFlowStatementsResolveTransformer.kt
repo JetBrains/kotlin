@@ -30,7 +30,8 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
     override fun transformWhileLoop(whileLoop: FirWhileLoop, data: ResolutionMode): FirStatement {
         val context = ResolutionMode.ContextIndependent
         return whileLoop.also(dataFlowAnalyzer::enterWhileLoop)
-            .transformCondition(transformer, context).also(dataFlowAnalyzer::exitWhileLoopCondition)
+            .transformCondition(transformer, withExpectedType(session.builtinTypes.booleanType))
+            .also(dataFlowAnalyzer::exitWhileLoopCondition)
             .transformBlock(transformer, context).also(dataFlowAnalyzer::exitWhileLoop)
             .transformOtherChildren(transformer, context)
     }
@@ -43,7 +44,8 @@ class FirControlFlowStatementsResolveTransformer(transformer: FirAbstractBodyRes
                 .also {
                     transformer.expressionsTransformer.transformBlockInCurrentScope(it.block, context)
                 }
-                .also(dataFlowAnalyzer::enterDoWhileLoopCondition).transformCondition(transformer, context)
+                .also(dataFlowAnalyzer::enterDoWhileLoopCondition)
+                .transformCondition(transformer, withExpectedType(session.builtinTypes.booleanType))
                 .also(dataFlowAnalyzer::exitDoWhileLoop)
                 .transformOtherChildren(transformer, context)
         }

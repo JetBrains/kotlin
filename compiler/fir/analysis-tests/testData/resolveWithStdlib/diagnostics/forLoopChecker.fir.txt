@@ -217,7 +217,7 @@ FILE: forLoopChecker.kt
 
          {
             lval <iterator>: R|ImproperIterator3| = R|<local>/notRange5|.R|/NotRange5.iterator|()
-            while(R|<local>/<iterator>|.R|/ImproperIterator3.hasNext|()) {
+            while(R|<local>/<iterator>|.R|/ImproperIterator3.hasNext<CS errors: /ImproperIterator3.hasNext>#|()) {
                 lval i: R|kotlin/Int| = R|<local>/<iterator>|.R|/ImproperIterator3.next|()
                  {
                 }
@@ -239,7 +239,7 @@ FILE: forLoopChecker.kt
 
          {
             lval <iterator>: R|ImproperIterator3| = R|<local>/notRange7|.R|/NotRange7.iterator|()
-            while(R|<local>/<iterator>|.R|/ImproperIterator3.hasNext|()) {
+            while(R|<local>/<iterator>|.R|/ImproperIterator3.hasNext<CS errors: /ImproperIterator3.hasNext>#|()) {
                 lval i: R|kotlin/Int| = R|<local>/<iterator>|.R|/ImproperIterator3.next|()
                  {
                 }
