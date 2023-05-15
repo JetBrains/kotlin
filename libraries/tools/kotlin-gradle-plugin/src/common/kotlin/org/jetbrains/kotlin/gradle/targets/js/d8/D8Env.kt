@@ -10,5 +10,6 @@ data class D8Env(
     val targetPath: File,
     val executablePath: File,
     val isWindows: Boolean,
-    val downloadUrl: URL
+    val downloadUrl: URL,
+    val ivyDependency: String
 )

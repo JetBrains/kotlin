@@ -60,7 +60,8 @@ open class D8RootExtension(@Transient val rootProject: Project) : ConfigurationP
             targetPath = targetPath,
             executablePath = targetPath.resolve(if (isWindows) "d8.exe" else "d8"),
             isWindows = isWindows,
-            downloadUrl = URL("${downloadBaseUrl.trimEnd('/')}/$requiredZipName"),
+            downloadUrl = URL(downloadBaseUrl),
+            ivyDependency = "google.d8:v8:${D8Platform.platform}-$edition-$version@zip"
         )
     }
 

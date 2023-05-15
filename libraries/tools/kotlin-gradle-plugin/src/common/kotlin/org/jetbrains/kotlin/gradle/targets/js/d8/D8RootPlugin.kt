@@ -5,15 +5,16 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.d8
 
-import de.undercouch.gradle.tasks.download.Download
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.tasks.Copy
+import org.jetbrains.kotlin.gradle.plugin.whenEvaluated
 import org.jetbrains.kotlin.gradle.targets.js.MultiplePluginDeclarationDetector
 import org.jetbrains.kotlin.gradle.targets.js.d8.D8RootExtension.Companion.EXTENSION_NAME
 import org.jetbrains.kotlin.gradle.tasks.CleanDataTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
+
 
 open class D8RootPlugin : Plugin<Project> {
     override fun apply(project: Project) {
@@ -27,13 +28,27 @@ open class D8RootPlugin : Plugin<Project> {
 
         val settings = project.extensions.create(EXTENSION_NAME, D8RootExtension::class.java, project)
 
-        val downloadTask = project.registerTask<Download>("${TASKS_GROUP_NAME}Download") {
-            val env = settings.requireConfigured()
+        project.gradle.projectsEvaluated {
+            val downloadUrl = settings.requireConfigured().downloadUrl
+            project.repositories.ivy { repo ->
+                repo.name = "D8 Distributions at $downloadUrl"
+                repo.url = downloadUrl.toURI()
+                repo.patternLayout {
+                    it.artifact("[artifact]-[revision].[ext]")
+                }
+                repo.metadataSources { it.artifact() }
+                repo.content { it.includeModule("google.d8", "v8") }
+            }
+        }
+
+        val downloadTask = project.registerTask<Copy>("${TASKS_GROUP_NAME}Download") {
             it.group = TASKS_GROUP_NAME
-            it.src(env.downloadUrl)
-            it.dest(env.zipPath)
-            it.overwrite(false)
             it.description = "Download local d8 version"
+
+            val env = settings.requireConfigured()
+            val configuration = project.configurations.detachedConfiguration(project.dependencies.create(env.ivyDependency))
+            it.from(project.provider { configuration.singleFile })
+            it.into(env.zipPath.parentFile)
         }
 
         project.registerTask<Copy>(INSTALL_TASK_NAME) {
