@@ -477,7 +477,8 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
         packageFqName: String,
         allAnnotations: List<PsiAnnotation>,
         metadata: Metadata?,
-        additionalAnnotations: JavacList<JCAnnotation> = JavacList.nil()
+        additionalAnnotations: JavacList<JCAnnotation> = JavacList.nil(),
+        excludeNullabilityAnnotations: Boolean = false
     ): JCModifiers {
         var seenOverride = false
         fun convertAndAdd(list: JavacList<JCAnnotation>, annotation: PsiAnnotation): JavacList<JCAnnotation> {
@@ -485,6 +486,8 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
                 if (seenOverride) return list  // KT-34569: skip duplicate @Override annotations
                 seenOverride = true
             }
+            if (excludeNullabilityAnnotations &&
+                (annotation.hasQualifiedName("org.jetbrains.annotations.NotNull") || annotation.hasQualifiedName("org.jetbrains.annotations.Nullable"))) return list
             val annotationTree = convertAnnotation(containingClass, annotation, packageFqName) ?: return list
             return list.prepend(annotationTree)
         }
@@ -725,7 +728,7 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
 
         val name = method.properName
         if (!isValidIdentifier(name, canBeConstructor = isConstructor)) return null
-
+        val returnType = method.returnType?.takeIf { it.qualifiedNameOrNull != "kotlin.Unit" } ?: PsiType.VOID
         val modifiers = convertModifiers(
             containingClass,
             if (containingClass.isEnum && isConstructor)
@@ -736,13 +739,14 @@ class Kapt4StubGenerator(private val analysisSession: KtAnalysisSession) {
             packageFqName,
             method.annotations.toList(),
             metadata = null,
+            excludeNullabilityAnnotations = returnType == PsiType.VOID
         )
 
         if (containingClass.isInterface && !method.isAbstract && !method.isStatic) {
             modifiers.flags = modifiers.flags or Flags.DEFAULT
         }
 
-        val returnType = method.returnType ?: PsiType.VOID
+
 
         val parametersInfo = method.getParametersInfo(containingClass, isInner)
 
