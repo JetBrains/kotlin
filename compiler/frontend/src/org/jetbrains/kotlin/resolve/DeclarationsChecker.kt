@@ -841,9 +841,6 @@ class DeclarationsChecker(
             suggestMakingItAbstract -> MUST_BE_INITIALIZED_OR_BE_ABSTRACT
             else -> MUST_BE_INITIALIZED
         }
-        if (isOpenValDeferredInitDeprecationWarning && factory == MUST_BE_INITIALIZED) {
-            error("Not reachable case. We can always suggest making `open val` property `final`")
-        }
         trace.report(
             when (isMissedMustBeInitializedDeprecationWarning || isOpenValDeferredInitDeprecationWarning) {
                 true -> factory.deprecationWarning

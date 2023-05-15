@@ -201,9 +201,6 @@ private fun reportMustBeInitialized(
         suggestMakingItAbstract -> FirErrors.MUST_BE_INITIALIZED_OR_BE_ABSTRACT
         else -> FirErrors.MUST_BE_INITIALIZED
     }
-    if (isOpenValDeferredInitDeprecationWarning && factory == FirErrors.MUST_BE_INITIALIZED) {
-        error("Not reachable case. We can always suggest making `open val` property `final`")
-    }
     reporter.reportOn(
         propertySource,
         when (isMissedMustBeInitializedDeprecationWarning || isOpenValDeferredInitDeprecationWarning) {
